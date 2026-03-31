@@ -12,20 +12,25 @@
       "en": "Main strategy"
     },
     "phase66g_production_soft_filters": {
-      "sk": "Referenčná verzia",
-      "en": "Reference version"
+      "sk": "Referenčná stratégia",
+      "en": "Reference strategy"
     }
   },
   "model_sources": {
     "phase67j_no_neo_main": {
-      "summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_final_narrow_validation_summary.csv",
-      "paper_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack",
-      "live_status_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv"
+      "summary_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_final_narrow_validation_summary.csv",
+      "paper_dir": "outputs/phase67j_final_narrow_validation_pack",
+      "live_status_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_live_status.csv"
     },
     "phase66g_production_soft_filters": {
-      "summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_summary.csv",
-      "paper_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live",
-      "live_status_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv"
+      "summary_path": "outputs/phase66g_production_candidate_live/phase66g_production_candidate_summary.csv",
+      "paper_dir": "outputs/phase66g_production_candidate_live",
+      "live_status_path": "outputs/phase66g_production_candidate_live/phase66g_live_status.csv"
     }
+  },
+  "trend_barometer_source": {
+    "live_status_path": "outputs/phase66g_production_candidate_live/phase66g_live_status.csv",
+    "history_path": "outputs/phase66g_production_candidate_live/phase66g_trend_barometer_history.csv",
+    "model_key": "phase66g_production_soft_filters"
   }
 }
