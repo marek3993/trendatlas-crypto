@@ -1,0 +1,11 @@
+{
+  "model": "rs",
+  "leverage_mode": "dynamic",
+  "total_return_pct": 12267.28,
+  "cagr_pct": 52.54,
+  "max_drawdown_pct": -45.28,
+  "sharpe": 0.982,
+  "sortino": 1.143,
+  "trade_count": 766,
+  "avg_gross_exposure": 0.345
+}

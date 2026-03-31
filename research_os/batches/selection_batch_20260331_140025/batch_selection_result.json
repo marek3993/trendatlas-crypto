@@ -1,0 +1,19 @@
+{
+  "batch_id": "selection_batch_20260331_140025",
+  "batch_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\batches\\selection_batch_20260331_140025",
+  "generated_at": "2026-03-31T12:00:25+00:00",
+  "selected_count": 1,
+  "selected_candidates": [
+    {
+      "candidate_id": "phase70_golden_path_harness",
+      "branch": "ai_lab",
+      "experiment_family": "research_os_harness",
+      "final_score": 1.25,
+      "promotion_recommendation": "promote_to_precheck",
+      "policy_version": "unknown",
+      "run_dir": "",
+      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_golden_path_harness.spec_ready.json"
+    }
+  ],
+  "decision_log_count": 2
+}

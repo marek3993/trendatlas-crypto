@@ -1,0 +1,4 @@
+variant,top_k,score,aggr_total_return_pct,aggr_cagr_pct,aggr_max_drawdown_pct,aggr_sharpe,aggr_sortino,aggr_trade_count,bal_total_return_pct,bal_cagr_pct,bal_max_drawdown_pct,bal_sharpe,bal_sortino,bal_trade_count
+top1,1,8.482,4973.9,57.94,-37.13,1.404,1.012,170,3899.91,53.63,-32.5,1.438,1.081,461
+top3,3,4.83,1165.52,34.37,-35.24,1.137,0.716,242,957.62,31.59,-26.1,1.181,0.757,561
+top5,5,3.282,953.74,31.54,-35.24,1.074,0.67,250,797.17,29.1,-26.63,1.12,0.715,573

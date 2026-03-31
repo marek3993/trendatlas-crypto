@@ -1,0 +1,10 @@
+candidate_id,check_item,passed,details
+phase70_golden_path_harness,batch_selection_selected,1,
+phase70_golden_path_harness,scoring_promote_to_precheck,1,
+phase70_golden_path_harness,precheck_passed,1,
+phase70_golden_path_harness,run_status_forensic_ready,1,
+phase70_golden_path_harness,evidence_bundle_complete,1,
+phase70_golden_path_harness,lineage_context_present,1,
+phase70_golden_path_harness,policy_context_present,1,
+phase70_golden_path_harness,manual_approval_pending_or_complete,1,
+phase70_golden_path_harness,rollback_record_ready,1,

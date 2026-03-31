@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.1",
+  "candidate_id": "phase70_golden_path_harness",
+  "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness",
+  "executed_at": "2026-03-31 07:46:31 UTC",
+  "policy_paths": {
+    "scoring_policy": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\policies\\research_os_scoring_policy_v1.json",
+    "promotion_policy": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\policies\\research_os_promotion_policy_v1.json"
+  },
+  "applied_overrides": {
+    "scoring_policy": [
+      "golden_path_harness"
+    ],
+    "promotion_policy": [
+      "golden_path_harness"
+    ]
+  },
+  "inputs": {
+    "compare_context_missing": false,
+    "precheck_failed": false,
+    "complexity_level": "low",
+    "robustness_level": "strong",
+    "suspicious_uplift_flag": true,
+    "suspicious_uplift_hard_fail": false
+  },
+  "baseline_metrics": {
+    "cagr_pct": 0.0,
+    "since2023_cagr_pct": 0.0,
+    "since2025_cagr_pct": 0.0,
+    "max_drawdown_pct": 0.0,
+    "switch_count": 0
+  },
+  "candidate_metrics": {
+    "score": 1.25,
+    "cagr_pct": 12.5,
+    "since2023_cagr_pct": 0.0,
+    "since2025_cagr_pct": 10.1,
+    "max_drawdown_pct": -3.2,
+    "switch_count": 0.0,
+    "delta_vs_baseline_pct": 1.75
+  },
+  "uplifts": {
+    "cagr_uplift_pct": 12.5,
+    "since2023_uplift_pct": 0.0,
+    "since2025_uplift_pct": 10.1,
+    "max_drawdown_worsening_pct": 3.2,
+    "switch_count_over_baseline": 0.0
+  },
+  "score_breakdown": {
+    "cagr_component": 2.5,
+    "since2023_component": 0.0,
+    "since2025_component": 1.01,
+    "max_drawdown_penalty_component": -0.0,
+    "switch_count_penalty_component": -0.0,
+    "complexity_penalty_component": -0.0,
+    "robustness_penalty_component": -0.0,
+    "instability_penalty_component": -0.0,
+    "recency_bonus_component": 0.08080000000000008,
+    "recency_multiplier": 1.08,
+    "final_score": 3.5907999999999998
+  },
+  "promotion_recommendation": "promote_to_precheck",
+  "reason_codes": [
+    "warning_suspicious_instability",
+    "promotion_recommendation:promote_to_precheck"
+  ]
+}

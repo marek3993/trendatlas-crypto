@@ -1,0 +1,16 @@
+{
+  "variant": "r5g20_xg10",
+  "ret5_gap_threshold": 20.0,
+  "xs20_gap_threshold": 10.0,
+  "score": -21.417,
+  "total_return_pct": 12369.05,
+  "cagr_pct": 84.69,
+  "max_drawdown_pct": -36.58,
+  "sharpe": 1.37,
+  "sortino": 1.796,
+  "trade_count": 177,
+  "cash_days_pct": 69.38,
+  "missed_leader_pct_of_in_market": 88.07,
+  "pain_bar_pct_of_in_market": 69.66,
+  "sum_leader_gap_ret": 50.3065
+}

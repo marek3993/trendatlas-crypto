@@ -1,0 +1,16 @@
+{
+  "policy_version": "1.0",
+  "generated_at": "2026-03-31T13:41:01+00:00",
+  "candidate_id": "phase70_golden_path_harness",
+  "batch_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\batches\\selection_batch_20260331_140025",
+  "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_golden_path_harness.spec_ready.json",
+  "handoff_decision": "handoff_staged",
+  "approval_status": "pending_manual_approval",
+  "finalization_state": "staged_pending_manual_finalization",
+  "evidence_complete": true,
+  "lineage_context_present": true,
+  "policy_context_present": true,
+  "official_truth_changed": false,
+  "reason_codes": []
+}

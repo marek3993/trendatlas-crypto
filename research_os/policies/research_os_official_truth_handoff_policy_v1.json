@@ -1,0 +1,73 @@
+{
+  "policy_version": "1.0",
+  "description": "Deterministic official truth handoff policy for staging a gate-passed candidate without directly mutating live official truth.",
+  "handoff_admission_rules": {
+    "required_gate_decision": "gate_passed",
+    "required_approval_statuses": [
+      "pending_manual_approval",
+      "approved"
+    ],
+    "require_manual_approval_field": true,
+    "require_evidence_complete": true,
+    "require_lineage_context": true,
+    "require_policy_context": true,
+    "require_rollback_ready_record": true
+  },
+  "manual_approval_validation_rules": {
+    "approval_status_field": "approval_status",
+    "approval_status_allowed": [
+      "pending_manual_approval",
+      "approved",
+      "rejected"
+    ],
+    "pending_allowed_for_staging": true,
+    "approved_required_for_finalize_ready": false,
+    "manual_finalization_status_default": "staged_pending_manual_finalization"
+  },
+  "truth_staging_rules": {
+    "staging_only": true,
+    "write_truth_pack_directly": false,
+    "required_staging_fields": [
+      "candidate_id",
+      "run_dir",
+      "spec_path",
+      "promotion_manifest_path",
+      "rollback_pointer_path",
+      "policy_version",
+      "approval_status",
+      "gate_decision"
+    ]
+  },
+  "promotion_manifest_rules": {
+    "required_fields": [
+      "candidate_id",
+      "batch_dir",
+      "run_dir",
+      "spec_path",
+      "gate_result_path",
+      "evidence_bundle_path",
+      "rollback_record_path",
+      "truth_update_staging_path",
+      "policy_version",
+      "approval_status"
+    ]
+  },
+  "rollback_pointer_rules": {
+    "required_fields": [
+      "candidate_id",
+      "run_id",
+      "spec_path",
+      "rollback_record_path",
+      "promotion_manifest_path",
+      "created_at",
+      "policy_version"
+    ]
+  },
+  "safe_outcomes": {
+    "missing_approval": "handoff_failed",
+    "broken_evidence": "handoff_failed",
+    "broken_lineage": "handoff_failed",
+    "broken_policy_context": "handoff_failed",
+    "manual_rejected": "handoff_rejected"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "variant": "baseline_v1",
+  "max_prev_day_pump": NaN,
+  "max_3d_pump": NaN,
+  "min_dv_rank": 0.0,
+  "min_persistence": 0,
+  "robust_score": 1.168,
+  "median_window_sharpe": 0.75,
+  "median_window_sortino": 0.349,
+  "median_window_cagr_pct": 20.01,
+  "median_window_return_pct": 9.23,
+  "worst_window_dd_pct": -28.79,
+  "positive_window_ratio": 0.625,
+  "full_total_return_pct": 4393.93,
+  "full_cagr_pct": 62.19,
+  "full_max_drawdown_pct": -36.56,
+  "full_sharpe": 1.176,
+  "full_sortino": 1.372,
+  "full_trade_count": 174
+}

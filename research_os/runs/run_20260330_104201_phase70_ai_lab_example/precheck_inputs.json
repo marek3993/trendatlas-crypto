@@ -1,0 +1,25 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260330_104201_phase70_ai_lab_example",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_ai_lab_example.spec_ready.json",
+  "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv"
+  ],
+  "expected_outputs": [
+    "summary.csv",
+    "paper.csv",
+    "compare.csv",
+    "run_manifest.json",
+    "quality_report.json"
+  ],
+  "run_folder_contract": [
+    "run_manifest.json",
+    "run_status.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts_index.json",
+    "quality_report.json",
+    "precheck_inputs.json"
+  ]
+}

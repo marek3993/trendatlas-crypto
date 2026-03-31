@@ -1,0 +1,15 @@
+{
+  "batch_id": "batch_20260330_112202",
+  "started_at": "2026-03-30 11:22:02 UTC",
+  "completed_at": "2026-03-30 11:22:02 UTC",
+  "selected_specs": 2,
+  "completed_runs": 0,
+  "failed_runs": 0,
+  "kill_count": 0,
+  "hold_count": 0,
+  "rerun_count": 0,
+  "promote_to_precheck_count": 0,
+  "forensic_ready_count": 0,
+  "mode": "dry_run",
+  "results": []
+}

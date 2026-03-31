@@ -1,0 +1,24 @@
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] START
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] cwd=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] python=C:\Users\benda\Desktop\market_regime_v1\.venv\Scripts\python.exe
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] argv=C:\Users\benda\Desktop\market_regime_v1\scripts\research_os_golden_path_producer.py
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] CHECK dir run_dir: C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] OK dir run_dir
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED kind=csv path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\summary.csv rows=1 cols=7 size_bytes=146
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED kind=csv path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\paper.csv rows=3 cols=5 size_bytes=165
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED kind=csv path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\compare.csv rows=1 cols=6 size_bytes=172
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED kind=json path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\metrics.json size_bytes=206
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED kind=json path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\artifacts_index.json size_bytes=1049
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED kind=json path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\quality_report.json size_bytes=494
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] experiment_id=phase70_golden_path_harness
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] score=1.25
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] golden_path_ready=1
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] END status=OK elapsed_sec=0.047
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SUMMARY saved_files_count=6
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED_FILE[1] path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\summary.csv
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED_FILE[2] path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\paper.csv
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED_FILE[3] path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\compare.csv
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED_FILE[4] path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\metrics.json
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED_FILE[5] path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\artifacts_index.json
+[2026-03-30 13:22:14 Západoeurópsky èas (letný)] [research_os_golden_path_producer.py] SAVED_FILE[6] path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_112213_phase70_golden_path_harness\quality_report.json

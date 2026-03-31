@@ -1,0 +1,4 @@
+window,start_date,main_above_prev_pct_of_days,main_vs_prev_rolling_90d_win_pct,main_vs_prev_rolling_180d_win_pct
+since_2021,2021-01-01,82.64,32.61,33.56
+since_2023,2023-01-01,29.8,34.67,24.08
+since_2025,2025-01-01,4.77,19.09,11.82

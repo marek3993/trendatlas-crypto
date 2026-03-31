@@ -1,0 +1,13 @@
+{
+  "decision_id": "decision_run_20260330_110043_phase70_ai_lab_example",
+  "candidate_id": "phase70_ai_lab_example",
+  "source_run_id": "run_20260330_110043_phase70_ai_lab_example",
+  "decision": "kill",
+  "decision_reason": "invalid_ingest_missing_outputs:['summary.csv', 'paper.csv', 'compare.csv']",
+  "decided_by": "research_os_orchestrator_v1",
+  "decided_at": "2026-03-30 11:00:43 UTC",
+  "evidence_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_110043_phase70_ai_lab_example\\run_manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_110043_phase70_ai_lab_example\\quality_report.json"
+  ]
+}

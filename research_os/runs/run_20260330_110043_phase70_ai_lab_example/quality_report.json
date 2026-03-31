@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260330_110043_phase70_ai_lab_example",
+  "status": "failed",
+  "checks": [
+    {
+      "name": "required_run_artifacts",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "expected_outputs",
+      "ok": false,
+      "missing": [
+        "summary.csv",
+        "paper.csv",
+        "compare.csv"
+      ]
+    },
+    {
+      "name": "numeric_score_extract",
+      "ok": false,
+      "value": null
+    },
+    {
+      "name": "compare_valid",
+      "ok": false
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+model,label,total_return_pct,cagr_pct,max_drawdown_pct,sharpe,sortino,trade_count,cash_days_pct,missed_leader_pct_of_in_market,pain_bar_pct_of_in_market,sum_leader_gap_ret
+phase45_without_BNBUSDT,No BNB,18405.55,94.2,-32.66,1.452,1.924,194,69.55,86.29,65.6,47.0055
+phase45_without_BNBUSDT_and_DOGEUSDT,No BNB + No DOGE,16331.93,91.29,-33.59,1.424,1.917,193,69.45,84.62,62.53,41.0895
+phase42_full12,Full12 Winner,15300.6,89.72,-36.56,1.418,1.864,213,69.38,87.05,69.43,49.9826
+old_baseline,Old Baseline,4393.93,62.22,-36.56,1.176,1.374,174,74.6,88.22,71.23,45.1068

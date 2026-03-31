@@ -1,0 +1,21 @@
+{
+  "model": "confirm_breakout_4h",
+  "robust_score": -8.18,
+  "median_window_sharpe": 0.0,
+  "median_window_sortino": 0.0,
+  "median_window_cagr_pct": 0.0,
+  "median_window_return_pct": 0.0,
+  "worst_window_dd_pct": -13.7,
+  "positive_window_ratio": 0.278,
+  "available_spike_bars": 2893,
+  "captured_spike_bars": 15,
+  "spike_capture_ratio": 0.005,
+  "avg_captured_spike_ret_pct": 5.73,
+  "full_total_return_pct": 41.7,
+  "full_cagr_pct": 4.14,
+  "full_max_drawdown_pct": -24.41,
+  "full_sharpe": 0.385,
+  "full_sortino": 0.095,
+  "full_trade_count": 375,
+  "full_avg_exposure": 0.017
+}

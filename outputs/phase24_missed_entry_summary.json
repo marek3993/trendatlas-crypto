@@ -1,0 +1,10 @@
+{
+  "total_bars": 18817,
+  "missed_entry_bars": 0,
+  "missed_entry_bar_pct": 0.0,
+  "missed_positive_bars": 0,
+  "missed_positive_bar_pct": 0.0,
+  "sum_selected_ret_next_on_missed_bars": 0.0,
+  "compound_selected_ret_next_on_missed_bars": 0.0,
+  "top_20_windows": []
+}

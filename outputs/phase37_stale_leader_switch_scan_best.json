@@ -1,0 +1,16 @@
+{
+  "variant": "gap0_pen0",
+  "switch_gap_threshold": 0.0,
+  "stale_penalty": 0.0,
+  "score": -23.529,
+  "total_return_pct": 9031.72,
+  "cagr_pct": 77.52,
+  "max_drawdown_pct": -36.64,
+  "sharpe": 1.328,
+  "sortino": 1.616,
+  "trade_count": 200,
+  "cash_days_pct": 69.38,
+  "missed_leader_pct_of_in_market": 87.73,
+  "pain_bar_pct_of_in_market": 69.66,
+  "sum_leader_gap_ret": 50.6085
+}

@@ -1,0 +1,26 @@
+{
+  "candidate_id": "phase70_golden_path_harness",
+  "batch_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\batches\\selection_batch_20260331_140025",
+  "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_golden_path_harness.spec_ready.json",
+  "batch_selection_result_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\batches\\selection_batch_20260331_140025\\batch_selection_result.json",
+  "batch_selection_summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\batches\\selection_batch_20260331_140025\\batch_selection_summary.csv",
+  "selection_decision_log_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\batches\\selection_batch_20260331_140025\\selection_decision_log.jsonl",
+  "run_manifest_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\run_manifest.json",
+  "run_status_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\run_status.json",
+  "artifacts_index_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\artifacts_index.json",
+  "quality_report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\quality_report.json",
+  "precheck_inputs_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\precheck_inputs.json",
+  "summary_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\summary.csv",
+  "paper_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\paper.csv",
+  "compare_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\compare.csv",
+  "scoring_result_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\scoring_result.json",
+  "precheck_result_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\precheck_result.json",
+  "evidence_missing": [],
+  "policy_version_context": {
+    "official_promotion_policy_version": "1.0",
+    "scoring_policy_version": "unknown",
+    "precheck_policy_version": "unknown",
+    "selection_policy_version": "unknown"
+  }
+}

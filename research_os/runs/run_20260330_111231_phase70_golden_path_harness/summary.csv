@@ -1,0 +1,2 @@
+model,score,primary_metric_value,cagr_pct,max_drawdown_pct,since2025_cagr_pct,status
+phase70_golden_path_harness,1.25,1.25,12.5,-3.2,10.1,valid

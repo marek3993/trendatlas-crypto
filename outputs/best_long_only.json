@@ -1,0 +1,15 @@
+{
+  "enter_conf": 40.0,
+  "hold_conf": 30.0,
+  "long_mr_floor": -90.0,
+  "exit_long_bias": 0.0,
+  "robust_score": 4.247,
+  "median_fold_sharpe": 0.47,
+  "median_fold_sortino": 0.36,
+  "median_fold_cagr_pct": 10.63,
+  "median_fold_return_pct": 39.0,
+  "worst_fold_dd_pct": -55.32,
+  "positive_fold_ratio": 0.667,
+  "median_asset_sharpe": 0.591,
+  "median_asset_return_pct": 337.2
+}

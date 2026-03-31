@@ -1,0 +1,90 @@
+{
+  "dataset_name": "phase67e_guardrail_sweep",
+  "built_at_utc": "2026-03-29 12:19:13 UTC",
+  "script": "phase67e_guardrail_sweep.py",
+  "cwd": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "python": "C:\\Users\\benda\\Desktop\\market_regime_v1\\.venv\\Scripts\\python.exe",
+  "files": [
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67d_weekly_shortlist_challenger_governance\\phase67d_weekly_shortlist_challenger_summary.csv",
+      "exists": true,
+      "size_bytes": 2778,
+      "modified_utc": "2026-03-28 19:20:02 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67d_weekly_shortlist_challenger_governance\\phase67d_weekly_shortlist_challenger_decisions.csv",
+      "exists": true,
+      "size_bytes": 74670,
+      "modified_utc": "2026-03-28 19:20:02 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_daily_behavior.csv",
+      "exists": true,
+      "size_bytes": 37516,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67e_guardrail_sweep\\phase67e_guardrail_ranked_top20.csv",
+      "exists": true,
+      "size_bytes": 2593,
+      "modified_utc": "2026-03-29 12:19:13 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67e_guardrail_sweep\\phase67e_guardrail_ranked_all.csv",
+      "exists": true,
+      "size_bytes": 24359,
+      "modified_utc": "2026-03-29 12:19:13 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67e_guardrail_sweep\\phase67e_2025_damage_by_month.csv",
+      "exists": true,
+      "size_bytes": 246,
+      "modified_utc": "2026-03-29 12:19:13 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67e_guardrail_sweep\\phase67e_2025_damage_by_main_asset.csv",
+      "exists": true,
+      "size_bytes": 304,
+      "modified_utc": "2026-03-29 12:19:13 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67e_guardrail_sweep\\phase67e_2025_damage_by_leader_asset.csv",
+      "exists": true,
+      "size_bytes": 99,
+      "modified_utc": "2026-03-29 12:19:13 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67e_guardrail_sweep\\phase67e_weekly_decision_behavior.csv",
+      "exists": true,
+      "size_bytes": 28883,
+      "modified_utc": "2026-03-29 12:19:13 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67e_guardrail_sweep\\phase67e_guardrail_verdict.txt",
+      "exists": true,
+      "size_bytes": 1826,
+      "modified_utc": "2026-03-29 12:19:13 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67e_guardrail_sweep\\phase67e_attribution_input_quality.json",
+      "exists": true,
+      "size_bytes": 697,
+      "modified_utc": "2026-03-29 12:19:13 UTC"
+    }
+  ],
+  "extra": {
+    "input_mode": "strict",
+    "strict_input_mode": true,
+    "baseline_model": "phase66g_production_soft_filters",
+    "challenger_model": "phase67d_weekly_challenger_base",
+    "attribution_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_daily_behavior.csv",
+    "damage_data_available": 1,
+    "summary_rows": 4,
+    "decisions_rows": 718,
+    "attribution_rows": 440,
+    "weekly_rows": 359,
+    "ranked_rows": 216,
+    "top_profile_label": "pm0.02_pw2_cd7_dl42_bs0.01",
+    "top_score": 328.587456
+  }
+}

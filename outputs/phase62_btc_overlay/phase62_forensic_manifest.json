@@ -1,0 +1,11 @@
+{
+  "phase": "phase62_forensic_check",
+  "winner_input_key": "phase61_restore_trx_sol_base",
+  "baseline_key": "phase42 core",
+  "checked_models": [
+    "phase61_restore_trx_sol_base",
+    "phase62_btcov_f20_s100_r20_m12_rm200_rb+00_v30_060_cd0",
+    "phase62_btcov_f20_s100_r20_m12_rm150_rb-03_v20_045_cd0"
+  ],
+  "forensic_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase62_btc_overlay\\phase62_forensic_check.csv"
+}

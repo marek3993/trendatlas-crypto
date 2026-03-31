@@ -1,0 +1,11 @@
+asset,train_total_delta_pct,recent_total_delta_pct,train_dd_worsen_pct,train_triggers,score,passed_filters,profile,decision_date,next_date_exclusive,probation_delta_pct,suspended,suspended_until_rebalance_idx,incumbent_asset_before,selected_asset,keep_reason
+BCH,10.101143510290584,0.0,-1.0658141036401503e-14,24,18.751715265435877,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,331,,,best_passed
+QNT,0.5734857807490243,0.0,0.0,14,2.9602286711235366,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,330,,,best_passed
+ADA,0.0,0.0,0.0,0,0.0,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,244,,,best_passed
+ALGO,0.0,0.0,0.0,0,0.0,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,210,,,best_passed
+APT,0.0,0.0,0.0,0,0.0,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,287,,,best_passed
+ARB,0.0,0.0,0.0,0,0.0,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,245,,,best_passed
+ATOM,0.0,0.0,0.0,0,0.0,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,250,,,best_passed
+AVAX,0.0,0.0,0.0,0,0.0,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,293,,,best_passed
+AXS,0.0,0.0,0.0,0,0.0,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,250,,,best_passed
+BFUSD,0.0,0.0,0.0,0,0.0,False,phase67_top100_production_soft_filters,2026-03-14,2026-03-16,0.0,False,-1,,,best_passed

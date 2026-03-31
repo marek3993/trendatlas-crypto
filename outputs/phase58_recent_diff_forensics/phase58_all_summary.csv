@@ -1,0 +1,3 @@
+window,days_total,days_different_selection,different_selection_pct,same_selection_pct,main_cash_prev_in_days,prev_cash_main_in_days,sum_ret_diff_all_days_pct_points,sum_ret_diff_diff_days_pct_points,avg_ret_diff_diff_days_pct_points,negative_diff_days,positive_diff_days
+since_2023,1171,60,5.12,94.88,0,0,-7.5433,-9.3433,-0.1557,30,30
+since_2025,440,24,5.45,94.55,0,0,-9.5615,-9.8615,-0.4109,12,12

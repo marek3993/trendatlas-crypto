@@ -1,0 +1,5 @@
+model,label,total_return_pct,cagr_pct,max_drawdown_pct,worst_day_pct,worst_3d_pct,worst_5d_pct,days,full_history_cagr_pct,full_history_max_drawdown_pct,rank_total_return,rank_cagr,rank_max_dd
+phase42_full12,Predosly lider,121.0,93.44,-19.53,-12.18,-17.53,-15.36,440,89.72,-36.56,1.0,1.0,2.0
+old_baseline,Starsia verzia,100.06,78.06,-15.8,-12.18,-15.8,-15.8,440,62.22,-36.56,2.0,2.0,1.0
+phase45_without_BNBUSDT_and_DOGEUSDT,Alternativna verzia,79.34,62.58,-21.42,-8.45,-10.92,-11.71,440,91.29,-33.59,3.0,3.0,3.0
+phase45_without_BNBUSDT,Hlavna strategia,72.25,57.21,-22.73,-8.45,-10.92,-14.21,440,94.2,-32.66,4.0,4.0,4.0

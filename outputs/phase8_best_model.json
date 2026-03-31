@@ -1,0 +1,15 @@
+{
+  "model": "base",
+  "median_window_sharpe": 0.639,
+  "median_window_sortino": 0.303,
+  "median_window_cagr_pct": 13.6,
+  "median_window_return_pct": 9.19,
+  "worst_window_dd_pct": -28.56,
+  "positive_window_ratio": 0.625,
+  "full_total_return_pct": 1638.64,
+  "full_cagr_pct": 28.48,
+  "full_max_drawdown_pct": -36.29,
+  "full_sharpe": 1.006,
+  "full_sortino": 0.86,
+  "full_trade_count": 148
+}

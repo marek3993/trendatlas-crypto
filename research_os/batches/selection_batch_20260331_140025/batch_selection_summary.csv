@@ -1,0 +1,2 @@
+batch_id,selected_count,rejected_count,promote_to_precheck_count,hold_count,unique_branches_selected,unique_families_selected,generated_at
+selection_batch_20260331_140025,1,1,1,0,1,1,2026-03-31T12:00:25+00:00

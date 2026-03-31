@@ -1,0 +1,58 @@
+{
+  "policy_version": "1.0",
+  "description": "Deterministic batch selection policy for Research OS.",
+  "top_n_per_batch": 3,
+  "allowed_recommendations": [
+    "promote_to_precheck",
+    "hold",
+    "rerun",
+    "kill"
+  ],
+  "eligible_recommendations": [
+    "promote_to_precheck",
+    "hold"
+  ],
+  "minimum_final_score": 0.0,
+  "require_precheck_pass_for_selection": false,
+  "require_compare_context": true,
+  "branch_priority": {
+    "main": 100,
+    "core": 90,
+    "ai_lab": 80,
+    "research": 70,
+    "experimental": 50,
+    "__default__": 10
+  },
+  "recommendation_priority": {
+    "promote_to_precheck": 100,
+    "hold": 50,
+    "rerun": 20,
+    "kill": 0
+  },
+  "promotion_slot_allocation": {
+    "total_slots": 2,
+    "per_branch_max": 1
+  },
+  "recent_failure_cooldown": {
+    "enabled": true,
+    "cooldown_hours": 24,
+    "apply_to_statuses": [
+      "run_failed",
+      "archived"
+    ]
+  },
+  "duplicate_family_suppression": {
+    "enabled": true,
+    "family_key_fields": [
+      "experiment_family",
+      "branch"
+    ],
+    "max_per_family": 1
+  },
+  "tie_break_order": [
+    "final_score_desc",
+    "branch_priority_desc",
+    "created_at_asc",
+    "candidate_id_asc"
+  ]
+}

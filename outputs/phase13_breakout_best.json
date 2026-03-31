@@ -1,0 +1,20 @@
+{
+  "model": "rs_accel",
+  "robust_score": 5.446,
+  "median_window_sharpe": 0.809,
+  "median_window_sortino": 0.56,
+  "median_window_cagr_pct": 24.21,
+  "median_window_return_pct": 11.21,
+  "worst_window_dd_pct": -28.79,
+  "positive_window_ratio": 0.625,
+  "available_spike_days": 444,
+  "captured_spike_days": 14,
+  "spike_capture_ratio": 0.032,
+  "avg_captured_spike_ret_pct": 19.47,
+  "full_total_return_pct": 3111.92,
+  "full_cagr_pct": 55.41,
+  "full_max_drawdown_pct": -36.56,
+  "full_sharpe": 1.085,
+  "full_sortino": 1.273,
+  "full_trade_count": 224
+}

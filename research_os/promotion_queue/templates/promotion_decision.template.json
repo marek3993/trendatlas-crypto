@@ -1,0 +1,10 @@
+{
+  "decision_id": "decision_example_0001",
+  "candidate_id": "candidate_example",
+  "source_run_id": "run_example_0001",
+  "decision": "hold",
+  "decision_reason": "Awaiting precheck/forensic evidence.",
+  "decided_by": "ai_lab",
+  "decided_at": "2026-03-30 00:00:00 UTC",
+  "evidence_refs": []
+}

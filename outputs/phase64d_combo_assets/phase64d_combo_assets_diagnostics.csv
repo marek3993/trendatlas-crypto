@@ -1,0 +1,10 @@
+combo,asset,status,asset_file,raw_rows,daily_rows,start_date,end_date,history_days,non_na_close_ratio,max_gap_days,reason
+add_DOGE,DOGE,loaded,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\DOGEUSDT_1d.csv,2448.0,2448.0,2019-07-05,2026-03-17,2448.0,100.0,1.0,
+add_DOGE,DOGE,processed_combo,DOGEUSDT_1d.csv,,,,,,,,
+add_DOGE_XRP,XRP,loaded,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\XRPUSDT_1d.csv,2875.0,2875.0,2018-05-04,2026-03-17,2875.0,100.0,1.0,
+add_DOGE_XRP,"DOGE,XRP",processed_combo,DOGEUSDT_1d.csv | XRPUSDT_1d.csv,,,,,,,,
+add_DOGE_SUI,"DOGE,SUI",failed_combo,,,,,,,,,Nenašiel som input file pre asset SUI v C:\Users\benda\Desktop\market_regime_v1\data\ohlcv
+add_DOGE_HYPE,"DOGE,HYPE",failed_combo,,,,,,,,,Nenašiel som input file pre asset HYPE v C:\Users\benda\Desktop\market_regime_v1\data\ohlcv
+add_DOGE_XRP_SUI,"DOGE,XRP,SUI",failed_combo,,,,,,,,,Nenašiel som input file pre asset SUI v C:\Users\benda\Desktop\market_regime_v1\data\ohlcv
+add_DOGE_XRP_HYPE,"DOGE,XRP,HYPE",failed_combo,,,,,,,,,Nenašiel som input file pre asset HYPE v C:\Users\benda\Desktop\market_regime_v1\data\ohlcv
+add_DOGE_SUI_HYPE,"DOGE,SUI,HYPE",failed_combo,,,,,,,,,Nenašiel som input file pre asset SUI v C:\Users\benda\Desktop\market_regime_v1\data\ohlcv

@@ -1,0 +1,20 @@
+{
+  "schema_version": "2.0",
+  "required_run_artifacts": [
+    "run_manifest.json",
+    "run_status.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts_index.json",
+    "quality_report.json",
+    "precheck_inputs.json"
+  ],
+  "conditional_artifacts": {
+    "when_applicable": [
+      "summary.csv",
+      "paper.csv",
+      "compare.csv"
+    ]
+  },
+  "notes": "Každý run folder pod research_os/runs/<run_id>/ musí obsahovať required artifacts. conditional artifacts sú povinné keď ich experiment family očakáva."
+}

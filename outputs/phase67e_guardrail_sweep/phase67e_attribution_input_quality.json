@@ -1,0 +1,32 @@
+{
+  "input_mode": "strict",
+  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_daily_behavior.csv",
+  "rows": 440,
+  "cols": 13,
+  "ts_null_rows": 0,
+  "ts_min": "2025-01-01 00:00:00",
+  "ts_max": "2026-03-16 00:00:00",
+  "same_selection_null_rows": 0,
+  "ret_diff_null_rows": 0,
+  "unique_main_assets": [
+    "AVAXUSDT",
+    "BTCUSDT",
+    "CASH",
+    "DOGEUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "TRXUSDT",
+    "XRPUSDT"
+  ],
+  "unique_leader_assets": [
+    "AVAXUSDT",
+    "BNBUSDT",
+    "BTCUSDT",
+    "CASH",
+    "DOGEUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "TRXUSDT",
+    "XRPUSDT"
+  ]
+}

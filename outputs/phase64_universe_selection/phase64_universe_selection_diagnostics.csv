@@ -1,0 +1,13 @@
+file,asset,status,reason,raw_rows,daily_rows,non_na_close_ratio,start_date,end_date,history_days,max_gap_days,median_gap_days
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\ADAUSDT_1d.csv,ADA,processed,,2892.0,2892.0,1.0,2018-04-17,2026-03-17,2892.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\AVAXUSDT_1d.csv,AVAX,processed,,2003.0,2003.0,1.0,2020-09-22,2026-03-17,2003.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\BNBUSDT_1d.csv,BNB,processed,,3054.0,3054.0,1.0,2017-11-06,2026-03-17,3054.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\BTCUSDT_1d.csv,BTC,skipped,bad_asset_name_or_excluded,,,,,,,,
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\DOGEUSDT_1d.csv,DOGE,processed,,2448.0,2448.0,1.0,2019-07-05,2026-03-17,2448.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\DOTUSDT_1d.csv,DOT,processed,,2038.0,2038.0,1.0,2020-08-18,2026-03-17,2038.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\ETHUSDT_1d.csv,ETH,processed,,3135.0,3135.0,1.0,2017-08-17,2026-03-17,3135.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\LINKUSDT_1d.csv,LINK,processed,,2618.0,2618.0,1.0,2019-01-16,2026-03-17,2618.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\LTCUSDT_1d.csv,LTC,processed,,3017.0,3017.0,1.0,2017-12-13,2026-03-17,3017.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\SOLUSDT_1d.csv,SOL,processed,,2045.0,2045.0,1.0,2020-08-11,2026-03-17,2045.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\TRXUSDT_1d.csv,TRX,processed,,2837.0,2837.0,1.0,2018-06-11,2026-03-17,2837.0,1.0,1.0
+C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\XRPUSDT_1d.csv,XRP,processed,,2875.0,2875.0,1.0,2018-05-04,2026-03-17,2875.0,1.0,1.0

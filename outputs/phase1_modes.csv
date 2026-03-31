@@ -1,0 +1,4 @@
+mode,robust_score,median_fold_sharpe,median_fold_sortino,median_fold_cagr_pct,median_fold_return_pct,worst_fold_dd_pct,positive_fold_ratio,median_asset_sharpe,median_asset_return_pct
+long_only,-6.467,0.218,0.157,2.4,7.62,-52.06,0.533,0.38,97.54
+short_only,-12.776,0.195,0.105,1.7,4.05,-66.49,0.533,0.032,-11.33
+long_short,-17.78,0.128,0.103,-1.21,-2.82,-71.7,0.467,0.076,-17.89

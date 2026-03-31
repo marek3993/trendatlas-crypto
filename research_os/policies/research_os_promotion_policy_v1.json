@@ -1,0 +1,72 @@
+{
+  "policy_version": "1.1",
+  "description": "Deterministic promotion policy for Research OS candidates.",
+  "hard_fail_rules": {
+    "require_compare_context": true,
+    "block_if_precheck_failed": true,
+    "block_if_artifacts_incomplete": true,
+    "block_if_compare_missing": true,
+    "block_if_manifest_inconsistent": true,
+    "block_if_suspicious_instability_hard": true,
+    "block_if_weak_since2025_and_not_explicitly_allowed": true
+  },
+  "score_thresholds": {
+    "promote_to_precheck_min_score": 8.0,
+    "hold_min_score": 2.0,
+    "rerun_min_score": -2.0
+  },
+  "recent_performance_thresholds": {
+    "minimum_since2025_uplift_pct": 0.0,
+    "minimum_since2023_uplift_pct": -5.0
+  },
+  "micro_uplift_policy": {
+    "micro_uplift_max_cagr_pct": 1.0,
+    "require_robustness": "strong",
+    "action_if_missing_robustness": "hold"
+  },
+  "warning_treatment": {
+    "warning_suspicious_uplift_flag": "hold",
+    "warning_instability": "hold"
+  },
+  "tie_break_logic": [
+    "higher_final_score",
+    "higher_since2025_uplift_pct",
+    "lower_max_drawdown_penalty",
+    "lower_complexity_penalty"
+  ],
+  "top_n_per_batch": null,
+  "explicit_policy_flags": {
+    "allow_weak_since2025_override": false
+  },
+  "output_actions": [
+    "kill",
+    "hold",
+    "rerun",
+    "promote_to_precheck"
+  ],
+  "branch_overrides": {
+    "golden_path_harness": {
+      "match_contains": [
+        "golden_path",
+        "synthetic_harness"
+      ],
+      "replace_score_thresholds": {
+        "promote_to_precheck_min_score": 0.5,
+        "hold_min_score": -5.0,
+        "rerun_min_score": -10.0
+      },
+      "replace_recent_performance_thresholds": {
+        "minimum_since2025_uplift_pct": -999999.0,
+        "minimum_since2023_uplift_pct": -999999.0
+      },
+      "replace_warning_treatment": {
+        "warning_suspicious_uplift_flag": "promote_to_precheck",
+        "warning_instability": "hold"
+      },
+      "replace_explicit_policy_flags": {
+        "allow_weak_since2025_override": true
+      },
+      "notes": "Synthetic harness override for success-path controller validation only."
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "decision_id": "decision_run_20260330_111231_phase70_golden_path_harness",
+  "candidate_id": "phase70_golden_path_harness",
+  "source_run_id": "run_20260330_111231_phase70_golden_path_harness",
+  "decision": "promote_to_precheck",
+  "decision_reason": "score_above_threshold:1.25",
+  "decided_by": "research_os_orchestrator_v1",
+  "decided_at": "2026-03-30 11:12:32 UTC",
+  "evidence_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111231_phase70_golden_path_harness\\summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111231_phase70_golden_path_harness\\paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111231_phase70_golden_path_harness\\compare.csv"
+  ]
+}

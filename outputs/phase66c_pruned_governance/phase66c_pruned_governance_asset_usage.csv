@@ -1,0 +1,10 @@
+asset,selected_days,selected_days_pct,profile
+DOGE,546,18.997912317327767,phase66c_pruned_base
+ADA,312,10.855949895615867,phase66c_pruned_base
+ETH,132,4.592901878914405,phase66c_pruned_base
+TRX,60,2.0876826722338206,phase66c_pruned_base
+LINK,42,1.4613778705636742,phase66c_pruned_base
+ETH,120,4.175365344467641,phase66c_pruned_strict
+DOGE,66,2.2964509394572024,phase66c_pruned_strict
+ADA,48,1.6701461377870561,phase66c_pruned_strict
+TRX,48,1.6701461377870561,phase66c_pruned_strict

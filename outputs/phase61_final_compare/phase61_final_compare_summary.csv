@@ -1,0 +1,5 @@
+model,label,total_return_pct,cagr_pct,max_drawdown_pct,sharpe,sortino,trade_count,cash_days_pct,since2021_total_return_pct,since2021_cagr_pct,since2021_max_drawdown_pct,since2021_trade_count,since2021_cash_days_pct,since2023_total_return_pct,since2023_cagr_pct,since2023_max_drawdown_pct,since2023_trade_count,since2023_cash_days_pct,since2025_total_return_pct,since2025_cagr_pct,since2025_max_drawdown_pct,since2025_trade_count,since2025_cash_days_pct
+phase61_restore_trx_sol_base,Restore BNB vs TRX/SOL,20083.68,96.35,-36.25,1.483,1.931,199,69.66,1149.24,62.49,-36.25,153,68.33,681.21,89.98,-36.25,125,56.96,125.86,96.97,-22.56,32,64.77
+phase61_restore_trx_only_base,Restore BNB vs TRX,19050.08,95.05,-36.25,1.472,1.914,199,69.66,1085.27,60.85,-36.25,153,68.33,641.2,86.89,-36.25,125,56.96,125.22,96.5,-22.56,32,64.77
+phase61_phase42_core,Phase42 core,15300.6,89.72,-36.56,1.418,1.864,213,69.38,1071.17,60.48,-36.56,148,68.23,675.47,89.54,-36.25,118,56.96,120.5,93.07,-19.53,30,64.77
+phase61_phase49_strict,Phase49 strict,17869.05,93.47,-36.25,1.456,1.864,194,69.66,1012.17,58.9,-36.25,148,68.33,573.04,81.34,-36.25,120,56.96,100.08,78.07,-22.56,32,64.77

@@ -1,0 +1,29 @@
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] START
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] cwd=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_104201_phase70_ai_lab_example
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] python=C:\Users\benda\Desktop\market_regime_v1\.venv\Scripts\python.exe
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] argv=C:\Users\benda\Desktop\market_regime_v1\scripts\research_os_validate.py
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK dir C:\Users\benda\Desktop\market_regime_v1\research_os
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK dir C:\Users\benda\Desktop\market_regime_v1\research_os\leaderboards
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK dir C:\Users\benda\Desktop\market_regime_v1\research_os\runs
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK dir C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK dir C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK dir C:\Users\benda\Desktop\market_regime_v1\research_os\archives
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK dir C:\Users\benda\Desktop\market_regime_v1\research_os\single_truth
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK dir C:\Users\benda\Desktop\market_regime_v1\research_os\schemas
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] dirs_checked=8
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK file C:\Users\benda\Desktop\market_regime_v1\research_os\single_truth\truth_pack.json
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK file C:\Users\benda\Desktop\market_regime_v1\research_os\candidates_registry.csv
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK file C:\Users\benda\Desktop\market_regime_v1\research_os\leaderboards\leaderboard_summary.csv
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK file C:\Users\benda\Desktop\market_regime_v1\research_os\schemas\run_manifest.schema.json
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] CHECK file C:\Users\benda\Desktop\market_regime_v1\research_os\research_os_manifest.json
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] files_checked=5
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] OK truth_pack.json
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] OK run_manifest.schema.json
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] OK candidates_registry.csv headers
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] OK leaderboard_summary.csv headers
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] OK research_os_manifest.json
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] validation_status=passed
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] END status=OK elapsed_sec=0.063
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] SUMMARY dirs_checked=8
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] SUMMARY files_checked=5
+[2026-03-30 12:42:01 Západoeurópsky èas (letný)] [research_os_validate.py] SUMMARY validation_status=passed

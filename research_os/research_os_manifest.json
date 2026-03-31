@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "registry_id": "ai_research_registry_v1",
+  "created_utc": "2026-03-30 08:13:41 UTC",
+  "project_root": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "research_os_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os",
+  "required_dirs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\leaderboards",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\promotion_queue",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\archives",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\single_truth",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas"
+  ],
+  "truth_pack_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\single_truth\\truth_pack.json",
+  "candidates_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\candidates_registry.csv",
+  "leaderboard_summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\leaderboards\\leaderboard_summary.csv",
+  "schema_templates": {
+    "truth_pack": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\single_truth\\truth_pack.json",
+    "run_manifest_schema": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\run_manifest.schema.json"
+  },
+  "updated_utc": "2026-03-30 08:40:41 UTC",
+  "v2_extensions": {
+    "experiment_spec_template": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\templates\\experiment_spec.template.json",
+    "experiment_spec_schema": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\experiment_spec.schema.json",
+    "run_folder_contract": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\templates\\run_folder_contract.json",
+    "candidate_lifecycle_schema": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\candidate_lifecycle.schema.json",
+    "promotion_decision_template": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\promotion_queue\\templates\\promotion_decision.template.json",
+    "promotion_decision_schema": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\promotion_decision.schema.json"
+  },
+  "v2_contract_pack": {
+    "schema_index": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\schema_index.json",
+    "doc_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\docs\\research_os_v2_contract.md",
+    "required_lifecycle_statuses": [
+      "proposed",
+      "spec_ready",
+      "queued",
+      "running",
+      "run_failed",
+      "ran",
+      "scored",
+      "precheck_failed",
+      "precheck_passed",
+      "forensic_ready",
+      "forensic_failed",
+      "forensic_passed",
+      "master_pending",
+      "promoted",
+      "archived"
+    ],
+    "required_promotion_decisions": [
+      "kill",
+      "hold",
+      "rerun",
+      "promote_to_precheck",
+      "promote_to_forensic",
+      "promote_to_master",
+      "promote_to_official"
+    ],
+    "required_run_artifacts": [
+      "run_manifest.json",
+      "run_status.json",
+      "stdout.log",
+      "stderr.log",
+      "artifacts_index.json",
+      "quality_report.json",
+      "precheck_inputs.json"
+    ]
+  }
+}

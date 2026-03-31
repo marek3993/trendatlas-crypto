@@ -1,0 +1,53 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260330_112214_phase70_ai_lab_example",
+  "experiment_id": "phase70_ai_lab_example",
+  "candidate_id": "phase70_ai_lab_example",
+  "status": "archived",
+  "started_utc": "2026-03-30 11:22:14 UTC",
+  "ended_utc": "2026-03-30 11:22:14 UTC",
+  "artifact_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112214_phase70_ai_lab_example",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_ai_lab_example.spec_ready.json",
+  "input_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv"
+  ],
+  "output_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112214_phase70_ai_lab_example\\run_manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112214_phase70_ai_lab_example\\quality_report.json"
+  ],
+  "metrics": {
+    "extracted_score": null
+  },
+  "quality_checks": {
+    "schema_version": "2.0",
+    "run_id": "run_20260330_112214_phase70_ai_lab_example",
+    "status": "failed",
+    "checks": [
+      {
+        "name": "required_run_artifacts",
+        "ok": true,
+        "missing": []
+      },
+      {
+        "name": "expected_outputs",
+        "ok": false,
+        "missing": [
+          "summary.csv",
+          "paper.csv",
+          "compare.csv"
+        ]
+      },
+      {
+        "name": "numeric_score_extract",
+        "ok": false,
+        "value": null
+      },
+      {
+        "name": "compare_valid",
+        "ok": false
+      }
+    ]
+  },
+  "exit_code": 0,
+  "notes": null
+}

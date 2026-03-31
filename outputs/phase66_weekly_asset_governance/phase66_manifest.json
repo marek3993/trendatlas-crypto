@@ -1,0 +1,45 @@
+{
+  "phase": "phase66_weekly_asset_governance",
+  "baseline_model": "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+  "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "candidate_assets_loaded": 11,
+  "candidate_assets_failed": 0,
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase66_weekly_asset_governance_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase66_weekly_asset_governance_compare.csv",
+  "decisions_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase66_weekly_asset_governance_decisions.csv",
+  "leaderboard_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase66_weekly_asset_governance_leaderboard.csv",
+  "asset_quality_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase66_weekly_asset_governance_asset_quality.csv",
+  "asset_usage_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase66_weekly_asset_governance_asset_usage.csv",
+  "failed_assets_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase66_weekly_asset_governance_failed_assets.csv",
+  "baseline_paper_saved": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "governance_paper_saved": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66_weekly_asset_governance\\phase66_weekly_asset_governance_paper.csv",
+  "overlay_config": {
+    "candidate_fast_ma": 20,
+    "candidate_slow_ma": 100,
+    "candidate_ret_lb": 30,
+    "candidate_ret_min": 0.12,
+    "candidate_risk_ma": 150,
+    "candidate_risk_buffer": -0.03,
+    "candidate_vol_lb": 30,
+    "candidate_vol_cap": 0.045,
+    "weak_base_lb": 30,
+    "weak_base_threshold": 0.02,
+    "cooldown_days": 3
+  },
+  "governance_config": {
+    "trailing_train_days": 365,
+    "recent_days": 90,
+    "rebalance_every_days": 7,
+    "min_history_days": 180,
+    "min_triggers_in_train": 3,
+    "min_total_delta_pct": 0.0,
+    "min_recent_delta_pct": 0.0,
+    "max_allowed_dd_worsen_pct": 5.0
+  },
+  "notes": [
+    "Future-safe weekly asset governance.",
+    "Ka\u017ed\u00fd t\u00fd\u017ede\u0148 sa asset vyber\u00e1 len z minul\u00fdch d\u00e1t.",
+    "Ak nikto neprejde filtrom, ost\u00e1va baseline.",
+    "Toto nie je hindsight vyp\u00ednanie assetu pod\u013ea bud\u00facnosti."
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "batch_id": "batch_20260330_112213",
+  "created_at": "2026-03-30 11:22:13 UTC",
+  "mode": "execute",
+  "selection_filters": {
+    "max_batch_size": 5,
+    "branch": [],
+    "budget_class": null
+  },
+  "selected_specs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_golden_path_harness.spec_ready.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_ai_lab_example.spec_ready.json"
+  ],
+  "selected_experiment_ids": [
+    "phase70_golden_path_harness",
+    "phase70_ai_lab_example"
+  ],
+  "selected_count": 2,
+  "dedupe_applied": true,
+  "sequential_dispatch": true,
+  "orchestrator_v1_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_orchestrator_v1.py"
+}

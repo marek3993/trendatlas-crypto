@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "run_id": "example_run_id",
+  "experiment_id": "example_experiment_id",
+  "candidate_id": "example_candidate_id",
+  "status": "created",
+  "started_utc": "2026-01-01 00:00:00 UTC",
+  "ended_utc": null,
+  "artifact_root": "research_os/runs/example_run_id",
+  "spec_path": "research_os/experiment_specs/example_experiment.json",
+  "input_refs": [],
+  "output_refs": [],
+  "metrics": {},
+  "quality_checks": {
+    "status": "pending",
+    "checks": []
+  },
+  "notes": null
+}

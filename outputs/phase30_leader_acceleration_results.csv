@@ -1,0 +1,6 @@
+selector,accel_weight,score,aggr_total_return_pct,aggr_cagr_pct,aggr_max_drawdown_pct,aggr_sharpe,aggr_sortino,aggr_trade_count,bal_total_return_pct,bal_cagr_pct,bal_max_drawdown_pct,bal_sharpe,bal_sortino,bal_trade_count
+accel_w_0p25,0.25,19.871,4973.9,57.94,-37.13,1.404,1.012,170,3899.91,53.63,-32.5,1.438,1.081,461
+accel_w_0p20,0.2,19.686,4956.27,57.88,-37.13,1.404,1.011,169,3806.57,53.21,-32.5,1.431,1.075,463
+accel_w_0p15,0.15,18.956,3953.39,53.87,-35.41,1.343,0.972,170,2951.81,48.87,-29.71,1.353,1.013,465
+accel_w_0p10,0.1,18.595,3833.58,53.33,-35.41,1.335,0.966,177,2836.57,48.2,-29.71,1.341,1.005,471
+accel_w_0p00,0.0,16.545,2986.79,49.06,-35.41,1.261,0.91,174,2321.68,44.91,-29.71,1.278,0.954,468

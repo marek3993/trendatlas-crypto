@@ -1,0 +1,48 @@
+{
+  "phase": "phase64_universe_selection",
+  "mode": "broad_add_one_prescan",
+  "baseline_model": "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+  "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "data_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv",
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase64_universe_selection\\phase64_universe_selection_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase64_universe_selection\\phase64_universe_selection_top_compare.csv",
+  "diagnostics_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase64_universe_selection\\phase64_universe_selection_diagnostics.csv",
+  "processed_candidates": 11,
+  "skipped_candidates": 1,
+  "failed_candidates": 0,
+  "top_saved_models": [
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+    "add_DOGE",
+    "add_SOL",
+    "add_LTC",
+    "add_ADA",
+    "add_DOT",
+    "add_TRX",
+    "add_LINK",
+    "add_BNB",
+    "add_XRP",
+    "add_AVAX",
+    "add_ETH"
+  ],
+  "config": {
+    "candidate_fast_ma": 20,
+    "candidate_slow_ma": 100,
+    "candidate_ret_lb": 30,
+    "candidate_ret_min": 0.12,
+    "candidate_risk_ma": 150,
+    "candidate_risk_buffer": -0.03,
+    "candidate_vol_lb": 30,
+    "candidate_vol_cap": 0.045,
+    "weak_base_lb": 30,
+    "weak_base_threshold": 0.02,
+    "cooldown_days": 3,
+    "min_history_days": 180,
+    "min_non_na_close_ratio": 0.9,
+    "max_gap_days": 45
+  },
+  "notes": [
+    "Toto je broad add-one prescan proti current Phase63 winnerovi.",
+    "Ak s\u00fa inputy intraday, skript ich agreguje na daily last close.",
+    "V\u00fdstup je shortlist filter pre \u010fal\u0161\u00ed presn\u00fd phase."
+  ]
+}

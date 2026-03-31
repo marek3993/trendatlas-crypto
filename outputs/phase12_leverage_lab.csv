@@ -1,0 +1,5 @@
+model,leverage_mode,total_return_pct,cagr_pct,max_drawdown_pct,sharpe,sortino,trade_count,avg_gross_exposure
+rs,dynamic,12267.28,52.54,-45.28,0.982,1.143,766,0.345
+rs,1.5x,18427.68,58.04,-50.12,0.977,1.139,174,0.381
+rs,1.25x,9362.65,49.01,-43.68,0.977,1.139,174,0.317
+rs,1.0x,4393.93,39.59,-36.56,0.977,1.139,174,0.254

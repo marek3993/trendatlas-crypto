@@ -1,0 +1,6 @@
+model,robust_score,median_window_sharpe,median_window_sortino,median_window_cagr_pct,median_window_return_pct,worst_window_dd_pct,positive_window_ratio,available_spike_bars,captured_spike_bars,spike_capture_ratio,avg_captured_spike_ret_pct,full_total_return_pct,full_cagr_pct,full_max_drawdown_pct,full_sharpe,full_sortino,full_trade_count,full_avg_exposure
+soft_kill_4h,-2.312,0.426,0.238,8.41,3.96,-21.05,0.5,2893,36,0.012,5.68,891.29,30.6,-22.39,1.235,0.832,1207,0.139
+soft_half_4h,-10.776,0.108,0.092,1.02,0.5,-22.54,0.5,2893,29,0.01,5.75,277.36,16.72,-23.29,0.858,0.438,805,0.082
+soft_breakout_scale_4h,-11.53,0.0,0.0,0.0,0.0,-19.31,0.444,2893,21,0.007,5.38,311.51,17.9,-19.31,1.046,0.618,1173,0.078
+soft_scale_4h,-11.8,0.046,0.029,0.0,0.0,-21.36,0.444,2893,29,0.01,5.75,436.32,21.59,-22.69,1.039,0.614,1153,0.098
+always_daily,-13.652,0.243,0.148,3.07,1.48,-32.35,0.5,2893,65,0.022,6.37,2986.79,49.06,-35.41,1.261,0.91,174,0.233

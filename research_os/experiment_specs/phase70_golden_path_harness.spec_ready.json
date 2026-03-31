@@ -1,0 +1,27 @@
+{
+  "experiment_id": "phase70_golden_path_harness",
+  "branch": "main",
+  "segment_owner": "ai_lab",
+  "hypothesis_label": "orchestrator_positive_path_validation",
+  "experiment_family": "research_os_harness",
+  "baseline_model": "phase66g_production_soft_filters",
+  "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv"
+  ],
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_golden_path_producer.py",
+  "script_args": [],
+  "expected_outputs": [
+    "summary.csv",
+    "paper.csv",
+    "compare.csv"
+  ],
+  "scoring_profile": "golden_path_positive_score_v1",
+  "promotion_rule": "promote_to_precheck_if_complete_outputs_and_positive_score_and_compare_present",
+  "invalidation_rule": "kill_if_missing_expected_outputs_or_invalid_csv_payload",
+  "budget_class": "tiny",
+  "priority": "high",
+  "created_by": "ai_lab",
+  "created_at": "2026-03-30 12:00:00 UTC",
+  "status": "spec_ready"
+}

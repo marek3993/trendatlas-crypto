@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_example_0001",
+  "experiment_id": "phase70_ai_lab_example",
+  "candidate_id": "candidate_example",
+  "status": "queued",
+  "allowed_status_values": [
+    "proposed",
+    "spec_ready",
+    "queued",
+    "running",
+    "run_failed",
+    "ran",
+    "scored",
+    "precheck_failed",
+    "precheck_passed",
+    "forensic_ready",
+    "forensic_failed",
+    "forensic_passed",
+    "master_pending",
+    "promoted",
+    "archived"
+  ],
+  "started_at": null,
+  "ended_at": null,
+  "status_reason": null,
+  "current_step": "waiting_for_execution",
+  "promotion_decision": null,
+  "updated_at": "2026-03-30 00:00:00 UTC"
+}

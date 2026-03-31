@@ -1,0 +1,7 @@
+model,latest_available_date,current_asset,latest_decision_date,latest_period_start,latest_period_end,next_rebalance_date,latest_keep_reason,candidate_assets_loaded,failed_assets_count,suspended_assets_now
+phase66h_core_guardrail_A,2026-03-16,BASELINE,2026-03-14,2026-03-15,2026-03-16,2026-03-21,best_passed,9,0,0
+phase66h_core_guardrail_B,2026-03-16,BASELINE,2026-03-14,2026-03-15,2026-03-16,2026-03-21,best_passed,9,0,0
+phase66h_core_guardrail_C,2026-03-16,BASELINE,2026-03-14,2026-03-15,2026-03-16,2026-03-21,best_passed,9,0,0
+phase66h_core_guardrail_D,2026-03-16,BASELINE,2026-03-14,2026-03-15,2026-03-16,2026-03-21,best_passed,9,0,0
+phase66h_core_guardrail_E,2026-03-16,BASELINE,2026-03-14,2026-03-15,2026-03-16,2026-03-21,best_passed,9,0,0
+phase66h_core_guardrail_F,2026-03-16,BASELINE,2026-03-14,2026-03-15,2026-03-16,2026-03-21,best_passed,9,0,0

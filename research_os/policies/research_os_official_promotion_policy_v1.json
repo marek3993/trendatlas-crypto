@@ -1,0 +1,79 @@
+{
+  "policy_version": "1.0",
+  "description": "Deterministic official promotion gate policy before manual official truth update.",
+  "admission_rules": {
+    "allowed_batch_selection_statuses": [
+      "selected"
+    ],
+    "allowed_promotion_recommendations": [
+      "promote_to_precheck"
+    ],
+    "required_precheck_decision": "precheck_passed",
+    "required_scoring_recommendation": "promote_to_precheck",
+    "require_forensic_ready_status": true,
+    "minimum_final_score": 0.5,
+    "require_manual_approval": true
+  },
+  "evidence_requirements": {
+    "required_run_artifacts": [
+      "run_manifest.json",
+      "run_status.json",
+      "artifacts_index.json",
+      "quality_report.json",
+      "precheck_inputs.json",
+      "summary.csv",
+      "paper.csv",
+      "compare.csv",
+      "scoring_result.json",
+      "precheck_result.json"
+    ],
+    "required_context_files": [
+      "batch_selection_result.json",
+      "selection_decision_log.jsonl"
+    ],
+    "require_policy_version_context": true,
+    "require_registry_lineage_context": true,
+    "require_candidate_run_spec_linkage": true
+  },
+  "manual_approval_hook": {
+    "approval_status_default": "pending_manual_approval",
+    "approval_status_allowed": [
+      "pending_manual_approval",
+      "approved",
+      "rejected"
+    ],
+    "manual_approval_required_fields": [
+      "approval_status",
+      "approval_requested_at",
+      "approver",
+      "approval_comment"
+    ]
+  },
+  "promotion_checklist": {
+    "items": [
+      "batch_selection_selected",
+      "scoring_promote_to_precheck",
+      "precheck_passed",
+      "run_status_forensic_ready",
+      "evidence_bundle_complete",
+      "lineage_context_present",
+      "policy_context_present",
+      "manual_approval_pending_or_complete",
+      "rollback_record_ready"
+    ]
+  },
+  "safe_rejection_rules": {
+    "missing_evidence_outcome": "gate_failed",
+    "broken_lineage_outcome": "gate_failed",
+    "broken_policy_context_outcome": "gate_failed",
+    "manual_rejection_outcome": "gate_rejected"
+  },
+  "priority_handling": {
+    "enabled": true,
+    "tie_break_order": [
+      "final_score_desc",
+      "created_at_asc",
+      "candidate_id_asc"
+    ]
+  }
+}

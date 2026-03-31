@@ -1,0 +1,37 @@
+=== PHASE67E GUARDRAIL SWEEP PLANNER ===
+
+Input mode
+- strict
+- attribution source: C:\Users\benda\Desktop\market_regime_v1\outputs\recent_regime_audit_2025\recent_regime_attribution_2025_daily_behavior.csv
+
+Baseline vs latest challenger baseline
+- phase66g_production_soft_filters: CAGR 113.72 | Max DD -23.60 | since2023 136.46 | since2025 113.90
+- phase67d_weekly_challenger_base: CAGR 148.44 | Max DD -25.85 | since2023 192.58 | since2025 111.16
+
+2025 damage concentration
+- different selection days: 34 / 440 (7.73%)
+- total ret diff main minus leader on different days: -0.302429
+- worst single different day diff: -0.141626
+- worst month: 2025-10 | diff_sum -0.232545 | diff_days 9
+- worst main asset on differing days: DOGEUSDT | diff_sum -0.171694 | diff_days 4
+- worst leader asset on differing days: BNBUSDT | diff_sum -0.302429 | diff_days 34
+
+Weekly challenger baseline behavior
+- weekly asset changes: 22
+- challenger weeks: 274
+- median hold streak weeks: 13.00
+
+Top recommended Phase67E configs to backtest next
+1. pm0.02_pw2_cd7_dl42_bs0.01 | score 328.59 | est_2025_repair +4.30 p.b. | est_DD_help +2.30 p.b. | est_lift_retained 31.21 p.b.
+2. pm0.02_pw2_cd7_dl63_bs0.01 | score 325.39 | est_2025_repair +4.30 p.b. | est_DD_help +2.30 p.b. | est_lift_retained 31.21 p.b.
+3. pm0.01_pw2_cd7_dl42_bs0.01 | score 324.09 | est_2025_repair +4.30 p.b. | est_DD_help +2.30 p.b. | est_lift_retained 33.41 p.b.
+
+Recommended exact first run set
+- winner_candidate_1 = pm0.02_pw2_cd7_dl42_bs0.01
+- winner_candidate_2 = pm0.02_pw2_cd7_dl63_bs0.01
+- winner_candidate_3 = pm0.01_pw2_cd7_dl42_bs0.01
+
+Interpretation
+- priorita: promotion margin + 2-week persistence + 42d downside lookback
+- BNB shield nechaj v first pass sete
+- cieľ first passu: opraviť 2025 / DD bez zabitia 67D liftu

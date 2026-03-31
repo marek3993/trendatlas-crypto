@@ -1,0 +1,85 @@
+{
+  "phase": "phase66k_core_volatility_gate_sweep",
+  "baseline_model": "phase66g_production_soft_filters",
+  "baseline_input_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "phase66g_summary_ref": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_summary.csv",
+  "phase66g_paper_ref": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "drop_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66b_governance_forensic\\phase66b_governance_drop_candidates.csv",
+  "removed_assets": [
+    "LTC",
+    "SOL"
+  ],
+  "candidate_assets_cached": 9,
+  "candidate_assets_cache_failed": 0,
+  "success_rule": {
+    "min_since2025_cagr_pct": 113.91,
+    "max_cagr_drop_vs_66g_pct": -2.0,
+    "max_dd_worsen_vs_66g_pct": -3.0,
+    "max_switch_count_increase_pct": 25.0
+  },
+  "fixed_overlay_fields_from_base": {
+    "candidate_fast_ma": 20,
+    "candidate_slow_ma": 100,
+    "candidate_ret_lb": 30,
+    "candidate_risk_ma": 150,
+    "candidate_risk_buffer": -0.03,
+    "candidate_ret_min": 0.12,
+    "weak_base_lb": 30,
+    "weak_base_threshold": 0.02,
+    "cooldown_days": 3
+  },
+  "swept_overlay_fields": {
+    "candidate_vol_lb_base": 30,
+    "candidate_vol_cap_base": 0.045
+  },
+  "variants": [
+    {
+      "model": "phase66k_core_volgate_A",
+      "candidate_vol_lb_delta": -5,
+      "candidate_vol_cap_bump": -0.02
+    },
+    {
+      "model": "phase66k_core_volgate_B",
+      "candidate_vol_lb_delta": 0,
+      "candidate_vol_cap_bump": -0.02
+    },
+    {
+      "model": "phase66k_core_volgate_C",
+      "candidate_vol_lb_delta": 5,
+      "candidate_vol_cap_bump": -0.02
+    },
+    {
+      "model": "phase66k_core_volgate_D",
+      "candidate_vol_lb_delta": -5,
+      "candidate_vol_cap_bump": -0.04
+    },
+    {
+      "model": "phase66k_core_volgate_E",
+      "candidate_vol_lb_delta": 0,
+      "candidate_vol_cap_bump": -0.04
+    },
+    {
+      "model": "phase66k_core_volgate_F",
+      "candidate_vol_lb_delta": 5,
+      "candidate_vol_cap_bump": -0.04
+    }
+  ],
+  "top_model": "phase66k_core_volgate_A",
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_core_volatility_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_core_volatility_compare.csv",
+  "live_status_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_live_status.csv",
+  "decisions_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_core_volatility_decisions.csv",
+  "leaderboard_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_core_volatility_leaderboard.csv",
+  "latest_top10_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_latest_decision_top10.csv",
+  "suspended_now_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_suspended_assets_now.csv",
+  "asset_quality_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_core_volatility_asset_quality.csv",
+  "asset_usage_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_core_volatility_asset_usage.csv",
+  "failed_assets_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase66k_core_volatility_failed_assets.csv",
+  "baseline_paper_saved": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66k_core_volatility_gate_sweep\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "notes": [
+    "Phase66K nemen\u00ed GovernanceConfig ani universe/drop logic.",
+    "Phase66K nemen\u00ed timing, permission ani weak-base fieldy oproti baseline 66G.",
+    "Sweepuje len candidate_vol_lb a candidate_vol_cap.",
+    "Compare je roben\u00fd len proti phase66g_production_soft_filters."
+  ]
+}

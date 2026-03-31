@@ -1,0 +1,17 @@
+{
+  "selector": "accel_w_0p25",
+  "accel_weight": 0.25,
+  "score": 19.871,
+  "aggr_total_return_pct": 4973.9,
+  "aggr_cagr_pct": 57.94,
+  "aggr_max_drawdown_pct": -37.13,
+  "aggr_sharpe": 1.404,
+  "aggr_sortino": 1.012,
+  "aggr_trade_count": 170,
+  "bal_total_return_pct": 3899.91,
+  "bal_cagr_pct": 53.63,
+  "bal_max_drawdown_pct": -32.5,
+  "bal_sharpe": 1.438,
+  "bal_sortino": 1.081,
+  "bal_trade_count": 461
+}

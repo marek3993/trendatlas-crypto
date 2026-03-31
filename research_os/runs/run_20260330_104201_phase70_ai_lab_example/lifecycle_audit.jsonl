@@ -1,0 +1,3 @@
+{"ts": "2026-03-30 10:42:01 UTC", "run_id": "run_20260330_104201_phase70_ai_lab_example", "from_status": "spec_ready", "to_status": "queued", "reason": "orchestrator_init"}
+{"ts": "2026-03-30 10:42:01 UTC", "run_id": "run_20260330_104201_phase70_ai_lab_example", "from_status": "queued", "to_status": "running", "reason": "execution_started"}
+{"ts": "2026-03-30 10:42:01 UTC", "run_id": "run_20260330_104201_phase70_ai_lab_example", "from_status": "running", "to_status": "ran", "reason": "process_exit_code_0"}

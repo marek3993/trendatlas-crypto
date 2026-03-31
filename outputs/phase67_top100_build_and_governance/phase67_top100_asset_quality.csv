@@ -1,0 +1,92 @@
+asset,binance_symbol,cg_rank,cg_id,name,history_days,start_date,end_date,daily_rows,max_gap_days,non_na_close_ratio,file
+ETH,ETHUSDT,2,ethereum,Ethereum,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ETHUSDT_1d.csv
+BNB,BNBUSDT,4,binancecoin,BNB,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\BNBUSDT_1d.csv
+XRP,XRPUSDT,5,ripple,XRP,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\XRPUSDT_1d.csv
+SOL,SOLUSDT,7,solana,Solana,2056,2020-08-11,2026-03-28,2056,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SOLUSDT_1d.csv
+TRX,TRXUSDT,8,tron,TRON,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\TRXUSDT_1d.csv
+DOGE,DOGEUSDT,10,dogecoin,Dogecoin,2459,2019-07-05,2026-03-28,2459,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\DOGEUSDT_1d.csv
+BCH,BCHUSDT,13,bitcoin-cash,Bitcoin Cash,2313,2019-11-28,2026-03-28,2313,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\BCHUSDT_1d.csv
+ADA,ADAUSDT,15,cardano,Cardano,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ADAUSDT_1d.csv
+LINK,LINKUSDT,18,chainlink,Chainlink,2629,2019-01-16,2026-03-28,2629,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\LINKUSDT_1d.csv
+XLM,XLMUSDT,21,stellar,Stellar,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\XLMUSDT_1d.csv
+LTC,LTCUSDT,24,litecoin,Litecoin,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\LTCUSDT_1d.csv
+HBAR,HBARUSDT,27,hedera-hashgraph,Hedera,2373,2019-09-29,2026-03-28,2373,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\HBARUSDT_1d.csv
+AVAX,AVAXUSDT,29,avalanche-2,Avalanche,2014,2020-09-22,2026-03-28,2014,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\AVAXUSDT_1d.csv
+ZEC,ZECUSDT,30,zcash,Zcash,2565,2019-03-21,2026-03-28,2565,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ZECUSDT_1d.csv
+SHIB,SHIBUSDT,31,shiba-inu,Shiba Inu,1784,2021-05-10,2026-03-28,1784,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SHIBUSDT_1d.csv
+SUI,SUIUSDT,32,sui,Sui,1061,2023-05-03,2026-03-28,1061,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SUIUSDT_1d.csv
+TON,TONUSDT,33,the-open-network,Toncoin,598,2024-08-08,2026-03-28,598,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\TONUSDT_1d.csv
+TAO,TAOUSDT,35,bittensor,Bittensor,717,2024-04-11,2026-03-28,717,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\TAOUSDT_1d.csv
+WLFI,WLFIUSDT,36,world-liberty-financial,World Liberty Financial,209,2025-09-01,2026-03-28,209,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\WLFIUSDT_1d.csv
+PAXG,PAXGUSDT,39,pax-gold,PAX Gold,2039,2020-08-28,2026-03-28,2039,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\PAXGUSDT_1d.csv
+UNI,UNIUSDT,42,uniswap,Uniswap,2019,2020-09-17,2026-03-28,2019,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\UNIUSDT_1d.csv
+DOT,DOTUSDT,43,polkadot,Polkadot,2049,2020-08-18,2026-03-28,2049,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\DOTUSDT_1d.csv
+SKY,SKYUSDT,49,sky,Sky,193,2025-09-17,2026-03-28,193,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SKYUSDT_1d.csv
+NEAR,NEARUSDT,51,near,NEAR Protocol,1992,2020-10-14,2026-03-28,1992,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\NEARUSDT_1d.csv
+AAVE,AAVEUSDT,52,aave,Aave,1991,2020-10-15,2026-03-28,1991,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\AAVEUSDT_1d.csv
+PEPE,PEPEUSDT,54,pepe,Pepe,1059,2023-05-05,2026-03-28,1059,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\PEPEUSDT_1d.csv
+ONDO,ONDOUSDT,56,ondo-finance,Ondo,352,2025-04-11,2026-03-28,352,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ONDOUSDT_1d.csv
+BFUSD,BFUSDUSDT,57,bfusd,BFUSD,228,2025-08-13,2026-03-28,228,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\BFUSDUSDT_1d.csv
+ETC,ETCUSDT,59,ethereum-classic,Ethereum Classic,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ETCUSDT_1d.csv
+ICP,ICPUSDT,60,internet-computer,Internet Computer,1783,2021-05-11,2026-03-28,1783,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ICPUSDT_1d.csv
+QNT,QNTUSDT,65,quant-network,Quant,1704,2021-07-29,2026-03-28,1704,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\QNTUSDT_1d.csv
+PUMP,PUMPUSDT,66,pump-fun,Pump.fun,199,2025-09-11,2026-03-28,199,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\PUMPUSDT_1d.csv
+POL,POLUSDT,67,polygon-ecosystem-token,POL (ex-MATIC),562,2024-09-13,2026-03-28,562,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\POLUSDT_1d.csv
+RENDER,RENDERUSDT,70,render-token,Render,611,2024-07-26,2026-03-28,611,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\RENDERUSDT_1d.csv
+NEXO,NEXOUSDT,71,nexo,NEXO,1430,2022-04-29,2026-03-28,1430,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\NEXOUSDT_1d.csv
+WLD,WLDUSDT,74,worldcoin-wld,Worldcoin,979,2023-07-24,2026-03-28,979,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\WLDUSDT_1d.csv
+ATOM,ATOMUSDT,75,cosmos,Cosmos Hub,2526,2019-04-29,2026-03-28,2526,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ATOMUSDT_1d.csv
+ENA,ENAUSDT,77,ethena,Ethena,726,2024-04-02,2026-03-28,726,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ENAUSDT_1d.csv
+APT,APTUSDT,79,aptos,Aptos,1257,2022-10-19,2026-03-28,1257,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\APTUSDT_1d.csv
+ALGO,ALGOUSDT,81,algorand,Algorand,2472,2019-06-22,2026-03-28,2472,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ALGOUSDT_1d.csv
+TRUMP,TRUMPUSDT,82,official-trump,Official Trump,434,2025-01-19,2026-03-28,434,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\TRUMPUSDT_1d.csv
+FIL,FILUSDT,84,filecoin,Filecoin,1991,2020-10-15,2026-03-28,1991,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\FILUSDT_1d.csv
+VET,VETUSDT,91,vechain,VeChain,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\VETUSDT_1d.csv
+FET,FETUSDT,93,fetch-ai,Artificial Superintelligence Alliance,2586,2019-02-28,2026-03-28,2586,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\FETUSDT_1d.csv
+ARB,ARBUSDT,94,arbitrum,Arbitrum,1102,2023-03-23,2026-03-28,1102,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ARBUSDT_1d.csv
+JST,JSTUSDT,96,just,JUST,2056,2020-08-11,2026-03-28,2056,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\JSTUSDT_1d.csv
+JUP,JUPUSDT,97,jupiter-exchange-solana,Jupiter,788,2024-01-31,2026-03-28,788,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\JUPUSDT_1d.csv
+BONK,BONKUSDT,98,bonk,Bonk,835,2023-12-15,2026-03-28,835,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\BONKUSDT_1d.csv
+ZRO,ZROUSDT,99,layerzero,LayerZero,647,2024-06-20,2026-03-28,647,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ZROUSDT_1d.csv
+CAKE,CAKEUSDT,103,pancakeswap-token,PancakeSwap,1864,2021-02-19,2026-03-28,1864,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\CAKEUSDT_1d.csv
+VIRTUAL,VIRTUALUSDT,104,virtual-protocol,Virtuals Protocol,352,2025-04-11,2026-03-28,352,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\VIRTUALUSDT_1d.csv
+STX,STXUSDT,106,blockstack,Stacks,2347,2019-10-25,2026-03-28,2347,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\STXUSDT_1d.csv
+PENGU,PENGUUSDT,107,pudgy-penguins,Pudgy Penguins,467,2024-12-17,2026-03-28,467,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\PENGUUSDT_1d.csv
+DASH,DASHUSDT,108,dash,Dash,2558,2019-03-28,2026-03-28,2558,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\DASHUSDT_1d.csv
+CHZ,CHZUSDT,109,chiliz,Chiliz,2396,2019-09-06,2026-03-28,2396,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\CHZUSDT_1d.csv
+XTZ,XTZUSDT,112,tezos,Tezos,2378,2019-09-24,2026-03-28,2378,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\XTZUSDT_1d.csv
+SEI,SEIUSDT,113,sei-network,Sei,957,2023-08-15,2026-03-28,957,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SEIUSDT_1d.csv
+ETHFI,ETHFIUSDT,114,ether-fi,Ether.fi,741,2024-03-18,2026-03-28,741,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ETHFIUSDT_1d.csv
+DCR,DCRUSDT,115,decred,Decred,2068,2020-07-30,2026-03-28,2068,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\DCRUSDT_1d.csv
+DEXE,DEXEUSDT,119,dexe,DeXe,1710,2021-07-23,2026-03-28,1710,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\DEXEUSDT_1d.csv
+SUN,SUNUSDT,120,sun-token,Sun Token,2015,2020-09-21,2026-03-28,2012,4,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SUNUSDT_1d.csv
+CRV,CRVUSDT,123,curve-dao-token,Curve DAO,2052,2020-08-15,2026-03-28,2052,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\CRVUSDT_1d.csv
+GNO,GNOUSDT,124,gnosis,Gnosis,1672,2021-08-30,2026-03-28,1672,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\GNOUSDT_1d.csv
+CFX,CFXUSDT,129,conflux-token,Conflux,1826,2021-03-29,2026-03-28,1826,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\CFXUSDT_1d.csv
+INJ,INJUSDT,130,injective-protocol,Injective,1985,2020-10-21,2026-03-28,1985,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\INJUSDT_1d.csv
+FLOKI,FLOKIUSDT,135,floki,FLOKI,1059,2023-05-05,2026-03-28,1059,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\FLOKIUSDT_1d.csv
+KAIA,KAIAUSDT,136,kaia,Kaia,514,2024-10-31,2026-03-28,514,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\KAIAUSDT_1d.csv
+TIA,TIAUSDT,137,celestia,Celestia,880,2023-10-31,2026-03-28,880,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\TIAUSDT_1d.csv
+LDO,LDOUSDT,138,lido-dao,Lido DAO,1420,2022-05-09,2026-03-28,1420,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\LDOUSDT_1d.csv
+JASMY,JASMYUSDT,139,jasmycoin,JasmyCoin,1588,2021-11-22,2026-03-28,1588,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\JASMYUSDT_1d.csv
+GRT,GRTUSDT,143,the-graph,The Graph,1928,2020-12-17,2026-03-28,1928,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\GRTUSDT_1d.csv
+SYRUP,SYRUPUSDT,148,syrup,Maple Finance,327,2025-05-06,2026-03-28,327,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SYRUPUSDT_1d.csv
+IOTA,IOTAUSDT,150,iota,IOTA,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\IOTAUSDT_1d.csv
+OP,OPUSDT,153,optimism,Optimism,1397,2022-06-01,2026-03-28,1397,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\OPUSDT_1d.csv
+PYTH,PYTHUSDT,155,pyth-network,Pyth Network,786,2024-02-02,2026-03-28,786,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\PYTHUSDT_1d.csv
+ENS,ENSUSDT,156,ethereum-name-service,Ethereum Name Service,1600,2021-11-10,2026-03-28,1600,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ENSUSDT_1d.csv
+XPL,XPLUSDT,158,plasma,Plasma,185,2025-09-25,2026-03-28,185,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\XPLUSDT_1d.csv
+LUNC,LUNCUSDT,166,terra-luna,Terra Luna Classic,1297,2022-09-09,2026-03-28,1297,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\LUNCUSDT_1d.csv
+SAND,SANDUSDT,167,the-sandbox,The Sandbox,2053,2020-08-14,2026-03-28,2053,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SANDUSDT_1d.csv
+AXS,AXSUSDT,168,axie-infinity,Axie Infinity,1971,2020-11-04,2026-03-28,1971,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\AXSUSDT_1d.csv
+PENDLE,PENDLEUSDT,170,pendle,Pendle,1000,2023-07-03,2026-03-28,1000,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\PENDLEUSDT_1d.csv
+STRK,STRKUSDT,171,starknet,Starknet,768,2024-02-20,2026-03-28,768,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\STRKUSDT_1d.csv
+NEO,NEOUSDT,179,neo,NEO,2644,2019-01-01,2026-03-28,2644,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\NEOUSDT_1d.csv
+TWT,TWTUSDT,180,trust-wallet-token,Trust Wallet,1887,2021-01-27,2026-03-28,1887,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\TWTUSDT_1d.csv
+COMP,COMPUSDT,181,compound-governance-token,Compound,2103,2020-06-25,2026-03-28,2103,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\COMPUSDT_1d.csv
+WIF,WIFUSDT,183,dogwifcoin,dogwifhat,754,2024-03-05,2026-03-28,754,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\WIFUSDT_1d.csv
+ZK,ZKUSDT,187,zksync,ZKsync,650,2024-06-17,2026-03-28,650,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\ZKUSDT_1d.csv
+FF,FFUSDT,189,falcon-finance-ff,Falcon Finance,181,2025-09-29,2026-03-28,181,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\FFUSDT_1d.csv
+MANA,MANAUSDT,192,decentraland,Decentraland,2061,2020-08-06,2026-03-28,2061,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\MANAUSDT_1d.csv
+S,SUSDT,196,sonic-3,Sonic,437,2025-01-16,2026-03-28,437,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\SUSDT_1d.csv
+THETA,THETAUSDT,197,theta-token,Theta Network,2545,2019-04-10,2026-03-28,2545,1,100.0,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\THETAUSDT_1d.csv

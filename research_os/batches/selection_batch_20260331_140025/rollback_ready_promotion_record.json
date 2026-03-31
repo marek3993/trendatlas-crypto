@@ -1,0 +1,42 @@
+{
+  "record_version": "1.0",
+  "generated_at": "2026-03-31T13:19:07+00:00",
+  "candidate_id": "phase70_golden_path_harness",
+  "batch_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\batches\\selection_batch_20260331_140025",
+  "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_golden_path_harness.spec_ready.json",
+  "run_id": "run_20260330_111240_phase70_golden_path_harness",
+  "policy_version_lineage": {
+    "official_promotion_policy_version": "1.0",
+    "scoring_policy_version": "unknown",
+    "precheck_policy_version": "unknown",
+    "selection_policy_version": "unknown"
+  },
+  "selection_lineage": {
+    "ts": "2026-03-31T12:00:25+00:00",
+    "batch_id": "selection_batch_20260331_140025",
+    "candidate_id": "phase70_golden_path_harness",
+    "branch": "ai_lab",
+    "experiment_family": "research_os_harness",
+    "final_score": 1.25,
+    "promotion_recommendation": "promote_to_precheck",
+    "selection_decision": "selected",
+    "reason_codes": []
+  },
+  "scoring_lineage": {
+    "final_score": 3.5907999999999998,
+    "promotion_recommendation": "promote_to_precheck",
+    "reason_codes": [
+      "warning_suspicious_instability",
+      "promotion_recommendation:promote_to_precheck"
+    ]
+  },
+  "precheck_lineage": {
+    "decision": "precheck_passed",
+    "reason_codes": [
+      "warning_suspicious_uplift_flag"
+    ]
+  },
+  "rollback_ready": true,
+  "official_truth_changed": false
+}

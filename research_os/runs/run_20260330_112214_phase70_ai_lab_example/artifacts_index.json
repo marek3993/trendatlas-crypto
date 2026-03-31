@@ -1,0 +1,32 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260330_112214_phase70_ai_lab_example",
+  "required_run_artifacts": [
+    "run_manifest.json",
+    "run_status.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts_index.json",
+    "quality_report.json",
+    "precheck_inputs.json"
+  ],
+  "conditional_artifacts": {
+    "when_applicable": [
+      "summary.csv",
+      "paper.csv",
+      "compare.csv"
+    ]
+  },
+  "produced_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112214_phase70_ai_lab_example\\run_manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112214_phase70_ai_lab_example\\quality_report.json"
+  ],
+  "ingest": {
+    "summary_path": null,
+    "paper_path": null,
+    "compare_path": null,
+    "has_summary": false,
+    "has_paper": false,
+    "has_compare": false
+  }
+}

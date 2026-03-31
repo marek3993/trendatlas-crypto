@@ -1,0 +1,10 @@
+model,asset,train_total_delta_pct,recent_total_delta_pct,train_dd_worsen_pct,train_triggers,score,passed_filters,profile,decision_date,next_date_exclusive,probation_delta_pct,suspended,suspended_until_rebalance_idx,incumbent_asset_before,selected_asset,keep_reason
+phase66j_core_reaction_C,AVAX,0.0,0.0,0.0,0,0.0,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,294,,,best_passed
+phase66j_core_reaction_C,BNB,0.0,0.0,0.0,0,0.0,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,293,,,best_passed
+phase66j_core_reaction_C,DOGE,0.0,0.0,0.0,0,0.0,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,233,,,best_passed
+phase66j_core_reaction_C,DOT,0.0,0.0,0.0,0,0.0,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,-1,,,best_passed
+phase66j_core_reaction_C,LINK,0.0,0.0,0.0,0,0.0,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,277,,,best_passed
+phase66j_core_reaction_C,TRX,0.0,0.0,0.0,0,0.0,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,223,,,best_passed
+phase66j_core_reaction_C,XRP,0.0,0.0,0.0,0,0.0,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,303,,,best_passed
+phase66j_core_reaction_C,ETH,-11.281792881042605,0.0,-1.3764081887530182,5,-16.172689321563908,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,334,,,best_passed
+phase66j_core_reaction_C,ADA,-31.77007544397091,0.0,-7.7022449239960835,5,-46.905113165956365,False,phase66j_core_reaction_C,2026-03-14,2026-03-16,0.0,False,334,,,best_passed

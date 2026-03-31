@@ -1,0 +1,10 @@
+model,asset,train_total_delta_pct,recent_total_delta_pct,train_dd_worsen_pct,train_triggers,score,passed_filters,profile,decision_date,next_date_exclusive,probation_delta_pct,suspended,suspended_until_rebalance_idx,incumbent_asset_before,selected_asset,keep_reason
+phase66i_core_permission_F,ADA,0.0,0.0,0.0,0,0.0,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,244,,,best_passed
+phase66i_core_permission_F,AVAX,0.0,0.0,0.0,0,0.0,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,218,,,best_passed
+phase66i_core_permission_F,DOGE,0.0,0.0,0.0,0,0.0,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,-1,,,best_passed
+phase66i_core_permission_F,DOT,0.0,0.0,0.0,0,0.0,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,250,,,best_passed
+phase66i_core_permission_F,LINK,0.0,0.0,0.0,0,0.0,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,237,,,best_passed
+phase66i_core_permission_F,XRP,0.0,0.0,0.0,0,0.0,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,290,,,best_passed
+phase66i_core_permission_F,TRX,-19.82586501388228,0.0,-2.4225350527672056,6,-28.83879752082342,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,334,,,best_passed
+phase66i_core_permission_F,BNB,-23.167144562987502,0.0,-3.9608168998639606,5,-34.00071684448125,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,334,,,best_passed
+phase66i_core_permission_F,ETH,-27.48669921512584,0.0,-1.3764081887529969,8,-40.030048822688755,False,phase66i_core_permission_F,2026-03-14,2026-03-16,0.0,False,336,,,best_passed

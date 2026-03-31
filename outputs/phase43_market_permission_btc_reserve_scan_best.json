@@ -1,0 +1,22 @@
+{
+  "variant": "es14_el21_xl35_ao55_ac35_btc_eth",
+  "enter_short": 14,
+  "enter_long": 21,
+  "exit_long": 35,
+  "alt_open_th": 0.55,
+  "alt_close_th": 0.35,
+  "reserve_mode": "btc_eth",
+  "score": -41.241,
+  "total_return_pct": 14484.29,
+  "cagr_pct": 88.41,
+  "max_drawdown_pct": -43.97,
+  "sharpe": 1.366,
+  "sortino": 1.978,
+  "trade_count": 389,
+  "cash_days_pct": 51.18,
+  "reserve_days_pct": 32.32,
+  "alt_gate_days_pct": 16.49,
+  "missed_leader_pct_of_in_market": 89.74,
+  "pain_bar_pct_of_in_market": 68.28,
+  "sum_leader_gap_ret": 83.5189
+}

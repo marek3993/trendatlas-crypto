@@ -1,0 +1,15 @@
+{
+  "model": "lag2_gt_3pct",
+  "override_mode": "lag2_gt_0.030",
+  "kill_day_pct": 46.74080774756558,
+  "override_used_pct": 0.4842228489331134,
+  "bars": 18793,
+  "days": 3134,
+  "years": 8.580424366872005,
+  "total_return_pct": 3023.2951117582643,
+  "cagr_pct": 49.344318867994154,
+  "max_drawdown_pct": -27.331201945985473,
+  "sharpe": 1.3681587797064145,
+  "sortino": 1.0192160972831716,
+  "avg_exposure": 0.23295908050870004
+}

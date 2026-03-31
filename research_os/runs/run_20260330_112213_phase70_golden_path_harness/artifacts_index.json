@@ -1,0 +1,34 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260330_112213_phase70_golden_path_harness",
+  "required_run_artifacts": [
+    "run_manifest.json",
+    "run_status.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts_index.json",
+    "quality_report.json",
+    "precheck_inputs.json"
+  ],
+  "conditional_artifacts": {
+    "when_applicable": [
+      "summary.csv",
+      "paper.csv",
+      "compare.csv"
+    ]
+  },
+  "produced_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness\\summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness\\paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness\\compare.csv"
+  ],
+  "producer_status": "golden_path_outputs_written",
+  "ingest": {
+    "summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness\\summary.csv",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness\\paper.csv",
+    "compare_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness\\compare.csv",
+    "has_summary": true,
+    "has_paper": true,
+    "has_compare": true
+  }
+}

@@ -1,0 +1,8 @@
+asset,train_total_delta_pct,recent_total_delta_pct,train_dd_worsen_pct,train_triggers,score,passed_filters,profile,decision_date,next_date_exclusive,probation_delta_pct,suspended,suspended_until_rebalance_idx,incumbent_asset_before,selected_asset,keep_reason
+APT,0.0,0.0,0.0,0,0.0,False,phase67d_weekly_challenger_base,2026-03-14,2026-03-16,0.0,False,285,,,best_passed
+ICP,-22.307881552760023,0.0,-2.2593484325179602,3,-33.01182232914003,False,phase67d_weekly_challenger_base,2026-03-14,2026-03-16,0.0,False,332,,,best_passed
+STX,-26.705433808210003,0.0,-4.204043439727734,3,-39.608150712315,False,phase67d_weekly_challenger_base,2026-03-14,2026-03-16,0.0,False,332,,,best_passed
+XTZ,-15.857732509831877,-7.785495073493765,-7.643897772742935,11,-53.278579058722876,False,phase67d_weekly_challenger_base,2026-03-14,2026-03-16,0.0,False,357,,,best_passed
+NEO,-55.50885700625672,0.0,-11.112491614052622,11,-81.61328550938507,False,phase67d_weekly_challenger_base,2026-03-14,2026-03-16,0.0,False,336,,,best_passed
+DOGE,-58.35853604676471,0.0,-9.245054670675898,15,-85.28780407014708,False,phase67d_weekly_challenger_base,2026-03-14,2026-03-16,0.0,False,340,,,best_passed
+BCH,-75.9755039573173,0.0,-14.408441644260382,92,-100.16325593597595,False,phase67d_weekly_challenger_base,2026-03-14,2026-03-16,0.0,False,356,,,best_passed

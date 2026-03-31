@@ -1,0 +1,12 @@
+{
+  "phase": "phase63_forensic_check",
+  "winner_input_key": "phase61_restore_trx_sol_base",
+  "baseline_key": "phase42 core",
+  "checked_models": [
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v20_045_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v20_060_wb30_wt+02_cd3",
+    "phase61_restore_trx_sol_base"
+  ],
+  "forensic_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_forensic_check.csv"
+}

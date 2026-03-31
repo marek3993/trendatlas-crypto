@@ -1,0 +1,149 @@
+{
+  "schema_version": "2.0",
+  "entity": "experiment_spec",
+  "required_fields": [
+    "experiment_id",
+    "branch",
+    "segment_owner",
+    "hypothesis_label",
+    "experiment_family",
+    "baseline_model",
+    "baseline_paper_path",
+    "input_paths",
+    "script_path",
+    "script_args",
+    "expected_outputs",
+    "scoring_profile",
+    "promotion_rule",
+    "invalidation_rule",
+    "budget_class",
+    "priority",
+    "created_by",
+    "created_at",
+    "status"
+  ],
+  "allowed_status_values": [
+    "proposed",
+    "spec_ready",
+    "queued",
+    "running",
+    "run_failed",
+    "ran",
+    "scored",
+    "precheck_failed",
+    "precheck_passed",
+    "forensic_ready",
+    "forensic_failed",
+    "forensic_passed",
+    "master_pending",
+    "promoted",
+    "archived"
+  ],
+  "field_contract": {
+    "experiment_id": {
+      "type": "string",
+      "example": "phase70_ai_lab_guardrail_sweep"
+    },
+    "branch": {
+      "type": "string",
+      "example": "main"
+    },
+    "segment_owner": {
+      "type": "string",
+      "example": "ai_lab"
+    },
+    "hypothesis_label": {
+      "type": "string",
+      "example": "guardrail_repair_2025"
+    },
+    "experiment_family": {
+      "type": "string",
+      "example": "guardrail_sweep"
+    },
+    "baseline_model": {
+      "type": "string",
+      "example": "phase66g_production_soft_filters"
+    },
+    "baseline_paper_path": {
+      "type": "string",
+      "example": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv"
+    },
+    "input_paths": {
+      "type": "list[str]"
+    },
+    "script_path": {
+      "type": "string",
+      "example": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66h_core_regime_guardrail_sweep.py"
+    },
+    "script_args": {
+      "type": "list[str]"
+    },
+    "expected_outputs": {
+      "type": "list[str]"
+    },
+    "scoring_profile": {
+      "type": "string",
+      "example": "production_guardrail_score_v1"
+    },
+    "promotion_rule": {
+      "type": "string",
+      "example": "if_scored_and_precheck_passed_then_promote_to_forensic"
+    },
+    "invalidation_rule": {
+      "type": "string",
+      "example": "kill_if_manifest_missing_or_quality_failed"
+    },
+    "budget_class": {
+      "type": "string",
+      "allowed_values": [
+        "tiny",
+        "small",
+        "medium",
+        "large"
+      ]
+    },
+    "priority": {
+      "type": "string",
+      "allowed_values": [
+        "low",
+        "normal",
+        "high",
+        "critical"
+      ]
+    },
+    "created_by": {
+      "type": "string",
+      "example": "ai_lab"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "YYYY-MM-DD HH:MM:SS UTC"
+    },
+    "status": {
+      "type": "string",
+      "allowed_values": [
+        "proposed",
+        "spec_ready",
+        "queued",
+        "running",
+        "run_failed",
+        "ran",
+        "scored",
+        "precheck_failed",
+        "precheck_passed",
+        "forensic_ready",
+        "forensic_failed",
+        "forensic_passed",
+        "master_pending",
+        "promoted",
+        "archived"
+      ]
+    }
+  },
+  "strict_rules": {
+    "allow_unknown_top_level_fields": false,
+    "allow_custom_status_values": false,
+    "allow_empty_input_paths": false,
+    "allow_empty_expected_outputs": false
+  }
+}

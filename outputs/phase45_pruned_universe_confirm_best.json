@@ -1,0 +1,16 @@
+{
+  "label": "without_BNBUSDT_and_DOGEUSDT",
+  "symbols": "BTCUSDT,ETHUSDT,XRPUSDT,SOLUSDT,ADAUSDT,LINKUSDT,AVAXUSDT,LTCUSDT,TRXUSDT,DOTUSDT",
+  "n_symbols": 10,
+  "score": -12.697,
+  "total_return_pct": 16331.93,
+  "cagr_pct": 91.29,
+  "max_drawdown_pct": -33.59,
+  "sharpe": 1.424,
+  "sortino": 1.917,
+  "trade_count": 193,
+  "cash_days_pct": 69.45,
+  "missed_leader_pct_of_in_market": 84.62,
+  "pain_bar_pct_of_in_market": 62.53,
+  "sum_leader_gap_ret": 41.0895
+}

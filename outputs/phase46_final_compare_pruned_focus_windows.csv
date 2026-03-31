@@ -1,0 +1,17 @@
+model,label,window,total_return_pct,cagr_pct,max_drawdown_pct,cash_days_pct,missed_leader_pct_of_in_market,pain_bar_pct_of_in_market,sum_leader_gap_ret
+old_baseline,Old Baseline,2021_Q1_to_Apr,30.49,126.31,-19.4,72.5,96.97,90.91,6.6042
+old_baseline,Old Baseline,2021_H2,33.28,77.42,-18.62,65.22,87.5,78.12,4.8747
+old_baseline,Old Baseline,2024_Feb_Mar,18.28,182.73,-13.87,23.33,93.48,80.43,2.9973
+old_baseline,Old Baseline,2025_Apr_Jul,26.98,105.67,-4.63,82.79,90.48,71.43,0.8474
+phase42_full12,Full12 Winner,2021_Q1_to_Apr,30.49,126.31,-19.4,72.5,96.97,90.91,6.6042
+phase42_full12,Full12 Winner,2021_H2,32.58,75.57,-18.62,64.13,86.36,77.27,5.0
+phase42_full12,Full12 Winner,2024_Feb_Mar,44.19,863.64,-11.93,23.33,89.13,76.09,2.8234
+phase42_full12,Full12 Winner,2025_Apr_Jul,20.32,74.77,-9.91,77.05,89.29,67.86,1.0358
+phase45_without_BNBUSDT,No BNB,2021_Q1_to_Apr,30.49,126.31,-19.4,72.5,90.91,81.82,6.1946
+phase45_without_BNBUSDT,No BNB,2021_H2,45.06,110.12,-16.39,65.22,85.94,73.44,4.608
+phase45_without_BNBUSDT,No BNB,2024_Feb_Mar,40.17,708.73,-11.88,23.33,89.13,76.09,2.6811
+phase45_without_BNBUSDT,No BNB,2025_Apr_Jul,21.63,80.58,-9.91,79.51,88.0,64.0,0.9371
+phase45_without_BNBUSDT_and_DOGEUSDT,No BNB + No DOGE,2021_Q1_to_Apr,30.49,126.31,-19.4,72.5,81.82,72.73,3.2765
+phase45_without_BNBUSDT_and_DOGEUSDT,No BNB + No DOGE,2021_H2,45.31,110.82,-16.39,65.22,84.38,70.31,4.3294
+phase45_without_BNBUSDT_and_DOGEUSDT,No BNB + No DOGE,2024_Feb_Mar,35.18,546.38,-11.88,23.33,89.13,71.74,2.2503
+phase45_without_BNBUSDT_and_DOGEUSDT,No BNB + No DOGE,2025_Apr_Jul,20.5,75.58,-9.91,77.87,88.89,55.56,0.84

@@ -1,0 +1,3 @@
+selector,accel_weight,score,aggr_total_return_pct,aggr_cagr_pct,aggr_max_drawdown_pct,aggr_sharpe,aggr_sortino,aggr_trade_count,bal_total_return_pct,bal_cagr_pct,bal_max_drawdown_pct,bal_sharpe,bal_sortino,bal_trade_count
+daily_accel_w_0p25,0.25,14.147,6227.5,69.43,-36.64,1.255,1.413,170,4323.2,61.89,-39.25,1.202,1.507,341
+daily_accel_w_0p20,0.2,14.067,6270.34,69.58,-36.64,1.257,1.417,169,4265.63,61.62,-39.25,1.199,1.505,341

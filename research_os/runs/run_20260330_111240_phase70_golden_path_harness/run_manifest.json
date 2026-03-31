@@ -1,0 +1,50 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260330_111240_phase70_golden_path_harness",
+  "experiment_id": "phase70_golden_path_harness",
+  "candidate_id": "phase70_golden_path_harness",
+  "status": "forensic_ready",
+  "started_utc": "2026-03-30 11:12:40 UTC",
+  "ended_utc": "2026-03-30 11:12:41 UTC",
+  "artifact_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_golden_path_harness.spec_ready.json",
+  "input_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv"
+  ],
+  "output_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness\\compare.csv"
+  ],
+  "metrics": {
+    "extracted_score": 1.25
+  },
+  "quality_checks": {
+    "schema_version": "2.0",
+    "run_id": "run_20260330_111240_phase70_golden_path_harness",
+    "status": "passed",
+    "checks": [
+      {
+        "name": "required_run_artifacts",
+        "ok": true,
+        "missing": []
+      },
+      {
+        "name": "expected_outputs",
+        "ok": true,
+        "missing": []
+      },
+      {
+        "name": "numeric_score_extract",
+        "ok": true,
+        "value": 1.25
+      },
+      {
+        "name": "compare_valid",
+        "ok": true
+      }
+    ]
+  },
+  "exit_code": 0,
+  "notes": null
+}

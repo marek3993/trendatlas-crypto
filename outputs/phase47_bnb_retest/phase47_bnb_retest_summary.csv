@@ -1,0 +1,5 @@
+model,label,total_return_pct,cagr_pct,max_drawdown_pct,sharpe,sortino,trade_count,cash_days_pct,missed_leader_pct_of_in_market,pain_bar_pct_of_in_market,sum_leader_gap_ret,recent_total_return_pct,recent_cagr_pct,recent_max_drawdown_pct,recent_trade_count,recent_cash_days_pct
+phase47_bnb_full_back,BNB back fully,15300.6,89.72,-36.56,1.418,1.864,213,69.38,87.05,69.43,49.9826,120.5,93.07,-19.53,30,64.77
+phase47_bnb_gap_filter,BNB back with score-gap filter,12617.01,85.15,-36.92,1.373,1.811,214,69.38,87.39,69.66,50.1735,111.2,86.27,-22.47,33,64.77
+phase47_bnb_trend_filter,BNB back with trend filter,16920.34,92.14,-36.25,1.444,1.881,196,69.62,87.97,69.3,49.5274,100.08,78.07,-22.56,32,64.77
+phase47_main_current,Current main (No BNB),14171.23,87.89,-36.25,1.394,1.835,193,69.69,88.75,69.46,49.6173,65.95,52.41,-23.05,35,64.77

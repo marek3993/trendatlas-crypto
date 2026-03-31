@@ -1,0 +1,4 @@
+cost_bps,universe_size,base_chosen,rs_chosen,median_test_sharpe,median_test_sortino,median_test_cagr_pct,median_test_return_pct,worst_test_dd_pct,positive_window_ratio,oos_total_return_pct,oos_cagr_pct,oos_max_drawdown_pct,oos_sharpe,oos_sortino,oos_trade_count
+10.0,12,1,10,0.943,0.878,28.49,19.61,-28.56,0.545,2238.37,49.36,-36.29,1.038,1.454,152
+15.0,12,1,10,0.92,0.858,27.53,18.97,-28.79,0.545,1971.92,47.07,-36.56,1.006,1.41,152
+20.0,12,1,10,0.898,0.839,26.57,18.33,-29.01,0.545,1735.65,44.83,-36.82,0.973,1.366,152

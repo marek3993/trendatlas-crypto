@@ -1,0 +1,2 @@
+candidate_model,baseline_model,score,delta_vs_baseline_pct,compare_valid,verdict
+phase70_golden_path_harness,phase66g_production_soft_filters,1.25,1.75,1,above_threshold

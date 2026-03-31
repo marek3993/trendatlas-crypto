@@ -1,0 +1,6 @@
+model,label,total_return_pct,cagr_pct,max_drawdown_pct,sharpe,sortino,trade_count,cash_days_pct,missed_leader_pct_of_in_market,pain_bar_pct_of_in_market,recent_total_return_pct,recent_cagr_pct,recent_max_drawdown_pct,recent_trade_count,recent_cash_days_pct
+phase48_bnb_trend_base,BNB hybrid base,16920.34,92.14,-36.25,1.444,1.881,196,69.62,87.97,69.3,100.08,78.07,-22.56,32,64.77
+phase48_bnb_trend_strict,BNB hybrid strict,17869.05,93.47,-36.25,1.456,1.864,194,69.66,87.96,69.04,100.08,78.07,-22.56,32,64.77
+phase48_bnb_trend_plus_gap,BNB hybrid trend + gap,15356.11,89.8,-36.25,1.422,1.852,196,69.62,88.09,69.42,100.08,78.07,-22.56,32,64.77
+phase48_bnb_trend_loose,BNB hybrid loose,15731.35,90.38,-36.25,1.425,1.862,199,69.62,87.74,69.3,96.64,75.52,-22.56,34,64.77
+phase48_current_main,Current main (No BNB),14171.23,87.89,-36.25,1.394,1.835,193,69.69,88.75,69.46,65.95,52.41,-23.05,35,64.77

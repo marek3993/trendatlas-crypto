@@ -1,0 +1,67 @@
+{
+  "phase": "phase66g_production_candidate_live",
+  "baseline_model": "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+  "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "phase66f_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66f_probation_robustness\\phase66f_probation_robustness_summary.csv",
+  "drop_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66b_governance_forensic\\phase66b_governance_drop_candidates.csv",
+  "removed_assets": [
+    "LTC",
+    "SOL"
+  ],
+  "candidate_assets_loaded": 9,
+  "candidate_assets_failed": 0,
+  "winner_profile": {
+    "profile_name": "phase66g_production_soft_filters",
+    "trailing_train_days": 365,
+    "recent_days": 60,
+    "rebalance_every_days": 7,
+    "min_history_days": 180,
+    "min_triggers_in_train": 4,
+    "min_total_delta_pct": 0.5,
+    "min_recent_delta_pct": 0.25,
+    "max_allowed_dd_worsen_pct": 3.0,
+    "switch_score_margin": 3.0,
+    "min_hold_periods": 3,
+    "probation_lookback_days": 45,
+    "probation_min_delta_pct": 0.0,
+    "probation_ban_periods": 6
+  },
+  "current_asset": "BASELINE",
+  "latest_available_date": "2026-03-16",
+  "latest_decision_date": "2026-03-14",
+  "next_rebalance_date": "2026-03-21",
+  "trend_barometer_definition": {
+    "trend_score": "clip((base_strength_lb - weak_base_threshold) / max(candidate_ret_min, candidate_risk_buffer, 1e-6), -1, 1)",
+    "buy_threshold": 0.0,
+    "zero_meaning": "core buy threshold crossed, not guaranteed execution",
+    "state_labels": {
+      "negativny": "trend_score <= -0.50",
+      "pod_buy_hranicou": "-0.50 < trend_score < 0.0",
+      "nad_buy_hranicou": "0.0 <= trend_score < 0.50",
+      "pozitivny": "trend_score >= 0.50"
+    },
+    "source_column": "base_strength_lb",
+    "threshold_source": "OverlayConfig.weak_base_threshold",
+    "band_source": "max(OverlayConfig.candidate_ret_min, OverlayConfig.candidate_risk_buffer)"
+  },
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_compare.csv",
+  "live_status_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv",
+  "trend_history_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+  "decisions_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_decisions.csv",
+  "leaderboard_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_leaderboard.csv",
+  "latest_top10_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_latest_decision_top10.csv",
+  "suspended_now_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_suspended_assets_now.csv",
+  "asset_quality_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_asset_quality.csv",
+  "asset_usage_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_asset_usage.csv",
+  "failed_assets_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_failed_assets.csv",
+  "baseline_paper_saved": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "production_paper_saved": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "notes": [
+    "Produk\u010dn\u00fd kandid\u00e1t z v\u00ed\u0165azn\u00e9ho Phase66F soft_filters profilu.",
+    "Rovnou exportuje aj live weekly selector stav.",
+    "Current asset je based na poslednom dostupnom daily bare, nie na intraday live cene.",
+    "Trend barometer je source-of-truth metric zo strat\u00e9gie, nie app-side heuristika.",
+    "Trend score 0.0 znamen\u00e1 core buy threshold, nie automatick\u00fd buy execution."
+  ]
+}

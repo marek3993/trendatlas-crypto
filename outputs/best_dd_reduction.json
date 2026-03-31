@@ -1,0 +1,16 @@
+{
+  "min_lt_score_long": 0.0,
+  "min_st_score_long": -10.0,
+  "max_yz_vol_entry": 0.7,
+  "max_atr_pct_entry": 85.0,
+  "exit_on_transition": true,
+  "robust_score": -9.096,
+  "median_fold_sharpe": 0.114,
+  "median_fold_sortino": 0.034,
+  "median_fold_cagr_pct": 0.64,
+  "median_fold_return_pct": 2.45,
+  "worst_fold_dd_pct": -27.2,
+  "positive_fold_ratio": 0.533,
+  "median_asset_sharpe": 0.179,
+  "median_asset_return_pct": 18.57
+}

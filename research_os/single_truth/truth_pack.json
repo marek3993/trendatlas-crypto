@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "pack_id": "truth_pack_v1",
+  "project_root": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "research_os_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os",
+  "current_truth": {
+    "baseline_candidate_id": null,
+    "baseline_run_id": null,
+    "production_candidate_id": null,
+    "production_run_id": null,
+    "latest_validated_leaderboard_id": null,
+    "last_promotion_utc": null,
+    "truth_status": "bootstrap"
+  },
+  "registry_files": {
+    "candidates_registry_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\candidates_registry.csv",
+    "leaderboard_summary_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\leaderboards\\leaderboard_summary.csv"
+  },
+  "required_run_manifest_fields": [
+    "schema_version",
+    "run_id",
+    "experiment_id",
+    "candidate_id",
+    "status",
+    "started_utc",
+    "ended_utc",
+    "artifact_root",
+    "spec_path",
+    "input_refs",
+    "output_refs",
+    "metrics",
+    "quality_checks"
+  ],
+  "required_candidate_statuses": [
+    "draft",
+    "queued",
+    "active",
+    "shadow",
+    "promoted",
+    "rejected",
+    "archived"
+  ],
+  "notes": "Single source of truth pre AI Research Registry v1.",
+  "registry_extensions": {
+    "experiment_spec_schema": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\experiment_spec.schema.json",
+    "candidate_lifecycle_schema": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\candidate_lifecycle.schema.json",
+    "promotion_decision_schema": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\promotion_decision.schema.json",
+    "experiment_spec_template": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\templates\\experiment_spec.template.json",
+    "run_status_template": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\templates\\run_status.template.json",
+    "promotion_decision_template": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\promotion_queue\\templates\\promotion_decision.template.json",
+    "run_folder_contract": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\templates\\run_folder_contract.json",
+    "research_os_v2_contract_doc": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\docs\\research_os_v2_contract.md"
+  },
+  "updated_utc": "2026-03-30 08:40:41 UTC"
+}

@@ -1,0 +1,15 @@
+{
+  "record_version": "1.0",
+  "generated_at": "2026-03-31T13:41:01+00:00",
+  "candidate_id": "phase70_golden_path_harness",
+  "approval_status": "pending_manual_approval",
+  "handoff_decision": "handoff_staged",
+  "finalization_state": "staged_pending_manual_finalization",
+  "manual_finalization_required": true,
+  "official_truth_changed": false,
+  "policy_version_context": {
+    "official_truth_handoff_policy_version": "1.0",
+    "gate_policy_version": "1.0"
+  },
+  "reason_codes": []
+}

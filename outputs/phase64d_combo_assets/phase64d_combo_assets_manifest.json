@@ -1,0 +1,54 @@
+{
+  "phase": "phase64d_combo_assets",
+  "baseline_model": "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+  "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "combos": [
+    [
+      "DOGE"
+    ],
+    [
+      "DOGE",
+      "XRP"
+    ],
+    [
+      "DOGE",
+      "SUI"
+    ],
+    [
+      "DOGE",
+      "HYPE"
+    ],
+    [
+      "DOGE",
+      "XRP",
+      "SUI"
+    ],
+    [
+      "DOGE",
+      "XRP",
+      "HYPE"
+    ],
+    [
+      "DOGE",
+      "SUI",
+      "HYPE"
+    ]
+  ],
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase64d_combo_assets\\phase64d_combo_assets_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase64d_combo_assets\\phase64d_combo_assets_compare.csv",
+  "diagnostics_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase64d_combo_assets\\phase64d_combo_assets_diagnostics.csv",
+  "config": {
+    "candidate_fast_ma": 20,
+    "candidate_slow_ma": 100,
+    "candidate_ret_lb": 30,
+    "candidate_ret_min": 0.12,
+    "candidate_risk_ma": 150,
+    "candidate_risk_buffer": -0.03,
+    "candidate_vol_lb": 30,
+    "candidate_vol_cap": 0.045,
+    "weak_base_lb": 30,
+    "weak_base_threshold": 0.02,
+    "cooldown_days": 3
+  },
+  "selection_rule": "Ak je akt\u00edvnych viac kandid\u00e1tov, berie sa ten s najvy\u0161\u0161\u00edm candidate_ret_lb score."
+}

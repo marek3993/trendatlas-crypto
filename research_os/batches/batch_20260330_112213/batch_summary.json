@@ -1,0 +1,40 @@
+{
+  "batch_id": "batch_20260330_112213",
+  "started_at": "2026-03-30 11:22:13 UTC",
+  "completed_at": "2026-03-30 11:22:14 UTC",
+  "selected_specs": 2,
+  "completed_runs": 2,
+  "failed_runs": 0,
+  "kill_count": 1,
+  "hold_count": 0,
+  "rerun_count": 0,
+  "promote_to_precheck_count": 1,
+  "forensic_ready_count": 1,
+  "mode": "execute",
+  "results": [
+    {
+      "batch_id": "batch_20260330_112213",
+      "experiment_id": "phase70_golden_path_harness",
+      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_golden_path_harness.spec_ready.json",
+      "dispatch_exit_code": 0,
+      "final_status": "forensic_ready",
+      "decision": "promote_to_precheck",
+      "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness",
+      "run_manifest_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness\\run_manifest.json",
+      "run_status_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112213_phase70_golden_path_harness\\run_status.json",
+      "promotion_decision_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\promotion_queue\\run_20260330_112213_phase70_golden_path_harness_promotion_decision.json"
+    },
+    {
+      "batch_id": "batch_20260330_112213",
+      "experiment_id": "phase70_ai_lab_example",
+      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\phase70_ai_lab_example.spec_ready.json",
+      "dispatch_exit_code": 0,
+      "final_status": "archived",
+      "decision": "kill",
+      "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112214_phase70_ai_lab_example",
+      "run_manifest_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112214_phase70_ai_lab_example\\run_manifest.json",
+      "run_status_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_112214_phase70_ai_lab_example\\run_status.json",
+      "promotion_decision_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\promotion_queue\\run_20260330_112214_phase70_ai_lab_example_promotion_decision.json"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "variant": "ret5_w0p10",
+  "thrust_mode": "ret5",
+  "thrust_weight": 0.1,
+  "score": -20.612,
+  "total_return_pct": 14028.43,
+  "cagr_pct": 87.65,
+  "max_drawdown_pct": -37.04,
+  "sharpe": 1.399,
+  "sortino": 1.834,
+  "trade_count": 206,
+  "cash_days_pct": 69.38,
+  "missed_leader_pct_of_in_market": 87.27,
+  "pain_bar_pct_of_in_market": 69.55,
+  "sum_leader_gap_ret": 50.0939
+}

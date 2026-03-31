@@ -1,0 +1,18 @@
+{
+  "variant": "k0p75_r0p02",
+  "kill_multiplier": 0.75,
+  "restore_threshold": 0.02,
+  "score": 9.493,
+  "aggr_total_return_pct": 9031.72,
+  "aggr_cagr_pct": 77.52,
+  "aggr_max_drawdown_pct": -36.64,
+  "aggr_sharpe": 1.328,
+  "bal_total_return_pct": 7665.03,
+  "bal_cagr_pct": 73.9,
+  "bal_max_drawdown_pct": -35.98,
+  "bal_sharpe": 1.313,
+  "bal_sortino": 1.702,
+  "bal_trade_count": 396,
+  "bal_cash_days_pct": 69.38,
+  "bal_kill_days_pct": 47.25
+}

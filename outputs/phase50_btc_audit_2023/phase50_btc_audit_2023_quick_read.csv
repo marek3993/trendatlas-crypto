@@ -1,0 +1,2 @@
+start_date,strategy_above_btc_pct_of_days,strategy_beats_btc_rolling_90d_pct,strategy_beats_btc_rolling_180d_pct,strategy_total_return_pct,btc_total_return_pct,strategy_cagr_pct,btc_cagr_pct,strategy_max_dd_pct,btc_max_dd_pct
+2023-01-01,100.0,46.8,45.86,573.04,350.66,81.34,60.0,-36.25,-49.53

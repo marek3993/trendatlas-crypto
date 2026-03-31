@@ -1,0 +1,9 @@
+asset,status,asset_file,raw_rows,daily_rows,start_date,end_date,history_days,non_na_close_ratio,max_gap_days,reason
+DOGE,processed,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\DOGEUSDT_1d.csv,2448.0,2448.0,2019-07-05,2026-03-17,2448.0,100.0,1.0,
+XRP,processed,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\XRPUSDT_1d.csv,2875.0,2875.0,2018-05-04,2026-03-17,2875.0,100.0,1.0,
+SUI,failed,,,,,,,,,Nenašiel som input file pre asset SUI v C:\Users\benda\Desktop\market_regime_v1\data\ohlcv
+HYPE,failed,,,,,,,,,Nenašiel som input file pre asset HYPE v C:\Users\benda\Desktop\market_regime_v1\data\ohlcv
+SOL,processed,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\SOLUSDT_1d.csv,2045.0,2045.0,2020-08-11,2026-03-17,2045.0,100.0,1.0,
+LTC,processed,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\LTCUSDT_1d.csv,3017.0,3017.0,2017-12-13,2026-03-17,3017.0,100.0,1.0,
+ADA,processed,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\ADAUSDT_1d.csv,2892.0,2892.0,2018-04-17,2026-03-17,2892.0,100.0,1.0,
+DOT,processed,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv\DOTUSDT_1d.csv,2038.0,2038.0,2020-08-18,2026-03-17,2038.0,100.0,1.0,

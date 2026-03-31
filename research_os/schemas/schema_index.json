@@ -1,0 +1,18 @@
+{
+  "schema_version": "2.0",
+  "updated_at": "2026-03-30 08:40:41 UTC",
+  "schemas": {
+    "experiment_spec": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\experiment_spec.schema.json",
+    "candidate_lifecycle": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\candidate_lifecycle.schema.json",
+    "promotion_decision": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\promotion_decision.schema.json",
+    "run_folder_contract": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\templates\\run_folder_contract.json"
+  },
+  "templates": {
+    "experiment_spec": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\templates\\experiment_spec.template.json",
+    "run_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\templates\\run_status.template.json",
+    "promotion_decision": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\promotion_queue\\templates\\promotion_decision.template.json"
+  },
+  "docs": {
+    "research_os_v2_contract": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\docs\\research_os_v2_contract.md"
+  }
+}

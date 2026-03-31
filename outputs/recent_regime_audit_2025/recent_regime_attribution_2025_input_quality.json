@@ -1,0 +1,39 @@
+{
+  "input_mode": "strict",
+  "strict_input_mode": true,
+  "recent_equity_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_audit_2025_equity_curves.csv",
+  "main_daily_paper": {
+    "model_key": "phase45_without_BNBUSDT",
+    "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase49_final_compare\\phase49_no_bnb_baseline_paper.csv",
+    "rows_total": 2874,
+    "rows_since_start_date": 440,
+    "ts_min": "2018-05-04 00:00:00",
+    "ts_max": "2026-03-16 00:00:00",
+    "selected_null_rows": 0,
+    "strategy_ret_null_rows": 0,
+    "gross_exposure_null_rows": 0,
+    "unique_selected_count": 11
+  },
+  "leader_daily_paper": {
+    "model_key": "phase42_full12",
+    "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase59_bnb_selective_restore\\phase59_phase42_core_paper.csv",
+    "rows_total": 2874,
+    "rows_since_start_date": 440,
+    "ts_min": "2018-05-04 00:00:00",
+    "ts_max": "2026-03-16 00:00:00",
+    "selected_null_rows": 0,
+    "strategy_ret_null_rows": 0,
+    "gross_exposure_null_rows": 0,
+    "unique_selected_count": 12
+  },
+  "behavior": {
+    "rows": 440,
+    "ts_min": "2025-01-01 00:00:00",
+    "ts_max": "2026-03-16 00:00:00",
+    "same_selection_pct": 92.2727,
+    "different_selection_days": 34,
+    "main_cash_leader_in_days": 0,
+    "leader_cash_main_in_days": 0,
+    "ret_diff_null_rows": 0
+  }
+}

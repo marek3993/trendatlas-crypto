@@ -1,0 +1,5 @@
+window,base_total_return_pct,winner_total_return_pct,delta_total_return_pct,base_cash_days_pct,winner_cash_days_pct,delta_cash_days_pct,base_missed_leader_pct_of_in_market,winner_missed_leader_pct_of_in_market,delta_missed_leader_pct,base_pain_bar_pct_of_in_market,winner_pain_bar_pct_of_in_market,delta_pain_bar_pct,base_sum_leader_gap_ret,winner_sum_leader_gap_ret,delta_sum_leader_gap_ret
+2021_Q1_to_Apr,30.49,30.49,0.0,72.5,72.5,0.0,96.97,96.97,0.0,90.91,90.91,0.0,6.6042,6.6042,0.0
+2021_H2,33.28,27.53,-5.75,65.22,64.13,-1.09,87.5,87.88,0.38,78.12,78.79,0.67,4.8747,5.0478,0.1731
+2024_Feb_Mar,18.28,33.67,15.39,23.33,23.33,0.0,93.48,91.3,-2.18,80.43,78.26,-2.17,2.9973,2.9024,-0.0949
+2025_Apr_Jul,26.98,20.32,-6.66,82.79,77.05,-5.74,90.48,89.29,-1.19,71.43,67.86,-3.57,0.8474,1.0358,0.1884

@@ -1,0 +1,87 @@
+{
+  "schema_version": "2.0",
+  "entity": "candidate_lifecycle",
+  "id_field": "candidate_id",
+  "required_statuses": [
+    "proposed",
+    "spec_ready",
+    "queued",
+    "running",
+    "run_failed",
+    "ran",
+    "scored",
+    "precheck_failed",
+    "precheck_passed",
+    "forensic_ready",
+    "forensic_failed",
+    "forensic_passed",
+    "master_pending",
+    "promoted",
+    "archived"
+  ],
+  "strict_rules": {
+    "allow_custom_status_values": false,
+    "allow_unknown_status_transitions": false
+  },
+  "allowed_transitions": {
+    "proposed": [
+      "spec_ready",
+      "archived"
+    ],
+    "spec_ready": [
+      "queued",
+      "archived"
+    ],
+    "queued": [
+      "running",
+      "archived"
+    ],
+    "running": [
+      "run_failed",
+      "ran",
+      "archived"
+    ],
+    "run_failed": [
+      "queued",
+      "archived"
+    ],
+    "ran": [
+      "scored",
+      "archived"
+    ],
+    "scored": [
+      "precheck_failed",
+      "precheck_passed",
+      "archived"
+    ],
+    "precheck_failed": [
+      "queued",
+      "archived"
+    ],
+    "precheck_passed": [
+      "forensic_ready",
+      "archived"
+    ],
+    "forensic_ready": [
+      "forensic_failed",
+      "forensic_passed",
+      "archived"
+    ],
+    "forensic_failed": [
+      "queued",
+      "archived"
+    ],
+    "forensic_passed": [
+      "master_pending",
+      "archived"
+    ],
+    "master_pending": [
+      "promoted",
+      "archived"
+    ],
+    "promoted": [
+      "archived"
+    ],
+    "archived": []
+  }
+}

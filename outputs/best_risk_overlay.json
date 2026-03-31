@@ -1,0 +1,21 @@
+{
+  "market_score_floor": 10.0,
+  "min_confidence": 35.0,
+  "max_yz_vol": 0.7,
+  "max_atr_pct": 70.0,
+  "weight_mode": "full",
+  "robust_score": 40.929,
+  "median_fold_sharpe": 1.229,
+  "median_fold_sortino": 0.82,
+  "median_fold_cagr_pct": 35.36,
+  "median_fold_return_pct": 215.76,
+  "worst_fold_dd_pct": -28.21,
+  "positive_fold_ratio": 1.0,
+  "full_total_return_pct": 1867.22,
+  "full_cagr_pct": 29.88,
+  "full_max_drawdown_pct": -28.21,
+  "full_sharpe": 1.103,
+  "full_sortino": 0.833,
+  "full_trade_count": 149,
+  "avg_selected": 0.22
+}

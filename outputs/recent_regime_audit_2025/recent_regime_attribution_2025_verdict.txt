@@ -1,0 +1,13 @@
+=== RECENT REGIME ATTRIBUTION 2025 ===
+
+Input mode
+- strict
+- main_daily_paper: C:\Users\benda\Desktop\market_regime_v1\outputs\phase49_final_compare\phase49_no_bnb_baseline_paper.csv
+- leader_daily_paper: C:\Users\benda\Desktop\market_regime_v1\outputs\phase59_bnb_selective_restore\phase59_phase42_core_paper.csv
+
+Quick read
+- Total return rozdiel main - leader: -48.75 p.b.
+- Rovnaky vyber coinu v tie iste dni: 92.27%
+- Dni, ked hlavna strategia bola v cashi a leader bol v trhu: 0
+- Dni, ked leader bol v cashi a hlavna strategia bola v trhu: 0
+- Different selection days: 34

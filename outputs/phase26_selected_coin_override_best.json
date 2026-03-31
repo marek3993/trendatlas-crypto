@@ -1,0 +1,17 @@
+{
+  "model": "phase26_sel_1bar_gt_0",
+  "override_mode": "selected_1bar_gt_0",
+  "kill_day_pct": 46.74080774756558,
+  "override_used_pct": 4.501676156015537,
+  "start_ts": "2017-08-17 04:00:00",
+  "end_ts": "2026-03-17 20:00:00",
+  "bars": 18793,
+  "days": 3134,
+  "years": 8.580424366872005,
+  "total_return_pct": 133110.61477121926,
+  "cagr_pct": 131.28493975667777,
+  "max_drawdown_pct": -22.116611390344787,
+  "sharpe": 2.5801517702230514,
+  "sortino": 2.054678362988055,
+  "avg_exposure": 0.23295908050870004
+}

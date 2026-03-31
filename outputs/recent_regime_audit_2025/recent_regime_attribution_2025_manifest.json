@@ -1,0 +1,92 @@
+{
+  "dataset_name": "recent_regime_attribution_2025",
+  "built_at_utc": "2026-03-29 12:16:00 UTC",
+  "script": "recent_regime_attribution_2025.py",
+  "cwd": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "python": "C:\\Users\\benda\\Desktop\\market_regime_v1\\.venv\\Scripts\\python.exe",
+  "files": [
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_audit_2025_equity_curves.csv",
+      "exists": true,
+      "size_bytes": 37862,
+      "modified_utc": "2026-03-22 19:18:32 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase49_final_compare\\phase49_no_bnb_baseline_paper.csv",
+      "exists": true,
+      "size_bytes": 372178,
+      "modified_utc": "2026-03-22 19:59:54 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase59_bnb_selective_restore\\phase59_phase42_core_paper.csv",
+      "exists": true,
+      "size_bytes": 364530,
+      "modified_utc": "2026-03-25 18:25:06 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_equity_summary.csv",
+      "exists": true,
+      "size_bytes": 261,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_monthly.csv",
+      "exists": true,
+      "size_bytes": 601,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_selection_summary.csv",
+      "exists": true,
+      "size_bytes": 98,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_top_holdings.csv",
+      "exists": true,
+      "size_bytes": 551,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_daily_behavior.csv",
+      "exists": true,
+      "size_bytes": 37516,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_worst_main_vs_leader_days.csv",
+      "exists": true,
+      "size_bytes": 997,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_best_main_vs_leader_days.csv",
+      "exists": true,
+      "size_bytes": 981,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_input_quality.json",
+      "exists": true,
+      "size_bytes": 1444,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    },
+    {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_verdict.txt",
+      "exists": true,
+      "size_bytes": 592,
+      "modified_utc": "2026-03-29 12:16:00 UTC"
+    }
+  ],
+  "extra": {
+    "input_mode": "strict",
+    "strict_input_mode": true,
+    "main_key": "phase45_without_BNBUSDT",
+    "leader_key": "phase42_full12",
+    "main_daily_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase49_final_compare\\phase49_no_bnb_baseline_paper.csv",
+    "leader_daily_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase59_bnb_selective_restore\\phase59_phase42_core_paper.csv",
+    "behavior_rows": 440,
+    "same_selection_pct": 92.2727,
+    "different_selection_days": 34
+  }
+}

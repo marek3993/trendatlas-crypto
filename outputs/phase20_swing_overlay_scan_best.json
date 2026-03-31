@@ -1,0 +1,21 @@
+{
+  "model": "phase20_combo_all_2d",
+  "overlay_mode": "combo_all_2d",
+  "breadth_threshold": 0.35,
+  "kill_multiplier": 0.0,
+  "cooldown_days": 0.0,
+  "kill_days_pct": 38.39241138292561,
+  "start_date": "2020-09-22",
+  "end_date": "2026-03-17",
+  "days": 2002,
+  "years": 5.4811772758384665,
+  "start_equity": 1.0,
+  "end_equity": 83.01592874185602,
+  "total_return_pct": 8201.592874185602,
+  "cagr_pct": 123.94260180177947,
+  "max_drawdown_pct": -17.58020987039196,
+  "sharpe": 2.022876122138024,
+  "sortino": 2.8699457682361076,
+  "active_day_fraction": 0.2126809785322017,
+  "score": 88.67775072295582
+}

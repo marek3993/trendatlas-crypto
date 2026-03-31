@@ -1,0 +1,34 @@
+{
+  "policy_version": "1.0",
+  "description": "Deterministic portfolio constraints for Research OS batch selection.",
+  "branch_quotas": {
+    "main": 1,
+    "core": 1,
+    "ai_lab": 1,
+    "__default__": 1
+  },
+  "diversity_constraints": {
+    "enabled": true,
+    "max_same_branch": 1,
+    "max_same_family": 1,
+    "enforce_unique_candidate_ids": true
+  },
+  "duplicate_family_rules": {
+    "enabled": true,
+    "match_fields": [
+      "experiment_family",
+      "branch"
+    ],
+    "suppression_mode": "keep_highest_ranked_only"
+  },
+  "cooldown_rules": {
+    "enabled": true,
+    "cooldown_hours": 24,
+    "blocked_if_recent_failure": true
+  },
+  "selection_outputs": {
+    "batch_selection_result_filename": "batch_selection_result.json",
+    "batch_selection_summary_filename": "batch_selection_summary.csv",
+    "selection_decision_log_filename": "selection_decision_log.jsonl"
+  }
+}

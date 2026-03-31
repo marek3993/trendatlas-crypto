@@ -1,0 +1,20 @@
+{
+  "variant": "br1p00_x200p35_x900p20_xp0p10_ac0p20_r50p15",
+  "base_rank_weight": 1.0,
+  "xs20_weight": 0.35,
+  "xs90_weight": 0.2,
+  "xs_persist_weight": 0.1,
+  "accel_weight": 0.2,
+  "ret5_weight": 0.15,
+  "score": -19.614,
+  "total_return_pct": 15300.6,
+  "cagr_pct": 89.72,
+  "max_drawdown_pct": -36.56,
+  "sharpe": 1.418,
+  "sortino": 1.864,
+  "trade_count": 213,
+  "cash_days_pct": 69.38,
+  "missed_leader_pct_of_in_market": 87.05,
+  "pain_bar_pct_of_in_market": 69.43,
+  "sum_leader_gap_ret": 49.9826
+}

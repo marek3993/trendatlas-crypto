@@ -1,0 +1,17 @@
+{
+  "top_n": 1.0,
+  "robust_score": 65.756,
+  "median_fold_sharpe": 1.119,
+  "median_fold_sortino": 1.127,
+  "median_fold_cagr_pct": 48.4,
+  "median_fold_return_pct": 347.75,
+  "worst_fold_dd_pct": -51.38,
+  "positive_fold_ratio": 1.0,
+  "full_total_return_pct": 3638.71,
+  "full_cagr_pct": 37.4,
+  "full_max_drawdown_pct": -51.38,
+  "full_sharpe": 1.013,
+  "full_sortino": 0.991,
+  "full_trade_count": 107.0,
+  "avg_selected": 0.38
+}

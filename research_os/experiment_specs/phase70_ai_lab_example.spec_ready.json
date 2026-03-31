@@ -1,0 +1,29 @@
+{
+  "experiment_id": "phase70_ai_lab_example",
+  "branch": "main",
+  "segment_owner": "ai_lab",
+  "hypothesis_label": "example_hypothesis",
+  "experiment_family": "registry_contract_test",
+  "baseline_model": "phase66g_production_soft_filters",
+  "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv"
+  ],
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_validate.py",
+  "script_args": [],
+  "expected_outputs": [
+    "summary.csv",
+    "paper.csv",
+    "compare.csv",
+    "run_manifest.json",
+    "quality_report.json"
+  ],
+  "scoring_profile": "production_guardrail_score_v1",
+  "promotion_rule": "promote_to_precheck_if_primary_score_beats_baseline_and_required_outputs_exist",
+  "invalidation_rule": "kill_if_required_outputs_missing_or_quality_failed",
+  "budget_class": "small",
+  "priority": "normal",
+  "created_by": "ai_lab",
+  "created_at": "2026-03-30 00:00:00 UTC",
+  "status": "spec_ready"
+}

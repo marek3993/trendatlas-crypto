@@ -1,0 +1,3 @@
+asset,train_total_delta_pct,recent_total_delta_pct,train_dd_worsen_pct,downside_dd_worsen_pct,train_triggers,score,passed_filters,profile,decision_date,next_date_exclusive,reentry_blocked,persistence_passes,persistence_ok,core_asset_today,core_is_bnb,required_recent_delta_pct,promotion_ok,incumbent_asset_before,selected_asset,keep_reason,approved_shortlist_size,approved_shortlist
+ZEC,99.33421592887471,0.0,-1.0658141036401503e-14,0.0,28,-1e+18,False,phase68b_dynamic_repair_tight5,2026-03-14,2026-03-16,False,0,False,CASH,False,2.0,False,ZRO,,best_passed,2,"ZEC,ZRO"
+ZRO,7.45459441346901,0.0,-1.0658141036401503e-14,0.0,11,-1e+18,False,phase68b_dynamic_repair_tight5,2026-03-14,2026-03-16,False,0,False,CASH,False,2.0,False,ZRO,,best_passed,2,"ZEC,ZRO"

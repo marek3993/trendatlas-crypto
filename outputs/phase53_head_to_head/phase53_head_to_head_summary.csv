@@ -1,0 +1,7 @@
+window,start_date,model,label,total_return_pct,cagr_pct,max_drawdown_pct,worst_day_pct,days
+since_2021,2021-01-01,phase42_full12,Predosly lider,967.56,57.65,-36.56,-12.57,1901
+since_2021,2021-01-01,phase49_bnb_hybrid_strict,Hlavna strategia,913.78,56.09,-36.25,-12.57,1901
+since_2023,2023-01-01,phase42_full12,Predosly lider,675.47,89.54,-36.25,-12.18,1171
+since_2023,2023-01-01,phase49_bnb_hybrid_strict,Hlavna strategia,573.04,81.34,-36.25,-12.18,1171
+since_2025,2025-01-01,phase42_full12,Predosly lider,121.0,93.44,-19.53,-12.18,440
+since_2025,2025-01-01,phase49_bnb_hybrid_strict,Hlavna strategia,95.13,74.4,-22.56,-12.18,440

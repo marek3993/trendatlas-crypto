@@ -1,0 +1,31 @@
+{
+  "phase": "phase63_btc_participation_overlay",
+  "winner_input_key": "phase61_restore_trx_sol_base",
+  "winner_label": "Restore BNB vs TRX/SOL",
+  "baseline_key": "phase42 core",
+  "base_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase60_selective_restore_robustness\\phase60_restore_trx_sol_base_paper.csv",
+  "btc_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_overlay_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_overlay_top_compare.csv",
+  "top_saved_models": [
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v20_045_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v20_060_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_060_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm200_rb-03_v20_060_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm200_rb-03_v30_060_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm200_rb-03_v20_045_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm200_rb-03_v30_045_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm200_rb+00_v30_060_wb30_wt+02_cd3",
+    "phase63_btcpref_f20_s100_r30_m12_rm200_rb+00_v20_060_wb30_wt+02_cd3",
+    "phase61_restore_trx_sol_base"
+  ],
+  "variant_count_total": 23331,
+  "execution_model": "signal_t -> execute_t_plus_1",
+  "notes": [
+    "BASE = explicitn\u00fd phase61 winner paper",
+    "BTC = preferovan\u00fd len ke\u010f BTC trend je OK a base leader je slab\u00fd",
+    "CASH = risk-off re\u017eim",
+    "Phase61 baseline sa neberie z compare summary ani equity curves"
+  ]
+}

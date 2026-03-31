@@ -1,0 +1,4 @@
+model,robust_score,median_window_sharpe,median_window_sortino,median_window_cagr_pct,median_window_return_pct,worst_window_dd_pct,positive_window_ratio,available_spike_bars,captured_spike_bars,spike_capture_ratio,avg_captured_spike_ret_pct,full_total_return_pct,full_cagr_pct,full_max_drawdown_pct,full_sharpe,full_sortino,full_trade_count
+fast_breakout_4h,-19.832,0.379,0.365,5.94,2.88,-51.43,0.611,2893,217,0.075,6.89,-69.97,-13.06,-93.93,0.003,0.002,3306
+base_4h,-42.21,0.203,0.24,-11.26,-5.92,-78.49,0.5,2893,633,0.219,6.59,2954.78,48.88,-96.16,0.886,1.142,2766
+fast_4h,-43.76,0.152,0.13,-14.91,-8.02,-76.7,0.5,2893,641,0.222,6.76,1333.11,36.33,-97.14,0.797,0.973,3064

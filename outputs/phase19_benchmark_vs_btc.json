@@ -1,0 +1,41 @@
+{
+  "always_daily": {
+    "start_date": "2017-08-17",
+    "end_date": "2026-03-17",
+    "days": 3134,
+    "years": 8.580424366872005,
+    "start_equity": 1.0,
+    "end_equity": 30.86787334369708,
+    "total_return_pct": 2986.787334369708,
+    "cagr_pct": 49.13981315557858,
+    "max_drawdown_pct": -33.856156706275364,
+    "sharpe": 1.1145394479612247,
+    "sortino": 1.105574332674223
+  },
+  "soft_kill_4h": {
+    "start_date": "2017-08-17",
+    "end_date": "2026-03-17",
+    "days": 3134,
+    "years": 8.580424366872005,
+    "start_equity": 1.0,
+    "end_equity": 9.912865733396716,
+    "total_return_pct": 891.2865733396716,
+    "cagr_pct": 30.647587104893127,
+    "max_drawdown_pct": -18.417249544433545,
+    "sharpe": 1.1546167562677165,
+    "sortino": 1.0728221294667992
+  },
+  "btc_buy_hold": {
+    "start_date": "2017-08-17",
+    "end_date": "2026-03-17",
+    "days": 3134,
+    "years": 8.580424366872005,
+    "start_equity": 1.0,
+    "end_equity": 17.248070047700395,
+    "total_return_pct": 1624.8070047700394,
+    "cagr_pct": 39.35903210035514,
+    "max_drawdown_pct": -83.18705353076483,
+    "sharpe": 0.831573296879367,
+    "sortino": 1.1191568403600167
+  }
+}

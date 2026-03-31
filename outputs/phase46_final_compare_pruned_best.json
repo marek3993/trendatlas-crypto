@@ -1,0 +1,14 @@
+{
+  "model": "phase45_without_BNBUSDT",
+  "label": "No BNB",
+  "total_return_pct": 18405.55,
+  "cagr_pct": 94.2,
+  "max_drawdown_pct": -32.66,
+  "sharpe": 1.452,
+  "sortino": 1.924,
+  "trade_count": 194,
+  "cash_days_pct": 69.55,
+  "missed_leader_pct_of_in_market": 86.29,
+  "pain_bar_pct_of_in_market": 65.6,
+  "sum_leader_gap_ret": 47.0055
+}

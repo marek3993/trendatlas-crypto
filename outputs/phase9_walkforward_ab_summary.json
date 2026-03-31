@@ -1,0 +1,17 @@
+{
+  "windows": 11,
+  "base_chosen": 3,
+  "rs_chosen": 8,
+  "median_test_sharpe": 0.801,
+  "median_test_sortino": 0.923,
+  "median_test_cagr_pct": 25.79,
+  "median_test_return_pct": 17.81,
+  "worst_test_dd_pct": -28.56,
+  "positive_window_ratio": 0.636,
+  "oos_total_return_pct": 932.43,
+  "oos_cagr_pct": 34.6,
+  "oos_max_drawdown_pct": -36.29,
+  "oos_sharpe": 1.121,
+  "oos_sortino": 1.046,
+  "oos_trade_count": 124
+}

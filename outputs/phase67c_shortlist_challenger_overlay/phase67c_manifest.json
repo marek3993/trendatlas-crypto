@@ -1,0 +1,50 @@
+{
+  "phase": "phase67c_shortlist_challenger_overlay",
+  "phase63_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "core_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "shortlist_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67b_top100_forensic_prune_and_rerun\\phase67b_asset_shortlist.csv",
+  "profiles": [
+    {
+      "profile_name": "phase67c_shortlist_challenger_base",
+      "score_lb": 30,
+      "fast_ma": 20,
+      "slow_ma": 100,
+      "min_score": 0.12,
+      "edge_vs_core": 0.03,
+      "risk_ma": 150,
+      "risk_buffer": -0.03,
+      "vol_lb": 30,
+      "vol_cap": 0.045,
+      "rel_recent_lb": 30,
+      "rel_recent_min_edge": 0.0,
+      "cooldown_days": 3
+    },
+    {
+      "profile_name": "phase67c_shortlist_challenger_strict",
+      "score_lb": 30,
+      "fast_ma": 20,
+      "slow_ma": 100,
+      "min_score": 0.16,
+      "edge_vs_core": 0.06,
+      "risk_ma": 150,
+      "risk_buffer": -0.03,
+      "vol_lb": 20,
+      "vol_cap": 0.035,
+      "rel_recent_lb": 30,
+      "rel_recent_min_edge": 0.03,
+      "cooldown_days": 3
+    }
+  ],
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67c_shortlist_challenger_overlay\\phase67c_shortlist_challenger_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67c_shortlist_challenger_overlay\\phase67c_shortlist_challenger_compare.csv",
+  "decisions_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67c_shortlist_challenger_overlay\\phase67c_shortlist_challenger_decisions.csv",
+  "asset_quality_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67c_shortlist_challenger_overlay\\phase67c_shortlist_challenger_asset_quality.csv",
+  "live_status_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67c_shortlist_challenger_overlay\\phase67c_live_status.csv",
+  "latest_rows_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67c_shortlist_challenger_overlay\\phase67c_latest_rows.csv",
+  "best_model": "phase67c_shortlist_challenger_base",
+  "notes": [
+    "66G narrow core ost\u00e1va baseline.",
+    "Phase67B shortlist assety s\u00fa len challenger layer.",
+    "Cie\u013e: zachova\u0165 kvalitu 66G a prida\u0165 edge z broad scan shortlistu len ke\u010f si ho zasl\u00fa\u017ei."
+  ]
+}

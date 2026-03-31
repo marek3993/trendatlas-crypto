@@ -1,0 +1,2 @@
+candidate_id,run_dir,decision,reason_codes,artifacts_complete,summary_paper_consistent,compare_complete,manifest_artifact_index_consistent,lag1_sensitivity_ok,benchmark_sanity_ok,suspicious_uplift_flag,suspicious_uplift_hard_fail,synthetic_harness,executed_at
+phase70_golden_path_harness,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260330_111240_phase70_golden_path_harness,precheck_passed,warning_suspicious_uplift_flag,1,1,1,1,1,1,1,0,1,2026-03-30 13:04:26 UTC

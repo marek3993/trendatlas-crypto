@@ -1,0 +1,30 @@
+{
+  "phase": "phase65_exact_universe_add_doge",
+  "baseline_model": "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+  "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "doge_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOGEUSDT_1d.csv",
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase65_exact_universe_add_doge\\phase65_exact_universe_add_doge_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase65_exact_universe_add_doge\\phase65_exact_universe_add_doge_compare.csv",
+  "top_saved_models": [
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+    "phase65_doge_exact_lb20_f20_s100_m12_e03_rm150_rb-03_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s100_m12_e03_rm150_rb+00_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s100_m12_e03_rm200_rb-03_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s100_m12_e03_rm200_rb+00_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s100_m12_e06_rm150_rb-03_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s100_m12_e06_rm150_rb+00_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s100_m12_e06_rm200_rb-03_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s100_m12_e06_rm200_rb+00_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s150_m12_e03_rm150_rb-03_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s150_m12_e03_rm150_rb+00_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s150_m12_e03_rm200_rb-03_v30_060_cd3",
+    "phase65_doge_exact_lb20_f20_s150_m12_e03_rm200_rb+00_v30_060_cd3"
+  ],
+  "variant_count_total": 3459,
+  "notes": [
+    "DOGE tu s\u00fa\u0165a\u017e\u00ed proti BASE d\u0148om ako plnohodnotn\u00fd challenger.",
+    "Nie je to weak-base rescue override z predch\u00e1dzaj\u00facich phase.",
+    "Nie je to 100% native rerun p\u00f4vodn\u00e9ho cel\u00e9ho ranking enginu, ale je to najbli\u017e\u0161\u00ed exact challenger test nad current winner paperom.",
+    "Exek\u00facia ost\u00e1va signal_t -> execute_t_plus_1."
+  ]
+}

@@ -1,0 +1,4 @@
+top_n,robust_score,median_fold_sharpe,median_fold_sortino,median_fold_cagr_pct,median_fold_return_pct,worst_fold_dd_pct,positive_fold_ratio,full_total_return_pct,full_cagr_pct,full_max_drawdown_pct,full_sharpe,full_sortino,full_trade_count,avg_selected
+1,65.756,1.119,1.127,48.4,347.75,-51.38,1.0,3638.71,37.4,-51.38,1.013,0.991,107,0.38
+3,45.824,1.054,1.096,33.47,199.72,-50.3,1.0,1972.94,30.47,-50.3,0.934,0.856,139,0.76
+2,40.573,0.978,1.025,30.5,175.08,-51.49,1.0,1942.62,30.3,-51.49,0.922,0.841,139,0.63

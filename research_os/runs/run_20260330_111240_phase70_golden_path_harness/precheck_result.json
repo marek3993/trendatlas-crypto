@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260330_111240_phase70_golden_path_harness",
+  "candidate_id": "phase70_golden_path_harness",
+  "executed_at": "2026-03-30 13:04:26 UTC",
+  "decision": "precheck_passed",
+  "reason_codes": [
+    "warning_suspicious_uplift_flag"
+  ],
+  "checks": {
+    "artifacts_complete": {
+      "ok": true,
+      "missing_required_artifacts": []
+    },
+    "summary_paper_consistent": {
+      "ok": true,
+      "details": {
+        "summary_metrics": {
+          "score": 1.25,
+          "total_return_pct": 1.25,
+          "cagr_pct": 12.5,
+          "max_drawdown_pct": -3.2,
+          "since2025_cagr_pct": 10.1
+        },
+        "paper_metrics": {
+          "row_count": 3.0,
+          "final_equity": 1.026216576,
+          "total_return_pct": 1.4047999999999838,
+          "avg_daily_ret_pct": 0.8666666666666668,
+          "worst_day_pct": 0.6
+        },
+        "problems": []
+      }
+    },
+    "compare_complete": {
+      "ok": true,
+      "problems": []
+    },
+    "manifest_artifact_index_consistent": {
+      "ok": true,
+      "problems": []
+    },
+    "lag1_sensitivity_ok": {
+      "ok": true,
+      "details": {
+        "available": true,
+        "same_day_total_return_pct": 2.621657600000016,
+        "lag1_total_return_pct": 2.0096000000000114,
+        "delta_pct_pts": 0.6120576000000044,
+        "lag1_sensitivity_ok": true
+      }
+    },
+    "benchmark_sanity_ok": {
+      "ok": true,
+      "details": {
+        "benchmark_sanity_ok": true,
+        "summary_score": 1.25,
+        "compare_score": 1.25,
+        "delta_vs_baseline_pct": 1.75
+      }
+    },
+    "suspicious_uplift_flag": {
+      "value": true,
+      "details": {
+        "suspicious_uplift_flag": true,
+        "reason": "paper_too_short_for_uplift_concentration",
+        "top3_share_pct": null
+      },
+      "hard_fail": false
+    }
+  },
+  "synthetic_harness": true,
+  "forensic_handoff_ready": true
+}

@@ -1,0 +1,21 @@
+{
+  "variant": "m0_c35_yz0p70",
+  "market_threshold": 0.0,
+  "conf_min": 35.0,
+  "yz_cap": 0.7,
+  "score": 11.481,
+  "aggr_total_return_pct": 8743.92,
+  "aggr_cagr_pct": 76.8,
+  "aggr_max_drawdown_pct": -36.64,
+  "aggr_sharpe": 1.32,
+  "aggr_sortino": 1.605,
+  "aggr_trade_count": 198,
+  "aggr_cash_days_pct": 69.45,
+  "bal_total_return_pct": 5330.98,
+  "bal_cagr_pct": 66.17,
+  "bal_max_drawdown_pct": -39.53,
+  "bal_sharpe": 1.244,
+  "bal_sortino": 1.681,
+  "bal_trade_count": 408,
+  "bal_cash_days_pct": 69.45
+}
