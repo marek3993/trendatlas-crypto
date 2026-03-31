@@ -47,7 +47,6 @@ DEFAULT_SELECTOR = {
             "en": "Reference strategy",
         },
     },
-    
     "model_sources": {
         "phase67j_no_neo_main": {
             "summary_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_final_narrow_validation_summary.csv",
@@ -60,7 +59,6 @@ DEFAULT_SELECTOR = {
             "live_status_path": "outputs/phase66g_production_candidate_live/phase66g_live_status.csv",
         },
     },
-
     "trend_barometer_source": {
         "live_status_path": "outputs/phase66g_production_candidate_live/phase66g_live_status.csv",
         "history_path": "outputs/phase66g_production_candidate_live/phase66g_trend_barometer_history.csv",
