@@ -1,0 +1,128 @@
+{
+  "policy_version": "research_os_autonomous_loop_policy_v1",
+  "macro_frozen_mode": true,
+  "mode": "execute",
+  "max_cycles": 2,
+  "max_hypotheses_per_cycle": 4,
+  "branch_filter": null,
+  "truth_pack_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\single_truth\\truth_pack.json",
+  "registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\leaderboards\\research_os_registry.csv",
+  "pipeline_runner_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_orchestrator_v1.py",
+  "pipeline_runner_spec_arg": "--spec",
+  "pipeline_runner_extra_args": [
+    "--allow-status",
+    "spec_ready"
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "mode": "execute",
+      "ideation_returncode": 0,
+      "spec_generation_returncode": 0,
+      "spec_count": 4,
+      "candidate_runs": [
+        {
+          "cycle": 1,
+          "spec_id": "spec_d82eab035b8b",
+          "branch": "core",
+          "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_d82eab035b8b.json",
+          "pipeline_status": "failed",
+          "pipeline_returncode": 1,
+          "new_worthy_candidates": "",
+          "macro_frozen_mode": true,
+          "mode": "execute"
+        },
+        {
+          "cycle": 1,
+          "spec_id": "spec_023cd97f5d69",
+          "branch": "core",
+          "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_023cd97f5d69.json",
+          "pipeline_status": "failed",
+          "pipeline_returncode": 1,
+          "new_worthy_candidates": "",
+          "macro_frozen_mode": true,
+          "mode": "execute"
+        },
+        {
+          "cycle": 1,
+          "spec_id": "spec_cf05799b384d",
+          "branch": "universe",
+          "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_cf05799b384d.json",
+          "pipeline_status": "failed",
+          "pipeline_returncode": 1,
+          "new_worthy_candidates": "",
+          "macro_frozen_mode": true,
+          "mode": "execute"
+        },
+        {
+          "cycle": 1,
+          "spec_id": "spec_6f5e5594d70e",
+          "branch": "universe",
+          "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_6f5e5594d70e.json",
+          "pipeline_status": "failed",
+          "pipeline_returncode": 1,
+          "new_worthy_candidates": "",
+          "macro_frozen_mode": true,
+          "mode": "execute"
+        }
+      ],
+      "staged_governance_candidates": []
+    },
+    {
+      "cycle": 2,
+      "mode": "execute",
+      "ideation_returncode": 0,
+      "spec_generation_returncode": 0,
+      "spec_count": 4,
+      "candidate_runs": [
+        {
+          "cycle": 2,
+          "spec_id": "spec_d82eab035b8b",
+          "branch": "core",
+          "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_d82eab035b8b.json",
+          "pipeline_status": "failed",
+          "pipeline_returncode": 1,
+          "new_worthy_candidates": "",
+          "macro_frozen_mode": true,
+          "mode": "execute"
+        },
+        {
+          "cycle": 2,
+          "spec_id": "spec_023cd97f5d69",
+          "branch": "core",
+          "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_023cd97f5d69.json",
+          "pipeline_status": "failed",
+          "pipeline_returncode": 1,
+          "new_worthy_candidates": "",
+          "macro_frozen_mode": true,
+          "mode": "execute"
+        },
+        {
+          "cycle": 2,
+          "spec_id": "spec_cf05799b384d",
+          "branch": "universe",
+          "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_cf05799b384d.json",
+          "pipeline_status": "failed",
+          "pipeline_returncode": 1,
+          "new_worthy_candidates": "",
+          "macro_frozen_mode": true,
+          "mode": "execute"
+        },
+        {
+          "cycle": 2,
+          "spec_id": "spec_6f5e5594d70e",
+          "branch": "universe",
+          "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_6f5e5594d70e.json",
+          "pipeline_status": "failed",
+          "pipeline_returncode": 1,
+          "new_worthy_candidates": "",
+          "macro_frozen_mode": true,
+          "mode": "execute"
+        }
+      ],
+      "staged_governance_candidates": []
+    }
+  ],
+  "started_at_utc": "2026-04-01T13:51:24+00:00",
+  "finished_at_utc": "2026-04-01T13:51:26+00:00"
+}

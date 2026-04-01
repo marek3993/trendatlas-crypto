@@ -1,0 +1,299 @@
+{
+  "policy_versions": {
+    "ideation_policy_version": "1.0",
+    "mutation_space_policy_version": "1.0"
+  },
+  "generated_at": "2026-03-31T19:18:25+00:00",
+  "selected_branch_filter": null,
+  "max_hypotheses": 8,
+  "hypotheses": [
+    {
+      "hypothesis_id": "hyp_2c1d702bcf0a",
+      "generated_at": "2026-03-31T19:18:25+00:00",
+      "status": "proposed",
+      "branch": "core",
+      "segment_owner": "core_strategy",
+      "hypothesis_label": "core_ranking_weight_tuning_phase70_golden_path_harness",
+      "rationale": "Controlled mutation from baseline phase70_golden_path_harness in branch core; focus on ranking_weight_tuning because current validated context suggests this is a bounded next-step search direction.",
+      "expected_improvement_direction": "increase_robustness",
+      "baseline_reference": {
+        "model_key": "phase66g_production_soft_filters",
+        "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "candidate_reference": "phase70_golden_path_harness"
+      },
+      "mutation_family": "ranking_weight_tuning",
+      "mutation_template": "Refine relative weighting inside existing ranking logic to improve robustness against weak recent leadership.",
+      "family_hint": "core_ranking_weight_tuning",
+      "risk_flags": {
+        "instability_risk": "medium",
+        "complexity_risk": "medium",
+        "duplicate_risk": "low",
+        "saturation_risk": "low"
+      },
+      "duplicate_suspicion": false,
+      "near_duplicate_suspicion": false,
+      "near_duplicate_score": 0.25,
+      "near_duplicate_match": "phase70_golden_path_harness | promote_to_precheck | warning_suspicious_instability promotion_recommendation:promote_to_precheck",
+      "branch_saturation_state": "clear",
+      "blocked": false,
+      "decision_reason_codes": [
+        "valid_controlled_hypothesis"
+      ],
+      "current_validated_winners": [
+        "phase70_golden_path_harness"
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_08503ffabd8f",
+      "generated_at": "2026-03-31T19:18:25+00:00",
+      "status": "proposed",
+      "branch": "core",
+      "segment_owner": "core_strategy",
+      "hypothesis_label": "core_cooldown_tuning_phase70_golden_path_harness",
+      "rationale": "Controlled mutation from baseline phase70_golden_path_harness in branch core; focus on cooldown_tuning because current validated context suggests this is a bounded next-step search direction.",
+      "expected_improvement_direction": "reduce_switches",
+      "baseline_reference": {
+        "model_key": "phase66g_production_soft_filters",
+        "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "candidate_reference": "phase70_golden_path_harness"
+      },
+      "mutation_family": "cooldown_tuning",
+      "mutation_template": "Adjust cooldown or hold discipline around existing switching logic to reduce noise and unnecessary churn.",
+      "family_hint": "core_cooldown_tuning",
+      "risk_flags": {
+        "instability_risk": "medium",
+        "complexity_risk": "low",
+        "duplicate_risk": "low",
+        "saturation_risk": "low"
+      },
+      "duplicate_suspicion": false,
+      "near_duplicate_suspicion": false,
+      "near_duplicate_score": 0.2667,
+      "near_duplicate_match": "phase70_golden_path_harness | promote_to_precheck | warning_suspicious_instability promotion_recommendation:promote_to_precheck",
+      "branch_saturation_state": "clear",
+      "blocked": false,
+      "decision_reason_codes": [
+        "valid_controlled_hypothesis"
+      ],
+      "current_validated_winners": [
+        "phase70_golden_path_harness"
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_00e01effb244",
+      "generated_at": "2026-03-31T19:18:25+00:00",
+      "status": "proposed",
+      "branch": "core",
+      "segment_owner": "core_strategy",
+      "hypothesis_label": "core_threshold_tuning_phase70_golden_path_harness",
+      "rationale": "Controlled mutation from baseline phase70_golden_path_harness in branch core; focus on threshold_tuning because current validated context suggests this is a bounded next-step search direction.",
+      "expected_improvement_direction": "improve_recent_performance",
+      "baseline_reference": {
+        "model_key": "phase66g_production_soft_filters",
+        "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "candidate_reference": "phase70_golden_path_harness"
+      },
+      "mutation_family": "threshold_tuning",
+      "mutation_template": "Adjust guarded thresholds around existing baseline controls to improve recent performance without increasing instability.",
+      "family_hint": "core_threshold_tuning",
+      "risk_flags": {
+        "instability_risk": "medium",
+        "complexity_risk": "low",
+        "duplicate_risk": "low",
+        "saturation_risk": "low"
+      },
+      "duplicate_suspicion": false,
+      "near_duplicate_suspicion": false,
+      "near_duplicate_score": 0.2778,
+      "near_duplicate_match": "phase70_golden_path_harness | research_os_harness | score_above_threshold:1.25 | forensic_ready | promote_to_precheck",
+      "branch_saturation_state": "clear",
+      "blocked": false,
+      "decision_reason_codes": [
+        "valid_controlled_hypothesis"
+      ],
+      "current_validated_winners": [
+        "phase70_golden_path_harness"
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_3d3ee43e4591",
+      "generated_at": "2026-03-31T19:18:25+00:00",
+      "status": "proposed",
+      "branch": "governance",
+      "segment_owner": "ai_lab",
+      "hypothesis_label": "governance_probation_rule_tuning_phase66g_production_soft_filters",
+      "rationale": "Controlled mutation from baseline phase66g_production_soft_filters in branch governance; focus on probation_rule_tuning because current validated context suggests this is a bounded next-step search direction.",
+      "expected_improvement_direction": "improve_governance_stability",
+      "baseline_reference": {
+        "model_key": "phase66g_production_soft_filters",
+        "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "candidate_reference": "phase66g_production_soft_filters"
+      },
+      "mutation_family": "probation_rule_tuning",
+      "mutation_template": "Adjust probation and ban discipline to better block weak challengers while preserving valid leaders.",
+      "family_hint": "governance_probation_rule_tuning",
+      "risk_flags": {
+        "instability_risk": "medium",
+        "complexity_risk": "low",
+        "duplicate_risk": "low",
+        "saturation_risk": "low"
+      },
+      "duplicate_suspicion": false,
+      "near_duplicate_suspicion": false,
+      "near_duplicate_score": 0.0,
+      "near_duplicate_match": "",
+      "branch_saturation_state": "clear",
+      "blocked": false,
+      "decision_reason_codes": [
+        "valid_controlled_hypothesis"
+      ],
+      "current_validated_winners": [
+        "phase70_golden_path_harness"
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_16a351869e5a",
+      "generated_at": "2026-03-31T19:18:25+00:00",
+      "status": "proposed",
+      "branch": "governance",
+      "segment_owner": "ai_lab",
+      "hypothesis_label": "governance_promotion_gate_tuning_phase66g_production_soft_filters",
+      "rationale": "Controlled mutation from baseline phase66g_production_soft_filters in branch governance; focus on promotion_gate_tuning because current validated context suggests this is a bounded next-step search direction.",
+      "expected_improvement_direction": "increase_robustness",
+      "baseline_reference": {
+        "model_key": "phase66g_production_soft_filters",
+        "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "candidate_reference": "phase66g_production_soft_filters"
+      },
+      "mutation_family": "promotion_gate_tuning",
+      "mutation_template": "Refine promotion thresholds or persistence requirements to reduce weak admissions into later stages.",
+      "family_hint": "governance_promotion_gate_tuning",
+      "risk_flags": {
+        "instability_risk": "medium",
+        "complexity_risk": "low",
+        "duplicate_risk": "low",
+        "saturation_risk": "low"
+      },
+      "duplicate_suspicion": false,
+      "near_duplicate_suspicion": false,
+      "near_duplicate_score": 0.0526,
+      "near_duplicate_match": "phase70_golden_path_harness | promote_to_precheck | warning_suspicious_instability promotion_recommendation:promote_to_precheck",
+      "branch_saturation_state": "clear",
+      "blocked": false,
+      "decision_reason_codes": [
+        "valid_controlled_hypothesis"
+      ],
+      "current_validated_winners": [
+        "phase70_golden_path_harness"
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_051050e0b596",
+      "generated_at": "2026-03-31T19:18:25+00:00",
+      "status": "proposed",
+      "branch": "universe",
+      "segment_owner": "ai_lab",
+      "hypothesis_label": "universe_asset_family_pruning_phase66g_production_soft_filters",
+      "rationale": "Controlled mutation from baseline phase66g_production_soft_filters in branch universe; focus on asset_family_pruning because current validated context suggests this is a bounded next-step search direction.",
+      "expected_improvement_direction": "reduce_drawdown",
+      "baseline_reference": {
+        "model_key": "phase66g_production_soft_filters",
+        "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "candidate_reference": "phase66g_production_soft_filters"
+      },
+      "mutation_family": "asset_family_pruning",
+      "mutation_template": "Prune weak or suspicious asset families from the current shortlist to reduce drawdown and governance noise.",
+      "family_hint": "universe_asset_family_pruning",
+      "risk_flags": {
+        "instability_risk": "low",
+        "complexity_risk": "low",
+        "duplicate_risk": "low",
+        "saturation_risk": "low"
+      },
+      "duplicate_suspicion": false,
+      "near_duplicate_suspicion": false,
+      "near_duplicate_score": 0.0,
+      "near_duplicate_match": "",
+      "branch_saturation_state": "clear",
+      "blocked": false,
+      "decision_reason_codes": [
+        "valid_controlled_hypothesis"
+      ],
+      "current_validated_winners": [
+        "phase70_golden_path_harness"
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_a66d46a917b2",
+      "generated_at": "2026-03-31T19:18:25+00:00",
+      "status": "proposed",
+      "branch": "universe",
+      "segment_owner": "ai_lab",
+      "hypothesis_label": "universe_eligibility_filter_tuning_phase66g_production_soft_filters",
+      "rationale": "Controlled mutation from baseline phase66g_production_soft_filters in branch universe; focus on eligibility_filter_tuning because current validated context suggests this is a bounded next-step search direction.",
+      "expected_improvement_direction": "increase_robustness",
+      "baseline_reference": {
+        "model_key": "phase66g_production_soft_filters",
+        "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "candidate_reference": "phase66g_production_soft_filters"
+      },
+      "mutation_family": "eligibility_filter_tuning",
+      "mutation_template": "Tighten or relax eligibility filters for currently admitted assets to improve selection quality.",
+      "family_hint": "universe_eligibility_filter_tuning",
+      "risk_flags": {
+        "instability_risk": "low",
+        "complexity_risk": "low",
+        "duplicate_risk": "low",
+        "saturation_risk": "low"
+      },
+      "duplicate_suspicion": false,
+      "near_duplicate_suspicion": false,
+      "near_duplicate_score": 0.0,
+      "near_duplicate_match": "",
+      "branch_saturation_state": "clear",
+      "blocked": false,
+      "decision_reason_codes": [
+        "valid_controlled_hypothesis"
+      ],
+      "current_validated_winners": [
+        "phase70_golden_path_harness"
+      ]
+    },
+    {
+      "hypothesis_id": "hyp_03d44f4072c2",
+      "generated_at": "2026-03-31T19:18:25+00:00",
+      "status": "proposed",
+      "branch": "meta_research",
+      "segment_owner": "ai_lab",
+      "hypothesis_label": "meta_research_scoring_weight_tuning_phase66g_production_soft_filters",
+      "rationale": "Controlled mutation from baseline phase66g_production_soft_filters in branch meta_research; focus on scoring_weight_tuning because current validated context suggests this is a bounded next-step search direction.",
+      "expected_improvement_direction": "improve_research_quality",
+      "baseline_reference": {
+        "model_key": "phase66g_production_soft_filters",
+        "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "candidate_reference": "phase66g_production_soft_filters"
+      },
+      "mutation_family": "scoring_weight_tuning",
+      "mutation_template": "Adjust scoring weights or penalties to better separate strong candidates from synthetic or unstable variants.",
+      "family_hint": "meta_research_scoring_weight_tuning",
+      "risk_flags": {
+        "instability_risk": "low",
+        "complexity_risk": "medium",
+        "duplicate_risk": "low",
+        "saturation_risk": "low"
+      },
+      "duplicate_suspicion": false,
+      "near_duplicate_suspicion": false,
+      "near_duplicate_score": 0.0417,
+      "near_duplicate_match": "phase70_golden_path_harness | research_os_harness | score_above_threshold:1.25 | forensic_ready | promote_to_precheck",
+      "branch_saturation_state": "clear",
+      "blocked": false,
+      "decision_reason_codes": [
+        "valid_controlled_hypothesis"
+      ],
+      "current_validated_winners": [
+        "phase70_golden_path_harness"
+      ]
+    }
+  ]
+}

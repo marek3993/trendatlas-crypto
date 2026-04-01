@@ -357,7 +357,9 @@ phase67j_no_neo_main,2026-02-14,2026-02-15,2026-02-20,,0,CASH,False,,False,best_
 phase67j_no_neo_main,2026-02-21,2026-02-22,2026-02-27,,0,CASH,False,,False,best_passed,,,2.0,NEO
 phase67j_no_neo_main,2026-02-28,2026-03-01,2026-03-06,,0,CASH,False,,False,best_passed,,,2.0,NEO
 phase67j_no_neo_main,2026-03-07,2026-03-08,2026-03-13,,0,CASH,False,,False,best_passed,,,2.0,NEO
-phase67j_no_neo_main,2026-03-14,2026-03-15,2026-03-16,,0,CASH,False,,False,best_passed,,,2.0,NEO
+phase67j_no_neo_main,2026-03-14,2026-03-15,2026-03-20,,0,CASH,False,,False,best_passed,,,2.0,NEO
+phase67j_no_neo_main,2026-03-21,2026-03-22,2026-03-27,,0,CASH,False,,False,best_passed,,,2.0,NEO
+phase67j_no_neo_main,2026-03-28,2026-03-29,2026-03-30,,0,CASH,False,,False,best_passed,,,2.0,NEO
 phase67j_no_neo_drop_bch,2019-05-04,2019-05-05,2019-05-10,,0,BTC,False,,False,best_passed,,,2.0,"NEO,BCH"
 phase67j_no_neo_drop_bch,2019-05-11,2019-05-12,2019-05-17,,0,0.0601288053556083,False,,False,best_passed,,,2.0,"NEO,BCH"
 phase67j_no_neo_drop_bch,2019-05-18,2019-05-19,2019-05-24,,0,0.0,False,,False,best_passed,,,2.0,"NEO,BCH"
@@ -716,7 +718,9 @@ phase67j_no_neo_drop_bch,2026-02-14,2026-02-15,2026-02-20,,0,CASH,False,,False,b
 phase67j_no_neo_drop_bch,2026-02-21,2026-02-22,2026-02-27,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH"
 phase67j_no_neo_drop_bch,2026-02-28,2026-03-01,2026-03-06,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH"
 phase67j_no_neo_drop_bch,2026-03-07,2026-03-08,2026-03-13,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH"
-phase67j_no_neo_drop_bch,2026-03-14,2026-03-15,2026-03-16,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH"
+phase67j_no_neo_drop_bch,2026-03-14,2026-03-15,2026-03-20,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH"
+phase67j_no_neo_drop_bch,2026-03-21,2026-03-22,2026-03-27,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH"
+phase67j_no_neo_drop_bch,2026-03-28,2026-03-29,2026-03-30,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH"
 phase67j_no_neo_drop_xtz,2019-05-04,2019-05-05,2019-05-10,,0,BTC,False,,False,best_passed,,,2.0,"NEO,XTZ"
 phase67j_no_neo_drop_xtz,2019-05-11,2019-05-12,2019-05-17,,0,0.0601288053556083,False,,False,best_passed,,,2.0,"NEO,XTZ"
 phase67j_no_neo_drop_xtz,2019-05-18,2019-05-19,2019-05-24,,0,0.0,False,,False,best_passed,,,2.0,"NEO,XTZ"
@@ -1075,7 +1079,9 @@ phase67j_no_neo_drop_xtz,2026-02-14,2026-02-15,2026-02-20,,0,CASH,False,,False,b
 phase67j_no_neo_drop_xtz,2026-02-21,2026-02-22,2026-02-27,,0,CASH,False,,False,best_passed,,,2.0,"NEO,XTZ"
 phase67j_no_neo_drop_xtz,2026-02-28,2026-03-01,2026-03-06,,0,CASH,False,,False,best_passed,,,2.0,"NEO,XTZ"
 phase67j_no_neo_drop_xtz,2026-03-07,2026-03-08,2026-03-13,,0,CASH,False,,False,best_passed,,,2.0,"NEO,XTZ"
-phase67j_no_neo_drop_xtz,2026-03-14,2026-03-15,2026-03-16,,0,CASH,False,,False,best_passed,,,2.0,"NEO,XTZ"
+phase67j_no_neo_drop_xtz,2026-03-14,2026-03-15,2026-03-20,,0,CASH,False,,False,best_passed,,,2.0,"NEO,XTZ"
+phase67j_no_neo_drop_xtz,2026-03-21,2026-03-22,2026-03-27,,0,CASH,False,,False,best_passed,,,2.0,"NEO,XTZ"
+phase67j_no_neo_drop_xtz,2026-03-28,2026-03-29,2026-03-30,,0,CASH,False,,False,best_passed,,,2.0,"NEO,XTZ"
 phase67j_no_neo_drop_bch_xtz,2019-05-04,2019-05-05,2019-05-10,,0,BTC,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
 phase67j_no_neo_drop_bch_xtz,2019-05-11,2019-05-12,2019-05-17,,0,0.0601288053556083,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
 phase67j_no_neo_drop_bch_xtz,2019-05-18,2019-05-19,2019-05-24,,0,0.0,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
@@ -1434,4 +1440,6 @@ phase67j_no_neo_drop_bch_xtz,2026-02-14,2026-02-15,2026-02-20,,0,CASH,False,,Fal
 phase67j_no_neo_drop_bch_xtz,2026-02-21,2026-02-22,2026-02-27,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
 phase67j_no_neo_drop_bch_xtz,2026-02-28,2026-03-01,2026-03-06,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
 phase67j_no_neo_drop_bch_xtz,2026-03-07,2026-03-08,2026-03-13,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
-phase67j_no_neo_drop_bch_xtz,2026-03-14,2026-03-15,2026-03-16,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
+phase67j_no_neo_drop_bch_xtz,2026-03-14,2026-03-15,2026-03-20,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
+phase67j_no_neo_drop_bch_xtz,2026-03-21,2026-03-22,2026-03-27,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"
+phase67j_no_neo_drop_bch_xtz,2026-03-28,2026-03-29,2026-03-30,,0,CASH,False,,False,best_passed,,,2.0,"NEO,BCH,XTZ"

@@ -1,0 +1,76 @@
+{
+  "policy_version": "research_os_ideation_policy_v1",
+  "macro_frozen_mode": true,
+  "output_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_ideation_v1",
+  "allowed_branches": [
+    "core",
+    "universe",
+    "governance",
+    "meta_research"
+  ],
+  "max_hypotheses_default": 8,
+  "max_hypotheses_per_branch": {
+    "core": 3,
+    "universe": 2,
+    "governance": 2,
+    "meta_research": 1
+  },
+  "segment_owner_by_branch": {
+    "core": "MRV1 CORE STRATEGY",
+    "universe": "MRV1 UNIVERSE / CHALLENGER",
+    "governance": "MRV1 FORENSIC / VALIDATION",
+    "meta_research": "MRV1 AI LAB"
+  },
+  "baseline_reference_by_branch": {
+    "core": "official_baseline",
+    "universe": "phase67j_no_neo_main",
+    "governance": "phase66g_production_soft_filters",
+    "meta_research": "research_os_validated_stack_v1"
+  },
+  "required_inputs": {
+    "truth_pack_candidates": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\single_truth\\truth_pack.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_exact_setup_v1\\research_os_truth_pack_v1.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_exact_setup\\research_os_truth_pack_v1.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_contract_pack_v1\\research_os_truth_pack_v1.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_contract_pack\\research_os_truth_pack_v1.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os_truth_pack_v1.json"
+    ],
+    "registry_csv_candidates": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_lineage_v1\\research_os_registry.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_lineage_v1\\registry.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_v1\\research_os_registry.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_v1\\registry.csv"
+    ],
+    "lineage_summary_csv_candidates": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_lineage_v1\\research_os_lineage_summary.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_lineage_v1\\lineage_summary.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_v1\\research_os_lineage_summary.csv"
+    ],
+    "scoring_history_candidates": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_scoring_v1\\research_os_scoring_history.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_scoring_v1\\scoring_history.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_scoring_hardening_v1\\research_os_scoring_history.csv"
+    ],
+    "selection_history_candidates": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_selection_v1\\research_os_selection_history.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_selection_v1\\selection_history.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_batch_selection_v1\\research_os_selection_history.csv"
+    ]
+  },
+  "saturation_rules": {
+    "minimum_recent_records_for_warning": 5,
+    "recent_window_records": 12,
+    "max_positive_delta_threshold_pct": 0.0,
+    "action": "warning"
+  },
+  "duplicate_rules": {
+    "normalize_case": true,
+    "near_duplicate_token_overlap_min": 0.8
+  },
+  "output_files": {
+    "hypotheses_json": "ideation_hypotheses.json",
+    "summary_csv": "ideation_summary.csv",
+    "decision_log_jsonl": "ideation_decision_log.jsonl"
+  }
+}

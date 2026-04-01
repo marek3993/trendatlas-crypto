@@ -1,0 +1,9 @@
+cycle,spec_id,branch,spec_file,pipeline_status,pipeline_returncode,new_worthy_candidates,macro_frozen_mode,mode
+1,spec_d82eab035b8b,core,C:\Users\benda\Desktop\market_regime_v1\outputs\research_os_spec_generation_v1\generated_experiment_specs\spec_d82eab035b8b.json,failed,1,,True,execute
+1,spec_023cd97f5d69,core,C:\Users\benda\Desktop\market_regime_v1\outputs\research_os_spec_generation_v1\generated_experiment_specs\spec_023cd97f5d69.json,failed,1,,True,execute
+1,spec_cf05799b384d,universe,C:\Users\benda\Desktop\market_regime_v1\outputs\research_os_spec_generation_v1\generated_experiment_specs\spec_cf05799b384d.json,failed,1,,True,execute
+1,spec_6f5e5594d70e,universe,C:\Users\benda\Desktop\market_regime_v1\outputs\research_os_spec_generation_v1\generated_experiment_specs\spec_6f5e5594d70e.json,failed,1,,True,execute
+2,spec_d82eab035b8b,core,C:\Users\benda\Desktop\market_regime_v1\outputs\research_os_spec_generation_v1\generated_experiment_specs\spec_d82eab035b8b.json,failed,1,,True,execute
+2,spec_023cd97f5d69,core,C:\Users\benda\Desktop\market_regime_v1\outputs\research_os_spec_generation_v1\generated_experiment_specs\spec_023cd97f5d69.json,failed,1,,True,execute
+2,spec_cf05799b384d,universe,C:\Users\benda\Desktop\market_regime_v1\outputs\research_os_spec_generation_v1\generated_experiment_specs\spec_cf05799b384d.json,failed,1,,True,execute
+2,spec_6f5e5594d70e,universe,C:\Users\benda\Desktop\market_regime_v1\outputs\research_os_spec_generation_v1\generated_experiment_specs\spec_6f5e5594d70e.json,failed,1,,True,execute

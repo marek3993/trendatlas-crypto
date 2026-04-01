@@ -1,0 +1,67 @@
+{
+  "policy_version": "1.0",
+  "description": "Deterministic controlled ideation policy for Research OS.",
+  "allowed_branches": [
+    "core",
+    "universe",
+    "governance",
+    "meta_research"
+  ],
+  "default_segment_owner_by_branch": {
+    "core": "core_strategy",
+    "universe": "ai_lab",
+    "governance": "ai_lab",
+    "meta_research": "ai_lab"
+  },
+  "required_fields": [
+    "hypothesis_id",
+    "branch",
+    "segment_owner",
+    "hypothesis_label",
+    "rationale",
+    "expected_improvement_direction",
+    "baseline_reference",
+    "mutation_family",
+    "risk_flags",
+    "duplicate_suspicion",
+    "near_duplicate_suspicion",
+    "branch_saturation_state"
+  ],
+  "baseline_reference_rules": {
+    "require_truth_pack_reference": true,
+    "require_official_baseline_model_key": true
+  },
+  "duplicate_rules": {
+    "block_exact_duplicates": true,
+    "near_duplicate_similarity_threshold": 0.72,
+    "label_near_duplicates": true
+  },
+  "branch_saturation_rules": {
+    "warn_threshold": 3,
+    "block_threshold": 5,
+    "window_latest_hypotheses": 20
+  },
+  "risk_flag_rules": {
+    "required_flag_categories": [
+      "instability_risk",
+      "complexity_risk",
+      "duplicate_risk",
+      "saturation_risk"
+    ]
+  },
+  "expected_improvement_direction_allowed": [
+    "increase_cagr",
+    "reduce_drawdown",
+    "reduce_switches",
+    "increase_robustness",
+    "improve_recent_performance",
+    "improve_governance_stability",
+    "improve_research_quality"
+  ],
+  "safe_outcomes": {
+    "broken_context": "fail_fast",
+    "duplicate_block": "blocked",
+    "saturated_branch_block": "blocked",
+    "valid_hypothesis": "proposed"
+  }
+}

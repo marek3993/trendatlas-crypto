@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "updated_at": "2026-03-30 08:40:41 UTC",
+  "updated_at": "2026-04-01 10:33:39 UTC",
   "schemas": {
     "experiment_spec": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\experiment_spec.schema.json",
     "candidate_lifecycle": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\candidate_lifecycle.schema.json",

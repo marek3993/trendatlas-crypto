@@ -1,0 +1,48 @@
+{
+  "experiment_id": "universe_eligibility_filter_tuning_phase66g_production_soft_filters",
+  "branch": "universe",
+  "segment_owner": "ai_lab",
+  "hypothesis_label": "universe_eligibility_filter_tuning_phase66g_production_soft_filters",
+  "experiment_family": "eligibility_filter_tuning",
+  "baseline_model": "{'model_key': 'phase66g_production_soft_filters', 'paper_path': 'C:\\\\Users\\\\benda\\\\Desktop\\\\market_regime_v1\\\\outputs\\\\phase66g_production_candidate_live\\\\phase66g_production_soft_filters_paper.csv', 'candidate_reference': 'phase66g_production_soft_filters'}",
+  "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro\\global_liquidity_weekly.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ADAUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\AVAXUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BNBUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOGEUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOTUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ETHUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LINKUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\SOLUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\TRXUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\XRPUSDT_1d.csv"
+  ],
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66g_production_candidate_live.py",
+  "script_args": [
+    "--mode",
+    "research",
+    "--baseline-model",
+    "{'model_key': 'phase66g_production_soft_filters', 'paper_path': 'C:\\\\Users\\\\benda\\\\Desktop\\\\market_regime_v1\\\\outputs\\\\phase66g_production_candidate_live\\\\phase66g_production_soft_filters_paper.csv', 'candidate_reference': 'phase66g_production_soft_filters'}",
+    "--baseline-paper",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv",
+    "--hypothesis-label",
+    "universe_eligibility_filter_tuning_phase66g_production_soft_filters"
+  ],
+  "expected_outputs": [
+    "summary.csv",
+    "paper.csv",
+    "compare_summary.csv"
+  ],
+  "scoring_profile": "research_os_scoring_policy_v1",
+  "promotion_rule": "research_os_promotion_policy_v1",
+  "invalidation_rule": "fail_on_missing_required_outputs",
+  "budget_class": "standard",
+  "priority": 70,
+  "created_by": "research_os_experiment_spec_generator_v1",
+  "created_at": "2026-04-01T13:51:25Z",
+  "status": "spec_ready"
+}

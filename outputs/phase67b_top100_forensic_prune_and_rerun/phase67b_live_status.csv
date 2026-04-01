@@ -1,2 +1,2 @@
 model,latest_available_date,current_asset,latest_decision_date,latest_period_start,latest_period_end,next_rebalance_date,latest_keep_reason,shortlist_size,current_shortlist_assets,failed_assets_count
-phase67b_top100_pruned_soft_filters,2026-03-16,BASELINE,2026-03-14,2026-03-15,2026-03-16,2026-03-21,best_passed,7,"DOGE,NEO,STX,BCH,APT,XTZ,ICP",0
+phase67b_top100_pruned_soft_filters,2026-03-30,BASELINE,2026-03-28,2026-03-29,2026-03-30,2026-04-04,best_passed,7,"DOGE,NEO,STX,BCH,APT,XTZ,ICP",0

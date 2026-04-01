@@ -1,0 +1,56 @@
+{
+  "policy_version": "research_os_autonomous_loop_policy_v1",
+  "macro_frozen_mode": true,
+  "max_cycles_default": 2,
+  "max_hypotheses_per_cycle_default": 4,
+  "output_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1",
+  "stage_status_allowlist": [
+    "forensic_ready",
+    "master_pending"
+  ],
+  "required_inputs": {
+    "truth_pack_candidates": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\single_truth\\truth_pack.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_exact_setup_v1\\research_os_truth_pack_v1.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_exact_setup\\research_os_truth_pack_v1.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_contract_pack_v1\\research_os_truth_pack_v1.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_contract_pack\\research_os_truth_pack_v1.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os_truth_pack_v1.json"
+    ],
+    "registry_csv_candidates": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_lineage_v1\\research_os_registry.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_lineage_v1\\registry.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_v1\\research_os_registry.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_registry_v1\\registry.csv"
+    ],
+    "pipeline_runner_candidates": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_pipeline_runner_v1.py",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_orchestrator_v1.py",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_queue_runner_v1.py"
+    ]
+  },
+  "script_paths": {
+    "ideation_agent": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_controlled_ideation_agent_v1.py",
+    "spec_generator": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_experiment_spec_generator_v1.py"
+  },
+  "pipeline_runner_cli_candidates": {
+    "spec_arg_names": [
+      "--spec-file",
+      "--spec-path",
+      "--spec-json",
+      "--specs-json"
+    ],
+    "dry_run_flags": [
+      "--dry-run"
+    ],
+    "execute_flags": [
+      "--execute"
+    ]
+  },
+  "output_files": {
+    "manifest_json": "autonomous_loop_run_manifest.json",
+    "summary_json": "autonomous_loop_run_summary.json",
+    "summary_csv": "autonomous_loop_run_summary.csv",
+    "log_jsonl": "autonomous_loop_log.jsonl"
+  }
+}

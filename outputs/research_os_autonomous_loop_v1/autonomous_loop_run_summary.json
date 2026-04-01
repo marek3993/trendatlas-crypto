@@ -1,0 +1,93 @@
+{
+  "rows": [
+    {
+      "cycle": 1,
+      "spec_id": "spec_d82eab035b8b",
+      "branch": "core",
+      "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_d82eab035b8b.json",
+      "pipeline_status": "failed",
+      "pipeline_returncode": 1,
+      "new_worthy_candidates": "",
+      "macro_frozen_mode": true,
+      "mode": "execute"
+    },
+    {
+      "cycle": 1,
+      "spec_id": "spec_023cd97f5d69",
+      "branch": "core",
+      "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_023cd97f5d69.json",
+      "pipeline_status": "failed",
+      "pipeline_returncode": 1,
+      "new_worthy_candidates": "",
+      "macro_frozen_mode": true,
+      "mode": "execute"
+    },
+    {
+      "cycle": 1,
+      "spec_id": "spec_cf05799b384d",
+      "branch": "universe",
+      "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_cf05799b384d.json",
+      "pipeline_status": "failed",
+      "pipeline_returncode": 1,
+      "new_worthy_candidates": "",
+      "macro_frozen_mode": true,
+      "mode": "execute"
+    },
+    {
+      "cycle": 1,
+      "spec_id": "spec_6f5e5594d70e",
+      "branch": "universe",
+      "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_6f5e5594d70e.json",
+      "pipeline_status": "failed",
+      "pipeline_returncode": 1,
+      "new_worthy_candidates": "",
+      "macro_frozen_mode": true,
+      "mode": "execute"
+    },
+    {
+      "cycle": 2,
+      "spec_id": "spec_d82eab035b8b",
+      "branch": "core",
+      "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_d82eab035b8b.json",
+      "pipeline_status": "failed",
+      "pipeline_returncode": 1,
+      "new_worthy_candidates": "",
+      "macro_frozen_mode": true,
+      "mode": "execute"
+    },
+    {
+      "cycle": 2,
+      "spec_id": "spec_023cd97f5d69",
+      "branch": "core",
+      "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_023cd97f5d69.json",
+      "pipeline_status": "failed",
+      "pipeline_returncode": 1,
+      "new_worthy_candidates": "",
+      "macro_frozen_mode": true,
+      "mode": "execute"
+    },
+    {
+      "cycle": 2,
+      "spec_id": "spec_cf05799b384d",
+      "branch": "universe",
+      "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_cf05799b384d.json",
+      "pipeline_status": "failed",
+      "pipeline_returncode": 1,
+      "new_worthy_candidates": "",
+      "macro_frozen_mode": true,
+      "mode": "execute"
+    },
+    {
+      "cycle": 2,
+      "spec_id": "spec_6f5e5594d70e",
+      "branch": "universe",
+      "spec_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1\\generated_experiment_specs\\spec_6f5e5594d70e.json",
+      "pipeline_status": "failed",
+      "pipeline_returncode": 1,
+      "new_worthy_candidates": "",
+      "macro_frozen_mode": true,
+      "mode": "execute"
+    }
+  ],
+  "macro_frozen_mode": true
+}

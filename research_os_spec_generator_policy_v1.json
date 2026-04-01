@@ -1,0 +1,22 @@
+{
+  "policy_version": "research_os_spec_generator_policy_v1",
+  "macro_frozen_mode": true,
+  "input_hypotheses_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_ideation_v1\\ideation_hypotheses.json",
+  "output_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_spec_generation_v1",
+  "spec_contract_version": "research_os_contract_pack_v1",
+  "default_scoring_profile": "official_candidate_scoring_v1",
+  "default_promotion_rule": "forensic_ready_then_master_pending_only",
+  "default_invalidation_rule": "invalidate_on_missing_expected_outputs_or_no_metrics_row",
+  "branch_owner_allowlist": {
+    "core": "MRV1 CORE STRATEGY",
+    "universe": "MRV1 UNIVERSE / CHALLENGER",
+    "governance": "MRV1 FORENSIC / VALIDATION",
+    "meta_research": "MRV1 AI LAB"
+  },
+  "output_files": {
+    "specs_json": "generated_experiment_specs.json",
+    "summary_csv": "generated_experiment_specs_summary.csv",
+    "log_jsonl": "spec_generation_log.jsonl",
+    "specs_dir": "generated_experiment_specs"
+  }
+}

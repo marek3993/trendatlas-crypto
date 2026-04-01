@@ -1,0 +1,8 @@
+{"ts": "2026-03-31T19:18:25+00:00", "hypothesis_id": "hyp_2c1d702bcf0a", "branch": "core", "mutation_family": "ranking_weight_tuning", "status": "proposed", "reason_codes": ["valid_controlled_hypothesis"]}
+{"ts": "2026-03-31T19:18:25+00:00", "hypothesis_id": "hyp_08503ffabd8f", "branch": "core", "mutation_family": "cooldown_tuning", "status": "proposed", "reason_codes": ["valid_controlled_hypothesis"]}
+{"ts": "2026-03-31T19:18:25+00:00", "hypothesis_id": "hyp_00e01effb244", "branch": "core", "mutation_family": "threshold_tuning", "status": "proposed", "reason_codes": ["valid_controlled_hypothesis"]}
+{"ts": "2026-03-31T19:18:25+00:00", "hypothesis_id": "hyp_3d3ee43e4591", "branch": "governance", "mutation_family": "probation_rule_tuning", "status": "proposed", "reason_codes": ["valid_controlled_hypothesis"]}
+{"ts": "2026-03-31T19:18:25+00:00", "hypothesis_id": "hyp_16a351869e5a", "branch": "governance", "mutation_family": "promotion_gate_tuning", "status": "proposed", "reason_codes": ["valid_controlled_hypothesis"]}
+{"ts": "2026-03-31T19:18:25+00:00", "hypothesis_id": "hyp_051050e0b596", "branch": "universe", "mutation_family": "asset_family_pruning", "status": "proposed", "reason_codes": ["valid_controlled_hypothesis"]}
+{"ts": "2026-03-31T19:18:25+00:00", "hypothesis_id": "hyp_a66d46a917b2", "branch": "universe", "mutation_family": "eligibility_filter_tuning", "status": "proposed", "reason_codes": ["valid_controlled_hypothesis"]}
+{"ts": "2026-03-31T19:18:25+00:00", "hypothesis_id": "hyp_03d44f4072c2", "branch": "meta_research", "mutation_family": "scoring_weight_tuning", "status": "proposed", "reason_codes": ["valid_controlled_hypothesis"]}

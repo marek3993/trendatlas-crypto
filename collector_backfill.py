@@ -30,6 +30,13 @@ def split_and_store(
         return
 
     tmp = df.copy()
+
+    if "symbol" in dedup_keys and "symbol" not in tmp.columns:
+        tmp["symbol"] = symbol
+
+    if ts_col not in tmp.columns:
+        raise KeyError(f"{dataset}: missing ts column '{ts_col}'")
+
     tmp["_day"] = pd.to_datetime(tmp[ts_col], utc=True).dt.date
 
     for day, part in tmp.groupby("_day"):

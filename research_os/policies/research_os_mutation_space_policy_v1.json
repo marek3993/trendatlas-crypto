@@ -1,0 +1,67 @@
+{
+  "policy_version": "1.0",
+  "description": "Explicit allowed mutation space for controlled ideation.",
+  "allowed_mutation_families": {
+    "core": [
+      {
+        "mutation_family": "threshold_tuning",
+        "hypothesis_template": "Adjust guarded thresholds around existing baseline controls to improve recent performance without increasing instability.",
+        "expected_improvement_direction": "improve_recent_performance"
+      },
+      {
+        "mutation_family": "cooldown_tuning",
+        "hypothesis_template": "Adjust cooldown or hold discipline around existing switching logic to reduce noise and unnecessary churn.",
+        "expected_improvement_direction": "reduce_switches"
+      },
+      {
+        "mutation_family": "ranking_weight_tuning",
+        "hypothesis_template": "Refine relative weighting inside existing ranking logic to improve robustness against weak recent leadership.",
+        "expected_improvement_direction": "increase_robustness"
+      }
+    ],
+    "universe": [
+      {
+        "mutation_family": "asset_family_pruning",
+        "hypothesis_template": "Prune weak or suspicious asset families from the current shortlist to reduce drawdown and governance noise.",
+        "expected_improvement_direction": "reduce_drawdown"
+      },
+      {
+        "mutation_family": "eligibility_filter_tuning",
+        "hypothesis_template": "Tighten or relax eligibility filters for currently admitted assets to improve selection quality.",
+        "expected_improvement_direction": "increase_robustness"
+      }
+    ],
+    "governance": [
+      {
+        "mutation_family": "probation_rule_tuning",
+        "hypothesis_template": "Adjust probation and ban discipline to better block weak challengers while preserving valid leaders.",
+        "expected_improvement_direction": "improve_governance_stability"
+      },
+      {
+        "mutation_family": "promotion_gate_tuning",
+        "hypothesis_template": "Refine promotion thresholds or persistence requirements to reduce weak admissions into later stages.",
+        "expected_improvement_direction": "increase_robustness"
+      }
+    ],
+    "meta_research": [
+      {
+        "mutation_family": "scoring_weight_tuning",
+        "hypothesis_template": "Adjust scoring weights or penalties to better separate strong candidates from synthetic or unstable variants.",
+        "expected_improvement_direction": "improve_research_quality"
+      },
+      {
+        "mutation_family": "selection_policy_tuning",
+        "hypothesis_template": "Refine batch selection constraints to reduce duplicate-family promotion and improve portfolio diversity.",
+        "expected_improvement_direction": "improve_research_quality"
+      }
+    ]
+  },
+  "blocked_mutation_families": [
+    "broad_random_search",
+    "unbounded_parameter_sweep",
+    "live_trading_override",
+    "official_truth_mutation",
+    "hidden_state_machine_change",
+    "unspecified_external_data_dependency"
+  ]
+}

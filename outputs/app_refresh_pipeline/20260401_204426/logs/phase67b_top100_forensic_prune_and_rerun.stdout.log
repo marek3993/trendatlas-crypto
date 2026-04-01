@@ -1,0 +1,52 @@
+[PHASE67B] Start
+[PHASE67B] Baseline paper: C:\Users\benda\Desktop\market_regime_v1\outputs\phase63_btc_participation_overlay\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv
+[PHASE67B] Asset quality file: C:\Users\benda\Desktop\market_regime_v1\outputs\phase67_top100_build_and_governance\phase67_top100_asset_quality.csv
+[PHASE67B] Asset forensic rows: 91
+[PHASE67B] Shortlist assets: ['DOGE', 'NEO', 'STX', 'BCH', 'APT', 'XTZ', 'ICP']
+
+=== PHASE67B TOP RESULT ===
+model: phase67b_top100_pruned_soft_filters
+cagr_pct: 104.08
+max_drawdown_pct: -33.46
+since2023_cagr_pct: 132.23
+since2025_cagr_pct: 117.54
+delta_vs_phase66g_cagr_pct: -8.85
+delta_vs_phase66g_since2023_cagr_pct: -1.84
+delta_vs_phase66g_since2025_cagr_pct: 8.60
+delta_vs_phase66g_max_drawdown_pct: -9.86
+delta_vs_phase67broad_cagr_pct: 1.75
+delta_vs_phase67broad_since2023_cagr_pct: 25.51
+delta_vs_phase67broad_since2025_cagr_pct: -5.45
+delta_vs_phase67broad_max_drawdown_pct: 14.78
+shortlist_size: 7
+selection_count: 40
+switch_count: 13
+
+=== PHASE67B SHORTLIST ===
+DOGE
+NEO
+STX
+BCH
+APT
+XTZ
+ICP
+
+=== PHASE67B LIVE STATUS ===
+latest_available_date: 2026-03-30
+current_asset: BASELINE
+latest_decision_date: 2026-03-28
+next_rebalance_date: 2026-04-04
+
+[PHASE67B] Saved forensic -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_asset_forensic.csv
+[PHASE67B] Saved shortlist -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_asset_shortlist.csv
+[PHASE67B] Saved summary -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_pruned_production_summary.csv
+[PHASE67B] Saved compare -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_pruned_production_compare.csv
+[PHASE67B] Saved live status -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_live_status.csv
+[PHASE67B] Saved decisions -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_pruned_production_decisions.csv
+[PHASE67B] Saved leaderboard -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_pruned_production_leaderboard.csv
+[PHASE67B] Saved latest top10 -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_latest_decision_top10.csv
+[PHASE67B] Saved asset usage -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_pruned_asset_usage.csv
+[PHASE67B] Saved failed assets -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_failed_assets.csv
+[PHASE67B] Saved baseline paper -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv
+[PHASE67B] Saved production paper -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_top100_pruned_soft_filters_paper.csv
+[PHASE67B] Saved manifest -> C:\Users\benda\Desktop\market_regime_v1\outputs\phase67b_top100_forensic_prune_and_rerun\phase67b_manifest.json

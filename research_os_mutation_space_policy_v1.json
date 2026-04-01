@@ -1,0 +1,202 @@
+{
+  "policy_version": "research_os_mutation_space_policy_v1",
+  "macro_frozen_mode": true,
+  "branch_templates": {
+    "core": [
+      {
+        "mutation_key": "core_guardrail_margin_tighten",
+        "priority": 10,
+        "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66h_core_regime_guardrail_sweep.py",
+        "hypothesis_label_template": "Core guardrail margin tighten around official baseline",
+        "rationale": "Retest core permission edge with tighter guardrail margin before declaring branch saturated.",
+        "expected_direction_of_improvement": "flat_or_up_cagr_and_lower_drawdown",
+        "risk_flags": [
+          "core_saturation_risk",
+          "overfitting_risk"
+        ],
+        "saturation_tags": [
+          "core_guardrail"
+        ],
+        "parameter_overrides": {
+          "profile_family": "guardrail_margin_tighten",
+          "window_scope": "since2025_focused"
+        },
+        "expected_outputs": [
+          "candidate_summary_csv",
+          "candidate_paper_csv",
+          "compare_csv"
+        ]
+      },
+      {
+        "mutation_key": "core_reaction_window_shift",
+        "priority": 9,
+        "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66j_core_reaction_sweep.py",
+        "hypothesis_label_template": "Core reaction window shift around official baseline",
+        "rationale": "Probe whether timing response rather than threshold level is the remaining controllable edge.",
+        "expected_direction_of_improvement": "improve_since2025_without_dd_regression",
+        "risk_flags": [
+          "timing_noise_risk",
+          "core_saturation_risk"
+        ],
+        "saturation_tags": [
+          "core_reaction"
+        ],
+        "parameter_overrides": {
+          "profile_family": "reaction_window_shift",
+          "window_scope": "since2025_focused"
+        },
+        "expected_outputs": [
+          "candidate_summary_csv",
+          "candidate_paper_csv",
+          "compare_csv"
+        ]
+      }
+    ],
+    "universe": [
+      {
+        "mutation_key": "universe_shortlist_binding_retest",
+        "priority": 8,
+        "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67g_binding_hardening_pack.py",
+        "hypothesis_label_template": "Universe shortlist binding retest with current 67J winner",
+        "rationale": "Retest shortlist binding and asset inclusion discipline without reopening broad random search.",
+        "expected_direction_of_improvement": "same_or_better_cagr_with_cleaner_binding",
+        "risk_flags": [
+          "selection_instability_risk"
+        ],
+        "saturation_tags": [
+          "universe_binding"
+        ],
+        "parameter_overrides": {
+          "profile_family": "binding_retest",
+          "reference_shortlist": "phase67j_final_narrow"
+        },
+        "expected_outputs": [
+          "candidate_summary_csv",
+          "candidate_paper_csv",
+          "asset_quality_csv"
+        ]
+      },
+      {
+        "mutation_key": "universe_targeted_prune_retest",
+        "priority": 7,
+        "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67h_shortlist_prune_pack.py",
+        "hypothesis_label_template": "Universe targeted prune retest around current shortlist",
+        "rationale": "Retest narrow prune decisions around the winning shortlist to separate stable keepers from accidental adds.",
+        "expected_direction_of_improvement": "lower_dd_or_same_cagr",
+        "risk_flags": [
+          "selection_instability_risk",
+          "shortlist_concentration_risk"
+        ],
+        "saturation_tags": [
+          "universe_prune"
+        ],
+        "parameter_overrides": {
+          "profile_family": "targeted_prune_retest",
+          "reference_shortlist": "phase67j_final_narrow"
+        },
+        "expected_outputs": [
+          "candidate_summary_csv",
+          "candidate_paper_csv",
+          "asset_quality_csv"
+        ]
+      }
+    ],
+    "governance": [
+      {
+        "mutation_key": "governance_probation_window_retest",
+        "priority": 6,
+        "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66e_probation_governance.py",
+        "hypothesis_label_template": "Governance probation window retest on 66G baseline",
+        "rationale": "Retest probation timing and hold discipline without changing official truth.",
+        "expected_direction_of_improvement": "lower_false_switches_and_same_or_up_cagr",
+        "risk_flags": [
+          "policy_complexity_risk"
+        ],
+        "saturation_tags": [
+          "governance_probation"
+        ],
+        "parameter_overrides": {
+          "profile_family": "probation_window_retest",
+          "reference_governance": "phase66g_production_soft_filters"
+        },
+        "expected_outputs": [
+          "summary_csv",
+          "live_status_csv",
+          "paper_csv"
+        ]
+      },
+      {
+        "mutation_key": "governance_permission_margin_retest",
+        "priority": 5,
+        "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66i_core_permission_tightening.py",
+        "hypothesis_label_template": "Governance permission margin retest on 66G baseline",
+        "rationale": "Retest permission tightness as a governance control rather than a broad core rewrite.",
+        "expected_direction_of_improvement": "fewer_bad_entries_with_flat_or_up_cagr",
+        "risk_flags": [
+          "permission_lockout_risk"
+        ],
+        "saturation_tags": [
+          "governance_permission"
+        ],
+        "parameter_overrides": {
+          "profile_family": "permission_margin_retest",
+          "reference_governance": "phase66g_production_soft_filters"
+        },
+        "expected_outputs": [
+          "summary_csv",
+          "compare_csv",
+          "paper_csv"
+        ]
+      }
+    ],
+    "meta_research": [
+      {
+        "mutation_key": "meta_contract_validation_retest",
+        "priority": 4,
+        "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_pipeline_runner_v1.py",
+        "hypothesis_label_template": "Meta research contract validation retest through pipeline runner",
+        "rationale": "Validate that contract compatibility and deterministic execution stay intact under autonomous loop load.",
+        "expected_direction_of_improvement": "higher_execution_stability",
+        "risk_flags": [
+          "infra_state_risk"
+        ],
+        "saturation_tags": [
+          "meta_contracts"
+        ],
+        "parameter_overrides": {
+          "profile_family": "contract_validation_retest",
+          "macro_frozen_mode": true
+        },
+        "expected_outputs": [
+          "pipeline_manifest_json",
+          "scoring_summary_csv",
+          "registry_row"
+        ]
+      },
+      {
+        "mutation_key": "meta_retry_resume_locking_retest",
+        "priority": 3,
+        "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\research_os_queue_runner_v1.py",
+        "hypothesis_label_template": "Meta research retry resume locking retest under autonomous sequencing",
+        "rationale": "Validate loop safety boundaries before enabling repeated autonomous cycles.",
+        "expected_direction_of_improvement": "higher_execution_stability",
+        "risk_flags": [
+          "infra_state_risk",
+          "locking_discipline_risk"
+        ],
+        "saturation_tags": [
+          "meta_execution"
+        ],
+        "parameter_overrides": {
+          "profile_family": "retry_resume_locking_retest",
+          "macro_frozen_mode": true
+        },
+        "expected_outputs": [
+          "queue_manifest_json",
+          "pipeline_manifest_json",
+          "registry_row"
+        ]
+      }
+    ]
+  }
+}

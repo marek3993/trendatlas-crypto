@@ -104,7 +104,7 @@ TEXT = {
         "switch_count": "Počet prepnutí",
         "cash_days": "Cash Days",
         "btc_days": "BTC Days",
-        "latest_date": "Posledný deň dát",
+        "latest_date": "Posledný uzavretý deň",
         "calc_title": "Koľko by bolo z 1 000 €",
         "calc_desc": "Vyber dátum a pozri sa, akú hodnotu by dnes mala modelová investícia 1 000 €.",
         "calc_date": "Dátum vkladu",
@@ -201,7 +201,7 @@ V každom momente drží portfólio jednoducho:
         "switch_count": "Switch count",
         "cash_days": "Cash Days",
         "btc_days": "BTC Days",
-        "latest_date": "Latest data date",
+        "latest_date": "Last closed day",
         "calc_title": "What 1,000 € would have become",
         "calc_desc": "Choose a start date and see what a model-based 1,000 € investment would be worth today.",
         "calc_date": "Investment date",
@@ -279,7 +279,7 @@ METRIC_HELP = {
         "Počet prepnutí": "Koľkokrát stratégia zmenila držanú pozíciu.",
         "Cash Days": "Koľko percent času stratégia radšej stála bokom.",
         "BTC Days": "Koľko percent času stratégia držala BTC.",
-        "Posledný deň dát": "Najnovší deň, z ktorého má dashboard dáta.",
+        "Posledný uzavretý deň": "Obchody vykonávame po uzavretí dňa, s jednodňovým oneskorením oproti signálu stratégie. Podľa testov je tento prístup stabilnejší a výnosnejší.",
     },
     "en": {
         "Currently holding": "This field is read directly from held_asset_public in the live CSV.",
@@ -297,7 +297,7 @@ METRIC_HELP = {
         "Switch count": "How many times the strategy changed the held position.",
         "Cash Days": "How often the strategy preferred to stay out of the market.",
         "BTC Days": "How often the strategy held BTC.",
-        "Latest data date": "The newest day included in the dashboard data.",
+        "Last closed day": "Trades are executed after the day closes, with a one-day delay versus the strategy signal. Based on our tests, this approach is more stable and more profitable.",
     },
 }
 

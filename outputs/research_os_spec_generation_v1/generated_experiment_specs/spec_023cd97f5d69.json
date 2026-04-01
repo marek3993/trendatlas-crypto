@@ -1,0 +1,43 @@
+{
+  "spec_id": "spec_023cd97f5d69",
+  "contract_version": "research_os_contract_pack_v1",
+  "macro_frozen_mode": true,
+  "source_hypothesis_id": "hyp_4fa86a34f259",
+  "hypothesis_label": "Core reaction window shift around official baseline",
+  "branch": "core",
+  "segment_owner": "MRV1 CORE STRATEGY",
+  "baseline_reference": "official_baseline_unresolved",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66j_core_reaction_sweep.py",
+  "expected_outputs": [
+    "candidate_summary_csv",
+    "candidate_paper_csv",
+    "compare_csv"
+  ],
+  "scoring_profile": "official_candidate_scoring_v1",
+  "promotion_rule": "forensic_ready_then_master_pending_only",
+  "invalidation_rule": "invalidate_on_missing_expected_outputs_or_no_metrics_row",
+  "parameter_overrides": {
+    "profile_family": "reaction_window_shift",
+    "window_scope": "since2025_focused"
+  },
+  "risk_flags": [
+    "timing_noise_risk",
+    "core_saturation_risk"
+  ],
+  "rationale": "Probe whether timing response rather than threshold level is the remaining controllable edge.",
+  "expected_direction_of_improvement": "improve_since2025_without_dd_regression",
+  "duplicate_spec_detection_hook": {
+    "fingerprint_fields": [
+      "branch",
+      "script_path",
+      "baseline_reference",
+      "parameter_overrides",
+      "expected_outputs"
+    ]
+  },
+  "deterministic": true,
+  "created_at_utc": "2026-04-01T11:35:33+00:00",
+  "duplicate_spec_flag": false,
+  "input_duplicate_or_near_duplicate_flag": false,
+  "mode": "execute"
+}

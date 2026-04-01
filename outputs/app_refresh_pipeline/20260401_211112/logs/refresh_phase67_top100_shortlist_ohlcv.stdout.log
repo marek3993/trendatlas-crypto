@@ -1,0 +1,11 @@
+[TOP100] shortlist_assets=APT,BCH,DOGE,ICP,NEO,STX,XTZ
+[TOP100] target_last_closed_date=2026-03-31
+[TOP100] APTUSDT unchanged last_date=2026-03-31
+[TOP100] BCHUSDT unchanged last_date=2026-03-31
+[TOP100] DOGEUSDT unchanged last_date=2026-03-31
+[TOP100] ICPUSDT unchanged last_date=2026-03-31
+[TOP100] NEOUSDT unchanged last_date=2026-03-31
+[TOP100] STXUSDT unchanged last_date=2026-03-31
+[TOP100] XTZUSDT unchanged last_date=2026-03-31
+[TOP100] out_dir=C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100
+[TOP100] DONE

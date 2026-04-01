@@ -1,0 +1,126 @@
+{
+  "policy_name": "research_os_spec_generator_policy_v1",
+  "policy_version": "1.2.0",
+  "generator_name": "research_os_experiment_spec_generator_v1",
+  "created_by": "MRV1 AI LAB",
+  "default_status": "spec_ready",
+  "default_budget_class": "standard",
+  "default_priority": 50,
+  "default_created_by": "research_os_experiment_spec_generator_v1",
+  "default_scoring_profile": "research_os_scoring_policy_v1",
+  "default_promotion_rule": "research_os_promotion_policy_v1",
+  "default_invalidation_rule": "fail_on_missing_required_outputs",
+  "default_expected_outputs": [
+    "summary.csv",
+    "paper.csv",
+    "compare_summary.csv"
+  ],
+  "allowed_branches": [
+    "core",
+    "universe",
+    "governance",
+    "meta_research"
+  ],
+  "branch_defaults": {
+    "core": {
+      "budget_class": "standard",
+      "priority": 80,
+      "segment_owner": "MRV1 CORE STRATEGY"
+    },
+    "universe": {
+      "budget_class": "standard",
+      "priority": 70,
+      "segment_owner": "MRV1 UNIVERSE"
+    },
+    "governance": {
+      "budget_class": "light",
+      "priority": 60,
+      "segment_owner": "MRV1 DATA"
+    },
+    "meta_research": {
+      "budget_class": "light",
+      "priority": 40,
+      "segment_owner": "MRV1 DATA"
+    }
+  },
+  "baseline_defaults": {
+    "baseline_model": "phase67j_no_neo_main",
+    "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv"
+  },
+  "script_defaults": {
+    "authoritative_script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66g_production_candidate_live.py"
+  },
+  "input_resolution": {
+    "macro_file_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro\\global_liquidity_weekly.csv",
+    "ohlcv_dir_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv",
+    "ohlcv_glob": "*.csv",
+    "require_nonempty_ohlcv_expansion": true
+  },
+  "script_args_defaults": {
+    "core": [
+      "--mode",
+      "research",
+      "--baseline-model",
+      "{baseline_model}",
+      "--baseline-paper",
+      "{baseline_paper_path}",
+      "--hypothesis-label",
+      "{hypothesis_label}"
+    ],
+    "universe": [
+      "--mode",
+      "research",
+      "--baseline-model",
+      "{baseline_model}",
+      "--baseline-paper",
+      "{baseline_paper_path}",
+      "--hypothesis-label",
+      "{hypothesis_label}"
+    ],
+    "governance": [
+      "--mode",
+      "research",
+      "--baseline-model",
+      "{baseline_model}",
+      "--baseline-paper",
+      "{baseline_paper_path}",
+      "--hypothesis-label",
+      "{hypothesis_label}"
+    ],
+    "meta_research": [
+      "--mode",
+      "research",
+      "--baseline-model",
+      "{baseline_model}",
+      "--baseline-paper",
+      "{baseline_paper_path}",
+      "--hypothesis-label",
+      "{hypothesis_label}"
+    ]
+  },
+  "required_spec_fields": [
+    "experiment_id",
+    "branch",
+    "segment_owner",
+    "hypothesis_label",
+    "experiment_family",
+    "baseline_model",
+    "baseline_paper_path",
+    "input_paths",
+    "script_path",
+    "script_args",
+    "expected_outputs",
+    "scoring_profile",
+    "promotion_rule",
+    "invalidation_rule",
+    "budget_class",
+    "priority",
+    "created_by",
+    "created_at",
+    "status"
+  ],
+  "output_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated",
+  "summary_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\generated_experiment_specs_summary.csv",
+  "summary_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\generated_experiment_specs.json",
+  "log_jsonl_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\spec_generation_log.jsonl"
+}

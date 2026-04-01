@@ -1,0 +1,6 @@
+[MACRO] status=OK
+[MACRO] mode=frozen_validate_only
+[MACRO] output_path=C:\Users\benda\Desktop\market_regime_v1\data\macro\global_liquidity_weekly.csv
+[MACRO] report_path=C:\Users\benda\Desktop\market_regime_v1\outputs\app_freshness_verification\macro_refresh_report.json
+[MACRO] last_date=2026-03-08
+[MACRO] missing_source_files=3
