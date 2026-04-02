@@ -1,5 +1,4 @@
 import importlib.util
-import sys
 import unittest
 from pathlib import Path
 
@@ -8,6 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 TESTS_DIR = ROOT / "tests"
 
 TEST_FILES = [
+    TESTS_DIR / "test_canonical_lineage_minimum.py",
+    TESTS_DIR / "test_canonical_truth_consistency.py",
     TESTS_DIR / "test_canonical_reference_separation.py",
     TESTS_DIR / "test_canonical_product_export_contract.py",
 ]
