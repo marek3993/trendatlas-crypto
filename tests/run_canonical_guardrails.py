@@ -11,6 +11,8 @@ TEST_FILES = [
     TESTS_DIR / "test_canonical_truth_consistency.py",
     TESTS_DIR / "test_canonical_reference_separation.py",
     TESTS_DIR / "test_canonical_product_export_contract.py",
+    TESTS_DIR / "test_canonical_json_schema_shape.py",
+    TESTS_DIR / "test_canonical_consumer_scope_rules.py",
 ]
 
 
