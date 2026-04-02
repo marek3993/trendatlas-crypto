@@ -5,19 +5,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TESTS_DIR = ROOT / "tests"
-
-TEST_MODULES = [
-    "tests.test_canonical_reference_separation",
-    "tests.test_canonical_product_export_contract",
-]
+PATTERN = "test_canonical_*.py"
 
 
 def main() -> int:
     loader = unittest.defaultTestLoader
-    suite = unittest.TestSuite()
-
-    for module_name in TEST_MODULES:
-        suite.addTests(loader.loadTestsFromName(module_name))
+    suite = loader.discover(
+        start_dir=str(TESTS_DIR),
+        pattern=PATTERN,
+        top_level_dir=str(ROOT),
+    )
 
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
