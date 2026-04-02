@@ -1,0 +1,109 @@
+# =========================
+# Market Regime v1 - root .gitignore
+# =========================
+
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.vscode/
+.idea/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# --- Python virtual envs ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Build / dist ---
+build/
+dist/
+site/
+*.egg-info/
+.eggs/
+
+# --- Local env / secrets ---
+.env
+.env.*
+!.env.example
+secrets/
+credentials/
+*.pem
+*.key
+
+# --- Logs / temp ---
+logs/
+*.log
+tmp/
+temp/
+*.tmp
+*.bak
+
+# --- Local databases / caches ---
+*.sqlite
+*.sqlite3
+.cache/
+
+# --- Test / coverage artifacts ---
+coverage.xml
+junit.xml
+
+# --- Runtime / local state ---
+local_state/
+scratch/
+sandbox/
+artifacts_local/
+
+# --- Generated outputs that should not live in git ---
+outputs/**/tmp/
+outputs/**/temp/
+outputs/**/cache/
+outputs/**/logs/
+outputs/**/debug/
+outputs/**/plots_tmp/
+outputs/**/charts_tmp/
+
+# --- Large binary artifacts ---
+*.zip
+*.7z
+*.tar
+*.gz
+*.rar
+*.parquet
+*.feather
+*.pkl
+*.joblib
+
+# --- Frontend build caches ---
+.next/
+.nuxt/
+.svelte-kit/
+.cache-loader/
+
+# --- Keep intentional repo docs/config tracked ---
+!.gitkeep
