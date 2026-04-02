@@ -1,0 +1,95 @@
+{
+  "artifact_name": "canonical_lineage_manifest",
+  "artifact_type": "manifest",
+  "truth_domain": "lineage",
+  "truth_status": "official",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "lineage_contract.md",
+    "canonical/manifests/canonical_artifacts_manifest.json",
+    "canonical/decisions/canonical_strategy_decision.json"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "schema_version": "v1",
+  "lineage_rules": {
+    "required_fields": [
+      "artifact_name",
+      "artifact_type",
+      "truth_domain",
+      "truth_status",
+      "generated_at",
+      "effective_date",
+      "producer_script",
+      "source_run_id",
+      "upstream_artifacts",
+      "supersedes",
+      "consumer_scope"
+    ],
+    "allowed_truth_domains": [
+      "strategy",
+      "universe",
+      "leverage",
+      "product",
+      "benchmark",
+      "artifacts",
+      "lineage"
+    ],
+    "allowed_artifact_types": [
+      "decision",
+      "snapshot",
+      "manifest",
+      "export",
+      "reference"
+    ],
+    "allowed_truth_statuses": [
+      "exploratory",
+      "candidate",
+      "reference",
+      "official",
+      "deprecated",
+      "superseded"
+    ]
+  },
+  "lineage_index": [
+    {
+      "artifact_name": "canonical_artifacts_manifest",
+      "path": "canonical/manifests/canonical_artifacts_manifest.json",
+      "producer_script": "manual_bootstrap_engineering_hygiene",
+      "source_run_id": null,
+      "upstream_artifacts": [
+        "artifact_taxonomy.md",
+        "artifact_naming_convention.md",
+        "truth_status_model.md",
+        "lineage_contract.md",
+        "canonical/README.md"
+      ]
+    },
+    {
+      "artifact_name": "canonical_strategy_decision",
+      "path": "canonical/decisions/canonical_strategy_decision.json",
+      "producer_script": "manual_bootstrap_engineering_hygiene",
+      "source_run_id": null,
+      "upstream_artifacts": [
+        "source_of_truth/project_truth.json",
+        "source_of_truth/master_state.md",
+        "artifact_taxonomy.md",
+        "truth_status_model.md",
+        "lineage_contract.md"
+      ]
+    }
+  ],
+  "notes": [
+    "Toto je bootstrap lineage manifest pre canonical layer.",
+    "Historical artifacts nemusia dostat full retrofit naraz.",
+    "Canonical artifacts maju byt mapovane postupne a explicitne."
+  ]
+}

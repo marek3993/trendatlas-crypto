@@ -1,0 +1,49 @@
+{
+  "artifact_name": "canonical_benchmark_reference",
+  "artifact_type": "reference",
+  "truth_domain": "benchmark",
+  "truth_status": "reference",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "source_of_truth/project_truth.json",
+    "canonical/decisions/canonical_strategy_decision.json",
+    "artifact_taxonomy.md",
+    "truth_status_model.md"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "reference_id": "canonical_benchmark_reference_2026_04_02",
+  "reference_summary": {
+    "benchmark_name": "BTC benchmark",
+    "reference_role": "approved stable benchmark reference",
+    "is_current_live_truth": false,
+    "product_direction_alignment": "67J main, 66G reference, BTC benchmark"
+  },
+  "reference_rules": {
+    "may_be_used_for": [
+      "comparison",
+      "product reference context",
+      "app-readable benchmark framing",
+      "forensic audit context"
+    ],
+    "must_not_be_used_as": [
+      "current strategy winner",
+      "current universe winner",
+      "current leverage truth",
+      "implicit official live state"
+    ]
+  },
+  "truth_notes": [
+    "Tento artifact je reference, nie official live truth.",
+    "Reference artifact sa nesmie tvarit ako aktualny decision carrier.",
+    "Downstream citanie ma zachovat rozdiel medzi reference a official state."
+  ]
+}
