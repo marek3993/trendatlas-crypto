@@ -1,3 +1,4 @@
+import importlib.util
 import sys
 import unittest
 from pathlib import Path
@@ -5,16 +6,29 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TESTS_DIR = ROOT / "tests"
-PATTERN = "test_canonical_*.py"
+
+TEST_FILES = [
+    TESTS_DIR / "test_canonical_reference_separation.py",
+    TESTS_DIR / "test_canonical_product_export_contract.py",
+]
+
+
+def load_module_from_path(module_name: str, file_path: Path):
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Cannot load module from {file_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def main() -> int:
     loader = unittest.defaultTestLoader
-    suite = loader.discover(
-        start_dir=str(TESTS_DIR),
-        pattern=PATTERN,
-        top_level_dir=str(ROOT),
-    )
+    suite = unittest.TestSuite()
+
+    for index, file_path in enumerate(TEST_FILES, start=1):
+        module = load_module_from_path(f"canonical_guardrail_module_{index}", file_path)
+        suite.addTests(loader.loadTestsFromModule(module))
 
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
