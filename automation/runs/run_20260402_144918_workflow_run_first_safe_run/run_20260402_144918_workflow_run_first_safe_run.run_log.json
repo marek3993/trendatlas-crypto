@@ -19,6 +19,41 @@
       "action": "finalize_run",
       "result": "ok",
       "note": "Run closed with status=success"
+    },
+    {
+      "step_index": 3,
+      "timestamp": "2026-04-02T15:42:21Z",
+      "action": "create_pending_truth_patch",
+      "result": "ok",
+      "note": "Pending patch created: patch_20260402_154221_20260402_144918_workflow_run_first_safe_run"
+    },
+    {
+      "step_index": 4,
+      "timestamp": "2026-04-02T16:24:55Z",
+      "action": "approve_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_20260402_154221_20260402_144918_workflow_run_first_safe_run marked as approved; no apply executed."
+    },
+    {
+      "step_index": 5,
+      "timestamp": "2026-04-02T16:36:28Z",
+      "action": "create_pending_truth_patch",
+      "result": "ok",
+      "note": "Pending patch created: patch_20260402_163628_20260402_144918_workflow_run_first_safe_run"
+    },
+    {
+      "step_index": 6,
+      "timestamp": "2026-04-02T16:49:09Z",
+      "action": "approve_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_20260402_163628_20260402_144918_workflow_run_first_safe_run marked as approved; approval recorded only; no source_of_truth write executed."
+    },
+    {
+      "step_index": 7,
+      "timestamp": "2026-04-02T18:13:23Z",
+      "action": "reconcile_run_state",
+      "result": "ok",
+      "note": "Updated report.next_action to approved_patch_ready_for_apply; no source_of_truth write executed."
     }
   ],
   "artifacts": {
@@ -28,7 +63,10 @@
     "screenshot_manifest_paths": [
       "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\screenshots\\run_20260402_144918_workflow_run_first_safe_run\\manifest_20260402_144918_workflow_run_first_safe_run.screenshot_manifest.json"
     ],
-    "pending_truth_patch_paths": []
+    "pending_truth_patch_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_patches\\pending\\patch_20260402_154221_20260402_144918_workflow_run_first_safe_run.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_patches\\pending\\patch_20260402_163628_20260402_144918_workflow_run_first_safe_run.json"
+    ]
   },
   "errors": [],
   "warnings": []

@@ -1,0 +1,8 @@
+{
+  "approval_id": "approval_20260402_164909_20260402_163628_20260402_144918_workflow_run_first_safe_run",
+  "patch_id": "patch_20260402_163628_20260402_144918_workflow_run_first_safe_run",
+  "decision": "approved",
+  "approved_by": "human",
+  "decided_at": "2026-04-02T16:49:09Z",
+  "note": "Approved test after contract hardening."
+}

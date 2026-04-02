@@ -8,7 +8,10 @@
     "Run log created.",
     "Screenshot manifest created.",
     "No truth patch created yet.",
-    "Run finalized with status=success."
+    "Run finalized with status=success.",
+    "Pending truth patch created: patch_20260402_154221_20260402_144918_workflow_run_first_safe_run",
+    "Pending truth patch created: patch_20260402_163628_20260402_144918_workflow_run_first_safe_run",
+    "Run state reconciled. next_action=approved_patch_ready_for_apply"
   ],
   "artifacts": {
     "run_log_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\runs\\run_20260402_144918_workflow_run_first_safe_run\\run_20260402_144918_workflow_run_first_safe_run.run_log.json",
@@ -17,6 +20,9 @@
     ],
     "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\reports\\run_20260402_144918_workflow_run_first_safe_run\\report_20260402_144918_workflow_run_first_safe_run.report.json"
   },
-  "pending_truth_patch_ids": [],
-  "next_action": "review_pending_outputs"
+  "pending_truth_patch_ids": [
+    "patch_20260402_154221_20260402_144918_workflow_run_first_safe_run",
+    "patch_20260402_163628_20260402_144918_workflow_run_first_safe_run"
+  ],
+  "next_action": "approved_patch_ready_for_apply"
 }
