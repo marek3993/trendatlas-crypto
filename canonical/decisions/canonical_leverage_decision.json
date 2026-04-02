@@ -37,7 +37,8 @@
     "does_not_cover": [
       "approval of future leverage deployment",
       "new leverage research verdicts",
-      "historical leverage experiment interpretation beyond reference/candidate status"
+      "historical leverage experiment interpretation beyond reference/candidate status",
+      "product wording"
     ]
   },
   "truth_notes": [
