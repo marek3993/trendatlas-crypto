@@ -18,6 +18,8 @@ TEST_FILES = [
     TESTS_DIR / "test_canonical_decision_vs_reference_boundaries.py",
     TESTS_DIR / "test_canonical_upstream_paths_exist.py",
     TESTS_DIR / "test_canonical_filename_path_contracts.py",
+    TESTS_DIR / "test_canonical_required_top_level_keys.py",
+    TESTS_DIR / "test_canonical_reference_truth_flags.py",
 ]
 
 
