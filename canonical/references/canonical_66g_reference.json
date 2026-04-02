@@ -1,0 +1,54 @@
+{
+  "artifact_name": "canonical_66g_reference",
+  "artifact_type": "reference",
+  "truth_domain": "strategy",
+  "truth_status": "reference",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "canonical/decisions/canonical_strategy_decision.json",
+    "canonical/manifests/canonical_strategy_snapshot.json",
+    "source_of_truth/project_truth.json",
+    "source_of_truth/master_state.md"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "reference_id": "canonical_66g_reference_2026_04_02",
+  "reference_summary": {
+    "reference_name": "phase66g_production_soft_filters",
+    "reference_role": "approved stable baseline reference",
+    "is_current_universe_winner": false,
+    "is_current_live_leverage_truth": false,
+    "allowed_usage": [
+      "baseline comparison",
+      "product reference context",
+      "audit context",
+      "benchmarking against current 67J-led direction"
+    ]
+  },
+  "reference_rules": {
+    "must_not_be_used_as": [
+      "official current universe winner",
+      "official current product strategy state",
+      "official live leverage truth",
+      "implicit replacement for canonical strategy decision"
+    ],
+    "may_be_used_as": [
+      "reference baseline",
+      "historical anchor",
+      "approved comparison point"
+    ]
+  },
+  "truth_notes": [
+    "66G je reference layer, nie samostatny current strategy state carrier.",
+    "67J main ostava official universe winner truth podla canonical decision/snapshot.",
+    "Tento artifact ma branit miesaniu baseline reference s current official truth."
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "artifact_name": "canonical_strategy_snapshot",
+  "artifact_type": "snapshot",
+  "truth_domain": "strategy",
+  "truth_status": "official",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "canonical/decisions/canonical_strategy_decision.json",
+    "canonical/manifests/canonical_artifacts_manifest.json",
+    "canonical/manifests/canonical_lineage_manifest.json",
+    "source_of_truth/project_truth.json",
+    "source_of_truth/master_state.md"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "snapshot_id": "canonical_strategy_snapshot_2026_04_02",
+  "current_state": {
+    "official_core_production_baseline": {
+      "value": "phase66g_production_soft_filters",
+      "truth_status": "official"
+    },
+    "official_universe_winner": {
+      "value": "phase67j_no_neo_main",
+      "truth_status": "official"
+    },
+    "product_direction": {
+      "value": "67J main, 66G reference, BTC benchmark",
+      "truth_status": "official"
+    },
+    "live_leverage_truth": {
+      "value": "1.0x without leverage",
+      "truth_status": "official"
+    }
+  },
+  "state_boundaries": {
+    "includes": [
+      "current official strategy baseline truth",
+      "current official universe winner truth",
+      "current official product reference direction",
+      "current official live leverage truth"
+    ],
+    "excludes": [
+      "new research verdict generation",
+      "historical compare table interpretation",
+      "paper-only narratives",
+      "marketing framing"
+    ]
+  },
+  "truth_notes": [
+    "Toto je machine-readable current strategy state snapshot.",
+    "Historical compare alebo summary artifacts nie su same o sebe current state carriers.",
+    "Pri konflikte ma canonical decision a canonical snapshot prioritu pred historical layer."
+  ]
+}
