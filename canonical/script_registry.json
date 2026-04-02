@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "purpose": "Central script index for cross-chat code navigation. This is not source_of_truth and not a decision file.",
+  "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
+  "scripts": [
+    {
+      "script_path": "automation/tools/bootstrap_automation.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Creates automation scaffold, config, schemas, templates, and folders.",
+      "primary_outputs": [
+        "automation/config/automation_config.json",
+        "automation/config/task_registry.json",
+        "automation/schemas/",
+        "automation/templates/"
+      ],
+      "output_type": "automation_scaffold",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Safe bootstrap only."
+    },
+    {
+      "script_path": "automation/tools/create_run.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Creates task spec, queue entry, run log, report, and screenshot manifest for a new automation run.",
+      "primary_outputs": [
+        "automation/tasks/specs/",
+        "automation/tasks/queue/",
+        "automation/runs/",
+        "automation/reports/",
+        "automation/screenshots/"
+      ],
+      "output_type": "run_artifacts",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Run initialization only."
+    },
+    {
+      "script_path": "automation/tools/finalize_run.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Finalizes an automation run and moves task record from queue to completed.",
+      "primary_outputs": [
+        "automation/runs/",
+        "automation/reports/",
+        "automation/tasks/completed/"
+      ],
+      "output_type": "run_artifacts",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No SSOT writes."
+    },
+    {
+      "script_path": "automation/tools/create_pending_truth_patch.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Creates pending truth patch proposal linked to a run.",
+      "primary_outputs": [
+        "automation/truth_patches/pending/"
+      ],
+      "output_type": "pending_truth_patch",
+      "decision_relevance": "candidate_truth_input",
+      "writes_source_of_truth": false,
+      "notes": "Proposal only."
+    },
+    {
+      "script_path": "automation/tools/approve_truth_patch.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Records approval or rejection decision for a pending truth patch and creates approval record.",
+      "primary_outputs": [
+        "automation/truth_patches/approved/",
+        "automation/truth_patches/rejected/",
+        "automation/approvals/"
+      ],
+      "output_type": "approval_artifacts",
+      "decision_relevance": "approval_gate",
+      "writes_source_of_truth": false,
+      "notes": "Approval recorded only. Apply is separate."
+    },
+    {
+      "script_path": "automation/tools/validate_json.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Validates a single automation JSON artifact against required keys and enum rules.",
+      "primary_outputs": [],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only validator."
+    },
+    {
+      "script_path": "automation/tools/validate_run_bundle.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Validates run bundle artifacts for a specific run_id.",
+      "primary_outputs": [],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only validator."
+    },
+    {
+      "script_path": "automation/tools/list_truth_patches.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Lists truth patches by status bucket and optional run filter.",
+      "primary_outputs": [],
+      "output_type": "query",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only."
+    },
+    {
+      "script_path": "automation/tools/list_runs.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Lists automation runs with patch counts and report path.",
+      "primary_outputs": [],
+      "output_type": "query",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only."
+    },
+    {
+      "script_path": "automation/tools/show_run_summary.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Shows compact run summary including patches and approvals.",
+      "primary_outputs": [],
+      "output_type": "query",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only."
+    },
+    {
+      "script_path": "automation/tools/reconcile_run_state.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Reconciles report next_action from current patch and approval state.",
+      "primary_outputs": [
+        "automation/reports/",
+        "automation/runs/"
+      ],
+      "output_type": "run_artifacts",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No SSOT writes."
+    },
+    {
+      "script_path": "scripts/phase68g_portfolio_exposure_leverage_validation.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Phase68G leverage validation execution for baseline 1.00x and candidates 1.25x / 1.50x with portfolio exposure framing.",
+      "primary_outputs": [
+        "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p00x_portfolio_exposure_baseline_paper.csv",
+        "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p25x_candidate_paper.csv",
+        "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p50x_candidate_paper.csv",
+        "outputs/phase68g_portfolio_exposure_leverage_validation/phase68g_portfolio_exposure_leverage_compare.csv",
+        "outputs/phase68g_portfolio_exposure_leverage_validation/phase68g_portfolio_exposure_leverage_manifest.json",
+        "outputs/phase68g_portfolio_exposure_leverage_validation/phase68g_portfolio_exposure_leverage_summary.csv",
+        "outputs/phase68g_portfolio_exposure_leverage_validation/phase68g_tradable_transition_calendar.csv"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Validated clean by forensic verdict."
+    },
+    {
+      "script_path": "scripts/phase68h_dynamic_leverage_ladder_candidate.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Phase68H dynamic leverage ladder candidate generation.",
+      "primary_outputs": [
+        "outputs/phase68h_dynamic_leverage_ladder_candidate/"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Tracked separately from automation scope."
+    }
+  ]
+}

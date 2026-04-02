@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "purpose": "Central output index for cross-chat navigation. This is not source_of_truth and not an approval artifact.",
+  "last_updated_note": "Update when a new output folder/file becomes relevant, active, deprecated, or decision-relevant.",
+  "outputs": [
+    {
+      "output_path": "automation/runs/",
+      "generated_by": [
+        "automation/tools/create_run.py",
+        "automation/tools/finalize_run.py",
+        "automation/tools/reconcile_run_state.py"
+      ],
+      "layer": "automation",
+      "status": "active",
+      "output_kind": "run_artifacts",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Operational run records."
+    },
+    {
+      "output_path": "automation/reports/",
+      "generated_by": [
+        "automation/tools/create_run.py",
+        "automation/tools/finalize_run.py",
+        "automation/tools/reconcile_run_state.py"
+      ],
+      "layer": "automation",
+      "status": "active",
+      "output_kind": "report_artifacts",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Execution reports, not SSOT."
+    },
+    {
+      "output_path": "automation/screenshots/",
+      "generated_by": [
+        "automation/tools/create_run.py"
+      ],
+      "layer": "automation",
+      "status": "active",
+      "output_kind": "evidence_artifacts",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Screenshot manifests and related evidence."
+    },
+    {
+      "output_path": "automation/truth_patches/pending/",
+      "generated_by": [
+        "automation/tools/create_pending_truth_patch.py"
+      ],
+      "layer": "automation",
+      "status": "active",
+      "output_kind": "pending_truth_patch",
+      "decision_relevance": "candidate_truth_input",
+      "official_truth": false,
+      "notes": "Proposal only."
+    },
+    {
+      "output_path": "automation/truth_patches/approved/",
+      "generated_by": [
+        "automation/tools/approve_truth_patch.py"
+      ],
+      "layer": "automation",
+      "status": "active",
+      "output_kind": "approved_truth_patch",
+      "decision_relevance": "apply_ready_input",
+      "official_truth": false,
+      "notes": "Approved for potential apply, still not SSOT."
+    },
+    {
+      "output_path": "automation/truth_patches/rejected/",
+      "generated_by": [
+        "automation/tools/approve_truth_patch.py"
+      ],
+      "layer": "automation",
+      "status": "active",
+      "output_kind": "rejected_truth_patch",
+      "decision_relevance": "rejected_input",
+      "official_truth": false,
+      "notes": "Rejected truth proposals."
+    },
+    {
+      "output_path": "automation/approvals/",
+      "generated_by": [
+        "automation/tools/approve_truth_patch.py"
+      ],
+      "layer": "automation",
+      "status": "active",
+      "output_kind": "approval_records",
+      "decision_relevance": "approval_gate",
+      "official_truth": false,
+      "notes": "Decision audit only."
+    },
+    {
+      "output_path": "outputs/phase68g_portfolio_exposure_leverage_validation/",
+      "generated_by": [
+        "scripts/phase68g_portfolio_exposure_leverage_validation.py"
+      ],
+      "layer": "forensic_validation",
+      "status": "active",
+      "output_kind": "research_outputs",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Contains leverage validation compare, summary, manifest, transition calendar, and paper CSVs."
+    },
+    {
+      "output_path": "outputs/phase68h_dynamic_leverage_ladder_candidate/",
+      "generated_by": [
+        "scripts/phase68h_dynamic_leverage_ladder_candidate.py"
+      ],
+      "layer": "forensic_validation",
+      "status": "active",
+      "output_kind": "research_outputs",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Dynamic leverage ladder candidate outputs."
+    },
+    {
+      "output_path": "source_of_truth/master_state.md",
+      "generated_by": [],
+      "layer": "source_of_truth",
+      "status": "active",
+      "output_kind": "official_truth",
+      "decision_relevance": "official_truth",
+      "official_truth": true,
+      "notes": "May change only via approved apply flow or explicit manual governance."
+    },
+    {
+      "output_path": "source_of_truth/project_truth.json",
+      "generated_by": [],
+      "layer": "source_of_truth",
+      "status": "active",
+      "output_kind": "official_truth",
+      "decision_relevance": "official_truth",
+      "official_truth": true,
+      "notes": "Official SSOT structured facts."
+    },
+    {
+      "output_path": "source_of_truth/paths_registry.json",
+      "generated_by": [],
+      "layer": "source_of_truth",
+      "status": "active",
+      "output_kind": "official_truth",
+      "decision_relevance": "official_truth",
+      "official_truth": true,
+      "notes": "Official path mapping."
+    },
+    {
+      "output_path": "source_of_truth/current_issues.md",
+      "generated_by": [],
+      "layer": "source_of_truth",
+      "status": "active",
+      "output_kind": "official_truth",
+      "decision_relevance": "official_truth",
+      "official_truth": true,
+      "notes": "Official active issues list."
+    }
+  ]
+}
