@@ -1,0 +1,44 @@
+{
+  "generated_at_utc": "2026-04-02T18:20:59+00:00",
+  "mode": "execute",
+  "loop_output_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1",
+  "candidate_count": 8,
+  "source_file_count": 12,
+  "output_files": {
+    "bundle_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\autonomous_quality_audit_bundle.json",
+    "bundle_txt": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\autonomous_quality_audit_bundle.txt",
+    "bundle_manifest": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\autonomous_quality_audit_bundle_manifest.json"
+  },
+  "source_files": {
+    "loop_manifest_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\autonomous_loop_run_manifest.json",
+    "loop_summary_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\autonomous_loop_run_summary.json",
+    "loop_summary_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\autonomous_loop_run_summary.csv",
+    "zero_selection_diagnostics_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\zero_selection_diagnostics.json",
+    "zero_selection_diagnostics_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\zero_selection_diagnostics.csv",
+    "candidate_trace_log_jsonl_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\candidate_trace_log.jsonl",
+    "ideation_hypotheses_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_ideation_v1\\ideation_hypotheses.json",
+    "generated_experiment_specs_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\generated_experiment_specs.json",
+    "generated_experiment_specs_summary_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\generated_experiment_specs_summary.csv",
+    "registry_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\leaderboards\\research_os_registry.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\candidates_registry.csv"
+    ],
+    "per_candidate_scoring_result_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144230_core_cooldown_tuning_phase70_golden_path_harness\\quality_report.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144231_core_ranking_weight_tuning_phase70_golden_path_harness\\quality_report.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144231_core_threshold_tuning_phase70_golden_path_harness\\quality_report.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters\\quality_report.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144233_core_cooldown_tuning_phase70_golden_path_harness\\quality_report.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144234_core_ranking_weight_tuning_phase70_golden_path_harness\\quality_report.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144235_core_threshold_tuning_phase70_golden_path_harness\\quality_report.json",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144236_governance_probation_rule_tuning_phase66g_production_soft_filters\\quality_report.json"
+    ],
+    "per_candidate_precheck_result_paths": [
+      "MISSING_IN_OUTPUT"
+    ]
+  },
+  "reason_code_counts": {
+    "LEGIT_LOW_QUALITY_REJECTION": 8,
+    "UPSTREAM_SCORING_REJECT": 8
+  }
+}
