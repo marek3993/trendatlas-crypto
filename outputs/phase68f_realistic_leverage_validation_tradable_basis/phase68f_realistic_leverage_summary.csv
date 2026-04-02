@@ -1,0 +1,5 @@
+model,target_leverage,trend_activation_threshold,stress_off_threshold,stress_on_threshold,annual_borrow_cost_pct,tradable_transition_slippage_bps,cagr_pct,max_drawdown_pct,calmar,since2023_cagr_pct,since2025_cagr_pct,worst_day_pct,borrow_cost_total_pct,tradable_slippage_cost_total_pct,governance_switch_count,exposure_days,asset_transition_count,tradable_transition_count,eligible_days,leverage_active_days,trend_block_days,stress_block_days,held_asset_now,latest_available_date
+phase68f_66g_1p00x_baseline,1.0,0.1,-0.08,-0.04,12.0,10.0,112.91,-23.68,4.769,134.1,113.55,-13.47,0.0,0.3,3,270,90,3,65,0,92,23,CASH,2026-03-30
+phase68f_66g_1p10x_candidate,1.1,0.1,-0.08,-0.04,12.0,10.0,115.71,-23.76,4.8702,137.54,113.55,-13.47,0.2136,0.3,3,270,90,3,65,65,92,23,CASH,2026-03-30
+phase68f_66g_1p25x_candidate,1.25,0.1,-0.08,-0.04,12.0,10.0,119.91,-24.24,4.9466,142.73,113.55,-13.47,0.5339,0.3,3,270,90,3,65,65,92,23,CASH,2026-03-30
+phase68f_66g_1p50x_candidate,1.5,0.1,-0.08,-0.04,12.0,10.0,126.92,-25.06,5.0646,151.46,113.55,-13.47,1.0678,0.3,3,270,90,3,65,65,92,23,CASH,2026-03-30
