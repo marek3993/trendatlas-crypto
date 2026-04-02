@@ -1,0 +1,69 @@
+{
+  "artifact_name": "canonical_product_manifest",
+  "artifact_type": "manifest",
+  "truth_domain": "product",
+  "truth_status": "official",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "canonical/decisions/canonical_strategy_decision.json",
+    "canonical/decisions/canonical_universe_decision.json",
+    "canonical/decisions/canonical_leverage_decision.json",
+    "canonical/manifests/canonical_strategy_snapshot.json",
+    "canonical/references/canonical_66g_reference.json",
+    "canonical/references/canonical_benchmark_reference.json"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "schema_version": "v1",
+  "product_truth_contract": {
+    "official_strategy_driver": "phase67j_no_neo_main",
+    "reference_baseline": "phase66g_production_soft_filters",
+    "benchmark_reference": "BTC benchmark",
+    "live_leverage_mode": "1.0x without leverage",
+    "reading_priority": [
+      "canonical decisions",
+      "canonical strategy snapshot",
+      "canonical product export contract",
+      "canonical references"
+    ]
+  },
+  "artifact_dependencies": [
+    {
+      "artifact_name": "canonical_strategy_decision",
+      "role": "top-level strategy truth carrier"
+    },
+    {
+      "artifact_name": "canonical_universe_decision",
+      "role": "official universe winner truth carrier"
+    },
+    {
+      "artifact_name": "canonical_leverage_decision",
+      "role": "official live leverage truth carrier"
+    },
+    {
+      "artifact_name": "canonical_strategy_snapshot",
+      "role": "current machine-readable state snapshot"
+    },
+    {
+      "artifact_name": "canonical_66g_reference",
+      "role": "approved stable baseline reference"
+    },
+    {
+      "artifact_name": "canonical_benchmark_reference",
+      "role": "approved benchmark reference"
+    }
+  ],
+  "notes": [
+    "Toto je canonical product manifest pre downstream citanie.",
+    "Historical research outputs nemaju byt citane priamo ako product truth source.",
+    "Canonical product layer ma byt mala, explicitna a stabilna."
+  ]
+}

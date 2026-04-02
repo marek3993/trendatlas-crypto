@@ -1,0 +1,50 @@
+{
+  "artifact_name": "canonical_product_export_contract",
+  "artifact_type": "export",
+  "truth_domain": "product",
+  "truth_status": "official",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "canonical/manifests/canonical_product_manifest.json",
+    "canonical/decisions/canonical_strategy_decision.json",
+    "canonical/decisions/canonical_universe_decision.json",
+    "canonical/decisions/canonical_leverage_decision.json",
+    "canonical/manifests/canonical_strategy_snapshot.json"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "export_contract": {
+    "purpose": "Define the stable downstream-readable product export layer without tying app/product directly to historical research artifacts.",
+    "allowed_sources": [
+      "canonical decisions",
+      "canonical manifests",
+      "canonical references"
+    ],
+    "forbidden_sources": [
+      "historical compare artifacts as direct product truth",
+      "historical summary artifacts as direct product truth",
+      "raw research outputs as app-facing exports",
+      "paper-only artifacts as machine-readable truth carriers"
+    ],
+    "required_truth_fields": [
+      "official_strategy_driver",
+      "reference_baseline",
+      "benchmark_reference",
+      "live_leverage_mode"
+    ],
+    "reading_rule": "Product/app layers should read canonical contracts first and use historical research artifacts only through explicit canonical mapping."
+  },
+  "notes": [
+    "Toto zatial nie je finalny app export subor s metrikami.",
+    "Je to machine-readable export contract pre buducu product/export vrstvu.",
+    "Ciel je zamedzit priamemu napojeniu downstream vrstiev na historical chaos."
+  ]
+}
