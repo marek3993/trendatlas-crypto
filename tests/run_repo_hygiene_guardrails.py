@@ -20,6 +20,8 @@ TEST_FILES = [
     TESTS_DIR / "test_canonical_filename_path_contracts.py",
     TESTS_DIR / "test_canonical_required_top_level_keys.py",
     TESTS_DIR / "test_canonical_reference_truth_flags.py",
+    TESTS_DIR / "test_canonical_decision_ids_present.py",
+    TESTS_DIR / "test_canonical_manifest_indexes_shape.py",
 ]
 
 
