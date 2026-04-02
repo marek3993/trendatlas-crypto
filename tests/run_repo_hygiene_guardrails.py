@@ -31,17 +31,17 @@ def main() -> int:
     suite = unittest.TestSuite()
 
     for index, file_path in enumerate(TEST_FILES, start=1):
-        module = load_module_from_path(f"canonical_guardrail_module_{index}", file_path)
+        module = load_module_from_path(f"repo_hygiene_guardrail_module_{index}", file_path)
         suite.addTests(loader.loadTestsFromModule(module))
 
     runner = unittest.TextTestRunner(verbosity=2)
     result = runner.run(suite)
 
     if result.wasSuccessful():
-        print("\n[OK] Canonical guardrails passed.")
+        print("\n[OK] Repo hygiene guardrails passed.")
         return 0
 
-    print("\n[FAIL] Canonical guardrails failed.")
+    print("\n[FAIL] Repo hygiene guardrails failed.")
     return 1
 
 
