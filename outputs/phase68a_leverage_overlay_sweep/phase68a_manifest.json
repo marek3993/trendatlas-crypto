@@ -1,0 +1,36 @@
+{
+  "phase": "phase68a_leverage_overlay_sweep",
+  "input_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "annual_borrow_cost": 0.0,
+  "variants": [
+    {
+      "model": "phase68a_66g_1p00x",
+      "leverage": 1.0
+    },
+    {
+      "model": "phase68a_66g_1p10x",
+      "leverage": 1.1
+    },
+    {
+      "model": "phase68a_66g_1p25x",
+      "leverage": 1.25
+    },
+    {
+      "model": "phase68a_66g_1p35x",
+      "leverage": 1.35
+    },
+    {
+      "model": "phase68a_66g_1p50x",
+      "leverage": 1.5
+    }
+  ],
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68a_leverage_overlay_sweep\\phase68a_leverage_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68a_leverage_overlay_sweep\\phase68a_leverage_compare.csv",
+  "papers_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68a_leverage_overlay_sweep\\papers",
+  "notes": [
+    "Synthetic leverage overlay nad current 66G paperom.",
+    "Nemen\u00ed signal/logiku/universe/governance.",
+    "Funding/liquidation/slippage nie s\u00fa v tomto v1 modele explicitne simulovan\u00e9.",
+    "Cie\u013e je zisti\u0165 first-order effect 1.10x/1.25x/1.35x/1.50x na current 66G line."
+  ]
+}

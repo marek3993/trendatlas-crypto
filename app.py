@@ -136,18 +136,83 @@ V každom momente drží portfólio jednoducho:
         "compare_table": "Prehľad verzií",
         "method_title": "Ako to funguje",
         "method_md": """
-### Základný princíp
+### Ako stratégia funguje
 
-- stratégia používa fixný shortlist
-- vyberá len jednu aktívnu pozíciu naraz
-- neprepína sa bezdôvodne, ale len vtedy, keď nový kandidát vyzerá dosť silno
+Táto stratégia je postavená na riadenej rotácii podľa trhového režimu.  
+Jej úloha je jednoduchá: **držať jednu najsilnejšiu pozíciu alebo zostať v hotovosti**.
 
-### Čo je dôležité pre bežného používateľa
+Nesnaží sa predpovedať každý krátkodobý pohyb trhu.  
+Namiesto toho si priebežne kladie dve hlavné otázky:
 
-- systém sa snaží zachytiť silnejšie časti trhu
-- keď podmienky nie sú dosť kvalitné, nemusí držať rizikovú pozíciu
-- trend barometer ukazuje, ako ďaleko alebo blízko je trend k buy hranici
+- Je trh v dostatočne zdravom stave na to, aby malo zmysel niesť riziko?
+- Ak áno, ktoré jediné aktívum má momentálne najlepšie predpoklady na držanie?
+
+### Základná logika
+
+Stratégia sa začína od základného signálu trhového režimu.  
+Ten vyhodnocuje, či je celkové prostredie dostatočne silné na risk-on prístup. Ak nie je, systém zostáva opatrný a preferuje hotovosť.
+
+Ak sú podmienky vhodné, stratégia následne porovnáva kandidátske aktíva a vytvára pre ne skóre na základe viacerých faktorov, najmä trendu, sily výnosov, rizika a volatility.  
+Do finálneho výberu sa dostanú len tie aktíva, ktoré prejdú kvalitatívnymi a bezpečnostnými filtrami.
+
+### Rozhodovanie o držaní a prepínaní
+
+Nestačí len to, že je nejaké aktívum na prvom mieste.  
+Stratégia zároveň rieši aj to, **či sa vôbec oplatí meniť aktuálnu pozíciu**.
+
+Preto používa riadiacu vrstvu, ktorá:
+
+- porovnáva aktuálne držané aktívum s novými kandidátmi
+- vyžaduje dostatočne silnú výhodu pred prepnutím
+- bráni zbytočne častému prehadzovaniu pozícií
+- využíva ochranné pravidlá typu minimum hold time, probation a cooldown
+
+Práve toto je dôležité, pretože veľa stratégií vyzerá dobre na papieri, ale v praxi zlyháva na príliš častých zmenách, slabých vstupoch alebo nestabilnom vedení.
+
+### Čo môže stratégia držať
+
+V každom momente môže byť stratégia len v jednom z týchto stavov:
+
+- **Cash**, ak podmienky nie sú dostatočne kvalitné
+- **BTC**, ak je Bitcoin najsilnejšia validná voľba
+- **jeden vybraný altcoin**, ak si jasne zaslúži nahradiť aktuálne držanú pozíciu
+
+V praxi teda ide o **top-1 rotačný systém s možnosťou zostať v hotovosti**.
+
+### Prečo stratégia niekedy zostáva v hotovosti
+
+Hotovosť neznamená, že systém „nič nerobí“.  
+Znamená to, že podľa interných pravidiel ešte trh neprekročil kvalitatívnu hranicu pre nákup, alebo žiadny kandidát nie je dosť presvedčivý na reálnu expozíciu.
+
+Aj preto môže systém interne vidieť lídra, ale obchod ešte nespustiť.  
+Kandidát môže existovať, no bezpečnostná a riadiaca vrstva stále nemusí dovoliť vstup.
+
+### Čím je táto stratégia iná
+
+Dôležité je, že toto nie je len jednoduchý ranking model.  
+Stratégia stojí na troch vrstvách:
+
+- **Filter trhového režimu** – rozhoduje, či má byť riziko vôbec zapnuté
+- **Vrstva výberu aktíva** – hľadá najsilnejšie validné aktívum
+- **Riadiaca vrstva** – rozhoduje, či je zmena pozície naozaj opodstatnená
+
+Práve tretia vrstva robí veľký rozdiel medzi modelom, ktorý vyzerá dobre len v backteste, a modelom, ktorý sa správa disciplinovane aj v reálnej prevádzke.
+
+### Praktické správanie stratégie
+
+V praxi sa stratégia správa veľmi jednoducho:
+
+- zostáva v hotovosti, keď trhové podmienky nie sú dosť dobré
+- inak drží jedno najsilnejšie validné aktívum
+- neprepína bez dostatočne jasnej výhody
+- snaží sa vyhýbať hlučným a nekvalitným zmenám
+
+### Prečo používame uzavretý deň
+
+Obchody vykonávame po uzavretí dňa, s jednodňovým oneskorením oproti signálu stratégie.  
+Podľa testov je tento prístup stabilnejší a výnosnejší.
 """,
+
         "feedback_title": "Feedback",
         "feedback_desc": "Pošli poznámku alebo screenshot. Obrázky majú limit 5 MB.",
         "feedback_text": "Tvoja správa",
@@ -232,18 +297,84 @@ At any point in time, the portfolio stays simple:
         "compare_table": "Version overview",
         "method_title": "How it works",
         "method_md": """
-### Core idea
+### How the strategy works
 
-- the strategy uses a fixed shortlist
-- it usually holds only one active position at a time
-- it avoids unnecessary switching by requiring enough evidence before rotating
+This strategy is built around regime-based rotation.  
+Its job is simple: **hold the single strongest position or stay in cash**.
 
-### What matters for a first-time visitor
+It does not try to predict every short-term market move.  
+Instead, it keeps answering two main questions:
 
-- the system tries to capture stronger parts of the market
-- when conditions are weak, it does not have to force risky exposure
-- the trend barometer shows how far or close the trend is to the buy threshold
+- Is the market healthy enough to justify taking risk?
+- If yes, which single asset is currently the best one to hold?
+
+### Core logic
+
+The strategy starts with a baseline market regime signal.  
+That signal evaluates whether the overall environment is strong enough for risk-on positioning. If it is not, the system stays defensive and prefers cash.
+
+If conditions are strong enough, the strategy then evaluates a set of candidate assets and scores them using multiple inputs, especially trend, return strength, risk, and volatility.  
+Only assets that pass the required quality and safety filters are allowed to compete.
+
+### Holding and switching logic
+
+It is not enough for an asset to rank first.  
+The strategy also decides **whether switching is actually worth it**.
+
+That is why it includes a governance layer that:
+
+- compares the currently held asset with challengers
+- requires a meaningful edge before switching
+- prevents unnecessary over-switching
+- uses protective rules such as minimum holding periods, probation, and cooldown logic
+
+This matters because many strategies look great in research but fail in practice due to excessive switching, weak entries, or unstable leadership.
+
+### What the strategy can hold
+
+At any time, the strategy can be in only one of these states:
+
+- **Cash**, if conditions are not strong enough
+- **BTC**, if Bitcoin is the strongest valid choice
+- **one shortlisted altcoin**, if it clearly earns the right to replace the current holding
+
+In practice, this makes it a **top-1 rotation system with a cash option**.
+
+### Why it sometimes stays in cash
+
+Cash does not mean the system is “doing nothing.”  
+It means the market is still below the internal quality threshold, or no candidate is strong enough to justify real exposure.
+
+That is why the system may have an internal leader while still not taking the trade.  
+A candidate may exist, but the governance and safety layer may still block execution.
+
+### What makes this strategy different
+
+This is not just a simple ranking model.  
+The strategy has three layers:
+
+- **Market regime filter** – decides whether risk should be on at all
+- **Asset selection layer** – finds the strongest valid candidate
+- **Governance layer** – decides whether a switch is actually justified
+
+That third layer is important because it is often the difference between a model that looks good in a backtest and one that behaves in a disciplined way in real operation.
+
+### Practical behavior
+
+In practice, the strategy behaves very simply:
+
+- stay in cash when market conditions are not strong enough
+- otherwise hold the single strongest valid asset
+- do not switch unless the challenger is clearly better
+- avoid noisy, low-quality flips
+
+### Why we use the last closed day
+
+Trades are executed after the day closes, with a one-day delay versus the strategy signal.  
+Based on our tests, this approach is more stable and more profitable.
 """,
+
+
         "feedback_title": "Feedback",
         "feedback_desc": "Send a comment or a screenshot. Images are limited to 5 MB.",
         "feedback_text": "Your message",

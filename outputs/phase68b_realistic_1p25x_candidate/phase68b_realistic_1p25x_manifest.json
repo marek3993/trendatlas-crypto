@@ -1,0 +1,39 @@
+{
+  "phase": "phase68b_realistic_1p25x_candidate",
+  "official_compare_baseline": "phase68b_66g_1p00x_realistic_baseline",
+  "input_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "trend_history": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+  "params": {
+    "annual_borrow_cost": 0.12,
+    "trend_activation_threshold": 0.1,
+    "stress_lookback_days": 20,
+    "stress_off_threshold": -0.08,
+    "stress_on_threshold": -0.04,
+    "switch_day_forced_1x": true,
+    "entry_buffer_day_forced_1x": true,
+    "cash_forced_1x": true
+  },
+  "variants": [
+    {
+      "model": "phase68b_66g_1p00x_realistic_baseline",
+      "target_leverage": 1.0
+    },
+    {
+      "model": "phase68b_realistic_1p25x_candidate",
+      "target_leverage": 1.25
+    }
+  ],
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68b_realistic_1p25x_candidate\\phase68b_realistic_1p25x_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68b_realistic_1p25x_candidate\\phase68b_realistic_1p25x_compare.csv",
+  "papers_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68b_realistic_1p25x_candidate\\papers",
+  "notes": [
+    "Phase68B je realistick\u00fd 1.25x candidate test nad current 66G baseline paperom.",
+    "Synthetic Phase68A a realistic Phase68B s\u00fa oddelen\u00e9.",
+    "Cash = v\u017edy 1.00x.",
+    "Switch day = 1.00x.",
+    "Prv\u00fd full day po switchi = 1.00x.",
+    "Leverage sa zap\u00edna len ak trend_score >= trend_activation_threshold a stress block nie je akt\u00edvny.",
+    "Borrow cost sa \u00fa\u010dtuje len pri re\u00e1lne akt\u00edvnom leverage.",
+    "Compare baseline je phase68b_66g_1p00x_realistic_baseline."
+  ]
+}

@@ -1,0 +1,6 @@
+model,leverage,annual_borrow_cost_pct,cagr_pct,max_drawdown_pct,since2023_cagr_pct,since2025_cagr_pct,selection_count,switch_count,unique_selected_assets,latest_available_date,held_asset_now
+phase68a_66g_1p00x,1.0,0.0,112.99,-23.6,134.24,113.55,270,90,4,2026-03-30,CASH
+phase68a_66g_1p10x,1.1,0.0,126.99,-25.81,151.03,127.91,270,90,4,2026-03-30,CASH
+phase68a_66g_1p25x,1.25,0.0,148.84,-29.05,177.25,150.39,270,90,4,2026-03-30,CASH
+phase68a_66g_1p35x,1.35,0.0,163.93,-31.18,195.37,165.97,270,90,4,2026-03-30,CASH
+phase68a_66g_1p50x,1.5,0.0,187.29,-34.31,223.42,190.16,270,90,4,2026-03-30,CASH
