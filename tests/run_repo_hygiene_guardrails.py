@@ -7,6 +7,8 @@ ROOT = Path(__file__).resolve().parents[1]
 TESTS_DIR = ROOT / "tests"
 
 TEST_FILES = [
+    TESTS_DIR / "test_source_of_truth_presence.py",
+    TESTS_DIR / "test_forbidden_tracked_artifacts.py",
     TESTS_DIR / "test_canonical_lineage_minimum.py",
     TESTS_DIR / "test_canonical_truth_consistency.py",
     TESTS_DIR / "test_canonical_reference_separation.py",
@@ -14,6 +16,8 @@ TEST_FILES = [
     TESTS_DIR / "test_canonical_json_schema_shape.py",
     TESTS_DIR / "test_canonical_consumer_scope_rules.py",
     TESTS_DIR / "test_canonical_decision_vs_reference_boundaries.py",
+    TESTS_DIR / "test_canonical_upstream_paths_exist.py",
+    TESTS_DIR / "test_canonical_filename_path_contracts.py",
 ]
 
 
