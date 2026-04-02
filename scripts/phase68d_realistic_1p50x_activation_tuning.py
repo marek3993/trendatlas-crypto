@@ -526,3 +526,7 @@ def main() -> None:
     log(f"[PHASE68D] Saved compare -> {compare_path}")
     log(f"[PHASE68D] Saved manifest -> {manifest_path}")
     log(f"[PHASE68D] Saved papers -> {papers_dir}")
+
+
+if __name__ == "__main__":
+    main()

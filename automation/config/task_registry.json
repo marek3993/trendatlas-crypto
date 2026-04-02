@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "task_types": [
+    "browser_check",
+    "browser_capture",
+    "workflow_run",
+    "report_only",
+    "truth_patch_prep"
+  ],
+  "status_enum": [
+    "draft",
+    "queued",
+    "running",
+    "completed",
+    "failed",
+    "cancelled"
+  ]
+}

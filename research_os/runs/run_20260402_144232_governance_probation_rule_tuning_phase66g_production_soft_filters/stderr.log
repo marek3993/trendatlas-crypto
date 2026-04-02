@@ -1,0 +1,6 @@
+usage: phase66g_production_candidate_live.py [-h]
+                                             [--baseline-paper BASELINE_PAPER]
+                                             [--drop-file DROP_FILE]
+                                             [--phase66f-summary PHASE66F_SUMMARY]
+                                             [--min-history-days MIN_HISTORY_DAYS]
+phase66g_production_candidate_live.py: error: unrecognized arguments: --mode research --baseline-model {'model_key': 'phase66g_production_soft_filters', 'paper_path': 'C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv', 'candidate_reference': 'phase66g_production_soft_filters'} --hypothesis-label governance_probation_rule_tuning_phase66g_production_soft_filters

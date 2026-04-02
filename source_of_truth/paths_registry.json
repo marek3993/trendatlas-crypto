@@ -1,0 +1,116 @@
+{
+  "paths": [
+    {
+      "label": "repo_root",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+      "owner_segment": "MASTER",
+      "status": "active",
+      "is_official": true,
+      "notes": "Project root"
+    },
+    {
+      "label": "phase63_compare_paper",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+      "owner_segment": "FORENSIC",
+      "status": "active",
+      "is_official": true,
+      "notes": "Pinned phase63 compare baseline paper"
+    },
+    {
+      "label": "phase49_main_daily_paper",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase49_final_compare\\phase49_no_bnb_baseline_paper.csv",
+      "owner_segment": "DATA",
+      "status": "active",
+      "is_official": true,
+      "notes": "Deterministic attribution main daily paper"
+    },
+    {
+      "label": "phase59_leader_daily_paper",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase59_bnb_selective_restore\\phase59_phase42_core_paper.csv",
+      "owner_segment": "DATA",
+      "status": "active",
+      "is_official": true,
+      "notes": "Deterministic attribution leader daily paper"
+    },
+    {
+      "label": "recent_regime_attribution_output",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_daily_behavior.csv",
+      "owner_segment": "DATA",
+      "status": "active",
+      "is_official": true,
+      "notes": "Deterministic attribution output"
+    },
+    {
+      "label": "phase67e_guardrail_sweep_script",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67e_guardrail_sweep.py",
+      "owner_segment": "DATA",
+      "status": "active",
+      "is_official": true,
+      "notes": "Hardened guardrail sweep script with strict inputs"
+    },
+    {
+      "label": "recent_regime_attribution_script",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\recent_regime_attribution_2025.py",
+      "owner_segment": "DATA",
+      "status": "active",
+      "is_official": true,
+      "notes": "Hardened attribution script with strict inputs"
+    },
+    {
+      "label": "phase63_compare_output_folder",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay",
+      "owner_segment": "FORENSIC",
+      "status": "active",
+      "is_official": true,
+      "notes": "Phase63 compare output folder"
+    },
+    {
+      "label": "source_of_truth_root",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth",
+      "owner_segment": "MASTER",
+      "status": "active",
+      "is_official": true,
+      "notes": "Central source of truth root"
+    },
+    {
+      "label": "research_os_truth_pack",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\single_truth\\truth_pack.json",
+      "owner_segment": "AI_LAB",
+      "status": "active",
+      "is_official": true,
+      "notes": "AI Research OS truth pack"
+    },
+    {
+      "label": "research_os_candidates_registry",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\candidates_registry.csv",
+      "owner_segment": "AI_LAB",
+      "status": "active",
+      "is_official": true,
+      "notes": "AI Research OS candidates registry"
+    },
+    {
+      "label": "research_os_leaderboard_summary",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\leaderboards\\leaderboard_summary.csv",
+      "owner_segment": "AI_LAB",
+      "status": "active",
+      "is_official": true,
+      "notes": "AI Research OS leaderboard summary"
+    },
+    {
+      "label": "research_os_manifest",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\research_os_manifest.json",
+      "owner_segment": "AI_LAB",
+      "status": "active",
+      "is_official": true,
+      "notes": "AI Research OS root manifest"
+    },
+    {
+      "label": "research_os_run_manifest_schema",
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\run_manifest.schema.json",
+      "owner_segment": "AI_LAB",
+      "status": "active",
+      "is_official": true,
+      "notes": "AI Research OS run manifest schema"
+    }
+  ]
+}

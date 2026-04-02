@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_id",
+    "run_id",
+    "task_id",
+    "summary",
+    "findings",
+    "artifacts",
+    "pending_truth_patch_ids",
+    "next_action"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_log_path": {
+          "type": "string"
+        },
+        "screenshot_manifest_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "report_path": {
+          "type": "string"
+        }
+      }
+    },
+    "pending_truth_patch_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_action": {
+      "type": "string"
+    }
+  }
+}

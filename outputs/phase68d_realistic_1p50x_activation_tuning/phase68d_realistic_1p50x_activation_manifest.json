@@ -1,0 +1,123 @@
+{
+  "phase": "phase68d_realistic_1p50x_activation_tuning",
+  "official_compare_baseline": "phase68d_66g_1p00x_realistic_baseline",
+  "input_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "trend_history": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+  "params": {
+    "annual_borrow_cost": 0.12,
+    "stress_lookback_days": 20,
+    "switch_day_forced_1x": true,
+    "entry_buffer_day_forced_1x": true,
+    "cash_forced_1x": true,
+    "target_leverage_fixed_for_candidates": 1.5
+  },
+  "baseline_variant": {
+    "model": "phase68d_66g_1p00x_realistic_baseline",
+    "target_leverage": 1.0,
+    "trend_activation_threshold": 0.1,
+    "stress_off_threshold": -0.08,
+    "stress_on_threshold": -0.04
+  },
+  "candidate_variants": [
+    {
+      "model": "phase68d_1p50x_act_A",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": -0.05,
+      "stress_off_threshold": -0.06,
+      "stress_on_threshold": -0.02
+    },
+    {
+      "model": "phase68d_1p50x_act_B",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": -0.05,
+      "stress_off_threshold": -0.08,
+      "stress_on_threshold": -0.04
+    },
+    {
+      "model": "phase68d_1p50x_act_C",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": -0.05,
+      "stress_off_threshold": -0.1,
+      "stress_on_threshold": -0.06
+    },
+    {
+      "model": "phase68d_1p50x_act_D",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.0,
+      "stress_off_threshold": -0.06,
+      "stress_on_threshold": -0.02
+    },
+    {
+      "model": "phase68d_1p50x_act_E",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.0,
+      "stress_off_threshold": -0.08,
+      "stress_on_threshold": -0.04
+    },
+    {
+      "model": "phase68d_1p50x_act_F",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.0,
+      "stress_off_threshold": -0.1,
+      "stress_on_threshold": -0.06
+    },
+    {
+      "model": "phase68d_1p50x_act_G",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.05,
+      "stress_off_threshold": -0.06,
+      "stress_on_threshold": -0.02
+    },
+    {
+      "model": "phase68d_1p50x_act_H",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.05,
+      "stress_off_threshold": -0.08,
+      "stress_on_threshold": -0.04
+    },
+    {
+      "model": "phase68d_1p50x_act_I",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.05,
+      "stress_off_threshold": -0.1,
+      "stress_on_threshold": -0.06
+    },
+    {
+      "model": "phase68d_1p50x_act_J",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.1,
+      "stress_off_threshold": -0.06,
+      "stress_on_threshold": -0.02
+    },
+    {
+      "model": "phase68d_1p50x_act_K",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.1,
+      "stress_off_threshold": -0.08,
+      "stress_on_threshold": -0.04
+    },
+    {
+      "model": "phase68d_1p50x_act_L",
+      "target_leverage": 1.5,
+      "trend_activation_threshold": 0.1,
+      "stress_off_threshold": -0.1,
+      "stress_on_threshold": -0.06
+    }
+  ],
+  "success_rule": {
+    "min_since2025_delta_vs_baseline_pct": 0.01,
+    "max_dd_worsen_vs_baseline_pct": -3.0,
+    "min_calmar_delta_vs_baseline": 0.0
+  },
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68d_realistic_1p50x_activation_tuning\\phase68d_realistic_1p50x_activation_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68d_realistic_1p50x_activation_tuning\\phase68d_realistic_1p50x_activation_compare.csv",
+  "papers_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68d_realistic_1p50x_activation_tuning\\papers",
+  "notes": [
+    "Phase68D nemen\u00ed leverage level na candidates, fixne dr\u017e\u00ed 1.50x.",
+    "Sweepuje len trend_activation_threshold a stress thresholds.",
+    "Cash = v\u017edy 1.00x.",
+    "Switch day = 1.00x.",
+    "Prv\u00fd full day po switchi = 1.00x.",
+    "Official compare baseline je phase68d_66g_1p00x_realistic_baseline."
+  ]
+}

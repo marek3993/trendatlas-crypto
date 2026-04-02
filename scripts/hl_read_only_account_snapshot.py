@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import argparse
@@ -19,6 +18,9 @@ API_BASE = {
     "mainnet": "https://api.hyperliquid.xyz",
     "testnet": "https://api.hyperliquid-testnet.xyz",
 }
+
+DEFAULT_NETWORK = "testnet"
+DEFAULT_ACCOUNT = "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856"
 
 ADDRESS_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
 
@@ -59,9 +61,7 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 def validate_address(address: str) -> str:
     address = address.strip()
     if not ADDRESS_RE.match(address):
-        raise ValueError(
-            "Neplatná Hyperliquid/EVM adresa. Očakávam formát 0x + 40 hex znakov."
-        )
+        raise ValueError("Neplatná Hyperliquid/EVM adresa. Očakávam formát 0x + 40 hex znakov.")
     return address
 
 
@@ -108,10 +108,7 @@ def normalize_positions(clearinghouse_state: dict[str, Any]) -> list[dict[str, A
     return rows
 
 
-def normalize_open_orders(
-    frontend_open_orders: Any,
-    plain_open_orders: Any,
-) -> list[dict[str, Any]]:
+def normalize_open_orders(frontend_open_orders: Any, plain_open_orders: Any) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
 
     source = frontend_open_orders if isinstance(frontend_open_orders, list) else []
@@ -198,26 +195,14 @@ def build_summary(
     spot_balances: list[dict[str, Any]],
     portfolio: Any,
 ) -> dict[str, Any]:
-    margin_summary = (
-        clearinghouse_state.get("marginSummary", {})
-        if isinstance(clearinghouse_state, dict)
-        else {}
-    )
-    cross_margin_summary = (
-        clearinghouse_state.get("crossMarginSummary", {})
-        if isinstance(clearinghouse_state, dict)
-        else {}
-    )
+    margin_summary = clearinghouse_state.get("marginSummary", {}) if isinstance(clearinghouse_state, dict) else {}
+    cross_margin_summary = clearinghouse_state.get("crossMarginSummary", {}) if isinstance(clearinghouse_state, dict) else {}
 
     account_value = safe_float(margin_summary.get("accountValue"))
     withdrawable = safe_float(clearinghouse_state.get("withdrawable"))
 
-    nonzero_positions = [
-        row for row in positions if row.get("szi") not in (None, 0.0)
-    ]
-    nonzero_balances = [
-        row for row in spot_balances if (row.get("total") or 0.0) != 0.0
-    ]
+    nonzero_positions = [row for row in positions if row.get("szi") not in (None, 0.0)]
+    nonzero_balances = [row for row in spot_balances if (row.get("total") or 0.0) != 0.0]
 
     portfolio_periods: list[str] = []
     if isinstance(portfolio, list):
@@ -241,9 +226,7 @@ def build_summary(
         "spot_balances_count": len(spot_balances),
         "nonzero_spot_balances_count": len(nonzero_balances),
         "position_coins": [row.get("coin") for row in nonzero_positions if row.get("coin")],
-        "open_order_coins": sorted(
-            {str(row.get("coin")) for row in open_orders if row.get("coin")}
-        ),
+        "open_order_coins": sorted({str(row.get("coin")) for row in open_orders if row.get("coin")}),
         "spot_balance_coins": [row.get("coin") for row in nonzero_balances if row.get("coin")],
         "portfolio_periods": portfolio_periods,
     }
@@ -251,8 +234,8 @@ def build_summary(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Hyperliquid read-only account snapshot")
-    parser.add_argument("--network", choices=["mainnet", "testnet"], required=True)
-    parser.add_argument("--account", required=True, help="0x... public account address")
+    parser.add_argument("--network", choices=["mainnet", "testnet"], default=DEFAULT_NETWORK)
+    parser.add_argument("--account", default=DEFAULT_ACCOUNT, help="0x... public account address")
     return parser.parse_args()
 
 

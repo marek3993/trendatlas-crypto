@@ -1,0 +1,16 @@
+{
+  "run_id": "run_YYYYMMDD_HHMMSS_slug",
+  "task_id": "task_YYYYMMDD_HHMMSS_slug",
+  "started_at": "2026-04-02T12:00:00Z",
+  "ended_at": null,
+  "status": "started",
+  "executor": "manual_orchestrator",
+  "steps": [],
+  "artifacts": {
+    "report_paths": [],
+    "screenshot_manifest_paths": [],
+    "pending_truth_patch_paths": []
+  },
+  "errors": [],
+  "warnings": []
+}

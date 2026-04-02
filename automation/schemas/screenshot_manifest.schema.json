@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ScreenshotManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_id",
+    "run_id",
+    "screenshots"
+  ],
+  "properties": {
+    "manifest_id": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "screenshots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "shot_id",
+          "timestamp",
+          "file_path",
+          "page_hint",
+          "note"
+        ],
+        "properties": {
+          "shot_id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "file_path": {
+            "type": "string"
+          },
+          "page_hint": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

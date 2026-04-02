@@ -1,0 +1,16 @@
+{
+  "project_name": "Market Regime v1",
+  "layer_name": "MRV1 AUTOMATION",
+  "safe_mode": true,
+  "allow_direct_source_of_truth_write": false,
+  "default_executor": "manual_orchestrator",
+  "artifacts": {
+    "runs_dir": "automation/runs",
+    "reports_dir": "automation/reports",
+    "screenshots_dir": "automation/screenshots",
+    "truth_patches_pending_dir": "automation/truth_patches/pending",
+    "truth_patches_approved_dir": "automation/truth_patches/approved",
+    "truth_patches_rejected_dir": "automation/truth_patches/rejected",
+    "approvals_dir": "automation/approvals"
+  }
+}

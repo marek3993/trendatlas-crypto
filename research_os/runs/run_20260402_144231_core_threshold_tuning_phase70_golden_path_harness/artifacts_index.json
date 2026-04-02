@@ -1,0 +1,29 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260402_144231_core_threshold_tuning_phase70_golden_path_harness",
+  "required_run_artifacts": [
+    "run_manifest.json",
+    "run_status.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts_index.json",
+    "quality_report.json",
+    "precheck_inputs.json"
+  ],
+  "conditional_artifacts": {
+    "when_applicable": [
+      "summary.csv",
+      "paper.csv",
+      "compare.csv"
+    ]
+  },
+  "produced_files": [],
+  "ingest": {
+    "summary_path": null,
+    "paper_path": null,
+    "compare_path": null,
+    "has_summary": false,
+    "has_paper": false,
+    "has_compare": false
+  }
+}

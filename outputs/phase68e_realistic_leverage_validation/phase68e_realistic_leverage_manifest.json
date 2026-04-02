@@ -1,0 +1,48 @@
+{
+  "phase": "phase68e_realistic_leverage_validation",
+  "official_compare_baseline": "phase68e_66g_1p00x_baseline",
+  "input_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "trend_history": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+  "decisions_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_decisions.csv",
+  "governance_switch_source": "ok",
+  "params": {
+    "annual_borrow_cost": 0.12,
+    "asset_transition_slippage_bps": 10.0,
+    "trend_activation_threshold": 0.1,
+    "stress_lookback_days": 20,
+    "stress_off_threshold": -0.08,
+    "stress_on_threshold": -0.04,
+    "cash_forced_1x": true,
+    "switch_day_forced_1x": true,
+    "entry_buffer_day_forced_1x": true
+  },
+  "variants": [
+    {
+      "model": "phase68e_66g_1p00x_baseline",
+      "target_leverage": 1.0
+    },
+    {
+      "model": "phase68e_66g_1p10x_candidate",
+      "target_leverage": 1.1
+    },
+    {
+      "model": "phase68e_66g_1p25x_candidate",
+      "target_leverage": 1.25
+    },
+    {
+      "model": "phase68e_66g_1p50x_candidate",
+      "target_leverage": 1.5
+    }
+  ],
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68e_realistic_leverage_validation\\phase68e_realistic_leverage_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68e_realistic_leverage_validation\\phase68e_realistic_leverage_compare.csv",
+  "papers_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68e_realistic_leverage_validation\\papers",
+  "notes": [
+    "Realistic leverage validation nad current 66G baseline.",
+    "Fokus hlavne na 1.25x, ale compare obsahuje aj 1.10x a 1.50x.",
+    "Metriky s\u00fa explicitne oddelen\u00e9: governance_switch_count, exposure_days, asset_transition_count.",
+    "Borrow cost je \u00fa\u010dtovan\u00fd len pri re\u00e1lne akt\u00edvnom leverage.",
+    "Jednoduch\u00fd slippage model sa \u00fa\u010dtuje len na asset_transition_day.",
+    "Ostatn\u00e9 pravidl\u00e1 ost\u00e1vaj\u00fa fixn\u00e9."
+  ]
+}

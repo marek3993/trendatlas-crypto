@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RunLog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "task_id",
+    "started_at",
+    "ended_at",
+    "status",
+    "executor",
+    "steps",
+    "artifacts",
+    "errors",
+    "warnings"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "ended_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "started",
+        "success",
+        "partial",
+        "failed"
+      ]
+    },
+    "executor": {
+      "type": "string"
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step_index",
+          "timestamp",
+          "action",
+          "result"
+        ],
+        "properties": {
+          "step_index": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "report_paths",
+        "screenshot_manifest_paths",
+        "pending_truth_patch_paths"
+      ],
+      "properties": {
+        "report_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "screenshot_manifest_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pending_truth_patch_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

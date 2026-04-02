@@ -1,0 +1,62 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters",
+  "experiment_id": "governance_probation_rule_tuning_phase66g_production_soft_filters",
+  "candidate_id": "governance_probation_rule_tuning_phase66g_production_soft_filters",
+  "status": "archived",
+  "started_utc": "2026-04-02 14:42:32 UTC",
+  "ended_utc": "2026-04-02 14:42:33 UTC",
+  "artifact_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\governance_probation_rule_tuning_phase66g_production_soft_filters.spec_ready.json",
+  "input_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro\\global_liquidity_weekly.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ADAUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\AVAXUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BNBUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOGEUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOTUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ETHUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LINKUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\SOLUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\TRXUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\XRPUSDT_1d.csv"
+  ],
+  "output_refs": [],
+  "metrics": {
+    "extracted_score": null
+  },
+  "quality_checks": {
+    "schema_version": "2.0",
+    "run_id": "run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters",
+    "status": "failed",
+    "checks": [
+      {
+        "name": "required_run_artifacts",
+        "ok": true,
+        "missing": []
+      },
+      {
+        "name": "expected_outputs",
+        "ok": false,
+        "missing": [
+          "summary.csv",
+          "paper.csv",
+          "compare_summary.csv"
+        ]
+      },
+      {
+        "name": "numeric_score_extract",
+        "ok": false,
+        "value": null
+      },
+      {
+        "name": "compare_valid",
+        "ok": false
+      }
+    ]
+  },
+  "exit_code": 2,
+  "notes": null
+}

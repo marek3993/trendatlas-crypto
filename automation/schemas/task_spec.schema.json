@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TaskSpec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "task_type",
+    "created_at",
+    "requested_by",
+    "status",
+    "inputs",
+    "constraints",
+    "expected_outputs",
+    "approval_gate",
+    "source_refs"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string"
+    },
+    "task_type": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "requested_by": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "inputs": {
+      "type": "object"
+    },
+    "constraints": {
+      "type": "object"
+    },
+    "expected_outputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "approval_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_for_truth_apply"
+      ],
+      "properties": {
+        "required_for_truth_apply": {
+          "type": "boolean"
+        },
+        "approver_role": {
+          "type": "string"
+        }
+      }
+    },
+    "source_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

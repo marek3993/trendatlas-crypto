@@ -1,0 +1,14 @@
+{
+  "report_id": "report_YYYYMMDD_HHMMSS_slug",
+  "run_id": "run_YYYYMMDD_HHMMSS_slug",
+  "task_id": "task_YYYYMMDD_HHMMSS_slug",
+  "summary": "",
+  "findings": [],
+  "artifacts": {
+    "run_log_path": "",
+    "screenshot_manifest_paths": [],
+    "report_path": ""
+  },
+  "pending_truth_patch_ids": [],
+  "next_action": "review"
+}

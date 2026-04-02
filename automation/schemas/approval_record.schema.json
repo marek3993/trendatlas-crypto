@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ApprovalRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "approval_id",
+    "patch_id",
+    "decision",
+    "approved_by",
+    "decided_at",
+    "note"
+  ],
+  "properties": {
+    "approval_id": {
+      "type": "string"
+    },
+    "patch_id": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "rejected"
+      ]
+    },
+    "approved_by": {
+      "type": "string"
+    },
+    "decided_at": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

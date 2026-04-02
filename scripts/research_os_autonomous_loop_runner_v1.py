@@ -11,41 +11,54 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_PATH = ROOT / "research_os_autonomous_loop_policy_v1.json"
-SPEC_POLICY_PATH = ROOT / "research_os_spec_generator_policy_v1.json"
-BOOTSTRAP_REGISTRY_PATH = ROOT / "research_os" / "leaderboards" / "research_os_registry.csv"
+
+AUTHORITATIVE_GENERATED_SPECS_DIR = ROOT / "research_os" / "experiment_specs" / "generated"
+AUTHORITATIVE_IDEATION_PATHS = [
+    ROOT / "outputs" / "research_os_ideation_v1" / "ideation_hypotheses.json",
+    ROOT / "research_os" / "ideation" / "ideation_hypotheses.json",
+]
+AUTHORITATIVE_ORCHESTRATOR_PATH = ROOT / "scripts" / "research_os_orchestrator_v1.py"
+AUTHORITATIVE_RUNS_ROOT = ROOT / "research_os" / "runs"
+AUTHORITATIVE_REGISTRY_PATHS = [
+    ROOT / "research_os" / "leaderboards" / "research_os_registry.csv",
+    ROOT / "research_os" / "candidates_registry.csv",
+]
+
+OUTPUT_DIR = ROOT / "outputs" / "research_os_autonomous_loop_v1"
+MANIFEST_PATH = OUTPUT_DIR / "autonomous_loop_run_manifest.json"
+SUMMARY_JSON_PATH = OUTPUT_DIR / "autonomous_loop_run_summary.json"
+SUMMARY_CSV_PATH = OUTPUT_DIR / "autonomous_loop_run_summary.csv"
+LOG_JSONL_PATH = OUTPUT_DIR / "autonomous_loop_log.jsonl"
+
+MANDATORY_EXECUTE_OUTPUTS = [
+    MANIFEST_PATH,
+    SUMMARY_JSON_PATH,
+    SUMMARY_CSV_PATH,
+    LOG_JSONL_PATH,
+]
 
 
-def now_utc() -> str:
+def now_utc_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
-def load_json(path: Path) -> Any:
-    if not path.exists():
-        raise FileNotFoundError(f"Missing required file: {path}")
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def load_csv_optional(path: Path) -> list[dict[str, Any]]:
-    if not path.exists():
-        return []
-    with path.open("r", encoding="utf-8-sig", newline="") as fh:
-        return list(csv.DictReader(fh))
+def ensure_dir(path: Path) -> None:
+    path.mkdir(parents=True, exist_ok=True)
 
 
 def write_json(path: Path, payload: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+    ensure_dir(path.parent)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+    ensure_dir(path.parent)
     if not rows:
         path.write_text("", encoding="utf-8")
         return
 
     fieldnames: list[str] = []
-    seen = set()
+    seen: set[str] = set()
     for row in rows:
         for key in row.keys():
             if key not in seen:
@@ -58,396 +71,473 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
-def log_jsonl(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
+def append_jsonl(path: Path, payload: dict[str, Any]) -> None:
+    ensure_dir(path.parent)
     with path.open("a", encoding="utf-8") as fh:
         fh.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 
-def ensure_bootstrap_registry(path: Path) -> Path:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if not path.exists():
-        fieldnames = [
-            "candidate_id",
-            "status",
-            "lifecycle_stage",
-            "branch",
-            "segment_owner",
-            "hypothesis_label",
-            "model_key",
-            "script_path",
-            "created_at_utc",
-            "updated_at_utc",
-        ]
-        with path.open("w", encoding="utf-8", newline="") as fh:
-            writer = csv.DictWriter(fh, fieldnames=fieldnames)
-            writer.writeheader()
-    return path
+def load_json(path: Path) -> Any:
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
-def is_truth_pack_json(path: Path) -> bool:
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except Exception:
-        return False
-    if not isinstance(payload, dict):
-        return False
-    if (
-        "official_baseline" in payload
-        or "official_baseline_model_key" in payload
-        or "baseline_model_key" in payload
-    ):
-        return True
-    return path.name.lower() == "truth_pack.json" and len(payload) > 0
+def read_csv_optional(path: Path | None) -> list[dict[str, Any]]:
+    if path is None or not path.exists():
+        return []
+    with path.open("r", encoding="utf-8-sig", newline="") as fh:
+        return list(csv.DictReader(fh))
 
 
-def resolve_first_existing(
-    candidates: list[str],
-    label: str,
-    fallback_globs: list[str] | None = None,
-    validator: Any | None = None,
-) -> Path:
-    checked: list[str] = []
-
-    for raw in candidates:
-        path = Path(raw)
-        checked.append(str(path))
+def first_existing(paths: list[Path]) -> Path | None:
+    for path in paths:
         if path.exists() and path.is_file():
-            if validator is None or validator(path):
-                return path
-
-    discovered: list[Path] = []
-    for pattern in fallback_globs or []:
-        discovered.extend(ROOT.glob(pattern))
-
-    unique_sorted = sorted({p.resolve() for p in discovered if p.exists() and p.is_file()})
-    for path in unique_sorted:
-        if validator is None or validator(path):
             return path
-
-    if label == "registry csv":
-        return ensure_bootstrap_registry(BOOTSTRAP_REGISTRY_PATH)
-
-    joined = "\n".join(checked)
-    discovered_text = "\n".join(str(p) for p in unique_sorted) if unique_sorted else "(none)"
-    raise FileNotFoundError(
-        f"Missing required {label}. Checked explicit candidates:\n{joined}\n"
-        f"Fallback matches checked:\n{discovered_text}"
-    )
-
-
-def collect_existing_files(candidates: list[str], fallback_globs: list[str] | None = None) -> list[Path]:
-    found: list[Path] = []
-
-    for raw in candidates:
-        path = Path(raw)
-        if path.exists() and path.is_file():
-            found.append(path.resolve())
-
-    for pattern in fallback_globs or []:
-        for path in ROOT.glob(pattern):
-            if path.exists() and path.is_file():
-                found.append(path.resolve())
-
-    return sorted({p for p in found})
-
-
-def read_registry_snapshot(path: Path) -> list[dict[str, Any]]:
-    return load_csv_optional(path)
-
-
-def determine_winners(registry_rows: list[dict[str, Any]]) -> list[str]:
-    winners: list[str] = []
-    for row in registry_rows:
-        status = str(row.get("status", "")).strip().lower()
-        lifecycle = str(row.get("lifecycle_stage", "")).strip().lower()
-        if status in {"forensic_ready", "master_pending"} or lifecycle in {"forensic_ready", "master_pending"}:
-            candidate_id = str(row.get("candidate_id", "")).strip()
-            if candidate_id:
-                winners.append(candidate_id)
-    return sorted(set(winners))
-
-
-def run_subprocess(command: list[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(command, capture_output=True, text=True, check=False)
-
-
-def script_help_text(script_path: Path) -> str:
-    proc = run_subprocess([sys.executable, str(script_path), "--help"])
-    return ((proc.stdout or "") + "\n" + (proc.stderr or "")).strip()
-
-
-def detect_flag_from_help(help_text: str, candidates: list[str]) -> str | None:
-    for candidate in candidates:
-        if candidate in help_text:
-            return candidate
     return None
 
 
-def resolve_pipeline_runner(
-    candidates: list[str],
-    fallback_globs: list[str],
-    spec_arg_names: list[str],
-) -> tuple[Path, str, list[str]]:
-    scripts = collect_existing_files(candidates, fallback_globs)
-    if not scripts:
-        raise FileNotFoundError("Missing required pipeline runner. No candidate scripts found.")
-
-    diagnostics: list[str] = []
-    spec_candidates = list(spec_arg_names)
-    if "--spec" not in spec_candidates:
-        spec_candidates.append("--spec")
-
-    for script_path in scripts:
-        help_text = script_help_text(script_path)
-        spec_arg = detect_flag_from_help(help_text, spec_candidates)
-
-        extra_args: list[str] = []
-        if spec_arg == "--spec" and "--allow-status" in help_text:
-            extra_args = ["--allow-status", "spec_ready"]
-
-        diagnostics.append(
-            f"{script_path} :: spec_arg={spec_arg or 'NONE'} :: extra_args={' '.join(extra_args) if extra_args else '(none)'}"
-        )
-
-        if spec_arg:
-            return script_path, spec_arg, extra_args
-
-    diag_text = "\n".join(diagnostics)
-    raise RuntimeError(
-        "Unable to detect compatible spec-driven pipeline runner.\n"
-        f"Checked scripts:\n{diag_text}"
-    )
-
-
-def build_base_command(
-    script_path: Path,
-    mode: str,
-    dry_run_flags: list[str],
-    execute_flags: list[str],
-) -> list[str]:
-    command = [sys.executable, str(script_path)]
-    if mode == "execute":
-        command.extend(execute_flags)
-    else:
-        command.extend(dry_run_flags)
-    return command
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--max-cycles", type=int, default=None)
-    parser.add_argument("--max-hypotheses-per-cycle", type=int, default=None)
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Research OS Autonomous Loop Runner v1")
+    parser.add_argument("--max-cycles", type=int, default=1)
+    parser.add_argument("--max-hypotheses-per-cycle", type=int, default=4)
     parser.add_argument("--branch", type=str, default=None)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
 
-    if args.dry_run and args.execute:
-        raise ValueError("Use either --dry-run or --execute, not both.")
+    if args.dry_run == args.execute:
+        raise SystemExit("Choose exactly one of --dry-run or --execute.")
+    if args.max_cycles <= 0:
+        raise SystemExit("--max-cycles must be > 0")
+    if args.max_hypotheses_per_cycle <= 0:
+        raise SystemExit("--max-hypotheses-per-cycle must be > 0")
+    return args
+
+
+def print_kv(key: str, value: Any) -> None:
+    if isinstance(value, (list, dict)):
+        rendered = json.dumps(value, ensure_ascii=False)
+    else:
+        rendered = str(value)
+    print(f"[AUTOLOOP] {key}={rendered}", flush=True)
+
+
+def tail_text(text: str, limit: int = 2000) -> str:
+    if not text:
+        return ""
+    return text[-limit:] if len(text) > limit else text
+
+
+def load_hypotheses_count() -> tuple[int, str | None]:
+    path = first_existing(AUTHORITATIVE_IDEATION_PATHS)
+    if path is None:
+        return 0, None
+
+    payload = load_json(path)
+    if isinstance(payload, list):
+        return len(payload), str(path)
+    if isinstance(payload, dict):
+        if isinstance(payload.get("hypotheses"), list):
+            return len(payload["hypotheses"]), str(path)
+        if isinstance(payload.get("rows"), list):
+            return len(payload["rows"]), str(path)
+
+    return 0, str(path)
+
+
+def load_generated_specs(branch_filter: str | None) -> list[dict[str, Any]]:
+    if not AUTHORITATIVE_GENERATED_SPECS_DIR.exists():
+        raise FileNotFoundError(
+            f"Missing authoritative generated spec dir: {AUTHORITATIVE_GENERATED_SPECS_DIR}"
+        )
+
+    out: list[dict[str, Any]] = []
+    for path in sorted(AUTHORITATIVE_GENERATED_SPECS_DIR.glob("*.spec_ready.json")):
+        spec = load_json(path)
+        if not isinstance(spec, dict):
+            raise ValueError(f"Spec is not a JSON object: {path}")
+
+        branch = str(spec.get("branch", "")).strip()
+        if branch_filter and branch != branch_filter:
+            continue
+
+        out.append(
+            {
+                "path": path,
+                "spec": spec,
+                "branch": branch,
+                "experiment_id": str(spec.get("experiment_id", "")).strip(),
+                "status": str(spec.get("status", "")).strip(),
+            }
+        )
+
+    return out
+
+
+def resolve_registry_path() -> Path | None:
+    return first_existing(AUTHORITATIVE_REGISTRY_PATHS)
+
+
+def count_governance_candidates(rows: list[dict[str, Any]]) -> int:
+    count = 0
+    for row in rows:
+        status = str(row.get("status", "")).strip().lower()
+        lifecycle = str(row.get("lifecycle_stage", "")).strip().lower()
+        if status in {"forensic_ready", "master_pending"} or lifecycle in {
+            "forensic_ready",
+            "master_pending",
+        }:
+            count += 1
+    return count
+
+
+def list_run_dirs() -> set[Path]:
+    if not AUTHORITATIVE_RUNS_ROOT.exists():
+        return set()
+    return {p.resolve() for p in AUTHORITATIVE_RUNS_ROOT.iterdir() if p.is_dir()}
+
+
+def inspect_new_run_dirs(new_run_dirs: list[Path]) -> tuple[int, int]:
+    scoring_completed = 0
+    precheck_completed = 0
+
+    for run_dir in new_run_dirs:
+        if (run_dir / "quality_report.json").exists():
+            scoring_completed += 1
+        if (run_dir / "precheck_inputs.json").exists():
+            precheck_completed += 1
+
+    return scoring_completed, precheck_completed
+
+
+def run_orchestrator(spec_path: Path, mode: str) -> subprocess.CompletedProcess[str]:
+    cmd = [
+        sys.executable,
+        str(AUTHORITATIVE_ORCHESTRATOR_PATH),
+        "--spec",
+        str(spec_path),
+        "--allow-status",
+        "spec_ready",
+        "--dry-run" if mode == "dry-run" else "--execute",
+    ]
+    return subprocess.run(cmd, capture_output=True, text=True, check=False)
+
+
+def save_outputs(
+    manifest: dict[str, Any],
+    summary_payload: dict[str, Any],
+    summary_rows: list[dict[str, Any]],
+) -> None:
+    write_json(MANIFEST_PATH, manifest)
+    write_json(SUMMARY_JSON_PATH, summary_payload)
+    write_csv(SUMMARY_CSV_PATH, summary_rows)
+
+
+def main() -> None:
+    args = parse_args()
     mode = "execute" if args.execute else "dry-run"
 
-    policy = load_json(POLICY_PATH)
-    if policy.get("policy_version") != "research_os_autonomous_loop_policy_v1":
-        raise ValueError("Unexpected autonomous loop policy version.")
+    ensure_dir(OUTPUT_DIR)
 
-    spec_policy = load_json(SPEC_POLICY_PATH)
+    current_stage = "startup"
+    status = "OK"
+    exit_code = 0
+    first_blocker_stage: str | None = None
+    first_blocker_reason: str | None = None
 
-    output_dir = Path(str(policy["output_dir"]))
-    output_dir.mkdir(parents=True, exist_ok=True)
-    files = policy["output_files"]
-    log_path = output_dir / str(files["log_jsonl"])
+    summary_rows: list[dict[str, Any]] = []
+    selected_spec_paths: list[str] = []
 
-    ideation_script = Path(str(policy["script_paths"]["ideation_agent"]))
-    spec_generator_script = Path(str(policy["script_paths"]["spec_generator"]))
-    if not ideation_script.exists():
-        raise FileNotFoundError(f"Missing ideation agent: {ideation_script}")
-    if not spec_generator_script.exists():
-        raise FileNotFoundError(f"Missing spec generator: {spec_generator_script}")
+    counts = {
+        "hypotheses_loaded_count": 0,
+        "specs_generated_count": 0,
+        "specs_selected_count": 0,
+        "candidate_runs_started_count": 0,
+        "candidate_runs_completed_count": 0,
+        "scoring_completed_count": 0,
+        "precheck_completed_count": 0,
+        "selection_completed_count": 0,
+        "governance_candidates_count": 0,
+    }
 
-    truth_pack_path = resolve_first_existing(
-        policy["required_inputs"]["truth_pack_candidates"],
-        "truth pack",
-        fallback_globs=[
-            "research_os/single_truth/truth_pack.json",
-            "outputs/**/research_os_truth_pack*.json",
-            "outputs/**/*truth_pack*.json",
-            "research_os_truth_pack*.json",
-            "*truth_pack*.json",
-        ],
-        validator=is_truth_pack_json,
-    )
-
-    registry_path = resolve_first_existing(
-        policy["required_inputs"]["registry_csv_candidates"],
-        "registry csv",
-        fallback_globs=[
-            "research_os/leaderboards/research_os_registry.csv",
-            "research_os/leaderboards/registry.csv",
-            "outputs/**/research_os_registry*.csv",
-            "outputs/**/registry.csv",
-        ],
-    )
-
-    cli_candidates = policy["pipeline_runner_cli_candidates"]
-    pipeline_runner_path, pipeline_spec_arg, pipeline_extra_args = resolve_pipeline_runner(
-        candidates=list(policy["required_inputs"]["pipeline_runner_candidates"]),
-        fallback_globs=[
-            "scripts/research_os_pipeline_runner*.py",
-            "scripts/research_os_orchestrator*.py",
-            "scripts/research_os_queue_runner*.py",
-        ],
-        spec_arg_names=list(cli_candidates["spec_arg_names"]),
-    )
-
-    max_cycles = int(args.max_cycles or policy["max_cycles_default"])
-    max_hypotheses_per_cycle = int(args.max_hypotheses_per_cycle or policy["max_hypotheses_per_cycle_default"])
+    registry_path = resolve_registry_path()
 
     manifest: dict[str, Any] = {
-        "policy_version": policy["policy_version"],
-        "macro_frozen_mode": bool(policy["macro_frozen_mode"]),
+        "policy_version": "research_os_autonomous_loop_runner_v1_hardened",
         "mode": mode,
-        "max_cycles": max_cycles,
-        "max_hypotheses_per_cycle": max_hypotheses_per_cycle,
+        "started_at_utc": now_utc_iso(),
+        "max_cycles": args.max_cycles,
+        "max_hypotheses_per_cycle": args.max_hypotheses_per_cycle,
         "branch_filter": args.branch,
-        "truth_pack_path": str(truth_pack_path),
-        "registry_path": str(registry_path),
-        "pipeline_runner_path": str(pipeline_runner_path),
-        "pipeline_runner_spec_arg": pipeline_spec_arg,
-        "pipeline_runner_extra_args": pipeline_extra_args,
+        "authoritative_generated_spec_dir": str(AUTHORITATIVE_GENERATED_SPECS_DIR),
+        "authoritative_orchestrator_path": str(AUTHORITATIVE_ORCHESTRATOR_PATH),
+        "authoritative_runs_root": str(AUTHORITATIVE_RUNS_ROOT),
+        "authoritative_registry_path": str(registry_path) if registry_path else None,
         "cycles": [],
-        "started_at_utc": now_utc(),
+        "status": "RUNNING",
+        "first_blocker_stage": None,
+        "first_blocker_reason": None,
+        "counts": counts,
     }
-    summary_rows: list[dict[str, Any]] = []
 
-    for cycle in range(1, max_cycles + 1):
-        cycle_label = f"cycle_{cycle:02d}"
-        registry_before = read_registry_snapshot(registry_path)
+    try:
+        current_stage = "orchestrator_path_validation"
+        print_kv("mode", mode)
+        print_kv("authoritative_generated_spec_dir", str(AUTHORITATIVE_GENERATED_SPECS_DIR))
+        print_kv("authoritative_orchestrator_path", str(AUTHORITATIVE_ORCHESTRATOR_PATH))
+        print_kv("authoritative_registry_path", str(registry_path) if registry_path else "")
 
-        ideation_cmd = [
-            sys.executable,
-            str(ideation_script),
-            "--max-hypotheses",
-            str(max_hypotheses_per_cycle),
-        ]
-        if args.branch:
-            ideation_cmd.extend(["--branch", args.branch])
-        ideation_cmd.append("--execute" if mode == "execute" else "--dry-run")
+        if not AUTHORITATIVE_ORCHESTRATOR_PATH.exists():
+            raise FileNotFoundError(f"Missing orchestrator: {AUTHORITATIVE_ORCHESTRATOR_PATH}")
 
-        ideation_proc = run_subprocess(ideation_cmd)
-        if ideation_proc.returncode != 0:
-            raise RuntimeError(
-                f"Ideation agent failed in {cycle_label}.\nSTDOUT:\n{ideation_proc.stdout}\nSTDERR:\n{ideation_proc.stderr}"
-            )
+        current_stage = "load_hypotheses"
+        hypotheses_loaded_count, hypotheses_source_path = load_hypotheses_count()
+        counts["hypotheses_loaded_count"] = hypotheses_loaded_count
+        print_kv("hypotheses_loaded_count", counts["hypotheses_loaded_count"])
+        print_kv("hypotheses_source_path", hypotheses_source_path or "")
 
-        spec_cmd = [
-            sys.executable,
-            str(spec_generator_script),
-            "--execute" if mode == "execute" else "--dry-run",
-        ]
-        spec_proc = run_subprocess(spec_cmd)
-        if spec_proc.returncode != 0:
-            raise RuntimeError(
-                f"Spec generator failed in {cycle_label}.\nSTDOUT:\n{spec_proc.stdout}\nSTDERR:\n{spec_proc.stderr}"
-            )
+        current_stage = "load_generated_specs"
+        all_specs = load_generated_specs(branch_filter=args.branch)
+        counts["specs_generated_count"] = len(all_specs)
+        print_kv("specs_generated_count", counts["specs_generated_count"])
 
-        spec_summary_path = Path(str(spec_policy["output_dir"])) / str(spec_policy["output_files"]["summary_csv"])
-        spec_rows = load_csv_optional(spec_summary_path)
-        cycle_rows: list[dict[str, Any]] = []
-        cycle_winners: list[str] = []
+        if counts["specs_generated_count"] == 0:
+            raise RuntimeError("No generated specs found in authoritative generated spec dir.")
 
-        for spec_row in spec_rows:
-            spec_file = Path(str(spec_row.get("spec_file", "")).strip())
-            if not spec_file.exists():
-                raise FileNotFoundError(f"Missing generated spec file: {spec_file}")
+        current_stage = "select_specs"
+        selected_specs = all_specs[: args.max_hypotheses_per_cycle]
+        counts["specs_selected_count"] = len(selected_specs)
+        selected_spec_paths = [str(item["path"]) for item in selected_specs]
 
-            pipeline_cmd = build_base_command(
-                pipeline_runner_path,
-                mode=mode,
-                dry_run_flags=list(cli_candidates["dry_run_flags"]),
-                execute_flags=list(cli_candidates["execute_flags"]),
-            )
-            pipeline_cmd.extend(pipeline_extra_args)
-            pipeline_cmd.extend([pipeline_spec_arg, str(spec_file)])
+        print_kv("specs_selected_count", counts["specs_selected_count"])
+        print_kv("selected_spec_paths", selected_spec_paths)
 
-            proc = run_subprocess(pipeline_cmd)
-            registry_after = read_registry_snapshot(registry_path)
-            new_winners = sorted(set(determine_winners(registry_after)) - set(determine_winners(registry_before)))
-            cycle_winners.extend(new_winners)
+        if mode == "execute" and counts["specs_selected_count"] == 0:
+            raise RuntimeError("Zero selected specs in execute mode.")
 
-            status = "success" if proc.returncode == 0 else "failed"
-            row = {
+        for cycle in range(1, args.max_cycles + 1):
+            current_stage = f"cycle_{cycle}_start"
+            print_kv("cycle_start", cycle)
+
+            cycle_info: dict[str, Any] = {
                 "cycle": cycle,
-                "spec_id": spec_row.get("spec_id", ""),
-                "branch": spec_row.get("branch", ""),
-                "spec_file": str(spec_file),
-                "pipeline_status": status,
-                "pipeline_returncode": proc.returncode,
-                "new_worthy_candidates": "|".join(new_winners),
-                "macro_frozen_mode": bool(policy["macro_frozen_mode"]),
-                "mode": mode,
+                "selected_spec_paths": selected_spec_paths,
+                "rows": [],
             }
-            cycle_rows.append(row)
-            summary_rows.append(row)
 
-            log_jsonl(
-                log_path,
-                {
-                    "ts_utc": now_utc(),
-                    "event": "candidate_pipeline_run",
+            registry_before_rows = read_csv_optional(registry_path)
+            governance_before = count_governance_candidates(registry_before_rows)
+
+            for dispatch_index, item in enumerate(selected_specs, start=1):
+                spec_path = item["path"]
+                spec = item["spec"]
+                experiment_id = item["experiment_id"] or spec_path.stem
+
+                current_stage = f"cycle_{cycle}_dispatch_{dispatch_index}"
+                print_kv("stage", current_stage)
+                print_kv("dispatch_spec_path", str(spec_path))
+
+                run_dirs_before = list_run_dirs()
+                proc = run_orchestrator(spec_path=spec_path, mode=mode)
+                run_dirs_after = list_run_dirs()
+                new_run_dirs = sorted(run_dirs_after - run_dirs_before)
+
+                row = {
                     "cycle": cycle,
-                    "spec_id": spec_row.get("spec_id", ""),
-                    "spec_file": str(spec_file),
-                    "returncode": proc.returncode,
-                    "pipeline_status": status,
-                    "new_worthy_candidates": new_winners,
-                    "stdout_tail": (proc.stdout or "")[-2000:],
-                    "stderr_tail": (proc.stderr or "")[-2000:],
-                },
-            )
+                    "dispatch_index": dispatch_index,
+                    "mode": mode,
+                    "spec_path": str(spec_path),
+                    "experiment_id": experiment_id,
+                    "branch": item["branch"],
+                    "spec_status": item["status"],
+                    "dispatch_returncode": proc.returncode,
+                    "new_run_dirs": "|".join(str(p) for p in new_run_dirs),
+                    "candidate_run_started": 0,
+                    "candidate_run_completed": 0,
+                    "scoring_completed": 0,
+                    "precheck_completed": 0,
+                    "selection_completed_delta": 0,
+                    "governance_candidates_after": governance_before,
+                    "stdout_tail": tail_text(proc.stdout or ""),
+                    "stderr_tail": tail_text(proc.stderr or ""),
+                }
 
-            registry_before = registry_after
+                summary_rows.append(row)
+                cycle_info["rows"].append(row)
 
-        cycle_manifest = {
-            "cycle": cycle,
-            "mode": mode,
-            "ideation_returncode": ideation_proc.returncode,
-            "spec_generation_returncode": spec_proc.returncode,
-            "spec_count": len(spec_rows),
-            "candidate_runs": cycle_rows,
-            "staged_governance_candidates": sorted(set(cycle_winners)),
-        }
-        manifest["cycles"].append(cycle_manifest)
+                append_jsonl(
+                    LOG_JSONL_PATH,
+                    {
+                        "ts_utc": now_utc_iso(),
+                        "event": "dispatch_result",
+                        "cycle": cycle,
+                        "dispatch_index": dispatch_index,
+                        "mode": mode,
+                        "spec_path": str(spec_path),
+                        "experiment_id": experiment_id,
+                        "dispatch_returncode": proc.returncode,
+                        "new_run_dirs": [str(p) for p in new_run_dirs],
+                        "stdout_tail": row["stdout_tail"],
+                        "stderr_tail": row["stderr_tail"],
+                    },
+                )
 
-        log_jsonl(
-            log_path,
+                if proc.returncode != 0:
+                    raise RuntimeError(
+                        f"Dispatch failed for spec {spec_path}. "
+                        f"returncode={proc.returncode}. stderr_tail={row['stderr_tail']}"
+                    )
+
+                if mode == "execute":
+                    if not new_run_dirs:
+                        current_stage = f"cycle_{cycle}_candidate_run_creation_{dispatch_index}"
+                        raise RuntimeError(
+                            f"Execute dispatch created zero candidate runs for spec {spec_path}."
+                        )
+
+                    run_count = len(new_run_dirs)
+                    counts["candidate_runs_started_count"] += run_count
+                    counts["candidate_runs_completed_count"] += run_count
+
+                    scoring_completed, precheck_completed = inspect_new_run_dirs(new_run_dirs)
+                    counts["scoring_completed_count"] += scoring_completed
+                    counts["precheck_completed_count"] += precheck_completed
+
+                    registry_after_rows = read_csv_optional(registry_path)
+                    selection_delta = max(0, len(registry_after_rows) - len(registry_before_rows))
+                    counts["selection_completed_count"] += selection_delta
+                    counts["governance_candidates_count"] = count_governance_candidates(
+                        registry_after_rows
+                    )
+
+                    row["candidate_run_started"] = run_count
+                    row["candidate_run_completed"] = run_count
+                    row["scoring_completed"] = scoring_completed
+                    row["precheck_completed"] = precheck_completed
+                    row["selection_completed_delta"] = selection_delta
+                    row["governance_candidates_after"] = counts["governance_candidates_count"]
+
+                    registry_before_rows = registry_after_rows
+
+                print_kv("dispatch_returncode", proc.returncode)
+                if mode == "execute":
+                    print_kv("new_run_dirs", [str(p) for p in new_run_dirs])
+                    print_kv("candidate_runs_started_count", counts["candidate_runs_started_count"])
+                    print_kv(
+                        "candidate_runs_completed_count",
+                        counts["candidate_runs_completed_count"],
+                    )
+                    print_kv("scoring_completed_count", counts["scoring_completed_count"])
+                    print_kv("precheck_completed_count", counts["precheck_completed_count"])
+                    print_kv("selection_completed_count", counts["selection_completed_count"])
+                    print_kv(
+                        "governance_candidates_count",
+                        counts["governance_candidates_count"],
+                    )
+
+            manifest["cycles"].append(cycle_info)
+            print_kv("cycle_complete", cycle)
+
+        current_stage = "execute_zero_work_validation"
+        if mode == "execute":
+            if counts["specs_selected_count"] == 0:
+                raise RuntimeError("Zero selected specs in execute mode.")
+            if counts["candidate_runs_started_count"] == 0:
+                raise RuntimeError("Zero candidate runs started in execute mode.")
+            if counts["candidate_runs_completed_count"] == 0:
+                raise RuntimeError("Zero candidate runs completed in execute mode.")
+
+        status = "OK"
+        exit_code = 0
+
+    except Exception as exc:
+        status = "FAIL"
+        exit_code = 1
+        if first_blocker_stage is None:
+            first_blocker_stage = current_stage
+        if first_blocker_reason is None:
+            first_blocker_reason = str(exc)
+
+        print_kv("first_blocker_stage", first_blocker_stage)
+        print_kv("first_blocker_reason", first_blocker_reason)
+
+        append_jsonl(
+            LOG_JSONL_PATH,
             {
-                "ts_utc": now_utc(),
-                "event": "cycle_complete",
-                "cycle": cycle,
-                "spec_count": len(spec_rows),
-                "staged_governance_candidates": sorted(set(cycle_winners)),
+                "ts_utc": now_utc_iso(),
+                "event": "first_blocker",
+                "mode": mode,
+                "first_blocker_stage": first_blocker_stage,
+                "first_blocker_reason": first_blocker_reason,
             },
         )
 
-        if not spec_rows:
-            break
+    finally:
+        manifest["finished_at_utc"] = now_utc_iso()
+        manifest["status"] = status
+        manifest["first_blocker_stage"] = first_blocker_stage
+        manifest["first_blocker_reason"] = first_blocker_reason
+        manifest["counts"] = counts
 
-    manifest["finished_at_utc"] = now_utc()
-    write_json(output_dir / str(files["manifest_json"]), manifest)
-    write_json(
-        output_dir / str(files["summary_json"]),
-        {
+        summary_payload = {
+            "status": status,
+            "mode": mode,
+            "counts": counts,
+            "first_blocker_stage": first_blocker_stage,
+            "first_blocker_reason": first_blocker_reason,
+            "selected_spec_paths": selected_spec_paths,
             "rows": summary_rows,
-            "macro_frozen_mode": bool(policy["macro_frozen_mode"]),
-        },
-    )
-    write_csv(output_dir / str(files["summary_csv"]), summary_rows)
+        }
 
-    print(f"[AUTOLOOP] mode={mode}")
-    print(f"[AUTOLOOP] macro_frozen_mode={policy['macro_frozen_mode']}")
-    print(f"[AUTOLOOP] cycles={len(manifest['cycles'])}")
-    print(f"[AUTOLOOP] output_dir={output_dir}")
+        save_outputs(manifest=manifest, summary_payload=summary_payload, summary_rows=summary_rows)
+
+        if mode == "execute":
+            missing_outputs = [str(path) for path in MANDATORY_EXECUTE_OUTPUTS if not path.exists()]
+            if missing_outputs:
+                status = "FAIL"
+                exit_code = 1
+                if first_blocker_stage is None:
+                    first_blocker_stage = "mandatory_output_persistence"
+                if first_blocker_reason is None:
+                    first_blocker_reason = f"Missing mandatory outputs: {missing_outputs}"
+
+                manifest["status"] = status
+                manifest["first_blocker_stage"] = first_blocker_stage
+                manifest["first_blocker_reason"] = first_blocker_reason
+                summary_payload["status"] = status
+                summary_payload["first_blocker_stage"] = first_blocker_stage
+                summary_payload["first_blocker_reason"] = first_blocker_reason
+
+                save_outputs(
+                    manifest=manifest,
+                    summary_payload=summary_payload,
+                    summary_rows=summary_rows,
+                )
+
+        print_kv("hypotheses_loaded_count", counts["hypotheses_loaded_count"])
+        print_kv("specs_generated_count", counts["specs_generated_count"])
+        print_kv("specs_selected_count", counts["specs_selected_count"])
+        print_kv("selected_spec_paths", selected_spec_paths)
+
+        if mode == "execute":
+            print_kv("candidate_runs_started_count", counts["candidate_runs_started_count"])
+            print_kv("candidate_runs_completed_count", counts["candidate_runs_completed_count"])
+            print_kv("scoring_completed_count", counts["scoring_completed_count"])
+            print_kv("precheck_completed_count", counts["precheck_completed_count"])
+            print_kv("selection_completed_count", counts["selection_completed_count"])
+            print_kv("governance_candidates_count", counts["governance_candidates_count"])
+
+        print_kv("status", status)
+        if first_blocker_stage:
+            print_kv("first_blocker_stage", first_blocker_stage)
+        if first_blocker_reason:
+            print_kv("first_blocker_reason", first_blocker_reason)
+
+        print_kv("autonomous_loop_run_manifest_json", str(MANIFEST_PATH))
+        print_kv("autonomous_loop_run_summary_json", str(SUMMARY_JSON_PATH))
+        print_kv("autonomous_loop_run_summary_csv", str(SUMMARY_CSV_PATH))
+        print_kv("autonomous_loop_log_jsonl", str(LOG_JSONL_PATH))
+
+    raise SystemExit(exit_code)
 
 
 if __name__ == "__main__":

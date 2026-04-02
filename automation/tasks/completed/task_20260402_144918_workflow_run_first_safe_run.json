@@ -1,0 +1,28 @@
+{
+  "task_id": "task_20260402_144918_workflow_run_first_safe_run",
+  "task_type": "workflow_run",
+  "created_at": "2026-04-02T14:49:18Z",
+  "requested_by": "user",
+  "status": "completed",
+  "inputs": {},
+  "constraints": {
+    "safe_mode": true,
+    "allow_direct_source_of_truth_write": false
+  },
+  "expected_outputs": [
+    "run_log",
+    "report"
+  ],
+  "approval_gate": {
+    "required_for_truth_apply": true,
+    "approver_role": "human"
+  },
+  "source_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\README.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\chat_roles.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\current_issues.md"
+  ]
+}
