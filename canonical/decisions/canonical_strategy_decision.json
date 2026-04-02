@@ -1,0 +1,50 @@
+{
+  "artifact_name": "canonical_strategy_decision",
+  "artifact_type": "decision",
+  "truth_domain": "strategy",
+  "truth_status": "official",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "source_of_truth/project_truth.json",
+    "source_of_truth/master_state.md",
+    "artifact_taxonomy.md",
+    "truth_status_model.md",
+    "lineage_contract.md"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "decision_id": "canonical_strategy_decision_2026_04_02",
+  "decision_summary": {
+    "official_core_production_baseline": "phase66g_production_soft_filters",
+    "official_universe_winner": "phase67j_no_neo_main",
+    "product_direction": "67J main, 66G reference, BTC benchmark",
+    "live_leverage_truth": "1.0x without leverage"
+  },
+  "decision_scope": {
+    "covers": [
+      "strategy",
+      "universe",
+      "product_reference_direction",
+      "live_leverage_truth"
+    ],
+    "does_not_cover": [
+      "new research verdict generation",
+      "product wording",
+      "marketing framing",
+      "token design"
+    ]
+  },
+  "truth_notes": [
+    "Toto je canonical decision layer bootstrap.",
+    "Historical outputs a compare artefakty nie su same o sebe canonical decision.",
+    "Downstream citanie ma preferovat tento decision artifact alebo naviazane canonical manifests/exports."
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "artifact_name": "canonical_artifacts_manifest",
+  "artifact_type": "manifest",
+  "truth_domain": "artifacts",
+  "truth_status": "official",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "artifact_taxonomy.md",
+    "artifact_naming_convention.md",
+    "truth_status_model.md",
+    "lineage_contract.md",
+    "canonical/README.md",
+    "canonical/decisions/README.md",
+    "canonical/manifests/README.md",
+    "canonical/exports/README.md",
+    "canonical/references/README.md"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "schema_version": "v1",
+  "canonical_domains": [
+    "strategy",
+    "universe",
+    "leverage",
+    "product",
+    "benchmark",
+    "artifacts",
+    "lineage"
+  ],
+  "canonical_artifact_types": [
+    "decision",
+    "snapshot",
+    "manifest",
+    "export",
+    "reference"
+  ],
+  "artifact_index": [
+    {
+      "artifact_name": "canonical_artifacts_manifest",
+      "artifact_type": "manifest",
+      "truth_domain": "artifacts",
+      "truth_status": "official",
+      "path": "canonical/manifests/canonical_artifacts_manifest.json",
+      "consumer_scope": [
+        "canonical_only",
+        "product_readable",
+        "app_readable",
+        "audit_only"
+      ]
+    },
+    {
+      "artifact_name": "canonical_strategy_decision",
+      "artifact_type": "decision",
+      "truth_domain": "strategy",
+      "truth_status": "official",
+      "path": "canonical/decisions/canonical_strategy_decision.json",
+      "consumer_scope": [
+        "canonical_only",
+        "product_readable",
+        "app_readable",
+        "audit_only"
+      ]
+    }
+  ],
+  "notes": [
+    "Toto je bootstrap canonical manifest.",
+    "Historical research layer zostava zachovana a nie je hromadne premenovavana.",
+    "Canonical layer je preferovany downstream source official truth."
+  ]
+}
