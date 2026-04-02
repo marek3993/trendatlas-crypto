@@ -1,0 +1,24 @@
+{
+  "version": "v1",
+  "migration_scope": "artifact_hygiene_naming_lineage_truth_discipline",
+  "repo_reorg_phase": "phase_0_contract_bootstrap",
+  "canonical_outputs_enabled": true,
+  "write_through_enabled": false,
+  "registry_readers_enabled": false,
+  "legacy_deprecation_enabled": false,
+  "current_controlled_milestone": "bootstrap_source_of_truth_contracts",
+  "preferred_first_migration_slice": [
+    "outputs/execution/app_exports",
+    "outputs/execution/freshness",
+    "outputs/execution/refresh_pipeline",
+    "outputs/research_os/autonomous_loop"
+  ],
+  "historical_mass_rename_allowed": false,
+  "historical_delete_allowed": false,
+  "notes": [
+    "Historical research chaos does not need full immediate rename.",
+    "Canonical layer is introduced above legacy/historical artifacts.",
+    "Paths must be controlled through source_of_truth/paths_registry.json before reader migration.",
+    "Reader migration should use explicit registry resolver, not autodiscovery."
+  ]
+}

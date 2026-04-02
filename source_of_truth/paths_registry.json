@@ -1,116 +1,210 @@
 {
-  "paths": [
-    {
-      "label": "repo_root",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1",
-      "owner_segment": "MASTER",
-      "status": "active",
-      "is_official": true,
-      "notes": "Project root"
+  "version": "v1",
+  "registry_purpose": "canonical_path_resolution_and_legacy_alias_mapping",
+  "canonical_roots": {
+    "source_of_truth": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth",
+    "data_raw": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\raw",
+    "data_market": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\market",
+    "data_derived": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\derived",
+    "data_validation_inputs": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\validation_inputs",
+    "strategy_core": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\strategy\\core",
+    "strategy_overlay": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\strategy\\overlay",
+    "strategy_universe": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\strategy\\universe",
+    "strategy_governance": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\strategy\\governance",
+    "strategy_leverage": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\strategy\\leverage",
+    "forensic_strategy": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\forensic\\strategy",
+    "forensic_universe": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\forensic\\universe",
+    "forensic_governance": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\forensic\\governance",
+    "forensic_leverage": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\forensic\\leverage",
+    "execution_app_exports": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports",
+    "execution_freshness": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness",
+    "execution_refresh_pipeline": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline",
+    "research_os_ideation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\ideation",
+    "research_os_spec_generation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\spec_generation",
+    "research_os_autonomous_loop": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop",
+    "research_os_diagnostics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\diagnostics",
+    "validation_bundles": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\bundles",
+    "validation_manifests": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\manifests",
+    "validation_reports": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\reports"
+  },
+  "artifact_type_definitions": {
+    "paper": "time_series_source_of_truth_output",
+    "summary": "metric_summary_output",
+    "compare": "variant_or_baseline_comparison_output",
+    "manifest": "lineage_paths_and_contract_metadata",
+    "decisions": "selection_or_rebalance_decision_log",
+    "leaderboard": "ranked_candidate_output",
+    "asset_quality": "asset_quality_diagnostic_output",
+    "asset_usage": "asset_usage_diagnostic_output",
+    "failed_assets": "asset_failure_diagnostic_output",
+    "forensic": "diagnostic_or_audit_output",
+    "shortlist": "shortlisted_asset_or_variant_output",
+    "latest_top10": "stable_top10_snapshot_output",
+    "live_status": "normalized_live_or_app_status_output",
+    "export": "normalized_downstream_export_output",
+    "validation_report": "machine_readable_validation_verdict_output",
+    "bundle_manifest": "validation_bundle_contract_output"
+  },
+  "artifacts": {
+    "phase67j_winner_paper": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "paper",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "phase63_compare_paper",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
-      "owner_segment": "FORENSIC",
-      "status": "active",
-      "is_official": true,
-      "notes": "Pinned phase63 compare baseline paper"
+    "phase67j_validation_summary": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_final_narrow_validation_summary.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_final_narrow_validation_summary.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "summary",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "phase49_main_daily_paper",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase49_final_compare\\phase49_no_bnb_baseline_paper.csv",
-      "owner_segment": "DATA",
-      "status": "active",
-      "is_official": true,
-      "notes": "Deterministic attribution main daily paper"
+    "phase67j_live_status": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "live_status",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "phase59_leader_daily_paper",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase59_bnb_selective_restore\\phase59_phase42_core_paper.csv",
-      "owner_segment": "DATA",
-      "status": "active",
-      "is_official": true,
-      "notes": "Deterministic attribution leader daily paper"
+    "phase66g_core_paper": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "paper",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "recent_regime_attribution_output",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\recent_regime_audit_2025\\recent_regime_attribution_2025_daily_behavior.csv",
-      "owner_segment": "DATA",
-      "status": "active",
-      "is_official": true,
-      "notes": "Deterministic attribution output"
+    "phase66g_candidate_summary": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_candidate_summary.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_summary.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "summary",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "phase67e_guardrail_sweep_script",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67e_guardrail_sweep.py",
-      "owner_segment": "DATA",
-      "status": "active",
-      "is_official": true,
-      "notes": "Hardened guardrail sweep script with strict inputs"
+    "phase66g_live_status": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "live_status",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "recent_regime_attribution_script",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\recent_regime_attribution_2025.py",
-      "owner_segment": "DATA",
-      "status": "active",
-      "is_official": true,
-      "notes": "Hardened attribution script with strict inputs"
+    "phase66g_trend_barometer_history": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_trend_barometer_history.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "export",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "phase63_compare_output_folder",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay",
-      "owner_segment": "FORENSIC",
-      "status": "active",
-      "is_official": true,
-      "notes": "Phase63 compare output folder"
+    "app_freshness_report": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json"
+      ],
+      "owner": "DATA",
+      "artifact_type": "validation_report",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "source_of_truth_root",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth",
-      "owner_segment": "MASTER",
-      "status": "active",
-      "is_official": true,
-      "notes": "Central source of truth root"
+    "app_refresh_pipeline_report": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline\\app_refresh_pipeline_report.json",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\app_refresh_pipeline_report.json"
+      ],
+      "owner": "DATA",
+      "artifact_type": "validation_report",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "research_os_truth_pack",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\single_truth\\truth_pack.json",
-      "owner_segment": "AI_LAB",
-      "status": "active",
-      "is_official": true,
-      "notes": "AI Research OS truth pack"
+    "research_os_zero_selection_diagnostics": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop\\zero_selection_diagnostics.json",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\zero_selection_diagnostics.json"
+      ],
+      "owner": "AI_LAB",
+      "artifact_type": "forensic",
+      "truth_domain": "lineage",
+      "read_scope": [
+        "research_os",
+        "audit"
+      ],
+      "write_mode": "future_write_through_candidate"
     },
-    {
-      "label": "research_os_candidates_registry",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\candidates_registry.csv",
-      "owner_segment": "AI_LAB",
-      "status": "active",
-      "is_official": true,
-      "notes": "AI Research OS candidates registry"
-    },
-    {
-      "label": "research_os_leaderboard_summary",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\leaderboards\\leaderboard_summary.csv",
-      "owner_segment": "AI_LAB",
-      "status": "active",
-      "is_official": true,
-      "notes": "AI Research OS leaderboard summary"
-    },
-    {
-      "label": "research_os_manifest",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\research_os_manifest.json",
-      "owner_segment": "AI_LAB",
-      "status": "active",
-      "is_official": true,
-      "notes": "AI Research OS root manifest"
-    },
-    {
-      "label": "research_os_run_manifest_schema",
-      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\schemas\\run_manifest.schema.json",
-      "owner_segment": "AI_LAB",
-      "status": "active",
-      "is_official": true,
-      "notes": "AI Research OS run manifest schema"
+    "research_os_candidate_trace_log": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop\\candidate_trace_log.jsonl",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os_autonomous_loop_v1\\candidate_trace_log.jsonl"
+      ],
+      "owner": "AI_LAB",
+      "artifact_type": "forensic",
+      "truth_domain": "lineage",
+      "read_scope": [
+        "research_os",
+        "audit"
+      ],
+      "write_mode": "future_write_through_candidate"
     }
-  ]
+  }
 }
