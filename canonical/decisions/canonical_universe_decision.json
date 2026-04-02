@@ -1,0 +1,49 @@
+{
+  "artifact_name": "canonical_universe_decision",
+  "artifact_type": "decision",
+  "truth_domain": "universe",
+  "truth_status": "official",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "canonical/decisions/canonical_strategy_decision.json",
+    "canonical/manifests/canonical_strategy_snapshot.json",
+    "canonical/references/canonical_66g_reference.json",
+    "source_of_truth/project_truth.json",
+    "source_of_truth/master_state.md"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "decision_id": "canonical_universe_decision_2026_04_02",
+  "decision_summary": {
+    "official_universe_winner": "phase67j_no_neo_main",
+    "reference_baseline": "phase66g_production_soft_filters",
+    "reading_rule": "67J main is official universe winner truth; 66G is retained as approved reference only.",
+    "product_direction_alignment": "67J main, 66G reference, BTC benchmark"
+  },
+  "decision_scope": {
+    "covers": [
+      "official universe winner truth",
+      "separation of current winner from baseline reference",
+      "downstream reading rule for universe state"
+    ],
+    "does_not_cover": [
+      "fresh universe research generation",
+      "historical compare table reinterpretation",
+      "benchmark truth beyond approved reference role",
+      "product wording choices"
+    ]
+  },
+  "truth_notes": [
+    "Historical compare and summary outputs are not official universe decision carriers by themselves.",
+    "66G remains approved reference, not current universe winner.",
+    "Any future universe replacement must supersede this artifact explicitly."
+  ]
+}

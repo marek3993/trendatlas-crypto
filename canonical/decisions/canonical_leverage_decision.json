@@ -1,0 +1,48 @@
+{
+  "artifact_name": "canonical_leverage_decision",
+  "artifact_type": "decision",
+  "truth_domain": "leverage",
+  "truth_status": "official",
+  "generated_at": "2026-04-02T00:00:00Z",
+  "effective_date": "2026-04-02",
+  "producer_script": "manual_bootstrap_engineering_hygiene",
+  "source_run_id": null,
+  "upstream_artifacts": [
+    "canonical/decisions/canonical_strategy_decision.json",
+    "canonical/manifests/canonical_strategy_snapshot.json",
+    "source_of_truth/project_truth.json",
+    "source_of_truth/master_state.md",
+    "truth_status_model.md"
+  ],
+  "supersedes": [],
+  "consumer_scope": [
+    "canonical_only",
+    "product_readable",
+    "app_readable",
+    "audit_only"
+  ],
+  "decision_id": "canonical_leverage_decision_2026_04_02",
+  "decision_summary": {
+    "current_live_leverage_mode": "1.0x without leverage",
+    "is_live_leverage_enabled": false,
+    "approved_reference_position": "Leverage experiments may exist in research history but are not current live truth.",
+    "downstream_rule": "App and product-facing layers must treat 1.0x without leverage as current official leverage truth."
+  },
+  "decision_scope": {
+    "covers": [
+      "current live leverage truth",
+      "downstream reading rule for leverage state",
+      "separation of research leverage experiments from live truth"
+    ],
+    "does_not_cover": [
+      "approval of future leverage deployment",
+      "new leverage research verdicts",
+      "historical leverage experiment interpretation beyond reference/candidate status"
+    ]
+  },
+  "truth_notes": [
+    "Leverage research artifacts are not live leverage truth carriers by themselves.",
+    "Current official leverage truth remains 1.0x without leverage.",
+    "Any future leverage adoption must supersede this artifact explicitly."
+  ]
+}
