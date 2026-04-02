@@ -1,0 +1,56 @@
+{
+  "phase": "phase68g_portfolio_exposure_leverage_validation",
+  "official_compare_baseline": "phase68g_66g_1p00x_portfolio_exposure_baseline",
+  "governance_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "trend_history": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+  "decisions_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_decisions.csv",
+  "params": {
+    "annual_borrow_cost": 0.12,
+    "tradable_transition_slippage_bps": 10.0,
+    "trend_activation_threshold": 0.1,
+    "stress_lookback_days": 20,
+    "stress_off_threshold": -0.08,
+    "stress_on_threshold": -0.04,
+    "cash_forced_1x": true,
+    "switch_day_forced_1x": true,
+    "entry_buffer_day_forced_1x": true,
+    "exposure_basis_fix": "portfolio_held_asset = chosen_asset override else baseline held asset by same date"
+  },
+  "transition_mapping_meta": {
+    "decision_rows_total": 361,
+    "selected_rows_used": 45,
+    "governance_switch_rows": 3,
+    "mapped_transition_rows": 3,
+    "unmapped_transition_rows": 0,
+    "mapping_sources": {
+      "period_start": 3
+    }
+  },
+  "governance_switch_count": 3,
+  "tradable_transition_count": 3,
+  "transition_calendar_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\phase68g_tradable_transition_calendar.csv",
+  "variants": [
+    {
+      "model": "phase68g_66g_1p00x_portfolio_exposure_baseline",
+      "target_leverage": 1.0
+    },
+    {
+      "model": "phase68g_66g_1p25x_candidate",
+      "target_leverage": 1.25
+    },
+    {
+      "model": "phase68g_66g_1p50x_candidate",
+      "target_leverage": 1.5
+    }
+  ],
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\phase68g_portfolio_exposure_leverage_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\phase68g_portfolio_exposure_leverage_compare.csv",
+  "papers_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\papers",
+  "notes": [
+    "Fixnut\u00fd exposure lineage: leverage u\u017e nepou\u017e\u00edva chosen_asset ako cel\u00fd held path.",
+    "Ak baseline paper nem\u00e1 explicitn\u00fd asset column, loader pou\u017eije exposure/cash/return fallback namiesto p\u00e1du.",
+    "Slippage basis ost\u00e1va governance-linked tradable transition day, rovnako ako v 68F.",
+    "Metriky ost\u00e1vaj\u00fa oddelen\u00e9: governance_switch_count, exposure_days, asset_transition_count, tradable_transition_count."
+  ]
+}
