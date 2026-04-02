@@ -22,6 +22,8 @@ TEST_FILES = [
     TESTS_DIR / "test_canonical_reference_truth_flags.py",
     TESTS_DIR / "test_canonical_decision_ids_present.py",
     TESTS_DIR / "test_canonical_manifest_indexes_shape.py",
+    TESTS_DIR / "test_canonical_truth_domain_allowed_values.py",
+    TESTS_DIR / "test_canonical_artifact_type_allowed_values.py",
 ]
 
 
