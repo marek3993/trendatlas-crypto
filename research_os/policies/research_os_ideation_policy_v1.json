@@ -1,72 +1,81 @@
 {
-  "policy_version": "2.0.0",
-  "description": "Deterministic controlled ideation policy with mandatory edge thesis fields.",
+  "policy_version": "3.0.0",
+  "description": "Controlled ideation v3 with mechanism-first candidate generation.",
   "allowed_branches": [
     "core"
   ],
+  "allowed_families_by_branch": {
+    "core": [
+      "ranking_weight_tuning_v2",
+      "cooldown_tuning_v2",
+      "threshold_tuning_v2"
+    ]
+  },
   "default_segment_owner_by_branch": {
     "core": "core_strategy"
   },
-  "required_fields": [
+  "global_required_fields": [
     "hypothesis_id",
     "branch",
     "segment_owner",
     "hypothesis_label",
     "hypothesis_text",
     "rationale",
-    "expected_improvement_direction",
     "baseline_reference",
     "mutation_family",
-    "risk_flags",
-    "duplicate_suspicion",
-    "near_duplicate_suspicion",
-    "branch_saturation_state",
     "known_baseline_weakness",
-    "failure_mode_being_fixed",
-    "explicit_mechanism_of_improvement",
+    "exact_mechanism_of_improvement",
     "exact_compare_target",
-    "why_edge_should_survive_scoring_strictness"
+    "exact_failure_mode_being_fixed",
+    "why_expected_edge_survives_strict_scoring",
+    "primary_expected_metric_improvement"
   ],
-  "baseline_reference_rules": {
-    "require_truth_pack_reference": true,
-    "require_official_baseline_model_key": true
-  },
-  "duplicate_rules": {
-    "block_exact_duplicates": true,
-    "near_duplicate_similarity_threshold": 0.72,
-    "label_near_duplicates": true
-  },
-  "branch_saturation_rules": {
-    "warn_threshold": 2,
-    "block_threshold": 3,
-    "window_latest_hypotheses": 20
-  },
-  "risk_flag_rules": {
-    "required_flag_categories": [
-      "instability_risk",
-      "complexity_risk",
-      "duplicate_risk",
-      "saturation_risk"
+  "family_specific_required_fields": {
+    "ranking_weight_tuning_v2": [
+      "weight_block_name",
+      "current_weight_problem",
+      "exact_weight_change",
+      "why_this_weight_change_addresses_baseline_weakness",
+      "expected_selection_effect"
+    ],
+    "cooldown_tuning_v2": [
+      "cooldown_component_name",
+      "named_baseline_failure_mode",
+      "why_current_cooldown_is_wrong_for_that_failure_mode",
+      "exact_cooldown_change",
+      "expected_transition_effect"
+    ],
+    "threshold_tuning_v2": [
+      "threshold_name",
+      "named_failure_mode",
+      "why_baseline_threshold_is_wrong",
+      "exact_threshold_change",
+      "expected_false_positive_or_missed_move_effect"
     ]
   },
-  "expected_improvement_direction_allowed": [
-    "increase_robustness",
-    "reduce_switches",
-    "improve_recent_performance"
-  ],
   "anti_generic_guards": {
     "reject_if_hypothesis_text_equals_label": true,
-    "reject_if_missing_exact_compare_target": true,
-    "reject_if_missing_baseline_weakness": true,
-    "reject_if_missing_failure_mode": true,
-    "reject_if_missing_improvement_mechanism": true,
-    "reject_if_missing_scoring_survival_rationale": true
+    "reject_if_missing_global_required_fields": true,
+    "reject_if_missing_family_required_fields": true,
+    "reject_if_parameter_first_not_mechanism_first": true,
+    "reject_vague_phrases": [
+      "improve robustness",
+      "reduce whipsaw",
+      "tune cooldown",
+      "shift threshold",
+      "rebalance weights"
+    ]
   },
-  "safe_outcomes": {
-    "broken_context": "fail_fast",
-    "duplicate_block": "blocked",
-    "saturated_branch_block": "blocked",
-    "generic_shell_block": "blocked",
-    "valid_hypothesis": "proposed"
+  "allowed_primary_expected_metric_improvement": [
+    "CAGR",
+    "DD",
+    "since2025",
+    "Calmar"
+  ],
+  "generation_limits": {
+    "max_selected_specs_total": 3,
+    "ranking_weight_tuning_v2_max": 1,
+    "cooldown_tuning_v2_max": 1,
+    "threshold_tuning_v2_max": 1
   }
 }

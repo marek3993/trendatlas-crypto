@@ -85,3 +85,6 @@
 {"ts": "2026-04-03T14:27:33+00:00", "family": "ranking_weight_tuning", "hypothesis_label": "core_ranking_weight_tuning_v2", "decision": "accepted", "reason": "valid"}
 {"ts": "2026-04-03T14:27:33+00:00", "family": "cooldown_tuning", "hypothesis_label": "core_cooldown_tuning_v2", "decision": "accepted", "reason": "valid"}
 {"ts": "2026-04-03T14:27:33+00:00", "family": "threshold_tuning", "hypothesis_label": "core_threshold_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T17:00:09+00:00", "family": "ranking_weight_tuning_v2", "hypothesis_label": "core_ranking_weight_tuning_v3", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T17:00:09+00:00", "family": "cooldown_tuning_v2", "hypothesis_label": "core_cooldown_tuning_v3", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T17:00:09+00:00", "family": "threshold_tuning_v2", "hypothesis_label": "core_threshold_tuning_v3", "decision": "accepted", "reason": "valid"}

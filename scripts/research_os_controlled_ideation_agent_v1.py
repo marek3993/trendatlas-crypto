@@ -4,17 +4,14 @@ import argparse
 import csv
 import hashlib
 import json
-import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-
 ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = ROOT / "research_os" / "policies" / "research_os_ideation_policy_v1.json"
 MUTATION_POLICY_PATH = ROOT / "research_os" / "policies" / "research_os_mutation_space_policy_v1.json"
-TRUTH_PACK_PATH = ROOT / "source_of_truth" / "project_truth.json"
 OUTPUT_DIR = ROOT / "outputs" / "research_os_ideation_v1"
 OUTPUT_JSON = OUTPUT_DIR / "ideation_hypotheses.json"
 OUTPUT_CSV = OUTPUT_DIR / "ideation_summary.csv"
@@ -59,120 +56,88 @@ def make_id(label: str) -> str:
     return f"hyp_{digest}"
 
 
-def blocked_by_phrase(text: str, blocked_phrases: list[str]) -> bool:
-    lowered = text.lower()
-    return any(phrase.lower() in lowered for phrase in blocked_phrases)
-
-
-def hypothesis_templates() -> dict[str, dict[str, str]]:
+def templates() -> dict[str, dict[str, Any]]:
     return {
-        "ranking_weight_tuning": {
-            "hypothesis_text": "Retune leadership weights inside the current 66G ranking stack to down-weight weak recent leadership persistence and improve robustness against false leader handoffs.",
-            "rationale": "Baseline appears vulnerable to unstable recent leadership ranking persistence; weight redistribution may reduce weak leader admissions without changing asset universe or decision regime.",
-            "known_baseline_weakness": "Weak recent leadership persistence can allow fragile leader handoffs.",
-            "failure_mode_being_fixed": "False leader promotion after weak ranking persistence.",
-            "explicit_mechanism_of_improvement": "Shift ranking emphasis away from unstable short-horizon leadership inputs toward more persistent ranking evidence.",
+        "ranking_weight_tuning_v2": {
+            "hypothesis_label": "core_ranking_weight_tuning_v3",
+            "hypothesis_text": "Retune the leadership persistence weight block to reduce false leader handoffs caused by unstable short-horizon ranking dominance.",
+            "rationale": "Baseline 66G may overweight unstable short-horizon leader persistence; targeted weight correction could improve regime selection robustness.",
+            "known_baseline_weakness": "Fragile leader handoff after unstable short-horizon ranking persistence.",
+            "exact_mechanism_of_improvement": "Reduce short-horizon persistence weight and increase persistent confirmation weight within one named leadership weight block.",
             "exact_compare_target": "phase66g_production_soft_filters",
-            "why_edge_should_survive_scoring_strictness": "Mechanism targets a known ranking failure mode rather than broad parameter search.",
-            "weight_group_name": "leadership_persistence_weights",
-            "current_weighting_problem": "Current weighting may overweight unstable recent leadership signals.",
-            "proposed_weight_shift": "Decrease unstable short-horizon weight and increase persistent leadership confirmation weight.",
-            "expected_effect_on_regime_selection": "Reduce fragile leader handoffs and improve robustness."
+            "exact_failure_mode_being_fixed": "False leader promotion after unstable ranking dominance.",
+            "why_expected_edge_survives_strict_scoring": "Targets a specific baseline weakness with a named mechanism, not a broad weight sweep.",
+            "primary_expected_metric_improvement": "Calmar",
+            "weight_block_name": "leadership_persistence_block",
+            "current_weight_problem": "Short-horizon persistence weight appears too influential.",
+            "exact_weight_change": "Decrease short-horizon persistence coefficient and increase persistent confirmation coefficient.",
+            "why_this_weight_change_addresses_baseline_weakness": "It reduces promotion of unstable leaders while preserving confirmed ones.",
+            "expected_selection_effect": "Fewer fragile handoffs and cleaner leader retention."
         },
-        "cooldown_tuning": {
-            "hypothesis_text": "Target cooldown discipline around weak post-switch churn so baseline holds fewer fragile follow-up transitions after low-conviction switches.",
-            "rationale": "Baseline may overreact after low-conviction switches; a targeted cooldown adjustment could reduce churn without blocking valid regime changes.",
-            "known_baseline_weakness": "Weak post-switch churn after low-conviction transitions.",
-            "failure_mode_being_fixed": "Low-conviction switch followed by immediate noisy reversal.",
-            "explicit_mechanism_of_improvement": "Increase cooldown discipline only around fragile post-switch states to suppress bad follow-up transitions.",
+        "cooldown_tuning_v2": {
+            "hypothesis_label": "core_cooldown_tuning_v3",
+            "hypothesis_text": "Adjust only the post-switch fragility cooldown to suppress immediate reversal churn after one named fragile switch pattern.",
+            "rationale": "Baseline may allow too-fast re-entry after a fragile post-switch state, causing avoidable churn.",
+            "known_baseline_weakness": "Immediate reversal churn after fragile low-conviction switch.",
+            "exact_mechanism_of_improvement": "Lengthen only the post-switch fragility cooldown component for one named fragile switch pattern.",
             "exact_compare_target": "phase66g_production_soft_filters",
-            "why_edge_should_survive_scoring_strictness": "Targets a concrete churn failure mode instead of generic cooldown knob turning.",
+            "exact_failure_mode_being_fixed": "Immediate reversal after low-conviction switch.",
+            "why_expected_edge_survives_strict_scoring": "Targets one named failure mode rather than generic cooldown reduction of whipsaw.",
+            "primary_expected_metric_improvement": "DD",
             "cooldown_component_name": "post_switch_fragility_cooldown",
-            "current_failure_mode": "Immediate noisy reversal after fragile switch.",
-            "why_current_cooldown_is_wrong": "Current cooldown may be too permissive after fragile transitions.",
-            "proposed_cooldown_change": "Increase cooldown only for low-conviction post-switch states.",
-            "expected_reduction_in_bad_transitions": "Fewer fragile back-and-forth reversals."
+            "named_baseline_failure_mode": "low_conviction_switch_then_immediate_reversal",
+            "why_current_cooldown_is_wrong_for_that_failure_mode": "It allows too-early follow-up transition after a fragile switch.",
+            "exact_cooldown_change": "Increase fragility cooldown by one step only for the named failure mode.",
+            "expected_transition_effect": "Lower repeated reversal churn after fragile switches."
         },
-        "threshold_tuning": {
-            "hypothesis_text": "Tighten a targeted baseline threshold that currently admits weak confirmation states, aiming to reduce false positives without broadly suppressing valid moves.",
-            "rationale": "A specific confirmation threshold may be too loose and allow weak setups that do not survive scoring scrutiny.",
-            "known_baseline_weakness": "Loose confirmation threshold can admit weak setups.",
-            "failure_mode_being_fixed": "False positive admissions from weak confirmation states.",
-            "explicit_mechanism_of_improvement": "Tighten only the targeted confirmation threshold to reject weak setups while preserving valid moves.",
+        "threshold_tuning_v2": {
+            "hypothesis_label": "core_threshold_tuning_v3",
+            "hypothesis_text": "Tighten only the confirmation-strength threshold that admits one named weak setup pattern in recent conditions.",
+            "rationale": "A single confirmation threshold may be too loose and admit weak setups that fail quickly.",
+            "known_baseline_weakness": "Weak confirmation setup admissions in recent regime transitions.",
+            "exact_mechanism_of_improvement": "Tighten one named confirmation threshold for one named weak setup pattern.",
             "exact_compare_target": "phase66g_production_soft_filters",
-            "why_edge_should_survive_scoring_strictness": "Targets a precise false-positive failure mode, not a broad threshold sweep.",
+            "exact_failure_mode_being_fixed": "False positive admission from weak confirmation setup.",
+            "why_expected_edge_survives_strict_scoring": "Targets one named false-positive channel instead of a generic threshold sweep.",
+            "primary_expected_metric_improvement": "since2025",
             "threshold_name": "confirmation_strength_threshold",
-            "current_threshold_failure_mode": "Weak confirmation states pass too often.",
-            "why_baseline_threshold_is_too_loose_or_tight": "Baseline threshold appears too loose for weak confirmation states.",
-            "proposed_threshold_change": "Slightly tighten confirmation requirement.",
-            "expected_effect_on_false_positives_or_missed_moves": "Reduce false positives with limited impact on valid moves."
+            "named_failure_mode": "weak_confirmation_false_positive",
+            "why_baseline_threshold_is_wrong": "It is too loose for one named weak setup pattern.",
+            "exact_threshold_change": "Raise confirmation threshold by one targeted increment for the named failure mode.",
+            "expected_false_positive_or_missed_move_effect": "Reduce false positives with limited missed valid transitions."
         }
     }
 
 
-def build_hypothesis(branch: str, family: str, owner: str, expected_direction: str) -> dict[str, Any]:
-    template = hypothesis_templates()[family]
-    label = f"{branch}_{family}_v2"
-    hypothesis_text = template["hypothesis_text"]
+def validate_candidate(candidate: dict[str, Any], ideation_policy: dict[str, Any], mutation_policy: dict[str, Any]) -> tuple[bool, str]:
+    for field in ideation_policy["global_required_fields"]:
+        if candidate.get(field) in (None, "", []):
+            return False, f"missing_global_field:{field}"
 
-    return {
-        "hypothesis_id": make_id(label),
-        "branch": branch,
-        "segment_owner": owner,
-        "hypothesis_label": label,
-        "hypothesis_text": hypothesis_text,
-        "rationale": template["rationale"],
-        "expected_improvement_direction": expected_direction,
-        "baseline_reference": "phase66g_production_soft_filters",
-        "mutation_family": family,
-        "risk_flags": {
-            "instability_risk": "medium",
-            "complexity_risk": "low",
-            "duplicate_risk": "low",
-            "saturation_risk": "low"
-        },
-        "duplicate_suspicion": False,
-        "near_duplicate_suspicion": False,
-        "branch_saturation_state": "ok",
-        "known_baseline_weakness": template["known_baseline_weakness"],
-        "failure_mode_being_fixed": template["failure_mode_being_fixed"],
-        "explicit_mechanism_of_improvement": template["explicit_mechanism_of_improvement"],
-        "exact_compare_target": template["exact_compare_target"],
-        "why_edge_should_survive_scoring_strictness": template["why_edge_should_survive_scoring_strictness"],
-        **{k: v for k, v in template.items() if k not in {
-            "hypothesis_text",
-            "rationale",
-            "known_baseline_weakness",
-            "failure_mode_being_fixed",
-            "explicit_mechanism_of_improvement",
-            "exact_compare_target",
-            "why_edge_should_survive_scoring_strictness"
-        }}
-    }
+    family = candidate["mutation_family"]
+    for field in ideation_policy["family_specific_required_fields"].get(family, []):
+        if candidate.get(field) in (None, "", []):
+            return False, f"missing_family_field:{field}"
 
-
-def validate_hypothesis(h: dict[str, Any], policy: dict[str, Any], mutation_policy: dict[str, Any]) -> tuple[bool, str]:
-    for field in policy["required_fields"]:
-        if field not in h or h[field] in (None, "", []):
-            return False, f"missing_required_field:{field}"
-
-    if h["hypothesis_text"] == h["hypothesis_label"]:
+    if candidate["hypothesis_text"] == candidate["hypothesis_label"]:
         return False, "generic_shell:hypothesis_text_equals_label"
 
-    if h["mutation_family"] in mutation_policy["blocked_mutation_families"]:
-        return False, "blocked_family"
+    vague = set(ideation_policy["anti_generic_guards"]["reject_vague_phrases"])
+    lowered = candidate["hypothesis_text"].lower()
+    if any(p.lower() in lowered for p in vague):
+        return False, "generic_shell:vague_phrase"
 
-    blocked_phrases = mutation_policy["hard_guards"]["generic_phrases_blocklist"]
-    if blocked_by_phrase(h["hypothesis_text"], blocked_phrases):
-        return False, "generic_shell:blocked_phrase"
+    if candidate["primary_expected_metric_improvement"] not in ideation_policy["allowed_primary_expected_metric_improvement"]:
+        return False, "invalid_primary_metric_target"
+
+    if family in mutation_policy["blocked_families"]:
+        return False, "blocked_family"
 
     return True, "valid"
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--branch", default="core")
-    parser.add_argument("--max-hypotheses", type=int, default=3)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
@@ -180,44 +145,43 @@ def main() -> int:
     if args.dry_run == args.execute:
         raise IdeationError("choose exactly one of --dry-run or --execute")
 
-    policy = load_json(POLICY_PATH)
+    ideation_policy = load_json(POLICY_PATH)
     mutation_policy = load_json(MUTATION_POLICY_PATH)
-    truth = load_json(TRUTH_PACK_PATH)
 
-    if args.branch not in policy["allowed_branches"]:
-        raise IdeationError(f"unsupported branch: {args.branch}")
-
-    core_families = mutation_policy["allowed_mutation_families"]["core"]
-    selected = []
-    for item in core_families:
-        family = item["mutation_family"]
-        owner = policy["default_segment_owner_by_branch"]["core"]
-        h = build_hypothesis("core", family, owner, item["expected_improvement_direction"])
-        ok, reason = validate_hypothesis(h, policy, mutation_policy)
+    selected: list[dict[str, Any]] = []
+    for family, payload in templates().items():
+        candidate = {
+            "hypothesis_id": make_id(payload["hypothesis_label"]),
+            "branch": "core",
+            "segment_owner": "core_strategy",
+            "baseline_reference": "phase66g_production_soft_filters",
+            "mutation_family": family,
+            **payload
+        }
+        ok, reason = validate_candidate(candidate, ideation_policy, mutation_policy)
         append_jsonl(OUTPUT_LOG, {
             "ts": now_utc(),
             "family": family,
-            "hypothesis_label": h["hypothesis_label"],
+            "hypothesis_label": candidate["hypothesis_label"],
             "decision": "accepted" if ok else "blocked",
             "reason": reason
         })
         if ok:
-            selected.append(h)
+            selected.append(candidate)
 
-    selected = selected[:args.max_hypotheses]
+    limits = ideation_policy["generation_limits"]
+    selected = selected[:limits["max_selected_specs_total"]]
 
     summary_rows = [{
         "hypothesis_id": h["hypothesis_id"],
         "hypothesis_label": h["hypothesis_label"],
         "mutation_family": h["mutation_family"],
-        "branch": h["branch"],
-        "segment_owner": h["segment_owner"],
         "baseline_reference": h["baseline_reference"],
-        "exact_compare_target": h["exact_compare_target"]
+        "primary_expected_metric_improvement": h["primary_expected_metric_improvement"]
     } for h in selected]
 
     if args.execute:
-        write_json(OUTPUT_JSON, {"hypotheses": selected, "policy_version": policy["policy_version"], "baseline_truth": truth.get("official_baselines", {})})
+        write_json(OUTPUT_JSON, {"hypotheses": selected, "policy_version": ideation_policy["policy_version"]})
         write_csv(
             OUTPUT_CSV,
             summary_rows,
@@ -225,20 +189,17 @@ def main() -> int:
                 "hypothesis_id",
                 "hypothesis_label",
                 "mutation_family",
-                "branch",
-                "segment_owner",
                 "baseline_reference",
-                "exact_compare_target"
+                "primary_expected_metric_improvement"
             ]
         )
         print(f"[SAVED] hypotheses={len(selected)}")
         print(f"[SAVED] json={OUTPUT_JSON}")
         print(f"[SAVED] csv={OUTPUT_CSV}")
     else:
-        print(f"[DRY-RUN] branch={args.branch}")
         print(f"[DRY-RUN] hypotheses={len(selected)}")
         for row in summary_rows:
-            print(f"[DRY-RUN] {row['hypothesis_label']} | {row['mutation_family']}")
+            print(f"[DRY-RUN] {row['hypothesis_label']} | {row['mutation_family']} | {row['primary_expected_metric_improvement']}")
 
     return 0
 

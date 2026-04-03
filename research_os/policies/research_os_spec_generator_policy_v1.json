@@ -1,8 +1,7 @@
 {
   "policy_name": "research_os_spec_generator_policy_v1",
-  "policy_version": "3.0.0",
+  "policy_version": "4.0.0",
   "generator_name": "research_os_experiment_spec_generator_v1",
-  "created_by": "MRV1 AI LAB",
   "default_status": "spec_ready",
   "default_budget_class": "standard",
   "default_priority": 50,
@@ -76,34 +75,41 @@
   "required_hypothesis_thesis_fields": [
     "hypothesis_text",
     "known_baseline_weakness",
-    "failure_mode_being_fixed",
-    "explicit_mechanism_of_improvement",
+    "exact_mechanism_of_improvement",
     "exact_compare_target",
-    "why_edge_should_survive_scoring_strictness"
+    "exact_failure_mode_being_fixed",
+    "why_expected_edge_survives_strict_scoring",
+    "primary_expected_metric_improvement"
   ],
   "family_specific_required_fields": {
-    "ranking_weight_tuning": [
-      "weight_group_name",
-      "current_weighting_problem",
-      "proposed_weight_shift",
-      "expected_effect_on_regime_selection"
+    "ranking_weight_tuning_v2": [
+      "weight_block_name",
+      "current_weight_problem",
+      "exact_weight_change",
+      "why_this_weight_change_addresses_baseline_weakness",
+      "expected_selection_effect"
     ],
-    "cooldown_tuning": [
+    "cooldown_tuning_v2": [
       "cooldown_component_name",
-      "current_failure_mode",
-      "why_current_cooldown_is_wrong",
-      "proposed_cooldown_change",
-      "expected_reduction_in_bad_transitions"
+      "named_baseline_failure_mode",
+      "why_current_cooldown_is_wrong_for_that_failure_mode",
+      "exact_cooldown_change",
+      "expected_transition_effect"
     ],
-    "threshold_tuning": [
+    "threshold_tuning_v2": [
       "threshold_name",
-      "current_threshold_failure_mode",
-      "why_baseline_threshold_is_too_loose_or_tight",
-      "proposed_threshold_change",
-      "expected_effect_on_false_positives_or_missed_moves"
+      "named_failure_mode",
+      "why_baseline_threshold_is_wrong",
+      "exact_threshold_change",
+      "expected_false_positive_or_missed_move_effect"
     ]
   },
-  "spec_top_level_unknown_fields_allowed": false,
+  "allowed_primary_expected_metric_improvement": [
+    "CAGR",
+    "DD",
+    "since2025",
+    "Calmar"
+  ],
   "thesis_fields_export_policy": {
     "store_in_spec_top_level": false,
     "store_only_in_ideation_and_audit_bundle_layers": true

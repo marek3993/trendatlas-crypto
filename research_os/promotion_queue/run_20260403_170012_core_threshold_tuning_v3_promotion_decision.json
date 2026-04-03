@@ -1,0 +1,10 @@
+{
+  "decision_id": "decision_run_20260403_170012_core_threshold_tuning_v3",
+  "candidate_id": "core_threshold_tuning_v3",
+  "source_run_id": "run_20260403_170012_core_threshold_tuning_v3",
+  "decision": "kill",
+  "decision_reason": "run_failed_exit_code_2",
+  "decided_by": "research_os_orchestrator_v1",
+  "decided_at": "2026-04-03 17:00:13 UTC",
+  "evidence_refs": []
+}

@@ -1,121 +1,118 @@
 {
-  "policy_version": "2.0.0",
-  "description": "Narrowed mutation space after CORE strategy-quality audit. Generic tuning shells are blocked.",
-  "allowed_mutation_families": {
-    "core": [
-      {
-        "mutation_family": "ranking_weight_tuning",
-        "expected_improvement_direction": "increase_robustness",
-        "max_per_cycle": 1,
-        "required_template_fields": [
-          "weight_group_name",
-          "current_weighting_problem",
-          "proposed_weight_shift",
-          "expected_effect_on_regime_selection",
-          "known_baseline_weakness",
-          "failure_mode_being_fixed",
-          "explicit_mechanism_of_improvement",
-          "exact_compare_target",
-          "why_edge_should_survive_scoring_strictness"
-        ]
-      },
-      {
-        "mutation_family": "cooldown_tuning",
-        "expected_improvement_direction": "reduce_switches",
-        "max_per_cycle": 1,
-        "required_template_fields": [
-          "cooldown_component_name",
-          "current_failure_mode",
-          "why_current_cooldown_is_wrong",
-          "proposed_cooldown_change",
-          "expected_reduction_in_bad_transitions",
-          "known_baseline_weakness",
-          "failure_mode_being_fixed",
-          "explicit_mechanism_of_improvement",
-          "exact_compare_target",
-          "why_edge_should_survive_scoring_strictness"
-        ]
-      },
-      {
-        "mutation_family": "threshold_tuning",
-        "expected_improvement_direction": "improve_recent_performance",
-        "max_per_cycle": 1,
-        "required_template_fields": [
-          "threshold_name",
-          "current_threshold_failure_mode",
-          "why_baseline_threshold_is_too_loose_or_tight",
-          "proposed_threshold_change",
-          "expected_effect_on_false_positives_or_missed_moves",
-          "known_baseline_weakness",
-          "failure_mode_being_fixed",
-          "explicit_mechanism_of_improvement",
-          "exact_compare_target",
-          "why_edge_should_survive_scoring_strictness"
-        ]
-      }
-    ],
-    "universe": [],
-    "governance": [],
-    "meta_research": []
+  "policy_version": "3.0.0",
+  "description": "Mutation-space v3 after clean v2 zero-selection audit. Mechanism-first only.",
+  "enabled_families": {
+    "ranking_weight_tuning_v2": {
+      "enabled": true,
+      "role": "primary",
+      "max_candidates_per_batch": 1
+    },
+    "cooldown_tuning_v2": {
+      "enabled": true,
+      "role": "conditional",
+      "max_candidates_per_batch": 1
+    },
+    "threshold_tuning_v2": {
+      "enabled": true,
+      "role": "conditional",
+      "max_candidates_per_batch": 1
+    }
   },
-  "blocked_mutation_families": [
+  "paused_families": [],
+  "blocked_families": [
     "probation_rule_tuning",
-    "promotion_gate_tuning",
-    "asset_family_pruning",
-    "eligibility_filter_tuning",
-    "scoring_weight_tuning",
-    "selection_policy_tuning",
-    "broad_random_search",
-    "unbounded_parameter_sweep",
-    "live_trading_override",
-    "official_truth_mutation",
-    "hidden_state_machine_change",
-    "unspecified_external_data_dependency",
+    "generic_governance_fiddling",
     "generic_tuning_shell",
     "generic_threshold_search",
     "generic_cooldown_change",
-    "generic_governance_fiddling"
+    "generic_weight_rebalance",
+    "broad_random_search",
+    "unbounded_parameter_sweep"
   ],
-  "hard_guards": {
-    "reject_hypothesis_text_equal_label": true,
-    "reject_missing_mandatory_thesis_fields": true,
-    "reject_missing_exact_compare_target": true,
-    "reject_missing_baseline_weakness_or_mechanism": true,
-    "reject_near_duplicate_knob_turning": true,
-    "generic_phrases_blocklist": [
-      "tune threshold",
-      "adjust threshold",
-      "try cooldown",
-      "change cooldown",
-      "refine parameters",
-      "optimize weights",
-      "improve performance",
-      "better recent performance",
-      "generic tuning"
-    ]
-  },
-  "narrowed_family_rules": {
-    "cooldown_tuning": {
-      "allow_only_if_targeted_failure_mode": true,
-      "must_explain_non_generic_knob_turning": true
+  "global_required_fields": [
+    "known_baseline_weakness",
+    "exact_mechanism_of_improvement",
+    "exact_compare_target",
+    "exact_failure_mode_being_fixed",
+    "why_expected_edge_survives_strict_scoring",
+    "primary_expected_metric_improvement"
+  ],
+  "allowed_primary_expected_metric_improvement": [
+    "CAGR",
+    "DD",
+    "since2025",
+    "Calmar"
+  ],
+  "family_rules": {
+    "ranking_weight_tuning_v2": {
+      "mechanism_first_required": true,
+      "parameter_first_forbidden": true,
+      "required_fields": [
+        "weight_block_name",
+        "current_weight_problem",
+        "exact_weight_change",
+        "why_this_weight_change_addresses_baseline_weakness",
+        "expected_selection_effect"
+      ],
+      "hard_reason": "most_salvageable_family_but_only_with_exact_weight_block_and_exact_weakness"
     },
-    "threshold_tuning": {
-      "allow_only_as_targeted_threshold_fix": true,
-      "generic_sweeps_blocked": true
+    "cooldown_tuning_v2": {
+      "mechanism_first_required": true,
+      "parameter_first_forbidden": true,
+      "single_named_failure_mode_required": true,
+      "required_fields": [
+        "cooldown_component_name",
+        "named_baseline_failure_mode",
+        "why_current_cooldown_is_wrong_for_that_failure_mode",
+        "exact_cooldown_change",
+        "expected_transition_effect"
+      ],
+      "hard_reason": "allowed_only_if_tied_to_one_explicit_baseline_failure_mode"
     },
-    "ranking_weight_tuning": {
-      "allowed": true,
-      "needs_better_template": true,
-      "must_name_weight_group_and_baseline_weakness": true
+    "threshold_tuning_v2": {
+      "mechanism_first_required": true,
+      "parameter_first_forbidden": true,
+      "single_named_failure_mode_required": true,
+      "required_fields": [
+        "threshold_name",
+        "named_failure_mode",
+        "why_baseline_threshold_is_wrong",
+        "exact_threshold_change",
+        "expected_false_positive_or_missed_move_effect"
+      ],
+      "hard_reason": "allowed_only_as_one_targeted_threshold_fix_against_one_named_failure_mode"
     }
   },
-  "next_autonomous_batch_policy": {
-    "max_new_hypotheses_per_cycle": 3,
-    "ranking_weight_tuning_max": 1,
-    "cooldown_tuning_max": 1,
-    "threshold_tuning_max": 1,
-    "probation_rule_tuning_max": 0,
-    "keep_scoring_strictness_unchanged": true,
-    "no_placeholder_golden_path_tuning_shells": true
+  "anti_generic_filters": {
+    "reject_hypothesis_text_equal_label": true,
+    "reject_if_missing_global_required_fields": true,
+    "reject_if_missing_family_required_fields": true,
+    "reject_if_missing_explicit_baseline_weakness": true,
+    "reject_if_missing_explicit_mechanism": true,
+    "reject_if_missing_explicit_compare_target": true,
+    "reject_if_missing_explicit_failure_mode": true,
+    "reject_if_missing_primary_expected_metric_improvement": true,
+    "reject_if_vague_phrase_only": [
+      "improve robustness",
+      "reduce whipsaw",
+      "tune cooldown",
+      "shift threshold",
+      "rebalance weights",
+      "optimize parameters"
+    ],
+    "reject_if_generic_only": [
+      "generic cooldown change",
+      "generic threshold shift",
+      "generic weight rebalance"
+    ]
+  },
+  "next_batch_policy": {
+    "keep_scoring_strictness": true,
+    "max_selected_specs_total": 3,
+    "ranking_weight_tuning_v2_max": 1,
+    "cooldown_tuning_v2_max": 1,
+    "threshold_tuning_v2_max": 1,
+    "no_governance_family_reintroduction": true,
+    "each_selected_spec_must_be_mechanism_first": true
   }
 }

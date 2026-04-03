@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-03T14:27:37+00:00",
+  "generated_at_utc": "2026-04-03T17:00:17+00:00",
   "mode": "execute",
   "loop_output_dir": "outputs\\research_os_autonomous_loop_v1",
   "input_files": {
@@ -21,9 +21,9 @@
   },
   "traces": [
     {
-      "candidate_id": "core_cooldown_tuning_v2",
-      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\core_cooldown_tuning_v2.spec_ready.json",
-      "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260403_142733_core_cooldown_tuning_v2",
+      "candidate_id": "core_cooldown_tuning_v3",
+      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\core_cooldown_tuning_v3.spec_ready.json",
+      "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260403_170010_core_cooldown_tuning_v3",
       "orchestrator_status": "ok",
       "scoring_status": "failed",
       "scoring_recommendation": "",
@@ -39,7 +39,7 @@
       "precheck_decision": "",
       "promotion_recommendation": "",
       "worthy_candidate_flag": false,
-      "experiment_id": "core_cooldown_tuning_v2",
+      "experiment_id": "core_cooldown_tuning_v3",
       "dispatch_returncode": 0,
       "run_manifest_status": "archived",
       "registry_exact_match_count": 1,
@@ -47,9 +47,9 @@
       "promotion_block_reason": "UPSTREAM_SCORING_REJECT"
     },
     {
-      "candidate_id": "core_ranking_weight_tuning_v2",
-      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\core_ranking_weight_tuning_v2.spec_ready.json",
-      "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260403_142734_core_ranking_weight_tuning_v2",
+      "candidate_id": "core_ranking_weight_tuning_v3",
+      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\core_ranking_weight_tuning_v3.spec_ready.json",
+      "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260403_170011_core_ranking_weight_tuning_v3",
       "orchestrator_status": "ok",
       "scoring_status": "failed",
       "scoring_recommendation": "",
@@ -65,7 +65,7 @@
       "precheck_decision": "",
       "promotion_recommendation": "",
       "worthy_candidate_flag": false,
-      "experiment_id": "core_ranking_weight_tuning_v2",
+      "experiment_id": "core_ranking_weight_tuning_v3",
       "dispatch_returncode": 0,
       "run_manifest_status": "archived",
       "registry_exact_match_count": 1,
@@ -73,9 +73,9 @@
       "promotion_block_reason": "UPSTREAM_SCORING_REJECT"
     },
     {
-      "candidate_id": "core_threshold_tuning_v2",
-      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\core_threshold_tuning_v2.spec_ready.json",
-      "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260403_142735_core_threshold_tuning_v2",
+      "candidate_id": "core_threshold_tuning_v3",
+      "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\core_threshold_tuning_v3.spec_ready.json",
+      "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260403_170012_core_threshold_tuning_v3",
       "orchestrator_status": "ok",
       "scoring_status": "failed",
       "scoring_recommendation": "",
@@ -91,7 +91,7 @@
       "precheck_decision": "",
       "promotion_recommendation": "",
       "worthy_candidate_flag": false,
-      "experiment_id": "core_threshold_tuning_v2",
+      "experiment_id": "core_threshold_tuning_v3",
       "dispatch_returncode": 0,
       "run_manifest_status": "archived",
       "registry_exact_match_count": 1,

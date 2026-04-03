@@ -97,7 +97,7 @@ TEXT = {
         "trend_cross_none": "Bez dnešného prechodu",
         "na": "Nedostupné",
         "chart_title": "Vývoj kapitálu",
-        "chart_note": "Graf ukazuje hlavnú stratégiu, referenčnú stratégiu, leverage kandidáta a BTC Buy & Hold.",
+        "chart_note": "Graf ukazuje hlavnú stratégiu, referenčnú stratégiu, leverage kandidáta a BTC Buy & Hold v prémiovejšom porovnaní bez zmeny source-of-truth logiky.",
         "chart_year": "Začať graf od roku",
         "performance_title": "Výkon na prvý pohľad",
         "ops_title": "Prevádzkové metriky",
@@ -258,7 +258,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "trend_cross_none": "No cross today",
         "na": "Unavailable",
         "chart_title": "Capital curve",
-        "chart_note": "The chart shows the main strategy, the reference strategy, the leverage candidate and BTC Buy & Hold.",
+        "chart_note": "The chart shows the main strategy, the reference strategy, the leverage candidate and BTC Buy & Hold in a more premium comparison view without changing the source-of-truth logic.",
         "chart_year": "Start chart from year",
         "performance_title": "Performance at a glance",
         "ops_title": "Operational metrics",
@@ -548,71 +548,96 @@ def inject_css() -> None:
         """
         <style>
         .block-container {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            max-width: 1340px;
+            padding-top: 1.4rem;
+            padding-bottom: 2.4rem;
+            max-width: 1380px;
+        }
+
+        .stApp {
+            background:
+                radial-gradient(circle at top left, rgba(17,138,178,0.12), transparent 24%),
+                radial-gradient(circle at top right, rgba(165,110,255,0.12), transparent 24%),
+                radial-gradient(circle at bottom center, rgba(6,214,160,0.06), transparent 28%),
+                linear-gradient(180deg, #0a0f18 0%, #0d1320 50%, #0a0f18 100%);
         }
 
         .hero-wrap {
             background:
-                radial-gradient(circle at top left, rgba(17,138,178,0.17), transparent 35%),
-                radial-gradient(circle at top right, rgba(165,110,255,0.17), transparent 35%),
-                linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012));
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 24px;
-            padding: 1.2rem 1.25rem 1rem 1.25rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 14px 42px rgba(0,0,0,0.28);
+                radial-gradient(circle at top left, rgba(17,138,178,0.22), transparent 34%),
+                radial-gradient(circle at top right, rgba(165,110,255,0.20), transparent 34%),
+                linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.016));
+            border: 1px solid rgba(255,255,255,0.10);
+            border-radius: 28px;
+            padding: 1.4rem 1.4rem 1.15rem 1.4rem;
+            margin-bottom: 1.15rem;
+            box-shadow:
+                0 18px 56px rgba(0,0,0,0.34),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.03) 45%, transparent 90%);
+            pointer-events: none;
         }
 
         .gradient-line {
-            height: 3px;
+            height: 4px;
             width: 100%;
             background: linear-gradient(90deg, #ff6b6b, #ffd166, #06d6a0, #118ab2, #a56eff);
             border-radius: 999px;
-            margin: 0.35rem 0 1rem 0;
+            margin: 0.45rem 0 1.15rem 0;
+            box-shadow: 0 0 22px rgba(165,110,255,0.26);
         }
 
         .lang-wrap {
-            margin-top: 0.55rem;
-            margin-bottom: 0.95rem;
+            margin-top: 0.7rem;
+            margin-bottom: 1rem;
         }
 
         div[data-testid="stRadio"] > div {
-            background: rgba(255,255,255,0.035);
-            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.10);
             border-radius: 999px;
-            padding: 4px 10px;
+            padding: 5px 10px;
             width: fit-content;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.16);
         }
 
         .card {
-            border-radius: 18px;
+            border-radius: 20px;
             padding: 16px 18px;
             min-height: 118px;
-            border: 1px solid rgba(255,255,255,0.09);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.18);
-            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.10);
+            box-shadow:
+                0 12px 34px rgba(0,0,0,0.22),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+            margin-bottom: 12px;
+            backdrop-filter: blur(6px);
         }
 
         .card-blue {
-            background: linear-gradient(180deg, rgba(64,140,255,0.16), rgba(255,255,255,0.02));
+            background: linear-gradient(180deg, rgba(64,140,255,0.18), rgba(255,255,255,0.025));
         }
 
         .card-green {
-            background: linear-gradient(180deg, rgba(6,214,160,0.16), rgba(255,255,255,0.02));
+            background: linear-gradient(180deg, rgba(6,214,160,0.18), rgba(255,255,255,0.025));
         }
 
         .card-violet {
-            background: linear-gradient(180deg, rgba(165,110,255,0.16), rgba(255,255,255,0.02));
+            background: linear-gradient(180deg, rgba(165,110,255,0.18), rgba(255,255,255,0.025));
         }
 
         .card-orange {
-            background: linear-gradient(180deg, rgba(255,161,90,0.16), rgba(255,255,255,0.02));
+            background: linear-gradient(180deg, rgba(255,161,90,0.18), rgba(255,255,255,0.025));
         }
 
         .card-neutral {
-            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));
+            background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.022));
         }
 
         .card-top {
@@ -626,6 +651,7 @@ def inject_css() -> None:
         .card-label {
             font-size: 0.88rem;
             opacity: 0.82;
+            letter-spacing: 0.01em;
         }
 
         .card-info {
@@ -646,8 +672,9 @@ def inject_css() -> None:
         .card-value {
             font-size: 2rem;
             font-weight: 700;
-            line-height: 1.15;
-            margin-bottom: 6px;
+            line-height: 1.1;
+            margin-bottom: 7px;
+            text-shadow: 0 0 18px rgba(255,255,255,0.05);
         }
 
         .card-sub {
@@ -660,7 +687,14 @@ def inject_css() -> None:
             border: 1px solid rgba(255,255,255,0.09);
             border-radius: 18px;
             padding: 8px 10px;
-            box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+        }
+
+        div[data-testid="stDataFrame"] {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 10px 28px rgba(0,0,0,0.16);
         }
         </style>
         """,
@@ -1157,7 +1191,7 @@ def make_capital_chart(
                 y=rebase_series(candidate_plot["equity"]),
                 mode="lines",
                 name=candidate_label,
-                line=dict(width=2.5, color="#ffd166", dash="dash"),
+                line=dict(width=3.0, color="#ffd166", dash="dash"),
             )
         )
 
@@ -1168,7 +1202,7 @@ def make_capital_chart(
             y=rebase_series(btc_plot["close"]),
             mode="lines",
             name=btc_label,
-            line=dict(width=2.0, color="#7aa6ff"),
+            line=dict(width=2.2, color="#7aa6ff"),
         )
     )
 
@@ -1179,19 +1213,33 @@ def make_capital_chart(
             y=rebase_series(main_plot["equity"]),
             mode="lines",
             name=main_label,
-            line=dict(width=4.0, color="#ff6b6b"),
+            line=dict(width=4.8, color="#ff6b6b"),
         )
     )
 
     fig.update_layout(
-        height=540,
+        height=560,
         title=title,
         template="plotly_dark",
-        margin=dict(l=20, r=20, t=55, b=20),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(255,255,255,0.015)",
+        margin=dict(l=20, r=20, t=60, b=20),
         legend_title="",
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            bgcolor="rgba(10,15,24,0.72)",
+            bordercolor="rgba(255,255,255,0.08)",
+            borderwidth=1,
+        ),
         xaxis_title="",
         yaxis_title="Indexed growth",
         hovermode="x unified",
+        xaxis=dict(showgrid=False),
+        yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.06)"),
     )
     return fig
 
@@ -1229,6 +1277,8 @@ def make_trend_gauge(trend_live: dict, lang: str) -> go.Figure:
     fig.update_layout(
         height=320,
         template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(255,255,255,0.015)",
         margin=dict(l=10, r=10, t=45, b=10),
     )
     return fig
@@ -1260,8 +1310,11 @@ def make_trend_history_chart(history_df: pd.DataFrame, lang: str) -> go.Figure:
         height=280,
         title=t(lang, "trend_history"),
         template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(255,255,255,0.015)",
         margin=dict(l=20, r=20, t=50, b=20),
-        yaxis=dict(range=[-1.05, 1.05]),
+        yaxis=dict(range=[-1.05, 1.05], gridcolor="rgba(255,255,255,0.06)"),
+        xaxis=dict(showgrid=False),
         xaxis_title="",
         legend_title="",
     )
