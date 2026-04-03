@@ -1,40 +1,12 @@
 import importlib.util
+import json
 import unittest
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 TESTS_DIR = ROOT / "tests"
-
-TEST_FILES = [
-    TESTS_DIR / "test_source_of_truth_presence.py",
-    TESTS_DIR / "test_source_of_truth_json_valid.py",
-    TESTS_DIR / "test_forbidden_tracked_artifacts.py",
-    TESTS_DIR / "test_canonical_lineage_minimum.py",
-    TESTS_DIR / "test_canonical_truth_consistency.py",
-    TESTS_DIR / "test_canonical_reference_separation.py",
-    TESTS_DIR / "test_canonical_product_export_contract.py",
-    TESTS_DIR / "test_canonical_json_schema_shape.py",
-    TESTS_DIR / "test_canonical_consumer_scope_rules.py",
-    TESTS_DIR / "test_canonical_decision_vs_reference_boundaries.py",
-    TESTS_DIR / "test_canonical_upstream_paths_exist.py",
-    TESTS_DIR / "test_canonical_filename_path_contracts.py",
-    TESTS_DIR / "test_canonical_required_top_level_keys.py",
-    TESTS_DIR / "test_canonical_reference_truth_flags.py",
-    TESTS_DIR / "test_canonical_decision_ids_present.py",
-    TESTS_DIR / "test_canonical_manifest_indexes_shape.py",
-    TESTS_DIR / "test_canonical_truth_domain_allowed_values.py",
-    TESTS_DIR / "test_canonical_artifact_type_allowed_values.py",
-    TESTS_DIR / "test_canonical_truth_status_allowed_values.py",
-    TESTS_DIR / "test_canonical_consumer_scope_allowed_values.py",
-    TESTS_DIR / "test_canonical_notes_blocks_present.py",
-    TESTS_DIR / "test_canonical_manifest_schema_version_present.py",
-    TESTS_DIR / "test_canonical_decision_summary_blocks_present.py",
-    TESTS_DIR / "test_canonical_reference_summary_blocks_present.py",
-    TESTS_DIR / "test_canonical_decision_scope_lists_are_strings.py",
-    TESTS_DIR / "test_canonical_reference_rule_lists_are_strings.py",
-    TESTS_DIR / "test_output_registry_official_truth_flags.py",
-]
+MANIFEST_PATH = TESTS_DIR / "repo_hygiene_guardrails_manifest.json"
 
 
 def load_module_from_path(module_name: str, file_path: Path):
@@ -46,11 +18,35 @@ def load_module_from_path(module_name: str, file_path: Path):
     return module
 
 
+def load_test_files() -> list[Path]:
+    if not MANIFEST_PATH.exists():
+        raise RuntimeError(f"Missing manifest: {MANIFEST_PATH}")
+
+    with MANIFEST_PATH.open("r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+
+    test_files = payload.get("test_files")
+    if not isinstance(test_files, list) or not test_files:
+        raise RuntimeError("repo_hygiene_guardrails_manifest.json must contain non-empty test_files list")
+
+    resolved = []
+    for rel_path in test_files:
+        if not isinstance(rel_path, str) or not rel_path.strip():
+            raise RuntimeError(f"Invalid test file entry in manifest: {rel_path}")
+        abs_path = ROOT / rel_path
+        if not abs_path.exists():
+            raise RuntimeError(f"Manifest references missing test file: {rel_path}")
+        resolved.append(abs_path)
+
+    return resolved
+
+
 def main() -> int:
     loader = unittest.defaultTestLoader
     suite = unittest.TestSuite()
+    test_files = load_test_files()
 
-    for index, file_path in enumerate(TEST_FILES, start=1):
+    for index, file_path in enumerate(test_files, start=1):
         module = load_module_from_path(f"repo_hygiene_guardrail_module_{index}", file_path)
         suite.addTests(loader.loadTestsFromModule(module))
 
