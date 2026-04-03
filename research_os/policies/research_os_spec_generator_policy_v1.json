@@ -1,6 +1,6 @@
 {
   "policy_name": "research_os_spec_generator_policy_v1",
-  "policy_version": "1.2.0",
+  "policy_version": "2.0.0",
   "generator_name": "research_os_experiment_spec_generator_v1",
   "created_by": "MRV1 AI LAB",
   "default_status": "spec_ready",
@@ -16,31 +16,13 @@
     "compare_summary.csv"
   ],
   "allowed_branches": [
-    "core",
-    "universe",
-    "governance",
-    "meta_research"
+    "core"
   ],
   "branch_defaults": {
     "core": {
       "budget_class": "standard",
       "priority": 80,
       "segment_owner": "MRV1 CORE STRATEGY"
-    },
-    "universe": {
-      "budget_class": "standard",
-      "priority": 70,
-      "segment_owner": "MRV1 UNIVERSE"
-    },
-    "governance": {
-      "budget_class": "light",
-      "priority": 60,
-      "segment_owner": "MRV1 DATA"
-    },
-    "meta_research": {
-      "budget_class": "light",
-      "priority": 40,
-      "segment_owner": "MRV1 DATA"
     }
   },
   "baseline_defaults": {
@@ -65,37 +47,9 @@
       "--baseline-paper",
       "{baseline_paper_path}",
       "--hypothesis-label",
-      "{hypothesis_label}"
-    ],
-    "universe": [
-      "--mode",
-      "research",
-      "--baseline-model",
-      "{baseline_model}",
-      "--baseline-paper",
-      "{baseline_paper_path}",
-      "--hypothesis-label",
-      "{hypothesis_label}"
-    ],
-    "governance": [
-      "--mode",
-      "research",
-      "--baseline-model",
-      "{baseline_model}",
-      "--baseline-paper",
-      "{baseline_paper_path}",
-      "--hypothesis-label",
-      "{hypothesis_label}"
-    ],
-    "meta_research": [
-      "--mode",
-      "research",
-      "--baseline-model",
-      "{baseline_model}",
-      "--baseline-paper",
-      "{baseline_paper_path}",
-      "--hypothesis-label",
-      "{hypothesis_label}"
+      "{hypothesis_label}",
+      "--compare-target",
+      "{exact_compare_target}"
     ]
   },
   "required_spec_fields": [
@@ -103,6 +57,7 @@
     "branch",
     "segment_owner",
     "hypothesis_label",
+    "hypothesis_text",
     "experiment_family",
     "baseline_model",
     "baseline_paper_path",
@@ -117,8 +72,35 @@
     "priority",
     "created_by",
     "created_at",
-    "status"
+    "status",
+    "known_baseline_weakness",
+    "failure_mode_being_fixed",
+    "explicit_mechanism_of_improvement",
+    "exact_compare_target",
+    "why_edge_should_survive_scoring_strictness"
   ],
+  "family_specific_required_fields": {
+    "ranking_weight_tuning": [
+      "weight_group_name",
+      "current_weighting_problem",
+      "proposed_weight_shift",
+      "expected_effect_on_regime_selection"
+    ],
+    "cooldown_tuning": [
+      "cooldown_component_name",
+      "current_failure_mode",
+      "why_current_cooldown_is_wrong",
+      "proposed_cooldown_change",
+      "expected_reduction_in_bad_transitions"
+    ],
+    "threshold_tuning": [
+      "threshold_name",
+      "current_threshold_failure_mode",
+      "why_baseline_threshold_is_too_loose_or_tight",
+      "proposed_threshold_change",
+      "expected_effect_on_false_positives_or_missed_moves"
+    ]
+  },
   "output_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated",
   "summary_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\generated_experiment_specs_summary.csv",
   "summary_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\generated_experiment_specs.json",

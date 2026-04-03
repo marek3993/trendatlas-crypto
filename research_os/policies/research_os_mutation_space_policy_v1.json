@@ -1,67 +1,121 @@
 {
-  "policy_version": "1.0",
-  "description": "Explicit allowed mutation space for controlled ideation.",
+  "policy_version": "2.0.0",
+  "description": "Narrowed mutation space after CORE strategy-quality audit. Generic tuning shells are blocked.",
   "allowed_mutation_families": {
     "core": [
       {
-        "mutation_family": "threshold_tuning",
-        "hypothesis_template": "Adjust guarded thresholds around existing baseline controls to improve recent performance without increasing instability.",
-        "expected_improvement_direction": "improve_recent_performance"
+        "mutation_family": "ranking_weight_tuning",
+        "expected_improvement_direction": "increase_robustness",
+        "max_per_cycle": 1,
+        "required_template_fields": [
+          "weight_group_name",
+          "current_weighting_problem",
+          "proposed_weight_shift",
+          "expected_effect_on_regime_selection",
+          "known_baseline_weakness",
+          "failure_mode_being_fixed",
+          "explicit_mechanism_of_improvement",
+          "exact_compare_target",
+          "why_edge_should_survive_scoring_strictness"
+        ]
       },
       {
         "mutation_family": "cooldown_tuning",
-        "hypothesis_template": "Adjust cooldown or hold discipline around existing switching logic to reduce noise and unnecessary churn.",
-        "expected_improvement_direction": "reduce_switches"
+        "expected_improvement_direction": "reduce_switches",
+        "max_per_cycle": 1,
+        "required_template_fields": [
+          "cooldown_component_name",
+          "current_failure_mode",
+          "why_current_cooldown_is_wrong",
+          "proposed_cooldown_change",
+          "expected_reduction_in_bad_transitions",
+          "known_baseline_weakness",
+          "failure_mode_being_fixed",
+          "explicit_mechanism_of_improvement",
+          "exact_compare_target",
+          "why_edge_should_survive_scoring_strictness"
+        ]
       },
       {
-        "mutation_family": "ranking_weight_tuning",
-        "hypothesis_template": "Refine relative weighting inside existing ranking logic to improve robustness against weak recent leadership.",
-        "expected_improvement_direction": "increase_robustness"
+        "mutation_family": "threshold_tuning",
+        "expected_improvement_direction": "improve_recent_performance",
+        "max_per_cycle": 1,
+        "required_template_fields": [
+          "threshold_name",
+          "current_threshold_failure_mode",
+          "why_baseline_threshold_is_too_loose_or_tight",
+          "proposed_threshold_change",
+          "expected_effect_on_false_positives_or_missed_moves",
+          "known_baseline_weakness",
+          "failure_mode_being_fixed",
+          "explicit_mechanism_of_improvement",
+          "exact_compare_target",
+          "why_edge_should_survive_scoring_strictness"
+        ]
       }
     ],
-    "universe": [
-      {
-        "mutation_family": "asset_family_pruning",
-        "hypothesis_template": "Prune weak or suspicious asset families from the current shortlist to reduce drawdown and governance noise.",
-        "expected_improvement_direction": "reduce_drawdown"
-      },
-      {
-        "mutation_family": "eligibility_filter_tuning",
-        "hypothesis_template": "Tighten or relax eligibility filters for currently admitted assets to improve selection quality.",
-        "expected_improvement_direction": "increase_robustness"
-      }
-    ],
-    "governance": [
-      {
-        "mutation_family": "probation_rule_tuning",
-        "hypothesis_template": "Adjust probation and ban discipline to better block weak challengers while preserving valid leaders.",
-        "expected_improvement_direction": "improve_governance_stability"
-      },
-      {
-        "mutation_family": "promotion_gate_tuning",
-        "hypothesis_template": "Refine promotion thresholds or persistence requirements to reduce weak admissions into later stages.",
-        "expected_improvement_direction": "increase_robustness"
-      }
-    ],
-    "meta_research": [
-      {
-        "mutation_family": "scoring_weight_tuning",
-        "hypothesis_template": "Adjust scoring weights or penalties to better separate strong candidates from synthetic or unstable variants.",
-        "expected_improvement_direction": "improve_research_quality"
-      },
-      {
-        "mutation_family": "selection_policy_tuning",
-        "hypothesis_template": "Refine batch selection constraints to reduce duplicate-family promotion and improve portfolio diversity.",
-        "expected_improvement_direction": "improve_research_quality"
-      }
-    ]
+    "universe": [],
+    "governance": [],
+    "meta_research": []
   },
   "blocked_mutation_families": [
+    "probation_rule_tuning",
+    "promotion_gate_tuning",
+    "asset_family_pruning",
+    "eligibility_filter_tuning",
+    "scoring_weight_tuning",
+    "selection_policy_tuning",
     "broad_random_search",
     "unbounded_parameter_sweep",
     "live_trading_override",
     "official_truth_mutation",
     "hidden_state_machine_change",
-    "unspecified_external_data_dependency"
-  ]
+    "unspecified_external_data_dependency",
+    "generic_tuning_shell",
+    "generic_threshold_search",
+    "generic_cooldown_change",
+    "generic_governance_fiddling"
+  ],
+  "hard_guards": {
+    "reject_hypothesis_text_equal_label": true,
+    "reject_missing_mandatory_thesis_fields": true,
+    "reject_missing_exact_compare_target": true,
+    "reject_missing_baseline_weakness_or_mechanism": true,
+    "reject_near_duplicate_knob_turning": true,
+    "generic_phrases_blocklist": [
+      "tune threshold",
+      "adjust threshold",
+      "try cooldown",
+      "change cooldown",
+      "refine parameters",
+      "optimize weights",
+      "improve performance",
+      "better recent performance",
+      "generic tuning"
+    ]
+  },
+  "narrowed_family_rules": {
+    "cooldown_tuning": {
+      "allow_only_if_targeted_failure_mode": true,
+      "must_explain_non_generic_knob_turning": true
+    },
+    "threshold_tuning": {
+      "allow_only_as_targeted_threshold_fix": true,
+      "generic_sweeps_blocked": true
+    },
+    "ranking_weight_tuning": {
+      "allowed": true,
+      "needs_better_template": true,
+      "must_name_weight_group_and_baseline_weakness": true
+    }
+  },
+  "next_autonomous_batch_policy": {
+    "max_new_hypotheses_per_cycle": 3,
+    "ranking_weight_tuning_max": 1,
+    "cooldown_tuning_max": 1,
+    "threshold_tuning_max": 1,
+    "probation_rule_tuning_max": 0,
+    "keep_scoring_strictness_unchanged": true,
+    "no_placeholder_golden_path_tuning_shells": true
+  }
 }

@@ -1,23 +1,18 @@
 {
-  "policy_version": "1.0",
-  "description": "Deterministic controlled ideation policy for Research OS.",
+  "policy_version": "2.0.0",
+  "description": "Deterministic controlled ideation policy with mandatory edge thesis fields.",
   "allowed_branches": [
-    "core",
-    "universe",
-    "governance",
-    "meta_research"
+    "core"
   ],
   "default_segment_owner_by_branch": {
-    "core": "core_strategy",
-    "universe": "ai_lab",
-    "governance": "ai_lab",
-    "meta_research": "ai_lab"
+    "core": "core_strategy"
   },
   "required_fields": [
     "hypothesis_id",
     "branch",
     "segment_owner",
     "hypothesis_label",
+    "hypothesis_text",
     "rationale",
     "expected_improvement_direction",
     "baseline_reference",
@@ -25,7 +20,12 @@
     "risk_flags",
     "duplicate_suspicion",
     "near_duplicate_suspicion",
-    "branch_saturation_state"
+    "branch_saturation_state",
+    "known_baseline_weakness",
+    "failure_mode_being_fixed",
+    "explicit_mechanism_of_improvement",
+    "exact_compare_target",
+    "why_edge_should_survive_scoring_strictness"
   ],
   "baseline_reference_rules": {
     "require_truth_pack_reference": true,
@@ -37,8 +37,8 @@
     "label_near_duplicates": true
   },
   "branch_saturation_rules": {
-    "warn_threshold": 3,
-    "block_threshold": 5,
+    "warn_threshold": 2,
+    "block_threshold": 3,
     "window_latest_hypotheses": 20
   },
   "risk_flag_rules": {
@@ -50,18 +50,23 @@
     ]
   },
   "expected_improvement_direction_allowed": [
-    "increase_cagr",
-    "reduce_drawdown",
-    "reduce_switches",
     "increase_robustness",
-    "improve_recent_performance",
-    "improve_governance_stability",
-    "improve_research_quality"
+    "reduce_switches",
+    "improve_recent_performance"
   ],
+  "anti_generic_guards": {
+    "reject_if_hypothesis_text_equals_label": true,
+    "reject_if_missing_exact_compare_target": true,
+    "reject_if_missing_baseline_weakness": true,
+    "reject_if_missing_failure_mode": true,
+    "reject_if_missing_improvement_mechanism": true,
+    "reject_if_missing_scoring_survival_rationale": true
+  },
   "safe_outcomes": {
     "broken_context": "fail_fast",
     "duplicate_block": "blocked",
     "saturated_branch_block": "blocked",
+    "generic_shell_block": "blocked",
     "valid_hypothesis": "proposed"
   }
 }

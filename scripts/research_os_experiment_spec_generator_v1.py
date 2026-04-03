@@ -9,11 +9,11 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(r"C:\Users\benda\Desktop\market_regime_v1")
+ROOT = Path(__file__).resolve().parents[1]
 RESEARCH_OS = ROOT / "research_os"
-DEFAULT_POLICY_PATH = RESEARCH_OS / "policies" / "research_os_spec_generator_policy_v1.json"
-DEFAULT_HYPOTHESES_PATH = RESEARCH_OS / "ideation" / "ideation_hypotheses.json"
-DEFAULT_TRUTH_PACK_PATH = RESEARCH_OS / "single_truth" / "truth_pack.json"
+POLICY_PATH = RESEARCH_OS / "policies" / "research_os_spec_generator_policy_v1.json"
+HYPOTHESES_PATH = ROOT / "outputs" / "research_os_ideation_v1" / "ideation_hypotheses.json"
+TRUTH_PACK_PATH = ROOT / "source_of_truth" / "project_truth.json"
 
 
 class SpecGenerationError(RuntimeError):
@@ -71,32 +71,13 @@ def resolve_hypotheses(payload: Any) -> list[dict[str, Any]]:
     raise SpecGenerationError("unsupported hypotheses payload shape")
 
 
-def require_hypothesis_field(hypothesis: dict[str, Any], field: str) -> Any:
-    value = hypothesis.get(field)
-    if value in (None, "", []):
-        raise SpecGenerationError(f"hypothesis missing required field: {field}")
-    return value
-
-
-def resolve_baseline_model(truth_pack: dict[str, Any], policy: dict[str, Any], hypothesis: dict[str, Any]) -> str:
-    return str(
-        hypothesis.get("baseline_reference")
-        or truth_pack.get("official_universe_winner")
-        or policy["baseline_defaults"]["baseline_model"]
-    )
-
-
 def resolve_baseline_paper_path(policy: dict[str, Any]) -> str:
     path = Path(policy["baseline_defaults"]["baseline_paper_path"])
-    if not path.exists():
-        raise SpecGenerationError(f"authoritative baseline_paper_path does not exist: {path}")
     return str(path)
 
 
 def resolve_script_path(policy: dict[str, Any]) -> str:
     path = Path(policy["script_defaults"]["authoritative_script_path"])
-    if not path.exists():
-        raise SpecGenerationError(f"authoritative script_path does not exist: {path}")
     return str(path)
 
 
@@ -104,105 +85,81 @@ def expand_input_paths(policy: dict[str, Any]) -> list[str]:
     macro_path = Path(policy["input_resolution"]["macro_file_path"])
     ohlcv_dir = Path(policy["input_resolution"]["ohlcv_dir_path"])
     glob_pattern = policy["input_resolution"]["ohlcv_glob"]
-
-    if not macro_path.exists() or not macro_path.is_file():
-        raise SpecGenerationError(f"macro input file does not exist: {macro_path}")
-    if not ohlcv_dir.exists() or not ohlcv_dir.is_dir():
-        raise SpecGenerationError(f"ohlcv input directory does not exist: {ohlcv_dir}")
-
     ohlcv_files = sorted(p for p in ohlcv_dir.glob(glob_pattern) if p.is_file())
-    if policy["input_resolution"].get("require_nonempty_ohlcv_expansion", False) and not ohlcv_files:
-        raise SpecGenerationError("ohlcv expansion produced zero files")
-
-    resolved = [str(macro_path)] + [str(p) for p in ohlcv_files]
-    return resolved
+    return [str(macro_path)] + [str(p) for p in ohlcv_files]
 
 
 def render_script_args(policy: dict[str, Any], hypothesis: dict[str, Any], baseline_model: str, baseline_paper_path: str) -> list[str]:
-    branch = str(require_hypothesis_field(hypothesis, "branch"))
-    template = policy["script_args_defaults"][branch]
+    template = policy["script_args_defaults"]["core"]
     mapping = {
         "baseline_model": baseline_model,
         "baseline_paper_path": baseline_paper_path,
-        "hypothesis_label": str(require_hypothesis_field(hypothesis, "hypothesis_label"))
+        "hypothesis_label": hypothesis["hypothesis_label"],
+        "exact_compare_target": hypothesis["exact_compare_target"]
     }
     return [str(x).format(**mapping) for x in template]
 
 
+def validate_hypothesis_for_spec(hypothesis: dict[str, Any], policy: dict[str, Any]) -> None:
+    mandatory = [
+        "known_baseline_weakness",
+        "failure_mode_being_fixed",
+        "explicit_mechanism_of_improvement",
+        "exact_compare_target",
+        "why_edge_should_survive_scoring_strictness",
+        "hypothesis_text"
+    ]
+    for field in mandatory:
+        if hypothesis.get(field) in (None, "", []):
+            raise SpecGenerationError(f"hypothesis missing mandatory thesis field: {field}")
+
+    family = hypothesis["mutation_family"]
+    for field in policy["family_specific_required_fields"].get(family, []):
+        if hypothesis.get(field) in (None, "", []):
+            raise SpecGenerationError(f"hypothesis missing family-specific field: {field}")
+
+
 def build_spec(policy: dict[str, Any], truth_pack: dict[str, Any], hypothesis: dict[str, Any]) -> dict[str, Any]:
-    branch = str(require_hypothesis_field(hypothesis, "branch"))
-    if branch not in policy["allowed_branches"]:
-        raise SpecGenerationError(f"unsupported branch: {branch}")
+    validate_hypothesis_for_spec(hypothesis, policy)
 
-    branch_defaults = policy["branch_defaults"][branch]
-    hypothesis_label = str(require_hypothesis_field(hypothesis, "hypothesis_label"))
-    experiment_family = str(
-        hypothesis.get("experiment_family")
-        or hypothesis.get("mutation_family")
-        or f"{branch}_mutation"
-    )
-
-    baseline_model = resolve_baseline_model(truth_pack, policy, hypothesis)
+    baseline_model = hypothesis.get("baseline_reference") or policy["baseline_defaults"]["baseline_model"]
     baseline_paper_path = resolve_baseline_paper_path(policy)
     script_path = resolve_script_path(policy)
     input_paths = expand_input_paths(policy)
     script_args = render_script_args(policy, hypothesis, baseline_model, baseline_paper_path)
 
-    experiment_id = str(
-        hypothesis.get("experiment_id")
-        or slugify(hypothesis_label)
-    )
-
-    spec: dict[str, Any] = {
+    experiment_id = hypothesis.get("experiment_id") or slugify(hypothesis["hypothesis_label"])
+    spec = {
         "experiment_id": experiment_id,
-        "branch": branch,
-        "segment_owner": str(
-            hypothesis.get("segment_owner")
-            or branch_defaults["segment_owner"]
-        ),
-        "hypothesis_label": hypothesis_label,
-        "experiment_family": experiment_family,
+        "branch": hypothesis["branch"],
+        "segment_owner": hypothesis["segment_owner"],
+        "hypothesis_label": hypothesis["hypothesis_label"],
+        "hypothesis_text": hypothesis["hypothesis_text"],
+        "experiment_family": hypothesis["mutation_family"],
         "baseline_model": baseline_model,
         "baseline_paper_path": baseline_paper_path,
         "input_paths": input_paths,
         "script_path": script_path,
         "script_args": script_args,
-        "expected_outputs": list(
-            hypothesis.get("expected_outputs")
-            or policy["default_expected_outputs"]
-        ),
-        "scoring_profile": str(
-            hypothesis.get("scoring_profile")
-            or policy["default_scoring_profile"]
-        ),
-        "promotion_rule": str(
-            hypothesis.get("promotion_rule")
-            or policy["default_promotion_rule"]
-        ),
-        "invalidation_rule": str(
-            hypothesis.get("invalidation_rule")
-            or policy["default_invalidation_rule"]
-        ),
-        "budget_class": str(
-            hypothesis.get("budget_class")
-            or branch_defaults["budget_class"]
-            or policy["default_budget_class"]
-        ),
-        "priority": int(
-            hypothesis.get("priority")
-            or branch_defaults["priority"]
-            or policy["default_priority"]
-        ),
-        "created_by": str(
-            hypothesis.get("created_by")
-            or policy["default_created_by"]
-        ),
-        "created_at": str(
-            hypothesis.get("created_at")
-            or utc_now_iso()
-        ),
-        "status": "spec_ready"
+        "expected_outputs": policy["default_expected_outputs"],
+        "scoring_profile": policy["default_scoring_profile"],
+        "promotion_rule": policy["default_promotion_rule"],
+        "invalidation_rule": policy["default_invalidation_rule"],
+        "budget_class": policy["branch_defaults"]["core"]["budget_class"],
+        "priority": policy["branch_defaults"]["core"]["priority"],
+        "created_by": policy["default_created_by"],
+        "created_at": utc_now_iso(),
+        "status": "spec_ready",
+        "known_baseline_weakness": hypothesis["known_baseline_weakness"],
+        "failure_mode_being_fixed": hypothesis["failure_mode_being_fixed"],
+        "explicit_mechanism_of_improvement": hypothesis["explicit_mechanism_of_improvement"],
+        "exact_compare_target": hypothesis["exact_compare_target"],
+        "why_edge_should_survive_scoring_strictness": hypothesis["why_edge_should_survive_scoring_strictness"]
     }
+
+    family = hypothesis["mutation_family"]
+    for field in policy["family_specific_required_fields"].get(family, []):
+        spec[field] = hypothesis[field]
 
     missing = [field for field in policy["required_spec_fields"] if spec.get(field) in (None, "", [])]
     if missing:
@@ -225,7 +182,6 @@ def write_summary_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         "budget_class",
         "priority",
         "status",
-        "input_paths_count",
         "spec_path"
     ]
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -235,10 +191,7 @@ def write_summary_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate executable orchestrator-compatible experiment specs.")
-    parser.add_argument("--policy-path", default=str(DEFAULT_POLICY_PATH))
-    parser.add_argument("--hypotheses-path", default=str(DEFAULT_HYPOTHESES_PATH))
-    parser.add_argument("--truth-pack-path", default=str(DEFAULT_TRUTH_PACK_PATH))
+    parser = argparse.ArgumentParser(description="Generate sharper orchestrator-compatible experiment specs.")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
@@ -248,9 +201,9 @@ def main() -> int:
 
     print("[START] research_os_experiment_spec_generator_v1")
 
-    policy = load_json(Path(args.policy_path))
-    truth_pack = load_json(Path(args.truth_pack_path))
-    hypotheses_payload = load_json(Path(args.hypotheses_path))
+    policy = load_json(POLICY_PATH)
+    truth_pack = load_json(TRUTH_PACK_PATH)
+    hypotheses_payload = load_json(HYPOTHESES_PATH)
     hypotheses = resolve_hypotheses(hypotheses_payload)
 
     output_dir = Path(policy["output_dir"])
@@ -264,11 +217,7 @@ def main() -> int:
     for hypothesis in hypotheses:
         spec = build_spec(policy, truth_pack, hypothesis)
         spec_path = output_dir / f"{spec['experiment_id']}.spec_ready.json"
-
-        generated_specs_payload.append({
-            "spec_path": str(spec_path),
-            "spec": spec
-        })
+        generated_specs_payload.append({"spec_path": str(spec_path), "spec": spec})
         summary_rows.append({
             "experiment_id": spec["experiment_id"],
             "branch": spec["branch"],
@@ -281,7 +230,6 @@ def main() -> int:
             "budget_class": spec["budget_class"],
             "priority": spec["priority"],
             "status": spec["status"],
-            "input_paths_count": len(spec["input_paths"]),
             "spec_path": str(spec_path)
         })
 
@@ -298,19 +246,13 @@ def main() -> int:
             "policy_version": policy["policy_version"],
             "generated_count": len(generated_specs_payload)
         })
-
         print(f"[SAVED] specs={len(generated_specs_payload)}")
         print(f"[SAVED] summary_json={summary_json_path}")
         print(f"[SAVED] summary_csv={summary_csv_path}")
     else:
         print(f"[DRY-RUN] would_generate_specs={len(generated_specs_payload)}")
         for row in summary_rows:
-            print(
-                f"[DRY-RUN] {row['experiment_id']} | "
-                f"status={row['status']} | "
-                f"inputs={row['input_paths_count']} | "
-                f"script={row['script_path']}"
-            )
+            print(f"[DRY-RUN] {row['experiment_id']} | {row['experiment_family']} | {row['status']}")
 
     print("[END] research_os_experiment_spec_generator_v1")
     return 0
@@ -319,6 +261,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except SpecGenerationError as exc:
+    except Exception as exc:
         print(f"[FAIL] {exc}", file=sys.stderr)
         raise SystemExit(1)
