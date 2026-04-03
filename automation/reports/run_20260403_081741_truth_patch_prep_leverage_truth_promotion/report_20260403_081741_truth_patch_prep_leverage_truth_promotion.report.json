@@ -1,0 +1,21 @@
+{
+  "report_id": "report_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "summary": "Run scaffold created.",
+  "findings": [
+    "Task spec created.",
+    "Run log created.",
+    "Screenshot manifest created.",
+    "No truth patch created yet."
+  ],
+  "artifacts": {
+    "run_log_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\runs\\run_20260403_081741_truth_patch_prep_leverage_truth_promotion\\run_20260403_081741_truth_patch_prep_leverage_truth_promotion.run_log.json",
+    "screenshot_manifest_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\screenshots\\run_20260403_081741_truth_patch_prep_leverage_truth_promotion\\manifest_20260403_081741_truth_patch_prep_leverage_truth_promotion.screenshot_manifest.json"
+    ],
+    "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\reports\\run_20260403_081741_truth_patch_prep_leverage_truth_promotion\\report_20260403_081741_truth_patch_prep_leverage_truth_promotion.report.json"
+  },
+  "pending_truth_patch_ids": [],
+  "next_action": "execute_task_or_capture_evidence"
+}

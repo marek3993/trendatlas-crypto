@@ -1,0 +1,15 @@
+{
+  "artifact_name": "execution_source_contract_validation",
+  "generated_at_utc": "2026-04-03T13:18:01Z",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\validate_execution_source_contract.py",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json"
+  ],
+  "output_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_report.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_quality.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_manifest.json"
+  ],
+  "started_at_utc": "2026-04-03T13:18:01Z",
+  "status": "success"
+}

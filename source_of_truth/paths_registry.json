@@ -19,6 +19,12 @@
     "execution_app_exports": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports",
     "execution_freshness": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness",
     "execution_refresh_pipeline": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline",
+    "execution_read_only": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only",
+    "execution_live_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status",
+    "execution_source_contract": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract",
+    "execution_intents": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents",
+    "execution_dry_run": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run",
+    "execution_logs": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\logs",
     "research_os_ideation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\ideation",
     "research_os_spec_generation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\spec_generation",
     "research_os_autonomous_loop": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop",
@@ -43,7 +49,11 @@
     "live_status": "normalized_live_or_app_status_output",
     "export": "normalized_downstream_export_output",
     "validation_report": "machine_readable_validation_verdict_output",
-    "bundle_manifest": "validation_bundle_contract_output"
+    "bundle_manifest": "validation_bundle_contract_output",
+    "account_snapshot": "read_only_exchange_account_snapshot_output",
+    "execution_intent": "normalized_execution_intent_output",
+    "dry_run_decision": "simulated_execution_decision_output",
+    "execution_log": "execution_runtime_log_output"
   },
   "artifacts": {
     "phase67j_winner_paper": {
@@ -88,7 +98,37 @@
         "app",
         "product"
       ],
-      "write_mode": "future_write_through_candidate"
+      "write_mode": "future_write_through_candidate",
+      "field_contract": {
+        "existing_fields_preserved": true,
+        "app_must_not_infer": true,
+        "required_app_live_mode_fields": [
+          "live_truth_mode",
+          "execution_profile",
+          "leverage_mode",
+          "deployment_candidate_label",
+          "fallback_profile_label",
+          "approval_gate_status"
+        ],
+        "current_semantics": {
+          "live_truth_mode": "1.0x_without_leverage",
+          "execution_profile": "unlevered",
+          "leverage_mode": "none",
+          "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
+          "fallback_profile_label": "phase68g_66g_1p25x_candidate",
+          "approval_gate_status": "pending_or_not_live_yet"
+        },
+        "future_target_semantics": {
+          "live_truth_mode": "phase68i_dynamic_ladder_candidate",
+          "execution_profile": "dynamic_ladder",
+          "leverage_mode": "dynamic"
+        },
+        "future_fallback_semantics": {
+          "live_truth_mode": "phase68g_66g_1p25x_candidate",
+          "execution_profile": "static_1p25x",
+          "leverage_mode": "static_1p25x"
+        }
+      }
     },
     "phase66g_core_paper": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",

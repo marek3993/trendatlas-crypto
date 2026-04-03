@@ -1,0 +1,4 @@
+{"ts": "2026-04-03 13:59:40 UTC", "run_id": "run_20260403_135940_meta_research_scoring_weight_tuning_phase66g_production_soft_filters", "from_status": "spec_ready", "to_status": "queued", "reason": "orchestrator_init"}
+{"ts": "2026-04-03 13:59:40 UTC", "run_id": "run_20260403_135940_meta_research_scoring_weight_tuning_phase66g_production_soft_filters", "from_status": "queued", "to_status": "running", "reason": "execution_started"}
+{"ts": "2026-04-03 13:59:41 UTC", "run_id": "run_20260403_135940_meta_research_scoring_weight_tuning_phase66g_production_soft_filters", "from_status": "running", "to_status": "run_failed", "reason": "process_exit_code_2"}
+{"ts": "2026-04-03 13:59:41 UTC", "run_id": "run_20260403_135940_meta_research_scoring_weight_tuning_phase66g_production_soft_filters", "from_status": "run_failed", "to_status": "archived", "reason": "run_failed_exit_code_2"}

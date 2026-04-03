@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ApplyLog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apply_id",
+    "patch_id",
+    "run_id",
+    "task_id",
+    "applied_at",
+    "applied_by",
+    "target_file",
+    "change_type",
+    "backup_path",
+    "diff_path",
+    "status",
+    "source_of_truth_write_executed",
+    "note"
+  ],
+  "properties": {
+    "apply_id": {
+      "type": "string"
+    },
+    "patch_id": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "applied_at": {
+      "type": "string"
+    },
+    "applied_by": {
+      "type": "string"
+    },
+    "target_file": {
+      "type": "string"
+    },
+    "change_type": {
+      "type": "string",
+      "enum": [
+        "replace_entire_file",
+        "replace_json_top_level_key"
+      ]
+    },
+    "backup_path": {
+      "type": "string"
+    },
+    "diff_path": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed"
+      ]
+    },
+    "source_of_truth_write_executed": {
+      "type": "boolean"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

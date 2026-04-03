@@ -1,111 +1,46 @@
 cycle,dispatch_index,mode,spec_path,experiment_id,branch,spec_status,dispatch_returncode,new_run_dirs,candidate_run_started,candidate_run_completed,scoring_completed,precheck_completed,selection_completed_delta,governance_candidates_after,stdout_tail,stderr_tail
-1,1,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_cooldown_tuning_phase70_golden_path_harness.spec_ready.json,core_cooldown_tuning_phase70_golden_path_harness,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144230_core_cooldown_tuning_phase70_golden_path_harness,1,1,1,1,0,0,"psky čas (letný)] [research_os_orchestrator_v1.py] missing_expected_outputs=3
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.844
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260402_144230_core_cooldown_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144230_core_cooldown_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144230_core_cooldown_tuning_phase70_golden_path_harness\run_manifest.json
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144230_core_cooldown_tuning_phase70_golden_path_harness\run_status.json
-[2026-04-02 16:42:30 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260402_144230_core_cooldown_tuning_phase70_golden_path_harness_promotion_decision.json
+1,1,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_cooldown_tuning_v2.spec_ready.json,core_cooldown_tuning_v2,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142733_core_cooldown_tuning_v2,1,1,1,1,0,0,"26-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] artifacts_ok=1
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] missing_expected_outputs=3
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.937
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260403_142733_core_cooldown_tuning_v2
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142733_core_cooldown_tuning_v2
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142733_core_cooldown_tuning_v2\run_manifest.json
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142733_core_cooldown_tuning_v2\run_status.json
+[2026-04-03 16:27:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260403_142733_core_cooldown_tuning_v2_promotion_decision.json
 ",
-1,2,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_ranking_weight_tuning_phase70_golden_path_harness.spec_ready.json,core_ranking_weight_tuning_phase70_golden_path_harness,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144231_core_ranking_weight_tuning_phase70_golden_path_harness,1,1,1,1,0,0,"_orchestrator_v1.py] missing_expected_outputs=3
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.828
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260402_144231_core_ranking_weight_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144231_core_ranking_weight_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144231_core_ranking_weight_tuning_phase70_golden_path_harness\run_manifest.json
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144231_core_ranking_weight_tuning_phase70_golden_path_harness\run_status.json
-[2026-04-02 16:42:31 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260402_144231_core_ranking_weight_tuning_phase70_golden_path_harness_promotion_decision.json
+1,2,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_ranking_weight_tuning_v2.spec_ready.json,core_ranking_weight_tuning_v2,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142734_core_ranking_weight_tuning_v2,1,1,1,1,0,0,"ky čas (letný)] [research_os_orchestrator_v1.py] artifacts_ok=1
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] missing_expected_outputs=3
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.859
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260403_142734_core_ranking_weight_tuning_v2
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142734_core_ranking_weight_tuning_v2
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142734_core_ranking_weight_tuning_v2\run_manifest.json
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142734_core_ranking_weight_tuning_v2\run_status.json
+[2026-04-03 16:27:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260403_142734_core_ranking_weight_tuning_v2_promotion_decision.json
 ",
-1,3,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_threshold_tuning_phase70_golden_path_harness.spec_ready.json,core_threshold_tuning_phase70_golden_path_harness,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144231_core_threshold_tuning_phase70_golden_path_harness,1,1,1,1,0,0,"čas (letný)] [research_os_orchestrator_v1.py] missing_expected_outputs=3
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.782
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260402_144231_core_threshold_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144231_core_threshold_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144231_core_threshold_tuning_phase70_golden_path_harness\run_manifest.json
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144231_core_threshold_tuning_phase70_golden_path_harness\run_status.json
-[2026-04-02 16:42:32 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260402_144231_core_threshold_tuning_phase70_golden_path_harness_promotion_decision.json
-",
-1,4,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\governance_probation_rule_tuning_phase66g_production_soft_filters.spec_ready.json,governance_probation_rule_tuning_phase66g_production_soft_filters,governance,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters,1,1,1,1,0,0,"4-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.922
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters\run_manifest.json
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters\run_status.json
-[2026-04-02 16:42:33 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260402_144232_governance_probation_rule_tuning_phase66g_production_soft_filters_promotion_decision.json
-",
-2,1,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_cooldown_tuning_phase70_golden_path_harness.spec_ready.json,core_cooldown_tuning_phase70_golden_path_harness,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144233_core_cooldown_tuning_phase70_golden_path_harness,1,1,1,1,0,0,"psky čas (letný)] [research_os_orchestrator_v1.py] missing_expected_outputs=3
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.844
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260402_144233_core_cooldown_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144233_core_cooldown_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144233_core_cooldown_tuning_phase70_golden_path_harness\run_manifest.json
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144233_core_cooldown_tuning_phase70_golden_path_harness\run_status.json
-[2026-04-02 16:42:34 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260402_144233_core_cooldown_tuning_phase70_golden_path_harness_promotion_decision.json
-",
-2,2,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_ranking_weight_tuning_phase70_golden_path_harness.spec_ready.json,core_ranking_weight_tuning_phase70_golden_path_harness,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144234_core_ranking_weight_tuning_phase70_golden_path_harness,1,1,1,1,0,0,"_orchestrator_v1.py] missing_expected_outputs=3
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.750
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260402_144234_core_ranking_weight_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144234_core_ranking_weight_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144234_core_ranking_weight_tuning_phase70_golden_path_harness\run_manifest.json
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144234_core_ranking_weight_tuning_phase70_golden_path_harness\run_status.json
-[2026-04-02 16:42:35 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260402_144234_core_ranking_weight_tuning_phase70_golden_path_harness_promotion_decision.json
-",
-2,3,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_threshold_tuning_phase70_golden_path_harness.spec_ready.json,core_threshold_tuning_phase70_golden_path_harness,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144235_core_threshold_tuning_phase70_golden_path_harness,1,1,1,1,0,0,"čas (letný)] [research_os_orchestrator_v1.py] missing_expected_outputs=3
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.766
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260402_144235_core_threshold_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144235_core_threshold_tuning_phase70_golden_path_harness
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144235_core_threshold_tuning_phase70_golden_path_harness\run_manifest.json
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144235_core_threshold_tuning_phase70_golden_path_harness\run_status.json
-[2026-04-02 16:42:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260402_144235_core_threshold_tuning_phase70_golden_path_harness_promotion_decision.json
-",
-2,4,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\governance_probation_rule_tuning_phase66g_production_soft_filters.spec_ready.json,governance_probation_rule_tuning_phase66g_production_soft_filters,governance,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144236_governance_probation_rule_tuning_phase66g_production_soft_filters,1,1,1,1,0,0,"4-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.766
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260402_144236_governance_probation_rule_tuning_phase66g_production_soft_filters
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144236_governance_probation_rule_tuning_phase66g_production_soft_filters
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144236_governance_probation_rule_tuning_phase66g_production_soft_filters\run_manifest.json
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260402_144236_governance_probation_rule_tuning_phase66g_production_soft_filters\run_status.json
-[2026-04-02 16:42:37 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260402_144236_governance_probation_rule_tuning_phase66g_production_soft_filters_promotion_decision.json
+1,3,execute,C:\Users\benda\Desktop\market_regime_v1\research_os\experiment_specs\generated\core_threshold_tuning_v2.spec_ready.json,core_threshold_tuning_v2,core,spec_ready,0,C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142735_core_threshold_tuning_v2,1,1,1,1,0,0,"-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] artifacts_ok=1
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] missing_expected_outputs=3
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] END status=OK elapsed_sec=0.844
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_id=run_20260403_142735_core_threshold_tuning_v2
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY mode=execute
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY exit_code=2
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY final_status=archived
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY decision=kill
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY artifacts_ok=1
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY missing_expected_outputs=3
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_dir=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142735_core_threshold_tuning_v2
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_manifest_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142735_core_threshold_tuning_v2\run_manifest.json
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY run_status_path=C:\Users\benda\Desktop\market_regime_v1\research_os\runs\run_20260403_142735_core_threshold_tuning_v2\run_status.json
+[2026-04-03 16:27:36 Západoeurópsky čas (letný)] [research_os_orchestrator_v1.py] SUMMARY promotion_decision_path=C:\Users\benda\Desktop\market_regime_v1\research_os\promotion_queue\run_20260403_142735_core_threshold_tuning_v2_promotion_decision.json
 ",

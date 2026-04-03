@@ -1,0 +1,62 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260403_135938_core_ranking_weight_tuning_v2",
+  "experiment_id": "core_ranking_weight_tuning_v2",
+  "candidate_id": "core_ranking_weight_tuning_v2",
+  "status": "archived",
+  "started_utc": "2026-04-03 13:59:38 UTC",
+  "ended_utc": "2026-04-03 13:59:39 UTC",
+  "artifact_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260403_135938_core_ranking_weight_tuning_v2",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\core_ranking_weight_tuning_v2.spec_ready.json",
+  "input_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro\\global_liquidity_weekly.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ADAUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\AVAXUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BNBUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOGEUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOTUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ETHUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LINKUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\SOLUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\TRXUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\XRPUSDT_1d.csv"
+  ],
+  "output_refs": [],
+  "metrics": {
+    "extracted_score": null
+  },
+  "quality_checks": {
+    "schema_version": "2.0",
+    "run_id": "run_20260403_135938_core_ranking_weight_tuning_v2",
+    "status": "failed",
+    "checks": [
+      {
+        "name": "required_run_artifacts",
+        "ok": true,
+        "missing": []
+      },
+      {
+        "name": "expected_outputs",
+        "ok": false,
+        "missing": [
+          "summary.csv",
+          "paper.csv",
+          "compare_summary.csv"
+        ]
+      },
+      {
+        "name": "numeric_score_extract",
+        "ok": false,
+        "value": null
+      },
+      {
+        "name": "compare_valid",
+        "ok": false
+      }
+    ]
+  },
+  "exit_code": 2,
+  "notes": null
+}

@@ -1,6 +1,6 @@
 {
   "policy_name": "research_os_spec_generator_policy_v1",
-  "policy_version": "2.0.0",
+  "policy_version": "3.0.0",
   "generator_name": "research_os_experiment_spec_generator_v1",
   "created_by": "MRV1 AI LAB",
   "default_status": "spec_ready",
@@ -57,7 +57,6 @@
     "branch",
     "segment_owner",
     "hypothesis_label",
-    "hypothesis_text",
     "experiment_family",
     "baseline_model",
     "baseline_paper_path",
@@ -72,7 +71,10 @@
     "priority",
     "created_by",
     "created_at",
-    "status",
+    "status"
+  ],
+  "required_hypothesis_thesis_fields": [
+    "hypothesis_text",
     "known_baseline_weakness",
     "failure_mode_being_fixed",
     "explicit_mechanism_of_improvement",
@@ -100,6 +102,11 @@
       "proposed_threshold_change",
       "expected_effect_on_false_positives_or_missed_moves"
     ]
+  },
+  "spec_top_level_unknown_fields_allowed": false,
+  "thesis_fields_export_policy": {
+    "store_in_spec_top_level": false,
+    "store_only_in_ideation_and_audit_bundle_layers": true
   },
   "output_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated",
   "summary_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\generated_experiment_specs_summary.csv",

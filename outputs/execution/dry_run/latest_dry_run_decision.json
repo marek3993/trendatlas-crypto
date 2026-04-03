@@ -1,0 +1,46 @@
+{
+  "decision_type": "dry_run_execution_decision",
+  "generated_at_utc": "2026-04-03T12:14:55Z",
+  "signal_id": "phase67j::2026-03-30::CASH",
+  "strategy_model": "phase67j_no_neo_main",
+  "reference_model": "phase66g_production_soft_filters",
+  "benchmark": "BTC",
+  "as_of_source": "2026-03-30",
+  "target_asset": "CASH",
+  "target_regime": "Držíme CASH",
+  "current_state": "CASH",
+  "current_position_details": {
+    "normalized_state": "CASH",
+    "active_positions_count": 0,
+    "active_positions": []
+  },
+  "open_orders_count": 0,
+  "duplicate_order_risk": false,
+  "stale_signal": false,
+  "recommended_action": "hold_cash",
+  "decision_reason": "already_in_cash",
+  "simulated_order": {
+    "would_place_order": false,
+    "side": null,
+    "asset": null,
+    "size_mode": "not_computed_yet",
+    "notional_usd": null,
+    "qty": null
+  },
+  "guardrails": {
+    "trading_enabled": false,
+    "kill_switch_required": true,
+    "manual_approval_required_for_live_orders": true,
+    "contract_validated": true,
+    "staleness_ok": true
+  },
+  "source_paths": {
+    "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json"
+  },
+  "notes": [
+    "Dry-run only.",
+    "No real orders were created.",
+    "No size calculation yet."
+  ]
+}

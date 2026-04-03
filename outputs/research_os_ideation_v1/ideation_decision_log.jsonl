@@ -70,3 +70,18 @@
 {"ts_utc": "2026-04-01T13:51:25+00:00", "event": "hypothesis_generated", "hypothesis_id": "hyp_c575a3ffaf25", "branch": "universe", "duplicate_or_near_duplicate": false, "duplicate_reason": "", "saturated_branch_block_or_warning": "none"}
 {"ts_utc": "2026-04-01T13:51:25+00:00", "event": "hypothesis_generated", "hypothesis_id": "hyp_a271ff2656e0", "branch": "universe", "duplicate_or_near_duplicate": false, "duplicate_reason": "", "saturated_branch_block_or_warning": "none"}
 {"ts_utc": "2026-04-01T13:51:25+00:00", "event": "ideation_complete", "mode": "execute", "hypothesis_count": 4, "branch_filter": null}
+{"ts": "2026-04-03T12:09:39+00:00", "family": "ranking_weight_tuning", "hypothesis_label": "core_ranking_weight_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T12:09:39+00:00", "family": "cooldown_tuning", "hypothesis_label": "core_cooldown_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T12:09:39+00:00", "family": "threshold_tuning", "hypothesis_label": "core_threshold_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T12:16:21+00:00", "family": "ranking_weight_tuning", "hypothesis_label": "core_ranking_weight_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T12:16:21+00:00", "family": "cooldown_tuning", "hypothesis_label": "core_cooldown_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T12:16:21+00:00", "family": "threshold_tuning", "hypothesis_label": "core_threshold_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T13:59:35+00:00", "family": "ranking_weight_tuning", "hypothesis_label": "core_ranking_weight_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T13:59:35+00:00", "family": "cooldown_tuning", "hypothesis_label": "core_cooldown_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T13:59:35+00:00", "family": "threshold_tuning", "hypothesis_label": "core_threshold_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T14:24:18+00:00", "family": "ranking_weight_tuning", "hypothesis_label": "core_ranking_weight_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T14:24:18+00:00", "family": "cooldown_tuning", "hypothesis_label": "core_cooldown_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T14:24:18+00:00", "family": "threshold_tuning", "hypothesis_label": "core_threshold_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T14:27:33+00:00", "family": "ranking_weight_tuning", "hypothesis_label": "core_ranking_weight_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T14:27:33+00:00", "family": "cooldown_tuning", "hypothesis_label": "core_cooldown_tuning_v2", "decision": "accepted", "reason": "valid"}
+{"ts": "2026-04-03T14:27:33+00:00", "family": "threshold_tuning", "hypothesis_label": "core_threshold_tuning_v2", "decision": "accepted", "reason": "valid"}

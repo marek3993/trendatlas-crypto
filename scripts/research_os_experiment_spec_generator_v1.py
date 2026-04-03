@@ -73,11 +73,15 @@ def resolve_hypotheses(payload: Any) -> list[dict[str, Any]]:
 
 def resolve_baseline_paper_path(policy: dict[str, Any]) -> str:
     path = Path(policy["baseline_defaults"]["baseline_paper_path"])
+    if not path.exists():
+        raise SpecGenerationError(f"baseline paper path does not exist: {path}")
     return str(path)
 
 
 def resolve_script_path(policy: dict[str, Any]) -> str:
     path = Path(policy["script_defaults"]["authoritative_script_path"])
+    if not path.exists():
+        raise SpecGenerationError(f"authoritative script_path does not exist: {path}")
     return str(path)
 
 
@@ -85,7 +89,16 @@ def expand_input_paths(policy: dict[str, Any]) -> list[str]:
     macro_path = Path(policy["input_resolution"]["macro_file_path"])
     ohlcv_dir = Path(policy["input_resolution"]["ohlcv_dir_path"])
     glob_pattern = policy["input_resolution"]["ohlcv_glob"]
+
+    if not macro_path.exists() or not macro_path.is_file():
+        raise SpecGenerationError(f"macro input file does not exist: {macro_path}")
+    if not ohlcv_dir.exists() or not ohlcv_dir.is_dir():
+        raise SpecGenerationError(f"ohlcv input directory does not exist: {ohlcv_dir}")
+
     ohlcv_files = sorted(p for p in ohlcv_dir.glob(glob_pattern) if p.is_file())
+    if policy["input_resolution"].get("require_nonempty_ohlcv_expansion", False) and not ohlcv_files:
+        raise SpecGenerationError("ohlcv expansion produced zero files")
+
     return [str(macro_path)] + [str(p) for p in ohlcv_files]
 
 
@@ -101,15 +114,7 @@ def render_script_args(policy: dict[str, Any], hypothesis: dict[str, Any], basel
 
 
 def validate_hypothesis_for_spec(hypothesis: dict[str, Any], policy: dict[str, Any]) -> None:
-    mandatory = [
-        "known_baseline_weakness",
-        "failure_mode_being_fixed",
-        "explicit_mechanism_of_improvement",
-        "exact_compare_target",
-        "why_edge_should_survive_scoring_strictness",
-        "hypothesis_text"
-    ]
-    for field in mandatory:
+    for field in policy["required_hypothesis_thesis_fields"]:
         if hypothesis.get(field) in (None, "", []):
             raise SpecGenerationError(f"hypothesis missing mandatory thesis field: {field}")
 
@@ -129,12 +134,15 @@ def build_spec(policy: dict[str, Any], truth_pack: dict[str, Any], hypothesis: d
     script_args = render_script_args(policy, hypothesis, baseline_model, baseline_paper_path)
 
     experiment_id = hypothesis.get("experiment_id") or slugify(hypothesis["hypothesis_label"])
+
+    # IMPORTANT:
+    # thesis/template fields are validated here but NOT emitted as top-level spec fields,
+    # because experiment_spec.schema.json rejects unknown top-level fields.
     spec = {
         "experiment_id": experiment_id,
         "branch": hypothesis["branch"],
         "segment_owner": hypothesis["segment_owner"],
         "hypothesis_label": hypothesis["hypothesis_label"],
-        "hypothesis_text": hypothesis["hypothesis_text"],
         "experiment_family": hypothesis["mutation_family"],
         "baseline_model": baseline_model,
         "baseline_paper_path": baseline_paper_path,
@@ -149,17 +157,8 @@ def build_spec(policy: dict[str, Any], truth_pack: dict[str, Any], hypothesis: d
         "priority": policy["branch_defaults"]["core"]["priority"],
         "created_by": policy["default_created_by"],
         "created_at": utc_now_iso(),
-        "status": "spec_ready",
-        "known_baseline_weakness": hypothesis["known_baseline_weakness"],
-        "failure_mode_being_fixed": hypothesis["failure_mode_being_fixed"],
-        "explicit_mechanism_of_improvement": hypothesis["explicit_mechanism_of_improvement"],
-        "exact_compare_target": hypothesis["exact_compare_target"],
-        "why_edge_should_survive_scoring_strictness": hypothesis["why_edge_should_survive_scoring_strictness"]
+        "status": "spec_ready"
     }
-
-    family = hypothesis["mutation_family"]
-    for field in policy["family_specific_required_fields"].get(family, []):
-        spec[field] = hypothesis[field]
 
     missing = [field for field in policy["required_spec_fields"] if spec.get(field) in (None, "", [])]
     if missing:
@@ -191,7 +190,7 @@ def write_summary_csv(path: Path, rows: list[dict[str, Any]]) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Generate sharper orchestrator-compatible experiment specs.")
+    parser = argparse.ArgumentParser(description="Generate contract-compliant orchestrator-compatible experiment specs.")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args()
@@ -217,6 +216,7 @@ def main() -> int:
     for hypothesis in hypotheses:
         spec = build_spec(policy, truth_pack, hypothesis)
         spec_path = output_dir / f"{spec['experiment_id']}.spec_ready.json"
+
         generated_specs_payload.append({"spec_path": str(spec_path), "spec": spec})
         summary_rows.append({
             "experiment_id": spec["experiment_id"],
@@ -258,6 +258,12 @@ def main() -> int:
     return 0
 
 
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except Exception as exc:
+        print(f"[FAIL] {exc}", file=sys.stderr)
+        raise SystemExit(1)
 if __name__ == "__main__":
     try:
         raise SystemExit(main())

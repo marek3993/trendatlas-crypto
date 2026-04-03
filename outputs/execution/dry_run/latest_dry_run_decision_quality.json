@@ -1,0 +1,11 @@
+{
+  "dry_run_ok": true,
+  "signal_id_present": true,
+  "target_asset_present": true,
+  "snapshot_read_ok": true,
+  "intent_read_ok": true,
+  "would_place_order": false,
+  "recommended_action": "hold_cash",
+  "stale_signal": false,
+  "duplicate_order_risk": false
+}

@@ -1,0 +1,4 @@
+{
+  "account_address": "PASTE_HYPERLIQUID_MAIN_ACCOUNT_ADDRESS_HERE",
+  "comment": "Copy this file to execution/config/hyperliquid_account.json and fill the real Hyperliquid account address. Read-only only. No private keys here."
+}

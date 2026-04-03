@@ -1,0 +1,26 @@
+{
+  "status_type": "execution_app_status",
+  "as_of_utc": "2026-04-03T12:14:55Z",
+  "mode": "dry_run",
+  "trading_enabled": false,
+  "kill_switch": true,
+  "status": "ok",
+  "provider": "Hyperliquid",
+  "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "positions_count": 0,
+  "open_orders_count": 0,
+  "recent_fills_count": 0,
+  "current_position": "CASH",
+  "last_action": "dry_run_execution_bridge",
+  "last_action_result": "hold_cash",
+  "guardrails_ok": true,
+  "stale_signal": false,
+  "signal_id": "phase67j::2026-03-30::CASH",
+  "target_asset": "CASH",
+  "error": null,
+  "source_paths": {
+    "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+    "dry_run_decision_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision.json"
+  }
+}

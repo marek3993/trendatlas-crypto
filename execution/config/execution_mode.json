@@ -1,0 +1,9 @@
+{
+  "mode": "read_only",
+  "trading_enabled": false,
+  "dry_run_enabled": false,
+  "kill_switch": true,
+  "write_app_status": true,
+  "write_raw_snapshot": true,
+  "fail_fast": true
+}

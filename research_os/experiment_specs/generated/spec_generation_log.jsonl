@@ -6,3 +6,8 @@
 {"ts": "2026-04-01T13:48:14Z", "event": "spec_generation_completed", "policy_name": "research_os_spec_generator_policy_v1", "policy_version": "1.2.0", "generated_count": 8}
 {"ts": "2026-04-01T13:51:24Z", "event": "spec_generation_completed", "policy_name": "research_os_spec_generator_policy_v1", "policy_version": "1.2.0", "generated_count": 8}
 {"ts": "2026-04-01T13:51:25Z", "event": "spec_generation_completed", "policy_name": "research_os_spec_generator_policy_v1", "policy_version": "1.2.0", "generated_count": 8}
+{"ts": "2026-04-03T12:16:23Z", "event": "spec_generation_completed", "policy_name": "research_os_spec_generator_policy_v1", "policy_version": "2.0.0", "generated_count": 3}
+{"ts": "2026-04-03T12:41:55Z", "event": "spec_generation_completed", "policy_name": "research_os_spec_generator_policy_v1", "policy_version": "3.0.0", "generated_count": 3}
+{"ts": "2026-04-03T13:59:35Z", "event": "spec_generation_completed", "policy_name": "research_os_spec_generator_policy_v1", "policy_version": "3.0.0", "generated_count": 3}
+{"ts": "2026-04-03T14:24:18Z", "event": "spec_generation_completed", "policy_name": "research_os_spec_generator_policy_v1", "policy_version": "3.0.0", "generated_count": 3}
+{"ts": "2026-04-03T14:27:33Z", "event": "spec_generation_completed", "policy_name": "research_os_spec_generator_policy_v1", "policy_version": "3.0.0", "generated_count": 3}

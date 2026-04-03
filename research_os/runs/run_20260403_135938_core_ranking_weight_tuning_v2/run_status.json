@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260403_135938_core_ranking_weight_tuning_v2",
+  "experiment_id": "core_ranking_weight_tuning_v2",
+  "candidate_id": "core_ranking_weight_tuning_v2",
+  "status": "archived",
+  "allowed_status_values": [
+    "proposed",
+    "spec_ready",
+    "queued",
+    "running",
+    "run_failed",
+    "ran",
+    "scored",
+    "precheck_failed",
+    "precheck_passed",
+    "forensic_ready",
+    "forensic_failed",
+    "forensic_passed",
+    "master_pending",
+    "promoted",
+    "archived"
+  ],
+  "started_at": "2026-04-03 13:59:38 UTC",
+  "ended_at": "2026-04-03 13:59:39 UTC",
+  "status_reason": "run_failed_exit_code_2",
+  "current_step": "waiting_for_execution",
+  "promotion_decision": null,
+  "updated_at": "2026-04-03 13:59:39 UTC"
+}

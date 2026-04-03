@@ -1,0 +1,10 @@
+{
+  "decision_id": "decision_run_20260403_142422_universe_asset_family_pruning_phase66g_production_soft_filters",
+  "candidate_id": "universe_asset_family_pruning_phase66g_production_soft_filters",
+  "source_run_id": "run_20260403_142422_universe_asset_family_pruning_phase66g_production_soft_filters",
+  "decision": "kill",
+  "decision_reason": "run_failed_exit_code_2",
+  "decided_by": "research_os_orchestrator_v1",
+  "decided_at": "2026-04-03 14:24:23 UTC",
+  "evidence_refs": []
+}

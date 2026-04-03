@@ -1,0 +1,10 @@
+scenario_id,borrow_cost_pct,slippage_bps,raw_winner_model,deployment_winner_model
+bc12_sl10,12.0,10.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate
+bc12_sl20,12.0,20.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate
+bc12_sl30,12.0,30.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate
+bc18_sl10,18.0,10.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate
+bc18_sl20,18.0,20.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate
+bc18_sl30,18.0,30.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate
+bc24_sl10,24.0,10.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate
+bc24_sl20,24.0,20.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate
+bc24_sl30,24.0,30.0,phase68i_66g_1p50x_static,phase68i_dynamic_ladder_candidate

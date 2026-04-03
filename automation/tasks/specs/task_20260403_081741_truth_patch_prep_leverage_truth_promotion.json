@@ -1,0 +1,28 @@
+{
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "task_type": "truth_patch_prep",
+  "created_at": "2026-04-03T08:17:41Z",
+  "requested_by": "user",
+  "status": "queued",
+  "inputs": {},
+  "constraints": {
+    "safe_mode": true,
+    "allow_direct_source_of_truth_write": false
+  },
+  "expected_outputs": [
+    "run_log",
+    "report"
+  ],
+  "approval_gate": {
+    "required_for_truth_apply": true,
+    "approver_role": "human"
+  },
+  "source_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\README.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\chat_roles.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\current_issues.md"
+  ]
+}

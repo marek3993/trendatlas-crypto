@@ -1,0 +1,19 @@
+{
+  "artifact_name": "latest_execution_intent",
+  "generated_at_utc": "2026-04-03T13:18:01Z",
+  "started_at_utc": "2026-04-03T13:18:01Z",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\build_execution_intent_from_strategy_exports.py",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json"
+  ],
+  "output_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent_quality.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent_manifest.json"
+  ],
+  "status": "success"
+}

@@ -1,0 +1,119 @@
+{
+  "report_type": "materialize_execution_app_exports_report",
+  "generated_at_utc": "2026-04-03T13:18:01Z",
+  "started_at_utc": "2026-04-03T13:18:01Z",
+  "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
+  "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+  "required_artifact_keys": [
+    "phase67j_winner_paper",
+    "phase67j_live_status",
+    "phase66g_core_paper",
+    "phase66g_live_status",
+    "app_freshness_report"
+  ],
+  "required_app_live_mode_fields": [
+    "live_truth_mode",
+    "execution_profile",
+    "leverage_mode",
+    "deployment_candidate_label",
+    "fallback_profile_label",
+    "approval_gate_status"
+  ],
+  "hard_required_for_execution": [
+    "phase67j_winner_paper",
+    "phase67j_live_status"
+  ],
+  "missing_registry_keys": [],
+  "missing_legacy_sources": [],
+  "hard_required_missing": [],
+  "copied_count": 0,
+  "transformed_count": 1,
+  "already_present_count": 4,
+  "rows": [
+    {
+      "artifact_key": "phase67j_winner_paper",
+      "canonical_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+      "artifact_type": "paper",
+      "owner": "DATA",
+      "truth_domain": "product",
+      "status": "already_present",
+      "canonical_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+        "size_bytes": 155339,
+        "modified_utc": "2026-04-01T21:12:27Z"
+      }
+    },
+    {
+      "artifact_key": "phase67j_live_status",
+      "canonical_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+      "artifact_type": "live_status",
+      "owner": "DATA",
+      "truth_domain": "product",
+      "status": "materialized_with_app_live_mode_contract",
+      "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
+      "source_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
+        "size_bytes": 249,
+        "modified_utc": "2026-04-01T21:12:27Z"
+      },
+      "canonical_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+        "size_bytes": 492,
+        "modified_utc": "2026-04-03T13:18:01Z"
+      },
+      "added_fields": [
+        "live_truth_mode",
+        "execution_profile",
+        "leverage_mode",
+        "deployment_candidate_label",
+        "fallback_profile_label",
+        "approval_gate_status"
+      ]
+    },
+    {
+      "artifact_key": "phase66g_core_paper",
+      "canonical_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+      "artifact_type": "paper",
+      "owner": "DATA",
+      "truth_domain": "product",
+      "status": "already_present",
+      "canonical_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+        "size_bytes": 381429,
+        "modified_utc": "2026-04-01T19:56:34Z"
+      }
+    },
+    {
+      "artifact_key": "phase66g_live_status",
+      "canonical_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
+      "artifact_type": "live_status",
+      "owner": "DATA",
+      "truth_domain": "product",
+      "status": "already_present",
+      "canonical_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
+        "size_bytes": 619,
+        "modified_utc": "2026-04-01T19:56:34Z"
+      }
+    },
+    {
+      "artifact_key": "app_freshness_report",
+      "canonical_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
+      "artifact_type": "validation_report",
+      "owner": "DATA",
+      "truth_domain": "product",
+      "status": "already_present",
+      "canonical_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
+        "size_bytes": 1099,
+        "modified_utc": "2026-04-01T21:12:28Z"
+      }
+    }
+  ],
+  "status": "success",
+  "notes": [
+    "This script never fabricates strategy data.",
+    "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
+    "Other artifacts are copied from existing legacy aliases only."
+  ]
+}

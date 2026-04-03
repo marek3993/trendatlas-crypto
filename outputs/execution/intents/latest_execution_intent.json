@@ -1,0 +1,94 @@
+{
+  "intent_type": "normalized_execution_intent",
+  "generated_at_utc": "2026-04-03T13:18:01Z",
+  "as_of_source": "2026-03-30",
+  "execution_mode": "read_only_intent_only",
+  "trading_enabled": false,
+  "kill_switch_required": true,
+  "strategy_model": "phase67j_no_neo_main",
+  "reference_model": "phase66g_production_soft_filters",
+  "benchmark": "BTC",
+  "signal_id": "phase67j::2026-03-30::CASH",
+  "target_asset": "CASH",
+  "target_side": "long_only_hold_selected_asset_or_cash",
+  "target_regime": "Držíme CASH",
+  "size_mode": "not_computed_yet",
+  "target_size_pct": null,
+  "target_notional_usd": null,
+  "reference_asset": "CASH",
+  "staleness_ok": true,
+  "stale_signal": false,
+  "guardrail_flags": {
+    "contract_validated": true,
+    "trading_disabled": true,
+    "kill_switch_required": true,
+    "manual_approval_required_for_live_orders": true,
+    "leverage_live_truth_allowed": false
+  },
+  "source_paths": {
+    "phase67j_winner_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase67j_live_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+    "phase66g_core_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+    "app_freshness_report": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json"
+  },
+  "resolved_columns": {
+    "paper_date_col": "date",
+    "paper_asset_col": "chosen_asset",
+    "paper_regime_col": "executed_regime",
+    "paper_position_col": "executed_position",
+    "status_date_col": "latest_available_date",
+    "status_asset_col": "held_asset_public",
+    "status_regime_col": "held_state_label",
+    "status_execution_state_col": "execution_state",
+    "reference_asset_col": "chosen_asset",
+    "reference_position_col": "executed_position"
+  },
+  "source_samples": {
+    "phase67j_last_paper_row": {
+      "date": "2026-03-30",
+      "strategy_return": "0.0",
+      "equity": "1038.9375764729098",
+      "executed_regime": "CASH",
+      "executed_position": "CASH",
+      "chosen_asset": "",
+      "weekly_authorized_asset": ""
+    },
+    "phase67j_last_live_status_row": {
+      "model": "phase67j_no_neo_main",
+      "latest_available_date": "2026-03-30",
+      "current_asset": "CORE",
+      "held_asset_public": "CASH",
+      "held_state_label": "Držíme CASH",
+      "execution_state": "CASH",
+      "next_rebalance_date": "2026-04-04",
+      "dropped_assets": "NEO",
+      "final_shortlist": "APT,BCH,DOGE,ICP,STX,XTZ",
+      "live_truth_mode": "1.0x_without_leverage",
+      "execution_profile": "unlevered",
+      "leverage_mode": "none",
+      "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
+      "fallback_profile_label": "phase68g_66g_1p25x_candidate",
+      "approval_gate_status": "pending_or_not_live_yet"
+    },
+    "phase66g_last_paper_row": {
+      "date": "2026-03-30",
+      "strategy_return": "0.0",
+      "base_return": "0.0",
+      "btc_return": "0.0119137845808263",
+      "equity": "393.96191274270194",
+      "executed_regime": "CASH",
+      "executed_position": "CASH",
+      "base_strength_lb": "0.0",
+      "baseline_is_weak": "True",
+      "chosen_asset": "",
+      "weekly_authorized_asset": "",
+      "profile": "phase66g_production_soft_filters"
+    }
+  },
+  "notes": [
+    "Deterministic intent from official execution app exports.",
+    "Supports current canonical export schema with chosen_asset / held_asset_public / execution_state.",
+    "No order sizing logic yet.",
+    "No live order execution allowed."
+  ]
+}

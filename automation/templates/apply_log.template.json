@@ -1,0 +1,15 @@
+{
+  "apply_id": "apply_YYYYMMDD_HHMMSS_patch_slug",
+  "patch_id": "patch_YYYYMMDD_HHMMSS_slug",
+  "run_id": "run_YYYYMMDD_HHMMSS_slug",
+  "task_id": "task_YYYYMMDD_HHMMSS_slug",
+  "applied_at": "2026-04-03T09:55:00Z",
+  "applied_by": "human",
+  "target_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\current_issues.md",
+  "change_type": "replace_entire_file",
+  "backup_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_apply\\backups\\patch_YYYYMMDD_HHMMSS_slug__current_issues.md.backup",
+  "diff_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_apply\\diffs\\patch_YYYYMMDD_HHMMSS_slug.diff.txt",
+  "status": "success",
+  "source_of_truth_write_executed": true,
+  "note": "Approved truth patch applied successfully."
+}

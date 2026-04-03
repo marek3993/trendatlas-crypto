@@ -179,6 +179,99 @@
       "decision_relevance": "decision_relevant",
       "writes_source_of_truth": false,
       "notes": "Tracked separately from automation scope."
+    },
+    {
+      "script_path": "scripts/execution/materialize_execution_app_exports.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Copies legacy strategy exports to canonical execution app export paths without fabricating data.",
+      "primary_outputs": [
+        "outputs/execution/app_exports/",
+        "outputs/execution/freshness/",
+        "outputs/execution/refresh_pipeline/materialize_execution_app_exports_report.json",
+        "outputs/execution/refresh_pipeline/materialize_execution_app_exports_quality.json",
+        "outputs/execution/refresh_pipeline/materialize_execution_app_exports_manifest.json"
+      ],
+      "output_type": "execution_export_materialization",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Bridge only. No official truth writes."
+    },
+    {
+      "script_path": "scripts/execution/validate_execution_source_contract.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Validates canonical execution input contract presence and basic shape before intent build.",
+      "primary_outputs": [
+        "outputs/execution/source_contract/execution_source_contract_report.json",
+        "outputs/execution/source_contract/execution_source_contract_quality.json",
+        "outputs/execution/source_contract/execution_source_contract_manifest.json"
+      ],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only validator for execution contract."
+    },
+    {
+      "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Fetches Hyperliquid account state in read-only mode and writes snapshot/quality/manifest artifacts.",
+      "primary_outputs": [
+        "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+        "outputs/execution/read_only/hyperliquid_account_snapshot_quality.json",
+        "outputs/execution/read_only/hyperliquid_account_snapshot_manifest.json"
+      ],
+      "output_type": "read_only_snapshot",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No order placement."
+    },
+    {
+      "script_path": "scripts/execution/render_execution_app_status.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Renders app-facing execution live status from read-only snapshot artifacts.",
+      "primary_outputs": [
+        "outputs/execution/live_status/execution_status.json",
+        "outputs/execution/live_status/execution_status_manifest.json"
+      ],
+      "output_type": "live_status",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "App read model only."
+    },
+    {
+      "script_path": "scripts/execution/build_execution_intent_from_strategy_exports.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Builds deterministic normalized execution intent from canonical strategy exports and freshness report.",
+      "primary_outputs": [
+        "outputs/execution/intents/latest_execution_intent.json",
+        "outputs/execution/intents/latest_execution_intent_quality.json",
+        "outputs/execution/intents/latest_execution_intent_manifest.json"
+      ],
+      "output_type": "execution_intent",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Intent only. No live orders."
+    },
+    {
+      "script_path": "scripts/execution/run_dry_execution_bridge.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Combines normalized intent with read-only account snapshot and produces simulated execution decision plus app status.",
+      "primary_outputs": [
+        "outputs/execution/dry_run/latest_dry_run_decision.json",
+        "outputs/execution/dry_run/latest_dry_run_decision_quality.json",
+        "outputs/execution/dry_run/latest_dry_run_decision_manifest.json",
+        "outputs/execution/live_status/execution_status.json",
+        "outputs/execution/logs/execution_action_log.jsonl"
+      ],
+      "output_type": "dry_run_execution",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Dry-run only. No real orders."
     }
   ]
 }

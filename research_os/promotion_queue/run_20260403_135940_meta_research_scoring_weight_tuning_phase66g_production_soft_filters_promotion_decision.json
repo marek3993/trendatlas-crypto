@@ -1,0 +1,10 @@
+{
+  "decision_id": "decision_run_20260403_135940_meta_research_scoring_weight_tuning_phase66g_production_soft_filters",
+  "candidate_id": "meta_research_scoring_weight_tuning_phase66g_production_soft_filters",
+  "source_run_id": "run_20260403_135940_meta_research_scoring_weight_tuning_phase66g_production_soft_filters",
+  "decision": "kill",
+  "decision_reason": "run_failed_exit_code_2",
+  "decided_by": "research_os_orchestrator_v1",
+  "decided_at": "2026-04-03 13:59:41 UTC",
+  "evidence_refs": []
+}

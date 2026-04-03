@@ -33,6 +33,7 @@ DEFAULT_SELECTOR = {
     "product_name": "TrendAtlas Crypto",
     "main_model_key": "phase67j_no_neo_main",
     "reference_model_key": "phase66g_production_soft_filters",
+    "candidate_strategy_model_key": "phase68i_dynamic_ladder_candidate",
     "compare_model_keys": [
         "phase67j_no_neo_main",
         "phase66g_production_soft_filters",
@@ -46,6 +47,10 @@ DEFAULT_SELECTOR = {
             "sk": "Referenčná stratégia",
             "en": "Reference strategy",
         },
+        "phase68i_dynamic_ladder_candidate": {
+            "sk": "Leverage kandidát",
+            "en": "Leverage candidate",
+        },
     },
     "model_sources": {
         "phase67j_no_neo_main": {
@@ -57,6 +62,9 @@ DEFAULT_SELECTOR = {
             "summary_path": "outputs/phase66g_production_candidate_live/phase66g_production_candidate_summary.csv",
             "paper_dir": "outputs/phase66g_production_candidate_live",
             "live_status_path": "outputs/phase66g_production_candidate_live/phase66g_live_status.csv",
+        },
+        "phase68i_dynamic_ladder_candidate": {
+            "paper_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
         },
     },
     "trend_barometer_source": {
@@ -89,7 +97,7 @@ TEXT = {
         "trend_cross_none": "Bez dnešného prechodu",
         "na": "Nedostupné",
         "chart_title": "Vývoj kapitálu",
-        "chart_note": "Graf ukazuje hlavnú stratégiu, referenčnú stratégiu a BTC Buy & Hold.",
+        "chart_note": "Graf ukazuje hlavnú stratégiu, referenčnú stratégiu, leverage kandidáta a BTC Buy & Hold.",
         "chart_year": "Začať graf od roku",
         "performance_title": "Výkon na prvý pohľad",
         "ops_title": "Prevádzkové metriky",
@@ -131,7 +139,7 @@ V každom momente drží portfólio jednoducho:
 - a podľa širšieho setupu môže časť času tráviť aj v BTC alebo v cash-like defenzívnej pozícii
 """,
         "compare_title": "Porovnanie stratégií",
-        "compare_desc": "Porovnanie hlavnej stratégie, referenčnej stratégie a BTC Buy & Hold bez interných research názvov.",
+        "compare_desc": "Porovnanie hlavnej stratégie, referenčnej stratégie, leverage kandidáta a BTC Buy & Hold bez interných research názvov.",
         "compare_chart": "Porovnanie kapitálových kriviek",
         "compare_table": "Prehľad verzií",
         "method_title": "Ako to funguje",
@@ -212,7 +220,6 @@ V praxi sa stratégia správa veľmi jednoducho:
 Obchody vykonávame po uzavretí dňa, s jednodňovým oneskorením oproti signálu stratégie.  
 Podľa testov je tento prístup stabilnejší a výnosnejší.
 """,
-
         "feedback_title": "Feedback",
         "feedback_desc": "Pošli poznámku alebo screenshot. Obrázky majú limit 5 MB.",
         "feedback_text": "Tvoja správa",
@@ -251,7 +258,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "trend_cross_none": "No cross today",
         "na": "Unavailable",
         "chart_title": "Capital curve",
-        "chart_note": "The chart shows the main strategy, the reference strategy and BTC Buy & Hold.",
+        "chart_note": "The chart shows the main strategy, the reference strategy, the leverage candidate and BTC Buy & Hold.",
         "chart_year": "Start chart from year",
         "performance_title": "Performance at a glance",
         "ops_title": "Operational metrics",
@@ -292,7 +299,7 @@ At any point in time, the portfolio stays simple:
 - and in weaker conditions the system can also spend time in BTC or a more defensive cash-like stance
 """,
         "compare_title": "Strategy comparison",
-        "compare_desc": "Comparison of the main strategy, the reference strategy and BTC Buy & Hold without internal research labels.",
+        "compare_desc": "Comparison of the main strategy, the reference strategy, the leverage candidate and BTC Buy & Hold without internal research labels.",
         "compare_chart": "Capital curve comparison",
         "compare_table": "Version overview",
         "method_title": "How it works",
@@ -373,8 +380,6 @@ In practice, the strategy behaves very simply:
 Trades are executed after the day closes, with a one-day delay versus the strategy signal.  
 Based on our tests, this approach is more stable and more profitable.
 """,
-
-
         "feedback_title": "Feedback",
         "feedback_desc": "Send a comment or a screenshot. Images are limited to 5 MB.",
         "feedback_text": "Your message",
@@ -777,15 +782,20 @@ def resolve_model_source(selector_cfg: dict, model_key: str) -> dict:
 
 
 @st.cache_data(show_spinner=False)
-def load_model_paper(paper_dir_str: str | None, model_key: str) -> pd.DataFrame:
-    paper_dir = normalize_path(paper_dir_str)
-    if paper_dir is None:
-        raise FileNotFoundError("Paper dir is missing")
+def load_model_paper(paper_dir_str: str | None, model_key: str, explicit_paper_path: str | None = None) -> pd.DataFrame:
+    candidates: list[Path] = []
 
-    candidates = [
-        paper_dir / f"{model_key}_paper.csv",
-        paper_dir / f"{model_key}.csv",
-    ]
+    explicit_path = normalize_path(explicit_paper_path)
+    if explicit_path is not None:
+        candidates.append(explicit_path)
+
+    paper_dir = normalize_path(paper_dir_str)
+    if paper_dir is not None:
+        candidates.extend([
+            paper_dir / f"{model_key}_paper.csv",
+            paper_dir / f"{model_key}.csv",
+        ])
+
     path = next((p for p in candidates if p.exists()), None)
     if path is None:
         raise FileNotFoundError(f"Missing paper file for model: {model_key}")
@@ -1116,10 +1126,12 @@ def load_trend_barometer_history(source_cfg: dict) -> pd.DataFrame:
 def make_capital_chart(
     main_df: pd.DataFrame,
     reference_df: pd.DataFrame | None,
+    candidate_df: pd.DataFrame | None,
     btc_df: pd.DataFrame,
     year: int,
     main_label: str,
     reference_label: str,
+    candidate_label: str,
     btc_label: str,
     title: str,
 ) -> go.Figure:
@@ -1134,6 +1146,18 @@ def make_capital_chart(
                 mode="lines",
                 name=reference_label,
                 line=dict(width=2.0, color="#06d6a0", dash="dot"),
+            )
+        )
+
+    if candidate_df is not None and not candidate_df.empty:
+        candidate_plot = filter_from_year(candidate_df, year)
+        fig.add_trace(
+            go.Scatter(
+                x=candidate_plot["ts"],
+                y=rebase_series(candidate_plot["equity"]),
+                mode="lines",
+                name=candidate_label,
+                line=dict(width=2.5, color="#ffd166", dash="dash"),
             )
         )
 
@@ -1340,8 +1364,9 @@ if missing:
 
 main_key = selector_cfg.get("main_model_key")
 reference_key = selector_cfg.get("reference_model_key")
+candidate_key = selector_cfg.get("candidate_strategy_model_key")
 compare_keys = [x for x in selector_cfg.get("compare_model_keys", []) if x]
-labels = {key: human_label(key, lang, selector_cfg) for key in compare_keys}
+labels = build_display_map(selector_cfg, lang)
 
 try:
     btc_df = load_btc_df()
@@ -1361,11 +1386,23 @@ for model_key in compare_keys:
     live_row = get_row(live_df, model_key)
 
     try:
-        paper_df = load_model_paper(source_cfg.get("paper_dir"), model_key)
+        paper_df = load_model_paper(source_cfg.get("paper_dir"), model_key, explicit_paper_path=source_cfg.get("paper_path"))
         papers[model_key] = paper_df
         model_metrics[model_key] = build_metrics(summary_row, live_row, paper_df)
     except Exception as e:
         paper_errors.append(f"{model_key}: {e}")
+
+candidate_equity_df = None
+if candidate_key:
+    candidate_source_cfg = resolve_model_source(selector_cfg, candidate_key)
+    try:
+        candidate_equity_df = load_model_paper(
+            candidate_source_cfg.get("paper_dir"),
+            candidate_key,
+            explicit_paper_path=candidate_source_cfg.get("paper_path"),
+        )
+    except Exception:
+        candidate_equity_df = None
 
 if main_key not in papers:
     st.error(f"{t(lang, 'load_failed')}: missing main model paper for {main_key}")
@@ -1383,7 +1420,7 @@ trend_history_df = load_trend_barometer_history(trend_source_cfg)
 main_metrics = model_metrics.get(main_key, {})
 reference_metrics = model_metrics.get(reference_key, {})
 
-years = available_years_from_frames(list(papers.values()) + [btc_df])
+years = available_years_from_frames(list(papers.values()) + [btc_df] + ([candidate_equity_df] if candidate_equity_df is not None else []))
 if not years:
     st.error(f"{t(lang, 'load_failed')}: no usable dates")
     st.stop()
@@ -1412,25 +1449,26 @@ with tabs[0]:
             )
 
         home_cards.append(
-        {
-            "label": t(lang, "trend_state"),
-            "value": safe_metric_text(trend_live.get("trend_score"), decimals=4, suffix="", lang=lang),
-            "subtitle": safe_text_value(trend_live.get("trend_state_label"), lang=lang),
-            "help": METRIC_HELP[lang][t(lang, "trend_score")],
-            "accent": "orange",
-        }
-    )
+            {
+                "label": t(lang, "trend_state"),
+                "value": safe_metric_text(trend_live.get("trend_score"), decimals=4, suffix="", lang=lang),
+                "subtitle": safe_text_value(trend_live.get("trend_state_label"), lang=lang),
+                "help": METRIC_HELP[lang][t(lang, "trend_score")],
+                "accent": "orange",
+            }
+        )
 
-    home_cols = st.columns(len(home_cards))
-    for col, item in zip(home_cols, home_cards):
-        with col:
-            render_color_card(
-                item["label"],
-                item["value"],
-                item["subtitle"],
-                item["help"],
-                item["accent"],
-            )
+    if home_cards:
+        home_cols = st.columns(len(home_cards))
+        for col, item in zip(home_cols, home_cards):
+            with col:
+                render_color_card(
+                    item["label"],
+                    item["value"],
+                    item["subtitle"],
+                    item["help"],
+                    item["accent"],
+                )
 
     st.markdown(f"### {t(lang, 'chart_title')}")
     st.caption(t(lang, "chart_note"))
@@ -1444,10 +1482,12 @@ with tabs[0]:
         make_capital_chart(
             main_df=papers[main_key],
             reference_df=reference_equity_df,
+            candidate_df=candidate_equity_df,
             btc_df=btc_df,
             year=selected_year_home,
             main_label=labels.get(main_key, main_key),
             reference_label=labels.get(reference_key, reference_key),
+            candidate_label=labels.get(candidate_key, candidate_key or "Candidate"),
             btc_label=t(lang, "btc_label"),
             title=t(lang, "chart_title"),
         ),
@@ -1589,40 +1629,56 @@ with tabs[1]:
         make_capital_chart(
             main_df=papers[main_key],
             reference_df=reference_equity_df,
+            candidate_df=candidate_equity_df,
             btc_df=btc_df,
             year=selected_year_compare,
             main_label=labels.get(main_key, main_key),
             reference_label=labels.get(reference_key, reference_key),
+            candidate_label=labels.get(candidate_key, candidate_key or "Candidate"),
             btc_label=t(lang, "btc_label"),
             title=t(lang, "compare_chart"),
         ),
         use_container_width=True,
     )
 
-    compare_df = pd.DataFrame(
-        [
+    compare_rows = [
+        {
+            "Stratégia" if lang == "sk" else "Strategy": labels.get(main_key, main_key),
+            t(lang, "cagr"): safe_metric_text(main_metrics.get("cagr_pct"), lang=lang),
+            t(lang, "max_dd"): safe_metric_text(main_metrics.get("max_drawdown_pct"), lang=lang),
+            t(lang, "since2023"): safe_metric_text(main_metrics.get("since2023_cagr_pct"), lang=lang),
+            t(lang, "since2025"): safe_metric_text(main_metrics.get("since2025_cagr_pct"), lang=lang),
+            t(lang, "sharpe"): safe_metric_text(main_metrics.get("sharpe"), decimals=3, suffix="", lang=lang),
+            t(lang, "sortino"): safe_metric_text(main_metrics.get("sortino"), decimals=3, suffix="", lang=lang),
+        },
+        {
+            "Stratégia" if lang == "sk" else "Strategy": labels.get(reference_key, reference_key),
+            t(lang, "cagr"): safe_metric_text(reference_metrics.get("cagr_pct"), lang=lang),
+            t(lang, "max_dd"): safe_metric_text(reference_metrics.get("max_drawdown_pct"), lang=lang),
+            t(lang, "since2023"): safe_metric_text(reference_metrics.get("since2023_cagr_pct"), lang=lang),
+            t(lang, "since2025"): safe_metric_text(reference_metrics.get("since2025_cagr_pct"), lang=lang),
+            t(lang, "sharpe"): safe_metric_text(reference_metrics.get("sharpe"), decimals=3, suffix="", lang=lang),
+            t(lang, "sortino"): safe_metric_text(reference_metrics.get("sortino"), decimals=3, suffix="", lang=lang),
+        },
+    ]
+
+    if candidate_equity_df is not None and not candidate_equity_df.empty:
+        candidate_metrics = build_metrics(None, None, candidate_equity_df)
+        compare_rows.append(
             {
-                "Stratégia" if lang == "sk" else "Strategy": labels.get(main_key, main_key),
-                t(lang, "cagr"): safe_metric_text(main_metrics.get("cagr_pct"), lang=lang),
-                t(lang, "max_dd"): safe_metric_text(main_metrics.get("max_drawdown_pct"), lang=lang),
-                t(lang, "since2023"): safe_metric_text(main_metrics.get("since2023_cagr_pct"), lang=lang),
-                t(lang, "since2025"): safe_metric_text(main_metrics.get("since2025_cagr_pct"), lang=lang),
-                t(lang, "sharpe"): safe_metric_text(main_metrics.get("sharpe"), decimals=3, suffix="", lang=lang),
-                t(lang, "sortino"): safe_metric_text(main_metrics.get("sortino"), decimals=3, suffix="", lang=lang),
-            },
-            {
-                "Stratégia" if lang == "sk" else "Strategy": labels.get(reference_key, reference_key),
-                t(lang, "cagr"): safe_metric_text(reference_metrics.get("cagr_pct"), lang=lang),
-                t(lang, "max_dd"): safe_metric_text(reference_metrics.get("max_drawdown_pct"), lang=lang),
-                t(lang, "since2023"): safe_metric_text(reference_metrics.get("since2023_cagr_pct"), lang=lang),
-                t(lang, "since2025"): safe_metric_text(reference_metrics.get("since2025_cagr_pct"), lang=lang),
-                t(lang, "sharpe"): safe_metric_text(reference_metrics.get("sharpe"), decimals=3, suffix="", lang=lang),
-                t(lang, "sortino"): safe_metric_text(reference_metrics.get("sortino"), decimals=3, suffix="", lang=lang),
-            },
-        ]
-    )
+                "Stratégia" if lang == "sk" else "Strategy": labels.get(candidate_key, candidate_key),
+                t(lang, "cagr"): safe_metric_text(candidate_metrics.get("cagr_pct"), lang=lang),
+                t(lang, "max_dd"): safe_metric_text(candidate_metrics.get("max_drawdown_pct"), lang=lang),
+                t(lang, "since2023"): safe_metric_text(candidate_metrics.get("since2023_cagr_pct"), lang=lang),
+                t(lang, "since2025"): safe_metric_text(candidate_metrics.get("since2025_cagr_pct"), lang=lang),
+                t(lang, "sharpe"): safe_metric_text(candidate_metrics.get("sharpe"), decimals=3, suffix="", lang=lang),
+                t(lang, "sortino"): safe_metric_text(candidate_metrics.get("sortino"), decimals=3, suffix="", lang=lang),
+            }
+        )
+
+    compare_df = pd.DataFrame(compare_rows)
     st.markdown(f"### {t(lang, 'compare_table')}")
-    st.dataframe(compare_df, use_container_width=True, height=190, hide_index=True)
+    st.dataframe(compare_df, use_container_width=True, hide_index=True)
 
 with tabs[2]:
     st.subheader(t(lang, "method_title"))

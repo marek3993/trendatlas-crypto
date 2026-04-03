@@ -154,6 +154,82 @@
       "decision_relevance": "official_truth",
       "official_truth": true,
       "notes": "Official active issues list."
+    },
+    {
+      "output_path": "outputs/execution/read_only/",
+      "generated_by": [
+        "scripts/execution/hyperliquid_read_only_snapshot.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "read_only_snapshot_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Hyperliquid read-only account snapshots and validation sidecars."
+    },
+    {
+      "output_path": "outputs/execution/live_status/",
+      "generated_by": [
+        "scripts/execution/render_execution_app_status.py",
+        "scripts/execution/run_dry_execution_bridge.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "execution_live_status_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "App-facing execution status. Not official truth."
+    },
+    {
+      "output_path": "outputs/execution/source_contract/",
+      "generated_by": [
+        "scripts/execution/validate_execution_source_contract.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "execution_contract_validation_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Contract validation artifacts for execution pipeline."
+    },
+    {
+      "output_path": "outputs/execution/intents/",
+      "generated_by": [
+        "scripts/execution/build_execution_intent_from_strategy_exports.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "normalized_execution_intent_outputs",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Deterministic intent artifacts derived from canonical strategy exports."
+    },
+    {
+      "output_path": "outputs/execution/dry_run/",
+      "generated_by": [
+        "scripts/execution/run_dry_execution_bridge.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "dry_run_execution_outputs",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Simulated execution decisions only. No real orders."
+    },
+    {
+      "output_path": "outputs/execution/logs/",
+      "generated_by": [
+        "scripts/execution/hyperliquid_read_only_snapshot.py",
+        "scripts/execution/render_execution_app_status.py",
+        "scripts/execution/run_dry_execution_bridge.py",
+        "scripts/execution/freeze_execution_registry_contract.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "runtime_logs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Operational logs only."
     }
   ]
 }

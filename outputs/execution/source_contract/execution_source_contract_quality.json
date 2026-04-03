@@ -1,0 +1,9 @@
+{
+  "validator_ok": true,
+  "paths_registry_present": true,
+  "missing_registry_key_count": 0,
+  "missing_file_count": 0,
+  "hard_required_missing_count": 0,
+  "contract_status": "valid",
+  "ready_for_intent_builder": true
+}

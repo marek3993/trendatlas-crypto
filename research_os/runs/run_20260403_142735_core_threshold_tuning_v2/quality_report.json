@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260403_142735_core_threshold_tuning_v2",
+  "status": "failed",
+  "checks": [
+    {
+      "name": "required_run_artifacts",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "expected_outputs",
+      "ok": false,
+      "missing": [
+        "summary.csv",
+        "paper.csv",
+        "compare_summary.csv"
+      ]
+    },
+    {
+      "name": "numeric_score_extract",
+      "ok": false,
+      "value": null
+    },
+    {
+      "name": "compare_valid",
+      "ok": false
+    }
+  ]
+}

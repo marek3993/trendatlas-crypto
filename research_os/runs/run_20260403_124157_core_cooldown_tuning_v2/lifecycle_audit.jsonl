@@ -1,0 +1,4 @@
+{"ts": "2026-04-03 12:41:57 UTC", "run_id": "run_20260403_124157_core_cooldown_tuning_v2", "from_status": "spec_ready", "to_status": "queued", "reason": "orchestrator_init"}
+{"ts": "2026-04-03 12:41:57 UTC", "run_id": "run_20260403_124157_core_cooldown_tuning_v2", "from_status": "queued", "to_status": "running", "reason": "execution_started"}
+{"ts": "2026-04-03 12:41:58 UTC", "run_id": "run_20260403_124157_core_cooldown_tuning_v2", "from_status": "running", "to_status": "run_failed", "reason": "process_exit_code_2"}
+{"ts": "2026-04-03 12:41:58 UTC", "run_id": "run_20260403_124157_core_cooldown_tuning_v2", "from_status": "run_failed", "to_status": "archived", "reason": "run_failed_exit_code_2"}

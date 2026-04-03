@@ -1,0 +1,10 @@
+{
+  "decision_id": "decision_run_20260403_142419_core_cooldown_tuning_v2",
+  "candidate_id": "core_cooldown_tuning_v2",
+  "source_run_id": "run_20260403_142419_core_cooldown_tuning_v2",
+  "decision": "kill",
+  "decision_reason": "run_failed_exit_code_2",
+  "decided_by": "research_os_orchestrator_v1",
+  "decided_at": "2026-04-03 14:24:20 UTC",
+  "evidence_refs": []
+}

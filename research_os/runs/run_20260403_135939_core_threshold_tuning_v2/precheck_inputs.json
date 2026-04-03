@@ -1,0 +1,35 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260403_135939_core_threshold_tuning_v2",
+  "spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\core_threshold_tuning_v2.spec_ready.json",
+  "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro\\global_liquidity_weekly.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ADAUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\AVAXUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BNBUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOGEUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOTUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ETHUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LINKUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\SOLUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\TRXUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\XRPUSDT_1d.csv"
+  ],
+  "expected_outputs": [
+    "summary.csv",
+    "paper.csv",
+    "compare_summary.csv"
+  ],
+  "run_folder_contract": [
+    "run_manifest.json",
+    "run_status.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts_index.json",
+    "quality_report.json",
+    "precheck_inputs.json"
+  ]
+}

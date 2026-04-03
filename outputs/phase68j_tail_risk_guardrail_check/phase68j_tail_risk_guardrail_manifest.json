@@ -1,0 +1,69 @@
+{
+  "phase": "phase68j_tail_risk_guardrail_check",
+  "official_compare_baseline": "phase68j_ref_dynamic_ladder",
+  "governance_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+  "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+  "trend_history": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+  "decisions_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_decisions.csv",
+  "transition_mapping_meta": {
+    "decision_rows_total": 361,
+    "selected_rows_used": 45,
+    "governance_switch_rows": 3,
+    "mapped_transition_rows": 3,
+    "unmapped_transition_rows": 0,
+    "mapping_sources": {
+      "period_start": 3
+    }
+  },
+  "governance_switch_count": 3,
+  "tradable_transition_count": 3,
+  "transition_calendar_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68j_tail_risk_guardrail_check\\phase68j_tradable_transition_calendar.csv",
+  "dynamic_params": {
+    "trend_activation_threshold": 0.1,
+    "dynamic_mid_threshold": 0.5,
+    "dynamic_mid_leverage": 1.25,
+    "dynamic_high_leverage": 1.5,
+    "stress_lookback_days": 20,
+    "stress_off_threshold": -0.08,
+    "stress_on_threshold": -0.04
+  },
+  "borrow_cost": 0.12,
+  "tradable_transition_slippage_bps": 10.0,
+  "parent_variants": [
+    {
+      "model": "phase68j_ref_1p50x_static",
+      "mode": "static",
+      "target_leverage": 1.5
+    },
+    {
+      "model": "phase68j_ref_dynamic_ladder",
+      "mode": "dynamic",
+      "target_leverage": 0.0
+    },
+    {
+      "model": "phase68j_ref_1p25x_static",
+      "mode": "static",
+      "target_leverage": 1.25
+    }
+  ],
+  "guardrails": [
+    {
+      "guardrail_id": "g1_adverse_cd2",
+      "description": "Ak parent realistic_ret <= -5.0%, \u010fal\u0161ie 2 dni force 1.00x"
+    },
+    {
+      "guardrail_id": "g2_dd5_cd3",
+      "description": "Ak parent rolling 5d DD <= -7.5%, \u010fal\u0161ie 3 dni force 1.00x"
+    }
+  ],
+  "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68j_tail_risk_guardrail_check\\phase68j_tail_risk_guardrail_summary.csv",
+  "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68j_tail_risk_guardrail_check\\phase68j_tail_risk_guardrail_compare.csv",
+  "papers_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68j_tail_risk_guardrail_check\\papers",
+  "notes": [
+    "68J nemen\u00ed leverage level ani signal logiku parent vetiev.",
+    "Testuje len downward-only tail-risk override na effective_leverage.",
+    "G1: po adverse dni <= -5% \u010fal\u0161ie 2 dni force 1.00x.",
+    "G2: po parent rolling 5d DD <= -7.5% \u010fal\u0161ie 3 dni force 1.00x.",
+    "Official compare baseline = dynamic ladder reference."
+  ]
+}
