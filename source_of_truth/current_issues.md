@@ -1,80 +1,10 @@
-\# Current Issues
+# Current Issues
 
-
-
-\## ISSUE-001
-
-\- Title: Final live-data/source-of-truth mapping not frozen
-
-\- Owner segment: DATA
-
-\- Status: open
-
-\- Impact: blocks final APP wording/export polish
-
-\# Current Issues
-
-
-
-\## ISSUE-001
-
-\- Title: Final live-data/source-of-truth mapping not frozen
-
-\- Owner segment: DATA
-
-\- Status: open
-
-\- Impact: blocks final APP wording/export polish
-
-\- Next step: freeze authoritative files and freshness semantics
-
-\- Blocked by: none
-
-
-
-\## ISSUE-002
-
-\- Title: Exact 67J export contract not frozen
-
-\- Owner segment: APP
-
-\- Status: pending
-
-\- Impact: blocks final export switch precision
-
-\- Next step: fill export\_contract.json after DATA mapping is frozen
-
-\- Blocked by: ISSUE-001
-
-
-
-\## ISSUE-003
-
-\- Title: Leverage branch still research-only
-
-\- Owner segment: CORE
-
-\- Status: active\_research
-
-\- Impact: none on current product/live
-
-\- Next step: phase68d realistic 1.50x activation tuning
-
-\- Blocked by: none
-
-
-
-\## ISSUE-004
-
-\- Title: source\_of\_truth minimum pack still incomplete
-
-\- Owner segment: MASTER
-
-\- Status: in\_progress
-
-\- Impact: blocks clean bootstrap of new discipline chats
-
-\- Next step: finish minimum pack and validate structure
-
-\- Blocked by: none
-
+## Leverage branch truth-promotion status
+- research/raw winner = phase68i_66g_1p50x_static
+- best deployment candidate = phase68i_dynamic_ladder_candidate
+- official softer fallback = phase68g_66g_1p25x_candidate
+- Phase68J simple tail-risk guardrails = rejected
+- ordering remains unchanged
+- leverage branch is strong enough for truth-promotion workflow
+- leverage branch is not approved for direct auto-switch to app/live

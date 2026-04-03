@@ -1,0 +1,70 @@
+{
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "started_at": "2026-04-03T08:17:41Z",
+  "ended_at": null,
+  "status": "started",
+  "executor": "manual_orchestrator",
+  "steps": [
+    {
+      "step_index": 1,
+      "timestamp": "2026-04-03T08:17:41Z",
+      "action": "create_run_scaffold",
+      "result": "ok",
+      "note": "Initialized run, report, manifest and task spec."
+    },
+    {
+      "step_index": 2,
+      "timestamp": "2026-04-03T08:25:48Z",
+      "action": "approve_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_leverage_truth_promotion_current_issues_v1 marked as approved; approval recorded only; no source_of_truth write executed."
+    },
+    {
+      "step_index": 3,
+      "timestamp": "2026-04-03T09:21:19Z",
+      "action": "apply_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_leverage_truth_promotion_current_issues_v1 applied to C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\current_issues.md"
+    },
+    {
+      "step_index": 4,
+      "timestamp": "2026-04-03T09:44:45Z",
+      "action": "approve_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_leverage_truth_promotion_project_truth_v1 marked as approved; approval recorded only; no source_of_truth write executed."
+    },
+    {
+      "step_index": 5,
+      "timestamp": "2026-04-03T09:44:54Z",
+      "action": "apply_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_leverage_truth_promotion_project_truth_v1 applied to C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json"
+    },
+    {
+      "step_index": 6,
+      "timestamp": "2026-04-03T09:47:35Z",
+      "action": "approve_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_leverage_truth_promotion_master_state_v1 marked as approved; approval recorded only; no source_of_truth write executed."
+    },
+    {
+      "step_index": 7,
+      "timestamp": "2026-04-03T09:47:42Z",
+      "action": "apply_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_leverage_truth_promotion_master_state_v1 applied to C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md"
+    }
+  ],
+  "artifacts": {
+    "report_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\reports\\run_20260403_081741_truth_patch_prep_leverage_truth_promotion\\report_20260403_081741_truth_patch_prep_leverage_truth_promotion.report.json"
+    ],
+    "screenshot_manifest_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\screenshots\\run_20260403_081741_truth_patch_prep_leverage_truth_promotion\\manifest_20260403_081741_truth_patch_prep_leverage_truth_promotion.screenshot_manifest.json"
+    ],
+    "pending_truth_patch_paths": []
+  },
+  "errors": [],
+  "warnings": []
+}
