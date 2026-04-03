@@ -1,0 +1,8 @@
+{
+  "approval_id": "approval_20260403_160043_project_truth_remove_leverage_branch_truth_v3",
+  "patch_id": "patch_project_truth_remove_leverage_branch_truth_v3",
+  "decision": "approved",
+  "approved_by": "human",
+  "decided_at": "2026-04-03T16:00:43Z",
+  "note": "Approved final project_truth cleanup: remove duplicate leverage_branch_truth and update CORE next step."
+}

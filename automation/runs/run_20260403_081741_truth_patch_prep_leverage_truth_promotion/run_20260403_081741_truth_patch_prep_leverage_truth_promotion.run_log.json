@@ -68,6 +68,13 @@
       "action": "apply_truth_patch",
       "result": "ok",
       "note": "Patch patch_leverage_truth_cleanup_project_truth_v2 applied to C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json"
+    },
+    {
+      "step_index": 10,
+      "timestamp": "2026-04-03T16:00:43Z",
+      "action": "approve_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_project_truth_remove_leverage_branch_truth_v3 marked as approved; approval recorded only; no source_of_truth write executed."
     }
   ],
   "artifacts": {
