@@ -33,7 +33,9 @@
     "tests/test_canonical_decision_summary_required_keys.py",
     "tests/test_canonical_reference_summary_required_keys.py",
     "tests/test_canonical_manifest_required_keys.py",
-    "tests/test_canonical_export_contract_required_keys.py"
+    "tests/test_canonical_export_contract_required_keys.py",
+    "tests/test_canonical_dates_string_shape.py",
+    "tests/test_canonical_ids_uniqueness.py"
   ],
   "notes": [
     "Frozen batch manifest for repo hygiene guardrails.",
