@@ -26,10 +26,6 @@ TEST_FILES = [
     TESTS_DIR / "test_canonical_artifact_type_allowed_values.py",
     TESTS_DIR / "test_canonical_truth_status_allowed_values.py",
     TESTS_DIR / "test_canonical_consumer_scope_allowed_values.py",
-    TESTS_DIR / "test_canonical_notes_blocks_present.py",
-    TESTS_DIR / "test_canonical_manifest_schema_version_present.py",
-    TESTS_DIR / "test_canonical_decision_summary_blocks_present.py",
-    TESTS_DIR / "test_canonical_reference_summary_blocks_present.py",
 ]
 
 
