@@ -1,0 +1,8 @@
+{
+  "approval_id": "approval_20260403_131920_leverage_truth_cleanup_project_truth_v2",
+  "patch_id": "patch_leverage_truth_cleanup_project_truth_v2",
+  "decision": "approved",
+  "approved_by": "human",
+  "decided_at": "2026-04-03T13:19:20Z",
+  "note": "Approved leverage truth cleanup for project_truth.json while preserving live truth."
+}

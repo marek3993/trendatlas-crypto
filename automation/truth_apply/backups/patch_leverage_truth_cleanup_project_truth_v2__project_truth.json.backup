@@ -45,13 +45,9 @@
   },
   "leverage_truth": {
     "current_live_truth": "1.0x_without_leverage",
-    "research_raw_winner": "phase68i_66g_1p50x_static",
-    "best_deployment_candidate": "phase68i_dynamic_ladder_candidate",
-    "official_softer_fallback": "phase68g_66g_1p25x_candidate",
-    "phase68j_simple_tail_risk_guardrails": "rejected",
-    "ordering_remains_unchanged": true,
-    "truth_promotion_ready": true,
-    "direct_auto_switch_app_live_approved": false
+    "best_realistic_research_candidate": "phase68c_realistic_1p50x_candidate",
+    "next_step": "phase68d_realistic_1p50x_activation_tuning.py",
+    "status": "research_only"
   },
   "segment_next_steps": {
     "MASTER": "maintain_truth",

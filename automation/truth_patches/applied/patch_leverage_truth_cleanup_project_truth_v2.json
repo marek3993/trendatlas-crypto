@@ -1,0 +1,35 @@
+{
+  "patch_id": "patch_leverage_truth_cleanup_project_truth_v2",
+  "created_at": "2026-04-03T12:30:00Z",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "target_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json"
+  ],
+  "reason": "Clean stale leverage research fields from project_truth.json while preserving current live truth and app/live non-switch state.",
+  "proposed_changes": [
+    {
+      "change_type": "replace_json_top_level_key",
+      "target": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+      "payload": {
+        "key": "leverage_truth",
+        "value": {
+          "current_live_truth": "1.0x_without_leverage",
+          "research_raw_winner": "phase68i_66g_1p50x_static",
+          "best_deployment_candidate": "phase68i_dynamic_ladder_candidate",
+          "official_softer_fallback": "phase68g_66g_1p25x_candidate",
+          "phase68j_simple_tail_risk_guardrails": "rejected",
+          "ordering_remains_unchanged": true,
+          "truth_promotion_ready": true,
+          "direct_auto_switch_app_live_approved": false
+        }
+      }
+    }
+  ],
+  "evidence_refs": [
+    "MASTER truth cleanup task after leverage truth-promotion",
+    "source_of_truth/master_state.md leverage truth-promotion snapshot",
+    "source_of_truth/current_issues.md leverage truth-promotion snapshot"
+  ],
+  "status": "applied"
+}

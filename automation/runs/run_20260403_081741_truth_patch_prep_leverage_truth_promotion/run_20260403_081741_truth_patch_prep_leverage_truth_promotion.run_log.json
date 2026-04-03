@@ -54,6 +54,20 @@
       "action": "apply_truth_patch",
       "result": "ok",
       "note": "Patch patch_leverage_truth_promotion_master_state_v1 applied to C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md"
+    },
+    {
+      "step_index": 8,
+      "timestamp": "2026-04-03T13:19:20Z",
+      "action": "approve_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_leverage_truth_cleanup_project_truth_v2 marked as approved; approval recorded only; no source_of_truth write executed."
+    },
+    {
+      "step_index": 9,
+      "timestamp": "2026-04-03T13:19:28Z",
+      "action": "apply_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_leverage_truth_cleanup_project_truth_v2 applied to C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json"
     }
   ],
   "artifacts": {
