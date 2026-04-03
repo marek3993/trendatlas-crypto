@@ -1,0 +1,15 @@
+{
+  "apply_id": "apply_20260403_160307_project_truth_remove_leverage_branch_truth_v3",
+  "patch_id": "patch_project_truth_remove_leverage_branch_truth_v3",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "applied_at": "2026-04-03T16:03:07Z",
+  "applied_by": "human",
+  "target_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+  "change_type": "replace_entire_file",
+  "backup_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_apply\\backups\\patch_project_truth_remove_leverage_branch_truth_v3__project_truth.json.backup",
+  "diff_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_apply\\diffs\\patch_project_truth_remove_leverage_branch_truth_v3.diff.txt",
+  "status": "success",
+  "source_of_truth_write_executed": true,
+  "note": "Approved truth patch applied successfully."
+}
