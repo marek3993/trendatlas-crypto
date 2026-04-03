@@ -1,0 +1,53 @@
+{
+  "report_id": "report_20260403_121452_workflow_run_execution_refresh_wrapper_v1",
+  "run_id": "run_20260403_121452_workflow_run_execution_refresh_wrapper_v1",
+  "task_id": "task_20260403_121452_workflow_run_execution_refresh_wrapper_v1",
+  "summary": "Execution refresh wrapper completed successfully with healthy chain.",
+  "findings": [
+    "source_contract: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_report.json",
+    "source_contract: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_manifest.json",
+    "source_contract: Manifest status acceptable: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_manifest.json",
+    "source_contract: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_quality.json",
+    "source_contract: Quality file looks healthy: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_quality.json",
+    "read_only_account_snapshot: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+    "read_only_account_snapshot: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_manifest.json",
+    "read_only_account_snapshot: Manifest status acceptable: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_manifest.json",
+    "read_only_account_snapshot: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_quality.json",
+    "read_only_account_snapshot: Quality file looks healthy: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_quality.json",
+    "live_status: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status.json",
+    "live_status: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status_manifest.json",
+    "live_status: Manifest status acceptable: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status_manifest.json",
+    "latest_intent: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "latest_intent: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent_manifest.json",
+    "latest_intent: Manifest status acceptable: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent_manifest.json",
+    "latest_intent: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent_quality.json",
+    "latest_intent: Quality file looks healthy: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent_quality.json",
+    "dry_run_decision: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision.json",
+    "dry_run_decision: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status.json",
+    "dry_run_decision: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision_manifest.json",
+    "dry_run_decision: Manifest status acceptable: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision_manifest.json",
+    "dry_run_decision: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status_manifest.json",
+    "dry_run_decision: Manifest status acceptable: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status_manifest.json",
+    "dry_run_decision: Readable JSON: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision_quality.json",
+    "dry_run_decision: Quality file looks healthy: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision_quality.json",
+    "Readable JSONL: C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\logs\\execution_action_log.jsonl",
+    "dry_run decision summary: recommended_action=hold_cash | would_place_order=None | current_state=CASH | target_asset=CASH",
+    "chain_status=healthy",
+    "official_truth_changed=False",
+    "real_orders_allowed=False",
+    "source_of_truth_write_executed=False",
+    "recommended_action=hold_cash",
+    "would_place_order=None",
+    "duplicate_order_risk=False",
+    "stale_signal=False"
+  ],
+  "artifacts": {
+    "run_log_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\runs\\run_20260403_121452_workflow_run_execution_refresh_wrapper_v1\\run_20260403_121452_workflow_run_execution_refresh_wrapper_v1.run_log.json",
+    "screenshot_manifest_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\screenshots\\run_20260403_121452_workflow_run_execution_refresh_wrapper_v1\\manifest_20260403_121452_workflow_run_execution_refresh_wrapper_v1.screenshot_manifest.json"
+    ],
+    "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\reports\\run_20260403_121452_workflow_run_execution_refresh_wrapper_v1\\report_20260403_121452_workflow_run_execution_refresh_wrapper_v1.report.json"
+  },
+  "pending_truth_patch_ids": [],
+  "next_action": "review_execution_refresh_report"
+}

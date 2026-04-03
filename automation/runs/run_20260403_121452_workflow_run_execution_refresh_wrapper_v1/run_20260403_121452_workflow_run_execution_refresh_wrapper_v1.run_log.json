@@ -1,0 +1,91 @@
+{
+  "run_id": "run_20260403_121452_workflow_run_execution_refresh_wrapper_v1",
+  "task_id": "task_20260403_121452_workflow_run_execution_refresh_wrapper_v1",
+  "started_at": "2026-04-03T12:14:52Z",
+  "ended_at": "2026-04-03T12:14:55Z",
+  "status": "success",
+  "executor": "automation_wrapper",
+  "steps": [
+    {
+      "step_index": 1,
+      "timestamp": "2026-04-03T12:14:52Z",
+      "action": "create_run_scaffold",
+      "result": "ok",
+      "note": "Execution refresh wrapper run scaffold created."
+    },
+    {
+      "step_index": 2,
+      "timestamp": "2026-04-03T12:14:52Z",
+      "action": "load_runbook",
+      "result": "ok",
+      "note": "Loaded runbook: C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\config\\execution_refresh_runbook.json"
+    },
+    {
+      "step_index": 3,
+      "timestamp": "2026-04-03T12:14:52Z",
+      "action": "run_stage:materialize_execution_app_exports",
+      "result": "ok",
+      "note": "stage=materialize_execution_app_exports | returncode=0 | stdout=[START] materialize_execution_app_exports\n[OK] already present: phase67j_winner_paper -> C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv\n[OK] already present: phase67j_live_status -> C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv\n[OK] already present: phase66g_core_paper -> C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv\n[OK] already present: phase66g_live_status -> C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv\n[OK] already present: app_freshness_report -> C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline\\materialize_execution_app_exports_report.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline\\materialize_execution_app_exports_quality.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline\\materialize_execution_app_exports_manifest.json\n[END] materialize_execution_app_exports status=success"
+    },
+    {
+      "step_index": 4,
+      "timestamp": "2026-04-03T12:14:52Z",
+      "action": "run_stage:source_contract",
+      "result": "ok",
+      "note": "stage=source_contract | returncode=0 | stdout=[START] validate_execution_source_contract\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_report.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_quality.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_manifest.json\n[END] validate_execution_source_contract success contract_status=valid"
+    },
+    {
+      "step_index": 5,
+      "timestamp": "2026-04-03T12:14:55Z",
+      "action": "run_stage:read_only_account_snapshot",
+      "result": "ok",
+      "note": "stage=read_only_account_snapshot | returncode=0 | stdout=[START] hyperliquid_read_only_snapshot\n[CONFIG] mode=read_only trading_enabled=False kill_switch=True\n[CONFIG] account_address=0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856\n[FETCH] clearinghouseState\n[FETCH] openOrders\n[FETCH] userFills\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_quality.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_manifest.json\n[END] hyperliquid_read_only_snapshot success"
+    },
+    {
+      "step_index": 6,
+      "timestamp": "2026-04-03T12:14:55Z",
+      "action": "run_stage:live_status",
+      "result": "ok",
+      "note": "stage=live_status | returncode=0 | stdout=[START] render_execution_app_status\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status_manifest.json\n[END] render_execution_app_status success"
+    },
+    {
+      "step_index": 7,
+      "timestamp": "2026-04-03T12:14:55Z",
+      "action": "run_stage:latest_intent",
+      "result": "ok",
+      "note": "stage=latest_intent | returncode=0 | stdout=[START] build_execution_intent_from_strategy_exports\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent_quality.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent_manifest.json\n[END] build_execution_intent_from_strategy_exports success target_asset=CASH"
+    },
+    {
+      "step_index": 8,
+      "timestamp": "2026-04-03T12:14:55Z",
+      "action": "run_stage:dry_run_decision",
+      "result": "ok",
+      "note": "stage=dry_run_decision | returncode=0 | stdout=[START] run_dry_execution_bridge\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision_quality.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision_manifest.json\n[SAVED] C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status.json\n[END] run_dry_execution_bridge success recommended_action=hold_cash"
+    },
+    {
+      "step_index": 9,
+      "timestamp": "2026-04-03T12:14:55Z",
+      "action": "validate_execution_chain",
+      "result": "ok",
+      "note": "chain_status=healthy"
+    },
+    {
+      "step_index": 10,
+      "timestamp": "2026-04-03T12:14:55Z",
+      "action": "finalize_run",
+      "result": "ok",
+      "note": "Run finalized with status=success"
+    }
+  ],
+  "artifacts": {
+    "report_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\reports\\run_20260403_121452_workflow_run_execution_refresh_wrapper_v1\\report_20260403_121452_workflow_run_execution_refresh_wrapper_v1.report.json"
+    ],
+    "screenshot_manifest_paths": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\screenshots\\run_20260403_121452_workflow_run_execution_refresh_wrapper_v1\\manifest_20260403_121452_workflow_run_execution_refresh_wrapper_v1.screenshot_manifest.json"
+    ],
+    "pending_truth_patch_paths": []
+  },
+  "errors": [],
+  "warnings": []
+}

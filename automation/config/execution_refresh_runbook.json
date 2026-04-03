@@ -1,0 +1,99 @@
+{
+  "slug": "execution_refresh_wrapper_v1",
+  "description": "Safe automation wrapper for Hyperliquid read-only + dry-run refresh chain. No real orders. No source_of_truth writes.",
+  "stages": [
+    {
+      "name": "materialize_execution_app_exports",
+      "command": [
+        "python",
+        "scripts/execution/materialize_execution_app_exports.py"
+      ],
+      "required_outputs": [],
+      "required_manifests": [],
+      "required_quality_files": []
+    },
+    {
+      "name": "source_contract",
+      "command": [
+        "python",
+        "scripts/execution/validate_execution_source_contract.py"
+      ],
+      "required_outputs": [
+        "outputs/execution/source_contract/execution_source_contract_report.json"
+      ],
+      "required_manifests": [
+        "outputs/execution/source_contract/execution_source_contract_manifest.json"
+      ],
+      "required_quality_files": [
+        "outputs/execution/source_contract/execution_source_contract_quality.json"
+      ]
+    },
+    {
+      "name": "read_only_account_snapshot",
+      "command": [
+        "python",
+        "scripts/execution/hyperliquid_read_only_snapshot.py"
+      ],
+      "required_outputs": [
+        "outputs/execution/read_only/hyperliquid_account_snapshot.json"
+      ],
+      "required_manifests": [
+        "outputs/execution/read_only/hyperliquid_account_snapshot_manifest.json"
+      ],
+      "required_quality_files": [
+        "outputs/execution/read_only/hyperliquid_account_snapshot_quality.json"
+      ]
+    },
+    {
+      "name": "live_status",
+      "command": [
+        "python",
+        "scripts/execution/render_execution_app_status.py"
+      ],
+      "required_outputs": [
+        "outputs/execution/live_status/execution_status.json"
+      ],
+      "required_manifests": [
+        "outputs/execution/live_status/execution_status_manifest.json"
+      ],
+      "required_quality_files": []
+    },
+    {
+      "name": "latest_intent",
+      "command": [
+        "python",
+        "scripts/execution/build_execution_intent_from_strategy_exports.py"
+      ],
+      "required_outputs": [
+        "outputs/execution/intents/latest_execution_intent.json"
+      ],
+      "required_manifests": [
+        "outputs/execution/intents/latest_execution_intent_manifest.json"
+      ],
+      "required_quality_files": [
+        "outputs/execution/intents/latest_execution_intent_quality.json"
+      ]
+    },
+    {
+      "name": "dry_run_decision",
+      "command": [
+        "python",
+        "scripts/execution/run_dry_execution_bridge.py"
+      ],
+      "required_outputs": [
+        "outputs/execution/dry_run/latest_dry_run_decision.json",
+        "outputs/execution/live_status/execution_status.json"
+      ],
+      "required_manifests": [
+        "outputs/execution/dry_run/latest_dry_run_decision_manifest.json",
+        "outputs/execution/live_status/execution_status_manifest.json"
+      ],
+      "required_quality_files": [
+        "outputs/execution/dry_run/latest_dry_run_decision_quality.json"
+      ]
+    }
+  ],
+  "global_jsonl_files": [
+    "outputs/execution/logs/execution_action_log.jsonl"
+  ]
+}
