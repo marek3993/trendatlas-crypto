@@ -28,7 +28,7 @@
     "product_direction_alignment": "67J main, 66G reference, BTC benchmark"
   },
   "reference_rules": {
-    "may_be_used_for": [
+    "may_be_used_as": [
       "comparison",
       "product reference context",
       "app-readable benchmark framing",
