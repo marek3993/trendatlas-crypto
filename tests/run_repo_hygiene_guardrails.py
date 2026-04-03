@@ -8,6 +8,7 @@ TESTS_DIR = ROOT / "tests"
 
 TEST_FILES = [
     TESTS_DIR / "test_source_of_truth_presence.py",
+    TESTS_DIR / "test_source_of_truth_json_valid.py",
     TESTS_DIR / "test_forbidden_tracked_artifacts.py",
     TESTS_DIR / "test_canonical_lineage_minimum.py",
     TESTS_DIR / "test_canonical_truth_consistency.py",
@@ -32,6 +33,7 @@ TEST_FILES = [
     TESTS_DIR / "test_canonical_reference_summary_blocks_present.py",
     TESTS_DIR / "test_canonical_decision_scope_lists_are_strings.py",
     TESTS_DIR / "test_canonical_reference_rule_lists_are_strings.py",
+    TESTS_DIR / "test_output_registry_official_truth_flags.py",
 ]
 
 
