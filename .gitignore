@@ -107,3 +107,12 @@ outputs/**/charts_tmp/
 
 # --- Keep intentional repo docs/config tracked ---
 !.gitkeep
+
+# --- Allow tracked automation truth-apply audit artifacts ---
+!automation/truth_apply/
+!automation/truth_apply/backups/
+!automation/truth_apply/diffs/
+!automation/truth_apply/logs/
+!automation/truth_apply/backups/**
+!automation/truth_apply/diffs/**
+!automation/truth_apply/logs/**
