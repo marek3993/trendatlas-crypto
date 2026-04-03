@@ -41,7 +41,13 @@
     "tests/test_canonical_manifest_list_entries_shape.py",
     "tests/test_canonical_snapshot_state_shape.py",
     "tests/test_output_registry_required_fields.py",
-    "tests/test_output_registry_source_of_truth_consistency.py"
+    "tests/test_output_registry_source_of_truth_consistency.py",
+    "tests/test_output_registry_allowed_values.py",
+    "tests/test_output_registry_string_fields.py",
+    "tests/test_script_registry_required_fields.py",
+    "tests/test_script_registry_paths_exist.py",
+    "tests/test_automation_apply_paths_exist.py",
+    "tests/test_automation_apply_files_non_empty.py"
   ],
   "notes": [
     "Frozen batch manifest for repo hygiene guardrails.",
