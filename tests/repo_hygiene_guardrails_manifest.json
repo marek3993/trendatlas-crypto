@@ -29,7 +29,9 @@
     "tests/test_canonical_decision_scope_lists_are_strings.py",
     "tests/test_canonical_reference_rule_lists_are_strings.py",
     "tests/test_output_registry_official_truth_flags.py",
-    "tests/test_repo_hygiene_manifest_valid.py"
+    "tests/test_repo_hygiene_manifest_valid.py",
+    "tests/test_canonical_decision_summary_required_keys.py",
+    "tests/test_canonical_reference_summary_required_keys.py"
   ],
   "notes": [
     "Frozen batch manifest for repo hygiene guardrails.",
