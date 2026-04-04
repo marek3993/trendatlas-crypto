@@ -4,8 +4,9 @@
   "missing_legacy_source_count": 0,
   "hard_required_missing_count": 0,
   "copied_count": 0,
-  "transformed_count": 1,
+  "transformed_count": 2,
   "already_present_count": 4,
   "contract_ready_after_materialization": true,
-  "app_live_mode_fields_written": true
+  "app_live_mode_fields_written": true,
+  "phase68i_summary_written": true
 }

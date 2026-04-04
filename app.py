@@ -30,6 +30,7 @@ DEFAULT_SELECTOR = {
     "product_name": "TrendAtlas Crypto",
     "main_model_key": "phase68i_dynamic_ladder_candidate",
     "reference_model_key": "phase67j_no_neo_main",
+    "benchmark_label": "BTC",
     "compare_model_keys": [
         "phase68i_dynamic_ladder_candidate",
         "phase67j_no_neo_main",
@@ -50,6 +51,7 @@ DEFAULT_SELECTOR = {
     },
     "model_sources": {
         "phase68i_dynamic_ladder_candidate": {
+            "summary_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_summary.csv",
             "paper_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
             "live_status_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_live_status.csv",
         },
@@ -1528,31 +1530,7 @@ with tabs[0]:
                     item["accent"],
                 )
 
-    live_mode_cols = st.columns(3)
-    with live_mode_cols[0]:
-        render_color_card(
-            t(lang, "live_mode"),
-            safe_text_value(live_public_state.get("live_truth_mode"), lang=lang),
-            "",
-            METRIC_HELP[lang][t(lang, "live_mode")],
-            "green",
-        )
-    with live_mode_cols[1]:
-        render_color_card(
-            t(lang, "current_profile"),
-            safe_text_value(live_public_state.get("execution_profile"), lang=lang),
-            "",
-            METRIC_HELP[lang][t(lang, "current_profile")],
-            "violet",
-        )
-    with live_mode_cols[2]:
-        render_color_card(
-            t(lang, "fallback_profile"),
-            safe_text_value(live_public_state.get("fallback_profile_label"), lang=lang),
-            "",
-            METRIC_HELP[lang][t(lang, "fallback_profile")],
-            "neutral",
-        )
+    
 
     st.markdown(f"### {t(lang, 'chart_title')}")
     st.caption(t(lang, "chart_note"))

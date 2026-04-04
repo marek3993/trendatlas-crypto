@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-04-03T20:01:25Z",
-  "started_at_utc": "2026-04-03T20:01:25Z",
+  "generated_at_utc": "2026-04-04T10:18:47Z",
+  "started_at_utc": "2026-04-04T10:18:47Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -27,7 +27,7 @@
   "missing_legacy_sources": [],
   "hard_required_missing": [],
   "copied_count": 0,
-  "transformed_count": 1,
+  "transformed_count": 2,
   "already_present_count": 4,
   "rows": [
     {
@@ -59,7 +59,7 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 492,
-        "modified_utc": "2026-04-03T20:01:25Z"
+        "modified_utc": "2026-04-04T10:18:47Z"
       },
       "added_fields": [
         "live_truth_mode",
@@ -108,12 +108,38 @@
         "size_bytes": 1099,
         "modified_utc": "2026-04-01T21:12:28Z"
       }
+    },
+    {
+      "artifact_key": "phase68i_dynamic_ladder_candidate_summary",
+      "status": "phase68i_summary_export_written",
+      "summary_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68h_dynamic_leverage_ladder_candidate\\phase68h_dynamic_leverage_ladder_summary.csv",
+      "paper_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+      "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+      "output_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+        "size_bytes": 220,
+        "modified_utc": "2026-04-04T10:18:47Z"
+      },
+      "computed_fields": [
+        "sharpe",
+        "sortino",
+        "switch_count",
+        "cash_days_pct",
+        "btc_days_pct"
+      ],
+      "copied_fields_from_summary_source": [
+        "cagr_pct",
+        "max_drawdown_pct",
+        "since2023_cagr_pct",
+        "since2025_cagr_pct"
+      ]
     }
   ],
   "status": "success",
   "notes": [
     "This script never fabricates strategy data.",
     "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
+    "phase68i dynamic ladder summary export is built from phase68h summary source plus phase68i app paper-derived metrics.",
     "Other artifacts are copied from existing legacy aliases only."
   ]
 }

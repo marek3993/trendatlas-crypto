@@ -1,0 +1,15 @@
+{
+  "apply_id": "apply_20260404_101222_20260404_093856_first_mvp_test",
+  "patch_id": "code_patch_20260404_093856_first_mvp_test",
+  "run_id": "run_20260404_093856_first_mvp_test",
+  "task_id": "task_20260404_093856_first_mvp_test",
+  "applied_at": "2026-04-04T10:12:22Z",
+  "applied_by": "human",
+  "target_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\tools\\example_low_risk.py",
+  "change_type": "replace_entire_file",
+  "backup_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\code_apply\\backups\\code_patch_20260404_093856_first_mvp_test__example_low_risk.py.backup",
+  "diff_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\code_apply\\diffs\\code_patch_20260404_093856_first_mvp_test.diff.txt",
+  "status": "success",
+  "source_of_truth_write_executed": true,
+  "note": "Code patch applied and validation passed. | validation_result=C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\code_apply\\validation\\code_patch_20260404_093856_first_mvp_test.validation_result.json"
+}

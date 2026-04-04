@@ -41,6 +41,10 @@ REQUIRED_APP_LIVE_MODE_FIELDS = [
     "approval_gate_status",
 ]
 
+PHASE68I_SUMMARY_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_summary.csv"
+PHASE68I_PAPER_INPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_paper.csv"
+PHASE68H_SUMMARY_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "phase68h_dynamic_leverage_ladder_summary.csv"
+
 
 def utc_now_iso() -> str:
     return (
@@ -137,6 +141,200 @@ def copy_plain_artifact(source_path: Path, canonical_path: Path) -> dict[str, An
     }
 
 
+def read_csv_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
+    if not path.exists():
+        fail(f"Missing required CSV: {path}")
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as f:
+            reader = csv.DictReader(f)
+            header = reader.fieldnames or []
+            rows = list(reader)
+            return header, rows
+    except Exception as e:
+        fail(f"Failed reading CSV {path}: {e}")
+    raise RuntimeError("unreachable")
+
+
+def parse_float_required(row: dict[str, str], key: str) -> float:
+    raw = str(row.get(key, "")).strip()
+    if raw == "":
+        fail(f"Missing required numeric field '{key}' in summary source row")
+    try:
+        return float(raw)
+    except Exception:
+        fail(f"Invalid numeric field '{key}' in summary source row: {raw}")
+    raise RuntimeError("unreachable")
+
+
+def parse_float_maybe(raw: str | None) -> float | None:
+    if raw is None:
+        return None
+    text = str(raw).strip()
+    if text == "":
+        return None
+    try:
+        return float(text)
+    except Exception:
+        return None
+
+
+def annualized_sharpe_from_daily_returns(daily_returns: list[float]) -> float | None:
+    if len(daily_returns) < 2:
+        return None
+    mean_ret = sum(daily_returns) / len(daily_returns)
+    var = sum((x - mean_ret) ** 2 for x in daily_returns) / (len(daily_returns) - 1)
+    if var <= 0:
+        return None
+    std = var ** 0.5
+    if std == 0:
+        return None
+    return (mean_ret / std) * (365 ** 0.5)
+
+
+def annualized_sortino_from_daily_returns(daily_returns: list[float]) -> float | None:
+    if len(daily_returns) < 2:
+        return None
+    mean_ret = sum(daily_returns) / len(daily_returns)
+    downside = [x for x in daily_returns if x < 0]
+    if len(downside) < 2:
+        return None
+    downside_mean = sum(downside) / len(downside)
+    downside_var = sum((x - downside_mean) ** 2 for x in downside) / (len(downside) - 1)
+    if downside_var <= 0:
+        return None
+    downside_std = downside_var ** 0.5
+    if downside_std == 0:
+        return None
+    return (mean_ret / downside_std) * (365 ** 0.5)
+
+
+def format_float(value: float | None, decimals: int = 4) -> str:
+    if value is None:
+        return ""
+    return f"{value:.{decimals}f}"
+
+
+def build_phase68i_summary_export() -> dict[str, Any]:
+    summary_header, summary_rows = read_csv_rows(PHASE68H_SUMMARY_INPUT_PATH)
+    if not summary_rows:
+        fail(f"No rows found in {PHASE68H_SUMMARY_INPUT_PATH}")
+
+    target_row = None
+    for row in summary_rows:
+        if str(row.get("model", "")).strip() == "phase68h_dynamic_ladder_candidate":
+            target_row = row
+            break
+
+    if target_row is None:
+        fail("Could not find phase68h_dynamic_ladder_candidate row in phase68h summary source")
+
+    paper_header, paper_rows = read_csv_rows(PHASE68I_PAPER_INPUT_PATH)
+    if not paper_rows:
+        fail(f"No rows found in {PHASE68I_PAPER_INPUT_PATH}")
+
+    if "date" not in paper_header and "ts" not in paper_header:
+        fail("phase68i paper export missing date/ts column")
+
+    if "equity_curve" not in paper_header and "equity" not in paper_header:
+        fail("phase68i paper export missing equity-compatible column")
+
+    if "realistic_ret" not in paper_header:
+        fail("phase68i paper export missing realistic_ret required for sharpe/sortino")
+    if "portfolio_held_asset" not in paper_header:
+        fail("phase68i paper export missing portfolio_held_asset required for switch/cash/btc metrics")
+
+    returns: list[float] = []
+    held_assets: list[str] = []
+    for row in paper_rows:
+        ret = parse_float_maybe(row.get("realistic_ret"))
+        if ret is None:
+            fail("phase68i paper export contains empty/invalid realistic_ret")
+        returns.append(ret)
+        held_assets.append(str(row.get("portfolio_held_asset", "")).strip().upper())
+
+    sharpe = annualized_sharpe_from_daily_returns(returns)
+    sortino = annualized_sortino_from_daily_returns(returns)
+    if sharpe is None:
+        fail("Could not compute sharpe reliably from realistic_ret")
+    if sortino is None:
+        fail("Could not compute sortino reliably from realistic_ret")
+
+    switch_count = 0
+    prev_asset = None
+    for asset in held_assets:
+        if prev_asset is None:
+            prev_asset = asset
+            continue
+        if asset != prev_asset:
+            switch_count += 1
+        prev_asset = asset
+
+    total_days = len(held_assets)
+    if total_days == 0:
+        fail("No held asset rows found in phase68i paper export")
+
+    cash_days = sum(1 for asset in held_assets if asset == "CASH")
+    btc_days = sum(1 for asset in held_assets if asset == "BTC")
+
+    cash_days_pct = (cash_days / total_days) * 100.0
+    btc_days_pct = (btc_days / total_days) * 100.0
+
+    output_header = [
+        "model",
+        "cagr_pct",
+        "max_drawdown_pct",
+        "since2023_cagr_pct",
+        "since2025_cagr_pct",
+        "sharpe",
+        "sortino",
+        "switch_count",
+        "cash_days_pct",
+        "btc_days_pct",
+    ]
+
+    output_row = {
+        "model": "phase68i_dynamic_ladder_candidate",
+        "cagr_pct": str(parse_float_required(target_row, "cagr_pct")),
+        "max_drawdown_pct": str(parse_float_required(target_row, "max_drawdown_pct")),
+        "since2023_cagr_pct": str(parse_float_required(target_row, "since2023_cagr_pct")),
+        "since2025_cagr_pct": str(parse_float_required(target_row, "since2025_cagr_pct")),
+        "sharpe": format_float(sharpe, 4),
+        "sortino": format_float(sortino, 4),
+        "switch_count": str(switch_count),
+        "cash_days_pct": format_float(cash_days_pct, 4),
+        "btc_days_pct": format_float(btc_days_pct, 4),
+    }
+
+    try:
+        with PHASE68I_SUMMARY_OUTPUT_PATH.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=output_header)
+            writer.writeheader()
+            writer.writerow(output_row)
+    except Exception as e:
+        fail(f"Failed writing phase68i summary export {PHASE68I_SUMMARY_OUTPUT_PATH}: {e}")
+
+    return {
+        "status": "phase68i_summary_export_written",
+        "summary_source_path": str(PHASE68H_SUMMARY_INPUT_PATH),
+        "paper_source_path": str(PHASE68I_PAPER_INPUT_PATH),
+        "output_path": str(PHASE68I_SUMMARY_OUTPUT_PATH),
+        "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
+        "computed_fields": [
+            "sharpe",
+            "sortino",
+            "switch_count",
+            "cash_days_pct",
+            "btc_days_pct",
+        ],
+        "copied_fields_from_summary_source": [
+            "cagr_pct",
+            "max_drawdown_pct",
+            "since2023_cagr_pct",
+            "since2025_cagr_pct",
+        ],
+    }
+
+
 def materialize_phase67j_live_status_with_contract(
     source_path: Path,
     canonical_path: Path,
@@ -211,11 +409,11 @@ def main() -> None:
         canonical_path.parent.mkdir(parents=True, exist_ok=True)
 
         row: dict[str, Any] = {
-          "artifact_key": artifact_key,
-          "canonical_path": str(canonical_path),
-          "artifact_type": entry.get("artifact_type"),
-          "owner": entry.get("owner"),
-          "truth_domain": entry.get("truth_domain"),
+            "artifact_key": artifact_key,
+            "canonical_path": str(canonical_path),
+            "artifact_type": entry.get("artifact_type"),
+            "owner": entry.get("owner"),
+            "truth_domain": entry.get("truth_domain"),
         }
 
         source_path = find_existing_source(entry)
@@ -262,6 +460,15 @@ def main() -> None:
         log(f"         source={source_path}")
         log(f"         target={canonical_path}")
 
+    phase68i_summary_result = build_phase68i_summary_export()
+    report_rows.append({
+        "artifact_key": "phase68i_dynamic_ladder_candidate_summary",
+        **phase68i_summary_result,
+    })
+    transformed_count += 1
+    log(f"[MATERIALIZED] phase68i_dynamic_ladder_candidate_summary")
+    log(f"              target={PHASE68I_SUMMARY_OUTPUT_PATH}")
+
     hard_required = [
         "phase67j_winner_paper",
         "phase67j_live_status",
@@ -292,6 +499,7 @@ def main() -> None:
         "notes": [
             "This script never fabricates strategy data.",
             "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
+            "phase68i dynamic ladder summary export is built from phase68h summary source plus phase68i app paper-derived metrics.",
             "Other artifacts are copied from existing legacy aliases only."
         ],
     }
@@ -306,6 +514,7 @@ def main() -> None:
         "already_present_count": already_present_count,
         "contract_ready_after_materialization": len(hard_required_missing) == 0,
         "app_live_mode_fields_written": True,
+        "phase68i_summary_written": PHASE68I_SUMMARY_OUTPUT_PATH.exists(),
     }
 
     manifest = {
@@ -315,11 +524,14 @@ def main() -> None:
         "input_paths": [
             str(PATHS_REGISTRY_PATH.resolve()),
             str(PROJECT_TRUTH_PATH.resolve()),
+            str(PHASE68H_SUMMARY_INPUT_PATH.resolve()),
+            str(PHASE68I_PAPER_INPUT_PATH.resolve()),
         ],
         "output_paths": [
             str(REPORT_PATH.resolve()),
             str(QUALITY_PATH.resolve()),
             str(MANIFEST_PATH.resolve()),
+            str(PHASE68I_SUMMARY_OUTPUT_PATH.resolve()),
         ],
         "status": report["status"],
     }
