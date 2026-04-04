@@ -48,11 +48,11 @@ def read_json_if_exists(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def print_final_summary(prefix: str = "") -> None:
+def print_final_summary() -> None:
     loop_summary = read_json_if_exists(LOOP_SUMMARY_JSON)
     zerosel = read_json_if_exists(ZEROSEL_JSON)
 
-    print(f"[LAUNCH] {prefix}final_summary_start")
+    print("[LAUNCH] final_summary_start")
     print(f"[LAUNCH] loop_summary_json={LOOP_SUMMARY_JSON}")
     print(f"[LAUNCH] zero_selection_json={ZEROSEL_JSON}")
     print(f"[LAUNCH] selected_spec_paths={json.dumps(loop_summary.get('selected_spec_paths', []), ensure_ascii=False)}")
@@ -66,32 +66,11 @@ def print_final_summary(prefix: str = "") -> None:
     print(f"[LAUNCH] worthy_candidates_count={zerosel.get('worthy_candidates_count')}")
     print(f"[LAUNCH] zero_selection_confirmed={zerosel.get('zero_selection_confirmed')}")
     print(f"[LAUNCH] reason_code_counts={json.dumps(zerosel.get('reason_code_counts'), ensure_ascii=False)}")
-    print(f"[LAUNCH] {prefix}final_summary_end")
-
-
-def get_zero_worthy() -> bool:
-    zerosel = read_json_if_exists(ZEROSEL_JSON)
-    return zerosel.get("worthy_candidates_count") == 0 and zerosel.get("zero_selection_confirmed") is True
-
-
-def run_wave(wave: str, mode_flag: str, skip_clean: bool) -> None:
-    if not skip_clean:
-        clean_generated_specs()
-
-    run_step([str(PYTHON), str(IDEATION), mode_flag, "--wave", wave], f"{wave}_ideation")
-    run_step([str(PYTHON), str(SPEC_GEN), mode_flag], f"{wave}_spec_generation")
-    run_step([str(PYTHON), str(AUTOLOOP), mode_flag], f"{wave}_autonomous_loop")
-
-    if mode_flag == "--execute":
-        run_step(
-            [str(PYTHON), str(ZEROSEL), "--loop-output-dir", str(LOOP_OUTPUT_DIR), "--execute"],
-            f"{wave}_zero_selection_diagnostics",
-        )
-        print_final_summary(prefix=f"{wave}_")
+    print("[LAUNCH] final_summary_end")
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Single entry launcher for autonomous research batch with automatic wave fallback.")
+    parser = argparse.ArgumentParser(description="Single entry launcher for redesigned autonomous research batch.")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--skip-clean", action="store_true")
@@ -106,12 +85,19 @@ def main() -> int:
     if not PYTHON.exists():
         raise LaunchError(f"python executable not found: {PYTHON}")
 
-    run_wave("wave1", mode_flag, args.skip_clean)
+    if not args.skip_clean:
+        clean_generated_specs()
 
-    if args.execute and not args.disable_wave2_fallback and get_zero_worthy():
-        print("[LAUNCH] wave1 returned zero worthy candidates")
-        print("[LAUNCH] automatic_fallback=wave2_loss_shape_response")
-        run_wave("wave2", mode_flag, False)
+    run_step([str(PYTHON), str(IDEATION), mode_flag], "ideation")
+    run_step([str(PYTHON), str(SPEC_GEN), mode_flag], "spec_generation")
+    run_step([str(PYTHON), str(AUTOLOOP), mode_flag], "autonomous_loop")
+
+    if args.execute:
+        run_step(
+            [str(PYTHON), str(ZEROSEL), "--loop-output-dir", str(LOOP_OUTPUT_DIR), "--execute"],
+            "zero_selection_diagnostics",
+        )
+        print_final_summary()
 
     print("[LAUNCH] batch_complete")
     return 0

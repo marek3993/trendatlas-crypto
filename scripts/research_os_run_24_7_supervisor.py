@@ -59,7 +59,7 @@ def write_text(path: Path, text: str) -> None:
 
 
 def run_launcher() -> int:
-    cmd = [str(PYTHON), str(LAUNCHER), "--execute", "--disable-wave2-fallback"]
+    cmd = [str(PYTHON), str(LAUNCHER), "--execute"]
     print(f"[SUPERVISOR] cmd={' '.join(cmd)}")
     result = subprocess.run(cmd, cwd=ROOT)
     return result.returncode
