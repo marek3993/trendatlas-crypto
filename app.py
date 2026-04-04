@@ -21,38 +21,38 @@ ROOT = Path(__file__).resolve().parent
 OUTPUTS = ROOT / "outputs"
 BTC_FILE = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
 
-FEEDBACK_DIR = ROOT / "feedback"
-FEEDBACK_IMG_DIR = FEEDBACK_DIR / "images"
-FEEDBACK_CSV = FEEDBACK_DIR / "feedback_log.csv"
-MAX_UPLOAD_MB = 5
-MAX_UPLOAD_BYTES = MAX_UPLOAD_MB * 1024 * 1024
+CONTACT_DIR = ROOT / "contact"
+CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
 
 SELECTOR_PATH = OUTPUTS / "live_strategy_selector.json"
 
 DEFAULT_SELECTOR = {
     "product_name": "TrendAtlas Crypto",
-    "main_model_key": "phase67j_no_neo_main",
-    "reference_model_key": "phase66g_production_soft_filters",
-    "candidate_strategy_model_key": "phase68i_dynamic_ladder_candidate",
+    "main_model_key": "phase68i_dynamic_ladder_candidate",
+    "reference_model_key": "phase67j_no_neo_main",
     "compare_model_keys": [
+        "phase68i_dynamic_ladder_candidate",
         "phase67j_no_neo_main",
-        "phase66g_production_soft_filters",
     ],
     "display_names": {
-        "phase67j_no_neo_main": {
+        "phase68i_dynamic_ladder_candidate": {
             "sk": "Hlavná stratégia",
             "en": "Main strategy",
         },
-        "phase66g_production_soft_filters": {
+        "phase67j_no_neo_main": {
             "sk": "Referenčná stratégia",
             "en": "Reference strategy",
         },
-        "phase68i_dynamic_ladder_candidate": {
-            "sk": "Leverage kandidát",
-            "en": "Leverage candidate",
+        "phase66g_production_soft_filters": {
+            "sk": "Trend / core vrstva",
+            "en": "Trend / core layer",
         },
     },
     "model_sources": {
+        "phase68i_dynamic_ladder_candidate": {
+            "paper_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
+            "live_status_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_live_status.csv",
+        },
         "phase67j_no_neo_main": {
             "summary_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_final_narrow_validation_summary.csv",
             "paper_dir": "outputs/phase67j_final_narrow_validation_pack",
@@ -62,9 +62,6 @@ DEFAULT_SELECTOR = {
             "summary_path": "outputs/phase66g_production_candidate_live/phase66g_production_candidate_summary.csv",
             "paper_dir": "outputs/phase66g_production_candidate_live",
             "live_status_path": "outputs/phase66g_production_candidate_live/phase66g_live_status.csv",
-        },
-        "phase68i_dynamic_ladder_candidate": {
-            "paper_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
         },
     },
     "trend_barometer_source": {
@@ -77,7 +74,7 @@ DEFAULT_SELECTOR = {
 TEXT = {
     "sk": {
         "language": "Jazyk",
-        "tabs": ["Domov", "Porovnanie", "Ako to funguje", "Feedback"],
+        "tabs": ["Domov", "Porovnanie", "Ako to funguje", "Kontakt"],
         "hero": "Pravidlami riadená crypto rotačná stratégia pre meniace sa trhové podmienky",
         "subhero": (
             "TrendAtlas Crypto je navrhnutý pre ľudí, ktorí chcú disciplinovaný spôsob, ako sa pohybovať v crypto trhu "
@@ -89,6 +86,9 @@ TEXT = {
         "trend_state": "Stav trendu",
         "trend_score": "Trend score",
         "buy_threshold": "Buy threshold",
+        "live_mode": "Live režim",
+        "current_profile": "Aktuálny profil",
+        "fallback_profile": "Fallback profil",
         "trend_title": "Trend barometer",
         "trend_desc": "Toto je source-of-truth pohľad na stav trendu z core vrstvy. App nič nedopočítava, len zobrazuje exportovanú hodnotu.",
         "trend_threshold_note": "0.0 je core buy threshold. Nad nulou je trend nad hranou, pod nulou pod hranou. Governance vrstva ešte stále môže blokovať samotný buy.",
@@ -97,7 +97,7 @@ TEXT = {
         "trend_cross_none": "Bez dnešného prechodu",
         "na": "Nedostupné",
         "chart_title": "Vývoj kapitálu",
-        "chart_note": "Graf ukazuje hlavnú stratégiu, referenčnú stratégiu, leverage kandidáta a BTC Buy & Hold v prémiovejšom porovnaní bez zmeny source-of-truth logiky.",
+        "chart_note": "Graf ukazuje hlavnú stratégiu, referenčnú stratégiu a BTC Buy & Hold v prémiovejšom porovnaní bez zmeny source-of-truth logiky.",
         "chart_year": "Začať graf od roku",
         "performance_title": "Výkon na prvý pohľad",
         "ops_title": "Prevádzkové metriky",
@@ -139,7 +139,7 @@ V každom momente drží portfólio jednoducho:
 - a podľa širšieho setupu môže časť času tráviť aj v BTC alebo v cash-like defenzívnej pozícii
 """,
         "compare_title": "Porovnanie stratégií",
-        "compare_desc": "Porovnanie hlavnej stratégie, referenčnej stratégie, leverage kandidáta a BTC Buy & Hold bez interných research názvov.",
+        "compare_desc": "Porovnanie hlavnej stratégie, referenčnej stratégie a BTC Buy & Hold bez interných research názvov.",
         "compare_chart": "Porovnanie kapitálových kriviek",
         "compare_table": "Prehľad verzií",
         "method_title": "Ako to funguje",
@@ -220,17 +220,19 @@ V praxi sa stratégia správa veľmi jednoducho:
 Obchody vykonávame po uzavretí dňa, s jednodňovým oneskorením oproti signálu stratégie.  
 Podľa testov je tento prístup stabilnejší a výnosnejší.
 """,
-        "feedback_title": "Feedback",
-        "feedback_desc": "Pošli poznámku alebo screenshot. Obrázky majú limit 5 MB.",
-        "feedback_text": "Tvoja správa",
-        "feedback_placeholder": "Napíš, čo je jasné, nejasné, užitočné, pokazené alebo čo chýba...",
-        "feedback_image": "Voliteľný obrázok",
-        "feedback_send": "Uložiť feedback",
-        "feedback_saved": "Feedback uložený.",
-        "feedback_need_input": "Najprv napíš správu alebo pridaj obrázok.",
-        "feedback_too_big": "Obrázok je príliš veľký. Maximum je 5 MB.",
-        "feedback_failed": "Uloženie feedbacku zlyhalo",
-        "feedback_files": "Ukladá sa do: feedback/feedback_log.csv a feedback/images/",
+        "contact_title": "Kontakt",
+        "contact_desc": "Ak ťa stratégia zaujala, chceš spoluprácu alebo sa chceš niečo opýtať, nechaj tu email a krátku správu. Ozvem sa len na relevantné veci.",
+        "contact_email": "Email",
+        "contact_type": "Typ správy",
+        "contact_message": "Správa",
+        "contact_placeholder": "Napíš stručne, čo chceš, čo ťa zaujíma alebo s čím chceš pomôcť...",
+        "contact_send": "Uložiť správu",
+        "contact_saved": "Správa uložená.",
+        "contact_need_input": "Vyplň email aj správu.",
+        "contact_bad_email": "Zadaj platný email.",
+        "contact_failed": "Uloženie správy zlyhalo",
+        "contact_files": "Ukladá sa do: contact/contact_log.csv",
+        "contact_type_options": ["Otázka", "Záujem o produkt", "Partnerstvo", "Bug / problém", "Iné"],
         "missing_files": "Chýbajú potrebné súbory:",
         "load_failed": "Načítanie dát zlyhalo",
         "btc_label": "BTC Buy & Hold",
@@ -238,7 +240,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
     },
     "en": {
         "language": "Language",
-        "tabs": ["Home", "Comparison", "How it works", "Feedback"],
+        "tabs": ["Home", "Comparison", "How it works", "Contact"],
         "hero": "A rules-based crypto rotation strategy built for changing market conditions",
         "subhero": (
             "TrendAtlas Crypto is designed for people who want a disciplined way to navigate crypto without manually watching "
@@ -250,6 +252,9 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "trend_state": "Trend state",
         "trend_score": "Trend score",
         "buy_threshold": "Buy threshold",
+        "live_mode": "Live režim",
+        "current_profile": "Aktuálny profil",
+        "fallback_profile": "Fallback profil",
         "trend_title": "Trend barometer",
         "trend_desc": "This is a source-of-truth view of the trend state from the core layer. The app does not calculate the score itself.",
         "trend_threshold_note": "0.0 is the core buy threshold. Above zero means above the threshold, below zero means below it. Governance can still block actual buy execution.",
@@ -258,7 +263,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "trend_cross_none": "No cross today",
         "na": "Unavailable",
         "chart_title": "Capital curve",
-        "chart_note": "The chart shows the main strategy, the reference strategy, the leverage candidate and BTC Buy & Hold in a more premium comparison view without changing the source-of-truth logic.",
+        "chart_note": "The chart shows the main strategy, the reference strategy and BTC Buy & Hold in a more premium comparison view without changing the source-of-truth logic.",
         "chart_year": "Start chart from year",
         "performance_title": "Performance at a glance",
         "ops_title": "Operational metrics",
@@ -299,7 +304,7 @@ At any point in time, the portfolio stays simple:
 - and in weaker conditions the system can also spend time in BTC or a more defensive cash-like stance
 """,
         "compare_title": "Strategy comparison",
-        "compare_desc": "Comparison of the main strategy, the reference strategy, the leverage candidate and BTC Buy & Hold without internal research labels.",
+        "compare_desc": "Comparison of the main strategy, the reference strategy and BTC Buy & Hold without internal research labels.",
         "compare_chart": "Capital curve comparison",
         "compare_table": "Version overview",
         "method_title": "How it works",
@@ -380,17 +385,19 @@ In practice, the strategy behaves very simply:
 Trades are executed after the day closes, with a one-day delay versus the strategy signal.  
 Based on our tests, this approach is more stable and more profitable.
 """,
-        "feedback_title": "Feedback",
-        "feedback_desc": "Send a comment or a screenshot. Images are limited to 5 MB.",
-        "feedback_text": "Your message",
-        "feedback_placeholder": "Tell us what feels clear, confusing, useful, broken, or missing...",
-        "feedback_image": "Optional image",
-        "feedback_send": "Save feedback",
-        "feedback_saved": "Feedback saved.",
-        "feedback_need_input": "Write a message or upload an image first.",
-        "feedback_too_big": "The image is too large. Maximum is 5 MB.",
-        "feedback_failed": "Saving feedback failed",
-        "feedback_files": "Saved to: feedback/feedback_log.csv and feedback/images/",
+        "contact_title": "Contact",
+        "contact_desc": "If the strategy caught your interest, you want a partnership, or you want to ask something, leave your email and a short message here. I will reply only to relevant messages.",
+        "contact_email": "Email",
+        "contact_type": "Message type",
+        "contact_message": "Message",
+        "contact_placeholder": "Write briefly what you want, what interests you, or what you need help with...",
+        "contact_send": "Save message",
+        "contact_saved": "Message saved.",
+        "contact_need_input": "Fill in both email and message.",
+        "contact_bad_email": "Enter a valid email.",
+        "contact_failed": "Saving message failed",
+        "contact_files": "Saved to: contact/contact_log.csv",
+        "contact_type_options": ["Question", "Product interest", "Partnership", "Bug / issue", "Other"],
         "missing_files": "Missing required files:",
         "load_failed": "Failed to load data",
         "btc_label": "BTC Buy & Hold",
@@ -404,6 +411,9 @@ METRIC_HELP = {
         "Stav trendu": "Textový stav exportovaný zo stratégie, nie vypočítaný v appke.",
         "Trend score": "Source-of-truth trend hodnota od -1 po +1. Pod nulou je trend pod buy hranou, nad nulou nad ňou.",
         "Buy threshold": "Hranica 0.0, ktorú používa core vrstva.",
+        "Live režim": "Aktuálny live režim, ktorý app číta priamo z live status exportu.",
+        "Aktuálny profil": "Profil, podľa ktorého je systém momentálne nastavený.",
+        "Fallback profil": "Záložný profil pripravený pre prípad, že hlavný leverage deployment profil nebude vhodný.",
         "Celkové zhodnotenie": "O koľko stratégia narástla za celé sledované obdobie.",
         "Priemerný ročný rast": "Vyhladené ročné tempo rastu. Praktickejšia metrika než len celkové zhodnotenie.",
         "Najväčší pokles": "Najhorší peak-to-trough prepad počas celej histórie.",
@@ -422,6 +432,9 @@ METRIC_HELP = {
         "Trend state": "Text state exported by the strategy layer.",
         "Trend score": "Source-of-truth trend value from -1 to +1.",
         "Buy threshold": "The 0.0 threshold used by the core layer.",
+        "Live mode": "The current live mode read directly from the live status export.",
+        "Current profile": "The profile the system is currently configured to use.",
+        "Fallback profile": "The backup profile prepared in case the main leverage deployment profile is not suitable.",
         "Total return": "How much the strategy grew over the full tracked period.",
         "Average annual growth": "Smoothed annual growth rate. More practical than only total return.",
         "Largest decline": "Worst peak-to-trough drawdown over the full history.",
@@ -537,6 +550,36 @@ def trend_cross_text(trend_live: dict, lang: str) -> str:
     if trend_live.get("crossed_down_today") is True:
         return "Cross down today" if lang == "en" else "Dnes prechod dole"
     return t(lang, "trend_cross_none")
+
+
+def prettify_live_mode(value: str | None, lang: str) -> str:
+    if value is None:
+        return t(lang, "na")
+    raw = str(value).strip().lower()
+    mapping = {
+        "1.0x_without_leverage": {"sk": "Bez leverage", "en": "Without leverage"},
+        "phase68i_dynamic_ladder_candidate": {"sk": "Dynamická leverage škála", "en": "Dynamic leverage ladder"},
+        "phase68g_66g_1p25x_candidate": {"sk": "Statický 1.25x fallback", "en": "Static 1.25x fallback"},
+    }
+    return mapping.get(raw, {"sk": str(value), "en": str(value)})[lang]
+
+
+def prettify_execution_profile(value: str | None, lang: str) -> str:
+    if value is None:
+        return t(lang, "na")
+    raw = str(value).strip().lower()
+    mapping = {
+        "unlevered": {"sk": "Bez leverage", "en": "Without leverage"},
+        "none": {"sk": "Bez leverage", "en": "Without leverage"},
+        "dynamic_ladder": {"sk": "Dynamická leverage škála", "en": "Dynamic leverage ladder"},
+        "static_1p25x": {"sk": "Statický 1.25x fallback", "en": "Static 1.25x fallback"},
+        "phase68g_66g_1p25x_candidate": {"sk": "Statický 1.25x fallback", "en": "Static 1.25x fallback"},
+    }
+    return mapping.get(raw, {"sk": str(value), "en": str(value)})[lang]
+
+
+def valid_email(value: str) -> bool:
+    return bool(re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", value.strip()))
 
 
 # =========================================================
@@ -1098,10 +1141,17 @@ def load_live_public_state(live_path: str | None, model_key: str, lang: str) -> 
     held_asset_public_raw = get_text_from_row(row, "held_asset_public") if has_new_fields else None
     held_state_label_raw = get_text_from_row(row, "held_state_label") if has_new_fields else None
 
+    live_truth_mode_raw = get_text_from_row(row, "live_truth_mode")
+    execution_profile_raw = get_text_from_row(row, "execution_profile")
+    fallback_profile_label_raw = get_text_from_row(row, "fallback_profile_label")
+
     return {
         "has_new_fields": has_new_fields,
         "held_asset_public": prettify_asset_public(held_asset_public_raw, lang),
         "held_state_label": safe_text_value(held_state_label_raw, lang),
+        "live_truth_mode": prettify_live_mode(live_truth_mode_raw, lang),
+        "execution_profile": prettify_execution_profile(execution_profile_raw, lang),
+        "fallback_profile_label": prettify_execution_profile(fallback_profile_label_raw, lang),
     }
 
 
@@ -1160,12 +1210,10 @@ def load_trend_barometer_history(source_cfg: dict) -> pd.DataFrame:
 def make_capital_chart(
     main_df: pd.DataFrame,
     reference_df: pd.DataFrame | None,
-    candidate_df: pd.DataFrame | None,
     btc_df: pd.DataFrame,
     year: int,
     main_label: str,
     reference_label: str,
-    candidate_label: str,
     btc_label: str,
     title: str,
 ) -> go.Figure:
@@ -1183,17 +1231,6 @@ def make_capital_chart(
             )
         )
 
-    if candidate_df is not None and not candidate_df.empty:
-        candidate_plot = filter_from_year(candidate_df, year)
-        fig.add_trace(
-            go.Scatter(
-                x=candidate_plot["ts"],
-                y=rebase_series(candidate_plot["equity"]),
-                mode="lines",
-                name=candidate_label,
-                line=dict(width=3.0, color="#ffd166", dash="dash"),
-            )
-        )
 
     btc_plot = filter_from_year(btc_df, year)
     fig.add_trace(
@@ -1322,55 +1359,36 @@ def make_trend_history_chart(history_df: pd.DataFrame, lang: str) -> go.Figure:
 
 
 # =========================================================
-# FEEDBACK
+# CONTACT
 # =========================================================
 
-def ensure_feedback_dirs() -> None:
-    FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
-    FEEDBACK_IMG_DIR.mkdir(parents=True, exist_ok=True)
+def ensure_contact_dir() -> None:
+    CONTACT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def slugify_filename(name: str) -> str:
-    name = name.strip().lower()
-    name = re.sub(r"[^a-z0-9._-]+", "_", name)
-    return name[:80] if name else "file"
-
-
-def save_feedback(note_text: str, uploaded_file) -> None:
-    ensure_feedback_dirs()
+def save_contact_message(email: str, message_type: str, message: str) -> None:
+    ensure_contact_dir()
 
     now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     row_id = uuid.uuid4().hex[:12]
-    image_path = ""
-    original_name = ""
-
-    if uploaded_file is not None:
-        original_name = uploaded_file.name
-        ext = Path(uploaded_file.name).suffix.lower()
-        safe_name = slugify_filename(Path(uploaded_file.name).stem)
-        final_name = f"{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{row_id}_{safe_name}{ext}"
-        target = FEEDBACK_IMG_DIR / final_name
-        with open(target, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-        image_path = str(target.relative_to(ROOT))
 
     row = pd.DataFrame(
         [{
             "created_utc": now,
             "id": row_id,
-            "note_text": note_text.strip(),
-            "image_original_name": original_name,
-            "image_path": image_path,
+            "email": email.strip(),
+            "message_type": message_type.strip(),
+            "message": message.strip(),
         }]
     )
 
-    if FEEDBACK_CSV.exists():
-        existing = pd.read_csv(FEEDBACK_CSV)
+    if CONTACT_CSV.exists():
+        existing = pd.read_csv(CONTACT_CSV)
         combined = pd.concat([existing, row], ignore_index=True)
     else:
         combined = row
 
-    combined.to_csv(FEEDBACK_CSV, index=False)
+    combined.to_csv(CONTACT_CSV, index=False)
 
 
 # =========================================================
@@ -1417,7 +1435,6 @@ if missing:
 
 main_key = selector_cfg.get("main_model_key")
 reference_key = selector_cfg.get("reference_model_key")
-candidate_key = selector_cfg.get("candidate_strategy_model_key")
 compare_keys = [x for x in selector_cfg.get("compare_model_keys", []) if x]
 labels = build_display_map(selector_cfg, lang)
 
@@ -1445,18 +1462,6 @@ for model_key in compare_keys:
     except Exception as e:
         paper_errors.append(f"{model_key}: {e}")
 
-candidate_equity_df = None
-if candidate_key:
-    candidate_source_cfg = resolve_model_source(selector_cfg, candidate_key)
-    try:
-        candidate_equity_df = load_model_paper(
-            candidate_source_cfg.get("paper_dir"),
-            candidate_key,
-            explicit_paper_path=candidate_source_cfg.get("paper_path"),
-        )
-    except Exception:
-        candidate_equity_df = None
-
 if main_key not in papers:
     st.error(f"{t(lang, 'load_failed')}: missing main model paper for {main_key}")
     for msg in paper_errors:
@@ -1473,7 +1478,7 @@ trend_history_df = load_trend_barometer_history(trend_source_cfg)
 main_metrics = model_metrics.get(main_key, {})
 reference_metrics = model_metrics.get(reference_key, {})
 
-years = available_years_from_frames(list(papers.values()) + [btc_df] + ([candidate_equity_df] if candidate_equity_df is not None else []))
+years = available_years_from_frames(list(papers.values()) + [btc_df])
 if not years:
     st.error(f"{t(lang, 'load_failed')}: no usable dates")
     st.stop()
@@ -1523,6 +1528,32 @@ with tabs[0]:
                     item["accent"],
                 )
 
+    live_mode_cols = st.columns(3)
+    with live_mode_cols[0]:
+        render_color_card(
+            t(lang, "live_mode"),
+            safe_text_value(live_public_state.get("live_truth_mode"), lang=lang),
+            "",
+            METRIC_HELP[lang][t(lang, "live_mode")],
+            "green",
+        )
+    with live_mode_cols[1]:
+        render_color_card(
+            t(lang, "current_profile"),
+            safe_text_value(live_public_state.get("execution_profile"), lang=lang),
+            "",
+            METRIC_HELP[lang][t(lang, "current_profile")],
+            "violet",
+        )
+    with live_mode_cols[2]:
+        render_color_card(
+            t(lang, "fallback_profile"),
+            safe_text_value(live_public_state.get("fallback_profile_label"), lang=lang),
+            "",
+            METRIC_HELP[lang][t(lang, "fallback_profile")],
+            "neutral",
+        )
+
     st.markdown(f"### {t(lang, 'chart_title')}")
     st.caption(t(lang, "chart_note"))
     selected_year_home = st.selectbox(
@@ -1535,12 +1566,10 @@ with tabs[0]:
         make_capital_chart(
             main_df=papers[main_key],
             reference_df=reference_equity_df,
-            candidate_df=candidate_equity_df,
             btc_df=btc_df,
             year=selected_year_home,
             main_label=labels.get(main_key, main_key),
             reference_label=labels.get(reference_key, reference_key),
-            candidate_label=labels.get(candidate_key, candidate_key or "Candidate"),
             btc_label=t(lang, "btc_label"),
             title=t(lang, "chart_title"),
         ),
@@ -1682,12 +1711,10 @@ with tabs[1]:
         make_capital_chart(
             main_df=papers[main_key],
             reference_df=reference_equity_df,
-            candidate_df=candidate_equity_df,
             btc_df=btc_df,
             year=selected_year_compare,
             main_label=labels.get(main_key, main_key),
             reference_label=labels.get(reference_key, reference_key),
-            candidate_label=labels.get(candidate_key, candidate_key or "Candidate"),
             btc_label=t(lang, "btc_label"),
             title=t(lang, "compare_chart"),
         ),
@@ -1715,19 +1742,7 @@ with tabs[1]:
         },
     ]
 
-    if candidate_equity_df is not None and not candidate_equity_df.empty:
-        candidate_metrics = build_metrics(None, None, candidate_equity_df)
-        compare_rows.append(
-            {
-                "Stratégia" if lang == "sk" else "Strategy": labels.get(candidate_key, candidate_key),
-                t(lang, "cagr"): safe_metric_text(candidate_metrics.get("cagr_pct"), lang=lang),
-                t(lang, "max_dd"): safe_metric_text(candidate_metrics.get("max_drawdown_pct"), lang=lang),
-                t(lang, "since2023"): safe_metric_text(candidate_metrics.get("since2023_cagr_pct"), lang=lang),
-                t(lang, "since2025"): safe_metric_text(candidate_metrics.get("since2025_cagr_pct"), lang=lang),
-                t(lang, "sharpe"): safe_metric_text(candidate_metrics.get("sharpe"), decimals=3, suffix="", lang=lang),
-                t(lang, "sortino"): safe_metric_text(candidate_metrics.get("sortino"), decimals=3, suffix="", lang=lang),
-            }
-        )
+  
 
     compare_df = pd.DataFrame(compare_rows)
     st.markdown(f"### {t(lang, 'compare_table')}")
@@ -1738,65 +1753,33 @@ with tabs[2]:
     st.markdown(t(lang, "method_md"))
 
 with tabs[3]:
-    st.subheader(t(lang, "feedback_title"))
-    st.caption(t(lang, "feedback_desc"))
+    st.subheader(t(lang, "contact_title"))
+    st.caption(t(lang, "contact_desc"))
 
-    with st.form("feedback_form", clear_on_submit=True):
-        note_text = st.text_area(
-            t(lang, "feedback_text"),
-            placeholder=t(lang, "feedback_placeholder"),
+    with st.form("contact_form", clear_on_submit=True):
+        email = st.text_input(t(lang, "contact_email"))
+        message_type = st.selectbox(t(lang, "contact_type"), options=t(lang, "contact_type_options"))
+        message = st.text_area(
+            t(lang, "contact_message"),
+            placeholder=t(lang, "contact_placeholder"),
             height=180,
         )
-        uploaded_file = st.file_uploader(
-            t(lang, "feedback_image"),
-            type=["png", "jpg", "jpeg", "webp"],
-            accept_multiple_files=False,
-        )
-        submitted = st.form_submit_button(t(lang, "feedback_send"))
+        honeypot = st.text_input("website", value="", help="Leave blank", label_visibility="collapsed")
+        submitted = st.form_submit_button(t(lang, "contact_send"))
 
     if submitted:
-        if not note_text.strip() and uploaded_file is None:
-            st.warning(t(lang, "feedback_need_input"))
-        elif uploaded_file is not None and getattr(uploaded_file, "size", 0) > MAX_UPLOAD_BYTES:
-            st.warning(t(lang, "feedback_too_big"))
+        if honeypot.strip():
+            st.success(t(lang, "contact_saved"))
+        elif not email.strip() or not message.strip():
+            st.warning(t(lang, "contact_need_input"))
+        elif not valid_email(email):
+            st.warning(t(lang, "contact_bad_email"))
         else:
             try:
-                ensure_feedback_dirs()
-
-                now = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                row_id = uuid.uuid4().hex[:12]
-                image_path = ""
-                original_name = ""
-
-                if uploaded_file is not None:
-                    original_name = uploaded_file.name
-                    ext = Path(uploaded_file.name).suffix.lower()
-                    safe_name = re.sub(r"[^a-z0-9._-]+", "_", Path(uploaded_file.name).stem.strip().lower())[:80] or "file"
-                    final_name = f"{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{row_id}_{safe_name}{ext}"
-                    target = FEEDBACK_IMG_DIR / final_name
-                    with open(target, "wb") as f:
-                        f.write(uploaded_file.getbuffer())
-                    image_path = str(target.relative_to(ROOT))
-
-                row = pd.DataFrame(
-                    [{
-                        "created_utc": now,
-                        "id": row_id,
-                        "note_text": note_text.strip(),
-                        "image_original_name": original_name,
-                        "image_path": image_path,
-                    }]
-                )
-
-                if FEEDBACK_CSV.exists():
-                    existing = pd.read_csv(FEEDBACK_CSV)
-                    combined = pd.concat([existing, row], ignore_index=True)
-                else:
-                    combined = row
-
-                combined.to_csv(FEEDBACK_CSV, index=False)
-                st.success(t(lang, "feedback_saved"))
+                save_contact_message(email=email, message_type=message_type, message=message)
+                st.success(t(lang, "contact_saved"))
             except Exception as e:
-                st.error(f"{t(lang, 'feedback_failed')}: {e}")
+                st.error(f"{t(lang, 'contact_failed')}: {e}")
 
-    st.caption(t(lang, "feedback_files"))
+    st.caption(t(lang, "contact_files"))
+

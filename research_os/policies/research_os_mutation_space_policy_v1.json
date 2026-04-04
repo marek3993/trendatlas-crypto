@@ -1,21 +1,21 @@
 {
-  "policy_version": "6.0.0",
-  "description": "Mechanism-first redesigned family space after exhausted wave1 and wave2.",
+  "policy_version": "7.0.0",
+  "description": "MASTER-approved human-reset family space for this strategy line.",
   "enabled_families": {
-    "regime_reentry_proof": {
+    "baseline_relative_edge_gate": {
       "enabled": true,
-      "role": "redesigned_wave1",
+      "role": "human_reset_batch",
       "max_candidates_per_batch": 1
     },
-    "leader_fragility_filter": {
+    "breadth_dispersion_corridor": {
       "enabled": true,
-      "role": "redesigned_wave1",
+      "role": "human_reset_batch",
       "max_candidates_per_batch": 1
     },
-    "recovery_quality_split": {
-      "enabled": false,
-      "role": "disabled_initially",
-      "max_candidates_per_batch": 0
+    "downside_asymmetry_veto": {
+      "enabled": true,
+      "role": "human_reset_batch",
+      "max_candidates_per_batch": 1
     }
   },
   "blocked_families": [
@@ -26,6 +26,9 @@
     "transition_state_machine",
     "trend_acceleration_confirmation",
     "loss_shape_response",
+    "regime_reentry_proof",
+    "leader_fragility_filter",
+    "recovery_quality_split",
     "probation_rule_tuning",
     "generic_governance_fiddling",
     "generic_tuning_shell",
@@ -52,30 +55,32 @@
     "Calmar"
   ],
   "family_rules": {
-    "regime_reentry_proof": {
+    "baseline_relative_edge_gate": {
       "required_fields": [
-        "reentry_proof_sequence_name",
-        "follow_through_requirement",
-        "persistence_requirement",
-        "immediate_reversal_block_rule"
+        "rolling_excess_edge_reference",
+        "short_horizon_edge_gate",
+        "medium_horizon_edge_gate",
+        "fallback_to_baseline_rule"
       ],
       "mechanism_first_required": true,
       "parameter_first_forbidden": true
     },
-    "leader_fragility_filter": {
+    "breadth_dispersion_corridor": {
       "required_fields": [
-        "leader_fragility_signal_name",
-        "stability_definition",
-        "activation_or_continuation_gate"
+        "breadth_measure_name",
+        "dispersion_measure_name",
+        "healthy_corridor_definition",
+        "fallback_to_baseline_rule"
       ],
       "mechanism_first_required": true,
       "parameter_first_forbidden": true
     },
-    "recovery_quality_split": {
+    "downside_asymmetry_veto": {
       "required_fields": [
-        "recovery_classifier_name",
-        "high_quality_vs_weak_recovery_logic",
-        "full_risk_on_gate_rule"
+        "downside_reference_name",
+        "downside_beta_or_capture_measure",
+        "downside_cap_rule",
+        "promotion_veto_rule"
       ],
       "mechanism_first_required": true,
       "parameter_first_forbidden": true
@@ -95,27 +100,23 @@
       "improve selection quality"
     ],
     "reject_if_generic_only": [
-      "parameter change without new state",
+      "parameter change without new gate",
       "parameter change without new classification",
-      "parameter change without new logical gate"
+      "parameter change without baseline-relative logic"
     ],
     "reject_if_not_mechanism_first": true
   },
   "next_batch_policy": {
     "keep_scoring_strictness": true,
-    "max_active_families": 2,
-    "max_selected_specs_total": 2,
+    "max_active_families": 3,
+    "max_selected_specs_total": 3,
     "exactly_one_spec_per_active_family": true,
     "active_families": [
-      "regime_reentry_proof",
-      "leader_fragility_filter"
+      "baseline_relative_edge_gate",
+      "breadth_dispersion_corridor",
+      "downside_asymmetry_veto"
     ],
-    "disabled_initially": [
-      "recovery_quality_split",
-      "cooldown_tuning_v3",
-      "threshold_tuning_v3",
-      "ranking_weight_tuning_v4"
-    ],
-    "if_zero_worthy_again": "stop_autonomous_family_ideation_and_escalate_to_mrv1_master_for_human_designed_hypothesis_reset"
+    "if_at_least_one_worthy": "continue_only_winning_family",
+    "if_zero_worthy_again": "pause_this_strategy_line_and_escalate_to_master"
   }
 }

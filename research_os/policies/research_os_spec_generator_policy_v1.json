@@ -1,6 +1,6 @@
 {
   "policy_name": "research_os_spec_generator_policy_v1",
-  "policy_version": "7.0.0",
+  "policy_version": "8.0.0",
   "generator_name": "research_os_experiment_spec_generator_v1",
   "default_status": "spec_ready",
   "default_budget_class": "standard",
@@ -84,16 +84,23 @@
     "primary_expected_metric_improvement"
   ],
   "family_specific_required_fields": {
-    "regime_reentry_proof": [
-      "reentry_proof_sequence_name",
-      "follow_through_requirement",
-      "persistence_requirement",
-      "immediate_reversal_block_rule"
+    "baseline_relative_edge_gate": [
+      "rolling_excess_edge_reference",
+      "short_horizon_edge_gate",
+      "medium_horizon_edge_gate",
+      "fallback_to_baseline_rule"
     ],
-    "leader_fragility_filter": [
-      "leader_fragility_signal_name",
-      "stability_definition",
-      "activation_or_continuation_gate"
+    "breadth_dispersion_corridor": [
+      "breadth_measure_name",
+      "dispersion_measure_name",
+      "healthy_corridor_definition",
+      "fallback_to_baseline_rule"
+    ],
+    "downside_asymmetry_veto": [
+      "downside_reference_name",
+      "downside_beta_or_capture_measure",
+      "downside_cap_rule",
+      "promotion_veto_rule"
     ]
   },
   "allowed_primary_expected_metric_improvement": [

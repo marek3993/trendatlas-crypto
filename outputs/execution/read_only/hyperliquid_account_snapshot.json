@@ -1,6 +1,6 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-04-03T12:14:55Z",
+  "as_of_utc": "2026-04-03T20:01:28Z",
   "execution_mode": "read_only",
   "trading_enabled": false,
   "kill_switch": true,
@@ -26,7 +26,7 @@
       "crossMaintenanceMarginUsed": "0.0",
       "withdrawable": "0.0",
       "assetPositions": [],
-      "time": 1775218531080
+      "time": 1775246524444
     },
     "openOrders": [],
     "userFills": []

@@ -56,42 +56,61 @@ def make_id(label: str) -> str:
     return f"hyp_{digest}"
 
 
-def redesigned_templates() -> list[dict[str, Any]]:
+def reset_templates() -> list[dict[str, Any]]:
     return [
         {
-            "hypothesis_label": "core_regime_reentry_proof_v1",
-            "mutation_family": "regime_reentry_proof",
-            "family_name": "regime_reentry_proof",
-            "hypothesis_text": "Require a re-entry proof sequence after cash or stress exit before full risk-on reactivation.",
-            "rationale": "Baseline can re-enter risk-on too early after weak recovery.",
-            "known_baseline_weakness": "Baseline can re-enter risk-on too early after weak recovery.",
-            "exact_mechanism_of_improvement": "Require follow-through, persistence and no immediate reversal before full risk-on after exit.",
-            "new_state_or_new_classification": "New re-entry proof sequence gate.",
-            "exact_compare_target": "phase66g_production_soft_filters",
-            "why_not_parameter_tuning": "Introduces a new re-entry mechanism and sequence gate, not a threshold tweak.",
-            "why_expected_edge_should_survive_strict_scoring": "Targets one concrete re-entry failure mode with a discrete proof sequence.",
-            "primary_expected_metric_improvement": "Calmar",
-            "reentry_proof_sequence_name": "post_exit_reentry_proof_sequence",
-            "follow_through_requirement": "require follow-through confirmation after exit",
-            "persistence_requirement": "require persistence before full risk-on",
-            "immediate_reversal_block_rule": "block full risk-on if immediate reversal appears during proof window"
+            "hypothesis_label": "core_baseline_relative_edge_gate_v1",
+            "mutation_family": "baseline_relative_edge_gate",
+            "family_name": "baseline_relative_edge_gate",
+            "hypothesis_text": "Promote candidate only when rolling excess edge versus baseline is positive on two horizons; otherwise fallback to baseline.",
+            "rationale": "Family fails because it does not create stable excess edge versus baseline, especially in hard subperiods.",
+            "known_baseline_weakness": "Family fails to create stable excess edge versus baseline, especially in hard subperiods.",
+            "exact_mechanism_of_improvement": "Require positive rolling excess edge versus baseline on short and medium horizons before promotion; otherwise fallback to baseline.",
+            "new_state_or_new_classification": "New baseline-relative excess-edge promotion gate.",
+            "exact_compare_target": "phase67j_no_neo_main",
+            "why_not_parameter_tuning": "Introduces explicit baseline-relative gating logic instead of tuning thresholds or weights.",
+            "why_expected_edge_should_survive_strict_scoring": "Directly ties promotion to stable excess edge versus baseline on two horizons.",
+            "primary_expected_metric_improvement": "since2025",
+            "rolling_excess_edge_reference": "baseline_relative_excess_edge",
+            "short_horizon_edge_gate": "short_horizon_excess_edge_must_be_positive",
+            "medium_horizon_edge_gate": "medium_horizon_excess_edge_must_be_positive",
+            "fallback_to_baseline_rule": "if either horizon fails then fallback_to_baseline"
         },
         {
-            "hypothesis_label": "core_leader_fragility_filter_v1",
-            "mutation_family": "leader_fragility_filter",
-            "family_name": "leader_fragility_filter",
-            "hypothesis_text": "Block or reduce risk-on when the selected leader looks strong by level but fails a stability or fragility screen.",
-            "rationale": "Selected leader can look strong by level but still be unstable and break quickly.",
-            "known_baseline_weakness": "Selected leader looks strong by level but is unstable and breaks quickly.",
-            "exact_mechanism_of_improvement": "Add a leader fragility or stability filter before activation or continuation.",
-            "new_state_or_new_classification": "New leader stability classification gate.",
-            "exact_compare_target": "phase66g_production_soft_filters",
-            "why_not_parameter_tuning": "Introduces a new leader stability concept, not ranking-weight tuning.",
-            "why_expected_edge_should_survive_strict_scoring": "Targets selection persistence weakness directly with a new logical gate.",
-            "primary_expected_metric_improvement": "since2025",
-            "leader_fragility_signal_name": "leader_stability_fragility_filter",
-            "stability_definition": "leader must remain stable across short persistence checks before activation or continuation",
-            "activation_or_continuation_gate": "unstable leader blocks or reduces risk-on"
+            "hypothesis_label": "core_breadth_dispersion_corridor_v1",
+            "mutation_family": "breadth_dispersion_corridor",
+            "family_name": "breadth_dispersion_corridor",
+            "hypothesis_text": "Promote candidate only inside a healthy breadth and dispersion corridor; otherwise fallback to baseline.",
+            "rationale": "Family quality collapses when market participation is too narrow or too chaotic.",
+            "known_baseline_weakness": "Family quality collapses when market participation is too narrow or too chaotic.",
+            "exact_mechanism_of_improvement": "Require breadth and dispersion to remain inside a healthy corridor before promotion; otherwise fallback to baseline.",
+            "new_state_or_new_classification": "New breadth-dispersion corridor classification gate.",
+            "exact_compare_target": "phase67j_no_neo_main",
+            "why_not_parameter_tuning": "Introduces a new corridor gate based on market participation quality, not a simple parameter change.",
+            "why_expected_edge_should_survive_strict_scoring": "Targets a concrete participation-quality collapse mode with explicit fallback behavior.",
+            "primary_expected_metric_improvement": "DD",
+            "breadth_measure_name": "market_breadth_participation",
+            "dispersion_measure_name": "cross_sectional_dispersion",
+            "healthy_corridor_definition": "breadth_not_too_narrow_and_dispersion_not_too_chaotic",
+            "fallback_to_baseline_rule": "outside_corridor_fallback_to_baseline"
+        },
+        {
+            "hypothesis_label": "core_downside_asymmetry_veto_v1",
+            "mutation_family": "downside_asymmetry_veto",
+            "family_name": "downside_asymmetry_veto",
+            "hypothesis_text": "Veto promotion when downside beta or downside capture versus reference exceeds cap.",
+            "rationale": "Family still participates too much in bad downside states.",
+            "known_baseline_weakness": "Family still participates too much in bad downside states.",
+            "exact_mechanism_of_improvement": "Block promotion when downside beta or downside capture versus reference breaches a cap.",
+            "new_state_or_new_classification": "New downside-asymmetry veto gate.",
+            "exact_compare_target": "phase67j_no_neo_main",
+            "why_not_parameter_tuning": "Introduces a downside-state veto relationship, not a threshold or weight tuning shell.",
+            "why_expected_edge_should_survive_strict_scoring": "Targets explicit downside participation weakness with a hard veto gate.",
+            "primary_expected_metric_improvement": "DD",
+            "downside_reference_name": "baseline_or_reference_downside_profile",
+            "downside_beta_or_capture_measure": "downside_beta_or_capture_vs_reference",
+            "downside_cap_rule": "must_not_exceed_downside_cap",
+            "promotion_veto_rule": "if_downside_measure_exceeds_cap_then_veto_promotion"
         }
     ]
 
@@ -136,12 +155,12 @@ def main() -> int:
     mutation_policy = load_json(MUTATION_POLICY_PATH)
 
     selected: list[dict[str, Any]] = []
-    for payload in redesigned_templates():
+    for payload in reset_templates():
         candidate = {
             "hypothesis_id": make_id(payload["hypothesis_label"]),
             "branch": "core",
             "segment_owner": "core_strategy",
-            "baseline_reference": "phase66g_production_soft_filters",
+            "baseline_reference": "phase67j_no_neo_main",
             **payload
         }
         ok, reason = validate_candidate(candidate, ideation_policy, mutation_policy)
@@ -165,7 +184,7 @@ def main() -> int:
 
     if args.execute:
         write_json(OUTPUT_JSON, {
-            "wave": "redesigned_batch_v1",
+            "wave": "master_reset_batch_v1",
             "hypotheses": selected,
             "policy_version": ideation_policy["policy_version"]
         })

@@ -1,6 +1,6 @@
 {
-  "policy_version": "6.0.0",
-  "description": "Controlled ideation v6 with redesigned mechanism-first family space.",
+  "policy_version": "7.0.0",
+  "description": "Controlled ideation v7 for MASTER-approved human-reset batch.",
   "allowed_branches": [
     "core"
   ],
@@ -26,16 +26,23 @@
     "primary_expected_metric_improvement"
   ],
   "family_specific_required_fields": {
-    "regime_reentry_proof": [
-      "reentry_proof_sequence_name",
-      "follow_through_requirement",
-      "persistence_requirement",
-      "immediate_reversal_block_rule"
+    "baseline_relative_edge_gate": [
+      "rolling_excess_edge_reference",
+      "short_horizon_edge_gate",
+      "medium_horizon_edge_gate",
+      "fallback_to_baseline_rule"
     ],
-    "leader_fragility_filter": [
-      "leader_fragility_signal_name",
-      "stability_definition",
-      "activation_or_continuation_gate"
+    "breadth_dispersion_corridor": [
+      "breadth_measure_name",
+      "dispersion_measure_name",
+      "healthy_corridor_definition",
+      "fallback_to_baseline_rule"
+    ],
+    "downside_asymmetry_veto": [
+      "downside_reference_name",
+      "downside_beta_or_capture_measure",
+      "downside_cap_rule",
+      "promotion_veto_rule"
     ]
   },
   "anti_generic_guards": {
@@ -60,8 +67,9 @@
     "Calmar"
   ],
   "generation_limits": {
-    "max_selected_specs_total": 2,
-    "regime_reentry_proof_max": 1,
-    "leader_fragility_filter_max": 1
+    "max_selected_specs_total": 3,
+    "baseline_relative_edge_gate_max": 1,
+    "breadth_dispersion_corridor_max": 1,
+    "downside_asymmetry_veto_max": 1
   }
 }

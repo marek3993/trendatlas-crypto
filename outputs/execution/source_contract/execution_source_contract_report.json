@@ -1,6 +1,6 @@
 {
   "report_type": "execution_source_contract_report",
-  "generated_at_utc": "2026-04-03T13:18:01Z",
+  "generated_at_utc": "2026-04-03T20:01:25Z",
   "source_of_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "required_artifact_keys": [
     "phase67j_winner_paper",
@@ -78,7 +78,7 @@
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 492,
-        "modified_utc": "2026-04-03T13:18:01Z",
+        "modified_utc": "2026-04-03T20:01:25Z",
         "file_type": "csv",
         "header": [
           "model",
