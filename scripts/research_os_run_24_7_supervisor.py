@@ -184,8 +184,8 @@ def main() -> int:
             "ts": now_utc(),
             "cycle_index": 0,
             "stop_reason": stop_reason,
-            "requires_master_escalation": false,
-            "worthy_candidate_found": false,
+            "requires_master_escalation": False,
+            "worthy_candidate_found": False,
             "latest": latest,
             "retired_strategy_line_id": RETIRED_STRATEGY_LINE_ID
         }
