@@ -83,15 +83,5 @@
       "execution_profile": "static_1p25x",
       "leverage_mode": "static_1p25x"
     }
-  },
-  "automation_capabilities": {
-    "safe_code_apply_layer_available": true,
-    "code_apply_flow": "approval_gated",
-    "supported_code_patch_types": [
-      "replace_entire_file",
-      "replace_exact_block"
-    ],
-    "dispatcher_available": true,
-    "uncontrolled_auto_write": false
   }
 }
