@@ -101,21 +101,14 @@ def validate_patch_contract(patch: dict) -> tuple[Path, dict]:
     if len(proposed_changes) != 1:
         raise ValueError("MVP apply_code_patch supports exactly one proposed change")
 
-    if patch_type != "replace_entire_file":
-        raise ValueError("MVP apply_code_patch currently supports only replace_entire_file")
+    if patch_type not in {"replace_entire_file", "replace_exact_block"}:
+        raise ValueError(f"Unsupported patch_type: {patch_type}")
 
     target_path = resolve_target(str(target_files[0]))
     change = proposed_changes[0]
 
-    if str(change.get("change_type", "")).strip() != "replace_entire_file":
-        raise ValueError("Only replace_entire_file change_type is supported in MVP")
-
     if resolve_target(str(change.get("target", ""))) != target_path:
         raise ValueError("proposed_changes[0].target does not match target_files[0]")
-
-    payload = change.get("payload", {})
-    if "new_content" not in payload:
-        raise ValueError("replace_entire_file requires payload.new_content")
 
     return target_path, change
 
@@ -136,6 +129,39 @@ def read_old_content(target_path: Path) -> str:
     if target_path.exists():
         return target_path.read_text(encoding="utf-8")
     return ""
+
+
+def build_new_content(change: dict, old_content: str) -> tuple[str, str]:
+    change_type = str(change.get("change_type", "")).strip()
+    payload = change.get("payload", {})
+
+    if change_type == "replace_entire_file":
+        if "new_content" not in payload:
+            raise ValueError("replace_entire_file requires payload.new_content")
+        return str(payload["new_content"]), change_type
+
+    if change_type == "replace_exact_block":
+        block_id = str(payload.get("block_id", "")).strip()
+        new_block_content = str(payload.get("new_block_content", ""))
+
+        if not block_id:
+            raise ValueError("replace_exact_block requires payload.block_id")
+
+        start_marker = f"# PATCH_BLOCK_START:{block_id}"
+        end_marker = f"# PATCH_BLOCK_END:{block_id}"
+
+        start_idx = old_content.find(start_marker)
+        end_idx = old_content.find(end_marker)
+
+        if start_idx == -1 or end_idx == -1 or end_idx < start_idx:
+            raise ValueError(f"Patch block markers not found for block_id={block_id}")
+
+        end_idx = end_idx + len(end_marker)
+        replacement = f"{start_marker}\n{new_block_content}\n{end_marker}"
+        new_content = old_content[:start_idx] + replacement + old_content[end_idx:]
+        return new_content, change_type
+
+    raise ValueError(f"Unsupported change_type: {change_type}")
 
 
 def write_diff_artifact(diff_path: Path, target_file: str, old_content: str, new_content: str) -> None:
@@ -164,6 +190,7 @@ def build_apply_log(
     patch_id: str,
     applied_by: str,
     target_file: str,
+    change_type: str,
     backup_path: Path,
     diff_path: Path,
     validation_result_path: Path,
@@ -182,7 +209,7 @@ def build_apply_log(
     log["applied_at"] = now_utc_iso()
     log["applied_by"] = applied_by
     log["target_file"] = target_file
-    log["change_type"] = "replace_entire_file"
+    log["change_type"] = change_type
     log["backup_path"] = str(backup_path)
     log["diff_path"] = str(diff_path)
     log["status"] = status
@@ -205,8 +232,8 @@ def main() -> None:
     ensure_idempotency(patch_id)
 
     target_path, change = validate_patch_contract(patch)
-    new_content = str(change["payload"]["new_content"])
     old_content = read_old_content(target_path)
+    new_content, change_type = build_new_content(change, old_content)
 
     backup_path = build_backup_path(patch_id, target_path)
     diff_path = build_diff_path(patch_id)
@@ -235,6 +262,7 @@ def main() -> None:
             patch_id=patch_id,
             applied_by=applied_by,
             target_file=str(target_path),
+            change_type=change_type,
             backup_path=backup_path,
             diff_path=diff_path,
             validation_result_path=validation_result_path,
@@ -263,6 +291,7 @@ def main() -> None:
         patch_id=patch_id,
         applied_by=applied_by,
         target_file=str(target_path),
+        change_type=change_type,
         backup_path=backup_path,
         diff_path=diff_path,
         validation_result_path=validation_result_path,

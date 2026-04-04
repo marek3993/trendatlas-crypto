@@ -99,12 +99,22 @@ def infer_risk_level(target_path: Path) -> str:
 def main() -> None:
     if len(sys.argv) < 4:
         raise SystemExit(
-            "Usage: python create_code_patch.py <target_file> <patch_slug> <reason>"
+            "Usage:\n"
+            "  python create_code_patch.py <target_file> <patch_slug> <reason>\n"
+            "  python create_code_patch.py <target_file> <patch_slug> <reason> replace_exact_block <block_id>"
         )
 
     target_file_arg = sys.argv[1].strip()
     patch_slug_arg = sys.argv[2].strip()
     reason = sys.argv[3].strip()
+    patch_mode = sys.argv[4].strip() if len(sys.argv) > 4 else "replace_entire_file"
+    block_id = sys.argv[5].strip() if len(sys.argv) > 5 else ""
+
+    if patch_mode not in {"replace_entire_file", "replace_exact_block"}:
+        raise ValueError(f"Unsupported patch mode: {patch_mode}")
+
+    if patch_mode == "replace_exact_block" and not block_id:
+        raise ValueError("replace_exact_block requires <block_id>")
 
     target_path = resolve_target(target_file_arg)
     patch_slug = slugify(patch_slug_arg)
@@ -120,19 +130,32 @@ def main() -> None:
     patch["run_id"] = f"run_{now_utc_compact()}_{patch_slug}"
     patch["target_files"] = [str(target_path)]
     patch["reason"] = reason
-    patch["patch_type"] = "replace_entire_file"
-    patch["proposed_changes"] = [
-        {
-            "change_type": "replace_entire_file",
-            "target": str(target_path),
-            "payload": {
-                "new_content": ""
-            }
-        }
-    ]
+    patch["patch_type"] = patch_mode
     patch["validation_plan"] = validator_for_target(target_path)
     patch["risk_level"] = infer_risk_level(target_path)
     patch["status"] = "pending"
+
+    if patch_mode == "replace_entire_file":
+        patch["proposed_changes"] = [
+            {
+                "change_type": "replace_entire_file",
+                "target": str(target_path),
+                "payload": {
+                    "new_content": ""
+                }
+            }
+        ]
+    else:
+        patch["proposed_changes"] = [
+            {
+                "change_type": "replace_exact_block",
+                "target": str(target_path),
+                "payload": {
+                    "block_id": block_id,
+                    "new_block_content": ""
+                }
+            }
+        ]
 
     patch_path = PENDING_CODE_PATCHES_DIR / f"{patch_id}.json"
     write_json(patch_path, patch)
@@ -141,6 +164,9 @@ def main() -> None:
     print(f"patch_id={patch_id}")
     print(f"patch_path={patch_path}")
     print(f"target_file={target_path}")
+    print(f"patch_type={patch['patch_type']}")
+    if block_id:
+        print(f"block_id={block_id}")
     print(f"risk_level={patch['risk_level']}")
     print(f"validator_type={patch['validation_plan']['validator_type']}")
 
