@@ -62,14 +62,23 @@
       "tooling_status": "operational_not_blocker"
     },
     "phase68i_dynamic_ladder_autonomous_line": {
-      "status": "human_seeded_first_batch_pending",
-      "autonomous_ideation_allowed": true,
-      "human_reset_allowed": true,
+      "status": "paused_for_later_objective_reframing",
+      "autonomous_ideation_allowed": false,
+      "human_seeded_batch_allowed": false,
+      "human_reset_allowed": false,
       "start_mode": "human_seeded_first_batch",
       "baseline_for_ideation": "phase68i_dynamic_ladder_candidate",
       "raw_research_winner_context": "phase68i_66g_1p50x_static",
       "official_fallback": "phase68g_66g_1p25x_candidate",
       "current_official_live_truth": "phase68i_dynamic_ladder_candidate",
+      "pause_reason": "objective_framing_not_good_enough_under_current_strict_scoring",
+      "future_reopen_requires": "new MASTER decision with new objective framing",
+      "latest_outcome": {
+        "worthy_candidates_count": 0,
+        "zero_selection_confirmed": true,
+        "reason_code": "LEGIT_LOW_QUALITY_REJECTION",
+        "stop_reason": "human_seeded_line_exhausted_escalate_to_master"
+      },
       "constraints": {
         "no_execution_or_live_order_work": true,
         "no_app_or_data_tasks": true,
@@ -87,16 +96,16 @@
     }
   },
   "ai_lab_runtime": {
-    "active_strategy_line_id": "phase68i_dynamic_ladder_autonomous_line"
+    "active_strategy_line_id": null
   },
   "segment_next_steps": {
-    "MASTER": "human_seeded_first_batch_for_phase68i_dynamic_ladder_autonomous_line",
-    "CORE": "support_targeted_dynamic_ladder_weakness_framing_if_needed",
+    "MASTER": "select_next_non_paused_ai_lab_focus_or_issue_new_objective_framing",
+    "CORE": "support_targeted_strategy_framing_if_requested",
     "UNIVERSE": "frozen",
-    "DATA": "execution_and_app_paths_out_of_scope_for_this_ai_line",
+    "DATA": "execution_and_app_paths_out_of_scope_for_this_ai_pause",
     "FORENSIC": "targeted_validation_only_if_worthy_candidate_emerges",
-    "APP": "no_change_during_ideation",
-    "AI_LAB": "run_human_seeded_first_batch_for_phase68i_dynamic_ladder_autonomous_line"
+    "APP": "no_change_during_ideation_pause",
+    "AI_LAB": "idle_waiting_for_new_master_selected_focus"
   },
   "automation_capabilities": {
     "safe_code_apply_layer_available": true,

@@ -1,10 +1,19 @@
 {
-  "policy_version": "8.0.0",
-  "description": "Human-seeded first batch for phase68i dynamic ladder autonomous line.",
+  "policy_version": "8.1.0",
+  "description": "AI LAB policy with retired and paused strategy-line exclusion.",
   "retired_strategy_lines": {
     "phase67j_no_neo_main_autonomous_line": {
       "status": "retired_from_autonomous_ideation",
       "autonomous_ideation_allowed": false,
+      "human_reset_allowed": false,
+      "future_reopen_requires": "new MASTER decision with new objective framing"
+    }
+  },
+  "paused_strategy_lines": {
+    "phase68i_dynamic_ladder_autonomous_line": {
+      "status": "paused_for_later_objective_reframing",
+      "autonomous_ideation_allowed": false,
+      "human_seeded_batch_allowed": false,
       "human_reset_allowed": false,
       "future_reopen_requires": "new MASTER decision with new objective framing"
     }

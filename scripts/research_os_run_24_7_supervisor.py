@@ -164,6 +164,7 @@ def main() -> int:
     SUPERVISOR_DIR.mkdir(parents=True, exist_ok=True)
 
     active_line_id, active_line = get_active_strategy_line()
+
     if active_line.get("status") == "retired_from_autonomous_ideation":
         latest = {
             "selected_spec_paths": [],
@@ -190,17 +191,40 @@ def main() -> int:
         }
         write_json(SUPERVISOR_JSON, decision_payload)
         write_json(SUPERVISOR_DECISION_JSON, decision_payload)
-        write_text(
-            SUPERVISOR_SUMMARY_TXT,
-            make_human_report(
-                cycle_index=0,
-                total_cycles_completed=0,
-                latest=latest,
-                stop_reason=stop_reason,
-                sleep_seconds=args.sleep_seconds,
-                max_cycles=args.max_cycles
-            )
-        )
+        write_text(SUPERVISOR_SUMMARY_TXT, make_human_report(0, 0, latest, stop_reason, args.sleep_seconds, args.max_cycles))
+        print(f"[SUPERVISOR] stop_reason={stop_reason}")
+        print(f"[SUPERVISOR] latest_status_json={SUPERVISOR_JSON}")
+        print(f"[SUPERVISOR] decision_json={SUPERVISOR_DECISION_JSON}")
+        print(f"[SUPERVISOR] human_report_txt={SUPERVISOR_SUMMARY_TXT}")
+        return 0
+
+    if active_line.get("status") == "paused_for_later_objective_reframing" or active_line.get("autonomous_ideation_allowed") is not True:
+        latest = {
+            "selected_spec_paths": [],
+            "loop_status": "SKIPPED_PAUSED_STRATEGY_LINE",
+            "candidate_runs_started_count": 0,
+            "candidate_runs_completed_count": 0,
+            "scoring_completed_count": 0,
+            "precheck_completed_count": 0,
+            "selection_completed_count": 0,
+            "governance_candidates_count": 0,
+            "worthy_candidates_count": 0,
+            "zero_selection_confirmed": False,
+            "reason_code_counts": {}
+        }
+        stop_reason = "strategy_line_paused_waiting_for_master_reframe"
+        decision_payload = {
+            "ts": now_utc(),
+            "cycle_index": 0,
+            "stop_reason": stop_reason,
+            "requires_master_escalation": False,
+            "worthy_candidate_found": False,
+            "latest": latest,
+            "strategy_line_id": active_line_id
+        }
+        write_json(SUPERVISOR_JSON, decision_payload)
+        write_json(SUPERVISOR_DECISION_JSON, decision_payload)
+        write_text(SUPERVISOR_SUMMARY_TXT, make_human_report(0, 0, latest, stop_reason, args.sleep_seconds, args.max_cycles))
         print(f"[SUPERVISOR] stop_reason={stop_reason}")
         print(f"[SUPERVISOR] latest_status_json={SUPERVISOR_JSON}")
         print(f"[SUPERVISOR] decision_json={SUPERVISOR_DECISION_JSON}")

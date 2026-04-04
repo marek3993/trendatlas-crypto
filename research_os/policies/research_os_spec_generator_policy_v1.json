@@ -1,6 +1,6 @@
 {
   "policy_name": "research_os_spec_generator_policy_v1",
-  "policy_version": "9.0.0",
+  "policy_version": "9.1.0",
   "generator_name": "research_os_experiment_spec_generator_v1",
   "default_status": "spec_ready",
   "default_budget_class": "standard",
@@ -26,7 +26,7 @@
   },
   "baseline_defaults": {
     "baseline_model": "phase68i_dynamic_ladder_candidate",
-    "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68i_dynamic_ladder_candidate\\papers\\phase68i_dynamic_ladder_candidate_paper.csv"
+    "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv"
   },
   "script_defaults": {
     "authoritative_script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66g_production_candidate_live.py"
@@ -115,6 +115,3 @@
   "summary_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\generated_experiment_specs.json",
   "log_jsonl_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\spec_generation_log.jsonl"
 }
-
-
-

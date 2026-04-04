@@ -1,6 +1,6 @@
 {
-  "policy_version": "8.0.0",
-  "description": "Controlled ideation v8 for phase68i dynamic ladder human-seeded first batch.",
+  "policy_version": "8.1.0",
+  "description": "Controlled ideation policy with paused-line exclusion.",
   "allowed_branches": [
     "core"
   ],

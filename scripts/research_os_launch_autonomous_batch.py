@@ -95,6 +95,11 @@ def main() -> int:
         print(f"[LAUNCH][FAIL] strategy line is retired and excluded from runtime")
         return 1
 
+    if active_line.get("status") == "paused_for_later_objective_reframing":
+        print(f"[LAUNCH] strategy_line_status=paused_for_later_objective_reframing")
+        print(f"[LAUNCH][FAIL] strategy line is paused and excluded from runtime")
+        return 1
+
     if active_line.get("autonomous_ideation_allowed") is not True:
         print(f"[LAUNCH] strategy_line_status={active_line.get('status')}")
         print("[LAUNCH][FAIL] active strategy line is not allowed for autonomous ideation")
