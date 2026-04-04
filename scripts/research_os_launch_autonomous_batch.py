@@ -19,10 +19,26 @@ GENERATED_DIR = ROOT / "research_os" / "experiment_specs" / "generated"
 LOOP_OUTPUT_DIR = ROOT / "outputs" / "research_os_autonomous_loop_v1"
 LOOP_SUMMARY_JSON = LOOP_OUTPUT_DIR / "autonomous_loop_run_summary.json"
 ZEROSEL_JSON = LOOP_OUTPUT_DIR / "zero_selection_diagnostics.json"
+PROJECT_TRUTH_JSON = ROOT / "source_of_truth" / "project_truth.json"
+
+RETIRED_STRATEGY_LINE_ID = "phase67j_no_neo_main_autonomous_line"
 
 
 class LaunchError(RuntimeError):
     pass
+
+
+def read_json_if_exists(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def is_retired_strategy_line() -> bool:
+    truth = read_json_if_exists(PROJECT_TRUTH_JSON)
+    lines = truth.get("ai_lab_strategy_lines", {})
+    line = lines.get(RETIRED_STRATEGY_LINE_ID, {})
+    return line.get("status") == "retired_from_autonomous_ideation"
 
 
 def run_step(cmd: list[str], label: str) -> None:
@@ -40,12 +56,6 @@ def clean_generated_specs() -> None:
         path.unlink()
         removed += 1
     print(f"[LAUNCH] cleaned_spec_files={removed}")
-
-
-def read_json_if_exists(path: Path) -> dict:
-    if not path.exists():
-        return {}
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def print_final_summary() -> None:
@@ -70,7 +80,7 @@ def print_final_summary() -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Single entry launcher for redesigned autonomous research batch.")
+    parser = argparse.ArgumentParser(description="Single entry launcher for autonomous research batch.")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--skip-clean", action="store_true")
@@ -79,6 +89,12 @@ def main() -> int:
 
     if args.dry_run == args.execute:
         raise LaunchError("choose exactly one of --dry-run or --execute")
+
+    if is_retired_strategy_line():
+        print(f"[LAUNCH] strategy_line_status=retired_from_autonomous_ideation")
+        print(f"[LAUNCH] retired_strategy_line_id={RETIRED_STRATEGY_LINE_ID}")
+        print("[LAUNCH][FAIL] strategy line is retired and excluded from runtime")
+        return 1
 
     mode_flag = "--dry-run" if args.dry_run else "--execute"
 

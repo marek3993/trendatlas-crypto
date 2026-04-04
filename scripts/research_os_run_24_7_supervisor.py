@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PYTHON = ROOT / ".venv" / "Scripts" / "python.exe"
 
 LAUNCHER = ROOT / "scripts" / "research_os_launch_autonomous_batch.py"
+PROJECT_TRUTH_JSON = ROOT / "source_of_truth" / "project_truth.json"
 LOOP_OUTPUT_DIR = ROOT / "outputs" / "research_os_autonomous_loop_v1"
 ZEROSEL_JSON = LOOP_OUTPUT_DIR / "zero_selection_diagnostics.json"
 LOOP_SUMMARY_JSON = LOOP_OUTPUT_DIR / "autonomous_loop_run_summary.json"
@@ -22,6 +23,8 @@ SUPERVISOR_JSON = SUPERVISOR_DIR / "supervisor_latest_status.json"
 SUPERVISOR_CYCLE_JSONL = SUPERVISOR_DIR / "supervisor_cycle_log.jsonl"
 SUPERVISOR_SUMMARY_TXT = SUPERVISOR_DIR / "supervisor_human_report.txt"
 SUPERVISOR_DECISION_JSON = SUPERVISOR_DIR / "supervisor_decision.json"
+
+RETIRED_STRATEGY_LINE_ID = "phase67j_no_neo_main_autonomous_line"
 
 
 class SupervisorError(RuntimeError):
@@ -56,6 +59,13 @@ def append_jsonl(path: Path, payload: dict[str, Any]) -> None:
 def write_text(path: Path, text: str) -> None:
     ensure_parent(path)
     path.write_text(text, encoding="utf-8")
+
+
+def is_retired_strategy_line() -> bool:
+    truth = read_json_if_exists(PROJECT_TRUTH_JSON)
+    lines = truth.get("ai_lab_strategy_lines", {})
+    line = lines.get(RETIRED_STRATEGY_LINE_ID, {})
+    return line.get("status") == "retired_from_autonomous_ideation"
 
 
 def run_launcher() -> int:
@@ -141,7 +151,7 @@ def classify_stop_reason(returncode: int, latest: dict[str, Any], args: argparse
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="24/7 supervisor for redesigned autonomous research batches.")
+    parser = argparse.ArgumentParser(description="24/7 supervisor for autonomous research batches.")
     parser.add_argument("--max-cycles", type=int, default=None)
     parser.add_argument("--sleep-seconds", type=int, default=300)
     parser.add_argument("--stop-on-worthy", action="store_true", default=True)
@@ -154,6 +164,49 @@ def main() -> int:
         raise SupervisorError(f"launcher script not found: {LAUNCHER}")
 
     SUPERVISOR_DIR.mkdir(parents=True, exist_ok=True)
+
+    if is_retired_strategy_line():
+        latest = {
+            "selected_spec_paths": [],
+            "loop_status": "SKIPPED_RETIRED_STRATEGY_LINE",
+            "candidate_runs_started_count": 0,
+            "candidate_runs_completed_count": 0,
+            "scoring_completed_count": 0,
+            "precheck_completed_count": 0,
+            "selection_completed_count": 0,
+            "governance_candidates_count": 0,
+            "worthy_candidates_count": 0,
+            "zero_selection_confirmed": False,
+            "reason_code_counts": {}
+        }
+        stop_reason = "strategy_line_retired_do_not_run"
+        decision_payload = {
+            "ts": now_utc(),
+            "cycle_index": 0,
+            "stop_reason": stop_reason,
+            "requires_master_escalation": false,
+            "worthy_candidate_found": false,
+            "latest": latest,
+            "retired_strategy_line_id": RETIRED_STRATEGY_LINE_ID
+        }
+        write_json(SUPERVISOR_JSON, decision_payload)
+        write_json(SUPERVISOR_DECISION_JSON, decision_payload)
+        write_text(
+            SUPERVISOR_SUMMARY_TXT,
+            make_human_report(
+                cycle_index=0,
+                total_cycles_completed=0,
+                latest=latest,
+                stop_reason=stop_reason,
+                sleep_seconds=args.sleep_seconds,
+                max_cycles=args.max_cycles
+            )
+        )
+        print(f"[SUPERVISOR] stop_reason={stop_reason}")
+        print(f"[SUPERVISOR] latest_status_json={SUPERVISOR_JSON}")
+        print(f"[SUPERVISOR] decision_json={SUPERVISOR_DECISION_JSON}")
+        print(f"[SUPERVISOR] human_report_txt={SUPERVISOR_SUMMARY_TXT}")
+        return 0
 
     cycle_index = 0
     total_cycles_completed = 0
@@ -168,10 +221,10 @@ def main() -> int:
         latest = load_cycle_result()
 
         cycle_payload = {
-            "ts": now_utc(),
-            "cycle_index": cycle_index,
-            "launcher_returncode": returncode,
-            **latest
+          "ts": now_utc(),
+          "cycle_index": cycle_index,
+          "launcher_returncode": returncode,
+          **latest
         }
         append_jsonl(SUPERVISOR_CYCLE_JSONL, cycle_payload)
         write_json(SUPERVISOR_JSON, cycle_payload)

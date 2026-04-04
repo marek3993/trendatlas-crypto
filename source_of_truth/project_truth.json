@@ -53,6 +53,23 @@
     "truth_promotion_ready": true,
     "direct_auto_switch_app_live_approved": true
   },
+  "ai_lab_strategy_lines": {
+    "phase67j_no_neo_main_autonomous_line": {
+      "status": "retired_from_autonomous_ideation",
+      "retire_reason": "LEGIT_LOW_QUALITY_REJECTION after autonomous + human-reset exhaustion",
+      "autonomous_ideation_allowed": false,
+      "human_reset_allowed": false,
+      "future_reopen_requires": "new MASTER decision with new objective framing",
+      "infra_status": "operational_not_blocker",
+      "tooling_status": "operational_not_blocker",
+      "latest_authoritative_outcome": {
+        "worthy_candidates_count": 0,
+        "zero_selection_confirmed": true,
+        "reason_code": "LEGIT_LOW_QUALITY_REJECTION",
+        "stop_reason": "redesigned_family_space_exhausted_escalate_to_master"
+      }
+    }
+  },
   "segment_next_steps": {
     "MASTER": "maintain_truth",
     "CORE": "no_active_core_research_leverage_branch_done",
@@ -60,7 +77,7 @@
     "DATA": "freeze_live_source_of_truth_mapping",
     "FORENSIC": "targeted_validation_only",
     "APP": "final_export_contract_preparation_for_dynamic_ladder",
-    "AI_LAB": "schema_contract_expansion"
+    "AI_LAB": "exclude_retired_line_and_move_to_next_strategy_line"
   },
   "app_live_mode_contract": {
     "current": {

@@ -1,6 +1,14 @@
 {
-  "policy_version": "7.0.0",
-  "description": "MASTER-approved human-reset family space for this strategy line.",
+  "policy_version": "7.1.0",
+  "description": "MASTER-approved human-reset family space with retired strategy-line exclusion.",
+  "retired_strategy_lines": {
+    "phase67j_no_neo_main_autonomous_line": {
+      "status": "retired_from_autonomous_ideation",
+      "autonomous_ideation_allowed": false,
+      "human_reset_allowed": false,
+      "future_reopen_requires": "new MASTER decision with new objective framing"
+    }
+  },
   "enabled_families": {
     "baseline_relative_edge_gate": {
       "enabled": true,
