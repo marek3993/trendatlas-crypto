@@ -1,25 +1,31 @@
 {
-  "policy_version": "3.0.0",
-  "description": "Mutation-space v3 after clean v2 zero-selection audit. Mechanism-first only.",
+  "policy_version": "6.0.0",
+  "description": "Mechanism-first redesigned family space after exhausted wave1 and wave2.",
   "enabled_families": {
-    "ranking_weight_tuning_v2": {
+    "regime_reentry_proof": {
       "enabled": true,
-      "role": "primary",
+      "role": "redesigned_wave1",
       "max_candidates_per_batch": 1
     },
-    "cooldown_tuning_v2": {
+    "leader_fragility_filter": {
       "enabled": true,
-      "role": "conditional",
+      "role": "redesigned_wave1",
       "max_candidates_per_batch": 1
     },
-    "threshold_tuning_v2": {
-      "enabled": true,
-      "role": "conditional",
-      "max_candidates_per_batch": 1
+    "recovery_quality_split": {
+      "enabled": false,
+      "role": "disabled_initially",
+      "max_candidates_per_batch": 0
     }
   },
-  "paused_families": [],
   "blocked_families": [
+    "cooldown_tuning_v3",
+    "threshold_tuning_v3",
+    "ranking_weight_tuning_v4",
+    "signal_disagreement_veto",
+    "transition_state_machine",
+    "trend_acceleration_confirmation",
+    "loss_shape_response",
     "probation_rule_tuning",
     "generic_governance_fiddling",
     "generic_tuning_shell",
@@ -30,11 +36,13 @@
     "unbounded_parameter_sweep"
   ],
   "global_required_fields": [
+    "family_name",
     "known_baseline_weakness",
     "exact_mechanism_of_improvement",
+    "new_state_or_new_classification",
     "exact_compare_target",
-    "exact_failure_mode_being_fixed",
-    "why_expected_edge_survives_strict_scoring",
+    "why_not_parameter_tuning",
+    "why_expected_edge_should_survive_strict_scoring",
     "primary_expected_metric_improvement"
   ],
   "allowed_primary_expected_metric_improvement": [
@@ -44,75 +52,70 @@
     "Calmar"
   ],
   "family_rules": {
-    "ranking_weight_tuning_v2": {
-      "mechanism_first_required": true,
-      "parameter_first_forbidden": true,
+    "regime_reentry_proof": {
       "required_fields": [
-        "weight_block_name",
-        "current_weight_problem",
-        "exact_weight_change",
-        "why_this_weight_change_addresses_baseline_weakness",
-        "expected_selection_effect"
+        "reentry_proof_sequence_name",
+        "follow_through_requirement",
+        "persistence_requirement",
+        "immediate_reversal_block_rule"
       ],
-      "hard_reason": "most_salvageable_family_but_only_with_exact_weight_block_and_exact_weakness"
+      "mechanism_first_required": true,
+      "parameter_first_forbidden": true
     },
-    "cooldown_tuning_v2": {
-      "mechanism_first_required": true,
-      "parameter_first_forbidden": true,
-      "single_named_failure_mode_required": true,
+    "leader_fragility_filter": {
       "required_fields": [
-        "cooldown_component_name",
-        "named_baseline_failure_mode",
-        "why_current_cooldown_is_wrong_for_that_failure_mode",
-        "exact_cooldown_change",
-        "expected_transition_effect"
+        "leader_fragility_signal_name",
+        "stability_definition",
+        "activation_or_continuation_gate"
       ],
-      "hard_reason": "allowed_only_if_tied_to_one_explicit_baseline_failure_mode"
+      "mechanism_first_required": true,
+      "parameter_first_forbidden": true
     },
-    "threshold_tuning_v2": {
-      "mechanism_first_required": true,
-      "parameter_first_forbidden": true,
-      "single_named_failure_mode_required": true,
+    "recovery_quality_split": {
       "required_fields": [
-        "threshold_name",
-        "named_failure_mode",
-        "why_baseline_threshold_is_wrong",
-        "exact_threshold_change",
-        "expected_false_positive_or_missed_move_effect"
+        "recovery_classifier_name",
+        "high_quality_vs_weak_recovery_logic",
+        "full_risk_on_gate_rule"
       ],
-      "hard_reason": "allowed_only_as_one_targeted_threshold_fix_against_one_named_failure_mode"
+      "mechanism_first_required": true,
+      "parameter_first_forbidden": true
     }
   },
   "anti_generic_filters": {
     "reject_hypothesis_text_equal_label": true,
     "reject_if_missing_global_required_fields": true,
     "reject_if_missing_family_required_fields": true,
-    "reject_if_missing_explicit_baseline_weakness": true,
-    "reject_if_missing_explicit_mechanism": true,
-    "reject_if_missing_explicit_compare_target": true,
-    "reject_if_missing_explicit_failure_mode": true,
-    "reject_if_missing_primary_expected_metric_improvement": true,
     "reject_if_vague_phrase_only": [
       "improve robustness",
-      "reduce whipsaw",
-      "tune cooldown",
-      "shift threshold",
-      "rebalance weights",
-      "optimize parameters"
+      "avoid whipsaw",
+      "change thresholds",
+      "change cooldown",
+      "change weights",
+      "adjust governance",
+      "improve selection quality"
     ],
     "reject_if_generic_only": [
-      "generic cooldown change",
-      "generic threshold shift",
-      "generic weight rebalance"
-    ]
+      "parameter change without new state",
+      "parameter change without new classification",
+      "parameter change without new logical gate"
+    ],
+    "reject_if_not_mechanism_first": true
   },
   "next_batch_policy": {
     "keep_scoring_strictness": true,
-    "max_selected_specs_total": 3,
-    "ranking_weight_tuning_v2_max": 1,
-    "cooldown_tuning_v2_max": 1,
-    "threshold_tuning_v2_max": 1,
-    "no_governance_family_reintroduction": true,
-    "each_selected_spec_must_be_mechanism_first": true
+    "max_active_families": 2,
+    "max_selected_specs_total": 2,
+    "exactly_one_spec_per_active_family": true,
+    "active_families": [
+      "regime_reentry_proof",
+      "leader_fragility_filter"
+    ],
+    "disabled_initially": [
+      "recovery_quality_split",
+      "cooldown_tuning_v3",
+      "threshold_tuning_v3",
+      "ranking_weight_tuning_v4"
+    ],
+    "if_zero_worthy_again": "stop_autonomous_family_ideation_and_escalate_to_mrv1_master_for_human_designed_hypothesis_reset"
   }
 }

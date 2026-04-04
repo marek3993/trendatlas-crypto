@@ -1,6 +1,6 @@
 {
   "policy_name": "research_os_spec_generator_policy_v1",
-  "policy_version": "4.0.0",
+  "policy_version": "7.0.0",
   "generator_name": "research_os_experiment_spec_generator_v1",
   "default_status": "spec_ready",
   "default_budget_class": "standard",
@@ -73,35 +73,27 @@
     "status"
   ],
   "required_hypothesis_thesis_fields": [
+    "family_name",
     "hypothesis_text",
     "known_baseline_weakness",
     "exact_mechanism_of_improvement",
+    "new_state_or_new_classification",
     "exact_compare_target",
-    "exact_failure_mode_being_fixed",
-    "why_expected_edge_survives_strict_scoring",
+    "why_not_parameter_tuning",
+    "why_expected_edge_should_survive_strict_scoring",
     "primary_expected_metric_improvement"
   ],
   "family_specific_required_fields": {
-    "ranking_weight_tuning_v2": [
-      "weight_block_name",
-      "current_weight_problem",
-      "exact_weight_change",
-      "why_this_weight_change_addresses_baseline_weakness",
-      "expected_selection_effect"
+    "regime_reentry_proof": [
+      "reentry_proof_sequence_name",
+      "follow_through_requirement",
+      "persistence_requirement",
+      "immediate_reversal_block_rule"
     ],
-    "cooldown_tuning_v2": [
-      "cooldown_component_name",
-      "named_baseline_failure_mode",
-      "why_current_cooldown_is_wrong_for_that_failure_mode",
-      "exact_cooldown_change",
-      "expected_transition_effect"
-    ],
-    "threshold_tuning_v2": [
-      "threshold_name",
-      "named_failure_mode",
-      "why_baseline_threshold_is_wrong",
-      "exact_threshold_change",
-      "expected_false_positive_or_missed_move_effect"
+    "leader_fragility_filter": [
+      "leader_fragility_signal_name",
+      "stability_definition",
+      "activation_or_continuation_gate"
     ]
   },
   "allowed_primary_expected_metric_improvement": [

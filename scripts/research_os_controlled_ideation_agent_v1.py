@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
-POLICY_PATH = ROOT / "research_os" / "policies" / "research_os_ideation_policy_v1.json"
+IDEATION_POLICY_PATH = ROOT / "research_os" / "policies" / "research_os_ideation_policy_v1.json"
 MUTATION_POLICY_PATH = ROOT / "research_os" / "policies" / "research_os_mutation_space_policy_v1.json"
 OUTPUT_DIR = ROOT / "outputs" / "research_os_ideation_v1"
 OUTPUT_JSON = OUTPUT_DIR / "ideation_hypotheses.json"
@@ -37,12 +37,6 @@ def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def append_jsonl(path: Path, payload: dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as fh:
-        fh.write(json.dumps(payload, ensure_ascii=False) + "\n")
-
-
 def write_csv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8", newline="") as fh:
@@ -51,62 +45,55 @@ def write_csv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) -> 
         writer.writerows(rows)
 
 
+def append_jsonl(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as fh:
+        fh.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+
 def make_id(label: str) -> str:
     digest = hashlib.sha1(label.encode("utf-8")).hexdigest()[:12]
     return f"hyp_{digest}"
 
 
-def templates() -> dict[str, dict[str, Any]]:
-    return {
-        "ranking_weight_tuning_v2": {
-            "hypothesis_label": "core_ranking_weight_tuning_v3",
-            "hypothesis_text": "Retune the leadership persistence weight block to reduce false leader handoffs caused by unstable short-horizon ranking dominance.",
-            "rationale": "Baseline 66G may overweight unstable short-horizon leader persistence; targeted weight correction could improve regime selection robustness.",
-            "known_baseline_weakness": "Fragile leader handoff after unstable short-horizon ranking persistence.",
-            "exact_mechanism_of_improvement": "Reduce short-horizon persistence weight and increase persistent confirmation weight within one named leadership weight block.",
+def redesigned_templates() -> list[dict[str, Any]]:
+    return [
+        {
+            "hypothesis_label": "core_regime_reentry_proof_v1",
+            "mutation_family": "regime_reentry_proof",
+            "family_name": "regime_reentry_proof",
+            "hypothesis_text": "Require a re-entry proof sequence after cash or stress exit before full risk-on reactivation.",
+            "rationale": "Baseline can re-enter risk-on too early after weak recovery.",
+            "known_baseline_weakness": "Baseline can re-enter risk-on too early after weak recovery.",
+            "exact_mechanism_of_improvement": "Require follow-through, persistence and no immediate reversal before full risk-on after exit.",
+            "new_state_or_new_classification": "New re-entry proof sequence gate.",
             "exact_compare_target": "phase66g_production_soft_filters",
-            "exact_failure_mode_being_fixed": "False leader promotion after unstable ranking dominance.",
-            "why_expected_edge_survives_strict_scoring": "Targets a specific baseline weakness with a named mechanism, not a broad weight sweep.",
+            "why_not_parameter_tuning": "Introduces a new re-entry mechanism and sequence gate, not a threshold tweak.",
+            "why_expected_edge_should_survive_strict_scoring": "Targets one concrete re-entry failure mode with a discrete proof sequence.",
             "primary_expected_metric_improvement": "Calmar",
-            "weight_block_name": "leadership_persistence_block",
-            "current_weight_problem": "Short-horizon persistence weight appears too influential.",
-            "exact_weight_change": "Decrease short-horizon persistence coefficient and increase persistent confirmation coefficient.",
-            "why_this_weight_change_addresses_baseline_weakness": "It reduces promotion of unstable leaders while preserving confirmed ones.",
-            "expected_selection_effect": "Fewer fragile handoffs and cleaner leader retention."
+            "reentry_proof_sequence_name": "post_exit_reentry_proof_sequence",
+            "follow_through_requirement": "require follow-through confirmation after exit",
+            "persistence_requirement": "require persistence before full risk-on",
+            "immediate_reversal_block_rule": "block full risk-on if immediate reversal appears during proof window"
         },
-        "cooldown_tuning_v2": {
-            "hypothesis_label": "core_cooldown_tuning_v3",
-            "hypothesis_text": "Adjust only the post-switch fragility cooldown to suppress immediate reversal churn after one named fragile switch pattern.",
-            "rationale": "Baseline may allow too-fast re-entry after a fragile post-switch state, causing avoidable churn.",
-            "known_baseline_weakness": "Immediate reversal churn after fragile low-conviction switch.",
-            "exact_mechanism_of_improvement": "Lengthen only the post-switch fragility cooldown component for one named fragile switch pattern.",
+        {
+            "hypothesis_label": "core_leader_fragility_filter_v1",
+            "mutation_family": "leader_fragility_filter",
+            "family_name": "leader_fragility_filter",
+            "hypothesis_text": "Block or reduce risk-on when the selected leader looks strong by level but fails a stability or fragility screen.",
+            "rationale": "Selected leader can look strong by level but still be unstable and break quickly.",
+            "known_baseline_weakness": "Selected leader looks strong by level but is unstable and breaks quickly.",
+            "exact_mechanism_of_improvement": "Add a leader fragility or stability filter before activation or continuation.",
+            "new_state_or_new_classification": "New leader stability classification gate.",
             "exact_compare_target": "phase66g_production_soft_filters",
-            "exact_failure_mode_being_fixed": "Immediate reversal after low-conviction switch.",
-            "why_expected_edge_survives_strict_scoring": "Targets one named failure mode rather than generic cooldown reduction of whipsaw.",
-            "primary_expected_metric_improvement": "DD",
-            "cooldown_component_name": "post_switch_fragility_cooldown",
-            "named_baseline_failure_mode": "low_conviction_switch_then_immediate_reversal",
-            "why_current_cooldown_is_wrong_for_that_failure_mode": "It allows too-early follow-up transition after a fragile switch.",
-            "exact_cooldown_change": "Increase fragility cooldown by one step only for the named failure mode.",
-            "expected_transition_effect": "Lower repeated reversal churn after fragile switches."
-        },
-        "threshold_tuning_v2": {
-            "hypothesis_label": "core_threshold_tuning_v3",
-            "hypothesis_text": "Tighten only the confirmation-strength threshold that admits one named weak setup pattern in recent conditions.",
-            "rationale": "A single confirmation threshold may be too loose and admit weak setups that fail quickly.",
-            "known_baseline_weakness": "Weak confirmation setup admissions in recent regime transitions.",
-            "exact_mechanism_of_improvement": "Tighten one named confirmation threshold for one named weak setup pattern.",
-            "exact_compare_target": "phase66g_production_soft_filters",
-            "exact_failure_mode_being_fixed": "False positive admission from weak confirmation setup.",
-            "why_expected_edge_survives_strict_scoring": "Targets one named false-positive channel instead of a generic threshold sweep.",
+            "why_not_parameter_tuning": "Introduces a new leader stability concept, not ranking-weight tuning.",
+            "why_expected_edge_should_survive_strict_scoring": "Targets selection persistence weakness directly with a new logical gate.",
             "primary_expected_metric_improvement": "since2025",
-            "threshold_name": "confirmation_strength_threshold",
-            "named_failure_mode": "weak_confirmation_false_positive",
-            "why_baseline_threshold_is_wrong": "It is too loose for one named weak setup pattern.",
-            "exact_threshold_change": "Raise confirmation threshold by one targeted increment for the named failure mode.",
-            "expected_false_positive_or_missed_move_effect": "Reduce false positives with limited missed valid transitions."
+            "leader_fragility_signal_name": "leader_stability_fragility_filter",
+            "stability_definition": "leader must remain stable across short persistence checks before activation or continuation",
+            "activation_or_continuation_gate": "unstable leader blocks or reduces risk-on"
         }
-    }
+    ]
 
 
 def validate_candidate(candidate: dict[str, Any], ideation_policy: dict[str, Any], mutation_policy: dict[str, Any]) -> tuple[bool, str]:
@@ -122,10 +109,10 @@ def validate_candidate(candidate: dict[str, Any], ideation_policy: dict[str, Any
     if candidate["hypothesis_text"] == candidate["hypothesis_label"]:
         return False, "generic_shell:hypothesis_text_equals_label"
 
-    vague = set(ideation_policy["anti_generic_guards"]["reject_vague_phrases"])
     lowered = candidate["hypothesis_text"].lower()
-    if any(p.lower() in lowered for p in vague):
-        return False, "generic_shell:vague_phrase"
+    for phrase in ideation_policy["anti_generic_guards"]["reject_vague_phrases"]:
+        if phrase.lower() in lowered:
+            return False, "generic_shell:vague_phrase"
 
     if candidate["primary_expected_metric_improvement"] not in ideation_policy["allowed_primary_expected_metric_improvement"]:
         return False, "invalid_primary_metric_target"
@@ -145,32 +132,28 @@ def main() -> int:
     if args.dry_run == args.execute:
         raise IdeationError("choose exactly one of --dry-run or --execute")
 
-    ideation_policy = load_json(POLICY_PATH)
+    ideation_policy = load_json(IDEATION_POLICY_PATH)
     mutation_policy = load_json(MUTATION_POLICY_PATH)
 
     selected: list[dict[str, Any]] = []
-    for family, payload in templates().items():
+    for payload in redesigned_templates():
         candidate = {
             "hypothesis_id": make_id(payload["hypothesis_label"]),
             "branch": "core",
             "segment_owner": "core_strategy",
             "baseline_reference": "phase66g_production_soft_filters",
-            "mutation_family": family,
             **payload
         }
         ok, reason = validate_candidate(candidate, ideation_policy, mutation_policy)
         append_jsonl(OUTPUT_LOG, {
             "ts": now_utc(),
-            "family": family,
+            "family": candidate["mutation_family"],
             "hypothesis_label": candidate["hypothesis_label"],
             "decision": "accepted" if ok else "blocked",
             "reason": reason
         })
         if ok:
             selected.append(candidate)
-
-    limits = ideation_policy["generation_limits"]
-    selected = selected[:limits["max_selected_specs_total"]]
 
     summary_rows = [{
         "hypothesis_id": h["hypothesis_id"],
@@ -181,7 +164,11 @@ def main() -> int:
     } for h in selected]
 
     if args.execute:
-        write_json(OUTPUT_JSON, {"hypotheses": selected, "policy_version": ideation_policy["policy_version"]})
+        write_json(OUTPUT_JSON, {
+            "wave": "redesigned_batch_v1",
+            "hypotheses": selected,
+            "policy_version": ideation_policy["policy_version"]
+        })
         write_csv(
             OUTPUT_CSV,
             summary_rows,
