@@ -1,0 +1,20 @@
+{
+  "allow_live_orders": false,
+  "allowed_approval_gate_statuses": [
+    "live_order_enabled_and_approved"
+  ],
+  "manual_approval_required": true,
+  "require_kill_switch_off": true,
+  "max_order_notional_usd": 0.0,
+  "allowed_assets": [
+    "CASH",
+    "BTC",
+    "ETH",
+    "DOGE",
+    "BCH",
+    "APT",
+    "XTZ",
+    "ICP",
+    "STX"
+  ]
+}
