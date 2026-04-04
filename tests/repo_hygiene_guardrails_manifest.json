@@ -18,7 +18,7 @@
     "tests/test_canonical_reference_truth_flags.py",
     "tests/test_canonical_decision_ids_present.py",
     "tests/test_canonical_manifest_indexes_shape.py",
-    "tests/test_canonical_truth_domain_allowed_values.py",
+    "tests/test_canonical_truth_domain_allowedValues.py",
     "tests/test_canonical_artifact_type_allowed_values.py",
     "tests/test_canonical_truth_status_allowed_values.py",
     "tests/test_canonical_consumer_scope_allowed_values.py",
@@ -47,7 +47,9 @@
     "tests/test_script_registry_required_fields.py",
     "tests/test_script_registry_paths_exist.py",
     "tests/test_automation_apply_paths_exist.py",
-    "tests/test_automation_apply_files_non_empty.py"
+    "tests/test_automation_apply_files_non_empty.py",
+    "tests/test_repo_hygiene_docs_exist.py",
+    "tests/test_repo_hygiene_docs_keywords.py"
   ],
   "notes": [
     "Frozen batch manifest for repo hygiene guardrails.",
