@@ -116,3 +116,15 @@ outputs/**/charts_tmp/
 !automation/truth_apply/backups/**
 !automation/truth_apply/diffs/**
 !automation/truth_apply/logs/**
+
+
+# --- Allow tracked automation code-apply audit artifacts ---
+!automation/code_apply/
+!automation/code_apply/backups/
+!automation/code_apply/diffs/
+!automation/code_apply/logs/
+!automation/code_apply/validation/
+!automation/code_apply/backups/**
+!automation/code_apply/diffs/**
+!automation/code_apply/logs/**
+!automation/code_apply/validation/**
