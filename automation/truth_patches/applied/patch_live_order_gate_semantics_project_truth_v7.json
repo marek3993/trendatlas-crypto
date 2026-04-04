@@ -1,0 +1,23 @@
+{
+  "patch_id": "patch_live_order_gate_semantics_project_truth_v7",
+  "created_at": "2026-04-04T14:30:00Z",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "target_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json"
+  ],
+  "reason": "Clarify live-order gate semantics so approved_and_applied means truth/live applied but real orders still blocked; only live_order_enabled_and_approved is real-order eligible.",
+  "proposed_changes": [
+    {
+      "change_type": "replace_entire_file",
+      "target": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+      "payload": {
+        "new_content": "{\n  \"project_name\": \"Market Regime v1\",\n  \"official_core_baseline\": {\n    \"model\": \"phase66g_production_soft_filters\",\n    \"status\": \"official_core_production_baseline\"\n  },\n  \"official_universe_winner\": {\n    \"model\": \"phase67j_no_neo_main\",\n    \"status\": \"validated_universe_winner\",\n    \"shortlist\": [\n      \"APT\",\n      \"BCH\",\n      \"DOGE\",\n      \"ICP\",\n      \"STX\",\n      \"XTZ\"\n    ],\n    \"removed_assets\": [\n      \"NEO\"\n    ],\n    \"metrics\": {\n      \"cagr_pct\": 141.75,\n      \"max_drawdown_pct\": -26.16,\n      \"since2023_cagr_pct\": 203.52,\n      \"since2025_cagr_pct\": 113.9\n    },\n    \"delta_vs_66g\": {\n      \"cagr_pct\": 28.03,\n      \"since2023_cagr_pct\": 67.06,\n      \"since2025_cagr_pct\": 0.0,\n      \"max_drawdown_pct\": -2.56\n    },\n    \"forensic_status\": \"passed\"\n  },\n  \"official_phase63_compare_baseline\": {\n    \"model\": \"phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3\",\n    \"paper_path\": \"C:\\\\Users\\\\benda\\\\Desktop\\\\market_regime_v1\\\\outputs\\\\phase63_btc_participation_overlay\\\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv\",\n    \"status\": \"pinned_compare_baseline\"\n  },\n  \"app_product_truth\": {\n    \"main_strategy_model\": \"phase68i_dynamic_ladder_candidate\",\n    \"reference_strategy_model\": \"phase67j_no_neo_main\",\n    \"benchmark\": \"BTC\",\n    \"status\": \"official_app_main_changed_live_not_switched\"\n  },\n  \"leverage_truth\": {\n    \"current_live_truth\": \"phase68i_dynamic_ladder_candidate\",\n    \"research_raw_winner\": \"phase68i_66g_1p50x_static\",\n    \"best_deployment_candidate\": \"phase68i_dynamic_ladder_candidate\",\n    \"official_softer_fallback\": \"phase68g_66g_1p25x_candidate\",\n    \"phase68j_simple_tail_risk_guardrails\": \"rejected\",\n    \"ordering_remains_unchanged\": true,\n    \"truth_promotion_ready\": true,\n    \"direct_auto_switch_app_live_approved\": true\n  },\n  \"segment_next_steps\": {\n    \"MASTER\": \"maintain_truth\",\n    \"CORE\": \"no_active_core_research_leverage_branch_done\",\n    \"UNIVERSE\": \"frozen\",\n    \"DATA\": \"freeze_live_source_of_truth_mapping\",\n    \"FORENSIC\": \"targeted_validation_only\",\n    \"APP\": \"final_export_contract_preparation_for_dynamic_ladder\",\n    \"AI_LAB\": \"schema_contract_expansion\"\n  },\n  \"app_live_mode_contract\": {\n    \"current\": {\n      \"live_truth_mode\": \"phase68i_dynamic_ladder_candidate\",\n      \"execution_profile\": \"dynamic_ladder\",\n      \"leverage_mode\": \"dynamic\",\n      \"deployment_candidate_label\": \"phase68i_dynamic_ladder_candidate\",\n      \"fallback_profile_label\": \"phase68g_66g_1p25x_candidate\",\n      \"approval_gate_status\": \"approved_and_applied\",\n      \"real_order_gate_status\": \"blocked\",\n      \"real_order_eligible_status\": \"live_order_enabled_and_approved\"\n    },\n    \"future_target\": {\n      \"live_truth_mode\": \"phase68i_dynamic_ladder_candidate\",\n      \"execution_profile\": \"dynamic_ladder\",\n      \"leverage_mode\": \"dynamic\"\n    },\n    \"future_fallback\": {\n      \"live_truth_mode\": \"phase68g_66g_1p25x_candidate\",\n      \"execution_profile\": \"static_1p25x\",\n      \"leverage_mode\": \"static_1p25x\"\n    }\n  }\n}\n"
+      }
+    }
+  ],
+  "evidence_refs": [
+    "MASTER official decision for live-order gate semantics"
+  ],
+  "status": "applied"
+}

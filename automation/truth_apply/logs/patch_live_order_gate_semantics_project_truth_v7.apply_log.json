@@ -1,0 +1,15 @@
+{
+  "apply_id": "apply_20260404_125929_live_order_gate_semantics_project_truth_v7",
+  "patch_id": "patch_live_order_gate_semantics_project_truth_v7",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "applied_at": "2026-04-04T12:59:29Z",
+  "applied_by": "human",
+  "target_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+  "change_type": "replace_entire_file",
+  "backup_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_apply\\backups\\patch_live_order_gate_semantics_project_truth_v7__project_truth.json.backup",
+  "diff_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_apply\\diffs\\patch_live_order_gate_semantics_project_truth_v7.diff.txt",
+  "status": "success",
+  "source_of_truth_write_executed": true,
+  "note": "Approved truth patch applied successfully."
+}

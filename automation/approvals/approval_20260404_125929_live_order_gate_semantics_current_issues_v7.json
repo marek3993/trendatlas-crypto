@@ -1,0 +1,8 @@
+{
+  "approval_id": "approval_20260404_125929_live_order_gate_semantics_current_issues_v7",
+  "patch_id": "patch_live_order_gate_semantics_current_issues_v7",
+  "decision": "approved",
+  "approved_by": "human",
+  "decided_at": "2026-04-04T12:59:29Z",
+  "note": "Approved live-order gate semantics for current_issues.md."
+}

@@ -1,0 +1,23 @@
+{
+  "patch_id": "patch_live_order_gate_semantics_master_state_v7",
+  "created_at": "2026-04-04T14:35:00Z",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "target_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md"
+  ],
+  "reason": "Clarify that approved_and_applied means live/app truth applied but real orders still blocked.",
+  "proposed_changes": [
+    {
+      "change_type": "replace_entire_file",
+      "target": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md",
+      "payload": {
+        "new_content": "# Master State\n\n## Official state snapshot\n- research/raw leverage winner: phase68i_66g_1p50x_static\n- best deployment candidate: phase68i_dynamic_ladder_candidate\n- official softer fallback: phase68g_66g_1p25x_candidate\n- Phase68J simple tail-risk guardrails: rejected\n- ordering: unchanged\n- leverage branch: live truth approved and applied\n- current live truth: phase68i_dynamic_ladder_candidate\n- direct app/live truth switch: approved and applied\n- real-order gate: still blocked\n- only real-order eligible status: live_order_enabled_and_approved\n"
+      }
+    }
+  ],
+  "evidence_refs": [
+    "MASTER official decision for live-order gate semantics"
+  ],
+  "status": "applied"
+}
