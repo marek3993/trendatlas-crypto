@@ -1,6 +1,6 @@
 {
-  "policy_version": "7.0.0",
-  "description": "Controlled ideation v7 for MASTER-approved human-reset batch.",
+  "policy_version": "8.0.0",
+  "description": "Controlled ideation v8 for phase68i dynamic ladder human-seeded first batch.",
   "allowed_branches": [
     "core"
   ],
@@ -26,23 +26,20 @@
     "primary_expected_metric_improvement"
   ],
   "family_specific_required_fields": {
-    "baseline_relative_edge_gate": [
-      "rolling_excess_edge_reference",
-      "short_horizon_edge_gate",
-      "medium_horizon_edge_gate",
-      "fallback_to_baseline_rule"
+    "ladder_reentry_stability_gate": [
+      "reentry_trigger_name",
+      "stability_proof_requirement",
+      "premature_reentry_block_rule"
     ],
-    "breadth_dispersion_corridor": [
-      "breadth_measure_name",
-      "dispersion_measure_name",
-      "healthy_corridor_definition",
-      "fallback_to_baseline_rule"
+    "ladder_step_fragility_filter": [
+      "step_fragility_signal_name",
+      "step_up_gate_rule",
+      "fragile_state_hold_rule"
     ],
-    "downside_asymmetry_veto": [
-      "downside_reference_name",
-      "downside_beta_or_capture_measure",
+    "ladder_downside_capture_cap": [
+      "downside_capture_reference",
       "downside_cap_rule",
-      "promotion_veto_rule"
+      "step_down_or_freeze_rule"
     ]
   },
   "anti_generic_guards": {
@@ -68,8 +65,8 @@
   ],
   "generation_limits": {
     "max_selected_specs_total": 3,
-    "baseline_relative_edge_gate_max": 1,
-    "breadth_dispersion_corridor_max": 1,
-    "downside_asymmetry_veto_max": 1
+    "ladder_reentry_stability_gate_max": 1,
+    "ladder_step_fragility_filter_max": 1,
+    "ladder_downside_capture_cap_max": 1
   }
 }

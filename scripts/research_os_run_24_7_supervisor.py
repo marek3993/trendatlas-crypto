@@ -24,8 +24,6 @@ SUPERVISOR_CYCLE_JSONL = SUPERVISOR_DIR / "supervisor_cycle_log.jsonl"
 SUPERVISOR_SUMMARY_TXT = SUPERVISOR_DIR / "supervisor_human_report.txt"
 SUPERVISOR_DECISION_JSON = SUPERVISOR_DIR / "supervisor_decision.json"
 
-RETIRED_STRATEGY_LINE_ID = "phase67j_no_neo_main_autonomous_line"
-
 
 class SupervisorError(RuntimeError):
     pass
@@ -61,11 +59,11 @@ def write_text(path: Path, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
-def is_retired_strategy_line() -> bool:
+def get_active_strategy_line() -> tuple[str | None, dict]:
     truth = read_json_if_exists(PROJECT_TRUTH_JSON)
+    active_line_id = truth.get("ai_lab_runtime", {}).get("active_strategy_line_id")
     lines = truth.get("ai_lab_strategy_lines", {})
-    line = lines.get(RETIRED_STRATEGY_LINE_ID, {})
-    return line.get("status") == "retired_from_autonomous_ideation"
+    return active_line_id, lines.get(active_line_id, {})
 
 
 def run_launcher() -> int:
@@ -139,7 +137,7 @@ def classify_stop_reason(returncode: int, latest: dict[str, Any], args: argparse
         return f"loop_status_not_ok:{latest.get('loop_status')}"
 
     if latest.get("worthy_candidates_count") == 0 and latest.get("zero_selection_confirmed") is True:
-        return "redesigned_family_space_exhausted_escalate_to_master"
+        return "human_seeded_line_exhausted_escalate_to_master"
 
     if args.max_cycles is not None and total_cycles_completed >= args.max_cycles:
         return "max_cycles_reached"
@@ -165,7 +163,8 @@ def main() -> int:
 
     SUPERVISOR_DIR.mkdir(parents=True, exist_ok=True)
 
-    if is_retired_strategy_line():
+    active_line_id, active_line = get_active_strategy_line()
+    if active_line.get("status") == "retired_from_autonomous_ideation":
         latest = {
             "selected_spec_paths": [],
             "loop_status": "SKIPPED_RETIRED_STRATEGY_LINE",
@@ -187,7 +186,7 @@ def main() -> int:
             "requires_master_escalation": False,
             "worthy_candidate_found": False,
             "latest": latest,
-            "retired_strategy_line_id": RETIRED_STRATEGY_LINE_ID
+            "strategy_line_id": active_line_id
         }
         write_json(SUPERVISOR_JSON, decision_payload)
         write_json(SUPERVISOR_DECISION_JSON, decision_payload)
@@ -221,10 +220,11 @@ def main() -> int:
         latest = load_cycle_result()
 
         cycle_payload = {
-          "ts": now_utc(),
-          "cycle_index": cycle_index,
-          "launcher_returncode": returncode,
-          **latest
+            "ts": now_utc(),
+            "cycle_index": cycle_index,
+            "launcher_returncode": returncode,
+            "strategy_line_id": active_line_id,
+            **latest
         }
         append_jsonl(SUPERVISOR_CYCLE_JSONL, cycle_payload)
         write_json(SUPERVISOR_JSON, cycle_payload)
@@ -244,9 +244,10 @@ def main() -> int:
         "ts": now_utc(),
         "cycle_index": cycle_index,
         "stop_reason": stop_reason,
-        "requires_master_escalation": stop_reason == "redesigned_family_space_exhausted_escalate_to_master",
+        "requires_master_escalation": stop_reason == "human_seeded_line_exhausted_escalate_to_master",
         "worthy_candidate_found": stop_reason == "worthy_candidate_found",
-        "latest": latest
+        "latest": latest,
+        "strategy_line_id": active_line_id
     }
     write_json(SUPERVISOR_DECISION_JSON, decision_payload)
     write_text(

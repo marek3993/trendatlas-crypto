@@ -21,8 +21,6 @@ LOOP_SUMMARY_JSON = LOOP_OUTPUT_DIR / "autonomous_loop_run_summary.json"
 ZEROSEL_JSON = LOOP_OUTPUT_DIR / "zero_selection_diagnostics.json"
 PROJECT_TRUTH_JSON = ROOT / "source_of_truth" / "project_truth.json"
 
-RETIRED_STRATEGY_LINE_ID = "phase67j_no_neo_main_autonomous_line"
-
 
 class LaunchError(RuntimeError):
     pass
@@ -34,11 +32,11 @@ def read_json_if_exists(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def is_retired_strategy_line() -> bool:
+def get_active_strategy_line() -> tuple[str | None, dict]:
     truth = read_json_if_exists(PROJECT_TRUTH_JSON)
+    active_line_id = truth.get("ai_lab_runtime", {}).get("active_strategy_line_id")
     lines = truth.get("ai_lab_strategy_lines", {})
-    line = lines.get(RETIRED_STRATEGY_LINE_ID, {})
-    return line.get("status") == "retired_from_autonomous_ideation"
+    return active_line_id, lines.get(active_line_id, {})
 
 
 def run_step(cmd: list[str], label: str) -> None:
@@ -84,16 +82,22 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--skip-clean", action="store_true")
-    parser.add_argument("--disable-wave2-fallback", action="store_true")
     args = parser.parse_args()
 
     if args.dry_run == args.execute:
         raise LaunchError("choose exactly one of --dry-run or --execute")
 
-    if is_retired_strategy_line():
+    active_line_id, active_line = get_active_strategy_line()
+    print(f"[LAUNCH] active_strategy_line_id={active_line_id}")
+
+    if active_line.get("status") == "retired_from_autonomous_ideation":
         print(f"[LAUNCH] strategy_line_status=retired_from_autonomous_ideation")
-        print(f"[LAUNCH] retired_strategy_line_id={RETIRED_STRATEGY_LINE_ID}")
-        print("[LAUNCH][FAIL] strategy line is retired and excluded from runtime")
+        print(f"[LAUNCH][FAIL] strategy line is retired and excluded from runtime")
+        return 1
+
+    if active_line.get("autonomous_ideation_allowed") is not True:
+        print(f"[LAUNCH] strategy_line_status={active_line.get('status')}")
+        print("[LAUNCH][FAIL] active strategy line is not allowed for autonomous ideation")
         return 1
 
     mode_flag = "--dry-run" if args.dry_run else "--execute"

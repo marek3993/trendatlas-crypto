@@ -12,10 +12,13 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 IDEATION_POLICY_PATH = ROOT / "research_os" / "policies" / "research_os_ideation_policy_v1.json"
 MUTATION_POLICY_PATH = ROOT / "research_os" / "policies" / "research_os_mutation_space_policy_v1.json"
+PROJECT_TRUTH_JSON = ROOT / "source_of_truth" / "project_truth.json"
 OUTPUT_DIR = ROOT / "outputs" / "research_os_ideation_v1"
 OUTPUT_JSON = OUTPUT_DIR / "ideation_hypotheses.json"
 OUTPUT_CSV = OUTPUT_DIR / "ideation_summary.csv"
 OUTPUT_LOG = OUTPUT_DIR / "ideation_decision_log.jsonl"
+
+ACTIVE_STRATEGY_LINE_ID = "phase68i_dynamic_ladder_autonomous_line"
 
 
 class IdeationError(RuntimeError):
@@ -56,61 +59,69 @@ def make_id(label: str) -> str:
     return f"hyp_{digest}"
 
 
-def reset_templates() -> list[dict[str, Any]]:
+def assert_active_line_allowed() -> None:
+    truth = load_json(PROJECT_TRUTH_JSON)
+    active_line = truth.get("ai_lab_runtime", {}).get("active_strategy_line_id")
+    if active_line != ACTIVE_STRATEGY_LINE_ID:
+        raise IdeationError(f"unexpected active strategy line: {active_line}")
+
+    line = truth.get("ai_lab_strategy_lines", {}).get(ACTIVE_STRATEGY_LINE_ID, {})
+    if line.get("autonomous_ideation_allowed") is not True:
+        raise IdeationError(f"active strategy line not allowed for ideation: {ACTIVE_STRATEGY_LINE_ID}")
+
+
+def human_seeded_templates() -> list[dict[str, Any]]:
     return [
         {
-            "hypothesis_label": "core_baseline_relative_edge_gate_v1",
-            "mutation_family": "baseline_relative_edge_gate",
-            "family_name": "baseline_relative_edge_gate",
-            "hypothesis_text": "Promote candidate only when rolling excess edge versus baseline is positive on two horizons; otherwise fallback to baseline.",
-            "rationale": "Family fails because it does not create stable excess edge versus baseline, especially in hard subperiods.",
-            "known_baseline_weakness": "Family fails to create stable excess edge versus baseline, especially in hard subperiods.",
-            "exact_mechanism_of_improvement": "Require positive rolling excess edge versus baseline on short and medium horizons before promotion; otherwise fallback to baseline.",
-            "new_state_or_new_classification": "New baseline-relative excess-edge promotion gate.",
-            "exact_compare_target": "phase67j_no_neo_main",
-            "why_not_parameter_tuning": "Introduces explicit baseline-relative gating logic instead of tuning thresholds or weights.",
-            "why_expected_edge_should_survive_strict_scoring": "Directly ties promotion to stable excess edge versus baseline on two horizons.",
-            "primary_expected_metric_improvement": "since2025",
-            "rolling_excess_edge_reference": "baseline_relative_excess_edge",
-            "short_horizon_edge_gate": "short_horizon_excess_edge_must_be_positive",
-            "medium_horizon_edge_gate": "medium_horizon_excess_edge_must_be_positive",
-            "fallback_to_baseline_rule": "if either horizon fails then fallback_to_baseline"
+            "hypothesis_label": "phase68i_ladder_reentry_stability_gate_v1",
+            "mutation_family": "ladder_reentry_stability_gate",
+            "family_name": "ladder_reentry_stability_gate",
+            "hypothesis_text": "After temporary ladder reduction, require stable continuation proof before restoring higher ladder exposure.",
+            "rationale": "Dynamic ladder can re-expand too early after a weak bounce.",
+            "known_baseline_weakness": "Dynamic ladder can re-expand too early after a weak bounce.",
+            "exact_mechanism_of_improvement": "Require a stability proof sequence before re-entry to higher ladder states after temporary reduction.",
+            "new_state_or_new_classification": "New ladder re-entry stability gate.",
+            "exact_compare_target": "phase68i_dynamic_ladder_candidate",
+            "why_not_parameter_tuning": "Introduces a new ladder re-entry gate instead of changing thresholds or weights.",
+            "why_expected_edge_should_survive_strict_scoring": "Targets a specific deployment-profile weakness around premature re-expansion after weak recovery.",
+            "primary_expected_metric_improvement": "DD",
+            "reentry_trigger_name": "ladder_reentry_after_reduction",
+            "stability_proof_requirement": "require stable continuation before higher step restoration",
+            "premature_reentry_block_rule": "block higher step restoration on weak bounce"
         },
         {
-            "hypothesis_label": "core_breadth_dispersion_corridor_v1",
-            "mutation_family": "breadth_dispersion_corridor",
-            "family_name": "breadth_dispersion_corridor",
-            "hypothesis_text": "Promote candidate only inside a healthy breadth and dispersion corridor; otherwise fallback to baseline.",
-            "rationale": "Family quality collapses when market participation is too narrow or too chaotic.",
-            "known_baseline_weakness": "Family quality collapses when market participation is too narrow or too chaotic.",
-            "exact_mechanism_of_improvement": "Require breadth and dispersion to remain inside a healthy corridor before promotion; otherwise fallback to baseline.",
-            "new_state_or_new_classification": "New breadth-dispersion corridor classification gate.",
-            "exact_compare_target": "phase67j_no_neo_main",
-            "why_not_parameter_tuning": "Introduces a new corridor gate based on market participation quality, not a simple parameter change.",
-            "why_expected_edge_should_survive_strict_scoring": "Targets a concrete participation-quality collapse mode with explicit fallback behavior.",
-            "primary_expected_metric_improvement": "DD",
-            "breadth_measure_name": "market_breadth_participation",
-            "dispersion_measure_name": "cross_sectional_dispersion",
-            "healthy_corridor_definition": "breadth_not_too_narrow_and_dispersion_not_too_chaotic",
-            "fallback_to_baseline_rule": "outside_corridor_fallback_to_baseline"
+            "hypothesis_label": "phase68i_ladder_step_fragility_filter_v1",
+            "mutation_family": "ladder_step_fragility_filter",
+            "family_name": "ladder_step_fragility_filter",
+            "hypothesis_text": "Before each higher ladder step, require a fragility check so that fragile continuation blocks the next step-up.",
+            "rationale": "Ladder step-up progression can be too aggressive when trend continuation is fragile.",
+            "known_baseline_weakness": "Ladder step-up progression can be too aggressive when continuation is fragile.",
+            "exact_mechanism_of_improvement": "Add a step fragility filter before each upward ladder move and hold at the lower step when fragile.",
+            "new_state_or_new_classification": "New ladder step fragility gate.",
+            "exact_compare_target": "phase68i_dynamic_ladder_candidate",
+            "why_not_parameter_tuning": "Introduces a new ladder step fragility decision layer, not generic threshold tuning.",
+            "why_expected_edge_should_survive_strict_scoring": "Targets deployment-profile step escalation quality directly instead of chasing raw CAGR.",
+            "primary_expected_metric_improvement": "Calmar",
+            "step_fragility_signal_name": "ladder_step_fragility_signal",
+            "step_up_gate_rule": "require non-fragile continuation before higher step",
+            "fragile_state_hold_rule": "hold current lower step when fragility detected"
         },
         {
-            "hypothesis_label": "core_downside_asymmetry_veto_v1",
-            "mutation_family": "downside_asymmetry_veto",
-            "family_name": "downside_asymmetry_veto",
-            "hypothesis_text": "Veto promotion when downside beta or downside capture versus reference exceeds cap.",
-            "rationale": "Family still participates too much in bad downside states.",
-            "known_baseline_weakness": "Family still participates too much in bad downside states.",
-            "exact_mechanism_of_improvement": "Block promotion when downside beta or downside capture versus reference breaches a cap.",
-            "new_state_or_new_classification": "New downside-asymmetry veto gate.",
-            "exact_compare_target": "phase67j_no_neo_main",
-            "why_not_parameter_tuning": "Introduces a downside-state veto relationship, not a threshold or weight tuning shell.",
-            "why_expected_edge_should_survive_strict_scoring": "Targets explicit downside participation weakness with a hard veto gate.",
+            "hypothesis_label": "phase68i_ladder_downside_capture_cap_v1",
+            "mutation_family": "ladder_downside_capture_cap",
+            "family_name": "ladder_downside_capture_cap",
+            "hypothesis_text": "If downside capture versus the baseline exceeds a cap, freeze further ladder increases and reduce exposure.",
+            "rationale": "Dynamic ladder may still absorb too much downside participation in bad intervals.",
+            "known_baseline_weakness": "Dynamic ladder may still absorb too much downside participation in bad intervals.",
+            "exact_mechanism_of_improvement": "Apply a downside capture cap relative to the baseline and step down or freeze when breached.",
+            "new_state_or_new_classification": "New downside capture veto state for ladder progression.",
+            "exact_compare_target": "phase68i_dynamic_ladder_candidate",
+            "why_not_parameter_tuning": "Introduces a new downside control relationship versus the baseline, not a simple ladder threshold tweak.",
+            "why_expected_edge_should_survive_strict_scoring": "Targets downside robustness explicitly, which matches the deployment objective of the line.",
             "primary_expected_metric_improvement": "DD",
-            "downside_reference_name": "baseline_or_reference_downside_profile",
-            "downside_beta_or_capture_measure": "downside_beta_or_capture_vs_reference",
-            "downside_cap_rule": "must_not_exceed_downside_cap",
-            "promotion_veto_rule": "if_downside_measure_exceeds_cap_then_veto_promotion"
+            "downside_capture_reference": "phase68i_dynamic_ladder_candidate",
+            "downside_cap_rule": "must not exceed downside capture cap versus baseline",
+            "step_down_or_freeze_rule": "freeze higher steps and reduce exposure when cap is breached"
         }
     ]
 
@@ -151,21 +162,24 @@ def main() -> int:
     if args.dry_run == args.execute:
         raise IdeationError("choose exactly one of --dry-run or --execute")
 
+    assert_active_line_allowed()
+
     ideation_policy = load_json(IDEATION_POLICY_PATH)
     mutation_policy = load_json(MUTATION_POLICY_PATH)
 
     selected: list[dict[str, Any]] = []
-    for payload in reset_templates():
+    for payload in human_seeded_templates():
         candidate = {
             "hypothesis_id": make_id(payload["hypothesis_label"]),
             "branch": "core",
             "segment_owner": "core_strategy",
-            "baseline_reference": "phase67j_no_neo_main",
+            "baseline_reference": "phase68i_dynamic_ladder_candidate",
             **payload
         }
         ok, reason = validate_candidate(candidate, ideation_policy, mutation_policy)
         append_jsonl(OUTPUT_LOG, {
             "ts": now_utc(),
+            "strategy_line_id": ACTIVE_STRATEGY_LINE_ID,
             "family": candidate["mutation_family"],
             "hypothesis_label": candidate["hypothesis_label"],
             "decision": "accepted" if ok else "blocked",
@@ -184,7 +198,8 @@ def main() -> int:
 
     if args.execute:
         write_json(OUTPUT_JSON, {
-            "wave": "master_reset_batch_v1",
+            "strategy_line_id": ACTIVE_STRATEGY_LINE_ID,
+            "wave": "human_seeded_first_batch_v1",
             "hypotheses": selected,
             "policy_version": ideation_policy["policy_version"]
         })

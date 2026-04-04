@@ -1,6 +1,6 @@
 {
-  "policy_version": "7.1.0",
-  "description": "MASTER-approved human-reset family space with retired strategy-line exclusion.",
+  "policy_version": "8.0.0",
+  "description": "Human-seeded first batch for phase68i dynamic ladder autonomous line.",
   "retired_strategy_lines": {
     "phase67j_no_neo_main_autonomous_line": {
       "status": "retired_from_autonomous_ideation",
@@ -10,19 +10,19 @@
     }
   },
   "enabled_families": {
-    "baseline_relative_edge_gate": {
+    "ladder_reentry_stability_gate": {
       "enabled": true,
-      "role": "human_reset_batch",
+      "role": "human_seeded_first_batch",
       "max_candidates_per_batch": 1
     },
-    "breadth_dispersion_corridor": {
+    "ladder_step_fragility_filter": {
       "enabled": true,
-      "role": "human_reset_batch",
+      "role": "human_seeded_first_batch",
       "max_candidates_per_batch": 1
     },
-    "downside_asymmetry_veto": {
+    "ladder_downside_capture_cap": {
       "enabled": true,
-      "role": "human_reset_batch",
+      "role": "human_seeded_first_batch",
       "max_candidates_per_batch": 1
     }
   },
@@ -37,6 +37,9 @@
     "regime_reentry_proof",
     "leader_fragility_filter",
     "recovery_quality_split",
+    "baseline_relative_edge_gate",
+    "breadth_dispersion_corridor",
+    "downside_asymmetry_veto",
     "probation_rule_tuning",
     "generic_governance_fiddling",
     "generic_tuning_shell",
@@ -63,32 +66,29 @@
     "Calmar"
   ],
   "family_rules": {
-    "baseline_relative_edge_gate": {
+    "ladder_reentry_stability_gate": {
       "required_fields": [
-        "rolling_excess_edge_reference",
-        "short_horizon_edge_gate",
-        "medium_horizon_edge_gate",
-        "fallback_to_baseline_rule"
+        "reentry_trigger_name",
+        "stability_proof_requirement",
+        "premature_reentry_block_rule"
       ],
       "mechanism_first_required": true,
       "parameter_first_forbidden": true
     },
-    "breadth_dispersion_corridor": {
+    "ladder_step_fragility_filter": {
       "required_fields": [
-        "breadth_measure_name",
-        "dispersion_measure_name",
-        "healthy_corridor_definition",
-        "fallback_to_baseline_rule"
+        "step_fragility_signal_name",
+        "step_up_gate_rule",
+        "fragile_state_hold_rule"
       ],
       "mechanism_first_required": true,
       "parameter_first_forbidden": true
     },
-    "downside_asymmetry_veto": {
+    "ladder_downside_capture_cap": {
       "required_fields": [
-        "downside_reference_name",
-        "downside_beta_or_capture_measure",
+        "downside_capture_reference",
         "downside_cap_rule",
-        "promotion_veto_rule"
+        "step_down_or_freeze_rule"
       ],
       "mechanism_first_required": true,
       "parameter_first_forbidden": true
@@ -108,9 +108,9 @@
       "improve selection quality"
     ],
     "reject_if_generic_only": [
-      "parameter change without new gate",
-      "parameter change without new classification",
-      "parameter change without baseline-relative logic"
+      "parameter change without new ladder gate",
+      "parameter change without new ladder state rule",
+      "parameter change without downside control relationship"
     ],
     "reject_if_not_mechanism_first": true
   },
@@ -120,11 +120,11 @@
     "max_selected_specs_total": 3,
     "exactly_one_spec_per_active_family": true,
     "active_families": [
-      "baseline_relative_edge_gate",
-      "breadth_dispersion_corridor",
-      "downside_asymmetry_veto"
+      "ladder_reentry_stability_gate",
+      "ladder_step_fragility_filter",
+      "ladder_downside_capture_cap"
     ],
-    "if_at_least_one_worthy": "continue_only_winning_family",
-    "if_zero_worthy_again": "pause_this_strategy_line_and_escalate_to_master"
+    "if_zero_worthy_again": "stop_this_line_and_escalate_to_master",
+    "if_at_least_one_worthy": "continue_only_winning_family"
   }
 }
