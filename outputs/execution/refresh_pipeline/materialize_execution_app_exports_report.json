@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-04-04T10:18:47Z",
-  "started_at_utc": "2026-04-04T10:18:47Z",
+  "generated_at_utc": "2026-04-04T11:07:24Z",
+  "started_at_utc": "2026-04-04T11:07:24Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -54,12 +54,12 @@
       "source_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
         "size_bytes": 249,
-        "modified_utc": "2026-04-01T21:12:27Z"
+        "modified_utc": "2026-04-04T11:07:22Z"
       },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 492,
-        "modified_utc": "2026-04-04T10:18:47Z"
+        "modified_utc": "2026-04-04T11:07:24Z"
       },
       "added_fields": [
         "live_truth_mode",
@@ -118,7 +118,7 @@
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
         "size_bytes": 220,
-        "modified_utc": "2026-04-04T10:18:47Z"
+        "modified_utc": "2026-04-04T11:07:24Z"
       },
       "computed_fields": [
         "sharpe",
