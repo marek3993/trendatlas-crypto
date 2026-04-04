@@ -1,6 +1,6 @@
 {
   "report_type": "execution_source_contract_report",
-  "generated_at_utc": "2026-04-04T11:07:24Z",
+  "generated_at_utc": "2026-04-04T14:21:44Z",
   "source_of_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "required_artifact_keys": [
     "phase67j_winner_paper",
@@ -77,8 +77,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
-        "size_bytes": 492,
-        "modified_utc": "2026-04-04T11:07:24Z",
+        "size_bytes": 509,
+        "modified_utc": "2026-04-04T14:21:44Z",
         "file_type": "csv",
         "header": [
           "model",
@@ -108,12 +108,12 @@
           "next_rebalance_date": "2026-04-04",
           "dropped_assets": "NEO",
           "final_shortlist": "APT,BCH,DOGE,ICP,STX,XTZ",
-          "live_truth_mode": "1.0x_without_leverage",
-          "execution_profile": "unlevered",
-          "leverage_mode": "none",
+          "live_truth_mode": "phase68i_dynamic_ladder_candidate",
+          "execution_profile": "dynamic_ladder",
+          "leverage_mode": "dynamic",
           "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
           "fallback_profile_label": "phase68g_66g_1p25x_candidate",
-          "approval_gate_status": "pending_or_not_live_yet"
+          "approval_gate_status": "approved_and_applied"
         },
         "sample_last_row": {
           "model": "phase67j_no_neo_main",
@@ -125,12 +125,12 @@
           "next_rebalance_date": "2026-04-04",
           "dropped_assets": "NEO",
           "final_shortlist": "APT,BCH,DOGE,ICP,STX,XTZ",
-          "live_truth_mode": "1.0x_without_leverage",
-          "execution_profile": "unlevered",
-          "leverage_mode": "none",
+          "live_truth_mode": "phase68i_dynamic_ladder_candidate",
+          "execution_profile": "dynamic_ladder",
+          "leverage_mode": "dynamic",
           "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
           "fallback_profile_label": "phase68g_66g_1p25x_candidate",
-          "approval_gate_status": "pending_or_not_live_yet"
+          "approval_gate_status": "approved_and_applied"
         }
       }
     },

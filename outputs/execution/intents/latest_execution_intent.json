@@ -1,6 +1,6 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-04-04T11:07:24Z",
+  "generated_at_utc": "2026-04-04T14:21:44Z",
   "as_of_source": "2026-03-30",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
@@ -63,12 +63,12 @@
       "next_rebalance_date": "2026-04-04",
       "dropped_assets": "NEO",
       "final_shortlist": "APT,BCH,DOGE,ICP,STX,XTZ",
-      "live_truth_mode": "1.0x_without_leverage",
-      "execution_profile": "unlevered",
-      "leverage_mode": "none",
+      "live_truth_mode": "phase68i_dynamic_ladder_candidate",
+      "execution_profile": "dynamic_ladder",
+      "leverage_mode": "dynamic",
       "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
       "fallback_profile_label": "phase68g_66g_1p25x_candidate",
-      "approval_gate_status": "pending_or_not_live_yet"
+      "approval_gate_status": "approved_and_applied"
     },
     "phase66g_last_paper_row": {
       "date": "2026-03-30",
