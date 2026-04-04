@@ -76,7 +76,7 @@ DEFAULT_SELECTOR = {
 TEXT = {
     "sk": {
         "language": "Jazyk",
-        "tabs": ["Domov", "Porovnanie", "Ako to funguje", "Kontakt"],
+        "tabs": ["Domov", "Ako to funguje", "Kontakt"],
         "hero": "Pravidlami riadená crypto rotačná stratégia pre meniace sa trhové podmienky",
         "subhero": (
             "TrendAtlas Crypto je navrhnutý pre ľudí, ktorí chcú disciplinovaný spôsob, ako sa pohybovať v crypto trhu "
@@ -99,7 +99,7 @@ TEXT = {
         "trend_cross_none": "Bez dnešného prechodu",
         "na": "Nedostupné",
         "chart_title": "Vývoj kapitálu",
-        "chart_note": "Graf ukazuje hlavnú stratégiu, referenčnú stratégiu a BTC Buy & Hold v prémiovejšom porovnaní bez zmeny source-of-truth logiky.",
+        "chart_note": "Graf ukazuje hlavnú stratégiu a BTC benchmark bez referenčnej stratégie.",
         "chart_year": "Začať graf od roku",
         "performance_title": "Výkon na prvý pohľad",
         "ops_title": "Prevádzkové metriky",
@@ -242,7 +242,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
     },
     "en": {
         "language": "Language",
-        "tabs": ["Home", "Comparison", "How it works", "Contact"],
+        "tabs": ["Home", "How it works", "Contact"],
         "hero": "A rules-based crypto rotation strategy built for changing market conditions",
         "subhero": (
             "TrendAtlas Crypto is designed for people who want a disciplined way to navigate crypto without manually watching "
@@ -265,7 +265,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "trend_cross_none": "No cross today",
         "na": "Unavailable",
         "chart_title": "Capital curve",
-        "chart_note": "The chart shows the main strategy, the reference strategy and BTC Buy & Hold in a more premium comparison view without changing the source-of-truth logic.",
+        "chart_note": "The chart shows the main strategy and the BTC benchmark, without the reference strategy.",
         "chart_year": "Start chart from year",
         "performance_title": "Performance at a glance",
         "ops_title": "Operational metrics",
@@ -1066,10 +1066,16 @@ def build_metrics(summary_row: pd.Series | None, live_row: pd.Series | None, pap
     if metrics["btc_days_pct"] is None:
         metrics["btc_days_pct"] = derive_btc_days_pct(paper_df)
 
-    if not paper_df.empty:
+    metrics["latest_date"] = None
+
+    for date_key in ["latest_available_date", "strategy_last_closed_day", "last_closed_day", "latest_date"]:
+        live_date = get_text_from_row(live_row, date_key)
+        if live_date:
+            metrics["latest_date"] = live_date
+            break
+
+    if metrics["latest_date"] is None and not paper_df.empty:
         metrics["latest_date"] = pd.to_datetime(paper_df["ts"].iloc[-1]).strftime("%Y-%m-%d")
-    else:
-        metrics["latest_date"] = None
 
     metrics["sharpe"] = get_metric_from_row(summary_row, "sharpe")
     metrics["sortino"] = get_metric_from_row(summary_row, "sortino")
@@ -1221,31 +1227,9 @@ def make_capital_chart(
 ) -> go.Figure:
     fig = go.Figure()
 
-    if reference_df is not None and not reference_df.empty:
-        ref_plot = filter_from_year(reference_df, year)
-        fig.add_trace(
-            go.Scatter(
-                x=ref_plot["ts"],
-                y=rebase_series(ref_plot["equity"]),
-                mode="lines",
-                name=reference_label,
-                line=dict(width=2.0, color="#06d6a0", dash="dot"),
-            )
-        )
-
-
-    btc_plot = filter_from_year(btc_df, year)
-    fig.add_trace(
-        go.Scatter(
-            x=btc_plot["ts"],
-            y=rebase_series(btc_plot["close"]),
-            mode="lines",
-            name=btc_label,
-            line=dict(width=2.2, color="#7aa6ff"),
-        )
-    )
-
     main_plot = filter_from_year(main_df, year)
+    btc_plot = filter_from_year(btc_df, year)
+
     fig.add_trace(
         go.Scatter(
             x=main_plot["ts"],
@@ -1253,6 +1237,16 @@ def make_capital_chart(
             mode="lines",
             name=main_label,
             line=dict(width=4.8, color="#ff6b6b"),
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=btc_plot["ts"],
+            y=rebase_series(btc_plot["close"]),
+            mode="lines",
+            name=btc_label,
+            line=dict(width=2.4, color="#60a5fa", dash="solid"),
         )
     )
 
@@ -1537,7 +1531,7 @@ with tabs[0]:
     selected_year_home = st.selectbox(
         t(lang, "chart_year"),
         options=years,
-        index=0,
+        index=years.index(2025) if 2025 in years else 0,
         key="selected_year_home",
     )
     st.plotly_chart(
@@ -1676,61 +1670,10 @@ with tabs[0]:
         st.warning(" / ".join(paper_errors))
 
 with tabs[1]:
-    st.subheader(t(lang, "compare_title"))
-    st.caption(t(lang, "compare_desc"))
-
-    selected_year_compare = st.selectbox(
-        t(lang, "chart_year"),
-        options=years,
-        index=0,
-        key="selected_year_compare",
-    )
-    st.plotly_chart(
-        make_capital_chart(
-            main_df=papers[main_key],
-            reference_df=reference_equity_df,
-            btc_df=btc_df,
-            year=selected_year_compare,
-            main_label=labels.get(main_key, main_key),
-            reference_label=labels.get(reference_key, reference_key),
-            btc_label=t(lang, "btc_label"),
-            title=t(lang, "compare_chart"),
-        ),
-        use_container_width=True,
-    )
-
-    compare_rows = [
-        {
-            "Stratégia" if lang == "sk" else "Strategy": labels.get(main_key, main_key),
-            t(lang, "cagr"): safe_metric_text(main_metrics.get("cagr_pct"), lang=lang),
-            t(lang, "max_dd"): safe_metric_text(main_metrics.get("max_drawdown_pct"), lang=lang),
-            t(lang, "since2023"): safe_metric_text(main_metrics.get("since2023_cagr_pct"), lang=lang),
-            t(lang, "since2025"): safe_metric_text(main_metrics.get("since2025_cagr_pct"), lang=lang),
-            t(lang, "sharpe"): safe_metric_text(main_metrics.get("sharpe"), decimals=3, suffix="", lang=lang),
-            t(lang, "sortino"): safe_metric_text(main_metrics.get("sortino"), decimals=3, suffix="", lang=lang),
-        },
-        {
-            "Stratégia" if lang == "sk" else "Strategy": labels.get(reference_key, reference_key),
-            t(lang, "cagr"): safe_metric_text(reference_metrics.get("cagr_pct"), lang=lang),
-            t(lang, "max_dd"): safe_metric_text(reference_metrics.get("max_drawdown_pct"), lang=lang),
-            t(lang, "since2023"): safe_metric_text(reference_metrics.get("since2023_cagr_pct"), lang=lang),
-            t(lang, "since2025"): safe_metric_text(reference_metrics.get("since2025_cagr_pct"), lang=lang),
-            t(lang, "sharpe"): safe_metric_text(reference_metrics.get("sharpe"), decimals=3, suffix="", lang=lang),
-            t(lang, "sortino"): safe_metric_text(reference_metrics.get("sortino"), decimals=3, suffix="", lang=lang),
-        },
-    ]
-
-  
-
-    compare_df = pd.DataFrame(compare_rows)
-    st.markdown(f"### {t(lang, 'compare_table')}")
-    st.dataframe(compare_df, use_container_width=True, hide_index=True)
-
-with tabs[2]:
     st.subheader(t(lang, "method_title"))
     st.markdown(t(lang, "method_md"))
 
-with tabs[3]:
+with tabs[2]:
     st.subheader(t(lang, "contact_title"))
     st.caption(t(lang, "contact_desc"))
 
@@ -1760,4 +1703,3 @@ with tabs[3]:
                 st.error(f"{t(lang, 'contact_failed')}: {e}")
 
     st.caption(t(lang, "contact_files"))
-
