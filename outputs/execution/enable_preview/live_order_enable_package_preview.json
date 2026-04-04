@@ -1,0 +1,106 @@
+{
+  "artifact_type": "live_order_enable_package_preview",
+  "generated_at_utc": "2026-04-04T14:47:51Z",
+  "current_truth_snapshot": {
+    "current_live_truth": "phase68i_dynamic_ladder_candidate",
+    "current_app_live_mode": null,
+    "current_approval_gate_status": null,
+    "current_real_order_eligible_status": null
+  },
+  "affected_files_and_contracts": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\current_issues.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_report.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_decision.json"
+  ],
+  "preview_target_values": {
+    "approval_gate_status": "live_order_enabled_and_approved",
+    "real_order_gate_status": "ready_if_enabled",
+    "execution_mode": {
+      "mode": "live",
+      "trading_enabled": true,
+      "kill_switch": false
+    },
+    "live_order_policy": {
+      "allow_live_orders": true,
+      "allowed_approval_gate_statuses": [
+        "live_order_enabled_and_approved"
+      ],
+      "manual_approval_required": true,
+      "manual_approval_for_first_order_status": "still_required",
+      "require_kill_switch_off": true,
+      "max_order_notional_usd": 250.0,
+      "allowed_assets": [
+        "CASH",
+        "BTC",
+        "ETH",
+        "DOGE",
+        "BCH",
+        "APT",
+        "XTZ",
+        "ICP",
+        "STX"
+      ]
+    }
+  },
+  "counterfactual_preflight": {
+    "signal_id": "phase67j::2026-03-30::CASH",
+    "target_asset": "CASH",
+    "target_regime": "Držíme CASH",
+    "current_state": "CASH",
+    "current_gate_status": "blocked",
+    "current_gate_block_reasons": [
+      "kill_switch_enabled",
+      "manual_approval_required",
+      "approval_gate_status=approved_and_applied",
+      "max_order_notional_not_enabled",
+      "allow_live_orders=false",
+      "execution_mode_trading_disabled"
+    ],
+    "current_submit_preview_status": "blocked",
+    "reconciled": true,
+    "open_orders_count": 0,
+    "would_submit_if_package_applied_now": false,
+    "blockers_if_applied_now": [
+      "manual_approval_not_yet_satisfied",
+      "no_actionable_order_current_signal_is_cash_and_already_reconciled",
+      "current_runtime_gate_still_blocked_until_package_is_actually_applied"
+    ]
+  },
+  "exact_preflight_checklist_before_future_enable": [
+    "approval_gate_status == live_order_enabled_and_approved",
+    "real_order_gate_status == ready_if_enabled",
+    "execution_mode.trading_enabled == true",
+    "live_order_policy.allow_live_orders == true",
+    "kill switch policy satisfied",
+    "max_order_notional_usd > 0",
+    "target asset on allowlist",
+    "fresh valid intent exists",
+    "account snapshot exists and account address present",
+    "open_orders_count == 0",
+    "reconciliation passes",
+    "manual approval explicitly satisfied for first order",
+    "submit preview would_submit == true"
+  ],
+  "notes": [
+    "Preview only. No file is applied by this script.",
+    "No trading is enabled by this script.",
+    "No real order is placed by this script.",
+    "Current blocked state of the real system remains unchanged."
+  ],
+  "source_paths": {
+    "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+    "mode_config_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+    "live_order_policy_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json",
+    "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+    "gate_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",
+    "reconciliation_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_report.json",
+    "submit_preview_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_decision.json"
+  }
+}

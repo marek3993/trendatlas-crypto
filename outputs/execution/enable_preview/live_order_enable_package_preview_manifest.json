@@ -1,0 +1,22 @@
+{
+  "artifact_name": "live_order_enable_package_preview",
+  "generated_at_utc": "2026-04-04T14:47:51Z",
+  "started_at_utc": "2026-04-04T14:47:51Z",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\preview_live_order_enable_package.py",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_report.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_decision.json"
+  ],
+  "output_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\enable_preview\\live_order_enable_package_preview.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\enable_preview\\live_order_enable_package_preview_quality.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\enable_preview\\live_order_enable_package_preview_manifest.json"
+  ],
+  "status": "success"
+}
