@@ -1,4 +1,4 @@
-{
+﻿{
   "manifest_name": "repo_hygiene_guardrails_manifest",
   "schema_version": "v1",
   "test_files": [
@@ -18,7 +18,7 @@
     "tests/test_canonical_reference_truth_flags.py",
     "tests/test_canonical_decision_ids_present.py",
     "tests/test_canonical_manifest_indexes_shape.py",
-    "tests/test_canonical_truth_domain_allowedValues.py",
+    "tests/test_canonical_truth_domain_allowed_values.py",
     "tests/test_canonical_artifact_type_allowed_values.py",
     "tests/test_canonical_truth_status_allowed_values.py",
     "tests/test_canonical_consumer_scope_allowed_values.py",
