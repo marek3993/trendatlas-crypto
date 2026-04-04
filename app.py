@@ -53,22 +53,22 @@ DEFAULT_SELECTOR = {
         "phase68i_dynamic_ladder_candidate": {
             "summary_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_summary.csv",
             "paper_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
-            "live_status_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_live_status.csv",
+            "live_status_path": "outputs/execution/app_exports/phase67j_live_status.csv",
         },
         "phase67j_no_neo_main": {
-            "summary_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_final_narrow_validation_summary.csv",
-            "paper_dir": "outputs/phase67j_final_narrow_validation_pack",
-            "live_status_path": "outputs/phase67j_final_narrow_validation_pack/phase67j_live_status.csv",
+            "summary_path": "outputs/execution/app_exports/phase67j_final_narrow_validation_summary.csv",
+            "paper_path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+            "live_status_path": "outputs/execution/app_exports/phase67j_live_status.csv",
         },
         "phase66g_production_soft_filters": {
-            "summary_path": "outputs/phase66g_production_candidate_live/phase66g_production_candidate_summary.csv",
-            "paper_dir": "outputs/phase66g_production_candidate_live",
-            "live_status_path": "outputs/phase66g_production_candidate_live/phase66g_live_status.csv",
+            "summary_path": "outputs/execution/app_exports/phase66g_production_candidate_summary.csv",
+            "paper_path": "outputs/execution/app_exports/phase66g_production_soft_filters_paper.csv",
+            "live_status_path": "outputs/execution/app_exports/phase66g_live_status.csv",
         },
     },
     "trend_barometer_source": {
-        "live_status_path": "outputs/phase66g_production_candidate_live/phase66g_live_status.csv",
-        "history_path": "outputs/phase66g_production_candidate_live/phase66g_trend_barometer_history.csv",
+        "live_status_path": "outputs/execution/app_exports/phase66g_live_status.csv",
+        "history_path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
         "model_key": "phase66g_production_soft_filters",
     },
 }
