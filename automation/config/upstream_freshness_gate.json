@@ -1,0 +1,29 @@
+{
+  "stages": [
+    {
+      "name": "phase63_root_paper",
+      "glob": "outputs/phase63_btc_participation_overlay/*paper.csv",
+      "max_age_hours": 72
+    },
+    {
+      "name": "phase66g_paper",
+      "glob": "outputs/phase66g_production_candidate_live/*paper.csv",
+      "max_age_hours": 72
+    },
+    {
+      "name": "phase67j_paper_or_live",
+      "glob": "outputs/phase67j_no_neo_main/**/*",
+      "max_age_hours": 72
+    },
+    {
+      "name": "phase68h_dynamic_paper",
+      "glob": "outputs/phase68h_dynamic_leverage_ladder_candidate/**/*",
+      "max_age_hours": 72
+    },
+    {
+      "name": "execution_app_exports",
+      "glob": "outputs/execution/app_exports/**/*",
+      "max_age_hours": 72
+    }
+  ]
+}

@@ -25,6 +25,8 @@ SCREENSHOTS_DIR = AUTOMATION_ROOT / "screenshots"
 
 DEFAULT_RUNBOOK = AUTOMATION_ROOT / "config" / "execution_refresh_runbook.json"
 VALIDATOR_SCRIPT = AUTOMATION_ROOT / "tools" / "validate_execution_refresh_chain.py"
+FRESHNESS_GATE_SCRIPT = AUTOMATION_ROOT / "tools" / "validate_upstream_freshness_gate.py"
+FRESHNESS_GATE_CONFIG = AUTOMATION_ROOT / "config" / "upstream_freshness_gate.json"
 
 
 def now_utc_compact() -> str:
@@ -91,35 +93,18 @@ def build_task_spec(task_id: str, runbook_path: Path, requested_by: str) -> dict
     data["created_at"] = now_utc_iso()
     data["requested_by"] = requested_by
     data["status"] = "running"
-    data["inputs"] = {
-        "runbook_path": str(runbook_path),
-    }
+    data["inputs"] = {"runbook_path": str(runbook_path)}
     data["constraints"] = {
         "safe_mode": True,
         "allow_direct_source_of_truth_write": False,
         "real_orders_allowed": False,
         "app_switching_allowed": False,
     }
-    data["expected_outputs"] = [
-        "run_log",
-        "report",
-        "screenshot_manifest",
-    ]
+    data["expected_outputs"] = ["run_log", "report", "screenshot_manifest"]
     data["approval_gate"] = {
         "required_for_truth_apply": True,
         "approver_role": "human",
     }
-    data["source_refs"] = [
-        str(PROJECT_ROOT / "source_of_truth" / "README.md"),
-        str(PROJECT_ROOT / "source_of_truth" / "master_state.md"),
-        str(PROJECT_ROOT / "source_of_truth" / "chat_roles.md"),
-        str(PROJECT_ROOT / "source_of_truth" / "project_truth.json"),
-        str(PROJECT_ROOT / "source_of_truth" / "paths_registry.json"),
-        str(PROJECT_ROOT / "source_of_truth" / "current_issues.md"),
-        str(PROJECT_ROOT / "canonical" / "script_registry.json"),
-        str(PROJECT_ROOT / "canonical" / "output_registry.json"),
-        str(PROJECT_ROOT / "canonical" / "registry_workflow.md"),
-    ]
     return data
 
 
@@ -168,14 +153,7 @@ def build_manifest(manifest_id: str, run_id: str) -> dict:
 
 
 def ensure_parent_dirs() -> None:
-    for p in [
-        TASKS_SPECS_DIR,
-        TASKS_QUEUE_DIR,
-        TASKS_COMPLETED_DIR,
-        RUNS_DIR,
-        REPORTS_DIR,
-        SCREENSHOTS_DIR,
-    ]:
+    for p in [TASKS_SPECS_DIR, TASKS_QUEUE_DIR, TASKS_COMPLETED_DIR, RUNS_DIR, REPORTS_DIR, SCREENSHOTS_DIR]:
         p.mkdir(parents=True, exist_ok=True)
 
 
@@ -217,11 +195,9 @@ def create_run_scaffold(runbook_path: Path, requested_by: str, slug: str) -> dic
     return {
         "task_id": task_id,
         "run_id": run_id,
-        "task_spec_path": task_spec_path,
         "queue_path": queue_path,
         "run_log_path": run_log_path,
         "report_path": report_path,
-        "manifest_path": manifest_path,
     }
 
 
@@ -231,14 +207,7 @@ def run_stage(stage: dict) -> tuple[bool, str]:
     if not isinstance(command, list) or not command:
         return False, f"Stage '{name}' has invalid command list"
 
-    cmd = [str(part) for part in command]
-    result = subprocess.run(
-        cmd,
-        cwd=str(PROJECT_ROOT),
-        capture_output=True,
-        text=True,
-    )
-
+    result = subprocess.run([str(x) for x in command], cwd=str(PROJECT_ROOT), capture_output=True, text=True)
     stdout = (result.stdout or "").strip()
     stderr = (result.stderr or "").strip()
 
@@ -248,8 +217,7 @@ def run_stage(stage: dict) -> tuple[bool, str]:
     if stderr:
         note_parts.append(f"stderr={stderr}")
 
-    ok = result.returncode == 0
-    return ok, " | ".join(note_parts)
+    return result.returncode == 0, " | ".join(note_parts)
 
 
 def run_validator(runbook_path: Path) -> tuple[bool, str, list[str], list[str]]:
@@ -280,6 +248,37 @@ def run_validator(runbook_path: Path) -> tuple[bool, str, list[str], list[str]]:
 
     ok = result.returncode == 0 and chain_status == "healthy"
     note = f"validator_returncode={result.returncode} | chain_status={chain_status}"
+    return ok, note, findings, errors
+
+
+def run_freshness_gate() -> tuple[bool, str, list[str], list[str]]:
+    result = subprocess.run(
+        [sys.executable, str(FRESHNESS_GATE_SCRIPT), str(FRESHNESS_GATE_CONFIG)],
+        cwd=str(PROJECT_ROOT),
+        capture_output=True,
+        text=True,
+    )
+
+    stdout_lines = [line.strip() for line in (result.stdout or "").splitlines() if line.strip()]
+    stderr_lines = [line.strip() for line in (result.stderr or "").splitlines() if line.strip()]
+
+    chain_status = "broken"
+    findings: list[str] = []
+    errors: list[str] = []
+
+    for line in stdout_lines:
+        if line.startswith("chain_status="):
+            chain_status = line.split("=", 1)[1].strip()
+        elif line.startswith("finding="):
+            findings.append(line.split("=", 1)[1].strip())
+        elif line.startswith("error="):
+            errors.append(line.split("=", 1)[1].strip())
+
+    for line in stderr_lines:
+        errors.append(line)
+
+    ok = result.returncode == 0 and chain_status == "healthy"
+    note = f"freshness_gate_returncode={result.returncode} | chain_status={chain_status}"
     return ok, note, findings, errors
 
 
@@ -316,14 +315,13 @@ def main() -> None:
     ensure_exists(TEMPLATE_SCREENSHOT_MANIFEST, "screenshot manifest template")
     ensure_exists(runbook_path, "execution refresh runbook")
     ensure_exists(VALIDATOR_SCRIPT, "execution refresh chain validator")
+    ensure_exists(FRESHNESS_GATE_SCRIPT, "upstream freshness gate validator")
+    ensure_exists(FRESHNESS_GATE_CONFIG, "upstream freshness gate config")
 
     runbook = read_json(runbook_path)
     slug = slugify(str(runbook.get("slug", "execution_refresh")))
 
     scaffold = create_run_scaffold(runbook_path, requested_by, slug)
-
-    task_id = scaffold["task_id"]
-    run_id = scaffold["run_id"]
     queue_path = scaffold["queue_path"]
     run_log_path = scaffold["run_log_path"]
     report_path = scaffold["report_path"]
@@ -333,16 +331,27 @@ def main() -> None:
 
     append_step(run_log, "load_runbook", "ok", f"Loaded runbook: {runbook_path}")
 
+    gate_ok, gate_note, gate_findings, gate_errors = run_freshness_gate()
+    append_step(run_log, "preflight_upstream_freshness_gate", "ok" if gate_ok else "failed", gate_note)
+    report["findings"].extend(gate_findings)
+    if gate_errors:
+        report["findings"].extend([f"ERROR: {x}" for x in gate_errors])
+        run_log.setdefault("errors", []).extend(gate_errors)
+
     any_stage_failed = False
 
-    for stage in runbook.get("stages", []):
-        stage_name = str(stage["name"])
-        ok, note = run_stage(stage)
-        append_step(run_log, f"run_stage:{stage_name}", "ok" if ok else "failed", note)
-        if not ok:
-            run_log.setdefault("errors", []).append(note)
-            any_stage_failed = True
-            break
+    if gate_ok:
+        for stage in runbook.get("stages", []):
+            stage_name = str(stage["name"])
+            ok, note = run_stage(stage)
+            append_step(run_log, f"run_stage:{stage_name}", "ok" if ok else "failed", note)
+            if not ok:
+                run_log.setdefault("errors", []).append(note)
+                any_stage_failed = True
+                break
+    else:
+        any_stage_failed = True
+        report["findings"].append("Downstream refresh skipped because upstream freshness gate failed.")
 
     validator_ok, validator_note, findings, errors = run_validator(runbook_path)
     append_step(run_log, "validate_execution_chain", "ok" if validator_ok else "failed", validator_note)
@@ -358,18 +367,18 @@ def main() -> None:
 
     if any_stage_failed or not validator_ok:
         final_status = "failed"
-        summary = "Execution refresh wrapper failed due to broken stage or validator failure."
+        summary = "Execution refresh wrapper failed due to upstream freshness gate, broken stage, or validator failure."
     else:
         final_status = "success"
-        summary = "Execution refresh wrapper completed successfully with healthy validator result."
+        summary = "Execution refresh wrapper completed successfully with healthy freshness gate and validator result."
 
     write_json(run_log_path, run_log)
     write_json(report_path, report)
     finalize_run(queue_path, run_log_path, report_path, final_status, summary)
 
     print("OK: execution refresh wrapper finished")
-    print(f"task_id={task_id}")
-    print(f"run_id={run_id}")
+    print(f"task_id={scaffold['task_id']}")
+    print(f"run_id={scaffold['run_id']}")
     print(f"status={final_status}")
     print(f"run_log={run_log_path}")
     print(f"report={report_path}")
