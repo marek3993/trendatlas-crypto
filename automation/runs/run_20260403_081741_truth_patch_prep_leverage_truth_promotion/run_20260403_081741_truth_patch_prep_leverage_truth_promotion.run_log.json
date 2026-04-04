@@ -96,6 +96,20 @@
       "action": "apply_truth_patch",
       "result": "ok",
       "note": "Patch patch_project_truth_update_app_next_step_v4 applied to C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json"
+    },
+    {
+      "step_index": 14,
+      "timestamp": "2026-04-04T07:25:03Z",
+      "action": "approve_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_project_truth_update_app_main_strategy_v5 marked as approved; approval recorded only; no source_of_truth write executed."
+    },
+    {
+      "step_index": 15,
+      "timestamp": "2026-04-04T07:25:12Z",
+      "action": "apply_truth_patch",
+      "result": "ok",
+      "note": "Patch patch_project_truth_update_app_main_strategy_v5 applied to C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json"
     }
   ],
   "artifacts": {

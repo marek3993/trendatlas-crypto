@@ -38,10 +38,10 @@
     "status": "pinned_compare_baseline"
   },
   "app_product_truth": {
-    "main_strategy_model": "phase68i_dynamic_ladder_candidate",
-    "reference_strategy_model": "phase67j_no_neo_main",
+    "main_strategy_model": "phase67j_no_neo_main",
+    "reference_strategy_model": "phase66g_production_soft_filters",
     "benchmark": "BTC",
-    "status": "official_app_main_changed_live_not_switched"
+    "status": "approved_direction_not_final_export_mapping"
   },
   "leverage_truth": {
     "current_live_truth": "1.0x_without_leverage",
@@ -59,7 +59,7 @@
     "UNIVERSE": "frozen",
     "DATA": "freeze_live_source_of_truth_mapping",
     "FORENSIC": "targeted_validation_only",
-    "APP": "final_export_contract_preparation_for_dynamic_ladder",
+    "APP": "final_live_export_preparation_for_dynamic_ladder",
     "AI_LAB": "schema_contract_expansion"
   },
   "app_live_mode_contract": {
