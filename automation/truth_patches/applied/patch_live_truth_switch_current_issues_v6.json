@@ -1,0 +1,24 @@
+{
+  "patch_id": "patch_live_truth_switch_current_issues_v6",
+  "created_at": "2026-04-04T14:10:00Z",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "target_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\current_issues.md"
+  ],
+  "reason": "Close the leverage-live-truth blocker after approved live switch to dynamic ladder.",
+  "proposed_changes": [
+    {
+      "change_type": "replace_entire_file",
+      "target": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\current_issues.md",
+      "payload": {
+        "new_content": "# Current Issues\n\n## Leverage live truth status\n- research/raw winner = phase68i_66g_1p50x_static\n- best deployment candidate = phase68i_dynamic_ladder_candidate\n- official softer fallback = phase68g_66g_1p25x_candidate\n- Phase68J simple tail-risk guardrails = rejected\n- ordering remains unchanged\n- leverage branch live truth has been promoted to phase68i_dynamic_ladder_candidate\n- direct auto-switch to app/live is approved and applied\n- current live truth is phase68i_dynamic_ladder_candidate\n- approval_gate_status = approved_and_applied\n\n## Execution refresh branch status\n- Hyperliquid execution branch is frozen at safe read-only + dry-run scope\n- automation wrapper layer for execution refresh is functional\n- canonical execution chain is:\n1. scripts/execution/materialize_execution_app_exports.py\n2. scripts/execution/validate_execution_source_contract.py\n3. scripts/execution/hyperliquid_read_only_snapshot.py\n4. scripts/execution/render_execution_app_status.py\n5. scripts/execution/build_execution_intent_from_strategy_exports.py\n6. scripts/execution/run_dry_execution_bridge.py\n- execution outputs are decision-relevant operational artifacts, not official truth\n- automation artifacts for execution refresh are not official truth\n- live orders are not enabled yet\n- source_of_truth writes are not part of execution refresh runtime\n"
+      }
+    }
+  ],
+  "evidence_refs": [
+    "MASTER official live truth promotion decision",
+    "current remote source_of_truth/current_issues.md"
+  ],
+  "status": "applied"
+}

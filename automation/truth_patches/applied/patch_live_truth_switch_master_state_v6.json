@@ -1,0 +1,24 @@
+{
+  "patch_id": "patch_live_truth_switch_master_state_v6",
+  "created_at": "2026-04-04T14:05:00Z",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "target_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md"
+  ],
+  "reason": "Align master_state with approved live truth promotion to phase68i_dynamic_ladder_candidate.",
+  "proposed_changes": [
+    {
+      "change_type": "replace_entire_file",
+      "target": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md",
+      "payload": {
+        "new_content": "# Master State\n\n## Official state snapshot\n- research/raw leverage winner: phase68i_66g_1p50x_static\n- best deployment candidate: phase68i_dynamic_ladder_candidate\n- official softer fallback: phase68g_66g_1p25x_candidate\n- Phase68J simple tail-risk guardrails: rejected\n- ordering: unchanged\n- leverage branch: live truth approved and applied\n- current live truth: phase68i_dynamic_ladder_candidate\n- direct auto-switch to app/live: approved and applied\n"
+      }
+    }
+  ],
+  "evidence_refs": [
+    "MASTER official live truth promotion decision",
+    "current remote source_of_truth/master_state.md"
+  ],
+  "status": "applied"
+}

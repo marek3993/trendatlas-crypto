@@ -1,0 +1,8 @@
+{
+  "approval_id": "approval_20260404_113226_live_truth_switch_master_state_v6",
+  "patch_id": "patch_live_truth_switch_master_state_v6",
+  "decision": "approved",
+  "approved_by": "human",
+  "decided_at": "2026-04-04T11:32:26Z",
+  "note": "Approved live truth switch for master_state.md."
+}
