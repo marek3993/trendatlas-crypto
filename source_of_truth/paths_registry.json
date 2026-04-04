@@ -245,6 +245,47 @@
         "audit"
       ],
       "write_mode": "future_write_through_candidate"
+    },
+    "phase68i_dynamic_ladder_candidate_paper": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "paper",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate"
+    },
+    "phase68i_dynamic_ladder_candidate_summary": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "summary",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate",
+      "field_contract": {
+        "required_fields": [
+          "model",
+          "cagr_pct",
+          "max_drawdown_pct",
+          "since2023_cagr_pct",
+          "since2025_cagr_pct",
+          "sharpe",
+          "sortino",
+          "switch_count",
+          "cash_days_pct",
+          "btc_days_pct"
+        ],
+        "app_must_not_infer": true
+      }
     }
   }
 }

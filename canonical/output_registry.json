@@ -230,6 +230,30 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Operational logs only."
+    },
+    {
+      "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
+      "generated_by": [
+        "scripts/phase68h_dynamic_leverage_ladder_candidate.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "app_curve_export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Approved deployment candidate curve for APP rendering. Canonical app export artifact."
+    },
+    {
+      "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_summary.csv",
+      "generated_by": [
+        "scripts/execution/materialize_execution_app_exports.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "app_summary_export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Approved deployment candidate product metrics for APP summary_path. APP must not infer these metrics."
     }
   ]
 }
