@@ -1,0 +1,26 @@
+{
+  "patch_id": "code_patch_YYYYMMDD_HHMMSS_slug",
+  "created_at": "2026-04-04T20:30:00Z",
+  "task_id": "task_YYYYMMDD_HHMMSS_slug",
+  "run_id": "run_YYYYMMDD_HHMMSS_slug",
+  "target_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\tools\\example.py"
+  ],
+  "reason": "Explain why this code patch exists.",
+  "patch_type": "replace_entire_file",
+  "proposed_changes": [
+    {
+      "change_type": "replace_entire_file",
+      "target": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\tools\\example.py",
+      "payload": {
+        "new_content": "print('hello')\n"
+      }
+    }
+  ],
+  "validation_plan": {
+    "validator_type": "python_py_compile",
+    "target_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\tools\\example.py"
+  },
+  "risk_level": "low",
+  "status": "pending"
+}
