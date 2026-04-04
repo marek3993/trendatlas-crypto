@@ -50,6 +50,8 @@
     "tests/test_automation_apply_files_non_empty.py",
     "tests/test_automation_apply_json_valid.py",
     "tests/test_automation_apply_template_shape.py",
+    "tests/test_automation_apply_schema_required_keys.py",
+    "tests/test_automation_apply_template_required_keys.py",
     "tests/test_repo_hygiene_docs_exist.py",
     "tests/test_repo_hygiene_docs_keywords.py"
   ],
@@ -59,5 +61,6 @@
     "Runner should read this manifest and execute files in listed order."
   ]
 }
+
 
 
