@@ -1,0 +1,355 @@
+TARGET_FILE: C:\Users\benda\Desktop\market_regime_v1\source_of_truth\project_truth.json
+
+=== UNIFIED DIFF ===
+--- C:\Users\benda\Desktop\market_regime_v1\source_of_truth\project_truth.json (before)
++++ C:\Users\benda\Desktop\market_regime_v1\source_of_truth\project_truth.json (after)
+@@ -45,67 +45,44 @@
+   },
+   "leverage_truth": {
+     "current_live_truth": "phase68i_dynamic_ladder_candidate",
+-    "raw_research_winner": "phase68i_66g_1p50x_static",
++    "research_raw_winner": "phase68i_66g_1p50x_static",
+     "best_deployment_candidate": "phase68i_dynamic_ladder_candidate",
+-    "official_fallback": "phase68g_66g_1p25x_candidate",
++    "official_softer_fallback": "phase68g_66g_1p25x_candidate",
++    "phase68j_simple_tail_risk_guardrails": "rejected",
++    "ordering_remains_unchanged": true,
+     "truth_promotion_ready": true,
+-    "live_truth_must_not_change_during_ideation": true
+-  },
+-  "ai_lab_strategy_lines": {
+-    "phase67j_no_neo_main_autonomous_line": {
+-      "status": "retired_from_autonomous_ideation",
+-      "retire_reason": "LEGIT_LOW_QUALITY_REJECTION after autonomous + human-reset exhaustion",
+-      "autonomous_ideation_allowed": false,
+-      "human_reset_allowed": false,
+-      "future_reopen_requires": "new MASTER decision with new objective framing",
+-      "infra_status": "operational_not_blocker",
+-      "tooling_status": "operational_not_blocker"
+-    },
+-    "phase68i_dynamic_ladder_autonomous_line": {
+-      "status": "paused_for_later_objective_reframing",
+-      "autonomous_ideation_allowed": false,
+-      "human_seeded_batch_allowed": false,
+-      "human_reset_allowed": false,
+-      "start_mode": "human_seeded_first_batch",
+-      "baseline_for_ideation": "phase68i_dynamic_ladder_candidate",
+-      "raw_research_winner_context": "phase68i_66g_1p50x_static",
+-      "official_fallback": "phase68g_66g_1p25x_candidate",
+-      "current_official_live_truth": "phase68i_dynamic_ladder_candidate",
+-      "pause_reason": "objective_framing_not_good_enough_under_current_strict_scoring",
+-      "future_reopen_requires": "new MASTER decision with new objective framing",
+-      "latest_outcome": {
+-        "worthy_candidates_count": 0,
+-        "zero_selection_confirmed": true,
+-        "reason_code": "LEGIT_LOW_QUALITY_REJECTION",
+-        "stop_reason": "human_seeded_line_exhausted_escalate_to_master"
+-      },
+-      "constraints": {
+-        "no_execution_or_live_order_work": true,
+-        "no_app_or_data_tasks": true,
+-        "no_scoring_loosening": true,
+-        "no_broad_sweeps": true,
+-        "compare_baseline_must_be_phase68i_dynamic_ladder_candidate": true,
+-        "fallback_must_remain_phase68g_66g_1p25x_candidate": true,
+-        "current_live_truth_must_not_change_during_ideation": true,
+-        "optimize_for": [
+-          "DD",
+-          "Calmar",
+-          "robustness"
+-        ]
+-      }
+-    }
+-  },
+-  "ai_lab_runtime": {
+-    "active_strategy_line_id": null
++    "direct_auto_switch_app_live_approved": true
+   },
+   "segment_next_steps": {
+-    "MASTER": "select_next_non_paused_ai_lab_focus_or_issue_new_objective_framing",
+-    "CORE": "support_targeted_strategy_framing_if_requested",
++    "MASTER": "maintain_truth",
++    "CORE": "no_active_core_research_leverage_branch_done",
+     "UNIVERSE": "frozen",
+-    "DATA": "execution_and_app_paths_out_of_scope_for_this_ai_pause",
+-    "FORENSIC": "targeted_validation_only_if_worthy_candidate_emerges",
+-    "APP": "no_change_during_ideation_pause",
+-    "AI_LAB": "idle_waiting_for_new_master_selected_focus"
++    "DATA": "freeze_live_source_of_truth_mapping",
++    "FORENSIC": "targeted_validation_only",
++    "APP": "final_export_contract_preparation_for_dynamic_ladder",
++    "AI_LAB": "schema_contract_expansion"
++  },
++  "app_live_mode_contract": {
++    "current": {
++      "live_truth_mode": "phase68i_dynamic_ladder_candidate",
++      "execution_profile": "dynamic_ladder",
++      "leverage_mode": "dynamic",
++      "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
++      "fallback_profile_label": "phase68g_66g_1p25x_candidate",
++      "approval_gate_status": "approved_and_applied",
++      "real_order_gate_status": "blocked",
++      "real_order_eligible_status": "live_order_enabled_and_approved"
++    },
++    "future_target": {
++      "live_truth_mode": "phase68i_dynamic_ladder_candidate",
++      "execution_profile": "dynamic_ladder",
++      "leverage_mode": "dynamic"
++    },
++    "future_fallback": {
++      "live_truth_mode": "phase68g_66g_1p25x_candidate",
++      "execution_profile": "static_1p25x",
++      "leverage_mode": "static_1p25x"
++    }
+   },
+   "automation_capabilities": {
+     "safe_code_apply_layer_available": true,
+@@ -116,5 +93,16 @@
+     ],
+     "dispatcher_available": true,
+     "uncontrolled_auto_write": false
++  },
++  "workflow_rules": {
++    "repo_heavy_or_multi_step_tasks": {
++      "codex_should_be_used_for_patching": true,
++      "local_user_runs_heavy_validations": true,
++      "segment_chat_interprets_results_and_gives_next_step": true
++    },
++    "truth_sensitive_tasks": {
++      "files_read_header_required": true,
++      "must_list_actual_ssot_files_read_before_repo_based_conclusions": true
++    }
+   }
+ }
+
+=== OLD CONTENT ===
+{
+  "project_name": "Market Regime v1",
+  "official_core_baseline": {
+    "model": "phase66g_production_soft_filters",
+    "status": "official_core_production_baseline"
+  },
+  "official_universe_winner": {
+    "model": "phase67j_no_neo_main",
+    "status": "validated_universe_winner",
+    "shortlist": [
+      "APT",
+      "BCH",
+      "DOGE",
+      "ICP",
+      "STX",
+      "XTZ"
+    ],
+    "removed_assets": [
+      "NEO"
+    ],
+    "metrics": {
+      "cagr_pct": 141.75,
+      "max_drawdown_pct": -26.16,
+      "since2023_cagr_pct": 203.52,
+      "since2025_cagr_pct": 113.9
+    },
+    "delta_vs_66g": {
+      "cagr_pct": 28.03,
+      "since2023_cagr_pct": 67.06,
+      "since2025_cagr_pct": 0.0,
+      "max_drawdown_pct": -2.56
+    },
+    "forensic_status": "passed"
+  },
+  "official_phase63_compare_baseline": {
+    "model": "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+    "status": "pinned_compare_baseline"
+  },
+  "app_product_truth": {
+    "main_strategy_model": "phase68i_dynamic_ladder_candidate",
+    "reference_strategy_model": "phase67j_no_neo_main",
+    "benchmark": "BTC",
+    "status": "official_app_main_changed_live_not_switched"
+  },
+  "leverage_truth": {
+    "current_live_truth": "phase68i_dynamic_ladder_candidate",
+    "raw_research_winner": "phase68i_66g_1p50x_static",
+    "best_deployment_candidate": "phase68i_dynamic_ladder_candidate",
+    "official_fallback": "phase68g_66g_1p25x_candidate",
+    "truth_promotion_ready": true,
+    "live_truth_must_not_change_during_ideation": true
+  },
+  "ai_lab_strategy_lines": {
+    "phase67j_no_neo_main_autonomous_line": {
+      "status": "retired_from_autonomous_ideation",
+      "retire_reason": "LEGIT_LOW_QUALITY_REJECTION after autonomous + human-reset exhaustion",
+      "autonomous_ideation_allowed": false,
+      "human_reset_allowed": false,
+      "future_reopen_requires": "new MASTER decision with new objective framing",
+      "infra_status": "operational_not_blocker",
+      "tooling_status": "operational_not_blocker"
+    },
+    "phase68i_dynamic_ladder_autonomous_line": {
+      "status": "paused_for_later_objective_reframing",
+      "autonomous_ideation_allowed": false,
+      "human_seeded_batch_allowed": false,
+      "human_reset_allowed": false,
+      "start_mode": "human_seeded_first_batch",
+      "baseline_for_ideation": "phase68i_dynamic_ladder_candidate",
+      "raw_research_winner_context": "phase68i_66g_1p50x_static",
+      "official_fallback": "phase68g_66g_1p25x_candidate",
+      "current_official_live_truth": "phase68i_dynamic_ladder_candidate",
+      "pause_reason": "objective_framing_not_good_enough_under_current_strict_scoring",
+      "future_reopen_requires": "new MASTER decision with new objective framing",
+      "latest_outcome": {
+        "worthy_candidates_count": 0,
+        "zero_selection_confirmed": true,
+        "reason_code": "LEGIT_LOW_QUALITY_REJECTION",
+        "stop_reason": "human_seeded_line_exhausted_escalate_to_master"
+      },
+      "constraints": {
+        "no_execution_or_live_order_work": true,
+        "no_app_or_data_tasks": true,
+        "no_scoring_loosening": true,
+        "no_broad_sweeps": true,
+        "compare_baseline_must_be_phase68i_dynamic_ladder_candidate": true,
+        "fallback_must_remain_phase68g_66g_1p25x_candidate": true,
+        "current_live_truth_must_not_change_during_ideation": true,
+        "optimize_for": [
+          "DD",
+          "Calmar",
+          "robustness"
+        ]
+      }
+    }
+  },
+  "ai_lab_runtime": {
+    "active_strategy_line_id": null
+  },
+  "segment_next_steps": {
+    "MASTER": "select_next_non_paused_ai_lab_focus_or_issue_new_objective_framing",
+    "CORE": "support_targeted_strategy_framing_if_requested",
+    "UNIVERSE": "frozen",
+    "DATA": "execution_and_app_paths_out_of_scope_for_this_ai_pause",
+    "FORENSIC": "targeted_validation_only_if_worthy_candidate_emerges",
+    "APP": "no_change_during_ideation_pause",
+    "AI_LAB": "idle_waiting_for_new_master_selected_focus"
+  },
+  "automation_capabilities": {
+    "safe_code_apply_layer_available": true,
+    "code_apply_flow": "approval_gated",
+    "supported_code_patch_types": [
+      "replace_entire_file",
+      "replace_exact_block"
+    ],
+    "dispatcher_available": true,
+    "uncontrolled_auto_write": false
+  }
+}
+
+=== NEW CONTENT ===
+{
+  "project_name": "Market Regime v1",
+  "official_core_baseline": {
+    "model": "phase66g_production_soft_filters",
+    "status": "official_core_production_baseline"
+  },
+  "official_universe_winner": {
+    "model": "phase67j_no_neo_main",
+    "status": "validated_universe_winner",
+    "shortlist": [
+      "APT",
+      "BCH",
+      "DOGE",
+      "ICP",
+      "STX",
+      "XTZ"
+    ],
+    "removed_assets": [
+      "NEO"
+    ],
+    "metrics": {
+      "cagr_pct": 141.75,
+      "max_drawdown_pct": -26.16,
+      "since2023_cagr_pct": 203.52,
+      "since2025_cagr_pct": 113.9
+    },
+    "delta_vs_66g": {
+      "cagr_pct": 28.03,
+      "since2023_cagr_pct": 67.06,
+      "since2025_cagr_pct": 0.0,
+      "max_drawdown_pct": -2.56
+    },
+    "forensic_status": "passed"
+  },
+  "official_phase63_compare_baseline": {
+    "model": "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+    "status": "pinned_compare_baseline"
+  },
+  "app_product_truth": {
+    "main_strategy_model": "phase68i_dynamic_ladder_candidate",
+    "reference_strategy_model": "phase67j_no_neo_main",
+    "benchmark": "BTC",
+    "status": "official_app_main_changed_live_not_switched"
+  },
+  "leverage_truth": {
+    "current_live_truth": "phase68i_dynamic_ladder_candidate",
+    "research_raw_winner": "phase68i_66g_1p50x_static",
+    "best_deployment_candidate": "phase68i_dynamic_ladder_candidate",
+    "official_softer_fallback": "phase68g_66g_1p25x_candidate",
+    "phase68j_simple_tail_risk_guardrails": "rejected",
+    "ordering_remains_unchanged": true,
+    "truth_promotion_ready": true,
+    "direct_auto_switch_app_live_approved": true
+  },
+  "segment_next_steps": {
+    "MASTER": "maintain_truth",
+    "CORE": "no_active_core_research_leverage_branch_done",
+    "UNIVERSE": "frozen",
+    "DATA": "freeze_live_source_of_truth_mapping",
+    "FORENSIC": "targeted_validation_only",
+    "APP": "final_export_contract_preparation_for_dynamic_ladder",
+    "AI_LAB": "schema_contract_expansion"
+  },
+  "app_live_mode_contract": {
+    "current": {
+      "live_truth_mode": "phase68i_dynamic_ladder_candidate",
+      "execution_profile": "dynamic_ladder",
+      "leverage_mode": "dynamic",
+      "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
+      "fallback_profile_label": "phase68g_66g_1p25x_candidate",
+      "approval_gate_status": "approved_and_applied",
+      "real_order_gate_status": "blocked",
+      "real_order_eligible_status": "live_order_enabled_and_approved"
+    },
+    "future_target": {
+      "live_truth_mode": "phase68i_dynamic_ladder_candidate",
+      "execution_profile": "dynamic_ladder",
+      "leverage_mode": "dynamic"
+    },
+    "future_fallback": {
+      "live_truth_mode": "phase68g_66g_1p25x_candidate",
+      "execution_profile": "static_1p25x",
+      "leverage_mode": "static_1p25x"
+    }
+  },
+  "automation_capabilities": {
+    "safe_code_apply_layer_available": true,
+    "code_apply_flow": "approval_gated",
+    "supported_code_patch_types": [
+      "replace_entire_file",
+      "replace_exact_block"
+    ],
+    "dispatcher_available": true,
+    "uncontrolled_auto_write": false
+  },
+  "workflow_rules": {
+    "repo_heavy_or_multi_step_tasks": {
+      "codex_should_be_used_for_patching": true,
+      "local_user_runs_heavy_validations": true,
+      "segment_chat_interprets_results_and_gives_next_step": true
+    },
+    "truth_sensitive_tasks": {
+      "files_read_header_required": true,
+      "must_list_actual_ssot_files_read_before_repo_based_conclusions": true
+    }
+  }
+}

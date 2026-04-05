@@ -1,0 +1,15 @@
+{
+  "apply_id": "apply_20260405_084458_workflow_rules_master_state_v9",
+  "patch_id": "patch_workflow_rules_master_state_v9",
+  "run_id": "run_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "task_id": "task_20260403_081741_truth_patch_prep_leverage_truth_promotion",
+  "applied_at": "2026-04-05T08:44:58Z",
+  "applied_by": "human",
+  "target_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md",
+  "change_type": "replace_entire_file",
+  "backup_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_apply\\backups\\patch_workflow_rules_master_state_v9__master_state.md.backup",
+  "diff_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\truth_apply\\diffs\\patch_workflow_rules_master_state_v9.diff.txt",
+  "status": "success",
+  "source_of_truth_write_executed": true,
+  "note": "Approved truth patch applied successfully."
+}

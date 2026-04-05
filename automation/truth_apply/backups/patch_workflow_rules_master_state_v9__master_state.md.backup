@@ -11,9 +11,3 @@
 - direct app/live truth switch: approved and applied
 - real-order gate: still blocked
 - only real-order eligible status: live_order_enabled_and_approved
-
-## Workflow rules
-- Repo-heavy / multi-step workflow: Codex should be used for repo patching/execution.
-- Heavy validations are run locally by the user.
-- Segment chat interprets validation results and gives the next exact step.
-- Truth-sensitive workflow: repo-based conclusions must include a FILES READ header listing the actual SSOT/README files read.
