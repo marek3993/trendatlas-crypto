@@ -149,6 +149,19 @@
       "notes": "No SSOT writes."
     },
     {
+      "script_path": "automation/tools/run_controlled_runtime_loop.py",
+      "layer": "automation",
+      "status": "active",
+      "purpose": "Runs the lightweight execution refresh chain on a local PC with lock, graceful stop, and runtime health guardrails.",
+      "primary_outputs": [
+        "outputs/execution/runtime_health/"
+      ],
+      "output_type": "runtime_control",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Default is one pass. Loop mode is explicit only. No SSOT writes and no real orders."
+    },
+    {
       "script_path": "scripts/phase68g_portfolio_exposure_leverage_validation.py",
       "layer": "forensic_validation",
       "status": "active",

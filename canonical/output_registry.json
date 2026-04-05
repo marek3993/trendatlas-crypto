@@ -92,6 +92,18 @@
       "notes": "Decision audit only."
     },
     {
+      "output_path": "outputs/execution/runtime_health/",
+      "generated_by": [
+        "automation/tools/run_controlled_runtime_loop.py"
+      ],
+      "layer": "automation",
+      "status": "active",
+      "output_kind": "runtime_health_artifacts",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Local-PC runtime health, lock, stop-marker, loop manifests, and event logs. Not official truth."
+    },
+    {
       "output_path": "outputs/phase68g_portfolio_exposure_leverage_validation/",
       "generated_by": [
         "scripts/phase68g_portfolio_exposure_leverage_validation.py"
