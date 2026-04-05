@@ -832,6 +832,14 @@ def merge_selector_config(raw_selector: dict | None) -> dict:
             **(selector.get(nested_key, {}) or {}),
         }
 
+    default_live_mode_current = ((DEFAULT_SELECTOR.get("app_live_mode_contract") or {}).get("current") or {})
+    selector_live_mode_current = ((selector.get("app_live_mode_contract") or {}).get("current") or {})
+    if default_live_mode_current or selector_live_mode_current:
+        merged["app_live_mode_contract"]["current"] = {
+            **default_live_mode_current,
+            **selector_live_mode_current,
+        }
+
     if not merged.get("compare_model_keys"):
         merged["compare_model_keys"] = [
             key for key in [merged.get("main_model_key"), merged.get("reference_model_key")] if key
@@ -852,6 +860,15 @@ def load_selector_config() -> dict:
         return json.loads(json.dumps(DEFAULT_SELECTOR))
 
     return merge_selector_config(raw)
+
+
+def get_current_live_mode_contract(contract_cfg: dict | None) -> dict:
+    default_current = ((DEFAULT_SELECTOR.get("app_live_mode_contract") or {}).get("current") or {})
+    selector_current = (((contract_cfg or {}).get("app_live_mode_contract") or {}).get("current") or {})
+    return {
+        **default_current,
+        **selector_current,
+    }
 
 
 @st.cache_data(show_spinner=False)
@@ -1188,11 +1205,11 @@ def load_live_public_state(contract_cfg: dict, live_path: str | None, model_key:
     held_asset_public_raw = get_text_from_row(row, "held_asset_public") if has_new_fields else None
     held_state_label_raw = get_text_from_row(row, "held_state_label") if has_new_fields else None
 
-    live_mode_contract = ((contract_cfg.get("app_live_mode_contract") or {}).get("current") or {})
+    live_mode_contract = get_current_live_mode_contract(contract_cfg)
 
-    live_truth_mode_raw = live_mode_contract.get("live_truth_mode") or get_text_from_row(row, "live_truth_mode")
-    execution_profile_raw = live_mode_contract.get("execution_profile") or get_text_from_row(row, "execution_profile")
-    fallback_profile_label_raw = live_mode_contract.get("fallback_profile_label") or get_text_from_row(row, "fallback_profile_label")
+    live_truth_mode_raw = live_mode_contract.get("live_truth_mode")
+    execution_profile_raw = live_mode_contract.get("execution_profile")
+    fallback_profile_label_raw = live_mode_contract.get("fallback_profile_label")
 
     return {
         "has_new_fields": has_new_fields,
