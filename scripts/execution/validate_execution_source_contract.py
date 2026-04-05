@@ -33,6 +33,10 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def format_utc_timestamp(ts: float) -> str:
+    return datetime.fromtimestamp(ts, tz=timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
 def log(msg: str) -> None:
     print(msg)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -67,7 +71,7 @@ def safe_file_info(path: Path) -> dict[str, Any]:
 
     stat = path.stat()
     info["size_bytes"] = stat.st_size
-    info["modified_utc"] = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    info["modified_utc"] = format_utc_timestamp(stat.st_mtime)
     return info
 
 

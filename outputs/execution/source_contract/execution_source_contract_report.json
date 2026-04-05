@@ -1,6 +1,6 @@
 {
   "report_type": "execution_source_contract_report",
-  "generated_at_utc": "2026-04-04T14:21:44Z",
+  "generated_at_utc": "2026-04-05T19:07:20Z",
   "source_of_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "required_artifact_keys": [
     "phase67j_winner_paper",
@@ -32,7 +32,7 @@
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
         "size_bytes": 155339,
-        "modified_utc": "2026-04-01T21:12:27Z",
+        "modified_utc": "2026-04-05T16:50:22Z",
         "file_type": "csv",
         "header": [
           "date",
@@ -78,7 +78,7 @@
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 509,
-        "modified_utc": "2026-04-04T14:21:44Z",
+        "modified_utc": "2026-04-05T19:07:19Z",
         "file_type": "csv",
         "header": [
           "model",
@@ -149,7 +149,7 @@
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
         "size_bytes": 381429,
-        "modified_utc": "2026-04-01T19:56:34Z",
+        "modified_utc": "2026-04-05T16:50:22Z",
         "file_type": "csv",
         "header": [
           "date",
@@ -210,7 +210,7 @@
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
         "size_bytes": 619,
-        "modified_utc": "2026-04-01T19:56:34Z",
+        "modified_utc": "2026-04-05T16:50:22Z",
         "file_type": "csv",
         "header": [
           "model",
@@ -302,7 +302,7 @@
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
         "size_bytes": 1099,
-        "modified_utc": "2026-04-01T21:12:28Z",
+        "modified_utc": "2026-04-05T16:50:22Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
