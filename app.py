@@ -24,10 +24,13 @@ BTC_FILE = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
 
-SELECTOR_PATH = OUTPUTS / "live_strategy_selector.json"
+EXPORT_CONTRACT_PATH = ROOT / "source_of_truth" / "export_contract.json"
 
 DEFAULT_SELECTOR = {
     "product_name": "TrendAtlas Crypto",
+    "main_strategy_model": "phase68i_dynamic_ladder_candidate",
+    "reference_strategy_model": "phase67j_no_neo_main",
+    "benchmark": "BTC",
     "main_model_key": "phase68i_dynamic_ladder_candidate",
     "reference_model_key": "phase67j_no_neo_main",
     "benchmark_label": "BTC",
@@ -70,6 +73,18 @@ DEFAULT_SELECTOR = {
         "live_status_path": "outputs/execution/app_exports/phase66g_live_status.csv",
         "history_path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
         "model_key": "phase66g_production_soft_filters",
+    },
+    "app_live_mode_contract": {
+        "current": {
+            "live_truth_mode": "phase68i_dynamic_ladder_candidate",
+            "execution_profile": "dynamic_ladder",
+            "leverage_mode": "dynamic",
+            "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
+            "fallback_profile_label": "phase68g_66g_1p25x_candidate",
+            "approval_gate_status": "approved_and_applied",
+            "real_order_gate_status": "blocked",
+            "real_order_eligible_status": "live_order_enabled_and_approved",
+        }
     },
 }
 
@@ -791,27 +806,52 @@ def human_label(model_key: str, lang: str, selector: dict) -> str:
     return build_display_map(selector, lang).get(model_key, model_key)
 
 
+def extract_app_export_contract(raw_payload: dict | None) -> dict:
+    if not isinstance(raw_payload, dict):
+        return {}
+    contract = raw_payload.get("app_export_contract")
+    if isinstance(contract, dict):
+        return contract
+    return raw_payload
+
+
+def merge_selector_config(raw_selector: dict | None) -> dict:
+    merged = json.loads(json.dumps(DEFAULT_SELECTOR))
+    selector = extract_app_export_contract(raw_selector)
+    if not selector:
+        return merged
+
+    merged.update(selector)
+    merged["main_model_key"] = selector.get("main_model_key") or selector.get("main_strategy_model") or merged.get("main_model_key")
+    merged["reference_model_key"] = selector.get("reference_model_key") or selector.get("reference_strategy_model") or merged.get("reference_model_key")
+    merged["benchmark_label"] = selector.get("benchmark_label") or selector.get("benchmark") or merged.get("benchmark_label")
+
+    for nested_key in ["display_names", "model_sources", "trend_barometer_source", "app_live_mode_contract"]:
+        merged[nested_key] = {
+            **DEFAULT_SELECTOR.get(nested_key, {}),
+            **(selector.get(nested_key, {}) or {}),
+        }
+
+    if not merged.get("compare_model_keys"):
+        merged["compare_model_keys"] = [
+            key for key in [merged.get("main_model_key"), merged.get("reference_model_key")] if key
+        ]
+
+    return merged
+
+
 @st.cache_data(show_spinner=False)
 def load_selector_config() -> dict:
-    if SELECTOR_PATH.exists():
-        with open(SELECTOR_PATH, "r", encoding="utf-8") as f:
+    if not EXPORT_CONTRACT_PATH.exists():
+        return json.loads(json.dumps(DEFAULT_SELECTOR))
+
+    try:
+        with open(EXPORT_CONTRACT_PATH, "r", encoding="utf-8") as f:
             raw = json.load(f)
-        merged = json.loads(json.dumps(DEFAULT_SELECTOR))
-        merged.update(raw or {})
-        merged["display_names"] = {
-            **DEFAULT_SELECTOR.get("display_names", {}),
-            **(raw or {}).get("display_names", {}),
-        }
-        merged["model_sources"] = {
-            **DEFAULT_SELECTOR.get("model_sources", {}),
-            **(raw or {}).get("model_sources", {}),
-        }
-        merged["trend_barometer_source"] = {
-            **DEFAULT_SELECTOR.get("trend_barometer_source", {}),
-            **(raw or {}).get("trend_barometer_source", {}),
-        }
-        return merged
-    return json.loads(json.dumps(DEFAULT_SELECTOR))
+    except (OSError, json.JSONDecodeError):
+        return json.loads(json.dumps(DEFAULT_SELECTOR))
+
+    return merge_selector_config(raw)
 
 
 @st.cache_data(show_spinner=False)
@@ -1131,27 +1171,28 @@ def investment_value(equity_df: pd.DataFrame, picked_date, amount: float = 1000.
 # =========================================================
 
 @st.cache_data(show_spinner=False)
-def load_live_public_state(live_path: str | None, model_key: str, lang: str) -> dict:
+def load_live_public_state(contract_cfg: dict, live_path: str | None, model_key: str, lang: str) -> dict:
     df = load_csv_optional(live_path)
-    if df.empty:
-        return {}
-
-    row_df = df.loc[df["model"] == model_key] if "model" in df.columns else pd.DataFrame()
-    row = row_df.iloc[0] if not row_df.empty else df.iloc[0]
+    row = None
+    if not df.empty:
+        row_df = df.loc[df["model"] == model_key] if "model" in df.columns else pd.DataFrame()
+        row = row_df.iloc[0] if not row_df.empty else df.iloc[0]
 
     required_cols = [
         "held_asset_public",
         "held_state_label",
         "execution_state",
     ]
-    has_new_fields = all(col in df.columns for col in required_cols)
+    has_new_fields = row is not None and all(col in df.columns for col in required_cols)
 
     held_asset_public_raw = get_text_from_row(row, "held_asset_public") if has_new_fields else None
     held_state_label_raw = get_text_from_row(row, "held_state_label") if has_new_fields else None
 
-    live_truth_mode_raw = get_text_from_row(row, "live_truth_mode")
-    execution_profile_raw = get_text_from_row(row, "execution_profile")
-    fallback_profile_label_raw = get_text_from_row(row, "fallback_profile_label")
+    live_mode_contract = ((contract_cfg.get("app_live_mode_contract") or {}).get("current") or {})
+
+    live_truth_mode_raw = live_mode_contract.get("live_truth_mode") or get_text_from_row(row, "live_truth_mode")
+    execution_profile_raw = live_mode_contract.get("execution_profile") or get_text_from_row(row, "execution_profile")
+    fallback_profile_label_raw = live_mode_contract.get("fallback_profile_label") or get_text_from_row(row, "fallback_profile_label")
 
     return {
         "has_new_fields": has_new_fields,
@@ -1160,6 +1201,9 @@ def load_live_public_state(live_path: str | None, model_key: str, lang: str) -> 
         "live_truth_mode": prettify_live_mode(live_truth_mode_raw, lang),
         "execution_profile": prettify_execution_profile(execution_profile_raw, lang),
         "fallback_profile_label": prettify_execution_profile(fallback_profile_label_raw, lang),
+        "approval_gate_status": live_mode_contract.get("approval_gate_status"),
+        "real_order_gate_status": live_mode_contract.get("real_order_gate_status"),
+        "real_order_eligible_status": live_mode_contract.get("real_order_eligible_status"),
     }
 
 
@@ -1465,7 +1509,7 @@ if main_key not in papers:
     st.stop()
 
 main_source = resolve_model_source(selector_cfg, main_key)
-live_public_state = load_live_public_state(main_source.get("live_status_path"), main_key, lang)
+live_public_state = load_live_public_state(selector_cfg, main_source.get("live_status_path"), main_key, lang)
 
 trend_source_cfg = selector_cfg.get("trend_barometer_source", {}) or {}
 trend_live = load_trend_barometer_live(trend_source_cfg, lang)

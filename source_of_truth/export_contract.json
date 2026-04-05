@@ -1,0 +1,77 @@
+{
+  "artifact_name": "app_export_contract",
+  "artifact_type": "export",
+  "truth_domain": "product",
+  "truth_status": "official",
+  "generated_at": "2026-04-05T00:00:00Z",
+  "effective_date": "2026-04-05",
+  "producer_script": "manual_codex_patch",
+  "source_run_id": null,
+  "consumer_scope": [
+    "app_readable",
+    "execution_readable",
+    "audit_only"
+  ],
+  "authoritative_reading_rule": "App must read source_of_truth/export_contract.json first. outputs/live_strategy_selector.json is a legacy output artifact and must not redefine truth or real-order eligibility.",
+  "app_export_contract": {
+    "product_name": "TrendAtlas Crypto",
+    "main_strategy_model": "phase68i_dynamic_ladder_candidate",
+    "reference_strategy_model": "phase67j_no_neo_main",
+    "benchmark": "BTC",
+    "main_model_key": "phase68i_dynamic_ladder_candidate",
+    "reference_model_key": "phase67j_no_neo_main",
+    "benchmark_label": "BTC",
+    "compare_model_keys": [
+      "phase68i_dynamic_ladder_candidate",
+      "phase67j_no_neo_main"
+    ],
+    "display_names": {
+      "phase68i_dynamic_ladder_candidate": {
+        "sk": "Hlavná stratégia",
+        "en": "Main strategy"
+      },
+      "phase67j_no_neo_main": {
+        "sk": "Referenčná stratégia",
+        "en": "Reference strategy"
+      },
+      "phase66g_production_soft_filters": {
+        "sk": "Trend / core vrstva",
+        "en": "Trend / core layer"
+      }
+    },
+    "model_sources": {
+      "phase68i_dynamic_ladder_candidate": {
+        "summary_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_summary.csv",
+        "paper_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
+        "live_status_path": "outputs/execution/app_exports/phase67j_live_status.csv"
+      },
+      "phase67j_no_neo_main": {
+        "summary_path": "outputs/execution/app_exports/phase67j_final_narrow_validation_summary.csv",
+        "paper_path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+        "live_status_path": "outputs/execution/app_exports/phase67j_live_status.csv"
+      },
+      "phase66g_production_soft_filters": {
+        "summary_path": "outputs/execution/app_exports/phase66g_production_candidate_summary.csv",
+        "paper_path": "outputs/execution/app_exports/phase66g_production_soft_filters_paper.csv",
+        "live_status_path": "outputs/execution/app_exports/phase66g_live_status.csv"
+      }
+    },
+    "trend_barometer_source": {
+      "live_status_path": "outputs/execution/app_exports/phase66g_live_status.csv",
+      "history_path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+      "model_key": "phase66g_production_soft_filters"
+    },
+    "app_live_mode_contract": {
+      "current": {
+        "live_truth_mode": "phase68i_dynamic_ladder_candidate",
+        "execution_profile": "dynamic_ladder",
+        "leverage_mode": "dynamic",
+        "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
+        "fallback_profile_label": "phase68g_66g_1p25x_candidate",
+        "approval_gate_status": "approved_and_applied",
+        "real_order_gate_status": "blocked",
+        "real_order_eligible_status": "live_order_enabled_and_approved"
+      }
+    }
+  }
+}
