@@ -41,7 +41,7 @@
     "main_strategy_model": "phase68i_dynamic_ladder_candidate",
     "reference_strategy_model": "phase67j_no_neo_main",
     "benchmark": "BTC",
-    "status": "official_app_main_changed_live_not_switched"
+    "status": "official_app_main_live_switched"
   },
   "leverage_truth": {
     "current_live_truth": "phase68i_dynamic_ladder_candidate",
