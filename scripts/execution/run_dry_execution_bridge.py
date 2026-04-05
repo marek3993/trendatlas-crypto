@@ -6,6 +6,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+try:
+    from execution_app_status_payload import build_execution_app_status
+except ImportError:
+    from scripts.execution.execution_app_status_payload import build_execution_app_status
+
 
 ROOT = Path(__file__).resolve().parents[2]
 OUTPUTS_DIR = ROOT / "outputs" / "execution"
@@ -278,32 +283,25 @@ def main() -> None:
         "status": "success",
     }
 
-    app_status = {
-        "status_type": "execution_app_status",
-        "as_of_utc": utc_now_iso(),
-        "mode": "dry_run",
-        "trading_enabled": False,
-        "kill_switch": True,
-        "status": "ok",
-        "provider": "Hyperliquid",
-        "account_address": snapshot.get("account_address"),
-        "positions_count": int(current_position_state.get("active_positions_count", 0)),
-        "open_orders_count": open_orders_count,
-        "recent_fills_count": int(snapshot.get("summary", {}).get("recent_fills_count", 0)),
-        "current_position": current_state,
-        "last_action": "dry_run_execution_bridge",
-        "last_action_result": recommended_action,
-        "guardrails_ok": True,
-        "stale_signal": stale_signal,
-        "signal_id": signal_id,
-        "target_asset": target_asset,
-        "error": None,
-        "source_paths": {
+    app_status = build_execution_app_status(
+        mode="dry_run",
+        kill_switch=True,
+        account_address=snapshot.get("account_address"),
+        positions_count=int(current_position_state.get("active_positions_count", 0)),
+        open_orders_count=open_orders_count,
+        recent_fills_count=int(snapshot.get("summary", {}).get("recent_fills_count", 0)),
+        current_position=current_state,
+        last_action="dry_run_execution_bridge",
+        last_action_result=recommended_action,
+        stale_signal=stale_signal,
+        signal_id=signal_id,
+        target_asset=target_asset,
+        source_paths={
             "intent_path": str(INTENT_PATH.resolve()),
             "snapshot_path": str(SNAPSHOT_PATH.resolve()),
             "dry_run_decision_path": str(DECISION_PATH.resolve()),
-        }
-    }
+        },
+    )
 
     DECISION_PATH.write_text(json.dumps(decision, indent=2, ensure_ascii=False), encoding="utf-8")
     QUALITY_PATH.write_text(json.dumps(quality, indent=2, ensure_ascii=False), encoding="utf-8")
