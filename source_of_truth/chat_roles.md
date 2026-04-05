@@ -252,3 +252,22 @@ NerieÅ¡i:
 
 \- NemÃ¡ mieÅ¡aÅ¥ svoju rolu s inÃ½m segmentom.
 
+
+## Repo-heavy / multi-step workflow
+- Ak je task repo-heavy / multi-step / file-edit heavy / validation-heavy, preferovanı postup je pripravi presnı prompt pre Codex.
+- Codex sa má poui na repo patching / execution.
+- Lokálny user má spúša heavy validations.
+- Segment chat má interpretova vısledky a da ïalší presnı krok.
+
+## Truth-sensitive workflow
+- Pri truth-sensitive tasku musí acting chat explicitne vypísa, ktoré SSOT / README súbory reálne èítal pred záverom.
+- Povinnı header odpovede je:
+  - FILES READ:
+
+## Keï je ïalší krok jasnı
+- Chat nemá zbytoène èaka na user confirmation.
+- Má rovno da:
+  - exact next step
+  - exact prompt pre správny segment chat
+  - exact Codex prompt, ak je needed
+  - exact commands, ak sú needed
