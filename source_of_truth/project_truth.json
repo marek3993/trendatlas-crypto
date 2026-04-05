@@ -57,10 +57,11 @@
     "MASTER": "maintain_truth",
     "CORE": "no_active_core_research_leverage_branch_done",
     "UNIVERSE": "frozen",
-    "DATA": "freeze_live_source_of_truth_mapping",
+    "DATA": "blocker_closed_execution_contract_and_source_mapping_operational",
     "FORENSIC": "targeted_validation_only",
-    "APP": "final_export_contract_preparation_for_dynamic_ladder",
-    "AI_LAB": "schema_contract_expansion"
+    "APP": "final_export_contract_preparation_for_dynamic_ladder_complete",
+    "AI_LAB": "idle_schema_contract_expansion_complete_no_new_autonomous_line",
+    "AUTOMATION": "local_pc_controlled_runtime_loop_operational"
   },
   "app_live_mode_contract": {
     "current": {
@@ -92,7 +93,17 @@
       "replace_exact_block"
     ],
     "dispatcher_available": true,
-    "uncontrolled_auto_write": false
+    "uncontrolled_auto_write": false,
+    "local_pc_controlled_runtime_loop_available": true,
+    "runtime_loop_validated_safe_posture": {
+      "mode": "read_only",
+      "trading_enabled": false,
+      "dry_run_enabled": true,
+      "kill_switch": true
+    },
+    "runtime_loop_default_behavior": "one_pass",
+    "continuous_runtime_loop_requires_explicit_request": true,
+    "source_of_truth_runtime_writes_allowed": false
   },
   "workflow_rules": {
     "repo_heavy_or_multi_step_tasks": {

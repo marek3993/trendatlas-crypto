@@ -12,6 +12,22 @@
 - real-order gate: live_order_enabled_and_approved
 - only real-order eligible status: live_order_enabled_and_approved
 
+## Accepted progress snapshot
+- DATA: plumbing / execution-contract / source-mapping blocker is closed
+- APP: final export-contract preparation for dynamic ladder is complete
+- AUTOMATION: local-PC controlled runtime loop discipline is operational
+- validated safe posture:
+  - mode = read_only
+  - trading_enabled = false
+  - dry_run_enabled = true
+  - kill_switch = true
+- default runtime behavior: one_pass
+- continuous runtime loop: explicit request only
+- source_of_truth writes are not part of runtime loops
+- AI LAB: schema_contract_expansion maintenance step is complete
+- AI LAB: idle for strategy generation
+- AI LAB: no new autonomous line is assigned
+
 ## Workflow rules
 - Repo-heavy / multi-step workflow: Codex should be used for repo patching/execution.
 - Heavy validations are run locally by the user.
