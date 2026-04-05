@@ -848,7 +848,6 @@ def merge_selector_config(raw_selector: dict | None) -> dict:
     return merged
 
 
-@st.cache_data(show_spinner=False)
 def load_selector_config() -> dict:
     if not EXPORT_CONTRACT_PATH.exists():
         return json.loads(json.dumps(DEFAULT_SELECTOR))
@@ -871,7 +870,6 @@ def get_current_live_mode_contract(contract_cfg: dict | None) -> dict:
     }
 
 
-@st.cache_data(show_spinner=False)
 def load_csv_optional(path_str: str | None) -> pd.DataFrame:
     path = normalize_path(path_str)
     if path is None or not path.exists():
@@ -884,7 +882,6 @@ def load_csv_optional(path_str: str | None) -> pd.DataFrame:
     return df
 
 
-@st.cache_data(show_spinner=False)
 def load_btc_df() -> pd.DataFrame:
     df = pd.read_csv(BTC_FILE)
     df = df.rename(
@@ -917,7 +914,6 @@ def resolve_model_source(selector_cfg: dict, model_key: str) -> dict:
     return dict(model_sources.get(model_key, {}) or {})
 
 
-@st.cache_data(show_spinner=False)
 def load_model_paper(paper_dir_str: str | None, model_key: str, explicit_paper_path: str | None = None) -> pd.DataFrame:
     candidates: list[Path] = []
 
@@ -1187,7 +1183,6 @@ def investment_value(equity_df: pd.DataFrame, picked_date, amount: float = 1000.
 # LIVE STATE / TREND BAROMETER
 # =========================================================
 
-@st.cache_data(show_spinner=False)
 def load_live_public_state(contract_cfg: dict, live_path: str | None, model_key: str, lang: str) -> dict:
     df = load_csv_optional(live_path)
     row = None
@@ -1224,7 +1219,6 @@ def load_live_public_state(contract_cfg: dict, live_path: str | None, model_key:
     }
 
 
-@st.cache_data(show_spinner=False)
 def load_trend_barometer_live(source_cfg: dict, lang: str) -> dict:
     df = load_csv_optional(source_cfg.get("live_status_path"))
     model_key = source_cfg.get("model_key")
@@ -1248,7 +1242,6 @@ def load_trend_barometer_live(source_cfg: dict, lang: str) -> dict:
     }
 
 
-@st.cache_data(show_spinner=False)
 def load_trend_barometer_history(source_cfg: dict) -> pd.DataFrame:
     path = normalize_path(source_cfg.get("history_path"))
     if path is None or not path.exists():
