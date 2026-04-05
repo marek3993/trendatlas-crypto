@@ -29,6 +29,8 @@ MANIFEST_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot_manifest.json"
 LOG_PATH = LOGS_DIR / "hyperliquid_read_only_snapshot.log"
 
 INFO_URL = "https://api.hyperliquid.xyz/info"
+STABLE_BALANCE_SYMBOLS = {"USDC", "USD", "USDT", "CASH"}
+NUMERIC_EPSILON = 1e-9
 
 
 def utc_now_iso() -> str:
@@ -81,6 +83,184 @@ def post_info(payload: dict[str, Any]) -> Any:
     raise RuntimeError("unreachable")
 
 
+def try_post_info(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        resp = requests.post(INFO_URL, json=payload, timeout=30)
+    except requests.RequestException as e:
+        return {
+            "ok": False,
+            "payload_type": payload.get("type"),
+            "error": f"request_exception:{type(e).__name__}:{e}",
+        }
+
+    if resp.status_code != 200:
+        return {
+            "ok": False,
+            "payload_type": payload.get("type"),
+            "http_status": resp.status_code,
+            "error": resp.text[:500],
+        }
+
+    try:
+        return {
+            "ok": True,
+            "payload_type": payload.get("type"),
+            "response": resp.json(),
+        }
+    except Exception as e:
+        return {
+            "ok": False,
+            "payload_type": payload.get("type"),
+            "error": f"non_json_response:{type(e).__name__}:{e}",
+        }
+
+
+def to_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, str) and not value.strip():
+        return None
+    try:
+        return float(str(value))
+    except Exception:
+        return None
+
+
+def first_float(payload: dict[str, Any], keys: list[str]) -> float | None:
+    for key in keys:
+        if key not in payload:
+            continue
+        parsed = to_float(payload.get(key))
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def extract_spot_balance_rows(spot_state: Any) -> list[dict[str, Any]]:
+    if isinstance(spot_state, list):
+        raw_rows = spot_state
+    elif isinstance(spot_state, dict):
+        raw_rows = []
+        for key in ("balances", "tokenBalances", "spotBalances", "assets"):
+            candidate = spot_state.get(key)
+            if isinstance(candidate, list):
+                raw_rows = candidate
+                break
+    else:
+        raw_rows = []
+
+    rows: list[dict[str, Any]] = []
+    for entry in raw_rows:
+        if not isinstance(entry, dict):
+            continue
+        nested = entry.get("balance")
+        candidate_dicts = [nested, entry] if isinstance(nested, dict) else [entry]
+        coin = ""
+        for candidate in candidate_dicts:
+            coin = str(
+                candidate.get("coin")
+                or candidate.get("token")
+                or candidate.get("name")
+                or candidate.get("asset")
+                or ""
+            ).strip().upper()
+            if coin:
+                break
+        total = None
+        available = None
+        for candidate in candidate_dicts:
+            total = first_float(
+                candidate,
+                ["total", "balance", "amount", "totalBalance", "totalRaw", "equity"],
+            )
+            if total is not None:
+                break
+        for candidate in candidate_dicts:
+            available = first_float(
+                candidate,
+                ["available", "withdrawable", "free", "transferable", "availableBalance"],
+            )
+            if available is not None:
+                break
+        if available is None:
+            available = total
+        rows.append(
+            {
+                "coin": coin or "UNKNOWN",
+                "total": total,
+                "available": available,
+                "raw": entry,
+            }
+        )
+    return rows
+
+
+def sum_spot_balances(rows: list[dict[str, Any]]) -> tuple[float | None, float | None]:
+    matching = [row for row in rows if row.get("coin") in STABLE_BALANCE_SYMBOLS]
+    if not matching:
+        return None, None
+    total = sum(row["total"] for row in matching if row.get("total") is not None)
+    available = sum(row["available"] for row in matching if row.get("available") is not None)
+    return total, available
+
+
+def summarize_balance_sources(clearinghouse_state: Any, spot_state: Any) -> dict[str, Any]:
+    perp_margin_summary = {}
+    perp_cross_summary = {}
+    perp_withdrawable = None
+    if isinstance(clearinghouse_state, dict):
+        perp_margin_summary = (
+            clearinghouse_state.get("marginSummary", {})
+            if isinstance(clearinghouse_state.get("marginSummary"), dict)
+            else {}
+        )
+        perp_cross_summary = (
+            clearinghouse_state.get("crossMarginSummary", {})
+            if isinstance(clearinghouse_state.get("crossMarginSummary"), dict)
+            else {}
+        )
+        perp_withdrawable = to_float(clearinghouse_state.get("withdrawable"))
+
+    perp_account_value = first_float(perp_margin_summary, ["accountValue"])
+    if perp_account_value is None:
+        perp_account_value = first_float(perp_cross_summary, ["accountValue"])
+
+    spot_rows = extract_spot_balance_rows(spot_state)
+    spot_stable_total, spot_stable_available = sum_spot_balances(spot_rows)
+    spot_source_available = isinstance(spot_state, (dict, list))
+
+    balance_source_of_truth = "perp_clearinghouse"
+    account_equity_usd = perp_account_value
+    available_balance_usd = perp_withdrawable
+
+    if (
+        spot_source_available
+        and spot_stable_total is not None
+        and abs(spot_stable_total) > NUMERIC_EPSILON
+    ):
+        balance_source_of_truth = "spot_stable_balance"
+        account_equity_usd = spot_stable_total
+        available_balance_usd = (
+            spot_stable_available if spot_stable_available is not None else spot_stable_total
+        )
+
+    if available_balance_usd is None:
+        available_balance_usd = account_equity_usd
+
+    return {
+        "balance_source_of_truth": balance_source_of_truth,
+        "account_equity_usd": account_equity_usd,
+        "available_balance_usd": available_balance_usd,
+        "perp_account_value": perp_account_value,
+        "perp_withdrawable": perp_withdrawable,
+        "spot_balance_count": len(spot_rows),
+        "spot_balance_symbols": sorted({row["coin"] for row in spot_rows if row.get("coin")}),
+        "spot_stable_total_usd": spot_stable_total,
+        "spot_stable_available_usd": spot_stable_available,
+        "spot_source_available": spot_source_available,
+    }
+
+
 def main() -> None:
     ensure_dirs()
     started_at = utc_now_iso()
@@ -110,12 +290,24 @@ def main() -> None:
 
     payloads = {
         "clearinghouseState": {"type": "clearinghouseState", "user": account_address},
+        "spotClearinghouseState": {"type": "spotClearinghouseState", "user": account_address},
         "openOrders": {"type": "openOrders", "user": account_address},
         "userFills": {"type": "userFills", "user": account_address}
     }
 
     log("[FETCH] clearinghouseState")
     clearinghouse_state = post_info(payloads["clearinghouseState"])
+
+    log("[FETCH] spotClearinghouseState")
+    spot_clearinghouse_result = try_post_info(payloads["spotClearinghouseState"])
+    if spot_clearinghouse_result["ok"]:
+        spot_clearinghouse_state = spot_clearinghouse_result["response"]
+    else:
+        spot_clearinghouse_state = None
+        log(
+            "[WARN] spotClearinghouseState unavailable: "
+            f"{spot_clearinghouse_result.get('error')}"
+        )
 
     log("[FETCH] openOrders")
     open_orders = post_info(payloads["openOrders"])
@@ -136,6 +328,8 @@ def main() -> None:
         balances = clearinghouse_state.get("crossMarginSummary", {})
         withdrawable = clearinghouse_state.get("withdrawable")
 
+    balance_summary = summarize_balance_sources(clearinghouse_state, spot_clearinghouse_state)
+
     snapshot = {
         "snapshot_type": "hyperliquid_read_only_account_snapshot",
         "as_of_utc": utc_now_iso(),
@@ -149,6 +343,11 @@ def main() -> None:
         },
         "raw": {
             "clearinghouseState": clearinghouse_state,
+            "spotClearinghouseState": (
+                spot_clearinghouse_state
+                if spot_clearinghouse_result["ok"]
+                else {"fetch_error": spot_clearinghouse_result}
+            ),
             "openOrders": open_orders,
             "userFills": user_fills
         },
@@ -158,7 +357,17 @@ def main() -> None:
             "recent_fills_count": len(user_fills) if isinstance(user_fills, list) else 0,
             "withdrawable": withdrawable,
             "margin_summary": margin_summary,
-            "cross_margin_summary": balances
+            "cross_margin_summary": balances,
+            "balance_source_of_truth": balance_summary["balance_source_of_truth"],
+            "account_equity_usd": balance_summary["account_equity_usd"],
+            "available_balance_usd": balance_summary["available_balance_usd"],
+            "perp_account_value": balance_summary["perp_account_value"],
+            "perp_withdrawable": balance_summary["perp_withdrawable"],
+            "spot_balance_count": balance_summary["spot_balance_count"],
+            "spot_balance_symbols": balance_summary["spot_balance_symbols"],
+            "spot_stable_total_usd": balance_summary["spot_stable_total_usd"],
+            "spot_stable_available_usd": balance_summary["spot_stable_available_usd"],
+            "spot_source_available": balance_summary["spot_source_available"]
         }
     }
 
@@ -171,7 +380,11 @@ def main() -> None:
         "http_source": INFO_URL,
         "positions_count": snapshot["summary"]["positions_count"],
         "open_orders_count": snapshot["summary"]["open_orders_count"],
-        "recent_fills_count": snapshot["summary"]["recent_fills_count"]
+        "recent_fills_count": snapshot["summary"]["recent_fills_count"],
+        "balance_source_of_truth": snapshot["summary"]["balance_source_of_truth"],
+        "account_equity_usd": snapshot["summary"]["account_equity_usd"],
+        "available_balance_usd": snapshot["summary"]["available_balance_usd"],
+        "spot_source_available": snapshot["summary"]["spot_source_available"]
     }
 
     manifest = {

@@ -46,6 +46,7 @@ DEFAULT_EXPIRES_AFTER_MS = 30_000
 DEFAULT_POLL_SECONDS = 15.0
 DEFAULT_POLL_INTERVAL_SECONDS = 1.5
 POSITION_TOLERANCE = 1e-9
+STABLE_BALANCE_SYMBOLS = {"USDC", "USD", "USDT", "CASH"}
 
 TERMINAL_ORDER_STATES = {
     "canceled",
@@ -165,6 +166,21 @@ def info_request(payload: dict[str, Any]) -> Any:
 
 def exchange_request(payload: dict[str, Any]) -> Any:
     return post_json(EXCHANGE_URL, payload)
+
+
+def try_info_request(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        return {
+            "ok": True,
+            "payload_type": payload.get("type"),
+            "response": post_json(INFO_URL, payload),
+        }
+    except SystemExit as exc:
+        return {
+            "ok": False,
+            "payload_type": payload.get("type"),
+            "error": f"info_request_failed:exit_code:{exc.code}",
+        }
 
 
 def ensure_manual_execution(manual_confirm: str) -> None:
@@ -389,6 +405,15 @@ def fetch_user_state(account_address: str) -> dict[str, Any]:
     return state
 
 
+def fetch_spot_user_state(account_address: str) -> dict[str, Any] | None:
+    payload = {"type": "spotClearinghouseState", "user": account_address}
+    result = try_info_request(payload)
+    if not result["ok"]:
+        return None
+    response = result["response"]
+    return response if isinstance(response, dict) else None
+
+
 def fetch_open_orders(account_address: str) -> list[dict[str, Any]]:
     orders = info_request({"type": "openOrders", "user": account_address})
     return orders if isinstance(orders, list) else []
@@ -486,10 +511,155 @@ def extract_positions(user_state: dict[str, Any]) -> list[dict[str, Any]]:
     return positions
 
 
-def summarize_snapshot(account_address: str, state: dict[str, Any], open_orders: list[dict[str, Any]]) -> dict[str, Any]:
+def to_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, str) and not value.strip():
+        return None
+    try:
+        return float(str(value))
+    except Exception:
+        return None
+
+
+def first_float(payload: dict[str, Any], keys: list[str]) -> float | None:
+    for key in keys:
+        if key not in payload:
+            continue
+        parsed = to_float(payload.get(key))
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def extract_spot_balance_rows(spot_state: Any) -> list[dict[str, Any]]:
+    if isinstance(spot_state, list):
+        raw_rows = spot_state
+    elif isinstance(spot_state, dict):
+        raw_rows = []
+        for key in ("balances", "tokenBalances", "spotBalances", "assets"):
+            candidate = spot_state.get(key)
+            if isinstance(candidate, list):
+                raw_rows = candidate
+                break
+    else:
+        raw_rows = []
+
+    rows: list[dict[str, Any]] = []
+    for entry in raw_rows:
+        if not isinstance(entry, dict):
+            continue
+        nested = entry.get("balance")
+        candidate_dicts = [nested, entry] if isinstance(nested, dict) else [entry]
+        coin = ""
+        for candidate in candidate_dicts:
+            coin = normalize_asset(
+                candidate.get("coin")
+                or candidate.get("token")
+                or candidate.get("name")
+                or candidate.get("asset")
+            )
+            if coin:
+                break
+        total = None
+        available = None
+        for candidate in candidate_dicts:
+            total = first_float(
+                candidate,
+                ["total", "balance", "amount", "totalBalance", "totalRaw", "equity"],
+            )
+            if total is not None:
+                break
+        for candidate in candidate_dicts:
+            available = first_float(
+                candidate,
+                ["available", "withdrawable", "free", "transferable", "availableBalance"],
+            )
+            if available is not None:
+                break
+        if available is None:
+            available = total
+        rows.append(
+            {
+                "coin": coin or "UNKNOWN",
+                "total": total,
+                "available": available,
+                "raw": entry,
+            }
+        )
+    return rows
+
+
+def sum_spot_balances(rows: list[dict[str, Any]]) -> tuple[float | None, float | None]:
+    matching = [row for row in rows if row.get("coin") in STABLE_BALANCE_SYMBOLS]
+    if not matching:
+        return None, None
+    total = sum(row["total"] for row in matching if row.get("total") is not None)
+    available = sum(row["available"] for row in matching if row.get("available") is not None)
+    return total, available
+
+
+def summarize_balance_sources(state: dict[str, Any], spot_state: dict[str, Any] | None) -> dict[str, Any]:
+    margin_summary = (
+        state.get("marginSummary", {})
+        if isinstance(state.get("marginSummary"), dict)
+        else {}
+    )
+    cross_summary = (
+        state.get("crossMarginSummary", {})
+        if isinstance(state.get("crossMarginSummary"), dict)
+        else {}
+    )
+    perp_account_value = first_float(margin_summary, ["accountValue"])
+    if perp_account_value is None:
+        perp_account_value = first_float(cross_summary, ["accountValue"])
+    perp_withdrawable = to_float(state.get("withdrawable"))
+
+    spot_rows = extract_spot_balance_rows(spot_state)
+    spot_stable_total, spot_stable_available = sum_spot_balances(spot_rows)
+    spot_source_available = spot_state is not None
+
+    balance_source_of_truth = "perp_clearinghouse"
+    account_equity_usd = perp_account_value
+    available_balance_usd = perp_withdrawable
+    if (
+        spot_source_available
+        and spot_stable_total is not None
+        and abs(spot_stable_total) > POSITION_TOLERANCE
+    ):
+        balance_source_of_truth = "spot_stable_balance"
+        account_equity_usd = spot_stable_total
+        available_balance_usd = (
+            spot_stable_available if spot_stable_available is not None else spot_stable_total
+        )
+
+    if available_balance_usd is None:
+        available_balance_usd = account_equity_usd
+
+    return {
+        "balance_source_of_truth": balance_source_of_truth,
+        "account_equity_usd": account_equity_usd,
+        "available_balance_usd": available_balance_usd,
+        "perp_account_value": perp_account_value,
+        "perp_withdrawable": perp_withdrawable,
+        "spot_balance_count": len(spot_rows),
+        "spot_balance_symbols": sorted({row["coin"] for row in spot_rows if row.get("coin")}),
+        "spot_stable_total_usd": spot_stable_total,
+        "spot_stable_available_usd": spot_stable_available,
+        "spot_source_available": spot_source_available,
+    }
+
+
+def summarize_snapshot(
+    account_address: str,
+    state: dict[str, Any],
+    spot_state: dict[str, Any] | None,
+    open_orders: list[dict[str, Any]],
+) -> dict[str, Any]:
     positions = extract_positions(state)
     margin_summary = state.get("marginSummary", {}) if isinstance(state.get("marginSummary"), dict) else {}
     cross_summary = state.get("crossMarginSummary", {}) if isinstance(state.get("crossMarginSummary"), dict) else {}
+    balance_summary = summarize_balance_sources(state, spot_state)
     return {
         "account_address": account_address,
         "positions": positions,
@@ -499,8 +669,19 @@ def summarize_snapshot(account_address: str, state: dict[str, Any], open_orders:
         "margin_summary": margin_summary,
         "cross_margin_summary": cross_summary,
         "withdrawable": state.get("withdrawable"),
+        "balance_source_of_truth": balance_summary["balance_source_of_truth"],
+        "account_equity_usd": balance_summary["account_equity_usd"],
+        "available_balance_usd": balance_summary["available_balance_usd"],
+        "perp_account_value": balance_summary["perp_account_value"],
+        "perp_withdrawable": balance_summary["perp_withdrawable"],
+        "spot_balance_count": balance_summary["spot_balance_count"],
+        "spot_balance_symbols": balance_summary["spot_balance_symbols"],
+        "spot_stable_total_usd": balance_summary["spot_stable_total_usd"],
+        "spot_stable_available_usd": balance_summary["spot_stable_available_usd"],
+        "spot_source_available": balance_summary["spot_source_available"],
         "raw": {
             "clearinghouseState": state,
+            "spotClearinghouseState": spot_state,
             "openOrders": open_orders,
         },
     }
@@ -897,6 +1078,16 @@ def build_preflight(
             "positions": snapshot.get("positions", []),
             "withdrawable": snapshot.get("withdrawable"),
             "margin_summary": snapshot.get("margin_summary", {}),
+            "balance_source_of_truth": snapshot.get("balance_source_of_truth"),
+            "account_equity_usd": snapshot.get("account_equity_usd"),
+            "available_balance_usd": snapshot.get("available_balance_usd"),
+            "perp_account_value": snapshot.get("perp_account_value"),
+            "perp_withdrawable": snapshot.get("perp_withdrawable"),
+            "spot_balance_count": snapshot.get("spot_balance_count"),
+            "spot_balance_symbols": snapshot.get("spot_balance_symbols", []),
+            "spot_stable_total_usd": snapshot.get("spot_stable_total_usd"),
+            "spot_stable_available_usd": snapshot.get("spot_stable_available_usd"),
+            "spot_source_available": snapshot.get("spot_source_available"),
         },
         "auth_probe": auth_probe,
         "agent_verification": agent_verification,
@@ -1225,8 +1416,14 @@ def main() -> None:
     market_map = build_market_map(meta)
     mids = fetch_all_mids()
     pre_state = fetch_user_state(account_setup["account_address"])
+    pre_spot_state = fetch_spot_user_state(account_setup["account_address"])
     pre_open_orders = fetch_open_orders(account_setup["account_address"])
-    pre_snapshot = summarize_snapshot(account_setup["account_address"], pre_state, pre_open_orders)
+    pre_snapshot = summarize_snapshot(
+        account_setup["account_address"],
+        pre_state,
+        pre_spot_state,
+        pre_open_orders,
+    )
 
     preflight, abort_conditions, order_preview = build_preflight(
         args=args,
@@ -1406,8 +1603,14 @@ def main() -> None:
     fills_summary = summarize_fills(matched_fills)
 
     post_state = fetch_user_state(account_setup["account_address"])
+    post_spot_state = fetch_spot_user_state(account_setup["account_address"])
     post_open_orders = fetch_open_orders(account_setup["account_address"])
-    post_snapshot = summarize_snapshot(account_setup["account_address"], post_state, post_open_orders)
+    post_snapshot = summarize_snapshot(
+        account_setup["account_address"],
+        post_state,
+        post_spot_state,
+        post_open_orders,
+    )
     write_json(artifact_paths["order_timeline"], timeline)
     write_json(artifact_paths["post_snapshot"], post_snapshot)
 
