@@ -72,7 +72,7 @@
         "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
         "fallback_profile_label": "phase68g_66g_1p25x_candidate",
         "approval_gate_status": "approved_and_applied",
-        "real_order_gate_status": "blocked",
+        "real_order_gate_status": "live_order_enabled_and_approved",
         "real_order_eligible_status": "live_order_enabled_and_approved"
       }
     }

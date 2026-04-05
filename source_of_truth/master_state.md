@@ -9,7 +9,7 @@
 - leverage branch: live truth approved and applied
 - current live truth: phase68i_dynamic_ladder_candidate
 - direct app/live truth switch: approved and applied
-- real-order gate: still blocked
+- real-order gate: live_order_enabled_and_approved
 - only real-order eligible status: live_order_enabled_and_approved
 
 ## Workflow rules

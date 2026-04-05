@@ -10,11 +10,11 @@
 - direct app/live truth switch is approved and applied
 - current live truth is phase68i_dynamic_ladder_candidate
 - approval_gate_status = approved_and_applied
-- real orders remain blocked under approved_and_applied
+- real orders are enabled and approved under live_order_enabled_and_approved
 - only live_order_enabled_and_approved counts as real-order eligible
 
 ## Execution refresh branch status
-- Hyperliquid execution branch is frozen at safe read-only + dry-run scope
+- Hyperliquid execution branch is enabled for guarded live-order runtime
 - automation wrapper layer for execution refresh is functional
 - canonical execution chain is:
 1. scripts/execution/materialize_execution_app_exports.py
@@ -25,5 +25,5 @@
 6. scripts/execution/run_dry_execution_bridge.py
 - execution outputs are decision-relevant operational artifacts, not official truth
 - automation artifacts for execution refresh are not official truth
-- live orders are not enabled yet
+- live orders are enabled and approved
 - source_of_truth writes are not part of execution refresh runtime

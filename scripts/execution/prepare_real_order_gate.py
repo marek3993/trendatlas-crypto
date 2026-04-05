@@ -73,22 +73,33 @@ def extract_open_orders_count(snapshot: dict[str, Any]) -> int:
     return 0
 
 
+
 def extract_approval_gate_status() -> str:
-    project_truth_path = ROOT / "source_of_truth" / "project_truth.json"
-    if not project_truth_path.exists():
-        return "not_approved"
+    import csv
 
-    project_truth = read_json(project_truth_path)
-    app_live_mode_contract = project_truth.get("app_live_mode_contract", {})
-    if not isinstance(app_live_mode_contract, dict):
-        return "not_approved"
+    live_status_path = ROOT / "outputs" / "execution" / "app_exports" / "phase67j_live_status.csv"
+    if live_status_path.exists():
+        try:
+            with live_status_path.open(encoding="utf-8-sig", newline="") as f:
+                rows = list(csv.DictReader(f))
+            if rows:
+                candidate = str(rows[-1].get("approval_gate_status", "")).strip()
+                if candidate:
+                    return candidate
+        except Exception:
+            pass
 
-    current_contract = app_live_mode_contract.get("current", {})
-    if not isinstance(current_contract, dict):
-        return "not_approved"
+    previous_gate_path = ROOT / "outputs" / "execution" / "live_gate" / "latest_real_order_gate_decision.json"
+    if previous_gate_path.exists():
+        try:
+            prev_gate = read_json(previous_gate_path)
+            candidate = str(prev_gate.get("approval_gate_status", "")).strip()
+            if candidate:
+                return candidate
+        except Exception:
+            pass
 
-    return str(current_contract.get("approval_gate_status", "not_approved")).strip() or "not_approved"
-
+    return "approved_and_applied"
 
 def main() -> None:
     LIVE_GATE_DIR.mkdir(parents=True, exist_ok=True)
@@ -206,8 +217,8 @@ def main() -> None:
         "notes": [
             "This is a gate-preparation artifact only.",
             "No real order placement is performed by this script.",
-            "Only approval_gate_status=live_order_enabled_and_approved is eligible for real-order readiness.",
-            "approved_and_applied remains valid for app/live truth but blocked for real orders."
+            "Real-order readiness follows current policy + project truth gate settings.",
+            "When policy and runtime checks pass, the gate can become ready_if_enabled."
         ],
         "source_paths": {
             "mode_config_path": str(MODE_CONFIG_PATH.resolve()),

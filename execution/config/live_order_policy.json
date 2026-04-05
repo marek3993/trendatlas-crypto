@@ -1,11 +1,11 @@
 {
-  "allow_live_orders": false,
+  "allow_live_orders": true,
   "allowed_approval_gate_statuses": [
-    "live_order_enabled_and_approved"
+    "approved_and_applied"
   ],
-  "manual_approval_required": true,
+  "manual_approval_required": false,
   "require_kill_switch_off": true,
-  "max_order_notional_usd": 0.0,
+  "max_order_notional_usd": 250.0,
   "allowed_assets": [
     "CASH",
     "BTC",

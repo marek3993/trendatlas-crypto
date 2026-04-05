@@ -200,7 +200,7 @@ def main() -> None:
             "Disabled-ready submit skeleton only.",
             "No real order placement is performed by this script.",
             "This layer validates final pre-submit conditions and builds payload preview only.",
-            "Current gate remains blocked until explicitly changed later."
+            "Submit preview reflects current gate state and policy."
         ],
         "source_paths": {
             "mode_config_path": str(MODE_CONFIG_PATH.resolve()),

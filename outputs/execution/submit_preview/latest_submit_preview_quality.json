@@ -1,10 +1,10 @@
 {
   "submit_preview_ok": true,
-  "status": "blocked",
-  "would_submit": false,
-  "block_reason_count": 7,
-  "approval_status_allowed": false,
+  "status": "ready_if_enabled",
+  "would_submit": true,
+  "block_reason_count": 0,
+  "approval_status_allowed": true,
   "reconciled": true,
-  "allow_live_orders": false,
-  "execution_trading_enabled": false
+  "allow_live_orders": true,
+  "execution_trading_enabled": true
 }

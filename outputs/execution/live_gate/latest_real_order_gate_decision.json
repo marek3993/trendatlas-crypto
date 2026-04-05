@@ -1,0 +1,45 @@
+{
+  "decision_type": "real_order_gate_decision",
+  "generated_at_utc": "2026-04-05T15:41:55Z",
+  "signal_id": "phase67j::2026-04-03::CASH",
+  "target_asset": "CASH",
+  "mode": "live",
+  "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "approval_gate_status": "approved_and_applied",
+  "would_place_real_order": true,
+  "real_orders_enabled": false,
+  "status": "ready_if_enabled",
+  "block_reasons": [],
+  "checks": {
+    "signal_present": true,
+    "target_asset_present": true,
+    "target_asset_allowed": true,
+    "contract_validated": true,
+    "mode_known": true,
+    "execution_trading_enabled": true,
+    "allow_live_orders": true,
+    "kill_switch": false,
+    "require_kill_switch_off": true,
+    "stale_signal": false,
+    "duplicate_order_risk": false,
+    "open_orders_present": false,
+    "manual_approval_required": false,
+    "approval_gate_status": "approved_and_applied",
+    "approval_status_allowed": true,
+    "leverage_live_truth_allowed": false,
+    "max_order_notional_usd": 250.0,
+    "account_address_present": true
+  },
+  "notes": [
+    "This is a gate-preparation artifact only.",
+    "No real order placement is performed by this script.",
+    "Real-order readiness follows current policy + project truth gate settings.",
+    "When policy and runtime checks pass, the gate can become ready_if_enabled."
+  ],
+  "source_paths": {
+    "mode_config_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+    "live_order_policy_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json",
+    "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json"
+  }
+}

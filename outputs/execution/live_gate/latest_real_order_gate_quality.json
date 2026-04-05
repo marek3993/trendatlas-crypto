@@ -1,0 +1,11 @@
+{
+  "gate_ok": true,
+  "signal_present": true,
+  "target_asset_present": true,
+  "target_asset_allowed": true,
+  "contract_validated": true,
+  "blocked": false,
+  "block_reason_count": 0,
+  "would_place_real_order": true,
+  "status": "ready_if_enabled"
+}

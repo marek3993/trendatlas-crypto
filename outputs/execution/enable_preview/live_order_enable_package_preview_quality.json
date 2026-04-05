@@ -2,7 +2,8 @@
   "preview_ok": true,
   "current_system_still_blocked": true,
   "counterfactual_would_submit_if_applied_now": false,
-  "counterfactual_blocker_count": 3,
-  "preview_max_order_notional_usd": 250.0,
-  "manual_approval_still_required_in_preview": true
+  "counterfactual_blocker_count": 2,
+  "preview_max_order_notional_usd": 50.0,
+  "manual_approval_still_required_in_preview": true,
+  "truth_snapshot_mapping_ok": true
 }
