@@ -1,10 +1,10 @@
-﻿\# Chat Roles - Market Regime v1
+\# Chat Roles - Market Regime v1
 
 
 
 \## MRV1 MASTER
 
-RieĹˇi:
+Rieši:
 
 \- current truth
 
@@ -18,35 +18,35 @@ RieĹˇi:
 
 
 
-NerieĹˇi:
+Nerieši:
 
-\- veÄľkĂ© skripty
+\- veľké skripty
 
-\- detailnĂ© debugovanie
+\- detailné debugovanie
 
 \- downloader chyby
 
-\- forensic audit do hÄşbky
+\- forensic audit do hĺbky
 
-\- app implementĂˇciu
+\- app implementáciu
 
 
 
 \## MRV1 CORE STRATEGY
 
-RieĹˇi:
+Rieši:
 
 \- core regime logika
 
 \- BTC-led / alt-led / cash
 
-\- phase61â€“63 typ vĂ˝skumu
+\- phase61–63 typ výskumu
 
 \- leverage research v core vetve
 
 
 
-NerieĹˇi:
+Nerieši:
 
 \- universe shortlist/governance
 
@@ -60,7 +60,7 @@ NerieĹˇi:
 
 \## MRV1 UNIVERSE
 
-RieĹˇi:
+Rieši:
 
 \- asset selection
 
@@ -76,7 +76,7 @@ RieĹˇi:
 
 
 
-NerieĹˇi:
+Nerieši:
 
 \- core regime logiku
 
@@ -90,7 +90,7 @@ NerieĹˇi:
 
 \## MRV1 DATA
 
-RieĹˇi:
+Rieši:
 
 \- CoinGecko / Binance mapping
 
@@ -110,7 +110,7 @@ RieĹˇi:
 
 
 
-NerieĹˇi:
+Nerieši:
 
 \- strategy logic decisions
 
@@ -124,7 +124,7 @@ NerieĹˇi:
 
 \## MRV1 FORENSIC
 
-RieĹˇi:
+Rieši:
 
 \- lookahead kontrolu
 
@@ -138,7 +138,7 @@ RieĹˇi:
 
 
 
-NerieĹˇi:
+Nerieši:
 
 \- strategy ideation
 
@@ -152,7 +152,7 @@ NerieĹˇi:
 
 \## MRV1 APP
 
-RieĹˇi:
+Rieši:
 
 \- app.py
 
@@ -170,7 +170,7 @@ RieĹˇi:
 
 
 
-NerieĹˇi:
+Nerieši:
 
 \- strategy research
 
@@ -182,9 +182,9 @@ NerieĹˇi:
 
 \## MRV1 AI LAB
 
-RieĹˇi:
+Rieši:
 
-\- AI research OS architektĂşru
+\- AI research OS architektúru
 
 \- experiment registry design
 
@@ -194,21 +194,21 @@ RieĹˇi:
 
 
 
-NerieĹˇi:
+Nerieši:
 
-\- beĹľnĂ© ladenie jednej stratĂ©gie
+\- bežné ladenie jednej stratégie
 
 \- app UI
 
 \- data bugy
 
-\- forensic audit konkrĂ©tneho winnera
+\- forensic audit konkrétneho winnera
 
 
 
 \## MRV1 ENGINEERING HYGIENE
 
-RieĹˇi:
+Rieši:
 
 \- repo structure cleanup
 
@@ -228,7 +228,7 @@ RieĹˇi:
 
 
 
-NerieĹˇi:
+Nerieši:
 
 \- winner decisions
 
@@ -242,33 +242,32 @@ NerieĹˇi:
 
 
 
-\## PovinnĂˇ disciplĂ­na
+\## Povinná disciplína
 
-\- Ak problĂ©m patrĂ­ inĂ©mu segmentu, chat sa mĂˇ zastaviĹĄ.
+\- Ak problém patrí inému segmentu, chat sa má zastaviť.
 
-\- MĂˇ rovno napĂ­saĹĄ presnĂ˝ prompt pre sprĂˇvny chat.
+\- Má rovno napísať presný prompt pre správny chat.
 
-\- NemĂˇ sa pĂ˝taĹĄ na veci, ktorĂ© uĹľ existujĂş v source-of-truth.
+\- Nemá sa pýtať na veci, ktoré už existujú v source-of-truth.
 
-\- NemĂˇ mieĹˇaĹĄ svoju rolu s inĂ˝m segmentom.
-
+\- Nemá miešať svoju rolu s iným segmentom.
 
 
 ## Repo-heavy / multi-step workflow
-- Ak je task repo-heavy / multi-step / file-edit heavy / validation-heavy, preferovaný postup je pripraviť presný prompt pre Codex.
-- Codex sa má použiť na repo patching / execution.
-- Lokálny user má spúšťať heavy validations.
-- Segment chat má interpretovať výsledky a dať ďalší presný krok.
+- Ak je task repo-heavy / multi-step / file-edit heavy / validation-heavy, preferovan� postup je pripravi� presn� prompt pre Codex.
+- Codex sa m� pou�i� na repo patching / execution.
+- Lok�lny user m� sp���a� heavy validations.
+- Segment chat m� interpretova� v�sledky a da� �al�� presn� krok.
 
 ## Truth-sensitive workflow
-- Pri truth-sensitive tasku musí acting chat explicitne vypísať, ktoré SSOT / README súbory reálne čítal pred záverom.
-- Povinný header odpovede je:
+- Pri truth-sensitive tasku mus� acting chat explicitne vyp�sa�, ktor� SSOT / README s�bory re�lne ��tal pred z�verom.
+- Povinn� header odpovede je:
   - FILES READ:
 
-## Keď je ďalší krok jasný
-- Chat nemá zbytočne čakať na user confirmation.
-- Má rovno dať:
+## Ke� je �al�� krok jasn�
+- Chat nem� zbyto�ne �aka� na user confirmation.
+- M� rovno da�:
   - exact next step
-  - exact prompt pre správny segment chat
+  - exact prompt pre spr�vny segment chat
   - exact Codex prompt, ak je needed
-  - exact commands, ak sú needed
+  - exact commands, ak s� needed
