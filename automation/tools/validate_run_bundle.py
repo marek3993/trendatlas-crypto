@@ -13,6 +13,12 @@ REPORTS_DIR = AUTOMATION_ROOT / "reports"
 SCREENSHOTS_DIR = AUTOMATION_ROOT / "screenshots"
 VALIDATE_JSON_SCRIPT = AUTOMATION_ROOT / "tools" / "validate_json.py"
 
+REQUIRED_BUNDLE_FILES = [
+    ("run_log", RUNS_DIR, ".run_log.json"),
+    ("report", REPORTS_DIR, ".report.json"),
+    ("screenshot_manifest", SCREENSHOTS_DIR, ".screenshot_manifest.json"),
+]
+
 
 def find_single_file(directory: Path, suffix: str) -> Path:
     matches = list(directory.glob(f"*{suffix}"))
@@ -54,10 +60,14 @@ def main() -> None:
     if not screenshot_dir.exists():
         raise FileNotFoundError(f"Screenshot directory not found: {screenshot_dir}")
 
+    target_dirs = {
+        RUNS_DIR: run_dir,
+        REPORTS_DIR: report_dir,
+        SCREENSHOTS_DIR: screenshot_dir,
+    }
     targets = [
-        find_single_file(run_dir, ".run_log.json"),
-        find_single_file(report_dir, ".report.json"),
-        find_single_file(screenshot_dir, ".screenshot_manifest.json"),
+        find_single_file(target_dirs[root_dir], suffix)
+        for _, root_dir, suffix in REQUIRED_BUNDLE_FILES
     ]
 
     all_ok = True
