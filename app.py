@@ -558,10 +558,10 @@ METRIC_HELP = {
 
 ACCOUNT_UI_COPY = {
     "sk": {
-        "observability_disabled": "Account observability je v oficialnom kontrakte momentalne vypnuta.",
-        "proof_banner": "Execution observability",
-        "proof_state": "Execution proof stav",
-        "read_mode": "Read rezim",
+        "observability_disabled": "Prevadzkovy prehlad uctu je v oficialnom kontrakte momentalne vypnuty.",
+        "proof_banner": "Prevadzkovy prehlad uctu",
+        "proof_state": "Stav potvrdenia exekucie",
+        "read_mode": "Rezim citania",
         "mode": "Prevadzkovy rezim",
         "overview": "Prehlad",
         "balances": "Zostatky",
@@ -776,9 +776,9 @@ def prettify_account_result(value: str | None, lang: str) -> str:
 def prettify_account_read_mode(value: str | None, lang: str) -> str:
     text = str(value or "").strip().lower()
     mapping = {
-        "read_only": {"sk": "Read-only", "en": "Read-only"},
-        "read_only_operational_view": {"sk": "Read-only operational view", "en": "Read-only operational view"},
-        "operational_read_only_view": {"sk": "Read-only operational view", "en": "Read-only operational view"},
+        "read_only": {"sk": "Len na citanie", "en": "Read-only"},
+        "read_only_operational_view": {"sk": "Prevadzkovy prehlad len na citanie", "en": "Read-only operational view"},
+        "operational_read_only_view": {"sk": "Prevadzkovy prehlad len na citanie", "en": "Read-only operational view"},
     }
     if text in mapping:
         return mapping[text][lang]
@@ -2109,7 +2109,7 @@ with tabs[0]:
 
         st.caption(t(lang, "trend_threshold_note"))
         if trend_live.get("trend_calc_date"):
-            st.caption(f"Calc date: {trend_live.get('trend_calc_date')}")
+            st.caption(f"{'Datum vypoctu' if lang == 'sk' else 'Calc date'}: {trend_live.get('trend_calc_date')}")
 
     if not trend_history_df.empty:
         st.plotly_chart(make_trend_history_chart(trend_history_df, lang), use_container_width=True)
