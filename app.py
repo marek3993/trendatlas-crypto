@@ -20,8 +20,8 @@ st.set_page_config(page_title="TrendAtlas Crypto", layout="wide")
 ROOT = Path(__file__).resolve().parent
 OUTPUTS = ROOT / "outputs"
 BTC_FILE = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
-EXECUTION_STATUS_FILE = OUTPUTS / "execution" / "live_status" / "execution_status.json"
-ACCOUNT_SNAPSHOT_FILE = OUTPUTS / "execution" / "read_only" / "hyperliquid_account_snapshot.json"
+DEFAULT_EXECUTION_STATUS_PATH = "outputs/execution/live_status/execution_status.json"
+DEFAULT_ACCOUNT_SNAPSHOT_PATH = "outputs/execution/read_only/hyperliquid_account_snapshot.json"
 
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
@@ -86,6 +86,37 @@ DEFAULT_SELECTOR = {
             "approval_gate_status": "approved_and_applied",
             "real_order_gate_status": "blocked",
             "real_order_eligible_status": "live_order_enabled_and_approved",
+        }
+    },
+    "account_observability_contract": {
+        "current": {
+            "enabled": True,
+            "status_json_path": DEFAULT_EXECUTION_STATUS_PATH,
+            "snapshot_json_path": DEFAULT_ACCOUNT_SNAPSHOT_PATH,
+            "read_mode": "read_only_operational_view",
+            "execution_proof_state_label": {
+                "sk": "Execution proof zatiaľ nie je oficiálne potvrdený",
+                "en": "Execution proof is not officially confirmed yet",
+            },
+            "placeholder_framing": {
+                "sk": (
+                    "Tento dashboard je read-only prevádzkový observability prehľad. "
+                    "Zobrazuje aktuálne operational artifacts bez tvrdenia, že live execution "
+                    "spoľahlivosť je už plne potvrdená."
+                ),
+                "en": (
+                    "This dashboard is a read-only operational observability view. "
+                    "It surfaces current operational artifacts without claiming that live "
+                    "execution reliability has already been fully confirmed."
+                ),
+            },
+            "ui_sections": [
+                "proof_banner",
+                "overview",
+                "balances",
+                "positions",
+                "activity",
+            ],
         }
     },
 }
@@ -525,6 +556,33 @@ METRIC_HELP = {
     },
 }
 
+ACCOUNT_UI_COPY = {
+    "sk": {
+        "observability_disabled": "Account observability je v oficialnom kontrakte momentalne vypnuta.",
+        "proof_banner": "Execution observability",
+        "proof_state": "Execution proof stav",
+        "read_mode": "Read rezim",
+        "mode": "Prevadzkovy rezim",
+        "overview": "Prehlad",
+        "balances": "Zostatky",
+        "positions": "Pozicie",
+        "activity": "Aktivita",
+        "runtime_error": "Posledna znama chyba",
+    },
+    "en": {
+        "observability_disabled": "Account observability is currently disabled in the official contract.",
+        "proof_banner": "Execution observability",
+        "proof_state": "Execution proof state",
+        "read_mode": "Read mode",
+        "mode": "Operating mode",
+        "overview": "Overview",
+        "balances": "Balances",
+        "positions": "Positions",
+        "activity": "Activity",
+        "runtime_error": "Latest known error",
+    },
+}
+
 # =========================================================
 # HELPERS
 # =========================================================
@@ -573,6 +631,19 @@ def as_bool(value) -> bool | None:
 
 def t(lang: str, key: str) -> str:
     return TEXT[lang][key]
+
+
+def account_ui_text(lang: str, key: str) -> str:
+    return ACCOUNT_UI_COPY.get(lang, ACCOUNT_UI_COPY["en"]).get(key, key)
+
+
+def localized_contract_text(value, lang: str) -> str:
+    if isinstance(value, dict):
+        text = value.get(lang) or value.get("en") or value.get("sk")
+        return str(text).strip() if text else ""
+    if value is None:
+        return ""
+    return str(value).strip()
 
 
 def safe_metric_text(value, decimals: int = 2, suffix: str = "%", lang: str = "sk") -> str:
@@ -696,6 +767,18 @@ def prettify_account_result(value: str | None, lang: str) -> str:
         "rotate_position": {"sk": "Pozícia bola zmenená", "en": "The position was rotated"},
         "exit_to_cash": {"sk": "Pozícia bola uzavretá do CASH", "en": "The position was closed to CASH"},
         "close_position": {"sk": "Pozícia bola uzavretá", "en": "The position was closed"},
+    }
+    if text in mapping:
+        return mapping[text][lang]
+    return pretty_token(value, lang)
+
+
+def prettify_account_read_mode(value: str | None, lang: str) -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "read_only": {"sk": "Read-only", "en": "Read-only"},
+        "read_only_operational_view": {"sk": "Read-only operational view", "en": "Read-only operational view"},
+        "operational_read_only_view": {"sk": "Read-only operational view", "en": "Read-only operational view"},
     }
     if text in mapping:
         return mapping[text][lang]
@@ -1101,11 +1184,19 @@ def extract_app_export_contract(raw_payload: dict | None) -> dict:
     return raw_payload
 
 
+def extract_account_observability_contract(raw_payload: dict | None) -> dict:
+    if not isinstance(raw_payload, dict):
+        return {}
+    contract = raw_payload.get("account_observability_contract")
+    return contract if isinstance(contract, dict) else {}
+
+
 def merge_selector_config(raw_selector: dict | None) -> dict:
     merged = json.loads(json.dumps(DEFAULT_SELECTOR))
     selector = extract_app_export_contract(raw_selector)
+    observability_contract = extract_account_observability_contract(raw_selector)
     if not selector:
-        return merged
+        selector = {}
 
     merged.update(selector)
     merged["main_model_key"] = selector.get("main_model_key") or selector.get("main_strategy_model") or merged.get("main_model_key")
@@ -1124,6 +1215,25 @@ def merge_selector_config(raw_selector: dict | None) -> dict:
         merged["app_live_mode_contract"]["current"] = {
             **default_live_mode_current,
             **selector_live_mode_current,
+        }
+
+    merged["account_observability_contract"] = {
+        **DEFAULT_SELECTOR.get("account_observability_contract", {}),
+        **observability_contract,
+    }
+    default_observability_current = ((DEFAULT_SELECTOR.get("account_observability_contract") or {}).get("current") or {})
+    selector_observability_current = (observability_contract.get("current") or {})
+    merged["account_observability_contract"]["current"] = {
+        **default_observability_current,
+        **selector_observability_current,
+    }
+
+    default_placeholder_framing = default_observability_current.get("placeholder_framing")
+    selector_placeholder_framing = selector_observability_current.get("placeholder_framing")
+    if isinstance(default_placeholder_framing, dict) or isinstance(selector_placeholder_framing, dict):
+        merged["account_observability_contract"]["current"]["placeholder_framing"] = {
+            **(default_placeholder_framing if isinstance(default_placeholder_framing, dict) else {}),
+            **(selector_placeholder_framing if isinstance(selector_placeholder_framing, dict) else {}),
         }
 
     if not merged.get("compare_model_keys"):
@@ -1154,6 +1264,27 @@ def get_current_live_mode_contract(contract_cfg: dict | None) -> dict:
         **default_current,
         **selector_current,
     }
+
+
+def get_current_account_observability_contract(contract_cfg: dict | None) -> dict:
+    default_current = ((DEFAULT_SELECTOR.get("account_observability_contract") or {}).get("current") or {})
+    selector_current = (((contract_cfg or {}).get("account_observability_contract") or {}).get("current") or {})
+    merged = {
+        **default_current,
+        **selector_current,
+    }
+
+    default_placeholder_framing = default_current.get("placeholder_framing")
+    selector_placeholder_framing = selector_current.get("placeholder_framing")
+    if isinstance(default_placeholder_framing, dict) or isinstance(selector_placeholder_framing, dict):
+        merged["placeholder_framing"] = {
+            **(default_placeholder_framing if isinstance(default_placeholder_framing, dict) else {}),
+            **(selector_placeholder_framing if isinstance(selector_placeholder_framing, dict) else {}),
+        }
+
+    ui_sections = merged.get("ui_sections") or []
+    merged["ui_sections"] = [str(section).strip() for section in ui_sections if str(section).strip()]
+    return merged
 
 
 def load_csv_optional(path_str: str | None) -> pd.DataFrame:
@@ -1851,8 +1982,9 @@ live_public_state = load_live_public_state(selector_cfg, main_source.get("live_s
 trend_source_cfg = selector_cfg.get("trend_barometer_source", {}) or {}
 trend_live = load_trend_barometer_live(trend_source_cfg, lang)
 trend_history_df = load_trend_barometer_history(trend_source_cfg)
-account_status_payload = load_json_optional(EXECUTION_STATUS_FILE)
-account_snapshot_payload = load_json_optional(ACCOUNT_SNAPSHOT_FILE)
+account_observability_cfg = get_current_account_observability_contract(selector_cfg)
+account_status_payload = load_json_optional(account_observability_cfg.get("status_json_path"))
+account_snapshot_payload = load_json_optional(account_observability_cfg.get("snapshot_json_path"))
 account_snapshot_view = build_account_snapshot_view(account_status_payload, account_snapshot_payload)
 
 main_metrics = model_metrics.get(main_key, {})
@@ -2056,102 +2188,146 @@ with tabs[0]:
 with tabs[1]:
     st.subheader(t(lang, "account_title"))
     st.caption(t(lang, "account_snapshot_note"))
+    account_sections = account_observability_cfg.get("ui_sections") or [
+        "proof_banner",
+        "overview",
+        "balances",
+        "positions",
+        "activity",
+    ]
+    account_enabled = as_bool(account_observability_cfg.get("enabled"))
 
-    open_position = account_snapshot_view.get("open_position")
-    provider_text = safe_text_value(account_snapshot_view.get("provider"), lang=lang)
-    full_account_address = str(account_snapshot_view.get("account_address") or "").strip()
-    masked_account_address = safe_text_value(mask_account_address(full_account_address), lang=lang)
-    connection_text = prettify_account_status(account_snapshot_view.get("status"), lang)
-    last_action_text = prettify_account_action(account_snapshot_view.get("last_action"), lang)
-    last_result_text = prettify_account_result(account_snapshot_view.get("last_action_result"), lang)
-    no_position = not isinstance(open_position, dict)
-    open_position_subtitle = ""
-    if not no_position:
-        side_key = str(open_position.get("side")).upper()
-        if side_key == "LONG":
-            side_text = t(lang, "account_long")
-        elif side_key == "SHORT":
-            side_text = t(lang, "account_short")
-        else:
-            side_text = safe_text_value(open_position.get("side"), lang=lang)
-        open_position_subtitle = f"{side_text} | {safe_plain_number_text(open_position.get('size'), decimals=6, lang=lang)}"
-
-    top_cards = st.columns(4)
-    with top_cards[0]:
-        metric_box(t(lang, "account_connection"), connection_text if account_snapshot_view.get("status") else t(lang, "account_status_unavailable"))
-    with top_cards[1]:
-        metric_box(t(lang, "account_last_sync"), format_utc_text(account_snapshot_view.get("as_of_utc"), lang))
-    with top_cards[2]:
-        metric_box(t(lang, "account_total_value"), safe_usd_text(account_snapshot_view.get("account_equity_usd"), lang=lang))
-    with top_cards[3]:
-        metric_box(t(lang, "account_available_balance"), safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang))
-
-    lower_cards = st.columns(3)
-    with lower_cards[0]:
-        metric_box(
-            t(lang, "account_open_position"),
-            safe_text_value(open_position.get("symbol"), lang=lang) if not no_position else t(lang, "account_no_position"),
-        )
-        if open_position_subtitle:
-            st.caption(open_position_subtitle)
-    with lower_cards[1]:
-        metric_box(t(lang, "account_open_orders"), safe_int_text(account_snapshot_view.get("open_orders_count"), lang=lang))
-    with lower_cards[2]:
-        metric_box(t(lang, "account_recent_fills"), safe_int_text(account_snapshot_view.get("recent_fills_count"), lang=lang))
-
-    detail_cards = st.columns(4)
-    with detail_cards[0]:
-        with st.container(border=True):
-            st.caption(t(lang, "account_provider"))
-            st.markdown(f"**{provider_text}**")
-    with detail_cards[1]:
-        with st.container(border=True):
-            st.caption(t(lang, "account_address"))
-            st.markdown(f"**{masked_account_address}**")
-            if full_account_address:
-                st.caption(t(lang, "account_copy_address"))
-                st.text_input(
-                    t(lang, "account_copy_address"),
-                    value=full_account_address,
-                    key=f"account_copy_address_{lang}",
-                    label_visibility="collapsed",
-                )
-    with detail_cards[2]:
-        with st.container(border=True):
-            st.caption(t(lang, "account_last_action"))
-            st.markdown(f"**{last_action_text}**")
-    with detail_cards[3]:
-        with st.container(border=True):
-            st.caption(t(lang, "account_last_result"))
-            st.markdown(f"**{last_result_text}**")
-
-    st.markdown(f"### {t(lang, 'account_position_details')}")
-    if no_position:
-        with st.container(border=True):
-            st.markdown(f"**{t(lang, 'account_no_position')}**")
-            st.caption(t(lang, "account_position_empty_note"))
+    if account_enabled is False:
+        st.info(account_ui_text(lang, "observability_disabled"))
     else:
-        side_key = str(open_position.get("side")).upper()
-        if side_key == "LONG":
-            position_side_text = t(lang, "account_long")
-        elif side_key == "SHORT":
-            position_side_text = t(lang, "account_short")
-        else:
-            position_side_text = safe_text_value(open_position.get("side"), lang=lang)
+        open_position = account_snapshot_view.get("open_position")
+        provider_text = safe_text_value(account_snapshot_view.get("provider"), lang=lang)
+        full_account_address = str(account_snapshot_view.get("account_address") or "").strip()
+        masked_account_address = safe_text_value(mask_account_address(full_account_address), lang=lang)
+        connection_text = prettify_account_status(account_snapshot_view.get("status"), lang)
+        last_action_text = prettify_account_action(account_snapshot_view.get("last_action"), lang)
+        last_result_text = prettify_account_result(account_snapshot_view.get("last_action_result"), lang)
+        proof_state_text = localized_contract_text(account_observability_cfg.get("execution_proof_state_label"), lang) or t(lang, "na")
+        placeholder_framing = localized_contract_text(account_observability_cfg.get("placeholder_framing"), lang)
+        read_mode_text = prettify_account_read_mode(account_observability_cfg.get("read_mode"), lang)
+        mode_text = pretty_token(account_snapshot_view.get("mode"), lang)
+        balance_source_text = prettify_balance_source(account_snapshot_view.get("balance_source_of_truth"), lang)
+        runtime_error_text = safe_text_value(account_snapshot_view.get("error"), lang=lang)
+        no_position = not isinstance(open_position, dict)
+        open_position_subtitle = ""
 
-        position_items = [
-            (t(lang, "account_symbol"), safe_text_value(open_position.get("symbol"), lang=lang)),
-            (t(lang, "account_side"), position_side_text),
-            (t(lang, "account_size"), safe_plain_number_text(open_position.get("size"), decimals=6, lang=lang)),
-            (t(lang, "account_entry_price"), safe_usd_text(open_position.get("entry_price"), decimals=2, lang=lang)),
-            (t(lang, "account_mark_price"), safe_usd_text(open_position.get("mark_price"), decimals=2, lang=lang)),
-            (t(lang, "account_unrealized_pnl_usd"), safe_signed_usd_text(open_position.get("unrealized_pnl_usd"), decimals=2, lang=lang)),
-            (t(lang, "account_unrealized_pnl_pct"), safe_signed_pct_text(open_position.get("unrealized_pnl_pct"), decimals=2, lang=lang)),
-        ]
-        position_cols = st.columns(2)
-        for idx, (label, value) in enumerate(position_items):
-            with position_cols[idx % 2]:
-                metric_box(label, value)
+        if not no_position:
+            side_key = str(open_position.get("side")).upper()
+            if side_key == "LONG":
+                side_text = t(lang, "account_long")
+            elif side_key == "SHORT":
+                side_text = t(lang, "account_short")
+            else:
+                side_text = safe_text_value(open_position.get("side"), lang=lang)
+            open_position_subtitle = f"{side_text} | {safe_plain_number_text(open_position.get('size'), decimals=6, lang=lang)}"
+
+        for section in account_sections:
+            if section == "proof_banner":
+                st.markdown(f"### {account_ui_text(lang, 'proof_banner')}")
+                with st.container(border=True):
+                    banner_cols = st.columns(2)
+                    with banner_cols[0]:
+                        st.caption(account_ui_text(lang, "proof_state"))
+                        st.markdown(f"**{proof_state_text}**")
+                    with banner_cols[1]:
+                        st.caption(account_ui_text(lang, "read_mode"))
+                        st.markdown(f"**{read_mode_text}**")
+                    if placeholder_framing:
+                        st.caption(placeholder_framing)
+                    if runtime_error_text != t(lang, "na"):
+                        st.warning(f"{account_ui_text(lang, 'runtime_error')}: {runtime_error_text}")
+
+            elif section == "overview":
+                st.markdown(f"### {account_ui_text(lang, 'overview')}")
+                overview_cols = st.columns(4)
+                with overview_cols[0]:
+                    metric_box(
+                        t(lang, "account_connection"),
+                        connection_text if account_snapshot_view.get("status") else t(lang, "account_status_unavailable"),
+                    )
+                with overview_cols[1]:
+                    metric_box(t(lang, "account_last_sync"), format_utc_text(account_snapshot_view.get("as_of_utc"), lang))
+                with overview_cols[2]:
+                    metric_box(t(lang, "account_provider"), provider_text)
+                with overview_cols[3]:
+                    metric_box(account_ui_text(lang, "mode"), mode_text)
+                with st.container(border=True):
+                    st.caption(t(lang, "account_address"))
+                    st.markdown(f"**{masked_account_address}**")
+
+            elif section == "balances":
+                st.markdown(f"### {account_ui_text(lang, 'balances')}")
+                balance_cols = st.columns(3)
+                with balance_cols[0]:
+                    metric_box(t(lang, "account_total_value"), safe_usd_text(account_snapshot_view.get("account_equity_usd"), lang=lang))
+                with balance_cols[1]:
+                    metric_box(t(lang, "account_available_balance"), safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang))
+                with balance_cols[2]:
+                    metric_box(
+                        "Zdroj zostatku" if lang == "sk" else "Balance source",
+                        balance_source_text,
+                    )
+
+            elif section == "positions":
+                st.markdown(f"### {account_ui_text(lang, 'positions')}")
+                position_summary_cols = st.columns(3)
+                with position_summary_cols[0]:
+                    metric_box(
+                        t(lang, "account_open_position"),
+                        safe_text_value(open_position.get("symbol"), lang=lang) if not no_position else t(lang, "account_no_position"),
+                    )
+                    if open_position_subtitle:
+                        st.caption(open_position_subtitle)
+                with position_summary_cols[1]:
+                    metric_box(
+                        "Pocet pozicii" if lang == "sk" else "Positions count",
+                        safe_int_text(account_snapshot_view.get("positions_count"), lang=lang),
+                    )
+                with position_summary_cols[2]:
+                    metric_box(t(lang, "account_open_orders"), safe_int_text(account_snapshot_view.get("open_orders_count"), lang=lang))
+
+                st.markdown(f"#### {t(lang, 'account_position_details')}")
+                if no_position:
+                    with st.container(border=True):
+                        st.markdown(f"**{t(lang, 'account_no_position')}**")
+                        st.caption(t(lang, "account_position_empty_note"))
+                else:
+                    side_key = str(open_position.get("side")).upper()
+                    if side_key == "LONG":
+                        position_side_text = t(lang, "account_long")
+                    elif side_key == "SHORT":
+                        position_side_text = t(lang, "account_short")
+                    else:
+                        position_side_text = safe_text_value(open_position.get("side"), lang=lang)
+
+                    position_items = [
+                        (t(lang, "account_symbol"), safe_text_value(open_position.get("symbol"), lang=lang)),
+                        (t(lang, "account_side"), position_side_text),
+                        (t(lang, "account_size"), safe_plain_number_text(open_position.get("size"), decimals=6, lang=lang)),
+                        (t(lang, "account_entry_price"), safe_usd_text(open_position.get("entry_price"), decimals=2, lang=lang)),
+                        (t(lang, "account_mark_price"), safe_usd_text(open_position.get("mark_price"), decimals=2, lang=lang)),
+                        (t(lang, "account_unrealized_pnl_usd"), safe_signed_usd_text(open_position.get("unrealized_pnl_usd"), decimals=2, lang=lang)),
+                        (t(lang, "account_unrealized_pnl_pct"), safe_signed_pct_text(open_position.get("unrealized_pnl_pct"), decimals=2, lang=lang)),
+                    ]
+                    position_cols = st.columns(2)
+                    for idx, (label, value) in enumerate(position_items):
+                        with position_cols[idx % 2]:
+                            metric_box(label, value)
+
+            elif section == "activity":
+                st.markdown(f"### {account_ui_text(lang, 'activity')}")
+                activity_cols = st.columns(3)
+                with activity_cols[0]:
+                    metric_box(t(lang, "account_recent_fills"), safe_int_text(account_snapshot_view.get("recent_fills_count"), lang=lang))
+                with activity_cols[1]:
+                    metric_box(t(lang, "account_last_action"), last_action_text)
+                with activity_cols[2]:
+                    metric_box(t(lang, "account_last_result"), last_result_text)
 
 with tabs[2]:
     st.subheader(t(lang, "method_title"))

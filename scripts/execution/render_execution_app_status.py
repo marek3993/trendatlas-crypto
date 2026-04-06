@@ -60,6 +60,13 @@ def to_float(value: Any) -> float | None:
         return None
 
 
+def to_int(value: Any, default: int = 0) -> int:
+    parsed = to_float(value)
+    if parsed is None:
+        return default
+    return int(parsed)
+
+
 def first_float(payload: dict[str, Any], keys: list[str]) -> float | None:
     for key in keys:
         if key not in payload:
@@ -147,27 +154,28 @@ def main() -> None:
         fail("Unexpected snapshot_type")
 
     summary = snapshot.get("summary", {})
-    mode = str(mode_cfg.get("mode", "read_only")).strip() or "read_only"
-    trading_enabled = bool(mode_cfg.get("trading_enabled", False))
-    kill_switch = bool(mode_cfg.get("kill_switch", True))
+    snapshot_source = snapshot.get("source", {})
+    mode = str(mode_cfg.get("mode") or snapshot.get("execution_mode") or "read_only").strip() or "read_only"
+    trading_enabled = bool(mode_cfg.get("trading_enabled", snapshot.get("trading_enabled", False)))
+    kill_switch = bool(mode_cfg.get("kill_switch", snapshot.get("kill_switch", True)))
     open_position = extract_open_position(snapshot)
     current_position = open_position["symbol"] if open_position else "CASH"
 
     status = {
         "status_type": "execution_app_status",
-        "as_of_utc": utc_now_iso(),
+        "as_of_utc": snapshot.get("as_of_utc") or utc_now_iso(),
         "mode": mode,
         "trading_enabled": trading_enabled,
         "kill_switch": kill_switch,
         "status": "ok",
-        "provider": "Hyperliquid",
+        "provider": snapshot_source.get("provider") or "Hyperliquid",
         "account_address": snapshot.get("account_address"),
-        "positions_count": int(summary.get("positions_count", 0)),
-        "open_orders_count": int(summary.get("open_orders_count", 0)),
-        "recent_fills_count": int(summary.get("recent_fills_count", 0)),
+        "positions_count": to_int(summary.get("positions_count")),
+        "open_orders_count": to_int(summary.get("open_orders_count")),
+        "recent_fills_count": to_int(summary.get("recent_fills_count")),
         "current_position": current_position,
-        "last_action": "snapshot_refresh",
-        "last_action_result": "success",
+        "last_action": "execution_status_render",
+        "last_action_result": "ok",
         "guardrails_ok": True,
         "stale_signal": None,
         "signal_id": None,

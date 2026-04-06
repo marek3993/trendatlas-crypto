@@ -16,6 +16,29 @@
   ],
   "authoritative_reading_rule": "App must read source_of_truth/export_contract.json first. DEFAULT_SELECTOR is a safe fallback only. outputs/live_strategy_selector.json is a legacy output artifact and must not redefine truth or real-order eligibility.",
   "default_fallback_rule": "If this file is missing or unreadable, app.py DEFAULT_SELECTOR may be used as a non-authoritative safety fallback only.",
+  "account_observability_contract": {
+    "current": {
+      "enabled": true,
+      "status_json_path": "outputs/execution/live_status/execution_status.json",
+      "snapshot_json_path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+      "read_mode": "read_only_operational_view",
+      "execution_proof_state_label": {
+        "sk": "Execution proof zatiaľ nie je oficiálne potvrdený",
+        "en": "Execution proof is not officially confirmed yet"
+      },
+      "placeholder_framing": {
+        "sk": "Tento dashboard je read-only prevádzkový observability prehľad. Zobrazuje aktuálne operational artifacts bez tvrdenia, že live execution spoľahlivosť je už plne potvrdená.",
+        "en": "This dashboard is a read-only operational observability view. It surfaces current operational artifacts without claiming that live execution reliability has already been fully confirmed."
+      },
+      "ui_sections": [
+        "proof_banner",
+        "overview",
+        "balances",
+        "positions",
+        "activity"
+      ]
+    }
+  },
   "app_export_contract": {
     "product_name": "TrendAtlas Crypto",
     "main_strategy_model": "phase68i_dynamic_ladder_candidate",
