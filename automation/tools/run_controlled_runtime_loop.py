@@ -24,6 +24,35 @@ LOCK_PATH = RUNTIME_HEALTH_DIR / "active_runtime.lock.json"
 STOP_MARKER_PATH = RUNTIME_HEALTH_DIR / "graceful_stop_request.json"
 
 EXECUTION_MODE_PATH = ROOT / "execution" / "config" / "execution_mode.json"
+LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
+SCRIPT_REGISTRY_PATH = ROOT / "canonical" / "script_registry.json"
+
+APPROVED_LIGHTWEIGHT_STEP_CHAIN: list[tuple[str, str]] = [
+    (
+        "materialize_execution_app_exports",
+        "scripts/execution/materialize_execution_app_exports.py",
+    ),
+    (
+        "validate_execution_source_contract",
+        "scripts/execution/validate_execution_source_contract.py",
+    ),
+    (
+        "hyperliquid_read_only_snapshot",
+        "scripts/execution/hyperliquid_read_only_snapshot.py",
+    ),
+    (
+        "render_execution_app_status",
+        "scripts/execution/render_execution_app_status.py",
+    ),
+    (
+        "build_execution_intent_from_strategy_exports",
+        "scripts/execution/build_execution_intent_from_strategy_exports.py",
+    ),
+    (
+        "run_dry_execution_bridge",
+        "scripts/execution/run_dry_execution_bridge.py",
+    ),
+]
 
 STEP_CHAIN: list[tuple[str, Path]] = [
     (
@@ -167,6 +196,101 @@ def load_execution_mode_guardrail() -> dict[str, Any]:
 
     guardrail["ok"] = not violations
     return guardrail
+
+
+def build_controlled_runtime_preflight() -> dict[str, Any]:
+    execution_mode_guardrail = load_execution_mode_guardrail()
+    live_order_policy = read_json(LIVE_ORDER_POLICY_PATH)
+    script_registry = read_json(SCRIPT_REGISTRY_PATH)
+
+    registry_entries = script_registry.get("scripts", [])
+    registry_by_path = {
+        str(entry.get("script_path", "")).strip(): entry
+        for entry in registry_entries
+        if isinstance(entry, dict)
+    }
+
+    approved_chain = [
+        {"step_name": step_name, "script_path": rel_path}
+        for step_name, rel_path in APPROVED_LIGHTWEIGHT_STEP_CHAIN
+    ]
+    actual_chain = []
+    chain_violations: list[str] = []
+
+    approved_pairs = list(APPROVED_LIGHTWEIGHT_STEP_CHAIN)
+    actual_pairs = [
+        (step_name, script_path.relative_to(ROOT).as_posix())
+        for step_name, script_path in STEP_CHAIN
+    ]
+    if actual_pairs != approved_pairs:
+        chain_violations.append(
+            "controlled runtime step chain differs from the approved lightweight step list"
+        )
+
+    for step_name, script_path in STEP_CHAIN:
+        relative_path = script_path.relative_to(ROOT).as_posix()
+        registry_entry = registry_by_path.get(relative_path)
+        actual_chain.append(
+            {
+                "step_name": step_name,
+                "script_path": relative_path,
+                "exists": script_path.exists(),
+                "registry_found": registry_entry is not None,
+                "registry_status": None if registry_entry is None else registry_entry.get("status"),
+                "registry_layer": None if registry_entry is None else registry_entry.get("layer"),
+                "registry_output_type": None
+                if registry_entry is None
+                else registry_entry.get("output_type"),
+                "writes_source_of_truth": None
+                if registry_entry is None
+                else registry_entry.get("writes_source_of_truth"),
+            }
+        )
+
+        if not script_path.exists():
+            chain_violations.append(f"controlled runtime step is missing: {relative_path}")
+            continue
+        if registry_entry is None:
+            chain_violations.append(
+                f"controlled runtime step is not registered in canonical/script_registry.json: {relative_path}"
+            )
+            continue
+        if registry_entry.get("status") != "active":
+            chain_violations.append(
+                f"controlled runtime step is not active in canonical/script_registry.json: {relative_path}"
+            )
+        if registry_entry.get("writes_source_of_truth"):
+            chain_violations.append(
+                f"controlled runtime step must not write source_of_truth: {relative_path}"
+            )
+
+    real_order_enabled = bool(live_order_policy.get("allow_live_orders"))
+    violations = []
+    violations.extend(execution_mode_guardrail.get("violations", []))
+    violations.extend(chain_violations)
+    if real_order_enabled:
+        violations.append("live_order_policy.allow_live_orders must be false for controlled runtime")
+
+    preflight = {
+        "checked_at_utc": utc_now_iso(),
+        "ok": not violations,
+        "violations": violations,
+        "execution_mode_guardrail": execution_mode_guardrail,
+        "step_chain_verification": {
+            "approved_chain": approved_chain,
+            "actual_chain": actual_chain,
+            "ok": not chain_violations,
+            "violations": chain_violations,
+        },
+        "real_order_path_check": {
+            "path": str(LIVE_ORDER_POLICY_PATH.resolve()),
+            "allow_live_orders": real_order_enabled,
+            "manual_approval_required": live_order_policy.get("manual_approval_required"),
+            "require_kill_switch_off": live_order_policy.get("require_kill_switch_off"),
+            "ok": not real_order_enabled,
+        },
+    }
+    return preflight
 
 
 def emit_step_output(step_name: str, stdout: str, stderr: str) -> None:
@@ -361,9 +485,13 @@ def build_runtime_health_payload(runtime_state: dict[str, Any]) -> dict[str, Any
         "cycle_index": runtime_state["cycle_index"],
         "cycles_completed": runtime_state["cycles_completed"],
         "current_step": runtime_state["current_step"],
+        "last_started_step": runtime_state["last_started_step"],
         "last_completed_step": runtime_state["last_completed_step"],
+        "last_finished_step": runtime_state["last_finished_step"],
         "last_success_utc": runtime_state["last_success_utc"],
+        "outputs_possibly_stale_or_partial": runtime_state["outputs_possibly_stale_or_partial"],
         "execution_mode_guardrail": runtime_state["execution_mode_guardrail"],
+        "preflight_check": runtime_state["preflight_check"],
         "source_of_truth_write_check": runtime_state["source_of_truth_write_check"],
         "safe_contract": runtime_state["safe_contract"],
         "step_order": [name for name, _ in STEP_CHAIN],
@@ -375,6 +503,7 @@ def build_runtime_health_payload(runtime_state: dict[str, Any]) -> dict[str, Any
         "notes": [
             "Manual/local-PC runtime controller only.",
             "Default mode is one pass. Continuous looping requires explicit --loop.",
+            "Preflight must pass before the controlled runtime loop can start.",
             "Any source_of_truth write or unsafe execution mode is treated as a hard failure.",
             "Only read-only snapshot plus dry-run execution steps are allowed here.",
         ],
@@ -492,6 +621,9 @@ def run_cycle(runtime_state: dict[str, Any]) -> dict[str, Any]:
 
     runtime_state["current_cycle_dir"] = str(cycle_dir)
     runtime_state["current_step"] = None
+    runtime_state["last_started_step"] = None
+    runtime_state["last_finished_step"] = None
+    runtime_state["outputs_possibly_stale_or_partial"] = False
     runtime_state["latest_cycle_steps"] = steps
     runtime_state["source_of_truth_write_check"] = {
         "before_file_count": len(before_state),
@@ -522,6 +654,7 @@ def run_cycle(runtime_state: dict[str, Any]) -> dict[str, Any]:
 
         for step_name, script_path in STEP_CHAIN:
             runtime_state["current_step"] = step_name
+            runtime_state["last_started_step"] = step_name
             publish_runtime_health(runtime_state)
 
             step_result = run_step(step_name=step_name, script_path=script_path, cycle_dir=cycle_dir)
@@ -529,6 +662,7 @@ def run_cycle(runtime_state: dict[str, Any]) -> dict[str, Any]:
             runtime_state["latest_cycle_steps"] = steps
             runtime_state["current_step"] = None
             runtime_state["last_completed_step"] = step_name
+            runtime_state["last_finished_step"] = step_name
             runtime_state["last_success_utc"] = step_result["finished_at_utc"]
             publish_runtime_health(runtime_state)
 
@@ -539,6 +673,12 @@ def run_cycle(runtime_state: dict[str, Any]) -> dict[str, Any]:
         cycle_status = "failed"
         cycle_error = str(exc)
         runtime_state["current_step"] = None
+
+    runtime_state["outputs_possibly_stale_or_partial"] = bool(
+        cycle_status == "failed"
+        and runtime_state["last_started_step"]
+        and runtime_state["last_started_step"] != runtime_state["last_finished_step"]
+    )
 
     after_state = snapshot_source_of_truth_state()
     source_of_truth_changes = diff_source_of_truth_state(before_state, after_state)
@@ -583,8 +723,11 @@ def run_cycle(runtime_state: dict[str, Any]) -> dict[str, Any]:
             "cycle_dir": str(cycle_dir),
             "status": cycle_status,
             "error": cycle_error,
+            "last_started_step": runtime_state["last_started_step"],
             "last_completed_step": runtime_state["last_completed_step"],
+            "last_finished_step": runtime_state["last_finished_step"],
             "last_success_utc": runtime_state["last_success_utc"],
+            "outputs_possibly_stale_or_partial": runtime_state["outputs_possibly_stale_or_partial"],
             "stop_reason": runtime_state["stop_reason"],
         },
     )
@@ -697,8 +840,11 @@ def main() -> int:
         "cycle_index": 0,
         "cycles_completed": 0,
         "current_step": None,
+        "last_started_step": None,
         "last_completed_step": None,
+        "last_finished_step": None,
         "last_success_utc": None,
+        "outputs_possibly_stale_or_partial": False,
         "latest_cycle_steps": [],
         "execution_mode_guardrail": {
             "path": str(EXECUTION_MODE_PATH.resolve()),
@@ -708,6 +854,14 @@ def main() -> int:
             "kill_switch": None,
             "ok": None,
             "violations": [],
+        },
+        "preflight_check": {
+            "checked_at_utc": None,
+            "ok": None,
+            "violations": [],
+            "execution_mode_guardrail": None,
+            "step_chain_verification": None,
+            "real_order_path_check": None,
         },
         "source_of_truth_write_check": {
             "before_file_count": None,
@@ -723,6 +877,63 @@ def main() -> int:
             "source_of_truth_writes_allowed": False,
         },
     }
+
+    try:
+        preflight = build_controlled_runtime_preflight()
+    except Exception as exc:
+        runtime_state["run_active"] = False
+        runtime_state["status"] = "blocked"
+        runtime_state["error"] = f"Controlled runtime preflight failed: {exc}"
+        runtime_state["stop_reason"] = "preflight_failed"
+        runtime_state["finished_at_utc"] = utc_now_iso()
+        runtime_state["preflight_check"] = {
+            "checked_at_utc": utc_now_iso(),
+            "ok": False,
+            "violations": [str(exc)],
+            "execution_mode_guardrail": runtime_state["execution_mode_guardrail"],
+            "step_chain_verification": None,
+            "real_order_path_check": None,
+        }
+        publish_runtime_health(runtime_state)
+        append_jsonl(
+            EVENTS_PATH,
+            {
+                "timestamp_utc": runtime_state["finished_at_utc"],
+                "event_type": "runtime_preflight_failed",
+                "runtime_label": args.label,
+                "run_id": run_id,
+                "run_dir": str(run_dir),
+                "violations": runtime_state["preflight_check"]["violations"],
+            },
+        )
+        print(f"[RUNTIME] {runtime_state['error']}", flush=True)
+        return 1
+
+    runtime_state["execution_mode_guardrail"] = preflight["execution_mode_guardrail"]
+    runtime_state["preflight_check"] = preflight
+    publish_runtime_health(runtime_state)
+    if not preflight["ok"]:
+        runtime_state["run_active"] = False
+        runtime_state["status"] = "blocked"
+        runtime_state["error"] = "Controlled runtime preflight failed: " + " | ".join(
+            preflight["violations"]
+        )
+        runtime_state["stop_reason"] = "preflight_failed"
+        runtime_state["finished_at_utc"] = utc_now_iso()
+        publish_runtime_health(runtime_state)
+        append_jsonl(
+            EVENTS_PATH,
+            {
+                "timestamp_utc": runtime_state["finished_at_utc"],
+                "event_type": "runtime_preflight_failed",
+                "runtime_label": args.label,
+                "run_id": run_id,
+                "run_dir": str(run_dir),
+                "violations": preflight["violations"],
+            },
+        )
+        print(f"[RUNTIME] {runtime_state['error']}", flush=True)
+        return 1
 
     lock_payload = {
         "lock_type": "controlled_runtime_loop",
