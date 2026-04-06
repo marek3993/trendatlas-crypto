@@ -1324,9 +1324,14 @@ def make_capital_chart(
         ),
         xaxis_title="",
         yaxis_title="Indexed growth",
-        hovermode="x unified",
-        xaxis=dict(showgrid=False),
+        hovermode="closest",
+        xaxis=dict(showgrid=False, showspikes=True, spikemode="across", spikesnap="cursor"),
         yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.06)"),
+        hoverlabel=dict(
+            bgcolor="rgba(10,15,24,0.96)",
+            bordercolor="rgba(255,255,255,0.10)",
+            font=dict(size=12),
+        ),
     )
     return fig
 
