@@ -5,7 +5,6 @@ import math
 import re
 import uuid
 from datetime import datetime
-from html import escape
 from pathlib import Path
 
 import pandas as pd
@@ -990,83 +989,6 @@ def inject_css() -> None:
             box-shadow: 0 10px 28px rgba(0,0,0,0.16);
         }
 
-        .detail-strip {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
-            margin: 0.55rem 0 1rem 0;
-        }
-
-        .detail-pill {
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 18px;
-            padding: 12px 14px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
-            box-shadow: 0 10px 24px rgba(0,0,0,0.16);
-        }
-
-        .detail-pill-label {
-            font-size: 0.76rem;
-            opacity: 0.68;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 6px;
-        }
-
-        .detail-pill-value {
-            font-size: 0.98rem;
-            font-weight: 600;
-            word-break: break-word;
-        }
-
-        .position-panel {
-            border-radius: 24px;
-            padding: 18px;
-            margin-top: 0.2rem;
-            border: 1px solid rgba(255,255,255,0.10);
-            background:
-                radial-gradient(circle at top right, rgba(64,140,255,0.12), transparent 24%),
-                linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
-            box-shadow:
-                0 16px 36px rgba(0,0,0,0.22),
-                inset 0 1px 0 rgba(255,255,255,0.04);
-        }
-
-        .position-empty {
-            min-height: 118px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            font-size: 1.02rem;
-            letter-spacing: 0.01em;
-            color: rgba(255,255,255,0.88);
-        }
-
-        .position-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 12px;
-        }
-
-        .position-stat {
-            border-radius: 18px;
-            padding: 12px 14px;
-            background: rgba(255,255,255,0.035);
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .position-stat-label {
-            font-size: 0.78rem;
-            opacity: 0.7;
-            margin-bottom: 6px;
-            letter-spacing: 0.03em;
-        }
-
-        .position-stat-value {
-            font-size: 1.02rem;
-            font-weight: 600;
-        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -1096,58 +1018,6 @@ def render_color_card(label: str, value: str, subtitle: str = "", help_text: str
 
 def metric_box(label: str, value: str, help_text: str | None = None) -> None:
     st.metric(label=label, value=value, help=help_text, border=True)
-
-
-def render_detail_strip(items: list[tuple[str, str]]) -> None:
-    pills = []
-    for label, value in items:
-        pills.append(
-            f"""
-            <div class="detail-pill">
-                <div class="detail-pill-label">{escape(label)}</div>
-                <div class="detail-pill-value">{escape(value)}</div>
-            </div>
-            """
-        )
-    st.markdown(f'<div class="detail-strip">{"".join(pills)}</div>', unsafe_allow_html=True)
-
-
-def render_position_panel(position: dict | None, lang: str) -> None:
-    if not isinstance(position, dict):
-        st.markdown(
-            f'<div class="position-panel position-empty">{escape(t(lang, "account_no_position"))}</div>',
-            unsafe_allow_html=True,
-        )
-        return
-
-    side_value = position.get("side")
-    side_key = str(side_value).upper()
-    if side_key == "LONG":
-        side_text = t(lang, "account_long")
-    elif side_key == "SHORT":
-        side_text = t(lang, "account_short")
-    else:
-        side_text = safe_text_value(side_value, lang=lang)
-
-    fields = [
-        (t(lang, "account_symbol"), safe_text_value(position.get("symbol"), lang=lang)),
-        (t(lang, "account_side"), side_text),
-        (t(lang, "account_size"), safe_plain_number_text(position.get("size"), decimals=6, lang=lang)),
-        (t(lang, "account_entry_price"), safe_usd_text(position.get("entry_price"), decimals=2, lang=lang)),
-        (t(lang, "account_mark_price"), safe_usd_text(position.get("mark_price"), decimals=2, lang=lang)),
-        (t(lang, "account_unrealized_pnl_usd"), safe_signed_usd_text(position.get("unrealized_pnl_usd"), decimals=2, lang=lang)),
-        (t(lang, "account_unrealized_pnl_pct"), safe_signed_pct_text(position.get("unrealized_pnl_pct"), decimals=2, lang=lang)),
-    ]
-    stats_html = "".join(
-        f"""
-        <div class="position-stat">
-            <div class="position-stat-label">{escape(label)}</div>
-            <div class="position-stat-value">{escape(value)}</div>
-        </div>
-        """
-        for label, value in fields
-    )
-    st.markdown(f'<div class="position-panel"><div class="position-grid">{stats_html}</div></div>', unsafe_allow_html=True)
 
 
 # =========================================================
@@ -2104,10 +1974,8 @@ with tabs[1]:
     st.caption(t(lang, "account_snapshot_note"))
 
     open_position = account_snapshot_view.get("open_position")
-    connection_subtitle_parts = [
-        safe_text_value(account_snapshot_view.get("provider"), lang=lang),
-        pretty_token(account_snapshot_view.get("mode"), lang),
-    ]
+    provider_text = safe_text_value(account_snapshot_view.get("provider"), lang=lang)
+    mode_text = pretty_token(account_snapshot_view.get("mode"), lang)
     open_position_subtitle = ""
     if isinstance(open_position, dict):
         side_key = str(open_position.get("side")).upper()
@@ -2117,14 +1985,14 @@ with tabs[1]:
             side_text = t(lang, "account_short")
         else:
             side_text = safe_text_value(open_position.get("side"), lang=lang)
-        open_position_subtitle = f"{side_text} · {safe_plain_number_text(open_position.get('size'), decimals=6, lang=lang)}"
+        open_position_subtitle = f"{side_text} | {safe_plain_number_text(open_position.get('size'), decimals=6, lang=lang)}"
 
     top_cards = st.columns(4)
     with top_cards[0]:
         render_color_card(
             t(lang, "account_connection"),
             pretty_token(account_snapshot_view.get("status"), lang) if account_snapshot_view.get("status") else t(lang, "account_status_unavailable"),
-            " · ".join([part for part in connection_subtitle_parts if part != t(lang, "na")]),
+            f"{provider_text} | {mode_text}" if provider_text != t(lang, "na") or mode_text != t(lang, "na") else "",
             None,
             "green",
         )
@@ -2132,7 +2000,7 @@ with tabs[1]:
         render_color_card(
             t(lang, "account_last_sync"),
             format_utc_text(account_snapshot_view.get("as_of_utc"), lang),
-            safe_text_value(account_snapshot_view.get("as_of_utc"), lang=lang),
+            "UTC",
             None,
             "neutral",
         )
@@ -2179,17 +2047,43 @@ with tabs[1]:
             "neutral",
         )
 
-    render_detail_strip(
-        [
-            (t(lang, "account_provider"), safe_text_value(account_snapshot_view.get("provider"), lang=lang)),
-            (t(lang, "account_address"), safe_text_value(mask_account_address(account_snapshot_view.get("account_address")), lang=lang)),
-            (t(lang, "account_last_action"), pretty_token(account_snapshot_view.get("last_action"), lang)),
-            (t(lang, "account_last_result"), pretty_token(account_snapshot_view.get("last_action_result"), lang)),
-        ]
-    )
+    detail_cards = st.columns(4)
+    detail_items = [
+        (t(lang, "account_provider"), provider_text),
+        (t(lang, "account_address"), safe_text_value(mask_account_address(account_snapshot_view.get("account_address")), lang=lang)),
+        (t(lang, "account_last_action"), pretty_token(account_snapshot_view.get("last_action"), lang)),
+        (t(lang, "account_last_result"), pretty_token(account_snapshot_view.get("last_action_result"), lang)),
+    ]
+    for col, (label, value) in zip(detail_cards, detail_items):
+        with col:
+            metric_box(label, value)
 
     st.markdown(f"### {t(lang, 'account_position_details')}")
-    render_position_panel(open_position, lang)
+    if not isinstance(open_position, dict):
+        with st.container(border=True):
+            st.write(t(lang, "account_no_position"))
+    else:
+        side_key = str(open_position.get("side")).upper()
+        if side_key == "LONG":
+            position_side_text = t(lang, "account_long")
+        elif side_key == "SHORT":
+            position_side_text = t(lang, "account_short")
+        else:
+            position_side_text = safe_text_value(open_position.get("side"), lang=lang)
+
+        position_items = [
+            (t(lang, "account_symbol"), safe_text_value(open_position.get("symbol"), lang=lang)),
+            (t(lang, "account_side"), position_side_text),
+            (t(lang, "account_size"), safe_plain_number_text(open_position.get("size"), decimals=6, lang=lang)),
+            (t(lang, "account_entry_price"), safe_usd_text(open_position.get("entry_price"), decimals=2, lang=lang)),
+            (t(lang, "account_mark_price"), safe_usd_text(open_position.get("mark_price"), decimals=2, lang=lang)),
+            (t(lang, "account_unrealized_pnl_usd"), safe_signed_usd_text(open_position.get("unrealized_pnl_usd"), decimals=2, lang=lang)),
+            (t(lang, "account_unrealized_pnl_pct"), safe_signed_pct_text(open_position.get("unrealized_pnl_pct"), decimals=2, lang=lang)),
+        ]
+        position_cols = st.columns(2)
+        for idx, (label, value) in enumerate(position_items):
+            with position_cols[idx % 2]:
+                metric_box(label, value)
 
 with tabs[2]:
     st.subheader(t(lang, "method_title"))
