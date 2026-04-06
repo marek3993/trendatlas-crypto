@@ -1,0 +1,12 @@
+{
+  "artifact_type": "full_auto_skip_reason",
+  "generated_at_utc": "2026-04-06T19:29:06Z",
+  "runner_status": "no_action_needed",
+  "skip_reason": "no_action_needed",
+  "signal_id": "phase67j::2026-04-04::CASH",
+  "target_asset": "CASH",
+  "gate_status": "ready_if_enabled",
+  "gate_block_reasons": [],
+  "reconciliation_action": "none",
+  "current_state": "CASH"
+}

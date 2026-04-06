@@ -1,6 +1,6 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-04-03T20:01:28Z",
+  "as_of_utc": "2026-04-06T09:16:25Z",
   "execution_mode": "read_only",
   "trading_enabled": false,
   "kill_switch": true,
@@ -26,15 +26,122 @@
       "crossMaintenanceMarginUsed": "0.0",
       "withdrawable": "0.0",
       "assetPositions": [],
-      "time": 1775246524444
+      "time": 1775469038685
+    },
+    "spotClearinghouseState": {
+      "balances": [
+        {
+          "coin": "USDC",
+          "token": 0,
+          "total": "9.913939",
+          "hold": "0.0",
+          "entryNtl": "0.0"
+        },
+        {
+          "coin": "USDE",
+          "token": 235,
+          "total": "0.0",
+          "hold": "0.0",
+          "entryNtl": "0.0"
+        },
+        {
+          "coin": "USDT0",
+          "token": 268,
+          "total": "0.0",
+          "hold": "0.0",
+          "entryNtl": "0.0"
+        },
+        {
+          "coin": "USDH",
+          "token": 360,
+          "total": "0.0",
+          "hold": "0.0",
+          "entryNtl": "0.0"
+        }
+      ],
+      "tokenToAvailableAfterMaintenance": [
+        [
+          0,
+          "9.913939"
+        ]
+      ]
     },
     "openOrders": [],
-    "userFills": []
+    "userFills": [
+      {
+        "coin": "BTC",
+        "px": "69122.0",
+        "sz": "0.00015",
+        "side": "A",
+        "time": 1775462432685,
+        "startPosition": "0.00015",
+        "dir": "Close Long",
+        "closedPnl": "0.0441",
+        "hash": "0x4c1c792de93e26694d9604388367570201f000138431453befe52480a8320053",
+        "oid": 371800202798,
+        "crossed": true,
+        "fee": "0.004665",
+        "tid": 830112622132947,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "BTC",
+        "px": "68828.0",
+        "sz": "0.00015",
+        "side": "B",
+        "time": 1775438106214,
+        "startPosition": "0.0",
+        "dir": "Open Long",
+        "closedPnl": "0.0",
+        "hash": "0xb018e0d01738601ab19204387e1c8b0202cc00b5b23b7eec53e18c22d63c3a05",
+        "oid": 371536620493,
+        "crossed": true,
+        "fee": "0.004645",
+        "tid": 223561322930293,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "BTC",
+        "px": "68875.0",
+        "sz": "0.00015",
+        "side": "A",
+        "time": 1775437492527,
+        "startPosition": "0.00015",
+        "dir": "Close Long",
+        "closedPnl": "-0.0513",
+        "hash": "0x7cb228d41fa1b7e87e2b04387df9e402036e00b9baa4d6ba207ad426dea591d3",
+        "oid": 371529936530,
+        "crossed": true,
+        "fee": "0.004649",
+        "tid": 916869582986161,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "BTC",
+        "px": "69217.0",
+        "sz": "0.00015",
+        "side": "B",
+        "time": 1775436678336,
+        "startPosition": "0.0",
+        "dir": "Open Long",
+        "closedPnl": "0.0",
+        "hash": "0x03ef706fc4a41716056904387dccfb02028b00555fa735e8a7b81bc283a7f100",
+        "oid": 371521837226,
+        "crossed": true,
+        "fee": "0.004672",
+        "tid": 822760922675711,
+        "feeToken": "USDC",
+        "twapId": null
+      }
+    ]
   },
   "summary": {
     "positions_count": 0,
     "open_orders_count": 0,
-    "recent_fills_count": 0,
+    "recent_fills_count": 4,
     "withdrawable": "0.0",
     "margin_summary": {
       "accountValue": "0.0",
@@ -47,6 +154,21 @@
       "totalNtlPos": "0.0",
       "totalRawUsd": "0.0",
       "totalMarginUsed": "0.0"
-    }
+    },
+    "balance_source_of_truth": "spot_stable_balance",
+    "account_equity_usd": 9.913939,
+    "available_balance_usd": 9.913939,
+    "perp_account_value": 0.0,
+    "perp_withdrawable": 0.0,
+    "spot_balance_count": 4,
+    "spot_balance_symbols": [
+      "USDC",
+      "USDE",
+      "USDH",
+      "USDT0"
+    ],
+    "spot_stable_total_usd": 9.913939,
+    "spot_stable_available_usd": 9.913939,
+    "spot_source_available": true
   }
 }

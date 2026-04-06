@@ -1,0 +1,35 @@
+{
+  "spec_version": "1.0",
+  "artifact_type": "dev_only_feature_probe_spec",
+  "artifact_id": "feature_probe_pre_move_structure",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "family_id": "pre_move_structure_quality_stack",
+  "objective": "Define a planning-only probe for structured pre-move quality classification before visible expansion.",
+  "raw_inputs": [
+    "OHLCV",
+    "rolling range",
+    "bar returns",
+    "wick/body ratios",
+    "local volatility",
+    "trend score history"
+  ],
+  "derived_features": [
+    "compression_tightness",
+    "compression_duration",
+    "release_asymmetry",
+    "acceleration_build",
+    "failed_break_pre_signal",
+    "bar_quality_consistency"
+  ],
+  "mechanical_hypothesis": "Higher quality pre-move structures should show tighter and more consistent compression with cleaner release preparation than noisy setups.",
+  "probe_rules": [
+    "use_only_information_available_up_to_decision_bar",
+    "reject_designs_that_reduce_to_threshold_tightening",
+    "reject_extra_features_without_clear_pre_move_role"
+  ],
+  "status": "probe_defined_not_runnable"
+}

@@ -1,0 +1,48 @@
+{
+  "spec_version": "1.0",
+  "artifact_type": "dev_only_anomaly_feature_wave_spec",
+  "artifact_id": "anomaly_feature_wave01",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "objective": "Prepare the first dev-only artifact pack for anomaly feature expansion wave01 as planning-only feature instrumentation.",
+  "status": "artifact_pack_ready_not_runnable",
+  "included_families": [
+    "pre_move_structure_quality_stack",
+    "participation_breadth_confirmation_stack",
+    "cross_asset_decoupling_stack",
+    "liquidity_stress_anomaly_stack",
+    "event_context_flags_stack"
+  ],
+  "priority_order": [
+    "pre_move_structure_quality_stack",
+    "participation_breadth_confirmation_stack",
+    "cross_asset_decoupling_stack",
+    "liquidity_stress_anomaly_stack",
+    "event_context_flags_stack"
+  ],
+  "deliverables": [
+    "layer_contract",
+    "five_family_contracts",
+    "five_family_probe_specs",
+    "wave_manifest",
+    "dev_only_feature_registry_manifest"
+  ],
+  "exclusions": [
+    "no_runner_code",
+    "no_batch_execution",
+    "no_source_of_truth_changes",
+    "no_app_data_execution_drift",
+    "no_official_truth_changes",
+    "no_strategy_advancement"
+  ],
+  "acceptance_requirements": [
+    "all_new_json_artifacts_must_include_dev_only_flags",
+    "each_family_must_define_one_mechanical_hypothesis",
+    "all_specs_must_forbid_hindsight_leakage_and_future_bars",
+    "event_context_must_remain_context_only",
+    "toxic_subset_must_define_harmful_subset_precisely"
+  ]
+}

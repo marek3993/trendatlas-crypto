@@ -1,0 +1,58 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "ai_lab_family_contract_spec",
+  "spec_id": "phase69_pre_move_compression_release_quality",
+  "line_id": "phase69_pre_move_anomaly_confidence_line",
+  "batch_id": "phase69_batch01_foundation_triplet",
+  "mechanism_family": "pre_move_compression_release_quality",
+  "status": "approved_contract_only",
+  "segment_owner": "MRV1 AI LAB",
+  "created_at_utc": "2026-04-05 00:00:00 UTC",
+  "baseline_reference": {
+    "model": "phase67j_no_neo_main",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  },
+  "optional_secondary_compare_context": {
+    "model": "phase68i_dynamic_ladder_candidate",
+    "usage": "overlay_context_suitability_only"
+  },
+  "hypothesis_label": "Compression release quality as a pre-expansion confidence gate",
+  "mechanism_contract": {
+    "known_baseline_weakness": "The current baseline can confirm only after visible expansion and does not explicitly rank the quality of compression-release preparation before the move.",
+    "exact_mechanism_of_improvement": "Introduce a pre-move release-quality state that scores compression cleanliness, release alignment, and false-release contamination before expansion confirmation.",
+    "new_state_or_new_classification": "pre_move_release_quality_state",
+    "exact_compare_target": "phase67j_no_neo_main",
+    "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only",
+    "why_not_parameter_tuning": "The change is a new pre-expansion classification layer rather than a threshold or weight adjustment on an existing state.",
+    "why_expected_edge_should_survive_strict_scoring": "If real, the edge should appear as cleaner pre-move separation and lower approval of noisy compressions, not as a one-window parameter bump.",
+    "primary_expected_metric_improvement": "since2025"
+  },
+  "required_evidence_inputs": [
+    "baseline paper path for phase67j_no_neo_main",
+    "deterministic compression width or range-tightening evidence",
+    "deterministic release alignment evidence available before full expansion"
+  ],
+  "expected_outputs": [
+    "candidate_summary_csv",
+    "candidate_paper_csv",
+    "compare_csv"
+  ],
+  "stop_conditions": [
+    "stop_if_mechanism_requires_post_move_information_to_label_release_quality",
+    "stop_if_spec_reduces_to_generic_volatility_threshold_tuning",
+    "stop_if_scope_expands_beyond_pre_move_confidence_classification"
+  ],
+  "allowed_scope": [
+    "pre-expansion compression structure quality",
+    "release-cleanliness classification before visible move confirmation",
+    "primary deterministic compare against phase67j_no_neo_main",
+    "optional secondary compare against phase68i_dynamic_ladder_candidate for overlay/context suitability only"
+  ],
+  "forbidden_scope": [
+    "post-move trade management or leverage ladder changes",
+    "generic threshold sweeps without a new state definition",
+    "execution or live-order logic"
+  ],
+  "exact_compare_target": "phase67j_no_neo_main",
+  "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only"
+}

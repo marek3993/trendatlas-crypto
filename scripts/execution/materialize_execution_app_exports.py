@@ -44,6 +44,7 @@ REQUIRED_APP_LIVE_MODE_FIELDS = [
 PHASE68I_SUMMARY_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_summary.csv"
 PHASE68I_PAPER_INPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_paper.csv"
 PHASE68H_SUMMARY_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "phase68h_dynamic_leverage_ladder_summary.csv"
+PHASE68H_DYNAMIC_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "papers" / "phase68h_dynamic_ladder_candidate_paper.csv"
 
 
 def utc_now_iso() -> str:
@@ -295,6 +296,14 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     if target_row is None:
         fail("Could not find phase68h_dynamic_ladder_candidate row in phase68h summary source")
 
+    if not PHASE68H_DYNAMIC_PAPER_INPUT_PATH.exists():
+        fail(f"Missing required phase68h dynamic paper: {PHASE68H_DYNAMIC_PAPER_INPUT_PATH}")
+
+    try:
+        shutil.copy2(PHASE68H_DYNAMIC_PAPER_INPUT_PATH, PHASE68I_PAPER_INPUT_PATH)
+    except Exception as e:
+        fail(f"Failed refreshing phase68i canonical paper from phase68h producer output: {e}")
+
     paper_header, paper_rows = read_csv_rows(PHASE68I_PAPER_INPUT_PATH)
     if not paper_rows:
         fail(f"No rows found in {PHASE68I_PAPER_INPUT_PATH}")
@@ -340,7 +349,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     if total_days == 0:
         fail("No held asset rows found in phase68i paper export")
 
-    cash_days = sum(1 for asset in held_assets if asset == "CASH")
+    cash_days = sum(1 for asset in held_assets if asset in {"CASH", "BASELINE_RISK"})
     btc_days = sum(1 for asset in held_assets if asset == "BTC")
 
     cash_days_pct = (cash_days / total_days) * 100.0
@@ -384,6 +393,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "status": "phase68i_summary_export_written",
         "summary_source_path": str(PHASE68H_SUMMARY_INPUT_PATH),
         "paper_source_path": str(PHASE68I_PAPER_INPUT_PATH),
+        "paper_refresh_source_path": str(PHASE68H_DYNAMIC_PAPER_INPUT_PATH),
         "output_path": str(PHASE68I_SUMMARY_OUTPUT_PATH),
         "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
         "computed_fields": [
@@ -659,3 +669,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

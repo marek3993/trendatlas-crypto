@@ -1,0 +1,11 @@
+[Unit]
+Description=Run MRV1 nightly candle-close runtime timer
+
+[Timer]
+Unit=mrv1-runtime.service
+OnCalendar=*-*-* 00:10:00 UTC
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

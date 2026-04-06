@@ -1,0 +1,36 @@
+{
+  "artifact_type": "hyperliquid_live_canary_reconciliation",
+  "generated_at_utc": "2026-04-06T07:26:54Z",
+  "command": "rollback",
+  "coin": "BTC",
+  "submit_acknowledged": true,
+  "order_submitted": true,
+  "exchange_acknowledged": true,
+  "final_order_status": "order",
+  "final_order_terminal": false,
+  "pre_position_size": 0.00015,
+  "post_position_size": 0.0,
+  "position_delta": -0.00015,
+  "filled_size": 0.0,
+  "fills_count": 0,
+  "average_fill_px": null,
+  "open_orders_cleared": true,
+  "position_delta_matches_expected": true,
+  "final_state_reconciled": false,
+  "needs_manual_review": false,
+  "submit_normalization_ok": true,
+  "submit_normalization_error": null,
+  "rollback_required": false,
+  "rollback_command": null,
+  "evidence": {
+    "order_submitted": true,
+    "exchange_acknowledged": true,
+    "final_state_reconciled": false
+  },
+  "notes": [
+    "Reconciliation here refers to exchange lifecycle evidence for the canary order and resulting position delta.",
+    "A filled canary may still require manual rollback if post_position_size is non-zero after the primary run.",
+    "Rollback is intentionally a separate manual action to avoid automatic repeated live orders."
+  ],
+  "preflight_abort_conditions": []
+}

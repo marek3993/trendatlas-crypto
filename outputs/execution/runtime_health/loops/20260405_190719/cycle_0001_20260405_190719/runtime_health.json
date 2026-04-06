@@ -1,0 +1,177 @@
+{
+  "runtime_type": "controlled_runtime_health",
+  "runtime_label": "controlled_runtime",
+  "mode": "controlled_runtime_loop",
+  "cycle_index": 1,
+  "started_at_utc": "2026-04-05T19:07:19Z",
+  "finished_at_utc": "2026-04-05T19:07:23Z",
+  "status": "success",
+  "error": null,
+  "root": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "python": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "cycle_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719",
+  "execution_mode_guardrail": {
+    "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+    "mode": "read_only",
+    "trading_enabled": false,
+    "dry_run_enabled": true,
+    "kill_switch": true,
+    "ok": true
+  },
+  "source_of_truth_write_check": {
+    "before_file_count": 9,
+    "after_file_count": 9,
+    "changed_files": [],
+    "ok": true
+  },
+  "safe_contract": {
+    "read_only_only": true,
+    "trading_enabled": false,
+    "kill_switch_required": true,
+    "real_orders_submitted": false,
+    "source_of_truth_writes_allowed": false
+  },
+  "step_order": [
+    "materialize_execution_app_exports",
+    "validate_execution_source_contract",
+    "hyperliquid_read_only_snapshot",
+    "render_execution_app_status",
+    "build_execution_intent_from_strategy_exports",
+    "run_dry_execution_bridge"
+  ],
+  "steps": [
+    {
+      "step_name": "materialize_execution_app_exports",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\materialize_execution_app_exports.py",
+      "command": [
+        "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\materialize_execution_app_exports.py"
+      ],
+      "started_at_utc": "2026-04-05T19:07:19Z",
+      "finished_at_utc": "2026-04-05T19:07:19Z",
+      "elapsed_sec": 0.125,
+      "returncode": 0,
+      "status": "success",
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\materialize_execution_app_exports.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\materialize_execution_app_exports.stderr.log"
+    },
+    {
+      "step_name": "validate_execution_source_contract",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\validate_execution_source_contract.py",
+      "command": [
+        "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\validate_execution_source_contract.py"
+      ],
+      "started_at_utc": "2026-04-05T19:07:19Z",
+      "finished_at_utc": "2026-04-05T19:07:20Z",
+      "elapsed_sec": 0.141,
+      "returncode": 0,
+      "status": "success",
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\validate_execution_source_contract.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\validate_execution_source_contract.stderr.log"
+    },
+    {
+      "step_name": "hyperliquid_read_only_snapshot",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\hyperliquid_read_only_snapshot.py",
+      "command": [
+        "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\hyperliquid_read_only_snapshot.py"
+      ],
+      "started_at_utc": "2026-04-05T19:07:20Z",
+      "finished_at_utc": "2026-04-05T19:07:23Z",
+      "elapsed_sec": 3.234,
+      "returncode": 0,
+      "status": "success",
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\hyperliquid_read_only_snapshot.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\hyperliquid_read_only_snapshot.stderr.log"
+    },
+    {
+      "step_name": "render_execution_app_status",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\render_execution_app_status.py",
+      "command": [
+        "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\render_execution_app_status.py"
+      ],
+      "started_at_utc": "2026-04-05T19:07:23Z",
+      "finished_at_utc": "2026-04-05T19:07:23Z",
+      "elapsed_sec": 0.094,
+      "returncode": 0,
+      "status": "success",
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\render_execution_app_status.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\render_execution_app_status.stderr.log"
+    },
+    {
+      "step_name": "build_execution_intent_from_strategy_exports",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\build_execution_intent_from_strategy_exports.py",
+      "command": [
+        "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\build_execution_intent_from_strategy_exports.py"
+      ],
+      "started_at_utc": "2026-04-05T19:07:23Z",
+      "finished_at_utc": "2026-04-05T19:07:23Z",
+      "elapsed_sec": 0.094,
+      "returncode": 0,
+      "status": "success",
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\build_execution_intent_from_strategy_exports.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\build_execution_intent_from_strategy_exports.stderr.log"
+    },
+    {
+      "step_name": "run_dry_execution_bridge",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\run_dry_execution_bridge.py",
+      "command": [
+        "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\run_dry_execution_bridge.py"
+      ],
+      "started_at_utc": "2026-04-05T19:07:23Z",
+      "finished_at_utc": "2026-04-05T19:07:23Z",
+      "elapsed_sec": 0.078,
+      "returncode": 0,
+      "status": "success",
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\run_dry_execution_bridge.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_190719\\cycle_0001_20260405_190719\\run_dry_execution_bridge.stderr.log"
+    }
+  ],
+  "key_runtime_outputs": {
+    "materialize_execution_app_exports_report": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline\\materialize_execution_app_exports_report.json",
+      "exists": true,
+      "size_bytes": 6190,
+      "modified_utc": "2026-04-05T19:07:19Z"
+    },
+    "execution_source_contract_report": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_report.json",
+      "exists": true,
+      "size_bytes": 11356,
+      "modified_utc": "2026-04-05T19:07:20Z"
+    },
+    "hyperliquid_account_snapshot": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+      "exists": true,
+      "size_bytes": 1376,
+      "modified_utc": "2026-04-05T19:07:23Z"
+    },
+    "execution_status": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status.json",
+      "exists": true,
+      "size_bytes": 1038,
+      "modified_utc": "2026-04-05T19:07:23Z"
+    },
+    "latest_execution_intent": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+      "exists": true,
+      "size_bytes": 3802,
+      "modified_utc": "2026-04-05T19:07:23Z"
+    },
+    "latest_dry_run_decision": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision.json",
+      "exists": true,
+      "size_bytes": 1484,
+      "modified_utc": "2026-04-05T19:07:23Z"
+    }
+  },
+  "notes": [
+    "This loop uses only the lightweight execution refresh chain.",
+    "daily_refresh_app_pipeline.py is intentionally excluded.",
+    "Any source_of_truth write or unsafe execution mode is treated as a hard failure."
+  ]
+}

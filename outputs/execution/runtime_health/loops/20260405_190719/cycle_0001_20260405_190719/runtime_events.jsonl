@@ -1,0 +1,2 @@
+{"timestamp_utc": "2026-04-05T19:07:19Z", "event_type": "runtime_cycle_started", "runtime_label": "controlled_runtime", "cycle_index": 1}
+{"timestamp_utc": "2026-04-05T19:07:23Z", "event_type": "runtime_cycle_finished", "runtime_label": "controlled_runtime", "cycle_index": 1, "status": "success", "error": null}

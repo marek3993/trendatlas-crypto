@@ -1,0 +1,73 @@
+{
+  "artifact_type": "ai_lab_dev_only_preflight_compatibility_gate",
+  "gate_name": "phase69_ai_lab_compatibility_gate",
+  "generated_at_utc": "2026-04-06 15:48:56 UTC",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "validation_scope": "dev_only_readiness_validation_only",
+  "spec_path": "research_os\\experiment_specs\\generated\\phase69_instability_veto_confirmed_divergence_selective_toxic_subset.spec_ready.json",
+  "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_preflight\\phase69_instability_veto_confirmed_divergence_selective_toxic_subset.compatibility_gate.json",
+  "experiment_id": "phase69_instability_veto_confirmed_divergence_selective_toxic_subset",
+  "status": "passed",
+  "failed_check_names": [],
+  "checks": [
+    {
+      "name": "spec_json_loadable",
+      "ok": true,
+      "detail": "spec json loaded: research_os\\experiment_specs\\generated\\phase69_instability_veto_confirmed_divergence_selective_toxic_subset.spec_ready.json"
+    },
+    {
+      "name": "contract_spec_loadable",
+      "ok": true,
+      "detail": "contract spec loaded: C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_instability_veto_confirmed_divergence_selective_toxic_subset.contract_spec.json"
+    },
+    {
+      "name": "script_path_exists",
+      "ok": true,
+      "detail": "script_path exists: C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase69_instability_veto_confirmed_divergence_selective_toxic_subset.py"
+    },
+    {
+      "name": "input_paths_exist",
+      "ok": true,
+      "detail": "all input_paths exist: 4"
+    },
+    {
+      "name": "primary_compare_phase67j_no_neo_main",
+      "ok": true,
+      "detail": "primary compare locked to phase67j_no_neo_main"
+    },
+    {
+      "name": "secondary_compare_overlay_context_only",
+      "ok": true,
+      "detail": "secondary compare limited to phase68i_dynamic_ladder_candidate with overlay_context_suitability_only"
+    },
+    {
+      "name": "failure_and_stop_conditions_exist",
+      "ok": true,
+      "detail": "failure criteria present and stop conditions count=3"
+    },
+    {
+      "name": "phase69_shared_runner_family_supported",
+      "ok": true,
+      "detail": "shared runner supports family_id=instability_veto_confirmed_divergence_selective_toxic_subset"
+    }
+  ],
+  "contract_spec_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_instability_veto_confirmed_divergence_selective_toxic_subset.contract_spec.json",
+  "expected_primary_compare_target": "phase67j_no_neo_main",
+  "allowed_secondary_compare_target": "phase68i_dynamic_ladder_candidate",
+  "allowed_secondary_compare_usage": "overlay_context_suitability_only",
+  "supported_phase69_shared_runner_family_ids": [
+    "compression_release_quality_context_gate",
+    "instability_veto_confirmed_divergence",
+    "instability_veto_confirmed_divergence_selective_toxic_subset",
+    "micro_acceleration_before_expansion",
+    "participation_divergence_instability_filter",
+    "pre_move_compression_release_quality"
+  ],
+  "notes": [
+    "Dev-only compatibility gate output.",
+    "Non-authoritative validation artifact.",
+    "Not source_of_truth and not an execution/runtime decision artifact."
+  ]
+}

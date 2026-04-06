@@ -1,0 +1,71 @@
+{
+  "artifact_type": "full_auto_scheduler_entry_decision",
+  "generated_at_utc": "2026-04-06T14:50:21Z",
+  "started_at_utc": "2026-04-06T14:50:15Z",
+  "run_id": "20260406T145015Z",
+  "status": "failed_time_offset_refresh",
+  "exit_code": 3,
+  "execute_live": false,
+  "preview_only": true,
+  "manual_confirmation_verified": true,
+  "working_directory": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "invoked_from_cwd": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "hyperliquid_time_offset_ms": null,
+  "time_offset_refresh": null,
+  "child_process": null,
+  "downstream_verification": {
+    "artifacts": [],
+    "missing_labels": [],
+    "unchanged_labels": [],
+    "invalid_labels": [],
+    "ok": false
+  },
+  "source_of_truth_write_check": {
+    "ok": true,
+    "changed_files": []
+  },
+  "runner_summary": {
+    "status": "ready_if_enabled",
+    "signal_id": "phase67j::2026-04-04::CASH",
+    "target_asset": "CASH",
+    "execute_live": false,
+    "real_order_sent": false,
+    "duplicate_prevented": false,
+    "gate_status": "ready_if_enabled",
+    "reconciliation_action": "would_exit_to_cash",
+    "idempotency_record_written": false
+  },
+  "gate_summary": {
+    "status": "ready_if_enabled",
+    "signal_id": "phase67j::2026-04-04::CASH",
+    "target_asset": "CASH",
+    "approval_gate_status": "approved_and_applied",
+    "would_place_real_order": true,
+    "block_reasons": []
+  },
+  "reconciliation_summary": {
+    "signal_id": "phase67j::2026-04-04::CASH",
+    "target_asset": "CASH",
+    "current_state": "DOGE",
+    "reconciled": false,
+    "reconciliation_action": "would_exit_to_cash",
+    "open_orders_count": 0
+  },
+  "submit_summary": {
+    "status": "ready_if_enabled",
+    "would_submit": true,
+    "real_order_sent": false,
+    "target_asset": "CASH",
+    "signal_id": "phase67j::2026-04-04::CASH",
+    "submit_block_reasons": []
+  },
+  "abort_conditions": [
+    "time_offset_refresh_failed::Could not compute fresh HYPERLIQUID_TIME_OFFSET_MS from Hyperliquid info endpoint: request_failed:ProxyError:HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))) | request_failed:ProxyError:HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))) | request_failed:ProxyError:HTTPSConnectionPool(host='api.hyperliquid.xyz', port=443): Max retries exceeded with url: /info (Caused by ProxyError('Unable to connect to proxy', NewConnectionError(\"HTTPSConnection(host='127.0.0.1', port=9): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\")))"
+  ],
+  "restore_profile_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto_scheduler\\latest_scheduler_entry_restore_profile.json",
+  "notes": [
+    "Scheduler entry is one-shot only. It never loops and it never creates a Task Scheduler task.",
+    "Live mode is allowed only with --execute-live --manual-confirm FULL_AUTO_EXECUTION.",
+    "A zero-exit child run is treated as incomplete if required downstream artifacts are missing, stale, or invalid."
+  ]
+}

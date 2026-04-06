@@ -1,0 +1,58 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "ai_lab_family_contract_spec",
+  "spec_id": "phase69_micro_acceleration_before_expansion",
+  "line_id": "phase69_pre_move_anomaly_confidence_line",
+  "batch_id": "phase69_batch01_foundation_triplet",
+  "mechanism_family": "micro_acceleration_before_expansion",
+  "status": "approved_contract_only",
+  "segment_owner": "MRV1 AI LAB",
+  "created_at_utc": "2026-04-05 00:00:00 UTC",
+  "baseline_reference": {
+    "model": "phase67j_no_neo_main",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  },
+  "optional_secondary_compare_context": {
+    "model": "phase68i_dynamic_ladder_candidate",
+    "usage": "overlay_context_suitability_only"
+  },
+  "hypothesis_label": "Micro acceleration build before expansion as an early intent detector",
+  "mechanism_contract": {
+    "known_baseline_weakness": "The baseline can wait for already-obvious expansion and may underweight whether directional pressure was accelerating just before the breakout window.",
+    "exact_mechanism_of_improvement": "Add a micro-acceleration pre-expansion state that distinguishes genuine directional build from flat drift in the immediate lead-up bars.",
+    "new_state_or_new_classification": "micro_acceleration_pre_expansion_state",
+    "exact_compare_target": "phase67j_no_neo_main",
+    "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only",
+    "why_not_parameter_tuning": "This introduces a new state tied to acceleration shape rather than moving existing thresholds or lookbacks.",
+    "why_expected_edge_should_survive_strict_scoring": "A real signal should generalize as earlier discrimination of launch-ready structures instead of depending on a narrow threshold pick.",
+    "primary_expected_metric_improvement": "CAGR"
+  },
+  "required_evidence_inputs": [
+    "baseline paper path for phase67j_no_neo_main",
+    "deterministic short-horizon acceleration evidence before expansion",
+    "deterministic separation between accelerating lead-in and flat pre-move drift"
+  ],
+  "expected_outputs": [
+    "candidate_summary_csv",
+    "candidate_paper_csv",
+    "compare_csv"
+  ],
+  "stop_conditions": [
+    "stop_if_mechanism_needs_forward_known_expansion_labels_to_define_micro_acceleration",
+    "stop_if_spec_becomes_generic_window_or_slope_tuning_only",
+    "stop_if_scope_expands_beyond_pre_expansion_intent_detection"
+  ],
+  "allowed_scope": [
+    "lead-in acceleration shape before expansion",
+    "new pre-expansion intent state or gate",
+    "primary deterministic compare against phase67j_no_neo_main",
+    "optional secondary compare against phase68i_dynamic_ladder_candidate for overlay/context suitability only"
+  ],
+  "forbidden_scope": [
+    "post-confirmation chase logic",
+    "broad slope or momentum parameter sweep shells",
+    "execution or live-order logic"
+  ],
+  "exact_compare_target": "phase67j_no_neo_main",
+  "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only"
+}

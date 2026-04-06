@@ -1,0 +1,26 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260406_081145_phase69_instability_veto_confirmed_divergence",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "required_run_artifacts",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "expected_outputs",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "numeric_score_extract",
+      "ok": true,
+      "value": -0.0015064949440875518
+    },
+    {
+      "name": "compare_valid",
+      "ok": true
+    }
+  ]
+}

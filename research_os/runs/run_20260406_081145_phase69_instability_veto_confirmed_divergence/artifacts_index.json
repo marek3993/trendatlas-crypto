@@ -1,0 +1,35 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260406_081145_phase69_instability_veto_confirmed_divergence",
+  "required_run_artifacts": [
+    "run_manifest.json",
+    "run_status.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts_index.json",
+    "quality_report.json",
+    "precheck_inputs.json"
+  ],
+  "conditional_artifacts": {
+    "when_applicable": [
+      "summary.csv",
+      "paper.csv",
+      "compare.csv"
+    ]
+  },
+  "produced_files": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260406_081145_phase69_instability_veto_confirmed_divergence\\summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260406_081145_phase69_instability_veto_confirmed_divergence\\paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260406_081145_phase69_instability_veto_confirmed_divergence\\compare.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260406_081145_phase69_instability_veto_confirmed_divergence\\run_manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260406_081145_phase69_instability_veto_confirmed_divergence\\quality_report.json"
+  ],
+  "ingest": {
+    "summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260406_081145_phase69_instability_veto_confirmed_divergence\\summary.csv",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260406_081145_phase69_instability_veto_confirmed_divergence\\paper.csv",
+    "compare_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260406_081145_phase69_instability_veto_confirmed_divergence\\compare.csv",
+    "has_summary": true,
+    "has_paper": true,
+    "has_compare": true
+  }
+}

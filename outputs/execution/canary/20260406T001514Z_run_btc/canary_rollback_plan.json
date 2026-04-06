@@ -1,0 +1,12 @@
+{
+  "artifact_type": "hyperliquid_live_canary_rollback_plan",
+  "generated_at_utc": "2026-04-06T00:15:22Z",
+  "command": "run",
+  "rollback_required": false,
+  "rollback_command": null,
+  "instructions": [
+    "If the primary canary fills and leaves non-zero exposure, do not rerun canary.",
+    "Flip kill switch back on unless you are immediately executing the rollback command.",
+    "Run the exact rollback command below as a separate manual invocation."
+  ]
+}

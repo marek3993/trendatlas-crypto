@@ -1,0 +1,44 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_anomaly_feature_layer_contract",
+  "artifact_id": "anomaly_feature_layer_v1",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "scope": "dev_only_readiness_and_feature_instrumentation",
+  "wave": "wave01",
+  "execution_approved": false,
+  "runner_code_included": false,
+  "batch_execution_included": false,
+  "source_of_truth_changes": false,
+  "app_data_execution_drift_allowed": false,
+  "family_contract_paths": [
+    "research_os/dev_only/contracts/feature_family_pre_move_structure.contract.json",
+    "research_os/dev_only/contracts/feature_family_participation_breadth.contract.json",
+    "research_os/dev_only/contracts/feature_family_cross_asset_decoupling.contract.json",
+    "research_os/dev_only/contracts/feature_family_liquidity_stress.contract.json",
+    "research_os/dev_only/contracts/feature_family_event_context.contract.json"
+  ],
+  "first_wave_priority": [
+    "pre_move_structure_quality_stack",
+    "participation_breadth_confirmation_stack",
+    "cross_asset_decoupling_stack",
+    "liquidity_stress_anomaly_stack",
+    "event_context_flags_stack"
+  ],
+  "anti_noise_rules": [
+    "each_family_must_define_exactly_one_mechanical_hypothesis",
+    "no_feature_spam",
+    "no_threshold_sweep_masked_as_research",
+    "no_hindsight_leakage",
+    "no_future_bars",
+    "event_context_cannot_be_magic_or_news_predictor",
+    "toxic_subset_must_define_harmful_subset_precisely",
+    "confidence_stack_must_be_mechanically_coherent",
+    "reject_anything_that_is_only_threshold_tightening"
+  ],
+  "wave01_objective": "Prepare non-authoritative artifact definitions for five anomaly feature families without changing official research, strategy, or execution layers."
+}

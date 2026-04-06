@@ -1,10 +1,10 @@
 {
   "submit_preview_ok": true,
-  "status": "ready_if_enabled",
-  "would_submit": true,
+  "status": "no_action_needed",
+  "would_submit": false,
+  "real_order_sent": false,
   "block_reason_count": 0,
-  "approval_status_allowed": true,
-  "reconciled": true,
-  "allow_live_orders": true,
-  "execution_trading_enabled": true
+  "strategy_target_leverage_present": false,
+  "exchange_leverage_target_present": false,
+  "post_submit_reconciliation_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_post_submit_reconciliation.json"
 }

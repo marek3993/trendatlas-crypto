@@ -1,0 +1,33 @@
+{
+  "spec_version": "1.0",
+  "artifact_type": "dev_only_feature_probe_spec",
+  "artifact_id": "feature_probe_participation_breadth",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "family_id": "participation_breadth_confirmation_stack",
+  "objective": "Define a planning-only probe for whether an apparent move is supported by broad and coherent market participation.",
+  "raw_inputs": [
+    "multi_asset_returns",
+    "asset_ranking_shifts",
+    "breadth_counts",
+    "participation_ratios",
+    "regime_participation_summaries"
+  ],
+  "derived_features": [
+    "breadth_thrust",
+    "participation_divergence",
+    "leader_follower_spread",
+    "cluster_confirmation_ratio",
+    "internal_agreement_score"
+  ],
+  "mechanical_hypothesis": "Trustworthy moves should exhibit broader and more internally aligned participation than isolated fake impulses.",
+  "probe_rules": [
+    "keep_stack_mechanically_coherent",
+    "forbid_random_feature_mix",
+    "forbid_future_bar_usage"
+  ],
+  "status": "probe_defined_not_runnable"
+}

@@ -1,0 +1,8 @@
+{
+  "artifact_type": "controlled_real_order_leverage_action_response",
+  "generated_at_utc": "2026-04-06T19:29:06Z",
+  "preview_only": true,
+  "signal_id": "phase67j::2026-04-04::CASH",
+  "target_asset": "CASH",
+  "leverage_action_result": null
+}

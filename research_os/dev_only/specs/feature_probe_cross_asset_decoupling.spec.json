@@ -1,0 +1,35 @@
+{
+  "spec_version": "1.0",
+  "artifact_type": "dev_only_feature_probe_spec",
+  "artifact_id": "feature_probe_cross_asset_decoupling",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "family_id": "cross_asset_decoupling_stack",
+  "objective": "Define a planning-only probe for structured decoupling versus normal leader or basket behavior.",
+  "raw_inputs": [
+    "multi_asset_returns",
+    "btc_context",
+    "eth_context",
+    "rolling_correlations",
+    "beta_like_sensitivity",
+    "relative_strength"
+  ],
+  "derived_features": [
+    "rolling_correlation_break",
+    "beta_deviation",
+    "relative_momentum_decoupling",
+    "leader_lag_follower_escape",
+    "isolated_strength_flag",
+    "isolated_weakness_flag"
+  ],
+  "mechanical_hypothesis": "A structured break from expected cross-asset behavior can mark a regime-relevant anomaly before the move is widely obvious.",
+  "probe_rules": [
+    "anchor_decoupling_to_explicit_context_basket_or_leaders",
+    "forbid_generic_correlation_threshold_sweeps",
+    "forbid_future_bar_usage"
+  ],
+  "status": "probe_defined_not_runnable"
+}

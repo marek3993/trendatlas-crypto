@@ -1,0 +1,28 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260406_081145_phase69_instability_veto_confirmed_divergence",
+  "spec_path": "research_os\\experiment_specs\\generated\\phase69_instability_veto_confirmed_divergence.spec_ready.json",
+  "baseline_paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+  "input_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\policies\\phase69_pre_move_anomaly_confidence_line.policy.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_instability_veto_confirmed_divergence.contract_spec.json"
+  ],
+  "expected_outputs": [
+    "summary.csv",
+    "paper.csv",
+    "compare.csv",
+    "run_manifest.json",
+    "quality_report.json"
+  ],
+  "run_folder_contract": [
+    "run_manifest.json",
+    "run_status.json",
+    "stdout.log",
+    "stderr.log",
+    "artifacts_index.json",
+    "quality_report.json",
+    "precheck_inputs.json"
+  ]
+}

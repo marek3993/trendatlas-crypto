@@ -1,0 +1,12 @@
+{
+  "artifact_type": "controlled_real_order_submit_request_payload",
+  "generated_at_utc": "2026-04-06T19:29:06Z",
+  "preview_only": true,
+  "signal_id": "phase67j::2026-04-04::CASH",
+  "target_asset": "CASH",
+  "steps": [],
+  "notes": [
+    "This artifact preserves the exact planned request actions before any live submit.",
+    "Preview mode writes the same action plan but does not call the exchange."
+  ]
+}

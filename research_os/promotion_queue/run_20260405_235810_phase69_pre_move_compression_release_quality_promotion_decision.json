@@ -1,0 +1,16 @@
+{
+  "decision_id": "decision_run_20260405_235810_phase69_pre_move_compression_release_quality",
+  "candidate_id": "phase69_pre_move_compression_release_quality",
+  "source_run_id": "run_20260405_235810_phase69_pre_move_compression_release_quality",
+  "decision": "hold",
+  "decision_reason": "valid_run_but_no_numeric_score",
+  "decided_by": "research_os_orchestrator_v1",
+  "decided_at": "2026-04-05 23:58:10 UTC",
+  "evidence_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_235810_phase69_pre_move_compression_release_quality\\summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_235810_phase69_pre_move_compression_release_quality\\paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_235810_phase69_pre_move_compression_release_quality\\compare.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_235810_phase69_pre_move_compression_release_quality\\run_manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_235810_phase69_pre_move_compression_release_quality\\quality_report.json"
+  ]
+}

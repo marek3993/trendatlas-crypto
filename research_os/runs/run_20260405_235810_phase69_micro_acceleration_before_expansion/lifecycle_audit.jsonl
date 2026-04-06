@@ -1,0 +1,4 @@
+{"ts": "2026-04-05 23:58:10 UTC", "run_id": "run_20260405_235810_phase69_micro_acceleration_before_expansion", "from_status": "spec_ready", "to_status": "queued", "reason": "orchestrator_init"}
+{"ts": "2026-04-05 23:58:10 UTC", "run_id": "run_20260405_235810_phase69_micro_acceleration_before_expansion", "from_status": "queued", "to_status": "running", "reason": "execution_started"}
+{"ts": "2026-04-05 23:58:10 UTC", "run_id": "run_20260405_235810_phase69_micro_acceleration_before_expansion", "from_status": "running", "to_status": "ran", "reason": "process_exit_code_0"}
+{"ts": "2026-04-05 23:58:10 UTC", "run_id": "run_20260405_235810_phase69_micro_acceleration_before_expansion", "from_status": "ran", "to_status": "scored", "reason": "post_run_ingest_started"}

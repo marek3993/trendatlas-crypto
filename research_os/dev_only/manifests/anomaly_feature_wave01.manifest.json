@@ -1,0 +1,49 @@
+{
+  "manifest_version": "1.0",
+  "artifact_type": "dev_only_artifact_pack_manifest",
+  "artifact_id": "anomaly_feature_wave01_manifest",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "pack_scope": "dev_only_readiness_and_feature_instrumentation",
+  "wave": "wave01",
+  "file_counts": {
+    "contracts": 6,
+    "specs": 6,
+    "manifests": 2,
+    "total": 14
+  },
+  "priority_order": [
+    "pre_move_structure_quality_stack",
+    "participation_breadth_confirmation_stack",
+    "cross_asset_decoupling_stack",
+    "liquidity_stress_anomaly_stack",
+    "event_context_flags_stack"
+  ],
+  "files": [
+    "research_os/dev_only/contracts/anomaly_feature_layer_v1.contract.json",
+    "research_os/dev_only/contracts/feature_family_pre_move_structure.contract.json",
+    "research_os/dev_only/contracts/feature_family_participation_breadth.contract.json",
+    "research_os/dev_only/contracts/feature_family_cross_asset_decoupling.contract.json",
+    "research_os/dev_only/contracts/feature_family_liquidity_stress.contract.json",
+    "research_os/dev_only/contracts/feature_family_event_context.contract.json",
+    "research_os/dev_only/specs/anomaly_feature_wave01.spec.json",
+    "research_os/dev_only/specs/feature_probe_pre_move_structure.spec.json",
+    "research_os/dev_only/specs/feature_probe_participation_breadth.spec.json",
+    "research_os/dev_only/specs/feature_probe_cross_asset_decoupling.spec.json",
+    "research_os/dev_only/specs/feature_probe_liquidity_stress.spec.json",
+    "research_os/dev_only/specs/feature_probe_event_context.spec.json",
+    "research_os/dev_only/manifests/anomaly_feature_wave01.manifest.json",
+    "research_os/dev_only/manifests/feature_registry_dev_only.manifest.json"
+  ],
+  "scope_lock": [
+    "no_runner_code",
+    "no_batch_execution",
+    "no_source_of_truth_changes",
+    "no_app_data_execution_drift",
+    "no_official_truth_changes"
+  ],
+  "status": "complete_dev_only_artifact_pack"
+}

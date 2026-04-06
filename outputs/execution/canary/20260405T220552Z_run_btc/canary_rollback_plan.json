@@ -1,0 +1,11 @@
+{
+  "artifact_type": "hyperliquid_live_canary_rollback_plan",
+  "generated_at_utc": "2026-04-05T22:05:56Z",
+  "command": "run",
+  "rollback_required": false,
+  "rollback_command": null,
+  "instructions": [
+    "Preview-only run. No live order was submitted.",
+    "If you want the live canary, rerun with --execute-live and the exact manual confirm token."
+  ]
+}

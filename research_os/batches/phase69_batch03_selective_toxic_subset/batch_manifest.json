@@ -1,0 +1,66 @@
+{
+  "batch_id": "phase69_batch03_selective_toxic_subset",
+  "line_id": "phase69_pre_move_anomaly_confidence_line",
+  "created_at": "2026-04-06 00:00:00 UTC",
+  "mode": "spec_ready_generation",
+  "segment_owner": "MRV1 AI LAB",
+  "baseline_reference": {
+    "model": "phase67j_no_neo_main",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  },
+  "optional_secondary_compare_context": {
+    "model": "phase68i_dynamic_ladder_candidate",
+    "usage": "overlay_context_suitability_only"
+  },
+  "derived_from_batch_id": "phase69_batch02_refined_context_duo",
+  "derived_from_spec_id": "phase69_instability_veto_confirmed_divergence",
+  "derived_from_family": "instability_veto_confirmed_divergence",
+  "derived_from_batch_outcome": "zero_selection_confirmed_with_single_near_miss_authorized_for_one_last_refinement",
+  "observed_batch02_failure_shape": {
+    "strict_verdict": "not_worthy_under_strict_scoring",
+    "score": -0.0015064949440875518,
+    "raw_edge_h3": 0.008493505055912447,
+    "avoided_damage_h3": 0.01158205234897152,
+    "selected_event_count": 75,
+    "vetoed_event_count": 55,
+    "coverage_ratio": 0.4230769230769231,
+    "interpretation": "Confirmed-divergence instability kept positive raw edge and avoided-damage signal, but the strict score remained slightly negative, implying the veto still covered too many non-toxic setups."
+  },
+  "selection_rule": "exactly_one_spec_ready_artifact_for_the_single_authorized_batch03_refinement",
+  "selected_specs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_instability_veto_confirmed_divergence_selective_toxic_subset.spec_ready.json"
+  ],
+  "selected_spec_ids": [
+    "phase69_instability_veto_confirmed_divergence_selective_toxic_subset"
+  ],
+  "selected_families": [
+    "instability_veto_confirmed_divergence_selective_toxic_subset"
+  ],
+  "selected_count": 1,
+  "refinement_rationale": [
+    "batch02 is the closest near-miss because confirmed-divergence instability produced positive raw_edge_h3 and avoided_damage_h3 while missing strict scoring only narrowly",
+    "the most direct failure-shape interpretation is residual over-veto breadth, not lack of mechanism signal",
+    "batch03 therefore narrows the same mechanism lineage to a selective toxic subset instead of adding random churn or threshold-only tuning"
+  ],
+  "batch_stop_conditions": [
+    "stop_batch_if_refinement_is_not_directly_traceable_to_phase69_instability_veto_confirmed_divergence_batch02_failure_shape",
+    "stop_batch_if_any_spec_requires_execution_or_live_order_logic",
+    "stop_batch_if_any_spec_expands_scope_into_source_of_truth_or_winner_mutation",
+    "stop_batch_if_any_spec_reduces_to_generic_parameter_tuning_or_random_churn_without_a_new_selective_toxic_subset_state"
+  ],
+  "allowed_scope": [
+    "single spec-ready AI LAB refinement inside research_os",
+    "mechanism-first narrowing of the batch02 confirmed-divergence veto to a selective toxic subset",
+    "primary compare framing against phase67j_no_neo_main",
+    "optional secondary compare against phase68i_dynamic_ladder_candidate for overlay/context suitability only"
+  ],
+  "forbidden_scope": [
+    "source_of_truth changes",
+    "APP DATA EXECUTION file changes",
+    "runtime execution or live-order logic",
+    "official promotion or live-truth mutation",
+    "broad family expansion beyond the single authorized batch03 refinement"
+  ],
+  "execution_approved": false,
+  "writes_source_of_truth": false
+}

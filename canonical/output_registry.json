@@ -244,6 +244,81 @@
       "notes": "Operational logs only."
     },
     {
+      "output_path": "outputs/execution/canary/",
+      "generated_by": [
+        "scripts/execution/hyperliquid_live_canary.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "live_canary_evidence_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Manual Hyperliquid canary evidence bundles including preflight, submit, poll, snapshot, reconciliation, and rollback-plan artifacts."
+    },
+    {
+      "output_path": "outputs/execution/reconciliation/",
+      "generated_by": [
+        "scripts/execution/reconcile_live_execution_state.py",
+        "scripts/execution/run_full_auto_execution_cycle.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "execution_reconciliation_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Latest reconciliation report, quality, and manifest for current exchange state versus target intent."
+    },
+    {
+      "output_path": "outputs/execution/live_gate/",
+      "generated_by": [
+        "scripts/execution/prepare_real_order_gate.py",
+        "scripts/execution/run_full_auto_execution_cycle.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "execution_gate_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Real-order gate preparation artifacts. Not official truth and no orders are placed here."
+    },
+    {
+      "output_path": "outputs/execution/submit_preview/",
+      "generated_by": [
+        "scripts/execution/submit_controlled_real_order.py",
+        "scripts/execution/run_full_auto_execution_cycle.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "controlled_submit_outputs",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Preview/default controlled submit artifacts including request payload, exchange response, snapshots, and post-submit reconciliation."
+    },
+    {
+      "output_path": "outputs/execution/full_auto/",
+      "generated_by": [
+        "scripts/execution/run_full_auto_execution_cycle.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "full_auto_runner_outputs",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "One-shot full-auto runner artifacts including decision, manifest, snapshot, skip reason, and optional idempotency record."
+    },
+    {
+      "output_path": "outputs/execution/full_auto_scheduler/",
+      "generated_by": [
+        "scripts/execution/run_full_auto_scheduler_entry.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "scheduler_entry_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Scheduler-facing wrapper artifacts including decision, manifest, restore profile, per-run logs, and downstream verification evidence."
+    },
+    {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "generated_by": [
         "scripts/phase68h_dynamic_leverage_ladder_candidate.py"

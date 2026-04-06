@@ -1,0 +1,36 @@
+{
+  "intent_type": "normalized_execution_intent",
+  "generated_at_utc": "2026-04-06T10:44:38Z",
+  "as_of_source": "2023-12-07",
+  "execution_mode": "read_only_intent_only",
+  "trading_enabled": false,
+  "kill_switch_required": true,
+  "strategy_model": "phase67j_no_neo_main",
+  "reference_model": "phase66g_production_soft_filters",
+  "benchmark": "BTC",
+  "signal_id": "phase68i-test::2023-12-07::DOGE",
+  "target_asset": "DOGE",
+  "target_side": "long_only_hold_selected_asset_or_cash",
+  "target_regime": "Forced DOGE validation",
+  "size_mode": "not_computed_yet",
+  "target_size_pct": null,
+  "target_notional_usd": null,
+  "reference_asset": "CASH",
+  "staleness_ok": true,
+  "stale_signal": false,
+  "exchange_leverage": 2,
+  "exchange_margin_mode": "cross",
+  "guardrail_flags": {
+    "contract_validated": true,
+    "trading_disabled": true,
+    "kill_switch_required": true,
+    "manual_approval_required_for_live_orders": true,
+    "leverage_live_truth_allowed": false
+  },
+  "source_paths": {
+    "phase67j_winner_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase67j_live_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+    "phase66g_core_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+    "app_freshness_report": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json"
+  }
+}

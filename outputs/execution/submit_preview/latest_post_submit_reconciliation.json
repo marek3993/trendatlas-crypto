@@ -1,0 +1,44 @@
+{
+  "artifact_type": "controlled_real_order_post_submit_reconciliation",
+  "generated_at_utc": "2026-04-06T19:29:06Z",
+  "started_at_utc": "2026-04-06T19:29:06Z",
+  "preview_only": true,
+  "signal_id": "phase67j::2026-04-04::CASH",
+  "target_asset": "CASH",
+  "target_regime": "Držíme CASH",
+  "final_status": "no_action_needed",
+  "current_state_before": "CASH",
+  "current_state_after": "CASH",
+  "target_size": null,
+  "final_target_size": null,
+  "target_notional_usd": null,
+  "strategy_target_leverage": null,
+  "exchange_leverage_target": null,
+  "final_exchange_leverage": {
+    "value": null,
+    "margin_mode": null,
+    "is_cross": null,
+    "source": "no_position"
+  },
+  "open_orders_count_after": 0,
+  "positions_after": [],
+  "order_oids": [],
+  "fills_summary": {
+    "fills_count": 0,
+    "filled_size": 0.0,
+    "average_px": null,
+    "fills": []
+  },
+  "action_results": [],
+  "checks": {
+    "target_state_reached": true,
+    "open_orders_cleared": true,
+    "manual_review_required": false,
+    "reconciliation_failed": false
+  },
+  "notes": [
+    "Strategy exposure sizing uses strategy_target_leverage from upstream leverage artifacts.",
+    "Exchange leverage update uses only explicit integer exchange leverage targets compatible with Hyperliquid updateLeverage.",
+    "No retries or polling loops are performed here; this is a strict one-shot controlled execution pass."
+  ]
+}

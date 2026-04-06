@@ -1,0 +1,102 @@
+{
+  "artifact_type": "hyperliquid_live_canary_submit_response",
+  "generated_at_utc": "2026-04-06T12:15:58Z",
+  "command": "rollback",
+  "coin": "BTC",
+  "side": "sell",
+  "reduce_only": true,
+  "nonce": 1775479832074,
+  "expires_after": 1775480012074,
+  "action": {
+    "type": "order",
+    "orders": [
+      {
+        "a": 0,
+        "b": false,
+        "p": "68678",
+        "s": "0.00015",
+        "r": true,
+        "t": {
+          "limit": {
+            "tif": "Ioc"
+          }
+        }
+      }
+    ],
+    "grouping": "na"
+  },
+  "payload_without_signature": {
+    "action": {
+      "type": "order",
+      "orders": [
+        {
+          "a": 0,
+          "b": false,
+          "p": "68678",
+          "s": "0.00015",
+          "r": true,
+          "t": {
+            "limit": {
+              "tif": "Ioc"
+            }
+          }
+        }
+      ],
+      "grouping": "na"
+    },
+    "nonce": 1775479832074,
+    "vaultAddress": null,
+    "expiresAfter": 1775480012074
+  },
+  "submit_normalized": {
+    "exchange_status": "ok",
+    "acknowledged": true,
+    "oid": 372000388813,
+    "submit_state": "filled",
+    "fill": {
+      "totalSz": "0.00015",
+      "avgPx": "69355.0",
+      "oid": 372000388813
+    },
+    "resting": null,
+    "error": null,
+    "raw": {
+      "status": "ok",
+      "response": {
+        "type": "order",
+        "data": {
+          "statuses": [
+            {
+              "filled": {
+                "totalSz": "0.00015",
+                "avgPx": "69355.0",
+                "oid": 372000388813
+              }
+            }
+          ]
+        }
+      }
+    },
+    "raw_type": "dict",
+    "normalization_ok": true,
+    "needs_manual_review": false
+  },
+  "raw_exchange_response": {
+    "status": "ok",
+    "response": {
+      "type": "order",
+      "data": {
+        "statuses": [
+          {
+            "filled": {
+              "totalSz": "0.00015",
+              "avgPx": "69355.0",
+              "oid": 372000388813
+            }
+          }
+        ]
+      }
+    }
+  },
+  "raw_exchange_response_type": "dict"
+}

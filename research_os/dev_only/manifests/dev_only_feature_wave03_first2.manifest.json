@@ -1,0 +1,37 @@
+﻿{
+  "manifest_version": "1.0",
+  "artifact_type": "dev_only_feature_wave_manifest",
+  "artifact_id": "dev_only_feature_wave03_first2",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "scope": "first_two_family_dev_only_feature_implementation_pack",
+  "included_files": [
+    "scripts/research_os_dev_only_feature_output_common.py",
+    "scripts/research_os_dev_only_feature_anti_leakage.py",
+    "scripts/dev_only_feature_probe_pre_move_structure.py",
+    "scripts/dev_only_feature_probe_participation_breadth.py",
+    "research_os/dev_only/contracts/dev_only_feature_output_schema.contract.json",
+    "research_os/dev_only/specs/dev_only_feature_probe_pre_move_structure.spec.json",
+    "research_os/dev_only/specs/dev_only_feature_probe_participation_breadth.spec.json",
+    "research_os/dev_only/manifests/dev_only_feature_wave03_first2.manifest.json"
+  ],
+  "families_in_scope": [
+    "pre_move_structure_quality_stack",
+    "participation_breadth_confirmation_stack"
+  ],
+  "hard_exclusions": [
+    "no source_of_truth changes",
+    "no APP drift",
+    "no DATA drift",
+    "no EXECUTION drift",
+    "no live-order logic",
+    "no strategy advancement",
+    "no candidate or promotion outputs",
+    "no remaining three families yet"
+  ],
+  "status": "ready_for_dev_only_file_creation"
+}

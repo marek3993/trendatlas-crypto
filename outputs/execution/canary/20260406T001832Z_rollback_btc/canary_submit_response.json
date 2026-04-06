@@ -1,0 +1,90 @@
+{
+  "artifact_type": "hyperliquid_live_canary_submit_response",
+  "generated_at_utc": "2026-04-06T00:18:38Z",
+  "command": "rollback",
+  "coin": "BTC",
+  "side": "sell",
+  "reduce_only": true,
+  "nonce": 1775436791389,
+  "expires_after": 1775436971389,
+  "action": {
+    "type": "order",
+    "orders": [
+      {
+        "a": 0,
+        "b": false,
+        "p": "69874",
+        "s": "0.00015",
+        "r": true,
+        "t": {
+          "limit": {
+            "tif": "Ioc"
+          }
+        }
+      }
+    ],
+    "grouping": "na"
+  },
+  "payload_without_signature": {
+    "action": {
+      "type": "order",
+      "orders": [
+        {
+          "a": 0,
+          "b": false,
+          "p": "69874",
+          "s": "0.00015",
+          "r": true,
+          "t": {
+            "limit": {
+              "tif": "Ioc"
+            }
+          }
+        }
+      ],
+      "grouping": "na"
+    },
+    "nonce": 1775436791389,
+    "vaultAddress": null,
+    "expiresAfter": 1775436971389
+  },
+  "submit_normalized": {
+    "exchange_status": "ok",
+    "acknowledged": false,
+    "oid": null,
+    "submit_state": "error",
+    "fill": null,
+    "resting": null,
+    "error": "Order could not immediately match against any resting orders. asset=0",
+    "raw": {
+      "status": "ok",
+      "response": {
+        "type": "order",
+        "data": {
+          "statuses": [
+            {
+              "error": "Order could not immediately match against any resting orders. asset=0"
+            }
+          ]
+        }
+      }
+    },
+    "raw_type": "dict",
+    "normalization_ok": true,
+    "needs_manual_review": false
+  },
+  "raw_exchange_response": {
+    "status": "ok",
+    "response": {
+      "type": "order",
+      "data": {
+        "statuses": [
+          {
+            "error": "Order could not immediately match against any resting orders. asset=0"
+          }
+        ]
+      }
+    }
+  },
+  "raw_exchange_response_type": "dict"
+}

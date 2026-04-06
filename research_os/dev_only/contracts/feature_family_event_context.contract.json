@@ -1,0 +1,37 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_feature_family_contract",
+  "artifact_id": "feature_family_event_context",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "family_id": "event_context_flags_stack",
+  "family_type": "event-context",
+  "priority_rank": 5,
+  "purpose": "mat male deterministic context flagy bez news-magic",
+  "raw_inputs": [
+    "scheduled_event_windows_if_available",
+    "session_boundaries",
+    "funding_reset_times",
+    "daily_weekly_boundary_flags",
+    "volatility_regime_shift_flags"
+  ],
+  "derived_features": [
+    "session_transition_flag",
+    "scheduled_event_proximity_flag",
+    "post_event_stabilization_flag",
+    "pre_event_compression_flag",
+    "funding_reset_context_flag"
+  ],
+  "mechanism_value": "iba context layer pre ostatne mechanizmy, nie samostatny predictor",
+  "mechanical_hypothesis": "Small deterministic timing and boundary flags can improve interpretation of other mechanisms by marking context transitions without trying to predict direction or news impact.",
+  "predictor_boundary": "event_context_flags_stack cannot act as a standalone predictor and cannot infer unscheduled news or discretionary event meaning",
+  "anti_noise_guards": [
+    "forbid_news_magic",
+    "forbid_future_bar_usage",
+    "forbid_hidden_directional_predictor_behavior",
+    "forbid_threshold_sweep_masked_as_context_logic"
+  ]
+}

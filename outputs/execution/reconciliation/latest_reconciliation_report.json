@@ -1,0 +1,30 @@
+{
+  "report_type": "live_execution_reconciliation_report",
+  "generated_at_utc": "2026-04-06T19:29:05Z",
+  "signal_id": "phase67j::2026-04-04::CASH",
+  "mode": "live",
+  "trading_enabled": true,
+  "kill_switch": false,
+  "allow_live_orders": true,
+  "target_asset": "CASH",
+  "current_state": "CASH",
+  "active_asset": "CASH",
+  "active_positions_count": 0,
+  "multi_position": false,
+  "open_orders_count": 0,
+  "reconciled": true,
+  "reconciliation_action": "none",
+  "mismatch_reason": null,
+  "open_positions": [],
+  "source_paths": {
+    "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_snapshot.json",
+    "mode_config_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+    "live_order_policy_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json"
+  },
+  "notes": [
+    "Reconciliation artifact only.",
+    "No real orders are placed by this script.",
+    "Used to verify whether current exchange state matches target execution intent."
+  ]
+}

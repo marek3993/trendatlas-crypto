@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-04-06T10:14:54Z",
-  "started_at_utc": "2026-04-06T10:14:54Z",
+  "generated_at_utc": "2026-04-06T19:29:04Z",
+  "started_at_utc": "2026-04-06T19:29:04Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -59,7 +59,7 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 509,
-        "modified_utc": "2026-04-06T10:14:54Z"
+        "modified_utc": "2026-04-06T19:29:04Z"
       },
       "added_fields": [
         "live_truth_mode",
@@ -115,11 +115,12 @@
       "status": "phase68i_summary_export_written",
       "summary_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68h_dynamic_leverage_ladder_candidate\\phase68h_dynamic_leverage_ladder_summary.csv",
       "paper_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+      "paper_refresh_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68h_dynamic_leverage_ladder_candidate\\papers\\phase68h_dynamic_ladder_candidate_paper.csv",
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
-        "size_bytes": 220,
-        "modified_utc": "2026-04-06T10:14:54Z"
+        "size_bytes": 221,
+        "modified_utc": "2026-04-06T19:29:04Z"
       },
       "computed_fields": [
         "sharpe",

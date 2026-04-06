@@ -1,0 +1,38 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_feature_family_contract",
+  "artifact_id": "feature_family_cross_asset_decoupling",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "family_id": "cross_asset_decoupling_stack",
+  "family_type": "regime-context",
+  "priority_rank": 3,
+  "purpose": "hladat momenty ked sa asset sprava neobvykle voci svojmu kosu alebo market leaderom",
+  "raw_inputs": [
+    "multi_asset_returns",
+    "btc_context",
+    "eth_context",
+    "rolling_correlations",
+    "beta_like_sensitivity",
+    "relative_strength"
+  ],
+  "derived_features": [
+    "rolling_correlation_break",
+    "beta_deviation",
+    "relative_momentum_decoupling",
+    "leader_lag_follower_escape",
+    "isolated_strength_flag",
+    "isolated_weakness_flag"
+  ],
+  "mechanism_value": "edge moze byt v tom ze asset sa zacne spravat inak nez ma",
+  "mechanical_hypothesis": "When an asset breaks its usual leader or basket relationship in a structured way, the decoupling itself can signal a regime-relevant anomaly rather than ordinary correlated drift.",
+  "anti_noise_guards": [
+    "forbid_future_bar_usage",
+    "forbid_generic_correlation_threshold_tuning",
+    "require_decoupling_to_be_defined_relative_to_context_basket",
+    "forbid_using_leader_context_as_magic_predictor"
+  ]
+}

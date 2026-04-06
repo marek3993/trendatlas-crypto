@@ -1,0 +1,16 @@
+{
+  "decision_id": "decision_run_20260405_233823_phase69_participation_divergence_instability_filter",
+  "candidate_id": "phase69_participation_divergence_instability_filter",
+  "source_run_id": "run_20260405_233823_phase69_participation_divergence_instability_filter",
+  "decision": "hold",
+  "decision_reason": "valid_run_but_no_numeric_score",
+  "decided_by": "research_os_orchestrator_v1",
+  "decided_at": "2026-04-05 23:38:23 UTC",
+  "evidence_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\compare.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\run_manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\quality_report.json"
+  ]
+}

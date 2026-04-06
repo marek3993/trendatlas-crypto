@@ -1,0 +1,118 @@
+{
+  "runtime_type": "controlled_runtime_health",
+  "runtime_label": "controlled_runtime",
+  "run_id": "20260405_194208",
+  "mode": "controlled_runtime_loop",
+  "control_mode": "one_pass",
+  "loop_requested": false,
+  "loop_seconds": 300,
+  "max_runtime_seconds": 0,
+  "run_active": true,
+  "status": "failed",
+  "error": "Unsafe execution mode: execution_mode.mode must be 'read_only' | execution_mode.trading_enabled must be false | execution_mode.kill_switch must be true | execution_mode.dry_run_enabled must be true when present",
+  "stop_requested": false,
+  "stop_reason": "runtime_failed",
+  "started_at_utc": "2026-04-05T19:42:08Z",
+  "updated_at_utc": "2026-04-05T19:42:08Z",
+  "finished_at_utc": null,
+  "root": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "python": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_194208",
+  "current_cycle_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_194208\\cycle_0001_20260405_194208",
+  "cycle_index": 1,
+  "cycles_completed": 0,
+  "current_step": null,
+  "last_completed_step": null,
+  "last_success_utc": null,
+  "execution_mode_guardrail": {
+    "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+    "mode": "live",
+    "trading_enabled": true,
+    "dry_run_enabled": false,
+    "kill_switch": false,
+    "ok": false,
+    "violations": [
+      "execution_mode.mode must be 'read_only'",
+      "execution_mode.trading_enabled must be false",
+      "execution_mode.kill_switch must be true",
+      "execution_mode.dry_run_enabled must be true when present"
+    ]
+  },
+  "source_of_truth_write_check": {
+    "before_file_count": 9,
+    "after_file_count": 9,
+    "changed_files": [],
+    "ok": true
+  },
+  "safe_contract": {
+    "read_only_only": true,
+    "trading_enabled": false,
+    "kill_switch_required": true,
+    "real_orders_submitted": false,
+    "source_of_truth_writes_allowed": false
+  },
+  "step_order": [
+    "materialize_execution_app_exports",
+    "validate_execution_source_contract",
+    "hyperliquid_read_only_snapshot",
+    "render_execution_app_status",
+    "build_execution_intent_from_strategy_exports",
+    "run_dry_execution_bridge"
+  ],
+  "latest_cycle_steps": [],
+  "active_lock": {
+    "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\active_runtime.lock.json",
+    "exists": true,
+    "size_bytes": 452,
+    "modified_utc": "2026-04-05T19:42:08Z"
+  },
+  "active_stop_marker": {
+    "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\graceful_stop_request.json",
+    "exists": false
+  },
+  "stop_marker_payload": null,
+  "key_runtime_outputs": {
+    "materialize_execution_app_exports_report": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline\\materialize_execution_app_exports_report.json",
+      "exists": true,
+      "size_bytes": 6200,
+      "modified_utc": "2026-04-05T19:24:36Z"
+    },
+    "execution_source_contract_report": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract\\execution_source_contract_report.json",
+      "exists": true,
+      "size_bytes": 11356,
+      "modified_utc": "2026-04-05T19:07:20Z"
+    },
+    "hyperliquid_account_snapshot": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+      "exists": true,
+      "size_bytes": 1376,
+      "modified_utc": "2026-04-05T19:24:36Z"
+    },
+    "execution_status": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status.json",
+      "exists": true,
+      "size_bytes": 1021,
+      "modified_utc": "2026-04-05T19:24:36Z"
+    },
+    "latest_execution_intent": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+      "exists": true,
+      "size_bytes": 3802,
+      "modified_utc": "2026-04-05T19:24:36Z"
+    },
+    "latest_dry_run_decision": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision.json",
+      "exists": true,
+      "size_bytes": 1484,
+      "modified_utc": "2026-04-05T19:24:36Z"
+    }
+  },
+  "notes": [
+    "Manual/local-PC runtime controller only.",
+    "Default mode is one pass. Continuous looping requires explicit --loop.",
+    "Any source_of_truth write or unsafe execution mode is treated as a hard failure.",
+    "Only read-only snapshot plus dry-run execution steps are allowed here."
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "artifact_type": "hyperliquid_live_canary_submit_response",
+  "generated_at_utc": "2026-04-06T00:10:03Z",
+  "command": "run",
+  "coin": "BTC",
+  "side": "buy",
+  "reduce_only": false,
+  "nonce": 1775434202764,
+  "expires_after": 1775434232764,
+  "action": {
+    "type": "order",
+    "orders": [
+      {
+        "a": 0,
+        "b": true,
+        "p": "69961",
+        "s": "0.00015",
+        "r": false,
+        "t": {
+          "limit": {
+            "tif": "Ioc"
+          }
+        }
+      }
+    ],
+    "grouping": "na"
+  },
+  "payload_without_signature": {
+    "action": {
+      "type": "order",
+      "orders": [
+        {
+          "a": 0,
+          "b": true,
+          "p": "69961",
+          "s": "0.00015",
+          "r": false,
+          "t": {
+            "limit": {
+              "tif": "Ioc"
+            }
+          }
+        }
+      ],
+      "grouping": "na"
+    },
+    "nonce": 1775434202764,
+    "vaultAddress": null,
+    "expiresAfter": 1775434232764
+  },
+  "submit_normalized": {
+    "exchange_status": "err",
+    "acknowledged": false,
+    "oid": null,
+    "submit_state": "manual_review_required",
+    "fill": null,
+    "resting": null,
+    "error": "unexpected_response_field_type:str",
+    "raw": {
+      "status": "err",
+      "response": "Action already expired"
+    },
+    "raw_type": "dict",
+    "normalization_ok": false,
+    "needs_manual_review": true
+  },
+  "raw_exchange_response": {
+    "status": "err",
+    "response": "Action already expired"
+  },
+  "raw_exchange_response_type": "dict"
+}

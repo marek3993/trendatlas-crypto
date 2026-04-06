@@ -1,2 +1,2 @@
 model,latest_available_date,current_asset,held_asset_public,held_state_label,execution_state,next_rebalance_date,dropped_assets,final_shortlist
-phase67j_no_neo_main,2026-03-30,CORE,CASH,Držíme CASH,CASH,2026-04-04,NEO,"APT,BCH,DOGE,ICP,STX,XTZ"
+phase67j_no_neo_main,2026-04-04,CORE,CASH,Držíme CASH,CASH,2026-04-04,NEO,"APT,BCH,DOGE,ICP,STX,XTZ"

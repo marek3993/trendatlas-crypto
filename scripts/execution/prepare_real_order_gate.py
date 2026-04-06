@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from datetime import datetime, timezone
@@ -101,17 +102,30 @@ def extract_approval_gate_status() -> str:
 
     return "approved_and_applied"
 
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Prepare latest real-order gate decision from intent, snapshot, mode, and policy inputs."
+    )
+    parser.add_argument("--mode-config-path", type=Path, default=MODE_CONFIG_PATH)
+    parser.add_argument("--live-order-policy-path", type=Path, default=LIVE_ORDER_POLICY_PATH)
+    parser.add_argument("--intent-path", type=Path, default=INTENT_PATH)
+    parser.add_argument("--snapshot-path", type=Path, default=SNAPSHOT_PATH)
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
     LIVE_GATE_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
     started_at = utc_now_iso()
     log("[START] prepare_real_order_gate")
 
-    mode_cfg = read_json(MODE_CONFIG_PATH)
-    policy_cfg = read_json(LIVE_ORDER_POLICY_PATH)
-    intent = read_json(INTENT_PATH)
-    snapshot = read_json(SNAPSHOT_PATH)
+    mode_cfg = read_json(args.mode_config_path)
+    policy_cfg = read_json(args.live_order_policy_path)
+    intent = read_json(args.intent_path)
+    snapshot = read_json(args.snapshot_path)
 
     mode = str(mode_cfg.get("mode", "")).strip()
     execution_trading_enabled = bool(mode_cfg.get("trading_enabled", False))
@@ -221,10 +235,10 @@ def main() -> None:
             "When policy and runtime checks pass, the gate can become ready_if_enabled."
         ],
         "source_paths": {
-            "mode_config_path": str(MODE_CONFIG_PATH.resolve()),
-            "live_order_policy_path": str(LIVE_ORDER_POLICY_PATH.resolve()),
-            "intent_path": str(INTENT_PATH.resolve()),
-            "snapshot_path": str(SNAPSHOT_PATH.resolve()),
+            "mode_config_path": str(args.mode_config_path.resolve()),
+            "live_order_policy_path": str(args.live_order_policy_path.resolve()),
+            "intent_path": str(args.intent_path.resolve()),
+            "snapshot_path": str(args.snapshot_path.resolve()),
         },
     }
 
@@ -246,10 +260,10 @@ def main() -> None:
         "started_at_utc": started_at,
         "script_path": str(Path(__file__).resolve()),
         "input_paths": [
-            str(MODE_CONFIG_PATH.resolve()),
-            str(LIVE_ORDER_POLICY_PATH.resolve()),
-            str(INTENT_PATH.resolve()),
-            str(SNAPSHOT_PATH.resolve()),
+            str(args.mode_config_path.resolve()),
+            str(args.live_order_policy_path.resolve()),
+            str(args.intent_path.resolve()),
+            str(args.snapshot_path.resolve()),
         ],
         "output_paths": [
             str(DECISION_PATH.resolve()),

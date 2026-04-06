@@ -1,0 +1,65 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "ai_lab_family_contract_spec",
+  "spec_id": "phase69_compression_release_quality_context_gate",
+  "line_id": "phase69_pre_move_anomaly_confidence_line",
+  "batch_id": "phase69_batch02_refined_context_duo",
+  "mechanism_family": "compression_release_quality_context_gate",
+  "status": "approved_contract_only",
+  "segment_owner": "MRV1 AI LAB",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "derived_from_batch01_failure_shape": {
+    "source_batch_id": "phase69_batch01_foundation_triplet",
+    "source_family": "pre_move_compression_release_quality",
+    "observed_failure_shape": "batch01 showed a positive raw edge path but failed strict scoring because selected coverage stayed sparse and weak-context releases still leaked into the approval set",
+    "refinement_reason": "batch02 keeps the release-quality mechanism and adds an explicit context gate so the family only approves compression-release structures that are also supported by clean pre-expansion context rather than broadening or tuning thresholds"
+  },
+  "baseline_reference": {
+    "model": "phase67j_no_neo_main",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  },
+  "optional_secondary_compare_context": {
+    "model": "phase68i_dynamic_ladder_candidate",
+    "usage": "overlay_context_suitability_only"
+  },
+  "hypothesis_label": "Compression release quality should improve only when combined with an explicit context gate before visible expansion",
+  "mechanism_contract": {
+    "known_baseline_weakness": "The primary baseline does not explicitly distinguish clean compression-release structures that occur in supportive pre-expansion context from superficially similar releases that appear in unstable context.",
+    "exact_mechanism_of_improvement": "Introduce a composite pre-expansion approval state that requires both clean compression-release quality and a confirming context gate built from deterministic pre-expansion stability, trend-pass, and non-blocked structure evidence.",
+    "new_state_or_new_classification": "compression_release_quality_context_gate_state",
+    "exact_compare_target": "phase67j_no_neo_main",
+    "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only",
+    "why_not_parameter_tuning": "The refinement changes the approval mechanism by adding a new context-gated state definition; it is not a threshold-only or lookback-only retune of the batch01 family.",
+    "why_expected_edge_should_survive_strict_scoring": "If the refinement is real, it should improve strict scoring by removing weak-context release events and concentrating approvals in cleaner pre-expansion structures rather than by extracting a narrow calibration gain.",
+    "primary_expected_metric_improvement": "strict_score_via_higher_quality_selected_avg_forward_return_h3_with_tighter_context_coverage"
+  },
+  "required_evidence_inputs": [
+    "baseline paper path for phase67j_no_neo_main",
+    "deterministic compression structure and release-cleanliness evidence available before expansion",
+    "deterministic context-gate evidence for pre-expansion trend pass, non-blocked structure, and stable readiness",
+    "overlay/context suitability evidence from phase68i_dynamic_ladder_candidate only when used as optional secondary context"
+  ],
+  "expected_outputs": [
+    "candidate_summary_csv",
+    "candidate_paper_csv",
+    "compare_csv"
+  ],
+  "stop_conditions": [
+    "stop_if_context_gate_reduces_to_generic_threshold_or_lookback_tuning_without_a_new_composite_state",
+    "stop_if_mechanism_requires_post_move_information_to_label_release_quality_or_context_confirmation",
+    "stop_if_scope_expands_beyond_pre_move_approval_logic_into_execution_or_live_order_behavior"
+  ],
+  "allowed_scope": [
+    "clean compression-release structure plus explicit pre-expansion context confirmation",
+    "new composite approval state before visible expansion",
+    "primary deterministic compare against phase67j_no_neo_main",
+    "optional secondary compare against phase68i_dynamic_ladder_candidate for overlay/context suitability only"
+  ],
+  "forbidden_scope": [
+    "post-move trade management or leverage ladder changes",
+    "generic parameter-only tuning or random churn variants",
+    "execution or live-order logic"
+  ],
+  "exact_compare_target": "phase67j_no_neo_main",
+  "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only"
+}

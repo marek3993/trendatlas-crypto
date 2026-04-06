@@ -1,0 +1,58 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "ai_lab_family_contract_spec",
+  "spec_id": "phase69_participation_divergence_instability_filter",
+  "line_id": "phase69_pre_move_anomaly_confidence_line",
+  "batch_id": "phase69_batch01_foundation_triplet",
+  "mechanism_family": "participation_divergence_instability_filter",
+  "status": "approved_contract_only",
+  "segment_owner": "MRV1 AI LAB",
+  "created_at_utc": "2026-04-05 00:00:00 UTC",
+  "baseline_reference": {
+    "model": "phase67j_no_neo_main",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  },
+  "optional_secondary_compare_context": {
+    "model": "phase68i_dynamic_ladder_candidate",
+    "usage": "overlay_context_suitability_only"
+  },
+  "hypothesis_label": "Participation divergence instability as a veto on fragile pre-move setups",
+  "mechanism_contract": {
+    "known_baseline_weakness": "The baseline can read apparent setup readiness while missing unstable participation or divergence that makes the pre-move structure fragile.",
+    "exact_mechanism_of_improvement": "Add an instability veto that blocks pre-move approvals when participation breadth, internal agreement, or divergence quality fails to confirm the apparent setup.",
+    "new_state_or_new_classification": "participation_divergence_instability_state",
+    "exact_compare_target": "phase67j_no_neo_main",
+    "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only",
+    "why_not_parameter_tuning": "The proposal adds a new instability filter tied to participation divergence, not a generic threshold change on the existing ladder.",
+    "why_expected_edge_should_survive_strict_scoring": "If valid, the filter should consistently remove fragile setups with weak internal confirmation rather than improve only on one calibration slice.",
+    "primary_expected_metric_improvement": "DD"
+  },
+  "required_evidence_inputs": [
+    "baseline paper path for phase67j_no_neo_main",
+    "deterministic participation or breadth confirmation evidence",
+    "deterministic divergence or instability evidence available before expansion"
+  ],
+  "expected_outputs": [
+    "candidate_summary_csv",
+    "candidate_paper_csv",
+    "compare_csv"
+  ],
+  "stop_conditions": [
+    "stop_if_participation_inputs_cannot_be_defined_deterministically_before_expansion",
+    "stop_if_spec_becomes_generic_filter_stacking_without_a_new_instability_state",
+    "stop_if_scope_expands_beyond_pre_move_fragility_veto"
+  ],
+  "allowed_scope": [
+    "pre-expansion participation confirmation or divergence instability evidence",
+    "new fragility veto state before expansion",
+    "primary deterministic compare against phase67j_no_neo_main",
+    "optional secondary compare against phase68i_dynamic_ladder_candidate for overlay/context suitability only"
+  ],
+  "forbidden_scope": [
+    "post-move exit management",
+    "generic multi-filter accretion without a distinct mechanism",
+    "execution or live-order logic"
+  ],
+  "exact_compare_target": "phase67j_no_neo_main",
+  "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only"
+}

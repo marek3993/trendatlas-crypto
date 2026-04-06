@@ -1,0 +1,26 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260406_000720_phase69_micro_acceleration_before_expansion",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "required_run_artifacts",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "expected_outputs",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "numeric_score_extract",
+      "ok": true,
+      "value": -0.012063610968762684
+    },
+    {
+      "name": "compare_valid",
+      "ok": true
+    }
+  ]
+}

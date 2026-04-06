@@ -1,0 +1,51 @@
+{
+  "batch_id": "phase69_batch01_foundation_triplet",
+  "line_id": "phase69_pre_move_anomaly_confidence_line",
+  "created_at": "2026-04-05 00:00:00 UTC",
+  "mode": "spec_ready_generation",
+  "segment_owner": "MRV1 AI LAB",
+  "baseline_reference": {
+    "model": "phase67j_no_neo_main",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  },
+  "optional_secondary_compare_context": {
+    "model": "phase68i_dynamic_ladder_candidate",
+    "usage": "overlay_context_suitability_only"
+  },
+  "selection_rule": "exactly_one_foundation_contract_spec_per_enabled_mechanism_family",
+  "selected_specs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_pre_move_compression_release_quality.spec_ready.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_micro_acceleration_before_expansion.spec_ready.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_participation_divergence_instability_filter.spec_ready.json"
+  ],
+  "selected_spec_ids": [
+    "phase69_pre_move_compression_release_quality",
+    "phase69_micro_acceleration_before_expansion",
+    "phase69_participation_divergence_instability_filter"
+  ],
+  "selected_families": [
+    "pre_move_compression_release_quality",
+    "micro_acceleration_before_expansion",
+    "participation_divergence_instability_filter"
+  ],
+  "selected_count": 3,
+  "batch_stop_conditions": [
+    "stop_batch_if_any_spec_requires_execution_or_live_order_logic",
+    "stop_batch_if_any_spec_expands_scope_into_source_of_truth_or_winner_mutation",
+    "stop_batch_if_any_spec_is_reduced_to_generic_parameter_tuning_without_new_pre_move_state_logic"
+  ],
+  "allowed_scope": [
+    "spec-ready AI LAB family specs inside research_os",
+    "mechanism-first pre-expansion anomaly confidence work",
+    "primary compare framing against phase67j_no_neo_main",
+    "optional secondary compare against phase68i_dynamic_ladder_candidate for overlay/context suitability only"
+  ],
+  "forbidden_scope": [
+    "source_of_truth changes",
+    "APP DATA EXECUTION file changes",
+    "runtime execution or live-order logic",
+    "official promotion or live-truth mutation"
+  ],
+  "execution_approved": false,
+  "writes_source_of_truth": false
+}

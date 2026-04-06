@@ -1,0 +1,40 @@
+{
+  "artifact_type": "dev_only_feature_output_manifest",
+  "artifact_id": "pre_move_structure_quality_stack_manifest",
+  "generated_at_utc": "2026-04-06 19:26:47 UTC",
+  "family_id": "pre_move_structure_quality_stack",
+  "family_type": "pre-move",
+  "output_files": {
+    "features_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\pre_move_structure_quality_stack.features.csv",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\pre_move_structure_quality_stack.quality.json"
+  },
+  "input_refs": [
+    "data/ohlcv/*.csv",
+    "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+    "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv"
+  ],
+  "column_schema": [
+    "date",
+    "asset",
+    "base_ret",
+    "range_pct",
+    "wick_body_ratio",
+    "local_volatility",
+    "trend_score",
+    "compression_tightness",
+    "compression_duration",
+    "release_asymmetry",
+    "acceleration_build",
+    "failed_break_pre_signal",
+    "bar_quality_consistency",
+    "feature_ready_flag",
+    "dev_only",
+    "non_authoritative"
+  ],
+  "row_count": 2,
+  "status": "generated_dev_only_feature_output",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

@@ -1,0 +1,54 @@
+{
+  "batch_id": "phase69_batch02_refined_context_duo",
+  "line_id": "phase69_pre_move_anomaly_confidence_line",
+  "created_at": "2026-04-06 00:00:00 UTC",
+  "mode": "spec_ready_generation",
+  "segment_owner": "MRV1 AI LAB",
+  "baseline_reference": {
+    "model": "phase67j_no_neo_main",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  },
+  "optional_secondary_compare_context": {
+    "model": "phase68i_dynamic_ladder_candidate",
+    "usage": "overlay_context_suitability_only"
+  },
+  "derived_from_batch_id": "phase69_batch01_foundation_triplet",
+  "derived_from_batch_outcome": "zero_selection_confirmed_under_strict_scoring",
+  "selection_rule": "exactly_one_refined_spec_ready_artifact_per_approved_batch02_family",
+  "selected_specs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_compression_release_quality_context_gate.spec_ready.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_instability_veto_confirmed_divergence.spec_ready.json"
+  ],
+  "selected_spec_ids": [
+    "phase69_compression_release_quality_context_gate",
+    "phase69_instability_veto_confirmed_divergence"
+  ],
+  "selected_families": [
+    "compression_release_quality_context_gate",
+    "instability_veto_confirmed_divergence"
+  ],
+  "selected_count": 2,
+  "refinement_rationale": [
+    "retain compression lineage because batch01 showed a positive raw edge path but insufficient strict score, so batch02 adds an explicit context gate instead of threshold tuning",
+    "retain instability lineage because batch01 showed avoided-damage signal but veto breadth remained too loose, so batch02 requires confirmed divergence before veto"
+  ],
+  "batch_stop_conditions": [
+    "stop_batch_if_any_spec_requires_execution_or_live_order_logic",
+    "stop_batch_if_any_spec_expands_scope_into_source_of_truth_or_winner_mutation",
+    "stop_batch_if_any_spec_reduces_to_generic_parameter_tuning_or_random_churn_without_new_pre_move_state_logic"
+  ],
+  "allowed_scope": [
+    "spec-ready AI LAB refined family specs inside research_os",
+    "mechanism-first refinement derived from phase69 batch01 zero-selection failure shape",
+    "primary compare framing against phase67j_no_neo_main",
+    "optional secondary compare against phase68i_dynamic_ladder_candidate for overlay/context suitability only"
+  ],
+  "forbidden_scope": [
+    "source_of_truth changes",
+    "APP DATA EXECUTION file changes",
+    "runtime execution or live-order logic",
+    "official promotion or live-truth mutation"
+  ],
+  "execution_approved": false,
+  "writes_source_of_truth": false
+}

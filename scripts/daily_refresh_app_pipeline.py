@@ -18,8 +18,12 @@ LEGACY_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_legacy_ohlcv.py"
 MACRO_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_global_liquidity_weekly.py"
 TOP100_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_phase67_top100_shortlist_ohlcv.py"
 PHASE67B_SCRIPT = ROOT / "scripts" / "phase67b_top100_forensic_prune_and_rerun.py"
+PHASE60_SCRIPT = ROOT / "phase60_selective_restore_robustness.py"
+PHASE63_SCRIPT = ROOT / "scripts" / "phase63_btc_participation_overlay.py"
+PHASE66G_SCRIPT = ROOT / "scripts" / "phase66g_production_candidate_live.py"
 PHASE67J_SCRIPT = ROOT / "scripts" / "phase67j_final_narrow_validation_pack.py"
 VERIFY_SCRIPT = ROOT / "scripts" / "verify_app_freshness.py"
+MATERIALIZE_SCRIPT = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
 
 PHASE67J_PAPER = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_no_neo_main_paper.csv"
 PHASE67J_SUMMARY = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_final_narrow_validation_summary.csv"
@@ -35,6 +39,7 @@ MACRO_FILE = ROOT / "data" / "macro" / "global_liquidity_weekly.csv"
 
 FRESHNESS_REPORT = ROOT / "outputs" / "app_freshness_verification" / "app_freshness_report.json"
 MACRO_REFRESH_REPORT = ROOT / "outputs" / "app_freshness_verification" / "macro_refresh_report.json"
+MATERIALIZE_REPORT = ROOT / "outputs" / "execution" / "refresh_pipeline" / "materialize_execution_app_exports_report.json"
 
 REQUIRED_OUTPUTS = [
     PHASE67J_PAPER,
@@ -48,6 +53,7 @@ REQUIRED_OUTPUTS = [
     MACRO_FILE,
     FRESHNESS_REPORT,
     MACRO_REFRESH_REPORT,
+    MATERIALIZE_REPORT,
 ]
 
 
@@ -179,10 +185,22 @@ def main() -> None:
             run_step("phase67b_top100_forensic_prune_and_rerun", PHASE67B_SCRIPT, env, logs_dir)
         )
         manifest["steps"].append(
+            run_step("phase60_selective_restore_robustness", PHASE60_SCRIPT, env, logs_dir)
+        )
+        manifest["steps"].append(
+            run_step("phase63_btc_participation_overlay", PHASE63_SCRIPT, env, logs_dir)
+        )
+        manifest["steps"].append(
+            run_step("phase66g_production_candidate_live", PHASE66G_SCRIPT, env, logs_dir)
+        )
+        manifest["steps"].append(
             run_step("phase67j_final_narrow_validation_pack", PHASE67J_SCRIPT, env, logs_dir)
         )
         manifest["steps"].append(
             run_step("verify_app_freshness", VERIFY_SCRIPT, env, logs_dir)
+        )
+        manifest["steps"].append(
+            run_step("materialize_execution_app_exports", MATERIALIZE_SCRIPT, env, logs_dir)
         )
 
         missing_outputs = verify_outputs()

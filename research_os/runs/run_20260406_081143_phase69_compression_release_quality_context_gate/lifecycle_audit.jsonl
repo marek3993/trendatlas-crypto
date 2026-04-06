@@ -1,0 +1,4 @@
+{"ts": "2026-04-06 08:11:43 UTC", "run_id": "run_20260406_081143_phase69_compression_release_quality_context_gate", "from_status": "spec_ready", "to_status": "queued", "reason": "orchestrator_init"}
+{"ts": "2026-04-06 08:11:43 UTC", "run_id": "run_20260406_081143_phase69_compression_release_quality_context_gate", "from_status": "queued", "to_status": "running", "reason": "execution_started"}
+{"ts": "2026-04-06 08:11:44 UTC", "run_id": "run_20260406_081143_phase69_compression_release_quality_context_gate", "from_status": "running", "to_status": "ran", "reason": "process_exit_code_0"}
+{"ts": "2026-04-06 08:11:44 UTC", "run_id": "run_20260406_081143_phase69_compression_release_quality_context_gate", "from_status": "ran", "to_status": "scored", "reason": "post_run_ingest_started"}

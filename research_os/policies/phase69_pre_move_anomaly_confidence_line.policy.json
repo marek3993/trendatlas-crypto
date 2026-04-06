@@ -1,0 +1,111 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "ai_lab_line_contract",
+  "line_id": "phase69_pre_move_anomaly_confidence_line",
+  "status": "approved_contract_only",
+  "segment_owner": "MRV1 AI LAB",
+  "created_at_utc": "2026-04-05 00:00:00 UTC",
+  "baseline_reference": {
+    "model": "phase67j_no_neo_main",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  },
+  "optional_secondary_compare_context": {
+    "model": "phase68i_dynamic_ladder_candidate",
+    "usage": "overlay_context_suitability_only"
+  },
+  "first_batch_id": "phase69_batch01_foundation_triplet",
+  "execution_contract": {
+    "mode": "contract_only",
+    "spec_layer_only": true,
+    "writes_source_of_truth": false,
+    "execution_or_live_order_logic_allowed": false,
+    "app_data_execution_file_changes_allowed": false
+  },
+  "line_objective": "Represent a mechanism-first AI LAB line for pre-move anomaly confidence before expansion without changing runtime, live truth, or winner state.",
+  "line_contract": {
+    "mechanism_first_required": true,
+    "parameter_first_forbidden": true,
+    "human_seeded_first_batch_only": true,
+    "exactly_one_foundation_spec_per_family": true,
+    "family_count": 3
+  },
+  "mechanism_families": {
+    "pre_move_compression_release_quality": {
+      "family_order": 1,
+      "mechanism_focus": "Differentiate clean compression-release setups from noisy low-volatility pauses before expansion confirmation.",
+      "known_baseline_weakness": "Baseline can react only once expansion is already visible and may treat weak compressions too similarly to strong pre-release structures.",
+      "new_state_or_classification": "pre_move_release_quality_state",
+      "exact_compare_target": "phase67j_no_neo_main",
+      "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only",
+      "expected_edge_path": "Improve early quality separation before expansion and reduce weak pre-move entries.",
+      "required_foundation_contract_fields": [
+        "known_baseline_weakness",
+        "exact_mechanism_of_improvement",
+        "new_state_or_new_classification",
+        "exact_compare_target",
+        "why_not_parameter_tuning",
+        "why_expected_edge_should_survive_strict_scoring",
+        "primary_expected_metric_improvement"
+      ]
+    },
+    "micro_acceleration_before_expansion": {
+      "family_order": 2,
+      "mechanism_focus": "Measure micro-acceleration build before visible expansion to separate genuine launch preparation from flat drift.",
+      "known_baseline_weakness": "Baseline may wait for visible expansion and miss whether directional pressure was already accelerating in the bars immediately before breakout.",
+      "new_state_or_classification": "micro_acceleration_pre_expansion_state",
+      "exact_compare_target": "phase67j_no_neo_main",
+      "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only",
+      "expected_edge_path": "Capture stronger pre-expansion intent while avoiding delayed confirmation on already obvious moves.",
+      "required_foundation_contract_fields": [
+        "known_baseline_weakness",
+        "exact_mechanism_of_improvement",
+        "new_state_or_new_classification",
+        "exact_compare_target",
+        "why_not_parameter_tuning",
+        "why_expected_edge_should_survive_strict_scoring",
+        "primary_expected_metric_improvement"
+      ]
+    },
+    "participation_divergence_instability_filter": {
+      "family_order": 3,
+      "mechanism_focus": "Filter pre-move setups when participation and internal stability diverge from apparent price readiness.",
+      "known_baseline_weakness": "Baseline can read surface readiness while missing unstable participation or divergence that makes pre-move setups fragile.",
+      "new_state_or_classification": "participation_divergence_instability_state",
+      "exact_compare_target": "phase67j_no_neo_main",
+      "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only",
+      "expected_edge_path": "Reduce fragile pre-move approvals by vetoing setups with unstable participation structure.",
+      "required_foundation_contract_fields": [
+        "known_baseline_weakness",
+        "exact_mechanism_of_improvement",
+        "new_state_or_new_classification",
+        "exact_compare_target",
+        "why_not_parameter_tuning",
+        "why_expected_edge_should_survive_strict_scoring",
+        "primary_expected_metric_improvement"
+      ]
+    }
+  },
+  "stop_conditions": [
+    "stop_line_if_phase69_batch01_foundation_triplet_returns_zero_worthy_candidates_across_all_three_families",
+    "stop_line_if_any_candidate_requires_execution_or_real_order_logic_to_demonstrate_edge",
+    "stop_line_if_any_candidate_expands_scope_into_source_of_truth_or_official_winner_mutation",
+    "stop_line_if_any_candidate_reduces_to_generic_parameter_tuning_without_new_pre_move_state_logic",
+    "stop_line_if_required_evidence_depends_on_post_move_information_not_available_before_expansion"
+  ],
+  "allowed_scope": [
+    "mechanism-first pre-move confidence hypotheses before visible expansion",
+    "new pre-expansion state classification or veto logic derived from deterministic market structure evidence",
+    "contract-only family specs and human-seeded batch registration inside research_os",
+    "primary compare framing against phase67j_no_neo_main",
+    "optional secondary compare against phase68i_dynamic_ladder_candidate for overlay/context suitability only"
+  ],
+  "forbidden_scope": [
+    "source_of_truth writes or official truth mutation",
+    "APP DATA EXECUTION file changes or runtime behavior changes",
+    "live-order canary dry-run bridge or execution intent logic",
+    "broad random search unbounded parameter sweeps or generic threshold tuning",
+    "winner promotion live truth rewiring or any production handoff"
+  ],
+  "exact_compare_target": "phase67j_no_neo_main",
+  "optional_secondary_compare_target": "phase68i_dynamic_ladder_candidate_overlay_context_only"
+}

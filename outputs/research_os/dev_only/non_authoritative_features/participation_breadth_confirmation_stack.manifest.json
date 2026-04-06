@@ -1,0 +1,37 @@
+{
+  "artifact_type": "dev_only_feature_output_manifest",
+  "artifact_id": "participation_breadth_confirmation_stack_manifest",
+  "generated_at_utc": "2026-04-06 19:26:50 UTC",
+  "family_id": "participation_breadth_confirmation_stack",
+  "family_type": "confidence-stack",
+  "output_files": {
+    "features_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\participation_breadth_confirmation_stack.features.csv",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\participation_breadth_confirmation_stack.quality.json"
+  },
+  "input_refs": [
+    "data/ohlcv/*.csv",
+    "data/ohlcv_phase67_top100/*.csv",
+    "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+    "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv"
+  ],
+  "column_schema": [
+    "date",
+    "leader_asset",
+    "breadth_count",
+    "participation_ratio",
+    "leader_follower_spread",
+    "cluster_confirmation_ratio",
+    "internal_agreement_score",
+    "breadth_thrust",
+    "participation_divergence",
+    "feature_ready_flag",
+    "dev_only",
+    "non_authoritative"
+  ],
+  "row_count": 2,
+  "status": "generated_dev_only_feature_output",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

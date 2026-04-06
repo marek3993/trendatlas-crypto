@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260406_000720_phase69_pre_move_compression_release_quality",
+  "experiment_id": "phase69_pre_move_compression_release_quality",
+  "candidate_id": "phase69_pre_move_compression_release_quality",
+  "status": "scored",
+  "allowed_status_values": [
+    "proposed",
+    "spec_ready",
+    "queued",
+    "running",
+    "run_failed",
+    "ran",
+    "scored",
+    "precheck_failed",
+    "precheck_passed",
+    "forensic_ready",
+    "forensic_failed",
+    "forensic_passed",
+    "master_pending",
+    "promoted",
+    "archived"
+  ],
+  "started_at": "2026-04-06 00:07:21 UTC",
+  "ended_at": "2026-04-06 00:07:21 UTC",
+  "status_reason": "post_run_ingest_started",
+  "current_step": "waiting_for_execution",
+  "promotion_decision": null,
+  "updated_at": "2026-04-06 00:07:21 UTC"
+}

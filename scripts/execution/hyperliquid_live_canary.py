@@ -42,7 +42,7 @@ EXCHANGE_URL = f"{MAINNET_API_URL}/exchange"
 MANUAL_CONFIRM_TOKEN = "LIVE_CANARY"
 MIN_CANARY_NOTIONAL_USD = 10.0
 DEFAULT_SLIPPAGE = 0.01
-DEFAULT_EXPIRES_AFTER_MS = 30_000
+DEFAULT_EXPIRES_AFTER_MS = 180_000
 DEFAULT_POLL_SECONDS = 15.0
 DEFAULT_POLL_INTERVAL_SECONDS = 1.5
 POSITION_TOLERANCE = 1e-9
@@ -770,6 +770,13 @@ def normalize_submit_response(response: Any) -> dict[str, Any]:
             exchange_status=exchange_status,
         )
 
+    response_type = str(response_body.get("type", "")).strip().lower()
+    if exchange_status == "ok" and response_type == "default":
+        normalized["submit_state"] = "acknowledged_non_order_action"
+        normalized["acknowledged"] = True
+        normalized["normalization_ok"] = True
+        return normalized
+
     data_body = response_body.get("data")
     if not isinstance(data_body, dict):
         return build_submit_normalization_fallback(
@@ -1022,6 +1029,7 @@ def build_preflight(
     limit_price = None
     order_size = None
     sz_decimals = None
+    preview_side = normalize_side(args.side)
 
     if market_entry is not None:
         sz_decimals = int(market_entry["sz_decimals"])
@@ -1030,22 +1038,25 @@ def build_preflight(
         except Exception:
             abort_conditions.append("missing_mid_price")
         if mid_price is not None:
-            side = normalize_side(args.side)
-            limit_price = compute_limit_price(mid_price, side == "buy", buy_slippage, sz_decimals)
             if args.command == "run":
+                preview_side = normalize_side(args.side)
+                limit_price = compute_limit_price(mid_price, preview_side == "buy", buy_slippage, sz_decimals)
                 order_size = compute_order_size(args.notional_usd, limit_price, sz_decimals)
                 if order_size * limit_price + POSITION_TOLERANCE < MIN_CANARY_NOTIONAL_USD:
                     abort_conditions.append("computed_order_notional_below_exchange_minimum")
             else:
-                current_size = abs(find_position_size(snapshot, coin))
+                current_position_size = find_position_size(snapshot, coin)
+                current_size = abs(current_position_size)
                 if current_size <= POSITION_TOLERANCE:
                     abort_conditions.append("rollback_position_not_found")
                 else:
+                    preview_side = "sell" if current_position_size > 0 else "buy"
+                    limit_price = compute_limit_price(mid_price, preview_side == "buy", buy_slippage, sz_decimals)
                     order_size = current_size
 
     order_preview = {
         "coin": coin,
-        "side": normalize_side(args.side),
+        "side": preview_side,
         "notional_usd": args.notional_usd,
         "mid_price": mid_price,
         "limit_price": limit_price,
@@ -1140,7 +1151,7 @@ def submit_signed_action(
     action: dict[str, Any],
     expires_after_ms: int,
 ) -> dict[str, Any]:
-    nonce = int(time.time() * 1000)
+    nonce = int(time.time() * 1000) + int(os.environ.get("HYPERLIQUID_TIME_OFFSET_MS", "0"))
     expires_after = nonce + expires_after_ms if expires_after_ms > 0 else None
     signature = sign_l1_action(
         crypto=crypto,
@@ -1379,7 +1390,7 @@ def main() -> None:
     submit_context = load_optional_json(SUBMIT_PREVIEW_PATH)
 
     account_setup = get_account_setup(account_cfg, crypto)
-    auth_probe_nonce = int(time.time() * 1000)
+    auth_probe_nonce = int(time.time() * 1000) + int(os.environ.get("HYPERLIQUID_TIME_OFFSET_MS", "0"))
     auth_probe_action = {"type": "noop"}
     auth_probe_signature = sign_l1_action(
         crypto=crypto,

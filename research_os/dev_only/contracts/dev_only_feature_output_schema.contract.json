@@ -1,0 +1,43 @@
+﻿{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_feature_output_schema_contract",
+  "artifact_id": "dev_only_feature_output_schema",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "scope": "shared_output_schema_for_first_two_dev_only_feature_families",
+  "output_namespace": "outputs/research_os/dev_only/non_authoritative_features/",
+  "required_output_triplet": [
+    "*.features.csv",
+    "*.manifest.json",
+    "*.quality.json"
+  ],
+  "mandatory_row_flags": [
+    "dev_only",
+    "non_authoritative"
+  ],
+  "mandatory_manifest_flags": [
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "forbidden_column_tokens": [
+    "future",
+    "forward_return",
+    "next_bar",
+    "target",
+    "label",
+    "winner",
+    "promotion",
+    "official"
+  ],
+  "first_two_families": [
+    "pre_move_structure_quality_stack",
+    "participation_breadth_confirmation_stack"
+  ],
+  "status": "dev_only_contract_ready"
+}

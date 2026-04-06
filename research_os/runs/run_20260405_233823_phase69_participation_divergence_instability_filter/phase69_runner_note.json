@@ -1,0 +1,20 @@
+{
+  "experiment_id": "phase69_participation_divergence_instability_filter",
+  "mechanism_family": "participation_divergence_instability_filter",
+  "research_status": "infrastructure_unblocked_not_scored",
+  "primary_compare_target": "phase67j_no_neo_main",
+  "primary_compare_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+  "secondary_compare_target": "phase68i_dynamic_ladder_candidate",
+  "secondary_compare_usage": "overlay_context_suitability_only",
+  "secondary_compare_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+  "leverage_policy": "downstream_only_evidence_gated",
+  "strict_scoring_ready": false,
+  "numeric_score_ready": false,
+  "evidence_gate_reason": "participation_divergence_instability_engine_not_yet_scored_in_minimal_batch01_runner",
+  "stop_conditions": [
+    "stop_if_participation_divergence_instability_state_cannot_be_defined_from_pre_expansion_evidence_only",
+    "stop_if_result_reduces_to_generic_filter_stacking_without_new_pre_move_state_logic",
+    "stop_if_phase68i_overlay_context_is_used_as_primary_compare_or_as_execution_logic"
+  ],
+  "created_at": "2026-04-05 23:38:23 UTC"
+}

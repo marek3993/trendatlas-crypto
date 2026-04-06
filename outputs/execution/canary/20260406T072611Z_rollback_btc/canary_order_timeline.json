@@ -1,0 +1,972 @@
+[
+  {
+    "polled_at_utc": "2026-04-06T07:26:18Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:20Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:22Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:24Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:26Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:28Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:31Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:33Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:35Z",
+    "raw": {
+      "cancel_response": {
+        "status": "ok",
+        "response": {
+          "type": "cancel",
+          "data": {
+            "statuses": [
+              {
+                "error": "Order was never placed, already canceled, or filled. asset=0"
+              }
+            ]
+          }
+        }
+      },
+      "cancel_nonce": 1775462468965,
+      "cancel_expires_after": 1775462648965
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "cancel_submitted",
+      "terminal": false,
+      "order_present": true
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:36Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:38Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:40Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:42Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:44Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:47Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:49Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  },
+  {
+    "polled_at_utc": "2026-04-06T07:26:51Z",
+    "raw": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "BTC",
+          "side": "A",
+          "limitPx": "68431.0",
+          "sz": "0.0",
+          "oid": 371800202798,
+          "timestamp": 1775462432685,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "0.00015",
+          "tif": "Ioc",
+          "cloid": null
+        },
+        "status": "filled",
+        "statusTimestamp": 1775462432685
+      }
+    },
+    "normalized": {
+      "oid": 371800202798,
+      "status": "order",
+      "terminal": false,
+      "order_present": true,
+      "raw": {
+        "status": "order",
+        "order": {
+          "order": {
+            "coin": "BTC",
+            "side": "A",
+            "limitPx": "68431.0",
+            "sz": "0.0",
+            "oid": 371800202798,
+            "timestamp": 1775462432685,
+            "triggerCondition": "N/A",
+            "isTrigger": false,
+            "triggerPx": "0.0",
+            "children": [],
+            "isPositionTpsl": false,
+            "reduceOnly": true,
+            "orderType": "Limit",
+            "origSz": "0.00015",
+            "tif": "Ioc",
+            "cloid": null
+          },
+          "status": "filled",
+          "statusTimestamp": 1775462432685
+        }
+      }
+    }
+  }
+]

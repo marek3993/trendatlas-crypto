@@ -1,0 +1,28 @@
+[Unit]
+Description=MRV1 nightly candle-close runtime (read-only + dry-run)
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=1800
+StartLimitBurst=2
+ConditionPathExists=/opt/market_regime_v1/automation/tools/run_controlled_runtime_loop.py
+ConditionPathExists=/opt/market_regime_v1/execution/config/execution_mode.json
+ConditionPathExists=/opt/market_regime_v1/execution/config/hyperliquid_account.json
+
+[Service]
+Type=oneshot
+User=mrv1
+Group=mrv1
+WorkingDirectory=/opt/market_regime_v1
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=/opt/market_regime_v1/src:/opt/market_regime_v1/scripts
+ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/automation/tools/run_controlled_runtime_loop.py --run-once --label nightly_candle_close
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mrv1-runtime
+Restart=on-failure
+RestartSec=300
+NoNewPrivileges=true
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

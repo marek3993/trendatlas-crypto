@@ -1,0 +1,26 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260406_081143_phase69_compression_release_quality_context_gate",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "required_run_artifacts",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "expected_outputs",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "numeric_score_extract",
+      "ok": true,
+      "value": -0.010468401088521996
+    },
+    {
+      "name": "compare_valid",
+      "ok": true
+    }
+  ]
+}

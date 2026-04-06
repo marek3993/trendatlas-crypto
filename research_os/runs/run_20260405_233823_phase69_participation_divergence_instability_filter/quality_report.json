@@ -1,0 +1,26 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260405_233823_phase69_participation_divergence_instability_filter",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "required_run_artifacts",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "expected_outputs",
+      "ok": true,
+      "missing": []
+    },
+    {
+      "name": "numeric_score_extract",
+      "ok": false,
+      "value": null
+    },
+    {
+      "name": "compare_valid",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "artifact_type": "dev_only_feature_quality_report",
+  "artifact_id": "participation_breadth_confirmation_stack_quality",
+  "generated_at_utc": "2026-04-06 19:26:50 UTC",
+  "family_id": "participation_breadth_confirmation_stack",
+  "row_count": 2,
+  "required_columns": [
+    "date",
+    "leader_asset",
+    "breadth_count",
+    "participation_ratio",
+    "leader_follower_spread",
+    "cluster_confirmation_ratio",
+    "internal_agreement_score",
+    "breadth_thrust",
+    "participation_divergence",
+    "feature_ready_flag",
+    "dev_only",
+    "non_authoritative"
+  ],
+  "leakage_checks": [
+    {
+      "name": "required_columns_present",
+      "ok": true,
+      "detail": "all required columns present"
+    },
+    {
+      "name": "forbidden_future_or_authoritative_columns_absent",
+      "ok": true,
+      "detail": "no forbidden columns found"
+    },
+    {
+      "name": "dev_only_flags_present_on_rows",
+      "ok": true,
+      "detail": "row dev-only flags valid"
+    }
+  ],
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

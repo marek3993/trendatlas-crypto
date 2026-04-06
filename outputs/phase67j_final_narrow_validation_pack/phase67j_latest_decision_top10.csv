@@ -1,7 +1,7 @@
 asset,train_total_delta_pct,recent_total_delta_pct,train_dd_worsen_pct,downside_dd_worsen_pct,train_triggers,score,passed_filters,profile,decision_date,next_date_exclusive,probation_delta_pct,suspended,reentry_blocked,persistence_passes,persistence_ok,core_asset_today,core_is_bnb,required_recent_delta_pct,promotion_ok,incumbent_asset_before,selected_asset,keep_reason,dropped_assets
-APT,0.0,0.0,0.0,0.0,0,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-03-30,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-XTZ,-15.857732509831877,0.0,-7.643897772742935,0.0,11,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-03-30,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-ICP,-22.307881552760023,0.0,-2.2593484325179602,0.0,3,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-03-30,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-STX,-26.705433808210003,0.0,-4.204043439727734,0.0,3,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-03-30,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-DOGE,-58.35853604676471,0.0,-9.245054670675898,0.0,15,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-03-30,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-BCH,-75.9755039573173,0.0,-14.408441644260382,0.0,92,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-03-30,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+APT,0.0,0.0,0.0,0.0,0,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-04-04,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+XTZ,-15.857732509831877,0.0,-7.643897772742935,0.0,11,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-04-04,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+ICP,-22.307881552760023,0.0,-2.2593484325179602,0.0,3,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-04-04,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+STX,-26.705433808210003,0.0,-4.204043439727734,0.0,3,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-04-04,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+DOGE,-58.35853604676471,0.0,-9.245054670675898,0.0,15,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-04-04,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+BCH,-75.9755039573173,0.0,-14.408441644260382,0.0,92,-1e+18,False,phase67j_no_neo_main,2026-03-28,2026-04-04,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO

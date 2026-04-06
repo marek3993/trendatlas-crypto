@@ -1,4 +1,8 @@
 {
+  "secret_key_env": "HYPERLIQUID_SECRET_KEY",
+  "secret_key": "",
+  "keystore_path": "",
   "account_address": "PASTE_HYPERLIQUID_MAIN_ACCOUNT_ADDRESS_HERE",
-  "comment": "Copy this file to execution/config/hyperliquid_account.json and fill the real Hyperliquid account address. Read-only only. No private keys here."
+  "vault_address": "",
+  "comment": "Copy this file to execution/config/hyperliquid_account.json. account_address must be the real Hyperliquid trading account. secret_key_env or secret_key must point to the signer wallet used for API auth. If signer != account_address, the signer must already be approved as an API/agent wallet on the account. Do not commit real secrets."
 }

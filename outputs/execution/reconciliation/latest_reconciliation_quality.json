@@ -1,0 +1,9 @@
+{
+  "reconciliation_ok": true,
+  "signal_present": true,
+  "target_asset_present": true,
+  "reconciled": true,
+  "current_state": "CASH",
+  "target_asset": "CASH",
+  "open_orders_count": 0
+}

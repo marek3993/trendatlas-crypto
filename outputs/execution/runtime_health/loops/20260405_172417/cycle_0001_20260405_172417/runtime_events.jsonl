@@ -1,0 +1,2 @@
+{"timestamp_utc": "2026-04-05T17:24:17Z", "event_type": "runtime_cycle_started", "runtime_label": "controlled_runtime", "cycle_index": 1}
+{"timestamp_utc": "2026-04-05T17:24:17Z", "event_type": "runtime_cycle_finished", "runtime_label": "controlled_runtime", "cycle_index": 1, "status": "failed", "error": "Unsafe execution mode: execution_mode.mode must be 'read_only' | execution_mode.trading_enabled must be false | execution_mode.kill_switch must be true | execution_mode.dry_run_enabled must be true when present"}

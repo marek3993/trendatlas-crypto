@@ -1,0 +1,21 @@
+{
+  "artifact_name": "controlled_runtime_health",
+  "generated_at_utc": "2026-04-05T19:42:08Z",
+  "started_at_utc": "2026-04-05T19:42:08Z",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\automation\\tools\\run_controlled_runtime_loop.py",
+  "runtime_label": "controlled_runtime",
+  "run_id": "20260405_194208",
+  "control_mode": "one_pass",
+  "run_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_194208",
+  "cycle_index": 1,
+  "output_paths": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\latest_runtime_health.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\latest_runtime_health_manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\runtime_loop_events.jsonl",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\active_runtime.lock.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\graceful_stop_request.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_194208\\cycle_0001_20260405_194208\\runtime_health.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\runtime_health\\loops\\20260405_194208\\cycle_0001_20260405_194208\\runtime_health_manifest.json"
+  ],
+  "status": "failed"
+}

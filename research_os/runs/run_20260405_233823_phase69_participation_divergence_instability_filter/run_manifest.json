@@ -1,0 +1,55 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260405_233823_phase69_participation_divergence_instability_filter",
+  "experiment_id": "phase69_participation_divergence_instability_filter",
+  "candidate_id": "phase69_participation_divergence_instability_filter",
+  "status": "scored",
+  "started_utc": "2026-04-05 23:38:23 UTC",
+  "ended_utc": "2026-04-05 23:38:23 UTC",
+  "artifact_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter",
+  "spec_path": "research_os\\experiment_specs\\generated\\phase69_participation_divergence_instability_filter.spec_ready.json",
+  "input_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\policies\\phase69_pre_move_anomaly_confidence_line.policy.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\experiment_specs\\generated\\phase69_participation_divergence_instability_filter.contract_spec.json"
+  ],
+  "output_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\compare.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\run_manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\runs\\run_20260405_233823_phase69_participation_divergence_instability_filter\\quality_report.json"
+  ],
+  "metrics": {
+    "extracted_score": null
+  },
+  "quality_checks": {
+    "schema_version": "2.0",
+    "run_id": "run_20260405_233823_phase69_participation_divergence_instability_filter",
+    "status": "passed",
+    "checks": [
+      {
+        "name": "required_run_artifacts",
+        "ok": true,
+        "missing": []
+      },
+      {
+        "name": "expected_outputs",
+        "ok": true,
+        "missing": []
+      },
+      {
+        "name": "numeric_score_extract",
+        "ok": false,
+        "value": null
+      },
+      {
+        "name": "compare_valid",
+        "ok": true
+      }
+    ]
+  },
+  "exit_code": 0,
+  "notes": null
+}

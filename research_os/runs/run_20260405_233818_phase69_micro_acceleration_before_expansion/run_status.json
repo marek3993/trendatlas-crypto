@@ -1,0 +1,30 @@
+{
+  "schema_version": "2.0",
+  "run_id": "run_20260405_233818_phase69_micro_acceleration_before_expansion",
+  "experiment_id": "phase69_micro_acceleration_before_expansion",
+  "candidate_id": "phase69_micro_acceleration_before_expansion",
+  "status": "scored",
+  "allowed_status_values": [
+    "proposed",
+    "spec_ready",
+    "queued",
+    "running",
+    "run_failed",
+    "ran",
+    "scored",
+    "precheck_failed",
+    "precheck_passed",
+    "forensic_ready",
+    "forensic_failed",
+    "forensic_passed",
+    "master_pending",
+    "promoted",
+    "archived"
+  ],
+  "started_at": "2026-04-05 23:38:18 UTC",
+  "ended_at": "2026-04-05 23:38:18 UTC",
+  "status_reason": "post_run_ingest_started",
+  "current_step": "waiting_for_execution",
+  "promotion_decision": null,
+  "updated_at": "2026-04-05 23:38:18 UTC"
+}

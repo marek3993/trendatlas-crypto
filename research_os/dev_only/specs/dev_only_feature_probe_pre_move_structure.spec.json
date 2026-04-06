@@ -1,0 +1,26 @@
+﻿{
+  "spec_version": "1.0",
+  "artifact_type": "dev_only_feature_probe_spec",
+  "artifact_id": "dev_only_feature_probe_pre_move_structure",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "family_id": "pre_move_structure_quality_stack",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\dev_only_feature_probe_pre_move_structure.py",
+  "expected_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_features/pre_move_structure_quality_stack.features.csv",
+    "outputs/research_os/dev_only/non_authoritative_features/pre_move_structure_quality_stack.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_features/pre_move_structure_quality_stack.quality.json"
+  ],
+  "input_refs": [
+    "data/ohlcv/*.csv",
+    "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+    "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv"
+  ],
+  "mechanical_question": "Is the setup structurally preparing for a move through clean compression and pre-release quality rather than noise?",
+  "future_bar_rule": "all features must be computable at or before the decision bar",
+  "status": "dev_only_probe_ready_not_authoritative"
+}

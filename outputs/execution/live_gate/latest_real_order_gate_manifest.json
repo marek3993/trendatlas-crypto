@@ -1,13 +1,13 @@
 {
   "artifact_name": "latest_real_order_gate_decision",
-  "generated_at_utc": "2026-04-05T15:41:55Z",
-  "started_at_utc": "2026-04-05T15:41:55Z",
+  "generated_at_utc": "2026-04-06T19:29:06Z",
+  "started_at_utc": "2026-04-06T19:29:06Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\prepare_real_order_gate.py",
   "input_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json"
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_snapshot.json"
   ],
   "output_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",

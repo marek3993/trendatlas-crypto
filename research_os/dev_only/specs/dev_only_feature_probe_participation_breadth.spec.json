@@ -1,0 +1,27 @@
+﻿{
+  "spec_version": "1.0",
+  "artifact_type": "dev_only_feature_probe_spec",
+  "artifact_id": "dev_only_feature_probe_participation_breadth",
+  "created_at_utc": "2026-04-06 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "family_id": "participation_breadth_confirmation_stack",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\dev_only_feature_probe_participation_breadth.py",
+  "expected_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_features/participation_breadth_confirmation_stack.features.csv",
+    "outputs/research_os/dev_only/non_authoritative_features/participation_breadth_confirmation_stack.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_features/participation_breadth_confirmation_stack.quality.json"
+  ],
+  "input_refs": [
+    "data/ohlcv/*.csv",
+    "data/ohlcv_phase67_top100/*.csv",
+    "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+    "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv"
+  ],
+  "mechanical_question": "Is the apparent move supported by wider market participation and internal agreement instead of isolated impulse noise?",
+  "future_bar_rule": "all features must be computable at or before the decision bar",
+  "status": "dev_only_probe_ready_not_authoritative"
+}

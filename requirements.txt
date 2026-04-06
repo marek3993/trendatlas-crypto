@@ -1,3 +1,6 @@
 streamlit
 pandas
 plotly
+eth-account
+eth-utils
+msgpack

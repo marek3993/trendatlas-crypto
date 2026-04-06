@@ -1,0 +1,113 @@
+{
+  "artifact_type": "hyperliquid_live_canary_preflight",
+  "generated_at_utc": "2026-04-06T00:15:19Z",
+  "command": "run",
+  "execute_live": true,
+  "manual_confirm_token_ok": true,
+  "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "signer_address": "0xF0457A78F44c87a358D754A6597147d2BC22D09d",
+  "uses_agent_wallet": true,
+  "mode_config": {
+    "mode": "live",
+    "trading_enabled": true,
+    "dry_run_enabled": false,
+    "kill_switch": false,
+    "write_app_status": true,
+    "write_raw_snapshot": true,
+    "fail_fast": true
+  },
+  "live_order_policy": {
+    "allow_live_orders": true,
+    "manual_approval_required": false,
+    "require_kill_switch_off": true,
+    "max_order_notional_usd": 250.0,
+    "allowed_assets": [
+      "APT",
+      "BCH",
+      "BTC",
+      "CASH",
+      "DOGE",
+      "ETH",
+      "ICP",
+      "STX",
+      "XTZ"
+    ]
+  },
+  "snapshot_summary": {
+    "positions_count": 0,
+    "open_orders_count": 0,
+    "positions": [],
+    "withdrawable": "0.0",
+    "margin_summary": {
+      "accountValue": "0.0",
+      "totalNtlPos": "0.0",
+      "totalRawUsd": "0.0",
+      "totalMarginUsed": "0.0"
+    },
+    "balance_source_of_truth": "spot_stable_balance",
+    "account_equity_usd": 9.94,
+    "available_balance_usd": 9.94,
+    "perp_account_value": 0.0,
+    "perp_withdrawable": 0.0,
+    "spot_balance_count": 4,
+    "spot_balance_symbols": [
+      "USDC",
+      "USDE",
+      "USDH",
+      "USDT0"
+    ],
+    "spot_stable_total_usd": 9.94,
+    "spot_stable_available_usd": 9.94,
+    "spot_source_available": true
+  },
+  "auth_probe": {
+    "signer_address": "0xF0457A78F44c87a358D754A6597147d2BC22D09d",
+    "recovered_address": "0xF0457A78F44c87a358D754A6597147d2BC22D09d",
+    "signature_roundtrip_ok": true
+  },
+  "agent_verification": {
+    "user_role": {
+      "role": "user"
+    },
+    "extra_agents": [
+      {
+        "name": "TrendAtlas",
+        "address": "0xf0457a78f44c87a358d754a6597147d2bc22d09d",
+        "validUntil": 1790980538701
+      }
+    ],
+    "looks_like_agent_account": false,
+    "authorized_agent_addresses": [
+      "0xf0457a78f44c87a358d754a6597147d2bc22d09d"
+    ],
+    "signer_authorized": true
+  },
+  "order_preview": {
+    "coin": "BTC",
+    "side": "buy",
+    "notional_usd": 10.0,
+    "mid_price": 69193.5,
+    "limit_price": 69885.0,
+    "size": 0.00015,
+    "slippage": 0.01,
+    "expires_after_ms": 180000,
+    "sz_decimals": 5
+  },
+  "upstream_context": {
+    "gate_status": "blocked",
+    "gate_block_reasons": [
+      "kill_switch_enabled",
+      "execution_mode_trading_disabled"
+    ],
+    "submit_preview_status": "ready_if_enabled",
+    "submit_block_reasons": []
+  },
+  "abort_conditions_before_first_live_order": [],
+  "status": "ready",
+  "notes": [
+    "Manual canary only. This script never loops and never auto-repeats live orders.",
+    "The primary canary command submits at most one live order.",
+    "Rollback is a separate manual command and must be invoked explicitly if needed.",
+    "expiresAfter is short-lived on every signed action to reduce stale-submit risk."
+  ]
+}

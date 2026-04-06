@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from datetime import datetime, timezone
@@ -138,17 +139,29 @@ def derive_current_state(open_positions: list[dict[str, Any]]) -> dict[str, Any]
     }
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Build latest live execution reconciliation artifact from intent + snapshot inputs."
+    )
+    parser.add_argument("--intent-path", type=Path, default=INTENT_PATH)
+    parser.add_argument("--snapshot-path", type=Path, default=SNAPSHOT_PATH)
+    parser.add_argument("--mode-config-path", type=Path, default=MODE_CONFIG_PATH)
+    parser.add_argument("--live-order-policy-path", type=Path, default=LIVE_ORDER_POLICY_PATH)
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
     RECON_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
     started_at = utc_now_iso()
     log("[START] reconcile_live_execution_state")
 
-    intent = read_json(INTENT_PATH)
-    snapshot = read_json(SNAPSHOT_PATH)
-    mode_cfg = read_json(MODE_CONFIG_PATH)
-    live_order_policy = read_json(LIVE_ORDER_POLICY_PATH)
+    intent = read_json(args.intent_path)
+    snapshot = read_json(args.snapshot_path)
+    mode_cfg = read_json(args.mode_config_path)
+    live_order_policy = read_json(args.live_order_policy_path)
 
     signal_id = str(intent.get("signal_id", "")).strip()
     if not signal_id:
@@ -196,10 +209,10 @@ def main() -> None:
         "mismatch_reason": mismatch_reason,
         "open_positions": open_positions,
         "source_paths": {
-            "intent_path": str(INTENT_PATH.resolve()),
-            "snapshot_path": str(SNAPSHOT_PATH.resolve()),
-            "mode_config_path": str(MODE_CONFIG_PATH.resolve()),
-            "live_order_policy_path": str(LIVE_ORDER_POLICY_PATH.resolve()),
+            "intent_path": str(args.intent_path.resolve()),
+            "snapshot_path": str(args.snapshot_path.resolve()),
+            "mode_config_path": str(args.mode_config_path.resolve()),
+            "live_order_policy_path": str(args.live_order_policy_path.resolve()),
         },
         "notes": [
             "Reconciliation artifact only.",
@@ -224,10 +237,10 @@ def main() -> None:
         "started_at_utc": started_at,
         "script_path": str(Path(__file__).resolve()),
         "input_paths": [
-            str(INTENT_PATH.resolve()),
-            str(SNAPSHOT_PATH.resolve()),
-            str(MODE_CONFIG_PATH.resolve()),
-            str(LIVE_ORDER_POLICY_PATH.resolve()),
+            str(args.intent_path.resolve()),
+            str(args.snapshot_path.resolve()),
+            str(args.mode_config_path.resolve()),
+            str(args.live_order_policy_path.resolve()),
         ],
         "output_paths": [
             str(REPORT_PATH.resolve()),

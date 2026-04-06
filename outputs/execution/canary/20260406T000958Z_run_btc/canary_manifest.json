@@ -1,0 +1,29 @@
+{
+  "artifact_name": "hyperliquid_live_canary",
+  "generated_at_utc": "2026-04-06T00:10:06Z",
+  "run_id": "20260406T000958Z_run_btc",
+  "command": "run",
+  "coin": "BTC",
+  "status": "success",
+  "input_paths": {
+    "account_config_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\hyperliquid_account.json",
+    "execution_mode_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+    "live_order_policy_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json",
+    "gate_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",
+    "submit_preview_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_decision.json"
+  },
+  "output_paths": {
+    "preflight": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\canary\\20260406T000958Z_run_btc\\canary_preflight.json",
+    "submit_response": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\canary\\20260406T000958Z_run_btc\\canary_submit_response.json",
+    "order_timeline": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\canary\\20260406T000958Z_run_btc\\canary_order_timeline.json",
+    "post_snapshot": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\canary\\20260406T000958Z_run_btc\\canary_post_snapshot.json",
+    "reconciliation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\canary\\20260406T000958Z_run_btc\\canary_reconciliation.json",
+    "rollback_plan": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\canary\\20260406T000958Z_run_btc\\canary_rollback_plan.json",
+    "manifest": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\canary\\20260406T000958Z_run_btc\\canary_manifest.json"
+  },
+  "evidence": {
+    "order_submitted": true,
+    "exchange_acknowledged": false,
+    "final_state_reconciled": false
+  }
+}

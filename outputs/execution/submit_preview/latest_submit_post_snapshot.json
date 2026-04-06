@@ -1,0 +1,94 @@
+{
+  "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "positions": [],
+  "positions_count": 0,
+  "open_orders_count": 0,
+  "open_orders": [],
+  "margin_summary": {
+    "accountValue": "0.0",
+    "totalNtlPos": "0.0",
+    "totalRawUsd": "0.0",
+    "totalMarginUsed": "0.0"
+  },
+  "cross_margin_summary": {
+    "accountValue": "0.0",
+    "totalNtlPos": "0.0",
+    "totalRawUsd": "0.0",
+    "totalMarginUsed": "0.0"
+  },
+  "withdrawable": "0.0",
+  "balance_source_of_truth": "spot_stable_balance",
+  "account_equity_usd": 9.835466,
+  "available_balance_usd": 9.835466,
+  "perp_account_value": 0.0,
+  "perp_withdrawable": 0.0,
+  "spot_balance_count": 4,
+  "spot_balance_symbols": [
+    "USDC",
+    "USDE",
+    "USDH",
+    "USDT0"
+  ],
+  "spot_stable_total_usd": 9.835466,
+  "spot_stable_available_usd": 9.835466,
+  "spot_source_available": true,
+  "raw": {
+    "clearinghouseState": {
+      "marginSummary": {
+        "accountValue": "0.0",
+        "totalNtlPos": "0.0",
+        "totalRawUsd": "0.0",
+        "totalMarginUsed": "0.0"
+      },
+      "crossMarginSummary": {
+        "accountValue": "0.0",
+        "totalNtlPos": "0.0",
+        "totalRawUsd": "0.0",
+        "totalMarginUsed": "0.0"
+      },
+      "crossMaintenanceMarginUsed": "0.0",
+      "withdrawable": "0.0",
+      "assetPositions": [],
+      "time": 1775505799738
+    },
+    "spotClearinghouseState": {
+      "balances": [
+        {
+          "coin": "USDC",
+          "token": 0,
+          "total": "9.835466",
+          "hold": "0.0",
+          "entryNtl": "0.0"
+        },
+        {
+          "coin": "USDE",
+          "token": 235,
+          "total": "0.0",
+          "hold": "0.0",
+          "entryNtl": "0.0"
+        },
+        {
+          "coin": "USDT0",
+          "token": 268,
+          "total": "0.0",
+          "hold": "0.0",
+          "entryNtl": "0.0"
+        },
+        {
+          "coin": "USDH",
+          "token": 360,
+          "total": "0.0",
+          "hold": "0.0",
+          "entryNtl": "0.0"
+        }
+      ],
+      "tokenToAvailableAfterMaintenance": [
+        [
+          0,
+          "9.835466"
+        ]
+      ]
+    },
+    "openOrders": []
+  }
+}

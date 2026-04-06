@@ -1,0 +1,3 @@
+date,asset,base_ret,range_pct,wick_body_ratio,local_volatility,trend_score,compression_tightness,compression_duration,release_asymmetry,acceleration_build,failed_break_pre_signal,bar_quality_consistency,feature_ready_flag,dev_only,non_authoritative
+2026-04-01,BTCUSDT,0.0042,0.018,1.1,0.021,0.42,0.77,4,0.31,0.18,0,0.74,True,True,True
+2026-04-02,BTCUSDT,0.0025,0.015,0.95,0.018,0.47,0.81,5,0.36,0.22,0,0.79,True,True,True

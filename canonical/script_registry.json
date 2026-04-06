@@ -285,6 +285,91 @@
       "decision_relevance": "decision_relevant",
       "writes_source_of_truth": false,
       "notes": "Dry-run only. No real orders."
+    },
+    {
+      "script_path": "scripts/execution/hyperliquid_live_canary.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Runs a manually invoked Hyperliquid live canary with auth verification, one guarded live submit, order polling, post-activity snapshot, evidence bundle, and separate manual rollback mode.",
+      "primary_outputs": [
+        "outputs/execution/canary/"
+      ],
+      "output_type": "live_canary_execution",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Manual only. The primary canary path submits at most one live order; rollback is a separate manual invocation."
+    },
+    {
+      "script_path": "scripts/execution/reconcile_live_execution_state.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Builds the latest reconciliation artifact from intent and snapshot inputs for the current exchange state.",
+      "primary_outputs": [
+        "outputs/execution/reconciliation/latest_reconciliation_report.json",
+        "outputs/execution/reconciliation/latest_reconciliation_quality.json",
+        "outputs/execution/reconciliation/latest_reconciliation_manifest.json"
+      ],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Reconciliation artifact only. No real orders."
+    },
+    {
+      "script_path": "scripts/execution/prepare_real_order_gate.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Builds the latest real-order gate decision from current mode, policy, intent, and snapshot inputs.",
+      "primary_outputs": [
+        "outputs/execution/live_gate/latest_real_order_gate_decision.json",
+        "outputs/execution/live_gate/latest_real_order_gate_quality.json",
+        "outputs/execution/live_gate/latest_real_order_gate_manifest.json"
+      ],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Gate-preparation only. No real orders."
+    },
+    {
+      "script_path": "scripts/execution/submit_controlled_real_order.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Runs a preview-by-default controlled submit path with explicit live unlock, leverage resolution, and one-shot post-submit reconciliation artifacts.",
+      "primary_outputs": [
+        "outputs/execution/submit_preview/"
+      ],
+      "output_type": "dry_run_execution",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Preview by default. Live submit requires explicit manual confirmation."
+    },
+    {
+      "script_path": "scripts/execution/run_full_auto_execution_cycle.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Runs one full auto execution cycle by refreshing official intent inputs, rebuilding reconciliation and gate context, and invoking the controlled submitter.",
+      "primary_outputs": [
+        "outputs/execution/full_auto/",
+        "outputs/execution/reconciliation/",
+        "outputs/execution/live_gate/",
+        "outputs/execution/submit_preview/"
+      ],
+      "output_type": "runtime_control",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "One-shot only. No scheduler creation and no source_of_truth writes."
+    },
+    {
+      "script_path": "scripts/execution/run_full_auto_scheduler_entry.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Scheduler-facing one-shot wrapper that refreshes HYPERLIQUID_TIME_OFFSET_MS, launches the full-auto cycle, and verifies required downstream artifacts.",
+      "primary_outputs": [
+        "outputs/execution/full_auto_scheduler/"
+      ],
+      "output_type": "runtime_control",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Preview by default. Live mode is allowed only via --execute-live --manual-confirm FULL_AUTO_EXECUTION."
     }
   ]
 }

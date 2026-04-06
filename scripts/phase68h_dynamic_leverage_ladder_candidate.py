@@ -120,6 +120,8 @@ def load_baseline_paper(path: Path) -> pd.DataFrame:
     asset_col = try_pick_col(
         df,
         [
+            "executed_position",
+            "executed_regime",
             "held_asset_public",
             "portfolio_held_asset",
             "selected_asset",
