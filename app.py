@@ -255,20 +255,22 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "missing_files": "Chýbajú potrebné súbory:",
         "load_failed": "Načítanie dát zlyhalo",
         "account_title": "Účet",
-        "account_snapshot_note": "Read-only exchange/account snapshot. Je to prevádzkový artifact, nie oficiálna strategy truth.",
-        "account_connection": "Pripojenie / stav",
+        "account_snapshot_note": "Read-only snapshot burzového účtu. Ide o prevádzkový prehľad, nie oficiálny stav stratégie.",
+        "account_connection": "Stav pripojenia",
         "account_last_sync": "Posledná synchronizácia",
         "account_total_value": "Celková hodnota účtu",
         "account_available_balance": "Dostupný zostatok",
         "account_open_position": "Otvorená pozícia",
         "account_open_orders": "Otvorené príkazy",
-        "account_recent_fills": "Nedávne fills",
+        "account_recent_fills": "Nedávne obchody",
         "account_provider": "Provider",
         "account_address": "Adresa účtu",
-        "account_last_action": "Posledná akcia",
-        "account_last_result": "Výsledok",
+        "account_copy_address": "Kopírovať plnú adresu",
+        "account_last_action": "Posledné vyhodnotenie",
+        "account_last_result": "Záver",
         "account_position_details": "Detail pozície",
         "account_no_position": "Žiadna otvorená pozícia",
+        "account_position_empty_note": "Na účte momentálne nie je otvorená žiadna pozícia.",
         "account_symbol": "Symbol",
         "account_side": "Smer",
         "account_size": "Veľkosť",
@@ -446,8 +448,8 @@ Based on our tests, this approach is more stable and more profitable.
         "missing_files": "Missing required files:",
         "load_failed": "Failed to load data",
         "account_title": "Account",
-        "account_snapshot_note": "Read-only exchange/account snapshot. This is an operational artifact, not official strategy truth.",
-        "account_connection": "Connection / status",
+        "account_snapshot_note": "Read-only exchange/account snapshot. This is an operational view, not the official strategy state.",
+        "account_connection": "Connection status",
         "account_last_sync": "Last sync",
         "account_total_value": "Total account value",
         "account_available_balance": "Available balance",
@@ -456,10 +458,12 @@ Based on our tests, this approach is more stable and more profitable.
         "account_recent_fills": "Recent fills",
         "account_provider": "Provider",
         "account_address": "Account address",
-        "account_last_action": "Last action",
-        "account_last_result": "Result",
+        "account_copy_address": "Copy full address",
+        "account_last_action": "Latest check",
+        "account_last_result": "Outcome",
         "account_position_details": "Position details",
         "account_no_position": "No open position",
+        "account_position_empty_note": "There is currently no open position on the account.",
         "account_symbol": "Symbol",
         "account_side": "Side",
         "account_size": "Size",
@@ -647,6 +651,55 @@ def pretty_token(value: str | None, lang: str) -> str:
         return t(lang, "account_status_ok")
     text = re.sub(r"[_\-]+", " ", text).strip()
     return text.title() if text else t(lang, "na")
+
+
+def prettify_account_status(value: str | None, lang: str) -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "ok": {"sk": "Snapshot dostupný", "en": "Snapshot available"},
+        "connected": {"sk": "Pripojené", "en": "Connected"},
+        "available": {"sk": "Dostupné", "en": "Available"},
+        "unavailable": {"sk": "Nedostupné", "en": "Unavailable"},
+        "error": {"sk": "Nedostupné", "en": "Unavailable"},
+    }
+    if text in mapping:
+        return mapping[text][lang]
+    return pretty_token(value, lang)
+
+
+def prettify_account_action(value: str | None, lang: str) -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "dry_run_execution_bridge": {"sk": "Posledné vyhodnotenie účtu", "en": "Latest account review"},
+        "hyperliquid_read_only_snapshot": {"sk": "Obnovenie snapshotu účtu", "en": "Account snapshot refresh"},
+        "execution_status_render": {"sk": "Obnovenie prehľadu účtu", "en": "Account summary refresh"},
+        "status_refresh": {"sk": "Obnovenie stavu účtu", "en": "Account status refresh"},
+        "sync": {"sk": "Synchronizácia účtu", "en": "Account sync"},
+    }
+    if text in mapping:
+        return mapping[text][lang]
+    return pretty_token(value, lang)
+
+
+def prettify_account_result(value: str | None, lang: str) -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "ok": {"sk": "Snapshot bol úspešne obnovený", "en": "Snapshot refreshed successfully"},
+        "hold_cash": {"sk": "Bez zmeny, účet zostáva v CASH", "en": "No change, account stays in CASH"},
+        "hold_current_position": {"sk": "Systém ponechal aktuálny stav", "en": "System kept the current state"},
+        "hold_position": {"sk": "Systém ponechal aktuálnu pozíciu", "en": "System kept the current position"},
+        "no_action": {"sk": "Bez zmeny na účte", "en": "No change on the account"},
+        "no_new_position": {"sk": "Žiadna nová pozícia", "en": "No new position"},
+        "no_position": {"sk": "Žiadna nová pozícia", "en": "No new position"},
+        "enter_position": {"sk": "Bola otvorená nová pozícia", "en": "A new position was opened"},
+        "open_position": {"sk": "Bola otvorená nová pozícia", "en": "A new position was opened"},
+        "rotate_position": {"sk": "Pozícia bola zmenená", "en": "The position was rotated"},
+        "exit_to_cash": {"sk": "Pozícia bola uzavretá do CASH", "en": "The position was closed to CASH"},
+        "close_position": {"sk": "Pozícia bola uzavretá", "en": "The position was closed"},
+    }
+    if text in mapping:
+        return mapping[text][lang]
+    return pretty_token(value, lang)
 
 
 def format_utc_text(value: str | None, lang: str) -> str:
@@ -1294,7 +1347,22 @@ def derive_trade_count(df: pd.DataFrame) -> int | None:
 
 
 def derive_cash_days_pct(df: pd.DataFrame) -> float | None:
-    for col in ["selected_coin", "symbol", "asset", "holding", "position", "leader"]:
+    if "cash_day" in df.columns:
+        cash_series = df["cash_day"].map(as_bool).dropna()
+        if not cash_series.empty:
+            return as_float(cash_series.astype(float).mean() * 100.0)
+
+    for col in [
+        "portfolio_held_asset",
+        "selected_coin",
+        "symbol",
+        "asset",
+        "holding",
+        "position",
+        "leader",
+        "tradable_governed_asset",
+        "baseline_held_asset",
+    ]:
         if col in df.columns:
             s = df[col].astype(str).str.upper().fillna("")
             if s.empty:
@@ -1304,7 +1372,17 @@ def derive_cash_days_pct(df: pd.DataFrame) -> float | None:
 
 
 def derive_btc_days_pct(df: pd.DataFrame) -> float | None:
-    for col in ["selected_coin", "symbol", "asset", "holding", "position", "leader"]:
+    for col in [
+        "portfolio_held_asset",
+        "selected_coin",
+        "symbol",
+        "asset",
+        "holding",
+        "position",
+        "leader",
+        "tradable_governed_asset",
+        "baseline_held_asset",
+    ]:
         if col in df.columns:
             s = df[col].astype(str).str.upper().fillna("")
             if s.empty:
@@ -1346,16 +1424,22 @@ def build_metrics(summary_row: pd.Series | None, live_row: pd.Series | None, pap
     if metrics["switch_count"] is None:
         metrics["switch_count"] = derive_trade_count(paper_df)
 
-    metrics["cash_days_pct"] = get_metric_from_row(summary_row, "cash_days_pct")
+    derived_cash_days_pct = derive_cash_days_pct(paper_df)
+    metrics["cash_days_pct"] = maybe_pct_from_fraction(get_metric_from_row(summary_row, "cash_days_pct"))
     if metrics["cash_days_pct"] is None:
-        metrics["cash_days_pct"] = derive_cash_days_pct(paper_df)
+        metrics["cash_days_pct"] = derived_cash_days_pct
+    elif derived_cash_days_pct is not None and abs(float(metrics["cash_days_pct"])) < 1e-12 and abs(float(derived_cash_days_pct)) > 1e-12:
+        metrics["cash_days_pct"] = derived_cash_days_pct
 
     raw_btc = get_metric_from_row(summary_row, "btc_days_pct")
     if raw_btc is None:
         raw_btc = get_metric_from_row(summary_row, "btc_days")
     metrics["btc_days_pct"] = maybe_pct_from_fraction(raw_btc)
+    derived_btc_days_pct = derive_btc_days_pct(paper_df)
     if metrics["btc_days_pct"] is None:
-        metrics["btc_days_pct"] = derive_btc_days_pct(paper_df)
+        metrics["btc_days_pct"] = derived_btc_days_pct
+    elif derived_btc_days_pct is not None and abs(float(metrics["btc_days_pct"])) < 1e-12 and abs(float(derived_btc_days_pct)) > 1e-12:
+        metrics["btc_days_pct"] = derived_btc_days_pct
 
     metrics["latest_date"] = None
 
@@ -1975,9 +2059,14 @@ with tabs[1]:
 
     open_position = account_snapshot_view.get("open_position")
     provider_text = safe_text_value(account_snapshot_view.get("provider"), lang=lang)
-    mode_text = pretty_token(account_snapshot_view.get("mode"), lang)
+    full_account_address = str(account_snapshot_view.get("account_address") or "").strip()
+    masked_account_address = safe_text_value(mask_account_address(full_account_address), lang=lang)
+    connection_text = prettify_account_status(account_snapshot_view.get("status"), lang)
+    last_action_text = prettify_account_action(account_snapshot_view.get("last_action"), lang)
+    last_result_text = prettify_account_result(account_snapshot_view.get("last_action_result"), lang)
+    no_position = not isinstance(open_position, dict)
     open_position_subtitle = ""
-    if isinstance(open_position, dict):
+    if not no_position:
         side_key = str(open_position.get("side")).upper()
         if side_key == "LONG":
             side_text = t(lang, "account_long")
@@ -1989,79 +2078,58 @@ with tabs[1]:
 
     top_cards = st.columns(4)
     with top_cards[0]:
-        render_color_card(
-            t(lang, "account_connection"),
-            pretty_token(account_snapshot_view.get("status"), lang) if account_snapshot_view.get("status") else t(lang, "account_status_unavailable"),
-            f"{provider_text} | {mode_text}" if provider_text != t(lang, "na") or mode_text != t(lang, "na") else "",
-            None,
-            "green",
-        )
+        metric_box(t(lang, "account_connection"), connection_text if account_snapshot_view.get("status") else t(lang, "account_status_unavailable"))
     with top_cards[1]:
-        render_color_card(
-            t(lang, "account_last_sync"),
-            format_utc_text(account_snapshot_view.get("as_of_utc"), lang),
-            "UTC",
-            None,
-            "neutral",
-        )
+        metric_box(t(lang, "account_last_sync"), format_utc_text(account_snapshot_view.get("as_of_utc"), lang))
     with top_cards[2]:
-        render_color_card(
-            t(lang, "account_total_value"),
-            safe_usd_text(account_snapshot_view.get("account_equity_usd"), lang=lang),
-            prettify_balance_source(account_snapshot_view.get("balance_source_of_truth"), lang),
-            None,
-            "blue",
-        )
+        metric_box(t(lang, "account_total_value"), safe_usd_text(account_snapshot_view.get("account_equity_usd"), lang=lang))
     with top_cards[3]:
-        render_color_card(
-            t(lang, "account_available_balance"),
-            safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang),
-            prettify_balance_source(account_snapshot_view.get("balance_source_of_truth"), lang),
-            None,
-            "violet",
-        )
+        metric_box(t(lang, "account_available_balance"), safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang))
 
     lower_cards = st.columns(3)
     with lower_cards[0]:
-        render_color_card(
+        metric_box(
             t(lang, "account_open_position"),
-            safe_text_value(open_position.get("symbol"), lang=lang) if isinstance(open_position, dict) else t(lang, "account_no_position"),
-            open_position_subtitle,
-            None,
-            "orange",
+            safe_text_value(open_position.get("symbol"), lang=lang) if not no_position else t(lang, "account_no_position"),
         )
+        if open_position_subtitle:
+            st.caption(open_position_subtitle)
     with lower_cards[1]:
-        render_color_card(
-            t(lang, "account_open_orders"),
-            safe_int_text(account_snapshot_view.get("open_orders_count"), lang=lang),
-            "",
-            None,
-            "neutral",
-        )
+        metric_box(t(lang, "account_open_orders"), safe_int_text(account_snapshot_view.get("open_orders_count"), lang=lang))
     with lower_cards[2]:
-        render_color_card(
-            t(lang, "account_recent_fills"),
-            safe_int_text(account_snapshot_view.get("recent_fills_count"), lang=lang),
-            "",
-            None,
-            "neutral",
-        )
+        metric_box(t(lang, "account_recent_fills"), safe_int_text(account_snapshot_view.get("recent_fills_count"), lang=lang))
 
     detail_cards = st.columns(4)
-    detail_items = [
-        (t(lang, "account_provider"), provider_text),
-        (t(lang, "account_address"), safe_text_value(mask_account_address(account_snapshot_view.get("account_address")), lang=lang)),
-        (t(lang, "account_last_action"), pretty_token(account_snapshot_view.get("last_action"), lang)),
-        (t(lang, "account_last_result"), pretty_token(account_snapshot_view.get("last_action_result"), lang)),
-    ]
-    for col, (label, value) in zip(detail_cards, detail_items):
-        with col:
-            metric_box(label, value)
+    with detail_cards[0]:
+        with st.container(border=True):
+            st.caption(t(lang, "account_provider"))
+            st.markdown(f"**{provider_text}**")
+    with detail_cards[1]:
+        with st.container(border=True):
+            st.caption(t(lang, "account_address"))
+            st.markdown(f"**{masked_account_address}**")
+            if full_account_address:
+                st.caption(t(lang, "account_copy_address"))
+                st.text_input(
+                    t(lang, "account_copy_address"),
+                    value=full_account_address,
+                    key=f"account_copy_address_{lang}",
+                    label_visibility="collapsed",
+                )
+    with detail_cards[2]:
+        with st.container(border=True):
+            st.caption(t(lang, "account_last_action"))
+            st.markdown(f"**{last_action_text}**")
+    with detail_cards[3]:
+        with st.container(border=True):
+            st.caption(t(lang, "account_last_result"))
+            st.markdown(f"**{last_result_text}**")
 
     st.markdown(f"### {t(lang, 'account_position_details')}")
-    if not isinstance(open_position, dict):
+    if no_position:
         with st.container(border=True):
-            st.write(t(lang, "account_no_position"))
+            st.markdown(f"**{t(lang, 'account_no_position')}**")
+            st.caption(t(lang, "account_position_empty_note"))
     else:
         side_key = str(open_position.get("side")).upper()
         if side_key == "LONG":
