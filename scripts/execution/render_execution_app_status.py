@@ -49,6 +49,89 @@ def read_json(path: Path) -> dict[str, Any]:
     raise RuntimeError("unreachable")
 
 
+def to_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, str) and not value.strip():
+        return None
+    try:
+        return float(str(value))
+    except Exception:
+        return None
+
+
+def first_float(payload: dict[str, Any], keys: list[str]) -> float | None:
+    for key in keys:
+        if key not in payload:
+            continue
+        parsed = to_float(payload.get(key))
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def maybe_pct_from_fraction(value: float | None) -> float | None:
+    if value is None:
+        return None
+    if -1.0 <= value <= 1.0:
+        return value * 100.0
+    return value
+
+
+def normalize_asset(value: Any) -> str:
+    return str(value or "").strip().upper()
+
+
+def extract_open_position(snapshot: dict[str, Any]) -> dict[str, Any] | None:
+    raw = snapshot.get("raw", {})
+    clearinghouse = raw.get("clearinghouseState", {})
+    asset_positions = clearinghouse.get("assetPositions", [])
+    if not isinstance(asset_positions, list):
+        return None
+
+    active_positions: list[tuple[dict[str, Any], dict[str, Any], float]] = []
+    for item in asset_positions:
+        if not isinstance(item, dict):
+            continue
+        position = item.get("position") or item.get("pos") or item
+        if not isinstance(position, dict):
+            continue
+
+        size = first_float(position, ["szi", "size", "positionSize"])
+        if size is None or abs(size) <= 0:
+            continue
+
+        active_positions.append((item, position, size))
+
+    if not active_positions:
+        return None
+
+    primary_item, primary_position, size = active_positions[0]
+    symbol = normalize_asset(
+        primary_position.get("coin")
+        or primary_position.get("asset")
+        or primary_item.get("coin")
+        or primary_item.get("asset")
+    ) or "UNKNOWN"
+
+    position_value = first_float(primary_position, ["positionValue", "position_value"])
+    mark_price = first_float(primary_position, ["markPx", "mark_price"])
+    if mark_price is None and position_value is not None and abs(size) > 0:
+        mark_price = abs(position_value / size)
+
+    return {
+        "symbol": symbol,
+        "side": "LONG" if size > 0 else "SHORT",
+        "size": abs(size),
+        "entry_price": first_float(primary_position, ["entryPx", "entry_price"]),
+        "mark_price": mark_price,
+        "unrealized_pnl_usd": first_float(primary_position, ["unrealizedPnl", "unrealized_pnl", "upl"]),
+        "unrealized_pnl_pct": maybe_pct_from_fraction(
+            first_float(primary_position, ["returnOnEquity", "unrealizedPnlPct", "roe"])
+        ),
+    }
+
+
 def main() -> None:
     LIVE_STATUS_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -67,6 +150,8 @@ def main() -> None:
     mode = str(mode_cfg.get("mode", "read_only")).strip() or "read_only"
     trading_enabled = bool(mode_cfg.get("trading_enabled", False))
     kill_switch = bool(mode_cfg.get("kill_switch", True))
+    open_position = extract_open_position(snapshot)
+    current_position = open_position["symbol"] if open_position else "CASH"
 
     status = {
         "status_type": "execution_app_status",
@@ -80,13 +165,17 @@ def main() -> None:
         "positions_count": int(summary.get("positions_count", 0)),
         "open_orders_count": int(summary.get("open_orders_count", 0)),
         "recent_fills_count": int(summary.get("recent_fills_count", 0)),
-        "current_position": "unknown_read_raw_positions_snapshot",
+        "current_position": current_position,
         "last_action": "snapshot_refresh",
         "last_action_result": "success",
         "guardrails_ok": True,
         "stale_signal": None,
         "signal_id": None,
         "target_asset": None,
+        "account_equity_usd": to_float(summary.get("account_equity_usd")),
+        "available_balance_usd": to_float(summary.get("available_balance_usd")),
+        "balance_source_of_truth": summary.get("balance_source_of_truth"),
+        "open_position": open_position,
         "error": None,
         "source_paths": {
             "snapshot_path": str(SNAPSHOT_PATH.resolve()),

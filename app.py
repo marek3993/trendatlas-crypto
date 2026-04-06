@@ -5,6 +5,7 @@ import math
 import re
 import uuid
 from datetime import datetime
+from html import escape
 from pathlib import Path
 
 import pandas as pd
@@ -20,6 +21,8 @@ st.set_page_config(page_title="TrendAtlas Crypto", layout="wide")
 ROOT = Path(__file__).resolve().parent
 OUTPUTS = ROOT / "outputs"
 BTC_FILE = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
+EXECUTION_STATUS_FILE = OUTPUTS / "execution" / "live_status" / "execution_status.json"
+ACCOUNT_SNAPSHOT_FILE = OUTPUTS / "execution" / "read_only" / "hyperliquid_account_snapshot.json"
 
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
@@ -91,7 +94,7 @@ DEFAULT_SELECTOR = {
 TEXT = {
     "sk": {
         "language": "Jazyk",
-        "tabs": ["Domov", "Ako to funguje", "Kontakt"],
+        "tabs": ["Domov", "Účet", "Ako to funguje", "Kontakt"],
         "hero": "Pravidlami riadená crypto rotačná stratégia pre meniace sa trhové podmienky",
         "subhero": (
             "TrendAtlas Crypto je navrhnutý pre ľudí, ktorí chcú disciplinovaný spôsob, ako sa pohybovať v crypto trhu "
@@ -252,12 +255,38 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "contact_type_options": ["Otázka", "Záujem o produkt", "Partnerstvo", "Bug / problém", "Iné"],
         "missing_files": "Chýbajú potrebné súbory:",
         "load_failed": "Načítanie dát zlyhalo",
+        "account_title": "Účet",
+        "account_snapshot_note": "Read-only exchange/account snapshot. Je to prevádzkový artifact, nie oficiálna strategy truth.",
+        "account_connection": "Pripojenie / stav",
+        "account_last_sync": "Posledná synchronizácia",
+        "account_total_value": "Celková hodnota účtu",
+        "account_available_balance": "Dostupný zostatok",
+        "account_open_position": "Otvorená pozícia",
+        "account_open_orders": "Otvorené príkazy",
+        "account_recent_fills": "Nedávne fills",
+        "account_provider": "Provider",
+        "account_address": "Adresa účtu",
+        "account_last_action": "Posledná akcia",
+        "account_last_result": "Výsledok",
+        "account_position_details": "Detail pozície",
+        "account_no_position": "Žiadna otvorená pozícia",
+        "account_symbol": "Symbol",
+        "account_side": "Smer",
+        "account_size": "Veľkosť",
+        "account_entry_price": "Entry cena",
+        "account_mark_price": "Mark cena",
+        "account_unrealized_pnl_usd": "Unrealized PnL USD",
+        "account_unrealized_pnl_pct": "Unrealized PnL %",
+        "account_long": "Long",
+        "account_short": "Short",
+        "account_status_ok": "OK",
+        "account_status_unavailable": "Nedostupné",
         "btc_label": "BTC Buy & Hold",
         "cash": "CASH",
     },
     "en": {
         "language": "Language",
-        "tabs": ["Home", "How it works", "Contact"],
+        "tabs": ["Home", "Account", "How it works", "Contact"],
         "hero": "A rules-based crypto rotation strategy built for changing market conditions",
         "subhero": (
             "TrendAtlas Crypto is designed for people who want a disciplined way to navigate crypto without manually watching "
@@ -417,6 +446,32 @@ Based on our tests, this approach is more stable and more profitable.
         "contact_type_options": ["Question", "Product interest", "Partnership", "Bug / issue", "Other"],
         "missing_files": "Missing required files:",
         "load_failed": "Failed to load data",
+        "account_title": "Account",
+        "account_snapshot_note": "Read-only exchange/account snapshot. This is an operational artifact, not official strategy truth.",
+        "account_connection": "Connection / status",
+        "account_last_sync": "Last sync",
+        "account_total_value": "Total account value",
+        "account_available_balance": "Available balance",
+        "account_open_position": "Open position",
+        "account_open_orders": "Open orders",
+        "account_recent_fills": "Recent fills",
+        "account_provider": "Provider",
+        "account_address": "Account address",
+        "account_last_action": "Last action",
+        "account_last_result": "Result",
+        "account_position_details": "Position details",
+        "account_no_position": "No open position",
+        "account_symbol": "Symbol",
+        "account_side": "Side",
+        "account_size": "Size",
+        "account_entry_price": "Entry price",
+        "account_mark_price": "Mark price",
+        "account_unrealized_pnl_usd": "Unrealized PnL USD",
+        "account_unrealized_pnl_pct": "Unrealized PnL %",
+        "account_long": "Long",
+        "account_short": "Short",
+        "account_status_ok": "OK",
+        "account_status_unavailable": "Unavailable",
         "btc_label": "BTC Buy & Hold",
         "cash": "CASH",
     },
@@ -536,6 +591,184 @@ def safe_text_value(value, lang: str = "sk") -> str:
         return t(lang, "na")
     text = str(value).strip()
     return text if text else t(lang, "na")
+
+
+def safe_usd_text(value, decimals: int = 2, lang: str = "sk") -> str:
+    number = as_float(value)
+    if number is None:
+        return t(lang, "na")
+    return f"${number:,.{decimals}f}"
+
+
+def safe_signed_usd_text(value, decimals: int = 2, lang: str = "sk") -> str:
+    number = as_float(value)
+    if number is None:
+        return t(lang, "na")
+    return f"{number:+,.{decimals}f} USD"
+
+
+def safe_plain_number_text(value, decimals: int = 4, lang: str = "sk") -> str:
+    number = as_float(value)
+    if number is None:
+        return t(lang, "na")
+    return f"{number:,.{decimals}f}"
+
+
+def safe_signed_pct_text(value, decimals: int = 2, lang: str = "sk") -> str:
+    number = as_float(value)
+    if number is None:
+        return t(lang, "na")
+    return f"{number:+.{decimals}f}%"
+
+
+def load_json_optional(path_value: str | Path | None) -> dict:
+    path = normalize_path(path_value)
+    if path is None or not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def mask_account_address(value: str | None, visible_prefix: int = 6, visible_suffix: int = 4) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    if len(text) <= visible_prefix + visible_suffix:
+        return text
+    return f"{text[:visible_prefix]}...{text[-visible_suffix:]}"
+
+
+def pretty_token(value: str | None, lang: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return t(lang, "na")
+    if text.lower() == "ok":
+        return t(lang, "account_status_ok")
+    text = re.sub(r"[_\-]+", " ", text).strip()
+    return text.title() if text else t(lang, "na")
+
+
+def format_utc_text(value: str | None, lang: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return t(lang, "na")
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M UTC")
+    except ValueError:
+        return text
+
+
+def first_float_from_dict(payload: dict | None, keys: list[str]) -> float | None:
+    if not isinstance(payload, dict):
+        return None
+    for key in keys:
+        if key not in payload:
+            continue
+        parsed = as_float(payload.get(key))
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def maybe_pct_from_fraction(value: float | None) -> float | None:
+    if value is None:
+        return None
+    if -1.0 <= value <= 1.0:
+        return value * 100.0
+    return value
+
+
+def extract_open_position_from_snapshot(snapshot_payload: dict) -> dict | None:
+    raw = snapshot_payload.get("raw", {}) if isinstance(snapshot_payload, dict) else {}
+    clearinghouse = raw.get("clearinghouseState", {}) if isinstance(raw, dict) else {}
+    asset_positions = clearinghouse.get("assetPositions", []) if isinstance(clearinghouse, dict) else []
+    if not isinstance(asset_positions, list):
+        return None
+
+    for item in asset_positions:
+        if not isinstance(item, dict):
+            continue
+        position = item.get("position") or item.get("pos") or item
+        if not isinstance(position, dict):
+            continue
+
+        size = first_float_from_dict(position, ["szi", "size", "positionSize"])
+        if size is None or abs(size) <= 0:
+            continue
+
+        symbol = str(
+            position.get("coin")
+            or position.get("asset")
+            or item.get("coin")
+            or item.get("asset")
+            or "UNKNOWN"
+        ).strip().upper()
+        position_value = first_float_from_dict(position, ["positionValue", "position_value"])
+        mark_price = first_float_from_dict(position, ["markPx", "mark_price"])
+        if mark_price is None and position_value is not None and abs(size) > 0:
+            mark_price = abs(position_value / size)
+
+        return {
+            "symbol": symbol or "UNKNOWN",
+            "side": "LONG" if size > 0 else "SHORT",
+            "size": abs(size),
+            "entry_price": first_float_from_dict(position, ["entryPx", "entry_price"]),
+            "mark_price": mark_price,
+            "unrealized_pnl_usd": first_float_from_dict(position, ["unrealizedPnl", "unrealized_pnl", "upl"]),
+            "unrealized_pnl_pct": maybe_pct_from_fraction(
+                first_float_from_dict(position, ["returnOnEquity", "unrealizedPnlPct", "roe"])
+            ),
+        }
+
+    return None
+
+
+def set_default_value(payload: dict, key: str, value) -> None:
+    if payload.get(key) is None or payload.get(key) == "":
+        payload[key] = value
+
+
+def build_account_snapshot_view(status_payload: dict, snapshot_payload: dict) -> dict:
+    account = dict(status_payload or {})
+    snapshot_summary = snapshot_payload.get("summary", {}) if isinstance(snapshot_payload, dict) else {}
+    snapshot_source = snapshot_payload.get("source", {}) if isinstance(snapshot_payload, dict) else {}
+
+    set_default_value(account, "provider", snapshot_source.get("provider"))
+    set_default_value(account, "account_address", snapshot_payload.get("account_address"))
+    set_default_value(account, "as_of_utc", snapshot_payload.get("as_of_utc"))
+    set_default_value(account, "status", "ok" if snapshot_payload else None)
+    set_default_value(account, "mode", snapshot_payload.get("execution_mode"))
+    set_default_value(account, "account_equity_usd", snapshot_summary.get("account_equity_usd"))
+    set_default_value(account, "available_balance_usd", snapshot_summary.get("available_balance_usd"))
+    set_default_value(account, "balance_source_of_truth", snapshot_summary.get("balance_source_of_truth"))
+    set_default_value(account, "positions_count", snapshot_summary.get("positions_count"))
+    set_default_value(account, "open_orders_count", snapshot_summary.get("open_orders_count"))
+    set_default_value(account, "recent_fills_count", snapshot_summary.get("recent_fills_count"))
+
+    if not isinstance(account.get("open_position"), dict):
+        account["open_position"] = extract_open_position_from_snapshot(snapshot_payload)
+
+    if not account.get("current_position"):
+        account["current_position"] = (
+            account["open_position"]["symbol"]
+            if isinstance(account.get("open_position"), dict)
+            else "CASH"
+        )
+
+    return account
+
+
+def prettify_balance_source(value: str | None, lang: str) -> str:
+    text = str(value or "").strip().lower()
+    if not text:
+        return t(lang, "na")
+    if text == "spot_stable_balance":
+        return "Spot stable balance"
+    if text == "perp_clearinghouse":
+        return "Perp clearinghouse"
+    return pretty_token(text, lang)
 
 
 def prettify_trend_state(value: str | None, lang: str) -> str:
@@ -756,6 +989,84 @@ def inject_css() -> None:
             border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 10px 28px rgba(0,0,0,0.16);
         }
+
+        .detail-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 0.55rem 0 1rem 0;
+        }
+
+        .detail-pill {
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 18px;
+            padding: 12px 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+            box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+        }
+
+        .detail-pill-label {
+            font-size: 0.76rem;
+            opacity: 0.68;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .detail-pill-value {
+            font-size: 0.98rem;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .position-panel {
+            border-radius: 24px;
+            padding: 18px;
+            margin-top: 0.2rem;
+            border: 1px solid rgba(255,255,255,0.10);
+            background:
+                radial-gradient(circle at top right, rgba(64,140,255,0.12), transparent 24%),
+                linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+            box-shadow:
+                0 16px 36px rgba(0,0,0,0.22),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+        }
+
+        .position-empty {
+            min-height: 118px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.02rem;
+            letter-spacing: 0.01em;
+            color: rgba(255,255,255,0.88);
+        }
+
+        .position-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 12px;
+        }
+
+        .position-stat {
+            border-radius: 18px;
+            padding: 12px 14px;
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .position-stat-label {
+            font-size: 0.78rem;
+            opacity: 0.7;
+            margin-bottom: 6px;
+            letter-spacing: 0.03em;
+        }
+
+        .position-stat-value {
+            font-size: 1.02rem;
+            font-weight: 600;
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -785,6 +1096,58 @@ def render_color_card(label: str, value: str, subtitle: str = "", help_text: str
 
 def metric_box(label: str, value: str, help_text: str | None = None) -> None:
     st.metric(label=label, value=value, help=help_text, border=True)
+
+
+def render_detail_strip(items: list[tuple[str, str]]) -> None:
+    pills = []
+    for label, value in items:
+        pills.append(
+            f"""
+            <div class="detail-pill">
+                <div class="detail-pill-label">{escape(label)}</div>
+                <div class="detail-pill-value">{escape(value)}</div>
+            </div>
+            """
+        )
+    st.markdown(f'<div class="detail-strip">{"".join(pills)}</div>', unsafe_allow_html=True)
+
+
+def render_position_panel(position: dict | None, lang: str) -> None:
+    if not isinstance(position, dict):
+        st.markdown(
+            f'<div class="position-panel position-empty">{escape(t(lang, "account_no_position"))}</div>',
+            unsafe_allow_html=True,
+        )
+        return
+
+    side_value = position.get("side")
+    side_key = str(side_value).upper()
+    if side_key == "LONG":
+        side_text = t(lang, "account_long")
+    elif side_key == "SHORT":
+        side_text = t(lang, "account_short")
+    else:
+        side_text = safe_text_value(side_value, lang=lang)
+
+    fields = [
+        (t(lang, "account_symbol"), safe_text_value(position.get("symbol"), lang=lang)),
+        (t(lang, "account_side"), side_text),
+        (t(lang, "account_size"), safe_plain_number_text(position.get("size"), decimals=6, lang=lang)),
+        (t(lang, "account_entry_price"), safe_usd_text(position.get("entry_price"), decimals=2, lang=lang)),
+        (t(lang, "account_mark_price"), safe_usd_text(position.get("mark_price"), decimals=2, lang=lang)),
+        (t(lang, "account_unrealized_pnl_usd"), safe_signed_usd_text(position.get("unrealized_pnl_usd"), decimals=2, lang=lang)),
+        (t(lang, "account_unrealized_pnl_pct"), safe_signed_pct_text(position.get("unrealized_pnl_pct"), decimals=2, lang=lang)),
+    ]
+    stats_html = "".join(
+        f"""
+        <div class="position-stat">
+            <div class="position-stat-label">{escape(label)}</div>
+            <div class="position-stat-value">{escape(value)}</div>
+        </div>
+        """
+        for label, value in fields
+    )
+    st.markdown(f'<div class="position-panel"><div class="position-grid">{stats_html}</div></div>', unsafe_allow_html=True)
 
 
 # =========================================================
@@ -1534,6 +1897,9 @@ live_public_state = load_live_public_state(selector_cfg, main_source.get("live_s
 trend_source_cfg = selector_cfg.get("trend_barometer_source", {}) or {}
 trend_live = load_trend_barometer_live(trend_source_cfg, lang)
 trend_history_df = load_trend_barometer_history(trend_source_cfg)
+account_status_payload = load_json_optional(EXECUTION_STATUS_FILE)
+account_snapshot_payload = load_json_optional(ACCOUNT_SNAPSHOT_FILE)
+account_snapshot_view = build_account_snapshot_view(account_status_payload, account_snapshot_payload)
 
 main_metrics = model_metrics.get(main_key, {})
 reference_metrics = model_metrics.get(reference_key, {})
@@ -1734,10 +2100,102 @@ with tabs[0]:
         st.warning(" / ".join(paper_errors))
 
 with tabs[1]:
+    st.subheader(t(lang, "account_title"))
+    st.caption(t(lang, "account_snapshot_note"))
+
+    open_position = account_snapshot_view.get("open_position")
+    connection_subtitle_parts = [
+        safe_text_value(account_snapshot_view.get("provider"), lang=lang),
+        pretty_token(account_snapshot_view.get("mode"), lang),
+    ]
+    open_position_subtitle = ""
+    if isinstance(open_position, dict):
+        side_key = str(open_position.get("side")).upper()
+        if side_key == "LONG":
+            side_text = t(lang, "account_long")
+        elif side_key == "SHORT":
+            side_text = t(lang, "account_short")
+        else:
+            side_text = safe_text_value(open_position.get("side"), lang=lang)
+        open_position_subtitle = f"{side_text} · {safe_plain_number_text(open_position.get('size'), decimals=6, lang=lang)}"
+
+    top_cards = st.columns(4)
+    with top_cards[0]:
+        render_color_card(
+            t(lang, "account_connection"),
+            pretty_token(account_snapshot_view.get("status"), lang) if account_snapshot_view.get("status") else t(lang, "account_status_unavailable"),
+            " · ".join([part for part in connection_subtitle_parts if part != t(lang, "na")]),
+            None,
+            "green",
+        )
+    with top_cards[1]:
+        render_color_card(
+            t(lang, "account_last_sync"),
+            format_utc_text(account_snapshot_view.get("as_of_utc"), lang),
+            safe_text_value(account_snapshot_view.get("as_of_utc"), lang=lang),
+            None,
+            "neutral",
+        )
+    with top_cards[2]:
+        render_color_card(
+            t(lang, "account_total_value"),
+            safe_usd_text(account_snapshot_view.get("account_equity_usd"), lang=lang),
+            prettify_balance_source(account_snapshot_view.get("balance_source_of_truth"), lang),
+            None,
+            "blue",
+        )
+    with top_cards[3]:
+        render_color_card(
+            t(lang, "account_available_balance"),
+            safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang),
+            prettify_balance_source(account_snapshot_view.get("balance_source_of_truth"), lang),
+            None,
+            "violet",
+        )
+
+    lower_cards = st.columns(3)
+    with lower_cards[0]:
+        render_color_card(
+            t(lang, "account_open_position"),
+            safe_text_value(open_position.get("symbol"), lang=lang) if isinstance(open_position, dict) else t(lang, "account_no_position"),
+            open_position_subtitle,
+            None,
+            "orange",
+        )
+    with lower_cards[1]:
+        render_color_card(
+            t(lang, "account_open_orders"),
+            safe_int_text(account_snapshot_view.get("open_orders_count"), lang=lang),
+            "",
+            None,
+            "neutral",
+        )
+    with lower_cards[2]:
+        render_color_card(
+            t(lang, "account_recent_fills"),
+            safe_int_text(account_snapshot_view.get("recent_fills_count"), lang=lang),
+            "",
+            None,
+            "neutral",
+        )
+
+    render_detail_strip(
+        [
+            (t(lang, "account_provider"), safe_text_value(account_snapshot_view.get("provider"), lang=lang)),
+            (t(lang, "account_address"), safe_text_value(mask_account_address(account_snapshot_view.get("account_address")), lang=lang)),
+            (t(lang, "account_last_action"), pretty_token(account_snapshot_view.get("last_action"), lang)),
+            (t(lang, "account_last_result"), pretty_token(account_snapshot_view.get("last_action_result"), lang)),
+        ]
+    )
+
+    st.markdown(f"### {t(lang, 'account_position_details')}")
+    render_position_panel(open_position, lang)
+
+with tabs[2]:
     st.subheader(t(lang, "method_title"))
     st.markdown(t(lang, "method_md"))
 
-with tabs[2]:
+with tabs[3]:
     st.subheader(t(lang, "contact_title"))
     st.caption(t(lang, "contact_desc"))
 

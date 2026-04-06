@@ -81,6 +81,79 @@ def normalize_hl_state(value: str | None) -> str:
     return text
 
 
+def to_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, str) and not value.strip():
+        return None
+    try:
+        return float(str(value))
+    except Exception:
+        return None
+
+
+def first_float(payload: dict[str, Any], keys: list[str]) -> float | None:
+    for key in keys:
+        if key not in payload:
+            continue
+        parsed = to_float(payload.get(key))
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def maybe_pct_from_fraction(value: float | None) -> float | None:
+    if value is None:
+        return None
+    if -1.0 <= value <= 1.0:
+        return value * 100.0
+    return value
+
+
+def extract_open_position_details(snapshot: dict[str, Any]) -> dict[str, Any] | None:
+    raw = snapshot.get("raw", {})
+    clearinghouse = raw.get("clearinghouseState", {})
+    asset_positions = clearinghouse.get("assetPositions", [])
+    if not isinstance(asset_positions, list):
+        return None
+
+    for item in asset_positions:
+        if not isinstance(item, dict):
+            continue
+        position = item.get("position") or item.get("pos") or item
+        if not isinstance(position, dict):
+            continue
+
+        size = first_float(position, ["szi", "size", "positionSize"])
+        if size is None or abs(size) <= 0:
+            continue
+
+        symbol = normalize_hl_state(
+            position.get("coin")
+            or position.get("asset")
+            or item.get("coin")
+            or item.get("asset")
+        ) or "UNKNOWN"
+        position_value = first_float(position, ["positionValue", "position_value"])
+        mark_price = first_float(position, ["markPx", "mark_price"])
+        if mark_price is None and position_value is not None and abs(size) > 0:
+            mark_price = abs(position_value / size)
+
+        return {
+            "symbol": symbol,
+            "side": "LONG" if size > 0 else "SHORT",
+            "size": abs(size),
+            "entry_price": first_float(position, ["entryPx", "entry_price"]),
+            "mark_price": mark_price,
+            "unrealized_pnl_usd": first_float(position, ["unrealizedPnl", "unrealized_pnl", "upl"]),
+            "unrealized_pnl_pct": maybe_pct_from_fraction(
+                first_float(position, ["returnOnEquity", "unrealizedPnlPct", "roe"])
+            ),
+        }
+
+    return None
+
+
 def extract_current_position_state(snapshot: dict[str, Any]) -> dict[str, Any]:
     raw = snapshot.get("raw", {})
     clearinghouse = raw.get("clearinghouseState", {})
@@ -163,6 +236,8 @@ def main() -> None:
 
     current_position_state = extract_current_position_state(snapshot)
     current_state = normalize_hl_state(current_position_state.get("normalized_state"))
+    open_position = extract_open_position_details(snapshot)
+    status_current_position = open_position["symbol"] if open_position else "CASH"
 
     open_orders = snapshot.get("raw", {}).get("openOrders", [])
     open_orders_count = len(open_orders) if isinstance(open_orders, list) else 0
@@ -290,7 +365,7 @@ def main() -> None:
         positions_count=int(current_position_state.get("active_positions_count", 0)),
         open_orders_count=open_orders_count,
         recent_fills_count=int(snapshot.get("summary", {}).get("recent_fills_count", 0)),
-        current_position=current_state,
+        current_position=status_current_position,
         last_action="dry_run_execution_bridge",
         last_action_result=recommended_action,
         stale_signal=stale_signal,
@@ -302,6 +377,10 @@ def main() -> None:
             "dry_run_decision_path": str(DECISION_PATH.resolve()),
         },
     )
+    app_status["account_equity_usd"] = to_float(snapshot.get("summary", {}).get("account_equity_usd"))
+    app_status["available_balance_usd"] = to_float(snapshot.get("summary", {}).get("available_balance_usd"))
+    app_status["balance_source_of_truth"] = snapshot.get("summary", {}).get("balance_source_of_truth")
+    app_status["open_position"] = open_position
 
     DECISION_PATH.write_text(json.dumps(decision, indent=2, ensure_ascii=False), encoding="utf-8")
     QUALITY_PATH.write_text(json.dumps(quality, indent=2, ensure_ascii=False), encoding="utf-8")
