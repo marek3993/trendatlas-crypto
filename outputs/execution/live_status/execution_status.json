@@ -1,7 +1,7 @@
 {
   "status_type": "execution_app_status",
-  "as_of_utc": "2026-04-06T12:03:33Z",
-  "mode": "dry_run",
+  "as_of_utc": "2026-04-06T09:16:25Z",
+  "mode": "read_only",
   "trading_enabled": false,
   "kill_switch": true,
   "status": "ok",
@@ -11,20 +11,20 @@
   "open_orders_count": 0,
   "recent_fills_count": 4,
   "current_position": "CASH",
-  "last_action": "dry_run_execution_bridge",
-  "last_action_result": "hold_cash",
+  "last_action": "execution_status_render",
+  "last_action_result": "ok",
   "guardrails_ok": true,
-  "stale_signal": false,
-  "signal_id": "phase67j::2026-04-04::CASH",
-  "target_asset": "CASH",
-  "error": null,
-  "source_paths": {
-    "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
-    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
-    "dry_run_decision_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run\\latest_dry_run_decision.json"
-  },
+  "stale_signal": null,
+  "signal_id": null,
+  "target_asset": null,
   "account_equity_usd": 9.913939,
   "available_balance_usd": 9.913939,
   "balance_source_of_truth": "spot_stable_balance",
-  "open_position": null
+  "open_position": null,
+  "error": null,
+  "source_paths": {
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+    "quality_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_quality.json",
+    "mode_config_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json"
+  }
 }
