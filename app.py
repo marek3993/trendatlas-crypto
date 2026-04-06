@@ -961,10 +961,15 @@ def load_model_paper(paper_dir_str: str | None, model_key: str, explicit_paper_p
 def get_row(df: pd.DataFrame, model_key: str) -> pd.Series | None:
     if df.empty or "model" not in df.columns:
         return None
+
     row = df.loc[df["model"] == model_key]
-    if row.empty:
-        return None
-    return row.iloc[0]
+    if not row.empty:
+        return row.iloc[0]
+
+    if len(df) == 1:
+        return df.iloc[0]
+
+    return None
 
 
 def get_metric_from_row(row: pd.Series | None, key: str) -> float | None:
