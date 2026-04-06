@@ -25,6 +25,7 @@ from research_os_state_machine import (
     FORBIDDEN_FINAL_STATES,
     validate_transition,
 )
+from research_os_ai_lab_preflight_compatibility_gate import run_preflight_gate
 
 
 PROJECT_ROOT = Path(r"C:\Users\benda\Desktop\market_regime_v1")
@@ -164,6 +165,13 @@ def validate_spec_against_contract(
         require_file(rt, Path(raw_path), f"input_path_{idx}")
 
     rt.log("OK spec contract validation")
+
+
+def should_run_ai_lab_phase69_preflight(spec: Dict[str, Any]) -> bool:
+    segment_owner = str(spec.get("segment_owner", "")).strip()
+    script_name = Path(str(spec.get("script_path", ""))).name.lower()
+    experiment_id = str(spec.get("experiment_id", "")).strip().lower()
+    return segment_owner == "MRV1 AI LAB" and (script_name.startswith("phase69_") or experiment_id.startswith("phase69_"))
 
 
 def make_run_folder(rt: Runtime, run_id: str) -> Path:
@@ -477,6 +485,19 @@ def main() -> None:
         promotion_schema = read_json(Path(schema_index["schemas"]["promotion_decision"]))
 
         spec = read_json(spec_path)
+        if should_run_ai_lab_phase69_preflight(spec):
+            preflight_report = run_preflight_gate(spec_path=spec_path, spec=spec, write_report=True)
+            rt.log(
+                "AI_LAB_PREFLIGHT "
+                f"status={preflight_report['status']} "
+                f"report_path={preflight_report['report_path']}"
+            )
+            if preflight_report["status"] != "passed":
+                rt.fail(
+                    "ai_lab_preflight_compatibility_gate_failed "
+                    f"report_path={preflight_report['report_path']} "
+                    f"failed_checks={preflight_report['failed_check_names']}"
+                )
         validate_spec_against_contract(rt, spec, spec_schema, args.allow_status)
 
         run_id = generate_run_id(spec["experiment_id"])
