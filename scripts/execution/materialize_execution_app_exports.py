@@ -101,6 +101,32 @@ def find_existing_source(artifact_entry: dict[str, Any]) -> Path | None:
     return None
 
 
+def read_single_csv_row(path: Path) -> dict[str, str]:
+    header, rows = read_csv_rows(path)
+    if not header:
+        fail(f"CSV has no header: {path}")
+    if not rows:
+        fail(f"CSV has no data rows: {path}")
+    return rows[0]
+
+
+def phase66g_live_status_refresh_tuple(path: Path) -> tuple[str, str]:
+    row = read_single_csv_row(path)
+    return (
+        str(row.get("latest_available_date", "")).strip(),
+        str(row.get("trend_calc_date", "")).strip(),
+    )
+
+
+def should_refresh_phase66g_live_status(source_path: Path, canonical_path: Path) -> bool:
+    if not canonical_path.exists() or not canonical_path.is_file():
+        return True
+
+    source_tuple = phase66g_live_status_refresh_tuple(source_path)
+    canonical_tuple = phase66g_live_status_refresh_tuple(canonical_path)
+    return source_tuple > canonical_tuple
+
+
 def safe_stat(path: Path) -> dict[str, Any]:
     stat = path.stat()
     return {
@@ -153,6 +179,47 @@ def read_csv_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
     except Exception as e:
         fail(f"Failed reading CSV {path}: {e}")
     raise RuntimeError("unreachable")
+
+
+def parse_iso_date_required(raw: str | None, context: str) -> str:
+    text = str(raw or "").strip()
+    if not text:
+        fail(f"Missing required ISO date in {context}")
+    try:
+        return datetime.fromisoformat(text).date().isoformat()
+    except Exception:
+        fail(f"Invalid ISO date in {context}: {text}")
+    raise RuntimeError("unreachable")
+
+
+def newer_phase66g_live_status_available(
+    source_path: Path,
+    canonical_path: Path,
+) -> dict[str, str] | None:
+    _, source_rows = read_csv_rows(source_path)
+    _, canonical_rows = read_csv_rows(canonical_path)
+
+    if len(source_rows) != 1:
+        fail(f"Expected exactly 1 row in phase66g live status source, got {len(source_rows)}")
+    if len(canonical_rows) != 1:
+        fail(f"Expected exactly 1 row in phase66g live status canonical, got {len(canonical_rows)}")
+
+    source_date = parse_iso_date_required(
+        source_rows[0].get("latest_available_date"),
+        f"{source_path} latest_available_date",
+    )
+    canonical_date = parse_iso_date_required(
+        canonical_rows[0].get("latest_available_date"),
+        f"{canonical_path} latest_available_date",
+    )
+
+    if source_date <= canonical_date:
+        return None
+
+    return {
+        "source_latest_available_date": source_date,
+        "canonical_latest_available_date": canonical_date,
+    }
 
 
 def parse_float_required(row: dict[str, str], key: str) -> float:
@@ -439,6 +506,50 @@ def main() -> None:
             log(f"[MATERIALIZED] {artifact_key}")
             log(f"              source={source_path}")
             log(f"              target={canonical_path}")
+            continue
+
+        if (
+            artifact_key == "phase66g_live_status"
+            and source_path is not None
+            and canonical_path.exists()
+            and canonical_path.is_file()
+        ):
+            refresh_metadata = newer_phase66g_live_status_available(
+                source_path=source_path,
+                canonical_path=canonical_path,
+            )
+            if refresh_metadata is not None:
+                copy_result = copy_plain_artifact(source_path, canonical_path)
+                copied_count += 1
+                row.update(copy_result)
+                row["status"] = "refreshed_from_newer_legacy_alias"
+                row.update(refresh_metadata)
+                report_rows.append(row)
+                log(f"[REFRESHED] {artifact_key}")
+                log(f"            source={source_path}")
+                log(f"            target={canonical_path}")
+                continue
+
+        if artifact_key == "phase66g_live_status":
+            if source_path is None:
+                fail("phase66g_live_status requires legacy source for freshness-aware rematerialization")
+            if should_refresh_phase66g_live_status(source_path, canonical_path):
+                copy_result = copy_plain_artifact(source_path, canonical_path)
+                copied_count += 1
+                row.update(copy_result)
+                row["status"] = "refreshed_from_newer_upstream"
+                row["refresh_reason"] = "upstream_phase66g_live_status_is_newer_than_canonical"
+                report_rows.append(row)
+                log(f"[REFRESHED] {artifact_key}")
+                log(f"           source={source_path}")
+                log(f"           target={canonical_path}")
+            else:
+                already_present_count += 1
+                row["status"] = "already_present"
+                row["canonical_info"] = safe_stat(canonical_path)
+                row["refresh_reason"] = "canonical_phase66g_live_status_is_not_older_than_upstream"
+                report_rows.append(row)
+                log(f"[OK] already present: {artifact_key} -> {canonical_path}")
             continue
 
         if canonical_path.exists() and canonical_path.is_file():

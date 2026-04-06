@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-04-04T21:21:46Z",
-  "started_at_utc": "2026-04-04T21:21:46Z",
+  "generated_at_utc": "2026-04-06T10:14:54Z",
+  "started_at_utc": "2026-04-06T10:14:54Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -39,8 +39,8 @@
       "status": "already_present",
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
-        "size_bytes": 155339,
-        "modified_utc": "2026-04-01T21:12:27Z"
+        "size_bytes": 155574,
+        "modified_utc": "2026-04-06T09:30:17Z"
       }
     },
     {
@@ -49,17 +49,17 @@
       "artifact_type": "live_status",
       "owner": "DATA",
       "truth_domain": "product",
-      "status": "materialized_with_current_live_runtime_fields",
+      "status": "materialized_with_app_live_mode_contract",
       "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
       "source_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
         "size_bytes": 249,
-        "modified_utc": "2026-04-04T21:21:44Z"
+        "modified_utc": "2026-04-06T09:30:17Z"
       },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 509,
-        "modified_utc": "2026-04-04T21:21:46Z"
+        "modified_utc": "2026-04-06T10:14:54Z"
       },
       "added_fields": [
         "live_truth_mode",
@@ -79,8 +79,8 @@
       "status": "already_present",
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
-        "size_bytes": 381429,
-        "modified_utc": "2026-04-01T19:56:34Z"
+        "size_bytes": 381990,
+        "modified_utc": "2026-04-06T09:29:46Z"
       }
     },
     {
@@ -93,8 +93,9 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
         "size_bytes": 619,
-        "modified_utc": "2026-04-01T19:56:34Z"
-      }
+        "modified_utc": "2026-04-06T09:29:46Z"
+      },
+      "refresh_reason": "canonical_phase66g_live_status_is_not_older_than_upstream"
     },
     {
       "artifact_key": "app_freshness_report",
@@ -106,7 +107,7 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
         "size_bytes": 1099,
-        "modified_utc": "2026-04-01T21:12:28Z"
+        "modified_utc": "2026-04-05T16:50:22Z"
       }
     },
     {
@@ -118,7 +119,7 @@
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
         "size_bytes": 220,
-        "modified_utc": "2026-04-04T21:21:46Z"
+        "modified_utc": "2026-04-06T10:14:54Z"
       },
       "computed_fields": [
         "sharpe",
@@ -138,7 +139,7 @@
   "status": "success",
   "notes": [
     "This script never fabricates strategy data.",
-    "phase67j_live_status is rematerialized deterministically with official current_live_runtime_fields.current fields from source_of_truth/project_truth.json.",
+    "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
     "phase68i dynamic ladder summary export is built from phase68h summary source plus phase68i app paper-derived metrics.",
     "Other artifacts are copied from existing legacy aliases only."
   ]
