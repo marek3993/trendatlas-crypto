@@ -1165,7 +1165,7 @@ def simplify_live_block_reason(reason: str, lang: str) -> str:
     lowered = text.lower()
 
     if "leverage_live_truth_allowed=true" in text:
-        return "Systém dnes ešte nepovoľuje odoslanie obchodu."
+        return "Dnešný signál ešte nespĺňa všetky podmienky."
     if "dry-run dnes neukazuje realny submit" in lowered and "hold_cash" in lowered:
         return "Dnes nie je vhodný signál."
     if "dry-run dnes neukazuje realny submit" in lowered:
@@ -1198,6 +1198,19 @@ def simplify_live_block_reason(reason: str, lang: str) -> str:
         return "Táto akcia teraz nie je dostupná."
 
     return text
+
+
+def build_live_blocked_notice(block_reasons: list[str], lang: str) -> str:
+    reasons = [str(item or "").strip() for item in block_reasons if str(item or "").strip()]
+    if lang == "sk":
+        if "Dnes nie je vhodný signál." in reasons:
+            return "Dnes sa obchod neodošle, pretože systém momentálne nevidí vhodný obchod."
+        first_reason = reasons[0] if reasons else ""
+        if first_reason:
+            return f"Obchod sa teraz neodošle. {first_reason}"
+        return "Obchod sa teraz neodošle."
+    first_reason = reasons[0] if reasons else ""
+    return first_reason or "Order will not be sent."
 
 
 def build_execution_notice(result: dict[str, Any], lang: str) -> str:
@@ -1251,11 +1264,7 @@ def build_execution_notice(result: dict[str, Any], lang: str) -> str:
             return "Kontrola signálu je hotová."
 
         if action == "live_execute" and status == "blocked":
-            if first_block_reason == "Dnes nie je vhodný signál.":
-                return "Obchod sa teraz neodošle, pretože dnes nie je vhodný signál."
-            if first_block_reason:
-                return f"Obchod sa teraz neodošle. {first_block_reason}"
-            return "Obchod sa teraz neodošle."
+            return build_live_blocked_notice(block_reasons, lang)
 
         if action == "live_execute" and result.get("ok"):
             if order_step_present:
@@ -2988,7 +2997,6 @@ with tabs[1]:
     if account_enabled is False:
         st.info(account_ui_text(lang, "observability_disabled"))
     else:
-        control_notice = str(st.session_state.get("execution_controls_notice") or "").strip()
         bridge_result = st.session_state.get("execution_bridge_result") or {}
         bridge_available = callable(run_app_execute_action)
 
@@ -3124,14 +3132,6 @@ with tabs[1]:
         st.markdown("#### Ovladanie")
         with st.container(border=True):
             st.markdown("**Ovládanie účtu**")
-            if control_notice:
-                bridge_status_value = str(bridge_result.get("status") or "").strip().lower()
-                if bridge_result.get("ok"):
-                    st.success(control_notice)
-                elif bridge_status_value == "blocked":
-                    st.warning(control_notice)
-                else:
-                    st.error(control_notice)
 
             if not bridge_available:
                 st.warning("Tieto akcie teraz nie sú dostupné.")
@@ -3157,6 +3157,8 @@ with tabs[1]:
                     st.session_state.execution_bridge_result = result
                     st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
+                if bridge_result.get("action") == "refresh":
+                    st.caption(build_execution_notice(bridge_result, lang))
 
             with dry_run_col:
                 render_phase_badge("SIGNAL", "#8a6d1f")
@@ -3177,6 +3179,8 @@ with tabs[1]:
                     st.session_state.execution_bridge_result = result
                     st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
+                if bridge_result.get("action") == "dry_run":
+                    st.caption(build_execution_notice(bridge_result, lang))
 
             with live_col:
                 render_phase_badge("OBCHOD", "#8e3b3b")
@@ -3187,8 +3191,7 @@ with tabs[1]:
                 if live_block_reasons:
                     simple_blockers = [simplify_live_block_reason(item, lang) for item in live_block_reasons]
                     simple_blockers = [item for item in dict.fromkeys(simple_blockers) if item]
-                    short_reason = simple_blockers[0] if simple_blockers else "Obchod sa teraz neodošle."
-                    st.warning(f"Obchod sa teraz neodošle. {short_reason}")
+                    st.warning(build_live_blocked_notice(simple_blockers, lang))
                 confirmation_input = st.text_input(
                     "Potvrdenie",
                     key="execution_controls_live_confirmation",
@@ -3218,6 +3221,8 @@ with tabs[1]:
                     st.session_state.execution_bridge_result = result
                     st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
+                if bridge_result.get("action") == "live_execute":
+                    st.caption(build_execution_notice(bridge_result, lang))
 
         st.markdown(f"#### {account_ui_text(lang, 'overview')}")
         render_ops_strip(
