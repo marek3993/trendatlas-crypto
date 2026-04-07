@@ -91,7 +91,7 @@ DEFAULT_SELECTOR = {
             "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
             "fallback_profile_label": "phase68g_66g_1p25x_candidate",
             "approval_gate_status": "approved_and_applied",
-            "real_order_gate_status": "blocked",
+            "real_order_gate_status": "live_order_enabled_and_approved",
             "real_order_eligible_status": "live_order_enabled_and_approved",
         }
     },
@@ -590,6 +590,38 @@ ACCOUNT_UI_COPY = {
     },
 }
 
+TEXT["sk"].update(
+    {
+        "account_snapshot_note": "Jednoduchy prehlad aktualneho stavu uctu.",
+        "account_provider": "Burza",
+        "account_last_action": "Posledna akcia",
+        "account_last_result": "Vysledok",
+        "account_position_details": "Pozicia",
+        "account_no_position": "Ziadna otvorena pozicia",
+        "account_position_empty_note": "Na ucte momentalne nie je otvorena ziadna pozicia.",
+        "account_entry_price": "Vstupna cena",
+        "account_mark_price": "Aktualna cena",
+        "account_unrealized_pnl_usd": "Zisk / strata",
+        "account_unrealized_pnl_pct": "Zisk / strata %",
+        "account_long": "Nakupna",
+        "account_short": "Predajna",
+        "account_status_ok": "V poriadku",
+    }
+)
+
+ACCOUNT_UI_COPY["sk"].update(
+    {
+        "proof_banner": "",
+        "proof_state": "Poznamka",
+        "read_mode": "",
+        "mode": "",
+        "balances": "Zostatok",
+        "positions": "Pozicia",
+        "activity": "Posledna zmena",
+        "runtime_error": "Upozornenie",
+    }
+)
+
 # =========================================================
 # HELPERS
 # =========================================================
@@ -990,6 +1022,55 @@ def prettify_balance_source(value: str | None, lang: str) -> str:
     if text == "perp_clearinghouse":
         return "Perp clearinghouse"
     return pretty_token(text, lang)
+
+
+def prettify_account_status(value: str | None, lang: str) -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "ok": {"sk": "Udaje su dostupne", "en": "Snapshot available"},
+        "connected": {"sk": "Pripojene", "en": "Connected"},
+        "available": {"sk": "Dostupne", "en": "Available"},
+        "unavailable": {"sk": "Nedostupne", "en": "Unavailable"},
+        "error": {"sk": "Nedostupne", "en": "Unavailable"},
+    }
+    if text in mapping:
+        return mapping[text][lang]
+    return pretty_token(value, lang)
+
+
+def prettify_account_action(value: str | None, lang: str) -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "dry_run_execution_bridge": {"sk": "Kontrola uctu", "en": "Latest account review"},
+        "hyperliquid_read_only_snapshot": {"sk": "Obnovenie udajov", "en": "Account snapshot refresh"},
+        "execution_status_render": {"sk": "Obnovenie prehladu", "en": "Account summary refresh"},
+        "status_refresh": {"sk": "Obnovenie stavu", "en": "Account status refresh"},
+        "sync": {"sk": "Synchronizacia uctu", "en": "Account sync"},
+    }
+    if text in mapping:
+        return mapping[text][lang]
+    return pretty_token(value, lang)
+
+
+def prettify_account_result(value: str | None, lang: str) -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "ok": {"sk": "Udaje boli uspesne obnovene", "en": "Snapshot refreshed successfully"},
+        "hold_cash": {"sk": "Bez zmeny, ucet zostava v hotovosti", "en": "No change, account stays in CASH"},
+        "hold_current_position": {"sk": "Aktualny stav zostal bez zmeny", "en": "System kept the current state"},
+        "hold_position": {"sk": "Aktualna pozicia zostala bez zmeny", "en": "System kept the current position"},
+        "no_action": {"sk": "Bez zmeny na ucte", "en": "No change on the account"},
+        "no_new_position": {"sk": "Ziadna nova pozicia", "en": "No new position"},
+        "no_position": {"sk": "Ziadna nova pozicia", "en": "No new position"},
+        "enter_position": {"sk": "Bola otvorena nova pozicia", "en": "A new position was opened"},
+        "open_position": {"sk": "Bola otvorena nova pozicia", "en": "A new position was opened"},
+        "rotate_position": {"sk": "Pozicia sa zmenila", "en": "The position was rotated"},
+        "exit_to_cash": {"sk": "Pozicia bola uzavreta a ucet je v hotovosti", "en": "The position was closed to CASH"},
+        "close_position": {"sk": "Pozicia bola uzavreta", "en": "The position was closed"},
+    }
+    if text in mapping:
+        return mapping[text][lang]
+    return pretty_token(value, lang)
 
 
 def prettify_trend_state(value: str | None, lang: str) -> str:
@@ -1460,6 +1541,8 @@ def render_ops_strip(items: list[dict], tone: str = "overview") -> None:
         label = escape_html_text(item.get("label", ""))
         value = escape_html_text(item.get("value", ""))
         subtitle = escape_html_text(item.get("subtitle", ""))
+        if not label or not value:
+            continue
         sub_html = f'<div class="ops-strip-sub">{subtitle}</div>' if subtitle else ""
         item_html.append(
             (
@@ -1470,6 +1553,8 @@ def render_ops_strip(items: list[dict], tone: str = "overview") -> None:
                 "</div>"
             )
         )
+    if not item_html:
+        return
     st.markdown(
         f'<div class="ops-strip ops-tone-{tone}">{"".join(item_html)}</div>',
         unsafe_allow_html=True,
@@ -1482,6 +1567,8 @@ def render_ops_kpi_row(items: list[dict], tone: str = "balance") -> None:
         label = escape_html_text(item.get("label", ""))
         value = escape_html_text(item.get("value", ""))
         subtitle = escape_html_text(item.get("subtitle", ""))
+        if not label or not value:
+            continue
         item_html.append(
             (
                 f'<div class="ops-kpi ops-tone-{tone}">'
@@ -1491,6 +1578,8 @@ def render_ops_kpi_row(items: list[dict], tone: str = "balance") -> None:
                 "</div>"
             )
         )
+    if not item_html:
+        return
     st.markdown(
         f'<div class="ops-kpi-row">{"".join(item_html)}</div>',
         unsafe_allow_html=True,
@@ -1498,11 +1587,26 @@ def render_ops_kpi_row(items: list[dict], tone: str = "balance") -> None:
 
 
 def render_ops_inline_note(label: str, value: str) -> None:
+    if not str(label or "").strip() or not str(value or "").strip():
+        return
+    value_text = str(value)
+    replacements = {
+        "Zhrnutie": "Zhrnutie",
+        "Posledny sync": "Posledna synchronizacia",
+        "trading_enabled": "Obchodovanie",
+        "kill_switch": "Bezpecnostna ochrana",
+        "Prepocet z": "Posledne vyhodnotenie z",
+        "Odporucana akcia": "Odporucanie",
+        "Cielovy asset": "Cielove aktivum",
+        "Kriticke info": "Dolezite informacie",
+    }
+    for old_text, new_text in replacements.items():
+        value_text = value_text.replace(old_text, new_text)
     st.markdown(
         (
             '<div class="ops-inline-note">'
             f'<span class="ops-inline-note-label">{escape_html_text(label)}</span>'
-            f'<span class="ops-inline-note-value">{escape_html_text(value)}</span>'
+            f'<span class="ops-inline-note-value">{escape_html_text(value_text)}</span>'
             "</div>"
         ),
         unsafe_allow_html=True,
@@ -1515,6 +1619,8 @@ def render_ops_dense_panel(title: str, items: list[dict], tone: str = "detail") 
         label = escape_html_text(item.get("label", ""))
         value = escape_html_text(item.get("value", ""))
         subtitle = escape_html_text(item.get("subtitle", ""))
+        if not label or not value or value in {"0", "0.0"}:
+            continue
         sub_html = f'<div class="ops-chip-sub">{subtitle}</div>' if subtitle else ""
         chip_html.append(
             (
@@ -1525,6 +1631,8 @@ def render_ops_dense_panel(title: str, items: list[dict], tone: str = "detail") 
                 "</div>"
             )
         )
+    if not chip_html:
+        return
     st.markdown(
         (
             f'<div class="ops-panel ops-tone-{tone}">'
@@ -2677,6 +2785,27 @@ with tabs[1]:
             if text:
                 live_block_reasons.append(text)
         live_block_reasons.append("APP flow nie je v tejto verzii napojeny na submit_controlled_real_order.py.")
+        if refresh_missing_artifacts:
+            refresh_missing_artifacts = [
+                "Niektore udaje momentalne chybaju."
+                if lang == "sk"
+                else "Some account inputs are currently missing."
+            ]
+        if dry_run_missing_artifacts:
+            dry_run_missing_artifacts = [
+                "Niektore podklady pre skusobne vyhodnotenie momentalne chybaju."
+                if lang == "sk"
+                else "Some dry-run inputs are currently missing."
+            ]
+        if live_block_reasons:
+            live_block_reasons = [
+                "Tato obrazovka sluzi len na prehlad uctu."
+                if lang == "sk"
+                else "This screen is for account overview only.",
+                "Odoslanie obchodu z tejto obrazovky zatial nie je dostupne."
+                if lang == "sk"
+                else "Trade submission from this screen is not available yet.",
+            ]
 
         live_trading_enabled_value = first_present_value(
             execution_mode_payload.get("trading_enabled"),
@@ -2693,26 +2822,31 @@ with tabs[1]:
         refresh_timestamp = format_utc_text(account_snapshot_view.get("as_of_utc"), lang)
         dry_run_timestamp = format_utc_text(dry_run_decision_payload.get("generated_at_utc"), lang)
         phase_badges = {
-            "refresh": ("READ-ONLY", "#365f9c"),
-            "dry_run": ("DRY-RUN", "#8a6d1f"),
-            "live": ("LIVE", "#8e3b3b"),
+            "refresh": ("LEN NA CITANIE" if lang == "sk" else "READ-ONLY", "#365f9c"),
+            "dry_run": ("NANECISTO" if lang == "sk" else "DRY-RUN", "#8a6d1f"),
+            "live": ("OBCHOD" if lang == "sk" else "LIVE", "#8e3b3b"),
         }
 
         open_position = account_snapshot_view.get("open_position")
-        provider_text = safe_text_value(account_snapshot_view.get("provider"), lang=lang)
-        full_account_address = str(account_snapshot_view.get("account_address") or "").strip()
-        masked_account_address = safe_text_value(mask_account_address(full_account_address), lang=lang)
         connection_text = prettify_account_status(account_snapshot_view.get("status"), lang)
         last_action_text = prettify_account_action(account_snapshot_view.get("last_action"), lang)
         last_result_text = prettify_account_result(account_snapshot_view.get("last_action_result"), lang)
-        proof_state_text = localized_contract_text(account_observability_cfg.get("execution_proof_state_label"), lang) or t(lang, "na")
-        placeholder_framing = localized_contract_text(account_observability_cfg.get("placeholder_framing"), lang)
-        read_mode_text = prettify_account_read_mode(account_observability_cfg.get("read_mode"), lang)
-        mode_text = pretty_token(account_snapshot_view.get("mode"), lang)
-        balance_source_text = prettify_balance_source(account_snapshot_view.get("balance_source_of_truth"), lang)
         runtime_error_text = safe_text_value(account_snapshot_view.get("error"), lang=lang)
         no_position = not isinstance(open_position, dict)
         open_position_subtitle = ""
+        sync_text = format_utc_text(account_snapshot_view.get("as_of_utc"), lang)
+        account_status_text = connection_text if account_snapshot_view.get("status") else t(lang, "account_status_unavailable")
+        proof_state_text = "Udaje su informativne" if lang == "sk" else "Informational only"
+        placeholder_framing = (
+            "Nejde o oficialne potvrdenie live obchodovania."
+            if lang == "sk"
+            else "This is not official proof of live trading."
+        )
+        read_mode_text = ""
+        mode_text = ""
+        provider_text = ""
+        masked_account_address = ""
+        balance_source_text = ""
 
         if not no_position:
             side_key = str(open_position.get("side")).upper()
@@ -2724,7 +2858,8 @@ with tabs[1]:
                 side_text = safe_text_value(open_position.get("side"), lang=lang)
             open_position_subtitle = f"{side_text} | {safe_plain_number_text(open_position.get('size'), decimals=6, lang=lang)}"
 
-        st.markdown(f"#### {account_ui_text(lang, 'proof_banner')}")
+        if account_ui_text(lang, "proof_banner").strip():
+            st.markdown(f"#### {account_ui_text(lang, 'proof_banner')}")
         render_ops_strip(
             [
                 {
@@ -2747,16 +2882,16 @@ with tabs[1]:
         if runtime_error_text != t(lang, "na"):
             st.warning(f"{account_ui_text(lang, 'runtime_error')}: {runtime_error_text}")
 
-        st.markdown("#### Exekučné ovládanie")
+        st.markdown("#### Ovladanie")
         with st.container(border=True):
             header_cols = st.columns([3, 1.15])
             with header_cols[0]:
                 if active_phase == "dry_run":
-                    st.markdown("**Prepočítať akciu**")
+                    st.markdown("**Prepocitat nanecisto**")
                 elif active_phase == "live":
-                    st.markdown("**Vykonať obchod**")
+                    st.markdown("**Odoslat obchod**")
                 else:
-                    st.markdown("**Aktualizovať stav**")
+                    st.markdown("**Obnovit udaje**")
             with header_cols[1]:
                 badge_label, badge_color = phase_badges.get(active_phase, phase_badges["refresh"])
                 render_phase_badge(badge_label, badge_color)
@@ -2774,12 +2909,12 @@ with tabs[1]:
                     ),
                 )
                 if refresh_stop_reason:
-                    st.caption(f"stop_reason: {refresh_stop_reason}")
+                    st.caption(f"Dovod zastavenia: {refresh_stop_reason}")
                 if refresh_missing_artifacts:
                     st.warning(f"Chybaju podporne artefakty: {', '.join(refresh_missing_artifacts)}")
-                if st.button("Aktualizovať stav", key="execution_controls_refresh", use_container_width=True):
+                if st.button("Obnovit udaje", key="execution_controls_refresh", use_container_width=True):
                     st.session_state.execution_controls_notice = (
-                        "Stav bol znovu nacitany iba v app vrstve. Ziadny order nebol odoslany."
+                        "Udaje boli obnovene iba v aplikacii. Ziadny obchod nebol odoslany."
                     )
                     st.session_state.execution_controls_phase = "dry_run"
                     st.rerun()
@@ -2794,12 +2929,12 @@ with tabs[1]:
                     ),
                 )
                 if dry_run_stop_reason:
-                    st.caption(f"stop_reason: {dry_run_stop_reason}")
+                    st.caption(f"Dovod zastavenia: {dry_run_stop_reason}")
                 if dry_run_missing_artifacts:
                     st.warning(f"Chybaju podporne artefakty: {', '.join(dry_run_missing_artifacts)}")
-                if st.button("Prepočítať akciu", key="execution_controls_recompute", use_container_width=True):
+                if st.button("Prepocitat nanecisto", key="execution_controls_recompute", use_container_width=True):
                     st.session_state.execution_controls_notice = (
-                        "Prepočet ostal bez backend submitu. Panel sa posunul do live fazy."
+                        "Skusobne vyhodnotenie prebehlo bez odoslania obchodu."
                     )
                     st.session_state.execution_controls_phase = "live"
                     st.rerun()
@@ -2813,24 +2948,24 @@ with tabs[1]:
                     ),
                 )
                 if live_stop_reason:
-                    st.caption(f"stop_reason: {live_stop_reason}")
+                    st.caption(f"Dovod zastavenia: {live_stop_reason}")
                 if live_block_reasons:
-                    st.warning("Blokacia: " + " ; ".join(live_block_reasons))
+                    st.warning("Obchod teraz nie je mozne odoslat. " + " ".join(live_block_reasons))
                 confirmation_input = st.text_input(
                     "Potvrdzovaci text",
                     key="execution_controls_live_confirmation",
                     placeholder=LIVE_ORDER_CONFIRMATION_TEXT,
-                    help="Pre live fazu musi text sediet presne, aj ked submit zostava zatial vypnuty.",
+                    help="Text musi sediet presne, aj ked odoslanie obchodu zostava vypnute.",
                 )
                 confirmation_matches = confirmation_input.strip() == LIVE_ORDER_CONFIRMATION_TEXT
                 if not confirmation_matches:
                     st.caption(f"Presny text: {LIVE_ORDER_CONFIRMATION_TEXT}")
                 st.button(
-                    "Vykonať obchod",
+                    "Odoslat obchod",
                     key="execution_controls_execute",
                     use_container_width=True,
                     disabled=True,
-                    help="Live-order submit z app UI nie je v tejto verzii backendovo napojeny.",
+                    help="Odoslanie obchodu z tejto obrazovky este nie je dostupne.",
                 )
 
         st.markdown(f"#### {account_ui_text(lang, 'overview')}")
