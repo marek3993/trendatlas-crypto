@@ -1,2 +1,2 @@
-model,cagr_pct,max_drawdown_pct,since2023_cagr_pct,since2025_cagr_pct,sharpe,sortino,switch_count,cash_days_pct,btc_days_pct
-phase68i_dynamic_ladder_candidate,189.13,-27.24,218.48,223.19,1.9075,2.8023,90,0.0000,0.0000
+model,total_return_pct,cagr_pct,max_drawdown_pct,since2023_cagr_pct,since2025_cagr_pct,sharpe,sortino,switch_count,cash_days_pct,btc_days_pct
+phase68i_dynamic_ladder_candidate,441056.82,189.13,-27.24,218.48,223.19,1.9075,2.8023,90,40.8227,7.1552
