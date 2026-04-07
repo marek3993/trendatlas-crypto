@@ -2441,7 +2441,7 @@ def load_model_paper(
             expected_since2025_cagr_pct=expected_since2025_cagr_pct,
         )
         if official_phase68i_path is not None:
-            candidates.insert(0, official_phase68i_path)
+            candidates.append(official_phase68i_path)
         candidates.extend(iter_phase68i_dynamic_paper_candidates())
 
     deduped_candidates: list[Path] = []
