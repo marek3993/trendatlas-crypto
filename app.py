@@ -12,6 +12,19 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+APP_EXECUTE_BRIDGE_IMPORT_ERROR = ""
+try:
+    from scripts.execution.app_execute_bridge import (
+        BACKEND_CONFIRM_TOKEN as APP_BACKEND_CONFIRM_TOKEN,
+        UI_CONFIRMATION_TEXT as APP_UI_CONFIRMATION_TEXT,
+        run_app_execute_action,
+    )
+except Exception as exc:  # pragma: no cover - Streamlit fallback only
+    APP_BACKEND_CONFIRM_TOKEN = "CONTROLLED_REAL_ORDER"
+    APP_UI_CONFIRMATION_TEXT = "POTVRDZUJEM VYKONAT OBCHOD"
+    run_app_execute_action = None
+    APP_EXECUTE_BRIDGE_IMPORT_ERROR = str(exc)
+
 st.set_page_config(page_title="TrendAtlas Crypto", layout="wide")
 
 # =========================================================
@@ -26,9 +39,14 @@ DEFAULT_ACCOUNT_SNAPSHOT_PATH = "outputs/execution/read_only/hyperliquid_account
 DEFAULT_RUNTIME_HEALTH_PATH = "outputs/execution/runtime_health/latest_runtime_health.json"
 DEFAULT_DRY_RUN_DECISION_PATH = "outputs/execution/dry_run/latest_dry_run_decision.json"
 DEFAULT_REAL_ORDER_GATE_PATH = "outputs/execution/live_gate/latest_real_order_gate_decision.json"
+DEFAULT_RECONCILIATION_PATH = "outputs/execution/reconciliation/latest_reconciliation_report.json"
+DEFAULT_SUBMIT_PREVIEW_DECISION_PATH = "outputs/execution/submit_preview/latest_submit_preview_decision.json"
+DEFAULT_SUBMIT_EXCHANGE_RESPONSE_PATH = "outputs/execution/submit_preview/latest_submit_exchange_response.json"
+DEFAULT_SUBMIT_POST_SNAPSHOT_PATH = "outputs/execution/submit_preview/latest_submit_post_snapshot.json"
+DEFAULT_POST_SUBMIT_RECON_PATH = "outputs/execution/submit_preview/latest_post_submit_reconciliation.json"
 EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
-LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM VYKONAT OBCHOD"
+LIVE_ORDER_CONFIRMATION_TEXT = APP_UI_CONFIRMATION_TEXT
 
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
@@ -876,6 +894,18 @@ def prettify_account_result(value: str | None, lang: str) -> str:
     return pretty_token(value, lang)
 
 
+def describe_bridge_action(value: str | None, lang: str = "sk") -> str:
+    text = str(value or "").strip().lower()
+    mapping = {
+        "refresh": {"sk": "Obnovenie udajov", "en": "Refresh"},
+        "dry_run": {"sk": "Prepocet nanecisto", "en": "Dry-run"},
+        "live_execute": {"sk": "Odoslanie obchodu", "en": "Live execute"},
+    }
+    if text in mapping:
+        return mapping[text][lang]
+    return pretty_token(value, lang)
+
+
 def prettify_account_read_mode(value: str | None, lang: str) -> str:
     text = str(value or "").strip().lower()
     mapping = {
@@ -1011,6 +1041,103 @@ def build_account_snapshot_view(status_payload: dict, snapshot_payload: dict) ->
         )
 
     return account
+
+
+def build_live_execute_gate_state(
+    *,
+    bridge_available: bool,
+    bridge_import_error: str,
+    execution_mode_payload: dict,
+    live_order_policy_payload: dict,
+    dry_run_decision_payload: dict,
+    real_order_gate_payload: dict,
+) -> dict[str, object]:
+    reasons: list[str] = []
+    checks = get_nested_dict(real_order_gate_payload, "checks")
+
+    if not bridge_available:
+        reasons.append("APP bridge pre live execute nie je dostupny.")
+        if bridge_import_error:
+            reasons.append(f"Import bridge zlyhal: {bridge_import_error}")
+    if not execution_mode_payload:
+        reasons.append("Chyba execution_mode.json.")
+    if not live_order_policy_payload:
+        reasons.append("Chyba live_order_policy.json.")
+    if not dry_run_decision_payload:
+        reasons.append("Chyba latest_dry_run_decision.json.")
+    if not real_order_gate_payload:
+        reasons.append("Chyba latest_real_order_gate_decision.json.")
+
+    if execution_mode_payload and str(execution_mode_payload.get("mode") or "").strip().lower() != "live":
+        reasons.append("execution_mode.json nema mode=live.")
+    if execution_mode_payload and as_bool(execution_mode_payload.get("trading_enabled")) is not True:
+        reasons.append("execution_mode.json nema trading_enabled=true.")
+    if live_order_policy_payload and as_bool(live_order_policy_payload.get("allow_live_orders")) is not True:
+        reasons.append("live_order_policy.json nema allow_live_orders=true.")
+    if live_order_policy_payload and as_bool(live_order_policy_payload.get("manual_approval_required")) is True:
+        reasons.append("live_order_policy.json stale vyzaduje manual_approval_required=true.")
+    if (
+        execution_mode_payload
+        and live_order_policy_payload
+        and as_bool(live_order_policy_payload.get("require_kill_switch_off")) is True
+        and as_bool(execution_mode_payload.get("kill_switch")) is True
+    ):
+        reasons.append("Live policy vyzaduje kill_switch=false.")
+
+    gate_status = str(real_order_gate_payload.get("status") or "").strip()
+    if real_order_gate_payload and gate_status != "ready_if_enabled":
+        reasons.append(f"Gate status nie je ready_if_enabled: {gate_status or 'neznamy'}.")
+    if real_order_gate_payload and as_bool(real_order_gate_payload.get("would_place_real_order")) is not True:
+        reasons.append("Gate artefakt nepotvrdzuje would_place_real_order=true.")
+    if real_order_gate_payload and checks and as_bool(checks.get("approval_status_allowed")) is not True:
+        reasons.append("Approval status nie je povoleny pre live execute.")
+    if real_order_gate_payload and checks and as_bool(checks.get("leverage_live_truth_allowed")) is not True:
+        reasons.append("Gate nepotvrdzuje leverage_live_truth_allowed=true.")
+    if real_order_gate_payload and checks and as_bool(checks.get("account_address_present")) is not True:
+        reasons.append("Gate nepotvrdzuje account_address.")
+
+    dry_run_action = str(dry_run_decision_payload.get("recommended_action") or "").strip()
+    dry_run_would_place_order = as_bool(
+        get_nested_value(dry_run_decision_payload, "simulated_order", "would_place_order")
+    )
+    if dry_run_decision_payload and dry_run_would_place_order is not True:
+        reasons.append(
+            "Dry-run dnes neukazuje realny submit "
+            f"({dry_run_action or 'neznamy stav'})."
+        )
+    if dry_run_decision_payload and dry_run_action.startswith("block_"):
+        reasons.append(f"Dry-run hlasi blocker: {dry_run_action}.")
+    if dry_run_decision_payload and as_bool(dry_run_decision_payload.get("stale_signal")) is True:
+        reasons.append("Dry-run hlasi stale_signal=true.")
+    if dry_run_decision_payload and as_bool(dry_run_decision_payload.get("duplicate_order_risk")) is True:
+        reasons.append("Dry-run hlasi duplicate_order_risk=true.")
+    if (
+        dry_run_decision_payload
+        and as_bool(get_nested_value(dry_run_decision_payload, "guardrails", "contract_validated")) is not True
+    ):
+        reasons.append("Dry-run nema guardrails.contract_validated=true.")
+
+    for item in real_order_gate_payload.get("block_reasons", []) or []:
+        text = str(item).strip()
+        if text and text not in reasons:
+            reasons.append(text)
+
+    return {
+        "ok": not reasons,
+        "reasons": reasons,
+        "status": gate_status,
+        "would_place_real_order": as_bool(real_order_gate_payload.get("would_place_real_order")),
+    }
+
+
+def render_json_artifact_block(title: str, path_label: str, payload: dict | None, *, expanded: bool = False) -> None:
+    st.markdown(f"**{title}**")
+    st.caption(path_label)
+    if payload:
+        with st.expander("Zobrazit JSON", expanded=expanded):
+            st.json(payload)
+    else:
+        st.caption("Artefakt zatial nie je dostupny.")
 
 
 def prettify_balance_source(value: str | None, lang: str) -> str:
@@ -2423,10 +2550,10 @@ inject_css()
 
 if "lang" not in st.session_state:
     st.session_state.lang = "sk"
-if "execution_controls_phase" not in st.session_state:
-    st.session_state.execution_controls_phase = "refresh"
 if "execution_controls_notice" not in st.session_state:
     st.session_state.execution_controls_notice = ""
+if "execution_bridge_result" not in st.session_state:
+    st.session_state.execution_bridge_result = {}
 
 selector_cfg = load_selector_config()
 
@@ -2509,6 +2636,11 @@ account_snapshot_view = build_account_snapshot_view(account_status_payload, acco
 runtime_health_payload = load_json_optional(DEFAULT_RUNTIME_HEALTH_PATH)
 dry_run_decision_payload = load_json_optional(DEFAULT_DRY_RUN_DECISION_PATH)
 real_order_gate_payload = load_json_optional(DEFAULT_REAL_ORDER_GATE_PATH)
+reconciliation_payload = load_json_optional(DEFAULT_RECONCILIATION_PATH)
+submit_preview_decision_payload = load_json_optional(DEFAULT_SUBMIT_PREVIEW_DECISION_PATH)
+submit_exchange_response_payload = load_json_optional(DEFAULT_SUBMIT_EXCHANGE_RESPONSE_PATH)
+submit_post_snapshot_payload = load_json_optional(DEFAULT_SUBMIT_POST_SNAPSHOT_PATH)
+post_submit_reconciliation_payload = load_json_optional(DEFAULT_POST_SUBMIT_RECON_PATH)
 execution_mode_payload = load_json_optional(EXECUTION_MODE_CONFIG_PATH)
 live_order_policy_payload = load_json_optional(LIVE_ORDER_POLICY_PATH)
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
@@ -2730,15 +2862,15 @@ with tabs[1]:
     if account_enabled is False:
         st.info(account_ui_text(lang, "observability_disabled"))
     else:
-        active_phase = st.session_state.get("execution_controls_phase", "refresh")
         control_notice = str(st.session_state.get("execution_controls_notice") or "").strip()
+        bridge_result = st.session_state.get("execution_bridge_result") or {}
+        bridge_available = callable(run_app_execute_action)
+
         refresh_missing_artifacts = []
         if not account_status_payload:
             refresh_missing_artifacts.append("execution_status.json")
         if not account_snapshot_payload:
             refresh_missing_artifacts.append("hyperliquid_account_snapshot.json")
-        if not runtime_health_payload:
-            refresh_missing_artifacts.append("latest_runtime_health.json")
 
         refresh_trading_enabled_value = first_present_value(
             runtime_guardrail_payload.get("trading_enabled"),
@@ -2756,35 +2888,17 @@ with tabs[1]:
         dry_run_missing_artifacts = []
         if not dry_run_decision_payload:
             dry_run_missing_artifacts.append("latest_dry_run_decision.json")
-        if not runtime_health_payload:
-            dry_run_missing_artifacts.append("latest_runtime_health.json")
 
-        live_block_reasons = []
-        if not execution_mode_payload:
-            live_block_reasons.append("Chyba execution_mode.json.")
-        if not live_order_policy_payload:
-            live_block_reasons.append("Chyba live_order_policy.json.")
-        if not real_order_gate_payload:
-            live_block_reasons.append("Chyba latest_real_order_gate_decision.json.")
-        if str(account_observability_cfg.get("read_mode") or "").strip().lower() in {
-            "read_only",
-            "read_only_operational_view",
-            "operational_read_only_view",
-        }:
-            live_block_reasons.append("Dashboard ma kontraktovo read-only observability framing.")
-        if as_bool(real_order_gate_payload.get("real_orders_enabled")) is False:
-            live_block_reasons.append("Gate artefakt hovori, ze real orders su vypnute.")
-        if as_bool(get_nested_value(real_order_gate_payload, "checks", "approval_status_allowed")) is False:
-            live_block_reasons.append("Approval gate status nie je povoleny pre live-order flow.")
-        if as_bool(get_nested_value(real_order_gate_payload, "checks", "leverage_live_truth_allowed")) is False:
-            live_block_reasons.append("Gate artefakt nepotvrdzuje leverage/live truth eligible stav pre realny order.")
-        if str(runtime_guardrail_payload.get("mode") or "").strip().lower() == "read_only":
-            live_block_reasons.append("Posledny validovany runtime guardrail ostava read_only + dry_run.")
-        for item in real_order_gate_payload.get("block_reasons", []) or []:
-            text = str(item).strip()
-            if text:
-                live_block_reasons.append(text)
-        live_block_reasons.append("APP flow nie je v tejto verzii napojeny na submit_controlled_real_order.py.")
+        live_gate_state = build_live_execute_gate_state(
+            bridge_available=bridge_available,
+            bridge_import_error=APP_EXECUTE_BRIDGE_IMPORT_ERROR,
+            execution_mode_payload=execution_mode_payload,
+            live_order_policy_payload=live_order_policy_payload,
+            dry_run_decision_payload=dry_run_decision_payload,
+            real_order_gate_payload=real_order_gate_payload,
+        )
+        live_block_reasons = list(live_gate_state["reasons"])
+
         if refresh_missing_artifacts:
             refresh_missing_artifacts = [
                 "Niektore udaje momentalne chybaju."
@@ -2797,19 +2911,10 @@ with tabs[1]:
                 if lang == "sk"
                 else "Some dry-run inputs are currently missing."
             ]
-        if live_block_reasons:
-            live_block_reasons = [
-                "Tato obrazovka sluzi len na prehlad uctu."
-                if lang == "sk"
-                else "This screen is for account overview only.",
-                "Odoslanie obchodu z tejto obrazovky zatial nie je dostupne."
-                if lang == "sk"
-                else "Trade submission from this screen is not available yet.",
-            ]
 
         live_trading_enabled_value = first_present_value(
             execution_mode_payload.get("trading_enabled"),
-            real_order_gate_payload.get("real_orders_enabled"),
+            get_nested_value(real_order_gate_payload, "checks", "execution_trading_enabled"),
         )
         live_kill_switch_value = first_present_value(
             execution_mode_payload.get("kill_switch"),
@@ -2818,14 +2923,9 @@ with tabs[1]:
 
         refresh_stop_reason = str(runtime_health_payload.get("stop_reason") or "").strip()
         dry_run_stop_reason = refresh_stop_reason
-        live_stop_reason = refresh_stop_reason
+        live_stop_reason = str(real_order_gate_payload.get("status") or "").strip()
         refresh_timestamp = format_utc_text(account_snapshot_view.get("as_of_utc"), lang)
         dry_run_timestamp = format_utc_text(dry_run_decision_payload.get("generated_at_utc"), lang)
-        phase_badges = {
-            "refresh": ("LEN NA CITANIE" if lang == "sk" else "READ-ONLY", "#365f9c"),
-            "dry_run": ("NANECISTO" if lang == "sk" else "DRY-RUN", "#8a6d1f"),
-            "live": ("OBCHOD" if lang == "sk" else "LIVE", "#8e3b3b"),
-        }
 
         open_position = account_snapshot_view.get("open_position")
         connection_text = prettify_account_status(account_snapshot_view.get("status"), lang)
@@ -2842,11 +2942,15 @@ with tabs[1]:
             if lang == "sk"
             else "This is not official proof of live trading."
         )
-        read_mode_text = ""
-        mode_text = ""
-        provider_text = ""
-        masked_account_address = ""
-        balance_source_text = ""
+        read_mode_text = prettify_account_read_mode(account_observability_cfg.get("read_mode"), lang)
+        mode_text = pretty_token(account_snapshot_view.get("mode"), lang)
+        provider_text = safe_text_value(account_snapshot_view.get("provider"), lang=lang)
+        full_account_address = str(account_snapshot_view.get("account_address") or "").strip()
+        if len(full_account_address) >= 12:
+            masked_account_address = f"{full_account_address[:6]}...{full_account_address[-4:]}"
+        else:
+            masked_account_address = safe_text_value(full_account_address, lang=lang)
+        balance_source_text = prettify_balance_source(account_snapshot_view.get("balance_source_of_truth"), lang)
 
         if not no_position:
             side_key = str(open_position.get("side")).upper()
@@ -2884,22 +2988,26 @@ with tabs[1]:
 
         st.markdown("#### Ovladanie")
         with st.container(border=True):
-            header_cols = st.columns([3, 1.15])
-            with header_cols[0]:
-                if active_phase == "dry_run":
-                    st.markdown("**Prepocitat nanecisto**")
-                elif active_phase == "live":
-                    st.markdown("**Odoslat obchod**")
-                else:
-                    st.markdown("**Obnovit udaje**")
-            with header_cols[1]:
-                badge_label, badge_color = phase_badges.get(active_phase, phase_badges["refresh"])
-                render_phase_badge(badge_label, badge_color)
-
+            st.markdown("**APP backend bridge**")
             if control_notice:
-                st.info(control_notice)
+                bridge_status_value = str(bridge_result.get("status") or "").strip().lower()
+                if bridge_result.get("ok"):
+                    st.success(control_notice)
+                elif bridge_status_value == "blocked":
+                    st.warning(control_notice)
+                else:
+                    st.error(control_notice)
 
-            if active_phase == "refresh":
+            if not bridge_available:
+                st.warning(
+                    "Local execution bridge sa nepodarilo nacitat. "
+                    f"APP nezapne backend akcie. Detail: {APP_EXECUTE_BRIDGE_IMPORT_ERROR or 'neznamy dovod'}"
+                )
+
+            refresh_col, dry_run_col, live_col = st.columns(3)
+
+            with refresh_col:
+                render_phase_badge("LEN NA CITANIE", "#365f9c")
                 render_ops_inline_note(
                     "Zhrnutie",
                     (
@@ -2909,17 +3017,27 @@ with tabs[1]:
                     ),
                 )
                 if refresh_stop_reason:
-                    st.caption(f"Dovod zastavenia: {refresh_stop_reason}")
+                    st.caption(f"Runtime health: {refresh_stop_reason}")
                 if refresh_missing_artifacts:
                     st.warning(f"Chybaju podporne artefakty: {', '.join(refresh_missing_artifacts)}")
-                if st.button("Obnovit udaje", key="execution_controls_refresh", use_container_width=True):
-                    st.session_state.execution_controls_notice = (
-                        "Udaje boli obnovene iba v aplikacii. Ziadny obchod nebol odoslany."
-                    )
-                    st.session_state.execution_controls_phase = "dry_run"
+                if st.button(
+                    "Obnovit udaje",
+                    key="execution_controls_refresh",
+                    use_container_width=True,
+                    disabled=not bridge_available,
+                ):
+                    with st.spinner("Obnovujem realne operational/account artefakty..."):
+                        result = run_app_execute_action(action="refresh")
+                    st.session_state.execution_bridge_result = result
+                    st.session_state.execution_controls_notice = str(
+                        result.get("user_summary")
+                        or result.get("error")
+                        or "Refresh skoncil bez summary."
+                    ).strip()
                     st.rerun()
 
-            elif active_phase == "dry_run":
+            with dry_run_col:
+                render_phase_badge("NANECISTO", "#8a6d1f")
                 render_ops_inline_note(
                     "Zhrnutie",
                     (
@@ -2929,17 +3047,27 @@ with tabs[1]:
                     ),
                 )
                 if dry_run_stop_reason:
-                    st.caption(f"Dovod zastavenia: {dry_run_stop_reason}")
+                    st.caption(f"Runtime health: {dry_run_stop_reason}")
                 if dry_run_missing_artifacts:
                     st.warning(f"Chybaju podporne artefakty: {', '.join(dry_run_missing_artifacts)}")
-                if st.button("Prepocitat nanecisto", key="execution_controls_recompute", use_container_width=True):
-                    st.session_state.execution_controls_notice = (
-                        "Skusobne vyhodnotenie prebehlo bez odoslania obchodu."
-                    )
-                    st.session_state.execution_controls_phase = "live"
+                if st.button(
+                    "Prepocitat nanecisto",
+                    key="execution_controls_recompute",
+                    use_container_width=True,
+                    disabled=not bridge_available,
+                ):
+                    with st.spinner("Pocitam realny dry-run backend path bez submitu..."):
+                        result = run_app_execute_action(action="dry_run")
+                    st.session_state.execution_bridge_result = result
+                    st.session_state.execution_controls_notice = str(
+                        result.get("user_summary")
+                        or result.get("error")
+                        or "Dry-run skoncil bez summary."
+                    ).strip()
                     st.rerun()
 
-            else:
+            with live_col:
+                render_phase_badge("OBCHOD", "#8e3b3b")
                 render_ops_inline_note(
                     "Kriticke info",
                     (
@@ -2948,24 +3076,102 @@ with tabs[1]:
                     ),
                 )
                 if live_stop_reason:
-                    st.caption(f"Dovod zastavenia: {live_stop_reason}")
+                    st.caption(f"Gate status: {live_stop_reason}")
                 if live_block_reasons:
-                    st.warning("Obchod teraz nie je mozne odoslat. " + " ".join(live_block_reasons))
+                    st.warning("Live execute je blokovany. " + " | ".join(live_block_reasons))
                 confirmation_input = st.text_input(
                     "Potvrdzovaci text",
                     key="execution_controls_live_confirmation",
                     placeholder=LIVE_ORDER_CONFIRMATION_TEXT,
-                    help="Text musi sediet presne, aj ked odoslanie obchodu zostava vypnute.",
+                    help="Bez presneho textu a backend tokenu APP nespusti live submit.",
                 )
                 confirmation_matches = confirmation_input.strip() == LIVE_ORDER_CONFIRMATION_TEXT
                 if not confirmation_matches:
                     st.caption(f"Presny text: {LIVE_ORDER_CONFIRMATION_TEXT}")
-                st.button(
+                if st.button(
                     "Odoslat obchod",
                     key="execution_controls_execute",
                     use_container_width=True,
-                    disabled=True,
-                    help="Odoslanie obchodu z tejto obrazovky este nie je dostupne.",
+                    disabled=(not live_gate_state["ok"]) or (not confirmation_matches),
+                    help="APP vola iba allowlistnuty bridge a ten dalej vola submit_controlled_real_order.py.",
+                ):
+                    with st.spinner("Spustam one-shot controlled submit backend path..."):
+                        result = run_app_execute_action(
+                            action="live_execute",
+                            ui_confirmation_text=confirmation_input,
+                            backend_confirm_token=APP_BACKEND_CONFIRM_TOKEN,
+                        )
+                    st.session_state.execution_bridge_result = result
+                    st.session_state.execution_controls_notice = str(
+                        result.get("user_summary")
+                        or result.get("error")
+                        or "Live execute skoncil bez summary."
+                    ).strip()
+                    st.rerun()
+
+            if bridge_result:
+                bridge_status = pretty_token(bridge_result.get("status"), lang)
+                bridge_action = describe_bridge_action(bridge_result.get("action"), lang)
+                bridge_finished = format_utc_text(bridge_result.get("finished_at_utc"), lang)
+                st.caption(f"Posledny backend beh: {bridge_action} | stav {bridge_status} | dokoncene {bridge_finished}")
+                if bridge_result.get("user_summary"):
+                    st.caption(str(bridge_result.get("user_summary")))
+                if bridge_result.get("error"):
+                    st.error(str(bridge_result.get("error")))
+                with st.expander("Detail backend bridge"):
+                    st.json(bridge_result)
+
+        if real_order_gate_payload or reconciliation_payload:
+            st.markdown("#### Gate a reconciliacia")
+            gate_cols = st.columns(2)
+            with gate_cols[0]:
+                render_json_artifact_block(
+                    "Real-order gate",
+                    DEFAULT_REAL_ORDER_GATE_PATH,
+                    real_order_gate_payload,
+                    expanded=False,
+                )
+            with gate_cols[1]:
+                render_json_artifact_block(
+                    "Reconciliation",
+                    DEFAULT_RECONCILIATION_PATH,
+                    reconciliation_payload,
+                    expanded=False,
+                )
+
+        if (
+            submit_preview_decision_payload
+            or submit_exchange_response_payload
+            or submit_post_snapshot_payload
+            or post_submit_reconciliation_payload
+        ):
+            st.markdown("#### Live submit artefakty")
+            artifact_cols = st.columns(2)
+            with artifact_cols[0]:
+                render_json_artifact_block(
+                    "Submit preview decision",
+                    DEFAULT_SUBMIT_PREVIEW_DECISION_PATH,
+                    submit_preview_decision_payload,
+                    expanded=True,
+                )
+                render_json_artifact_block(
+                    "Submit exchange response",
+                    DEFAULT_SUBMIT_EXCHANGE_RESPONSE_PATH,
+                    submit_exchange_response_payload,
+                    expanded=False,
+                )
+            with artifact_cols[1]:
+                render_json_artifact_block(
+                    "Submit post snapshot",
+                    DEFAULT_SUBMIT_POST_SNAPSHOT_PATH,
+                    submit_post_snapshot_payload,
+                    expanded=False,
+                )
+                render_json_artifact_block(
+                    "Post-submit reconciliation",
+                    DEFAULT_POST_SUBMIT_RECON_PATH,
+                    post_submit_reconciliation_payload,
+                    expanded=False,
                 )
 
         st.markdown(f"#### {account_ui_text(lang, 'overview')}")
