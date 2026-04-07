@@ -1,0 +1,601 @@
+{
+  "artifact_type": "dev_only_anomaly_cross_family_interaction_stability",
+  "artifact_id": "anomaly_cross_family_interaction_stability",
+  "generated_at_utc": "2026-04-07 12:18:10 UTC",
+  "history_cycle_count": 2,
+  "semantic_note": "recurrence here means repeated anomaly interaction surfacing only, not strategy value",
+  "stable_pairs": [
+    {
+      "family_pair": "cross_asset_decoupling_stack__liquidity_stress_anomaly_stack",
+      "family_a": "cross_asset_decoupling_stack",
+      "family_b": "liquidity_stress_anomaly_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 16.0,
+      "max_overlap_row_count": 16,
+      "mean_joint_interestingness": 1.794231,
+      "latest_top_entities": [
+        "DOGEUSDT",
+        "STXUSDT",
+        "ICPUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "participation_breadth_confirmation_stack__cross_asset_decoupling_stack",
+      "family_a": "participation_breadth_confirmation_stack",
+      "family_b": "cross_asset_decoupling_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 10.0,
+      "max_overlap_row_count": 10,
+      "mean_joint_interestingness": 1.541604,
+      "latest_top_entities": [
+        "STXUSDT",
+        "DOGEUSDT",
+        "ICPUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "participation_breadth_confirmation_stack__liquidity_stress_anomaly_stack",
+      "family_a": "participation_breadth_confirmation_stack",
+      "family_b": "liquidity_stress_anomaly_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 8.0,
+      "max_overlap_row_count": 8,
+      "mean_joint_interestingness": 1.706702,
+      "latest_top_entities": [
+        "STXUSDT",
+        "DOGEUSDT",
+        "ICPUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "cross_asset_decoupling_stack__event_context_flags_stack",
+      "family_a": "cross_asset_decoupling_stack",
+      "family_b": "event_context_flags_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 6.0,
+      "max_overlap_row_count": 6,
+      "mean_joint_interestingness": 1.230196,
+      "latest_top_entities": [
+        "XTZUSDT",
+        "STXUSDT",
+        "DOGEUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "liquidity_stress_anomaly_stack__event_context_flags_stack",
+      "family_a": "liquidity_stress_anomaly_stack",
+      "family_b": "event_context_flags_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 5.0,
+      "max_overlap_row_count": 5,
+      "mean_joint_interestingness": 1.401505,
+      "latest_top_entities": [
+        "STXUSDT",
+        "DOGEUSDT",
+        "XTZUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "pre_move_structure_quality_stack__liquidity_stress_anomaly_stack",
+      "family_a": "pre_move_structure_quality_stack",
+      "family_b": "liquidity_stress_anomaly_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 3.0,
+      "max_overlap_row_count": 3,
+      "mean_joint_interestingness": 1.524765,
+      "latest_top_entities": [
+        "DOGEUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "participation_breadth_confirmation_stack__event_context_flags_stack",
+      "family_a": "participation_breadth_confirmation_stack",
+      "family_b": "event_context_flags_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 2.0,
+      "max_overlap_row_count": 2,
+      "mean_joint_interestingness": 1.230914,
+      "latest_top_entities": [
+        "STXUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "pre_move_structure_quality_stack__cross_asset_decoupling_stack",
+      "family_a": "pre_move_structure_quality_stack",
+      "family_b": "cross_asset_decoupling_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 2.0,
+      "max_overlap_row_count": 2,
+      "mean_joint_interestingness": 1.53435,
+      "latest_top_entities": [
+        "DOGEUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "pre_move_structure_quality_stack__participation_breadth_confirmation_stack",
+      "family_a": "pre_move_structure_quality_stack",
+      "family_b": "participation_breadth_confirmation_stack",
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "mean_overlap_row_count": 2.0,
+      "max_overlap_row_count": 2,
+      "mean_joint_interestingness": 1.398582,
+      "latest_top_entities": [
+        "DOGEUSDT"
+      ],
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    }
+  ],
+  "stable_clusters": [
+    {
+      "entity": "STXUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2023-02-19",
+        "2023-02-20",
+        "2023-02-21",
+        "2023-02-23"
+      ],
+      "mean_interaction_interestingness": 6.802699,
+      "max_active_family_count": 3,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "DOGEUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2020-07-08"
+      ],
+      "mean_interaction_interestingness": 6.782138,
+      "max_active_family_count": 3,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "DOGEUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack",
+        "pre_move_structure_quality_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2024-11-11"
+      ],
+      "mean_interaction_interestingness": 6.557464,
+      "max_active_family_count": 4,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "DOGEUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2020-07-10"
+      ],
+      "mean_interaction_interestingness": 5.655588,
+      "max_active_family_count": 3,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "DOGEUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2020-07-07",
+        "2020-07-09",
+        "2024-11-10"
+      ],
+      "mean_interaction_interestingness": 5.649397,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "ICPUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2023-12-17"
+      ],
+      "mean_interaction_interestingness": 5.608061,
+      "max_active_family_count": 3,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "DOGEUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "pre_move_structure_quality_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2024-11-12"
+      ],
+      "mean_interaction_interestingness": 5.298611,
+      "max_active_family_count": 3,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "STXUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2023-02-27"
+      ],
+      "mean_interaction_interestingness": 5.285604,
+      "max_active_family_count": 3,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "STXUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2021-10-15"
+      ],
+      "mean_interaction_interestingness": 5.075141,
+      "max_active_family_count": 3,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "STXUSDT",
+      "active_families": [
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2023-03-31"
+      ],
+      "mean_interaction_interestingness": 4.995148,
+      "max_active_family_count": 3,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "STXUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2021-10-10",
+        "2023-03-12"
+      ],
+      "mean_interaction_interestingness": 4.416896,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "DOGEUSDT",
+      "active_families": [
+        "liquidity_stress_anomaly_stack",
+        "pre_move_structure_quality_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2024-11-13"
+      ],
+      "mean_interaction_interestingness": 4.110252,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "ICPUSDT",
+      "active_families": [
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2023-12-18"
+      ],
+      "mean_interaction_interestingness": 4.040925,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "XTZUSDT",
+      "active_families": [
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2021-09-28"
+      ],
+      "mean_interaction_interestingness": 3.943769,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "XTZUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2021-09-24"
+      ],
+      "mean_interaction_interestingness": 3.899502,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "ICPUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2023-12-19"
+      ],
+      "mean_interaction_interestingness": 3.860346,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "STXUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2024-01-08",
+        "2024-01-11"
+      ],
+      "mean_interaction_interestingness": 3.813901,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "entity": "ICPUSDT",
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack"
+      ],
+      "cycles_seen": 2,
+      "persistence_ratio": 1.0,
+      "first_seen_cycle_id": "20260407T121311841652Z",
+      "last_seen_cycle_id": "20260407T121753036817Z",
+      "sample_dates": [
+        "2023-12-22"
+      ],
+      "mean_interaction_interestingness": 3.747391,
+      "max_active_family_count": 2,
+      "stability_note": "recurred across recorded cycles",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    }
+  ],
+  "status": "generated_dev_only_interaction_stability",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}
