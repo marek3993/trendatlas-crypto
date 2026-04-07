@@ -10,6 +10,8 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 import sys
+from urllib.request import Request, urlopen
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent
 if str(ROOT) not in sys.path:
@@ -55,6 +57,8 @@ EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.jso
 LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
+APP_DISPLAY_TIMEZONE = ZoneInfo("Europe/Bratislava")
+BTC_LIVE_TICKER_24H_URL = "https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT"
 
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
@@ -971,6 +975,20 @@ def format_utc_text(value: str | None, lang: str) -> str:
         if parsed.tzinfo is not None:
             parsed = parsed.astimezone(timezone.utc)
         return f"{parsed.day}.{parsed.month}.{parsed.year} {parsed.hour}:{parsed.minute:02d} UTC"
+    except ValueError:
+        return format_date_text(text, lang)
+
+
+def format_local_time_text(value: str | None, lang: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return t(lang, "na")
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        parsed = parsed.astimezone(APP_DISPLAY_TIMEZONE)
+        return f"{parsed.day}.{parsed.month}.{parsed.year} {parsed.hour}:{parsed.minute:02d}"
     except ValueError:
         return format_date_text(text, lang)
 
@@ -2408,6 +2426,26 @@ def load_btc_df() -> pd.DataFrame:
     return df.drop_duplicates(subset=["ts"]).reset_index(drop=True)
 
 
+@st.cache_data(ttl=20, show_spinner=False)
+def fetch_live_btc_ticker_24h() -> dict[str, float] | None:
+    try:
+        request = Request(BTC_LIVE_TICKER_24H_URL, headers={"User-Agent": "TrendAtlas Crypto"})
+        with urlopen(request, timeout=4) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+        if not isinstance(payload, dict):
+            return None
+        last_price = as_float(payload.get("lastPrice"))
+        price_change_pct = as_float(payload.get("priceChangePercent"))
+        if last_price is None or price_change_pct is None:
+            return None
+        return {
+            "last_price": last_price,
+            "price_change_pct": price_change_pct,
+        }
+    except Exception:
+        return None
+
+
 def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     if btc_df is None or btc_df.empty or "close" not in btc_df.columns:
         return {}
@@ -2416,18 +2454,25 @@ def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     if len(closed_btc) < 2:
         return {}
 
-    previous_close = as_float(closed_btc.iloc[0]["close"])
     latest_close = as_float(closed_btc.iloc[1]["close"])
-    if previous_close in (None, 0) or latest_close is None:
+    if latest_close in (None, 0):
         return {}
 
-    pct_change = ((latest_close / previous_close) - 1.0) * 100.0
+    live_ticker = fetch_live_btc_ticker_24h()
+    if live_ticker:
+        display_price = as_float(live_ticker.get("last_price")) or latest_close
+        pct_change = as_float(live_ticker.get("price_change_pct"))
+    else:
+        display_price = latest_close
+        pct_change = 0.0
+    if pct_change is None:
+        pct_change = 0.0
     direction = "↑" if pct_change >= 0 else "↓"
     return {
         "label": "BTC",
         "direction": direction,
         "change_text": f"{pct_change:+.2f}%",
-        "price_text": f"${latest_close:,.0f}",
+        "price_text": f"${display_price:,.0f}",
     }
 
 
@@ -3442,12 +3487,12 @@ with tabs[0]:
     with ops[4]:
         render_color_card(
             t(lang, "strategy_last_update"),
-            format_utc_text(strategy_last_update_utc, lang),
+            format_local_time_text(strategy_last_update_utc, lang),
             "",
             (
-                "Tento cas ide priamo z outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json cez generated_at_utc."
+                "Tento cas ide priamo z outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json cez generated_at_utc a zobrazuje sa v lokalnom case Europe/Bratislava."
                 if lang == "sk"
-                else "This timestamp comes directly from outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json via generated_at_utc."
+                else "This timestamp comes directly from outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json via generated_at_utc and is shown in Europe/Bratislava local time."
             ),
             "neutral",
         )
