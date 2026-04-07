@@ -25,8 +25,18 @@
 - continuous runtime loop: explicit request only
 - source_of_truth writes are not part of runtime loops
 - AI LAB: schema_contract_expansion maintenance step is complete
-- AI LAB: idle for strategy generation
-- AI LAB: no new autonomous line is assigned
+- AI LAB: phase69 remains paused pending future objective reframing
+- AI LAB: strategy advancement remains paused
+- AI LAB: dev-only execution mode is approved
+- AI LAB: dev-only runner/spec maintenance is allowed
+- AI LAB: widened dev-only implementation is approved for:
+  - cross_asset_decoupling_stack
+  - liquidity_stress_anomaly_stack
+  - event_context_flags_stack
+- all such AI LAB outputs must remain:
+  - dev_only = true
+  - non_authoritative = true
+- no new strategy line, no phase69 reopening, no scoring loosening, and no APP / DATA / EXECUTION / live-order drift
 
 ## Workflow rules
 - Repo-heavy / multi-step workflow: Codex should be used for repo patching/execution.
