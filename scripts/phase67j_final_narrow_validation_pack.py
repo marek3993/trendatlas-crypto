@@ -9,10 +9,12 @@ import numpy as np
 import pandas as pd
 
 import phase66e_probation_governance as core
+from freshness_lineage import build_producer_lineage
 
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUTS = ROOT / "outputs"
+BTC_RAW_PATH = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
 
 CORE_MODEL_KEY = "phase66g_production_soft_filters"
 CORE_PAPER = (
@@ -1048,6 +1050,8 @@ def main() -> None:
         out_path = PHASE67J_DIR / f"{model}_paper.csv"
         paper.reset_index().rename(columns={paper.index.name or "index": "date"}).to_csv(out_path, index=False)
 
+    best_model_output_path = PHASE67J_DIR / f"{best_model}_paper.csv"
+
     manifest = {
         "phase": "phase67j_final_narrow_validation_pack",
         "phase63_paper": str(args.phase63_paper),
@@ -1069,6 +1073,13 @@ def main() -> None:
         "live_status_file": str(live_status_path),
         "latest_top10_file": str(latest_top10_path),
         "best_model": best_model,
+        "freshness_lineage": build_producer_lineage(
+            producer_script=__file__,
+            source_file=args.core_paper,
+            raw_file=BTC_RAW_PATH,
+            output_file=best_model_output_path,
+            date_semantics="execution_date",
+        ),
     }
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 

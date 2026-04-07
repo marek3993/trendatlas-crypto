@@ -8,6 +8,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from freshness_lineage import build_producer_lineage
+
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUTS = ROOT / "outputs"
@@ -283,11 +285,45 @@ def discover_candidate_files() -> list[Path]:
     return found
 
 
-def resolve_base_strategy_file(path: Path) -> Path:
-    if not path.exists():
-        raise FileNotFoundError(f"Explicit base paper path does not exist: {path}")
-    log(f"[BASE] Using explicit base paper: {path}")
-    return path
+def resolve_base_strategy_file(path: Path, winner_key: str) -> Path:
+    explicit = Path(path)
+
+    if explicit.exists():
+        explicit_name = explicit.name.lower()
+        if winner_key.lower() in explicit_name:
+            log(f"[BASE] Using explicit base paper: {explicit}")
+            return explicit
+        log(f"[BASE] Explicit path exists but is stale for winner_key={winner_key}: {explicit}")
+
+    candidates = []
+    target_name = f"{winner_key}_paper.csv".lower()
+
+    for candidate in discover_candidate_files():
+        try:
+            candidate_resolved = candidate.resolve()
+        except Exception:
+            candidate_resolved = candidate
+
+        if PHASE63_DIR.resolve() in candidate_resolved.parents:
+            continue
+
+        if candidate.name.lower() == target_name:
+            candidates.append(candidate)
+
+    if not candidates:
+        raise FileNotFoundError(
+            f"Could not resolve upstream base paper for winner_key={winner_key}. "
+            f"Explicit path was stale/missing: {explicit}"
+        )
+
+    candidates = sorted(
+        candidates,
+        key=lambda p: (p.stat().st_mtime, str(p)),
+        reverse=True,
+    )
+    resolved = candidates[0]
+    log(f"[BASE] Resolved winner base paper from upstream outputs: {resolved}")
+    return resolved
 
 
 def load_base_strategy(path: Path) -> pd.DataFrame:
@@ -630,6 +666,7 @@ def main() -> None:
     parser.add_argument("--winner-label", type=str, default=CURRENT_INTERNAL_WINNER_LABEL)
     parser.add_argument("--baseline-key", type=str, default=LATEST_BEST_BASELINE_KEY)
     parser.add_argument("--base-paper-path", type=str, default=str(EXPLICIT_BASE_PAPER_PATH))
+    parser.add_argument("--only-model", type=str, default="")
     args = parser.parse_args()
 
     ensure_dir(PHASE63_DIR)
@@ -639,7 +676,7 @@ def main() -> None:
     log(f"[PHASE63] Winner label: {args.winner_label}")
     log(f"[PHASE63] Baseline key: {args.baseline_key}")
 
-    base_file = resolve_base_strategy_file(Path(args.base_paper_path))
+    base_file = resolve_base_strategy_file(Path(args.base_paper_path), args.winner_key)
     btc_file = discover_btc_price_file()
 
     base_df = load_base_strategy(base_file)
@@ -647,6 +684,10 @@ def main() -> None:
     merged = merge_inputs(base_df, btc_df)
 
     variants = build_variant_grid()
+    if args.only_model:
+        variants = [v for v in variants if v.name == args.only_model]
+        if not variants:
+            raise ValueError(f"Requested only-model not found in phase63 grid: {args.only_model}")
     log(f"[PHASE63] Variants: {len(variants)}")
 
     base_paper, base_row = build_baseline_rows(merged, args.winner_key)
@@ -718,6 +759,9 @@ def main() -> None:
         tmp = paper.copy().reset_index().rename(columns={paper.index.name or "index": "date"})
         tmp.to_csv(out_path, index=False)
 
+    primary_output_model = next((model for model in top_models if model.lower().startswith("phase63")), top_models[0])
+    primary_output_path = PHASE63_DIR / f"{primary_output_model}_paper.csv"
+
     manifest = {
         "phase": "phase63_btc_participation_overlay",
         "winner_input_key": args.winner_key,
@@ -730,6 +774,13 @@ def main() -> None:
         "top_saved_models": top_models,
         "variant_count_total": int(len(variants)),
         "execution_model": "signal_t -> execute_t_plus_1",
+        "freshness_lineage": build_producer_lineage(
+            producer_script=__file__,
+            source_file=base_file,
+            raw_file=btc_file,
+            output_file=primary_output_path,
+            date_semantics="execution_date",
+        ),
         "notes": [
             "BASE = explicitný phase61 winner paper",
             "BTC = preferovaný len keď BTC trend je OK a base leader je slabý",

@@ -9,10 +9,12 @@ import numpy as np
 import pandas as pd
 
 import phase66e_probation_governance as core
+from freshness_lineage import build_producer_lineage
 
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUTS = ROOT / "outputs"
+BTC_RAW_PATH = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
 
 CURRENT_WINNER_KEY = core.CURRENT_WINNER_KEY
 CURRENT_WINNER_PAPER = core.CURRENT_WINNER_PAPER
@@ -351,6 +353,13 @@ def main() -> None:
         "latest_available_date": latest_available_date,
         "latest_decision_date": latest_decision_date,
         "next_rebalance_date": next_rebalance_date,
+        "freshness_lineage": build_producer_lineage(
+            producer_script=__file__,
+            source_file=args.baseline_paper,
+            raw_file=BTC_RAW_PATH,
+            output_file=production_paper_path,
+            date_semantics="execution_date",
+        ),
         "trend_barometer_definition": {
             "trend_score": "clip((base_strength_lb - weak_base_threshold) / max(candidate_ret_min, candidate_risk_buffer, 1e-6), -1, 1)",
             "buy_threshold": 0.0,

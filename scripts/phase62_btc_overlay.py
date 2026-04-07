@@ -2,16 +2,26 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
+from freshness_lineage import build_producer_lineage
+
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUTS = ROOT / "outputs"
 PHASE62_DIR = OUTPUTS / "phase62_btc_overlay"
+EXCLUDED_BASE_DISCOVERY_DIRS = [
+    OUTPUTS / "phase62_btc_overlay",
+    OUTPUTS / "phase63_btc_participation_overlay",
+    OUTPUTS / "phase66g_production_candidate_live",
+    OUTPUTS / "phase67j_final_narrow_validation_pack",
+    OUTPUTS / "execution" / "app_exports",
+]
 
 CURRENT_INTERNAL_WINNER_KEY = "phase61_restore_trx_sol_base"
 LATEST_BEST_BASELINE_KEY = "phase42 core"
@@ -55,7 +65,7 @@ def safe_read_table(path: Path) -> pd.DataFrame:
 
 
 def detect_date_column(df: pd.DataFrame) -> str:
-    for col in ["date", "datetime", "timestamp", "time", "dt"]:
+    for col in ["date", "datetime", "timestamp", "time", "dt", "ts"]:
         if col in df.columns:
             return col
     for col in df.columns:
@@ -230,19 +240,65 @@ def discover_candidate_files() -> list[Path]:
     return found
 
 
-def score_strategy_file(path: Path, key: str) -> tuple[int, int]:
+def is_excluded_base_discovery_path(path: Path) -> bool:
+    try:
+        path_resolved = path.resolve()
+    except Exception:
+        path_resolved = path
+
+    for excluded_dir in EXCLUDED_BASE_DISCOVERY_DIRS:
+        try:
+            excluded_resolved = excluded_dir.resolve()
+        except Exception:
+            excluded_resolved = excluded_dir
+        if path_resolved == excluded_resolved or excluded_resolved in path_resolved.parents:
+            return True
+    return False
+
+
+def extract_phase_number(path: Path) -> int | None:
+    for part in path.parts:
+        match = re.match(r"phase(\d+)", str(part).lower())
+        if match:
+            return int(match.group(1))
+    return None
+
+
+def strategy_lookup_terms(key: str) -> list[str]:
+    key_lc = key.lower()
+    terms = [key_lc]
+    alias = re.sub(r"^phase\d+_", "", key_lc)
+    if alias and alias not in terms:
+        terms.append(alias)
+    return terms
+
+
+def score_strategy_file(path: Path, key: str) -> tuple[int, int, int]:
     name = path.name.lower()
     full = str(path).lower()
+    lookup_terms = strategy_lookup_terms(key)
     s1 = 0
-    if key.lower() in full:
+    if lookup_terms[0] in full:
         s1 += 100
+    elif any(term in full for term in lookup_terms[1:]):
+        s1 += 85
     if "phase61" in full:
         s1 += 25
     if any(x in name for x in ["paper", "equity", "daily", "returns", "portfolio"]):
         s1 += 20
     if "compare" in name or "summary" in name:
         s1 -= 30
-    return s1, -len(full)
+    if any(name == f"{term}_paper.csv" for term in lookup_terms):
+        s1 += 30
+
+    phase_num = extract_phase_number(path)
+    upstream_rank = 0
+    if phase_num is not None:
+        upstream_rank = -phase_num
+        if phase_num <= 61:
+            upstream_rank += 1000
+
+    return s1, upstream_rank, -len(full)
 
 
 def discover_base_strategy_file(key: str) -> Path:
@@ -250,6 +306,9 @@ def discover_base_strategy_file(key: str) -> Path:
     ranked = sorted(files, key=lambda p: score_strategy_file(p, key), reverse=True)
 
     for path in ranked[:100]:
+        if is_excluded_base_discovery_path(path):
+            continue
+
         try:
             df = safe_read_table(path)
             df = normalize_columns(df)
@@ -263,8 +322,8 @@ def discover_base_strategy_file(key: str) -> Path:
             continue
 
     raise FileNotFoundError(
-        f"Nenašiel som papier/returns súbor pre {key}. "
-        f"Daj Phase61 paper CSV do outputs a skript ho nájde automaticky."
+        f"Nenašiel som upstream papier/returns súbor pre {key}. "
+        f"Phase62 nesmie fallbackovať na vlastný stale output."
     )
 
 
@@ -380,6 +439,23 @@ def load_btc_prices(path: Path) -> pd.DataFrame:
 
 
 def merge_inputs(base_df: pd.DataFrame, btc_df: pd.DataFrame) -> pd.DataFrame:
+    base_last = pd.Timestamp(base_df.index.max())
+    btc_last = pd.Timestamp(btc_df.index.max())
+
+    if getattr(base_last, "tzinfo", None) is not None:
+        base_last = base_last.tz_localize(None)
+    if getattr(btc_last, "tzinfo", None) is not None:
+        btc_last = btc_last.tz_localize(None)
+
+    if btc_last > base_last:
+        first_missing = (base_last + pd.Timedelta(days=1)).date().isoformat()
+        raise ValueError(
+            "Base strategy horizon is stale vs BTC data. "
+            f"base_last={base_last.date().isoformat()} "
+            f"btc_last={btc_last.date().isoformat()} "
+            f"first_missing={first_missing}"
+        )
+
     df = base_df.join(btc_df[["btc_close", "btc_return"]], how="left")
     df["btc_close"] = df["btc_close"].ffill().bfill()
     df["btc_return"] = df["btc_return"].fillna(0.0)
@@ -659,6 +735,7 @@ def main() -> None:
     parser.add_argument("--top-n-save", type=int, default=10)
     parser.add_argument("--winner-key", type=str, default=CURRENT_INTERNAL_WINNER_KEY)
     parser.add_argument("--baseline-key", type=str, default=LATEST_BEST_BASELINE_KEY)
+    parser.add_argument("--only-model", type=str, default="")
     args = parser.parse_args()
 
     ensure_dir(PHASE62_DIR)
@@ -675,6 +752,10 @@ def main() -> None:
     merged = merge_inputs(base_df, btc_df)
 
     variants = build_variant_grid()
+    if args.only_model:
+        variants = [v for v in variants if v.name == args.only_model]
+        if not variants:
+            raise ValueError(f"Requested only-model not found in phase62 grid: {args.only_model}")
     log(f"[PHASE62] Variants: {len(variants)}")
 
     base_paper, base_row = build_baseline_rows(merged, args.winner_key)
@@ -754,6 +835,9 @@ def main() -> None:
         tmp = paper.copy().reset_index().rename(columns={paper.index.name or "index": "date"})
         tmp.to_csv(out_path, index=False)
 
+    primary_output_model = next((model for model in top_models if model.lower().startswith("phase62")), top_models[0])
+    primary_output_path = PHASE62_DIR / f"{primary_output_model}_paper.csv"
+
     manifest = {
         "phase": "phase62_btc_overlay",
         "winner_input_key": args.winner_key,
@@ -765,6 +849,13 @@ def main() -> None:
         "top_saved_models": top_models,
         "variant_count_total": int(len(variants)),
         "execution_model": "signal_t -> execute_t_plus_1",
+        "freshness_lineage": build_producer_lineage(
+            producer_script=__file__,
+            source_file=base_file,
+            raw_file=btc_file,
+            output_file=primary_output_path,
+            date_semantics="execution_date",
+        ),
         "notes": [
             "BASE = phase61 winner bez overlayu",
             "BTC = priamy BTC hold podľa overlay režimu",
