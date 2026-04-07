@@ -21,6 +21,11 @@ from scripts.execution.hyperliquid_live_canary import (  # noqa: E402
     info_request,
     summarize_snapshot,
 )
+from scripts.execution.trading_operation_mode import (  # noqa: E402
+    DEFAULT_TRADING_OPERATION_MODE_PATH,
+    load_trading_operation_mode_payload,
+    write_trading_operation_mode_payload,
+)
 
 
 OUTPUTS_DIR = ROOT / "outputs" / "execution"
@@ -34,6 +39,7 @@ SUBMIT_DIR = OUTPUTS_DIR / "submit_preview"
 LOGS_DIR = OUTPUTS_DIR / "logs"
 
 LIVE_ORDER_POLICY_PATH = CONFIG_DIR / "live_order_policy.json"
+TRADING_OPERATION_MODE_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 
 SNAPSHOT_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot.json"
 SNAPSHOT_QUALITY_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot_quality.json"
@@ -60,7 +66,14 @@ RECONCILE_SCRIPT_PATH = ROOT / "scripts" / "execution" / "reconcile_live_executi
 PREPARE_GATE_SCRIPT_PATH = ROOT / "scripts" / "execution" / "prepare_real_order_gate.py"
 SUBMIT_SCRIPT_PATH = ROOT / "scripts" / "execution" / "submit_controlled_real_order.py"
 
-ALLOWLISTED_ACTIONS = {"refresh", "dry_run", "live_execute"}
+ALLOWLISTED_ACTIONS = {
+    "dry_run",
+    "get_mode",
+    "live_execute",
+    "refresh",
+    "set_automatic_mode",
+    "set_manual_mode",
+}
 ALLOWLISTED_SCRIPTS = {
     MATERIALIZE_SCRIPT_PATH.resolve(),
     VALIDATE_CONTRACT_SCRIPT_PATH.resolve(),
@@ -441,6 +454,83 @@ def summarize_dry_run_artifacts(steps: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def summarize_trading_operation_mode_action(
+    *,
+    action: str,
+    mode_payload: dict[str, Any],
+    step_name: str,
+) -> dict[str, Any]:
+    mode = str(mode_payload.get("mode") or "").strip().lower() or "manual"
+    fail_closed = bool(mode_payload.get("fail_closed", False))
+    updated_at_utc = str(mode_payload.get("updated_at_utc") or "").strip()
+    updated_by = str(mode_payload.get("updated_by") or "").strip() or "system"
+    error = str(mode_payload.get("error") or "").strip()
+
+    if action == "get_mode":
+        if fail_closed:
+            user_summary = (
+                "Rezim obchodovania sa nepodarilo nacitat. "
+                "System fail-closed pouziva manualny rezim."
+            )
+        else:
+            user_summary = (
+                "Aktualny rezim obchodovania je "
+                + ("automaticky." if mode == "automatic" else "manualny.")
+            )
+    else:
+        user_summary = (
+            "Rezim obchodovania je nastaveny na "
+            + ("automaticke obchody." if mode == "automatic" else "manualne obchody.")
+        )
+
+    return {
+        "status": "mode_loaded" if action == "get_mode" else "mode_updated",
+        "steps": [
+            {
+                "step_name": step_name,
+                "ok": not fail_closed if action == "get_mode" else True,
+                "mode": mode,
+                "fail_closed": fail_closed,
+                "updated_at_utc": updated_at_utc,
+                "updated_by": updated_by,
+                "error": error or None,
+                "path": str(TRADING_OPERATION_MODE_PATH.resolve()),
+            }
+        ],
+        "artifact_paths": {
+            "trading_operation_mode_path": str(TRADING_OPERATION_MODE_PATH.resolve()),
+        },
+        "result_summary": {
+            "mode": mode,
+            "updated_at_utc": updated_at_utc,
+            "updated_by": updated_by,
+            "fail_closed": fail_closed,
+            "error": error or None,
+        },
+        "user_summary": user_summary,
+    }
+
+
+def run_get_mode_action() -> dict[str, Any]:
+    return summarize_trading_operation_mode_action(
+        action="get_mode",
+        mode_payload=load_trading_operation_mode_payload(TRADING_OPERATION_MODE_PATH),
+        step_name="read_trading_operation_mode",
+    )
+
+
+def run_set_mode_action(mode: str) -> dict[str, Any]:
+    return summarize_trading_operation_mode_action(
+        action=f"set_{mode}_mode",
+        mode_payload=write_trading_operation_mode_payload(
+            mode,
+            updated_by="app",
+            path=TRADING_OPERATION_MODE_PATH,
+        ),
+        step_name="write_trading_operation_mode",
+    )
+
+
 def validate_live_submit_readiness() -> dict[str, Any]:
     mode_cfg = read_json(MODE_CONFIG_PATH)
     policy_cfg = read_json(LIVE_ORDER_POLICY_PATH)
@@ -806,7 +896,13 @@ def run_app_execute_action(
                 },
             )
 
-        if normalized_action == "refresh":
+        if normalized_action == "get_mode":
+            payload = run_get_mode_action()
+        elif normalized_action == "set_manual_mode":
+            payload = run_set_mode_action("manual")
+        elif normalized_action == "set_automatic_mode":
+            payload = run_set_mode_action("automatic")
+        elif normalized_action == "refresh":
             payload = run_refresh_action()
         elif normalized_action == "dry_run":
             payload = run_dry_run_action()
@@ -823,6 +919,16 @@ def run_app_execute_action(
         result["error"] = str(exc)
         result["status"] = exc.status
         result.update(exc.details)
+    except SystemExit as exc:
+        result["error"] = (
+            "Execution bridge child path exited early with SystemExit "
+            f"code={exc.code}."
+        )
+        result["status"] = "failed"
+        result["user_summary"] = (
+            "Akcia zlyhala v podriadenej execution vetve. "
+            "Skontroluj execution logy a posledne artefakty."
+        )
     except Exception as exc:  # pragma: no cover - defensive fallback only
         result["error"] = str(exc)
         result["status"] = "failed"
