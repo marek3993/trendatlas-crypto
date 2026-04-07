@@ -110,6 +110,22 @@ def save_trading_operation_mode_payload(
     return payload
 
 
+
+def write_trading_operation_mode_payload(
+    mode: str,
+    *,
+    path: str | Path | None = None,
+    updated_by: str = "system",
+    extra_fields: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    return save_trading_operation_mode_payload(
+        mode,
+        path=path,
+        updated_by=updated_by,
+        extra_fields=extra_fields,
+    )
+
+
 if __name__ == "__main__":
     print(
         json.dumps(
