@@ -12,6 +12,10 @@ from typing import Any
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+from scripts.execution.trading_operation_mode import (
+    DEFAULT_TRADING_OPERATION_MODE_PATH,
+    load_trading_operation_mode_payload,
+)
 
 APP_EXECUTE_BRIDGE_IMPORT_ERROR = ""
 try:
@@ -42,6 +46,7 @@ DEFAULT_DRY_RUN_DECISION_PATH = "outputs/execution/dry_run/latest_dry_run_decisi
 DEFAULT_REAL_ORDER_GATE_PATH = "outputs/execution/live_gate/latest_real_order_gate_decision.json"
 EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
+TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 
 CONTACT_DIR = ROOT / "contact"
@@ -1126,6 +1131,126 @@ def build_live_execute_gate_state(
     }
 
 
+def prettify_trading_operation_mode(value: str | None, lang: str) -> str:
+    mode = str(value or "").strip().lower()
+    mapping = {
+        "manual": {
+            "sk": "Manualne obchody",
+            "en": "Manual trading",
+        },
+        "automatic": {
+            "sk": "Automaticke obchody",
+            "en": "Automatic trading",
+        },
+    }
+    if mode in mapping:
+        return mapping[mode][lang]
+    return pretty_token(value, lang)
+
+
+def build_safety_posture_label(payload: dict[str, Any], lang: str) -> str:
+    if not payload:
+        return "Chyba execution_mode.json." if lang == "sk" else "execution_mode.json missing."
+    mode = str(payload.get("mode") or "").strip().lower()
+    trading_enabled = as_bool(payload.get("trading_enabled"))
+    kill_switch = as_bool(payload.get("kill_switch"))
+    if mode == "live" and trading_enabled is True and kill_switch is False:
+        return "Live povolene" if lang == "sk" else "Live armed"
+    if mode == "read_only" and trading_enabled is False and kill_switch is True:
+        return "Fail-closed"
+    return pretty_token(mode or "unknown", lang)
+
+
+def build_safety_posture_detail(payload: dict[str, Any], lang: str) -> str:
+    if not payload:
+        return (
+            "execution_mode.json chyba alebo je neplatny."
+            if lang == "sk"
+            else "execution_mode.json missing or invalid."
+        )
+    mode = str(payload.get("mode") or "").strip() or "unknown"
+    trading_enabled = payload.get("trading_enabled")
+    kill_switch = payload.get("kill_switch")
+    return (
+        f"mode={mode} | trading_enabled={trading_enabled} | kill_switch={kill_switch}"
+    )
+
+
+def build_signal_result_label(payload: dict[str, Any], lang: str) -> str:
+    if not payload:
+        return "Signal nedostupny" if lang == "sk" else "Signal unavailable"
+    recommended_action = str(payload.get("recommended_action") or "").strip().lower()
+    target_asset = str(payload.get("target_asset") or "").strip().upper() or "N/A"
+    would_place_order = as_bool(
+        get_nested_value(payload, "simulated_order", "would_place_order")
+    )
+    if as_bool(payload.get("stale_signal")) is True:
+        return "Stale signal"
+    if would_place_order is True and target_asset and target_asset != "CASH":
+        return (
+            f"Trade na {target_asset}" if lang == "sk" else f"Trade to {target_asset}"
+        )
+    if recommended_action == "hold_cash":
+        return "Dnes bez obchodu" if lang == "sk" else "No trade today"
+    return pretty_token(recommended_action or "unknown", lang)
+
+
+def build_signal_result_detail(payload: dict[str, Any], lang: str) -> str:
+    if not payload:
+        return (
+            "latest_dry_run_decision.json chyba."
+            if lang == "sk"
+            else "latest_dry_run_decision.json missing."
+        )
+    recommended_action = str(payload.get("recommended_action") or "").strip() or "unknown"
+    target_asset = str(payload.get("target_asset") or "").strip().upper() or "N/A"
+    would_place_order = as_bool(
+        get_nested_value(payload, "simulated_order", "would_place_order")
+    )
+    return (
+        f"recommended_action={recommended_action} | target_asset={target_asset} | "
+        f"would_place_order={would_place_order}"
+    )
+
+
+def build_gate_result_label(payload: dict[str, Any], lang: str) -> str:
+    if not payload:
+        return "Gate nedostupny" if lang == "sk" else "Gate unavailable"
+    status = str(payload.get("status") or "").strip().lower()
+    if status == "ready_if_enabled":
+        return "Gate pripraveny" if lang == "sk" else "Gate ready"
+    if payload.get("block_reasons"):
+        return "Gate blokuje" if lang == "sk" else "Gate blocked"
+    return pretty_token(status or "unknown", lang)
+
+
+def build_gate_result_detail(payload: dict[str, Any], lang: str) -> str:
+    if not payload:
+        return (
+            "latest_real_order_gate_decision.json chyba."
+            if lang == "sk"
+            else "latest_real_order_gate_decision.json missing."
+        )
+    status = str(payload.get("status") or "").strip() or "unknown"
+    would_place_real_order = as_bool(payload.get("would_place_real_order"))
+    return f"status={status} | would_place_real_order={would_place_real_order}"
+
+
+def build_scheduler_mode_explanation(mode: str, lang: str) -> str:
+    normalized_mode = str(mode or "").strip().lower()
+    if normalized_mode == "automatic":
+        return (
+            "Scheduler vyhodnocuje signal a odosle obchod iba vtedy, ked existuje validny trade a prejdu vsetky gate checks."
+            if lang == "sk"
+            else "The scheduler evaluates the signal and auto-sends only when a valid trade exists and all gate checks pass."
+        )
+    return (
+        "Scheduler iba vyhodnocuje refresh, signal, reconciliation a gate. Automaticke odoslanie je vypnute."
+        if lang == "sk"
+        else "The scheduler only evaluates refresh, signal, reconciliation, and gate. Auto-send is disabled."
+    )
+
+
 def friendly_hyperliquid_error_message(error_text: str, lang: str) -> str | None:
     text = str(error_text or "").strip()
     if not text:
@@ -1229,6 +1354,7 @@ def build_execution_notice(result: dict[str, Any], lang: str) -> str:
     current_position = normalize_execution_asset(result_summary.get("current_position"))
     target_asset = normalize_execution_asset(result_summary.get("target_asset"))
     order_step_present = bool(result_summary.get("order_step_present"))
+    mode = str(result_summary.get("mode") or "").strip().lower()
     first_block_reason = ""
 
     if lang == "sk":
@@ -1262,6 +1388,20 @@ def build_execution_notice(result: dict[str, Any], lang: str) -> str:
                     f"Dnes systém vidí obchod smerom na {target_asset}."
                 )
             return "Kontrola signálu je hotová."
+
+        if action == "get_mode" and result.get("ok"):
+            return (
+                "Aktualny rezim obchodovania je automaticky."
+                if mode == "automatic"
+                else "Aktualny rezim obchodovania je manualny."
+            )
+
+        if action in {"set_manual_mode", "set_automatic_mode"} and result.get("ok"):
+            return (
+                "Rezim obchodovania je nastaveny na automaticke obchody."
+                if mode == "automatic"
+                else "Rezim obchodovania je nastaveny na manualne obchody."
+            )
 
         if action == "live_execute" and status == "blocked":
             return build_live_blocked_notice(block_reasons, lang)
@@ -2778,6 +2918,7 @@ dry_run_decision_payload = load_json_optional(DEFAULT_DRY_RUN_DECISION_PATH)
 real_order_gate_payload = load_json_optional(DEFAULT_REAL_ORDER_GATE_PATH)
 execution_mode_payload = load_json_optional(EXECUTION_MODE_CONFIG_PATH)
 live_order_policy_payload = load_json_optional(LIVE_ORDER_POLICY_PATH)
+trading_operation_mode_payload = load_trading_operation_mode_payload(TRADING_OPERATION_MODE_CONFIG_PATH)
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 if not runtime_guardrail_payload:
     runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "preflight_check", "execution_mode_guardrail")
@@ -3032,6 +3173,22 @@ with tabs[1]:
             real_order_gate_payload=real_order_gate_payload,
         )
         live_block_reasons = list(live_gate_state["reasons"])
+        operation_mode = str(trading_operation_mode_payload.get("mode") or "manual").strip().lower() or "manual"
+        operation_mode_label = prettify_trading_operation_mode(operation_mode, lang)
+        operation_mode_updated_at_text = format_utc_text(
+            trading_operation_mode_payload.get("updated_at_utc"),
+            lang,
+        )
+        operation_mode_updated_by = str(trading_operation_mode_payload.get("updated_by") or "").strip() or "system"
+        operation_mode_fail_closed = bool(trading_operation_mode_payload.get("fail_closed", False))
+        operation_mode_error = str(trading_operation_mode_payload.get("error") or "").strip()
+        scheduler_mode_explanation = build_scheduler_mode_explanation(operation_mode, lang)
+        safety_posture_label = build_safety_posture_label(execution_mode_payload, lang)
+        safety_posture_detail = build_safety_posture_detail(execution_mode_payload, lang)
+        signal_result_label = build_signal_result_label(dry_run_decision_payload, lang)
+        signal_result_detail = build_signal_result_detail(dry_run_decision_payload, lang)
+        gate_result_label = build_gate_result_label(real_order_gate_payload, lang)
+        gate_result_detail = build_gate_result_detail(real_order_gate_payload, lang)
 
         if refresh_missing_artifacts:
             refresh_missing_artifacts = [
@@ -3131,7 +3288,47 @@ with tabs[1]:
 
         st.markdown("#### Ovladanie")
         with st.container(border=True):
-            st.markdown("**Ovládanie účtu**")
+            st.markdown("**Rezim obchodovania**")
+            render_ops_strip(
+                [
+                    {
+                        "label": "Zvoleny runtime mod" if lang == "sk" else "Selected runtime mode",
+                        "value": operation_mode_label,
+                    },
+                    {
+                        "label": "Signal" if lang == "sk" else "Signal",
+                        "value": signal_result_label,
+                    },
+                ],
+                tone="proof",
+            )
+
+            mode_manual_col, mode_auto_col = st.columns(2)
+            with mode_manual_col:
+                if st.button(
+                    "Manualne obchody",
+                    key="execution_controls_set_manual_mode",
+                    width="stretch",
+                    disabled=(not bridge_available) or operation_mode == "manual",
+                ):
+                    result = run_app_execute_action(action="set_manual_mode")
+                    st.session_state.execution_bridge_result = result
+                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
+                    st.rerun()
+            with mode_auto_col:
+                if st.button(
+                    "Automaticke obchody",
+                    key="execution_controls_set_automatic_mode",
+                    width="stretch",
+                    disabled=(not bridge_available) or operation_mode == "automatic",
+                ):
+                    result = run_app_execute_action(action="set_automatic_mode")
+                    st.session_state.execution_bridge_result = result
+                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
+                    st.rerun()
+
+            st.divider()
+            st.markdown("**Jednorazove akcie uctu**")
 
             if not bridge_available:
                 st.warning("Tieto akcie teraz nie sú dostupné.")
