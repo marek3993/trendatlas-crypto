@@ -1,0 +1,201 @@
+{
+  "artifact_type": "dev_only_feature_profile_report",
+  "artifact_id": "participation_breadth_confirmation_stack_profile",
+  "generated_at_utc": "2026-04-07 08:56:53 UTC",
+  "family_id": "participation_breadth_confirmation_stack",
+  "row_count": 348,
+  "date_min": "2020-02-09",
+  "date_max": "2024-12-20",
+  "asset_or_leader_coverage": {
+    "coverage_column": "leader_asset",
+    "unique_count": 4,
+    "values_sorted": [
+      "DOGEUSDT",
+      "ICPUSDT",
+      "STXUSDT",
+      "XTZUSDT"
+    ],
+    "row_count_by_value": {
+      "DOGEUSDT": 54,
+      "ICPUSDT": 60,
+      "STXUSDT": 102,
+      "XTZUSDT": 132
+    }
+  },
+  "null_count_per_column": {
+    "date": 0,
+    "leader_asset": 0,
+    "breadth_count": 0,
+    "participation_ratio": 0,
+    "leader_follower_spread": 0,
+    "cluster_confirmation_ratio": 0,
+    "internal_agreement_score": 0,
+    "breadth_thrust": 0,
+    "participation_divergence": 0,
+    "feature_ready_flag": 0,
+    "dev_only": 0,
+    "non_authoritative": 0,
+    "official_truth": 0,
+    "strategy_advancement": 0
+  },
+  "numeric_feature_summary": {
+    "breadth_count": {
+      "min": 0.0,
+      "max": 78.0,
+      "mean": 30.836207
+    },
+    "participation_ratio": {
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.58857
+    },
+    "leader_follower_spread": {
+      "min": -0.18544,
+      "max": 0.976336,
+      "mean": 0.035409
+    },
+    "cluster_confirmation_ratio": {
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.58054
+    },
+    "internal_agreement_score": {
+      "min": 0.0,
+      "max": 0.853687,
+      "mean": 0.208361
+    },
+    "breadth_thrust": {
+      "min": -0.940928,
+      "max": 0.783626,
+      "mean": -0.009731
+    },
+    "participation_divergence": {
+      "min": 0.005387,
+      "max": 1.214641,
+      "mean": 0.171985
+    }
+  },
+  "anomaly_score_definition": "mean absolute z-score across configured numeric feature columns",
+  "top_abnormal_rows": [
+    {
+      "date": "2023-12-17",
+      "leader_asset": "ICPUSDT",
+      "anomaly_score": 1.66704,
+      "feature_values": {
+        "breadth_count": 6.0,
+        "participation_ratio": 0.092308,
+        "leader_follower_spread": 0.621215,
+        "cluster_confirmation_ratio": 0.083333,
+        "internal_agreement_score": 0.0,
+        "breadth_thrust": -0.405128,
+        "participation_divergence": 0.025454
+      },
+      "profile_guardrail_reason": ""
+    },
+    {
+      "date": "2020-07-08",
+      "leader_asset": "DOGEUSDT",
+      "anomaly_score": 1.579615,
+      "feature_values": {
+        "breadth_count": 21.0,
+        "participation_ratio": 0.84,
+        "leader_follower_spread": 0.916088,
+        "cluster_confirmation_ratio": 0.777778,
+        "internal_agreement_score": 0.380612,
+        "breadth_thrust": 0.48,
+        "participation_divergence": 0.084414
+      },
+      "profile_guardrail_reason": ""
+    },
+    {
+      "date": "2023-02-19",
+      "leader_asset": "STXUSDT",
+      "anomaly_score": 1.479275,
+      "feature_values": {
+        "breadth_count": 46.0,
+        "participation_ratio": 0.807018,
+        "leader_follower_spread": 0.976336,
+        "cluster_confirmation_ratio": 0.833333,
+        "internal_agreement_score": 0.0,
+        "breadth_thrust": 0.087719,
+        "participation_divergence": 0.143001
+      },
+      "profile_guardrail_reason": ""
+    },
+    {
+      "date": "2020-07-02",
+      "leader_asset": "XTZUSDT",
+      "anomaly_score": 1.467475,
+      "feature_values": {
+        "breadth_count": 1.0,
+        "participation_ratio": 0.04,
+        "leader_follower_spread": 0.196753,
+        "cluster_confirmation_ratio": 0.0,
+        "internal_agreement_score": 0.005615,
+        "breadth_thrust": -0.493333,
+        "participation_divergence": 0.415161
+      },
+      "profile_guardrail_reason": ""
+    },
+    {
+      "date": "2024-11-11",
+      "leader_asset": "DOGEUSDT",
+      "anomaly_score": 1.429174,
+      "feature_values": {
+        "breadth_count": 70.0,
+        "participation_ratio": 0.886076,
+        "leader_follower_spread": 0.587036,
+        "cluster_confirmation_ratio": 0.916667,
+        "internal_agreement_score": 0.445692,
+        "breadth_thrust": -0.042194,
+        "participation_divergence": 0.036612
+      },
+      "profile_guardrail_reason": ""
+    }
+  ],
+  "status": "generated_dev_only_feature_profile",
+  "profile_guardrails": {
+    "degenerate_empty_participation_guardrail": {
+      "rule": "breadth_count == 0 and participation_ratio == 0 and cluster_confirmation_ratio == 0",
+      "row_count": 6,
+      "top_rows": [
+        {
+          "date": "2024-12-03",
+          "leader_asset": "DOGEUSDT",
+          "breadth_thrust": -0.548523,
+          "participation_divergence": 1.214641
+        },
+        {
+          "date": "2024-12-02",
+          "leader_asset": "DOGEUSDT",
+          "breadth_thrust": -0.860759,
+          "participation_divergence": 1.108903
+        },
+        {
+          "date": "2024-12-04",
+          "leader_asset": "DOGEUSDT",
+          "breadth_thrust": -0.270042,
+          "participation_divergence": 1.047893
+        },
+        {
+          "date": "2020-06-21",
+          "leader_asset": "XTZUSDT",
+          "breadth_thrust": -0.472222,
+          "participation_divergence": 0.094217
+        },
+        {
+          "date": "2020-07-05",
+          "leader_asset": "DOGEUSDT",
+          "breadth_thrust": -0.133333,
+          "participation_divergence": 0.092556
+        }
+      ],
+      "profile_abnormal_list_policy": "deprioritize_degenerate_empty_participation_rows_but_keep_them_counted",
+      "status": "guardrail_triggered"
+    }
+  },
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

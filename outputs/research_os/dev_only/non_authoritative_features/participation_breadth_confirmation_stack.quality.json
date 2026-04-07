@@ -1,9 +1,9 @@
 {
   "artifact_type": "dev_only_feature_quality_report",
   "artifact_id": "participation_breadth_confirmation_stack_quality",
-  "generated_at_utc": "2026-04-07 07:11:35 UTC",
+  "generated_at_utc": "2026-04-07 08:55:44 UTC",
   "family_id": "participation_breadth_confirmation_stack",
-  "row_count": 2,
+  "row_count": 348,
   "required_columns": [
     "date",
     "leader_asset",
@@ -16,7 +16,9 @@
     "participation_divergence",
     "feature_ready_flag",
     "dev_only",
-    "non_authoritative"
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
   ],
   "leakage_checks": [
     {
