@@ -1462,13 +1462,13 @@ def render_ops_strip(items: list[dict], tone: str = "overview") -> None:
         subtitle = escape_html_text(item.get("subtitle", ""))
         sub_html = f'<div class="ops-strip-sub">{subtitle}</div>' if subtitle else ""
         item_html.append(
-            f"""
-            <div class="ops-strip-item">
-                <div class="ops-strip-label">{label}</div>
-                <div class="ops-strip-value">{value}</div>
-                {sub_html}
-            </div>
-            """
+            (
+                '<div class="ops-strip-item">'
+                f'<div class="ops-strip-label">{label}</div>'
+                f'<div class="ops-strip-value">{value}</div>'
+                f"{sub_html}"
+                "</div>"
+            )
         )
     st.markdown(
         f'<div class="ops-strip ops-tone-{tone}">{"".join(item_html)}</div>',
@@ -1483,13 +1483,13 @@ def render_ops_kpi_row(items: list[dict], tone: str = "balance") -> None:
         value = escape_html_text(item.get("value", ""))
         subtitle = escape_html_text(item.get("subtitle", ""))
         item_html.append(
-            f"""
-            <div class="ops-kpi ops-tone-{tone}">
-                <div class="ops-kpi-label">{label}</div>
-                <div class="ops-kpi-value">{value}</div>
-                <div class="ops-kpi-sub">{subtitle}</div>
-            </div>
-            """
+            (
+                f'<div class="ops-kpi ops-tone-{tone}">'
+                f'<div class="ops-kpi-label">{label}</div>'
+                f'<div class="ops-kpi-value">{value}</div>'
+                f'<div class="ops-kpi-sub">{subtitle}</div>'
+                "</div>"
+            )
         )
     st.markdown(
         f'<div class="ops-kpi-row">{"".join(item_html)}</div>',
@@ -1517,23 +1517,23 @@ def render_ops_dense_panel(title: str, items: list[dict], tone: str = "detail") 
         subtitle = escape_html_text(item.get("subtitle", ""))
         sub_html = f'<div class="ops-chip-sub">{subtitle}</div>' if subtitle else ""
         chip_html.append(
-            f"""
-            <div class="ops-chip">
-                <div class="ops-chip-label">{label}</div>
-                <div class="ops-chip-value">{value}</div>
-                {sub_html}
-            </div>
-            """
+            (
+                '<div class="ops-chip">'
+                f'<div class="ops-chip-label">{label}</div>'
+                f'<div class="ops-chip-value">{value}</div>'
+                f"{sub_html}"
+                "</div>"
+            )
         )
     st.markdown(
-        f"""
-        <div class="ops-panel ops-tone-{tone}">
-            <div class="ops-panel-header">
-                <div class="ops-panel-title">{escape_html_text(title)}</div>
-            </div>
-            <div class="ops-chip-grid">{"".join(chip_html)}</div>
-        </div>
-        """,
+        (
+            f'<div class="ops-panel ops-tone-{tone}">'
+            '<div class="ops-panel-header">'
+            f'<div class="ops-panel-title">{escape_html_text(title)}</div>'
+            "</div>"
+            f'<div class="ops-chip-grid">{"".join(chip_html)}</div>'
+            "</div>"
+        ),
         unsafe_allow_html=True,
     )
 
@@ -1542,24 +1542,24 @@ def render_ops_detail_panel(title: str, items: list[tuple[str, str]], tone: str 
     detail_html = []
     for label, value in items:
         detail_html.append(
-            f"""
-            <div class="ops-detail-item">
-                <div class="ops-detail-label">{escape_html_text(label)}</div>
-                <div class="ops-detail-value">{escape_html_text(value)}</div>
-            </div>
-            """
+            (
+                '<div class="ops-detail-item">'
+                f'<div class="ops-detail-label">{escape_html_text(label)}</div>'
+                f'<div class="ops-detail-value">{escape_html_text(value)}</div>'
+                "</div>"
+            )
         )
     note_html = f'<div class="ops-inline-note">{escape_html_text(note)}</div>' if note else ""
     st.markdown(
-        f"""
-        <div class="ops-panel ops-tone-{tone}">
-            <div class="ops-panel-header">
-                <div class="ops-panel-title">{escape_html_text(title)}</div>
-            </div>
-            <div class="ops-detail-grid">{"".join(detail_html)}</div>
-            {note_html}
-        </div>
-        """,
+        (
+            f'<div class="ops-panel ops-tone-{tone}">'
+            '<div class="ops-panel-header">'
+            f'<div class="ops-panel-title">{escape_html_text(title)}</div>'
+            "</div>"
+            f'<div class="ops-detail-grid">{"".join(detail_html)}</div>'
+            f"{note_html}"
+            "</div>"
+        ),
         unsafe_allow_html=True,
     )
 
