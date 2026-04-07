@@ -3,6 +3,7 @@ from __future__ import annotations
 import html
 import json
 import math
+import os
 import re
 import uuid
 from datetime import date, datetime, timezone
@@ -766,6 +767,42 @@ def load_json_optional(path_value: str | Path | None) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
+
+
+def get_git_commit_marker() -> str:
+    for env_key in [
+        "GIT_COMMIT",
+        "GIT_SHA",
+        "COMMIT_SHA",
+        "STREAMLIT_GIT_COMMIT",
+        "RENDER_GIT_COMMIT",
+        "GITHUB_SHA",
+        "HEROKU_SLUG_COMMIT",
+    ]:
+        value = str(os.environ.get(env_key) or "").strip()
+        if value:
+            return value
+
+    git_dir = ROOT / ".git"
+    head_path = git_dir / "HEAD"
+    if not head_path.exists():
+        return "unknown"
+
+    try:
+        head_text = head_path.read_text(encoding="utf-8").strip()
+        if not head_text:
+            return "unknown"
+        if not head_text.startswith("ref:"):
+            return head_text
+        ref_name = head_text.split(":", 1)[1].strip()
+        ref_path = git_dir / ref_name
+        if ref_path.exists():
+            ref_text = ref_path.read_text(encoding="utf-8").strip()
+            return ref_text or "unknown"
+    except OSError:
+        return "unknown"
+
+    return "unknown"
 
 
 def first_present_value(*values):
@@ -3136,10 +3173,12 @@ if not years:
     st.stop()
 
 main_equity_df = papers[main_key][["ts", "equity"]].dropna().copy()
+main_paper_source_path = str(papers[main_key].attrs.get("source_path") or "unknown")
 main_latest_dates = pd.to_datetime(main_equity_df["ts"], errors="coerce").dropna().sort_values()
 main_latest_date = None
 if not main_latest_dates.empty:
     main_latest_date = main_latest_dates.iloc[-1].normalize().strftime("%Y-%m-%d")
+git_commit_marker = get_git_commit_marker()
 reference_equity_df = papers.get(reference_key)
 
 tabs = st.tabs(t(lang, "tabs"))
@@ -3337,6 +3376,13 @@ with tabs[0]:
 
     if paper_errors:
         st.warning(" / ".join(paper_errors))
+
+    st.caption(
+        "debug | "
+        f"main_paper={main_paper_source_path} | "
+        f"main_latest_date={main_latest_date or 'unknown'} | "
+        f"commit={git_commit_marker}"
+    )
 
 with tabs[1]:
     st.subheader(t(lang, "account_title"))
