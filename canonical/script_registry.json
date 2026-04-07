@@ -287,6 +287,25 @@
       "notes": "Dry-run only. No real orders."
     },
     {
+      "script_path": "scripts/execution/app_execute_bridge.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "App-facing allowlisted execution bridge that refreshes real operational artifacts, recomputes dry-run/gate context, and can invoke the one-shot controlled submitter.",
+      "primary_outputs": [
+        "outputs/execution/read_only/",
+        "outputs/execution/live_status/",
+        "outputs/execution/dry_run/",
+        "outputs/execution/reconciliation/",
+        "outputs/execution/live_gate/",
+        "outputs/execution/submit_preview/",
+        "outputs/execution/logs/"
+      ],
+      "output_type": "runtime_control",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Manual APP bridge only. Live execute still requires exact UI confirmation plus backend token and never submits directly from the UI process."
+    },
+    {
       "script_path": "scripts/execution/hyperliquid_live_canary.py",
       "layer": "execution_data",
       "status": "active",
@@ -370,6 +389,49 @@
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
       "notes": "Preview by default. Live mode is allowed only via --execute-live --manual-confirm FULL_AUTO_EXECUTION."
+    },
+    {
+      "script_path": "scripts/daily_refresh_app_pipeline.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Official DATA refresh entrypoint for the app-facing strategy and export refresh chain.",
+      "primary_outputs": [
+        "outputs/app_refresh_pipeline/",
+        "outputs/execution/refresh_pipeline/",
+        "outputs/execution/app_exports/"
+      ],
+      "output_type": "runtime_control",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Operator-facing official DATA refresh command. Preserves the existing underlying refresh scripts and validates required downstream artifacts."
+    },
+    {
+      "script_path": "scripts/validation/check_strategy_chain_freshness.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Official DATA freshness and health-check entrypoint for the strategy chain from raw BTC to canonical app-facing outputs.",
+      "primary_outputs": [
+        "outputs/validation/reports/strategy_chain_freshness_report.json"
+      ],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Operator-facing official DATA health-check command. Exits non-zero when the chain has a freshness break."
+    },
+    {
+      "script_path": "run_data_refresh.ps1",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Windows convenience wrapper that forwards directly to the official DATA refresh Python entrypoint.",
+      "primary_outputs": [
+        "outputs/app_refresh_pipeline/",
+        "outputs/execution/refresh_pipeline/",
+        "outputs/execution/app_exports/"
+      ],
+      "output_type": "runtime_control",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Optional operator helper only. The official refresh entrypoint remains scripts/daily_refresh_app_pipeline.py."
     }
   ]
 }

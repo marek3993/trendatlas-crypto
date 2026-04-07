@@ -319,6 +319,43 @@
       "notes": "Scheduler-facing wrapper artifacts including decision, manifest, restore profile, per-run logs, and downstream verification evidence."
     },
     {
+      "output_path": "outputs/app_refresh_pipeline/",
+      "generated_by": [
+        "scripts/daily_refresh_app_pipeline.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "refresh_pipeline_run_artifacts",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Timestamped DATA refresh run manifests and per-step logs for the official app refresh workflow."
+    },
+    {
+      "output_path": "outputs/execution/refresh_pipeline/",
+      "generated_by": [
+        "scripts/daily_refresh_app_pipeline.py",
+        "scripts/execution/materialize_execution_app_exports.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "refresh_pipeline_support_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Canonical refresh pipeline reports produced by the official DATA refresh flow and its materialization step."
+    },
+    {
+      "output_path": "outputs/validation/reports/strategy_chain_freshness_report.json",
+      "generated_by": [
+        "scripts/validation/check_strategy_chain_freshness.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "validation_report",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Official DATA freshness and health-check report for the strategy chain."
+    },
+    {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "generated_by": [
         "scripts/phase68h_dynamic_leverage_ladder_candidate.py"
