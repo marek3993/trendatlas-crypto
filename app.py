@@ -8,6 +8,11 @@ import uuid
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
+import sys
+
+ROOT = Path(__file__).resolve().parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -2496,15 +2501,22 @@ def build_metrics(summary_row: pd.Series | None, live_row: pd.Series | None, pap
         metrics["btc_days_pct"] = derived_btc_days_pct
 
     metrics["latest_date"] = None
+    latest_date_candidates = []
 
     for date_key in ["latest_available_date", "strategy_last_closed_day", "last_closed_day", "latest_date"]:
         live_date = get_text_from_row(live_row, date_key)
         if live_date:
-            metrics["latest_date"] = live_date
-            break
+            parsed_live_date = pd.to_datetime(live_date, errors="coerce")
+            if not pd.isna(parsed_live_date):
+                latest_date_candidates.append(parsed_live_date.normalize())
 
-    if metrics["latest_date"] is None and not paper_df.empty:
-        metrics["latest_date"] = pd.to_datetime(paper_df["ts"].iloc[-1]).strftime("%Y-%m-%d")
+    if not paper_df.empty:
+        parsed_paper_date = pd.to_datetime(paper_df["ts"].iloc[-1], errors="coerce")
+        if not pd.isna(parsed_paper_date):
+            latest_date_candidates.append(parsed_paper_date.normalize())
+
+    if latest_date_candidates:
+        metrics["latest_date"] = max(latest_date_candidates).strftime("%Y-%m-%d")
 
     metrics["sharpe"] = get_metric_from_row(summary_row, "sharpe")
     metrics["sortino"] = get_metric_from_row(summary_row, "sortino")
