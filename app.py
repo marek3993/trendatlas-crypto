@@ -194,7 +194,7 @@ TEXT = {
         "switch_count": "Počet prepnutí",
         "cash_days": "Cash Days",
         "btc_days": "BTC Days",
-        "latest_date": "Posledný uzavretý deň",
+        "strategy_last_update": "Posledná aktualizácia stratégie",
         "calc_title": "Koľko by bolo z 1 000 €",
         "calc_desc": "Vyber dátum a pozri sa, akú hodnotu by dnes mala modelová investícia 1 000 €.",
         "calc_date": "Dátum vkladu",
@@ -388,7 +388,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "switch_count": "Switch count",
         "cash_days": "Cash Days",
         "btc_days": "BTC Days",
-        "latest_date": "Last closed day",
+        "strategy_last_update": "Last strategy update",
         "calc_title": "What 1,000 € would have become",
         "calc_desc": "Choose a start date and see what a model-based 1,000 € investment would be worth today.",
         "calc_date": "Investment date",
@@ -3163,6 +3163,7 @@ trading_operation_mode_payload = load_trading_operation_mode_payload(TRADING_OPE
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 if not runtime_guardrail_payload:
     runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "preflight_check", "execution_mode_guardrail")
+strategy_last_update_utc = str(dry_run_decision_payload.get("generated_at_utc") or "").strip() or None
 
 main_metrics = model_metrics.get(main_key, {})
 reference_metrics = model_metrics.get(reference_key, {})
@@ -3313,10 +3314,14 @@ with tabs[0]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     with ops[4]:
         render_color_card(
-            t(lang, "latest_date"),
-            format_date_text(main_latest_date, lang),
+            t(lang, "strategy_last_update"),
+            format_utc_text(strategy_last_update_utc, lang),
             "",
-            METRIC_HELP[lang][t(lang, "latest_date")],
+            (
+                "Tento cas ide priamo z outputs/execution/dry_run/latest_dry_run_decision.json cez generated_at_utc."
+                if lang == "sk"
+                else "This timestamp comes directly from outputs/execution/dry_run/latest_dry_run_decision.json via generated_at_utc."
+            ),
             "neutral",
         )
 
