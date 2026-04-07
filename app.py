@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import html
 import json
 import math
 import re
@@ -1210,6 +1211,214 @@ def inject_css() -> None:
             box-shadow: 0 10px 28px rgba(0,0,0,0.16);
         }
 
+        .ops-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow:
+                0 10px 28px rgba(0,0,0,0.18),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+            margin-bottom: 10px;
+        }
+
+        .ops-strip-item {
+            min-width: 0;
+        }
+
+        .ops-strip-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(226,232,240,0.62);
+            margin-bottom: 3px;
+        }
+
+        .ops-strip-value {
+            font-size: 0.98rem;
+            line-height: 1.2;
+            font-weight: 650;
+            color: #f8fafc;
+        }
+
+        .ops-strip-sub {
+            font-size: 0.78rem;
+            color: rgba(226,232,240,0.72);
+            margin-top: 3px;
+        }
+
+        .ops-kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ops-kpi {
+            border-radius: 18px;
+            padding: 13px 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow:
+                0 10px 24px rgba(0,0,0,0.18),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+        }
+
+        .ops-kpi-label {
+            font-size: 0.72rem;
+            letter-spacing: 0.07em;
+            text-transform: uppercase;
+            color: rgba(226,232,240,0.62);
+            margin-bottom: 6px;
+        }
+
+        .ops-kpi-value {
+            font-size: 1.42rem;
+            font-weight: 720;
+            line-height: 1.08;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .ops-kpi-sub {
+            font-size: 0.8rem;
+            color: rgba(226,232,240,0.72);
+        }
+
+        .ops-panel {
+            border-radius: 18px;
+            padding: 12px 14px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow:
+                0 10px 24px rgba(0,0,0,0.18),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+            margin-bottom: 10px;
+        }
+
+        .ops-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .ops-panel-title {
+            font-size: 0.98rem;
+            font-weight: 650;
+            color: #f8fafc;
+        }
+
+        .ops-inline-note {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin: 2px 0 10px 0;
+            color: rgba(226,232,240,0.8);
+            font-size: 0.86rem;
+        }
+
+        .ops-inline-note-label {
+            color: rgba(226,232,240,0.56);
+        }
+
+        .ops-inline-note-value {
+            color: #f8fafc;
+            font-weight: 600;
+        }
+
+        .ops-chip-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+            gap: 8px;
+        }
+
+        .ops-chip {
+            border-radius: 14px;
+            padding: 9px 10px;
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .ops-chip-label {
+            font-size: 0.67rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: rgba(226,232,240,0.56);
+            margin-bottom: 4px;
+        }
+
+        .ops-chip-value {
+            font-size: 0.94rem;
+            line-height: 1.2;
+            font-weight: 620;
+            color: #f8fafc;
+        }
+
+        .ops-chip-sub {
+            font-size: 0.77rem;
+            color: rgba(226,232,240,0.68);
+            margin-top: 4px;
+        }
+
+        .ops-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 8px;
+        }
+
+        .ops-detail-item {
+            border-radius: 14px;
+            padding: 10px 11px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .ops-detail-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: rgba(226,232,240,0.56);
+            margin-bottom: 5px;
+        }
+
+        .ops-detail-value {
+            font-size: 0.95rem;
+            line-height: 1.25;
+            font-weight: 620;
+            color: #f8fafc;
+        }
+
+        .ops-tone-proof {
+            background: linear-gradient(180deg, rgba(61,94,124,0.34), rgba(255,255,255,0.018));
+        }
+
+        .ops-tone-overview {
+            background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.016));
+        }
+
+        .ops-tone-balance {
+            background: linear-gradient(180deg, rgba(20,126,104,0.24), rgba(255,255,255,0.018));
+        }
+
+        .ops-tone-position {
+            background: linear-gradient(180deg, rgba(49,86,134,0.22), rgba(255,255,255,0.018));
+        }
+
+        .ops-tone-activity {
+            background: linear-gradient(180deg, rgba(112,90,49,0.20), rgba(255,255,255,0.018));
+        }
+
+        .ops-tone-detail {
+            background: linear-gradient(180deg, rgba(255,255,255,0.036), rgba(255,255,255,0.012));
+        }
+
+        .ops-tone-control {
+            background: linear-gradient(180deg, rgba(90,109,136,0.24), rgba(255,255,255,0.018));
+        }
+
         </style>
         """,
         unsafe_allow_html=True,
@@ -1239,6 +1448,120 @@ def render_color_card(label: str, value: str, subtitle: str = "", help_text: str
 
 def metric_box(label: str, value: str, help_text: str | None = None) -> None:
     st.metric(label=label, value=value, help=help_text, border=True)
+
+
+def escape_html_text(value) -> str:
+    return html.escape(str(value if value is not None else ""))
+
+
+def render_ops_strip(items: list[dict], tone: str = "overview") -> None:
+    item_html = []
+    for item in items:
+        label = escape_html_text(item.get("label", ""))
+        value = escape_html_text(item.get("value", ""))
+        subtitle = escape_html_text(item.get("subtitle", ""))
+        sub_html = f'<div class="ops-strip-sub">{subtitle}</div>' if subtitle else ""
+        item_html.append(
+            f"""
+            <div class="ops-strip-item">
+                <div class="ops-strip-label">{label}</div>
+                <div class="ops-strip-value">{value}</div>
+                {sub_html}
+            </div>
+            """
+        )
+    st.markdown(
+        f'<div class="ops-strip ops-tone-{tone}">{"".join(item_html)}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def render_ops_kpi_row(items: list[dict], tone: str = "balance") -> None:
+    item_html = []
+    for item in items:
+        label = escape_html_text(item.get("label", ""))
+        value = escape_html_text(item.get("value", ""))
+        subtitle = escape_html_text(item.get("subtitle", ""))
+        item_html.append(
+            f"""
+            <div class="ops-kpi ops-tone-{tone}">
+                <div class="ops-kpi-label">{label}</div>
+                <div class="ops-kpi-value">{value}</div>
+                <div class="ops-kpi-sub">{subtitle}</div>
+            </div>
+            """
+        )
+    st.markdown(
+        f'<div class="ops-kpi-row">{"".join(item_html)}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def render_ops_inline_note(label: str, value: str) -> None:
+    st.markdown(
+        (
+            '<div class="ops-inline-note">'
+            f'<span class="ops-inline-note-label">{escape_html_text(label)}</span>'
+            f'<span class="ops-inline-note-value">{escape_html_text(value)}</span>'
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_ops_dense_panel(title: str, items: list[dict], tone: str = "detail") -> None:
+    chip_html = []
+    for item in items:
+        label = escape_html_text(item.get("label", ""))
+        value = escape_html_text(item.get("value", ""))
+        subtitle = escape_html_text(item.get("subtitle", ""))
+        sub_html = f'<div class="ops-chip-sub">{subtitle}</div>' if subtitle else ""
+        chip_html.append(
+            f"""
+            <div class="ops-chip">
+                <div class="ops-chip-label">{label}</div>
+                <div class="ops-chip-value">{value}</div>
+                {sub_html}
+            </div>
+            """
+        )
+    st.markdown(
+        f"""
+        <div class="ops-panel ops-tone-{tone}">
+            <div class="ops-panel-header">
+                <div class="ops-panel-title">{escape_html_text(title)}</div>
+            </div>
+            <div class="ops-chip-grid">{"".join(chip_html)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_ops_detail_panel(title: str, items: list[tuple[str, str]], tone: str = "detail", note: str = "") -> None:
+    detail_html = []
+    for label, value in items:
+        detail_html.append(
+            f"""
+            <div class="ops-detail-item">
+                <div class="ops-detail-label">{escape_html_text(label)}</div>
+                <div class="ops-detail-value">{escape_html_text(value)}</div>
+            </div>
+            """
+        )
+    note_html = f'<div class="ops-inline-note">{escape_html_text(note)}</div>' if note else ""
+    st.markdown(
+        f"""
+        <div class="ops-panel ops-tone-{tone}">
+            <div class="ops-panel-header">
+                <div class="ops-panel-title">{escape_html_text(title)}</div>
+            </div>
+            <div class="ops-detail-grid">{"".join(detail_html)}</div>
+            {note_html}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # =========================================================
@@ -2294,14 +2617,6 @@ with tabs[0]:
 with tabs[1]:
     st.subheader(t(lang, "account_title"))
     st.caption(t(lang, "account_snapshot_note"))
-    st.markdown("### Exekučné ovládanie")
-    account_sections = account_observability_cfg.get("ui_sections") or [
-        "proof_banner",
-        "overview",
-        "balances",
-        "positions",
-        "activity",
-    ]
     account_enabled = as_bool(account_observability_cfg.get("enabled"))
 
     if account_enabled is False:
@@ -2383,85 +2698,6 @@ with tabs[1]:
             "live": ("LIVE", "#8e3b3b"),
         }
 
-        with st.container(border=True):
-            header_cols = st.columns([3, 1.15])
-            with header_cols[0]:
-                if active_phase == "dry_run":
-                    st.markdown("#### Prepočítať akciu")
-                elif active_phase == "live":
-                    st.markdown("#### Vykonať obchod")
-                else:
-                    st.markdown("#### Aktualizovať stav")
-            with header_cols[1]:
-                badge_label, badge_color = phase_badges.get(active_phase, phase_badges["refresh"])
-                render_phase_badge(badge_label, badge_color)
-
-            if control_notice:
-                st.info(control_notice)
-
-            if active_phase == "refresh":
-                st.write(
-                    "Read-only obnova cita posledny app status a snapshot. "
-                    f"Posledny sync: {refresh_timestamp}. "
-                    f"trading_enabled: {control_bool_text(refresh_trading_enabled_value)}. "
-                    f"kill_switch: {control_bool_text(refresh_kill_switch_value)}."
-                )
-                if refresh_stop_reason:
-                    st.caption(f"stop_reason: {refresh_stop_reason}")
-                if refresh_missing_artifacts:
-                    st.warning(f"Chybaju podporne artefakty: {', '.join(refresh_missing_artifacts)}")
-                if st.button("Aktualizovať stav", key="execution_controls_refresh", use_container_width=True):
-                    st.session_state.execution_controls_notice = (
-                        "Stav bol znovu nacitany iba v app vrstve. Ziadny order nebol odoslany."
-                    )
-                    st.session_state.execution_controls_phase = "dry_run"
-                    st.rerun()
-
-            elif active_phase == "dry_run":
-                st.write(
-                    "Dry-run zobrazuje posledne neobchodne vyhodnotenie. "
-                    f"Prepocet z: {dry_run_timestamp}. "
-                    f"Odporucana akcia: {pretty_token(dry_run_decision_payload.get('recommended_action'), lang)}. "
-                    f"Cielovy asset: {safe_text_value(dry_run_decision_payload.get('target_asset'), lang=lang)}."
-                )
-                if dry_run_stop_reason:
-                    st.caption(f"stop_reason: {dry_run_stop_reason}")
-                if dry_run_missing_artifacts:
-                    st.warning(f"Chybaju podporne artefakty: {', '.join(dry_run_missing_artifacts)}")
-                if st.button("Prepočítať akciu", key="execution_controls_recompute", use_container_width=True):
-                    st.session_state.execution_controls_notice = (
-                        "Prepočet ostal bez backend submitu. Panel sa posunul do live fazy."
-                    )
-                    st.session_state.execution_controls_phase = "live"
-                    st.rerun()
-
-            else:
-                st.write(
-                    "Live faza ukazuje len kriticke gate info. "
-                    f"trading_enabled: {control_bool_text(live_trading_enabled_value)}. "
-                    f"kill_switch: {control_bool_text(live_kill_switch_value)}."
-                )
-                if live_stop_reason:
-                    st.caption(f"stop_reason: {live_stop_reason}")
-                if live_block_reasons:
-                    st.warning("Blokacia: " + " ; ".join(live_block_reasons))
-                confirmation_input = st.text_input(
-                    "Potvrdzovaci text",
-                    key="execution_controls_live_confirmation",
-                    placeholder=LIVE_ORDER_CONFIRMATION_TEXT,
-                    help="Pre live fazu musi text sediet presne, aj ked submit zostava zatial vypnuty.",
-                )
-                confirmation_matches = confirmation_input.strip() == LIVE_ORDER_CONFIRMATION_TEXT
-                if not confirmation_matches:
-                    st.caption(f"Presny text: {LIVE_ORDER_CONFIRMATION_TEXT}")
-                st.button(
-                    "Vykonať obchod",
-                    key="execution_controls_execute",
-                    use_container_width=True,
-                    disabled=True,
-                    help="Live-order submit z app UI nie je v tejto verzii backendovo napojeny.",
-                )
-
         open_position = account_snapshot_view.get("open_position")
         provider_text = safe_text_value(account_snapshot_view.get("provider"), lang=lang)
         full_account_address = str(account_snapshot_view.get("account_address") or "").strip()
@@ -2488,108 +2724,231 @@ with tabs[1]:
                 side_text = safe_text_value(open_position.get("side"), lang=lang)
             open_position_subtitle = f"{side_text} | {safe_plain_number_text(open_position.get('size'), decimals=6, lang=lang)}"
 
-        for section in account_sections:
-            if section == "proof_banner":
-                st.markdown(f"### {account_ui_text(lang, 'proof_banner')}")
-                with st.container(border=True):
-                    banner_cols = st.columns(2)
-                    with banner_cols[0]:
-                        st.caption(account_ui_text(lang, "proof_state"))
-                        st.markdown(f"**{proof_state_text}**")
-                    with banner_cols[1]:
-                        st.caption(account_ui_text(lang, "read_mode"))
-                        st.markdown(f"**{read_mode_text}**")
-                    if placeholder_framing:
-                        st.caption(placeholder_framing)
-                    if runtime_error_text != t(lang, "na"):
-                        st.warning(f"{account_ui_text(lang, 'runtime_error')}: {runtime_error_text}")
+        st.markdown(f"#### {account_ui_text(lang, 'proof_banner')}")
+        render_ops_strip(
+            [
+                {
+                    "label": account_ui_text(lang, "proof_state"),
+                    "value": proof_state_text,
+                },
+                {
+                    "label": account_ui_text(lang, "read_mode"),
+                    "value": read_mode_text,
+                },
+                {
+                    "label": account_ui_text(lang, "mode"),
+                    "value": mode_text,
+                },
+            ],
+            tone="proof",
+        )
+        if placeholder_framing:
+            st.caption(placeholder_framing)
+        if runtime_error_text != t(lang, "na"):
+            st.warning(f"{account_ui_text(lang, 'runtime_error')}: {runtime_error_text}")
 
-            elif section == "overview":
-                st.markdown(f"### {account_ui_text(lang, 'overview')}")
-                overview_cols = st.columns(4)
-                with overview_cols[0]:
-                    metric_box(
-                        t(lang, "account_connection"),
-                        connection_text if account_snapshot_view.get("status") else t(lang, "account_status_unavailable"),
-                    )
-                with overview_cols[1]:
-                    metric_box(t(lang, "account_last_sync"), format_utc_text(account_snapshot_view.get("as_of_utc"), lang))
-                with overview_cols[2]:
-                    metric_box(t(lang, "account_provider"), provider_text)
-                with overview_cols[3]:
-                    metric_box(account_ui_text(lang, "mode"), mode_text)
-                with st.container(border=True):
-                    st.caption(t(lang, "account_address"))
-                    st.markdown(f"**{masked_account_address}**")
-
-            elif section == "balances":
-                st.markdown(f"### {account_ui_text(lang, 'balances')}")
-                balance_cols = st.columns(3)
-                with balance_cols[0]:
-                    metric_box(t(lang, "account_total_value"), safe_usd_text(account_snapshot_view.get("account_equity_usd"), lang=lang))
-                with balance_cols[1]:
-                    metric_box(t(lang, "account_available_balance"), safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang))
-                with balance_cols[2]:
-                    metric_box(
-                        "Zdroj zostatku" if lang == "sk" else "Balance source",
-                        balance_source_text,
-                    )
-
-            elif section == "positions":
-                st.markdown(f"### {account_ui_text(lang, 'positions')}")
-                position_summary_cols = st.columns(3)
-                with position_summary_cols[0]:
-                    metric_box(
-                        t(lang, "account_open_position"),
-                        safe_text_value(open_position.get("symbol"), lang=lang) if not no_position else t(lang, "account_no_position"),
-                    )
-                    if open_position_subtitle:
-                        st.caption(open_position_subtitle)
-                with position_summary_cols[1]:
-                    metric_box(
-                        "Pocet pozicii" if lang == "sk" else "Positions count",
-                        safe_int_text(account_snapshot_view.get("positions_count"), lang=lang),
-                    )
-                with position_summary_cols[2]:
-                    metric_box(t(lang, "account_open_orders"), safe_int_text(account_snapshot_view.get("open_orders_count"), lang=lang))
-
-                st.markdown(f"#### {t(lang, 'account_position_details')}")
-                if no_position:
-                    with st.container(border=True):
-                        st.markdown(f"**{t(lang, 'account_no_position')}**")
-                        st.caption(t(lang, "account_position_empty_note"))
+        st.markdown("#### Exekučné ovládanie")
+        with st.container(border=True):
+            header_cols = st.columns([3, 1.15])
+            with header_cols[0]:
+                if active_phase == "dry_run":
+                    st.markdown("**Prepočítať akciu**")
+                elif active_phase == "live":
+                    st.markdown("**Vykonať obchod**")
                 else:
-                    side_key = str(open_position.get("side")).upper()
-                    if side_key == "LONG":
-                        position_side_text = t(lang, "account_long")
-                    elif side_key == "SHORT":
-                        position_side_text = t(lang, "account_short")
-                    else:
-                        position_side_text = safe_text_value(open_position.get("side"), lang=lang)
+                    st.markdown("**Aktualizovať stav**")
+            with header_cols[1]:
+                badge_label, badge_color = phase_badges.get(active_phase, phase_badges["refresh"])
+                render_phase_badge(badge_label, badge_color)
 
-                    position_items = [
-                        (t(lang, "account_symbol"), safe_text_value(open_position.get("symbol"), lang=lang)),
-                        (t(lang, "account_side"), position_side_text),
-                        (t(lang, "account_size"), safe_plain_number_text(open_position.get("size"), decimals=6, lang=lang)),
-                        (t(lang, "account_entry_price"), safe_usd_text(open_position.get("entry_price"), decimals=2, lang=lang)),
-                        (t(lang, "account_mark_price"), safe_usd_text(open_position.get("mark_price"), decimals=2, lang=lang)),
-                        (t(lang, "account_unrealized_pnl_usd"), safe_signed_usd_text(open_position.get("unrealized_pnl_usd"), decimals=2, lang=lang)),
-                        (t(lang, "account_unrealized_pnl_pct"), safe_signed_pct_text(open_position.get("unrealized_pnl_pct"), decimals=2, lang=lang)),
-                    ]
-                    position_cols = st.columns(2)
-                    for idx, (label, value) in enumerate(position_items):
-                        with position_cols[idx % 2]:
-                            metric_box(label, value)
+            if control_notice:
+                st.info(control_notice)
 
-            elif section == "activity":
-                st.markdown(f"### {account_ui_text(lang, 'activity')}")
-                activity_cols = st.columns(3)
-                with activity_cols[0]:
-                    metric_box(t(lang, "account_recent_fills"), safe_int_text(account_snapshot_view.get("recent_fills_count"), lang=lang))
-                with activity_cols[1]:
-                    metric_box(t(lang, "account_last_action"), last_action_text)
-                with activity_cols[2]:
-                    metric_box(t(lang, "account_last_result"), last_result_text)
+            if active_phase == "refresh":
+                render_ops_inline_note(
+                    "Zhrnutie",
+                    (
+                        f"Posledny sync {refresh_timestamp} | "
+                        f"trading_enabled {control_bool_text(refresh_trading_enabled_value)} | "
+                        f"kill_switch {control_bool_text(refresh_kill_switch_value)}"
+                    ),
+                )
+                if refresh_stop_reason:
+                    st.caption(f"stop_reason: {refresh_stop_reason}")
+                if refresh_missing_artifacts:
+                    st.warning(f"Chybaju podporne artefakty: {', '.join(refresh_missing_artifacts)}")
+                if st.button("Aktualizovať stav", key="execution_controls_refresh", use_container_width=True):
+                    st.session_state.execution_controls_notice = (
+                        "Stav bol znovu nacitany iba v app vrstve. Ziadny order nebol odoslany."
+                    )
+                    st.session_state.execution_controls_phase = "dry_run"
+                    st.rerun()
+
+            elif active_phase == "dry_run":
+                render_ops_inline_note(
+                    "Zhrnutie",
+                    (
+                        f"Prepocet z {dry_run_timestamp} | "
+                        f"Odporucana akcia {pretty_token(dry_run_decision_payload.get('recommended_action'), lang)} | "
+                        f"Cielovy asset {safe_text_value(dry_run_decision_payload.get('target_asset'), lang=lang)}"
+                    ),
+                )
+                if dry_run_stop_reason:
+                    st.caption(f"stop_reason: {dry_run_stop_reason}")
+                if dry_run_missing_artifacts:
+                    st.warning(f"Chybaju podporne artefakty: {', '.join(dry_run_missing_artifacts)}")
+                if st.button("Prepočítať akciu", key="execution_controls_recompute", use_container_width=True):
+                    st.session_state.execution_controls_notice = (
+                        "Prepočet ostal bez backend submitu. Panel sa posunul do live fazy."
+                    )
+                    st.session_state.execution_controls_phase = "live"
+                    st.rerun()
+
+            else:
+                render_ops_inline_note(
+                    "Kriticke info",
+                    (
+                        f"trading_enabled {control_bool_text(live_trading_enabled_value)} | "
+                        f"kill_switch {control_bool_text(live_kill_switch_value)}"
+                    ),
+                )
+                if live_stop_reason:
+                    st.caption(f"stop_reason: {live_stop_reason}")
+                if live_block_reasons:
+                    st.warning("Blokacia: " + " ; ".join(live_block_reasons))
+                confirmation_input = st.text_input(
+                    "Potvrdzovaci text",
+                    key="execution_controls_live_confirmation",
+                    placeholder=LIVE_ORDER_CONFIRMATION_TEXT,
+                    help="Pre live fazu musi text sediet presne, aj ked submit zostava zatial vypnuty.",
+                )
+                confirmation_matches = confirmation_input.strip() == LIVE_ORDER_CONFIRMATION_TEXT
+                if not confirmation_matches:
+                    st.caption(f"Presny text: {LIVE_ORDER_CONFIRMATION_TEXT}")
+                st.button(
+                    "Vykonať obchod",
+                    key="execution_controls_execute",
+                    use_container_width=True,
+                    disabled=True,
+                    help="Live-order submit z app UI nie je v tejto verzii backendovo napojeny.",
+                )
+
+        st.markdown(f"#### {account_ui_text(lang, 'overview')}")
+        render_ops_strip(
+            [
+                {
+                    "label": t(lang, "account_connection"),
+                    "value": connection_text if account_snapshot_view.get("status") else t(lang, "account_status_unavailable"),
+                },
+                {
+                    "label": t(lang, "account_last_sync"),
+                    "value": format_utc_text(account_snapshot_view.get("as_of_utc"), lang),
+                },
+                {
+                    "label": t(lang, "account_provider"),
+                    "value": provider_text,
+                },
+                {
+                    "label": account_ui_text(lang, "mode"),
+                    "value": mode_text,
+                },
+            ],
+            tone="overview",
+        )
+        render_ops_inline_note(t(lang, "account_address"), masked_account_address)
+
+        st.markdown(f"#### {account_ui_text(lang, 'balances')}")
+        render_ops_kpi_row(
+            [
+                {
+                    "label": t(lang, "account_total_value"),
+                    "value": safe_usd_text(account_snapshot_view.get("account_equity_usd"), lang=lang),
+                    "subtitle": "Primarny KPI",
+                },
+                {
+                    "label": t(lang, "account_available_balance"),
+                    "value": safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang),
+                    "subtitle": "Likvidna cast uctu",
+                },
+                {
+                    "label": "Zdroj zostatku" if lang == "sk" else "Balance source",
+                    "value": balance_source_text,
+                    "subtitle": "Operativny zdroj hodnoty",
+                },
+            ],
+            tone="balance",
+        )
+
+        dense_cols = st.columns([1.2, 1])
+        with dense_cols[0]:
+            render_ops_dense_panel(
+                account_ui_text(lang, "positions"),
+                [
+                    {
+                        "label": t(lang, "account_open_position"),
+                        "value": safe_text_value(open_position.get("symbol"), lang=lang) if not no_position else t(lang, "account_no_position"),
+                        "subtitle": open_position_subtitle,
+                    },
+                    {
+                        "label": "Pocet pozicii" if lang == "sk" else "Positions count",
+                        "value": safe_int_text(account_snapshot_view.get("positions_count"), lang=lang),
+                    },
+                    {
+                        "label": t(lang, "account_open_orders"),
+                        "value": safe_int_text(account_snapshot_view.get("open_orders_count"), lang=lang),
+                    },
+                ],
+                tone="position",
+            )
+        with dense_cols[1]:
+            render_ops_dense_panel(
+                account_ui_text(lang, "activity"),
+                [
+                    {
+                        "label": t(lang, "account_recent_fills"),
+                        "value": safe_int_text(account_snapshot_view.get("recent_fills_count"), lang=lang),
+                    },
+                    {
+                        "label": t(lang, "account_last_action"),
+                        "value": last_action_text,
+                    },
+                    {
+                        "label": t(lang, "account_last_result"),
+                        "value": last_result_text,
+                    },
+                ],
+                tone="activity",
+            )
+
+        if no_position:
+            render_ops_detail_panel(
+                t(lang, "account_position_details"),
+                [(t(lang, "account_open_position"), t(lang, "account_no_position"))],
+                tone="detail",
+                note=t(lang, "account_position_empty_note"),
+            )
+        else:
+            side_key = str(open_position.get("side")).upper()
+            if side_key == "LONG":
+                position_side_text = t(lang, "account_long")
+            elif side_key == "SHORT":
+                position_side_text = t(lang, "account_short")
+            else:
+                position_side_text = safe_text_value(open_position.get("side"), lang=lang)
+
+            render_ops_detail_panel(
+                t(lang, "account_position_details"),
+                [
+                    (t(lang, "account_symbol"), safe_text_value(open_position.get("symbol"), lang=lang)),
+                    (t(lang, "account_side"), position_side_text),
+                    (t(lang, "account_size"), safe_plain_number_text(open_position.get("size"), decimals=6, lang=lang)),
+                    (t(lang, "account_entry_price"), safe_usd_text(open_position.get("entry_price"), decimals=2, lang=lang)),
+                    (t(lang, "account_mark_price"), safe_usd_text(open_position.get("mark_price"), decimals=2, lang=lang)),
+                    (t(lang, "account_unrealized_pnl_usd"), safe_signed_usd_text(open_position.get("unrealized_pnl_usd"), decimals=2, lang=lang)),
+                    (t(lang, "account_unrealized_pnl_pct"), safe_signed_pct_text(open_position.get("unrealized_pnl_pct"), decimals=2, lang=lang)),
+                ],
+                tone="detail",
+            )
 
 with tabs[2]:
     st.subheader(t(lang, "method_title"))
