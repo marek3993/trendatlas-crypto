@@ -3137,11 +3137,9 @@ if not years:
 
 main_equity_df = papers[main_key][["ts", "equity"]].dropna().copy()
 main_latest_dates = pd.to_datetime(main_equity_df["ts"], errors="coerce").dropna().sort_values()
+main_latest_date = None
 if not main_latest_dates.empty:
-    main_metrics = {
-        **main_metrics,
-        "latest_date": main_latest_dates.iloc[-1].normalize().strftime("%Y-%m-%d"),
-    }
+    main_latest_date = main_latest_dates.iloc[-1].normalize().strftime("%Y-%m-%d")
 reference_equity_df = papers.get(reference_key)
 
 tabs = st.tabs(t(lang, "tabs"))
@@ -3277,7 +3275,7 @@ with tabs[0]:
     with ops[4]:
         render_color_card(
             t(lang, "latest_date"),
-            format_date_text(main_metrics.get("latest_date"), lang),
+            format_date_text(main_latest_date, lang),
             "",
             METRIC_HELP[lang][t(lang, "latest_date")],
             "neutral",
