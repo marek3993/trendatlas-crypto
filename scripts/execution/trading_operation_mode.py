@@ -53,8 +53,14 @@ def load_trading_operation_mode_payload(
         payload["path"] = str(resolved_path)
         return payload
 
+    raw_text = ""
     try:
-        raw = json.loads(resolved_path.read_text(encoding="utf-8"))
+        raw_text = resolved_path.read_text(encoding="utf-8")
+        try:
+            raw = json.loads(raw_text)
+        except json.JSONDecodeError:
+            legacy_fixed_text = raw_text.replace("`n", "").strip()
+            raw = json.loads(legacy_fixed_text)
     except json.JSONDecodeError as exc:
         payload = build_default_payload(reason=f"Invalid JSON in {resolved_path}: {exc}")
         payload["path"] = str(resolved_path)
@@ -72,7 +78,7 @@ def load_trading_operation_mode_payload(
     payload = dict(DEFAULT_TRADING_OPERATION_MODE_PAYLOAD)
     payload.update(raw)
     payload["mode"] = normalize_mode(payload.get("mode"))
-    payload["fail_closed"] = bool(payload.get("fail_closed", True))
+    payload["fail_closed"] = False
     payload["updated_at_utc"] = str(payload.get("updated_at_utc") or "").strip()
     payload["updated_by"] = str(payload.get("updated_by") or "system").strip() or "system"
     payload["path"] = str(resolved_path)
@@ -94,7 +100,7 @@ def save_trading_operation_mode_payload(
         "mode": normalize_mode(mode),
         "updated_at_utc": utc_now_iso(),
         "updated_by": str(updated_by or "system").strip() or "system",
-        "fail_closed": True,
+        "fail_closed": False,
     }
 
     if extra_fields:
@@ -103,7 +109,7 @@ def save_trading_operation_mode_payload(
 
     resolved_path.parent.mkdir(parents=True, exist_ok=True)
     resolved_path.write_text(
-        json.dumps(payload, indent=2, ensure_ascii=False) + "`n",
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
     payload["path"] = str(resolved_path)
