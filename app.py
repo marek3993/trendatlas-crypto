@@ -1204,14 +1204,17 @@ def build_execution_notice(result: dict[str, Any], lang: str) -> str:
     if not result:
         return ""
 
+    def normalize_execution_asset(value: Any) -> str:
+        return str(value or "").strip().upper()
+
     action = str(result.get("action") or "").strip().lower()
     status = str(result.get("status") or "").strip().lower()
     error_text = str(result.get("error") or "").strip()
     user_summary = str(result.get("user_summary") or "").strip()
     result_summary = result.get("result_summary") if isinstance(result.get("result_summary"), dict) else {}
     recommended_action = str(result_summary.get("recommended_action") or "").strip().lower()
-    current_position = normalize_asset(result_summary.get("current_position"))
-    target_asset = normalize_asset(result_summary.get("target_asset"))
+    current_position = normalize_execution_asset(result_summary.get("current_position"))
+    target_asset = normalize_execution_asset(result_summary.get("target_asset"))
     order_step_present = bool(result_summary.get("order_step_present"))
     first_block_reason = ""
 
