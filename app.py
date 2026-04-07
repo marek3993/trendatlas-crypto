@@ -49,6 +49,7 @@ DEFAULT_EXECUTION_STATUS_PATH = "outputs/execution/live_status/execution_status.
 DEFAULT_ACCOUNT_SNAPSHOT_PATH = "outputs/execution/read_only/hyperliquid_account_snapshot.json"
 DEFAULT_RUNTIME_HEALTH_PATH = "outputs/execution/runtime_health/latest_runtime_health.json"
 DEFAULT_DRY_RUN_DECISION_PATH = "outputs/execution/dry_run/latest_dry_run_decision.json"
+DEFAULT_SCHEDULER_ENTRY_DECISION_PATH = "outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json"
 DEFAULT_REAL_ORDER_GATE_PATH = "outputs/execution/live_gate/latest_real_order_gate_decision.json"
 EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
@@ -1190,6 +1191,19 @@ def prettify_trading_operation_mode(value: str | None, lang: str) -> str:
     return pretty_token(value, lang)
 
 
+def build_strategy_state_label(payload: dict[str, Any], lang: str) -> str:
+    if not payload:
+        return "Stratégia vypnutá" if lang == "sk" else "Strategy off"
+
+    mode = str(payload.get("mode") or "").strip().lower()
+    trading_enabled = as_bool(payload.get("trading_enabled"))
+    kill_switch = as_bool(payload.get("kill_switch"))
+    strategy_enabled = mode == "live" and trading_enabled is True and kill_switch is False
+    if strategy_enabled:
+        return "Stratégia zapnutá" if lang == "sk" else "Strategy on"
+    return "Stratégia vypnutá" if lang == "sk" else "Strategy off"
+
+
 def build_safety_posture_label(payload: dict[str, Any], lang: str) -> str:
     if not payload:
         return "Chyba execution_mode.json." if lang == "sk" else "execution_mode.json missing."
@@ -1662,6 +1676,73 @@ def inject_css() -> None:
             margin-bottom: 1rem;
         }
 
+        .btc-side-indicator {
+            border-radius: 18px;
+            padding: 0.8rem 0.9rem 0.78rem 0.9rem;
+            border: 1px solid rgba(255,255,255,0.10);
+            background:
+                radial-gradient(circle at top right, rgba(255,196,61,0.16), transparent 38%),
+                linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.020));
+            box-shadow:
+                0 12px 30px rgba(0,0,0,0.20),
+                inset 0 1px 0 rgba(255,255,255,0.04);
+            display: grid;
+            gap: 0.45rem;
+        }
+
+        .btc-side-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+        }
+
+        .btc-side-label,
+        .btc-side-source,
+        .btc-side-foot {
+            font-size: 0.7rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(226,232,240,0.62);
+        }
+
+        .btc-side-source,
+        .btc-side-foot {
+            letter-spacing: 0.08em;
+        }
+
+        .btc-side-body {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            gap: 0.8rem;
+        }
+
+        .btc-side-main {
+            display: flex;
+            align-items: baseline;
+            gap: 0.38rem;
+            font-size: 1.18rem;
+            font-weight: 700;
+            line-height: 1.1;
+            color: #f8fafc;
+        }
+
+        .btc-side-main.is-up {
+            color: #8ee6b3;
+        }
+
+        .btc-side-main.is-down {
+            color: #ff9d9d;
+        }
+
+        .btc-side-price {
+            font-size: 1rem;
+            font-weight: 650;
+            color: rgba(226,232,240,0.76);
+            text-align: right;
+        }
+
         div[data-testid="stRadio"] > div {
             background: rgba(255,255,255,0.04);
             border: 1px solid rgba(255,255,255,0.10);
@@ -2003,6 +2084,33 @@ def escape_html_text(value) -> str:
     return html.escape(str(value if value is not None else ""))
 
 
+def render_btc_side_indicator(indicator: dict[str, Any]) -> None:
+    if not indicator:
+        return
+
+    label = escape_html_text(indicator.get("label", "BTC"))
+    source_text = escape_html_text(indicator.get("source_text", ""))
+    direction = escape_html_text(indicator.get("direction", ""))
+    change_text = escape_html_text(indicator.get("change_text", ""))
+    price_text = escape_html_text(indicator.get("price_text", ""))
+    foot_text = escape_html_text(indicator.get("foot_text", ""))
+    direction_class = "is-up" if indicator.get("direction") == "↑" else "is-down"
+    source_html = f'<div class="btc-side-source">{source_text}</div>' if source_text else ""
+    price_html = f'<div class="btc-side-price">{price_text}</div>' if price_text else ""
+    foot_html = f'<div class="btc-side-foot">{foot_text}</div>' if foot_text else ""
+
+    st.markdown(
+        (
+            '<div class="btc-side-indicator">'
+            f'<div class="btc-side-head"><div class="btc-side-label">{label}</div>{source_html}</div>'
+            f'<div class="btc-side-body"><div class="btc-side-main {direction_class}"><span>{direction}</span><span>{change_text}</span></div>{price_html}</div>'
+            f"{foot_html}"
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
+
+
 def render_ops_strip(items: list[dict], tone: str = "overview") -> None:
     item_html = []
     for item in items:
@@ -2308,6 +2416,36 @@ def load_btc_df() -> pd.DataFrame:
     df = df[[date_col, "close"]].rename(columns={date_col: "ts"}).sort_values("ts")
     df["ts"] = pd.to_datetime(df["ts"]).dt.normalize()
     return df.drop_duplicates(subset=["ts"]).reset_index(drop=True)
+
+
+def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
+    if btc_df is None or btc_df.empty or "close" not in btc_df.columns:
+        return {}
+
+    closed_btc = btc_df.dropna(subset=["ts", "close"]).sort_values("ts").tail(2).reset_index(drop=True)
+    if len(closed_btc) < 2:
+        return {}
+
+    previous_close = as_float(closed_btc.iloc[0]["close"])
+    latest_close = as_float(closed_btc.iloc[1]["close"])
+    if previous_close in (None, 0) or latest_close is None:
+        return {}
+
+    pct_change = ((latest_close / previous_close) - 1.0) * 100.0
+    latest_ts = pd.to_datetime(closed_btc.iloc[1]["ts"], errors="coerce")
+    direction = "↑" if pct_change >= 0 else "↓"
+    return {
+        "label": "BTC",
+        "source_text": "1D close",
+        "direction": direction,
+        "change_text": f"{pct_change:+.2f}%",
+        "price_text": f"${latest_close:,.0f}",
+        "foot_text": (
+            f"Uzavretý deň {latest_ts.day}.{latest_ts.month}.{latest_ts.year}"
+            if pd.notna(latest_ts)
+            else ""
+        ),
+    }
 
 
 def resolve_model_source(selector_cfg: dict, model_key: str) -> dict:
@@ -3080,6 +3218,7 @@ with hero_right:
         horizontal=True,
     )
     st.markdown("</div>", unsafe_allow_html=True)
+    btc_indicator_slot = st.empty()
 
 st.session_state.lang = "sk" if lang_choice == "SK" else "en"
 lang = st.session_state.lang
@@ -3110,6 +3249,10 @@ try:
 except Exception as e:
     st.error(f"{t(lang, 'load_failed')}: {e}")
     st.stop()
+
+btc_side_indicator = build_btc_side_indicator_data(btc_df)
+with btc_indicator_slot.container():
+    render_btc_side_indicator(btc_side_indicator)
 
 papers: dict[str, pd.DataFrame] = {}
 model_metrics: dict[str, dict] = {}
@@ -3156,6 +3299,7 @@ account_snapshot_payload = load_json_optional(account_observability_cfg.get("sna
 account_snapshot_view = build_account_snapshot_view(account_status_payload, account_snapshot_payload)
 runtime_health_payload = load_json_optional(DEFAULT_RUNTIME_HEALTH_PATH)
 dry_run_decision_payload = load_json_optional(DEFAULT_DRY_RUN_DECISION_PATH)
+scheduler_entry_decision_payload = load_json_optional(DEFAULT_SCHEDULER_ENTRY_DECISION_PATH)
 real_order_gate_payload = load_json_optional(DEFAULT_REAL_ORDER_GATE_PATH)
 execution_mode_payload = load_json_optional(EXECUTION_MODE_CONFIG_PATH)
 live_order_policy_payload = load_json_optional(LIVE_ORDER_POLICY_PATH)
@@ -3163,7 +3307,7 @@ trading_operation_mode_payload = load_trading_operation_mode_payload(TRADING_OPE
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 if not runtime_guardrail_payload:
     runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "preflight_check", "execution_mode_guardrail")
-strategy_last_update_utc = str(dry_run_decision_payload.get("generated_at_utc") or "").strip() or None
+strategy_last_update_utc = str(scheduler_entry_decision_payload.get("generated_at_utc") or "").strip() or None
 
 main_metrics = model_metrics.get(main_key, {})
 reference_metrics = model_metrics.get(reference_key, {})
@@ -3318,9 +3462,9 @@ with tabs[0]:
             format_utc_text(strategy_last_update_utc, lang),
             "",
             (
-                "Tento cas ide priamo z outputs/execution/dry_run/latest_dry_run_decision.json cez generated_at_utc."
+                "Tento cas ide priamo z outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json cez generated_at_utc."
                 if lang == "sk"
-                else "This timestamp comes directly from outputs/execution/dry_run/latest_dry_run_decision.json via generated_at_utc."
+                else "This timestamp comes directly from outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json via generated_at_utc."
             ),
             "neutral",
         )
@@ -3434,6 +3578,7 @@ with tabs[1]:
         live_block_reasons = list(live_gate_state["reasons"])
         operation_mode = str(trading_operation_mode_payload.get("mode") or "manual").strip().lower() or "manual"
         operation_mode_label = prettify_trading_operation_mode(operation_mode, lang)
+        strategy_state_label = build_strategy_state_label(execution_mode_payload, lang)
         operation_mode_updated_at_text = format_utc_text(
             trading_operation_mode_payload.get("updated_at_utc"),
             lang,
@@ -3520,165 +3665,66 @@ with tabs[1]:
                 side_text = safe_text_value(open_position.get("side"), lang=lang)
             open_position_subtitle = f"{side_text} | {safe_plain_number_text(open_position.get('size'), decimals=6, lang=lang)}"
 
-        if account_ui_text(lang, "proof_banner").strip():
-            st.markdown(f"#### {account_ui_text(lang, 'proof_banner')}")
-        render_ops_strip(
-            [
-                {
-                    "label": account_ui_text(lang, "proof_state"),
-                    "value": proof_state_text,
-                },
-                {
-                    "label": account_ui_text(lang, "read_mode"),
-                    "value": read_mode_text,
-                },
-                {
-                    "label": account_ui_text(lang, "mode"),
-                    "value": mode_text,
-                },
-            ],
-            tone="proof",
-        )
-        if placeholder_framing:
-            st.caption(placeholder_framing)
         if runtime_error_text != t(lang, "na"):
             friendly_runtime_error = friendly_hyperliquid_error_message(runtime_error_text, lang)
             st.warning(friendly_runtime_error or f"{account_ui_text(lang, 'runtime_error')}: {runtime_error_text}")
 
-        st.markdown("#### Ovladanie")
+        st.markdown("#### Stav a ovládanie")
         with st.container(border=True):
-            st.markdown("**Rezim obchodovania**")
             render_ops_strip(
                 [
                     {
-                        "label": "Zvoleny runtime mod" if lang == "sk" else "Selected runtime mode",
-                        "value": operation_mode_label,
+                        "label": "Stav stratégie" if lang == "sk" else "Strategy state",
+                        "value": strategy_state_label,
                     },
                     {
-                        "label": "Signal" if lang == "sk" else "Signal",
-                        "value": signal_result_label,
+                        "label": "Režim obchodovania" if lang == "sk" else "Trading mode",
+                        "value": operation_mode_label,
                     },
                 ],
-                tone="proof",
+                tone="control",
             )
 
-            mode_manual_col, mode_auto_col = st.columns(2)
-            with mode_manual_col:
+            toggle_col, refresh_col = st.columns(2)
+            toggle_is_automatic = operation_mode == "automatic"
+            toggle_label = (
+                "Vypnúť automatické obchody"
+                if toggle_is_automatic and lang == "sk"
+                else "Zapnúť automatické obchody"
+                if lang == "sk"
+                else "Disable automatic trading"
+                if toggle_is_automatic
+                else "Enable automatic trading"
+            )
+            toggle_action = "set_manual_mode" if toggle_is_automatic else "set_automatic_mode"
+
+            with toggle_col:
                 if st.button(
-                    "Manualne obchody",
-                    key="execution_controls_set_manual_mode",
+                    toggle_label,
+                    key="execution_controls_toggle_automatic_mode",
                     width="stretch",
-                    disabled=(not bridge_available) or operation_mode == "manual",
+                    disabled=not bridge_available,
                 ):
-                    result = run_app_execute_action(action="set_manual_mode")
+                    result = run_app_execute_action(action=toggle_action)
                     st.session_state.execution_bridge_result = result
                     st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
-            with mode_auto_col:
-                if st.button(
-                    "Automaticke obchody",
-                    key="execution_controls_set_automatic_mode",
-                    width="stretch",
-                    disabled=(not bridge_available) or operation_mode == "automatic",
-                ):
-                    result = run_app_execute_action(action="set_automatic_mode")
-                    st.session_state.execution_bridge_result = result
-                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
-                    st.rerun()
-
-            st.divider()
-            st.markdown("**Jednorazove akcie uctu**")
-
-            if not bridge_available:
-                st.warning("Tieto akcie teraz nie sú dostupné.")
-
-            refresh_col, dry_run_col, live_col = st.columns(3)
 
             with refresh_col:
-                render_phase_badge("LEN NA CITANIE", "#365f9c")
-                render_ops_inline_note(
-                    "Zhrnutie",
-                    f"Posledna aktualizacia: {refresh_timestamp}",
-                )
-                if refresh_missing_artifacts:
-                    st.warning("Niektoré údaje o účte momentálne chýbajú.")
                 if st.button(
-                    "Obnovit udaje",
+                    "Obnoviť údaje z peňaženky" if lang == "sk" else "Refresh wallet data",
                     key="execution_controls_refresh",
                     width="stretch",
                     disabled=not bridge_available,
                 ):
-                    with st.spinner("Obnovujem realne operational/account artefakty..."):
+                    with st.spinner("Obnovujem údaje z peňaženky..." if lang == "sk" else "Refreshing wallet data..."):
                         result = run_app_execute_action(action="refresh")
                     st.session_state.execution_bridge_result = result
                     st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
-                if bridge_result.get("action") == "refresh":
-                    st.caption(build_execution_notice(bridge_result, lang))
 
-            with dry_run_col:
-                render_phase_badge("SIGNAL", "#8a6d1f")
-                render_ops_inline_note(
-                    "Zhrnutie",
-                    dry_run_summary_text,
-                )
-                if dry_run_missing_artifacts:
-                    st.warning("Kontrola signálu teraz nemá všetky podklady.")
-                if st.button(
-                    "Skontrolovat signal",
-                    key="execution_controls_recompute",
-                    width="stretch",
-                    disabled=not bridge_available,
-                ):
-                    with st.spinner("Kontrolujem dnesny signal bez odoslania obchodu..."):
-                        result = run_app_execute_action(action="dry_run")
-                    st.session_state.execution_bridge_result = result
-                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
-                    st.rerun()
-                if bridge_result.get("action") == "dry_run":
-                    st.caption(build_execution_notice(bridge_result, lang))
-
-            with live_col:
-                render_phase_badge("OBCHOD", "#8e3b3b")
-                render_ops_inline_note(
-                    "Zhrnutie",
-                    "Obchod sa odošle len vtedy, keď ho systém dnes naozaj povolí.",
-                )
-                if live_block_reasons:
-                    simple_blockers = [simplify_live_block_reason(item, lang) for item in live_block_reasons]
-                    simple_blockers = [item for item in dict.fromkeys(simple_blockers) if item]
-                    st.warning(build_live_blocked_notice(simple_blockers, lang))
-                confirmation_input = st.text_input(
-                    "Potvrdenie",
-                    key="execution_controls_live_confirmation",
-                    placeholder=LIVE_ORDER_CONFIRMATION_TEXT,
-                    help="Ak chcete obchod odoslať, napíšte presne POTVRDZUJEM.",
-                )
-                confirmation_matches = confirmation_input.strip() == LIVE_ORDER_CONFIRMATION_TEXT
-                if not confirmation_matches:
-                    st.caption(f"Presny text: {LIVE_ORDER_CONFIRMATION_TEXT}")
-                if st.button(
-                    "Odoslat obchod",
-                    key="execution_controls_execute",
-                    width="stretch",
-                    disabled=(not live_gate_state["ok"]) or (not confirmation_matches),
-                    help="APP vola iba allowlistnuty bridge a ten dalej vola submit_controlled_real_order.py.",
-                ):
-                    with st.spinner("Spustam one-shot controlled submit backend path..."):
-                        result = run_app_execute_action(
-                            action="live_execute",
-                            ui_confirmation_text=(
-                                APP_UI_CONFIRMATION_TEXT
-                                if confirmation_matches
-                                else confirmation_input
-                            ),
-                            backend_confirm_token=APP_BACKEND_CONFIRM_TOKEN,
-                        )
-                    st.session_state.execution_bridge_result = result
-                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
-                    st.rerun()
-                if bridge_result.get("action") == "live_execute":
-                    st.caption(build_execution_notice(bridge_result, lang))
+            if st.session_state.execution_controls_notice:
+                st.caption(st.session_state.execution_controls_notice)
 
         st.markdown(f"#### {account_ui_text(lang, 'overview')}")
         render_ops_strip(
