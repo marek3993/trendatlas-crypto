@@ -15,6 +15,7 @@ INTENTS_DIR = OUTPUTS_DIR / "intents"
 LOGS_DIR = OUTPUTS_DIR / "logs"
 
 PATHS_REGISTRY_PATH = SOURCE_OF_TRUTH_DIR / "paths_registry.json"
+EXPORT_CONTRACT_PATH = SOURCE_OF_TRUTH_DIR / "export_contract.json"
 
 INTENT_PATH = INTENTS_DIR / "latest_execution_intent.json"
 QUALITY_PATH = INTENTS_DIR / "latest_execution_intent_quality.json"
@@ -69,6 +70,23 @@ def read_csv_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
     raise RuntimeError("unreachable")
 
 
+def resolve_repo_path(raw_path: str | Path) -> Path:
+    candidate = Path(raw_path)
+    if not candidate.is_absolute():
+        return ROOT / candidate
+    if candidate.exists():
+        return candidate
+
+    root_name = ROOT.name.lower()
+    lowered_parts = [part.lower() for part in candidate.parts]
+    if root_name in lowered_parts:
+        root_index = lowered_parts.index(root_name)
+        suffix_parts = candidate.parts[root_index + 1 :]
+        if suffix_parts:
+            return ROOT.joinpath(*suffix_parts)
+    return candidate
+
+
 def normalize_key(s: str) -> str:
     return "".join(ch.lower() for ch in s if ch.isalnum())
 
@@ -97,7 +115,36 @@ def load_registered_path(artifacts: dict[str, Any], artifact_key: str) -> Path:
     canonical_raw = entry.get("canonical")
     if not isinstance(canonical_raw, str) or not canonical_raw.strip():
         fail(f"Artifact {artifact_key} missing canonical path")
-    return Path(canonical_raw)
+    return resolve_repo_path(canonical_raw)
+
+
+def load_app_export_contract() -> dict[str, Any]:
+    payload = read_json(EXPORT_CONTRACT_PATH)
+    contract = payload.get("app_export_contract") if isinstance(payload, dict) else None
+    if not isinstance(contract, dict):
+        fail("export_contract.json missing app_export_contract object")
+    return contract
+
+
+def load_model_source_path(
+    contract: dict[str, Any],
+    *,
+    model_key: str,
+    field_name: str,
+    fallback_path: Path,
+) -> Path:
+    model_sources = contract.get("model_sources")
+    if not isinstance(model_sources, dict):
+        return fallback_path
+
+    source_cfg = model_sources.get(model_key)
+    if not isinstance(source_cfg, dict):
+        return fallback_path
+
+    raw_path = source_cfg.get(field_name)
+    if not isinstance(raw_path, str) or not raw_path.strip():
+        return fallback_path
+    return resolve_repo_path(raw_path)
 
 
 def derive_target_asset(
@@ -128,7 +175,7 @@ def derive_target_asset(
     if paper_position:
         return paper_position
 
-    fail("Could not determine target asset/state from canonical 67J exports.")
+    fail("Could not determine target asset/state from current strategy exports.")
     raise RuntimeError("unreachable")
 
 
@@ -144,22 +191,45 @@ def main() -> None:
     if not isinstance(artifacts, dict):
         fail("paths_registry.json missing top-level 'artifacts' object")
 
-    phase67j_paper_path = load_registered_path(artifacts, "phase67j_winner_paper")
-    phase67j_live_status_path = load_registered_path(artifacts, "phase67j_live_status")
-    phase66g_paper_path = load_registered_path(artifacts, "phase66g_core_paper")
+    contract = load_app_export_contract()
+    strategy_model = str(
+        contract.get("main_model_key") or contract.get("main_strategy_model") or "phase67j_no_neo_main"
+    ).strip() or "phase67j_no_neo_main"
+    reference_model = str(
+        contract.get("reference_model_key") or contract.get("reference_strategy_model") or "phase66g_production_soft_filters"
+    ).strip() or "phase66g_production_soft_filters"
+
+    main_paper_path = load_model_source_path(
+        contract,
+        model_key=strategy_model,
+        field_name="paper_path",
+        fallback_path=load_registered_path(artifacts, "phase67j_winner_paper"),
+    )
+    main_live_status_path = load_model_source_path(
+        contract,
+        model_key=strategy_model,
+        field_name="live_status_path",
+        fallback_path=load_registered_path(artifacts, "phase67j_live_status"),
+    )
+    reference_paper_path = load_model_source_path(
+        contract,
+        model_key=reference_model,
+        field_name="paper_path",
+        fallback_path=load_registered_path(artifacts, "phase66g_core_paper"),
+    )
     app_freshness_report_path = load_registered_path(artifacts, "app_freshness_report")
 
-    paper_header, paper_rows = read_csv_rows(phase67j_paper_path)
+    paper_header, paper_rows = read_csv_rows(main_paper_path)
     if not paper_rows:
-        fail(f"No rows found in {phase67j_paper_path}")
+        fail(f"No rows found in {main_paper_path}")
 
-    live_header, live_rows = read_csv_rows(phase67j_live_status_path)
+    live_header, live_rows = read_csv_rows(main_live_status_path)
     if not live_rows:
-        fail(f"No rows found in {phase67j_live_status_path}")
+        fail(f"No rows found in {main_live_status_path}")
 
-    reference_header, reference_rows = read_csv_rows(phase66g_paper_path)
+    reference_header, reference_rows = read_csv_rows(reference_paper_path)
     if not reference_rows:
-        fail(f"No rows found in {phase66g_paper_path}")
+        fail(f"No rows found in {reference_paper_path}")
 
     freshness_report = read_json(app_freshness_report_path)
 
@@ -262,7 +332,7 @@ def main() -> None:
     )
 
     freshness_ok = bool(freshness_report.get("freshness_ok", True))
-    signal_id = f"phase67j::{str(as_of_source).strip()}::{target_asset}"
+    signal_id = f"{strategy_model}::{str(as_of_source).strip()}::{target_asset}"
 
     intent = {
         "intent_type": "normalized_execution_intent",
@@ -271,8 +341,8 @@ def main() -> None:
         "execution_mode": "read_only_intent_only",
         "trading_enabled": False,
         "kill_switch_required": True,
-        "strategy_model": "phase67j_no_neo_main",
-        "reference_model": "phase66g_production_soft_filters",
+        "strategy_model": strategy_model,
+        "reference_model": reference_model,
         "benchmark": "BTC",
         "signal_id": signal_id,
         "target_asset": target_asset,
@@ -292,9 +362,9 @@ def main() -> None:
             "leverage_live_truth_allowed": False
         },
         "source_paths": {
-            "phase67j_winner_paper": str(phase67j_paper_path.resolve()),
-            "phase67j_live_status": str(phase67j_live_status_path.resolve()),
-            "phase66g_core_paper": str(phase66g_paper_path.resolve()),
+            "strategy_paper": str(main_paper_path.resolve()),
+            "strategy_live_status": str(main_live_status_path.resolve()),
+            "reference_paper": str(reference_paper_path.resolve()),
             "app_freshness_report": str(app_freshness_report_path.resolve())
         },
         "resolved_columns": {
@@ -310,12 +380,13 @@ def main() -> None:
             "reference_position_col": reference_position_col
         },
         "source_samples": {
-            "phase67j_last_paper_row": paper_last,
-            "phase67j_last_live_status_row": live_last,
-            "phase66g_last_paper_row": reference_last
+            "strategy_last_paper_row": paper_last,
+            "strategy_last_live_status_row": live_last,
+            "reference_last_paper_row": reference_last
         },
         "notes": [
             "Deterministic intent from official execution app exports.",
+            "Uses the current strategy contract from source_of_truth/export_contract.json.",
             "Supports current canonical export schema with chosen_asset / held_asset_public / execution_state.",
             "No order sizing logic yet.",
             "No live order execution allowed."
@@ -341,9 +412,10 @@ def main() -> None:
         "script_path": str(Path(__file__).resolve()),
         "input_paths": [
             str(PATHS_REGISTRY_PATH.resolve()),
-            str(phase67j_paper_path.resolve()),
-            str(phase67j_live_status_path.resolve()),
-            str(phase66g_paper_path.resolve()),
+            str(EXPORT_CONTRACT_PATH.resolve()),
+            str(main_paper_path.resolve()),
+            str(main_live_status_path.resolve()),
+            str(reference_paper_path.resolve()),
             str(app_freshness_report_path.resolve())
         ],
         "output_paths": [

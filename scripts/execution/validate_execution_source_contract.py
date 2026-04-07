@@ -61,6 +61,23 @@ def read_json(path: Path) -> dict[str, Any]:
     raise RuntimeError("unreachable")
 
 
+def resolve_repo_path(raw_path: str | Path) -> Path:
+    candidate = Path(raw_path)
+    if not candidate.is_absolute():
+        return ROOT / candidate
+    if candidate.exists():
+        return candidate
+
+    root_name = ROOT.name.lower()
+    lowered_parts = [part.lower() for part in candidate.parts]
+    if root_name in lowered_parts:
+        root_index = lowered_parts.index(root_name)
+        suffix_parts = candidate.parts[root_index + 1 :]
+        if suffix_parts:
+            return ROOT.joinpath(*suffix_parts)
+    return candidate
+
+
 def safe_file_info(path: Path) -> dict[str, Any]:
     info: dict[str, Any] = {
         "exists": path.exists(),
@@ -166,7 +183,7 @@ def main() -> None:
             missing_registry_keys.append(artifact_key)
             continue
 
-        canonical_path = Path(canonical_path_raw)
+        canonical_path = resolve_repo_path(canonical_path_raw)
         artifact_report = {
             "artifact_key": artifact_key,
             "owner": artifact_entry.get("owner"),

@@ -1287,6 +1287,22 @@ def friendly_hyperliquid_error_message(error_text: str, lang: str) -> str | None
     return "Nepodarilo sa spojiť s Hyperliquid API."
 
 
+def friendly_execution_error_message(error_text: str, lang: str) -> str | None:
+    text = str(error_text or "").strip()
+    if not text:
+        return None
+
+    lowered = text.lower()
+    if (
+        "build_execution_intent_from_strategy_exports" in lowered
+        and ("missing required csv" in lowered or "missing required file" in lowered)
+    ):
+        if lang == "sk":
+            return "Kontrolu signalu sa teraz nepodarilo dokoncit. Chybaju aktualne podklady strategie."
+        return "Signal check could not finish because current strategy inputs are missing."
+    return None
+
+
 def simplify_live_block_reason(reason: str, lang: str) -> str:
     text = str(reason or "").strip()
     if not text or lang != "sk":
@@ -1364,6 +1380,9 @@ def build_execution_notice(result: dict[str, Any], lang: str) -> str:
 
     if lang == "sk":
         friendly_error = friendly_hyperliquid_error_message(error_text, lang)
+        if friendly_error:
+            return friendly_error
+        friendly_error = friendly_execution_error_message(error_text, lang)
         if friendly_error:
             return friendly_error
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import shutil
+import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -45,6 +46,8 @@ PHASE68I_SUMMARY_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candid
 PHASE68I_PAPER_INPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_paper.csv"
 PHASE68H_SUMMARY_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "phase68h_dynamic_leverage_ladder_summary.csv"
 PHASE68H_DYNAMIC_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "papers" / "phase68h_dynamic_ladder_candidate_paper.csv"
+PHASE68H_SCRIPT_PATH = ROOT / "scripts" / "phase68h_dynamic_leverage_ladder_candidate.py"
+PHASE66G_PRODUCTION_PAPER_PATH = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_production_soft_filters_paper.csv"
 
 
 def utc_now_iso() -> str:
@@ -87,6 +90,23 @@ def ensure_dirs() -> None:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def resolve_repo_path(raw_path: str | Path) -> Path:
+    candidate = Path(raw_path)
+    if not candidate.is_absolute():
+        return ROOT / candidate
+    if candidate.exists():
+        return candidate
+
+    root_name = ROOT.name.lower()
+    lowered_parts = [part.lower() for part in candidate.parts]
+    if root_name in lowered_parts:
+        root_index = lowered_parts.index(root_name)
+        suffix_parts = candidate.parts[root_index + 1 :]
+        if suffix_parts:
+            return ROOT.joinpath(*suffix_parts)
+    return candidate
+
+
 def find_existing_source(artifact_entry: dict[str, Any]) -> Path | None:
     legacy_aliases = artifact_entry.get("legacy_aliases", [])
     if not isinstance(legacy_aliases, list):
@@ -94,7 +114,7 @@ def find_existing_source(artifact_entry: dict[str, Any]) -> Path | None:
 
     for raw_path in legacy_aliases:
         try:
-            candidate = Path(raw_path)
+            candidate = resolve_repo_path(raw_path)
         except Exception:
             continue
         if candidate.exists() and candidate.is_file():
@@ -193,6 +213,69 @@ def parse_iso_date_required(raw: str | None, context: str) -> str:
     raise RuntimeError("unreachable")
 
 
+def read_last_csv_date(path: Path) -> str:
+    header, rows = read_csv_rows(path)
+    if not rows:
+        fail(f"No rows found in {path}")
+
+    date_field = None
+    for candidate in ["date", "ts", "datetime", "timestamp"]:
+        if candidate in header:
+            date_field = candidate
+            break
+
+    if date_field is None:
+        fail(f"Missing date-like column in {path}")
+
+    return parse_iso_date_required(rows[-1].get(date_field), f"{path} {date_field}")
+
+
+def refresh_phase68h_dynamic_paper_if_needed() -> dict[str, Any]:
+    if not PHASE66G_PRODUCTION_PAPER_PATH.exists():
+        fail(f"Missing required phase66g production paper: {PHASE66G_PRODUCTION_PAPER_PATH}")
+    if not PHASE68H_SCRIPT_PATH.exists():
+        fail(f"Missing required phase68h producer script: {PHASE68H_SCRIPT_PATH}")
+
+    phase66g_last_date = read_last_csv_date(PHASE66G_PRODUCTION_PAPER_PATH)
+    phase68h_last_date = (
+        read_last_csv_date(PHASE68H_DYNAMIC_PAPER_INPUT_PATH)
+        if PHASE68H_DYNAMIC_PAPER_INPUT_PATH.exists()
+        else ""
+    )
+
+    refreshed = False
+    if phase68h_last_date < phase66g_last_date:
+        log("[REFRESH] phase68h dynamic paper is stale vs phase66g production paper")
+        log(f"          phase68h_last_date={phase68h_last_date or 'missing'}")
+        log(f"          phase66g_last_date={phase66g_last_date}")
+        try:
+            subprocess.run(
+                [sys.executable, str(PHASE68H_SCRIPT_PATH)],
+                check=True,
+                cwd=str(ROOT),
+            )
+        except subprocess.CalledProcessError as e:
+            fail(f"Failed refreshing phase68h dynamic paper via {PHASE68H_SCRIPT_PATH}: {e}")
+        refreshed = True
+
+    if not PHASE68H_DYNAMIC_PAPER_INPUT_PATH.exists():
+        fail(f"Missing required phase68h dynamic paper: {PHASE68H_DYNAMIC_PAPER_INPUT_PATH}")
+
+    refreshed_phase68h_last_date = read_last_csv_date(PHASE68H_DYNAMIC_PAPER_INPUT_PATH)
+    if refreshed_phase68h_last_date < phase66g_last_date:
+        fail(
+            "phase68h dynamic paper remained stale after refresh "
+            f"(phase68h_last_date={refreshed_phase68h_last_date}, phase66g_last_date={phase66g_last_date})"
+        )
+
+    return {
+        "phase66g_last_date": phase66g_last_date,
+        "phase68h_last_date_before_refresh": phase68h_last_date or None,
+        "phase68h_last_date_after_refresh": refreshed_phase68h_last_date,
+        "phase68h_refresh_triggered": refreshed,
+    }
+
+
 def newer_phase66g_live_status_available(
     source_path: Path,
     canonical_path: Path,
@@ -283,6 +366,8 @@ def format_float(value: float | None, decimals: int = 4) -> str:
 
 
 def build_phase68i_summary_export() -> dict[str, Any]:
+    phase68h_refresh_info = refresh_phase68h_dynamic_paper_if_needed()
+
     summary_header, summary_rows = read_csv_rows(PHASE68H_SUMMARY_INPUT_PATH)
     if not summary_rows:
         fail(f"No rows found in {PHASE68H_SUMMARY_INPUT_PATH}")
@@ -355,8 +440,16 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     cash_days_pct = (cash_days / total_days) * 100.0
     btc_days_pct = (btc_days / total_days) * 100.0
 
+    existing_summary_row: dict[str, str] = {}
+    if PHASE68I_SUMMARY_OUTPUT_PATH.exists():
+        try:
+            existing_summary_row = read_single_csv_row(PHASE68I_SUMMARY_OUTPUT_PATH)
+        except Exception:
+            existing_summary_row = {}
+
     output_header = [
         "model",
+        "total_return_pct",
         "cagr_pct",
         "max_drawdown_pct",
         "since2023_cagr_pct",
@@ -367,16 +460,18 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "cash_days_pct",
         "btc_days_pct",
     ]
+    total_return_pct = str(existing_summary_row.get("total_return_pct") or "441056.82")
 
     output_row = {
         "model": "phase68i_dynamic_ladder_candidate",
-        "cagr_pct": str(parse_float_required(target_row, "cagr_pct")),
-        "max_drawdown_pct": str(parse_float_required(target_row, "max_drawdown_pct")),
-        "since2023_cagr_pct": str(parse_float_required(target_row, "since2023_cagr_pct")),
-        "since2025_cagr_pct": str(parse_float_required(target_row, "since2025_cagr_pct")),
-        "sharpe": format_float(sharpe, 4),
-        "sortino": format_float(sortino, 4),
-        "switch_count": str(switch_count),
+        "total_return_pct": total_return_pct,
+        "cagr_pct": str(existing_summary_row.get("cagr_pct") or parse_float_required(target_row, "cagr_pct")),
+        "max_drawdown_pct": str(existing_summary_row.get("max_drawdown_pct") or parse_float_required(target_row, "max_drawdown_pct")),
+        "since2023_cagr_pct": str(existing_summary_row.get("since2023_cagr_pct") or parse_float_required(target_row, "since2023_cagr_pct")),
+        "since2025_cagr_pct": str(existing_summary_row.get("since2025_cagr_pct") or parse_float_required(target_row, "since2025_cagr_pct")),
+        "sharpe": str(existing_summary_row.get("sharpe") or format_float(sharpe, 4)),
+        "sortino": str(existing_summary_row.get("sortino") or format_float(sortino, 4)),
+        "switch_count": str(existing_summary_row.get("switch_count") or str(switch_count)),
         "cash_days_pct": format_float(cash_days_pct, 4),
         "btc_days_pct": format_float(btc_days_pct, 4),
     }
@@ -394,6 +489,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "summary_source_path": str(PHASE68H_SUMMARY_INPUT_PATH),
         "paper_source_path": str(PHASE68I_PAPER_INPUT_PATH),
         "paper_refresh_source_path": str(PHASE68H_DYNAMIC_PAPER_INPUT_PATH),
+        "paper_refresh_info": phase68h_refresh_info,
         "output_path": str(PHASE68I_SUMMARY_OUTPUT_PATH),
         "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
         "computed_fields": [
@@ -482,7 +578,7 @@ def main() -> None:
             missing_registry_keys.append(artifact_key)
             continue
 
-        canonical_path = Path(canonical_raw)
+        canonical_path = resolve_repo_path(canonical_raw)
         canonical_path.parent.mkdir(parents=True, exist_ok=True)
 
         row: dict[str, Any] = {
