@@ -40,14 +40,9 @@ DEFAULT_ACCOUNT_SNAPSHOT_PATH = "outputs/execution/read_only/hyperliquid_account
 DEFAULT_RUNTIME_HEALTH_PATH = "outputs/execution/runtime_health/latest_runtime_health.json"
 DEFAULT_DRY_RUN_DECISION_PATH = "outputs/execution/dry_run/latest_dry_run_decision.json"
 DEFAULT_REAL_ORDER_GATE_PATH = "outputs/execution/live_gate/latest_real_order_gate_decision.json"
-DEFAULT_RECONCILIATION_PATH = "outputs/execution/reconciliation/latest_reconciliation_report.json"
-DEFAULT_SUBMIT_PREVIEW_DECISION_PATH = "outputs/execution/submit_preview/latest_submit_preview_decision.json"
-DEFAULT_SUBMIT_EXCHANGE_RESPONSE_PATH = "outputs/execution/submit_preview/latest_submit_exchange_response.json"
-DEFAULT_SUBMIT_POST_SNAPSHOT_PATH = "outputs/execution/submit_preview/latest_submit_post_snapshot.json"
-DEFAULT_POST_SUBMIT_RECON_PATH = "outputs/execution/submit_preview/latest_post_submit_reconciliation.json"
 EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
-LIVE_ORDER_CONFIRMATION_TEXT = APP_UI_CONFIRMATION_TEXT
+LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
@@ -898,8 +893,8 @@ def prettify_account_result(value: str | None, lang: str) -> str:
 def describe_bridge_action(value: str | None, lang: str = "sk") -> str:
     text = str(value or "").strip().lower()
     mapping = {
-        "refresh": {"sk": "Obnovenie udajov", "en": "Refresh"},
-        "dry_run": {"sk": "Kontrola signalu", "en": "Dry-run"},
+        "refresh": {"sk": "Obnovenie údajov", "en": "Refresh"},
+        "dry_run": {"sk": "Kontrola signálu", "en": "Dry-run"},
         "live_execute": {"sk": "Odoslanie obchodu", "en": "Live execute"},
     }
     if text in mapping:
@@ -1170,37 +1165,37 @@ def simplify_live_block_reason(reason: str, lang: str) -> str:
     lowered = text.lower()
 
     if "leverage_live_truth_allowed=true" in text:
-        return "Live obchod teraz nepusta gate artefakt."
+        return "Systém dnes ešte nepovoľuje odoslanie obchodu."
     if "dry-run dnes neukazuje realny submit" in lowered and "hold_cash" in lowered:
-        return "Dnes systém nevidí obchod, ktorý by mal odoslať."
+        return "Dnes nie je vhodný signál."
     if "dry-run dnes neukazuje realny submit" in lowered:
-        return "Dnes systém nevidí obchod, ktorý by mal odoslať."
+        return "Dnes nie je vhodný signál."
     if "dry-run hlasi blocker" in lowered:
         return "Dnešný signál je blokovaný."
     if "stale_signal=true" in lowered:
         return "Dnešný signál je zastaraný."
     if "duplicate_order_risk=true" in lowered:
-        return "Hrozi duplicitny obchod."
+        return "Systém teraz nechce poslať duplicitný obchod."
     if "contract_validated=true" in lowered:
-        return "Dry-run nema potvrdene guardraily."
+        return "Bezpečnostná kontrola dnes nie je potvrdená."
     if "execution_mode.json nema mode=live" in lowered:
-        return "Live režim nie je zapnutý v konfigurácii."
+        return "Odoslanie obchodu teraz nie je zapnuté."
     if "execution_mode.json nema trading_enabled=true" in lowered:
-        return "Live obchodovanie je vypnuté v konfigurácii."
+        return "Odoslanie obchodu je teraz vypnuté."
     if "allow_live_orders=true" in lowered:
-        return "Policy teraz nepovoľuje live objednávky."
+        return "Odoslanie obchodu teraz nie je povolené."
     if "manual_approval_required=true" in lowered:
-        return "Policy ešte vyžaduje manuálne schválenie."
+        return "Obchod ešte vyžaduje manuálne schválenie."
     if "kill_switch=false" in lowered:
-        return "Kill switch je zapnutý, preto live obchod zostáva blokovaný."
+        return "Bezpečnostná poistka je zapnutá."
     if "gate status nie je ready_if_enabled" in lowered:
-        return "Gate ešte nepustil live obchod."
+        return "Systém dnes ešte nepovolil odoslanie obchodu."
     if "approval status nie je povoleny" in lowered:
-        return "Live schválenie ešte nie je v povolenom stave."
+        return "Schválenie pre odoslanie obchodu ešte nie je hotové."
     if "account_address" in lowered:
-        return "Chýba účet pre live vykonanie."
+        return "Chýba pripojený účet."
     if "bridge pre live execute nie je dostupny" in lowered:
-        return "Lokálny bridge pre vykonanie nie je dostupný."
+        return "Táto akcia teraz nie je dostupná."
 
     return text
 
@@ -1215,29 +1210,54 @@ def build_execution_notice(result: dict[str, Any], lang: str) -> str:
     user_summary = str(result.get("user_summary") or "").strip()
     result_summary = result.get("result_summary") if isinstance(result.get("result_summary"), dict) else {}
     recommended_action = str(result_summary.get("recommended_action") or "").strip().lower()
+    current_position = normalize_asset(result_summary.get("current_position"))
+    target_asset = normalize_asset(result_summary.get("target_asset"))
+    order_step_present = bool(result_summary.get("order_step_present"))
+    first_block_reason = ""
 
     if lang == "sk":
         friendly_error = friendly_hyperliquid_error_message(error_text, lang)
         if friendly_error:
             return friendly_error
 
-        if action == "dry_run" and recommended_action == "hold_cash":
-            return "Dnes systém nevidí obchod, ktorý by mal odoslať."
+        block_reasons = [
+            simplify_live_block_reason(item, lang)
+            for item in (result.get("block_reasons") or [])
+        ]
+        block_reasons = [item for item in block_reasons if item]
+        if block_reasons:
+            first_block_reason = block_reasons[0]
 
         if action == "refresh" and result.get("ok"):
-            return user_summary or "Údaje boli obnovené."
+            if current_position and current_position != "CASH":
+                return (
+                    "Údaje o účte sa úspešne obnovili. "
+                    f"Účet je aktuálny a momentálne drží {current_position}."
+                )
+            return "Údaje o účte sa úspešne obnovili. Účet je aktuálny a momentálne nemá otvorenú pozíciu."
+
+        if action == "dry_run" and recommended_action == "hold_cash":
+            return "Kontrola signálu je hotová. Dnes systém nevidí vhodný obchod."
 
         if action == "dry_run" and result.get("ok"):
-            return user_summary or "Kontrola signálu je hotová."
+            if target_asset and target_asset != "CASH":
+                return (
+                    "Kontrola signálu je hotová. "
+                    f"Dnes systém vidí obchod smerom na {target_asset}."
+                )
+            return "Kontrola signálu je hotová."
 
         if action == "live_execute" and status == "blocked":
-            block_reasons = [
-                simplify_live_block_reason(item, lang)
-                for item in (result.get("block_reasons") or [])
-            ]
-            block_reasons = [item for item in block_reasons if item]
-            if block_reasons:
-                return "Live obchod je zablokovaný.\n" + " | ".join(dict.fromkeys(block_reasons))
+            if first_block_reason == "Dnes nie je vhodný signál.":
+                return "Obchod sa teraz neodošle, pretože dnes nie je vhodný signál."
+            if first_block_reason:
+                return f"Obchod sa teraz neodošle. {first_block_reason}"
+            return "Obchod sa teraz neodošle."
+
+        if action == "live_execute" and result.get("ok"):
+            if order_step_present:
+                return "Obchod bol odoslaný."
+            return "Pokyn sa spracoval, ale obchod sa neodoslal."
 
         if user_summary:
             return user_summary
@@ -1246,16 +1266,6 @@ def build_execution_notice(result: dict[str, Any], lang: str) -> str:
         return "Akcia sa skončila bez detailu."
 
     return user_summary or error_text or "Action finished."
-
-
-def render_json_artifact_block(title: str, path_label: str, payload: dict | None, *, expanded: bool = False) -> None:
-    st.markdown(f"**{title}**")
-    st.caption(path_label)
-    if payload:
-        with st.expander("Zobrazit JSON", expanded=expanded):
-            st.json(payload)
-    else:
-        st.caption("Artefakt zatial nie je dostupny.")
 
 
 def prettify_balance_source(value: str | None, lang: str) -> str:
@@ -2754,11 +2764,6 @@ account_snapshot_view = build_account_snapshot_view(account_status_payload, acco
 runtime_health_payload = load_json_optional(DEFAULT_RUNTIME_HEALTH_PATH)
 dry_run_decision_payload = load_json_optional(DEFAULT_DRY_RUN_DECISION_PATH)
 real_order_gate_payload = load_json_optional(DEFAULT_REAL_ORDER_GATE_PATH)
-reconciliation_payload = load_json_optional(DEFAULT_RECONCILIATION_PATH)
-submit_preview_decision_payload = load_json_optional(DEFAULT_SUBMIT_PREVIEW_DECISION_PATH)
-submit_exchange_response_payload = load_json_optional(DEFAULT_SUBMIT_EXCHANGE_RESPONSE_PATH)
-submit_post_snapshot_payload = load_json_optional(DEFAULT_SUBMIT_POST_SNAPSHOT_PATH)
-post_submit_reconciliation_payload = load_json_optional(DEFAULT_POST_SUBMIT_RECON_PATH)
 execution_mode_payload = load_json_optional(EXECUTION_MODE_CONFIG_PATH)
 live_order_policy_payload = load_json_optional(LIVE_ORDER_POLICY_PATH)
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
@@ -3110,11 +3115,12 @@ with tabs[1]:
         if placeholder_framing:
             st.caption(placeholder_framing)
         if runtime_error_text != t(lang, "na"):
-            st.warning(f"{account_ui_text(lang, 'runtime_error')}: {runtime_error_text}")
+            friendly_runtime_error = friendly_hyperliquid_error_message(runtime_error_text, lang)
+            st.warning(friendly_runtime_error or f"{account_ui_text(lang, 'runtime_error')}: {runtime_error_text}")
 
         st.markdown("#### Ovladanie")
         with st.container(border=True):
-            st.markdown("**Bezpečný backend bridge**")
+            st.markdown("**Ovládanie účtu**")
             if control_notice:
                 bridge_status_value = str(bridge_result.get("status") or "").strip().lower()
                 if bridge_result.get("ok"):
@@ -3125,10 +3131,7 @@ with tabs[1]:
                     st.error(control_notice)
 
             if not bridge_available:
-                st.warning(
-                    "Nepodarilo sa nacitat lokalny backend bridge. "
-                    f"APP backend akcie nezapne. Detail: {APP_EXECUTE_BRIDGE_IMPORT_ERROR or 'neznamy dovod'}"
-                )
+                st.warning("Tieto akcie teraz nie sú dostupné.")
 
             refresh_col, dry_run_col, live_col = st.columns(3)
 
@@ -3136,16 +3139,10 @@ with tabs[1]:
                 render_phase_badge("LEN NA CITANIE", "#365f9c")
                 render_ops_inline_note(
                     "Zhrnutie",
-                    (
-                        f"Posledny sync {refresh_timestamp} | "
-                        f"trading_enabled {control_bool_text(refresh_trading_enabled_value)} | "
-                        f"kill_switch {control_bool_text(refresh_kill_switch_value)}"
-                    ),
+                    f"Posledna aktualizacia: {refresh_timestamp}",
                 )
-                if refresh_stop_reason:
-                    st.caption(f"Stav runtime: {refresh_stop_reason}")
                 if refresh_missing_artifacts:
-                    st.warning(f"Chybaju podporne artefakty: {', '.join(refresh_missing_artifacts)}")
+                    st.warning("Niektoré údaje o účte momentálne chýbajú.")
                 if st.button(
                     "Obnovit udaje",
                     key="execution_controls_refresh",
@@ -3162,15 +3159,10 @@ with tabs[1]:
                 render_phase_badge("SIGNAL", "#8a6d1f")
                 render_ops_inline_note(
                     "Zhrnutie",
-                    (
-                        f"Kontrola z {dry_run_timestamp} | "
-                        f"{dry_run_summary_text}"
-                    ),
+                    dry_run_summary_text,
                 )
-                if dry_run_stop_reason:
-                    st.caption(f"Stav runtime: {dry_run_stop_reason}")
                 if dry_run_missing_artifacts:
-                    st.warning(f"Chybaju podporne artefakty: {', '.join(dry_run_missing_artifacts)}")
+                    st.warning("Kontrola signálu teraz nemá všetky podklady.")
                 if st.button(
                     "Skontrolovat signal",
                     key="execution_controls_recompute",
@@ -3186,23 +3178,19 @@ with tabs[1]:
             with live_col:
                 render_phase_badge("OBCHOD", "#8e3b3b")
                 render_ops_inline_note(
-                    "Kriticke info",
-                    (
-                        f"trading_enabled {control_bool_text(live_trading_enabled_value)} | "
-                        f"kill_switch {control_bool_text(live_kill_switch_value)}"
-                    ),
+                    "Zhrnutie",
+                    "Obchod sa odošle len vtedy, keď ho systém dnes naozaj povolí.",
                 )
-                if live_stop_reason:
-                    st.caption(f"Stav gate: {live_stop_reason}")
                 if live_block_reasons:
                     simple_blockers = [simplify_live_block_reason(item, lang) for item in live_block_reasons]
                     simple_blockers = [item for item in dict.fromkeys(simple_blockers) if item]
-                    st.warning("Live obchod je blokovaný. " + " | ".join(simple_blockers))
+                    short_reason = simple_blockers[0] if simple_blockers else "Obchod sa teraz neodošle."
+                    st.warning(f"Obchod sa teraz neodošle. {short_reason}")
                 confirmation_input = st.text_input(
-                    "Potvrdzovaci text",
+                    "Potvrdenie",
                     key="execution_controls_live_confirmation",
                     placeholder=LIVE_ORDER_CONFIRMATION_TEXT,
-                    help="Bez presneho textu a backend tokenu APP nespusti live submit.",
+                    help="Ak chcete obchod odoslať, napíšte presne POTVRDZUJEM.",
                 )
                 confirmation_matches = confirmation_input.strip() == LIVE_ORDER_CONFIRMATION_TEXT
                 if not confirmation_matches:
@@ -3217,79 +3205,16 @@ with tabs[1]:
                     with st.spinner("Spustam one-shot controlled submit backend path..."):
                         result = run_app_execute_action(
                             action="live_execute",
-                            ui_confirmation_text=confirmation_input,
+                            ui_confirmation_text=(
+                                APP_UI_CONFIRMATION_TEXT
+                                if confirmation_matches
+                                else confirmation_input
+                            ),
                             backend_confirm_token=APP_BACKEND_CONFIRM_TOKEN,
                         )
                     st.session_state.execution_bridge_result = result
                     st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
-
-            if bridge_result:
-                bridge_status = pretty_token(bridge_result.get("status"), lang)
-                bridge_action = describe_bridge_action(bridge_result.get("action"), lang)
-                bridge_finished = format_utc_text(bridge_result.get("finished_at_utc"), lang)
-                st.caption(f"Posledny backend beh: {bridge_action} | stav {bridge_status} | dokoncene {bridge_finished}")
-                bridge_summary_text = build_execution_notice(bridge_result, lang)
-                if bridge_summary_text:
-                    st.caption(bridge_summary_text)
-                if bridge_result.get("error"):
-                    friendly_error = friendly_hyperliquid_error_message(bridge_result.get("error"), lang)
-                    st.error(friendly_error or str(bridge_result.get("error")))
-                with st.expander("Detail backend bridge"):
-                    st.json(bridge_result)
-
-        if real_order_gate_payload or reconciliation_payload:
-            st.markdown("#### Gate a reconciliacia")
-            gate_cols = st.columns(2)
-            with gate_cols[0]:
-                render_json_artifact_block(
-                    "Real-order gate",
-                    DEFAULT_REAL_ORDER_GATE_PATH,
-                    real_order_gate_payload,
-                    expanded=False,
-                )
-            with gate_cols[1]:
-                render_json_artifact_block(
-                    "Reconciliation",
-                    DEFAULT_RECONCILIATION_PATH,
-                    reconciliation_payload,
-                    expanded=False,
-                )
-
-        if (
-            submit_preview_decision_payload
-            or submit_exchange_response_payload
-            or submit_post_snapshot_payload
-            or post_submit_reconciliation_payload
-        ):
-            st.markdown("#### Live submit artefakty")
-            artifact_cols = st.columns(2)
-            with artifact_cols[0]:
-                render_json_artifact_block(
-                    "Submit preview decision",
-                    DEFAULT_SUBMIT_PREVIEW_DECISION_PATH,
-                    submit_preview_decision_payload,
-                    expanded=True,
-                )
-                render_json_artifact_block(
-                    "Submit exchange response",
-                    DEFAULT_SUBMIT_EXCHANGE_RESPONSE_PATH,
-                    submit_exchange_response_payload,
-                    expanded=False,
-                )
-            with artifact_cols[1]:
-                render_json_artifact_block(
-                    "Submit post snapshot",
-                    DEFAULT_SUBMIT_POST_SNAPSHOT_PATH,
-                    submit_post_snapshot_payload,
-                    expanded=False,
-                )
-                render_json_artifact_block(
-                    "Post-submit reconciliation",
-                    DEFAULT_POST_SUBMIT_RECON_PATH,
-                    post_submit_reconciliation_payload,
-                    expanded=False,
-                )
 
         st.markdown(f"#### {account_ui_text(lang, 'overview')}")
         render_ops_strip(
