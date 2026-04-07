@@ -1678,7 +1678,8 @@ def inject_css() -> None:
 
         .btc-side-indicator {
             border-radius: 18px;
-            padding: 0.8rem 0.9rem 0.78rem 0.9rem;
+            padding: 0.95rem 1rem 0.95rem 1rem;
+            min-height: 108px;
             border: 1px solid rgba(255,255,255,0.10);
             background:
                 radial-gradient(circle at top right, rgba(255,196,61,0.16), transparent 38%),
@@ -1687,42 +1688,40 @@ def inject_css() -> None:
                 0 12px 30px rgba(0,0,0,0.20),
                 inset 0 1px 0 rgba(255,255,255,0.04);
             display: grid;
-            gap: 0.45rem;
+            gap: 0.7rem;
         }
 
         .btc-side-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 0.8rem;
+            gap: 1rem;
         }
 
-        .btc-side-label,
-        .btc-side-source,
-        .btc-side-foot {
-            font-size: 0.7rem;
+        .btc-side-label {
+            font-size: 0.72rem;
             letter-spacing: 0.14em;
             text-transform: uppercase;
             color: rgba(226,232,240,0.62);
         }
 
-        .btc-side-source,
-        .btc-side-foot {
-            letter-spacing: 0.08em;
+        .btc-side-arrow {
+            font-size: 1.5rem;
+            line-height: 1;
         }
 
         .btc-side-body {
             display: flex;
-            align-items: end;
+            align-items: center;
             justify-content: space-between;
-            gap: 0.8rem;
+            gap: 1rem;
         }
 
         .btc-side-main {
             display: flex;
-            align-items: baseline;
-            gap: 0.38rem;
-            font-size: 1.18rem;
+            align-items: center;
+            gap: 0.48rem;
+            font-size: 1.36rem;
             font-weight: 700;
             line-height: 1.1;
             color: #f8fafc;
@@ -1737,9 +1736,9 @@ def inject_css() -> None:
         }
 
         .btc-side-price {
-            font-size: 1rem;
-            font-weight: 650;
-            color: rgba(226,232,240,0.76);
+            font-size: 1.18rem;
+            font-weight: 720;
+            color: #f8fafc;
             text-align: right;
         }
 
@@ -2089,22 +2088,17 @@ def render_btc_side_indicator(indicator: dict[str, Any]) -> None:
         return
 
     label = escape_html_text(indicator.get("label", "BTC"))
-    source_text = escape_html_text(indicator.get("source_text", ""))
     direction = escape_html_text(indicator.get("direction", ""))
     change_text = escape_html_text(indicator.get("change_text", ""))
     price_text = escape_html_text(indicator.get("price_text", ""))
-    foot_text = escape_html_text(indicator.get("foot_text", ""))
     direction_class = "is-up" if indicator.get("direction") == "↑" else "is-down"
-    source_html = f'<div class="btc-side-source">{source_text}</div>' if source_text else ""
     price_html = f'<div class="btc-side-price">{price_text}</div>' if price_text else ""
-    foot_html = f'<div class="btc-side-foot">{foot_text}</div>' if foot_text else ""
 
     st.markdown(
         (
             '<div class="btc-side-indicator">'
-            f'<div class="btc-side-head"><div class="btc-side-label">{label}</div>{source_html}</div>'
-            f'<div class="btc-side-body"><div class="btc-side-main {direction_class}"><span>{direction}</span><span>{change_text}</span></div>{price_html}</div>'
-            f"{foot_html}"
+            f'<div class="btc-side-head"><div class="btc-side-label">{label}</div>{price_html}</div>'
+            f'<div class="btc-side-body"><div class="btc-side-main {direction_class}"><span class="btc-side-arrow">{direction}</span><span>{change_text}</span></div></div>'
             "</div>"
         ),
         unsafe_allow_html=True,
@@ -2432,19 +2426,12 @@ def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
         return {}
 
     pct_change = ((latest_close / previous_close) - 1.0) * 100.0
-    latest_ts = pd.to_datetime(closed_btc.iloc[1]["ts"], errors="coerce")
     direction = "↑" if pct_change >= 0 else "↓"
     return {
         "label": "BTC",
-        "source_text": "1D close",
         "direction": direction,
         "change_text": f"{pct_change:+.2f}%",
         "price_text": f"${latest_close:,.0f}",
-        "foot_text": (
-            f"Uzavretý deň {latest_ts.day}.{latest_ts.month}.{latest_ts.year}"
-            if pd.notna(latest_ts)
-            else ""
-        ),
     }
 
 
