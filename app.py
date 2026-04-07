@@ -7,6 +7,7 @@ import re
 import uuid
 from datetime import date, datetime, timezone
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -898,7 +899,7 @@ def describe_bridge_action(value: str | None, lang: str = "sk") -> str:
     text = str(value or "").strip().lower()
     mapping = {
         "refresh": {"sk": "Obnovenie udajov", "en": "Refresh"},
-        "dry_run": {"sk": "Prepocet nanecisto", "en": "Dry-run"},
+        "dry_run": {"sk": "Kontrola signalu", "en": "Dry-run"},
         "live_execute": {"sk": "Odoslanie obchodu", "en": "Live execute"},
     }
     if text in mapping:
@@ -1128,6 +1129,123 @@ def build_live_execute_gate_state(
         "status": gate_status,
         "would_place_real_order": as_bool(real_order_gate_payload.get("would_place_real_order")),
     }
+
+
+def friendly_hyperliquid_error_message(error_text: str, lang: str) -> str | None:
+    text = str(error_text or "").strip()
+    if not text:
+        return None
+
+    lowered = text.lower()
+    hyperliquid_error = (
+        "hyperliquid" in lowered
+        or "api.hyperliquid.xyz" in lowered
+        or "nameresolutionerror" in lowered
+        or "failed to resolve" in lowered
+    )
+    if not hyperliquid_error:
+        return None
+
+    if lang != "sk":
+        return "Could not connect to the Hyperliquid API."
+
+    reason = ""
+    if "nameresolutionerror" in lowered or "failed to resolve" in lowered:
+        reason = "Dovod: NameResolutionError - nepodarilo sa prelozit adresu api.hyperliquid.xyz."
+    elif "connection refused" in lowered:
+        reason = "Dovod: API spojenie bolo odmietnute."
+    elif "timeout" in lowered:
+        reason = "Dovod: API neodpovedalo vcas."
+
+    if reason:
+        return "Nepodarilo sa spojiť s Hyperliquid API.\n" + reason
+    return "Nepodarilo sa spojiť s Hyperliquid API."
+
+
+def simplify_live_block_reason(reason: str, lang: str) -> str:
+    text = str(reason or "").strip()
+    if not text or lang != "sk":
+        return text
+
+    lowered = text.lower()
+
+    if "leverage_live_truth_allowed=true" in text:
+        return "Live obchod teraz nepusta gate artefakt."
+    if "dry-run dnes neukazuje realny submit" in lowered and "hold_cash" in lowered:
+        return "Dnes systém nevidí obchod, ktorý by mal odoslať."
+    if "dry-run dnes neukazuje realny submit" in lowered:
+        return "Dnes systém nevidí obchod, ktorý by mal odoslať."
+    if "dry-run hlasi blocker" in lowered:
+        return "Dnešný signál je blokovaný."
+    if "stale_signal=true" in lowered:
+        return "Dnešný signál je zastaraný."
+    if "duplicate_order_risk=true" in lowered:
+        return "Hrozi duplicitny obchod."
+    if "contract_validated=true" in lowered:
+        return "Dry-run nema potvrdene guardraily."
+    if "execution_mode.json nema mode=live" in lowered:
+        return "Live režim nie je zapnutý v konfigurácii."
+    if "execution_mode.json nema trading_enabled=true" in lowered:
+        return "Live obchodovanie je vypnuté v konfigurácii."
+    if "allow_live_orders=true" in lowered:
+        return "Policy teraz nepovoľuje live objednávky."
+    if "manual_approval_required=true" in lowered:
+        return "Policy ešte vyžaduje manuálne schválenie."
+    if "kill_switch=false" in lowered:
+        return "Kill switch je zapnutý, preto live obchod zostáva blokovaný."
+    if "gate status nie je ready_if_enabled" in lowered:
+        return "Gate ešte nepustil live obchod."
+    if "approval status nie je povoleny" in lowered:
+        return "Live schválenie ešte nie je v povolenom stave."
+    if "account_address" in lowered:
+        return "Chýba účet pre live vykonanie."
+    if "bridge pre live execute nie je dostupny" in lowered:
+        return "Lokálny bridge pre vykonanie nie je dostupný."
+
+    return text
+
+
+def build_execution_notice(result: dict[str, Any], lang: str) -> str:
+    if not result:
+        return ""
+
+    action = str(result.get("action") or "").strip().lower()
+    status = str(result.get("status") or "").strip().lower()
+    error_text = str(result.get("error") or "").strip()
+    user_summary = str(result.get("user_summary") or "").strip()
+    result_summary = result.get("result_summary") if isinstance(result.get("result_summary"), dict) else {}
+    recommended_action = str(result_summary.get("recommended_action") or "").strip().lower()
+
+    if lang == "sk":
+        friendly_error = friendly_hyperliquid_error_message(error_text, lang)
+        if friendly_error:
+            return friendly_error
+
+        if action == "dry_run" and recommended_action == "hold_cash":
+            return "Dnes systém nevidí obchod, ktorý by mal odoslať."
+
+        if action == "refresh" and result.get("ok"):
+            return user_summary or "Údaje boli obnovené."
+
+        if action == "dry_run" and result.get("ok"):
+            return user_summary or "Kontrola signálu je hotová."
+
+        if action == "live_execute" and status == "blocked":
+            block_reasons = [
+                simplify_live_block_reason(item, lang)
+                for item in (result.get("block_reasons") or [])
+            ]
+            block_reasons = [item for item in block_reasons if item]
+            if block_reasons:
+                return "Live obchod je zablokovaný.\n" + " | ".join(dict.fromkeys(block_reasons))
+
+        if user_summary:
+            return user_summary
+        if error_text:
+            return error_text
+        return "Akcia sa skončila bez detailu."
+
+    return user_summary or error_text or "Action finished."
 
 
 def render_json_artifact_block(title: str, path_label: str, payload: dict | None, *, expanded: bool = False) -> None:
@@ -2721,7 +2839,7 @@ with tabs[0]:
             btc_label=t(lang, "btc_label"),
             title=t(lang, "chart_title"),
         ),
-        use_container_width=True,
+        width="stretch",
     )
 
     st.markdown(f"### {t(lang, 'performance_title')}")
@@ -2746,7 +2864,7 @@ with tabs[0]:
 
     trend_cols = st.columns([1.35, 1.65])
     with trend_cols[0]:
-        st.plotly_chart(make_trend_gauge(trend_live, lang), use_container_width=True)
+        st.plotly_chart(make_trend_gauge(trend_live, lang), width="stretch")
 
     with trend_cols[1]:
         tc1 = st.columns(2)
@@ -2775,7 +2893,7 @@ with tabs[0]:
             )
 
     if not trend_history_df.empty:
-        st.plotly_chart(make_trend_history_chart(trend_history_df, lang), use_container_width=True)
+        st.plotly_chart(make_trend_history_chart(trend_history_df, lang), width="stretch")
         st.caption(t(lang, "trend_history_note"))
 
     st.markdown(f"### {t(lang, 'ops_title')}")
@@ -2820,7 +2938,7 @@ with tabs[0]:
             }
         ]
     )
-    st.dataframe(calc_df, use_container_width=True, hide_index=True)
+    st.dataframe(calc_df, width="stretch", hide_index=True)
     st.caption(t(lang, "calc_note"))
 
     example_rows = []
@@ -2846,7 +2964,7 @@ with tabs[0]:
         )
 
     st.markdown(f"#### {t(lang, 'quick_examples')}")
-    st.dataframe(pd.DataFrame(example_rows), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame(example_rows), width="stretch", hide_index=True)
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))
@@ -2926,6 +3044,14 @@ with tabs[1]:
         live_stop_reason = str(real_order_gate_payload.get("status") or "").strip()
         refresh_timestamp = format_utc_text(account_snapshot_view.get("as_of_utc"), lang)
         dry_run_timestamp = format_utc_text(dry_run_decision_payload.get("generated_at_utc"), lang)
+        dry_run_recommended_action = str(dry_run_decision_payload.get("recommended_action") or "").strip().lower()
+        if lang == "sk" and dry_run_recommended_action == "hold_cash":
+            dry_run_summary_text = "Dnes systém nevidí obchod, ktorý by mal odoslať."
+        else:
+            dry_run_summary_text = (
+                f"Odporucana akcia {pretty_token(dry_run_decision_payload.get('recommended_action'), lang)} | "
+                f"Cielovy asset {safe_text_value(dry_run_decision_payload.get('target_asset'), lang=lang)}"
+            )
 
         open_position = account_snapshot_view.get("open_position")
         connection_text = prettify_account_status(account_snapshot_view.get("status"), lang)
@@ -2988,7 +3114,7 @@ with tabs[1]:
 
         st.markdown("#### Ovladanie")
         with st.container(border=True):
-            st.markdown("**APP backend bridge**")
+            st.markdown("**Bezpečný backend bridge**")
             if control_notice:
                 bridge_status_value = str(bridge_result.get("status") or "").strip().lower()
                 if bridge_result.get("ok"):
@@ -3000,8 +3126,8 @@ with tabs[1]:
 
             if not bridge_available:
                 st.warning(
-                    "Local execution bridge sa nepodarilo nacitat. "
-                    f"APP nezapne backend akcie. Detail: {APP_EXECUTE_BRIDGE_IMPORT_ERROR or 'neznamy dovod'}"
+                    "Nepodarilo sa nacitat lokalny backend bridge. "
+                    f"APP backend akcie nezapne. Detail: {APP_EXECUTE_BRIDGE_IMPORT_ERROR or 'neznamy dovod'}"
                 )
 
             refresh_col, dry_run_col, live_col = st.columns(3)
@@ -3017,53 +3143,44 @@ with tabs[1]:
                     ),
                 )
                 if refresh_stop_reason:
-                    st.caption(f"Runtime health: {refresh_stop_reason}")
+                    st.caption(f"Stav runtime: {refresh_stop_reason}")
                 if refresh_missing_artifacts:
                     st.warning(f"Chybaju podporne artefakty: {', '.join(refresh_missing_artifacts)}")
                 if st.button(
                     "Obnovit udaje",
                     key="execution_controls_refresh",
-                    use_container_width=True,
+                    width="stretch",
                     disabled=not bridge_available,
                 ):
                     with st.spinner("Obnovujem realne operational/account artefakty..."):
                         result = run_app_execute_action(action="refresh")
                     st.session_state.execution_bridge_result = result
-                    st.session_state.execution_controls_notice = str(
-                        result.get("user_summary")
-                        or result.get("error")
-                        or "Refresh skoncil bez summary."
-                    ).strip()
+                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
 
             with dry_run_col:
-                render_phase_badge("NANECISTO", "#8a6d1f")
+                render_phase_badge("SIGNAL", "#8a6d1f")
                 render_ops_inline_note(
                     "Zhrnutie",
                     (
-                        f"Prepocet z {dry_run_timestamp} | "
-                        f"Odporucana akcia {pretty_token(dry_run_decision_payload.get('recommended_action'), lang)} | "
-                        f"Cielovy asset {safe_text_value(dry_run_decision_payload.get('target_asset'), lang=lang)}"
+                        f"Kontrola z {dry_run_timestamp} | "
+                        f"{dry_run_summary_text}"
                     ),
                 )
                 if dry_run_stop_reason:
-                    st.caption(f"Runtime health: {dry_run_stop_reason}")
+                    st.caption(f"Stav runtime: {dry_run_stop_reason}")
                 if dry_run_missing_artifacts:
                     st.warning(f"Chybaju podporne artefakty: {', '.join(dry_run_missing_artifacts)}")
                 if st.button(
-                    "Prepocitat nanecisto",
+                    "Skontrolovat signal",
                     key="execution_controls_recompute",
-                    use_container_width=True,
+                    width="stretch",
                     disabled=not bridge_available,
                 ):
-                    with st.spinner("Pocitam realny dry-run backend path bez submitu..."):
+                    with st.spinner("Kontrolujem dnesny signal bez odoslania obchodu..."):
                         result = run_app_execute_action(action="dry_run")
                     st.session_state.execution_bridge_result = result
-                    st.session_state.execution_controls_notice = str(
-                        result.get("user_summary")
-                        or result.get("error")
-                        or "Dry-run skoncil bez summary."
-                    ).strip()
+                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
 
             with live_col:
@@ -3076,9 +3193,11 @@ with tabs[1]:
                     ),
                 )
                 if live_stop_reason:
-                    st.caption(f"Gate status: {live_stop_reason}")
+                    st.caption(f"Stav gate: {live_stop_reason}")
                 if live_block_reasons:
-                    st.warning("Live execute je blokovany. " + " | ".join(live_block_reasons))
+                    simple_blockers = [simplify_live_block_reason(item, lang) for item in live_block_reasons]
+                    simple_blockers = [item for item in dict.fromkeys(simple_blockers) if item]
+                    st.warning("Live obchod je blokovaný. " + " | ".join(simple_blockers))
                 confirmation_input = st.text_input(
                     "Potvrdzovaci text",
                     key="execution_controls_live_confirmation",
@@ -3091,7 +3210,7 @@ with tabs[1]:
                 if st.button(
                     "Odoslat obchod",
                     key="execution_controls_execute",
-                    use_container_width=True,
+                    width="stretch",
                     disabled=(not live_gate_state["ok"]) or (not confirmation_matches),
                     help="APP vola iba allowlistnuty bridge a ten dalej vola submit_controlled_real_order.py.",
                 ):
@@ -3102,11 +3221,7 @@ with tabs[1]:
                             backend_confirm_token=APP_BACKEND_CONFIRM_TOKEN,
                         )
                     st.session_state.execution_bridge_result = result
-                    st.session_state.execution_controls_notice = str(
-                        result.get("user_summary")
-                        or result.get("error")
-                        or "Live execute skoncil bez summary."
-                    ).strip()
+                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
 
             if bridge_result:
@@ -3114,10 +3229,12 @@ with tabs[1]:
                 bridge_action = describe_bridge_action(bridge_result.get("action"), lang)
                 bridge_finished = format_utc_text(bridge_result.get("finished_at_utc"), lang)
                 st.caption(f"Posledny backend beh: {bridge_action} | stav {bridge_status} | dokoncene {bridge_finished}")
-                if bridge_result.get("user_summary"):
-                    st.caption(str(bridge_result.get("user_summary")))
+                bridge_summary_text = build_execution_notice(bridge_result, lang)
+                if bridge_summary_text:
+                    st.caption(bridge_summary_text)
                 if bridge_result.get("error"):
-                    st.error(str(bridge_result.get("error")))
+                    friendly_error = friendly_hyperliquid_error_message(bridge_result.get("error"), lang)
+                    st.error(friendly_error or str(bridge_result.get("error")))
                 with st.expander("Detail backend bridge"):
                     st.json(bridge_result)
 
