@@ -3136,6 +3136,12 @@ if not years:
     st.stop()
 
 main_equity_df = papers[main_key][["ts", "equity"]].dropna().copy()
+main_latest_dates = pd.to_datetime(main_equity_df["ts"], errors="coerce").dropna().sort_values()
+if not main_latest_dates.empty:
+    main_metrics = {
+        **main_metrics,
+        "latest_date": main_latest_dates.iloc[-1].normalize().strftime("%Y-%m-%d"),
+    }
 reference_equity_df = papers.get(reference_key)
 
 tabs = st.tabs(t(lang, "tabs"))
@@ -3671,7 +3677,7 @@ with tabs[1]:
             tone="balance",
         )
 
-        dense_cols = st.columns([1.2, 1])
+        dense_cols = st.columns(2, gap="large")
         with dense_cols[0]:
             render_ops_dense_panel(
                 account_ui_text(lang, "positions"),
@@ -3710,36 +3716,6 @@ with tabs[1]:
                     },
                 ],
                 tone="activity",
-            )
-
-        if no_position:
-            render_ops_detail_panel(
-                t(lang, "account_position_details"),
-                [(t(lang, "account_open_position"), t(lang, "account_no_position"))],
-                tone="detail",
-                note=t(lang, "account_position_empty_note"),
-            )
-        else:
-            side_key = str(open_position.get("side")).upper()
-            if side_key == "LONG":
-                position_side_text = t(lang, "account_long")
-            elif side_key == "SHORT":
-                position_side_text = t(lang, "account_short")
-            else:
-                position_side_text = safe_text_value(open_position.get("side"), lang=lang)
-
-            render_ops_detail_panel(
-                t(lang, "account_position_details"),
-                [
-                    (t(lang, "account_symbol"), safe_text_value(open_position.get("symbol"), lang=lang)),
-                    (t(lang, "account_side"), position_side_text),
-                    (t(lang, "account_size"), safe_plain_number_text(open_position.get("size"), decimals=6, lang=lang)),
-                    (t(lang, "account_entry_price"), safe_usd_text(open_position.get("entry_price"), decimals=2, lang=lang)),
-                    (t(lang, "account_mark_price"), safe_usd_text(open_position.get("mark_price"), decimals=2, lang=lang)),
-                    (t(lang, "account_unrealized_pnl_usd"), safe_signed_usd_text(open_position.get("unrealized_pnl_usd"), decimals=2, lang=lang)),
-                    (t(lang, "account_unrealized_pnl_pct"), safe_signed_pct_text(open_position.get("unrealized_pnl_pct"), decimals=2, lang=lang)),
-                ],
-                tone="detail",
             )
 
 with tabs[2]:
