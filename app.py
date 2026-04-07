@@ -1191,15 +1191,11 @@ def prettify_trading_operation_mode(value: str | None, lang: str) -> str:
     return pretty_token(value, lang)
 
 
-def build_strategy_state_label(payload: dict[str, Any], lang: str) -> str:
-    if not payload:
+def build_strategy_state_label(operation_mode: str | None, lang: str) -> str:
+    mode = str(operation_mode or "").strip().lower()
+    if not mode:
         return "Stratégia vypnutá" if lang == "sk" else "Strategy off"
-
-    mode = str(payload.get("mode") or "").strip().lower()
-    trading_enabled = as_bool(payload.get("trading_enabled"))
-    kill_switch = as_bool(payload.get("kill_switch"))
-    strategy_enabled = mode == "live" and trading_enabled is True and kill_switch is False
-    if strategy_enabled:
+    if mode == "automatic":
         return "Stratégia zapnutá" if lang == "sk" else "Strategy on"
     return "Stratégia vypnutá" if lang == "sk" else "Strategy off"
 
@@ -1473,9 +1469,9 @@ def build_execution_notice(result: dict[str, Any], lang: str) -> str:
 
         if action in {"set_manual_mode", "set_automatic_mode"} and result.get("ok"):
             return (
-                "Rezim obchodovania je nastaveny na automaticke obchody."
+                "Automatické obchody sú zapnuté."
                 if mode == "automatic"
-                else "Rezim obchodovania je nastaveny na manualne obchody."
+                else "Automatické obchody sú vypnuté."
             )
 
         if action == "live_execute" and status == "blocked":
@@ -3565,7 +3561,7 @@ with tabs[1]:
         live_block_reasons = list(live_gate_state["reasons"])
         operation_mode = str(trading_operation_mode_payload.get("mode") or "manual").strip().lower() or "manual"
         operation_mode_label = prettify_trading_operation_mode(operation_mode, lang)
-        strategy_state_label = build_strategy_state_label(execution_mode_payload, lang)
+        strategy_state_label = build_strategy_state_label(operation_mode, lang)
         operation_mode_updated_at_text = format_utc_text(
             trading_operation_mode_payload.get("updated_at_utc"),
             lang,
@@ -3663,10 +3659,6 @@ with tabs[1]:
                     {
                         "label": "Stav stratégie" if lang == "sk" else "Strategy state",
                         "value": strategy_state_label,
-                    },
-                    {
-                        "label": "Režim obchodovania" if lang == "sk" else "Trading mode",
-                        "value": operation_mode_label,
                     },
                 ],
                 tone="control",
