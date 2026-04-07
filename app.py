@@ -4,7 +4,7 @@ import json
 import math
 import re
 import uuid
-from datetime import datetime
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -742,36 +742,37 @@ def control_bool_text(value) -> str:
     return "Ano" if parsed else "Nie"
 
 
-def control_token_text(value) -> str:
-    if value is None or (isinstance(value, str) and not value.strip()):
-        return "Nedostupne"
-    return pretty_token(str(value), "sk")
+def format_date_text(value, lang: str = "sk") -> str:
+    if value is None:
+        return t(lang, "na")
 
+    parsed = None
+    text = str(value).strip()
 
-def render_execution_control_metrics(
-    *,
-    mode_value,
-    trading_enabled_value,
-    dry_run_enabled_value,
-    kill_switch_value,
-    control_mode_value,
-    stop_reason_value,
-) -> None:
-    primary_cols = st.columns(3)
-    with primary_cols[0]:
-        metric_box("mode", control_token_text(mode_value))
-    with primary_cols[1]:
-        metric_box("trading_enabled", control_bool_text(trading_enabled_value))
-    with primary_cols[2]:
-        metric_box("dry_run_enabled", control_bool_text(dry_run_enabled_value))
+    if isinstance(value, pd.Timestamp):
+        parsed = value.to_pydatetime()
+    elif isinstance(value, datetime):
+        parsed = value
+    elif isinstance(value, date):
+        parsed = datetime(value.year, value.month, value.day)
+    elif text:
+        try:
+            parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+        except ValueError:
+            try:
+                if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+                    parsed = datetime.strptime(text, "%Y-%m-%d")
+                else:
+                    parsed_ts = pd.to_datetime(text, errors="coerce")
+                    if not pd.isna(parsed_ts):
+                        parsed = parsed_ts.to_pydatetime()
+            except Exception:
+                parsed = None
 
-    secondary_cols = st.columns(3)
-    with secondary_cols[0]:
-        metric_box("kill_switch", control_bool_text(kill_switch_value))
-    with secondary_cols[1]:
-        metric_box("control_mode", control_token_text(control_mode_value))
-    with secondary_cols[2]:
-        metric_box("stop_reason", control_token_text(stop_reason_value))
+    if parsed is None:
+        return text if text else t(lang, "na")
+
+    return f"{parsed.day}.{parsed.month}.{parsed.year}"
 
 
 def mask_account_address(value: str | None, visible_prefix: int = 6, visible_suffix: int = 4) -> str | None:
@@ -859,9 +860,24 @@ def format_utc_text(value: str | None, lang: str) -> str:
     if not text:
         return t(lang, "na")
     try:
-        return datetime.fromisoformat(text.replace("Z", "+00:00")).strftime("%Y-%m-%d %H:%M UTC")
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+        if parsed.tzinfo is not None:
+            parsed = parsed.astimezone(timezone.utc)
+        return f"{parsed.day}.{parsed.month}.{parsed.year} {parsed.hour}:{parsed.minute:02d} UTC"
     except ValueError:
-        return text
+        return format_date_text(text, lang)
+
+
+def render_phase_badge(label: str, background: str) -> None:
+    st.markdown(
+        (
+            "<span style=\"display:inline-block;padding:0.16rem 0.55rem;"
+            f"border-radius:999px;background:{background};color:white;"
+            "font-size:0.72rem;font-weight:700;letter-spacing:0.03em;\">"
+            f"{label}</span>"
+        ),
+        unsafe_allow_html=True,
+    )
 
 
 def first_float_from_dict(payload: dict | None, keys: list[str]) -> float | None:
@@ -1976,6 +1992,10 @@ inject_css()
 
 if "lang" not in st.session_state:
     st.session_state.lang = "sk"
+if "execution_controls_phase" not in st.session_state:
+    st.session_state.execution_controls_phase = "refresh"
+if "execution_controls_notice" not in st.session_state:
+    st.session_state.execution_controls_notice = ""
 
 selector_cfg = load_selector_config()
 
@@ -2186,7 +2206,10 @@ with tabs[0]:
 
         st.caption(t(lang, "trend_threshold_note"))
         if trend_live.get("trend_calc_date"):
-            st.caption(f"{'Datum vypoctu' if lang == 'sk' else 'Calc date'}: {trend_live.get('trend_calc_date')}")
+            st.caption(
+                f"{'Datum vypoctu' if lang == 'sk' else 'Calc date'}: "
+                f"{format_date_text(trend_live.get('trend_calc_date'), lang)}"
+            )
 
     if not trend_history_df.empty:
         st.plotly_chart(make_trend_history_chart(trend_history_df, lang), use_container_width=True)
@@ -2203,7 +2226,13 @@ with tabs[0]:
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     with ops[4]:
-        render_color_card(t(lang, "latest_date"), safe_text_value(main_metrics.get("latest_date"), lang=lang), "", METRIC_HELP[lang][t(lang, "latest_date")], "neutral")
+        render_color_card(
+            t(lang, "latest_date"),
+            format_date_text(main_metrics.get("latest_date"), lang),
+            "",
+            METRIC_HELP[lang][t(lang, "latest_date")],
+            "neutral",
+        )
 
     st.markdown(f"### {t(lang, 'calc_title')}")
     st.write(t(lang, "calc_desc"))
@@ -2222,7 +2251,7 @@ with tabs[0]:
     calc_df = pd.DataFrame(
         [
             {
-                t(lang, "calc_used_date"): used_date.strftime("%Y-%m-%d"),
+                t(lang, "calc_used_date"): format_date_text(used_date, lang),
                 t(lang, "calc_value"): f"{value_now:,.2f} €",
                 t(lang, "calc_return"): f"{ret_pct:+.2f}%",
             }
@@ -2247,7 +2276,7 @@ with tabs[0]:
         e_used, e_value, e_ret = investment_value(main_equity_df, dt, amount=1000.0)
         example_rows.append(
             {
-                "Dátum" if lang == "sk" else "Date": e_used.strftime("%Y-%m-%d"),
+                "Dátum" if lang == "sk" else "Date": format_date_text(e_used, lang),
                 "Hodnota" if lang == "sk" else "Value": f"{e_value:,.2f} €",
                 "Zhodnotenie" if lang == "sk" else "Return": f"{e_ret:+.2f}%",
             }
@@ -2266,10 +2295,6 @@ with tabs[1]:
     st.subheader(t(lang, "account_title"))
     st.caption(t(lang, "account_snapshot_note"))
     st.markdown("### Exekučné ovládanie")
-    st.caption(
-        "Kazda akcia je oddelena. 'Aktualizovat stav' a 'Prepocitat akciu' nikdy neposielaju order. "
-        "'Vykonat obchod' je samostatny flow s potvrdenim a v tejto app verzii nie je backendovo napojeny."
-    )
     account_sections = account_observability_cfg.get("ui_sections") or [
         "proof_banner",
         "overview",
@@ -2282,6 +2307,8 @@ with tabs[1]:
     if account_enabled is False:
         st.info(account_ui_text(lang, "observability_disabled"))
     else:
+        active_phase = st.session_state.get("execution_controls_phase", "refresh")
+        control_notice = str(st.session_state.get("execution_controls_notice") or "").strip()
         refresh_missing_artifacts = []
         if not account_status_payload:
             refresh_missing_artifacts.append("execution_status.json")
@@ -2290,21 +2317,11 @@ with tabs[1]:
         if not runtime_health_payload:
             refresh_missing_artifacts.append("latest_runtime_health.json")
 
-        refresh_mode_value = first_present_value(
-            runtime_guardrail_payload.get("mode"),
-            account_status_payload.get("mode"),
-            account_snapshot_payload.get("execution_mode"),
-            "read_only" if (account_status_payload or account_snapshot_payload) else None,
-        )
         refresh_trading_enabled_value = first_present_value(
             runtime_guardrail_payload.get("trading_enabled"),
             account_status_payload.get("trading_enabled"),
             account_snapshot_payload.get("trading_enabled"),
             False if (account_status_payload or account_snapshot_payload) else None,
-        )
-        refresh_dry_run_enabled_value = first_present_value(
-            runtime_guardrail_payload.get("dry_run_enabled"),
-            True if runtime_guardrail_payload else None,
         )
         refresh_kill_switch_value = first_present_value(
             runtime_guardrail_payload.get("kill_switch"),
@@ -2313,110 +2330,11 @@ with tabs[1]:
             True if runtime_guardrail_payload else None,
         )
 
-        with st.container(border=True):
-            header_cols = st.columns([1.7, 1, 1.2])
-            with header_cols[0]:
-                st.markdown("#### Aktualizovať stav")
-                st.caption("READ-ONLY")
-            with header_cols[1]:
-                metric_box("Dostupnost", "Dostupne" if (account_status_payload or account_snapshot_payload) else "Nedostupne")
-            with header_cols[2]:
-                metric_box("Posledny sync", format_utc_text(account_snapshot_view.get("as_of_utc"), lang))
-
-            render_execution_control_metrics(
-                mode_value=refresh_mode_value,
-                trading_enabled_value=refresh_trading_enabled_value,
-                dry_run_enabled_value=refresh_dry_run_enabled_value,
-                kill_switch_value=refresh_kill_switch_value,
-                control_mode_value=runtime_health_payload.get("control_mode"),
-                stop_reason_value=runtime_health_payload.get("stop_reason"),
-            )
-
-            detail_cols = st.columns(3)
-            with detail_cols[0]:
-                metric_box("Stav pripojenia", prettify_account_status(account_snapshot_view.get("status"), lang))
-            with detail_cols[1]:
-                metric_box("Rezim citania", prettify_account_read_mode(account_observability_cfg.get("read_mode"), lang))
-            with detail_cols[2]:
-                metric_box("Posledna akcia", prettify_account_action(account_snapshot_view.get("last_action"), lang))
-
-            st.caption("Tato akcia len znova nacita uz dostupne app/runtime artefakty. Nikdy neposiela order.")
-            if refresh_missing_artifacts:
-                st.warning(f"Chybaju podporne artefakty: {', '.join(refresh_missing_artifacts)}")
-            if st.button("Aktualizovať stav", key="execution_controls_refresh", use_container_width=True):
-                st.success("Stav bol znovu nacitany iba v app vrstve. Ziadny order nebol odoslany.")
-
         dry_run_missing_artifacts = []
         if not dry_run_decision_payload:
             dry_run_missing_artifacts.append("latest_dry_run_decision.json")
         if not runtime_health_payload:
             dry_run_missing_artifacts.append("latest_runtime_health.json")
-
-        dry_run_mode_value = first_present_value(
-            runtime_guardrail_payload.get("mode"),
-            "read_only" if dry_run_decision_payload else None,
-        )
-        dry_run_trading_enabled_value = first_present_value(
-            runtime_guardrail_payload.get("trading_enabled"),
-            get_nested_value(dry_run_decision_payload, "guardrails", "trading_enabled"),
-            False if dry_run_decision_payload else None,
-        )
-        dry_run_dry_run_enabled_value = first_present_value(
-            runtime_guardrail_payload.get("dry_run_enabled"),
-            True if dry_run_decision_payload else None,
-        )
-        dry_run_kill_switch_value = first_present_value(
-            runtime_guardrail_payload.get("kill_switch"),
-            get_nested_value(dry_run_decision_payload, "guardrails", "kill_switch_required"),
-            True if dry_run_decision_payload else None,
-        )
-
-        with st.container(border=True):
-            header_cols = st.columns([1.7, 1, 1.2])
-            with header_cols[0]:
-                st.markdown("#### Prepočítať akciu")
-                st.caption("DRY-RUN")
-            with header_cols[1]:
-                metric_box("Dostupnost", "Dostupne" if dry_run_decision_payload else "Nedostupne")
-            with header_cols[2]:
-                metric_box(
-                    "Prepocet z",
-                    format_utc_text(dry_run_decision_payload.get("generated_at_utc"), lang),
-                )
-
-            render_execution_control_metrics(
-                mode_value=dry_run_mode_value,
-                trading_enabled_value=dry_run_trading_enabled_value,
-                dry_run_enabled_value=dry_run_dry_run_enabled_value,
-                kill_switch_value=dry_run_kill_switch_value,
-                control_mode_value=runtime_health_payload.get("control_mode"),
-                stop_reason_value=runtime_health_payload.get("stop_reason"),
-            )
-
-            detail_cols = st.columns(3)
-            with detail_cols[0]:
-                metric_box("Odporucana akcia", control_token_text(dry_run_decision_payload.get("recommended_action")))
-            with detail_cols[1]:
-                metric_box("Cielovy asset", safe_text_value(dry_run_decision_payload.get("target_asset"), lang=lang))
-            with detail_cols[2]:
-                metric_box(
-                    "V dry-rune by zadal order",
-                    control_bool_text(get_nested_value(dry_run_decision_payload, "simulated_order", "would_place_order")),
-                )
-
-            st.caption(
-                "Panel zobrazuje posledny dry-run artefakt. Akcia je oddelena od refreshu a nikdy neposiela realny order."
-            )
-            if dry_run_missing_artifacts:
-                st.warning(f"Chybaju podporne artefakty: {', '.join(dry_run_missing_artifacts)}")
-            st.button(
-                "Prepočítať akciu",
-                key="execution_controls_recompute",
-                use_container_width=True,
-                disabled=True,
-                help="UI flow je zatial zamerne nenapojeny na backend prepocet.",
-            )
-            st.info("Tlacidlo je zamerne nenapojene na backend. UI zatial len transparentne ukazuje posledny dry-run stav.")
 
         live_block_reasons = []
         if not execution_mode_payload:
@@ -2445,69 +2363,104 @@ with tabs[1]:
                 live_block_reasons.append(text)
         live_block_reasons.append("APP flow nie je v tejto verzii napojeny na submit_controlled_real_order.py.")
 
-        live_mode_value = first_present_value(
-            real_order_gate_payload.get("mode"),
-            execution_mode_payload.get("mode"),
-        )
         live_trading_enabled_value = first_present_value(
             execution_mode_payload.get("trading_enabled"),
             real_order_gate_payload.get("real_orders_enabled"),
         )
-        live_dry_run_enabled_value = execution_mode_payload.get("dry_run_enabled")
         live_kill_switch_value = first_present_value(
             execution_mode_payload.get("kill_switch"),
             get_nested_value(real_order_gate_payload, "checks", "kill_switch"),
         )
 
+        refresh_stop_reason = str(runtime_health_payload.get("stop_reason") or "").strip()
+        dry_run_stop_reason = refresh_stop_reason
+        live_stop_reason = refresh_stop_reason
+        refresh_timestamp = format_utc_text(account_snapshot_view.get("as_of_utc"), lang)
+        dry_run_timestamp = format_utc_text(dry_run_decision_payload.get("generated_at_utc"), lang)
+        phase_badges = {
+            "refresh": ("READ-ONLY", "#365f9c"),
+            "dry_run": ("DRY-RUN", "#8a6d1f"),
+            "live": ("LIVE", "#8e3b3b"),
+        }
+
         with st.container(border=True):
-            header_cols = st.columns([1.7, 1, 1.2])
+            header_cols = st.columns([3, 1.15])
             with header_cols[0]:
-                st.markdown("#### Vykonať obchod")
-                st.caption("LIVE-ORDER")
+                if active_phase == "dry_run":
+                    st.markdown("#### Prepočítať akciu")
+                elif active_phase == "live":
+                    st.markdown("#### Vykonať obchod")
+                else:
+                    st.markdown("#### Aktualizovať stav")
             with header_cols[1]:
-                metric_box("Dostupnost", "Dostupne" if (execution_mode_payload or real_order_gate_payload) else "Nedostupne")
-            with header_cols[2]:
-                metric_box("Stav gate", control_token_text(real_order_gate_payload.get("status")))
+                badge_label, badge_color = phase_badges.get(active_phase, phase_badges["refresh"])
+                render_phase_badge(badge_label, badge_color)
 
-            render_execution_control_metrics(
-                mode_value=live_mode_value,
-                trading_enabled_value=live_trading_enabled_value,
-                dry_run_enabled_value=live_dry_run_enabled_value,
-                kill_switch_value=live_kill_switch_value,
-                control_mode_value=runtime_health_payload.get("control_mode"),
-                stop_reason_value=runtime_health_payload.get("stop_reason"),
-            )
+            if control_notice:
+                st.info(control_notice)
 
-            detail_cols = st.columns(3)
-            with detail_cols[0]:
-                metric_box("Stav approval gate", safe_text_value(real_order_gate_payload.get("approval_gate_status"), lang=lang))
-            with detail_cols[1]:
-                metric_box("Live orders povolene", control_bool_text(live_order_policy_payload.get("allow_live_orders")))
-            with detail_cols[2]:
-                metric_box("Podla gate by siel realny order", control_bool_text(real_order_gate_payload.get("would_place_real_order")))
+            if active_phase == "refresh":
+                st.write(
+                    "Read-only obnova cita posledny app status a snapshot. "
+                    f"Posledny sync: {refresh_timestamp}. "
+                    f"trading_enabled: {control_bool_text(refresh_trading_enabled_value)}. "
+                    f"kill_switch: {control_bool_text(refresh_kill_switch_value)}."
+                )
+                if refresh_stop_reason:
+                    st.caption(f"stop_reason: {refresh_stop_reason}")
+                if refresh_missing_artifacts:
+                    st.warning(f"Chybaju podporne artefakty: {', '.join(refresh_missing_artifacts)}")
+                if st.button("Aktualizovať stav", key="execution_controls_refresh", use_container_width=True):
+                    st.session_state.execution_controls_notice = (
+                        "Stav bol znovu nacitany iba v app vrstve. Ziadny order nebol odoslany."
+                    )
+                    st.session_state.execution_controls_phase = "dry_run"
+                    st.rerun()
 
-            st.caption(
-                "Toto je izolovany confirmation-gated flow. V tejto app verzii sluzi iba ako transparentny UI navrh bez backend submitu."
-            )
-            confirmation_input = st.text_input(
-                "Potvrdzovaci text",
-                key="execution_controls_live_confirmation",
-                placeholder=LIVE_ORDER_CONFIRMATION_TEXT,
-                help="Pre odblokovanie flow musi text sediet presne, aj ked submit zostava zatial vypnuty.",
-            )
-            confirmation_matches = confirmation_input.strip() == LIVE_ORDER_CONFIRMATION_TEXT
-            metric_box("Potvrdenie", "Spravne" if confirmation_matches else "Chyba")
-            if not confirmation_matches:
-                st.warning(f"Pre tento flow treba napisat presne: {LIVE_ORDER_CONFIRMATION_TEXT}")
-            for reason in live_block_reasons:
-                st.warning(reason)
-            st.button(
-                "Vykonať obchod",
-                key="execution_controls_execute",
-                use_container_width=True,
-                disabled=True,
-                help="Live-order submit z app UI nie je v tejto verzii backendovo napojeny.",
-            )
+            elif active_phase == "dry_run":
+                st.write(
+                    "Dry-run zobrazuje posledne neobchodne vyhodnotenie. "
+                    f"Prepocet z: {dry_run_timestamp}. "
+                    f"Odporucana akcia: {pretty_token(dry_run_decision_payload.get('recommended_action'), lang)}. "
+                    f"Cielovy asset: {safe_text_value(dry_run_decision_payload.get('target_asset'), lang=lang)}."
+                )
+                if dry_run_stop_reason:
+                    st.caption(f"stop_reason: {dry_run_stop_reason}")
+                if dry_run_missing_artifacts:
+                    st.warning(f"Chybaju podporne artefakty: {', '.join(dry_run_missing_artifacts)}")
+                if st.button("Prepočítať akciu", key="execution_controls_recompute", use_container_width=True):
+                    st.session_state.execution_controls_notice = (
+                        "Prepočet ostal bez backend submitu. Panel sa posunul do live fazy."
+                    )
+                    st.session_state.execution_controls_phase = "live"
+                    st.rerun()
+
+            else:
+                st.write(
+                    "Live faza ukazuje len kriticke gate info. "
+                    f"trading_enabled: {control_bool_text(live_trading_enabled_value)}. "
+                    f"kill_switch: {control_bool_text(live_kill_switch_value)}."
+                )
+                if live_stop_reason:
+                    st.caption(f"stop_reason: {live_stop_reason}")
+                if live_block_reasons:
+                    st.warning("Blokacia: " + " ; ".join(live_block_reasons))
+                confirmation_input = st.text_input(
+                    "Potvrdzovaci text",
+                    key="execution_controls_live_confirmation",
+                    placeholder=LIVE_ORDER_CONFIRMATION_TEXT,
+                    help="Pre live fazu musi text sediet presne, aj ked submit zostava zatial vypnuty.",
+                )
+                confirmation_matches = confirmation_input.strip() == LIVE_ORDER_CONFIRMATION_TEXT
+                if not confirmation_matches:
+                    st.caption(f"Presny text: {LIVE_ORDER_CONFIRMATION_TEXT}")
+                st.button(
+                    "Vykonať obchod",
+                    key="execution_controls_execute",
+                    use_container_width=True,
+                    disabled=True,
+                    help="Live-order submit z app UI nie je v tejto verzii backendovo napojeny.",
+                )
 
         open_position = account_snapshot_view.get("open_position")
         provider_text = safe_text_value(account_snapshot_view.get("provider"), lang=lang)
