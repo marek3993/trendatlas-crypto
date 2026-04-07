@@ -2278,24 +2278,7 @@ def resolve_model_source(selector_cfg: dict, model_key: str) -> dict:
     return dict(model_sources.get(model_key, {}) or {})
 
 
-def load_model_paper(paper_dir_str: str | None, model_key: str, explicit_paper_path: str | None = None) -> pd.DataFrame:
-    candidates: list[Path] = []
-
-    explicit_path = normalize_path(explicit_paper_path)
-    if explicit_path is not None:
-        candidates.append(explicit_path)
-
-    paper_dir = normalize_path(paper_dir_str)
-    if paper_dir is not None:
-        candidates.extend([
-            paper_dir / f"{model_key}_paper.csv",
-            paper_dir / f"{model_key}.csv",
-        ])
-
-    path = next((p for p in candidates if p.exists()), None)
-    if path is None:
-        raise FileNotFoundError(f"Missing paper file for model: {model_key}")
-
+def load_paper_frame(path: Path, model_key: str) -> pd.DataFrame:
     df = pd.read_csv(path)
     df.columns = [str(c).strip() for c in df.columns]
 
@@ -2319,7 +2302,187 @@ def load_model_paper(paper_dir_str: str | None, model_key: str, explicit_paper_p
         .drop_duplicates(subset=["ts"], keep="last")
         .reset_index(drop=True)
     )
+    df.attrs["source_path"] = str(path)
     return df
+
+
+def calc_total_return_from_frame(df: pd.DataFrame) -> float | None:
+    if df.empty or "equity" not in df.columns:
+        return None
+    eq = pd.to_numeric(df["equity"], errors="coerce").dropna()
+    if len(eq) < 2:
+        return None
+    start_val = as_float(eq.iloc[0])
+    end_val = as_float(eq.iloc[-1])
+    if start_val is None or end_val is None or start_val <= 0:
+        return None
+    return (end_val / start_val - 1.0) * 100.0
+
+
+def resolve_phase68i_official_paper_path(
+    expected_total_return_pct: float | None = None,
+    expected_cagr_pct: float | None = None,
+    expected_max_drawdown_pct: float | None = None,
+    expected_since2023_cagr_pct: float | None = None,
+    expected_since2025_cagr_pct: float | None = None,
+) -> Path | None:
+    summary_path = ROOT / "outputs" / "phase68i_leverage_cost_stress_check" / "phase68i_leverage_cost_stress_summary.csv"
+    if not summary_path.exists():
+        return None
+
+    try:
+        summary_df = pd.read_csv(summary_path)
+    except Exception:
+        return None
+
+    if summary_df.empty or "model" not in summary_df.columns:
+        return None
+
+    candidates = summary_df.loc[summary_df["model"] == "phase68i_dynamic_ladder_candidate"].copy()
+    if candidates.empty:
+        return None
+
+    numeric_keys = [
+        ("cagr_pct", expected_cagr_pct),
+        ("max_drawdown_pct", expected_max_drawdown_pct),
+        ("since2023_cagr_pct", expected_since2023_cagr_pct),
+        ("since2025_cagr_pct", expected_since2025_cagr_pct),
+    ]
+
+    best_path: Path | None = None
+    best_score: tuple[float, str] | None = None
+    for _, row in candidates.iterrows():
+        scenario_id = str(row.get("scenario_id") or "").strip()
+        if not scenario_id:
+            continue
+
+        candidate_path = (
+            ROOT
+            / "outputs"
+            / "phase68i_leverage_cost_stress_check"
+            / "papers"
+            / scenario_id
+            / "phase68i_dynamic_ladder_candidate_paper.csv"
+        )
+        if not candidate_path.exists():
+            continue
+
+        diff = 0.0
+        for key, expected_value in numeric_keys:
+            if expected_value is None:
+                continue
+            current_value = as_float(row.get(key))
+            if current_value is None:
+                diff += 1_000_000.0
+                continue
+            diff += abs(current_value - expected_value)
+
+        if expected_total_return_pct is not None:
+            try:
+                candidate_frame = load_paper_frame(candidate_path, "phase68i_dynamic_ladder_candidate")
+                current_total_return_pct = calc_total_return_from_frame(candidate_frame)
+            except Exception:
+                current_total_return_pct = None
+            if current_total_return_pct is None:
+                diff += 1_000_000.0
+            else:
+                diff += abs(current_total_return_pct - expected_total_return_pct)
+
+        score = (diff, str(candidate_path))
+        if best_score is None or score < best_score:
+            best_score = score
+            best_path = candidate_path
+
+    if best_path is not None:
+        return best_path
+
+    fallback_path = ROOT / "outputs" / "phase68j_tail_risk_guardrail_check" / "papers" / "phase68j_ref_dynamic_ladder_paper.csv"
+    if fallback_path.exists():
+        return fallback_path
+    return None
+
+
+def iter_phase68i_dynamic_paper_candidates() -> list[Path]:
+    stress_dir = ROOT / "outputs" / "phase68i_leverage_cost_stress_check" / "papers"
+    if not stress_dir.exists():
+        return []
+    return sorted(stress_dir.rglob("phase68i_dynamic_ladder_candidate_paper.csv"))
+
+
+def load_model_paper(
+    paper_dir_str: str | None,
+    model_key: str,
+    explicit_paper_path: str | None = None,
+    expected_total_return_pct: float | None = None,
+    expected_cagr_pct: float | None = None,
+    expected_max_drawdown_pct: float | None = None,
+    expected_since2023_cagr_pct: float | None = None,
+    expected_since2025_cagr_pct: float | None = None,
+) -> pd.DataFrame:
+    candidates: list[Path] = []
+
+    explicit_path = normalize_path(explicit_paper_path)
+    if explicit_path is not None:
+        candidates.append(explicit_path)
+
+    paper_dir = normalize_path(paper_dir_str)
+    if paper_dir is not None:
+        candidates.extend([
+            paper_dir / f"{model_key}_paper.csv",
+            paper_dir / f"{model_key}.csv",
+        ])
+
+    if model_key == "phase68i_dynamic_ladder_candidate":
+        official_phase68i_path = resolve_phase68i_official_paper_path(
+            expected_total_return_pct=expected_total_return_pct,
+            expected_cagr_pct=expected_cagr_pct,
+            expected_max_drawdown_pct=expected_max_drawdown_pct,
+            expected_since2023_cagr_pct=expected_since2023_cagr_pct,
+            expected_since2025_cagr_pct=expected_since2025_cagr_pct,
+        )
+        if official_phase68i_path is not None:
+            candidates.insert(0, official_phase68i_path)
+        candidates.extend(iter_phase68i_dynamic_paper_candidates())
+
+    deduped_candidates: list[Path] = []
+    seen_candidates: set[str] = set()
+    for candidate in candidates:
+        normalized_candidate = normalize_path(candidate)
+        if normalized_candidate is None:
+            continue
+        key = str(normalized_candidate.resolve()) if normalized_candidate.exists() else str(normalized_candidate)
+        if key in seen_candidates:
+            continue
+        seen_candidates.add(key)
+        deduped_candidates.append(normalized_candidate)
+
+    existing_candidates = [p for p in deduped_candidates if p.exists()]
+    if not existing_candidates:
+        raise FileNotFoundError(f"Missing paper file for model: {model_key}")
+
+    if expected_total_return_pct is None:
+        return load_paper_frame(existing_candidates[0], model_key)
+
+    best_frame: pd.DataFrame | None = None
+    best_score: tuple[float, float, int, str] | None = None
+    for candidate_path in existing_candidates:
+        candidate_frame = load_paper_frame(candidate_path, model_key)
+        total_return_pct = calc_total_return_from_frame(candidate_frame)
+        if total_return_pct is None:
+            continue
+        score = (
+            abs(total_return_pct - expected_total_return_pct),
+            -float(len(candidate_frame)),
+            0 if explicit_path is not None and candidate_path == explicit_path else 1,
+            str(candidate_path),
+        )
+        if best_score is None or score < best_score:
+            best_score = score
+            best_frame = candidate_frame
+
+    if best_frame is not None:
+        return best_frame
+    return load_paper_frame(existing_candidates[0], model_key)
 
 
 def get_row(df: pd.DataFrame, model_key: str) -> pd.Series | None:
@@ -2520,22 +2683,23 @@ def build_metrics(summary_row: pd.Series | None, live_row: pd.Series | None, pap
         metrics["btc_days_pct"] = derived_btc_days_pct
 
     metrics["latest_date"] = None
-    latest_date_candidates = []
-
-    for date_key in ["latest_available_date", "strategy_last_closed_day", "last_closed_day", "latest_date"]:
-        live_date = get_text_from_row(live_row, date_key)
-        if live_date:
-            parsed_live_date = pd.to_datetime(live_date, errors="coerce")
-            if not pd.isna(parsed_live_date):
-                latest_date_candidates.append(parsed_live_date.normalize())
-
     if not paper_df.empty:
         parsed_paper_date = pd.to_datetime(paper_df["ts"].iloc[-1], errors="coerce")
         if not pd.isna(parsed_paper_date):
-            latest_date_candidates.append(parsed_paper_date.normalize())
+            metrics["latest_date"] = parsed_paper_date.normalize().strftime("%Y-%m-%d")
 
-    if latest_date_candidates:
-        metrics["latest_date"] = max(latest_date_candidates).strftime("%Y-%m-%d")
+    if metrics["latest_date"] is None:
+        latest_date_candidates = []
+        for row in [summary_row, live_row]:
+            for date_key in ["latest_available_date", "strategy_last_closed_day", "last_closed_day", "latest_date"]:
+                row_date = get_text_from_row(row, date_key)
+                if row_date:
+                    parsed_row_date = pd.to_datetime(row_date, errors="coerce")
+                    if not pd.isna(parsed_row_date):
+                        latest_date_candidates.append(parsed_row_date.normalize())
+
+        if latest_date_candidates:
+            metrics["latest_date"] = max(latest_date_candidates).strftime("%Y-%m-%d")
 
     metrics["sharpe"] = get_metric_from_row(summary_row, "sharpe")
     metrics["sortino"] = get_metric_from_row(summary_row, "sortino")
@@ -2922,7 +3086,16 @@ for model_key in compare_keys:
     live_row = get_row(live_df, model_key)
 
     try:
-        paper_df = load_model_paper(source_cfg.get("paper_dir"), model_key, explicit_paper_path=source_cfg.get("paper_path"))
+        paper_df = load_model_paper(
+            source_cfg.get("paper_dir"),
+            model_key,
+            explicit_paper_path=source_cfg.get("paper_path"),
+            expected_total_return_pct=get_metric_from_row(summary_row, "total_return_pct"),
+            expected_cagr_pct=get_metric_from_row(summary_row, "cagr_pct"),
+            expected_max_drawdown_pct=get_metric_from_row(summary_row, "max_drawdown_pct"),
+            expected_since2023_cagr_pct=get_metric_from_row(summary_row, "since2023_cagr_pct"),
+            expected_since2025_cagr_pct=get_metric_from_row(summary_row, "since2025_cagr_pct"),
+        )
         papers[model_key] = paper_df
         model_metrics[model_key] = build_metrics(summary_row, live_row, paper_df)
     except Exception as e:
