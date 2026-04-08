@@ -58,7 +58,10 @@ LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 APP_DISPLAY_TIMEZONE = ZoneInfo("Europe/Bratislava")
-BTC_LIVE_TICKER_24H_URL = "https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT"
+BTC_LIVE_TICKER_24H_URL = (
+    "https://api.coingecko.com/api/v3/simple/price"
+    "?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
+)
 
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
@@ -2434,8 +2437,11 @@ def fetch_live_btc_ticker_24h() -> dict[str, float] | None:
             payload = json.loads(response.read().decode("utf-8"))
         if not isinstance(payload, dict):
             return None
-        last_price = as_float(payload.get("lastPrice"))
-        price_change_pct = as_float(payload.get("priceChangePercent"))
+        bitcoin_payload = payload.get("bitcoin")
+        if not isinstance(bitcoin_payload, dict):
+            return None
+        last_price = as_float(bitcoin_payload.get("usd"))
+        price_change_pct = as_float(bitcoin_payload.get("usd_24h_change"))
         if last_price is None or price_change_pct is None:
             return None
         return {
