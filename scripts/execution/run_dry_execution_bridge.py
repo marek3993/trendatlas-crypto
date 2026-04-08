@@ -6,19 +6,34 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-try:
-    from execution_app_status_payload import build_execution_app_status
-except ImportError:
-    from scripts.execution.execution_app_status_payload import build_execution_app_status
-
-
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+try:
+    from execution_app_status_payload import (
+        build_execution_app_status,
+        build_execution_mode_posture_payload,
+        build_trading_operation_mode_read_model,
+    )
+except ImportError:
+    from scripts.execution.execution_app_status_payload import (
+        build_execution_app_status,
+        build_execution_mode_posture_payload,
+        build_trading_operation_mode_read_model,
+    )
+from scripts.execution.trading_operation_mode import load_trading_operation_mode_payload
+
+
 OUTPUTS_DIR = ROOT / "outputs" / "execution"
+CONFIG_DIR = ROOT / "execution" / "config"
 INTENTS_DIR = OUTPUTS_DIR / "intents"
 READ_ONLY_DIR = OUTPUTS_DIR / "read_only"
 DRY_RUN_DIR = OUTPUTS_DIR / "dry_run"
 LIVE_STATUS_DIR = OUTPUTS_DIR / "live_status"
 LOGS_DIR = OUTPUTS_DIR / "logs"
+MODE_CONFIG_PATH = CONFIG_DIR / "execution_mode.json"
+TRADING_OPERATION_MODE_PATH = CONFIG_DIR / "trading_operation_mode.json"
 
 INTENT_PATH = INTENTS_DIR / "latest_execution_intent.json"
 INTENT_QUALITY_PATH = INTENTS_DIR / "latest_execution_intent_quality.json"
@@ -212,6 +227,8 @@ def main() -> None:
     intent_quality = read_json(INTENT_QUALITY_PATH)
     snapshot = read_json(SNAPSHOT_PATH)
     snapshot_quality = read_json(SNAPSHOT_QUALITY_PATH)
+    mode_cfg = read_json(MODE_CONFIG_PATH)
+    trading_operation_mode = load_trading_operation_mode_payload(TRADING_OPERATION_MODE_PATH)
 
     if not bool(intent_quality.get("intent_ok")):
         fail("latest_execution_intent_quality.json says intent_ok=false")
@@ -219,8 +236,6 @@ def main() -> None:
         fail("hyperliquid_account_snapshot_quality.json says snapshot_ok=false")
     if bool(intent.get("trading_enabled")):
         fail("Intent says trading_enabled=true. Dry-run bridge refuses to run.")
-    if snapshot.get("execution_mode") != "read_only":
-        fail("Snapshot execution_mode must be read_only for dry-run bridge stage.")
 
     signal_id = str(intent.get("signal_id", "")).strip()
     if not signal_id:
@@ -233,6 +248,16 @@ def main() -> None:
         fail("Intent guardrail contract_validated is false")
     if not bool(guardrail_flags.get("kill_switch_required")):
         fail("Intent guardrail kill_switch_required is false")
+
+    runtime_mode = str(
+        mode_cfg.get("mode") or snapshot.get("execution_mode") or "unknown"
+    ).strip() or "unknown"
+    runtime_trading_enabled = bool(
+        mode_cfg.get("trading_enabled", snapshot.get("trading_enabled", False))
+    )
+    runtime_kill_switch = bool(
+        mode_cfg.get("kill_switch", snapshot.get("kill_switch", True))
+    )
 
     current_position_state = extract_current_position_state(snapshot)
     current_state = normalize_hl_state(current_position_state.get("normalized_state"))
@@ -299,7 +324,10 @@ def main() -> None:
             "qty": None,
         },
         "guardrails": {
-            "trading_enabled": False,
+            "dry_run_only": True,
+            "runtime_mode": runtime_mode,
+            "runtime_trading_enabled": runtime_trading_enabled,
+            "runtime_kill_switch": runtime_kill_switch,
             "kill_switch_required": True,
             "manual_approval_required_for_live_orders": True,
             "contract_validated": bool(guardrail_flags.get("contract_validated")),
@@ -313,6 +341,7 @@ def main() -> None:
             "Dry-run only.",
             "No real orders were created.",
             "No size calculation yet.",
+            "Dry-run can execute under a live runtime config because this script never submits exchange actions.",
         ],
     }
 
@@ -337,6 +366,9 @@ def main() -> None:
         "recommended_action": recommended_action,
         "stale_signal": stale_signal,
         "duplicate_order_risk": duplicate_order_risk,
+        "runtime_mode": runtime_mode,
+        "runtime_trading_enabled": runtime_trading_enabled,
+        "runtime_kill_switch": runtime_kill_switch,
     }
 
     manifest = {
@@ -359,8 +391,9 @@ def main() -> None:
     }
 
     app_status = build_execution_app_status(
-        mode="dry_run",
-        kill_switch=True,
+        mode=runtime_mode,
+        trading_enabled=runtime_trading_enabled,
+        kill_switch=runtime_kill_switch,
         account_address=snapshot.get("account_address"),
         positions_count=int(current_position_state.get("active_positions_count", 0)),
         open_orders_count=open_orders_count,
@@ -371,16 +404,29 @@ def main() -> None:
         stale_signal=stale_signal,
         signal_id=signal_id,
         target_asset=target_asset,
+        trading_operation_mode=build_trading_operation_mode_read_model(
+            trading_operation_mode,
+            source_path=str(TRADING_OPERATION_MODE_PATH.resolve()),
+        ),
+        execution_mode_posture=build_execution_mode_posture_payload(
+            mode=runtime_mode,
+            trading_enabled=runtime_trading_enabled,
+            kill_switch=runtime_kill_switch,
+            source_path=str(MODE_CONFIG_PATH.resolve()),
+        ),
         source_paths={
             "intent_path": str(INTENT_PATH.resolve()),
             "snapshot_path": str(SNAPSHOT_PATH.resolve()),
             "dry_run_decision_path": str(DECISION_PATH.resolve()),
+            "mode_config_path": str(MODE_CONFIG_PATH.resolve()),
+            "trading_operation_mode_path": str(TRADING_OPERATION_MODE_PATH.resolve()),
         },
     )
     app_status["account_equity_usd"] = to_float(snapshot.get("summary", {}).get("account_equity_usd"))
     app_status["available_balance_usd"] = to_float(snapshot.get("summary", {}).get("available_balance_usd"))
     app_status["balance_source_of_truth"] = snapshot.get("summary", {}).get("balance_source_of_truth")
     app_status["open_position"] = open_position
+    app_status["simulation_mode"] = "dry_run"
 
     DECISION_PATH.write_text(json.dumps(decision, indent=2, ensure_ascii=False), encoding="utf-8")
     QUALITY_PATH.write_text(json.dumps(quality, indent=2, ensure_ascii=False), encoding="utf-8")

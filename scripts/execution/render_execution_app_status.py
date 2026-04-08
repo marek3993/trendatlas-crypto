@@ -6,7 +6,23 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+try:
+    from execution_app_status_payload import (
+        build_execution_app_status,
+        build_execution_mode_posture_payload,
+        build_trading_operation_mode_read_model,
+    )
+except ImportError:
+    from scripts.execution.execution_app_status_payload import (
+        build_execution_app_status,
+        build_execution_mode_posture_payload,
+        build_trading_operation_mode_read_model,
+    )
+
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 OUTPUT_DIR = ROOT / "outputs" / "execution"
 READ_ONLY_DIR = OUTPUT_DIR / "read_only"
 LIVE_STATUS_DIR = OUTPUT_DIR / "live_status"
@@ -16,9 +32,12 @@ CONFIG_DIR = ROOT / "execution" / "config"
 SNAPSHOT_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot.json"
 QUALITY_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot_quality.json"
 MODE_CONFIG_PATH = CONFIG_DIR / "execution_mode.json"
+TRADING_OPERATION_MODE_PATH = CONFIG_DIR / "trading_operation_mode.json"
 STATUS_PATH = LIVE_STATUS_DIR / "execution_status.json"
 STATUS_MANIFEST_PATH = LIVE_STATUS_DIR / "execution_status_manifest.json"
 LOG_PATH = LOGS_DIR / "render_execution_app_status.log"
+
+from scripts.execution.trading_operation_mode import load_trading_operation_mode_payload
 
 
 def utc_now_iso() -> str:
@@ -158,39 +177,48 @@ def main() -> None:
     mode = str(mode_cfg.get("mode") or snapshot.get("execution_mode") or "read_only").strip() or "read_only"
     trading_enabled = bool(mode_cfg.get("trading_enabled", snapshot.get("trading_enabled", False)))
     kill_switch = bool(mode_cfg.get("kill_switch", snapshot.get("kill_switch", True)))
+    trading_operation_mode = load_trading_operation_mode_payload(TRADING_OPERATION_MODE_PATH)
     open_position = extract_open_position(snapshot)
     current_position = open_position["symbol"] if open_position else "CASH"
 
-    status = {
-        "status_type": "execution_app_status",
-        "as_of_utc": snapshot.get("as_of_utc") or utc_now_iso(),
-        "mode": mode,
-        "trading_enabled": trading_enabled,
-        "kill_switch": kill_switch,
-        "status": "ok",
-        "provider": snapshot_source.get("provider") or "Hyperliquid",
-        "account_address": snapshot.get("account_address"),
-        "positions_count": to_int(summary.get("positions_count")),
-        "open_orders_count": to_int(summary.get("open_orders_count")),
-        "recent_fills_count": to_int(summary.get("recent_fills_count")),
-        "current_position": current_position,
-        "last_action": "execution_status_render",
-        "last_action_result": "ok",
-        "guardrails_ok": True,
-        "stale_signal": None,
-        "signal_id": None,
-        "target_asset": None,
-        "account_equity_usd": to_float(summary.get("account_equity_usd")),
-        "available_balance_usd": to_float(summary.get("available_balance_usd")),
-        "balance_source_of_truth": summary.get("balance_source_of_truth"),
-        "open_position": open_position,
-        "error": None,
-        "source_paths": {
+    status = build_execution_app_status(
+        mode=mode,
+        trading_enabled=trading_enabled,
+        kill_switch=kill_switch,
+        account_address=snapshot.get("account_address"),
+        positions_count=to_int(summary.get("positions_count")),
+        open_orders_count=to_int(summary.get("open_orders_count")),
+        recent_fills_count=to_int(summary.get("recent_fills_count")),
+        current_position=current_position,
+        last_action="execution_status_render",
+        last_action_result="ok",
+        stale_signal=None,
+        signal_id=None,
+        target_asset=None,
+        trading_operation_mode=build_trading_operation_mode_read_model(
+            trading_operation_mode,
+            source_path=str(TRADING_OPERATION_MODE_PATH.resolve()),
+        ),
+        execution_mode_posture=build_execution_mode_posture_payload(
+            mode=mode,
+            trading_enabled=trading_enabled,
+            kill_switch=kill_switch,
+            source_path=str(MODE_CONFIG_PATH.resolve()),
+        ),
+        source_paths={
             "snapshot_path": str(SNAPSHOT_PATH.resolve()),
             "quality_path": str(QUALITY_PATH.resolve()),
-            "mode_config_path": str(MODE_CONFIG_PATH.resolve())
-        }
-    }
+            "mode_config_path": str(MODE_CONFIG_PATH.resolve()),
+            "trading_operation_mode_path": str(TRADING_OPERATION_MODE_PATH.resolve()),
+        },
+    )
+    status["as_of_utc"] = snapshot.get("as_of_utc") or utc_now_iso()
+    status["status"] = "ok"
+    status["provider"] = snapshot_source.get("provider") or "Hyperliquid"
+    status["account_equity_usd"] = to_float(summary.get("account_equity_usd"))
+    status["available_balance_usd"] = to_float(summary.get("available_balance_usd"))
+    status["balance_source_of_truth"] = summary.get("balance_source_of_truth")
+    status["open_position"] = open_position
 
     manifest = {
         "artifact_name": "execution_app_status",
@@ -199,7 +227,8 @@ def main() -> None:
         "input_paths": [
             str(SNAPSHOT_PATH.resolve()),
             str(QUALITY_PATH.resolve()),
-            str(MODE_CONFIG_PATH.resolve())
+            str(MODE_CONFIG_PATH.resolve()),
+            str(TRADING_OPERATION_MODE_PATH.resolve()),
         ],
         "output_path": str(STATUS_PATH.resolve()),
         "status": "success"

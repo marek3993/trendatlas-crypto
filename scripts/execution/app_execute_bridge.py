@@ -465,6 +465,20 @@ def summarize_trading_operation_mode_action(
     updated_at_utc = str(mode_payload.get("updated_at_utc") or "").strip()
     updated_by = str(mode_payload.get("updated_by") or "").strip() or "system"
     error = str(mode_payload.get("error") or "").strip()
+    source_path = str(
+        mode_payload.get("path")
+        or mode_payload.get("source_path")
+        or TRADING_OPERATION_MODE_PATH.resolve()
+    )
+    trading_operation_mode = {
+        "mode": mode,
+        "updated_at_utc": updated_at_utc or None,
+        "updated_by": updated_by,
+        "fail_closed": fail_closed,
+        "error": error or None,
+        "source_path": source_path,
+        "authority": "execution/config/trading_operation_mode.json",
+    }
 
     if action == "get_mode":
         if fail_closed:
@@ -494,18 +508,20 @@ def summarize_trading_operation_mode_action(
                 "updated_at_utc": updated_at_utc,
                 "updated_by": updated_by,
                 "error": error or None,
-                "path": str(TRADING_OPERATION_MODE_PATH.resolve()),
+                "path": source_path,
             }
         ],
         "artifact_paths": {
-            "trading_operation_mode_path": str(TRADING_OPERATION_MODE_PATH.resolve()),
+            "trading_operation_mode_path": source_path,
         },
+        "trading_operation_mode": trading_operation_mode,
         "result_summary": {
             "mode": mode,
             "updated_at_utc": updated_at_utc,
             "updated_by": updated_by,
             "fail_closed": fail_closed,
             "error": error or None,
+            "trading_operation_mode": trading_operation_mode,
         },
         "user_summary": user_summary,
     }

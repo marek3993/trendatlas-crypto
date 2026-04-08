@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import hmac
 import json
 import math
 import os
@@ -22,7 +23,6 @@ import plotly.graph_objects as go
 import streamlit as st
 from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
-    load_trading_operation_mode_payload,
 )
 
 APP_EXECUTE_BRIDGE_IMPORT_ERROR = ""
@@ -1247,6 +1247,60 @@ def build_safety_posture_detail(payload: dict[str, Any], lang: str) -> str:
     return (
         f"mode={mode} | trading_enabled={trading_enabled} | kill_switch={kill_switch}"
     )
+
+
+def extract_trading_operation_mode_bridge_payload(result: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(result, dict):
+        return {}
+    bridge_payload = result.get("trading_operation_mode")
+    if isinstance(bridge_payload, dict):
+        payload = dict(bridge_payload)
+    else:
+        summary = result.get("result_summary")
+        nested_payload = summary.get("trading_operation_mode") if isinstance(summary, dict) else None
+        payload = dict(nested_payload) if isinstance(nested_payload, dict) else {}
+    if not payload:
+        return {}
+    payload["mode"] = str(payload.get("mode") or "").strip().lower()
+    payload["source_path"] = str(
+        payload.get("source_path")
+        or TRADING_OPERATION_MODE_CONFIG_PATH.resolve()
+    )
+    return payload
+
+
+def load_trading_operation_mode_via_bridge() -> tuple[dict[str, Any], dict[str, Any]]:
+    if not callable(run_app_execute_action):
+        result = {
+            "action": "get_mode",
+            "ok": False,
+            "status": "blocked",
+            "error": APP_EXECUTE_BRIDGE_IMPORT_ERROR or "APP bridge unavailable.",
+            "user_summary": APP_EXECUTE_BRIDGE_IMPORT_ERROR or "APP bridge unavailable.",
+        }
+        payload = {
+            "mode": "",
+            "updated_at_utc": None,
+            "updated_by": "bridge_unavailable",
+            "fail_closed": True,
+            "error": result["error"],
+            "source_path": str(TRADING_OPERATION_MODE_CONFIG_PATH.resolve()),
+        }
+        return result, payload
+
+    result = run_app_execute_action(action="get_mode")
+    payload = extract_trading_operation_mode_bridge_payload(result)
+    if payload:
+        return result, payload
+
+    return result, {
+        "mode": "",
+        "updated_at_utc": None,
+        "updated_by": "bridge_unknown",
+        "fail_closed": True,
+        "error": str(result.get("error") or "APP bridge returned no trading mode payload.").strip(),
+        "source_path": str(TRADING_OPERATION_MODE_CONFIG_PATH.resolve()),
+    }
 
 
 def build_signal_result_label(payload: dict[str, Any], lang: str) -> str:
@@ -3227,6 +3281,30 @@ def save_contact_message(email: str, message_type: str, message: str) -> None:
 
 
 # =========================================================
+# ACCOUNT AUTH
+# =========================================================
+
+def load_account_login_credentials() -> tuple[str, str, str]:
+    try:
+        account_login = st.secrets.get("account_login", {})
+    except Exception:
+        account_login = {}
+
+    if hasattr(account_login, "get"):
+        username = str(account_login.get("username") or "").strip()
+        password = str(account_login.get("password") or "").strip()
+        if username and password:
+            return username, password, "secrets"
+
+    username = str(os.getenv("ACCOUNT_TAB_USERNAME") or "").strip()
+    password = str(os.getenv("ACCOUNT_TAB_PASSWORD") or "").strip()
+    if username and password:
+        return username, password, "env"
+
+    return "", "", ""
+
+
+# =========================================================
 # APP
 # =========================================================
 
@@ -3238,6 +3316,10 @@ if "execution_controls_notice" not in st.session_state:
     st.session_state.execution_controls_notice = ""
 if "execution_bridge_result" not in st.session_state:
     st.session_state.execution_bridge_result = {}
+if "account_authenticated" not in st.session_state:
+    st.session_state.account_authenticated = False
+if "account_auth_error" not in st.session_state:
+    st.session_state.account_auth_error = ""
 
 selector_cfg = load_selector_config()
 
@@ -3337,7 +3419,7 @@ scheduler_entry_decision_payload = load_json_optional(DEFAULT_SCHEDULER_ENTRY_DE
 real_order_gate_payload = load_json_optional(DEFAULT_REAL_ORDER_GATE_PATH)
 execution_mode_payload = load_json_optional(EXECUTION_MODE_CONFIG_PATH)
 live_order_policy_payload = load_json_optional(LIVE_ORDER_POLICY_PATH)
-trading_operation_mode_payload = load_trading_operation_mode_payload(TRADING_OPERATION_MODE_CONFIG_PATH)
+_trading_mode_bridge_result, trading_operation_mode_payload = load_trading_operation_mode_via_bridge()
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 if not runtime_guardrail_payload:
     runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "preflight_check", "execution_mode_guardrail")
@@ -3568,14 +3650,57 @@ with tabs[0]:
     )
 
 with tabs[1]:
-    st.subheader(t(lang, "account_title"))
-    st.caption(t(lang, "account_snapshot_note"))
-    account_enabled = as_bool(account_observability_cfg.get("enabled"))
+    configured_account_username, configured_account_password, _account_login_source = load_account_login_credentials()
+    account_login_available = bool(configured_account_username and configured_account_password)
+    if not account_login_available:
+        st.session_state.account_authenticated = False
+
+    title_col, action_col = st.columns([6, 1])
+    with title_col:
+        st.subheader(t(lang, "account_title"))
+    with action_col:
+        if account_login_available and st.session_state.account_authenticated:
+            if st.button("Odhlásiť", key="account_logout", width="stretch"):
+                st.session_state.account_authenticated = False
+                st.session_state.account_auth_error = ""
+                st.session_state.account_login_username = ""
+                st.session_state.account_login_password = ""
+                st.rerun()
+
+    account_enabled_cfg = as_bool(account_observability_cfg.get("enabled"))
+    account_enabled = account_enabled_cfg if account_login_available and st.session_state.account_authenticated else False
+
+    if not account_login_available:
+        st.warning("Prístup k účtu je dočasne nedostupný.")
+    elif not st.session_state.account_authenticated:
+        st.markdown("#### Prihlásenie")
+        st.info("Pre prístup k účtu sa najprv prihláste.")
+        with st.form("account_login_form"):
+            username_input = st.text_input("Používateľské meno", key="account_login_username")
+            password_input = st.text_input("Heslo", type="password", key="account_login_password")
+            login_submitted = st.form_submit_button("Prihlásiť sa", width="stretch")
+
+        if login_submitted:
+            username_ok = hmac.compare_digest(username_input.strip(), configured_account_username)
+            password_ok = hmac.compare_digest(password_input, configured_account_password)
+            if username_ok and password_ok:
+                st.session_state.account_authenticated = True
+                st.session_state.account_auth_error = ""
+                st.session_state.account_login_username = ""
+                st.session_state.account_login_password = ""
+                st.rerun()
+            st.session_state.account_authenticated = False
+            st.session_state.account_auth_error = "Nesprávne prihlasovacie údaje."
+
+        if st.session_state.account_auth_error:
+            st.error(st.session_state.account_auth_error)
+    else:
+        st.caption(t(lang, "account_snapshot_note"))
 
     if account_enabled is False:
-        st.info(account_ui_text(lang, "observability_disabled"))
+        if account_login_available and st.session_state.account_authenticated and account_enabled_cfg is False:
+            st.info(account_ui_text(lang, "observability_disabled"))
     else:
-        bridge_result = st.session_state.get("execution_bridge_result") or {}
         bridge_available = callable(run_app_execute_action)
 
         refresh_missing_artifacts = []
@@ -3610,9 +3735,12 @@ with tabs[1]:
             real_order_gate_payload=real_order_gate_payload,
         )
         live_block_reasons = list(live_gate_state["reasons"])
-        operation_mode = str(trading_operation_mode_payload.get("mode") or "manual").strip().lower() or "manual"
-        operation_mode_label = prettify_trading_operation_mode(operation_mode, lang)
-        strategy_state_label = build_strategy_state_label(operation_mode, lang)
+        operation_mode = str(trading_operation_mode_payload.get("mode") or "").strip().lower()
+        operation_mode_label = (
+            prettify_trading_operation_mode(operation_mode, lang)
+            if operation_mode in {"manual", "automatic"}
+            else ("Nedostupne" if lang == "sk" else "Unavailable")
+        )
         operation_mode_updated_at_text = format_utc_text(
             trading_operation_mode_payload.get("updated_at_utc"),
             lang,
@@ -3620,9 +3748,14 @@ with tabs[1]:
         operation_mode_updated_by = str(trading_operation_mode_payload.get("updated_by") or "").strip() or "system"
         operation_mode_fail_closed = bool(trading_operation_mode_payload.get("fail_closed", False))
         operation_mode_error = str(trading_operation_mode_payload.get("error") or "").strip()
+        operation_mode_source_path = str(
+            trading_operation_mode_payload.get("source_path")
+            or TRADING_OPERATION_MODE_CONFIG_PATH.resolve()
+        )
         scheduler_mode_explanation = build_scheduler_mode_explanation(operation_mode, lang)
         safety_posture_label = build_safety_posture_label(execution_mode_payload, lang)
         safety_posture_detail = build_safety_posture_detail(execution_mode_payload, lang)
+        safety_posture_source_path = str(EXECUTION_MODE_CONFIG_PATH.resolve())
         signal_result_label = build_signal_result_label(dry_run_decision_payload, lang)
         signal_result_detail = build_signal_result_detail(dry_run_decision_payload, lang)
         gate_result_label = build_gate_result_label(real_order_gate_payload, lang)
@@ -3709,11 +3842,42 @@ with tabs[1]:
                 [
                     {
                         "label": "Stav stratégie" if lang == "sk" else "Strategy state",
-                        "value": strategy_state_label,
+                        "value": operation_mode_label,
                     },
                 ],
                 tone="control",
             )
+            render_ops_strip(
+                [
+                    {
+                        "label": "Trading mode",
+                        "value": operation_mode_label,
+                        "subtitle": "bridge get_mode -> trading_operation_mode.json",
+                    },
+                    {
+                        "label": "Runtime posture",
+                        "value": safety_posture_label,
+                        "subtitle": "execution_mode.json",
+                    },
+                ],
+                tone="control",
+            )
+            render_ops_inline_note(
+                "Trading mode",
+                (
+                    f"{operation_mode_label} | source=bridge:get_mode | path={operation_mode_source_path}"
+                ),
+            )
+            render_ops_inline_note("Runtime posture", f"{safety_posture_label} | {safety_posture_detail}")
+            render_ops_inline_note("Runtime posture source", safety_posture_source_path)
+            if operation_mode_fail_closed and operation_mode_error:
+                st.warning(
+                    "Trading mode fail-closed na manual, pretoze sa nepodarilo nacitat autoritativny mode payload. "
+                    + operation_mode_error
+                )
+            elif operation_mode_error:
+                st.warning(operation_mode_error)
+            st.caption(scheduler_mode_explanation)
 
             toggle_col, refresh_col = st.columns(2)
             toggle_is_automatic = operation_mode == "automatic"
