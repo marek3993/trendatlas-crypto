@@ -3663,8 +3663,6 @@ with tabs[1]:
             if st.button("Odhlásiť", key="account_logout", width="stretch"):
                 st.session_state.account_authenticated = False
                 st.session_state.account_auth_error = ""
-                st.session_state.account_login_username = ""
-                st.session_state.account_login_password = ""
                 st.rerun()
 
     account_enabled_cfg = as_bool(account_observability_cfg.get("enabled"))
@@ -3675,9 +3673,9 @@ with tabs[1]:
     elif not st.session_state.account_authenticated:
         st.markdown("#### Prihlásenie")
         st.info("Pre prístup k účtu sa najprv prihláste.")
-        with st.form("account_login_form"):
-            username_input = st.text_input("Používateľské meno", key="account_login_username")
-            password_input = st.text_input("Heslo", type="password", key="account_login_password")
+        with st.form("account_login_form", clear_on_submit=True):
+            username_input = st.text_input("Používateľské meno")
+            password_input = st.text_input("Heslo", type="password")
             login_submitted = st.form_submit_button("Prihlásiť sa", width="stretch")
 
         if login_submitted:
@@ -3686,8 +3684,6 @@ with tabs[1]:
             if username_ok and password_ok:
                 st.session_state.account_authenticated = True
                 st.session_state.account_auth_error = ""
-                st.session_state.account_login_username = ""
-                st.session_state.account_login_password = ""
                 st.rerun()
             st.session_state.account_authenticated = False
             st.session_state.account_auth_error = "Nesprávne prihlasovacie údaje."
