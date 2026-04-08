@@ -419,6 +419,87 @@
       "notes": "Operator-facing official DATA health-check command. Exits non-zero when the chain has a freshness break."
     },
     {
+      "script_path": "scripts/phase68k_early_entry_ladder_probe.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Dev-only narrow CORE probe that tests a partial EARLY_RISK ladder ahead of the existing phase67j full entry without changing shortlist, governance, leverage, or app truth.",
+      "primary_outputs": [
+        "outputs/phase68k_early_entry_ladder_probe/phase68k_early_entry_summary.csv",
+        "outputs/phase68k_early_entry_ladder_probe/phase68k_early_entry_compare.csv",
+        "outputs/phase68k_early_entry_ladder_probe/phase68k_early_entry_manifest.json",
+        "outputs/phase68k_early_entry_ladder_probe/papers/"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Reuses official phase67j/phase66g artifacts and does not touch app/live truth."
+    },
+    {
+      "script_path": "scripts/phase68l_early_entry_soft_gate_probe.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Dev-only follow-up CORE probe that preserves strict FULL_RISK but tests one softer EARLY_RISK gate plus blocker/state diagnostics against the official phase67j baseline.",
+      "primary_outputs": [
+        "outputs/phase68l_early_entry_soft_gate_probe/phase68l_early_entry_soft_gate_summary.csv",
+        "outputs/phase68l_early_entry_soft_gate_probe/phase68l_early_entry_soft_gate_compare.csv",
+        "outputs/phase68l_early_entry_soft_gate_probe/phase68l_early_entry_soft_gate_blocker_counts.csv",
+        "outputs/phase68l_early_entry_soft_gate_probe/phase68l_early_entry_soft_gate_state_time.csv",
+        "outputs/phase68l_early_entry_soft_gate_probe/phase68l_early_entry_soft_gate_manifest.json",
+        "outputs/phase68l_early_entry_soft_gate_probe/papers/"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Single follow-up pass only. Dev-only and non-authoritative, with no shortlist/governance/leverage/app truth mutation."
+    },
+    {
+      "script_path": "scripts/phase68m_early_entry_micro_confirm.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Final narrow dev-only micro-pass that reuses the phase68l structure and tests three hand-picked EARLY_RISK relaxations while preserving strict FULL_RISK behavior.",
+      "primary_outputs": [
+        "outputs/phase68m_early_entry_micro_confirm/phase68m_early_entry_micro_confirm_summary.csv",
+        "outputs/phase68m_early_entry_micro_confirm/phase68m_early_entry_micro_confirm_compare.csv",
+        "outputs/phase68m_early_entry_micro_confirm/phase68m_early_entry_micro_confirm_blocker_counts.csv",
+        "outputs/phase68m_early_entry_micro_confirm/phase68m_early_entry_micro_confirm_state_time.csv",
+        "outputs/phase68m_early_entry_micro_confirm/phase68m_early_entry_micro_confirm_manifest.json",
+        "outputs/phase68m_early_entry_micro_confirm/papers/"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Micro-pass only. Dev-only and non-authoritative, with no source_of_truth, app, leverage, shortlist, or governance mutation."
+    },
+    {
+      "script_path": "scripts/dev_only_response_shape_probe_runner.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds the first compact dev-only response-shape bot outputs from official phase67j baseline risk-on entry events using descriptive aftermath metrics only.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_response_shape/response_shape_bot_v1.features.csv",
+        "outputs/research_os/dev_only/non_authoritative_response_shape/response_shape_bot_v1.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_response_shape/response_shape_bot_v1.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Not tradability scoring, not candidate quality, and no app/data/execution/live-order logic changes."
+    },
+    {
+      "script_path": "scripts/dev_only_response_shape_profile_runner.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds the compact profile report for response_shape_bot_v1 from its generated descriptive response-shape features.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_response_shape/response_shape_bot_v1.profile.json",
+        "outputs/research_os/dev_only/non_authoritative_response_shape/response_shape_bot_v1.manifest.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Profile-only follow-up. Dev-only and non-authoritative, with no official truth or execution-layer mutation."
+    },
+    {
       "script_path": "run_data_refresh.ps1",
       "layer": "execution_data",
       "status": "active",

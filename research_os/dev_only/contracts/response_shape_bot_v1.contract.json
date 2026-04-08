@@ -1,0 +1,44 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_response_shape_bot_contract",
+  "artifact_id": "response_shape_bot_v1",
+  "created_at_utc": "2026-04-08 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "bot_id": "response_shape_bot_v1",
+  "purpose": "Compact aftermath-quality response-shape diagnostics over official baseline risk-on entry events.",
+  "primary_compare_baseline": "phase67j_no_neo_main",
+  "analysis_mode": "descriptive_aftermath_only",
+  "lookahead_horizon_days": 10,
+  "event_anchor": "official_baseline_risk_on_entry",
+  "dimensions": [
+    "follow_through_quality",
+    "false_start_risk",
+    "volatility_damage_shape",
+    "recovery_vs_exhaustion",
+    "response_regime_context"
+  ],
+  "raw_inputs": [
+    "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+    "outputs/phase66g_production_candidate_live/phase66g_trend_barometer_history.csv"
+  ],
+  "mechanism_rules": [
+    "no_new_strategy_line",
+    "no_winner_change",
+    "no_source_of_truth_mutation",
+    "no_phase69_reopen",
+    "no_app_data_execution_live_logic_change",
+    "no_scoring_loosening"
+  ],
+  "semantic_rules": [
+    "not_tradability_scoring",
+    "not_candidate_quality",
+    "not_leverage_guidance",
+    "not_official_edge_discovery",
+    "response_shape_is_descriptive_not_prescriptive"
+  ],
+  "status": "defined_dev_only_bot"
+}

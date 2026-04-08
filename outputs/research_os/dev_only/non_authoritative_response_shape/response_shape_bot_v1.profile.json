@@ -1,0 +1,262 @@
+{
+  "artifact_type": "dev_only_response_shape_profile_report",
+  "artifact_id": "response_shape_bot_v1_profile",
+  "generated_at_utc": "2026-04-08 14:49:32 UTC",
+  "bot_id": "response_shape_bot_v1",
+  "row_count": 36,
+  "date_min": "2018-05-05",
+  "date_max": "2025-11-01",
+  "selected_asset_coverage": {
+    "column": "selected_asset",
+    "unique_count": 2,
+    "values_sorted": [
+      "USDT",
+      "XTZUSDT"
+    ],
+    "row_count_by_value": {
+      "USDT": 34,
+      "XTZUSDT": 2
+    }
+  },
+  "entry_regime_distribution": {
+    "column": "entry_regime",
+    "unique_count": 2,
+    "values_sorted": [
+      "BASE",
+      "BTC"
+    ],
+    "row_count_by_value": {
+      "BASE": 35,
+      "BTC": 1
+    }
+  },
+  "response_regime_context_distribution": {
+    "column": "response_regime_context",
+    "unique_count": 7,
+    "values_sorted": [
+      "BASE|constructive|named_asset",
+      "BASE|constructive|no_named_asset",
+      "BASE|near_flat|no_named_asset",
+      "BASE|unknown|no_named_asset",
+      "BASE|weak_negative|named_asset",
+      "BASE|weak_negative|no_named_asset",
+      "BTC|weak_negative|no_named_asset"
+    ],
+    "row_count_by_value": {
+      "BASE|constructive|named_asset": 1,
+      "BASE|constructive|no_named_asset": 6,
+      "BASE|near_flat|no_named_asset": 5,
+      "BASE|unknown|no_named_asset": 1,
+      "BASE|weak_negative|named_asset": 1,
+      "BASE|weak_negative|no_named_asset": 21,
+      "BTC|weak_negative|no_named_asset": 1
+    }
+  },
+  "null_count_per_column": {
+    "date": 0,
+    "event_id": 0,
+    "event_type": 0,
+    "entry_regime": 0,
+    "entry_position": 0,
+    "selected_asset": 0,
+    "trend_score": 1,
+    "trend_state_label": 0,
+    "response_regime_context": 0,
+    "lookahead_window_days": 0,
+    "observed_return_3d": 0,
+    "observed_return_5d": 0,
+    "observed_return_10d": 0,
+    "observed_max_drawdown_5d": 0,
+    "observed_max_drawdown_10d": 0,
+    "observed_recovery_from_5d_low_to_10d": 0,
+    "observed_realized_volatility_10d": 0,
+    "observed_downside_volatility_10d": 0,
+    "follow_through_quality": 0,
+    "false_start_risk": 0,
+    "volatility_damage_shape": 0,
+    "recovery_vs_exhaustion": 0,
+    "analysis_mode": 0,
+    "live_decision_ready": 0,
+    "dev_only": 0,
+    "non_authoritative": 0,
+    "official_truth": 0,
+    "strategy_advancement": 0
+  },
+  "numeric_feature_summary": {
+    "observed_return_3d": {
+      "min": -0.016051,
+      "max": 0.083796,
+      "mean": 0.002224
+    },
+    "observed_return_5d": {
+      "min": -0.079779,
+      "max": 0.220711,
+      "mean": 0.006661
+    },
+    "observed_return_10d": {
+      "min": -0.069749,
+      "max": 0.21888,
+      "mean": 0.014387
+    },
+    "observed_max_drawdown_5d": {
+      "min": -0.091246,
+      "max": 0.0,
+      "mean": -0.006039
+    },
+    "observed_max_drawdown_10d": {
+      "min": -0.091246,
+      "max": 0.0,
+      "mean": -0.010239
+    },
+    "observed_recovery_from_5d_low_to_10d": {
+      "min": -0.069749,
+      "max": 0.239044,
+      "mean": 0.019422
+    },
+    "observed_realized_volatility_10d": {
+      "min": 0.0,
+      "max": 0.042416,
+      "mean": 0.00641
+    },
+    "observed_downside_volatility_10d": {
+      "min": 0.0,
+      "max": 0.018909,
+      "mean": 0.002245
+    },
+    "follow_through_quality": {
+      "min": -0.154609,
+      "max": 0.220711,
+      "mean": 0.000622
+    },
+    "false_start_risk": {
+      "min": 0.0,
+      "max": 0.091246,
+      "mean": 0.006745
+    },
+    "volatility_damage_shape": {
+      "min": 0.0,
+      "max": 0.98718,
+      "mean": 0.107613
+    },
+    "recovery_vs_exhaustion": {
+      "min": -0.069749,
+      "max": 0.239044,
+      "mean": 0.018717
+    }
+  },
+  "anomaly_score_definition": "mean absolute z-score across configured response-shape numeric columns",
+  "top_abnormal_rows": [
+    {
+      "date": "2019-03-28",
+      "event_id": "20190328_005",
+      "selected_asset": "USDT",
+      "response_regime_context": "BASE|near_flat|no_named_asset",
+      "anomaly_score": 2.090659,
+      "feature_values": {
+        "observed_return_3d": 0.000972,
+        "observed_return_5d": 0.220711,
+        "observed_return_10d": 0.21888,
+        "observed_max_drawdown_5d": 0.0,
+        "observed_max_drawdown_10d": -0.0015,
+        "observed_recovery_from_5d_low_to_10d": 0.239044,
+        "observed_realized_volatility_10d": 0.042416,
+        "observed_downside_volatility_10d": 0.004853,
+        "follow_through_quality": 0.220711,
+        "false_start_risk": 0.0,
+        "volatility_damage_shape": 0.114407,
+        "recovery_vs_exhaustion": 0.239044
+      }
+    },
+    {
+      "date": "2023-01-13",
+      "event_id": "20230113_019",
+      "selected_asset": "USDT",
+      "response_regime_context": "BASE|weak_negative|no_named_asset",
+      "anomaly_score": 2.068212,
+      "feature_values": {
+        "observed_return_3d": -0.009335,
+        "observed_return_5d": -0.079779,
+        "observed_return_10d": 0.019863,
+        "observed_max_drawdown_5d": -0.074829,
+        "observed_max_drawdown_10d": -0.074829,
+        "observed_recovery_from_5d_low_to_10d": 0.108281,
+        "observed_realized_volatility_10d": 0.031079,
+        "observed_downside_volatility_10d": 0.015464,
+        "follow_through_quality": -0.154609,
+        "false_start_risk": 0.084164,
+        "volatility_damage_shape": 0.497585,
+        "recovery_vs_exhaustion": 0.098946
+      }
+    },
+    {
+      "date": "2021-03-11",
+      "event_id": "20210311_011",
+      "selected_asset": "USDT",
+      "response_regime_context": "BTC|weak_negative|no_named_asset",
+      "anomaly_score": 1.986193,
+      "feature_values": {
+        "observed_return_3d": 0.020687,
+        "observed_return_5d": -0.015101,
+        "observed_return_10d": 0.005697,
+        "observed_max_drawdown_5d": -0.091246,
+        "observed_max_drawdown_10d": -0.091246,
+        "observed_recovery_from_5d_low_to_10d": 0.044907,
+        "observed_realized_volatility_10d": 0.034281,
+        "observed_downside_volatility_10d": 0.018909,
+        "follow_through_quality": -0.106347,
+        "false_start_risk": 0.091246,
+        "volatility_damage_shape": 0.551573,
+        "recovery_vs_exhaustion": 0.044907
+      }
+    },
+    {
+      "date": "2019-06-11",
+      "event_id": "20190611_006",
+      "selected_asset": "USDT",
+      "response_regime_context": "BASE|near_flat|no_named_asset",
+      "anomaly_score": 1.831475,
+      "feature_values": {
+        "observed_return_3d": 0.083796,
+        "observed_return_5d": 0.08217,
+        "observed_return_10d": 0.218313,
+        "observed_max_drawdown_5d": -0.0015,
+        "observed_max_drawdown_10d": -0.0015,
+        "observed_recovery_from_5d_low_to_10d": 0.204838,
+        "observed_realized_volatility_10d": 0.025726,
+        "observed_downside_volatility_10d": 0.00045,
+        "follow_through_quality": 0.08067,
+        "false_start_risk": 0.0015,
+        "volatility_damage_shape": 0.017492,
+        "recovery_vs_exhaustion": 0.204838
+      }
+    },
+    {
+      "date": "2022-03-28",
+      "event_id": "20220328_017",
+      "selected_asset": "USDT",
+      "response_regime_context": "BASE|weak_negative|no_named_asset",
+      "anomaly_score": 1.263396,
+      "feature_values": {
+        "observed_return_3d": 0.0,
+        "observed_return_5d": 0.0,
+        "observed_return_10d": -0.069749,
+        "observed_max_drawdown_5d": 0.0,
+        "observed_max_drawdown_10d": -0.073207,
+        "observed_recovery_from_5d_low_to_10d": -0.069749,
+        "observed_realized_volatility_10d": 0.016344,
+        "observed_downside_volatility_10d": 0.016134,
+        "follow_through_quality": 0.0,
+        "false_start_risk": 0.0,
+        "volatility_damage_shape": 0.98718,
+        "recovery_vs_exhaustion": -0.069749
+      }
+    }
+  ],
+  "status": "generated_dev_only_response_shape_profile",
+  "analysis_mode": "descriptive_aftermath_only",
+  "live_decision_ready": false,
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

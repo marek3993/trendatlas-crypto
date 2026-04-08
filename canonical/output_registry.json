@@ -356,6 +356,55 @@
       "notes": "Official DATA freshness and health-check report for the strategy chain."
     },
     {
+      "output_path": "outputs/phase68k_early_entry_ladder_probe/",
+      "generated_by": [
+        "scripts/phase68k_early_entry_ladder_probe.py"
+      ],
+      "layer": "forensic_validation",
+      "status": "active",
+      "output_kind": "research_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only narrow CORE probe outputs for partial EARLY_RISK ladder evaluation versus the official phase67j baseline."
+    },
+    {
+      "output_path": "outputs/phase68l_early_entry_soft_gate_probe/",
+      "generated_by": [
+        "scripts/phase68l_early_entry_soft_gate_probe.py"
+      ],
+      "layer": "forensic_validation",
+      "status": "active",
+      "output_kind": "research_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only follow-up probe outputs for a softer EARLY_RISK gate with blocker and state-time diagnostics against phase67j."
+    },
+    {
+      "output_path": "outputs/phase68m_early_entry_micro_confirm/",
+      "generated_by": [
+        "scripts/phase68m_early_entry_micro_confirm.py"
+      ],
+      "layer": "forensic_validation",
+      "status": "active",
+      "output_kind": "research_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Final narrow dev-only micro-pass outputs for hand-picked EARLY_RISK relaxations compared against phase67j."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_response_shape/",
+      "generated_by": [
+        "scripts/dev_only_response_shape_probe_runner.py",
+        "scripts/dev_only_response_shape_profile_runner.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative response-shape diagnostics for response_shape_bot_v1. Descriptive aftermath outputs only, not tradability scoring or strategy promotion."
+    },
+    {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "generated_by": [
         "scripts/phase68h_dynamic_leverage_ladder_candidate.py"

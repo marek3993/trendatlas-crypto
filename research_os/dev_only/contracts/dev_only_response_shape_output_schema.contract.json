@@ -1,0 +1,55 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_response_shape_output_schema_contract",
+  "artifact_id": "dev_only_response_shape_output_schema",
+  "created_at_utc": "2026-04-08 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "scope": "shared_output_schema_for_response_shape_bot_v1",
+  "output_namespace": "outputs/research_os/dev_only/non_authoritative_response_shape/",
+  "required_outputs": [
+    "response_shape_bot_v1.features.csv",
+    "response_shape_bot_v1.manifest.json",
+    "response_shape_bot_v1.quality.json",
+    "response_shape_bot_v1.profile.json"
+  ],
+  "mandatory_row_flags": [
+    "analysis_mode",
+    "live_decision_ready",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "required_dimensions": [
+    "follow_through_quality",
+    "false_start_risk",
+    "volatility_damage_shape",
+    "recovery_vs_exhaustion",
+    "response_regime_context"
+  ],
+  "semantic_locks": [
+    "descriptive_aftermath_only",
+    "not_tradability_scoring",
+    "not_candidate_quality",
+    "not_leverage_guidance",
+    "not_official_edge_discovery"
+  ],
+  "forbidden_column_tokens": [
+    "future",
+    "next_bar",
+    "target",
+    "winner",
+    "promotion",
+    "tradability",
+    "candidate_quality",
+    "leverage_guidance",
+    "recommended_action",
+    "live_order"
+  ],
+  "hindsight_naming_rule": "Any realized aftermath metric must use the observed_ prefix unless it is one of the five approved response-shape dimensions.",
+  "status": "dev_only_contract_ready"
+}
