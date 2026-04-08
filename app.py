@@ -3312,8 +3312,6 @@ inject_css()
 
 if "lang" not in st.session_state:
     st.session_state.lang = "sk"
-if "execution_controls_notice" not in st.session_state:
-    st.session_state.execution_controls_notice = ""
 if "execution_bridge_result" not in st.session_state:
     st.session_state.execution_bridge_result = {}
 if "account_authenticated" not in st.session_state:
@@ -3730,32 +3728,16 @@ with tabs[1]:
             dry_run_decision_payload=dry_run_decision_payload,
             real_order_gate_payload=real_order_gate_payload,
         )
-        live_block_reasons = list(live_gate_state["reasons"])
         operation_mode = str(trading_operation_mode_payload.get("mode") or "").strip().lower()
         operation_mode_label = (
-            prettify_trading_operation_mode(operation_mode, lang)
-            if operation_mode in {"manual", "automatic"}
-            else ("Nedostupne" if lang == "sk" else "Unavailable")
+            "Zapnutá"
+            if lang == "sk" and operation_mode == "automatic"
+            else "Vypnutá"
+            if lang == "sk"
+            else "Enabled"
+            if operation_mode == "automatic"
+            else "Disabled"
         )
-        operation_mode_updated_at_text = format_utc_text(
-            trading_operation_mode_payload.get("updated_at_utc"),
-            lang,
-        )
-        operation_mode_updated_by = str(trading_operation_mode_payload.get("updated_by") or "").strip() or "system"
-        operation_mode_fail_closed = bool(trading_operation_mode_payload.get("fail_closed", False))
-        operation_mode_error = str(trading_operation_mode_payload.get("error") or "").strip()
-        operation_mode_source_path = str(
-            trading_operation_mode_payload.get("source_path")
-            or TRADING_OPERATION_MODE_CONFIG_PATH.resolve()
-        )
-        scheduler_mode_explanation = build_scheduler_mode_explanation(operation_mode, lang)
-        safety_posture_label = build_safety_posture_label(execution_mode_payload, lang)
-        safety_posture_detail = build_safety_posture_detail(execution_mode_payload, lang)
-        safety_posture_source_path = str(EXECUTION_MODE_CONFIG_PATH.resolve())
-        signal_result_label = build_signal_result_label(dry_run_decision_payload, lang)
-        signal_result_detail = build_signal_result_detail(dry_run_decision_payload, lang)
-        gate_result_label = build_gate_result_label(real_order_gate_payload, lang)
-        gate_result_detail = build_gate_result_detail(real_order_gate_payload, lang)
 
         if refresh_missing_artifacts:
             refresh_missing_artifacts = [
@@ -3843,37 +3825,6 @@ with tabs[1]:
                 ],
                 tone="control",
             )
-            render_ops_strip(
-                [
-                    {
-                        "label": "Trading mode",
-                        "value": operation_mode_label,
-                        "subtitle": "bridge get_mode -> trading_operation_mode.json",
-                    },
-                    {
-                        "label": "Runtime posture",
-                        "value": safety_posture_label,
-                        "subtitle": "execution_mode.json",
-                    },
-                ],
-                tone="control",
-            )
-            render_ops_inline_note(
-                "Trading mode",
-                (
-                    f"{operation_mode_label} | source=bridge:get_mode | path={operation_mode_source_path}"
-                ),
-            )
-            render_ops_inline_note("Runtime posture", f"{safety_posture_label} | {safety_posture_detail}")
-            render_ops_inline_note("Runtime posture source", safety_posture_source_path)
-            if operation_mode_fail_closed and operation_mode_error:
-                st.warning(
-                    "Trading mode fail-closed na manual, pretoze sa nepodarilo nacitat autoritativny mode payload. "
-                    + operation_mode_error
-                )
-            elif operation_mode_error:
-                st.warning(operation_mode_error)
-            st.caption(scheduler_mode_explanation)
 
             toggle_col, refresh_col = st.columns(2)
             toggle_is_automatic = operation_mode == "automatic"
@@ -3897,7 +3848,6 @@ with tabs[1]:
                 ):
                     result = run_app_execute_action(action=toggle_action)
                     st.session_state.execution_bridge_result = result
-                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
 
             with refresh_col:
@@ -3910,11 +3860,7 @@ with tabs[1]:
                     with st.spinner("Obnovujem údaje z peňaženky..." if lang == "sk" else "Refreshing wallet data..."):
                         result = run_app_execute_action(action="refresh")
                     st.session_state.execution_bridge_result = result
-                    st.session_state.execution_controls_notice = build_execution_notice(result, lang)
                     st.rerun()
-
-            if st.session_state.execution_controls_notice:
-                st.caption(st.session_state.execution_controls_notice)
 
         st.markdown(f"#### {account_ui_text(lang, 'overview')}")
         render_ops_strip(
