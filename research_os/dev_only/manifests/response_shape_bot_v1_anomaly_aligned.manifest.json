@@ -1,0 +1,36 @@
+{
+  "manifest_version": "1.0",
+  "artifact_type": "dev_only_response_shape_bot_manifest",
+  "artifact_id": "response_shape_bot_v1_anomaly_aligned_manifest",
+  "created_at_utc": "2026-04-08 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "bot_id": "response_shape_bot_v1_anomaly_aligned",
+  "output_namespace": "outputs/research_os/dev_only/non_authoritative_response_shape_aligned/",
+  "contract_paths": [
+    "research_os/dev_only/contracts/dev_only_response_shape_output_schema.contract.json",
+    "research_os/dev_only/contracts/response_shape_bot_v1_anomaly_aligned.contract.json"
+  ],
+  "spec_paths": [
+    "research_os/dev_only/specs/dev_only_response_shape_anomaly_aligned_probe_runner.spec.json",
+    "research_os/dev_only/specs/dev_only_response_shape_anomaly_aligned_profile_runner.spec.json"
+  ],
+  "runner_paths": [
+    "scripts/dev_only_response_shape_anomaly_aligned_probe_runner.py",
+    "scripts/dev_only_response_shape_anomaly_aligned_profile_runner.py"
+  ],
+  "shared_helper_paths": [
+    "scripts/research_os_dev_only_response_shape_output_common.py",
+    "scripts/research_os_dev_only_response_shape_anti_leakage.py"
+  ],
+  "registry_rules": [
+    "bot_is_dev_only_non_authoritative",
+    "bot_must_not_modify_source_of_truth",
+    "bot_must_use_exact_date_and_entity_anomaly_anchors_only",
+    "bot_must_remain_descriptive_not_prescriptive"
+  ],
+  "status": "implementation_pack_ready"
+}

@@ -405,6 +405,32 @@
       "notes": "Dev-only non-authoritative response-shape diagnostics for response_shape_bot_v1. Descriptive aftermath outputs only, not tradability scoring or strategy promotion."
     },
     {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_response_shape_aligned/",
+      "generated_by": [
+        "scripts/dev_only_response_shape_anomaly_aligned_probe_runner.py",
+        "scripts/dev_only_response_shape_anomaly_aligned_profile_runner.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative anomaly-aligned response-shape diagnostics for response_shape_bot_v1_anomaly_aligned. Exact anomaly-selected date+entity anchors only."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_bot_compare/",
+      "generated_by": [
+        "scripts/dev_only_anomaly_vs_response_shape_compare.py",
+        "scripts/dev_only_anomaly_vs_response_shape_aligned_compare.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative bot-vs-bot compare outputs for anomaly operating layer versus response_shape_bot_v1. Exact date+entity alignment only."
+    },
+    {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "generated_by": [
         "scripts/phase68h_dynamic_leverage_ladder_candidate.py"

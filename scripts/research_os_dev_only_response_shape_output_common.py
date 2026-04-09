@@ -48,12 +48,13 @@ def with_semantic_scope(payload: Dict[str, Any]) -> Dict[str, Any]:
     return out
 
 
-def response_shape_file_paths(bot_id: str) -> Dict[str, Path]:
+def response_shape_file_paths(bot_id: str, output_root: Path | None = None) -> Dict[str, Path]:
+    base_root = OUTPUT_ROOT if output_root is None else output_root
     return {
-        "features_csv": OUTPUT_ROOT / f"{bot_id}.features.csv",
-        "manifest_json": OUTPUT_ROOT / f"{bot_id}.manifest.json",
-        "quality_json": OUTPUT_ROOT / f"{bot_id}.quality.json",
-        "profile_json": OUTPUT_ROOT / f"{bot_id}.profile.json",
+        "features_csv": base_root / f"{bot_id}.features.csv",
+        "manifest_json": base_root / f"{bot_id}.manifest.json",
+        "quality_json": base_root / f"{bot_id}.quality.json",
+        "profile_json": base_root / f"{bot_id}.profile.json",
     }
 
 
@@ -83,7 +84,9 @@ def build_manifest(
     contract_refs: List[str],
     spec_refs: List[str],
     notes: List[str],
+    output_root: Path | None = None,
 ) -> Dict[str, Any]:
+    base_root = OUTPUT_ROOT if output_root is None else output_root
     output_files = {
         "features_csv": str(features_csv_path),
         "quality_json": str(quality_json_path),
@@ -98,7 +101,7 @@ def build_manifest(
                 "artifact_id": f"{bot_id}_manifest",
                 "generated_at_utc": timestamp_utc(),
                 "bot_id": bot_id,
-                "output_namespace": str(OUTPUT_ROOT),
+                "output_namespace": str(base_root),
                 "output_files": output_files,
                 "input_refs": input_refs,
                 "column_schema": column_schema,

@@ -8,13 +8,16 @@
   "non_authoritative": true,
   "official_truth": false,
   "strategy_advancement": false,
-  "scope": "shared_output_schema_for_response_shape_bot_v1",
-  "output_namespace": "outputs/research_os/dev_only/non_authoritative_response_shape/",
+  "scope": "shared_output_schema_for_response_shape_bot_v1_family",
+  "output_namespaces": [
+    "outputs/research_os/dev_only/non_authoritative_response_shape/",
+    "outputs/research_os/dev_only/non_authoritative_response_shape_aligned/"
+  ],
   "required_outputs": [
-    "response_shape_bot_v1.features.csv",
-    "response_shape_bot_v1.manifest.json",
-    "response_shape_bot_v1.quality.json",
-    "response_shape_bot_v1.profile.json"
+    "*.features.csv",
+    "*.manifest.json",
+    "*.quality.json",
+    "*.profile.json"
   ],
   "mandatory_row_flags": [
     "analysis_mode",
@@ -51,5 +54,9 @@
     "live_order"
   ],
   "hindsight_naming_rule": "Any realized aftermath metric must use the observed_ prefix unless it is one of the five approved response-shape dimensions.",
+  "supported_bot_ids": [
+    "response_shape_bot_v1",
+    "response_shape_bot_v1_anomaly_aligned"
+  ],
   "status": "dev_only_contract_ready"
 }

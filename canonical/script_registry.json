@@ -500,6 +500,67 @@
       "notes": "Profile-only follow-up. Dev-only and non-authoritative, with no official truth or execution-layer mutation."
     },
     {
+      "script_path": "scripts/dev_only_anomaly_vs_response_shape_compare.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds the first dev-only bot-vs-bot comparison layer between anomaly operating outputs and response_shape_bot_v1 using exact date+entity alignment only.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_bot_compare/anomaly_vs_response_shape_comparison.json",
+        "outputs/research_os/dev_only/non_authoritative_bot_compare/anomaly_vs_response_shape_comparison.csv",
+        "outputs/research_os/dev_only/non_authoritative_bot_compare/anomaly_vs_response_shape_agreement_watchlist.json",
+        "outputs/research_os/dev_only/non_authoritative_bot_compare/anomaly_vs_response_shape_disagreement_watchlist.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Overlap/agreement/disagreement only, with no strategy score, winner language, tradability language, leverage guidance, or official edge claims."
+    },
+    {
+      "script_path": "scripts/dev_only_response_shape_anomaly_aligned_probe_runner.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds anomaly-aligned response-shape outputs by mapping each anomaly operating row into the same exact date+entity anchor and measuring descriptive aftermath only.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_response_shape_aligned/response_shape_bot_v1_anomaly_aligned.features.csv",
+        "outputs/research_os/dev_only/non_authoritative_response_shape_aligned/response_shape_bot_v1_anomaly_aligned.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_response_shape_aligned/response_shape_bot_v1_anomaly_aligned.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Anomaly-selected anchor mapping only, exact date+entity only, and descriptive aftermath only."
+    },
+    {
+      "script_path": "scripts/dev_only_response_shape_anomaly_aligned_profile_runner.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds the compact profile report for response_shape_bot_v1_anomaly_aligned from its exact-anchor descriptive response-shape features.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_response_shape_aligned/response_shape_bot_v1_anomaly_aligned.profile.json",
+        "outputs/research_os/dev_only/non_authoritative_response_shape_aligned/response_shape_bot_v1_anomaly_aligned.manifest.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Profile-only follow-up. Dev-only and non-authoritative, with no official truth or execution-layer mutation."
+    },
+    {
+      "script_path": "scripts/dev_only_anomaly_vs_response_shape_aligned_compare.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds the aligned dev-only bot-vs-bot comparison layer between anomaly operating outputs and response_shape_bot_v1_anomaly_aligned using exact date+entity alignment only.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_bot_compare/anomaly_vs_response_shape_aligned_comparison.json",
+        "outputs/research_os/dev_only/non_authoritative_bot_compare/anomaly_vs_response_shape_aligned_comparison.csv",
+        "outputs/research_os/dev_only/non_authoritative_bot_compare/anomaly_vs_response_shape_aligned_agreement_watchlist.json",
+        "outputs/research_os/dev_only/non_authoritative_bot_compare/anomaly_vs_response_shape_aligned_disagreement_watchlist.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Exact overlap/agreement/disagreement only, with no fuzzy joins, strategy score, tradability language, leverage guidance, or official edge claims."
+    },
+    {
       "script_path": "run_data_refresh.ps1",
       "layer": "execution_data",
       "status": "active",

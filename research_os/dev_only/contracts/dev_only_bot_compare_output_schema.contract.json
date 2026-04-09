@@ -1,0 +1,38 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_bot_compare_output_schema_contract",
+  "artifact_id": "dev_only_bot_compare_output_schema",
+  "created_at_utc": "2026-04-08 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "scope": "shared_output_schema_for_dev_only_bot_vs_bot_compare",
+  "output_namespace": "outputs/research_os/dev_only/non_authoritative_bot_compare/",
+  "required_outputs": [
+    "*_comparison.json",
+    "*_comparison.csv",
+    "*_agreement_watchlist.json",
+    "*_disagreement_watchlist.json"
+  ],
+  "shared_key_rule": "exact date + entity alignment only",
+  "forbidden_semantics": [
+    "strategy_score",
+    "winner_language",
+    "tradability_language",
+    "leverage_guidance",
+    "official_edge_claims"
+  ],
+  "mandatory_flags": [
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "supported_compare_ids": [
+    "anomaly_vs_response_shape_comparison",
+    "anomaly_vs_response_shape_aligned_comparison"
+  ],
+  "status": "dev_only_contract_ready"
+}
