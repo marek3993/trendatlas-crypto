@@ -1,0 +1,10 @@
+model,state,days,days_pct
+phase68m_early_zone_plus,CASH,2839,98.13342550985136
+phase68m_early_zone_plus,EARLY_RISK,1,0.034566194262011754
+phase68m_early_zone_plus,FULL_RISK,53,1.8320082958866228
+phase68m_zone_score_plus,CASH,2839,98.13342550985136
+phase68m_zone_score_plus,EARLY_RISK,1,0.034566194262011754
+phase68m_zone_score_plus,FULL_RISK,53,1.8320082958866228
+phase68m_zone_score_risk_plus,CASH,2839,98.13342550985136
+phase68m_zone_score_risk_plus,EARLY_RISK,1,0.034566194262011754
+phase68m_zone_score_risk_plus,FULL_RISK,53,1.8320082958866228

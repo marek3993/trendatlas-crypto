@@ -1,0 +1,45 @@
+{
+  "manifest_version": "1.0",
+  "artifact_type": "dev_only_feature_wave_manifest",
+  "artifact_id": "dev_only_feature_wave04_remaining3",
+  "created_at_utc": "2026-04-07 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "scope": "remaining_three_family_dev_only_feature_implementation_pack",
+  "included_files": [
+    "scripts/research_os_dev_only_feature_output_common.py",
+    "scripts/research_os_dev_only_feature_anti_leakage.py",
+    "scripts/research_os_dev_only_feature_inputs_common.py",
+    "scripts/research_os_dev_only_feature_profile_common.py",
+    "scripts/dev_only_feature_probe_cross_asset_decoupling.py",
+    "scripts/dev_only_feature_probe_liquidity_stress.py",
+    "scripts/dev_only_feature_probe_event_context_flags.py",
+    "scripts/dev_only_feature_profile_runner.py",
+    "research_os/dev_only/contracts/dev_only_feature_output_schema.contract.json",
+    "research_os/dev_only/specs/dev_only_feature_probe_cross_asset_decoupling.spec.json",
+    "research_os/dev_only/specs/dev_only_feature_probe_liquidity_stress.spec.json",
+    "research_os/dev_only/specs/dev_only_feature_probe_event_context_flags.spec.json",
+    "research_os/dev_only/manifests/dev_only_feature_wave04_remaining3.manifest.json"
+  ],
+  "families_in_scope": [
+    "cross_asset_decoupling_stack",
+    "liquidity_stress_anomaly_stack",
+    "event_context_flags_stack"
+  ],
+  "hard_exclusions": [
+    "no source_of_truth changes",
+    "no APP drift",
+    "no DATA drift",
+    "no EXECUTION drift",
+    "no live-order logic",
+    "no strategy advancement",
+    "no official winner changes",
+    "no promotion into official truth",
+    "no reopening phase69",
+    "no batch04"
+  ],
+  "status": "ready_for_remaining3_dev_only_feature_outputs"
+}

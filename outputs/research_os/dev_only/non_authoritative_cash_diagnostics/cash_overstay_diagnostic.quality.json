@@ -1,0 +1,52 @@
+{
+  "artifact_id": "cash_overstay_diagnostic_quality",
+  "generated_at_utc": "2026-04-09 18:34:13 UTC",
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68_context_refs": {
+      "phase68k_context": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv"
+      ],
+      "phase68l_context": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_state_time.csv"
+      ],
+      "phase68m_context": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_state_time.csv"
+      ]
+    }
+  },
+  "check_count": 4,
+  "checks": [
+    {
+      "name": "baseline_required_columns_present",
+      "ok": true,
+      "detail": "baseline paper columns available for diagnostic"
+    },
+    {
+      "name": "benchmark_columns_present",
+      "ok": true,
+      "detail": "benchmark trend-anchor columns available"
+    },
+    {
+      "name": "constructive_windows_determined_without_fuzzy_matching",
+      "ok": true,
+      "detail": "fuzzy_matching_used=false and rule uses only deterministic date alignment"
+    },
+    {
+      "name": "constructive_window_count_non_negative",
+      "ok": true,
+      "detail": "constructive windows counted=12"
+    }
+  ],
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "cash_overstay_diagnostic_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

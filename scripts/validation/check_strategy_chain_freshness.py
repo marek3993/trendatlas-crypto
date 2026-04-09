@@ -29,6 +29,7 @@ DEFAULT_PHASE60_PAPER = (
     / "phase60_selective_restore_robustness"
     / "phase60_restore_trx_sol_base_paper.csv"
 )
+PHASE68I_CANONICAL_APP_EXPORT_PATH = ROOT / "outputs" / "execution" / "app_exports" / "phase68i_dynamic_ladder_candidate_paper.csv"
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -53,6 +54,16 @@ def manifest_lineage_value(manifest: dict[str, Any], field: str) -> str | None:
     return text or None
 
 
+def read_first_existing_last_date(*candidate_paths: Any) -> str | None:
+    for candidate_path in candidate_paths:
+        if not candidate_path:
+            continue
+        last_date = read_last_date(Path(str(candidate_path)))
+        if last_date:
+            return last_date
+    return None
+
+
 def find_saved_model_output(manifest: dict[str, Any], phase_prefix: str, output_dir: Path) -> Path | None:
     top_models = manifest.get("top_saved_models")
     if not isinstance(top_models, list) or not top_models:
@@ -70,6 +81,14 @@ def find_saved_model_output(manifest: dict[str, Any], phase_prefix: str, output_
 
 
 def read_phase60_last_date(phase62_manifest: dict[str, Any], phase63_manifest: dict[str, Any]) -> str | None:
+    artifact_last_date = read_first_existing_last_date(
+        phase62_manifest.get("base_file"),
+        phase63_manifest.get("base_file"),
+        DEFAULT_PHASE60_PAPER,
+    )
+    if artifact_last_date:
+        return artifact_last_date
+
     for candidate in (
         manifest_lineage_value(phase62_manifest, "source_last_date"),
         manifest_lineage_value(phase63_manifest, "source_last_date"),
@@ -77,64 +96,54 @@ def read_phase60_last_date(phase62_manifest: dict[str, Any], phase63_manifest: d
         if candidate:
             return candidate
 
-    for candidate_path in (
-        phase62_manifest.get("base_file"),
-        phase63_manifest.get("base_file"),
-        str(DEFAULT_PHASE60_PAPER),
-    ):
-        if not candidate_path:
-            continue
-        last_date = read_last_date(Path(str(candidate_path)))
-        if last_date:
-            return last_date
     return None
 
 
 def read_phase62_last_date(phase62_manifest: dict[str, Any]) -> str | None:
-    lineage_date = manifest_lineage_value(phase62_manifest, "output_last_date")
-    if lineage_date:
-        return lineage_date
-
     output_path = find_saved_model_output(
         manifest=phase62_manifest,
         phase_prefix="phase62",
         output_dir=ROOT / "outputs" / "phase62_btc_overlay",
     )
-    return read_last_date(output_path) if output_path is not None else None
+    artifact_last_date = read_last_date(output_path) if output_path is not None else None
+    if artifact_last_date:
+        return artifact_last_date
+
+    return manifest_lineage_value(phase62_manifest, "output_last_date")
 
 
 def read_phase63_last_date(phase63_manifest: dict[str, Any]) -> str | None:
-    lineage_date = manifest_lineage_value(phase63_manifest, "output_last_date")
-    if lineage_date:
-        return lineage_date
-
     output_path = find_saved_model_output(
         manifest=phase63_manifest,
         phase_prefix="phase63",
         output_dir=ROOT / "outputs" / "phase63_btc_participation_overlay",
     )
-    return read_last_date(output_path) if output_path is not None else None
+    artifact_last_date = read_last_date(output_path) if output_path is not None else None
+    if artifact_last_date:
+        return artifact_last_date
+
+    return manifest_lineage_value(phase63_manifest, "output_last_date")
 
 
 def read_phase66g_last_date(phase66g_manifest: dict[str, Any]) -> str | None:
-    lineage_date = manifest_lineage_value(phase66g_manifest, "output_last_date")
-    if lineage_date:
-        return lineage_date
-
     output_path = phase66g_manifest.get("production_paper_saved")
-    return read_last_date(Path(str(output_path))) if output_path else None
+    artifact_last_date = read_last_date(Path(str(output_path))) if output_path else None
+    if artifact_last_date:
+        return artifact_last_date
+
+    return manifest_lineage_value(phase66g_manifest, "output_last_date")
 
 
 def read_phase67j_last_date(phase67j_manifest: dict[str, Any]) -> str | None:
-    lineage_date = manifest_lineage_value(phase67j_manifest, "output_last_date")
-    if lineage_date:
-        return lineage_date
-
     best_model = str(phase67j_manifest.get("best_model") or "").strip()
     if not best_model:
-        return None
+        return manifest_lineage_value(phase67j_manifest, "output_last_date")
     output_path = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / f"{best_model}_paper.csv"
-    return read_last_date(output_path)
+    artifact_last_date = read_last_date(output_path)
+    if artifact_last_date:
+        return artifact_last_date
+
+    return manifest_lineage_value(phase67j_manifest, "output_last_date")
 
 
 def determine_first_break(stage_dates: list[tuple[str, str | None]]) -> tuple[str | None, str | None]:
@@ -164,7 +173,11 @@ def build_report() -> dict[str, Any]:
     paths_registry = read_json(PATHS_REGISTRY_PATH)
     artifacts = paths_registry.get("artifacts", {})
 
-    canonical_app_export_path = Path(artifacts["phase67j_winner_paper"]["canonical"])
+    canonical_app_export_path = (
+        PHASE68I_CANONICAL_APP_EXPORT_PATH
+        if PHASE68I_CANONICAL_APP_EXPORT_PATH.exists()
+        else Path(artifacts["phase67j_winner_paper"]["canonical"])
+    )
     canonical_live_status_path = Path(artifacts["phase67j_live_status"]["canonical"])
 
     raw_btc_last_date = read_last_date(BTC_RAW_PATH)

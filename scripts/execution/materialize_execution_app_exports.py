@@ -368,7 +368,7 @@ def format_float(value: float | None, decimals: int = 4) -> str:
 def build_phase68i_summary_export() -> dict[str, Any]:
     phase68h_refresh_info = refresh_phase68h_dynamic_paper_if_needed()
 
-    summary_header, summary_rows = read_csv_rows(PHASE68H_SUMMARY_INPUT_PATH)
+    _, summary_rows = read_csv_rows(PHASE68H_SUMMARY_INPUT_PATH)
     if not summary_rows:
         fail(f"No rows found in {PHASE68H_SUMMARY_INPUT_PATH}")
 
@@ -398,20 +398,36 @@ def build_phase68i_summary_export() -> dict[str, Any]:
 
     if "equity_curve" not in paper_header and "equity" not in paper_header:
         fail("phase68i paper export missing equity-compatible column")
+    if "equity_curve_gross" not in paper_header:
+        fail("phase68i paper export missing equity_curve_gross required for gross/net export")
+    if "equity_curve_net" not in paper_header:
+        fail("phase68i paper export missing equity_curve_net required for gross/net export")
 
     if "realistic_ret" not in paper_header:
         fail("phase68i paper export missing realistic_ret required for sharpe/sortino")
+    if "trading_fees_daily" not in paper_header:
+        fail("phase68i paper export missing trading_fees_daily required for fee decomposition")
+    if "trading_fees_cumulative" not in paper_header:
+        fail("phase68i paper export missing trading_fees_cumulative required for fee decomposition")
+    if "funding_daily" not in paper_header:
+        fail("phase68i paper export missing funding_daily required for funding decomposition")
+    if "funding_cumulative" not in paper_header:
+        fail("phase68i paper export missing funding_cumulative required for funding decomposition")
     if "portfolio_held_asset" not in paper_header:
         fail("phase68i paper export missing portfolio_held_asset required for switch/cash/btc metrics")
 
     returns: list[float] = []
     held_assets: list[str] = []
+    borrow_cost_total = 0.0
+    tradable_slippage_cost_total = 0.0
     for row in paper_rows:
         ret = parse_float_maybe(row.get("realistic_ret"))
         if ret is None:
             fail("phase68i paper export contains empty/invalid realistic_ret")
         returns.append(ret)
         held_assets.append(str(row.get("portfolio_held_asset", "")).strip().upper())
+        borrow_cost_total += parse_float_maybe(row.get("daily_borrow_cost")) or 0.0
+        tradable_slippage_cost_total += parse_float_maybe(row.get("tradable_slippage_cost")) or 0.0
 
     sharpe = annualized_sharpe_from_daily_returns(returns)
     sortino = annualized_sortino_from_daily_returns(returns)
@@ -440,40 +456,78 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     cash_days_pct = (cash_days / total_days) * 100.0
     btc_days_pct = (btc_days / total_days) * 100.0
 
-    existing_summary_row: dict[str, str] = {}
-    if PHASE68I_SUMMARY_OUTPUT_PATH.exists():
-        try:
-            existing_summary_row = read_single_csv_row(PHASE68I_SUMMARY_OUTPUT_PATH)
-        except Exception:
-            existing_summary_row = {}
+    last_paper_row = paper_rows[-1]
+    total_return_pct_gross = (parse_float_required(last_paper_row, "equity_curve_gross") - 1.0) * 100.0
+    total_return_pct_net = (parse_float_required(last_paper_row, "equity_curve_net") - 1.0) * 100.0
+    trading_fees_total_pct = parse_float_required(last_paper_row, "trading_fees_cumulative") * 100.0
+    funding_total_pct = parse_float_required(last_paper_row, "funding_cumulative") * 100.0
 
     output_header = [
         "model",
         "total_return_pct",
+        "total_return_pct_gross",
+        "total_return_pct_net",
         "cagr_pct",
+        "cagr_pct_gross",
+        "cagr_pct_net",
         "max_drawdown_pct",
+        "max_drawdown_pct_gross",
+        "max_drawdown_pct_net",
         "since2023_cagr_pct",
+        "since2023_cagr_pct_gross",
+        "since2023_cagr_pct_net",
         "since2025_cagr_pct",
+        "since2025_cagr_pct_gross",
+        "since2025_cagr_pct_net",
         "sharpe",
         "sortino",
         "switch_count",
         "cash_days_pct",
         "btc_days_pct",
+        "trading_fees_total_pct",
+        "funding_total_pct",
+        "borrow_cost_total_pct",
+        "tradable_slippage_cost_total_pct",
+        "fee_side_mode",
+        "taker_fee_bps",
+        "maker_fee_bps",
+        "staking_discount_pct",
+        "referral_discount_pct",
+        "effective_trading_fee_bps",
     ]
-    total_return_pct = str(existing_summary_row.get("total_return_pct") or "441056.82")
 
     output_row = {
         "model": "phase68i_dynamic_ladder_candidate",
-        "total_return_pct": total_return_pct,
-        "cagr_pct": str(existing_summary_row.get("cagr_pct") or parse_float_required(target_row, "cagr_pct")),
-        "max_drawdown_pct": str(existing_summary_row.get("max_drawdown_pct") or parse_float_required(target_row, "max_drawdown_pct")),
-        "since2023_cagr_pct": str(existing_summary_row.get("since2023_cagr_pct") or parse_float_required(target_row, "since2023_cagr_pct")),
-        "since2025_cagr_pct": str(existing_summary_row.get("since2025_cagr_pct") or parse_float_required(target_row, "since2025_cagr_pct")),
-        "sharpe": str(existing_summary_row.get("sharpe") or format_float(sharpe, 4)),
-        "sortino": str(existing_summary_row.get("sortino") or format_float(sortino, 4)),
-        "switch_count": str(existing_summary_row.get("switch_count") or str(switch_count)),
+        "total_return_pct": format_float(total_return_pct_net, 2),
+        "total_return_pct_gross": format_float(total_return_pct_gross, 2),
+        "total_return_pct_net": format_float(total_return_pct_net, 2),
+        "cagr_pct": format_float(parse_float_required(target_row, "cagr_pct_net"), 2),
+        "cagr_pct_gross": format_float(parse_float_required(target_row, "cagr_pct_gross"), 2),
+        "cagr_pct_net": format_float(parse_float_required(target_row, "cagr_pct_net"), 2),
+        "max_drawdown_pct": format_float(parse_float_required(target_row, "max_drawdown_pct_net"), 2),
+        "max_drawdown_pct_gross": format_float(parse_float_required(target_row, "max_drawdown_pct_gross"), 2),
+        "max_drawdown_pct_net": format_float(parse_float_required(target_row, "max_drawdown_pct_net"), 2),
+        "since2023_cagr_pct": format_float(parse_float_required(target_row, "since2023_cagr_pct_net"), 2),
+        "since2023_cagr_pct_gross": format_float(parse_float_required(target_row, "since2023_cagr_pct_gross"), 2),
+        "since2023_cagr_pct_net": format_float(parse_float_required(target_row, "since2023_cagr_pct_net"), 2),
+        "since2025_cagr_pct": format_float(parse_float_required(target_row, "since2025_cagr_pct_net"), 2),
+        "since2025_cagr_pct_gross": format_float(parse_float_required(target_row, "since2025_cagr_pct_gross"), 2),
+        "since2025_cagr_pct_net": format_float(parse_float_required(target_row, "since2025_cagr_pct_net"), 2),
+        "sharpe": format_float(sharpe, 4),
+        "sortino": format_float(sortino, 4),
+        "switch_count": str(switch_count),
         "cash_days_pct": format_float(cash_days_pct, 4),
         "btc_days_pct": format_float(btc_days_pct, 4),
+        "trading_fees_total_pct": format_float(trading_fees_total_pct, 4),
+        "funding_total_pct": format_float(funding_total_pct, 4),
+        "borrow_cost_total_pct": format_float(borrow_cost_total * 100.0, 4),
+        "tradable_slippage_cost_total_pct": format_float(tradable_slippage_cost_total * 100.0, 4),
+        "fee_side_mode": str(target_row.get("fee_side_mode", "")).strip(),
+        "taker_fee_bps": format_float(parse_float_required(target_row, "taker_fee_bps"), 4),
+        "maker_fee_bps": format_float(parse_float_required(target_row, "maker_fee_bps"), 4),
+        "staking_discount_pct": format_float(parse_float_required(target_row, "staking_discount_pct"), 4),
+        "referral_discount_pct": format_float(parse_float_required(target_row, "referral_discount_pct"), 4),
+        "effective_trading_fee_bps": format_float(parse_float_required(target_row, "effective_trading_fee_bps"), 4),
     }
 
     try:
@@ -493,17 +547,38 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "output_path": str(PHASE68I_SUMMARY_OUTPUT_PATH),
         "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
         "computed_fields": [
+            "total_return_pct",
+            "total_return_pct_gross",
+            "total_return_pct_net",
             "sharpe",
             "sortino",
             "switch_count",
             "cash_days_pct",
             "btc_days_pct",
+            "trading_fees_total_pct",
+            "funding_total_pct",
+            "borrow_cost_total_pct",
+            "tradable_slippage_cost_total_pct",
         ],
         "copied_fields_from_summary_source": [
+            "fee_side_mode",
+            "taker_fee_bps",
+            "maker_fee_bps",
+            "staking_discount_pct",
+            "referral_discount_pct",
+            "effective_trading_fee_bps",
             "cagr_pct",
+            "cagr_pct_gross",
+            "cagr_pct_net",
             "max_drawdown_pct",
+            "max_drawdown_pct_gross",
+            "max_drawdown_pct_net",
             "since2023_cagr_pct",
+            "since2023_cagr_pct_gross",
+            "since2023_cagr_pct_net",
             "since2025_cagr_pct",
+            "since2025_cagr_pct_gross",
+            "since2025_cagr_pct_net",
         ],
     }
 

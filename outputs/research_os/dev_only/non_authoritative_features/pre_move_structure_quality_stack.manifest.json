@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_feature_output_manifest",
   "artifact_id": "pre_move_structure_quality_stack_manifest",
-  "generated_at_utc": "2026-04-07 08:55:44 UTC",
+  "generated_at_utc": "2026-04-07 17:55:26 UTC",
   "family_id": "pre_move_structure_quality_stack",
   "family_type": "pre-move",
   "output_files": {
@@ -34,7 +34,7 @@
     "official_truth",
     "strategy_advancement"
   ],
-  "row_count": 229,
+  "row_count": 255,
   "status": "generated_dev_only_feature_output",
   "dev_only": true,
   "non_authoritative": true,

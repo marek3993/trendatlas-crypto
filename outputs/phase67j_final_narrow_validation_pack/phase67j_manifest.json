@@ -43,130 +43,6 @@
       "dropped_assets": [
         "NEO"
       ]
-    },
-    {
-      "overlay": {
-        "score_lb": 30,
-        "fast_ma": 20,
-        "slow_ma": 100,
-        "min_score": 0.12,
-        "edge_vs_core": 0.03,
-        "risk_ma": 150,
-        "risk_buffer": -0.03,
-        "vol_lb": 30,
-        "vol_cap": 0.045,
-        "rel_recent_lb": 30,
-        "rel_recent_min_edge": 0.0,
-        "cooldown_days": 3
-      },
-      "governance": {
-        "profile_name": "phase67j_no_neo_drop_bch",
-        "trailing_train_days": 365,
-        "recent_days": 42,
-        "rebalance_every_days": 7,
-        "min_triggers_in_train": 3,
-        "min_total_delta_pct": 0.0,
-        "min_recent_delta_pct": 0.0,
-        "max_allowed_dd_worsen_pct": 6.0,
-        "switch_score_margin": 2.0,
-        "min_hold_periods": 2,
-        "probation_lookback_days": 45,
-        "probation_min_delta_pct": -0.5,
-        "probation_ban_periods": 4,
-        "promotion_margin_pct": 2.0,
-        "persistence_weeks": 2,
-        "reentry_cooldown_days": 7,
-        "downside_lookback_days": 42,
-        "downside_max_worsen_pct": 2.5,
-        "bnb_shield_margin_pct": 1.0
-      },
-      "dropped_assets": [
-        "NEO",
-        "BCH"
-      ]
-    },
-    {
-      "overlay": {
-        "score_lb": 30,
-        "fast_ma": 20,
-        "slow_ma": 100,
-        "min_score": 0.12,
-        "edge_vs_core": 0.03,
-        "risk_ma": 150,
-        "risk_buffer": -0.03,
-        "vol_lb": 30,
-        "vol_cap": 0.045,
-        "rel_recent_lb": 30,
-        "rel_recent_min_edge": 0.0,
-        "cooldown_days": 3
-      },
-      "governance": {
-        "profile_name": "phase67j_no_neo_drop_xtz",
-        "trailing_train_days": 365,
-        "recent_days": 42,
-        "rebalance_every_days": 7,
-        "min_triggers_in_train": 3,
-        "min_total_delta_pct": 0.0,
-        "min_recent_delta_pct": 0.0,
-        "max_allowed_dd_worsen_pct": 6.0,
-        "switch_score_margin": 2.0,
-        "min_hold_periods": 2,
-        "probation_lookback_days": 45,
-        "probation_min_delta_pct": -0.5,
-        "probation_ban_periods": 4,
-        "promotion_margin_pct": 2.0,
-        "persistence_weeks": 2,
-        "reentry_cooldown_days": 7,
-        "downside_lookback_days": 42,
-        "downside_max_worsen_pct": 2.5,
-        "bnb_shield_margin_pct": 1.0
-      },
-      "dropped_assets": [
-        "NEO",
-        "XTZ"
-      ]
-    },
-    {
-      "overlay": {
-        "score_lb": 30,
-        "fast_ma": 20,
-        "slow_ma": 100,
-        "min_score": 0.12,
-        "edge_vs_core": 0.03,
-        "risk_ma": 150,
-        "risk_buffer": -0.03,
-        "vol_lb": 30,
-        "vol_cap": 0.045,
-        "rel_recent_lb": 30,
-        "rel_recent_min_edge": 0.0,
-        "cooldown_days": 3
-      },
-      "governance": {
-        "profile_name": "phase67j_no_neo_drop_bch_xtz",
-        "trailing_train_days": 365,
-        "recent_days": 42,
-        "rebalance_every_days": 7,
-        "min_triggers_in_train": 3,
-        "min_total_delta_pct": 0.0,
-        "min_recent_delta_pct": 0.0,
-        "max_allowed_dd_worsen_pct": 6.0,
-        "switch_score_margin": 2.0,
-        "min_hold_periods": 2,
-        "probation_lookback_days": 45,
-        "probation_min_delta_pct": -0.5,
-        "probation_ban_periods": 4,
-        "promotion_margin_pct": 2.0,
-        "persistence_weeks": 2,
-        "reentry_cooldown_days": 7,
-        "downside_lookback_days": 42,
-        "downside_max_worsen_pct": 2.5,
-        "bnb_shield_margin_pct": 1.0
-      },
-      "dropped_assets": [
-        "NEO",
-        "BCH",
-        "XTZ"
-      ]
     }
   ],
   "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_final_narrow_validation_summary.csv",
@@ -176,5 +52,14 @@
   "asset_quality_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_final_narrow_validation_asset_quality.csv",
   "live_status_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
   "latest_top10_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_latest_decision_top10.csv",
-  "best_model": "phase67j_no_neo_main"
+  "best_model": "phase67j_no_neo_main",
+  "freshness_lineage": {
+    "producer_script": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67j_final_narrow_validation_pack.py",
+    "source_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+    "source_last_date": "2026-04-06",
+    "raw_last_date": "2026-04-06",
+    "output_last_date": "2026-04-06",
+    "first_missing_date_if_any": null,
+    "date_semantics": "execution_date"
+  }
 }

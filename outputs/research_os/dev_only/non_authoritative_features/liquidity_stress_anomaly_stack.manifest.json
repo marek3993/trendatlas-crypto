@@ -1,0 +1,37 @@
+{
+  "artifact_type": "dev_only_feature_output_manifest",
+  "artifact_id": "liquidity_stress_anomaly_stack_manifest",
+  "generated_at_utc": "2026-04-07 17:55:33 UTC",
+  "family_id": "liquidity_stress_anomaly_stack",
+  "family_type": "toxic-subset",
+  "output_files": {
+    "features_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\liquidity_stress_anomaly_stack.features.csv",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\liquidity_stress_anomaly_stack.quality.json",
+    "profile_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\liquidity_stress_anomaly_stack.profile.json"
+  },
+  "input_refs": [
+    "data/ohlcv_phase67_top100/*.csv",
+    "data/ohlcv/*.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
+  ],
+  "column_schema": [
+    "date",
+    "asset",
+    "abnormal_volume_burst",
+    "liquidity_dry_up",
+    "stress_persistence",
+    "liquidity_vacuum_proxy",
+    "unstable_reversal_pressure",
+    "feature_ready_flag",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "row_count": 329,
+  "status": "generated_dev_only_feature_output",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

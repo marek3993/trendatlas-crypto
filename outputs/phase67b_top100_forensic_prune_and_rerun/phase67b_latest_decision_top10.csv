@@ -1,8 +1,7 @@
 asset,train_total_delta_pct,recent_total_delta_pct,train_dd_worsen_pct,train_triggers,score,passed_filters,profile,decision_date,next_date_exclusive,probation_delta_pct,suspended,suspended_until_rebalance_idx,incumbent_asset_before,selected_asset,keep_reason
-BCH,10.101143510290584,0.0,-1.0658141036401503e-14,24,18.751715265435877,False,phase67b_top100_pruned_soft_filters,2026-03-28,2026-03-30,0.0,False,331,,,best_passed
-APT,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-03-28,2026-03-30,0.0,False,287,,,best_passed
-DOGE,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-03-28,2026-03-30,0.0,False,233,,,best_passed
-ICP,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-03-28,2026-03-30,0.0,False,288,,,best_passed
-NEO,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-03-28,2026-03-30,0.0,False,163,,,best_passed
-STX,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-03-28,2026-03-30,0.0,False,293,,,best_passed
-XTZ,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-03-28,2026-03-30,0.0,False,63,,,best_passed
+APT,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-04-05,2026-04-06,0.0,False,294,,,best_passed
+DOGE,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-04-05,2026-04-06,0.0,False,250,,,best_passed
+HBAR,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-04-05,2026-04-06,0.0,False,250,,,best_passed
+LINK,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-04-05,2026-04-06,0.0,False,299,,,best_passed
+NEO,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-04-05,2026-04-06,0.0,False,163,,,best_passed
+STX,0.0,0.0,0.0,0,0.0,False,phase67b_top100_pruned_soft_filters,2026-04-05,2026-04-06,0.0,False,293,,,best_passed

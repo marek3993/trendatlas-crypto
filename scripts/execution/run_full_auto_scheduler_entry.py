@@ -17,10 +17,22 @@ except ImportError:
     print("ERROR: Missing dependency 'requests'. Install with: pip install requests")
     raise SystemExit(1)
 
-
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.execution.app_execute_bridge import run_app_execute_action  # noqa: E402
+from scripts.execution.trading_operation_mode import (  # noqa: E402
+    DEFAULT_TRADING_OPERATION_MODE_PATH,
+    load_trading_operation_mode_payload,
+)
+
 OUTPUTS_DIR = ROOT / "outputs" / "execution"
 FULL_AUTO_DIR = OUTPUTS_DIR / "full_auto"
+DRY_RUN_DIR = OUTPUTS_DIR / "dry_run"
+INTENTS_DIR = OUTPUTS_DIR / "intents"
+READ_ONLY_DIR = OUTPUTS_DIR / "read_only"
+LIVE_STATUS_DIR = OUTPUTS_DIR / "live_status"
 LIVE_GATE_DIR = OUTPUTS_DIR / "live_gate"
 RECON_DIR = OUTPUTS_DIR / "reconciliation"
 SUBMIT_DIR = OUTPUTS_DIR / "submit_preview"
@@ -43,8 +55,97 @@ FULL_AUTO_SKIP_REASON_PATH = FULL_AUTO_DIR / "latest_full_auto_skip_reason.json"
 
 INFO_URL = "https://api.hyperliquid.xyz/info"
 MANUAL_CONFIRM_TOKEN = "FULL_AUTO_EXECUTION"
+TRADING_OPERATION_MODE_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
+LIVE_ORDER_ACTIONS = {
+    "simulate_enter_target_asset",
+    "simulate_exit_to_cash",
+    "simulate_rotate_position",
+}
 
-REQUIRED_DOWNSTREAM_ARTIFACTS: list[tuple[str, Path, list[str]]] = [
+BASE_REQUIRED_DOWNSTREAM_ARTIFACTS: list[tuple[str, Path, list[str]]] = [
+    (
+        "account_snapshot",
+        READ_ONLY_DIR / "hyperliquid_account_snapshot.json",
+        ["account_address", "summary", "raw"],
+    ),
+    (
+        "account_snapshot_quality",
+        READ_ONLY_DIR / "hyperliquid_account_snapshot_quality.json",
+        ["snapshot_ok", "account_address_present"],
+    ),
+    (
+        "account_snapshot_manifest",
+        READ_ONLY_DIR / "hyperliquid_account_snapshot_manifest.json",
+        ["artifact_name", "status", "output_paths"],
+    ),
+    (
+        "execution_status",
+        LIVE_STATUS_DIR / "execution_status.json",
+        ["status_type", "signal_id", "target_asset"],
+    ),
+    (
+        "execution_intent",
+        INTENTS_DIR / "latest_execution_intent.json",
+        ["intent_type", "signal_id", "target_asset"],
+    ),
+    (
+        "execution_intent_quality",
+        INTENTS_DIR / "latest_execution_intent_quality.json",
+        ["intent_ok", "signal_id_present"],
+    ),
+    (
+        "execution_intent_manifest",
+        INTENTS_DIR / "latest_execution_intent_manifest.json",
+        ["artifact_name", "status", "output_paths"],
+    ),
+    (
+        "dry_run_decision",
+        DRY_RUN_DIR / "latest_dry_run_decision.json",
+        ["decision_type", "signal_id", "recommended_action"],
+    ),
+    (
+        "dry_run_quality",
+        DRY_RUN_DIR / "latest_dry_run_decision_quality.json",
+        ["dry_run_ok", "recommended_action"],
+    ),
+    (
+        "dry_run_manifest",
+        DRY_RUN_DIR / "latest_dry_run_decision_manifest.json",
+        ["artifact_name", "status", "output_paths"],
+    ),
+    (
+        "live_gate_decision",
+        LIVE_GATE_DIR / "latest_real_order_gate_decision.json",
+        ["decision_type", "status", "block_reasons"],
+    ),
+    (
+        "live_gate_quality",
+        LIVE_GATE_DIR / "latest_real_order_gate_quality.json",
+        ["gate_ok", "status"],
+    ),
+    (
+        "live_gate_manifest",
+        LIVE_GATE_DIR / "latest_real_order_gate_manifest.json",
+        ["artifact_name", "status", "output_paths"],
+    ),
+    (
+        "reconciliation_report",
+        RECON_DIR / "latest_reconciliation_report.json",
+        ["report_type", "signal_id", "reconciliation_action"],
+    ),
+    (
+        "reconciliation_quality",
+        RECON_DIR / "latest_reconciliation_quality.json",
+        ["reconciliation_ok", "reconciled"],
+    ),
+    (
+        "reconciliation_manifest",
+        RECON_DIR / "latest_reconciliation_manifest.json",
+        ["artifact_name", "status", "output_paths"],
+    ),
+]
+
+LIVE_CHILD_REQUIRED_DOWNSTREAM_ARTIFACTS: list[tuple[str, Path, list[str]]] = [
     (
         "full_auto_runner_decision",
         FULL_AUTO_RUNNER_DECISION_PATH,
@@ -329,10 +430,10 @@ def compute_fresh_time_offset() -> dict[str, Any]:
     }
 
 
-def require_manual_execution(args: argparse.Namespace) -> None:
-    if not args.execute_live:
+def require_manual_execution(*, execute_live: bool, manual_confirm: str) -> None:
+    if not execute_live:
         return
-    if args.manual_confirm != MANUAL_CONFIRM_TOKEN:
+    if manual_confirm != MANUAL_CONFIRM_TOKEN:
         raise ValueError(
             "Manual confirmation missing. "
             f"Pass --manual-confirm {MANUAL_CONFIRM_TOKEN} together with --execute-live."
@@ -350,9 +451,13 @@ def emit_child_output(stdout_text: str, stderr_text: str) -> None:
         print("[SCHEDULER_ENTRY][child][stderr] END", file=sys.stderr, flush=True)
 
 
-def build_child_command(args: argparse.Namespace) -> list[str]:
+def build_child_command(
+    args: argparse.Namespace,
+    *,
+    execute_live: bool,
+) -> list[str]:
     command = [sys.executable, str(CHILD_SCRIPT_PATH.resolve())]
-    if args.execute_live:
+    if execute_live:
         command.extend(["--execute-live", "--manual-confirm", args.manual_confirm])
     if args.intent_path is not None:
         command.extend(["--intent-path", str(args.intent_path.resolve())])
@@ -376,10 +481,11 @@ def run_child_process(
     args: argparse.Namespace,
     env: dict[str, str],
     run_dir: Path,
+    execute_live: bool,
 ) -> dict[str, Any]:
     child_stdout_path = run_dir / "child.stdout.log"
     child_stderr_path = run_dir / "child.stderr.log"
-    command = build_child_command(args)
+    command = build_child_command(args, execute_live=execute_live)
     child_started_at_utc = utc_now_iso()
     started = time.monotonic()
     result = subprocess.run(
@@ -410,6 +516,7 @@ def run_child_process(
 
 
 def verify_required_artifacts(
+    required_artifacts: list[tuple[str, Path, list[str]]],
     before_states: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
     artifacts: list[dict[str, Any]] = []
@@ -417,7 +524,7 @@ def verify_required_artifacts(
     unchanged_labels: list[str] = []
     invalid_labels: list[str] = []
 
-    for label, path, required_keys in REQUIRED_DOWNSTREAM_ARTIFACTS:
+    for label, path, required_keys in required_artifacts:
         before_state = before_states[label]
         after_state = safe_file_state(path)
         artifact_result: dict[str, Any] = {
@@ -521,6 +628,98 @@ def build_gate_summary() -> dict[str, Any] | None:
     }
 
 
+def build_dry_run_summary() -> dict[str, Any] | None:
+    decision = read_json_if_exists(DRY_RUN_DIR / "latest_dry_run_decision.json")
+    if decision is None:
+        return None
+    return {
+        "signal_id": decision.get("signal_id"),
+        "target_asset": normalize_asset(decision.get("target_asset")),
+        "recommended_action": decision.get("recommended_action"),
+        "would_place_order": bool(
+            decision.get("simulated_order", {}).get("would_place_order", False)
+        ),
+        "stale_signal": bool(decision.get("stale_signal", False)),
+        "duplicate_order_risk": bool(decision.get("duplicate_order_risk", False)),
+    }
+
+
+def summarize_bridge_dry_run_result(result: dict[str, Any]) -> dict[str, Any]:
+    result_summary = (
+        result.get("result_summary")
+        if isinstance(result.get("result_summary"), dict)
+        else {}
+    )
+    return {
+        "ok": bool(result.get("ok", False)),
+        "status": result.get("status"),
+        "error": result.get("error"),
+        "user_summary": result.get("user_summary"),
+        "recommended_action": result_summary.get("recommended_action"),
+        "target_asset": normalize_asset(result_summary.get("target_asset")),
+        "would_place_order": bool(result_summary.get("would_place_order", False)),
+        "gate_status": result_summary.get("gate_status"),
+        "generated_at_utc": result_summary.get("generated_at_utc"),
+        "artifact_paths": result.get("artifact_paths", {}),
+    }
+
+
+def evaluate_auto_submit_readiness() -> dict[str, Any]:
+    dry_run_payload = read_json_if_exists(DRY_RUN_DIR / "latest_dry_run_decision.json") or {}
+    gate_payload = read_json_if_exists(LIVE_GATE_DIR / "latest_real_order_gate_decision.json") or {}
+    execution_mode_payload = read_json_if_exists(
+        ROOT / "execution" / "config" / "execution_mode.json"
+    ) or {}
+
+    recommended_action = str(dry_run_payload.get("recommended_action") or "").strip()
+    gate_status = str(gate_payload.get("status") or "").strip()
+    reasons: list[str] = []
+
+    if gate_status != "ready_if_enabled":
+        reasons.append(f"gate_status_not_ready_if_enabled::{gate_status or 'missing'}")
+    if not bool(gate_payload.get("would_place_real_order", False)):
+        reasons.append("gate_does_not_allow_real_order")
+    for item in gate_payload.get("block_reasons", []) or []:
+        text = str(item or "").strip()
+        if text:
+            reasons.append(f"gate_block_reason::{text}")
+
+    if recommended_action not in LIVE_ORDER_ACTIONS:
+        reasons.append(
+            "dry_run_not_real_trade_path::"
+            f"{recommended_action or 'missing'}"
+        )
+    if not bool(dry_run_payload.get("simulated_order", {}).get("would_place_order", False)):
+        reasons.append("dry_run_would_place_order_false")
+    if bool(dry_run_payload.get("stale_signal", False)):
+        reasons.append("dry_run_stale_signal")
+    if bool(dry_run_payload.get("duplicate_order_risk", False)):
+        reasons.append("dry_run_duplicate_order_risk")
+    if not bool(dry_run_payload.get("guardrails", {}).get("contract_validated", False)):
+        reasons.append("dry_run_contract_not_validated")
+
+    mode = str(execution_mode_payload.get("mode") or "").strip().lower()
+    if mode != "live":
+        reasons.append(f"execution_mode_not_live::{mode or 'missing'}")
+    if execution_mode_payload.get("trading_enabled") is not True:
+        reasons.append("execution_mode_trading_enabled_false")
+    if execution_mode_payload.get("kill_switch") is True:
+        reasons.append("execution_mode_kill_switch_true")
+
+    deduped_reasons = list(dict.fromkeys(reasons))
+    return {
+        "ok": not deduped_reasons,
+        "signal_id": dry_run_payload.get("signal_id"),
+        "target_asset": normalize_asset(dry_run_payload.get("target_asset")),
+        "recommended_action": recommended_action,
+        "would_place_order": bool(
+            dry_run_payload.get("simulated_order", {}).get("would_place_order", False)
+        ),
+        "gate_status": gate_status,
+        "reasons": deduped_reasons,
+    }
+
+
 def build_restore_profile(
     *,
     args: argparse.Namespace,
@@ -551,6 +750,9 @@ def build_restore_profile(
         "abort_conditions": abort_conditions,
         "decision_path": str(decision_path.resolve()),
         "safe_baseline": {
+            "trading_operation_mode_expected": {
+                "mode": "manual",
+            },
             "execution_mode_expected": {
                 "mode": "read_only",
                 "trading_enabled": False,
@@ -564,6 +766,7 @@ def build_restore_profile(
             "source_of_truth_runtime_writes_allowed": False,
         },
         "recovery_steps": [
+            "Restore execution/config/trading_operation_mode.json so mode=manual before any further scheduler invocation.",
             "Restore execution/config/execution_mode.json to the validated safe baseline: mode=read_only, trading_enabled=false, dry_run_enabled=true, kill_switch=true.",
             "Restore execution/config/live_order_policy.json so allow_live_orders=false and max_order_notional_usd=0.0 before any further scheduled invocation.",
             "Do not create or modify source_of_truth files from the runtime path.",
@@ -572,6 +775,7 @@ def build_restore_profile(
         ],
         "preview_rerun_command": preview_command,
         "paths": {
+            "trading_operation_mode_path": str(TRADING_OPERATION_MODE_PATH.resolve()),
             "execution_mode_path": str(
                 (ROOT / "execution" / "config" / "execution_mode.json").resolve()
             ),
@@ -594,6 +798,7 @@ def build_manifest(
     child_process: dict[str, Any] | None,
 ) -> dict[str, Any]:
     input_paths = [str(CHILD_SCRIPT_PATH.resolve())]
+    input_paths.append(str(TRADING_OPERATION_MODE_PATH.resolve()))
     for candidate in (
         args.intent_path,
         args.snapshot_path,
@@ -673,6 +878,7 @@ def resolve_exit_code(status: str) -> int:
         "failed_partial_output_verification": 5,
         "failed_source_of_truth_write_check": 6,
         "failed_preflight": 7,
+        "failed_base_chain": 8,
     }.get(status, 1)
 
 
@@ -697,10 +903,23 @@ def main() -> None:
     time_offset_refresh: dict[str, Any] | None = None
     source_of_truth_before = snapshot_source_of_truth_state()
     source_of_truth_changes: list[str] = []
+    bridge_result: dict[str, Any] | None = None
+    auto_submit_evaluation: dict[str, Any] | None = None
+    trading_operation_mode = load_trading_operation_mode_payload(TRADING_OPERATION_MODE_PATH)
+    requested_execute_live = bool(args.execute_live)
+    effective_execute_live = bool(
+        requested_execute_live
+        and str(trading_operation_mode.get("mode") or "").strip().lower() == "automatic"
+    )
+    live_child_invoked = False
+    execution_suppressed_reasons: list[str] = []
 
+    all_required_artifacts = (
+        BASE_REQUIRED_DOWNSTREAM_ARTIFACTS + LIVE_CHILD_REQUIRED_DOWNSTREAM_ARTIFACTS
+    )
     downstream_before_states = {
         label: safe_file_state(path)
-        for label, path, _required_keys in REQUIRED_DOWNSTREAM_ARTIFACTS
+        for label, path, _required_keys in all_required_artifacts
     }
     downstream_verification: dict[str, Any] = {
         "artifacts": [],
@@ -712,34 +931,65 @@ def main() -> None:
 
     log(
         "[START] run_full_auto_scheduler_entry "
-        f"run_id={run_id} execute_live={args.execute_live}"
+        f"run_id={run_id} requested_execute_live={requested_execute_live} "
+        f"effective_execute_live={effective_execute_live} "
+        f"trading_operation_mode={trading_operation_mode.get('mode')}"
     )
 
     try:
-        if not CHILD_SCRIPT_PATH.exists():
-            abort_conditions.append(f"missing_child_script::{CHILD_SCRIPT_PATH.resolve()}")
-            status = "failed_preflight"
-        else:
-            require_manual_execution(args)
-            time_offset_refresh = compute_fresh_time_offset()
-            os.environ["HYPERLIQUID_TIME_OFFSET_MS"] = str(
-                time_offset_refresh["selected_offset_ms"]
-            )
-            log(
-                "[TIME_OFFSET] "
-                f"selected_offset_ms={time_offset_refresh['selected_offset_ms']}"
-            )
-
-            child_process = run_child_process(
-                args=args,
-                env=os.environ.copy(),
-                run_dir=run_dir,
-            )
-            if child_process["returncode"] != 0:
-                abort_conditions.append(
-                    f"child_process_failed::returncode={child_process['returncode']}"
+        bridge_result = run_app_execute_action(action="dry_run")
+        if not bridge_result.get("ok", False):
+            abort_conditions.append(
+                "base_chain_failed::"
+                + str(
+                    bridge_result.get("error")
+                    or bridge_result.get("user_summary")
+                    or "dry_run_failed"
                 )
-                status = "failed_child_process"
+            )
+            status = "failed_base_chain"
+        else:
+            if requested_execute_live and not effective_execute_live:
+                execution_suppressed_reasons.append(
+                    "requested_execute_live_but_trading_operation_mode_fail_closed_to_manual"
+                )
+
+            auto_submit_evaluation = evaluate_auto_submit_readiness()
+            if effective_execute_live and not auto_submit_evaluation["ok"]:
+                execution_suppressed_reasons.extend(auto_submit_evaluation["reasons"])
+
+            if effective_execute_live and auto_submit_evaluation["ok"]:
+                if not CHILD_SCRIPT_PATH.exists():
+                    abort_conditions.append(
+                        f"missing_child_script::{CHILD_SCRIPT_PATH.resolve()}"
+                    )
+                    status = "failed_preflight"
+                else:
+                    require_manual_execution(
+                        execute_live=True,
+                        manual_confirm=args.manual_confirm,
+                    )
+                    time_offset_refresh = compute_fresh_time_offset()
+                    os.environ["HYPERLIQUID_TIME_OFFSET_MS"] = str(
+                        time_offset_refresh["selected_offset_ms"]
+                    )
+                    log(
+                        "[TIME_OFFSET] "
+                        f"selected_offset_ms={time_offset_refresh['selected_offset_ms']}"
+                    )
+
+                    child_process = run_child_process(
+                        args=args,
+                        env=os.environ.copy(),
+                        run_dir=run_dir,
+                        execute_live=True,
+                    )
+                    live_child_invoked = True
+                    if child_process["returncode"] != 0:
+                        abort_conditions.append(
+                            f"child_process_failed::returncode={child_process['returncode']}"
+                        )
+                        status = "failed_child_process"
 
         source_of_truth_after = snapshot_source_of_truth_state()
         source_of_truth_changes = diff_source_of_truth_state(
@@ -752,8 +1002,15 @@ def main() -> None:
             )
             status = "failed_source_of_truth_write_check"
 
-        downstream_verification = verify_required_artifacts(downstream_before_states)
-        if child_process is not None and child_process["returncode"] == 0 and not downstream_verification["ok"]:
+        required_artifacts = list(BASE_REQUIRED_DOWNSTREAM_ARTIFACTS)
+        if live_child_invoked:
+            required_artifacts.extend(LIVE_CHILD_REQUIRED_DOWNSTREAM_ARTIFACTS)
+
+        downstream_verification = verify_required_artifacts(
+            required_artifacts,
+            downstream_before_states,
+        )
+        if status not in {"failed_base_chain", "failed_child_process", "failed_source_of_truth_write_check"} and not downstream_verification["ok"]:
             if downstream_verification["missing_labels"]:
                 abort_conditions.append(
                     "missing_downstream_artifacts::"
@@ -769,8 +1026,7 @@ def main() -> None:
                     "invalid_downstream_artifacts::"
                     + ",".join(downstream_verification["invalid_labels"])
                 )
-            if status not in {"failed_child_process", "failed_source_of_truth_write_check"}:
-                status = "failed_partial_output_verification"
+            status = "failed_partial_output_verification"
 
         if not abort_conditions:
             status = "success"
@@ -781,10 +1037,11 @@ def main() -> None:
         abort_conditions.append(f"time_offset_refresh_failed::{exc}")
         status = "failed_time_offset_refresh"
     finally:
-        runner_summary = build_runner_summary()
+        runner_summary = build_runner_summary() if live_child_invoked else None
+        dry_run_summary = build_dry_run_summary()
         gate_summary = build_gate_summary()
         reconciliation_summary = build_reconciliation_summary()
-        submit_summary = build_submit_summary()
+        submit_summary = build_submit_summary() if live_child_invoked else None
 
         decision = {
             "artifact_type": "full_auto_scheduler_entry_decision",
@@ -793,19 +1050,37 @@ def main() -> None:
             "run_id": run_id,
             "status": status,
             "exit_code": resolve_exit_code(status),
-            "execute_live": bool(args.execute_live),
-            "preview_only": not bool(args.execute_live),
+            "execute_live": requested_execute_live,
+            "requested_execute_live": requested_execute_live,
+            "effective_execute_live": effective_execute_live,
+            "live_child_invoked": live_child_invoked,
+            "preview_only": not live_child_invoked,
             "manual_confirmation_verified": bool(
-                (not args.execute_live) or args.manual_confirm == MANUAL_CONFIRM_TOKEN
+                (not effective_execute_live) or args.manual_confirm == MANUAL_CONFIRM_TOKEN
             ),
             "working_directory": str(ROOT.resolve()),
             "invoked_from_cwd": str(original_cwd.resolve()),
+            "trading_operation_mode": {
+                "mode": trading_operation_mode.get("mode"),
+                "updated_at_utc": trading_operation_mode.get("updated_at_utc"),
+                "updated_by": trading_operation_mode.get("updated_by"),
+                "fail_closed": bool(trading_operation_mode.get("fail_closed", False)),
+                "error": trading_operation_mode.get("error"),
+                "path": str(TRADING_OPERATION_MODE_PATH.resolve()),
+            },
             "hyperliquid_time_offset_ms": (
                 None
                 if time_offset_refresh is None
                 else time_offset_refresh.get("selected_offset_ms")
             ),
             "time_offset_refresh": time_offset_refresh,
+            "bridge_dry_run": (
+                summarize_bridge_dry_run_result(bridge_result or {})
+                if bridge_result is not None
+                else None
+            ),
+            "auto_submit_evaluation": auto_submit_evaluation,
+            "execution_suppressed_reasons": execution_suppressed_reasons,
             "child_process": child_process,
             "downstream_verification": downstream_verification,
             "source_of_truth_write_check": {
@@ -813,6 +1088,7 @@ def main() -> None:
                 "changed_files": source_of_truth_changes,
             },
             "runner_summary": runner_summary,
+            "dry_run_summary": dry_run_summary,
             "gate_summary": gate_summary,
             "reconciliation_summary": reconciliation_summary,
             "submit_summary": submit_summary,
@@ -820,7 +1096,8 @@ def main() -> None:
             "restore_profile_path": str(RESTORE_PROFILE_PATH.resolve()),
             "notes": [
                 "Scheduler entry is one-shot only. It never loops and it never creates a Task Scheduler task.",
-                "Live mode is allowed only with --execute-live --manual-confirm FULL_AUTO_EXECUTION.",
+                "Trading operation mode is a separate runtime switch from execution_mode.json and defaults fail-closed to manual.",
+                "Live child execution is allowed only with --execute-live --manual-confirm FULL_AUTO_EXECUTION and trading_operation_mode=automatic.",
                 "A zero-exit child run is treated as incomplete if required downstream artifacts are missing, stale, or invalid.",
             ],
         }

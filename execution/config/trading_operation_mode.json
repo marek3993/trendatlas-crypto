@@ -1,6 +1,6 @@
 {
-  "mode": "manual",
-  "updated_at_utc": "",
-  "updated_by": "repo_default",
+  "mode": "automatic",
+  "updated_at_utc": "2026-04-07T23:08:03Z",
+  "updated_by": "app",
   "fail_closed": false
 }

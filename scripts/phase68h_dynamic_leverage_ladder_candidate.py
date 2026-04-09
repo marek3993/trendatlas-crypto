@@ -36,6 +36,7 @@ VARIANTS: list[ValidationVariant] = [
 
 
 BLANK_OVERRIDE_MARKERS = {"", "NAN", "NONE", "NULL", "BASELINE", "CORE"}
+CASH_EQUIVALENT_ASSETS = {"", "CASH", "USD", "USDT", "NAN", "NONE", "NULL"}
 
 
 def log(msg: str) -> None:
@@ -67,6 +68,30 @@ def normalize_asset_label(raw: str) -> str:
     if s in {"", "NAN", "NONE", "NULL", "BASELINE", "CORE"}:
         return "CASH"
     return s
+
+
+def resolve_fee_rate_bps(
+    fee_side_mode: str,
+    taker_fee_bps: float,
+    maker_fee_bps: float,
+    staking_discount_pct: float,
+    referral_discount_pct: float,
+) -> float:
+    side_mode = str(fee_side_mode).strip().lower()
+    if side_mode == "taker":
+        base_fee_bps = float(taker_fee_bps)
+    elif side_mode == "maker":
+        base_fee_bps = float(maker_fee_bps)
+    elif side_mode == "mixed":
+        base_fee_bps = (float(taker_fee_bps) + float(maker_fee_bps)) / 2.0
+    else:
+        raise ValueError(f"Unsupported fee_side_mode: {fee_side_mode}")
+
+    effective_multiplier = (
+        (1.0 - (float(staking_discount_pct) / 100.0))
+        * (1.0 - (float(referral_discount_pct) / 100.0))
+    )
+    return max(base_fee_bps * effective_multiplier, 0.0)
 
 
 def find_baseline_paper_in_phase66g_dir() -> Path:
@@ -480,6 +505,11 @@ def build_validation_wrapper(
     dynamic_mid_threshold: float,
     dynamic_mid_leverage: float,
     dynamic_high_leverage: float,
+    fee_side_mode: str,
+    taker_fee_bps: float,
+    maker_fee_bps: float,
+    staking_discount_pct: float,
+    referral_discount_pct: float,
 ) -> pd.DataFrame:
     merged = portfolio_df.merge(trend_df, on="date", how="left")
 
@@ -554,10 +584,57 @@ def build_validation_wrapper(
     )
 
     merged["realistic_ret_gross"] = merged["base_ret"] * merged["effective_leverage"]
-    merged["realistic_ret"] = merged["realistic_ret_gross"] - merged["daily_borrow_cost"] - merged["tradable_slippage_cost"]
-    merged["realistic_ret"] = merged["realistic_ret"].clip(lower=-0.999999)
+    merged["realistic_ret_before_trading_fees"] = (
+        merged["realistic_ret_gross"] - merged["daily_borrow_cost"] - merged["tradable_slippage_cost"]
+    )
 
-    merged["equity_curve"] = (1.0 + merged["realistic_ret"]).cumprod()
+    prev_asset = merged["portfolio_held_asset"].shift(1).astype(str).str.upper().fillna("")
+    curr_asset = merged["portfolio_held_asset"].astype(str).str.upper().fillna("")
+    prev_notional = np.where(
+        prev_asset.isin(CASH_EQUIVALENT_ASSETS),
+        0.0,
+        pd.to_numeric(merged["effective_leverage"].shift(1), errors="coerce").fillna(0.0),
+    )
+    curr_notional = np.where(
+        curr_asset.isin(CASH_EQUIVALENT_ASSETS),
+        0.0,
+        pd.to_numeric(merged["effective_leverage"], errors="coerce").fillna(0.0),
+    )
+    same_asset = prev_asset == curr_asset
+    merged["trading_turnover_notional"] = np.where(
+        same_asset,
+        np.abs(curr_notional - prev_notional),
+        prev_notional + curr_notional,
+    )
+
+    effective_trading_fee_bps = resolve_fee_rate_bps(
+        fee_side_mode=fee_side_mode,
+        taker_fee_bps=taker_fee_bps,
+        maker_fee_bps=maker_fee_bps,
+        staking_discount_pct=staking_discount_pct,
+        referral_discount_pct=referral_discount_pct,
+    )
+    merged["fee_side_mode"] = str(fee_side_mode).strip().lower()
+    merged["taker_fee_bps"] = float(taker_fee_bps)
+    merged["maker_fee_bps"] = float(maker_fee_bps)
+    merged["staking_discount_pct"] = float(staking_discount_pct)
+    merged["referral_discount_pct"] = float(referral_discount_pct)
+    merged["effective_trading_fee_bps"] = float(effective_trading_fee_bps)
+    merged["trading_fees_daily"] = merged["trading_turnover_notional"] * (float(effective_trading_fee_bps) / 10000.0)
+    merged["trading_fees_cumulative"] = merged["trading_fees_daily"].cumsum()
+
+    merged["funding_daily"] = 0.0
+    merged["funding_cumulative"] = merged["funding_daily"].cumsum()
+
+    merged["realistic_ret_net"] = (
+        merged["realistic_ret_before_trading_fees"] - merged["trading_fees_daily"] - merged["funding_daily"]
+    )
+    merged["realistic_ret_net"] = merged["realistic_ret_net"].clip(lower=-0.999999)
+    merged["realistic_ret"] = merged["realistic_ret_net"]
+
+    merged["equity_curve_gross"] = (1.0 + merged["realistic_ret_gross"]).cumprod()
+    merged["equity_curve_net"] = (1.0 + merged["realistic_ret_net"]).cumprod()
+    merged["equity_curve"] = merged["equity_curve_net"]
     merged["leverage_active"] = merged["effective_leverage"] > 1.0
 
     merged["leverage_state_reason"] = np.where(
@@ -648,6 +725,12 @@ def summarize_variant(
         "mode": str(df["dynamic_mode"].iloc[0]),
         "target_leverage": pd.to_numeric(df["target_leverage"].iloc[0], errors="coerce"),
         "annual_borrow_cost_pct": float(annual_borrow_cost * 100.0),
+        "fee_side_mode": str(df["fee_side_mode"].iloc[0]),
+        "taker_fee_bps": float(df["taker_fee_bps"].iloc[0]),
+        "maker_fee_bps": float(df["maker_fee_bps"].iloc[0]),
+        "staking_discount_pct": float(df["staking_discount_pct"].iloc[0]),
+        "referral_discount_pct": float(df["referral_discount_pct"].iloc[0]),
+        "effective_trading_fee_bps": float(df["effective_trading_fee_bps"].iloc[0]),
         "tradable_transition_slippage_bps": float(df["tradable_transition_slippage_bps"].iloc[0]),
         "trend_activation_threshold": float(df["trend_activation_threshold"].iloc[0]),
         "dynamic_mid_threshold": float(df["dynamic_mid_threshold"].iloc[0]),
@@ -655,14 +738,29 @@ def summarize_variant(
         "dynamic_high_leverage": float(df["dynamic_high_leverage"].iloc[0]),
         "stress_off_threshold": float(df["stress_off_threshold"].iloc[0]),
         "stress_on_threshold": float(df["stress_on_threshold"].iloc[0]),
+        "total_return_pct_gross": round(float((df["equity_curve_gross"].iloc[-1] - 1.0) * 100.0), 2) if not df.empty else np.nan,
+        "total_return_pct_net": round(float((df["equity_curve_net"].iloc[-1] - 1.0) * 100.0), 2) if not df.empty else np.nan,
+        "cagr_pct_gross": round(compute_cagr_pct(df["realistic_ret_gross"], df["date"]), 2),
+        "cagr_pct_net": round(cagr_pct, 2),
         "cagr_pct": round(cagr_pct, 2),
+        "max_drawdown_pct_gross": round(compute_max_drawdown_pct(df["realistic_ret_gross"]), 2),
+        "max_drawdown_pct_net": round(max_dd_pct, 2),
         "max_drawdown_pct": round(max_dd_pct, 2),
         "calmar": round(calmar, 4) if pd.notna(calmar) else np.nan,
+        "since2023_cagr_pct_gross": round(compute_cagr_pct(since2023["realistic_ret_gross"], since2023["date"]), 2) if not since2023.empty else np.nan,
+        "since2023_cagr_pct_net": round(compute_cagr_pct(since2023["realistic_ret"], since2023["date"]), 2) if not since2023.empty else np.nan,
         "since2023_cagr_pct": round(compute_cagr_pct(since2023["realistic_ret"], since2023["date"]), 2) if not since2023.empty else np.nan,
+        "since2025_cagr_pct_gross": round(compute_cagr_pct(since2025["realistic_ret_gross"], since2025["date"]), 2) if not since2025.empty else np.nan,
+        "since2025_cagr_pct_net": round(compute_cagr_pct(since2025["realistic_ret"], since2025["date"]), 2) if not since2025.empty else np.nan,
         "since2025_cagr_pct": round(compute_cagr_pct(since2025["realistic_ret"], since2025["date"]), 2) if not since2025.empty else np.nan,
+        "worst_day_pct_gross": round(float(df["realistic_ret_gross"].min() * 100.0), 2) if not df.empty else np.nan,
+        "worst_day_pct_net": round(float(df["realistic_ret"].min() * 100.0), 2) if not df.empty else np.nan,
         "worst_day_pct": round(float(df["realistic_ret"].min() * 100.0), 2) if not df.empty else np.nan,
         "borrow_cost_total_pct": round(float(df["daily_borrow_cost"].sum() * 100.0), 4),
         "tradable_slippage_cost_total_pct": round(float(df["tradable_slippage_cost"].sum() * 100.0), 4),
+        "trading_turnover_notional_total": round(float(df["trading_turnover_notional"].sum()), 6),
+        "trading_fees_total_pct": round(float(df["trading_fees_daily"].sum() * 100.0), 4),
+        "funding_total_pct": round(float(df["funding_daily"].sum() * 100.0), 4),
         "governance_switch_count": int(governance_switch_count),
         "exposure_days": int(df["is_exposed"].sum()),
         "asset_transition_count": int(df["asset_transition_day"].sum()),
@@ -682,14 +780,23 @@ def summarize_variant(
 def add_delta_cols(row: dict, ref: dict) -> dict:
     out = row.copy()
     for metric in [
+        "total_return_pct_gross",
+        "total_return_pct_net",
+        "cagr_pct_gross",
         "cagr_pct",
+        "max_drawdown_pct_gross",
         "max_drawdown_pct",
         "calmar",
+        "since2023_cagr_pct_gross",
         "since2023_cagr_pct",
+        "since2025_cagr_pct_gross",
         "since2025_cagr_pct",
+        "worst_day_pct_gross",
         "worst_day_pct",
         "borrow_cost_total_pct",
         "tradable_slippage_cost_total_pct",
+        "trading_fees_total_pct",
+        "funding_total_pct",
     ]:
         out[f"delta_vs_1p00x_{metric}"] = (
             pd.to_numeric(out.get(metric), errors="coerce")
@@ -713,6 +820,11 @@ def main() -> None:
     parser.add_argument("--stress-lookback-days", type=int, default=20)
     parser.add_argument("--stress-off-threshold", type=float, default=-0.08)
     parser.add_argument("--stress-on-threshold", type=float, default=-0.04)
+    parser.add_argument("--fee-side-mode", choices=["taker", "maker", "mixed"], default="taker")
+    parser.add_argument("--taker-fee-bps", type=float, default=4.5)
+    parser.add_argument("--maker-fee-bps", type=float, default=1.5)
+    parser.add_argument("--staking-discount-pct", type=float, default=0.0)
+    parser.add_argument("--referral-discount-pct", type=float, default=0.0)
     args = parser.parse_args()
 
     ensure_dir(PHASE68H_DIR)
@@ -740,6 +852,14 @@ def main() -> None:
     log(f"[PHASE68H] Decisions: {decisions_path}")
     log(f"[PHASE68H] Annual borrow cost: {args.annual_borrow_cost:.4f}")
     log(f"[PHASE68H] Tradable transition slippage bps: {args.tradable_transition_slippage_bps:.2f}")
+    log(
+        "[PHASE68H] Trading fees: "
+        f"mode={args.fee_side_mode} "
+        f"taker_bps={args.taker_fee_bps:.4f} "
+        f"maker_bps={args.maker_fee_bps:.4f} "
+        f"staking_discount_pct={args.staking_discount_pct:.2f} "
+        f"referral_discount_pct={args.referral_discount_pct:.2f}"
+    )
     log(f"[PHASE68H] Trend activation threshold: {args.trend_activation_threshold:.4f}")
     log(f"[PHASE68H] Dynamic mid threshold: {args.dynamic_mid_threshold:.4f}")
     log(f"[PHASE68H] Dynamic ladder: 1.00x -> {args.dynamic_mid_leverage:.2f}x -> {args.dynamic_high_leverage:.2f}x")
@@ -779,6 +899,11 @@ def main() -> None:
             dynamic_mid_threshold=float(args.dynamic_mid_threshold),
             dynamic_mid_leverage=float(args.dynamic_mid_leverage),
             dynamic_high_leverage=float(args.dynamic_high_leverage),
+            fee_side_mode=str(args.fee_side_mode),
+            taker_fee_bps=float(args.taker_fee_bps),
+            maker_fee_bps=float(args.maker_fee_bps),
+            staking_discount_pct=float(args.staking_discount_pct),
+            referral_discount_pct=float(args.referral_discount_pct),
         )
 
         summary_rows.append(
@@ -835,6 +960,22 @@ def main() -> None:
         "params": {
             "annual_borrow_cost": float(args.annual_borrow_cost),
             "tradable_transition_slippage_bps": float(args.tradable_transition_slippage_bps),
+            "venue": "hyperliquid_perps",
+            "fee_side_mode": str(args.fee_side_mode),
+            "taker_fee_bps": float(args.taker_fee_bps),
+            "maker_fee_bps": float(args.maker_fee_bps),
+            "staking_discount_pct": float(args.staking_discount_pct),
+            "referral_discount_pct": float(args.referral_discount_pct),
+            "effective_trading_fee_bps": float(
+                resolve_fee_rate_bps(
+                    fee_side_mode=str(args.fee_side_mode),
+                    taker_fee_bps=float(args.taker_fee_bps),
+                    maker_fee_bps=float(args.maker_fee_bps),
+                    staking_discount_pct=float(args.staking_discount_pct),
+                    referral_discount_pct=float(args.referral_discount_pct),
+                )
+            ),
+            "funding_mode": "separate_series_zero_when_unavailable",
             "trend_activation_threshold": float(args.trend_activation_threshold),
             "dynamic_mid_threshold": float(args.dynamic_mid_threshold),
             "dynamic_mid_leverage": float(args.dynamic_mid_leverage),
@@ -861,6 +1002,8 @@ def main() -> None:
             "68H testuje fixed dynamic ladder bez broad sweepu.",
             "Dynamic ladder: eligible & trend >= mid threshold -> 1.50x; eligible & trend >= activation threshold -> 1.25x; inak 1.00x.",
             "Borrow/slippage/transition mapping ostávajú rovnaké ako clean 68G basis.",
+            "Trading fees sú modelované explicitne cez odhad turnoveru z asset/leverage zmien.",
+            "Funding ostáva separátny export field; v current operator path je defaultne 0.0, kým nebude spoľahlivý source.",
         ],
     }
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")

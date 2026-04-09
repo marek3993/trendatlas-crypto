@@ -42,6 +42,38 @@ FAMILY_CONFIG = {
             "participation_divergence",
         ],
     },
+    "cross_asset_decoupling_stack": {
+        "coverage_column": "asset",
+        "numeric_columns": [
+            "rolling_correlation_break",
+            "beta_deviation",
+            "relative_momentum_decoupling",
+            "leader_lag_follower_escape",
+            "isolated_strength_flag",
+            "isolated_weakness_flag",
+        ],
+    },
+    "liquidity_stress_anomaly_stack": {
+        "coverage_column": "asset",
+        "numeric_columns": [
+            "abnormal_volume_burst",
+            "liquidity_dry_up",
+            "stress_persistence",
+            "liquidity_vacuum_proxy",
+            "unstable_reversal_pressure",
+        ],
+    },
+    "event_context_flags_stack": {
+        "coverage_column": "asset",
+        "numeric_columns": [
+            "session_transition_flag",
+            "scheduled_event_proximity_flag",
+            "post_event_stabilization_flag",
+            "pre_event_compression_flag",
+            "funding_reset_context_flag",
+            "volatility_regime_shift_flag",
+        ],
+    },
 }
 
 PRE_MOVE_PHASE67_PAPER_PATH = r"C:\Users\benda\Desktop\market_regime_v1\outputs\execution\app_exports\phase67j_no_neo_main_paper.csv"

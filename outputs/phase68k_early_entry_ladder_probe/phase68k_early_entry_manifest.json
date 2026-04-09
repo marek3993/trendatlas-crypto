@@ -1,0 +1,72 @@
+{
+  "phase": "phase68k_early_entry_ladder_probe",
+  "experiment_scope": "narrow_dev_only_core_probe",
+  "official_compare_baseline": "phase67j_no_neo_main",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "changes_shortlist": false,
+  "changes_governance": false,
+  "changes_leverage": false,
+  "changes_app_live_truth": false,
+  "mechanism": {
+    "states": [
+      "CASH",
+      "EARLY_RISK",
+      "FULL_RISK"
+    ],
+    "description": "EARLY_RISK blends the selected leader return into the official phase67j baseline return at a partial weight until the existing full-risk candidate state is reached."
+  },
+  "parameters": {
+    "overlay_config_reference": {
+      "score_lb": 30,
+      "fast_ma": 20,
+      "slow_ma": 100,
+      "min_score": 0.12,
+      "edge_vs_core": 0.03,
+      "risk_ma": 150,
+      "risk_buffer": -0.03,
+      "vol_lb": 30,
+      "vol_cap": 0.045,
+      "rel_recent_lb": 30,
+      "rel_recent_min_edge": 0.0,
+      "cooldown_days": 3
+    },
+    "early_entry_config": {
+      "early_entry_weight": 0.35,
+      "leader_stable_days": 2,
+      "trend_improve_days": 2,
+      "near_threshold_floor": -0.35,
+      "full_threshold": 0.0,
+      "success_resolution_days": 2
+    }
+  },
+  "inputs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "core_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+    "trend_history": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+    "ohlcv_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv"
+  },
+  "outputs": {
+    "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_summary.csv",
+    "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+    "manifest_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_manifest.json",
+    "papers_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\papers",
+    "baseline_paper_copy": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\papers\\phase67j_no_neo_main_paper.csv",
+    "probe_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\papers\\phase68k_early_entry_ladder_probe_paper.csv"
+  },
+  "metric_notes": {
+    "avg_lead_days_vs_full_entry": "Average calendar-day lead between EARLY_RISK start and the next resolved FULL_RISK start.",
+    "false_start_count": "Count of EARLY_RISK sequences that reverted without resolving into FULL_RISK inside the configured resolution window.",
+    "captured_pre_breakout_return_pct": "Compounded incremental return captured by the probe versus the official baseline over successful pre-full-entry windows."
+  },
+  "freshness_lineage": {
+    "producer_script": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase68k_early_entry_ladder_probe.py",
+    "source_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "source_last_date": "2026-04-04",
+    "raw_last_date": "2026-04-06",
+    "output_last_date": "2026-04-04",
+    "first_missing_date_if_any": null,
+    "date_semantics": "execution_date"
+  }
+}

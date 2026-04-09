@@ -1,12 +1,12 @@
 {
-  "raw_btc_last_date": "2026-04-05",
-  "phase60_last_date": "2026-04-05",
-  "phase62_last_date": "2026-04-05",
-  "phase63_last_date": "2026-04-05",
-  "phase66g_last_date": "2026-04-05",
-  "phase67j_last_date": "2026-04-05",
-  "canonical_app_export_last_date": "2026-04-04",
-  "canonical_live_status_latest_available_date": "2026-04-05",
-  "first_broken_stage": "canonical_app_export",
-  "first_missing_date": "2026-04-05"
+  "raw_btc_last_date": "2026-04-06",
+  "phase60_last_date": "2026-04-06",
+  "phase62_last_date": "2026-04-06",
+  "phase63_last_date": "2026-04-06",
+  "phase66g_last_date": "2026-04-06",
+  "phase67j_last_date": "2026-04-06",
+  "canonical_app_export_last_date": "2026-04-06",
+  "canonical_live_status_latest_available_date": "2026-04-06",
+  "first_broken_stage": null,
+  "first_missing_date": null
 }

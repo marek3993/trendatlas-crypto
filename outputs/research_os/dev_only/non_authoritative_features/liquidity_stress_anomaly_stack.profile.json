@@ -1,0 +1,134 @@
+{
+  "artifact_type": "dev_only_feature_profile_report",
+  "artifact_id": "liquidity_stress_anomaly_stack_profile",
+  "generated_at_utc": "2026-04-07 17:55:37 UTC",
+  "family_id": "liquidity_stress_anomaly_stack",
+  "row_count": 329,
+  "date_min": "2020-02-09",
+  "date_max": "2024-12-20",
+  "asset_or_leader_coverage": {
+    "coverage_column": "asset",
+    "unique_count": 4,
+    "values_sorted": [
+      "DOGEUSDT",
+      "ICPUSDT",
+      "STXUSDT",
+      "XTZUSDT"
+    ],
+    "row_count_by_value": {
+      "DOGEUSDT": 54,
+      "ICPUSDT": 60,
+      "STXUSDT": 102,
+      "XTZUSDT": 113
+    }
+  },
+  "null_count_per_column": {
+    "date": 0,
+    "asset": 0,
+    "abnormal_volume_burst": 0,
+    "liquidity_dry_up": 0,
+    "stress_persistence": 0,
+    "liquidity_vacuum_proxy": 0,
+    "unstable_reversal_pressure": 0,
+    "feature_ready_flag": 0,
+    "dev_only": 0,
+    "non_authoritative": 0,
+    "official_truth": 0,
+    "strategy_advancement": 0
+  },
+  "numeric_feature_summary": {
+    "abnormal_volume_burst": {
+      "min": 0.315176,
+      "max": 10.0,
+      "mean": 1.927448
+    },
+    "liquidity_dry_up": {
+      "min": 0.001885,
+      "max": 3.172832,
+      "mean": 0.952896
+    },
+    "stress_persistence": {
+      "min": 0.0,
+      "max": 1.0,
+      "mean": 0.711246
+    },
+    "liquidity_vacuum_proxy": {
+      "min": 0.001064,
+      "max": 0.397182,
+      "mean": 0.093444
+    },
+    "unstable_reversal_pressure": {
+      "min": 0.103506,
+      "max": 10.0,
+      "mean": 1.276545
+    }
+  },
+  "anomaly_score_definition": "mean absolute z-score across configured numeric feature columns",
+  "top_abnormal_rows": [
+    {
+      "date": "2020-07-09",
+      "asset": "DOGEUSDT",
+      "anomaly_score": 2.788639,
+      "feature_values": {
+        "abnormal_volume_burst": 10.0,
+        "liquidity_dry_up": 0.005971,
+        "stress_persistence": 0.8,
+        "liquidity_vacuum_proxy": 0.001395,
+        "unstable_reversal_pressure": 10.0
+      }
+    },
+    {
+      "date": "2023-02-20",
+      "asset": "STXUSDT",
+      "anomaly_score": 2.693081,
+      "feature_values": {
+        "abnormal_volume_burst": 10.0,
+        "liquidity_dry_up": 0.027075,
+        "stress_persistence": 1.0,
+        "liquidity_vacuum_proxy": 0.012961,
+        "unstable_reversal_pressure": 8.774544
+      }
+    },
+    {
+      "date": "2020-07-08",
+      "asset": "DOGEUSDT",
+      "anomaly_score": 2.687668,
+      "feature_values": {
+        "abnormal_volume_burst": 10.0,
+        "liquidity_dry_up": 0.001885,
+        "stress_persistence": 0.6,
+        "liquidity_vacuum_proxy": 0.001064,
+        "unstable_reversal_pressure": 9.237385
+      }
+    },
+    {
+      "date": "2023-02-21",
+      "asset": "STXUSDT",
+      "anomaly_score": 2.602689,
+      "feature_values": {
+        "abnormal_volume_burst": 10.0,
+        "liquidity_dry_up": 0.046947,
+        "stress_persistence": 1.0,
+        "liquidity_vacuum_proxy": 0.015399,
+        "unstable_reversal_pressure": 8.291159
+      }
+    },
+    {
+      "date": "2023-02-22",
+      "asset": "STXUSDT",
+      "anomaly_score": 2.312791,
+      "feature_values": {
+        "abnormal_volume_burst": 10.0,
+        "liquidity_dry_up": 0.034585,
+        "stress_persistence": 1.0,
+        "liquidity_vacuum_proxy": 0.011503,
+        "unstable_reversal_pressure": 6.330114
+      }
+    }
+  ],
+  "status": "generated_dev_only_feature_profile",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

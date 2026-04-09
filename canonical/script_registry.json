@@ -561,6 +561,43 @@
       "notes": "Dev-only and non-authoritative. Exact overlap/agreement/disagreement only, with no fuzzy joins, strategy score, tradability language, leverage guidance, or official edge claims."
     },
     {
+      "script_path": "scripts/dev_only_supportive_vs_caution_subset_layer.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds a dev-only descriptive subset layer above the aligned compare outputs by splitting exact-match overlap rows into supportive and caution subsets without creating a new compare layer.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_subset_layer/supportive_vs_caution_subset_layer_v1.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_subset_layer/supportive_vs_caution_subset_layer_v1.rows.csv",
+        "outputs/research_os/dev_only/non_authoritative_subset_layer/supportive_subset_watchlist.json",
+        "outputs/research_os/dev_only/non_authoritative_subset_layer/caution_subset_watchlist.json",
+        "outputs/research_os/dev_only/non_authoritative_subset_layer/supportive_vs_caution_subset_layer_v1.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_subset_layer/supportive_vs_caution_subset_layer_v1.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Reads only the existing aligned compare artifact, keeps exact date+entity semantics, and remains descriptive-only."
+    },
+    {
+      "script_path": "scripts/dev_only_cash_overstay_diagnostic.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Diagnoses whether phase67j_no_neo_main remains in CASH too often during deterministic constructive windows and classifies the resulting exposure gap shape.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_diagnostic.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_constructive_windows.csv",
+        "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_exposure_gap_by_window.csv",
+        "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_benchmark_missed_while_underexposed.csv",
+        "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_alt_participation_missed.csv",
+        "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_diagnostic.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_diagnostic.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Mechanism-first cash-overstay diagnosis only, with no leverage redesign, no app/runtime changes, and no official truth mutation."
+    },
+    {
       "script_path": "run_data_refresh.ps1",
       "layer": "execution_data",
       "status": "active",

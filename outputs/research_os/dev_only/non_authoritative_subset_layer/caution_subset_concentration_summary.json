@@ -1,0 +1,273 @@
+{
+  "artifact_id": "caution_subset_concentration_summary",
+  "generated_at_utc": "2026-04-09 17:36:58 UTC",
+  "subset_class": "caution_subset",
+  "row_count": 104,
+  "concentration_dimensions": [
+    "entity",
+    "anomaly_cluster_note",
+    "anomaly_active_family_count",
+    "response_shape_context",
+    "month_bucket"
+  ],
+  "top_counts_by_entity": [
+    {
+      "value": "STXUSDT",
+      "count": 33,
+      "share": 0.317308
+    },
+    {
+      "value": "DOGEUSDT",
+      "count": 28,
+      "share": 0.269231
+    },
+    {
+      "value": "ICPUSDT",
+      "count": 15,
+      "share": 0.144231
+    },
+    {
+      "value": "XTZUSDT",
+      "count": 11,
+      "share": 0.105769
+    },
+    {
+      "value": "LINKUSDT",
+      "count": 8,
+      "share": 0.076923
+    },
+    {
+      "value": "ADAUSDT",
+      "count": 3,
+      "share": 0.028846
+    },
+    {
+      "value": "ETHUSDT",
+      "count": 3,
+      "share": 0.028846
+    },
+    {
+      "value": "TRXUSDT",
+      "count": 3,
+      "share": 0.028846
+    }
+  ],
+  "top_counts_by_anomaly_cluster_note": [
+    {
+      "value": "single-family anomaly concentration",
+      "count": 79,
+      "share": 0.759615
+    },
+    {
+      "value": "compact multi-family anomaly cluster",
+      "count": 10,
+      "share": 0.096154
+    },
+    {
+      "value": "breadth and decoupling moved together",
+      "count": 9,
+      "share": 0.086538
+    },
+    {
+      "value": "liquidity stress aligned with context flags",
+      "count": 4,
+      "share": 0.038462
+    },
+    {
+      "value": "broad multi-family anomaly interaction",
+      "count": 1,
+      "share": 0.009615
+    },
+    {
+      "value": "pre-move shape aligned with decoupling behavior",
+      "count": 1,
+      "share": 0.009615
+    }
+  ],
+  "top_counts_by_anomaly_active_family_count": [
+    {
+      "value": "1",
+      "count": 79,
+      "share": 0.759615
+    },
+    {
+      "value": "2",
+      "count": 13,
+      "share": 0.125
+    },
+    {
+      "value": "3",
+      "count": 11,
+      "share": 0.105769
+    },
+    {
+      "value": "4",
+      "count": 1,
+      "share": 0.009615
+    }
+  ],
+  "top_counts_by_response_shape_context": [
+    {
+      "value": "anomaly_anchor|constructive|single-family",
+      "count": 41,
+      "share": 0.394231
+    },
+    {
+      "value": "anomaly_anchor|weak_negative|single-family",
+      "count": 30,
+      "share": 0.288462
+    },
+    {
+      "value": "anomaly_anchor|constructive|paired",
+      "count": 10,
+      "share": 0.096154
+    },
+    {
+      "value": "anomaly_anchor|near_flat|single-family",
+      "count": 8,
+      "share": 0.076923
+    },
+    {
+      "value": "anomaly_anchor|constructive|multi-family",
+      "count": 5,
+      "share": 0.048077
+    },
+    {
+      "value": "anomaly_anchor|near_flat|multi-family",
+      "count": 4,
+      "share": 0.038462
+    },
+    {
+      "value": "anomaly_anchor|weak_negative|paired",
+      "count": 2,
+      "share": 0.019231
+    },
+    {
+      "value": "anomaly_anchor|weak_negative|multi-family",
+      "count": 2,
+      "share": 0.019231
+    },
+    {
+      "value": "anomaly_anchor|near_flat|paired",
+      "count": 1,
+      "share": 0.009615
+    },
+    {
+      "value": "anomaly_anchor|constructive|broad-cluster",
+      "count": 1,
+      "share": 0.009615
+    }
+  ],
+  "month_bucket_counts": [
+    {
+      "month_bucket": "2020-02",
+      "count": 2,
+      "share": 0.019231
+    },
+    {
+      "month_bucket": "2020-03",
+      "count": 2,
+      "share": 0.019231
+    },
+    {
+      "month_bucket": "2020-06",
+      "count": 2,
+      "share": 0.019231
+    },
+    {
+      "month_bucket": "2020-07",
+      "count": 8,
+      "share": 0.076923
+    },
+    {
+      "month_bucket": "2020-08",
+      "count": 7,
+      "share": 0.067308
+    },
+    {
+      "month_bucket": "2021-04",
+      "count": 1,
+      "share": 0.009615
+    },
+    {
+      "month_bucket": "2021-05",
+      "count": 3,
+      "share": 0.028846
+    },
+    {
+      "month_bucket": "2021-09",
+      "count": 3,
+      "share": 0.028846
+    },
+    {
+      "month_bucket": "2021-10",
+      "count": 5,
+      "share": 0.048077
+    },
+    {
+      "month_bucket": "2023-02",
+      "count": 7,
+      "share": 0.067308
+    },
+    {
+      "month_bucket": "2023-03",
+      "count": 13,
+      "share": 0.125
+    },
+    {
+      "month_bucket": "2023-05",
+      "count": 5,
+      "share": 0.048077
+    },
+    {
+      "month_bucket": "2023-06",
+      "count": 3,
+      "share": 0.028846
+    },
+    {
+      "month_bucket": "2023-11",
+      "count": 1,
+      "share": 0.009615
+    },
+    {
+      "month_bucket": "2023-12",
+      "count": 9,
+      "share": 0.086538
+    },
+    {
+      "month_bucket": "2024-01",
+      "count": 8,
+      "share": 0.076923
+    },
+    {
+      "month_bucket": "2024-03",
+      "count": 2,
+      "share": 0.019231
+    },
+    {
+      "month_bucket": "2024-10",
+      "count": 2,
+      "share": 0.019231
+    },
+    {
+      "month_bucket": "2024-11",
+      "count": 9,
+      "share": 0.086538
+    },
+    {
+      "month_bucket": "2024-12",
+      "count": 12,
+      "share": 0.115385
+    }
+  ],
+  "shared_key_rule": "exact date + entity only",
+  "status": "generated_dev_only_subset_concentration_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "descriptive_subset_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "fuzzy_matching_used": false
+}

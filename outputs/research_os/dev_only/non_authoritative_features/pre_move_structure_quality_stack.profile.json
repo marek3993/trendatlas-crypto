@@ -1,25 +1,27 @@
 {
   "artifact_type": "dev_only_feature_profile_report",
   "artifact_id": "pre_move_structure_quality_stack_profile",
-  "generated_at_utc": "2026-04-07 08:56:53 UTC",
+  "generated_at_utc": "2026-04-07 17:55:35 UTC",
   "family_id": "pre_move_structure_quality_stack",
-  "row_count": 229,
-  "date_min": "2020-05-31",
-  "date_max": "2024-12-27",
+  "row_count": 255,
+  "date_min": "2020-06-01",
+  "date_max": "2024-12-28",
   "asset_or_leader_coverage": {
     "coverage_column": "asset",
-    "unique_count": 4,
+    "unique_count": 5,
     "values_sorted": [
       "ADAUSDT",
       "DOGEUSDT",
       "ETHUSDT",
+      "LINKUSDT",
       "TRXUSDT"
     ],
     "row_count_by_value": {
-      "ADAUSDT": 78,
-      "DOGEUSDT": 66,
-      "ETHUSDT": 49,
-      "TRXUSDT": 36
+      "ADAUSDT": 54,
+      "DOGEUSDT": 60,
+      "ETHUSDT": 17,
+      "LINKUSDT": 59,
+      "TRXUSDT": 65
     }
   },
   "null_count_per_column": {
@@ -44,91 +46,73 @@
   },
   "numeric_feature_summary": {
     "base_ret": {
-      "min": -0.122627,
-      "max": 0.268981,
-      "mean": 0.005517
+      "min": -0.138071,
+      "max": 0.266706,
+      "mean": 0.007832
     },
     "range_pct": {
       "min": 0.010215,
       "max": 0.293748,
-      "mean": 0.077161
+      "mean": 0.076721
     },
     "wick_body_ratio": {
-      "min": 0.047684,
-      "max": 9.987383,
-      "mean": 2.710772
+      "min": 0.042163,
+      "max": 9.992887,
+      "mean": 2.581875
     },
     "local_volatility": {
-      "min": 0.010353,
-      "max": 0.111918,
-      "mean": 0.04265
+      "min": 0.008817,
+      "max": 0.119515,
+      "mean": 0.045632
     },
     "trend_score": {
       "min": -1.0,
       "max": 1.0,
-      "mean": 0.278826
+      "mean": 0.196044
     },
     "compression_tightness": {
       "min": 0.0,
       "max": 0.557299,
-      "mean": 0.131976
+      "mean": 0.141584
     },
     "compression_duration": {
       "min": 0.0,
       "max": 6.0,
-      "mean": 0.820961
+      "mean": 0.827451
     },
     "release_asymmetry": {
       "min": -0.655552,
       "max": 0.801819,
-      "mean": 0.119155
+      "mean": 0.100858
     },
     "acceleration_build": {
       "min": -0.118778,
-      "max": 0.095124,
-      "mean": -0.001304
+      "max": 0.073236,
+      "mean": -0.00174
     },
     "failed_break_pre_signal": {
       "min": 2.0,
       "max": 10.0,
-      "mean": 4.847162
+      "mean": 4.623529
     },
     "bar_quality_consistency": {
       "min": 0.043517,
       "max": 0.352999,
-      "mean": 0.161871
+      "mean": 0.161128
     }
   },
   "anomaly_score_definition": "mean absolute z-score across configured numeric feature columns",
   "top_abnormal_rows": [
     {
-      "date": "2024-11-10",
-      "asset": "DOGEUSDT",
-      "anomaly_score": 2.093836,
-      "feature_values": {
-        "base_ret": 0.268981,
-        "range_pct": 0.292498,
-        "wick_body_ratio": 0.38016,
-        "local_volatility": 0.090123,
-        "trend_score": 0.877304,
-        "compression_tightness": 0.0,
-        "compression_duration": 0.0,
-        "release_asymmetry": 0.599802,
-        "acceleration_build": 0.095124,
-        "failed_break_pre_signal": 2.0,
-        "bar_quality_consistency": 0.120693
-      }
-    },
-    {
       "date": "2024-11-11",
       "asset": "DOGEUSDT",
-      "anomaly_score": 1.917733,
+      "anomaly_score": 1.862311,
       "feature_values": {
         "base_ret": 0.264886,
         "range_pct": 0.225011,
         "wick_body_ratio": 0.074915,
         "local_volatility": 0.104917,
-        "trend_score": 0.434465,
+        "trend_score": 0.877304,
         "compression_tightness": 0.0,
         "compression_duration": 0.0,
         "release_asymmetry": 0.801819,
@@ -138,15 +122,33 @@
       }
     },
     {
+      "date": "2020-08-12",
+      "asset": "LINKUSDT",
+      "anomaly_score": 1.642279,
+      "feature_values": {
+        "base_ret": 0.266706,
+        "range_pct": 0.255499,
+        "wick_body_ratio": 0.214459,
+        "local_volatility": 0.106029,
+        "trend_score": 1.0,
+        "compression_tightness": 0.0,
+        "compression_duration": 0.0,
+        "release_asymmetry": 0.443744,
+        "acceleration_build": 0.060023,
+        "failed_break_pre_signal": 4.0,
+        "bar_quality_consistency": 0.166406
+      }
+    },
+    {
       "date": "2024-11-14",
       "asset": "DOGEUSDT",
-      "anomaly_score": 1.705525,
+      "anomaly_score": 1.555277,
       "feature_values": {
         "base_ret": -0.091447,
         "range_pct": 0.177718,
         "wick_body_ratio": 0.767627,
         "local_volatility": 0.107277,
-        "trend_score": 0.72035,
+        "trend_score": 0.344932,
         "compression_tightness": 0.0,
         "compression_duration": 0.0,
         "release_asymmetry": -0.193568,
@@ -156,39 +158,39 @@
       }
     },
     {
-      "date": "2021-05-17",
-      "asset": "ETHUSDT",
-      "anomaly_score": 1.457041,
+      "date": "2020-08-21",
+      "asset": "LINKUSDT",
+      "anomaly_score": 1.339889,
       "feature_values": {
-        "base_ret": -0.083635,
-        "range_pct": 0.147771,
-        "wick_body_ratio": 0.620648,
-        "local_volatility": 0.07347,
-        "trend_score": -1.0,
+        "base_ret": -0.138071,
+        "range_pct": 0.235106,
+        "wick_body_ratio": 0.46815,
+        "local_volatility": 0.110421,
+        "trend_score": 1.0,
         "compression_tightness": 0.0,
         "compression_duration": 0.0,
-        "release_asymmetry": -0.435067,
-        "acceleration_build": -0.059895,
-        "failed_break_pre_signal": 9.0,
-        "bar_quality_consistency": 0.175646
+        "release_asymmetry": -0.234439,
+        "acceleration_build": -0.0336,
+        "failed_break_pre_signal": 5.0,
+        "bar_quality_consistency": 0.135265
       }
     },
     {
-      "date": "2024-11-12",
-      "asset": "DOGEUSDT",
-      "anomaly_score": 1.34836,
+      "date": "2020-08-17",
+      "asset": "LINKUSDT",
+      "anomaly_score": 1.281491,
       "feature_values": {
-        "base_ret": 0.081085,
-        "range_pct": 0.293748,
-        "wick_body_ratio": 2.915088,
-        "local_volatility": 0.101142,
-        "trend_score": 0.653817,
+        "base_ret": -0.105631,
+        "range_pct": 0.250369,
+        "wick_body_ratio": 1.116131,
+        "local_volatility": 0.119515,
+        "trend_score": 1.0,
         "compression_tightness": 0.0,
         "compression_duration": 0.0,
-        "release_asymmetry": 0.483325,
-        "acceleration_build": -0.000913,
-        "failed_break_pre_signal": 2.0,
-        "bar_quality_consistency": 0.213279
+        "release_asymmetry": -0.12514,
+        "acceleration_build": -0.030732,
+        "failed_break_pre_signal": 5.0,
+        "bar_quality_consistency": 0.188164
       }
     }
   ],
@@ -196,32 +198,32 @@
   "profile_guardrails": {
     "extreme_wick_body_ratio_guardrail": {
       "threshold": 8.0,
-      "row_count": 26,
+      "row_count": 29,
       "top_rows": [
         {
-          "date": "2024-11-24",
-          "asset": "DOGEUSDT",
-          "wick_body_ratio": 9.987383
+          "date": "2020-08-19",
+          "asset": "LINKUSDT",
+          "wick_body_ratio": 9.992887
         },
         {
-          "date": "2020-08-12",
-          "asset": "ADAUSDT",
-          "wick_body_ratio": 9.896616
+          "date": "2023-06-15",
+          "asset": "TRXUSDT",
+          "wick_body_ratio": 9.890873
         },
         {
-          "date": "2023-01-22",
-          "asset": "ETHUSDT",
-          "wick_body_ratio": 9.868091
-        },
-        {
-          "date": "2023-02-02",
-          "asset": "ETHUSDT",
-          "wick_body_ratio": 9.834908
+          "date": "2020-08-24",
+          "asset": "LINKUSDT",
+          "wick_body_ratio": 9.870306
         },
         {
           "date": "2024-11-28",
           "asset": "DOGEUSDT",
           "wick_body_ratio": 9.82209
+        },
+        {
+          "date": "2023-06-22",
+          "asset": "TRXUSDT",
+          "wick_body_ratio": 9.783358
         }
       ],
       "status": "guardrail_triggered"
@@ -235,12 +237,16 @@
       "ADAUSDT",
       "DOGEUSDT",
       "ETHUSDT",
+      "LINKUSDT",
+      "NANUSDT",
       "TRXUSDT"
     ],
     "gated_feature_asset_coverage": [
       "ADAUSDT",
       "DOGEUSDT",
       "ETHUSDT",
+      "LINKUSDT",
+      "NANUSDT",
       "TRXUSDT"
     ]
   },

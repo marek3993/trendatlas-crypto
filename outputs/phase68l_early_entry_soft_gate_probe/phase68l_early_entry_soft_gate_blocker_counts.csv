@@ -1,0 +1,11 @@
+reason,days,scope,days_pct_of_scope
+no_selected_asset,2545,all_days,87.97096439681991
+full_risk_override,3,all_days,0.10369858278603526
+leader_not_stable,48,eligible_non_full_days,16.271186440677965
+trend_not_improving,265,eligible_non_full_days,89.83050847457628
+below_early_zone_floor,39,eligible_non_full_days,13.220338983050848
+above_early_zone_ceiling,170,eligible_non_full_days,57.6271186440678
+early_trend_not_ready,122,eligible_non_full_days,41.35593220338983
+early_edge_not_ready,68,eligible_non_full_days,23.050847457627118
+early_risk_off_block,188,eligible_non_full_days,63.72881355932203
+no_soft_or_strict_early_signal,246,eligible_non_full_days,83.38983050847457

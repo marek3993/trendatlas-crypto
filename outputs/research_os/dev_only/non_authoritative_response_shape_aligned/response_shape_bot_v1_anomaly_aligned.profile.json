@@ -1,0 +1,301 @@
+{
+  "artifact_type": "dev_only_response_shape_profile_report",
+  "artifact_id": "response_shape_bot_v1_anomaly_aligned_profile",
+  "generated_at_utc": "2026-04-08 18:19:11 UTC",
+  "bot_id": "response_shape_bot_v1_anomaly_aligned",
+  "row_count": 125,
+  "date_min": "2020-02-16",
+  "date_max": "2024-12-19",
+  "selected_asset_coverage": {
+    "column": "selected_asset",
+    "unique_count": 8,
+    "values_sorted": [
+      "ADAUSDT",
+      "DOGEUSDT",
+      "ETHUSDT",
+      "ICPUSDT",
+      "LINKUSDT",
+      "STXUSDT",
+      "TRXUSDT",
+      "XTZUSDT"
+    ],
+    "row_count_by_value": {
+      "ADAUSDT": 4,
+      "DOGEUSDT": 31,
+      "ETHUSDT": 4,
+      "ICPUSDT": 19,
+      "LINKUSDT": 8,
+      "STXUSDT": 40,
+      "TRXUSDT": 3,
+      "XTZUSDT": 16
+    }
+  },
+  "entry_regime_distribution": {
+    "column": "entry_regime",
+    "unique_count": 1,
+    "values_sorted": [
+      "ANOMALY_ANCHOR"
+    ],
+    "row_count_by_value": {
+      "ANOMALY_ANCHOR": 125
+    }
+  },
+  "response_regime_context_distribution": {
+    "column": "response_regime_context",
+    "unique_count": 10,
+    "values_sorted": [
+      "anomaly_anchor|constructive|broad-cluster",
+      "anomaly_anchor|constructive|multi-family",
+      "anomaly_anchor|constructive|paired",
+      "anomaly_anchor|constructive|single-family",
+      "anomaly_anchor|near_flat|multi-family",
+      "anomaly_anchor|near_flat|paired",
+      "anomaly_anchor|near_flat|single-family",
+      "anomaly_anchor|weak_negative|multi-family",
+      "anomaly_anchor|weak_negative|paired",
+      "anomaly_anchor|weak_negative|single-family"
+    ],
+    "row_count_by_value": {
+      "anomaly_anchor|constructive|broad-cluster": 1,
+      "anomaly_anchor|constructive|multi-family": 5,
+      "anomaly_anchor|constructive|paired": 12,
+      "anomaly_anchor|constructive|single-family": 49,
+      "anomaly_anchor|near_flat|multi-family": 4,
+      "anomaly_anchor|near_flat|paired": 1,
+      "anomaly_anchor|near_flat|single-family": 11,
+      "anomaly_anchor|weak_negative|multi-family": 2,
+      "anomaly_anchor|weak_negative|paired": 2,
+      "anomaly_anchor|weak_negative|single-family": 38
+    }
+  },
+  "null_count_per_column": {
+    "date": 0,
+    "event_id": 0,
+    "event_type": 0,
+    "entry_regime": 0,
+    "entry_position": 0,
+    "selected_asset": 0,
+    "trend_score": 0,
+    "trend_state_label": 0,
+    "anchor_interestingness_score": 0,
+    "anchor_active_family_count": 0,
+    "anchor_cluster_note": 0,
+    "response_regime_context": 0,
+    "lookahead_window_days": 0,
+    "observed_return_3d": 0,
+    "observed_return_5d": 0,
+    "observed_return_10d": 0,
+    "observed_max_drawdown_5d": 0,
+    "observed_max_drawdown_10d": 0,
+    "observed_recovery_from_5d_low_to_10d": 0,
+    "observed_realized_volatility_10d": 0,
+    "observed_downside_volatility_10d": 0,
+    "follow_through_quality": 0,
+    "false_start_risk": 0,
+    "volatility_damage_shape": 0,
+    "recovery_vs_exhaustion": 0,
+    "analysis_mode": 0,
+    "live_decision_ready": 0,
+    "dev_only": 0,
+    "non_authoritative": 0,
+    "official_truth": 0,
+    "strategy_advancement": 0
+  },
+  "numeric_feature_summary": {
+    "anchor_interestingness_score": {
+      "min": 2.853875,
+      "max": 7.557464,
+      "mean": 3.677063
+    },
+    "anchor_active_family_count": {
+      "min": 1.0,
+      "max": 4.0,
+      "mean": 1.32
+    },
+    "observed_return_3d": {
+      "min": -0.261523,
+      "max": 0.64983,
+      "mean": 0.026715
+    },
+    "observed_return_5d": {
+      "min": -0.401493,
+      "max": 0.788456,
+      "mean": 0.037908
+    },
+    "observed_return_10d": {
+      "min": -0.583218,
+      "max": 1.291366,
+      "mean": 0.057849
+    },
+    "observed_max_drawdown_5d": {
+      "min": -0.331194,
+      "max": 0.0,
+      "mean": -0.088493
+    },
+    "observed_max_drawdown_10d": {
+      "min": -0.558228,
+      "max": -0.03941,
+      "mean": -0.157509
+    },
+    "observed_recovery_from_5d_low_to_10d": {
+      "min": -0.472871,
+      "max": 1.132714,
+      "mean": 0.110092
+    },
+    "observed_realized_volatility_10d": {
+      "min": 0.015178,
+      "max": 0.193323,
+      "mean": 0.069167
+    },
+    "observed_downside_volatility_10d": {
+      "min": 0.010912,
+      "max": 0.134726,
+      "mean": 0.033879
+    },
+    "follow_through_quality": {
+      "min": -0.732688,
+      "max": 0.788456,
+      "mean": -0.050585
+    },
+    "false_start_risk": {
+      "min": 0.0,
+      "max": 0.525672,
+      "mean": 0.125488
+    },
+    "volatility_damage_shape": {
+      "min": 0.154157,
+      "max": 0.91361,
+      "mean": 0.535526
+    },
+    "recovery_vs_exhaustion": {
+      "min": -0.672946,
+      "max": 1.132714,
+      "mean": 0.073097
+    }
+  },
+  "anomaly_score_definition": "mean absolute z-score across configured response-shape numeric columns",
+  "top_abnormal_rows": [
+    {
+      "date": "2020-03-06",
+      "event_id": "20200306_XTZUSDT",
+      "selected_asset": "XTZUSDT",
+      "response_regime_context": "anomaly_anchor|constructive|single-family",
+      "anomaly_score": 2.166259,
+      "feature_values": {
+        "anchor_interestingness_score": 2.891056,
+        "anchor_active_family_count": 1.0,
+        "observed_return_3d": -0.200076,
+        "observed_return_5d": -0.209336,
+        "observed_return_10d": -0.583218,
+        "observed_max_drawdown_5d": -0.159259,
+        "observed_max_drawdown_10d": -0.558228,
+        "observed_recovery_from_5d_low_to_10d": -0.472871,
+        "observed_realized_volatility_10d": 0.188703,
+        "observed_downside_volatility_10d": 0.134726,
+        "follow_through_quality": -0.368595,
+        "false_start_risk": 0.359335,
+        "volatility_damage_shape": 0.713958,
+        "recovery_vs_exhaustion": -0.672946
+      }
+    },
+    {
+      "date": "2023-03-09",
+      "event_id": "20230309_STXUSDT",
+      "selected_asset": "STXUSDT",
+      "response_regime_context": "anomaly_anchor|weak_negative|single-family",
+      "anomaly_score": 1.786122,
+      "feature_values": {
+        "anchor_interestingness_score": 3.182945,
+        "anchor_active_family_count": 1.0,
+        "observed_return_3d": 0.293567,
+        "observed_return_5d": 0.674354,
+        "observed_return_10d": 0.980753,
+        "observed_max_drawdown_5d": 0.0,
+        "observed_max_drawdown_10d": -0.091653,
+        "observed_recovery_from_5d_low_to_10d": 0.891852,
+        "observed_realized_volatility_10d": 0.116772,
+        "observed_downside_volatility_10d": 0.027711,
+        "follow_through_quality": 0.674354,
+        "false_start_risk": 0.0,
+        "volatility_damage_shape": 0.237311,
+        "recovery_vs_exhaustion": 0.891852
+      }
+    },
+    {
+      "date": "2021-05-14",
+      "event_id": "20210514_ETHUSDT",
+      "selected_asset": "ETHUSDT",
+      "response_regime_context": "anomaly_anchor|weak_negative|single-family",
+      "anomaly_score": 1.7791,
+      "feature_values": {
+        "anchor_interestingness_score": 2.920742,
+        "anchor_active_family_count": 1.0,
+        "observed_return_3d": -0.194478,
+        "observed_return_5d": -0.401493,
+        "observed_return_10d": -0.35008,
+        "observed_max_drawdown_5d": -0.331194,
+        "observed_max_drawdown_10d": -0.425124,
+        "observed_recovery_from_5d_low_to_10d": 0.085903,
+        "observed_realized_volatility_10d": 0.141015,
+        "observed_downside_volatility_10d": 0.080493,
+        "follow_through_quality": -0.732688,
+        "false_start_risk": 0.525672,
+        "volatility_damage_shape": 0.570809,
+        "recovery_vs_exhaustion": -0.108575
+      }
+    },
+    {
+      "date": "2024-11-06",
+      "event_id": "20241106_DOGEUSDT",
+      "selected_asset": "DOGEUSDT",
+      "response_regime_context": "anomaly_anchor|near_flat|single-family",
+      "anomaly_score": 1.722141,
+      "feature_values": {
+        "anchor_interestingness_score": 3.074448,
+        "anchor_active_family_count": 1.0,
+        "observed_return_3d": 0.114222,
+        "observed_return_5d": 0.788456,
+        "observed_return_10d": 0.853863,
+        "observed_max_drawdown_5d": 0.0,
+        "observed_max_drawdown_10d": -0.091447,
+        "observed_recovery_from_5d_low_to_10d": 0.884755,
+        "observed_realized_volatility_10d": 0.112259,
+        "observed_downside_volatility_10d": 0.028878,
+        "follow_through_quality": 0.788456,
+        "false_start_risk": 0.0,
+        "volatility_damage_shape": 0.257244,
+        "recovery_vs_exhaustion": 0.884755
+      }
+    },
+    {
+      "date": "2024-11-04",
+      "event_id": "20241104_DOGEUSDT",
+      "selected_asset": "DOGEUSDT",
+      "response_regime_context": "anomaly_anchor|near_flat|single-family",
+      "anomaly_score": 1.714931,
+      "feature_values": {
+        "anchor_interestingness_score": 2.957533,
+        "anchor_active_family_count": 1.0,
+        "observed_return_3d": 0.221337,
+        "observed_return_5d": 0.383517,
+        "observed_return_10d": 1.291366,
+        "observed_max_drawdown_5d": -0.01639,
+        "observed_max_drawdown_10d": -0.091447,
+        "observed_recovery_from_5d_low_to_10d": 1.132714,
+        "observed_realized_volatility_10d": 0.107277,
+        "observed_downside_volatility_10d": 0.027328,
+        "follow_through_quality": 0.367127,
+        "false_start_risk": 0.01639,
+        "volatility_damage_shape": 0.254744,
+        "recovery_vs_exhaustion": 1.132714
+      }
+    }
+  ],
+  "status": "generated_dev_only_response_shape_profile",
+  "analysis_mode": "descriptive_aftermath_only",
+  "live_decision_ready": false,
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

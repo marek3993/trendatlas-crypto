@@ -27,9 +27,18 @@
     "probation_ban_periods": 6
   },
   "current_asset": "BASELINE",
-  "latest_available_date": "2026-04-04",
-  "latest_decision_date": "2026-03-28",
-  "next_rebalance_date": "2026-04-04",
+  "latest_available_date": "2026-04-06",
+  "latest_decision_date": "2026-04-05",
+  "next_rebalance_date": "2026-04-12",
+  "freshness_lineage": {
+    "producer_script": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66g_production_candidate_live.py",
+    "source_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+    "source_last_date": "2026-04-06",
+    "raw_last_date": "2026-04-06",
+    "output_last_date": "2026-04-06",
+    "first_missing_date_if_any": null,
+    "date_semantics": "execution_date"
+  },
   "trend_barometer_definition": {
     "trend_score": "clip((base_strength_lb - weak_base_threshold) / max(candidate_ret_min, candidate_risk_buffer, 1e-6), -1, 1)",
     "buy_threshold": 0.0,

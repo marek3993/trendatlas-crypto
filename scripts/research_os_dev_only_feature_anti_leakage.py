@@ -3,6 +3,14 @@
 from typing import Any, Dict, List
 
 
+CONTROL_FLAG_COLUMNS = {
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement",
+}
+
+
 FORBIDDEN_COLUMN_TOKENS = (
     "future",
     "forward_return",
@@ -28,6 +36,8 @@ def check_forbidden_columns(columns: List[str]) -> Dict[str, Any]:
     bad = []
     for col in columns:
         normalized = col.strip().lower()
+        if normalized in CONTROL_FLAG_COLUMNS:
+            continue
         for token in FORBIDDEN_COLUMN_TOKENS:
             if token in normalized:
                 bad.append(col)
@@ -42,9 +52,16 @@ def check_forbidden_columns(columns: List[str]) -> Dict[str, Any]:
 def check_dev_flags(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     bad_rows = 0
     for row in rows:
+        row_ok = True
         if str(row.get("dev_only", "")).lower() not in {"true", "1"}:
-            bad_rows += 1
+            row_ok = False
         if str(row.get("non_authoritative", "")).lower() not in {"true", "1"}:
+            row_ok = False
+        if str(row.get("official_truth", "")).lower() not in {"false", "0"}:
+            row_ok = False
+        if str(row.get("strategy_advancement", "")).lower() not in {"false", "0"}:
+            row_ok = False
+        if not row_ok:
             bad_rows += 1
     return {
         "name": "dev_only_flags_present_on_rows",

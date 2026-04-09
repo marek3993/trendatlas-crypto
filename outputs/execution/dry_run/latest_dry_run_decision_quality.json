@@ -7,5 +7,8 @@
   "would_place_order": false,
   "recommended_action": "hold_cash",
   "stale_signal": false,
-  "duplicate_order_risk": false
+  "duplicate_order_risk": false,
+  "runtime_mode": "live",
+  "runtime_trading_enabled": true,
+  "runtime_kill_switch": false
 }

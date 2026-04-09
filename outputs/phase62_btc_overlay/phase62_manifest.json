@@ -2,24 +2,25 @@
   "phase": "phase62_btc_overlay",
   "winner_input_key": "phase61_restore_trx_sol_base",
   "baseline_key": "phase42 core",
-  "base_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\always_daily_phase28_detail.csv",
+  "base_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase60_selective_restore_robustness\\phase60_restore_trx_sol_base_paper.csv",
   "btc_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
   "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase62_btc_overlay\\phase62_overlay_summary.csv",
   "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase62_btc_overlay\\phase62_overlay_top_compare.csv",
   "top_saved_models": [
     "phase61_restore_trx_sol_base",
-    "phase62_btcov_f20_s100_r20_m12_rm200_rb+00_v30_060_cd0",
-    "phase62_btcov_f20_s100_r20_m12_rm150_rb-03_v20_045_cd0",
-    "phase62_btcov_f20_s100_r20_m12_rm200_rb-03_v30_060_cd0",
-    "phase62_btcov_f20_s100_r20_m12_rm150_rb-03_v20_060_cd0",
-    "phase62_btcov_f20_s100_r20_m12_rm200_rb+00_v30_045_cd0",
-    "phase62_btcov_f20_s100_r20_m12_rm200_rb+00_v20_060_cd0",
-    "phase62_btcov_f20_s100_r20_m12_rm200_rb-03_v20_045_cd0",
-    "phase62_btcov_f20_s100_r20_m12_rm150_rb-03_v30_060_cd0",
-    "phase62_btcov_f20_s100_r20_m12_rm150_rb-03_v30_045_cd0"
+    "phase62_btcov_default"
   ],
-  "variant_count_total": 2595,
+  "variant_count_total": 1,
   "execution_model": "signal_t -> execute_t_plus_1",
+  "freshness_lineage": {
+    "producer_script": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase62_btc_overlay.py",
+    "source_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase60_selective_restore_robustness\\phase60_restore_trx_sol_base_paper.csv",
+    "source_last_date": "2026-04-06",
+    "raw_last_date": "2026-04-06",
+    "output_last_date": "2026-04-06",
+    "first_missing_date_if_any": null,
+    "date_semantics": "execution_date"
+  },
   "notes": [
     "BASE = phase61 winner bez overlayu",
     "BTC = priamy BTC hold pod\u013ea overlay re\u017eimu",

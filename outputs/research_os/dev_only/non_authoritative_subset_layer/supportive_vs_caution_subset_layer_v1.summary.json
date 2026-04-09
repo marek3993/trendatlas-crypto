@@ -1,0 +1,43 @@
+{
+  "artifact_id": "supportive_vs_caution_subset_layer_v1",
+  "generated_at_utc": "2026-04-09 17:36:58 UTC",
+  "source_compare_id": "anomaly_vs_response_shape_aligned_comparison",
+  "input_refs": {
+    "input_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_bot_compare\\anomaly_vs_response_shape_aligned_comparison.csv",
+    "input_json_fallback": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_bot_compare\\anomaly_vs_response_shape_aligned_comparison.json"
+  },
+  "row_counts": {
+    "total_overlap_rows": 125,
+    "supportive_rows": 4,
+    "caution_rows": 104,
+    "mixed_rows": 17
+  },
+  "concentration_dimensions": [
+    "entity",
+    "anomaly_cluster_note",
+    "anomaly_active_family_count",
+    "response_shape_context",
+    "month_bucket"
+  ],
+  "persistence_dimensions": {
+    "repeated_entity_count": 8,
+    "repeated_cluster_count": 4,
+    "repeated_context_count": 8,
+    "max_entity_recurrence": 34,
+    "max_cluster_recurrence": 82,
+    "max_context_recurrence": 41
+  },
+  "exact_matching_metadata": {
+    "fuzzy_matching_used": false,
+    "shared_key_rule": "exact date + entity only"
+  },
+  "status": "generated_dev_only_subset_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "descriptive_subset_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "fuzzy_matching_used": false
+}

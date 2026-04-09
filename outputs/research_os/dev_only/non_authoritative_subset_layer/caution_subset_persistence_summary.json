@@ -1,0 +1,192 @@
+{
+  "artifact_id": "caution_subset_persistence_summary",
+  "generated_at_utc": "2026-04-09 17:36:58 UTC",
+  "subset_class": "caution_subset",
+  "row_count": 104,
+  "repeated_entity_count": 8,
+  "repeated_cluster_count": 4,
+  "repeated_context_count": 8,
+  "max_entity_recurrence": 33,
+  "max_cluster_recurrence": 79,
+  "max_context_recurrence": 41,
+  "recurrence_by_entity": [
+    {
+      "value": "STXUSDT",
+      "count": 33,
+      "first_seen": "2021-10-10",
+      "last_seen": "2024-03-29",
+      "max_exact_daily_streak_observations": 5,
+      "max_near_consecutive_3d_streak_observations": 11
+    },
+    {
+      "value": "DOGEUSDT",
+      "count": 28,
+      "first_seen": "2020-07-06",
+      "last_seen": "2024-12-19",
+      "max_exact_daily_streak_observations": 5,
+      "max_near_consecutive_3d_streak_observations": 14
+    },
+    {
+      "value": "ICPUSDT",
+      "count": 15,
+      "first_seen": "2023-05-12",
+      "last_seen": "2023-12-22",
+      "max_exact_daily_streak_observations": 2,
+      "max_near_consecutive_3d_streak_observations": 5
+    },
+    {
+      "value": "XTZUSDT",
+      "count": 11,
+      "first_seen": "2020-02-16",
+      "last_seen": "2021-10-01",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 2
+    },
+    {
+      "value": "LINKUSDT",
+      "count": 8,
+      "first_seen": "2020-08-12",
+      "last_seen": "2023-12-11",
+      "max_exact_daily_streak_observations": 2,
+      "max_near_consecutive_3d_streak_observations": 7
+    },
+    {
+      "value": "ADAUSDT",
+      "count": 3,
+      "first_seen": "2020-07-07",
+      "last_seen": "2020-07-25",
+      "max_exact_daily_streak_observations": 2,
+      "max_near_consecutive_3d_streak_observations": 2
+    },
+    {
+      "value": "ETHUSDT",
+      "count": 3,
+      "first_seen": "2021-05-12",
+      "last_seen": "2021-05-15",
+      "max_exact_daily_streak_observations": 2,
+      "max_near_consecutive_3d_streak_observations": 3
+    },
+    {
+      "value": "TRXUSDT",
+      "count": 3,
+      "first_seen": "2023-03-02",
+      "last_seen": "2023-12-02",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 1
+    }
+  ],
+  "recurrence_by_anomaly_cluster_note": [
+    {
+      "value": "single-family anomaly concentration",
+      "count": 79,
+      "first_seen": "2020-02-16",
+      "last_seen": "2024-12-18",
+      "max_exact_daily_streak_observations": 5,
+      "max_near_consecutive_3d_streak_observations": 13
+    },
+    {
+      "value": "compact multi-family anomaly cluster",
+      "count": 10,
+      "first_seen": "2020-07-07",
+      "last_seen": "2024-12-19",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 2
+    },
+    {
+      "value": "breadth and decoupling moved together",
+      "count": 9,
+      "first_seen": "2020-07-08",
+      "last_seen": "2024-01-11",
+      "max_exact_daily_streak_observations": 3,
+      "max_near_consecutive_3d_streak_observations": 4
+    },
+    {
+      "value": "liquidity stress aligned with context flags",
+      "count": 4,
+      "first_seen": "2020-07-10",
+      "last_seen": "2023-12-18",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 1
+    }
+  ],
+  "recurrence_by_response_shape_context": [
+    {
+      "value": "anomaly_anchor|constructive|single-family",
+      "count": 41,
+      "first_seen": "2020-02-16",
+      "last_seen": "2024-12-18",
+      "max_exact_daily_streak_observations": 5,
+      "max_near_consecutive_3d_streak_observations": 13
+    },
+    {
+      "value": "anomaly_anchor|weak_negative|single-family",
+      "count": 30,
+      "first_seen": "2020-03-12",
+      "last_seen": "2024-01-14",
+      "max_exact_daily_streak_observations": 2,
+      "max_near_consecutive_3d_streak_observations": 5
+    },
+    {
+      "value": "anomaly_anchor|constructive|paired",
+      "count": 10,
+      "first_seen": "2020-07-07",
+      "last_seen": "2024-12-19",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 2
+    },
+    {
+      "value": "anomaly_anchor|near_flat|single-family",
+      "count": 8,
+      "first_seen": "2020-06-26",
+      "last_seen": "2024-10-28",
+      "max_exact_daily_streak_observations": 2,
+      "max_near_consecutive_3d_streak_observations": 2
+    },
+    {
+      "value": "anomaly_anchor|constructive|multi-family",
+      "count": 5,
+      "first_seen": "2020-07-08",
+      "last_seen": "2024-11-12",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 2
+    },
+    {
+      "value": "anomaly_anchor|near_flat|multi-family",
+      "count": 4,
+      "first_seen": "2023-02-19",
+      "last_seen": "2023-02-23",
+      "max_exact_daily_streak_observations": 3,
+      "max_near_consecutive_3d_streak_observations": 4
+    },
+    {
+      "value": "anomaly_anchor|weak_negative|paired",
+      "count": 2,
+      "first_seen": "2021-10-10",
+      "last_seen": "2023-03-12",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 1
+    },
+    {
+      "value": "anomaly_anchor|weak_negative|multi-family",
+      "count": 2,
+      "first_seen": "2023-02-27",
+      "last_seen": "2023-03-31",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 1
+    }
+  ],
+  "streak_definition": {
+    "max_exact_daily_streak_observations": "Longest run where adjacent observations are exactly 1 calendar day apart.",
+    "max_near_consecutive_3d_streak_observations": "Longest run where adjacent observations are at most 3 calendar days apart."
+  },
+  "shared_key_rule": "exact date + entity only",
+  "status": "generated_dev_only_subset_persistence_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "descriptive_subset_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "fuzzy_matching_used": false
+}

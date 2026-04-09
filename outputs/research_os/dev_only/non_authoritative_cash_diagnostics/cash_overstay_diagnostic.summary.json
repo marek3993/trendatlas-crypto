@@ -1,0 +1,57 @@
+{
+  "artifact_id": "cash_overstay_diagnostic",
+  "generated_at_utc": "2026-04-09 18:34:13 UTC",
+  "source_compare_id": "phase67j_no_neo_main_cash_overstay_diagnostic",
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68_context_refs": {
+      "phase68k_context": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv"
+      ],
+      "phase68l_context": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_state_time.csv"
+      ],
+      "phase68m_context": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_state_time.csv"
+      ]
+    }
+  },
+  "constructive_window_rule": {
+    "benchmark_asset": "BTCUSDT",
+    "start_rule": "Constructive window starts on the confirmation day when benchmark 20-day MA is above benchmark 100-day MA and either the benchmark close or the baseline-selected asset close is above its 100-day anchor for 3 consecutive days.",
+    "end_rule": "Constructive window ends on the confirmation day when benchmark close is below benchmark 100-day MA and benchmark 20-day MA is below benchmark 100-day MA for 2 consecutive days.",
+    "shared_key_rule": "decision-time observable data only"
+  },
+  "row_counts": {
+    "constructive_windows": 12,
+    "windows_with_material_gap": 10,
+    "no_material_gap": 2,
+    "late_entry_only": 0,
+    "premature_risk_off": 8,
+    "broader_underexposure_policy_issue": 2
+  },
+  "aggregate_metrics": {
+    "total_underexposed_days": 193,
+    "total_missed_benchmark_return_while_cash": 0.231181,
+    "total_missed_selected_alt_return_while_cash": -0.114534
+  },
+  "final_diagnostic_verdict": "premature_risk_off_failure_to_stay_exposed",
+  "follow_up_recommendation": {
+    "mechanism_id": "constructive_regime_pilot_exposure_persistence",
+    "mechanism_description": "Maintain a small deterministic pilot risk-on state during constructive regime persistence instead of reverting too quickly to full CASH, without changing leverage or live execution behavior.",
+    "descriptive_only": true,
+    "non_authoritative": true
+  },
+  "why_phase68l_m_not_sufficient": "phase68l/phase68m primarily tested early-risk gate relaxation while preserving strict FULL_RISK behavior; they did not directly test exposure persistence or anti-all-or-nothing cash behavior during constructive windows.",
+  "status": "generated_dev_only_cash_diagnostic_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "cash_overstay_diagnostic_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

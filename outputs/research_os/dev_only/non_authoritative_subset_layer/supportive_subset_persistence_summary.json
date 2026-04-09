@@ -1,0 +1,56 @@
+{
+  "artifact_id": "supportive_subset_persistence_summary",
+  "generated_at_utc": "2026-04-09 17:36:58 UTC",
+  "subset_class": "supportive_subset",
+  "row_count": 4,
+  "repeated_entity_count": 1,
+  "repeated_cluster_count": 1,
+  "repeated_context_count": 1,
+  "max_entity_recurrence": 2,
+  "max_cluster_recurrence": 3,
+  "max_context_recurrence": 2,
+  "recurrence_by_entity": [
+    {
+      "value": "DOGEUSDT",
+      "count": 2,
+      "first_seen": "2024-11-04",
+      "last_seen": "2024-11-06",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 2
+    }
+  ],
+  "recurrence_by_anomaly_cluster_note": [
+    {
+      "value": "single-family anomaly concentration",
+      "count": 3,
+      "first_seen": "2023-03-09",
+      "last_seen": "2024-11-06",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 2
+    }
+  ],
+  "recurrence_by_response_shape_context": [
+    {
+      "value": "anomaly_anchor|near_flat|single-family",
+      "count": 2,
+      "first_seen": "2024-11-04",
+      "last_seen": "2024-11-06",
+      "max_exact_daily_streak_observations": 1,
+      "max_near_consecutive_3d_streak_observations": 2
+    }
+  ],
+  "streak_definition": {
+    "max_exact_daily_streak_observations": "Longest run where adjacent observations are exactly 1 calendar day apart.",
+    "max_near_consecutive_3d_streak_observations": "Longest run where adjacent observations are at most 3 calendar days apart."
+  },
+  "shared_key_rule": "exact date + entity only",
+  "status": "generated_dev_only_subset_persistence_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "descriptive_subset_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "fuzzy_matching_used": false
+}

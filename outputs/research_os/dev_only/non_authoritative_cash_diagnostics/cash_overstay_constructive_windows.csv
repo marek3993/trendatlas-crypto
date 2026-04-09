@@ -1,0 +1,13 @@
+window_id,window_start,window_end,window_length_days,baseline_time_in_market_share,baseline_cash_share,benchmark_return_during_window,baseline_return_during_window,underexposed_days_count,missed_benchmark_return_while_cash,missed_selected_alt_return_while_cash,selected_alt_days_with_data_count,exposure_gap_label
+window_001,2018-05-07,2018-05-23,17,1.0,0.0,-0.223321,0.0,0,0.0,,0,no_material_gap
+window_002,2019-02-28,2019-09-11,196,0.581633,0.418367,1.660593,1.15506,82,0.000125,,0,premature_risk_off
+window_003,2020-01-21,2020-03-15,55,0.872727,0.127273,-0.379648,0.413432,7,-0.332616,-0.334965,6,premature_risk_off
+window_004,2020-05-09,2021-05-18,375,0.845333,0.154667,3.372422,7.894486,58,0.472051,0.031317,1,premature_risk_off
+window_005,2021-08-11,2021-12-11,123,0.97561,0.02439,0.08347,0.220919,3,0.110432,0.189114,1,premature_risk_off
+window_006,2022-04-01,2022-04-26,26,0.230769,0.769231,-0.16255,-0.069749,20,-0.117159,,0,broader_underexposure_policy_issue
+window_007,2023-01-19,2023-06-08,141,1.0,0.0,0.281521,0.995896,0,0.0,,0,no_material_gap
+window_008,2023-07-01,2023-08-22,53,0.90566,0.09434,-0.14492,-0.05006,5,-0.021312,,0,premature_risk_off
+window_009,2023-10-22,2024-06-27,250,0.996,0.004,1.063085,1.153751,1,0.025089,,0,premature_risk_off
+window_010,2024-08-01,2024-08-08,8,0.25,0.75,-0.045522,0.0,6,0.003051,,0,broader_underexposure_policy_issue
+window_011,2024-09-30,2025-02-22,146,0.965753,0.034247,0.471769,4.027042,5,0.053116,,0,premature_risk_off
+window_012,2025-05-05,2025-10-23,172,0.965116,0.034884,0.167596,1.07094,6,0.038404,,0,premature_risk_off

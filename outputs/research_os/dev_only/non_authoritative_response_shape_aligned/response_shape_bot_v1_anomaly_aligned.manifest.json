@@ -1,0 +1,75 @@
+{
+  "artifact_type": "dev_only_response_shape_output_manifest",
+  "artifact_id": "response_shape_bot_v1_anomaly_aligned_manifest",
+  "generated_at_utc": "2026-04-08 18:19:03 UTC",
+  "bot_id": "response_shape_bot_v1_anomaly_aligned",
+  "output_namespace": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_response_shape_aligned",
+  "output_files": {
+    "features_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_response_shape_aligned\\response_shape_bot_v1_anomaly_aligned.features.csv",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_response_shape_aligned\\response_shape_bot_v1_anomaly_aligned.quality.json",
+    "profile_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_response_shape_aligned\\response_shape_bot_v1_anomaly_aligned.profile.json"
+  },
+  "input_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\anomaly_ranking_heuristics.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+    "data/ohlcv/*.csv",
+    "data/ohlcv_phase67_top100/*.csv"
+  ],
+  "column_schema": [
+    "date",
+    "event_id",
+    "event_type",
+    "entry_regime",
+    "entry_position",
+    "selected_asset",
+    "trend_score",
+    "trend_state_label",
+    "anchor_interestingness_score",
+    "anchor_active_family_count",
+    "anchor_cluster_note",
+    "response_regime_context",
+    "lookahead_window_days",
+    "observed_return_3d",
+    "observed_return_5d",
+    "observed_return_10d",
+    "observed_max_drawdown_5d",
+    "observed_max_drawdown_10d",
+    "observed_recovery_from_5d_low_to_10d",
+    "observed_realized_volatility_10d",
+    "observed_downside_volatility_10d",
+    "follow_through_quality",
+    "false_start_risk",
+    "volatility_damage_shape",
+    "recovery_vs_exhaustion",
+    "analysis_mode",
+    "live_decision_ready",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "row_count": 125,
+  "lookahead_horizon_days": 10,
+  "contract_refs": [
+    "research_os/dev_only/contracts/dev_only_response_shape_output_schema.contract.json",
+    "research_os/dev_only/contracts/response_shape_bot_v1_anomaly_aligned.contract.json"
+  ],
+  "spec_refs": [
+    "research_os/dev_only/specs/dev_only_response_shape_anomaly_aligned_probe_runner.spec.json",
+    "research_os/dev_only/specs/dev_only_response_shape_anomaly_aligned_profile_runner.spec.json"
+  ],
+  "notes": [
+    "anomaly_selected_anchor_mapping_only",
+    "exact_date_and_entity_anchor_only",
+    "descriptive_aftermath_only",
+    "not_tradability_scoring",
+    "not_official_edge_discovery"
+  ],
+  "status": "generated_dev_only_response_shape_output",
+  "analysis_mode": "descriptive_aftermath_only",
+  "live_decision_ready": false,
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

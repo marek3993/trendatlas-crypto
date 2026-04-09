@@ -1,0 +1,12 @@
+{
+  "artifact_type": "dev_only_bot_compare_agreement_watchlist",
+  "artifact_id": "anomaly_vs_response_shape_agreement_watchlist",
+  "generated_at_utc": "2026-04-08 17:32:28 UTC",
+  "row_count": 0,
+  "watchlist_rows": [],
+  "note": "No fuzzy joins. Rows appear here only when anomaly operating and response-shape share the exact same date+entity key and the aftermath profile is constructive.",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

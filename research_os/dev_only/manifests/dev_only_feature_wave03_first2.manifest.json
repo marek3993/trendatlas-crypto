@@ -12,8 +12,10 @@
   "included_files": [
     "scripts/research_os_dev_only_feature_output_common.py",
     "scripts/research_os_dev_only_feature_anti_leakage.py",
+    "scripts/research_os_dev_only_feature_profile_common.py",
     "scripts/dev_only_feature_probe_pre_move_structure.py",
     "scripts/dev_only_feature_probe_participation_breadth.py",
+    "scripts/dev_only_feature_profile_runner.py",
     "research_os/dev_only/contracts/dev_only_feature_output_schema.contract.json",
     "research_os/dev_only/specs/dev_only_feature_probe_pre_move_structure.spec.json",
     "research_os/dev_only/specs/dev_only_feature_probe_participation_breadth.spec.json",
@@ -33,5 +35,5 @@
     "no candidate or promotion outputs",
     "no remaining three families yet"
   ],
-  "status": "ready_for_dev_only_file_creation"
+  "status": "ready_for_dev_only_feature_profile_layer"
 }

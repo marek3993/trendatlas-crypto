@@ -8,6 +8,14 @@
   "params": {
     "annual_borrow_cost": 0.12,
     "tradable_transition_slippage_bps": 10.0,
+    "venue": "hyperliquid_perps",
+    "fee_side_mode": "taker",
+    "taker_fee_bps": 4.5,
+    "maker_fee_bps": 1.5,
+    "staking_discount_pct": 0.0,
+    "referral_discount_pct": 0.0,
+    "effective_trading_fee_bps": 4.5,
+    "funding_mode": "separate_series_zero_when_unavailable",
     "trend_activation_threshold": 0.1,
     "dynamic_mid_threshold": 0.5,
     "dynamic_mid_leverage": 1.25,
@@ -21,17 +29,17 @@
     "exposure_basis_fix": "portfolio_held_asset = chosen_asset override else baseline held asset by same date"
   },
   "transition_mapping_meta": {
-    "decision_rows_total": 361,
+    "decision_rows_total": 362,
     "selected_rows_used": 45,
-    "governance_switch_rows": 3,
-    "mapped_transition_rows": 3,
+    "governance_switch_rows": 9,
+    "mapped_transition_rows": 9,
     "unmapped_transition_rows": 0,
     "mapping_sources": {
-      "period_start": 3
+      "period_start": 9
     }
   },
-  "governance_switch_count": 3,
-  "tradable_transition_count": 3,
+  "governance_switch_count": 9,
+  "tradable_transition_count": 9,
   "transition_calendar_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68h_dynamic_leverage_ladder_candidate\\phase68h_tradable_transition_calendar.csv",
   "variants": [
     {
@@ -63,6 +71,8 @@
     "1.25x ost\u00e1va softer fallback.",
     "68H testuje fixed dynamic ladder bez broad sweepu.",
     "Dynamic ladder: eligible & trend >= mid threshold -> 1.50x; eligible & trend >= activation threshold -> 1.25x; inak 1.00x.",
-    "Borrow/slippage/transition mapping ost\u00e1vaj\u00fa rovnak\u00e9 ako clean 68G basis."
+    "Borrow/slippage/transition mapping ost\u00e1vaj\u00fa rovnak\u00e9 ako clean 68G basis.",
+    "Trading fees s\u00fa modelovan\u00e9 explicitne cez odhad turnoveru z asset/leverage zmien.",
+    "Funding ost\u00e1va separ\u00e1tny export field; v current operator path je defaultne 0.0, k\u00fdm nebude spo\u013eahliv\u00fd source."
   ]
 }

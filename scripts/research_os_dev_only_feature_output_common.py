@@ -37,6 +37,7 @@ def feature_file_paths(family_id: str) -> Dict[str, Path]:
         "features_csv": Path(str(base) + ".features.csv"),
         "manifest_json": Path(str(base) + ".manifest.json"),
         "quality_json": Path(str(base) + ".quality.json"),
+        "profile_json": Path(str(base) + ".profile.json"),
     }
 
 
@@ -60,9 +61,17 @@ def build_manifest(
     input_refs: List[str],
     features_csv_path: Path,
     quality_json_path: Path,
+    profile_json_path: Path | None = None,
     column_schema: List[str],
     row_count: int,
 ) -> Dict[str, Any]:
+    output_files = {
+        "features_csv": str(features_csv_path),
+        "quality_json": str(quality_json_path),
+    }
+    if profile_json_path is not None:
+        output_files["profile_json"] = str(profile_json_path)
+
     return with_dev_flags(
         {
             "artifact_type": "dev_only_feature_output_manifest",
@@ -70,10 +79,7 @@ def build_manifest(
             "generated_at_utc": timestamp_utc(),
             "family_id": family_id,
             "family_type": family_type,
-            "output_files": {
-                "features_csv": str(features_csv_path),
-                "quality_json": str(quality_json_path),
-            },
+            "output_files": output_files,
             "input_refs": input_refs,
             "column_schema": column_schema,
             "row_count": row_count,

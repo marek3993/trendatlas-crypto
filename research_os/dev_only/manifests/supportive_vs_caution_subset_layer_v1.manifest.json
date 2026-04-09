@@ -1,0 +1,30 @@
+{
+  "manifest_version": "1.0",
+  "artifact_type": "dev_only_subset_layer_manifest",
+  "artifact_id": "supportive_vs_caution_subset_layer_v1_manifest",
+  "created_at_utc": "2026-04-09 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "descriptive_subset_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "fuzzy_matching_used": false,
+  "output_namespace": "outputs/research_os/dev_only/non_authoritative_subset_layer/",
+  "contract_paths": [
+    "research_os/dev_only/contracts/supportive_vs_caution_subset_layer_v1.contract.json",
+    "research_os/dev_only/contracts/anomaly_vs_response_shape_aligned_compare.contract.json"
+  ],
+  "spec_paths": [
+    "research_os/dev_only/specs/dev_only_supportive_vs_caution_subset_layer.spec.json"
+  ],
+  "runner_paths": [
+    "scripts/dev_only_supportive_vs_caution_subset_layer.py"
+  ],
+  "upstream_manifest_paths": [
+    "research_os/dev_only/manifests/anomaly_vs_response_shape_aligned_compare.manifest.json"
+  ],
+  "status": "implementation_pack_ready"
+}

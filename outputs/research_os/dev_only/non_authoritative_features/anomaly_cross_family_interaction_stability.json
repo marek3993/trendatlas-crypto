@@ -1,18 +1,18 @@
 {
   "artifact_type": "dev_only_anomaly_cross_family_interaction_stability",
   "artifact_id": "anomaly_cross_family_interaction_stability",
-  "generated_at_utc": "2026-04-07 12:18:10 UTC",
-  "history_cycle_count": 2,
+  "generated_at_utc": "2026-04-07 17:55:40 UTC",
+  "history_cycle_count": 5,
   "semantic_note": "recurrence here means repeated anomaly interaction surfacing only, not strategy value",
   "stable_pairs": [
     {
       "family_pair": "cross_asset_decoupling_stack__liquidity_stress_anomaly_stack",
       "family_a": "cross_asset_decoupling_stack",
       "family_b": "liquidity_stress_anomaly_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 16.0,
       "max_overlap_row_count": 16,
       "mean_joint_interestingness": 1.794231,
@@ -31,10 +31,10 @@
       "family_pair": "participation_breadth_confirmation_stack__cross_asset_decoupling_stack",
       "family_a": "participation_breadth_confirmation_stack",
       "family_b": "cross_asset_decoupling_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 10.0,
       "max_overlap_row_count": 10,
       "mean_joint_interestingness": 1.541604,
@@ -53,10 +53,10 @@
       "family_pair": "participation_breadth_confirmation_stack__liquidity_stress_anomaly_stack",
       "family_a": "participation_breadth_confirmation_stack",
       "family_b": "liquidity_stress_anomaly_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 8.0,
       "max_overlap_row_count": 8,
       "mean_joint_interestingness": 1.706702,
@@ -75,10 +75,10 @@
       "family_pair": "cross_asset_decoupling_stack__event_context_flags_stack",
       "family_a": "cross_asset_decoupling_stack",
       "family_b": "event_context_flags_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 6.0,
       "max_overlap_row_count": 6,
       "mean_joint_interestingness": 1.230196,
@@ -97,10 +97,10 @@
       "family_pair": "liquidity_stress_anomaly_stack__event_context_flags_stack",
       "family_a": "liquidity_stress_anomaly_stack",
       "family_b": "event_context_flags_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 5.0,
       "max_overlap_row_count": 5,
       "mean_joint_interestingness": 1.401505,
@@ -119,10 +119,10 @@
       "family_pair": "pre_move_structure_quality_stack__liquidity_stress_anomaly_stack",
       "family_a": "pre_move_structure_quality_stack",
       "family_b": "liquidity_stress_anomaly_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 3.0,
       "max_overlap_row_count": 3,
       "mean_joint_interestingness": 1.524765,
@@ -139,10 +139,10 @@
       "family_pair": "participation_breadth_confirmation_stack__event_context_flags_stack",
       "family_a": "participation_breadth_confirmation_stack",
       "family_b": "event_context_flags_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 2.0,
       "max_overlap_row_count": 2,
       "mean_joint_interestingness": 1.230914,
@@ -159,10 +159,10 @@
       "family_pair": "pre_move_structure_quality_stack__cross_asset_decoupling_stack",
       "family_a": "pre_move_structure_quality_stack",
       "family_b": "cross_asset_decoupling_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 2.0,
       "max_overlap_row_count": 2,
       "mean_joint_interestingness": 1.53435,
@@ -179,10 +179,10 @@
       "family_pair": "pre_move_structure_quality_stack__participation_breadth_confirmation_stack",
       "family_a": "pre_move_structure_quality_stack",
       "family_b": "participation_breadth_confirmation_stack",
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "mean_overlap_row_count": 2.0,
       "max_overlap_row_count": 2,
       "mean_joint_interestingness": 1.398582,
@@ -204,10 +204,10 @@
         "liquidity_stress_anomaly_stack",
         "participation_breadth_confirmation_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2023-02-19",
         "2023-02-20",
@@ -229,10 +229,10 @@
         "liquidity_stress_anomaly_stack",
         "participation_breadth_confirmation_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2020-07-08"
       ],
@@ -252,10 +252,10 @@
         "participation_breadth_confirmation_stack",
         "pre_move_structure_quality_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2024-11-11"
       ],
@@ -274,10 +274,10 @@
         "event_context_flags_stack",
         "liquidity_stress_anomaly_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2020-07-10"
       ],
@@ -295,10 +295,10 @@
         "cross_asset_decoupling_stack",
         "liquidity_stress_anomaly_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2020-07-07",
         "2020-07-09",
@@ -319,10 +319,10 @@
         "liquidity_stress_anomaly_stack",
         "participation_breadth_confirmation_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2023-12-17"
       ],
@@ -341,10 +341,10 @@
         "liquidity_stress_anomaly_stack",
         "pre_move_structure_quality_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2024-11-12"
       ],
@@ -363,10 +363,10 @@
         "event_context_flags_stack",
         "liquidity_stress_anomaly_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2023-02-27"
       ],
@@ -385,10 +385,10 @@
         "event_context_flags_stack",
         "participation_breadth_confirmation_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2021-10-15"
       ],
@@ -407,10 +407,10 @@
         "liquidity_stress_anomaly_stack",
         "participation_breadth_confirmation_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2023-03-31"
       ],
@@ -428,10 +428,10 @@
         "cross_asset_decoupling_stack",
         "liquidity_stress_anomaly_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2021-10-10",
         "2023-03-12"
@@ -450,10 +450,10 @@
         "liquidity_stress_anomaly_stack",
         "pre_move_structure_quality_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2024-11-13"
       ],
@@ -471,10 +471,10 @@
         "event_context_flags_stack",
         "liquidity_stress_anomaly_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2023-12-18"
       ],
@@ -492,10 +492,10 @@
         "event_context_flags_stack",
         "liquidity_stress_anomaly_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2021-09-28"
       ],
@@ -513,10 +513,10 @@
         "cross_asset_decoupling_stack",
         "event_context_flags_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2021-09-24"
       ],
@@ -534,10 +534,10 @@
         "cross_asset_decoupling_stack",
         "liquidity_stress_anomaly_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2023-12-19"
       ],
@@ -555,10 +555,10 @@
         "cross_asset_decoupling_stack",
         "participation_breadth_confirmation_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2024-01-08",
         "2024-01-11"
@@ -577,10 +577,10 @@
         "cross_asset_decoupling_stack",
         "event_context_flags_stack"
       ],
-      "cycles_seen": 2,
+      "cycles_seen": 5,
       "persistence_ratio": 1.0,
       "first_seen_cycle_id": "20260407T121311841652Z",
-      "last_seen_cycle_id": "20260407T121753036817Z",
+      "last_seen_cycle_id": "20260407T175524686322Z",
       "sample_dates": [
         "2023-12-22"
       ],

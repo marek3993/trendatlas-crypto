@@ -1,0 +1,43 @@
+{
+  "artifact_type": "dev_only_feature_quality_report",
+  "artifact_id": "liquidity_stress_anomaly_stack_quality",
+  "generated_at_utc": "2026-04-07 17:55:33 UTC",
+  "family_id": "liquidity_stress_anomaly_stack",
+  "row_count": 329,
+  "required_columns": [
+    "date",
+    "asset",
+    "abnormal_volume_burst",
+    "liquidity_dry_up",
+    "stress_persistence",
+    "liquidity_vacuum_proxy",
+    "unstable_reversal_pressure",
+    "feature_ready_flag",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "leakage_checks": [
+    {
+      "name": "required_columns_present",
+      "ok": true,
+      "detail": "all required columns present"
+    },
+    {
+      "name": "forbidden_future_or_authoritative_columns_absent",
+      "ok": true,
+      "detail": "no forbidden columns found"
+    },
+    {
+      "name": "dev_only_flags_present_on_rows",
+      "ok": true,
+      "detail": "row dev-only flags valid"
+    }
+  ],
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

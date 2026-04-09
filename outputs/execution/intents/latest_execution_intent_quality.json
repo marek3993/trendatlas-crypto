@@ -1,6 +1,6 @@
 {
   "intent_ok": true,
-  "strategy_model": "phase67j_no_neo_main",
+  "strategy_model": "phase68i_dynamic_ladder_candidate",
   "signal_id_present": true,
   "target_asset_present": true,
   "target_regime_present": true,

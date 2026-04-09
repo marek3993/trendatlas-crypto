@@ -1,0 +1,514 @@
+{
+  "artifact_type": "full_auto_scheduler_entry_decision",
+  "generated_at_utc": "2026-04-07T06:31:00Z",
+  "started_at_utc": "2026-04-07T06:30:54Z",
+  "run_id": "20260407T063054Z",
+  "status": "success",
+  "exit_code": 0,
+  "execute_live": true,
+  "preview_only": false,
+  "manual_confirmation_verified": true,
+  "working_directory": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "invoked_from_cwd": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "hyperliquid_time_offset_ms": 2055212,
+  "time_offset_refresh": {
+    "artifact_type": "hyperliquid_time_offset_refresh",
+    "generated_at_utc": "2026-04-07T06:30:57Z",
+    "source_url": "https://api.hyperliquid.xyz/info",
+    "probe_payload": {
+      "type": "meta"
+    },
+    "sample_count": 3,
+    "selected_offset_ms": 2055212,
+    "min_offset_ms": 2055153,
+    "max_offset_ms": 2055236,
+    "samples": [
+      {
+        "attempt": 1,
+        "request_started_ms": 1775543454440,
+        "request_finished_ms": 1775543455254,
+        "round_trip_ms": 814,
+        "http_status": 200,
+        "date_header": "Tue, 07 Apr 2026 07:05:10 GMT",
+        "server_time_ms": 1775545510000,
+        "midpoint_ms": 1775543454847,
+        "offset_ms": 2055153
+      },
+      {
+        "attempt": 2,
+        "request_started_ms": 1775543455254,
+        "request_finished_ms": 1775543456274,
+        "round_trip_ms": 1020,
+        "http_status": 200,
+        "date_header": "Tue, 07 Apr 2026 07:05:11 GMT",
+        "server_time_ms": 1775545511000,
+        "midpoint_ms": 1775543455764,
+        "offset_ms": 2055236
+      },
+      {
+        "attempt": 3,
+        "request_started_ms": 1775543456274,
+        "request_finished_ms": 1775543457302,
+        "round_trip_ms": 1028,
+        "http_status": 200,
+        "date_header": "Tue, 07 Apr 2026 07:05:12 GMT",
+        "server_time_ms": 1775545512000,
+        "midpoint_ms": 1775543456788,
+        "offset_ms": 2055212
+      }
+    ],
+    "notes": [
+      "Offset is estimated from the HTTP Date header on a fresh Hyperliquid info request.",
+      "The selected offset is the median valid sample to reduce one-off jitter."
+    ]
+  },
+  "child_process": {
+    "command": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\run_full_auto_execution_cycle.py",
+      "--execute-live",
+      "--manual-confirm",
+      "FULL_AUTO_EXECUTION"
+    ],
+    "started_at_utc": "2026-04-07T06:30:57Z",
+    "finished_at_utc": "2026-04-07T06:30:59Z",
+    "elapsed_sec": 2.594,
+    "returncode": 0,
+    "stdout_log_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto_scheduler\\runs\\20260407T063054Z\\child.stdout.log",
+    "stderr_log_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto_scheduler\\runs\\20260407T063054Z\\child.stderr.log"
+  },
+  "downstream_verification": {
+    "artifacts": [
+      {
+        "label": "full_auto_runner_decision",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_decision.json",
+          "exists": true,
+          "size_bytes": 10356,
+          "mtime_ns": 1775503746237722800,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_decision.json",
+          "exists": true,
+          "size_bytes": 10356,
+          "mtime_ns": 1775543459877756500,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "full_auto_runner_manifest",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_manifest.json",
+          "exists": true,
+          "size_bytes": 1624,
+          "mtime_ns": 1775503746237722800,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_manifest.json",
+          "exists": true,
+          "size_bytes": 1624,
+          "mtime_ns": 1775543459877756500,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "full_auto_runner_snapshot",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_snapshot.json",
+          "exists": true,
+          "size_bytes": 2252,
+          "mtime_ns": 1775503745820555000,
+          "modified_at_utc": "2026-04-06T19:29:05Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_snapshot.json",
+          "exists": true,
+          "size_bytes": 2252,
+          "mtime_ns": 1775543459441113200,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "full_auto_skip_reason",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_skip_reason.json",
+          "exists": true,
+          "size_bytes": 379,
+          "mtime_ns": 1775503746237722800,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_skip_reason.json",
+          "exists": true,
+          "size_bytes": 379,
+          "mtime_ns": 1775543459874026500,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "live_gate_decision",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",
+          "exists": true,
+          "size_bytes": 1917,
+          "mtime_ns": 1775503746070326600,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",
+          "exists": true,
+          "size_bytes": 1917,
+          "mtime_ns": 1775543459713164100,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "live_gate_quality",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_quality.json",
+          "exists": true,
+          "size_bytes": 264,
+          "mtime_ns": 1775503746070326600,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_quality.json",
+          "exists": true,
+          "size_bytes": 264,
+          "mtime_ns": 1775543459716697500,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "live_gate_manifest",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_manifest.json",
+          "exists": true,
+          "size_bytes": 1120,
+          "mtime_ns": 1775503746070326600,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_manifest.json",
+          "exists": true,
+          "size_bytes": 1120,
+          "mtime_ns": 1775543459716697500,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "reconciliation_report",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_report.json",
+          "exists": true,
+          "size_bytes": 1255,
+          "mtime_ns": 1775503745931351000,
+          "modified_at_utc": "2026-04-06T19:29:05Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_report.json",
+          "exists": true,
+          "size_bytes": 1255,
+          "mtime_ns": 1775543459606994700,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "reconciliation_quality",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_quality.json",
+          "exists": true,
+          "size_bytes": 198,
+          "mtime_ns": 1775503745934865000,
+          "modified_at_utc": "2026-04-06T19:29:05Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_quality.json",
+          "exists": true,
+          "size_bytes": 198,
+          "mtime_ns": 1775543459606994700,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "reconciliation_manifest",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_manifest.json",
+          "exists": true,
+          "size_bytes": 1134,
+          "mtime_ns": 1775503745934865000,
+          "modified_at_utc": "2026-04-06T19:29:05Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_manifest.json",
+          "exists": true,
+          "size_bytes": 1134,
+          "mtime_ns": 1775543459606994700,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_preview_decision",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_decision.json",
+          "exists": true,
+          "size_bytes": 3585,
+          "mtime_ns": 1775503746126630700,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_decision.json",
+          "exists": true,
+          "size_bytes": 3585,
+          "mtime_ns": 1775543459773748200,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_preview_quality",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_quality.json",
+          "exists": true,
+          "size_bytes": 404,
+          "mtime_ns": 1775503746126630700,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_quality.json",
+          "exists": true,
+          "size_bytes": 404,
+          "mtime_ns": 1775543459773748200,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_preview_manifest",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_manifest.json",
+          "exists": true,
+          "size_bytes": 2241,
+          "mtime_ns": 1775503746126630700,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_preview_manifest.json",
+          "exists": true,
+          "size_bytes": 2241,
+          "mtime_ns": 1775543459773748200,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_request_payload",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_request_payload.json",
+          "exists": true,
+          "size_bytes": 424,
+          "mtime_ns": 1775503746119285900,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_request_payload.json",
+          "exists": true,
+          "size_bytes": 424,
+          "mtime_ns": 1775543459766612500,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_exchange_response",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_exchange_response.json",
+          "exists": true,
+          "size_bytes": 238,
+          "mtime_ns": 1775503746119285900,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_exchange_response.json",
+          "exists": true,
+          "size_bytes": 238,
+          "mtime_ns": 1775543459771455900,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_leverage_response",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_leverage_action_response.json",
+          "exists": true,
+          "size_bytes": 255,
+          "mtime_ns": 1775503746119285900,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_leverage_action_response.json",
+          "exists": true,
+          "size_bytes": 255,
+          "mtime_ns": 1775543459771455900,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_pre_snapshot",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_pre_snapshot.json",
+          "exists": true,
+          "size_bytes": 2252,
+          "mtime_ns": 1775503746119285900,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_pre_snapshot.json",
+          "exists": true,
+          "size_bytes": 2252,
+          "mtime_ns": 1775543459766612500,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_post_snapshot",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_post_snapshot.json",
+          "exists": true,
+          "size_bytes": 2252,
+          "mtime_ns": 1775503746119285900,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_submit_post_snapshot.json",
+          "exists": true,
+          "size_bytes": 2252,
+          "mtime_ns": 1775543459772756400,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      },
+      {
+        "label": "submit_post_reconciliation",
+        "before": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_post_submit_reconciliation.json",
+          "exists": true,
+          "size_bytes": 1450,
+          "mtime_ns": 1775503746119285900,
+          "modified_at_utc": "2026-04-06T19:29:06Z"
+        },
+        "after": {
+          "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_post_submit_reconciliation.json",
+          "exists": true,
+          "size_bytes": 1450,
+          "mtime_ns": 1775543459772756400,
+          "modified_at_utc": "2026-04-07T06:30:59Z"
+        },
+        "changed_after_run": true,
+        "valid_json": true,
+        "missing_required_keys": []
+      }
+    ],
+    "missing_labels": [],
+    "unchanged_labels": [],
+    "invalid_labels": [],
+    "ok": true
+  },
+  "source_of_truth_write_check": {
+    "ok": true,
+    "changed_files": []
+  },
+  "runner_summary": {
+    "status": "no_action_needed",
+    "signal_id": "phase67j::2026-04-04::CASH",
+    "target_asset": "CASH",
+    "execute_live": true,
+    "real_order_sent": false,
+    "duplicate_prevented": true,
+    "gate_status": "ready_if_enabled",
+    "reconciliation_action": "none",
+    "idempotency_record_written": true
+  },
+  "gate_summary": {
+    "status": "ready_if_enabled",
+    "signal_id": "phase67j::2026-04-04::CASH",
+    "target_asset": "CASH",
+    "approval_gate_status": "approved_and_applied",
+    "would_place_real_order": true,
+    "block_reasons": []
+  },
+  "reconciliation_summary": {
+    "signal_id": "phase67j::2026-04-04::CASH",
+    "target_asset": "CASH",
+    "current_state": "CASH",
+    "reconciled": true,
+    "reconciliation_action": "none",
+    "open_orders_count": 0
+  },
+  "submit_summary": {
+    "status": "no_action_needed",
+    "would_submit": false,
+    "real_order_sent": false,
+    "target_asset": "CASH",
+    "signal_id": "phase67j::2026-04-04::CASH",
+    "submit_block_reasons": []
+  },
+  "abort_conditions": [],
+  "restore_profile_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto_scheduler\\latest_scheduler_entry_restore_profile.json",
+  "notes": [
+    "Scheduler entry is one-shot only. It never loops and it never creates a Task Scheduler task.",
+    "Live mode is allowed only with --execute-live --manual-confirm FULL_AUTO_EXECUTION.",
+    "A zero-exit child run is treated as incomplete if required downstream artifacts are missing, stale, or invalid."
+  ]
+}

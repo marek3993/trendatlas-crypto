@@ -1,0 +1,49 @@
+{
+  "artifact_id": "supportive_vs_caution_subset_layer_v1_quality",
+  "generated_at_utc": "2026-04-09 17:36:58 UTC",
+  "source_compare_id": "anomaly_vs_response_shape_aligned_comparison",
+  "input_mode": "csv",
+  "row_count": 125,
+  "subset_row_count": 108,
+  "checks": [
+    {
+      "name": "required_input_columns_present",
+      "ok": true,
+      "detail": "all required input columns present"
+    },
+    {
+      "name": "exact_date_entity_duplicates_absent",
+      "ok": true,
+      "detail": "no duplicate date+entity keys"
+    },
+    {
+      "name": "agreement_classes_supported",
+      "ok": true,
+      "detail": "all agreement classes supported"
+    },
+    {
+      "name": "subset_rows_are_supportive_or_caution_only",
+      "ok": true,
+      "detail": "subset rows exclude mixed rows"
+    },
+    {
+      "name": "watchlists_capped_at_20_rows",
+      "ok": true,
+      "detail": "watchlist caps respected"
+    },
+    {
+      "name": "fuzzy_matching_disabled",
+      "ok": true,
+      "detail": "fuzzy_matching_used=false"
+    }
+  ],
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "descriptive_subset_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "fuzzy_matching_used": false
+}

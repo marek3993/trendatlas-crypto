@@ -1,6 +1,6 @@
 {
-  "mode": "live",
-  "trading_enabled": true,
-  "dry_run_enabled": false,
-  "kill_switch": false
+    "mode":  "live",
+    "trading_enabled":  true,
+    "dry_run_enabled":  false,
+    "kill_switch":  false
 }

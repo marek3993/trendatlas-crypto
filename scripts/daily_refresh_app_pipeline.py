@@ -24,6 +24,10 @@ PHASE66G_SCRIPT = ROOT / "scripts" / "phase66g_production_candidate_live.py"
 PHASE67J_SCRIPT = ROOT / "scripts" / "phase67j_final_narrow_validation_pack.py"
 VERIFY_SCRIPT = ROOT / "scripts" / "verify_app_freshness.py"
 MATERIALIZE_SCRIPT = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
+DEV_ONLY_ANOMALY_SCRIPT = ROOT / "scripts" / "dev_only_anomaly_operating_mode_runner.py"
+PHASE60_PINNED_MODEL = "phase60_restore_trx_sol_base"
+PHASE63_PINNED_MODEL = "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3"
+PHASE67J_PINNED_PROFILE = "phase67j_no_neo_main"
 
 PHASE67J_PAPER = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_no_neo_main_paper.csv"
 PHASE67J_SUMMARY = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_final_narrow_validation_summary.csv"
@@ -79,12 +83,15 @@ def run_step(
     script_path: Path,
     env: dict[str, str],
     step_logs_dir: Path,
+    script_args: list[str] | None = None,
 ) -> dict[str, Any]:
     ensure_file(script_path, f"script for step {step_name}")
 
     stdout_path = step_logs_dir / f"{step_name}.stdout.log"
     stderr_path = step_logs_dir / f"{step_name}.stderr.log"
     cmd = [sys.executable, str(script_path)]
+    if script_args:
+        cmd.extend(script_args)
 
     started = time.monotonic()
     proc = subprocess.run(
@@ -119,6 +126,90 @@ def run_step(
         "stdout_log": str(stdout_path),
         "stderr_log": str(stderr_path),
     }
+
+
+def run_non_fatal_post_step(
+    step_name: str,
+    script_path: Path,
+    env: dict[str, str],
+    step_logs_dir: Path,
+    script_args: list[str] | None = None,
+) -> dict[str, Any]:
+    stdout_path = step_logs_dir / f"{step_name}.stdout.log"
+    stderr_path = step_logs_dir / f"{step_name}.stderr.log"
+    started_at_utc = now_utc()
+    cmd = [sys.executable, str(script_path)]
+    if script_args:
+        cmd.extend(script_args)
+
+    try:
+        ensure_file(script_path, f"script for non-fatal post step {step_name}")
+        started = time.monotonic()
+        proc = subprocess.run(
+            cmd,
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd=str(ROOT),
+            check=False,
+        )
+        elapsed = time.monotonic() - started
+
+        stdout_path.write_text(proc.stdout or "", encoding="utf-8")
+        stderr_path.write_text(proc.stderr or "", encoding="utf-8")
+
+        result: dict[str, Any] = {
+            "step_name": step_name,
+            "script_path": str(script_path),
+            "command": cmd,
+            "started_at_utc": started_at_utc,
+            "finished_at_utc": now_utc(),
+            "elapsed_sec": round(elapsed, 3),
+            "returncode": proc.returncode,
+            "stdout_log": str(stdout_path),
+            "stderr_log": str(stderr_path),
+            "status": "OK" if proc.returncode == 0 else "NON_FATAL_FAIL",
+            "non_fatal": True,
+            "dev_only": True,
+            "non_authoritative_outputs_only": True,
+        }
+
+        if proc.returncode == 0:
+            print(f"[APP-REFRESH] post_step_ok={step_name} elapsed_sec={elapsed:.2f}", flush=True)
+        else:
+            result["failure_details"] = {
+                "reason": "non_zero_exit",
+                "message": f"Non-fatal post step failed with return code {proc.returncode}.",
+            }
+            print(
+                f"[APP-REFRESH] post_step_non_fatal_fail={step_name} returncode={proc.returncode}",
+                flush=True,
+            )
+
+        return result
+    except Exception as exc:
+        stdout_path.write_text("", encoding="utf-8")
+        stderr_path.write_text(f"{type(exc).__name__}: {exc}\n", encoding="utf-8")
+        print(f"[APP-REFRESH] post_step_non_fatal_fail={step_name} error={exc}", flush=True)
+        return {
+            "step_name": step_name,
+            "script_path": str(script_path),
+            "command": cmd,
+            "started_at_utc": started_at_utc,
+            "finished_at_utc": now_utc(),
+            "returncode": None,
+            "stdout_log": str(stdout_path),
+            "stderr_log": str(stderr_path),
+            "status": "NON_FATAL_FAIL",
+            "non_fatal": True,
+            "dev_only": True,
+            "non_authoritative_outputs_only": True,
+            "failure_details": {
+                "reason": "exception",
+                "message": str(exc),
+                "exception_type": type(exc).__name__,
+            },
+        }
 
 
 def verify_outputs() -> list[str]:
@@ -161,7 +252,17 @@ def main() -> None:
         "skip_legacy_refresh": bool(args.skip_legacy_refresh),
         "skip_macro_refresh": bool(args.skip_macro_refresh),
         "skip_top100_refresh": bool(args.skip_top100_refresh),
+        "main_refresh_chain_status": "RUNNING",
         "steps": [],
+        "dev_only_post_step": {
+            "step_name": "dev_only_anomaly_operating_mode_runner",
+            "script_path": str(DEV_ONLY_ANOMALY_SCRIPT),
+            "status": "NOT_RUN",
+            "non_fatal": True,
+            "dev_only": True,
+            "non_authoritative_outputs_only": True,
+            "reason": "main_refresh_chain_not_completed",
+        },
         "required_outputs": [str(p) for p in REQUIRED_OUTPUTS],
     }
 
@@ -185,16 +286,34 @@ def main() -> None:
             run_step("phase67b_top100_forensic_prune_and_rerun", PHASE67B_SCRIPT, env, logs_dir)
         )
         manifest["steps"].append(
-            run_step("phase60_selective_restore_robustness", PHASE60_SCRIPT, env, logs_dir)
+            run_step(
+                "phase60_selective_restore_robustness",
+                PHASE60_SCRIPT,
+                env,
+                logs_dir,
+                script_args=["--only-model", PHASE60_PINNED_MODEL],
+            )
         )
         manifest["steps"].append(
-            run_step("phase63_btc_participation_overlay", PHASE63_SCRIPT, env, logs_dir)
+            run_step(
+                "phase63_btc_participation_overlay",
+                PHASE63_SCRIPT,
+                env,
+                logs_dir,
+                script_args=["--only-model", PHASE63_PINNED_MODEL],
+            )
         )
         manifest["steps"].append(
             run_step("phase66g_production_candidate_live", PHASE66G_SCRIPT, env, logs_dir)
         )
         manifest["steps"].append(
-            run_step("phase67j_final_narrow_validation_pack", PHASE67J_SCRIPT, env, logs_dir)
+            run_step(
+                "phase67j_final_narrow_validation_pack",
+                PHASE67J_SCRIPT,
+                env,
+                logs_dir,
+                script_args=["--only-profile", PHASE67J_PINNED_PROFILE],
+            )
         )
         manifest["steps"].append(
             run_step("verify_app_freshness", VERIFY_SCRIPT, env, logs_dir)
@@ -212,12 +331,20 @@ def main() -> None:
         freshness = load_json(FRESHNESS_REPORT)
         macro_report = load_json(MACRO_REFRESH_REPORT)
 
-        manifest["finished_at_utc"] = now_utc()
+        manifest["main_refresh_chain_finished_at_utc"] = now_utc()
+        manifest["main_refresh_chain_status"] = "OK"
         manifest["status"] = "OK"
         manifest["freshness_report_path"] = str(FRESHNESS_REPORT)
         manifest["macro_refresh_report_path"] = str(MACRO_REFRESH_REPORT)
         manifest["freshness_report"] = freshness
         manifest["macro_refresh_report"] = macro_report
+        manifest["dev_only_post_step"] = run_non_fatal_post_step(
+            "dev_only_anomaly_operating_mode_runner",
+            DEV_ONLY_ANOMALY_SCRIPT,
+            env,
+            logs_dir,
+        )
+        manifest["finished_at_utc"] = now_utc()
 
         manifest_path = run_dir / "app_refresh_pipeline_manifest.json"
         manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -232,6 +359,7 @@ def main() -> None:
 
     except Exception as exc:
         manifest["finished_at_utc"] = now_utc()
+        manifest["main_refresh_chain_status"] = "FAIL"
         manifest["status"] = "FAIL"
         manifest["error"] = str(exc)
 

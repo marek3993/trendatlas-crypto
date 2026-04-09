@@ -431,6 +431,30 @@
       "notes": "Dev-only non-authoritative bot-vs-bot compare outputs for anomaly operating layer versus response_shape_bot_v1. Exact date+entity alignment only."
     },
     {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_subset_layer/",
+      "generated_by": [
+        "scripts/dev_only_supportive_vs_caution_subset_layer.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative supportive-versus-caution subset outputs derived only from the existing aligned compare artifact. Exact date+entity semantics only."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/",
+      "generated_by": [
+        "scripts/dev_only_cash_overstay_diagnostic.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative cash-overstay diagnostics against phase67j_no_neo_main using deterministic constructive-window rules only."
+    },
+    {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "generated_by": [
         "scripts/phase68h_dynamic_leverage_ladder_candidate.py"

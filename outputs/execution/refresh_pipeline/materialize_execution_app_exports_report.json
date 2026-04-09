@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-04-06T19:29:04Z",
-  "started_at_utc": "2026-04-06T19:29:04Z",
+  "generated_at_utc": "2026-04-09T17:43:08Z",
+  "started_at_utc": "2026-04-09T17:43:07Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -53,13 +53,13 @@
       "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
       "source_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
-        "size_bytes": 249,
-        "modified_utc": "2026-04-06T09:30:17Z"
+        "size_bytes": 247,
+        "modified_utc": "2026-04-07T17:55:23Z"
       },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
-        "size_bytes": 509,
-        "modified_utc": "2026-04-06T19:29:04Z"
+        "size_bytes": 507,
+        "modified_utc": "2026-04-09T17:43:07Z"
       },
       "added_fields": [
         "live_truth_mode",
@@ -93,7 +93,7 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
         "size_bytes": 619,
-        "modified_utc": "2026-04-06T09:29:46Z"
+        "modified_utc": "2026-04-07T14:39:04Z"
       },
       "refresh_reason": "canonical_phase66g_live_status_is_not_older_than_upstream"
     },
@@ -116,24 +116,51 @@
       "summary_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68h_dynamic_leverage_ladder_candidate\\phase68h_dynamic_leverage_ladder_summary.csv",
       "paper_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
       "paper_refresh_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68h_dynamic_leverage_ladder_candidate\\papers\\phase68h_dynamic_ladder_candidate_paper.csv",
+      "paper_refresh_info": {
+        "phase66g_last_date": "2026-04-06",
+        "phase68h_last_date_before_refresh": "2026-04-06",
+        "phase68h_last_date_after_refresh": "2026-04-06",
+        "phase68h_refresh_triggered": false
+      },
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
-        "size_bytes": 221,
-        "modified_utc": "2026-04-06T19:29:04Z"
+        "size_bytes": 809,
+        "modified_utc": "2026-04-09T17:43:08Z"
       },
       "computed_fields": [
+        "total_return_pct",
+        "total_return_pct_gross",
+        "total_return_pct_net",
         "sharpe",
         "sortino",
         "switch_count",
         "cash_days_pct",
-        "btc_days_pct"
+        "btc_days_pct",
+        "trading_fees_total_pct",
+        "funding_total_pct",
+        "borrow_cost_total_pct",
+        "tradable_slippage_cost_total_pct"
       ],
       "copied_fields_from_summary_source": [
+        "fee_side_mode",
+        "taker_fee_bps",
+        "maker_fee_bps",
+        "staking_discount_pct",
+        "referral_discount_pct",
+        "effective_trading_fee_bps",
         "cagr_pct",
+        "cagr_pct_gross",
+        "cagr_pct_net",
         "max_drawdown_pct",
+        "max_drawdown_pct_gross",
+        "max_drawdown_pct_net",
         "since2023_cagr_pct",
-        "since2025_cagr_pct"
+        "since2023_cagr_pct_gross",
+        "since2023_cagr_pct_net",
+        "since2025_cagr_pct",
+        "since2025_cagr_pct_gross",
+        "since2025_cagr_pct_net"
       ]
     }
   ],

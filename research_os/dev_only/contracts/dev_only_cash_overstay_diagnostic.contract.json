@@ -1,0 +1,48 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_cash_overstay_diagnostic_contract",
+  "artifact_id": "dev_only_cash_overstay_diagnostic",
+  "created_at_utc": "2026-04-09 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "cash_overstay_diagnostic_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "purpose": "Diagnose whether phase67j_no_neo_main over-allocates to CASH during constructive windows using deterministic decision-time observable rules only.",
+  "input_refs": [
+    "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+    "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv"
+  ],
+  "constructive_window_rule": {
+    "benchmark_asset": "BTCUSDT",
+    "start_rule": "Constructive window starts on the confirmation day when benchmark 20-day MA is above benchmark 100-day MA and either the benchmark close or the baseline-selected asset close is above its 100-day anchor for 3 consecutive days.",
+    "end_rule": "Constructive window ends on the confirmation day when benchmark close is below benchmark 100-day MA and benchmark 20-day MA is below benchmark 100-day MA for 2 consecutive days."
+  },
+  "allowed_verdicts": [
+    "pure_late_entry_timing",
+    "premature_risk_off_failure_to_stay_exposed",
+    "broader_exposure_policy_issue",
+    "not_confirmed"
+  ],
+  "required_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_diagnostic.summary.json",
+    "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_constructive_windows.csv",
+    "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_exposure_gap_by_window.csv",
+    "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_benchmark_missed_while_underexposed.csv",
+    "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_alt_participation_missed.csv",
+    "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_diagnostic.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_cash_diagnostics/cash_overstay_diagnostic.quality.json"
+  ],
+  "forbidden_semantics": [
+    "winner_language",
+    "approved_candidate_language",
+    "official_promotion",
+    "live_ready",
+    "tradable_edge",
+    "leverage_guidance"
+  ],
+  "status": "defined_dev_only_cash_diagnostic"
+}

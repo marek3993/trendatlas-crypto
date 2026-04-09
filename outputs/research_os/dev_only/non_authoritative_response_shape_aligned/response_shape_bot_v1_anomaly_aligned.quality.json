@@ -1,0 +1,74 @@
+{
+  "artifact_type": "dev_only_response_shape_quality_report",
+  "artifact_id": "response_shape_bot_v1_anomaly_aligned_quality",
+  "generated_at_utc": "2026-04-08 18:19:03 UTC",
+  "bot_id": "response_shape_bot_v1_anomaly_aligned",
+  "row_count": 125,
+  "required_columns": [
+    "date",
+    "event_id",
+    "event_type",
+    "entry_regime",
+    "entry_position",
+    "selected_asset",
+    "trend_score",
+    "trend_state_label",
+    "anchor_interestingness_score",
+    "anchor_active_family_count",
+    "anchor_cluster_note",
+    "response_regime_context",
+    "lookahead_window_days",
+    "observed_return_3d",
+    "observed_return_5d",
+    "observed_return_10d",
+    "observed_max_drawdown_5d",
+    "observed_max_drawdown_10d",
+    "observed_recovery_from_5d_low_to_10d",
+    "observed_realized_volatility_10d",
+    "observed_downside_volatility_10d",
+    "follow_through_quality",
+    "false_start_risk",
+    "volatility_damage_shape",
+    "recovery_vs_exhaustion",
+    "analysis_mode",
+    "live_decision_ready",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "leakage_checks": [
+    {
+      "name": "required_columns_present",
+      "ok": true,
+      "detail": "all required columns present"
+    },
+    {
+      "name": "forbidden_decision_or_authoritative_columns_absent",
+      "ok": true,
+      "detail": "no forbidden columns found"
+    },
+    {
+      "name": "hindsight_columns_are_explicitly_observed",
+      "ok": true,
+      "detail": "all hindsight columns use observed_ prefix"
+    },
+    {
+      "name": "dev_only_flags_present_on_rows",
+      "ok": true,
+      "detail": "row dev-only flags valid"
+    },
+    {
+      "name": "descriptive_aftermath_scope_locked",
+      "ok": true,
+      "detail": "rows are locked to descriptive aftermath semantics"
+    }
+  ],
+  "status": "passed",
+  "analysis_mode": "descriptive_aftermath_only",
+  "live_decision_ready": false,
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

@@ -1,9 +1,9 @@
 {
   "artifact_type": "dev_only_feature_quality_report",
   "artifact_id": "pre_move_structure_quality_stack_quality",
-  "generated_at_utc": "2026-04-07 08:55:44 UTC",
+  "generated_at_utc": "2026-04-07 17:55:26 UTC",
   "family_id": "pre_move_structure_quality_stack",
-  "row_count": 229,
+  "row_count": 255,
   "required_columns": [
     "date",
     "asset",

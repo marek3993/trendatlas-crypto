@@ -1,13 +1,14 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-04-06T09:16:25Z",
-  "execution_mode": "read_only",
-  "trading_enabled": false,
-  "kill_switch": true,
+  "as_of_utc": "2026-04-08T22:10:04Z",
+  "execution_mode": "live",
+  "trading_enabled": true,
+  "kill_switch": false,
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
   "source": {
     "provider": "Hyperliquid",
-    "info_url": "https://api.hyperliquid.xyz/info"
+    "info_url": "https://api.hyperliquid.xyz/info",
+    "bridge_source": "scripts/execution/app_execute_bridge.py"
   },
   "raw": {
     "clearinghouseState": {
@@ -26,14 +27,14 @@
       "crossMaintenanceMarginUsed": "0.0",
       "withdrawable": "0.0",
       "assetPositions": [],
-      "time": 1775469038685
+      "time": 1775686203053
     },
     "spotClearinghouseState": {
       "balances": [
         {
           "coin": "USDC",
           "token": 0,
-          "total": "9.913939",
+          "total": "9.835466",
           "hold": "0.0",
           "entryNtl": "0.0"
         },
@@ -62,12 +63,148 @@
       "tokenToAvailableAfterMaintenance": [
         [
           0,
-          "9.913939"
+          "9.835466"
         ]
       ]
     },
     "openOrders": [],
     "userFills": [
+      {
+        "coin": "DOGE",
+        "px": "0.092494",
+        "sz": "159.0",
+        "side": "A",
+        "time": 1775482096814,
+        "startPosition": "159.0",
+        "dir": "Close Long",
+        "closedPnl": "0.000636",
+        "hash": "0x967fa236b33962bf97f9043887b016020595001c4e3c81913a484d89723d3caa",
+        "oid": 372026304259,
+        "crossed": true,
+        "fee": "0.006617",
+        "tid": 345781172649558,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "DOGE",
+        "px": "0.09249",
+        "sz": "159.0",
+        "side": "B",
+        "time": 1775482087154,
+        "startPosition": "0.0",
+        "dir": "Open Long",
+        "closedPnl": "0.0",
+        "hash": "0x0264d82bb732cefc03de043887af8c02040700115235edcea62d837e7636a8e6",
+        "oid": 372026231411,
+        "crossed": true,
+        "fee": "0.006617",
+        "tid": 856335892923625,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "DOGE",
+        "px": "0.092464",
+        "sz": "159.0",
+        "side": "A",
+        "time": 1775481446403,
+        "startPosition": "159.0",
+        "dir": "Close Long",
+        "closedPnl": "-0.012879",
+        "hash": "0xfbfd3570afb67216fd760438878bcb02015400564ab990e99fc5e0c36eba4c01",
+        "oid": 372018662176,
+        "crossed": true,
+        "fee": "0.006615",
+        "tid": 203503085130014,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "DOGE",
+        "px": "0.092545",
+        "sz": "159.0",
+        "side": "B",
+        "time": 1775481254268,
+        "startPosition": "0.0",
+        "dir": "Open Long",
+        "closedPnl": "0.0",
+        "hash": "0xb34fb096719140cab4c9043887811d020308007c0c945f9c57185be930951ab5",
+        "oid": 372016774696,
+        "crossed": true,
+        "fee": "0.006621",
+        "tid": 980562631855768,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "BTC",
+        "px": "69355.0",
+        "sz": "0.00015",
+        "side": "A",
+        "time": 1775479813695,
+        "startPosition": "0.00015",
+        "dir": "Close Long",
+        "closedPnl": "-0.01725",
+        "hash": "0x0c671840c81238350de0043887304a02020f002663155707b02fc3938716121f",
+        "oid": 372000388813,
+        "crossed": true,
+        "fee": "0.004681",
+        "tid": 428970733842200,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "BTC",
+        "px": "69470.0",
+        "sz": "0.00015",
+        "side": "B",
+        "time": 1775479769274,
+        "startPosition": "0.0",
+        "dir": "Open Long",
+        "closedPnl": "0.0",
+        "hash": "0xb9f2b11530f5846bbb6c0438872dcd01fe00c8facbf8a33d5dbb5c67eff95e56",
+        "oid": 371999682033,
+        "crossed": true,
+        "fee": "0.004689",
+        "tid": 760337264131470,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "BTC",
+        "px": "69552.0",
+        "sz": "0.00015",
+        "side": "A",
+        "time": 1775477019394,
+        "startPosition": "0.00015",
+        "dir": "Close Long",
+        "closedPnl": "-0.00375",
+        "hash": "0x43acda01b80932e44526043886940f0202cd00e7530c51b6e7758554770d0cce",
+        "oid": 371969645836,
+        "crossed": true,
+        "fee": "0.004694",
+        "tid": 636656621012047,
+        "feeToken": "USDC",
+        "twapId": null
+      },
+      {
+        "coin": "BTC",
+        "px": "69577.0",
+        "sz": "0.00015",
+        "side": "B",
+        "time": 1775476857995,
+        "startPosition": "0.0",
+        "dir": "Open Long",
+        "closedPnl": "0.0",
+        "hash": "0x5e5fec5f4a242d155fd90438868b1002017a0044e5274be7022897b209280700",
+        "oid": 371967883549,
+        "crossed": true,
+        "fee": "0.004696",
+        "tid": 112202893038712,
+        "feeToken": "USDC",
+        "twapId": null
+      },
       {
         "coin": "BTC",
         "px": "69122.0",
@@ -141,7 +278,7 @@
   "summary": {
     "positions_count": 0,
     "open_orders_count": 0,
-    "recent_fills_count": 4,
+    "recent_fills_count": 12,
     "withdrawable": "0.0",
     "margin_summary": {
       "accountValue": "0.0",
@@ -156,8 +293,8 @@
       "totalMarginUsed": "0.0"
     },
     "balance_source_of_truth": "spot_stable_balance",
-    "account_equity_usd": 9.913939,
-    "available_balance_usd": 9.913939,
+    "account_equity_usd": 9.835466,
+    "available_balance_usd": 9.835466,
     "perp_account_value": 0.0,
     "perp_withdrawable": 0.0,
     "spot_balance_count": 4,
@@ -167,8 +304,8 @@
       "USDH",
       "USDT0"
     ],
-    "spot_stable_total_usd": 9.913939,
-    "spot_stable_available_usd": 9.913939,
+    "spot_stable_total_usd": 9.835466,
+    "spot_stable_available_usd": 9.835466,
     "spot_source_available": true
   }
 }

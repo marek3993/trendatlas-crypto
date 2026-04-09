@@ -1,7 +1,7 @@
 {
   "artifact_type": "full_auto_last_executed_signal_record",
-  "recorded_at_utc": "2026-04-06T19:29:06Z",
-  "signal_id": "phase67j::2026-04-04::CASH",
+  "recorded_at_utc": "2026-04-07T13:36:38Z",
+  "signal_id": "phase67j::2026-04-05::CASH",
   "target_asset": "CASH",
   "target_regime": "Držíme CASH",
   "runner_status": "no_action_needed",
@@ -9,7 +9,7 @@
   "preview_only": false,
   "real_order_sent": false,
   "duplicate_guard_active": true,
-  "idempotency_key": "e4109cc3cf39cd5d76b5cb1684db056ca5d97dc9ceaa2df82f84c6f55e464395",
+  "idempotency_key": "6c4d1c87c15b6bc5e4157b23e55265917b95e02d4dc872768c28add532384a05",
   "current_state": "CASH",
   "target_size": null,
   "target_notional_usd": null,

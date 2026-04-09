@@ -1,0 +1,36 @@
+{
+  "artifact_type": "dev_only_bot_compare_summary",
+  "artifact_id": "anomaly_vs_response_shape_comparison",
+  "generated_at_utc": "2026-04-08 17:32:28 UTC",
+  "shared_key_rule": "exact date + entity alignment only",
+  "input_refs": {
+    "anomaly_ranking_heuristics_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\anomaly_ranking_heuristics.csv",
+    "response_shape_features_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_response_shape\\response_shape_bot_v1.features.csv"
+  },
+  "counts": {
+    "anomaly_row_count": 125,
+    "response_shape_row_count": 36,
+    "comparison_row_count": 161,
+    "overlap_row_count": 0,
+    "agreement_row_count": 0,
+    "disagreement_row_count": 161,
+    "anomaly_only_row_count": 125,
+    "response_shape_only_row_count": 36
+  },
+  "agreement_class_counts": {
+    "anomaly_only": 125,
+    "response_shape_only": 36
+  },
+  "semantic_locks": [
+    "no_strategy_score",
+    "no_winner_language",
+    "no_tradability_language",
+    "no_leverage_guidance",
+    "no_official_edge_claims"
+  ],
+  "status": "generated_dev_only_bot_compare",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

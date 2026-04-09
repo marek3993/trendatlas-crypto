@@ -835,6 +835,7 @@ def main() -> None:
     parser.add_argument("--core-paper", type=str, default=str(CORE_PAPER))
     parser.add_argument("--phase63-paper", type=str, default=str(PHASE63_PAPER))
     parser.add_argument("--shortlist-file", type=str, default=str(PHASE67B_SHORTLIST))
+    parser.add_argument("--only-profile", type=str, default="")
     args = parser.parse_args()
 
     ensure_dir(PHASE67J_DIR)
@@ -843,6 +844,14 @@ def main() -> None:
     phase63_df = load_strategy_paper(Path(args.phase63_paper))
     full_shortlist = load_shortlist(Path(args.shortlist_file))
     profiles = build_profiles()
+    if args.only_profile:
+        profiles = [
+            (overlay_cfg, gov_cfg, drops)
+            for overlay_cfg, gov_cfg, drops in profiles
+            if gov_cfg.profile_name == args.only_profile
+        ]
+        if not profiles:
+            raise ValueError(f"Requested only-profile not found in phase67j pack: {args.only_profile}")
 
     core_row = calc_metrics(core_df, CORE_MODEL_KEY)
     core_row.update(window_metrics(core_df, "2021-01-01"))

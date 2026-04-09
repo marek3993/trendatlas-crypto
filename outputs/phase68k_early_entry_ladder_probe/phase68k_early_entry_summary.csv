@@ -1,0 +1,3 @@
+model,cagr_pct,max_drawdown_pct,calmar,since2023_cagr_pct,since2025_cagr_pct,early_entry_days,avg_lead_days_vs_full_entry,false_start_count,captured_pre_breakout_return_pct
+phase67j_no_neo_main,140.35521107916287,-26.163554706001946,5.364531412352972,198.1911191350214,107.26982063318093,0,0.0,0,0.0
+phase68k_early_entry_ladder_probe,140.35521107916287,-26.163554706001946,5.364531412352972,198.1911191350214,107.26982063318093,0,0.0,0,0.0

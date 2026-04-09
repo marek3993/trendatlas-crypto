@@ -1,0 +1,47 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_subset_layer_contract",
+  "artifact_id": "supportive_vs_caution_subset_layer_v1",
+  "created_at_utc": "2026-04-09 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "descriptive_subset_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "fuzzy_matching_used": false,
+  "output_namespace": "outputs/research_os/dev_only/non_authoritative_subset_layer/",
+  "input_contract": {
+    "source_compare_id": "anomaly_vs_response_shape_aligned_comparison",
+    "shared_key_rule": "exact date + entity only",
+    "fuzzy_matching_used": false,
+    "no_new_raw_joins": true
+  },
+  "subset_rules": {
+    "supportive_subset": "agreement_class == overlap_supportive",
+    "caution_subset": "agreement_class == overlap_caution",
+    "mixed_handling": "overlap_mixed rows remain outside both watchlists and are included only in summary/remainder counts"
+  },
+  "required_outputs": [
+    "supportive_vs_caution_subset_layer_v1.summary.json",
+    "supportive_vs_caution_subset_layer_v1.rows.csv",
+    "supportive_subset_watchlist.json",
+    "caution_subset_watchlist.json",
+    "supportive_subset_concentration_summary.json",
+    "caution_subset_concentration_summary.json",
+    "supportive_subset_persistence_summary.json",
+    "caution_subset_persistence_summary.json",
+    "supportive_vs_caution_subset_layer_v1.manifest.json",
+    "supportive_vs_caution_subset_layer_v1.quality.json"
+  ],
+  "forbidden_semantics": [
+    "winner_language",
+    "tradability_language",
+    "leverage_guidance",
+    "official_edge_claim",
+    "strategy_score"
+  ],
+  "status": "defined_dev_only_subset_layer"
+}

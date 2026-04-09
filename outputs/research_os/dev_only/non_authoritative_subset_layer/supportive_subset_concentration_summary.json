@@ -1,0 +1,98 @@
+{
+  "artifact_id": "supportive_subset_concentration_summary",
+  "generated_at_utc": "2026-04-09 17:36:58 UTC",
+  "subset_class": "supportive_subset",
+  "row_count": 4,
+  "concentration_dimensions": [
+    "entity",
+    "anomaly_cluster_note",
+    "anomaly_active_family_count",
+    "response_shape_context",
+    "month_bucket"
+  ],
+  "top_counts_by_entity": [
+    {
+      "value": "DOGEUSDT",
+      "count": 2,
+      "share": 0.5
+    },
+    {
+      "value": "XTZUSDT",
+      "count": 1,
+      "share": 0.25
+    },
+    {
+      "value": "STXUSDT",
+      "count": 1,
+      "share": 0.25
+    }
+  ],
+  "top_counts_by_anomaly_cluster_note": [
+    {
+      "value": "single-family anomaly concentration",
+      "count": 3,
+      "share": 0.75
+    },
+    {
+      "value": "liquidity stress aligned with context flags",
+      "count": 1,
+      "share": 0.25
+    }
+  ],
+  "top_counts_by_anomaly_active_family_count": [
+    {
+      "value": "1",
+      "count": 3,
+      "share": 0.75
+    },
+    {
+      "value": "2",
+      "count": 1,
+      "share": 0.25
+    }
+  ],
+  "top_counts_by_response_shape_context": [
+    {
+      "value": "anomaly_anchor|near_flat|single-family",
+      "count": 2,
+      "share": 0.5
+    },
+    {
+      "value": "anomaly_anchor|constructive|paired",
+      "count": 1,
+      "share": 0.25
+    },
+    {
+      "value": "anomaly_anchor|weak_negative|single-family",
+      "count": 1,
+      "share": 0.25
+    }
+  ],
+  "month_bucket_counts": [
+    {
+      "month_bucket": "2021-09",
+      "count": 1,
+      "share": 0.25
+    },
+    {
+      "month_bucket": "2023-03",
+      "count": 1,
+      "share": 0.25
+    },
+    {
+      "month_bucket": "2024-11",
+      "count": 2,
+      "share": 0.5
+    }
+  ],
+  "shared_key_rule": "exact date + entity only",
+  "status": "generated_dev_only_subset_concentration_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "descriptive_subset_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "fuzzy_matching_used": false
+}

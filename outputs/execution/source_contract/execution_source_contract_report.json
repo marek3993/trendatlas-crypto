@@ -1,6 +1,6 @@
 {
   "report_type": "execution_source_contract_report",
-  "generated_at_utc": "2026-04-06T10:35:47Z",
+  "generated_at_utc": "2026-04-08T22:10:05Z",
   "source_of_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "required_artifact_keys": [
     "phase67j_winner_paper",
@@ -77,8 +77,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
-        "size_bytes": 509,
-        "modified_utc": "2026-04-06T10:29:54Z",
+        "size_bytes": 507,
+        "modified_utc": "2026-04-08T22:10:05Z",
         "file_type": "csv",
         "header": [
           "model",
@@ -100,14 +100,14 @@
         "row_count": 1,
         "sample_first_row": {
           "model": "phase67j_no_neo_main",
-          "latest_available_date": "2026-04-04",
+          "latest_available_date": "2026-04-06",
           "current_asset": "CORE",
           "held_asset_public": "CASH",
           "held_state_label": "Držíme CASH",
           "execution_state": "CASH",
-          "next_rebalance_date": "2026-04-04",
+          "next_rebalance_date": "2026-04-12",
           "dropped_assets": "NEO",
-          "final_shortlist": "APT,BCH,DOGE,ICP,STX,XTZ",
+          "final_shortlist": "APT,DOGE,HBAR,LINK,STX",
           "live_truth_mode": "phase68i_dynamic_ladder_candidate",
           "execution_profile": "dynamic_ladder",
           "leverage_mode": "dynamic",
@@ -117,14 +117,14 @@
         },
         "sample_last_row": {
           "model": "phase67j_no_neo_main",
-          "latest_available_date": "2026-04-04",
+          "latest_available_date": "2026-04-06",
           "current_asset": "CORE",
           "held_asset_public": "CASH",
           "held_state_label": "Držíme CASH",
           "execution_state": "CASH",
-          "next_rebalance_date": "2026-04-04",
+          "next_rebalance_date": "2026-04-12",
           "dropped_assets": "NEO",
-          "final_shortlist": "APT,BCH,DOGE,ICP,STX,XTZ",
+          "final_shortlist": "APT,DOGE,HBAR,LINK,STX",
           "live_truth_mode": "phase68i_dynamic_ladder_candidate",
           "execution_profile": "dynamic_ladder",
           "leverage_mode": "dynamic",
@@ -210,7 +210,7 @@
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
         "size_bytes": 619,
-        "modified_utc": "2026-04-06T09:29:46Z",
+        "modified_utc": "2026-04-07T14:39:04Z",
         "file_type": "csv",
         "header": [
           "model",
@@ -239,12 +239,12 @@
         "row_count": 1,
         "sample_first_row": {
           "model": "phase66g_production_soft_filters",
-          "latest_available_date": "2026-04-04",
+          "latest_available_date": "2026-04-06",
           "current_asset": "BASELINE",
-          "latest_decision_date": "2026-03-28",
-          "latest_period_start": "2026-03-29",
-          "latest_period_end": "2026-04-04",
-          "next_rebalance_date": "2026-04-04",
+          "latest_decision_date": "2026-04-05",
+          "latest_period_start": "2026-04-06",
+          "latest_period_end": "2026-04-06",
+          "next_rebalance_date": "2026-04-12",
           "latest_keep_reason": "best_passed",
           "candidate_assets_loaded": "9",
           "failed_assets_count": "0",
@@ -259,16 +259,16 @@
           "trend_threshold_raw": "0.02",
           "trend_band": "0.12",
           "trend_score_raw": "-0.16666666666666669",
-          "trend_calc_date": "2026-04-04"
+          "trend_calc_date": "2026-04-06"
         },
         "sample_last_row": {
           "model": "phase66g_production_soft_filters",
-          "latest_available_date": "2026-04-04",
+          "latest_available_date": "2026-04-06",
           "current_asset": "BASELINE",
-          "latest_decision_date": "2026-03-28",
-          "latest_period_start": "2026-03-29",
-          "latest_period_end": "2026-04-04",
-          "next_rebalance_date": "2026-04-04",
+          "latest_decision_date": "2026-04-05",
+          "latest_period_start": "2026-04-06",
+          "latest_period_end": "2026-04-06",
+          "next_rebalance_date": "2026-04-12",
           "latest_keep_reason": "best_passed",
           "candidate_assets_loaded": "9",
           "failed_assets_count": "0",
@@ -283,7 +283,7 @@
           "trend_threshold_raw": "0.02",
           "trend_band": "0.12",
           "trend_score_raw": "-0.16666666666666669",
-          "trend_calc_date": "2026-04-04"
+          "trend_calc_date": "2026-04-06"
         }
       }
     },

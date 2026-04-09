@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 from typing import Dict
@@ -107,6 +108,12 @@ MODEL_LABELS = {
 }
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="PHASE60 selective restore robustness")
+    parser.add_argument("--only-model", type=str, default="")
+    return parser.parse_args()
+
+
 def normalize_ohlcv_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df.rename(
         columns={
@@ -173,6 +180,13 @@ def row_conf(row: pd.Series, cols: list[str]) -> float:
     return max(0.0, min(100.0, conf))
 
 
+def block_confidence(score_df: pd.DataFrame, cols: list[str]) -> pd.Series:
+    row_mean = score_df[cols].mean(axis=1)
+    mad = score_df[cols].sub(row_mean, axis=0).abs().mean(axis=1)
+    conf = 100.0 * (1.0 - (mad / 80.0))
+    return conf.clip(0.0, 100.0)
+
+
 def bull(score: float, threshold: float) -> bool:
     return score >= threshold
 
@@ -189,76 +203,79 @@ def build_daily_tables(assets: dict[str, pd.DataFrame], macro_df: pd.DataFrame, 
         ohlcv = assets[symbol]
         features = compute_feature_frame(ohlcv, macro_df=macro_df)
         scores = compute_score_frame(features)
+        st_score = scores[ST_COLS].mean(axis=1).to_numpy(dtype=float)
+        lt_score = scores[LT_COLS].mean(axis=1).to_numpy(dtype=float)
+        mr_score = scores[MR_COLS].mean(axis=1).to_numpy(dtype=float)
+        st_conf = block_confidence(scores, ST_COLS).to_numpy(dtype=float)
+        lt_conf = block_confidence(scores, LT_COLS).to_numpy(dtype=float)
+        confidence = np.minimum(st_conf, lt_conf)
 
-        rows = []
+        yz_vals = (
+            pd.to_numeric(features["yz_vol_20"], errors="coerce").fillna(0.0).to_numpy(dtype=float)
+            if "yz_vol_20" in features.columns
+            else np.zeros(len(features), dtype=float)
+        )
+        atr_vals = (
+            pd.to_numeric(features["atr_pct"], errors="coerce").fillna(0.0).to_numpy(dtype=float)
+            if "atr_pct" in features.columns
+            else np.zeros(len(features), dtype=float)
+        )
+        directional_bias = (0.45 * lt_score) + (0.35 * st_score) + (0.20 * mr_score)
+        general_score = (0.6 * lt_score) + (0.4 * st_score)
+        is_chaos = yz_vals > 0.9
+
+        enter_long = (
+            (st_score >= ST_BULL_THRESHOLD)
+            & (lt_score >= LT_BULL_THRESHOLD)
+            & (confidence >= ENTER_CONF_MIN)
+            & (~is_chaos)
+            & (mr_score >= -90.0)
+        )
+        hold_long = (
+            (lt_score > -LT_BULL_THRESHOLD)
+            & (confidence >= HOLD_CONF_MIN)
+            & (directional_bias > 0.0)
+            & (~is_chaos)
+        )
+
+        close_arr = pd.to_numeric(ohlcv["close"].reindex(features.index), errors="coerce").to_numpy(dtype=float)
+        normalized_index = features.index.normalize()
+        start_idx = 260
+        end_idx = len(features) - 1
         position = 0
+        active_long: list[int] = []
 
-        for i in range(260, len(features) - 1):
-            idx = features.index[i]
-            next_idx = features.index[i + 1]
-            srow = scores.loc[idx]
-
-            st_score = float(srow[ST_COLS].mean())
-            lt_score = float(srow[LT_COLS].mean())
-            mr_score = float(srow[MR_COLS].mean())
-            confidence = min(row_conf(srow, ST_COLS), row_conf(srow, LT_COLS))
-
-            yz_val = float(features.loc[idx, "yz_vol_20"]) if "yz_vol_20" in features.columns else 0.0
-            atr_val = float(features.loc[idx, "atr_pct"]) if "atr_pct" in features.columns else 0.0
-
-            regime = "transition"
-            if yz_val > 0.9:
-                regime = "chaos"
-            elif atr_val > 80:
-                regime = "transition"
-            elif abs(st_score) < 20 and abs(lt_score) < 20:
-                regime = "range"
-
-            directional_bias = 0.45 * lt_score + 0.35 * st_score + 0.20 * mr_score
-            general_score = 0.6 * lt_score + 0.4 * st_score
-
-            enter_long = (
-                bull(st_score, ST_BULL_THRESHOLD)
-                and bull(lt_score, LT_BULL_THRESHOLD)
-                and confidence >= ENTER_CONF_MIN
-                and regime != "chaos"
-                and mr_score >= -90.0
-            )
-
-            hold_long = (
-                not bear(lt_score, LT_BULL_THRESHOLD)
-                and confidence >= HOLD_CONF_MIN
-                and directional_bias > 0.0
-                and regime != "chaos"
-            )
-
+        for i in range(start_idx, end_idx):
             if position == 0:
-                if enter_long:
+                if enter_long[i]:
                     position = 1
             elif position == 1:
-                if not hold_long:
+                if not hold_long[i]:
                     position = 0
+            active_long.append(position)
 
-            base_rank = 0.55 * lt_score + 0.30 * st_score + 0.15 * confidence
-            ret_next = float(ohlcv.loc[next_idx, "close"] / ohlcv.loc[idx, "close"] - 1.0)
+        active_long_arr = np.asarray(active_long, dtype=int)
+        row_slice = slice(start_idx, end_idx)
+        next_slice = slice(start_idx + 1, end_idx + 1)
+        ret_next = (close_arr[next_slice] / close_arr[row_slice]) - 1.0
+        tbl = pd.DataFrame(
+            {
+                "ts": normalized_index[next_slice],
+                "signal_ts": normalized_index[row_slice],
+                "close": close_arr[row_slice],
+                "active_long": active_long_arr,
+                "confidence": confidence[row_slice],
+                "yz_vol_20": yz_vals[row_slice],
+                "atr_pct": atr_vals[row_slice],
+                "general_score": general_score[row_slice],
+                "base_rank": (0.55 * lt_score[row_slice]) + (0.30 * st_score[row_slice]) + (0.15 * confidence[row_slice]),
+                "ret_next_1d": ret_next,
+                "st_score": st_score[row_slice],
+                "lt_score": lt_score[row_slice],
+            }
+        )
 
-            rows.append(
-                {
-                    "ts": pd.Timestamp(idx).normalize(),
-                    "close": float(ohlcv.loc[idx, "close"]),
-                    "active_long": position,
-                    "confidence": confidence,
-                    "yz_vol_20": yz_val,
-                    "atr_pct": atr_val,
-                    "general_score": general_score,
-                    "base_rank": base_rank,
-                    "ret_next_1d": ret_next,
-                    "st_score": st_score,
-                    "lt_score": lt_score,
-                }
-            )
-
-        out[symbol] = pd.DataFrame(rows).drop_duplicates(subset=["ts"]).set_index("ts").sort_index()
+        out[symbol] = tbl.drop_duplicates(subset=["ts"]).set_index("ts").sort_index()
 
     close_df = pd.concat({s: t["close"] for s, t in out.items()}, axis=1).sort_index()
     btc_proxy = close_df["BTCUSDT"] if "BTCUSDT" in close_df.columns else close_df.mean(axis=1)
@@ -489,6 +506,8 @@ def compute_window_summary(model_df: pd.DataFrame, start_dt: pd.Timestamp, prefi
 
 
 def main() -> None:
+    args = parse_args()
+
     print("Loading OHLCV...", flush=True)
     all_assets = {s: load_ohlcv_csv(DATA_DIR / f"{s}_1d.csv") for s in ALL_SYMBOLS}
 
@@ -500,6 +519,10 @@ def main() -> None:
 
     model_runs: Dict[str, pd.DataFrame] = {}
     variants = list(MODEL_CONFIGS.keys())
+    if args.only_model:
+        variants = [model_key for model_key in variants if model_key == args.only_model]
+        if not variants:
+            raise ValueError(f"Requested only-model not found in phase60 configs: {args.only_model}")
 
     for model_key in variants:
         print(f"Running {model_key}...", flush=True)
