@@ -1,0 +1,28 @@
+{
+  "schema_version": "research_os_mvp.v1",
+  "registry_id": "family_registry_template_v1",
+  "owner": "MRV1 AI LAB",
+  "constraints": {
+    "mode": "dev_only_research_os",
+    "live_trading": false,
+    "source_of_truth_mutation": false,
+    "strategy_logic": "placeholder_only"
+  },
+  "families": [
+    {
+      "family_id": "environment_health_probe",
+      "owner": "MRV1 AI LAB",
+      "status": "enabled",
+      "description": "Validate that the 24/7 Research OS runtime can scan, plan, queue, register, and write artifacts.",
+      "allowed_job_types": [
+        "validation_placeholder"
+      ],
+      "default_priority": 5,
+      "constraints": {
+        "live_trading": false,
+        "source_of_truth_mutation": false,
+        "artifact_scope": "outputs/research_os/dev_only/mvp"
+      }
+    }
+  ]
+}

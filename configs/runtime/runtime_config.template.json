@@ -1,0 +1,32 @@
+{
+  "schema_version": "research_os_mvp.v1",
+  "role": "pi_orchestrator",
+  "registry_path": "outputs/research_os/dev_only/mvp/registry/research_os_mvp.sqlite",
+  "artifact_root": "outputs/research_os/dev_only/mvp/artifacts",
+  "queue_backend": "memory",
+  "redis_url": "redis://localhost:6379/0",
+  "streams": {
+    "worker_jobs": "research_os:worker_jobs",
+    "worker_results": "research_os:worker_results"
+  },
+  "consumer_group": "research_os_pc_workers",
+  "consumer_name": "pc_worker_01",
+  "max_jobs_per_cycle": 1,
+  "openai": {
+    "enabled": false,
+    "model": "placeholder",
+    "prompt_template": "research_os_planner_placeholder",
+    "responses_api": "prepared_no_network_call"
+  },
+  "scanner_paths": [
+    "research_os",
+    "outputs/research_os/dev_only",
+    "configs/families/family_registry.template.json",
+    "configs/runtime/runtime_config.template.json"
+  ],
+  "scanner_env_keys": [
+    "COMPUTERNAME",
+    "USERNAME",
+    "PROCESSOR_ARCHITECTURE"
+  ]
+}

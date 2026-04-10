@@ -455,6 +455,90 @@
       "notes": "Dev-only non-authoritative cash-overstay diagnostics against phase67j_no_neo_main using deterministic constructive-window rules only."
     },
     {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_constructive_pilot_probe/",
+      "generated_by": [
+        "scripts/dev_only_constructive_pilot_exposure_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative constructive pilot persistence probe outputs against phase67j_no_neo_main. Uses a small deterministic BTC pilot only inside already-confirmed constructive windows."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/",
+      "generated_by": [
+        "scripts/dev_only_high_conviction_pre_activation_pilot_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative earlier high-conviction pre-activation pilot outputs against phase67j_no_neo_main. Uses one capped pilot sleeve only on baseline CASH days under fresh benchmark-plus-asset confirmation with clean handoff and disciplined exits."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/",
+      "generated_by": [
+        "scripts/dev_only_rearmed_high_conviction_pre_activation_pilot_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative confirmatory outputs for the rearmed high-conviction pre-activation pilot pass against phase67j_no_neo_main. Reuses the prior stack and allows at most one clean re-arm per broader constructive regime after a reset."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_probe/",
+      "generated_by": [
+        "scripts/dev_only_cost_aware_hysteretic_pilot_to_full_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative cost-aware hysteretic Pilot-to-Full probe outputs against phase67j_no_neo_main. Uses fixed 0.00/0.15/1.00 weights with no daily resizing and net/churn-first evaluation."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/",
+      "generated_by": [
+        "scripts/dev_only_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative confirmatory outputs for the cost-aware hysteretic Pilot-to-Full family against phase67j_no_neo_main. Replaces recapture recency with recapture-and-hold confirmation while preserving fixed 0.00/0.15/1.00 weights, hysteretic exits, and net/churn-first evaluation."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/",
+      "generated_by": [
+        "scripts/dev_only_l1_trend_filter_regime_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative one-sided BTC L1 trend-filter regime probe outputs against phase67j_no_neo_main. Uses one causal 126-day rolling window and one robust MAD lambda rule; no pilot state, persistence exposure logic, app/runtime change, leverage redesign, or parameter grid."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/",
+      "generated_by": [
+        "scripts/dev_only_breadth_ignition_regime_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative cross-sectional breadth ignition regime probe outputs against phase67j_no_neo_main. Uses fixed data/ohlcv liquid core breadth with one 20/120 trend formula, one causal 21-day EWMA smoothing rule, one 2/3 threshold rule, and one 3-day ignition rule; no pilot state, persistence exposure logic, app/runtime change, leverage redesign, BTC endpoint-slope estimation, or parameter grid."
+    },
+    {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "generated_by": [
         "scripts/phase68h_dynamic_leverage_ladder_candidate.py"

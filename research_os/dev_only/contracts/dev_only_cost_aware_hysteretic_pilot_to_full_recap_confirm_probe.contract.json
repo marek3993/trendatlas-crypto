@@ -1,0 +1,59 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe_contract",
+  "artifact_id": "dev_only_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+  "created_at_utc": "2026-04-10 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "mechanism_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm",
+  "compare_baseline": "phase67j_no_neo_main",
+  "compare_vs_previous_cost_aware_hysteretic_pilot_to_full": "dev_only_cost_aware_hysteretic_pilot_to_full_probe",
+  "mechanism_description": "One narrow confirmatory dev-only CASH -> PILOT -> FULL state-machine pass that keeps the prior fixed 0.00/0.15/1.00 weights, no-trade-band cost discipline, stronger full-upgrade stack, and hysteretic exits, while replacing 7-day recapture recency with a recapture event followed by two consecutive days where benchmark and pilot asset both hold above anchors.",
+  "state_machine": {
+    "states": [
+      "CASH",
+      "PILOT",
+      "FULL"
+    ],
+    "allowed_weights": [
+      0.0,
+      0.15,
+      1.0
+    ],
+    "pilot_entry_requires_baseline_cash": true,
+    "pilot_to_full_requires_stronger_confirmation": true,
+    "hysteretic_exit_required": true,
+    "daily_resizing_allowed": false,
+    "recapture_recency_replaced_by_recapture_and_hold": true,
+    "recapture_hold_days": 2
+  },
+  "required_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.summary.json",
+    "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.window_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.state_time.csv",
+    "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.cost_metrics.csv",
+    "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.quality.json"
+  ],
+  "forbidden_semantics": [
+    "winner_language",
+    "official_promotion",
+    "candidate_selection_true",
+    "official_edge_claim_true",
+    "tradability_language",
+    "leverage_redesign",
+    "broad_entry_softening",
+    "full_window_persistence",
+    "daily_rebalancing",
+    "parameter_sweep",
+    "recapture_recency_duplicate"
+  ],
+  "status": "defined_dev_only_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe"
+}

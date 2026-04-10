@@ -15,6 +15,7 @@ SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
 OUTPUTS_DIR = ROOT / "outputs" / "execution"
 APP_EXPORTS_DIR = OUTPUTS_DIR / "app_exports"
 FRESHNESS_DIR = OUTPUTS_DIR / "freshness"
+APP_SNAPSHOT_DIR = OUTPUTS_DIR / "app_snapshot"
 LOGS_DIR = OUTPUTS_DIR / "logs"
 
 PATHS_REGISTRY_PATH = SOURCE_OF_TRUTH_DIR / "paths_registry.json"
@@ -24,12 +25,15 @@ REPORT_PATH = OUTPUTS_DIR / "refresh_pipeline" / "materialize_execution_app_expo
 MANIFEST_PATH = OUTPUTS_DIR / "refresh_pipeline" / "materialize_execution_app_exports_manifest.json"
 QUALITY_PATH = OUTPUTS_DIR / "refresh_pipeline" / "materialize_execution_app_exports_quality.json"
 LOG_PATH = LOGS_DIR / "materialize_execution_app_exports.log"
+APP_PRODUCT_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_product_snapshot.json"
+APP_RUNTIME_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_runtime_snapshot.json"
 
 REQUIRED_ARTIFACT_KEYS = [
     "phase67j_winner_paper",
     "phase67j_live_status",
     "phase66g_core_paper",
     "phase66g_live_status",
+    "phase66g_trend_barometer_history",
     "app_freshness_report",
 ]
 
@@ -44,6 +48,19 @@ REQUIRED_APP_LIVE_MODE_FIELDS = [
 
 PHASE68I_SUMMARY_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_summary.csv"
 PHASE68I_PAPER_INPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_paper.csv"
+PHASE67J_PAPER_PATH = APP_EXPORTS_DIR / "phase67j_no_neo_main_paper.csv"
+PHASE66G_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase66g_live_status.csv"
+PHASE66G_TREND_HISTORY_PATH = APP_EXPORTS_DIR / "phase66g_trend_barometer_history.csv"
+APP_FRESHNESS_REPORT_PATH = FRESHNESS_DIR / "app_freshness_report.json"
+BENCHMARK_BTC_SOURCE_PATH = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
+EXECUTION_STATUS_PATH = OUTPUTS_DIR / "live_status" / "execution_status.json"
+ACCOUNT_SNAPSHOT_PATH = OUTPUTS_DIR / "read_only" / "hyperliquid_account_snapshot.json"
+RUNTIME_HEALTH_PATH = OUTPUTS_DIR / "runtime_health" / "latest_runtime_health.json"
+DRY_RUN_DECISION_PATH = OUTPUTS_DIR / "dry_run" / "latest_dry_run_decision.json"
+REAL_ORDER_GATE_PATH = OUTPUTS_DIR / "live_gate" / "latest_real_order_gate_decision.json"
+EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
+LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
+TRADING_OPERATION_MODE_PATH = ROOT / "execution" / "config" / "trading_operation_mode.json"
 PHASE68H_SUMMARY_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "phase68h_dynamic_leverage_ladder_summary.csv"
 PHASE68H_DYNAMIC_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "papers" / "phase68h_dynamic_ladder_candidate_paper.csv"
 PHASE68H_SCRIPT_PATH = ROOT / "scripts" / "phase68h_dynamic_leverage_ladder_candidate.py"
@@ -83,9 +100,25 @@ def read_json(path: Path) -> dict[str, Any]:
     raise RuntimeError("unreachable")
 
 
+def read_json_optional(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
 def ensure_dirs() -> None:
     APP_EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
     FRESHNESS_DIR.mkdir(parents=True, exist_ok=True)
+    APP_SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
     (OUTPUTS_DIR / "refresh_pipeline").mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -157,6 +190,29 @@ def safe_stat(path: Path) -> dict[str, Any]:
             stat.st_mtime, tz=timezone.utc
         ).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
     }
+
+
+def path_for_app(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path.resolve())
+
+
+def source_metadata(path: Path, source_type: str, owner: str = "DATA") -> dict[str, Any]:
+    metadata: dict[str, Any] = {
+        "path": path_for_app(path),
+        "source_type": source_type,
+        "owner": owner,
+        "exists": path.exists(),
+    }
+    if path.exists():
+        stat = path.stat()
+        metadata["size_bytes"] = stat.st_size
+        metadata["modified_utc"] = datetime.fromtimestamp(
+            stat.st_mtime, tz=timezone.utc
+        ).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return metadata
 
 
 def load_app_live_mode_contract() -> dict[str, str]:
@@ -623,6 +679,377 @@ def materialize_phase67j_live_status_with_contract(
     }
 
 
+def csv_json_value(raw: Any) -> Any:
+    text = str(raw or "").strip()
+    if text == "":
+        return None
+    lowered = text.lower()
+    if lowered in {"nan", "none", "null"}:
+        return None
+    if lowered == "true":
+        return True
+    if lowered == "false":
+        return False
+    try:
+        return int(text)
+    except ValueError:
+        pass
+    try:
+        return float(text)
+    except ValueError:
+        return text
+
+
+def normalized_row(row: dict[str, Any], fields: list[str]) -> dict[str, Any]:
+    return {field: csv_json_value(row.get(field)) for field in fields if field in row}
+
+
+def read_optional_single_csv_row(path: Path) -> dict[str, str]:
+    if not path.exists():
+        return {}
+    _, rows = read_csv_rows(path)
+    if not rows:
+        return {}
+    return rows[0]
+
+
+def read_last_csv_row(path: Path) -> dict[str, str]:
+    _, rows = read_csv_rows(path)
+    if not rows:
+        fail(f"No rows found in {path}")
+    return rows[-1]
+
+
+def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_payload: dict[str, Any]) -> dict[str, Any]:
+    snapshot_summary = snapshot_payload.get("summary", {}) if isinstance(snapshot_payload, dict) else {}
+    snapshot_source = snapshot_payload.get("source", {}) if isinstance(snapshot_payload, dict) else {}
+    summary: dict[str, Any] = {
+        "status": status_payload.get("status") or ("ok" if snapshot_payload else None),
+        "provider": status_payload.get("provider") or snapshot_source.get("provider"),
+        "account_address": status_payload.get("account_address") or snapshot_payload.get("account_address"),
+        "as_of_utc": status_payload.get("as_of_utc") or snapshot_payload.get("as_of_utc"),
+        "mode": status_payload.get("mode") or snapshot_payload.get("execution_mode"),
+        "trading_enabled": status_payload.get("trading_enabled") if "trading_enabled" in status_payload else snapshot_payload.get("trading_enabled"),
+        "kill_switch": status_payload.get("kill_switch") if "kill_switch" in status_payload else snapshot_payload.get("kill_switch"),
+        "account_equity_usd": status_payload.get("account_equity_usd") or snapshot_summary.get("account_equity_usd"),
+        "available_balance_usd": status_payload.get("available_balance_usd") or snapshot_summary.get("available_balance_usd"),
+        "balance_source_of_truth": status_payload.get("balance_source_of_truth") or snapshot_summary.get("balance_source_of_truth"),
+        "positions_count": status_payload.get("positions_count") if "positions_count" in status_payload else snapshot_summary.get("positions_count"),
+        "open_orders_count": status_payload.get("open_orders_count") if "open_orders_count" in status_payload else snapshot_summary.get("open_orders_count"),
+        "recent_fills_count": status_payload.get("recent_fills_count") if "recent_fills_count" in status_payload else snapshot_summary.get("recent_fills_count"),
+        "current_position": status_payload.get("current_position") or "CASH",
+        "open_position": status_payload.get("open_position"),
+        "last_action": status_payload.get("last_action"),
+        "last_action_result": status_payload.get("last_action_result"),
+        "error": status_payload.get("error"),
+    }
+    return summary
+
+
+def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, Any]:
+    summary_row = read_single_csv_row(PHASE68I_SUMMARY_OUTPUT_PATH)
+    main_paper_row = read_last_csv_row(PHASE68I_PAPER_INPUT_PATH)
+    trend_row = read_optional_single_csv_row(PHASE66G_LIVE_STATUS_PATH)
+    freshness_payload = read_json_optional(APP_FRESHNESS_REPORT_PATH)
+
+    metric_fields = [
+        "model",
+        "total_return_pct",
+        "total_return_pct_gross",
+        "total_return_pct_net",
+        "cagr_pct",
+        "cagr_pct_gross",
+        "cagr_pct_net",
+        "max_drawdown_pct",
+        "max_drawdown_pct_gross",
+        "max_drawdown_pct_net",
+        "since2023_cagr_pct",
+        "since2023_cagr_pct_gross",
+        "since2023_cagr_pct_net",
+        "since2025_cagr_pct",
+        "since2025_cagr_pct_gross",
+        "since2025_cagr_pct_net",
+        "sharpe",
+        "sortino",
+        "switch_count",
+        "cash_days_pct",
+        "btc_days_pct",
+        "trading_fees_total_pct",
+        "funding_total_pct",
+        "borrow_cost_total_pct",
+        "tradable_slippage_cost_total_pct",
+        "fee_side_mode",
+        "taker_fee_bps",
+        "maker_fee_bps",
+        "staking_discount_pct",
+        "referral_discount_pct",
+        "effective_trading_fee_bps",
+    ]
+    trend_fields = [
+        "model",
+        "latest_available_date",
+        "current_asset",
+        "latest_decision_date",
+        "latest_period_start",
+        "latest_period_end",
+        "next_rebalance_date",
+        "latest_keep_reason",
+        "candidate_assets_loaded",
+        "failed_assets_count",
+        "suspended_assets_now",
+        "trend_score",
+        "trend_state_label",
+        "buy_threshold",
+        "prev_trend_score",
+        "crossed_up_today",
+        "crossed_down_today",
+        "trend_input_raw",
+        "trend_threshold_raw",
+        "trend_band",
+        "trend_score_raw",
+        "trend_calc_date",
+    ]
+    live_fields = [
+        "date",
+        "portfolio_held_asset",
+        "baseline_held_asset",
+        "tradable_governed_asset",
+        "trend_state_label",
+        "trend_score",
+        "buy_threshold",
+        "crossed_up_today",
+        "crossed_down_today",
+        "cash_day",
+        "leverage_state_reason",
+    ]
+
+    strategy_last_closed_day = parse_iso_date_required(main_paper_row.get("date"), f"{PHASE68I_PAPER_INPUT_PATH} date")
+    freshness_target_closed_day = freshness_payload.get("latest_closed_utc_date")
+    app_export_generated_at_utc = utc_now_iso()
+    live_public_state = normalized_row(main_paper_row, live_fields)
+    live_public_state.update({
+        "model": "phase68i_dynamic_ladder_candidate",
+        "held_asset_public": csv_json_value(main_paper_row.get("portfolio_held_asset")),
+        "held_state_label": csv_json_value(main_paper_row.get("trend_state_label")),
+        "execution_state": csv_json_value(main_paper_row.get("portfolio_held_asset")),
+        **app_live_mode_contract,
+    })
+
+    source_sections = {
+        "main_strategy_metrics": source_metadata(PHASE68I_SUMMARY_OUTPUT_PATH, "canonical_app_summary"),
+        "strategy_last_closed_day": {
+            **source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
+            "source_field": "last_row.date",
+        },
+        "freshness_target_closed_day": {
+            **source_metadata(APP_FRESHNESS_REPORT_PATH, "canonical_product_freshness_report"),
+            "source_field": "latest_closed_utc_date",
+        },
+        "app_export_generated_at_utc": {
+            **source_metadata(APP_PRODUCT_SNAPSHOT_PATH, "app_product_snapshot"),
+            "source_field": "generated_by_materializer_clock",
+        },
+        "live_public_state": {
+            **source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
+            "source_fields": live_fields,
+        },
+        "freshness": source_metadata(APP_FRESHNESS_REPORT_PATH, "canonical_product_freshness_report"),
+        "trend_barometer_summary": source_metadata(PHASE66G_LIVE_STATUS_PATH, "canonical_trend_live_status"),
+        "chart_source_paths": {
+            "main_strategy": source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
+            "reference_strategy": source_metadata(PHASE67J_PAPER_PATH, "canonical_app_paper"),
+        },
+        "benchmark_source_path": source_metadata(BENCHMARK_BTC_SOURCE_PATH, "benchmark_ohlcv"),
+        "trend_history_source_path": source_metadata(PHASE66G_TREND_HISTORY_PATH, "canonical_trend_history"),
+    }
+
+    return {
+        "snapshot_type": "app_product_snapshot",
+        "schema_version": 1,
+        "app_export_generated_at_utc": app_export_generated_at_utc,
+        "generated_at_utc": app_export_generated_at_utc,
+        "product_name": "TrendAtlas Crypto",
+        "page_scope": "homepage",
+        "main_strategy_model": "phase68i_dynamic_ladder_candidate",
+        "reference_strategy_model": "phase67j_no_neo_main",
+        "benchmark": "BTC",
+        "strategy_last_closed_day": strategy_last_closed_day,
+        "freshness_target_closed_day": freshness_target_closed_day,
+        "latest_closed_day": strategy_last_closed_day,
+        "freshness": {
+            "status": freshness_payload.get("status"),
+            "generated_at_utc": freshness_payload.get("generated_at_utc"),
+            "latest_closed_utc_date": freshness_target_closed_day,
+            "checks": freshness_payload.get("checks", {}),
+            "warnings": freshness_payload.get("warnings", []),
+            "errors": freshness_payload.get("errors", []),
+        },
+        "main_strategy_metrics": normalized_row(summary_row, metric_fields),
+        "live_public_state": live_public_state,
+        "trend_barometer_summary": normalized_row(trend_row, trend_fields),
+        "chart_source_paths": {
+            "main_strategy": path_for_app(PHASE68I_PAPER_INPUT_PATH),
+            "reference_strategy": path_for_app(PHASE67J_PAPER_PATH),
+        },
+        "benchmark_source_path": path_for_app(BENCHMARK_BTC_SOURCE_PATH),
+        "trend_history_source_path": path_for_app(PHASE66G_TREND_HISTORY_PATH),
+        "display_names": {
+            "phase68i_dynamic_ladder_candidate": {
+                "sk": "Hlavna strategia",
+                "en": "Main strategy",
+            },
+            "phase67j_no_neo_main": {
+                "sk": "Referencna strategia",
+                "en": "Reference strategy",
+            },
+            "phase66g_production_soft_filters": {
+                "sk": "Trend / core vrstva",
+                "en": "Trend / core layer",
+            },
+        },
+        "source_metadata": source_sections,
+    }
+
+
+def build_runtime_snapshot() -> dict[str, Any]:
+    status_payload = read_json_optional(EXECUTION_STATUS_PATH)
+    account_snapshot_payload = read_json_optional(ACCOUNT_SNAPSHOT_PATH)
+    runtime_health_payload = read_json_optional(RUNTIME_HEALTH_PATH)
+    dry_run_payload = read_json_optional(DRY_RUN_DECISION_PATH)
+    gate_payload = read_json_optional(REAL_ORDER_GATE_PATH)
+    execution_mode_payload = read_json_optional(EXECUTION_MODE_CONFIG_PATH)
+    live_order_policy_payload = read_json_optional(LIVE_ORDER_POLICY_PATH)
+    trading_operation_mode_payload = read_json_optional(TRADING_OPERATION_MODE_PATH)
+
+    account_summary = build_runtime_account_summary(status_payload, account_snapshot_payload)
+    runtime_last_sync_utc = runtime_health_payload.get("last_success_utc")
+    account_snapshot_as_of_utc = account_summary.get("as_of_utc")
+    dry_run_generated_at_utc = dry_run_payload.get("generated_at_utc")
+    gate_generated_at_utc = gate_payload.get("generated_at_utc")
+    app_runtime_generated_at_utc = utc_now_iso()
+    execution_mode_posture = {
+        "mode": execution_mode_payload.get("mode"),
+        "trading_enabled": execution_mode_payload.get("trading_enabled"),
+        "dry_run_enabled": execution_mode_payload.get("dry_run_enabled"),
+        "kill_switch": execution_mode_payload.get("kill_switch"),
+        "source_path": path_for_app(EXECUTION_MODE_CONFIG_PATH),
+        "trading_operation_mode": {
+            "mode": trading_operation_mode_payload.get("mode"),
+            "updated_at_utc": trading_operation_mode_payload.get("updated_at_utc"),
+            "updated_by": trading_operation_mode_payload.get("updated_by"),
+            "fail_closed": trading_operation_mode_payload.get("fail_closed"),
+            "error": trading_operation_mode_payload.get("error"),
+            "source_path": path_for_app(TRADING_OPERATION_MODE_PATH),
+        },
+    }
+
+    return {
+        "snapshot_type": "app_runtime_snapshot",
+        "schema_version": 1,
+        "app_export_generated_at_utc": app_runtime_generated_at_utc,
+        "generated_at_utc": app_runtime_generated_at_utc,
+        "page_scope": "account_page",
+        "runtime_last_sync_utc": runtime_last_sync_utc,
+        "account_snapshot_as_of_utc": account_snapshot_as_of_utc,
+        "dry_run_generated_at_utc": dry_run_generated_at_utc,
+        "gate_generated_at_utc": gate_generated_at_utc,
+        "account_observability_contract": {
+            "enabled": True,
+            "read_mode": "read_only_operational_view",
+            "ui_sections": [
+                "proof_banner",
+                "overview",
+                "balances",
+                "positions",
+                "activity",
+            ],
+        },
+        "execution_status": {
+            "status": status_payload.get("status"),
+            "as_of_utc": status_payload.get("as_of_utc"),
+            "mode": status_payload.get("mode"),
+            "trading_enabled": status_payload.get("trading_enabled"),
+            "kill_switch": status_payload.get("kill_switch"),
+            "guardrails_ok": status_payload.get("guardrails_ok"),
+            "stale_signal": status_payload.get("stale_signal"),
+            "signal_id": status_payload.get("signal_id"),
+            "target_asset": status_payload.get("target_asset"),
+            "error": status_payload.get("error"),
+        },
+        "account_snapshot_summary": account_summary,
+        "dry_run_summary": {
+            "generated_at_utc": dry_run_generated_at_utc,
+            "signal_id": dry_run_payload.get("signal_id"),
+            "strategy_model": dry_run_payload.get("strategy_model"),
+            "as_of_source": dry_run_payload.get("as_of_source"),
+            "target_asset": dry_run_payload.get("target_asset"),
+            "target_regime": dry_run_payload.get("target_regime"),
+            "current_state": dry_run_payload.get("current_state"),
+            "open_orders_count": dry_run_payload.get("open_orders_count"),
+            "duplicate_order_risk": dry_run_payload.get("duplicate_order_risk"),
+            "stale_signal": dry_run_payload.get("stale_signal"),
+            "recommended_action": dry_run_payload.get("recommended_action"),
+            "decision_reason": dry_run_payload.get("decision_reason"),
+            "simulated_order": dry_run_payload.get("simulated_order", {}),
+            "guardrails": dry_run_payload.get("guardrails", {}),
+        },
+        "gate_summary": {
+            "generated_at_utc": gate_generated_at_utc,
+            "signal_id": gate_payload.get("signal_id"),
+            "target_asset": gate_payload.get("target_asset"),
+            "mode": gate_payload.get("mode"),
+            "approval_gate_status": gate_payload.get("approval_gate_status"),
+            "would_place_real_order": gate_payload.get("would_place_real_order"),
+            "real_orders_enabled": gate_payload.get("real_orders_enabled"),
+            "status": gate_payload.get("status"),
+            "block_reasons": gate_payload.get("block_reasons", []),
+            "checks": gate_payload.get("checks", {}),
+        },
+        "runtime_health_summary": {
+            "runtime_type": runtime_health_payload.get("runtime_type"),
+            "runtime_label": runtime_health_payload.get("runtime_label"),
+            "run_id": runtime_health_payload.get("run_id"),
+            "mode": runtime_health_payload.get("mode"),
+            "run_active": runtime_health_payload.get("run_active"),
+            "status": runtime_health_payload.get("status"),
+            "error": runtime_health_payload.get("error"),
+            "stop_reason": runtime_health_payload.get("stop_reason"),
+            "started_at_utc": runtime_health_payload.get("started_at_utc"),
+            "updated_at_utc": runtime_health_payload.get("updated_at_utc"),
+            "finished_at_utc": runtime_health_payload.get("finished_at_utc"),
+            "last_success_utc": runtime_health_payload.get("last_success_utc"),
+            "outputs_possibly_stale_or_partial": runtime_health_payload.get("outputs_possibly_stale_or_partial"),
+            "execution_mode_guardrail": runtime_health_payload.get("execution_mode_guardrail")
+            or ((runtime_health_payload.get("preflight_check") or {}).get("execution_mode_guardrail") if isinstance(runtime_health_payload.get("preflight_check"), dict) else {}),
+        },
+        "execution_mode_posture": execution_mode_posture,
+        "live_order_policy_summary": {
+            "allow_live_orders": live_order_policy_payload.get("allow_live_orders"),
+            "manual_approval_required": live_order_policy_payload.get("manual_approval_required"),
+            "require_kill_switch_off": live_order_policy_payload.get("require_kill_switch_off"),
+            "max_order_notional_usd": live_order_policy_payload.get("max_order_notional_usd"),
+            "allowed_assets": live_order_policy_payload.get("allowed_assets", []),
+            "allowed_approval_gate_statuses": live_order_policy_payload.get("allowed_approval_gate_statuses", []),
+        },
+        "last_wallet_sync": account_snapshot_as_of_utc,
+        "source_metadata": {
+            "execution_status": source_metadata(EXECUTION_STATUS_PATH, "execution_status"),
+            "account_snapshot_summary": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
+            "dry_run_summary": source_metadata(DRY_RUN_DECISION_PATH, "dry_run_decision"),
+            "gate_summary": source_metadata(REAL_ORDER_GATE_PATH, "real_order_gate_decision"),
+            "runtime_health_summary": source_metadata(RUNTIME_HEALTH_PATH, "runtime_health"),
+            "execution_mode_posture": source_metadata(EXECUTION_MODE_CONFIG_PATH, "execution_mode_config"),
+            "live_order_policy_summary": source_metadata(LIVE_ORDER_POLICY_PATH, "live_order_policy_config"),
+            "trading_operation_mode": source_metadata(TRADING_OPERATION_MODE_PATH, "trading_operation_mode_config"),
+            "last_wallet_sync": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
+            "runtime_last_sync_utc": source_metadata(RUNTIME_HEALTH_PATH, "runtime_health"),
+            "account_snapshot_as_of_utc": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
+            "dry_run_generated_at_utc": source_metadata(DRY_RUN_DECISION_PATH, "dry_run_decision"),
+            "gate_generated_at_utc": source_metadata(REAL_ORDER_GATE_PATH, "real_order_gate_decision"),
+        },
+    }
+
+
 def main() -> None:
     ensure_dirs()
     started_at = utc_now_iso()
@@ -733,6 +1160,24 @@ def main() -> None:
                 log(f"[OK] already present: {artifact_key} -> {canonical_path}")
             continue
 
+        if (
+            artifact_key in {"app_freshness_report", "phase66g_trend_barometer_history"}
+            and source_path is not None
+            and canonical_path.exists()
+            and canonical_path.is_file()
+            and source_path.stat().st_mtime > canonical_path.stat().st_mtime
+        ):
+            copy_result = copy_plain_artifact(source_path, canonical_path)
+            copied_count += 1
+            row.update(copy_result)
+            row["status"] = "refreshed_from_newer_legacy_alias"
+            row["refresh_reason"] = "legacy_alias_mtime_newer_than_canonical"
+            report_rows.append(row)
+            log(f"[REFRESHED] {artifact_key}")
+            log(f"            source={source_path}")
+            log(f"            target={canonical_path}")
+            continue
+
         if canonical_path.exists() and canonical_path.is_file():
             already_present_count += 1
             row["status"] = "already_present"
@@ -760,6 +1205,28 @@ def main() -> None:
     transformed_count += 1
     log(f"[MATERIALIZED] phase68i_dynamic_ladder_candidate_summary")
     log(f"              target={PHASE68I_SUMMARY_OUTPUT_PATH}")
+
+    product_snapshot = build_product_snapshot(app_live_mode_contract)
+    runtime_snapshot = build_runtime_snapshot()
+    write_json(APP_PRODUCT_SNAPSHOT_PATH, product_snapshot)
+    write_json(APP_RUNTIME_SNAPSHOT_PATH, runtime_snapshot)
+    transformed_count += 2
+    report_rows.extend([
+        {
+            "artifact_key": "app_product_snapshot",
+            "status": "snapshot_written",
+            "output_path": str(APP_PRODUCT_SNAPSHOT_PATH),
+            "output_info": safe_stat(APP_PRODUCT_SNAPSHOT_PATH),
+        },
+        {
+            "artifact_key": "app_runtime_snapshot",
+            "status": "snapshot_written",
+            "output_path": str(APP_RUNTIME_SNAPSHOT_PATH),
+            "output_info": safe_stat(APP_RUNTIME_SNAPSHOT_PATH),
+        },
+    ])
+    log(f"[MATERIALIZED] app_product_snapshot -> {APP_PRODUCT_SNAPSHOT_PATH}")
+    log(f"[MATERIALIZED] app_runtime_snapshot -> {APP_RUNTIME_SNAPSHOT_PATH}")
 
     hard_required = [
         "phase67j_winner_paper",
@@ -807,6 +1274,8 @@ def main() -> None:
         "contract_ready_after_materialization": len(hard_required_missing) == 0,
         "app_live_mode_fields_written": True,
         "phase68i_summary_written": PHASE68I_SUMMARY_OUTPUT_PATH.exists(),
+        "app_product_snapshot_written": APP_PRODUCT_SNAPSHOT_PATH.exists(),
+        "app_runtime_snapshot_written": APP_RUNTIME_SNAPSHOT_PATH.exists(),
     }
 
     manifest = {
@@ -824,6 +1293,8 @@ def main() -> None:
             str(QUALITY_PATH.resolve()),
             str(MANIFEST_PATH.resolve()),
             str(PHASE68I_SUMMARY_OUTPUT_PATH.resolve()),
+            str(APP_PRODUCT_SNAPSHOT_PATH.resolve()),
+            str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
         ],
         "status": report["status"],
     }

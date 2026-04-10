@@ -1,0 +1,70 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_l1_trend_filter_regime_probe_contract",
+  "artifact_id": "dev_only_l1_trend_filter_regime_probe",
+  "created_at_utc": "2026-04-10 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "l1_trend_filter_regime_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "mechanism_id": "one_sided_btc_l1_trend_filter_regime",
+  "compare_baseline": "phase67j_no_neo_main",
+  "mechanism_description": "One narrow dev-only BTC regime-estimation probe that uses a causal one-sided rolling L1 trend filter on BTC log-return slopes as an earlier risk-on permission signal against phase67j_no_neo_main.",
+  "state_rule": {
+    "baseline_risk_days_unchanged": true,
+    "baseline_cash_days_may_enter_l1_btc_risk": true,
+    "l1_btc_risk_weight": 1.0,
+    "entry_requires": [
+      "baseline executed_regime is CASH",
+      "causal trailing-window L1-filtered BTC endpoint slope is greater than 0",
+      "existing hard BTC risk-off invalidation is false"
+    ],
+    "exit_requires": [
+      "baseline handoff to risk-on",
+      "causal L1-filtered endpoint slope is no longer greater than 0",
+      "existing hard BTC risk-off invalidation becomes true"
+    ],
+    "pilot_state_allowed": false,
+    "pilot_to_full_ladder_allowed": false,
+    "persistence_exposure_logic_allowed": false,
+    "parameter_grid_allowed": false
+  },
+  "l1_filter": {
+    "input": "BTCUSDT daily close",
+    "transform": "log price and daily log-return slopes",
+    "rolling_window_days": 126,
+    "one_sided": true,
+    "lambda_rule": "For each causal 126-day BTC window, compute sigma as 1.4826 * MAD of daily BTC log returns in that window; set lambda = 2.0 * sigma * sqrt(2 * log(125)) for the 125-slope fused-L1 problem.",
+    "lambda_sweep_allowed": false
+  },
+  "required_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.summary.json",
+    "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.window_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.state_time.csv",
+    "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.cost_metrics.csv",
+    "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.quality.json"
+  ],
+  "forbidden_semantics": [
+    "winner_language",
+    "official_promotion",
+    "candidate_selection_true",
+    "official_edge_claim_true",
+    "tradability_language",
+    "source_of_truth_mutation",
+    "app_runtime_change",
+    "leverage_redesign",
+    "broad_family_churn",
+    "parameter_grid",
+    "brute_force_lambda_sweep",
+    "pilot_state",
+    "pilot_to_full_ladder",
+    "persistence_exposure_logic"
+  ],
+  "status": "defined_dev_only_l1_trend_filter_regime_probe"
+}

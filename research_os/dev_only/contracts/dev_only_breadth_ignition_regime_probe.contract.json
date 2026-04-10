@@ -1,0 +1,74 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_breadth_ignition_regime_probe_contract",
+  "artifact_id": "dev_only_breadth_ignition_regime_probe",
+  "created_at_utc": "2026-04-10 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "breadth_ignition_regime_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "mechanism_id": "cross_sectional_breadth_ignition_regime",
+  "compare_baseline": "phase67j_no_neo_main",
+  "secondary_context_only": "phase68i_dynamic_ladder_candidate",
+  "mechanism_description": "One narrow dev-only cross-sectional breadth ignition regime probe using stable liquid participation as an earlier risk-on permission signal against phase67j_no_neo_main.",
+  "state_rule": {
+    "baseline_risk_days_unchanged": true,
+    "baseline_cash_days_may_enter_breadth_btc_risk": true,
+    "breadth_btc_risk_weight": 1.0,
+    "entry_requires": [
+      "baseline executed_regime is CASH",
+      "causal smoothed breadth ignition is ON",
+      "existing hard BTC risk-off invalidation is false"
+    ],
+    "exit_requires": [
+      "baseline handoff to risk-on",
+      "causal breadth ignition turns OFF",
+      "existing hard BTC risk-off invalidation becomes true"
+    ],
+    "pilot_state_allowed": false,
+    "pilot_to_full_ladder_allowed": false,
+    "persistence_exposure_logic_allowed": false,
+    "daily_sizing_change_allowed": false,
+    "leverage_change_allowed": false,
+    "parameter_grid_allowed": false
+  },
+  "breadth_signal": {
+    "universe_definition": "Fixed liquid core universe from data/ohlcv only: ADA, AVAX, BNB, BTC, DOGE, DOT, ETH, LINK, LTC, SOL, TRX, XRP. An asset is daily eligible only after its own 120-day moving average is available; the breadth signal is valid only when at least 8 of the 12 fixed assets are eligible.",
+    "breadth_formula": "For each date, breadth = count(eligible assets with close > own 120-day SMA and own 20-day SMA > own 120-day SMA) / count(eligible assets).",
+    "smoothing_rule": "Smooth daily breadth with one causal EWMA using span=21 trading days, adjust=false, and min_periods=21.",
+    "threshold_rule": "Breadth ignition candidate is true when causal smoothed breadth is at least 2/3, with the fixed-universe minimum eligibility rule already satisfied.",
+    "persistence_rule": "Ignition turns ON only after the threshold candidate is true for 3 consecutive available days.",
+    "sweep_allowed": false
+  },
+  "required_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.summary.json",
+    "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.window_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.state_time.csv",
+    "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.cost_metrics.csv",
+    "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.quality.json"
+  ],
+  "forbidden_semantics": [
+    "winner_language",
+    "official_promotion",
+    "candidate_selection_true",
+    "official_edge_claim_true",
+    "tradability_language",
+    "source_of_truth_mutation",
+    "app_runtime_change",
+    "leverage_redesign",
+    "broad_family_churn",
+    "parameter_grid",
+    "generic_sweep",
+    "pilot_state",
+    "pilot_to_full_ladder",
+    "persistence_exposure_logic",
+    "btc_endpoint_slope_estimator"
+  ],
+  "status": "defined_dev_only_breadth_ignition_regime_probe"
+}

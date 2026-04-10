@@ -11,7 +11,6 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 import sys
-from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent
@@ -46,120 +45,17 @@ st.set_page_config(page_title="TrendAtlas Crypto", layout="wide")
 
 ROOT = Path(__file__).resolve().parent
 OUTPUTS = ROOT / "outputs"
-BTC_FILE = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
-DEFAULT_EXECUTION_STATUS_PATH = "outputs/execution/live_status/execution_status.json"
-DEFAULT_ACCOUNT_SNAPSHOT_PATH = "outputs/execution/read_only/hyperliquid_account_snapshot.json"
-DEFAULT_RUNTIME_HEALTH_PATH = "outputs/execution/runtime_health/latest_runtime_health.json"
-DEFAULT_DRY_RUN_DECISION_PATH = "outputs/execution/dry_run/latest_dry_run_decision.json"
-DEFAULT_REAL_ORDER_GATE_PATH = "outputs/execution/live_gate/latest_real_order_gate_decision.json"
-DEFAULT_APP_FRESHNESS_REPORT_PATH = "outputs/app_freshness_verification/app_freshness_report.json"
-DEFAULT_APP_EXPORT_REFRESH_REPORT_PATH = "outputs/execution/refresh_pipeline/materialize_execution_app_exports_report.json"
-EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
-LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
+APP_PRODUCT_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "app_product_snapshot.json"
+APP_RUNTIME_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json"
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 APP_DISPLAY_TIMEZONE = ZoneInfo("Europe/Bratislava")
-BTC_LIVE_TICKER_24H_URL = (
-    "https://api.coingecko.com/api/v3/simple/price"
-    "?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
-)
 
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
 
-EXPORT_CONTRACT_PATH = ROOT / "source_of_truth" / "export_contract.json"
-
-DEFAULT_SELECTOR = {
+APP_SELECTOR_DEFAULTS = {
     "product_name": "TrendAtlas Crypto",
-    "main_strategy_model": "phase68i_dynamic_ladder_candidate",
-    "reference_strategy_model": "phase67j_no_neo_main",
-    "benchmark": "BTC",
-    "main_model_key": "phase68i_dynamic_ladder_candidate",
-    "reference_model_key": "phase67j_no_neo_main",
-    "benchmark_label": "BTC",
-    "compare_model_keys": [
-        "phase68i_dynamic_ladder_candidate",
-        "phase67j_no_neo_main",
-    ],
-    "display_names": {
-        "phase68i_dynamic_ladder_candidate": {
-            "sk": "Hlavná stratégia",
-            "en": "Main strategy",
-        },
-        "phase67j_no_neo_main": {
-            "sk": "Referenčná stratégia",
-            "en": "Reference strategy",
-        },
-        "phase66g_production_soft_filters": {
-            "sk": "Trend / core vrstva",
-            "en": "Trend / core layer",
-        },
-    },
-    "model_sources": {
-        "phase68i_dynamic_ladder_candidate": {
-            "summary_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_summary.csv",
-            "paper_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
-            "live_status_path": "outputs/execution/app_exports/phase67j_live_status.csv",
-        },
-        "phase67j_no_neo_main": {
-            "summary_path": "outputs/execution/app_exports/phase67j_final_narrow_validation_summary.csv",
-            "paper_path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
-            "live_status_path": "outputs/execution/app_exports/phase67j_live_status.csv",
-        },
-        "phase66g_production_soft_filters": {
-            "summary_path": "outputs/execution/app_exports/phase66g_production_candidate_summary.csv",
-            "paper_path": "outputs/execution/app_exports/phase66g_production_soft_filters_paper.csv",
-            "live_status_path": "outputs/execution/app_exports/phase66g_live_status.csv",
-        },
-    },
-    "trend_barometer_source": {
-        "live_status_path": "outputs/execution/app_exports/phase66g_live_status.csv",
-        "history_path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
-        "model_key": "phase66g_production_soft_filters",
-    },
-    "app_live_mode_contract": {
-        "current": {
-            "live_truth_mode": "phase68i_dynamic_ladder_candidate",
-            "execution_profile": "dynamic_ladder",
-            "leverage_mode": "dynamic",
-            "deployment_candidate_label": "phase68i_dynamic_ladder_candidate",
-            "fallback_profile_label": "phase68g_66g_1p25x_candidate",
-            "approval_gate_status": "approved_and_applied",
-            "real_order_gate_status": "live_order_enabled_and_approved",
-            "real_order_eligible_status": "live_order_enabled_and_approved",
-        }
-    },
-    "account_observability_contract": {
-        "current": {
-            "enabled": True,
-            "status_json_path": DEFAULT_EXECUTION_STATUS_PATH,
-            "snapshot_json_path": DEFAULT_ACCOUNT_SNAPSHOT_PATH,
-            "read_mode": "read_only_operational_view",
-            "execution_proof_state_label": {
-                "sk": "Execution proof zatiaľ nie je oficiálne potvrdený",
-                "en": "Execution proof is not officially confirmed yet",
-            },
-            "placeholder_framing": {
-                "sk": (
-                    "Tento dashboard je read-only prevádzkový observability prehľad. "
-                    "Zobrazuje aktuálne operational artifacts bez tvrdenia, že live execution "
-                    "spoľahlivosť je už plne potvrdená."
-                ),
-                "en": (
-                    "This dashboard is a read-only operational observability view. "
-                    "It surfaces current operational artifacts without claiming that live "
-                    "execution reliability has already been fully confirmed."
-                ),
-            },
-            "ui_sections": [
-                "proof_banner",
-                "overview",
-                "balances",
-                "positions",
-                "activity",
-            ],
-        }
-    },
 }
 
 TEXT = {
@@ -172,8 +68,8 @@ TEXT = {
             "bez toho, aby museli celý deň manuálne sledovať grafy. Systém pracuje s fixným shortlistom, priebežne hodnotí "
             "relatívnu silu kandidátov a drží iba tú pozíciu, ktorá momentálne najlepšie spĺňa jeho pravidlá."
         ),
-        "home_title": "Snapshot v skratke",
-        "currently_holding": "Snapshot pozícia",
+        "home_title": "Prehľad",
+        "currently_holding": "Modelová pozícia",
         "trend_state": "Stav trendu",
         "trend_score": "Trend score",
         "buy_threshold": "Buy threshold",
@@ -205,10 +101,10 @@ TEXT = {
         "btc_days": "BTC Days",
         "strategy_last_update": "Dátum dát stratégie",
         "calc_title": "Koľko by bolo z 1 000 €",
-        "calc_desc": "Vyber dátum a pozri sa, akú hodnotu by mala modelová investícia 1 000 EUR v poslednom app snapshote.",
+        "calc_desc": "Vyber dátum a pozri sa, akú hodnotu by mala modelová investícia 1 000 EUR podľa posledných dostupných dát.",
         "calc_date": "Dátum vkladu",
         "calc_used_date": "Použitý dátum",
-        "calc_value": "Hodnota v snapshote",
+        "calc_value": "Modelová hodnota",
         "calc_return": "Zhodnotenie",
         "calc_note": "Je to modelový výpočet podľa equity krivky stratégie. Nie je to broker statement ani sľub budúceho výsledku.",
         "quick_examples": "Rýchle príklady",
@@ -366,8 +262,8 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
             "the market all day. The system works with a fixed shortlist, continuously evaluates relative strength, and holds "
             "only the position that currently fits its rules best."
         ),
-        "home_title": "Snapshot at a glance",
-        "currently_holding": "Snapshot holding",
+        "home_title": "Overview",
+        "currently_holding": "Model position",
         "trend_state": "Trend state",
         "trend_score": "Trend score",
         "buy_threshold": "Buy threshold",
@@ -399,10 +295,10 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "btc_days": "BTC Days",
         "strategy_last_update": "Strategy data date",
         "calc_title": "What 1,000 € would have become",
-        "calc_desc": "Choose a start date and see the value of a model-based EUR 1,000 investment in the latest app snapshot.",
+        "calc_desc": "Choose a start date and see the value of a model-based EUR 1,000 investment using the latest available data.",
         "calc_date": "Investment date",
         "calc_used_date": "Used date",
-        "calc_value": "Snapshot value",
+        "calc_value": "Model value",
         "calc_return": "Return",
         "calc_note": "This is a model-based calculation from the strategy equity curve. It is not a broker statement and not a promise of future results.",
         "quick_examples": "Quick examples",
@@ -554,7 +450,7 @@ Based on our tests, this approach is more stable and more profitable.
 
 METRIC_HELP = {
     "sk": {
-        "Snapshot pozícia": "Toto pole ide priamo z live CSV cez held_asset_public. App si ho sama nedopočítava.",
+        "Modelová pozícia": "Toto pole ide priamo z product snapshotu cez held_asset_public. App si ho sama nedopočítava.",
         "Stav trendu": "Textový stav exportovaný zo stratégie, nie vypočítaný v appke.",
         "Trend score": "Source-of-truth trend hodnota od -1 po +1. Pod nulou je trend pod buy hranou, nad nulou nad ňou.",
         "Buy threshold": "Hranica 0.0, ktorú používa core vrstva.",
@@ -575,7 +471,7 @@ METRIC_HELP = {
         "Posledný uzavretý deň": "Obchody vykonávame po uzavretí dňa, s jednodňovým oneskorením oproti signálu stratégie. Podľa testov je tento prístup stabilnejší a výnosnejší.",
     },
     "en": {
-        "Snapshot holding": "This field is read directly from held_asset_public in the live CSV.",
+        "Model position": "This field is read directly from held_asset_public in the product snapshot.",
         "Trend state": "Text state exported by the strategy layer.",
         "Trend score": "Source-of-truth trend value from -1 to +1.",
         "Buy threshold": "The 0.0 threshold used by the core layer.",
@@ -776,6 +672,49 @@ def load_json_optional(path_value: str | Path | None) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
+
+
+def load_required_app_snapshot(path: Path, expected_type: str) -> dict:
+    payload = load_json_optional(path)
+    if not payload:
+        st.error(f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: missing {path}")
+        st.stop()
+    if payload.get("snapshot_type") != expected_type:
+        st.error(
+            f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: "
+            f"{path} is not {expected_type}"
+        )
+        st.stop()
+    return payload
+
+
+def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot: dict) -> dict:
+    main_key = str(product_snapshot.get("main_strategy_model") or "").strip()
+    reference_key = str(product_snapshot.get("reference_strategy_model") or "").strip()
+    chart_paths = product_snapshot.get("chart_source_paths") if isinstance(product_snapshot.get("chart_source_paths"), dict) else {}
+    model_sources: dict[str, dict[str, str]] = {}
+    if main_key:
+        model_sources[main_key] = {"paper_path": str(chart_paths.get("main_strategy") or "").strip()}
+    if reference_key and chart_paths.get("reference_strategy"):
+        model_sources[reference_key] = {"paper_path": str(chart_paths.get("reference_strategy") or "").strip()}
+
+    return {
+        "product_name": product_snapshot.get("product_name") or APP_SELECTOR_DEFAULTS["product_name"],
+        "main_model_key": main_key,
+        "reference_model_key": reference_key,
+        "benchmark_label": product_snapshot.get("benchmark") or "BTC",
+        "compare_model_keys": [main_key] if main_key else [],
+        "display_names": product_snapshot.get("display_names") or {},
+        "model_sources": model_sources,
+        "trend_barometer_source": {
+            "history_path": product_snapshot.get("trend_history_source_path"),
+            "model_key": "phase66g_production_soft_filters",
+        },
+        "app_live_mode_contract": {"current": product_snapshot.get("live_public_state") or {}},
+        "account_observability_contract": {
+            "current": runtime_snapshot.get("account_observability_contract") or {}
+        },
+    }
 
 
 def get_git_commit_marker() -> str:
@@ -995,90 +934,6 @@ def format_local_time_text(value: str | None, lang: str) -> str:
         return f"{parsed.day}.{parsed.month}.{parsed.year} {parsed.hour}:{parsed.minute:02d}"
     except ValueError:
         return format_date_text(text, lang)
-
-
-def parse_utc_datetime(value: str | None) -> datetime | None:
-    text = str(value or "").strip()
-    if not text:
-        return None
-    try:
-        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
-    except ValueError:
-        return None
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
-    return parsed.astimezone(timezone.utc)
-
-
-def is_utc_timestamp_today_local(value: str | None) -> bool:
-    parsed = parse_utc_datetime(value)
-    if parsed is None:
-        return False
-    return parsed.astimezone(APP_DISPLAY_TIMEZONE).date() == datetime.now(APP_DISPLAY_TIMEZONE).date()
-
-
-def build_app_freshness_display_state(
-    freshness_report: dict,
-    refresh_report: dict,
-    lang: str,
-) -> dict[str, str]:
-    latest_closed_utc_date = str(freshness_report.get("latest_closed_utc_date") or "").strip() or None
-    freshness_status = str(freshness_report.get("status") or "").strip().lower()
-    last_successful_refresh_utc = str(refresh_report.get("generated_at_utc") or "").strip() or None
-    refresh_status = str(refresh_report.get("status") or "").strip().lower()
-
-    freshness_ok = freshness_status in {"ok", "success", "pass", "passed"}
-    refresh_success = refresh_status in {"ok", "success"} or (bool(last_successful_refresh_utc) and not refresh_status)
-    refresh_today = refresh_success and is_utc_timestamp_today_local(last_successful_refresh_utc)
-
-    strategy_date_text = format_date_text(latest_closed_utc_date, lang)
-    refresh_time_text = format_local_time_text(last_successful_refresh_utc, lang)
-    freshness_status_text = freshness_status or t(lang, "na")
-
-    if not refresh_today:
-        headline = (
-            "Nie je aktuálne. Deployed app je snapshot-based; dnešný runtime refresh tu neprebehol."
-            if lang == "sk"
-            else "Not current. This deployed app is snapshot-based; today's runtime refresh has not completed here."
-        )
-        severity = "warning"
-    elif not freshness_ok:
-        headline = (
-            f"Nie je aktuálne. Freshness check je {freshness_status_text}; app ukazuje posledný materializovaný snapshot."
-            if lang == "sk"
-            else f"Not current. Freshness check is {freshness_status_text}; the app is showing the last materialized snapshot."
-        )
-        severity = "warning"
-    else:
-        headline = (
-            "Snapshot-based app: dnešný refresh prebehol a freshness check je OK."
-            if lang == "sk"
-            else "Snapshot-based app: today's refresh completed and the freshness check is OK."
-        )
-        severity = "info"
-
-    details = (
-        f"Dátum strategického artefaktu: {strategy_date_text}. "
-        f"Posledný úspešný app export refresh: {refresh_time_text}. "
-        f"Freshness check: {freshness_status_text}. "
-        "Dátum výpočtu trendu je osobitne v Trend barometri. "
-        "Synchronizácia peňaženky/účtu je iba v záložke Účet."
-        if lang == "sk"
-        else f"Strategy artifact date: {strategy_date_text}. "
-        f"Last successful app export refresh: {refresh_time_text}. "
-        f"Freshness check: {freshness_status_text}. "
-        "Trend calculation date is shown separately in the Trend barometer. "
-        "Wallet/account sync is shown only in the Account tab."
-    )
-
-    return {
-        "severity": severity,
-        "headline": headline,
-        "details": details,
-        "latest_closed_utc_date": latest_closed_utc_date or "",
-        "last_successful_refresh_utc": last_successful_refresh_utc or "",
-        "freshness_status": freshness_status,
-    }
 
 
 def render_phase_badge(label: str, background: str) -> None:
@@ -2417,118 +2272,6 @@ def human_label(model_key: str, lang: str, selector: dict) -> str:
     return build_display_map(selector, lang).get(model_key, model_key)
 
 
-def extract_app_export_contract(raw_payload: dict | None) -> dict:
-    if not isinstance(raw_payload, dict):
-        return {}
-    contract = raw_payload.get("app_export_contract")
-    if isinstance(contract, dict):
-        return contract
-    return raw_payload
-
-
-def extract_account_observability_contract(raw_payload: dict | None) -> dict:
-    if not isinstance(raw_payload, dict):
-        return {}
-    contract = raw_payload.get("account_observability_contract")
-    return contract if isinstance(contract, dict) else {}
-
-
-def merge_selector_config(raw_selector: dict | None) -> dict:
-    merged = json.loads(json.dumps(DEFAULT_SELECTOR))
-    selector = extract_app_export_contract(raw_selector)
-    observability_contract = extract_account_observability_contract(raw_selector)
-    if not selector:
-        selector = {}
-
-    merged.update(selector)
-    merged["main_model_key"] = selector.get("main_model_key") or selector.get("main_strategy_model") or merged.get("main_model_key")
-    merged["reference_model_key"] = selector.get("reference_model_key") or selector.get("reference_strategy_model") or merged.get("reference_model_key")
-    merged["benchmark_label"] = selector.get("benchmark_label") or selector.get("benchmark") or merged.get("benchmark_label")
-
-    for nested_key in ["display_names", "model_sources", "trend_barometer_source", "app_live_mode_contract"]:
-        merged[nested_key] = {
-            **DEFAULT_SELECTOR.get(nested_key, {}),
-            **(selector.get(nested_key, {}) or {}),
-        }
-
-    default_live_mode_current = ((DEFAULT_SELECTOR.get("app_live_mode_contract") or {}).get("current") or {})
-    selector_live_mode_current = ((selector.get("app_live_mode_contract") or {}).get("current") or {})
-    if default_live_mode_current or selector_live_mode_current:
-        merged["app_live_mode_contract"]["current"] = {
-            **default_live_mode_current,
-            **selector_live_mode_current,
-        }
-
-    merged["account_observability_contract"] = {
-        **DEFAULT_SELECTOR.get("account_observability_contract", {}),
-        **observability_contract,
-    }
-    default_observability_current = ((DEFAULT_SELECTOR.get("account_observability_contract") or {}).get("current") or {})
-    selector_observability_current = (observability_contract.get("current") or {})
-    merged["account_observability_contract"]["current"] = {
-        **default_observability_current,
-        **selector_observability_current,
-    }
-
-    default_placeholder_framing = default_observability_current.get("placeholder_framing")
-    selector_placeholder_framing = selector_observability_current.get("placeholder_framing")
-    if isinstance(default_placeholder_framing, dict) or isinstance(selector_placeholder_framing, dict):
-        merged["account_observability_contract"]["current"]["placeholder_framing"] = {
-            **(default_placeholder_framing if isinstance(default_placeholder_framing, dict) else {}),
-            **(selector_placeholder_framing if isinstance(selector_placeholder_framing, dict) else {}),
-        }
-
-    if not merged.get("compare_model_keys"):
-        merged["compare_model_keys"] = [
-            key for key in [merged.get("main_model_key"), merged.get("reference_model_key")] if key
-        ]
-
-    return merged
-
-
-def load_selector_config() -> dict:
-    if not EXPORT_CONTRACT_PATH.exists():
-        return json.loads(json.dumps(DEFAULT_SELECTOR))
-
-    try:
-        with open(EXPORT_CONTRACT_PATH, "r", encoding="utf-8") as f:
-            raw = json.load(f)
-    except (OSError, json.JSONDecodeError):
-        return json.loads(json.dumps(DEFAULT_SELECTOR))
-
-    return merge_selector_config(raw)
-
-
-def get_current_live_mode_contract(contract_cfg: dict | None) -> dict:
-    default_current = ((DEFAULT_SELECTOR.get("app_live_mode_contract") or {}).get("current") or {})
-    selector_current = (((contract_cfg or {}).get("app_live_mode_contract") or {}).get("current") or {})
-    return {
-        **default_current,
-        **selector_current,
-    }
-
-
-def get_current_account_observability_contract(contract_cfg: dict | None) -> dict:
-    default_current = ((DEFAULT_SELECTOR.get("account_observability_contract") or {}).get("current") or {})
-    selector_current = (((contract_cfg or {}).get("account_observability_contract") or {}).get("current") or {})
-    merged = {
-        **default_current,
-        **selector_current,
-    }
-
-    default_placeholder_framing = default_current.get("placeholder_framing")
-    selector_placeholder_framing = selector_current.get("placeholder_framing")
-    if isinstance(default_placeholder_framing, dict) or isinstance(selector_placeholder_framing, dict):
-        merged["placeholder_framing"] = {
-            **(default_placeholder_framing if isinstance(default_placeholder_framing, dict) else {}),
-            **(selector_placeholder_framing if isinstance(selector_placeholder_framing, dict) else {}),
-        }
-
-    ui_sections = merged.get("ui_sections") or []
-    merged["ui_sections"] = [str(section).strip() for section in ui_sections if str(section).strip()]
-    return merged
-
-
 def load_csv_optional(path_str: str | None) -> pd.DataFrame:
     path = normalize_path(path_str)
     if path is None or not path.exists():
@@ -2541,8 +2284,12 @@ def load_csv_optional(path_str: str | None) -> pd.DataFrame:
     return df
 
 
-def load_btc_df() -> pd.DataFrame:
-    df = pd.read_csv(BTC_FILE)
+def load_benchmark_df(path_str: str | None) -> pd.DataFrame:
+    path = normalize_path(path_str)
+    if path is None or not path.exists():
+        raise FileNotFoundError(f"Missing benchmark source path: {path_str}")
+
+    df = pd.read_csv(path)
     df = df.rename(
         columns={
             "Date": "date",
@@ -2568,29 +2315,6 @@ def load_btc_df() -> pd.DataFrame:
     return df.drop_duplicates(subset=["ts"]).reset_index(drop=True)
 
 
-@st.cache_data(ttl=20, show_spinner=False)
-def fetch_live_btc_ticker_24h() -> dict[str, float] | None:
-    try:
-        request = Request(BTC_LIVE_TICKER_24H_URL, headers={"User-Agent": "TrendAtlas Crypto"})
-        with urlopen(request, timeout=4) as response:
-            payload = json.loads(response.read().decode("utf-8"))
-        if not isinstance(payload, dict):
-            return None
-        bitcoin_payload = payload.get("bitcoin")
-        if not isinstance(bitcoin_payload, dict):
-            return None
-        last_price = as_float(bitcoin_payload.get("usd"))
-        price_change_pct = as_float(bitcoin_payload.get("usd_24h_change"))
-        if last_price is None or price_change_pct is None:
-            return None
-        return {
-            "last_price": last_price,
-            "price_change_pct": price_change_pct,
-        }
-    except Exception:
-        return None
-
-
 def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     if btc_df is None or btc_df.empty or "close" not in btc_df.columns:
         return {}
@@ -2603,13 +2327,9 @@ def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     if latest_close in (None, 0):
         return {}
 
-    live_ticker = fetch_live_btc_ticker_24h()
-    if live_ticker:
-        display_price = as_float(live_ticker.get("last_price")) or latest_close
-        pct_change = as_float(live_ticker.get("price_change_pct"))
-    else:
-        display_price = latest_close
-        pct_change = 0.0
+    previous_close = as_float(closed_btc.iloc[0]["close"])
+    display_price = latest_close
+    pct_change = ((latest_close / previous_close) - 1.0) * 100.0 if previous_close not in (None, 0) else 0.0
     if pct_change is None:
         pct_change = 0.0
     direction = "↑" if pct_change >= 0 else "↓"
@@ -2652,406 +2372,6 @@ def load_paper_frame(path: Path, model_key: str) -> pd.DataFrame:
     )
     df.attrs["source_path"] = str(path)
     return df
-
-
-def calc_total_return_from_frame(df: pd.DataFrame) -> float | None:
-    if df.empty or "equity" not in df.columns:
-        return None
-    eq = pd.to_numeric(df["equity"], errors="coerce").dropna()
-    if len(eq) < 2:
-        return None
-    start_val = as_float(eq.iloc[0])
-    end_val = as_float(eq.iloc[-1])
-    if start_val is None or end_val is None or start_val <= 0:
-        return None
-    return (end_val / start_val - 1.0) * 100.0
-
-
-def resolve_phase68i_official_paper_path(
-    expected_total_return_pct: float | None = None,
-    expected_cagr_pct: float | None = None,
-    expected_max_drawdown_pct: float | None = None,
-    expected_since2023_cagr_pct: float | None = None,
-    expected_since2025_cagr_pct: float | None = None,
-) -> Path | None:
-    summary_path = ROOT / "outputs" / "phase68i_leverage_cost_stress_check" / "phase68i_leverage_cost_stress_summary.csv"
-    if not summary_path.exists():
-        return None
-
-    try:
-        summary_df = pd.read_csv(summary_path)
-    except Exception:
-        return None
-
-    if summary_df.empty or "model" not in summary_df.columns:
-        return None
-
-    candidates = summary_df.loc[summary_df["model"] == "phase68i_dynamic_ladder_candidate"].copy()
-    if candidates.empty:
-        return None
-
-    numeric_keys = [
-        ("cagr_pct", expected_cagr_pct),
-        ("max_drawdown_pct", expected_max_drawdown_pct),
-        ("since2023_cagr_pct", expected_since2023_cagr_pct),
-        ("since2025_cagr_pct", expected_since2025_cagr_pct),
-    ]
-
-    best_path: Path | None = None
-    best_score: tuple[float, str] | None = None
-    for _, row in candidates.iterrows():
-        scenario_id = str(row.get("scenario_id") or "").strip()
-        if not scenario_id:
-            continue
-
-        candidate_path = (
-            ROOT
-            / "outputs"
-            / "phase68i_leverage_cost_stress_check"
-            / "papers"
-            / scenario_id
-            / "phase68i_dynamic_ladder_candidate_paper.csv"
-        )
-        if not candidate_path.exists():
-            continue
-
-        diff = 0.0
-        for key, expected_value in numeric_keys:
-            if expected_value is None:
-                continue
-            current_value = as_float(row.get(key))
-            if current_value is None:
-                diff += 1_000_000.0
-                continue
-            diff += abs(current_value - expected_value)
-
-        if expected_total_return_pct is not None:
-            try:
-                candidate_frame = load_paper_frame(candidate_path, "phase68i_dynamic_ladder_candidate")
-                current_total_return_pct = calc_total_return_from_frame(candidate_frame)
-            except Exception:
-                current_total_return_pct = None
-            if current_total_return_pct is None:
-                diff += 1_000_000.0
-            else:
-                diff += abs(current_total_return_pct - expected_total_return_pct)
-
-        score = (diff, str(candidate_path))
-        if best_score is None or score < best_score:
-            best_score = score
-            best_path = candidate_path
-
-    if best_path is not None:
-        return best_path
-
-    fallback_path = ROOT / "outputs" / "phase68j_tail_risk_guardrail_check" / "papers" / "phase68j_ref_dynamic_ladder_paper.csv"
-    if fallback_path.exists():
-        return fallback_path
-    return None
-
-
-def iter_phase68i_dynamic_paper_candidates() -> list[Path]:
-    stress_dir = ROOT / "outputs" / "phase68i_leverage_cost_stress_check" / "papers"
-    if not stress_dir.exists():
-        return []
-    return sorted(stress_dir.rglob("phase68i_dynamic_ladder_candidate_paper.csv"))
-
-
-def load_model_paper(
-    paper_dir_str: str | None,
-    model_key: str,
-    explicit_paper_path: str | None = None,
-    expected_total_return_pct: float | None = None,
-    expected_cagr_pct: float | None = None,
-    expected_max_drawdown_pct: float | None = None,
-    expected_since2023_cagr_pct: float | None = None,
-    expected_since2025_cagr_pct: float | None = None,
-) -> pd.DataFrame:
-    candidates: list[Path] = []
-
-    explicit_path = normalize_path(explicit_paper_path)
-    if explicit_path is not None:
-        candidates.append(explicit_path)
-
-    paper_dir = normalize_path(paper_dir_str)
-    if paper_dir is not None:
-        candidates.extend([
-            paper_dir / f"{model_key}_paper.csv",
-            paper_dir / f"{model_key}.csv",
-        ])
-
-    if model_key == "phase68i_dynamic_ladder_candidate":
-        official_phase68i_path = resolve_phase68i_official_paper_path(
-            expected_total_return_pct=expected_total_return_pct,
-            expected_cagr_pct=expected_cagr_pct,
-            expected_max_drawdown_pct=expected_max_drawdown_pct,
-            expected_since2023_cagr_pct=expected_since2023_cagr_pct,
-            expected_since2025_cagr_pct=expected_since2025_cagr_pct,
-        )
-        if official_phase68i_path is not None:
-            candidates.append(official_phase68i_path)
-        candidates.extend(iter_phase68i_dynamic_paper_candidates())
-
-    deduped_candidates: list[Path] = []
-    seen_candidates: set[str] = set()
-    for candidate in candidates:
-        normalized_candidate = normalize_path(candidate)
-        if normalized_candidate is None:
-            continue
-        key = str(normalized_candidate.resolve()) if normalized_candidate.exists() else str(normalized_candidate)
-        if key in seen_candidates:
-            continue
-        seen_candidates.add(key)
-        deduped_candidates.append(normalized_candidate)
-
-    existing_candidates = [p for p in deduped_candidates if p.exists()]
-    if not existing_candidates:
-        raise FileNotFoundError(f"Missing paper file for model: {model_key}")
-
-    if expected_total_return_pct is None:
-        return load_paper_frame(existing_candidates[0], model_key)
-
-    best_frame: pd.DataFrame | None = None
-    best_score: tuple[float, float, int, str] | None = None
-    for candidate_path in existing_candidates:
-        candidate_frame = load_paper_frame(candidate_path, model_key)
-        total_return_pct = calc_total_return_from_frame(candidate_frame)
-        if total_return_pct is None:
-            continue
-        score = (
-            abs(total_return_pct - expected_total_return_pct),
-            -float(len(candidate_frame)),
-            0 if explicit_path is not None and candidate_path == explicit_path else 1,
-            str(candidate_path),
-        )
-        if best_score is None or score < best_score:
-            best_score = score
-            best_frame = candidate_frame
-
-    if best_frame is not None:
-        return best_frame
-    return load_paper_frame(existing_candidates[0], model_key)
-
-
-def get_row(df: pd.DataFrame, model_key: str) -> pd.Series | None:
-    if df.empty or "model" not in df.columns:
-        return None
-
-    row = df.loc[df["model"] == model_key]
-    if not row.empty:
-        return row.iloc[0]
-
-    if len(df) == 1:
-        return df.iloc[0]
-
-    return None
-
-
-def get_metric_from_row(row: pd.Series | None, key: str) -> float | None:
-    if row is None or key not in row.index:
-        return None
-    return as_float(row[key])
-
-
-def get_text_from_row(row: pd.Series | None, key: str) -> str | None:
-    if row is None or key not in row.index:
-        return None
-    value = row[key]
-    if value is None:
-        return None
-    text = str(value).strip()
-    return text if text and text.lower() != "nan" else None
-
-
-# =========================================================
-# METRICS / DERIVATIONS
-# =========================================================
-
-def calc_cagr_from_equity(df: pd.DataFrame, start_date: str | pd.Timestamp | None = None) -> float | None:
-    if df.empty or "ts" not in df.columns or "equity" not in df.columns:
-        return None
-    work = df[["ts", "equity"]].copy()
-    work["ts"] = pd.to_datetime(work["ts"], errors="coerce").dt.normalize()
-    work["equity"] = pd.to_numeric(work["equity"], errors="coerce")
-    work = work.dropna(subset=["ts", "equity"]).sort_values("ts")
-    if start_date is not None:
-        work = work[work["ts"] >= pd.Timestamp(start_date).normalize()].copy()
-    if len(work) < 2:
-        return None
-
-    start_val = as_float(work["equity"].iloc[0])
-    end_val = as_float(work["equity"].iloc[-1])
-    if start_val is None or end_val is None or start_val <= 0 or end_val <= 0:
-        return None
-
-    days = (work["ts"].iloc[-1] - work["ts"].iloc[0]).days
-    if days <= 0:
-        return None
-
-    years = days / 365.25
-    if years <= 0:
-        return None
-
-    return ((end_val / start_val) ** (1.0 / years) - 1.0) * 100.0
-
-
-def calc_total_return_from_equity(df: pd.DataFrame) -> float | None:
-    if df.empty or "equity" not in df.columns:
-        return None
-    eq = pd.to_numeric(df["equity"], errors="coerce").dropna()
-    if len(eq) < 2:
-        return None
-    start_val = as_float(eq.iloc[0])
-    end_val = as_float(eq.iloc[-1])
-    if start_val is None or end_val is None or start_val == 0:
-        return None
-    return (end_val / start_val - 1.0) * 100.0
-
-
-def calc_max_drawdown_from_equity(df: pd.DataFrame) -> float | None:
-    if df.empty or "equity" not in df.columns:
-        return None
-    eq = pd.to_numeric(df["equity"], errors="coerce").dropna()
-    if eq.empty:
-        return None
-    peak = eq.cummax()
-    dd = (eq / peak - 1.0) * 100.0
-    return as_float(dd.min())
-
-
-def derive_trade_count(df: pd.DataFrame) -> int | None:
-    for col in ["selected_coin", "symbol", "asset", "holding", "position", "leader"]:
-        if col in df.columns:
-            s = df[col].astype(str).fillna("").tolist()
-            if len(s) < 2:
-                return 0
-            changes = 0
-            prev = s[0]
-            for cur in s[1:]:
-                if cur != prev:
-                    changes += 1
-                prev = cur
-            return changes
-    return None
-
-
-def derive_cash_days_pct(df: pd.DataFrame) -> float | None:
-    if "cash_day" in df.columns:
-        cash_series = df["cash_day"].map(as_bool).dropna()
-        if not cash_series.empty:
-            return as_float(cash_series.astype(float).mean() * 100.0)
-
-    for col in [
-        "portfolio_held_asset",
-        "selected_coin",
-        "symbol",
-        "asset",
-        "holding",
-        "position",
-        "leader",
-        "tradable_governed_asset",
-        "baseline_held_asset",
-    ]:
-        if col in df.columns:
-            s = df[col].astype(str).str.upper().fillna("")
-            if s.empty:
-                return None
-            return as_float((s.isin(["CASH", "USD", "USDT", "USDC", "NONE"]).mean()) * 100.0)
-    return None
-
-
-def derive_btc_days_pct(df: pd.DataFrame) -> float | None:
-    for col in [
-        "portfolio_held_asset",
-        "selected_coin",
-        "symbol",
-        "asset",
-        "holding",
-        "position",
-        "leader",
-        "tradable_governed_asset",
-        "baseline_held_asset",
-    ]:
-        if col in df.columns:
-            s = df[col].astype(str).str.upper().fillna("")
-            if s.empty:
-                return None
-            return as_float((s.str.contains("BTC", regex=False)).mean() * 100.0)
-    return None
-
-
-def build_metrics(summary_row: pd.Series | None, live_row: pd.Series | None, paper_df: pd.DataFrame) -> dict[str, float | int | str | None]:
-    metrics: dict[str, float | int | str | None] = {}
-
-    metrics["total_return_pct"] = get_metric_from_row(summary_row, "total_return_pct")
-    if metrics["total_return_pct"] is None:
-        metrics["total_return_pct"] = calc_total_return_from_equity(paper_df)
-
-    metrics["cagr_pct"] = get_metric_from_row(summary_row, "cagr_pct")
-    if metrics["cagr_pct"] is None:
-        metrics["cagr_pct"] = calc_cagr_from_equity(paper_df)
-
-    metrics["max_drawdown_pct"] = get_metric_from_row(summary_row, "max_drawdown_pct")
-    if metrics["max_drawdown_pct"] is None:
-        metrics["max_drawdown_pct"] = calc_max_drawdown_from_equity(paper_df)
-
-    metrics["since2021_cagr_pct"] = get_metric_from_row(summary_row, "since2021_cagr_pct")
-    if metrics["since2021_cagr_pct"] is None:
-        metrics["since2021_cagr_pct"] = calc_cagr_from_equity(paper_df, "2021-01-01")
-
-    metrics["since2023_cagr_pct"] = get_metric_from_row(summary_row, "since2023_cagr_pct")
-    if metrics["since2023_cagr_pct"] is None:
-        metrics["since2023_cagr_pct"] = calc_cagr_from_equity(paper_df, "2023-01-01")
-
-    metrics["since2025_cagr_pct"] = get_metric_from_row(summary_row, "since2025_cagr_pct")
-    if metrics["since2025_cagr_pct"] is None:
-        metrics["since2025_cagr_pct"] = calc_cagr_from_equity(paper_df, "2025-01-01")
-
-    metrics["switch_count"] = get_metric_from_row(summary_row, "switch_count")
-    if metrics["switch_count"] is None:
-        metrics["switch_count"] = get_metric_from_row(summary_row, "selection_count")
-    if metrics["switch_count"] is None:
-        metrics["switch_count"] = derive_trade_count(paper_df)
-
-    derived_cash_days_pct = derive_cash_days_pct(paper_df)
-    metrics["cash_days_pct"] = maybe_pct_from_fraction(get_metric_from_row(summary_row, "cash_days_pct"))
-    if metrics["cash_days_pct"] is None:
-        metrics["cash_days_pct"] = derived_cash_days_pct
-    elif derived_cash_days_pct is not None and abs(float(metrics["cash_days_pct"])) < 1e-12 and abs(float(derived_cash_days_pct)) > 1e-12:
-        metrics["cash_days_pct"] = derived_cash_days_pct
-
-    raw_btc = get_metric_from_row(summary_row, "btc_days_pct")
-    if raw_btc is None:
-        raw_btc = get_metric_from_row(summary_row, "btc_days")
-    metrics["btc_days_pct"] = maybe_pct_from_fraction(raw_btc)
-    derived_btc_days_pct = derive_btc_days_pct(paper_df)
-    if metrics["btc_days_pct"] is None:
-        metrics["btc_days_pct"] = derived_btc_days_pct
-    elif derived_btc_days_pct is not None and abs(float(metrics["btc_days_pct"])) < 1e-12 and abs(float(derived_btc_days_pct)) > 1e-12:
-        metrics["btc_days_pct"] = derived_btc_days_pct
-
-    metrics["latest_date"] = None
-    if not paper_df.empty:
-        parsed_paper_date = pd.to_datetime(paper_df["ts"].iloc[-1], errors="coerce")
-        if not pd.isna(parsed_paper_date):
-            metrics["latest_date"] = parsed_paper_date.normalize().strftime("%Y-%m-%d")
-
-    if metrics["latest_date"] is None:
-        latest_date_candidates = []
-        for row in [summary_row, live_row]:
-            for date_key in ["latest_available_date", "strategy_last_closed_day", "last_closed_day", "latest_date"]:
-                row_date = get_text_from_row(row, date_key)
-                if row_date:
-                    parsed_row_date = pd.to_datetime(row_date, errors="coerce")
-                    if not pd.isna(parsed_row_date):
-                        latest_date_candidates.append(parsed_row_date.normalize())
-
-        if latest_date_candidates:
-            metrics["latest_date"] = max(latest_date_candidates).strftime("%Y-%m-%d")
-
-    metrics["sharpe"] = get_metric_from_row(summary_row, "sharpe")
-    metrics["sortino"] = get_metric_from_row(summary_row, "sortino")
-    return metrics
 
 
 def available_years_from_frames(frames: list[pd.DataFrame]) -> list[int]:
@@ -3099,67 +2419,8 @@ def investment_value(equity_df: pd.DataFrame, picked_date, amount: float = 1000.
 
 
 # =========================================================
-# LIVE STATE / TREND BAROMETER
+# TREND BAROMETER
 # =========================================================
-
-def load_live_public_state(contract_cfg: dict, live_path: str | None, model_key: str, lang: str) -> dict:
-    df = load_csv_optional(live_path)
-    row = None
-    if not df.empty:
-        row_df = df.loc[df["model"] == model_key] if "model" in df.columns else pd.DataFrame()
-        row = row_df.iloc[0] if not row_df.empty else df.iloc[0]
-
-    required_cols = [
-        "held_asset_public",
-        "held_state_label",
-        "execution_state",
-    ]
-    has_new_fields = row is not None and all(col in df.columns for col in required_cols)
-
-    held_asset_public_raw = get_text_from_row(row, "held_asset_public") if has_new_fields else None
-    held_state_label_raw = get_text_from_row(row, "held_state_label") if has_new_fields else None
-
-    live_mode_contract = get_current_live_mode_contract(contract_cfg)
-
-    live_truth_mode_raw = live_mode_contract.get("live_truth_mode")
-    execution_profile_raw = live_mode_contract.get("execution_profile")
-    fallback_profile_label_raw = live_mode_contract.get("fallback_profile_label")
-
-    return {
-        "has_new_fields": has_new_fields,
-        "held_asset_public": prettify_asset_public(held_asset_public_raw, lang),
-        "held_state_label": safe_text_value(held_state_label_raw, lang),
-        "live_truth_mode": prettify_live_mode(live_truth_mode_raw, lang),
-        "execution_profile": prettify_execution_profile(execution_profile_raw, lang),
-        "fallback_profile_label": prettify_execution_profile(fallback_profile_label_raw, lang),
-        "approval_gate_status": live_mode_contract.get("approval_gate_status"),
-        "real_order_gate_status": live_mode_contract.get("real_order_gate_status"),
-        "real_order_eligible_status": live_mode_contract.get("real_order_eligible_status"),
-    }
-
-
-def load_trend_barometer_live(source_cfg: dict, lang: str) -> dict:
-    df = load_csv_optional(source_cfg.get("live_status_path"))
-    model_key = source_cfg.get("model_key")
-
-    if df.empty:
-        return {}
-
-    if model_key and "model" in df.columns:
-        row_df = df.loc[df["model"] == model_key]
-        row = row_df.iloc[0] if not row_df.empty else df.iloc[0]
-    else:
-        row = df.iloc[0]
-
-    return {
-        "trend_score": as_float(row.get("trend_score")),
-        "trend_state_label": prettify_trend_state(get_text_from_row(row, "trend_state_label"), lang),
-        "buy_threshold": as_float(row.get("buy_threshold")),
-        "crossed_up_today": as_bool(row.get("crossed_up_today")),
-        "crossed_down_today": as_bool(row.get("crossed_down_today")),
-        "trend_calc_date": get_text_from_row(row, "trend_calc_date"),
-    }
-
 
 def load_trend_barometer_history(source_cfg: dict) -> pd.DataFrame:
     path = normalize_path(source_cfg.get("history_path"))
@@ -3404,7 +2665,9 @@ if "account_authenticated" not in st.session_state:
 if "account_auth_error" not in st.session_state:
     st.session_state.account_auth_error = ""
 
-selector_cfg = load_selector_config()
+product_snapshot = load_required_app_snapshot(APP_PRODUCT_SNAPSHOT_PATH, "app_product_snapshot")
+runtime_snapshot = load_required_app_snapshot(APP_RUNTIME_SNAPSHOT_PATH, "app_runtime_snapshot")
+selector_cfg = build_selector_config_from_snapshot(product_snapshot, runtime_snapshot)
 
 hero_left, hero_right = st.columns([5, 1.6])
 
@@ -3430,7 +2693,14 @@ with hero_left:
     st.caption(t(lang, "subhero"))
     st.markdown("</div>", unsafe_allow_html=True)
 
-required = [BTC_FILE]
+main_key = selector_cfg.get("main_model_key")
+reference_key = selector_cfg.get("reference_model_key")
+labels = build_display_map(selector_cfg, lang)
+
+main_source = resolve_model_source(selector_cfg, main_key)
+main_paper_path = normalize_path(main_source.get("paper_path"))
+benchmark_path = normalize_path(product_snapshot.get("benchmark_source_path"))
+required = [p for p in [main_paper_path, benchmark_path] if p is not None]
 missing = [str(p) for p in required if not p.exists()]
 if missing:
     st.error(t(lang, "missing_files"))
@@ -3438,13 +2708,8 @@ if missing:
         st.write(f"- {path}")
     st.stop()
 
-main_key = selector_cfg.get("main_model_key")
-reference_key = selector_cfg.get("reference_model_key")
-compare_keys = [x for x in selector_cfg.get("compare_model_keys", []) if x]
-labels = build_display_map(selector_cfg, lang)
-
 try:
-    btc_df = load_btc_df()
+    btc_df = load_benchmark_df(product_snapshot.get("benchmark_source_path"))
 except Exception as e:
     st.error(f"{t(lang, 'load_failed')}: {e}")
     st.stop()
@@ -3454,31 +2719,12 @@ with btc_indicator_slot.container():
     render_btc_side_indicator(btc_side_indicator)
 
 papers: dict[str, pd.DataFrame] = {}
-model_metrics: dict[str, dict] = {}
 paper_errors: list[str] = []
 
-for model_key in compare_keys:
-    source_cfg = resolve_model_source(selector_cfg, model_key)
-    summary_df = load_csv_optional(source_cfg.get("summary_path"))
-    live_df = load_csv_optional(source_cfg.get("live_status_path"))
-    summary_row = get_row(summary_df, model_key)
-    live_row = get_row(live_df, model_key)
-
-    try:
-        paper_df = load_model_paper(
-            source_cfg.get("paper_dir"),
-            model_key,
-            explicit_paper_path=source_cfg.get("paper_path"),
-            expected_total_return_pct=get_metric_from_row(summary_row, "total_return_pct"),
-            expected_cagr_pct=get_metric_from_row(summary_row, "cagr_pct"),
-            expected_max_drawdown_pct=get_metric_from_row(summary_row, "max_drawdown_pct"),
-            expected_since2023_cagr_pct=get_metric_from_row(summary_row, "since2023_cagr_pct"),
-            expected_since2025_cagr_pct=get_metric_from_row(summary_row, "since2025_cagr_pct"),
-        )
-        papers[model_key] = paper_df
-        model_metrics[model_key] = build_metrics(summary_row, live_row, paper_df)
-    except Exception as e:
-        paper_errors.append(f"{model_key}: {e}")
+try:
+    papers[main_key] = load_paper_frame(main_paper_path, main_key)
+except Exception as e:
+    paper_errors.append(f"{main_key}: {e}")
 
 if main_key not in papers:
     st.error(f"{t(lang, 'load_failed')}: missing main model paper for {main_key}")
@@ -3486,35 +2732,31 @@ if main_key not in papers:
         st.write(f"- {msg}")
     st.stop()
 
-main_source = resolve_model_source(selector_cfg, main_key)
-live_public_state = load_live_public_state(selector_cfg, main_source.get("live_status_path"), main_key, lang)
-
 trend_source_cfg = selector_cfg.get("trend_barometer_source", {}) or {}
-trend_live = load_trend_barometer_live(trend_source_cfg, lang)
+live_public_state = dict(product_snapshot.get("live_public_state") or {})
+if live_public_state:
+    live_public_state["has_new_fields"] = True
+trend_live = dict(product_snapshot.get("trend_barometer_summary") or {})
+if trend_live.get("trend_state_label"):
+    trend_live["trend_state_label"] = prettify_trend_state(trend_live.get("trend_state_label"), lang)
 trend_history_df = load_trend_barometer_history(trend_source_cfg)
 account_observability_cfg = get_current_account_observability_contract(selector_cfg)
-account_status_payload = load_json_optional(account_observability_cfg.get("status_json_path"))
-account_snapshot_payload = load_json_optional(account_observability_cfg.get("snapshot_json_path"))
-account_snapshot_view = build_account_snapshot_view(account_status_payload, account_snapshot_payload)
-runtime_health_payload = load_json_optional(DEFAULT_RUNTIME_HEALTH_PATH)
-dry_run_decision_payload = load_json_optional(DEFAULT_DRY_RUN_DECISION_PATH)
-app_freshness_payload = load_json_optional(DEFAULT_APP_FRESHNESS_REPORT_PATH)
-app_export_refresh_payload = load_json_optional(DEFAULT_APP_EXPORT_REFRESH_REPORT_PATH)
-real_order_gate_payload = load_json_optional(DEFAULT_REAL_ORDER_GATE_PATH)
-execution_mode_payload = load_json_optional(EXECUTION_MODE_CONFIG_PATH)
-live_order_policy_payload = load_json_optional(LIVE_ORDER_POLICY_PATH)
-_trading_mode_bridge_result, trading_operation_mode_payload = load_trading_operation_mode_via_bridge()
+account_status_payload = dict(runtime_snapshot.get("execution_status") or {})
+account_snapshot_payload = dict(runtime_snapshot.get("account_snapshot_summary") or {})
+account_snapshot_view = dict(account_snapshot_payload)
+runtime_health_payload = dict(runtime_snapshot.get("runtime_health_summary") or {})
+dry_run_decision_payload = dict(runtime_snapshot.get("dry_run_summary") or {})
+real_order_gate_payload = dict(runtime_snapshot.get("gate_summary") or {})
+execution_mode_payload = dict(runtime_snapshot.get("execution_mode_posture") or {})
+live_order_policy_payload = dict(runtime_snapshot.get("live_order_policy_summary") or {})
+trading_operation_mode_payload = dict(execution_mode_payload.get("trading_operation_mode") or {})
+runtime_last_sync_utc = runtime_snapshot.get("runtime_last_sync_utc")
+account_snapshot_as_of_utc = runtime_snapshot.get("account_snapshot_as_of_utc")
+dry_run_generated_at_utc = runtime_snapshot.get("dry_run_generated_at_utc")
+gate_generated_at_utc = runtime_snapshot.get("gate_generated_at_utc")
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
-if not runtime_guardrail_payload:
-    runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "preflight_check", "execution_mode_guardrail")
-strategy_freshness_display = build_app_freshness_display_state(
-    app_freshness_payload,
-    app_export_refresh_payload,
-    lang,
-)
 
-main_metrics = model_metrics.get(main_key, {})
-reference_metrics = model_metrics.get(reference_key, {})
+main_metrics = dict(product_snapshot.get("main_strategy_metrics") or {})
 
 years = available_years_from_frames(list(papers.values()) + [btc_df])
 if not years:
@@ -3522,23 +2764,22 @@ if not years:
     st.stop()
 
 main_equity_df = papers[main_key][["ts", "equity"]].dropna().copy()
-main_paper_source_path = str(papers[main_key].attrs.get("source_path") or "unknown")
-main_latest_dates = pd.to_datetime(main_equity_df["ts"], errors="coerce").dropna().sort_values()
-main_latest_date = None
-if not main_latest_dates.empty:
-    main_latest_date = main_latest_dates.iloc[-1].normalize().strftime("%Y-%m-%d")
-git_commit_marker = get_git_commit_marker()
-reference_equity_df = papers.get(reference_key)
+reference_equity_df = None
 
 tabs = st.tabs(t(lang, "tabs"))
 
 with tabs[0]:
-    st.subheader(t(lang, "home_title"))
-    if strategy_freshness_display["severity"] == "warning":
-        st.warning(strategy_freshness_display["headline"])
+    product_freshness = product_snapshot.get("freshness") if isinstance(product_snapshot.get("freshness"), dict) else {}
+    freshness_status = str(product_freshness.get("status") or "").strip().lower()
+    strategy_last_closed_day = product_snapshot.get("strategy_last_closed_day")
+    freshness_text = (
+        f"Produktovy snapshot: strategy_last_closed_day={strategy_last_closed_day or t(lang, 'na')} | "
+        f"freshness={freshness_status or t(lang, 'na')}"
+    )
+    if freshness_status and freshness_status not in {"ok", "success", "pass", "passed"}:
+        st.warning(freshness_text)
     else:
-        st.info(strategy_freshness_display["headline"])
-    st.caption(strategy_freshness_display["details"])
+        st.info(freshness_text)
 
     home_cards = []
 
@@ -3656,7 +2897,7 @@ with tabs[0]:
         st.caption(t(lang, "trend_history_note"))
 
     st.markdown(f"### {t(lang, 'ops_title')}")
-    ops = st.columns(5)
+    ops = st.columns(4)
     with ops[0]:
         render_color_card(t(lang, "total_return"), safe_metric_text(main_metrics.get("total_return_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "total_return")], "blue")
     with ops[1]:
@@ -3665,30 +2906,6 @@ with tabs[0]:
         render_color_card(t(lang, "cash_days"), safe_metric_text(main_metrics.get("cash_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cash_days")], "green")
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
-    with ops[4]:
-        render_color_card(
-            t(lang, "strategy_last_update"),
-            format_date_text(strategy_freshness_display.get("latest_closed_utc_date"), lang),
-            "",
-            (
-                "Tento dátum ide priamo z outputs/app_freshness_verification/app_freshness_report.json cez latest_closed_utc_date."
-                if lang == "sk"
-                else "This date comes directly from outputs/app_freshness_verification/app_freshness_report.json via latest_closed_utc_date."
-            ),
-            "neutral",
-        )
-    st.caption(
-        (
-            "Posledný úspešný app export refresh: "
-            f"{format_local_time_text(strategy_freshness_display.get('last_successful_refresh_utc'), lang)}"
-        )
-        if lang == "sk"
-        else (
-            "Last successful app export refresh: "
-            f"{format_local_time_text(strategy_freshness_display.get('last_successful_refresh_utc'), lang)}"
-        )
-    )
-
     st.markdown(f"### {t(lang, 'calc_title')}")
     st.write(t(lang, "calc_desc"))
 
@@ -3745,13 +2962,6 @@ with tabs[0]:
 
     if paper_errors:
         st.warning(" / ".join(paper_errors))
-
-    st.caption(
-        "debug | "
-        f"main_paper={main_paper_source_path} | "
-        f"main_latest_date={main_latest_date or 'unknown'} | "
-        f"commit={git_commit_marker}"
-    )
 
 with tabs[1]:
     configured_account_username, configured_account_password, _account_login_source = load_account_login_credentials()
@@ -3870,8 +3080,8 @@ with tabs[1]:
         refresh_stop_reason = str(runtime_health_payload.get("stop_reason") or "").strip()
         dry_run_stop_reason = refresh_stop_reason
         live_stop_reason = str(real_order_gate_payload.get("status") or "").strip()
-        refresh_timestamp = format_utc_text(account_snapshot_view.get("as_of_utc"), lang)
-        dry_run_timestamp = format_utc_text(dry_run_decision_payload.get("generated_at_utc"), lang)
+        refresh_timestamp = format_utc_text(account_snapshot_as_of_utc, lang)
+        dry_run_timestamp = format_utc_text(dry_run_generated_at_utc, lang)
         dry_run_recommended_action = str(dry_run_decision_payload.get("recommended_action") or "").strip().lower()
         if lang == "sk" and dry_run_recommended_action == "hold_cash":
             dry_run_summary_text = "Dnes systém nevidí obchod, ktorý by mal odoslať."
@@ -3888,7 +3098,7 @@ with tabs[1]:
         runtime_error_text = safe_text_value(account_snapshot_view.get("error"), lang=lang)
         no_position = not isinstance(open_position, dict)
         open_position_subtitle = ""
-        sync_text = format_utc_text(account_snapshot_view.get("as_of_utc"), lang)
+        sync_text = format_utc_text(account_snapshot_as_of_utc, lang)
         account_status_text = connection_text if account_snapshot_view.get("status") else t(lang, "account_status_unavailable")
         proof_state_text = "Udaje su informativne" if lang == "sk" else "Informational only"
         placeholder_framing = (
@@ -3977,7 +3187,7 @@ with tabs[1]:
                 },
                 {
                     "label": t(lang, "account_last_sync"),
-                    "value": format_utc_text(account_snapshot_view.get("as_of_utc"), lang),
+                    "value": format_utc_text(account_snapshot_as_of_utc, lang),
                 },
                 {
                     "label": t(lang, "account_provider"),
@@ -4089,3 +3299,7 @@ with tabs[3]:
                 st.error(f"{t(lang, 'contact_failed')}: {e}")
 
     st.caption(t(lang, "contact_files"))
+
+
+
+

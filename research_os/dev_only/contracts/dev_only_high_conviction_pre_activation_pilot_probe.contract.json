@@ -1,0 +1,44 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_high_conviction_pre_activation_pilot_probe_contract",
+  "artifact_id": "dev_only_high_conviction_pre_activation_pilot_probe",
+  "created_at_utc": "2026-04-09 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "high_conviction_pre_activation_pilot_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "mechanism_id": "high_conviction_pre_activation_pilot",
+  "compare_baseline": "phase67j_no_neo_main",
+  "compare_vs_pure_constructive_pilot": "dev_only_constructive_pilot_exposure_probe",
+  "mechanism_description": "Add one narrow 0.15 pre-activation pilot sleeve only on baseline CASH days when benchmark constructive regime, benchmark anchor confirmation, pilot own-anchor confirmation, non-negative relative strength, and short persistence align under a fresh recapture gate.",
+  "pilot_parameters": {
+    "pilot_weight": 0.15,
+    "pilot_asset_resolution": "decision-time selected asset when available, otherwise BTCUSDT fallback",
+    "activation_persistence_days": 3,
+    "recent_recapture_max_age_days": 7
+  },
+  "required_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.summary.json",
+    "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.window_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.state_time.csv",
+    "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.cost_metrics.csv",
+    "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.quality.json"
+  ],
+  "forbidden_semantics": [
+    "winner_language",
+    "official_promotion",
+    "candidate_selection_true",
+    "official_edge_claim_true",
+    "tradability_language",
+    "leverage_redesign",
+    "broad_entry_softening",
+    "stay_exposed_longer_as_primary_idea"
+  ],
+  "status": "defined_dev_only_high_conviction_pre_activation_pilot_probe"
+}

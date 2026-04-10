@@ -598,6 +598,138 @@
       "notes": "Dev-only and non-authoritative. Mechanism-first cash-overstay diagnosis only, with no leverage redesign, no app/runtime changes, and no official truth mutation."
     },
     {
+      "script_path": "scripts/dev_only_constructive_pilot_exposure_probe.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Tests one narrow constructive-regime pilot exposure persistence mechanism against phase67j_no_neo_main by replacing confirmed-window CASH fallback with a small deterministic BTC pilot state.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_constructive_pilot_probe/constructive_pilot_probe.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_constructive_pilot_probe/constructive_pilot_probe.window_compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_constructive_pilot_probe/constructive_pilot_probe.state_time.csv",
+        "outputs/research_os/dev_only/non_authoritative_constructive_pilot_probe/constructive_pilot_probe.compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_constructive_pilot_probe/constructive_pilot_probe.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_constructive_pilot_probe/constructive_pilot_probe.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Persistence-only pilot probe using the existing constructive-window rule, with no leverage redesign, no app/runtime changes, and no broad soft-entry sweep."
+    },
+    {
+      "script_path": "scripts/dev_only_high_conviction_pre_activation_pilot_probe.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Tests one narrow earlier high-conviction pre-activation pilot sleeve against phase67j_no_neo_main by adding a small capped pilot only on baseline CASH days under fresh benchmark-plus-asset confirmation, then handing off cleanly to the baseline.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.window_compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.state_time.csv",
+        "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.cost_metrics.csv",
+        "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_high_conviction_pre_activation_pilot_probe/high_conviction_pre_activation_pilot_probe.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Earlier-activation-only probe with low-churn holding, fresh recapture gating, disciplined exits, and no broad gate softening or persistence-first framing."
+    },
+    {
+      "script_path": "scripts/dev_only_rearmed_high_conviction_pre_activation_pilot_probe.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Runs one confirmatory dev-only pass on the high-conviction pre-activation family by reusing the prior pilot stack unchanged and allowing at most one clean re-arm per broader constructive regime after a reset.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.window_compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.state_time.csv",
+        "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.cost_metrics.csv",
+        "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Confirmatory-only re-arm pass with at most one second-chance pilot per broader constructive regime, no persistence framing, no broad gate softening, and no exit loosening."
+    },
+    {
+      "script_path": "scripts/dev_only_cost_aware_hysteretic_pilot_to_full_probe.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Tests one narrow dev-only cost-aware CASH -> PILOT -> FULL state machine against phase67j_no_neo_main using fixed 0.00/0.15/1.00 weights, hysteretic exit discipline, and net/churn-first evaluation.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_probe/cost_aware_hysteretic_pilot_to_full_probe.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_probe/cost_aware_hysteretic_pilot_to_full_probe.window_compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_probe/cost_aware_hysteretic_pilot_to_full_probe.state_time.csv",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_probe/cost_aware_hysteretic_pilot_to_full_probe.compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_probe/cost_aware_hysteretic_pilot_to_full_probe.cost_metrics.csv",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_probe/cost_aware_hysteretic_pilot_to_full_probe.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_probe/cost_aware_hysteretic_pilot_to_full_probe.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Single mechanism only: no parameter sweep, no leverage redesign, no app/runtime changes, no persistence clone, and no daily resizing."
+    },
+    {
+      "script_path": "scripts/dev_only_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Runs one confirmatory dev-only pass on the cost-aware CASH -> PILOT -> FULL family by replacing 7-day recapture recency with recapture-and-hold confirmation while preserving fixed weights, hysteretic exits, and net/churn-first evaluation.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.window_compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.state_time.csv",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.cost_metrics.csv",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe/cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Confirmatory-only pass: no parameter sweep, no leverage redesign, no app/runtime changes, no soft-gate clone, no persistence clone, and no daily resizing."
+    },
+    {
+      "script_path": "scripts/dev_only_l1_trend_filter_regime_probe.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Tests one narrow dev-only BTC one-sided L1 trend-filter regime estimator against phase67j_no_neo_main as an earlier risk-on permission signal without pilot states, persistence exposure logic, or lambda sweeps.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.window_compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.state_time.csv",
+        "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.cost_metrics.csv",
+        "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/l1_trend_filter_regime_probe.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Single mechanism only: causal rolling BTC L1 slope estimator, one 126-day window, one robust MAD lambda rule, no app/runtime changes, no leverage redesign, no Pilot-to-Full ladder, and no parameter grid."
+    },
+    {
+      "script_path": "scripts/dev_only_breadth_ignition_regime_probe.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Tests one narrow dev-only cross-sectional breadth ignition regime signal against phase67j_no_neo_main as an earlier risk-on permission layer without pilot states, persistence exposure logic, BTC endpoint-slope estimation, or sweeps.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.window_compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.state_time.csv",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.cost_metrics.csv",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/breadth_ignition_regime_probe.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Single mechanism only: fixed data/ohlcv liquid core breadth, one 20/120 trend formula, one causal 21-day EWMA smoothing rule, one 2/3 threshold rule, one 3-day ignition rule, no app/runtime changes, no leverage redesign, no Pilot-to-Full ladder, and no parameter grid."
+    },
+    {
       "script_path": "run_data_refresh.ps1",
       "layer": "execution_data",
       "status": "active",

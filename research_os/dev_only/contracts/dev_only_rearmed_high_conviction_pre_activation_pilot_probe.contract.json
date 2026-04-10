@@ -1,0 +1,49 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_rearmed_high_conviction_pre_activation_pilot_probe_contract",
+  "artifact_id": "dev_only_rearmed_high_conviction_pre_activation_pilot_probe",
+  "created_at_utc": "2026-04-09 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "rearmed_high_conviction_pre_activation_pilot_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "mechanism_id": "rearmed_high_conviction_pre_activation_pilot",
+  "compare_baseline": "phase67j_no_neo_main",
+  "compare_vs_pure_constructive_pilot": "dev_only_constructive_pilot_exposure_probe",
+  "compare_vs_previous_pre_activation_probe": "dev_only_high_conviction_pre_activation_pilot_probe",
+  "mechanism_description": "Reuse the prior 0.15 high-conviction pre-activation pilot stack unchanged and add exactly one deterministic clean re-arm per broader constructive regime after a pilot deactivation, at least 5 calendar days out of pilot state, and only after the full base stack resets and re-holds.",
+  "pilot_parameters": {
+    "pilot_weight": 0.15,
+    "pilot_asset_resolution": "decision-time selected asset when available, otherwise BTCUSDT fallback",
+    "activation_persistence_days": 3,
+    "recent_recapture_max_age_days": 7,
+    "rearm_min_days_out_of_pilot": 5,
+    "max_rearms_per_constructive_regime": 1
+  },
+  "required_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.summary.json",
+    "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.window_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.state_time.csv",
+    "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.cost_metrics.csv",
+    "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe/rearmed_high_conviction_pre_activation_pilot_probe.quality.json"
+  ],
+  "forbidden_semantics": [
+    "winner_language",
+    "official_promotion",
+    "candidate_selection_true",
+    "official_edge_claim_true",
+    "tradability_language",
+    "leverage_redesign",
+    "broad_entry_softening",
+    "stay_exposed_longer_as_primary_idea",
+    "multiple_rearms",
+    "looser_exits_as_primary_idea"
+  ],
+  "status": "defined_dev_only_rearmed_high_conviction_pre_activation_pilot_probe"
+}

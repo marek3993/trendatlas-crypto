@@ -1,0 +1,31 @@
+{
+  "manifest_version": "1.0",
+  "artifact_type": "dev_only_l1_trend_filter_regime_probe_manifest",
+  "artifact_id": "dev_only_l1_trend_filter_regime_probe_manifest",
+  "created_at_utc": "2026-04-10 00:00:00 UTC",
+  "owner": "MRV1 AI LAB",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "l1_trend_filter_regime_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "output_namespace": "outputs/research_os/dev_only/non_authoritative_l1_trend_filter_regime_probe/",
+  "contract_paths": [
+    "research_os/dev_only/contracts/dev_only_l1_trend_filter_regime_probe.contract.json"
+  ],
+  "spec_paths": [
+    "research_os/dev_only/specs/dev_only_l1_trend_filter_regime_probe.spec.json"
+  ],
+  "runner_paths": [
+    "scripts/dev_only_l1_trend_filter_regime_probe.py"
+  ],
+  "upstream_refs": [
+    "scripts/dev_only_cash_overstay_diagnostic.py",
+    "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
+    "data/ohlcv/BTCUSDT_1d.csv",
+    "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_summary.csv"
+  ],
+  "status": "implementation_pack_ready"
+}
