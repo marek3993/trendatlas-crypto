@@ -7,7 +7,7 @@ import math
 import os
 import re
 import uuid
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 import sys
@@ -686,6 +686,120 @@ def load_required_app_snapshot(path: Path, expected_type: str) -> dict:
         )
         st.stop()
     return payload
+
+
+FRESHNESS_SUMMARY_TEXT = {
+    "current": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
+    "stale": "Stale: today's refresh ran, but strategy data is behind the latest closed UTC day.",
+    "not_run_today": "Not run today: today's daily refresh has not finished.",
+    "failed_latest_refresh": "Failed latest refresh: the most recent daily refresh failed.",
+    "missing_runtime_artifact": "Missing runtime artifact: app_runtime_snapshot.json is missing or invalid.",
+}
+
+
+def build_missing_runtime_snapshot(path: Path) -> dict:
+    missing_freshness = {
+        "freshness_state": "missing_runtime_artifact",
+        "freshness_detail_code": "runtime_artifact_missing",
+        "freshness_summary_text": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
+        "freshness_detail_text": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
+        "refresh_run_id": None,
+        "refresh_success": None,
+        "refresh_status": None,
+        "refresh_finished_at_utc": None,
+        "latest_strategy_artifact_date": None,
+        "latest_successful_refresh_runtime_utc": None,
+        "latest_trend_calculation_date": None,
+        "latest_wallet_sync_utc": None,
+        "latest_available_closed_utc_date": None,
+    }
+    return {
+        "snapshot_type": "app_runtime_snapshot",
+        "schema_version": 1,
+        "app_export_generated_at_utc": None,
+        "account_observability_contract": {"enabled": False},
+        "strategy_freshness": missing_freshness,
+        **missing_freshness,
+        "source_metadata": {
+            "app_runtime_snapshot": {
+                "path": str(path),
+                "exists": False,
+                "source_type": "app_runtime_snapshot",
+            },
+        },
+    }
+
+
+def load_runtime_snapshot_for_app(path: Path) -> dict:
+    payload = load_json_optional(path)
+    if not payload or payload.get("snapshot_type") != "app_runtime_snapshot":
+        return build_missing_runtime_snapshot(path)
+    return payload
+
+
+def utc_date_from_text(value: str | None) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc).date().isoformat()
+
+
+def resolve_strategy_freshness(runtime_snapshot: dict) -> dict:
+    freshness = runtime_snapshot.get("strategy_freshness")
+    if not isinstance(freshness, dict):
+        freshness = {}
+
+    resolved = dict(freshness)
+    for key in [
+        "refresh_run_id",
+        "refresh_success",
+        "refresh_status",
+        "refresh_finished_at_utc",
+        "latest_strategy_artifact_date",
+        "latest_successful_refresh_runtime_utc",
+        "latest_trend_calculation_date",
+        "latest_wallet_sync_utc",
+        "latest_available_closed_utc_date",
+        "freshness_state",
+        "freshness_detail_code",
+        "freshness_detail_text",
+        "freshness_summary_text",
+    ]:
+        if key not in resolved and key in runtime_snapshot:
+            resolved[key] = runtime_snapshot.get(key)
+
+    state = str(resolved.get("freshness_state") or "").strip() or "missing_runtime_artifact"
+    if state in {"current", "stale"}:
+        today_utc = datetime.now(timezone.utc).date().isoformat()
+        refresh_finished_date = utc_date_from_text(resolved.get("refresh_finished_at_utc"))
+        if refresh_finished_date != today_utc:
+            state = "not_run_today"
+            resolved["freshness_state"] = state
+            resolved["freshness_detail_code"] = "daily_refresh_not_finished_today"
+            resolved["freshness_summary_text"] = FRESHNESS_SUMMARY_TEXT[state]
+            resolved["freshness_detail_text"] = (
+                f"{FRESHNESS_SUMMARY_TEXT[state]} "
+                f"today_utc={today_utc} "
+                f"latest_refresh_finished_at_utc={resolved.get('refresh_finished_at_utc') or 'missing'}."
+            )
+
+    if state not in FRESHNESS_SUMMARY_TEXT:
+        state = "missing_runtime_artifact"
+        resolved["freshness_state"] = state
+        resolved["freshness_detail_code"] = "runtime_artifact_missing"
+        resolved["freshness_summary_text"] = FRESHNESS_SUMMARY_TEXT[state]
+        resolved["freshness_detail_text"] = FRESHNESS_SUMMARY_TEXT[state]
+
+    resolved["freshness_state"] = state
+    resolved.setdefault("freshness_summary_text", FRESHNESS_SUMMARY_TEXT[state])
+    resolved.setdefault("freshness_detail_text", FRESHNESS_SUMMARY_TEXT[state])
+    return resolved
 
 
 def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot: dict) -> dict:
@@ -2322,15 +2436,25 @@ def load_benchmark_df(path_str: str | None) -> pd.DataFrame:
     df = df.dropna(subset=[date_col, "close"]).copy()
     df = df[[date_col, "close"]].rename(columns={date_col: "ts"}).sort_values("ts")
     df["ts"] = pd.to_datetime(df["ts"]).dt.normalize()
-    return df.drop_duplicates(subset=["ts"]).reset_index(drop=True)
+    return df.drop_duplicates(subset=["ts"], keep="last").reset_index(drop=True)
 
 
 def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     if btc_df is None or btc_df.empty or "close" not in btc_df.columns:
         return {}
 
-    closed_btc = btc_df.dropna(subset=["ts", "close"]).sort_values("ts").tail(2).reset_index(drop=True)
+    expected_latest_close = pd.Timestamp(datetime.now(timezone.utc).date() - timedelta(days=1))
+    closed_btc = btc_df.dropna(subset=["ts", "close"]).copy()
+    closed_btc["ts"] = pd.to_datetime(closed_btc["ts"], errors="coerce").dt.normalize()
+    closed_btc = (
+        closed_btc.dropna(subset=["ts", "close"])
+        .sort_values("ts")
+        .drop_duplicates(subset=["ts"], keep="last")
+    )
+    closed_btc = closed_btc[closed_btc["ts"] <= expected_latest_close].tail(2).reset_index(drop=True)
     if len(closed_btc) < 2:
+        return {}
+    if pd.Timestamp(closed_btc.iloc[1]["ts"]).normalize() != expected_latest_close:
         return {}
 
     latest_close = as_float(closed_btc.iloc[1]["close"])
@@ -2676,7 +2800,7 @@ if "account_auth_error" not in st.session_state:
     st.session_state.account_auth_error = ""
 
 product_snapshot = load_required_app_snapshot(APP_PRODUCT_SNAPSHOT_PATH, "app_product_snapshot")
-runtime_snapshot = load_required_app_snapshot(APP_RUNTIME_SNAPSHOT_PATH, "app_runtime_snapshot")
+runtime_snapshot = load_runtime_snapshot_for_app(APP_RUNTIME_SNAPSHOT_PATH)
 selector_cfg = build_selector_config_from_snapshot(product_snapshot, runtime_snapshot)
 
 hero_left, hero_right = st.columns([5, 1.6])
@@ -2764,6 +2888,7 @@ runtime_last_sync_utc = runtime_snapshot.get("runtime_last_sync_utc")
 account_snapshot_as_of_utc = runtime_snapshot.get("account_snapshot_as_of_utc")
 dry_run_generated_at_utc = runtime_snapshot.get("dry_run_generated_at_utc")
 gate_generated_at_utc = runtime_snapshot.get("gate_generated_at_utc")
+strategy_freshness_payload = resolve_strategy_freshness(runtime_snapshot)
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 
 main_metrics = dict(product_snapshot.get("main_strategy_metrics") or {})
@@ -2779,18 +2904,6 @@ reference_equity_df = None
 tabs = st.tabs(t(lang, "tabs"))
 
 with tabs[0]:
-    product_freshness = product_snapshot.get("freshness") if isinstance(product_snapshot.get("freshness"), dict) else {}
-    freshness_status = str(product_freshness.get("status") or "").strip().lower()
-    strategy_last_closed_day = product_snapshot.get("strategy_last_closed_day")
-    freshness_text = (
-        f"Produktovy snapshot: strategy_last_closed_day={strategy_last_closed_day or t(lang, 'na')} | "
-        f"freshness={freshness_status or t(lang, 'na')}"
-    )
-    if freshness_status and freshness_status not in {"ok", "success", "pass", "passed"}:
-        st.warning(freshness_text)
-    else:
-        st.info(freshness_text)
-
     home_cards = []
 
     if live_public_state.get("has_new_fields"):
@@ -2907,7 +3020,11 @@ with tabs[0]:
         st.caption(t(lang, "trend_history_note"))
 
     st.markdown(f"### {t(lang, 'ops_title')}")
-    ops = st.columns(4)
+    strategy_data_date = (
+        strategy_freshness_payload.get("latest_strategy_artifact_date")
+        or product_snapshot.get("strategy_last_closed_day")
+    )
+    ops = st.columns(5)
     with ops[0]:
         render_color_card(t(lang, "total_return"), safe_metric_text(main_metrics.get("total_return_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "total_return")], "blue")
     with ops[1]:
@@ -2916,6 +3033,14 @@ with tabs[0]:
         render_color_card(t(lang, "cash_days"), safe_metric_text(main_metrics.get("cash_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cash_days")], "green")
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
+    with ops[4]:
+        render_color_card(
+            t(lang, "strategy_last_update"),
+            format_date_text(strategy_data_date, lang),
+            "",
+            None,
+            "neutral",
+        )
     st.markdown(f"### {t(lang, 'calc_title')}")
     st.write(t(lang, "calc_desc"))
 
