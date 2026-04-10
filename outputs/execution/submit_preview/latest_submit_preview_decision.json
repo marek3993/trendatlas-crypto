@@ -1,9 +1,9 @@
 {
   "submit_type": "controlled_real_order_submit_decision",
-  "generated_at_utc": "2026-04-07T13:36:38Z",
-  "started_at_utc": "2026-04-07T13:36:38Z",
+  "generated_at_utc": "2026-04-10T10:28:05Z",
+  "started_at_utc": "2026-04-10T10:28:05Z",
   "preview_only": true,
-  "signal_id": "phase67j::2026-04-05::CASH",
+  "signal_id": "phase68i_dynamic_ladder_candidate::2026-04-06::CASH",
   "target_asset": "CASH",
   "target_regime": "Držíme CASH",
   "status": "no_action_needed",
@@ -55,6 +55,15 @@
   "exchange_margin_mode": "cross",
   "exchange_margin_mode_source_field": null,
   "exchange_leverage_blocker": null,
+  "exchange_leverage_verified_before_order": null,
+  "leverage_verification_snapshot_path": null,
+  "leverage_verification_value": null,
+  "leverage_verification_target": null,
+  "leverage_verification_target_asset": "CASH",
+  "leverage_verification_source": null,
+  "leverage_verification_margin_mode": null,
+  "leverage_verification_reason": "not_attempted",
+  "leverage_verification_block_reason": null,
   "submit_plan": {
     "current_state": "CASH",
     "current_position_size": 0.0,
@@ -73,7 +82,7 @@
     "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
     "gate_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",
     "reconciliation_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\reconciliation\\latest_reconciliation_report.json",
-    "snapshot_override_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\full_auto\\latest_full_auto_runner_snapshot.json"
+    "snapshot_override_path": null
   },
   "notes": [
     "Preview mode preserves the full execution plan and evidence artifacts without sending exchange actions.",

@@ -6,5 +6,9 @@
   "block_reason_count": 0,
   "strategy_target_leverage_present": false,
   "exchange_leverage_target_present": false,
+  "exchange_leverage_verified_before_order": null,
+  "leverage_verification_snapshot_path": null,
+  "leverage_verification_value": null,
+  "leverage_verification_target": null,
   "post_submit_reconciliation_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\submit_preview\\latest_post_submit_reconciliation.json"
 }

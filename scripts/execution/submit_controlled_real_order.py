@@ -67,6 +67,7 @@ EXCHANGE_RESPONSE_PATH = SUBMIT_DIR / "latest_submit_exchange_response.json"
 LEVERAGE_RESPONSE_PATH = SUBMIT_DIR / "latest_submit_leverage_action_response.json"
 PRE_SNAPSHOT_PATH = SUBMIT_DIR / "latest_submit_pre_snapshot.json"
 POST_SNAPSHOT_PATH = SUBMIT_DIR / "latest_submit_post_snapshot.json"
+LEVERAGE_VERIFICATION_SNAPSHOT_PATH = SUBMIT_DIR / "latest_submit_leverage_verification_snapshot.json"
 POST_RECON_PATH = SUBMIT_DIR / "latest_post_submit_reconciliation.json"
 LOG_PATH = LOGS_DIR / "submit_controlled_real_order.log"
 
@@ -322,6 +323,61 @@ def extract_current_leverage(position: dict[str, Any] | None) -> dict[str, Any]:
         "is_cross": margin_mode == "cross",
         "source": "position.leverage",
         "raw": leverage,
+    }
+
+
+def build_empty_leverage_verification(
+    *,
+    target_asset: str,
+    exchange_leverage_target: Any,
+    reason: str,
+) -> dict[str, Any]:
+    return {
+        "exchange_leverage_verified_before_order": None,
+        "leverage_verification_snapshot_path": None,
+        "leverage_verification_value": None,
+        "leverage_verification_target": exchange_leverage_target,
+        "leverage_verification_target_asset": target_asset,
+        "leverage_verification_source": None,
+        "leverage_verification_margin_mode": None,
+        "leverage_verification_reason": reason,
+        "leverage_verification_block_reason": None,
+    }
+
+
+def build_leverage_verification_from_snapshot(
+    *,
+    snapshot: dict[str, Any],
+    target_asset: str,
+    exchange_leverage_target: int,
+    snapshot_path: Path,
+    reason: str,
+) -> dict[str, Any]:
+    actual = extract_current_leverage(extract_position(snapshot, target_asset))
+    actual_value = actual.get("value")
+    verified = (
+        actual_value is not None
+        and abs(float(actual_value) - float(exchange_leverage_target)) <= 1e-9
+    )
+    block_reason = None
+    if not verified:
+        actual_label = "missing" if actual_value is None else f"{float(actual_value):.12g}"
+        block_reason = (
+            "exchange_leverage_not_verified_before_order::"
+            f"{target_asset}::actual={actual_label}::target={int(exchange_leverage_target)}"
+        )
+
+    return {
+        "exchange_leverage_verified_before_order": verified,
+        "leverage_verification_snapshot_path": str(snapshot_path.resolve()),
+        "leverage_verification_value": actual_value,
+        "leverage_verification_target": int(exchange_leverage_target),
+        "leverage_verification_target_asset": target_asset,
+        "leverage_verification_source": actual.get("source"),
+        "leverage_verification_margin_mode": actual.get("margin_mode"),
+        "leverage_verification_reason": reason,
+        "leverage_verification_block_reason": block_reason,
+        "leverage_verification_actual": actual,
     }
 
 
@@ -1096,6 +1152,7 @@ def build_post_submit_reconciliation(
     final_target_leverage = extract_current_leverage(final_target_position)
     strategy_target_leverage = plan["leverage_context"].get("strategy_target_leverage")
     exchange_leverage_target = plan["leverage_context"].get("exchange_leverage_target")
+    leverage_verification = plan.get("leverage_verification_evidence", {})
 
     order_oids = [
         result["submit_normalized"].get("oid")
@@ -1124,6 +1181,15 @@ def build_post_submit_reconciliation(
         "target_notional_usd": plan.get("target_notional_usd"),
         "strategy_target_leverage": strategy_target_leverage,
         "exchange_leverage_target": exchange_leverage_target,
+        "exchange_leverage_verified_before_order": leverage_verification.get("exchange_leverage_verified_before_order"),
+        "leverage_verification_snapshot_path": leverage_verification.get("leverage_verification_snapshot_path"),
+        "leverage_verification_value": leverage_verification.get("leverage_verification_value"),
+        "leverage_verification_target": leverage_verification.get("leverage_verification_target"),
+        "leverage_verification_target_asset": leverage_verification.get("leverage_verification_target_asset"),
+        "leverage_verification_source": leverage_verification.get("leverage_verification_source"),
+        "leverage_verification_margin_mode": leverage_verification.get("leverage_verification_margin_mode"),
+        "leverage_verification_reason": leverage_verification.get("leverage_verification_reason"),
+        "leverage_verification_block_reason": leverage_verification.get("leverage_verification_block_reason"),
         "final_exchange_leverage": final_target_leverage,
         "open_orders_count_after": open_orders_count_after,
         "positions_after": extract_snapshot_positions(post_snapshot),
@@ -1279,6 +1345,12 @@ def main() -> None:
         slippage=float(args.slippage),
         execute_live=bool(args.execute_live),
     )
+    leverage_verification_evidence = build_empty_leverage_verification(
+        target_asset=plan["target_asset"],
+        exchange_leverage_target=leverage_ctx.get("exchange_leverage_target"),
+        reason="not_attempted",
+    )
+    plan["leverage_verification_evidence"] = leverage_verification_evidence
 
     auth_block_reasons: list[str] = []
     if not auth_probe["signature_roundtrip_ok"]:
@@ -1340,12 +1412,46 @@ def main() -> None:
         "signal_id": plan["signal_id"],
         "target_asset": plan["target_asset"],
         "leverage_action_result": None,
+        **leverage_verification_evidence,
     }
+
+    if args.execute_live and account_setup is not None and not plan["block_reasons"] and plan["steps"]:
+        has_target_order_step = any(
+            step["step_type"] == "order" and normalize_asset(step["coin"]) == plan["target_asset"]
+            for step in plan["steps"]
+        )
+        has_leverage_update_step = any(
+            step["step_type"] == "leverage_update"
+            for step in plan["steps"]
+        )
+        if plan["target_asset"] != "CASH" and has_target_order_step and not has_leverage_update_step:
+            existing_target = plan["leverage_context"].get("exchange_leverage_target")
+            if existing_target is not None:
+                leverage_verification_evidence = build_leverage_verification_from_snapshot(
+                    snapshot=pre_snapshot,
+                    target_asset=plan["target_asset"],
+                    exchange_leverage_target=int(existing_target),
+                    snapshot_path=PRE_SNAPSHOT_PATH,
+                    reason="pre_submit_snapshot_already_matched",
+                )
+                plan["leverage_verification_evidence"] = leverage_verification_evidence
+                leverage_action_response.update(leverage_verification_evidence)
+                if not leverage_verification_evidence["exchange_leverage_verified_before_order"]:
+                    block_reason = str(
+                        leverage_verification_evidence["leverage_verification_block_reason"]
+                        or "exchange_leverage_not_verified_before_order"
+                    )
+                    plan["block_reasons"].append(block_reason)
+                    plan["status"] = "blocked"
+                    log(f"[BLOCKED] {block_reason}")
 
     if args.execute_live and account_setup is not None and not plan["block_reasons"] and plan["steps"]:
         log("[LIVE] submitting controlled execution steps")
 
         for step in plan["steps"]:
+            if plan["block_reasons"]:
+                break
+
             result = execute_exchange_step(
                 step=step,
                 crypto=crypto,
@@ -1356,6 +1462,27 @@ def main() -> None:
 
             if step["step_type"] == "leverage_update":
                 leverage_action_response["leverage_action_result"] = result
+                post_snapshot = refresh_live_snapshot(account_setup["account_address"])
+                write_json(LEVERAGE_VERIFICATION_SNAPSHOT_PATH, post_snapshot)
+                leverage_verification_evidence = build_leverage_verification_from_snapshot(
+                    snapshot=post_snapshot,
+                    target_asset=normalize_asset(step["coin"]),
+                    exchange_leverage_target=int(step["exchange_leverage_target"]),
+                    snapshot_path=LEVERAGE_VERIFICATION_SNAPSHOT_PATH,
+                    reason="post_updateLeverage_one_shot_snapshot",
+                )
+                plan["leverage_verification_evidence"] = leverage_verification_evidence
+                leverage_action_response.update(leverage_verification_evidence)
+                if not leverage_verification_evidence["exchange_leverage_verified_before_order"]:
+                    block_reason = str(
+                        leverage_verification_evidence["leverage_verification_block_reason"]
+                        or "exchange_leverage_not_verified_before_order"
+                    )
+                    plan["block_reasons"].append(block_reason)
+                    plan["status"] = "blocked"
+                    log(f"[BLOCKED] {block_reason}")
+                    break
+                continue
 
             if step["step_type"] == "order":
                 post_snapshot = refresh_live_snapshot(account_setup["account_address"])
@@ -1399,6 +1526,7 @@ def main() -> None:
             "preview_only": not args.execute_live,
             "signal_id": plan["signal_id"],
             "target_asset": plan["target_asset"],
+            **plan.get("leverage_verification_evidence", leverage_verification_evidence),
             "action_results": action_results,
         },
     )
@@ -1456,6 +1584,7 @@ def main() -> None:
         ),
         "exchange_margin_mode_source_field": leverage_ctx.get("exchange_margin_mode_source_field"),
         "exchange_leverage_blocker": leverage_ctx.get("exchange_leverage_blocker"),
+        **plan.get("leverage_verification_evidence", leverage_verification_evidence),
         "submit_plan": {
             "current_state": plan["current_state"],
             "current_position_size": plan["current_position_size"],
@@ -1483,8 +1612,30 @@ def main() -> None:
         "block_reason_count": len(plan["block_reasons"]),
         "strategy_target_leverage_present": leverage_ctx.get("strategy_target_leverage") is not None,
         "exchange_leverage_target_present": leverage_ctx.get("exchange_leverage_target") is not None,
+        "exchange_leverage_verified_before_order": plan.get("leverage_verification_evidence", leverage_verification_evidence).get("exchange_leverage_verified_before_order"),
+        "leverage_verification_snapshot_path": plan.get("leverage_verification_evidence", leverage_verification_evidence).get("leverage_verification_snapshot_path"),
+        "leverage_verification_value": plan.get("leverage_verification_evidence", leverage_verification_evidence).get("leverage_verification_value"),
+        "leverage_verification_target": plan.get("leverage_verification_evidence", leverage_verification_evidence).get("leverage_verification_target"),
         "post_submit_reconciliation_path": str(POST_RECON_PATH.resolve()),
     }
+
+    manifest_output_paths = [
+        str(DECISION_PATH.resolve()),
+        str(QUALITY_PATH.resolve()),
+        str(MANIFEST_PATH.resolve()),
+        str(REQUEST_PAYLOAD_PATH.resolve()),
+        str(EXCHANGE_RESPONSE_PATH.resolve()),
+        str(LEVERAGE_RESPONSE_PATH.resolve()),
+        str(PRE_SNAPSHOT_PATH.resolve()),
+        str(POST_SNAPSHOT_PATH.resolve()),
+        str(POST_RECON_PATH.resolve()),
+    ]
+    leverage_verification_snapshot_path = plan.get(
+        "leverage_verification_evidence",
+        leverage_verification_evidence,
+    ).get("leverage_verification_snapshot_path")
+    if leverage_verification_snapshot_path:
+        manifest_output_paths.append(str(Path(leverage_verification_snapshot_path).resolve()))
 
     manifest = {
         "artifact_name": "latest_submit_preview_decision",
@@ -1500,17 +1651,7 @@ def main() -> None:
             str(args.reconciliation_path.resolve()),
             str(PRE_SNAPSHOT_PATH.resolve()),
         ],
-        "output_paths": [
-            str(DECISION_PATH.resolve()),
-            str(QUALITY_PATH.resolve()),
-            str(MANIFEST_PATH.resolve()),
-            str(REQUEST_PAYLOAD_PATH.resolve()),
-            str(EXCHANGE_RESPONSE_PATH.resolve()),
-            str(LEVERAGE_RESPONSE_PATH.resolve()),
-            str(PRE_SNAPSHOT_PATH.resolve()),
-            str(POST_SNAPSHOT_PATH.resolve()),
-            str(POST_RECON_PATH.resolve()),
-        ],
+        "output_paths": manifest_output_paths,
         "status": decision["status"],
     }
 
@@ -1526,6 +1667,8 @@ def main() -> None:
     log(f"[SAVED] {LEVERAGE_RESPONSE_PATH}")
     log(f"[SAVED] {PRE_SNAPSHOT_PATH}")
     log(f"[SAVED] {POST_SNAPSHOT_PATH}")
+    if leverage_verification_snapshot_path:
+        log(f"[SAVED] {LEVERAGE_VERIFICATION_SNAPSHOT_PATH}")
     log(f"[SAVED] {POST_RECON_PATH}")
     log(f"[END] submit_controlled_real_order status={decision['status']}")
 
