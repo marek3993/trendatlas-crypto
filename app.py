@@ -3166,18 +3166,10 @@ with tabs[0]:
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     with ops[4]:
-        render_color_card(t(lang, "strategy_last_update"), format_date_text(strategy_data_date, lang), "", None, "neutral")
-    st.markdown(f"### {t(lang, 'calc_title')}")
-    st.write(t(lang, "calc_desc"))
-
-    available_dates = pd.to_datetime(main_equity_df["ts"]).dt.normalize().sort_values().drop_duplicates()
-    default_date = nearest_valid_date(available_dates, pd.Timestamp("2024-01-01"))
-    picked_date = st.date_input(
-        t(lang, "calc_date"),
-        value=default_date.date(),
-        min_value=available_dates.min().date(),
-        max_value=available_dates.max().date(),
-    )
+        metric_box(
+            t(lang, "strategy_last_update"),
+            format_date_text(strategy_data_date, lang),
+        )
 
     used_date, value_now, ret_pct = investment_value(main_equity_df, picked_date, amount=1000.0)
 
