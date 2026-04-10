@@ -51,8 +51,9 @@ DEFAULT_EXECUTION_STATUS_PATH = "outputs/execution/live_status/execution_status.
 DEFAULT_ACCOUNT_SNAPSHOT_PATH = "outputs/execution/read_only/hyperliquid_account_snapshot.json"
 DEFAULT_RUNTIME_HEALTH_PATH = "outputs/execution/runtime_health/latest_runtime_health.json"
 DEFAULT_DRY_RUN_DECISION_PATH = "outputs/execution/dry_run/latest_dry_run_decision.json"
-DEFAULT_SCHEDULER_ENTRY_DECISION_PATH = "outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json"
 DEFAULT_REAL_ORDER_GATE_PATH = "outputs/execution/live_gate/latest_real_order_gate_decision.json"
+DEFAULT_APP_FRESHNESS_REPORT_PATH = "outputs/app_freshness_verification/app_freshness_report.json"
+DEFAULT_APP_EXPORT_REFRESH_REPORT_PATH = "outputs/execution/refresh_pipeline/materialize_execution_app_exports_report.json"
 EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
@@ -171,8 +172,8 @@ TEXT = {
             "bez toho, aby museli celý deň manuálne sledovať grafy. Systém pracuje s fixným shortlistom, priebežne hodnotí "
             "relatívnu silu kandidátov a drží iba tú pozíciu, ktorá momentálne najlepšie spĺňa jeho pravidlá."
         ),
-        "home_title": "Dnes v skratke",
-        "currently_holding": "Momentálne držíme",
+        "home_title": "Snapshot v skratke",
+        "currently_holding": "Snapshot pozícia",
         "trend_state": "Stav trendu",
         "trend_score": "Trend score",
         "buy_threshold": "Buy threshold",
@@ -184,7 +185,7 @@ TEXT = {
         "trend_threshold_note": "0.0 je core buy threshold. Nad nulou je trend nad hranou, pod nulou pod hranou. Governance vrstva ešte stále môže blokovať samotný buy.",
         "trend_history": "Mini história trend score",
         "trend_history_note": "Krivka ukazuje exportovanú históriu trend score. Biela čiara je buy threshold.",
-        "trend_cross_none": "Bez dnešného prechodu",
+        "trend_cross_none": "Bez prechodu k dátumu výpočtu",
         "na": "Nedostupné",
         "chart_title": "Vývoj kapitálu",
         "chart_note": "Graf ukazuje hlavnú stratégiu a BTC benchmark bez referenčnej stratégie.",
@@ -202,12 +203,12 @@ TEXT = {
         "switch_count": "Počet prepnutí",
         "cash_days": "Cash Days",
         "btc_days": "BTC Days",
-        "strategy_last_update": "Posledná aktualizácia stratégie",
+        "strategy_last_update": "Dátum dát stratégie",
         "calc_title": "Koľko by bolo z 1 000 €",
-        "calc_desc": "Vyber dátum a pozri sa, akú hodnotu by dnes mala modelová investícia 1 000 €.",
+        "calc_desc": "Vyber dátum a pozri sa, akú hodnotu by mala modelová investícia 1 000 EUR v poslednom app snapshote.",
         "calc_date": "Dátum vkladu",
         "calc_used_date": "Použitý dátum",
-        "calc_value": "Dnešná hodnota",
+        "calc_value": "Hodnota v snapshote",
         "calc_return": "Zhodnotenie",
         "calc_note": "Je to modelový výpočet podľa equity krivky stratégie. Nie je to broker statement ani sľub budúceho výsledku.",
         "quick_examples": "Rýchle príklady",
@@ -365,8 +366,8 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
             "the market all day. The system works with a fixed shortlist, continuously evaluates relative strength, and holds "
             "only the position that currently fits its rules best."
         ),
-        "home_title": "Today at a glance",
-        "currently_holding": "Currently holding",
+        "home_title": "Snapshot at a glance",
+        "currently_holding": "Snapshot holding",
         "trend_state": "Trend state",
         "trend_score": "Trend score",
         "buy_threshold": "Buy threshold",
@@ -378,7 +379,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "trend_threshold_note": "0.0 is the core buy threshold. Above zero means above the threshold, below zero means below it. Governance can still block actual buy execution.",
         "trend_history": "Mini trend score history",
         "trend_history_note": "The line shows exported trend score history. The white line is the buy threshold.",
-        "trend_cross_none": "No cross today",
+        "trend_cross_none": "No cross on calc date",
         "na": "Unavailable",
         "chart_title": "Capital curve",
         "chart_note": "The chart shows the main strategy and the BTC benchmark, without the reference strategy.",
@@ -396,12 +397,12 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "switch_count": "Switch count",
         "cash_days": "Cash Days",
         "btc_days": "BTC Days",
-        "strategy_last_update": "Last strategy update",
+        "strategy_last_update": "Strategy data date",
         "calc_title": "What 1,000 € would have become",
-        "calc_desc": "Choose a start date and see what a model-based 1,000 € investment would be worth today.",
+        "calc_desc": "Choose a start date and see the value of a model-based EUR 1,000 investment in the latest app snapshot.",
         "calc_date": "Investment date",
         "calc_used_date": "Used date",
-        "calc_value": "Value today",
+        "calc_value": "Snapshot value",
         "calc_return": "Return",
         "calc_note": "This is a model-based calculation from the strategy equity curve. It is not a broker statement and not a promise of future results.",
         "quick_examples": "Quick examples",
@@ -553,7 +554,7 @@ Based on our tests, this approach is more stable and more profitable.
 
 METRIC_HELP = {
     "sk": {
-        "Momentálne držíme": "Toto pole ide priamo z live CSV cez held_asset_public. App si ho sama nedopočítava.",
+        "Snapshot pozícia": "Toto pole ide priamo z live CSV cez held_asset_public. App si ho sama nedopočítava.",
         "Stav trendu": "Textový stav exportovaný zo stratégie, nie vypočítaný v appke.",
         "Trend score": "Source-of-truth trend hodnota od -1 po +1. Pod nulou je trend pod buy hranou, nad nulou nad ňou.",
         "Buy threshold": "Hranica 0.0, ktorú používa core vrstva.",
@@ -574,7 +575,7 @@ METRIC_HELP = {
         "Posledný uzavretý deň": "Obchody vykonávame po uzavretí dňa, s jednodňovým oneskorením oproti signálu stratégie. Podľa testov je tento prístup stabilnejší a výnosnejší.",
     },
     "en": {
-        "Currently holding": "This field is read directly from held_asset_public in the live CSV.",
+        "Snapshot holding": "This field is read directly from held_asset_public in the live CSV.",
         "Trend state": "Text state exported by the strategy layer.",
         "Trend score": "Source-of-truth trend value from -1 to +1.",
         "Buy threshold": "The 0.0 threshold used by the core layer.",
@@ -994,6 +995,90 @@ def format_local_time_text(value: str | None, lang: str) -> str:
         return f"{parsed.day}.{parsed.month}.{parsed.year} {parsed.hour}:{parsed.minute:02d}"
     except ValueError:
         return format_date_text(text, lang)
+
+
+def parse_utc_datetime(value: str | None) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def is_utc_timestamp_today_local(value: str | None) -> bool:
+    parsed = parse_utc_datetime(value)
+    if parsed is None:
+        return False
+    return parsed.astimezone(APP_DISPLAY_TIMEZONE).date() == datetime.now(APP_DISPLAY_TIMEZONE).date()
+
+
+def build_app_freshness_display_state(
+    freshness_report: dict,
+    refresh_report: dict,
+    lang: str,
+) -> dict[str, str]:
+    latest_closed_utc_date = str(freshness_report.get("latest_closed_utc_date") or "").strip() or None
+    freshness_status = str(freshness_report.get("status") or "").strip().lower()
+    last_successful_refresh_utc = str(refresh_report.get("generated_at_utc") or "").strip() or None
+    refresh_status = str(refresh_report.get("status") or "").strip().lower()
+
+    freshness_ok = freshness_status in {"ok", "success", "pass", "passed"}
+    refresh_success = refresh_status in {"ok", "success"} or (bool(last_successful_refresh_utc) and not refresh_status)
+    refresh_today = refresh_success and is_utc_timestamp_today_local(last_successful_refresh_utc)
+
+    strategy_date_text = format_date_text(latest_closed_utc_date, lang)
+    refresh_time_text = format_local_time_text(last_successful_refresh_utc, lang)
+    freshness_status_text = freshness_status or t(lang, "na")
+
+    if not refresh_today:
+        headline = (
+            "Nie je aktuálne. Deployed app je snapshot-based; dnešný runtime refresh tu neprebehol."
+            if lang == "sk"
+            else "Not current. This deployed app is snapshot-based; today's runtime refresh has not completed here."
+        )
+        severity = "warning"
+    elif not freshness_ok:
+        headline = (
+            f"Nie je aktuálne. Freshness check je {freshness_status_text}; app ukazuje posledný materializovaný snapshot."
+            if lang == "sk"
+            else f"Not current. Freshness check is {freshness_status_text}; the app is showing the last materialized snapshot."
+        )
+        severity = "warning"
+    else:
+        headline = (
+            "Snapshot-based app: dnešný refresh prebehol a freshness check je OK."
+            if lang == "sk"
+            else "Snapshot-based app: today's refresh completed and the freshness check is OK."
+        )
+        severity = "info"
+
+    details = (
+        f"Dátum strategického artefaktu: {strategy_date_text}. "
+        f"Posledný úspešný app export refresh: {refresh_time_text}. "
+        f"Freshness check: {freshness_status_text}. "
+        "Dátum výpočtu trendu je osobitne v Trend barometri. "
+        "Synchronizácia peňaženky/účtu je iba v záložke Účet."
+        if lang == "sk"
+        else f"Strategy artifact date: {strategy_date_text}. "
+        f"Last successful app export refresh: {refresh_time_text}. "
+        f"Freshness check: {freshness_status_text}. "
+        "Trend calculation date is shown separately in the Trend barometer. "
+        "Wallet/account sync is shown only in the Account tab."
+    )
+
+    return {
+        "severity": severity,
+        "headline": headline,
+        "details": details,
+        "latest_closed_utc_date": latest_closed_utc_date or "",
+        "last_successful_refresh_utc": last_successful_refresh_utc or "",
+        "freshness_status": freshness_status,
+    }
 
 
 def render_phase_badge(label: str, background: str) -> None:
@@ -1651,9 +1736,9 @@ def prettify_asset_public(value: str | None, lang: str) -> str:
 
 def trend_cross_text(trend_live: dict, lang: str) -> str:
     if trend_live.get("crossed_up_today") is True:
-        return "Cross up today" if lang == "en" else "Dnes prechod hore"
+        return "Cross up on calc date" if lang == "en" else "Prechod hore k dátumu výpočtu"
     if trend_live.get("crossed_down_today") is True:
-        return "Cross down today" if lang == "en" else "Dnes prechod dole"
+        return "Cross down on calc date" if lang == "en" else "Prechod dole k dátumu výpočtu"
     return t(lang, "trend_cross_none")
 
 
@@ -3413,7 +3498,8 @@ account_snapshot_payload = load_json_optional(account_observability_cfg.get("sna
 account_snapshot_view = build_account_snapshot_view(account_status_payload, account_snapshot_payload)
 runtime_health_payload = load_json_optional(DEFAULT_RUNTIME_HEALTH_PATH)
 dry_run_decision_payload = load_json_optional(DEFAULT_DRY_RUN_DECISION_PATH)
-scheduler_entry_decision_payload = load_json_optional(DEFAULT_SCHEDULER_ENTRY_DECISION_PATH)
+app_freshness_payload = load_json_optional(DEFAULT_APP_FRESHNESS_REPORT_PATH)
+app_export_refresh_payload = load_json_optional(DEFAULT_APP_EXPORT_REFRESH_REPORT_PATH)
 real_order_gate_payload = load_json_optional(DEFAULT_REAL_ORDER_GATE_PATH)
 execution_mode_payload = load_json_optional(EXECUTION_MODE_CONFIG_PATH)
 live_order_policy_payload = load_json_optional(LIVE_ORDER_POLICY_PATH)
@@ -3421,7 +3507,11 @@ _trading_mode_bridge_result, trading_operation_mode_payload = load_trading_opera
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 if not runtime_guardrail_payload:
     runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "preflight_check", "execution_mode_guardrail")
-strategy_last_update_utc = str(scheduler_entry_decision_payload.get("generated_at_utc") or "").strip() or None
+strategy_freshness_display = build_app_freshness_display_state(
+    app_freshness_payload,
+    app_export_refresh_payload,
+    lang,
+)
 
 main_metrics = model_metrics.get(main_key, {})
 reference_metrics = model_metrics.get(reference_key, {})
@@ -3444,6 +3534,11 @@ tabs = st.tabs(t(lang, "tabs"))
 
 with tabs[0]:
     st.subheader(t(lang, "home_title"))
+    if strategy_freshness_display["severity"] == "warning":
+        st.warning(strategy_freshness_display["headline"])
+    else:
+        st.info(strategy_freshness_display["headline"])
+    st.caption(strategy_freshness_display["details"])
 
     home_cards = []
 
@@ -3573,15 +3668,26 @@ with tabs[0]:
     with ops[4]:
         render_color_card(
             t(lang, "strategy_last_update"),
-            format_local_time_text(strategy_last_update_utc, lang),
+            format_date_text(strategy_freshness_display.get("latest_closed_utc_date"), lang),
             "",
             (
-                "Tento cas ide priamo z outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json cez generated_at_utc a zobrazuje sa v lokalnom case Europe/Bratislava."
+                "Tento dátum ide priamo z outputs/app_freshness_verification/app_freshness_report.json cez latest_closed_utc_date."
                 if lang == "sk"
-                else "This timestamp comes directly from outputs/execution/full_auto_scheduler/latest_scheduler_entry_decision.json via generated_at_utc and is shown in Europe/Bratislava local time."
+                else "This date comes directly from outputs/app_freshness_verification/app_freshness_report.json via latest_closed_utc_date."
             ),
             "neutral",
         )
+    st.caption(
+        (
+            "Posledný úspešný app export refresh: "
+            f"{format_local_time_text(strategy_freshness_display.get('last_successful_refresh_utc'), lang)}"
+        )
+        if lang == "sk"
+        else (
+            "Last successful app export refresh: "
+            f"{format_local_time_text(strategy_freshness_display.get('last_successful_refresh_utc'), lang)}"
+        )
+    )
 
     st.markdown(f"### {t(lang, 'calc_title')}")
     st.write(t(lang, "calc_desc"))
