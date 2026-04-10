@@ -2566,10 +2566,9 @@ def build_csv_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     pct_change = ((latest_close / previous_close) - 1.0) * 100.0 if previous_close not in (None, 0) else 0.0
     if pct_change is None:
         pct_change = 0.0
-    direction = "↑" if pct_change >= 0 else "↓"
     return {
         "label": "BTC",
-        "direction": direction,
+        "direction": "up" if pct_change >= 0 else "down",
         "change_text": f"{pct_change:+.2f}%",
         "price_text": f"${display_price:,.0f}",
     }
@@ -2600,12 +2599,7 @@ def fetch_realtime_btc_ticker() -> dict[str, float] | None:
 def build_btc_side_indicator_data(_btc_df: pd.DataFrame | None = None) -> dict[str, Any]:
     live_ticker = fetch_realtime_btc_ticker()
     if not live_ticker:
-        return {
-            "label": "BTC",
-            "direction": "flat",
-            "change_text": "Nedostupné",
-            "price_text": "—",
-        }
+        return build_csv_btc_side_indicator_data(_btc_df)
 
     display_price = live_ticker["price"]
     pct_change = live_ticker["pct_change"]
@@ -3176,7 +3170,7 @@ with tabs[0]:
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     with ops[4]:
-        metric_box(t(lang, "strategy_last_update"), format_date_text(strategy_data_date, lang))
+        render_color_card(t(lang, "strategy_last_update"), format_date_text(strategy_data_date, lang), "", None, "neutral")
     st.markdown(f"### {t(lang, 'calc_title')}")
     st.write(t(lang, "calc_desc"))
 
