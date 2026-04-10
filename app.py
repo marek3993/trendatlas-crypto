@@ -7,7 +7,7 @@ import math
 import os
 import re
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 import sys
@@ -2443,7 +2443,6 @@ def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     if btc_df is None or btc_df.empty or "close" not in btc_df.columns:
         return {}
 
-    expected_latest_close = pd.Timestamp(datetime.now(timezone.utc).date() - timedelta(days=1))
     closed_btc = btc_df.dropna(subset=["ts", "close"]).copy()
     closed_btc["ts"] = pd.to_datetime(closed_btc["ts"], errors="coerce").dt.normalize()
     closed_btc = (
@@ -2451,10 +2450,9 @@ def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
         .sort_values("ts")
         .drop_duplicates(subset=["ts"], keep="last")
     )
-    closed_btc = closed_btc[closed_btc["ts"] <= expected_latest_close].tail(2).reset_index(drop=True)
+    current_utc_day = pd.Timestamp(datetime.now(timezone.utc).date())
+    closed_btc = closed_btc[closed_btc["ts"] < current_utc_day].tail(2).reset_index(drop=True)
     if len(closed_btc) < 2:
-        return {}
-    if pd.Timestamp(closed_btc.iloc[1]["ts"]).normalize() != expected_latest_close:
         return {}
 
     latest_close = as_float(closed_btc.iloc[1]["close"])
@@ -3034,13 +3032,7 @@ with tabs[0]:
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     with ops[4]:
-        render_color_card(
-            t(lang, "strategy_last_update"),
-            format_date_text(strategy_data_date, lang),
-            "",
-            None,
-            "neutral",
-        )
+        metric_box(t(lang, "strategy_last_update"), format_date_text(strategy_data_date, lang))
     st.markdown(f"### {t(lang, 'calc_title')}")
     st.write(t(lang, "calc_desc"))
 
