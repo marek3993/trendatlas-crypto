@@ -4,6 +4,9 @@
   "missing_registry_key_count": 0,
   "missing_file_count": 0,
   "hard_required_missing_count": 0,
+  "app_product_snapshot_valid": true,
+  "app_runtime_snapshot_valid": true,
+  "app_snapshot_error_count": 0,
   "contract_status": "valid",
   "ready_for_intent_builder": true
 }

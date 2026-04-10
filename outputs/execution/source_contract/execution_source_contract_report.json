@@ -1,6 +1,6 @@
 {
   "report_type": "execution_source_contract_report",
-  "generated_at_utc": "2026-04-08T22:10:05Z",
+  "generated_at_utc": "2026-04-10T09:08:27Z",
   "source_of_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "required_artifact_keys": [
     "phase67j_winner_paper",
@@ -78,7 +78,7 @@
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 507,
-        "modified_utc": "2026-04-08T22:10:05Z",
+        "modified_utc": "2026-04-10T09:07:25Z",
         "file_type": "csv",
         "header": [
           "model",
@@ -301,8 +301,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
-        "size_bytes": 1099,
-        "modified_utc": "2026-04-05T16:50:22Z",
+        "size_bytes": 1224,
+        "modified_utc": "2026-04-10T06:56:03Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -317,10 +317,84 @@
       }
     }
   },
+  "app_snapshot_reports": {
+    "app_product_snapshot": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
+      "inspection": {
+        "exists": true,
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
+        "size_bytes": 9092,
+        "modified_utc": "2026-04-10T09:07:25Z",
+        "file_type": "json",
+        "top_level_type": "dict",
+        "top_level_keys": [
+          "snapshot_type",
+          "schema_version",
+          "app_export_generated_at_utc",
+          "generated_at_utc",
+          "product_name",
+          "page_scope",
+          "main_strategy_model",
+          "reference_strategy_model",
+          "benchmark",
+          "strategy_last_closed_day",
+          "freshness_target_closed_day",
+          "latest_closed_day",
+          "freshness",
+          "main_strategy_metrics",
+          "live_public_state",
+          "trend_barometer_summary",
+          "chart_source_paths",
+          "benchmark_source_path",
+          "trend_history_source_path",
+          "display_names",
+          "source_metadata"
+        ]
+      },
+      "errors": [],
+      "valid": true
+    },
+    "app_runtime_snapshot": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
+      "inspection": {
+        "exists": true,
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
+        "size_bytes": 9340,
+        "modified_utc": "2026-04-10T09:07:25Z",
+        "file_type": "json",
+        "top_level_type": "dict",
+        "top_level_keys": [
+          "snapshot_type",
+          "schema_version",
+          "app_export_generated_at_utc",
+          "generated_at_utc",
+          "page_scope",
+          "runtime_last_sync_utc",
+          "account_snapshot_as_of_utc",
+          "dry_run_generated_at_utc",
+          "gate_generated_at_utc",
+          "account_observability_contract",
+          "execution_status",
+          "account_snapshot_summary",
+          "dry_run_summary",
+          "gate_summary",
+          "runtime_health_summary",
+          "execution_mode_posture",
+          "live_order_policy_summary",
+          "last_wallet_sync",
+          "source_metadata"
+        ]
+      },
+      "errors": [],
+      "valid": true
+    }
+  },
   "contract_status": "valid",
   "notes": [
     "This validator checks existence and basic shape only.",
     "It does not infer trading logic.",
-    "Do not build execution intent until contract_status is valid."
+    "Do not build execution intent until contract_status is valid.",
+    "The app homepage must be served from app_product_snapshot.json.",
+    "The app account page must be served from app_runtime_snapshot.json."
   ]
 }

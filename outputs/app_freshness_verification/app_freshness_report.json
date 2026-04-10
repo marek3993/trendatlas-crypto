@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-04-07T17:55:23+00:00",
-  "latest_closed_utc_date": "2026-04-06",
-  "status": "ok",
+  "generated_at_utc": "2026-04-10T06:56:03+00:00",
+  "latest_closed_utc_date": "2026-04-09",
+  "status": "fail",
   "checks": {
-    "btc_raw_last_date": "2026-04-06",
+    "btc_raw_last_date": "2026-04-09",
     "phase66g_paper_last_date": "2026-04-06",
     "phase66g_live_latest_available_date": "2026-04-06",
     "phase66g_trend_last_date": "2026-04-06",
@@ -19,17 +19,20 @@
       "LINK"
     ],
     "top100_asset_last_dates": {
-      "NEO": "2026-04-06",
-      "DOGE": "2026-04-06",
-      "STX": "2026-04-06",
-      "APT": "2026-04-06",
-      "HBAR": "2026-04-06",
-      "LINK": "2026-04-06"
+      "NEO": "2026-04-09",
+      "DOGE": "2026-04-09",
+      "STX": "2026-04-09",
+      "APT": "2026-04-09",
+      "HBAR": "2026-04-09",
+      "LINK": "2026-04-09"
     },
-    "top100_min_last_date": "2026-04-06",
-    "top100_max_last_date": "2026-04-06"
+    "top100_min_last_date": "2026-04-09",
+    "top100_max_last_date": "2026-04-09"
   },
   "warnings": [],
-  "errors": [],
+  "errors": [
+    "phase66g_too_far_behind_raw::phase66g=2026-04-06 btc_raw=2026-04-09",
+    "phase67j_too_far_behind_top100::phase67j=2026-04-06 top100_min=2026-04-09"
+  ],
   "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json"
 }

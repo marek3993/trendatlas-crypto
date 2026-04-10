@@ -1,6 +1,6 @@
 profile,asset,file,dropped_assets,history_days,start_date,end_date,daily_rows,max_gap_days,non_na_close_ratio
-phase67j_no_neo_main,DOGE,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\DOGEUSDT_1d.csv,NEO,2468,2019-07-05,2026-04-06,2468,1,100.0
-phase67j_no_neo_main,STX,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\STXUSDT_1d.csv,NEO,2356,2019-10-25,2026-04-06,2356,1,100.0
-phase67j_no_neo_main,APT,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\APTUSDT_1d.csv,NEO,1266,2022-10-19,2026-04-06,1266,1,100.0
-phase67j_no_neo_main,HBAR,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\HBARUSDT_1d.csv,NEO,2382,2019-09-29,2026-04-06,2382,1,100.0
-phase67j_no_neo_main,LINK,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\LINKUSDT_1d.csv,NEO,2638,2019-01-16,2026-04-06,2638,1,100.0
+phase67j_no_neo_main,DOGE,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\DOGEUSDT_1d.csv,NEO,2471,2019-07-05,2026-04-09,2471,1,100.0
+phase67j_no_neo_main,STX,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\STXUSDT_1d.csv,NEO,2359,2019-10-25,2026-04-09,2359,1,100.0
+phase67j_no_neo_main,APT,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\APTUSDT_1d.csv,NEO,1269,2022-10-19,2026-04-09,1269,1,100.0
+phase67j_no_neo_main,HBAR,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\HBARUSDT_1d.csv,NEO,2385,2019-09-29,2026-04-09,2385,1,100.0
+phase67j_no_neo_main,LINK,C:\Users\benda\Desktop\market_regime_v1\data\ohlcv_phase67_top100\LINKUSDT_1d.csv,NEO,2641,2019-01-16,2026-04-09,2641,1,100.0

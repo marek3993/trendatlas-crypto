@@ -1,0 +1,284 @@
+{
+  "snapshot_type": "app_runtime_snapshot",
+  "schema_version": 1,
+  "app_export_generated_at_utc": "2026-04-10T09:07:25Z",
+  "generated_at_utc": "2026-04-10T09:07:25Z",
+  "page_scope": "account_page",
+  "runtime_last_sync_utc": "2026-04-06T09:16:26Z",
+  "account_snapshot_as_of_utc": "2026-04-08T22:10:05Z",
+  "dry_run_generated_at_utc": "2026-04-08T22:10:05Z",
+  "gate_generated_at_utc": "2026-04-08T22:10:06Z",
+  "account_observability_contract": {
+    "enabled": true,
+    "read_mode": "read_only_operational_view",
+    "ui_sections": [
+      "proof_banner",
+      "overview",
+      "balances",
+      "positions",
+      "activity"
+    ]
+  },
+  "execution_status": {
+    "status": "ok",
+    "as_of_utc": "2026-04-08T22:10:05Z",
+    "mode": "live",
+    "trading_enabled": true,
+    "kill_switch": false,
+    "guardrails_ok": true,
+    "stale_signal": false,
+    "signal_id": "phase68i_dynamic_ladder_candidate::2026-04-06::CASH",
+    "target_asset": "CASH",
+    "error": null
+  },
+  "account_snapshot_summary": {
+    "status": "ok",
+    "provider": "Hyperliquid",
+    "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+    "as_of_utc": "2026-04-08T22:10:05Z",
+    "mode": "live",
+    "trading_enabled": true,
+    "kill_switch": false,
+    "account_equity_usd": 9.835466,
+    "available_balance_usd": 9.835466,
+    "balance_source_of_truth": "spot_stable_balance",
+    "positions_count": 0,
+    "open_orders_count": 0,
+    "recent_fills_count": 12,
+    "current_position": "CASH",
+    "open_position": null,
+    "last_action": "dry_run_execution_bridge",
+    "last_action_result": "hold_cash",
+    "error": null
+  },
+  "dry_run_summary": {
+    "generated_at_utc": "2026-04-08T22:10:05Z",
+    "signal_id": "phase68i_dynamic_ladder_candidate::2026-04-06::CASH",
+    "strategy_model": "phase68i_dynamic_ladder_candidate",
+    "as_of_source": "2026-04-06",
+    "target_asset": "CASH",
+    "target_regime": "Držíme CASH",
+    "current_state": "CASH",
+    "open_orders_count": 0,
+    "duplicate_order_risk": false,
+    "stale_signal": false,
+    "recommended_action": "hold_cash",
+    "decision_reason": "already_in_cash",
+    "simulated_order": {
+      "would_place_order": false,
+      "side": null,
+      "asset": null,
+      "size_mode": "not_computed_yet",
+      "notional_usd": null,
+      "qty": null
+    },
+    "guardrails": {
+      "dry_run_only": true,
+      "runtime_mode": "live",
+      "runtime_trading_enabled": true,
+      "runtime_kill_switch": false,
+      "kill_switch_required": true,
+      "manual_approval_required_for_live_orders": true,
+      "contract_validated": true,
+      "staleness_ok": true
+    }
+  },
+  "gate_summary": {
+    "generated_at_utc": "2026-04-08T22:10:06Z",
+    "signal_id": "phase68i_dynamic_ladder_candidate::2026-04-06::CASH",
+    "target_asset": "CASH",
+    "mode": "live",
+    "approval_gate_status": "approved_and_applied",
+    "would_place_real_order": true,
+    "real_orders_enabled": false,
+    "status": "ready_if_enabled",
+    "block_reasons": [],
+    "checks": {
+      "signal_present": true,
+      "target_asset_present": true,
+      "target_asset_allowed": true,
+      "contract_validated": true,
+      "mode_known": true,
+      "execution_trading_enabled": true,
+      "allow_live_orders": true,
+      "kill_switch": false,
+      "require_kill_switch_off": true,
+      "stale_signal": false,
+      "duplicate_order_risk": false,
+      "open_orders_present": false,
+      "manual_approval_required": false,
+      "approval_gate_status": "approved_and_applied",
+      "approval_status_allowed": true,
+      "leverage_live_truth_allowed": false,
+      "max_order_notional_usd": 250.0,
+      "account_address_present": true
+    }
+  },
+  "runtime_health_summary": {
+    "runtime_type": "controlled_runtime_health",
+    "runtime_label": "controlled_runtime",
+    "run_id": "20260406_091622",
+    "mode": "controlled_runtime_loop",
+    "run_active": false,
+    "status": "success",
+    "error": null,
+    "stop_reason": "one_pass_completed",
+    "started_at_utc": "2026-04-06T09:16:22Z",
+    "updated_at_utc": "2026-04-06T09:16:26Z",
+    "finished_at_utc": "2026-04-06T09:16:26Z",
+    "last_success_utc": "2026-04-06T09:16:26Z",
+    "outputs_possibly_stale_or_partial": false,
+    "execution_mode_guardrail": {
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
+      "mode": "read_only",
+      "trading_enabled": false,
+      "dry_run_enabled": true,
+      "kill_switch": true,
+      "ok": true,
+      "violations": []
+    }
+  },
+  "execution_mode_posture": {
+    "mode": "live",
+    "trading_enabled": true,
+    "dry_run_enabled": false,
+    "kill_switch": false,
+    "source_path": "execution/config/execution_mode.json",
+    "trading_operation_mode": {
+      "mode": "automatic",
+      "updated_at_utc": "2026-04-07T23:08:03Z",
+      "updated_by": "app",
+      "fail_closed": false,
+      "error": null,
+      "source_path": "execution/config/trading_operation_mode.json"
+    }
+  },
+  "live_order_policy_summary": {
+    "allow_live_orders": true,
+    "manual_approval_required": false,
+    "require_kill_switch_off": true,
+    "max_order_notional_usd": 250.0,
+    "allowed_assets": [
+      "BTC",
+      "ETH",
+      "APT",
+      "BCH",
+      "DOGE",
+      "ICP",
+      "STX",
+      "XTZ",
+      "CASH"
+    ],
+    "allowed_approval_gate_statuses": [
+      "approved_and_applied",
+      "live_order_enabled_and_approved"
+    ]
+  },
+  "last_wallet_sync": "2026-04-08T22:10:05Z",
+  "source_metadata": {
+    "execution_status": {
+      "path": "outputs/execution/live_status/execution_status.json",
+      "source_type": "execution_status",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 2091,
+      "modified_utc": "2026-04-08T22:10:05Z"
+    },
+    "account_snapshot_summary": {
+      "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+      "source_type": "read_only_account_snapshot",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 8720,
+      "modified_utc": "2026-04-08T22:10:04Z"
+    },
+    "dry_run_summary": {
+      "path": "outputs/execution/dry_run/latest_dry_run_decision.json",
+      "source_type": "dry_run_decision",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 1716,
+      "modified_utc": "2026-04-08T22:10:05Z"
+    },
+    "gate_summary": {
+      "path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
+      "source_type": "real_order_gate_decision",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 1938,
+      "modified_utc": "2026-04-08T22:10:06Z"
+    },
+    "runtime_health_summary": {
+      "path": "outputs/execution/runtime_health/latest_runtime_health.json",
+      "source_type": "runtime_health",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 15036,
+      "modified_utc": "2026-04-06T09:16:26Z"
+    },
+    "execution_mode_posture": {
+      "path": "execution/config/execution_mode.json",
+      "source_type": "execution_mode_config",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 116,
+      "modified_utc": "2026-04-07T16:04:17Z"
+    },
+    "live_order_policy_summary": {
+      "path": "execution/config/live_order_policy.json",
+      "source_type": "live_order_policy_config",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 313,
+      "modified_utc": "2026-04-06T17:10:36Z"
+    },
+    "trading_operation_mode": {
+      "path": "execution/config/trading_operation_mode.json",
+      "source_type": "trading_operation_mode_config",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 123,
+      "modified_utc": "2026-04-07T23:08:03Z"
+    },
+    "last_wallet_sync": {
+      "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+      "source_type": "read_only_account_snapshot",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 8720,
+      "modified_utc": "2026-04-08T22:10:04Z"
+    },
+    "runtime_last_sync_utc": {
+      "path": "outputs/execution/runtime_health/latest_runtime_health.json",
+      "source_type": "runtime_health",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 15036,
+      "modified_utc": "2026-04-06T09:16:26Z"
+    },
+    "account_snapshot_as_of_utc": {
+      "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+      "source_type": "read_only_account_snapshot",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 8720,
+      "modified_utc": "2026-04-08T22:10:04Z"
+    },
+    "dry_run_generated_at_utc": {
+      "path": "outputs/execution/dry_run/latest_dry_run_decision.json",
+      "source_type": "dry_run_decision",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 1716,
+      "modified_utc": "2026-04-08T22:10:05Z"
+    },
+    "gate_generated_at_utc": {
+      "path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
+      "source_type": "real_order_gate_decision",
+      "owner": "DATA",
+      "exists": true,
+      "size_bytes": 1938,
+      "modified_utc": "2026-04-08T22:10:06Z"
+    }
+  }
+}
