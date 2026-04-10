@@ -1,12 +1,13 @@
 {
   "artifact_name": "execution_app_status",
-  "generated_at_utc": "2026-04-08T22:10:04Z",
+  "generated_at_utc": "2026-04-10T19:31:22Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\render_execution_app_status.py",
   "input_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_quality.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\trading_operation_mode.json"
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\trading_operation_mode.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json"
   ],
   "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status\\execution_status.json",
   "status": "success"

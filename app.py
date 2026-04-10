@@ -704,6 +704,11 @@ FRESHNESS_SUMMARY_TEXT = {
 
 def build_missing_runtime_snapshot(path: Path) -> dict:
     missing_freshness = {
+        "latest_refresh_run_id": None,
+        "latest_refresh_run_status": None,
+        "refresh_currentness_state": "missing_runtime_artifact",
+        "refresh_currentness_reason_code": "runtime_artifact_missing",
+        "refresh_currentness_reason": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
         "freshness_state": "missing_runtime_artifact",
         "freshness_detail_code": "runtime_artifact_missing",
         "freshness_summary_text": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
@@ -762,6 +767,8 @@ def resolve_strategy_freshness(runtime_snapshot: dict) -> dict:
 
     resolved = dict(freshness)
     for key in [
+        "latest_refresh_run_id",
+        "latest_refresh_run_status",
         "refresh_run_id",
         "refresh_success",
         "refresh_status",
@@ -771,6 +778,9 @@ def resolve_strategy_freshness(runtime_snapshot: dict) -> dict:
         "latest_trend_calculation_date",
         "latest_wallet_sync_utc",
         "latest_available_closed_utc_date",
+        "refresh_currentness_state",
+        "refresh_currentness_reason",
+        "refresh_currentness_reason_code",
         "freshness_state",
         "freshness_detail_code",
         "freshness_detail_text",
@@ -779,31 +789,36 @@ def resolve_strategy_freshness(runtime_snapshot: dict) -> dict:
         if key not in resolved and key in runtime_snapshot:
             resolved[key] = runtime_snapshot.get(key)
 
-    state = str(resolved.get("freshness_state") or "").strip() or "missing_runtime_artifact"
-    if state in {"current", "stale"}:
-        today_utc = datetime.now(timezone.utc).date().isoformat()
-        refresh_finished_date = utc_date_from_text(resolved.get("refresh_finished_at_utc"))
-        if refresh_finished_date != today_utc:
-            state = "not_run_today"
-            resolved["freshness_state"] = state
-            resolved["freshness_detail_code"] = "daily_refresh_not_finished_today"
-            resolved["freshness_summary_text"] = FRESHNESS_SUMMARY_TEXT[state]
-            resolved["freshness_detail_text"] = (
-                f"{FRESHNESS_SUMMARY_TEXT[state]} "
-                f"today_utc={today_utc} "
-                f"latest_refresh_finished_at_utc={resolved.get('refresh_finished_at_utc') or 'missing'}."
-            )
+    if not resolved.get("latest_refresh_run_id") and resolved.get("refresh_run_id"):
+        resolved["latest_refresh_run_id"] = resolved.get("refresh_run_id")
+    if not resolved.get("latest_refresh_run_status") and resolved.get("refresh_status"):
+        resolved["latest_refresh_run_status"] = resolved.get("refresh_status")
 
+    state = (
+        str(resolved.get("refresh_currentness_state") or resolved.get("freshness_state") or "")
+        .strip()
+        or "missing_runtime_artifact"
+    )
     if state not in FRESHNESS_SUMMARY_TEXT:
         state = "missing_runtime_artifact"
-        resolved["freshness_state"] = state
-        resolved["freshness_detail_code"] = "runtime_artifact_missing"
-        resolved["freshness_summary_text"] = FRESHNESS_SUMMARY_TEXT[state]
-        resolved["freshness_detail_text"] = FRESHNESS_SUMMARY_TEXT[state]
 
+    reason = (
+        str(resolved.get("refresh_currentness_reason") or resolved.get("freshness_detail_text") or "")
+        .strip()
+        or FRESHNESS_SUMMARY_TEXT[state]
+    )
+    reason_code = (
+        str(resolved.get("refresh_currentness_reason_code") or resolved.get("freshness_detail_code") or "")
+        .strip()
+        or "runtime_artifact_missing"
+    )
+    resolved["refresh_currentness_state"] = state
+    resolved["refresh_currentness_reason"] = reason
+    resolved["refresh_currentness_reason_code"] = reason_code
     resolved["freshness_state"] = state
+    resolved["freshness_detail_code"] = reason_code
+    resolved["freshness_detail_text"] = reason
     resolved.setdefault("freshness_summary_text", FRESHNESS_SUMMARY_TEXT[state])
-    resolved.setdefault("freshness_detail_text", FRESHNESS_SUMMARY_TEXT[state])
     return resolved
 
 
@@ -3170,6 +3185,86 @@ with tabs[0]:
             t(lang, "strategy_last_update"),
             format_date_text(strategy_data_date, lang),
         )
+
+    refresh_currentness_state = str(
+        strategy_freshness_payload.get("refresh_currentness_state")
+        or strategy_freshness_payload.get("freshness_state")
+        or "missing_runtime_artifact"
+    ).strip()
+    refresh_currentness_reason = str(
+        strategy_freshness_payload.get("refresh_currentness_reason")
+        or strategy_freshness_payload.get("freshness_detail_text")
+        or FRESHNESS_SUMMARY_TEXT.get(refresh_currentness_state, FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"])
+    ).strip()
+    refresh_rows = [
+        {
+            "Pole" if lang == "sk" else "Field": "latest_successful_refresh_runtime_utc",
+            "Hodnota" if lang == "sk" else "Value": format_utc_text(
+                strategy_freshness_payload.get("latest_successful_refresh_runtime_utc"),
+                lang,
+            ),
+        },
+        {
+            "Pole" if lang == "sk" else "Field": "latest_refresh_run_status",
+            "Hodnota" if lang == "sk" else "Value": safe_text_value(
+                strategy_freshness_payload.get("latest_refresh_run_status")
+                or strategy_freshness_payload.get("refresh_status"),
+                lang=lang,
+            ),
+        },
+        {
+            "Pole" if lang == "sk" else "Field": "latest_refresh_run_id",
+            "Hodnota" if lang == "sk" else "Value": safe_text_value(
+                strategy_freshness_payload.get("latest_refresh_run_id")
+                or strategy_freshness_payload.get("refresh_run_id"),
+                lang=lang,
+            ),
+        },
+        {
+            "Pole" if lang == "sk" else "Field": "latest_strategy_artifact_date",
+            "Hodnota" if lang == "sk" else "Value": format_date_text(
+                strategy_freshness_payload.get("latest_strategy_artifact_date"),
+                lang,
+            ),
+        },
+        {
+            "Pole" if lang == "sk" else "Field": "latest_trend_calculation_date",
+            "Hodnota" if lang == "sk" else "Value": format_date_text(
+                strategy_freshness_payload.get("latest_trend_calculation_date"),
+                lang,
+            ),
+        },
+        {
+            "Pole" if lang == "sk" else "Field": "latest_wallet_sync_utc",
+            "Hodnota" if lang == "sk" else "Value": format_utc_text(
+                strategy_freshness_payload.get("latest_wallet_sync_utc"),
+                lang,
+            ),
+        },
+        {
+            "Pole" if lang == "sk" else "Field": "latest_available_closed_utc_date",
+            "Hodnota" if lang == "sk" else "Value": format_date_text(
+                strategy_freshness_payload.get("latest_available_closed_utc_date"),
+                lang,
+            ),
+        },
+        {
+            "Pole" if lang == "sk" else "Field": "refresh_currentness_state",
+            "Hodnota" if lang == "sk" else "Value": safe_text_value(
+                refresh_currentness_state,
+                lang=lang,
+            ),
+        },
+        {
+            "Pole" if lang == "sk" else "Field": "refresh_currentness_reason",
+            "Hodnota" if lang == "sk" else "Value": safe_text_value(
+                refresh_currentness_reason,
+                lang=lang,
+            ),
+        },
+    ]
+    st.markdown("#### Denny refresh runtime" if lang == "sk" else "#### Daily Refresh Runtime")
+    render_app_table(refresh_rows)
 
     available_dates = pd.to_datetime(main_equity_df["ts"], errors="coerce").dropna().dt.normalize()
     min_calc_date = available_dates.min().date()

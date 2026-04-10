@@ -1,13 +1,54 @@
 {
   "snapshot_type": "app_runtime_snapshot",
   "schema_version": 1,
-  "app_export_generated_at_utc": "2026-04-10T09:07:25Z",
-  "generated_at_utc": "2026-04-10T09:07:25Z",
+  "app_export_generated_at_utc": "2026-04-10T19:27:22Z",
+  "app_runtime_snapshot_generated_at_utc": "2026-04-10T19:31:15Z",
   "page_scope": "account_page",
   "runtime_last_sync_utc": "2026-04-06T09:16:26Z",
-  "account_snapshot_as_of_utc": "2026-04-08T22:10:05Z",
+  "account_snapshot_as_of_utc": "2026-04-08T22:10:04Z",
   "dry_run_generated_at_utc": "2026-04-08T22:10:05Z",
   "gate_generated_at_utc": "2026-04-08T22:10:06Z",
+  "latest_refresh_run_id": "20260410_192557",
+  "latest_refresh_run_status": "OK",
+  "refresh_run_id": "20260410_192557",
+  "refresh_success": true,
+  "refresh_status": "OK",
+  "refresh_finished_at_utc": "2026-04-10T19:27:23+00:00",
+  "latest_strategy_artifact_date": "2026-04-09",
+  "latest_successful_refresh_runtime_utc": "2026-04-10T19:27:23+00:00",
+  "latest_trend_calculation_date": "2026-04-09",
+  "latest_wallet_sync_utc": "2026-04-08T22:10:04Z",
+  "latest_available_closed_utc_date": "2026-04-09",
+  "refresh_currentness_state": "current",
+  "refresh_currentness_reason": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
+  "refresh_currentness_reason_code": "strategy_refresh_current",
+  "freshness_state": "current",
+  "freshness_detail_code": "strategy_refresh_current",
+  "freshness_detail_text": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
+  "freshness_summary_text": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
+  "strategy_freshness": {
+    "latest_refresh_run_id": "20260410_192557",
+    "latest_refresh_run_status": "OK",
+    "refresh_currentness_state": "current",
+    "refresh_currentness_reason_code": "strategy_refresh_current",
+    "refresh_currentness_reason": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
+    "freshness_state": "current",
+    "freshness_detail_code": "strategy_refresh_current",
+    "freshness_summary_text": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
+    "freshness_detail_text": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
+    "refresh_run_id": "20260410_192557",
+    "refresh_success": true,
+    "refresh_status": "OK",
+    "refresh_finished_at_utc": "2026-04-10T19:27:23+00:00",
+    "refresh_manifest_path": "outputs/app_refresh_pipeline/20260410_192557/app_refresh_pipeline_manifest.json",
+    "latest_successful_refresh_runtime_utc": "2026-04-10T19:27:23+00:00",
+    "latest_successful_refresh_run_id": "20260410_192557",
+    "latest_strategy_artifact_date": "2026-04-09",
+    "latest_trend_calculation_date": "2026-04-09",
+    "latest_wallet_sync_utc": "2026-04-08T22:10:04Z",
+    "latest_available_closed_utc_date": "2026-04-09",
+    "evaluated_at_utc": "2026-04-10T19:31:15Z"
+  },
   "account_observability_contract": {
     "enabled": true,
     "read_mode": "read_only_operational_view",
@@ -21,21 +62,19 @@
   },
   "execution_status": {
     "status": "ok",
-    "as_of_utc": "2026-04-08T22:10:05Z",
     "mode": "live",
     "trading_enabled": true,
     "kill_switch": false,
     "guardrails_ok": true,
-    "stale_signal": false,
-    "signal_id": "phase68i_dynamic_ladder_candidate::2026-04-06::CASH",
-    "target_asset": "CASH",
+    "stale_signal": null,
+    "signal_id": null,
+    "target_asset": null,
     "error": null
   },
   "account_snapshot_summary": {
     "status": "ok",
     "provider": "Hyperliquid",
     "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
-    "as_of_utc": "2026-04-08T22:10:05Z",
     "mode": "live",
     "trading_enabled": true,
     "kill_switch": false,
@@ -47,12 +86,11 @@
     "recent_fills_count": 12,
     "current_position": "CASH",
     "open_position": null,
-    "last_action": "dry_run_execution_bridge",
-    "last_action_result": "hold_cash",
+    "last_action": "execution_status_render",
+    "last_action_result": "ok",
     "error": null
   },
   "dry_run_summary": {
-    "generated_at_utc": "2026-04-08T22:10:05Z",
     "signal_id": "phase68i_dynamic_ladder_candidate::2026-04-06::CASH",
     "strategy_model": "phase68i_dynamic_ladder_candidate",
     "as_of_source": "2026-04-06",
@@ -84,7 +122,6 @@
     }
   },
   "gate_summary": {
-    "generated_at_utc": "2026-04-08T22:10:06Z",
     "signal_id": "phase68i_dynamic_ladder_candidate::2026-04-06::CASH",
     "target_asset": "CASH",
     "mode": "live",
@@ -126,7 +163,6 @@
     "started_at_utc": "2026-04-06T09:16:22Z",
     "updated_at_utc": "2026-04-06T09:16:26Z",
     "finished_at_utc": "2026-04-06T09:16:26Z",
-    "last_success_utc": "2026-04-06T09:16:26Z",
     "outputs_possibly_stale_or_partial": false,
     "execution_mode_guardrail": {
       "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
@@ -174,15 +210,50 @@
       "live_order_enabled_and_approved"
     ]
   },
-  "last_wallet_sync": "2026-04-08T22:10:05Z",
   "source_metadata": {
+    "strategy_freshness": {
+      "refresh_manifest_path": "outputs/app_refresh_pipeline/20260410_192557/app_refresh_pipeline_manifest.json",
+      "latest_successful_refresh_run_id": "20260410_192557",
+      "freshness_report": {
+        "path": "outputs/execution/freshness/app_freshness_report.json",
+        "source_type": "canonical_product_freshness_report",
+        "owner": "DATA",
+        "exists": true,
+        "size_bytes": 1061,
+        "modified_utc": "2026-04-10T19:27:22Z"
+      },
+      "strategy_artifact": {
+        "path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
+        "source_type": "canonical_app_paper",
+        "owner": "DATA",
+        "exists": true,
+        "size_bytes": 1322269,
+        "modified_utc": "2026-04-10T13:57:20Z"
+      },
+      "trend_calculation": {
+        "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+        "source_type": "canonical_trend_live_status",
+        "owner": "DATA",
+        "exists": true,
+        "size_bytes": 619,
+        "modified_utc": "2026-04-10T13:57:09Z"
+      },
+      "wallet_sync": {
+        "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+        "source_type": "read_only_account_snapshot",
+        "owner": "DATA",
+        "exists": true,
+        "size_bytes": 8720,
+        "modified_utc": "2026-04-08T22:10:04Z"
+      }
+    },
     "execution_status": {
       "path": "outputs/execution/live_status/execution_status.json",
       "source_type": "execution_status",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 2091,
-      "modified_utc": "2026-04-08T22:10:05Z"
+      "size_bytes": 3637,
+      "modified_utc": "2026-04-10T19:31:15Z"
     },
     "account_snapshot_summary": {
       "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
@@ -239,14 +310,6 @@
       "exists": true,
       "size_bytes": 123,
       "modified_utc": "2026-04-07T23:08:03Z"
-    },
-    "last_wallet_sync": {
-      "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
-      "source_type": "read_only_account_snapshot",
-      "owner": "DATA",
-      "exists": true,
-      "size_bytes": 8720,
-      "modified_utc": "2026-04-08T22:10:04Z"
     },
     "runtime_last_sync_utc": {
       "path": "outputs/execution/runtime_health/latest_runtime_health.json",

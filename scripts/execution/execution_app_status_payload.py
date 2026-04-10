@@ -80,8 +80,12 @@ def build_execution_app_status(
     source_paths: dict[str, str],
     trading_operation_mode: dict[str, Any] | None = None,
     execution_mode_posture: dict[str, Any] | None = None,
+    strategy_freshness: dict[str, Any] | None = None,
     error: Any = None,
 ) -> dict[str, Any]:
+    strategy_freshness_payload = (
+        strategy_freshness if isinstance(strategy_freshness, dict) else {}
+    )
     return {
         "status_type": "execution_app_status",
         "as_of_utc": utc_now_iso(),
@@ -103,6 +107,28 @@ def build_execution_app_status(
         "target_asset": target_asset,
         "trading_operation_mode": trading_operation_mode,
         "execution_mode_posture": execution_mode_posture,
+        "strategy_freshness": strategy_freshness_payload,
+        "latest_successful_refresh_runtime_utc": strategy_freshness_payload.get(
+            "latest_successful_refresh_runtime_utc"
+        ),
+        "latest_refresh_run_status": strategy_freshness_payload.get("latest_refresh_run_status")
+        or strategy_freshness_payload.get("refresh_status"),
+        "latest_refresh_run_id": strategy_freshness_payload.get("latest_refresh_run_id")
+        or strategy_freshness_payload.get("refresh_run_id"),
+        "latest_strategy_artifact_date": strategy_freshness_payload.get(
+            "latest_strategy_artifact_date"
+        ),
+        "latest_trend_calculation_date": strategy_freshness_payload.get(
+            "latest_trend_calculation_date"
+        ),
+        "latest_wallet_sync_utc": strategy_freshness_payload.get("latest_wallet_sync_utc"),
+        "latest_available_closed_utc_date": strategy_freshness_payload.get(
+            "latest_available_closed_utc_date"
+        ),
+        "refresh_currentness_state": strategy_freshness_payload.get("refresh_currentness_state")
+        or strategy_freshness_payload.get("freshness_state"),
+        "refresh_currentness_reason": strategy_freshness_payload.get("refresh_currentness_reason")
+        or strategy_freshness_payload.get("freshness_detail_text"),
         "error": error,
         "source_paths": source_paths,
     }

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import shutil
@@ -17,6 +18,7 @@ APP_EXPORTS_DIR = OUTPUTS_DIR / "app_exports"
 FRESHNESS_DIR = OUTPUTS_DIR / "freshness"
 APP_SNAPSHOT_DIR = OUTPUTS_DIR / "app_snapshot"
 LOGS_DIR = OUTPUTS_DIR / "logs"
+APP_REFRESH_PIPELINE_DIR = ROOT / "outputs" / "app_refresh_pipeline"
 
 PATHS_REGISTRY_PATH = SOURCE_OF_TRUTH_DIR / "paths_registry.json"
 PROJECT_TRUTH_PATH = SOURCE_OF_TRUTH_DIR / "project_truth.json"
@@ -66,6 +68,15 @@ PHASE68H_DYNAMIC_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverag
 PHASE68H_SCRIPT_PATH = ROOT / "scripts" / "phase68h_dynamic_leverage_ladder_candidate.py"
 PHASE66G_PRODUCTION_PAPER_PATH = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_production_soft_filters_paper.csv"
 
+SUCCESS_REFRESH_STATUSES = {"OK", "SUCCESS", "PASS", "PASSED"}
+FRESHNESS_SUMMARY_TEXT = {
+    "current": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
+    "stale": "Stale: today's refresh ran, but strategy data is behind the latest closed UTC day.",
+    "not_run_today": "Not run today: today's daily refresh has not finished.",
+    "failed_latest_refresh": "Failed latest refresh: the most recent daily refresh failed.",
+    "missing_runtime_artifact": "Missing runtime artifact: app_runtime_snapshot.json is missing or invalid.",
+}
+
 
 def utc_now_iso() -> str:
     return (
@@ -108,6 +119,204 @@ def read_json_optional(path: Path) -> dict[str, Any]:
     except Exception:
         return {}
     return payload if isinstance(payload, dict) else {}
+
+
+def parse_utc_datetime(value: Any) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def utc_date_from_iso(value: Any) -> str | None:
+    parsed = parse_utc_datetime(value)
+    if parsed is None:
+        return None
+    return parsed.date().isoformat()
+
+
+def normalize_refresh_status(payload: dict[str, Any]) -> str:
+    status = str(payload.get("main_refresh_chain_status") or payload.get("status") or "").strip().upper()
+    return status or "UNKNOWN"
+
+
+def refresh_manifest_finished_at(payload: dict[str, Any]) -> str | None:
+    return (
+        str(
+            payload.get("main_refresh_chain_finished_at_utc")
+            or payload.get("finished_at_utc")
+            or payload.get("generated_at_utc")
+            or payload.get("started_at_utc")
+            or ""
+        ).strip()
+        or None
+    )
+
+
+def load_refresh_manifests() -> list[dict[str, Any]]:
+    manifests: list[dict[str, Any]] = []
+    if not APP_REFRESH_PIPELINE_DIR.exists():
+        return manifests
+    for manifest_path in APP_REFRESH_PIPELINE_DIR.glob("*/app_refresh_pipeline_manifest.json"):
+        payload = read_json_optional(manifest_path)
+        if not payload:
+            continue
+        run_id = manifest_path.parent.name
+        finished_at_utc = refresh_manifest_finished_at(payload)
+        manifests.append(
+            {
+                "run_id": run_id,
+                "manifest_path": path_for_app(manifest_path),
+                "status": normalize_refresh_status(payload),
+                "success": normalize_refresh_status(payload) in SUCCESS_REFRESH_STATUSES,
+                "started_at_utc": payload.get("started_at_utc"),
+                "finished_at_utc": finished_at_utc,
+                "sort_at_utc": finished_at_utc or payload.get("started_at_utc"),
+                "error": payload.get("error"),
+            }
+        )
+    return sorted(
+        manifests,
+        key=lambda item: parse_utc_datetime(item.get("sort_at_utc")) or datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+
+
+def read_last_csv_date_optional(path: Path) -> str | None:
+    if not path.exists() or not path.is_file():
+        return None
+    try:
+        return read_last_csv_date(path)
+    except SystemExit:
+        raise
+    except Exception:
+        return None
+
+
+def read_trend_calculation_date_optional(path: Path) -> str | None:
+    if not path.exists() or not path.is_file():
+        return None
+    try:
+        row = read_optional_single_csv_row(path)
+    except SystemExit:
+        raise
+    except Exception:
+        return None
+    return str(row.get("trend_calc_date") or row.get("latest_available_date") or "").strip() or None
+
+
+def freshness_detail(
+    state: str,
+    *,
+    latest_refresh: dict[str, Any] | None,
+    latest_strategy_artifact_date: str | None,
+    latest_available_closed_utc_date: str | None,
+    today_utc: str,
+) -> tuple[str, str]:
+    if state == "current":
+        return (
+            "strategy_refresh_current",
+            FRESHNESS_SUMMARY_TEXT[state],
+        )
+    if state == "stale":
+        return (
+            "strategy_artifact_behind_latest_closed_day",
+            (
+                f"{FRESHNESS_SUMMARY_TEXT[state]} "
+                f"strategy_date={latest_strategy_artifact_date or 'missing'} "
+                f"latest_available_closed_utc_date={latest_available_closed_utc_date or 'missing'}."
+            ),
+        )
+    if state == "failed_latest_refresh":
+        return (
+            "latest_refresh_failed",
+            (
+                f"{FRESHNESS_SUMMARY_TEXT[state]} "
+                f"run_id={(latest_refresh or {}).get('run_id') or 'missing'} "
+                f"finished_at_utc={(latest_refresh or {}).get('finished_at_utc') or 'missing'}."
+            ),
+        )
+    if state == "not_run_today":
+        return (
+            "daily_refresh_not_finished_today",
+            (
+                f"{FRESHNESS_SUMMARY_TEXT[state]} "
+                f"today_utc={today_utc} "
+                f"latest_refresh_finished_at_utc={(latest_refresh or {}).get('finished_at_utc') or 'missing'}."
+            ),
+        )
+    return (
+        "runtime_artifact_missing",
+        FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
+    )
+
+
+def build_strategy_freshness_summary(
+    *,
+    latest_strategy_artifact_date: str | None,
+    latest_trend_calculation_date: str | None,
+    latest_wallet_sync_utc: str | None,
+    latest_available_closed_utc_date: str | None,
+) -> dict[str, Any]:
+    refresh_manifests = load_refresh_manifests()
+    latest_refresh = refresh_manifests[0] if refresh_manifests else None
+    latest_successful_refresh = next((item for item in refresh_manifests if item.get("success")), None)
+    today_utc = datetime.now(timezone.utc).date().isoformat()
+
+    if latest_refresh is None:
+        state = "not_run_today"
+    elif not bool(latest_refresh.get("success")):
+        state = "failed_latest_refresh"
+    elif utc_date_from_iso(latest_refresh.get("finished_at_utc")) != today_utc:
+        state = "not_run_today"
+    elif not latest_strategy_artifact_date or not latest_available_closed_utc_date:
+        state = "stale"
+    elif latest_strategy_artifact_date < latest_available_closed_utc_date:
+        state = "stale"
+    else:
+        state = "current"
+
+    detail_code, detail_text = freshness_detail(
+        state,
+        latest_refresh=latest_refresh,
+        latest_strategy_artifact_date=latest_strategy_artifact_date,
+        latest_available_closed_utc_date=latest_available_closed_utc_date,
+        today_utc=today_utc,
+    )
+
+    return {
+        "latest_refresh_run_id": None if latest_refresh is None else latest_refresh.get("run_id"),
+        "latest_refresh_run_status": None if latest_refresh is None else latest_refresh.get("status"),
+        "refresh_currentness_state": state,
+        "refresh_currentness_reason_code": detail_code,
+        "refresh_currentness_reason": detail_text,
+        "freshness_state": state,
+        "freshness_detail_code": detail_code,
+        "freshness_summary_text": FRESHNESS_SUMMARY_TEXT[state],
+        "freshness_detail_text": detail_text,
+        "refresh_run_id": None if latest_refresh is None else latest_refresh.get("run_id"),
+        "refresh_success": None if latest_refresh is None else bool(latest_refresh.get("success")),
+        "refresh_status": None if latest_refresh is None else latest_refresh.get("status"),
+        "refresh_finished_at_utc": None if latest_refresh is None else latest_refresh.get("finished_at_utc"),
+        "refresh_manifest_path": None if latest_refresh is None else latest_refresh.get("manifest_path"),
+        "latest_successful_refresh_runtime_utc": (
+            None if latest_successful_refresh is None else latest_successful_refresh.get("finished_at_utc")
+        ),
+        "latest_successful_refresh_run_id": (
+            None if latest_successful_refresh is None else latest_successful_refresh.get("run_id")
+        ),
+        "latest_strategy_artifact_date": latest_strategy_artifact_date,
+        "latest_trend_calculation_date": latest_trend_calculation_date,
+        "latest_wallet_sync_utc": latest_wallet_sync_utc,
+        "latest_available_closed_utc_date": latest_available_closed_utc_date,
+        "evaluated_at_utc": utc_now_iso(),
+    }
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -727,7 +936,6 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
         "status": status_payload.get("status") or ("ok" if snapshot_payload else None),
         "provider": status_payload.get("provider") or snapshot_source.get("provider"),
         "account_address": status_payload.get("account_address") or snapshot_payload.get("account_address"),
-        "as_of_utc": status_payload.get("as_of_utc") or snapshot_payload.get("as_of_utc"),
         "mode": status_payload.get("mode") or snapshot_payload.get("execution_mode"),
         "trading_enabled": status_payload.get("trading_enabled") if "trading_enabled" in status_payload else snapshot_payload.get("trading_enabled"),
         "kill_switch": status_payload.get("kill_switch") if "kill_switch" in status_payload else snapshot_payload.get("kill_switch"),
@@ -867,7 +1075,6 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "snapshot_type": "app_product_snapshot",
         "schema_version": 1,
         "app_export_generated_at_utc": app_export_generated_at_utc,
-        "generated_at_utc": app_export_generated_at_utc,
         "product_name": "TrendAtlas Crypto",
         "page_scope": "homepage",
         "main_strategy_model": "phase68i_dynamic_ladder_candidate",
@@ -875,11 +1082,9 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "benchmark": "BTC",
         "strategy_last_closed_day": strategy_last_closed_day,
         "freshness_target_closed_day": freshness_target_closed_day,
-        "latest_closed_day": strategy_last_closed_day,
         "freshness": {
             "status": freshness_payload.get("status"),
             "generated_at_utc": freshness_payload.get("generated_at_utc"),
-            "latest_closed_utc_date": freshness_target_closed_day,
             "checks": freshness_payload.get("checks", {}),
             "warnings": freshness_payload.get("warnings", []),
             "errors": freshness_payload.get("errors", []),
@@ -911,7 +1116,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     }
 
 
-def build_runtime_snapshot() -> dict[str, Any]:
+def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> dict[str, Any]:
     status_payload = read_json_optional(EXECUTION_STATUS_PATH)
     account_snapshot_payload = read_json_optional(ACCOUNT_SNAPSHOT_PATH)
     runtime_health_payload = read_json_optional(RUNTIME_HEALTH_PATH)
@@ -920,13 +1125,32 @@ def build_runtime_snapshot() -> dict[str, Any]:
     execution_mode_payload = read_json_optional(EXECUTION_MODE_CONFIG_PATH)
     live_order_policy_payload = read_json_optional(LIVE_ORDER_POLICY_PATH)
     trading_operation_mode_payload = read_json_optional(TRADING_OPERATION_MODE_PATH)
+    product_snapshot_payload = read_json_optional(APP_PRODUCT_SNAPSHOT_PATH)
 
     account_summary = build_runtime_account_summary(status_payload, account_snapshot_payload)
     runtime_last_sync_utc = runtime_health_payload.get("last_success_utc")
-    account_snapshot_as_of_utc = account_summary.get("as_of_utc")
+    account_snapshot_as_of_utc = status_payload.get("as_of_utc") or account_snapshot_payload.get("as_of_utc")
     dry_run_generated_at_utc = dry_run_payload.get("generated_at_utc")
     gate_generated_at_utc = gate_payload.get("generated_at_utc")
     app_runtime_generated_at_utc = utc_now_iso()
+    resolved_app_export_generated_at_utc = (
+        app_export_generated_at_utc
+        or product_snapshot_payload.get("app_export_generated_at_utc")
+        or app_runtime_generated_at_utc
+    )
+    freshness_payload = read_json_optional(APP_FRESHNESS_REPORT_PATH)
+    latest_strategy_artifact_date = read_last_csv_date_optional(PHASE68I_PAPER_INPUT_PATH)
+    latest_trend_calculation_date = read_trend_calculation_date_optional(PHASE66G_LIVE_STATUS_PATH)
+    latest_available_closed_utc_date = (
+        str(freshness_payload.get("latest_closed_utc_date") or "").strip() or None
+    )
+    latest_wallet_sync_utc = account_snapshot_as_of_utc
+    strategy_freshness = build_strategy_freshness_summary(
+        latest_strategy_artifact_date=latest_strategy_artifact_date,
+        latest_trend_calculation_date=latest_trend_calculation_date,
+        latest_wallet_sync_utc=latest_wallet_sync_utc,
+        latest_available_closed_utc_date=latest_available_closed_utc_date,
+    )
     execution_mode_posture = {
         "mode": execution_mode_payload.get("mode"),
         "trading_enabled": execution_mode_payload.get("trading_enabled"),
@@ -946,13 +1170,32 @@ def build_runtime_snapshot() -> dict[str, Any]:
     return {
         "snapshot_type": "app_runtime_snapshot",
         "schema_version": 1,
-        "app_export_generated_at_utc": app_runtime_generated_at_utc,
-        "generated_at_utc": app_runtime_generated_at_utc,
+        "app_export_generated_at_utc": resolved_app_export_generated_at_utc,
+        "app_runtime_snapshot_generated_at_utc": app_runtime_generated_at_utc,
         "page_scope": "account_page",
         "runtime_last_sync_utc": runtime_last_sync_utc,
         "account_snapshot_as_of_utc": account_snapshot_as_of_utc,
         "dry_run_generated_at_utc": dry_run_generated_at_utc,
         "gate_generated_at_utc": gate_generated_at_utc,
+        "latest_refresh_run_id": strategy_freshness["latest_refresh_run_id"],
+        "latest_refresh_run_status": strategy_freshness["latest_refresh_run_status"],
+        "refresh_run_id": strategy_freshness["refresh_run_id"],
+        "refresh_success": strategy_freshness["refresh_success"],
+        "refresh_status": strategy_freshness["refresh_status"],
+        "refresh_finished_at_utc": strategy_freshness["refresh_finished_at_utc"],
+        "latest_strategy_artifact_date": latest_strategy_artifact_date,
+        "latest_successful_refresh_runtime_utc": strategy_freshness["latest_successful_refresh_runtime_utc"],
+        "latest_trend_calculation_date": latest_trend_calculation_date,
+        "latest_wallet_sync_utc": latest_wallet_sync_utc,
+        "latest_available_closed_utc_date": latest_available_closed_utc_date,
+        "refresh_currentness_state": strategy_freshness["refresh_currentness_state"],
+        "refresh_currentness_reason": strategy_freshness["refresh_currentness_reason"],
+        "refresh_currentness_reason_code": strategy_freshness["refresh_currentness_reason_code"],
+        "freshness_state": strategy_freshness["freshness_state"],
+        "freshness_detail_code": strategy_freshness["freshness_detail_code"],
+        "freshness_detail_text": strategy_freshness["freshness_detail_text"],
+        "freshness_summary_text": strategy_freshness["freshness_summary_text"],
+        "strategy_freshness": strategy_freshness,
         "account_observability_contract": {
             "enabled": True,
             "read_mode": "read_only_operational_view",
@@ -966,7 +1209,6 @@ def build_runtime_snapshot() -> dict[str, Any]:
         },
         "execution_status": {
             "status": status_payload.get("status"),
-            "as_of_utc": status_payload.get("as_of_utc"),
             "mode": status_payload.get("mode"),
             "trading_enabled": status_payload.get("trading_enabled"),
             "kill_switch": status_payload.get("kill_switch"),
@@ -978,7 +1220,6 @@ def build_runtime_snapshot() -> dict[str, Any]:
         },
         "account_snapshot_summary": account_summary,
         "dry_run_summary": {
-            "generated_at_utc": dry_run_generated_at_utc,
             "signal_id": dry_run_payload.get("signal_id"),
             "strategy_model": dry_run_payload.get("strategy_model"),
             "as_of_source": dry_run_payload.get("as_of_source"),
@@ -994,7 +1235,6 @@ def build_runtime_snapshot() -> dict[str, Any]:
             "guardrails": dry_run_payload.get("guardrails", {}),
         },
         "gate_summary": {
-            "generated_at_utc": gate_generated_at_utc,
             "signal_id": gate_payload.get("signal_id"),
             "target_asset": gate_payload.get("target_asset"),
             "mode": gate_payload.get("mode"),
@@ -1017,7 +1257,6 @@ def build_runtime_snapshot() -> dict[str, Any]:
             "started_at_utc": runtime_health_payload.get("started_at_utc"),
             "updated_at_utc": runtime_health_payload.get("updated_at_utc"),
             "finished_at_utc": runtime_health_payload.get("finished_at_utc"),
-            "last_success_utc": runtime_health_payload.get("last_success_utc"),
             "outputs_possibly_stale_or_partial": runtime_health_payload.get("outputs_possibly_stale_or_partial"),
             "execution_mode_guardrail": runtime_health_payload.get("execution_mode_guardrail")
             or ((runtime_health_payload.get("preflight_check") or {}).get("execution_mode_guardrail") if isinstance(runtime_health_payload.get("preflight_check"), dict) else {}),
@@ -1031,8 +1270,15 @@ def build_runtime_snapshot() -> dict[str, Any]:
             "allowed_assets": live_order_policy_payload.get("allowed_assets", []),
             "allowed_approval_gate_statuses": live_order_policy_payload.get("allowed_approval_gate_statuses", []),
         },
-        "last_wallet_sync": account_snapshot_as_of_utc,
         "source_metadata": {
+            "strategy_freshness": {
+                "refresh_manifest_path": strategy_freshness["refresh_manifest_path"],
+                "latest_successful_refresh_run_id": strategy_freshness["latest_successful_refresh_run_id"],
+                "freshness_report": source_metadata(APP_FRESHNESS_REPORT_PATH, "canonical_product_freshness_report"),
+                "strategy_artifact": source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
+                "trend_calculation": source_metadata(PHASE66G_LIVE_STATUS_PATH, "canonical_trend_live_status"),
+                "wallet_sync": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
+            },
             "execution_status": source_metadata(EXECUTION_STATUS_PATH, "execution_status"),
             "account_snapshot_summary": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
             "dry_run_summary": source_metadata(DRY_RUN_DECISION_PATH, "dry_run_decision"),
@@ -1041,7 +1287,6 @@ def build_runtime_snapshot() -> dict[str, Any]:
             "execution_mode_posture": source_metadata(EXECUTION_MODE_CONFIG_PATH, "execution_mode_config"),
             "live_order_policy_summary": source_metadata(LIVE_ORDER_POLICY_PATH, "live_order_policy_config"),
             "trading_operation_mode": source_metadata(TRADING_OPERATION_MODE_PATH, "trading_operation_mode_config"),
-            "last_wallet_sync": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
             "runtime_last_sync_utc": source_metadata(RUNTIME_HEALTH_PATH, "runtime_health"),
             "account_snapshot_as_of_utc": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
             "dry_run_generated_at_utc": source_metadata(DRY_RUN_DECISION_PATH, "dry_run_decision"),
@@ -1050,10 +1295,30 @@ def build_runtime_snapshot() -> dict[str, Any]:
     }
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Materialize canonical execution app exports and app-facing snapshots."
+    )
+    parser.add_argument(
+        "--runtime-snapshot-only",
+        action="store_true",
+        help="Only refresh outputs/execution/app_snapshot/app_runtime_snapshot.json.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
     ensure_dirs()
     started_at = utc_now_iso()
     log("[START] materialize_execution_app_exports")
+
+    if args.runtime_snapshot_only:
+        runtime_snapshot = build_runtime_snapshot()
+        write_json(APP_RUNTIME_SNAPSHOT_PATH, runtime_snapshot)
+        log(f"[MATERIALIZED] app_runtime_snapshot -> {APP_RUNTIME_SNAPSHOT_PATH}")
+        log("[END] materialize_execution_app_exports runtime_snapshot_only")
+        return
 
     registry = read_json(PATHS_REGISTRY_PATH)
     artifacts = registry.get("artifacts")
@@ -1207,7 +1472,9 @@ def main() -> None:
     log(f"              target={PHASE68I_SUMMARY_OUTPUT_PATH}")
 
     product_snapshot = build_product_snapshot(app_live_mode_contract)
-    runtime_snapshot = build_runtime_snapshot()
+    runtime_snapshot = build_runtime_snapshot(
+        app_export_generated_at_utc=product_snapshot.get("app_export_generated_at_utc")
+    )
     write_json(APP_PRODUCT_SNAPSHOT_PATH, product_snapshot)
     write_json(APP_RUNTIME_SNAPSHOT_PATH, runtime_snapshot)
     transformed_count += 2

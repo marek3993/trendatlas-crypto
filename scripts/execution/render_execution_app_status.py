@@ -28,11 +28,13 @@ READ_ONLY_DIR = OUTPUT_DIR / "read_only"
 LIVE_STATUS_DIR = OUTPUT_DIR / "live_status"
 LOGS_DIR = OUTPUT_DIR / "logs"
 CONFIG_DIR = ROOT / "execution" / "config"
+APP_SNAPSHOT_DIR = OUTPUT_DIR / "app_snapshot"
 
 SNAPSHOT_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot.json"
 QUALITY_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot_quality.json"
 MODE_CONFIG_PATH = CONFIG_DIR / "execution_mode.json"
 TRADING_OPERATION_MODE_PATH = CONFIG_DIR / "trading_operation_mode.json"
+APP_RUNTIME_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_runtime_snapshot.json"
 STATUS_PATH = LIVE_STATUS_DIR / "execution_status.json"
 STATUS_MANIFEST_PATH = LIVE_STATUS_DIR / "execution_status_manifest.json"
 LOG_PATH = LOGS_DIR / "render_execution_app_status.log"
@@ -66,6 +68,16 @@ def read_json(path: Path) -> dict[str, Any]:
     except Exception as e:
         fail(f"Failed reading {path}: {e}")
     raise RuntimeError("unreachable")
+
+
+def read_json_optional(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    return payload if isinstance(payload, dict) else {}
 
 
 def to_float(value: Any) -> float | None:
@@ -178,6 +190,22 @@ def main() -> None:
     trading_enabled = bool(mode_cfg.get("trading_enabled", snapshot.get("trading_enabled", False)))
     kill_switch = bool(mode_cfg.get("kill_switch", snapshot.get("kill_switch", True)))
     trading_operation_mode = load_trading_operation_mode_payload(TRADING_OPERATION_MODE_PATH)
+    runtime_snapshot_payload = read_json_optional(APP_RUNTIME_SNAPSHOT_PATH)
+    strategy_freshness = (
+        runtime_snapshot_payload.get("strategy_freshness")
+        if isinstance(runtime_snapshot_payload.get("strategy_freshness"), dict)
+        else {
+            "latest_refresh_run_id": None,
+            "latest_refresh_run_status": None,
+            "refresh_currentness_state": "missing_runtime_artifact",
+            "refresh_currentness_reason_code": "runtime_artifact_missing",
+            "refresh_currentness_reason": "Missing runtime artifact: app_runtime_snapshot.json is missing or invalid.",
+            "freshness_state": "missing_runtime_artifact",
+            "freshness_detail_code": "runtime_artifact_missing",
+            "freshness_summary_text": "Missing runtime artifact: app_runtime_snapshot.json is missing or invalid.",
+            "freshness_detail_text": "Missing runtime artifact: app_runtime_snapshot.json is missing or invalid.",
+        }
+    )
     open_position = extract_open_position(snapshot)
     current_position = open_position["symbol"] if open_position else "CASH"
 
@@ -205,11 +233,13 @@ def main() -> None:
             kill_switch=kill_switch,
             source_path=str(MODE_CONFIG_PATH.resolve()),
         ),
+        strategy_freshness=dict(strategy_freshness),
         source_paths={
             "snapshot_path": str(SNAPSHOT_PATH.resolve()),
             "quality_path": str(QUALITY_PATH.resolve()),
             "mode_config_path": str(MODE_CONFIG_PATH.resolve()),
             "trading_operation_mode_path": str(TRADING_OPERATION_MODE_PATH.resolve()),
+            "app_runtime_snapshot_path": str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
         },
     )
     status["as_of_utc"] = snapshot.get("as_of_utc") or utc_now_iso()
@@ -229,6 +259,7 @@ def main() -> None:
             str(QUALITY_PATH.resolve()),
             str(MODE_CONFIG_PATH.resolve()),
             str(TRADING_OPERATION_MODE_PATH.resolve()),
+            str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
         ],
         "output_path": str(STATUS_PATH.resolve()),
         "status": "success"

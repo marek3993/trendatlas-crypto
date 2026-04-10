@@ -134,6 +134,8 @@ def run_non_fatal_post_step(
     env: dict[str, str],
     step_logs_dir: Path,
     script_args: list[str] | None = None,
+    dev_only: bool = True,
+    non_authoritative_outputs_only: bool = True,
 ) -> dict[str, Any]:
     stdout_path = step_logs_dir / f"{step_name}.stdout.log"
     stderr_path = step_logs_dir / f"{step_name}.stderr.log"
@@ -170,8 +172,8 @@ def run_non_fatal_post_step(
             "stderr_log": str(stderr_path),
             "status": "OK" if proc.returncode == 0 else "NON_FATAL_FAIL",
             "non_fatal": True,
-            "dev_only": True,
-            "non_authoritative_outputs_only": True,
+            "dev_only": dev_only,
+            "non_authoritative_outputs_only": non_authoritative_outputs_only,
         }
 
         if proc.returncode == 0:
@@ -202,8 +204,8 @@ def run_non_fatal_post_step(
             "stderr_log": str(stderr_path),
             "status": "NON_FATAL_FAIL",
             "non_fatal": True,
-            "dev_only": True,
-            "non_authoritative_outputs_only": True,
+            "dev_only": dev_only,
+            "non_authoritative_outputs_only": non_authoritative_outputs_only,
             "failure_details": {
                 "reason": "exception",
                 "message": str(exc),
@@ -223,6 +225,38 @@ def verify_outputs() -> list[str]:
 def load_json(path: Path) -> dict[str, Any]:
     ensure_file(path, "json file")
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_manifest(run_dir: Path, manifest: dict[str, Any]) -> Path:
+    manifest_path = run_dir / "app_refresh_pipeline_manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+    return manifest_path
+
+
+def run_runtime_snapshot_materialization(
+    env: dict[str, str],
+    logs_dir: Path,
+    *,
+    required: bool,
+) -> dict[str, Any]:
+    if required:
+        return run_step(
+            "materialize_app_runtime_snapshot",
+            MATERIALIZE_SCRIPT,
+            env,
+            logs_dir,
+            script_args=["--runtime-snapshot-only"],
+        )
+
+    return run_non_fatal_post_step(
+        "materialize_app_runtime_snapshot",
+        MATERIALIZE_SCRIPT,
+        env,
+        logs_dir,
+        script_args=["--runtime-snapshot-only"],
+        dev_only=False,
+        non_authoritative_outputs_only=False,
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -346,8 +380,13 @@ def main() -> None:
         )
         manifest["finished_at_utc"] = now_utc()
 
-        manifest_path = run_dir / "app_refresh_pipeline_manifest.json"
-        manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+        manifest_path = write_manifest(run_dir, manifest)
+        manifest["runtime_snapshot_materialization_step"] = run_runtime_snapshot_materialization(
+            env,
+            logs_dir,
+            required=True,
+        )
+        manifest_path = write_manifest(run_dir, manifest)
 
         print("[APP-REFRESH] status=OK", flush=True)
         print(f"[APP-REFRESH] manifest={manifest_path}", flush=True)
@@ -363,8 +402,13 @@ def main() -> None:
         manifest["status"] = "FAIL"
         manifest["error"] = str(exc)
 
-        manifest_path = run_dir / "app_refresh_pipeline_manifest.json"
-        manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+        manifest_path = write_manifest(run_dir, manifest)
+        manifest["runtime_snapshot_materialization_step"] = run_runtime_snapshot_materialization(
+            env,
+            logs_dir,
+            required=False,
+        )
+        manifest_path = write_manifest(run_dir, manifest)
 
         print("[APP-REFRESH] status=FAIL", flush=True)
         print(f"[APP-REFRESH] manifest={manifest_path}", flush=True)
