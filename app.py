@@ -717,6 +717,16 @@ def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot
     }
 
 
+def get_current_account_observability_contract(selector_cfg: dict) -> dict:
+    contract = selector_cfg.get("account_observability_contract") or {}
+    if not isinstance(contract, dict):
+        return {}
+    current = contract.get("current") or {}
+    if not isinstance(current, dict):
+        return {}
+    return dict(current)
+
+
 def get_git_commit_marker() -> str:
     for env_key in [
         "GIT_COMMIT",
