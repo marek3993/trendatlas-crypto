@@ -1982,10 +1982,14 @@ def inject_css() -> None:
         }
 
         div[data-testid="stDataFrame"] {
-            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));
+            border-radius: 20px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 10px 28px rgba(0,0,0,0.16);
+            border: 1px solid rgba(255,255,255,0.09);
+            margin-bottom: 12px;
+            box-shadow:
+                0 12px 34px rgba(0,0,0,0.22),
+                inset 0 1px 0 rgba(255,255,255,0.03);
         }
 
         .app-table {
@@ -2324,22 +2328,14 @@ def render_app_table(rows: list[dict[str, Any]]) -> None:
     if not rows:
         return
 
-    columns: list[str] = []
+    columns: list[Any] = []
     for row in rows:
         for key in row.keys():
             if key not in columns:
                 columns.append(key)
 
-    header_html = "".join(f"<th>{escape_html_text(column)}</th>" for column in columns)
-    body_html = []
-    for row in rows:
-        cells = "".join(f"<td>{escape_html_text(row.get(column, ''))}</td>" for column in columns)
-        body_html.append(f"<tr>{cells}</tr>")
-
-    st.markdown(
-        f'<table class="app-table"><thead><tr>{header_html}</tr></thead><tbody>{"".join(body_html)}</tbody></table>',
-        unsafe_allow_html=True,
-    )
+    frame = pd.DataFrame([{column: row.get(column, "") for column in columns} for row in rows])
+    st.dataframe(frame, width="stretch", hide_index=True)
 
 
 def render_ops_strip(items: list[dict], tone: str = "overview") -> None:
