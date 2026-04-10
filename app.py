@@ -11,6 +11,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 import sys
+from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent
@@ -50,6 +51,10 @@ APP_RUNTIME_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "a
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 APP_DISPLAY_TIMEZONE = ZoneInfo("Europe/Bratislava")
+BTC_REALTIME_TICKER_URL = (
+    "https://api.coingecko.com/api/v3/simple/price"
+    "?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
+)
 
 CONTACT_DIR = ROOT / "contact"
 CONTACT_CSV = CONTACT_DIR / "contact_log.csv"
@@ -1870,6 +1875,10 @@ def inject_css() -> None:
             color: #ff9d9d;
         }
 
+        .btc-side-main.is-flat {
+            color: rgba(226,232,240,0.72);
+        }
+
         .btc-side-price {
             font-size: 1.18rem;
             font-weight: 720;
@@ -1973,6 +1982,50 @@ def inject_css() -> None:
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.08);
             box-shadow: 0 10px 28px rgba(0,0,0,0.16);
+        }
+
+        .app-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: hidden;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.09);
+            background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.016));
+            box-shadow: 0 10px 28px rgba(0,0,0,0.16);
+            margin: 0.35rem 0 0.85rem 0;
+            font-family: inherit;
+        }
+
+        .app-table th,
+        .app-table td {
+            padding: 0.78rem 0.92rem;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            text-align: left;
+            font-family: inherit;
+        }
+
+        .app-table th {
+            background: rgba(255,255,255,0.045);
+            color: rgba(226,232,240,0.68);
+            font-size: 0.82rem;
+            font-weight: 650;
+        }
+
+        .app-table td {
+            color: #f8fafc;
+            font-size: 0.95rem;
+            font-weight: 620;
+        }
+
+        .app-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .app-table th:last-child,
+        .app-table td:last-child {
+            border-right: 0;
         }
 
         .ops-strip {
@@ -2218,7 +2271,7 @@ def escape_html_text(value) -> str:
     return html.escape(str(value if value is not None else ""))
 
 
-def render_btc_side_indicator(indicator: dict[str, Any]) -> None:
+def render_legacy_csv_btc_side_indicator(indicator: dict[str, Any]) -> None:
     if not indicator:
         return
 
@@ -2236,6 +2289,51 @@ def render_btc_side_indicator(indicator: dict[str, Any]) -> None:
             f'<div class="btc-side-body"><div class="btc-side-main {direction_class}"><span class="btc-side-arrow">{direction}</span><span>{change_text}</span></div></div>'
             "</div>"
         ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_btc_side_indicator(indicator: dict[str, Any]) -> None:
+    if not indicator:
+        return
+
+    label = escape_html_text(indicator.get("label", "BTC"))
+    change_text = escape_html_text(indicator.get("change_text", ""))
+    price_text = escape_html_text(indicator.get("price_text", ""))
+    direction = str(indicator.get("direction") or "flat").strip().lower()
+    direction_class = {"up": "is-up", "down": "is-down"}.get(direction, "is-flat")
+    direction_symbol = {"up": "&uarr;", "down": "&darr;"}.get(direction, "&bull;")
+    price_html = f'<div class="btc-side-price">{price_text}</div>' if price_text else ""
+
+    st.markdown(
+        (
+            '<div class="btc-side-indicator">'
+            f'<div class="btc-side-head"><div class="btc-side-label">{label}</div>{price_html}</div>'
+            f'<div class="btc-side-body"><div class="btc-side-main {direction_class}"><span class="btc-side-arrow">{direction_symbol}</span><span>{change_text}</span></div></div>'
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_app_table(rows: list[dict[str, Any]]) -> None:
+    if not rows:
+        return
+
+    columns: list[str] = []
+    for row in rows:
+        for key in row.keys():
+            if key not in columns:
+                columns.append(key)
+
+    header_html = "".join(f"<th>{escape_html_text(column)}</th>" for column in columns)
+    body_html = []
+    for row in rows:
+        cells = "".join(f"<td>{escape_html_text(row.get(column, ''))}</td>" for column in columns)
+        body_html.append(f"<tr>{cells}</tr>")
+
+    st.markdown(
+        f'<table class="app-table"><thead><tr>{header_html}</tr></thead><tbody>{"".join(body_html)}</tbody></table>',
         unsafe_allow_html=True,
     )
 
@@ -2439,7 +2537,7 @@ def load_benchmark_df(path_str: str | None) -> pd.DataFrame:
     return df.drop_duplicates(subset=["ts"], keep="last").reset_index(drop=True)
 
 
-def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
+def build_csv_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     if btc_df is None or btc_df.empty or "close" not in btc_df.columns:
         return {}
 
@@ -2468,6 +2566,48 @@ def build_btc_side_indicator_data(btc_df: pd.DataFrame) -> dict[str, Any]:
     return {
         "label": "BTC",
         "direction": direction,
+        "change_text": f"{pct_change:+.2f}%",
+        "price_text": f"${display_price:,.0f}",
+    }
+
+
+@st.cache_data(ttl=20, show_spinner=False)
+def fetch_realtime_btc_ticker() -> dict[str, float] | None:
+    try:
+        request = Request(BTC_REALTIME_TICKER_URL, headers={"User-Agent": "TrendAtlas Crypto"})
+        with urlopen(request, timeout=4) as response:
+            payload = json.loads(response.read().decode("utf-8"))
+    except Exception:
+        return None
+
+    if not isinstance(payload, dict):
+        return None
+    bitcoin_payload = payload.get("bitcoin")
+    if not isinstance(bitcoin_payload, dict):
+        return None
+
+    price = as_float(bitcoin_payload.get("usd"))
+    pct_change = as_float(bitcoin_payload.get("usd_24h_change"))
+    if price is None or pct_change is None:
+        return None
+    return {"price": price, "pct_change": pct_change}
+
+
+def build_btc_side_indicator_data(_btc_df: pd.DataFrame | None = None) -> dict[str, Any]:
+    live_ticker = fetch_realtime_btc_ticker()
+    if not live_ticker:
+        return {
+            "label": "BTC",
+            "direction": "flat",
+            "change_text": "Nedostupné",
+            "price_text": "—",
+        }
+
+    display_price = live_ticker["price"]
+    pct_change = live_ticker["pct_change"]
+    return {
+        "label": "BTC",
+        "direction": "up" if pct_change >= 0 else "down",
         "change_text": f"{pct_change:+.2f}%",
         "price_text": f"${display_price:,.0f}",
     }
@@ -3056,7 +3196,7 @@ with tabs[0]:
             }
         ]
     )
-    st.dataframe(calc_df, width="stretch", hide_index=True)
+    render_app_table(calc_df.to_dict("records"))
     st.caption(t(lang, "calc_note"))
 
     example_rows = []
@@ -3082,7 +3222,7 @@ with tabs[0]:
         )
 
     st.markdown(f"#### {t(lang, 'quick_examples')}")
-    st.dataframe(pd.DataFrame(example_rows), width="stretch", hide_index=True)
+    render_app_table(example_rows)
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))
