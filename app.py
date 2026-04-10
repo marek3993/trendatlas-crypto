@@ -1972,9 +1972,13 @@ def inject_css() -> None:
         div[data-testid="stMetric"] {
             background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.018));
             border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 18px;
-            padding: 8px 10px;
-            box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+            border-radius: 20px;
+            padding: 16px 18px;
+            min-height: 118px;
+            margin-bottom: 12px;
+            box-shadow:
+                0 12px 34px rgba(0,0,0,0.22),
+                inset 0 1px 0 rgba(255,255,255,0.03);
         }
 
         div[data-testid="stDataFrame"] {
@@ -3172,7 +3176,7 @@ with tabs[0]:
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     with ops[4]:
-        render_color_card(t(lang, "strategy_last_update"), format_date_text(strategy_data_date, lang), "", "", "neutral")
+        metric_box(t(lang, "strategy_last_update"), format_date_text(strategy_data_date, lang))
     st.markdown(f"### {t(lang, 'calc_title')}")
     st.write(t(lang, "calc_desc"))
 
