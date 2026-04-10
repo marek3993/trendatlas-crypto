@@ -3171,6 +3171,16 @@ with tabs[0]:
             format_date_text(strategy_data_date, lang),
         )
 
+    available_dates = pd.to_datetime(main_equity_df["ts"], errors="coerce").dropna().dt.normalize()
+    min_calc_date = available_dates.min().date()
+    max_calc_date = available_dates.max().date()
+    picked_date = st.date_input(
+        t(lang, "calc_date"),
+        value=min_calc_date,
+        min_value=min_calc_date,
+        max_value=max_calc_date,
+        key="investment_calc_date",
+    )
     used_date, value_now, ret_pct = investment_value(main_equity_df, picked_date, amount=1000.0)
 
     calc_df = pd.DataFrame(
