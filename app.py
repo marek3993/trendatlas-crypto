@@ -3172,7 +3172,7 @@ with tabs[0]:
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     with ops[4]:
-        metric_box(t(lang, "strategy_last_update"), format_date_text(strategy_data_date, lang))
+        render_color_card(t(lang, "strategy_last_update"), format_date_text(strategy_data_date, lang), "", "", "neutral")
     st.markdown(f"### {t(lang, 'calc_title')}")
     st.write(t(lang, "calc_desc"))
 
