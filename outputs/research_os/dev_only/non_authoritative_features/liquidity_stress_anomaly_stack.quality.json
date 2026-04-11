@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_feature_quality_report",
   "artifact_id": "liquidity_stress_anomaly_stack_quality",
-  "generated_at_utc": "2026-04-07 17:55:33 UTC",
+  "generated_at_utc": "2026-04-11 07:03:44 UTC",
   "family_id": "liquidity_stress_anomaly_stack",
   "row_count": 329,
   "required_columns": [

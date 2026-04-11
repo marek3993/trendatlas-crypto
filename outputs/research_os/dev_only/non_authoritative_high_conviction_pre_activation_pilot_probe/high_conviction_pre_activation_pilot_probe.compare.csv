@@ -1,0 +1,14 @@
+metric,baseline_model,baseline_value,probe_model,probe_value,delta_probe_minus_baseline
+net_return_after_costs_pct,phase67j_no_neo_main,93500.121242,high_conviction_pre_activation_pilot_probe,94315.993152,815.8719100000017
+gross_return_pct,phase67j_no_neo_main,103793.757647,high_conviction_pre_activation_pilot_probe,104699.683865,905.9262179999932
+max_drawdown_pct,phase67j_no_neo_main,-26.377525,high_conviction_pre_activation_pilot_probe,-26.377525,0.0
+trade_count,phase67j_no_neo_main,72.0,high_conviction_pre_activation_pilot_probe,73.0,1.0
+switch_count,phase67j_no_neo_main,72.0,high_conviction_pre_activation_pilot_probe,73.0,1.0
+turnover_pressure,phase67j_no_neo_main,72.0,high_conviction_pre_activation_pilot_probe,72.0,0.0
+total_cost_pct,phase67j_no_neo_main,10.44,high_conviction_pre_activation_pilot_probe,10.44,0.0
+activation_window_count,phase67j_no_neo_main,0.0,high_conviction_pre_activation_pilot_probe,1.0,1.0
+activation_window_handoff_count,phase67j_no_neo_main,0.0,high_conviction_pre_activation_pilot_probe,1.0,1.0
+avg_lead_days_before_baseline_handoff,phase67j_no_neo_main,0.0,high_conviction_pre_activation_pilot_probe,28.0,28.0
+median_lead_days_before_baseline_handoff,phase67j_no_neo_main,0.0,high_conviction_pre_activation_pilot_probe,28.0,28.0
+early_move_capture_net_pct,phase67j_no_neo_main,0.0,high_conviction_pre_activation_pilot_probe,0.85003,0.85003
+pilot_days,phase67j_no_neo_main,0.0,high_conviction_pre_activation_pilot_probe,28.0,28.0

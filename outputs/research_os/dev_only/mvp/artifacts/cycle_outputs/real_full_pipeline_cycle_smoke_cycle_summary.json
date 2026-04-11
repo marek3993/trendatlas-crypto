@@ -1,0 +1,193 @@
+{
+  "completed_at": "2026-04-10T17:30:25+00:00",
+  "cycle_id": "real_full_pipeline_cycle_smoke",
+  "dev_only": true,
+  "errors": [],
+  "executed_steps": [
+    "environment_scan",
+    "market_snapshot",
+    "family_snapshot",
+    "planner",
+    "planner_job_registered",
+    "worker_proposal",
+    "heavy_validation_submission",
+    "heavy_validation_adapter",
+    "critic",
+    "governor"
+  ],
+  "family_ids_touched": [
+    "cost_aware_hysteretic_pilot_to_full"
+  ],
+  "final_governor_states": [
+    {
+      "attempt_count": 2,
+      "confirmatory_count": 1,
+      "family_id": "cost_aware_hysteretic_pilot_to_full",
+      "last_next_action": "pause_family",
+      "last_verdict": "pause",
+      "lifecycle_state": "paused",
+      "planning_eligible": false,
+      "status": "governor_completed"
+    }
+  ],
+  "final_status": "cycle_completed",
+  "live_trading": false,
+  "non_authoritative": true,
+  "official_promotion_logic": false,
+  "official_truth": false,
+  "planner_jobs_count": 1,
+  "produced_artifacts": [
+    {
+      "artifact_id": "planner_inputs__real_full_pipeline_cycle_smoke_environment_scan_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs\\real_full_pipeline_cycle_smoke_environment_scan.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "8400a8150205bd5c501c9a6adee30bcc62ceae9c118c1f5be0d6eaeb852b7e05"
+    },
+    {
+      "artifact_id": "market_state__latest_market_state_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\market_state\\latest_market_state.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "6e8054288eb810fa97739635823441697e06bebc66f2c8e6d5657e10fd1f9f2f"
+    },
+    {
+      "artifact_id": "family_state__latest_family_state_snapshot_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\family_state\\latest_family_state_snapshot.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "f2bb4f771398de57cc0492726921249f0306f4121025b8072cb3285e4b913216"
+    },
+    {
+      "artifact_id": "planner_inputs__real_full_pipeline_cycle_smoke_planner_input_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs\\real_full_pipeline_cycle_smoke_planner_input.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "c93d21c4071052962b6ec6aa89d405417a4b00333aaf64426338f7e28e54c84b"
+    },
+    {
+      "artifact_id": "planner_outputs__real_full_pipeline_cycle_smoke_planner_output_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_outputs\\real_full_pipeline_cycle_smoke_planner_output.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "5240eeccf89a3a7b46e78a9b631c7cfdd0d0ae7703a9aee5631b26778d536d43"
+    },
+    {
+      "artifact_id": "worker_outputs__real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_propose_next_mutation_mutation_proposal_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {
+        "job_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_propose_next_mutation",
+        "job_type": "propose_next_mutation"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\worker_outputs\\real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_propose_next_mutation_mutation_proposal.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "fde901af4648ac790685b7616a0fe2eecff80c8554ff4b93663a7146f9c61044"
+    },
+    {
+      "artifact_id": "worker_outputs__real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_request_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {
+        "job_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "job_type": "submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\worker_outputs\\real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_request.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "4baf7de95ec820bda067e224c7dc8feb9641a3473f71d22522ff3ea79024b9ef"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_summary_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_summary.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "7271d8514a924e4eaf78905f7d6195b331b60b0c00530d4d0ef896c536dc687e"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_compare_csv",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "csv",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_compare.csv",
+      "row_count": 4,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "dff1b78be4d53a7002bd62754918411fad8711a945b36f39931e6730d85bb023"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_cost_metrics_csv",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "csv",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_cost_metrics.csv",
+      "row_count": 3,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "f03313faab54bda4e74ba300051744c093b4caa9d458dc3f194eda8257922726"
+    },
+    {
+      "artifact_id": "critic_outputs__real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_critic_family_verdict_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {
+        "family_id": "cost_aware_hysteretic_pilot_to_full",
+        "job_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_critic",
+        "request_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "result_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_result"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\critic_outputs\\real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_critic_family_verdict.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "0ff6d9eccc3ab9989ed8615fee340c3e1ebced950e01299d1bb3e6eb80cb369c"
+    },
+    {
+      "artifact_id": "governor_outputs__real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_governor_family_governor_state_json",
+      "created_at": "2026-04-10T17:30:25+00:00",
+      "format": "json",
+      "metadata": {
+        "family_id": "cost_aware_hysteretic_pilot_to_full",
+        "job_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_governor",
+        "lifecycle_state": "paused",
+        "verdict_id": "real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_critic_family_verdict"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\governor_outputs\\real_full_pipeline_cycle_smoke_cost_aware_hysteretic_pilot_to_full_governor_family_governor_state.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "aebfa68e60e3ba1b322ff62e74feb26b42779e8138d273d8fa4b594358078484"
+    }
+  ],
+  "schema_version": "research_os_mvp.v1",
+  "source_of_truth_mutation": false,
+  "started_at": "2026-04-10T17:30:25+00:00",
+  "strategy_advancement": false
+}

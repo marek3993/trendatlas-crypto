@@ -1,8 +1,8 @@
 {
   "artifact_type": "dev_only_anomaly_operating_mode_cycle_manifest",
   "artifact_id": "anomaly_operating_mode_cycle_manifest",
-  "generated_at_utc": "2026-04-07 17:55:24 UTC",
-  "cycle_id": "20260407T175524686322Z",
+  "generated_at_utc": "2026-04-11 07:03:36 UTC",
+  "cycle_id": "20260411T070336112888Z",
   "cycle_status": "completed",
   "probe_steps": [
     {

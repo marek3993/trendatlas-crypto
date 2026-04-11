@@ -1,0 +1,103 @@
+{
+  "artifact_id": "breadth_ignition_regime_probe_quality",
+  "generated_at_utc": "2026-04-10 13:26:37 UTC",
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "universe_ohlcv": {
+      "ADA": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ADAUSDT_1d.csv",
+      "AVAX": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\AVAXUSDT_1d.csv",
+      "BNB": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BNBUSDT_1d.csv",
+      "BTC": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+      "DOGE": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOGEUSDT_1d.csv",
+      "DOT": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOTUSDT_1d.csv",
+      "ETH": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ETHUSDT_1d.csv",
+      "LINK": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LINKUSDT_1d.csv",
+      "LTC": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LTCUSDT_1d.csv",
+      "SOL": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\SOLUSDT_1d.csv",
+      "TRX": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\TRXUSDT_1d.csv",
+      "XRP": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\XRPUSDT_1d.csv"
+    },
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv"
+  },
+  "checks": [
+    {
+      "name": "fixed_universe_size",
+      "ok": true,
+      "detail": "ADA,AVAX,BNB,BTC,DOGE,DOT,ETH,LINK,LTC,SOL,TRX,XRP"
+    },
+    {
+      "name": "single_breadth_formula_recorded",
+      "ok": true,
+      "detail": "For each date, breadth = count(eligible assets with close > own 120-day SMA and own 20-day SMA > own 120-day SMA) / count(eligible assets)."
+    },
+    {
+      "name": "single_smoothing_rule_recorded",
+      "ok": true,
+      "detail": "Smooth daily breadth with a single causal EWMA using span=21 trading days, adjust=False, and min_periods=21."
+    },
+    {
+      "name": "single_threshold_rule_recorded",
+      "ok": true,
+      "detail": "Breadth ignition candidate is true when the causal smoothed breadth is at least 2/3, with the fixed-universe minimum eligibility rule already satisfied."
+    },
+    {
+      "name": "short_persistence_before_signal",
+      "ok": true,
+      "detail": "breadth ignition cannot turn on before the smoothed breadth series has enough causal history"
+    },
+    {
+      "name": "breadth_risk_only_on_baseline_cash_days",
+      "ok": true,
+      "detail": "breadth BTC risk never overlaps with baseline risk-on exposure"
+    },
+    {
+      "name": "baseline_risk_days_unchanged",
+      "ok": true,
+      "detail": "baseline in-market daily returns pass through unchanged"
+    },
+    {
+      "name": "no_pilot_ladder_or_sizing_states",
+      "ok": true,
+      "detail": "probe states are CASH, BREADTH_BTC_RISK, and BASELINE_RISK only"
+    },
+    {
+      "name": "semantic_flags_locked",
+      "ok": true,
+      "detail": "dev_only=true, non_authoritative=true, official_truth=false, strategy_advancement=false, candidate_selection=false, official_edge_claim=false"
+    }
+  ],
+  "activation_window_count": 6,
+  "baseline_metrics": {
+    "model": "phase67j_no_neo_main",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "breadth_risk_days": 0
+  },
+  "probe_metrics": {
+    "model": "breadth_ignition_regime_probe",
+    "gross_return_pct": 153607.307103,
+    "net_return_after_costs_pct": 139576.57969,
+    "net_cagr_pct": 149.506214,
+    "max_drawdown_pct": -28.016079,
+    "trade_count": 66,
+    "switch_count": 75,
+    "turnover_pressure": 66.0,
+    "total_cost_pct": 9.57,
+    "breadth_risk_days": 91
+  },
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "breadth_ignition_regime_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

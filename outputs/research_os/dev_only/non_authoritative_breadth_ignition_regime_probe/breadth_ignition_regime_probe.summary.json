@@ -1,0 +1,113 @@
+{
+  "artifact_id": "breadth_ignition_regime_probe",
+  "generated_at_utc": "2026-04-10 13:26:37 UTC",
+  "final_verdict": "stop_condition_triggered",
+  "mechanism_id": "cross_sectional_breadth_ignition_regime",
+  "compare_baseline": "phase67j_no_neo_main",
+  "secondary_context_only": "phase68i_dynamic_ladder_candidate",
+  "number_of_earlier_activation_windows": 4,
+  "lead_days_vs_baseline": {
+    "all_valid_handoff_windows": [
+      5,
+      56,
+      1,
+      1
+    ],
+    "avg": 15.75,
+    "median": 3.0,
+    "max": 56
+  },
+  "net_early_move_capture_pct": 49.690284,
+  "trade_days_delta": -6,
+  "switch_count_delta": 3,
+  "turnover_pressure_delta": -6.0,
+  "net_max_drawdown_delta_pct": -1.638554,
+  "net_total_return_delta_pct": 46076.458448,
+  "net_cagr_delta_pct": 12.296411,
+  "gross_metrics_context": {
+    "gross_early_move_capture_pct": 49.113934,
+    "gross_total_return_baseline_pct": 103793.757647,
+    "gross_total_return_probe_pct": 153607.307103,
+    "gross_total_return_delta_pct": 49813.549456
+  },
+  "baseline_metrics": {
+    "model": "phase67j_no_neo_main",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "breadth_risk_days": 0
+  },
+  "probe_metrics": {
+    "model": "breadth_ignition_regime_probe",
+    "gross_return_pct": 153607.307103,
+    "net_return_after_costs_pct": 139576.57969,
+    "net_cagr_pct": 149.506214,
+    "max_drawdown_pct": -28.016079,
+    "trade_count": 66,
+    "switch_count": 75,
+    "turnover_pressure": 66.0,
+    "total_cost_pct": 9.57,
+    "breadth_risk_days": 91
+  },
+  "exact_state_regime_rule": "Baseline risk days remain unchanged. On baseline CASH days only, the probe enters full BTC risk when breadth ignition is ON and the existing hard BTC risk-off invalidation is false; otherwise it remains CASH.",
+  "exact_universe_definition_used": "Fixed liquid core universe from data/ohlcv only: ADA, AVAX, BNB, BTC, DOGE, DOT, ETH, LINK, LTC, SOL, TRX, XRP. An asset is daily eligible only after its own 120-day moving average is available; the breadth signal is valid only when at least 8 of the 12 fixed assets are eligible.",
+  "exact_breadth_formula_used": "For each date, breadth = count(eligible assets with close > own 120-day SMA and own 20-day SMA > own 120-day SMA) / count(eligible assets).",
+  "exact_smoothing_rule_used": "Smooth daily breadth with a single causal EWMA using span=21 trading days, adjust=False, and min_periods=21.",
+  "exact_threshold_rule_used": "Breadth ignition candidate is true when the causal smoothed breadth is at least 2/3, with the fixed-universe minimum eligibility rule already satisfied.",
+  "exact_persistence_rule_used": "Ignition turns ON only after the threshold candidate is true for 3 consecutive available days; no pilot state, no Pilot-to-Full ladder, and no persistence exposure extension after the candidate turns false.",
+  "exact_why_materially_different": {
+    "soft_gate_line": "It does not soften a BTC entry gate or reuse the prior early-entry gate logic; it measures broad cross-sectional participation.",
+    "persistence_line": "It does not hold exposure because a prior constructive window existed; exposure requires current smoothed breadth ignition.",
+    "pre_activation_line": "It does not add an asset-specific high-conviction pre-activation sleeve; it uses fixed-universe breadth only.",
+    "pilot_to_full_line": "It has no Pilot state, no Pilot-to-Full ladder, and no partial-weight state machine.",
+    "l1_trend_filter_line": "It does not estimate a one-sided BTC endpoint slope; the signal comes from smoothed participation across the liquid universe."
+  },
+  "cost_model": {
+    "source_context": "phase68i dynamic ladder export fee/slippage fields used only as secondary cost assumptions",
+    "trading_fee_bps": 4.5,
+    "slippage_bps": 10.0,
+    "turnover_cost_per_unit": 0.00145
+  },
+  "stop_condition": {
+    "rule": "stop if breadth generalization still requires materially higher switching/churn, or if drawdown worsens materially, or if net gains disappear, or if the signal behaves like another noisy activation layer",
+    "triggered": true,
+    "components": {
+      "earlier_activation_ok": true,
+      "churn_ok": true,
+      "drawdown_ok": false,
+      "net_ok": true
+    }
+  },
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "universe_ohlcv": {
+      "ADA": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ADAUSDT_1d.csv",
+      "AVAX": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\AVAXUSDT_1d.csv",
+      "BNB": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BNBUSDT_1d.csv",
+      "BTC": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+      "DOGE": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOGEUSDT_1d.csv",
+      "DOT": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOTUSDT_1d.csv",
+      "ETH": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ETHUSDT_1d.csv",
+      "LINK": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LINKUSDT_1d.csv",
+      "LTC": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LTCUSDT_1d.csv",
+      "SOL": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\SOLUSDT_1d.csv",
+      "TRX": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\TRXUSDT_1d.csv",
+      "XRP": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\XRPUSDT_1d.csv"
+    },
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv"
+  },
+  "status": "generated_dev_only_breadth_ignition_regime_probe_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "breadth_ignition_regime_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

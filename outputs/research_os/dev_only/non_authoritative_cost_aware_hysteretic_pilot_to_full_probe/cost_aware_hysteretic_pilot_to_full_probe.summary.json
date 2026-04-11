@@ -1,0 +1,113 @@
+{
+  "artifact_id": "cost_aware_hysteretic_pilot_to_full_probe",
+  "generated_at_utc": "2026-04-10 06:15:41 UTC",
+  "final_verdict": "pause_condition_triggered",
+  "mechanism_id": "cost_aware_hysteretic_pilot_to_full",
+  "compare_baseline": "phase67j_no_neo_main",
+  "lead_days_vs_baseline": {
+    "activation_windows_with_handoff": 1,
+    "avg_lead_days": 29.0,
+    "median_lead_days": 29.0,
+    "max_lead_days": 29
+  },
+  "net_early_move_capture": {
+    "total_pct": 5.644844,
+    "window_count": 1
+  },
+  "trade_days_delta": 1,
+  "switch_count_delta": 2,
+  "turnover_pressure": {
+    "baseline": 72.0,
+    "probe": 72.0,
+    "delta_probe_minus_baseline": 0.0
+  },
+  "max_drawdown_net": {
+    "baseline_pct": -26.377525,
+    "probe_pct": -26.377525,
+    "delta_probe_minus_baseline_pct": 0.0
+  },
+  "total_return_net": {
+    "baseline_pct": 93500.121242,
+    "probe_pct": 98925.069061,
+    "delta_probe_minus_baseline_pct": 5424.947819
+  },
+  "cagr_net": {
+    "baseline_pct": 137.209803,
+    "probe_pct": 138.903156,
+    "delta_probe_minus_baseline_pct": 1.693353
+  },
+  "gross_metrics_context": {
+    "baseline_gross_return_pct": 103793.757647,
+    "probe_gross_return_pct": 109817.897421,
+    "delta_probe_minus_baseline_pct": 6024.139774,
+    "gross_early_move_capture_pct": 5.798365
+  },
+  "why_different_from_phase68k_l_m": "This probe is not another softer gate clone. It introduces a discrete cost-aware state machine with hysteretic Pilot-to-Full transition and no-trade band discipline.",
+  "why_different_from_constructive_pilot_persistence": "This probe does not rely on staying exposed longer through full constructive windows. It uses a smaller earlier pilot with explicit hysteresis and clean escalation to full only after stronger confirmation.",
+  "why_different_from_high_conviction_pre_activation": "This probe is not just a one-off pre-activation sleeve. It explicitly models CASH -> PILOT -> FULL with different thresholds and cost-aware no-trade-band discipline.",
+  "state_machine": {
+    "allowed_states": [
+      "CASH",
+      "PILOT",
+      "FULL"
+    ],
+    "allowed_weights": [
+      0.0,
+      0.15,
+      1.0
+    ],
+    "pilot_entry": [
+      "baseline must be CASH",
+      "BTC 20DMA > BTC 100DMA",
+      "BTC close > BTC 100DMA",
+      "pilot asset > own 100DMA",
+      "pilot asset 20-day relative strength versus BTC >= 0",
+      "BTC 20-day return >= 0 as the cost-aware no-trade band",
+      "setup persists 2 days",
+      "fresh benchmark/pilot recapture within 7 days"
+    ],
+    "pilot_to_full": [
+      "same stack persists 3 days",
+      "BTC 20-day return remains >= 0",
+      "existing local downside brake is not active",
+      "baseline handoff also maps cleanly to FULL"
+    ],
+    "exit": [
+      "constructive failure persists 2 days",
+      "or existing local downside brake",
+      "or hard benchmark risk-off invalidation"
+    ]
+  },
+  "cost_model": {
+    "trading_fee_bps": 4.5,
+    "slippage_bps": 10.0,
+    "turnover_cost_per_unit": 0.00145
+  },
+  "stop_condition": {
+    "rule": "if earlier activation is only achievable with churn or DD worsens too much or net benefit is too small after costs or mechanism collapses into disguised persistence or disguised soft-gate behavior",
+    "triggered": false
+  },
+  "pause_condition": {
+    "rule": "if mechanism is promising but evidence breadth is still too narrow",
+    "triggered": true
+  },
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+    "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+    "high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+    "rearmed_high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json",
+    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+  },
+  "status": "generated_dev_only_cost_aware_hysteretic_pilot_to_full_probe_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "cost_aware_hysteretic_pilot_to_full_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

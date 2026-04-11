@@ -1,0 +1,79 @@
+{
+  "artifact_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe_quality",
+  "generated_at_utc": "2026-04-10 06:52:54 UTC",
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+    "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+    "high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+    "rearmed_high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json",
+    "previous_cost_aware_hysteretic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.summary.json",
+    "previous_cost_aware_hysteretic_cost_metrics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.cost_metrics.csv",
+    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+  },
+  "checks": [
+    {
+      "name": "discrete_weights_only",
+      "ok": true,
+      "detail": "probe uses only 0.00, 0.15, and 1.00 exposure weights"
+    },
+    {
+      "name": "pilot_only_from_baseline_cash",
+      "ok": true,
+      "detail": "PILOT starts only while baseline is CASH"
+    },
+    {
+      "name": "recapture_and_hold_gate_present",
+      "ok": true,
+      "detail": "PILOT entry is gated by recapture event plus two-day benchmark/pilot anchor hold"
+    },
+    {
+      "name": "net_metric_available",
+      "ok": true,
+      "detail": "net-of-cost metrics computed for ranking"
+    },
+    {
+      "name": "semantic_flags_locked",
+      "ok": true,
+      "detail": "dev_only=true, non_authoritative=true, official_truth=false, strategy_advancement=false, candidate_selection=false, official_edge_claim=false"
+    }
+  ],
+  "activation_windows_count": 5,
+  "baseline_metrics": {
+    "model": "phase67j_no_neo_main",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "pilot_days": 0,
+    "full_prebaseline_days": 0
+  },
+  "probe_metrics": {
+    "model": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+    "gross_return_pct": 143764.316663,
+    "net_return_after_costs_pct": 129106.594278,
+    "net_cagr_pct": 147.063791,
+    "max_drawdown_pct": -32.099994,
+    "trade_count": 79,
+    "switch_count": 83,
+    "turnover_pressure": 74.0,
+    "total_cost_pct": 10.73,
+    "pilot_days": 5,
+    "full_prebaseline_days": 134
+  },
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

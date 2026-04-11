@@ -730,6 +730,25 @@
       "notes": "Dev-only and non-authoritative. Single mechanism only: fixed data/ohlcv liquid core breadth, one 20/120 trend formula, one causal 21-day EWMA smoothing rule, one 2/3 threshold rule, one 3-day ignition rule, no app/runtime changes, no leverage redesign, no Pilot-to-Full ladder, and no parameter grid."
     },
     {
+      "script_path": "scripts/dev_only_breadth_ignition_volatility_hostility_veto_probe.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Tests one narrow dev-only smoothed breadth ignition plus BTC volatility-hostility veto against phase67j_no_neo_main as an earlier risk-on permission layer.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_probe/breadth_ignition_volatility_hostility_veto_probe.summary.json",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_probe/breadth_ignition_volatility_hostility_veto_probe.window_compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_probe/breadth_ignition_volatility_hostility_veto_probe.state_time.csv",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_probe/breadth_ignition_volatility_hostility_veto_probe.compare.csv",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_probe/breadth_ignition_volatility_hostility_veto_probe.cost_metrics.csv",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_probe/breadth_ignition_volatility_hostility_veto_probe.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_probe/breadth_ignition_volatility_hostility_veto_probe.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative. Single mechanism only: fixed pure-breadth source ratio, one causal 5-day EMA threshold-cross rule, one slow BTC realized-volatility veto using 20-day annualized vol versus 63-day median times 1.20, 2-day set/clear veto persistence, no app/runtime changes, no leverage redesign, no Pilot-to-Full ladder, no daily resizing, and no parameter grid."
+    },
+    {
       "script_path": "run_data_refresh.ps1",
       "layer": "execution_data",
       "status": "active",

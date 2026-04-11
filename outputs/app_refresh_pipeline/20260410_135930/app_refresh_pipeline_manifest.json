@@ -1,0 +1,198 @@
+{
+  "started_at_utc": "2026-04-10T13:59:30+00:00",
+  "root": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "python": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "mode": "fast_app_refresh",
+  "skip_legacy_refresh": false,
+  "skip_macro_refresh": false,
+  "skip_top100_refresh": false,
+  "main_refresh_chain_status": "OK",
+  "steps": [
+    {
+      "step_name": "refresh_legacy_ohlcv",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\refresh_legacy_ohlcv.py",
+      "returncode": 0,
+      "elapsed_sec": 0.437,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\refresh_legacy_ohlcv.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\refresh_legacy_ohlcv.stderr.log"
+    },
+    {
+      "step_name": "refresh_global_liquidity_weekly",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\refresh_global_liquidity_weekly.py",
+      "returncode": 0,
+      "elapsed_sec": 0.703,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\refresh_global_liquidity_weekly.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\refresh_global_liquidity_weekly.stderr.log"
+    },
+    {
+      "step_name": "refresh_phase67_top100_shortlist_ohlcv",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\refresh_phase67_top100_shortlist_ohlcv.py",
+      "returncode": 0,
+      "elapsed_sec": 0.344,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\refresh_phase67_top100_shortlist_ohlcv.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\refresh_phase67_top100_shortlist_ohlcv.stderr.log"
+    },
+    {
+      "step_name": "phase67b_top100_forensic_prune_and_rerun",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67b_top100_forensic_prune_and_rerun.py",
+      "returncode": 0,
+      "elapsed_sec": 20.422,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase67b_top100_forensic_prune_and_rerun.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase67b_top100_forensic_prune_and_rerun.stderr.log"
+    },
+    {
+      "step_name": "phase60_selective_restore_robustness",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\phase60_selective_restore_robustness.py",
+      "returncode": 0,
+      "elapsed_sec": 5.75,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase60_selective_restore_robustness.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase60_selective_restore_robustness.stderr.log"
+    },
+    {
+      "step_name": "phase63_btc_participation_overlay",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase63_btc_participation_overlay.py",
+      "returncode": 0,
+      "elapsed_sec": 5.625,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase63_btc_participation_overlay.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase63_btc_participation_overlay.stderr.log"
+    },
+    {
+      "step_name": "phase66g_production_candidate_live",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase66g_production_candidate_live.py",
+      "returncode": 0,
+      "elapsed_sec": 24.547,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase66g_production_candidate_live.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase66g_production_candidate_live.stderr.log"
+    },
+    {
+      "step_name": "phase67j_final_narrow_validation_pack",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67j_final_narrow_validation_pack.py",
+      "returncode": 0,
+      "elapsed_sec": 19.187,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase67j_final_narrow_validation_pack.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\phase67j_final_narrow_validation_pack.stderr.log"
+    },
+    {
+      "step_name": "verify_app_freshness",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\verify_app_freshness.py",
+      "returncode": 0,
+      "elapsed_sec": 0.141,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\verify_app_freshness.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\verify_app_freshness.stderr.log"
+    },
+    {
+      "step_name": "materialize_execution_app_exports",
+      "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\materialize_execution_app_exports.py",
+      "returncode": 0,
+      "elapsed_sec": 0.328,
+      "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\materialize_execution_app_exports.stdout.log",
+      "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\materialize_execution_app_exports.stderr.log"
+    }
+  ],
+  "dev_only_post_step": {
+    "step_name": "dev_only_anomaly_operating_mode_runner",
+    "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\dev_only_anomaly_operating_mode_runner.py",
+    "command": [
+      "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\dev_only_anomaly_operating_mode_runner.py"
+    ],
+    "started_at_utc": "2026-04-10T14:00:47+00:00",
+    "finished_at_utc": "2026-04-10T14:01:07+00:00",
+    "elapsed_sec": 19.421,
+    "returncode": 0,
+    "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\dev_only_anomaly_operating_mode_runner.stdout.log",
+    "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\dev_only_anomaly_operating_mode_runner.stderr.log",
+    "status": "OK",
+    "non_fatal": true,
+    "dev_only": true,
+    "non_authoritative_outputs_only": true
+  },
+  "required_outputs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_final_narrow_validation_summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_summary.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro\\global_liquidity_weekly.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\macro_refresh_report.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline\\materialize_execution_app_exports_report.json"
+  ],
+  "main_refresh_chain_finished_at_utc": "2026-04-10T14:00:47+00:00",
+  "status": "OK",
+  "freshness_report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json",
+  "macro_refresh_report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\macro_refresh_report.json",
+  "freshness_report": {
+    "generated_at_utc": "2026-04-10T14:00:47+00:00",
+    "latest_closed_utc_date": "2026-04-09",
+    "status": "ok",
+    "checks": {
+      "btc_raw_last_date": "2026-04-09",
+      "phase66g_paper_last_date": "2026-04-09",
+      "phase66g_live_latest_available_date": "2026-04-09",
+      "phase66g_trend_last_date": "2026-04-09",
+      "phase67j_paper_last_date": "2026-04-09",
+      "phase67j_live_latest_available_date": "2026-04-09",
+      "macro_last_date": "2026-03-08",
+      "top100_assets_checked": [
+        "NEO",
+        "DOGE",
+        "STX",
+        "APT",
+        "HBAR",
+        "LINK"
+      ],
+      "top100_asset_last_dates": {
+        "NEO": "2026-04-09",
+        "DOGE": "2026-04-09",
+        "STX": "2026-04-09",
+        "APT": "2026-04-09",
+        "HBAR": "2026-04-09",
+        "LINK": "2026-04-09"
+      },
+      "top100_min_last_date": "2026-04-09",
+      "top100_max_last_date": "2026-04-09"
+    },
+    "warnings": [],
+    "errors": [],
+    "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json"
+  },
+  "macro_refresh_report": {
+    "ts_utc": "2026-04-10T13:59:31+00:00",
+    "status": "OK",
+    "mode": "frozen_validate_only",
+    "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro\\global_liquidity_weekly.csv",
+    "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\macro_refresh_report.json",
+    "last_date": "2026-03-08",
+    "rows": 114,
+    "missing_source_files": [
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro_sources\\g7_m2_yoy.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro_sources\\bis_gli_yoy.csv",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\macro_sources\\cb_balance_sheet_yoy.csv"
+    ],
+    "note": "No authoritative macro source files found. Existing snapshot preserved unchanged."
+  },
+  "finished_at_utc": "2026-04-10T14:01:07+00:00",
+  "runtime_snapshot_materialization_step": {
+    "step_name": "materialize_app_runtime_snapshot",
+    "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\materialize_execution_app_exports.py",
+    "command": [
+      "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\materialize_execution_app_exports.py",
+      "--runtime-snapshot-only"
+    ],
+    "started_at_utc": "2026-04-10T14:01:07+00:00",
+    "finished_at_utc": "2026-04-10T14:01:07+00:00",
+    "elapsed_sec": 0.188,
+    "returncode": 0,
+    "stdout_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\materialize_app_runtime_snapshot.stdout.log",
+    "stderr_log": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_refresh_pipeline\\20260410_135930\\logs\\materialize_app_runtime_snapshot.stderr.log",
+    "status": "OK",
+    "non_fatal": true,
+    "dev_only": false,
+    "non_authoritative_outputs_only": false
+  }
+}

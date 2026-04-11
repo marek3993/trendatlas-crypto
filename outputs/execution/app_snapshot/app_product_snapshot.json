@@ -1,19 +1,19 @@
 {
   "snapshot_type": "app_product_snapshot",
   "schema_version": 1,
-  "app_export_generated_at_utc": "2026-04-10T19:27:22Z",
+  "app_export_generated_at_utc": "2026-04-11T07:30:26Z",
   "product_name": "TrendAtlas Crypto",
   "page_scope": "homepage",
   "main_strategy_model": "phase68i_dynamic_ladder_candidate",
   "reference_strategy_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
   "strategy_last_closed_day": "2026-04-09",
-  "freshness_target_closed_day": "2026-04-09",
+  "freshness_target_closed_day": "2026-04-10",
   "freshness": {
     "status": "ok",
-    "generated_at_utc": "2026-04-10T19:27:22+00:00",
+    "generated_at_utc": "2026-04-11T07:03:34+00:00",
     "checks": {
-      "btc_raw_last_date": "2026-04-09",
+      "btc_raw_last_date": "2026-04-10",
       "phase66g_paper_last_date": "2026-04-09",
       "phase66g_live_latest_available_date": "2026-04-09",
       "phase66g_trend_last_date": "2026-04-09",
@@ -29,15 +29,15 @@
         "LINK"
       ],
       "top100_asset_last_dates": {
-        "NEO": "2026-04-09",
-        "DOGE": "2026-04-09",
-        "STX": "2026-04-09",
-        "APT": "2026-04-09",
-        "HBAR": "2026-04-09",
-        "LINK": "2026-04-09"
+        "NEO": "2026-04-10",
+        "DOGE": "2026-04-10",
+        "STX": "2026-04-10",
+        "APT": "2026-04-10",
+        "HBAR": "2026-04-10",
+        "LINK": "2026-04-10"
       },
-      "top100_min_last_date": "2026-04-09",
-      "top100_max_last_date": "2026-04-09"
+      "top100_min_last_date": "2026-04-10",
+      "top100_max_last_date": "2026-04-10"
     },
     "warnings": [],
     "errors": []
@@ -149,7 +149,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 809,
-      "modified_utc": "2026-04-10T19:27:22Z"
+      "modified_utc": "2026-04-11T07:30:26Z"
     },
     "strategy_last_closed_day": {
       "path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
@@ -166,7 +166,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 1061,
-      "modified_utc": "2026-04-10T19:27:22Z",
+      "modified_utc": "2026-04-11T07:03:34Z",
       "source_field": "latest_closed_utc_date"
     },
     "app_export_generated_at_utc": {
@@ -175,7 +175,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 8795,
-      "modified_utc": "2026-04-10T14:03:20Z",
+      "modified_utc": "2026-04-11T07:03:35Z",
       "source_field": "generated_by_materializer_clock"
     },
     "live_public_state": {
@@ -205,7 +205,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 1061,
-      "modified_utc": "2026-04-10T19:27:22Z"
+      "modified_utc": "2026-04-11T07:03:34Z"
     },
     "trend_barometer_summary": {
       "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -238,8 +238,8 @@
       "source_type": "benchmark_ohlcv",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 272114,
-      "modified_utc": "2026-04-10T06:55:15Z"
+      "size_bytes": 272201,
+      "modified_utc": "2026-04-11T07:02:30Z"
     },
     "trend_history_source_path": {
       "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
@@ -247,7 +247,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 375785,
-      "modified_utc": "2026-04-10T19:27:05Z"
+      "modified_utc": "2026-04-11T07:03:22Z"
     }
   }
 }

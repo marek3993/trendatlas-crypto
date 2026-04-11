@@ -1,0 +1,121 @@
+{
+  "artifact_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+  "generated_at_utc": "2026-04-10 06:52:54 UTC",
+  "final_verdict": "stop_condition_triggered",
+  "mechanism_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm",
+  "compare_baseline": "phase67j_no_neo_main",
+  "compare_vs_previous_cost_aware_hysteretic_pilot_to_full": "dev_only_cost_aware_hysteretic_pilot_to_full_probe",
+  "meaningful_earlier_activation_windows": {
+    "count": 2,
+    "window_ids": [
+      "window_001",
+      "window_004"
+    ]
+  },
+  "lead_days_vs_baseline": {
+    "activation_windows_with_handoff": 4,
+    "avg_lead_days": 33.75,
+    "median_lead_days": 37.5,
+    "max_lead_days": 55
+  },
+  "net_early_move_capture": {
+    "total_pct": 42.147373,
+    "window_count": 5
+  },
+  "trade_days_delta": 7,
+  "switch_count_delta": 11,
+  "turnover_pressure": {
+    "baseline": 72.0,
+    "probe": 74.0,
+    "delta_probe_minus_baseline": 2.0
+  },
+  "net_max_drawdown": {
+    "baseline_pct": -26.377525,
+    "probe_pct": -32.099994,
+    "delta_probe_minus_baseline_pct": -5.722469
+  },
+  "net_total_return": {
+    "baseline_pct": 93500.121242,
+    "probe_pct": 129106.594278,
+    "delta_probe_minus_baseline_pct": 35606.473036
+  },
+  "net_cagr": {
+    "baseline_pct": 137.209803,
+    "probe_pct": 147.063791,
+    "delta_probe_minus_baseline_pct": 9.853988
+  },
+  "gross_metrics_context": {
+    "baseline_gross_return_pct": 103793.757647,
+    "probe_gross_return_pct": 143764.316663,
+    "delta_probe_minus_baseline_pct": 39970.559016,
+    "gross_early_move_capture_pct": 43.080516
+  },
+  "why_same_family_not_duplicate": "This probe keeps the same cost-aware hysteretic CASH -> PILOT -> FULL family, but replaces recapture recency with recapture-and-hold confirmation to test whether broader earlier-activation evidence appears without adding churn.",
+  "state_machine": {
+    "allowed_states": [
+      "CASH",
+      "PILOT",
+      "FULL"
+    ],
+    "allowed_weights": [
+      0.0,
+      0.15,
+      1.0
+    ],
+    "pilot_entry": [
+      "baseline must be CASH",
+      "BTC 20DMA > BTC 100DMA",
+      "BTC close > BTC 100DMA",
+      "pilot asset > own 100DMA",
+      "pilot asset 20-day relative strength versus BTC >= 0",
+      "BTC 20-day return >= 0 as the cost-aware no-trade band",
+      "setup persists 2 days",
+      "recapture event occurs and benchmark plus pilot asset remain above anchors for 2 consecutive days"
+    ],
+    "pilot_to_full": [
+      "same stack persists 3 days",
+      "BTC 20-day return remains >= 0",
+      "existing local downside brake is not active",
+      "baseline handoff also maps cleanly to FULL"
+    ],
+    "exit": [
+      "constructive failure persists 2 days",
+      "or existing local downside brake",
+      "or hard benchmark risk-off invalidation"
+    ]
+  },
+  "cost_model": {
+    "trading_fee_bps": 4.5,
+    "slippage_bps": 10.0,
+    "turnover_cost_per_unit": 0.00145
+  },
+  "stop_condition": {
+    "rule": "if no new valid earlier-activation evidence appears or generalization requires higher churn / switches / DD or this remains a one-window-only family",
+    "triggered": true
+  },
+  "pause_condition": {
+    "rule": "if family remains strong but still too narrow for stronger progression language",
+    "triggered": false
+  },
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+    "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+    "high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+    "rearmed_high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json",
+    "previous_cost_aware_hysteretic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.summary.json",
+    "previous_cost_aware_hysteretic_cost_metrics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.cost_metrics.csv",
+    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+  },
+  "status": "generated_dev_only_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

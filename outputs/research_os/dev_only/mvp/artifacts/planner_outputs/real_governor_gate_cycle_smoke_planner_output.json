@@ -1,0 +1,21 @@
+{
+  "created_at": "2026-04-10T17:22:09+00:00",
+  "jobs": [],
+  "notes": [
+    "deterministic_single_mutation_proposal_plan",
+    "openai_responses_api_hook_prepared_without_network_call",
+    "job_type_propose_next_mutation_only",
+    "no_strategy_code_execution",
+    "planner_governor_override_disabled",
+    "governor_blocked_families=[{\"family_id\": \"cost_aware_hysteretic_pilot_to_full\", \"lifecycle_state\": \"paused\"}]"
+  ],
+  "openai_hook": {
+    "enabled": false,
+    "model": "placeholder",
+    "network_call": "disabled_in_mvp",
+    "prompt_template": "research_os_planner_mutation_proposal_v1"
+  },
+  "planner_id": "pi_planner_service",
+  "request_id": "real_governor_gate_cycle_smoke",
+  "schema_version": "research_os_mvp.v1"
+}

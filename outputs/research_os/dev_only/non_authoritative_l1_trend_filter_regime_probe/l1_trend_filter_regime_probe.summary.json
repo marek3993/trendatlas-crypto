@@ -1,0 +1,108 @@
+{
+  "artifact_id": "l1_trend_filter_regime_probe",
+  "generated_at_utc": "2026-04-10 08:51:29 UTC",
+  "final_verdict": "stop_condition_triggered",
+  "mechanism_id": "one_sided_btc_l1_trend_filter_regime",
+  "compare_baseline": "phase67j_no_neo_main",
+  "number_of_earlier_activation_windows": 14,
+  "lead_days_vs_baseline": {
+    "all_valid_handoff_windows": [
+      23,
+      12,
+      5,
+      10,
+      4,
+      6,
+      1,
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "avg": 4.928571,
+    "median": 1.5,
+    "max": 23
+  },
+  "net_early_move_capture_pct": 204.875099,
+  "trade_days_delta": 20,
+  "switch_count_delta": 37,
+  "turnover_pressure_delta": 20.0,
+  "net_max_drawdown_delta_pct": 1.895737,
+  "net_total_return_delta_pct": 529489.513909,
+  "net_cagr_delta_pct": 64.141783,
+  "gross_metrics_context": {
+    "gross_early_move_capture_pct": 208.041278,
+    "gross_total_return_baseline_pct": 103793.757647,
+    "gross_total_return_probe_pct": 710790.79245,
+    "gross_total_return_delta_pct": 606997.034803
+  },
+  "baseline_metrics": {
+    "model": "phase67j_no_neo_main",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "l1_risk_days": 0
+  },
+  "probe_metrics": {
+    "model": "l1_trend_filter_regime_probe",
+    "gross_return_pct": 710790.79245,
+    "net_return_after_costs_pct": 622989.635151,
+    "net_cagr_pct": 201.351586,
+    "max_drawdown_pct": -24.481788,
+    "trade_count": 92,
+    "switch_count": 109,
+    "turnover_pressure": 92.0,
+    "total_cost_pct": 13.34,
+    "l1_risk_days": 129
+  },
+  "exact_state_regime_rule": "Baseline risk days remain unchanged. On baseline CASH days only, the probe enters full BTC risk when the causal L1-filtered endpoint slope is greater than 0 and the existing hard BTC risk-off invalidation is false; otherwise it remains CASH. There is no pilot state, no Pilot-to-Full ladder, and no persistence exposure logic.",
+  "exact_one_sided_implementation_method": "Each day t uses only BTC closes from the trailing 126 daily observations ending on t. The script denoises the 125 log-return slopes in that window with a first-difference L1 penalty, then uses only the final filtered slope for day t.",
+  "exact_rolling_window_used": {
+    "rolling_window_days": 126,
+    "price_input": "BTCUSDT daily close",
+    "transform": "log price, daily log-return slopes"
+  },
+  "exact_lambda_rule_used": "For each causal 126-day BTC window, compute sigma as 1.4826 * MAD of daily BTC log returns in that window; set lambda = 2.0 * sigma * sqrt(2 * log(125)) for the 125-slope fused-L1 problem. This robust universal-threshold style rule is a single low-switch heuristic, not a sweep.",
+  "hysteresis": {
+    "used": false,
+    "entry_slope_threshold": 0.0
+  },
+  "cost_model": {
+    "source_context": "phase68i dynamic ladder export fee/slippage fields used only as secondary cost assumptions",
+    "trading_fee_bps": 4.5,
+    "slippage_bps": 10.0,
+    "turnover_cost_per_unit": 0.00145
+  },
+  "stop_condition": {
+    "rule": "stop if earlier activation is not present in more than one valid handoff window, or if net benefit disappears, or if trade days / switches / turnover rise materially, or if net drawdown deteriorates by more than 1 pct point",
+    "triggered": true,
+    "components": {
+      "earlier_activation_ok": true,
+      "churn_ok": false,
+      "drawdown_ok": true,
+      "net_ok": true
+    }
+  },
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "btc_ohlcv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv"
+  },
+  "status": "generated_dev_only_l1_trend_filter_regime_probe_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "l1_trend_filter_regime_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

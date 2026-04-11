@@ -1,0 +1,3 @@
+model,gross_return_pct,net_return_after_costs_pct,net_cagr_pct,max_drawdown_pct,trade_count,switch_count,turnover_pressure,total_cost_pct,breadth_risk_days
+phase67j_no_neo_main,103793.757647,93500.121242,137.209803,-26.377525,72,72,72.0,10.44,0
+breadth_ignition_regime_probe,153607.307103,139576.57969,149.506214,-28.016079,66,75,66.0,9.57,91

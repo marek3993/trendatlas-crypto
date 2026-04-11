@@ -1,0 +1,13 @@
+window_id,window_start,window_end,window_length_days,benchmark_return_during_window,baseline_return_during_window,probe_return_during_window,baseline_time_in_market_share,probe_time_in_market_share,baseline_cash_share,probe_cash_share,baseline_underexposed_days_count,probe_underexposed_days_count,baseline_missed_benchmark_return_while_underexposed,probe_missed_benchmark_return_while_underexposed,baseline_gap_label,probe_gap_label,pilot_days_in_window
+window_001,2018-05-07,2018-05-23,17,-0.223321,0.0,0.0,1.0,1.0,0.0,0.0,0,0,0.0,0.0,no_material_gap,no_material_gap,0
+window_002,2019-02-28,2019-09-11,196,1.660593,1.15506,1.181065,0.581633,1.0,0.418367,0.0,82,0,0.000125,0.0,premature_risk_off,no_material_gap,82
+window_003,2020-01-21,2020-03-15,55,-0.379648,0.413432,0.30922,0.872727,1.0,0.127273,0.0,7,0,-0.332616,0.0,premature_risk_off,no_material_gap,7
+window_004,2020-05-09,2021-05-18,375,3.372422,7.894486,8.929753,0.845333,1.0,0.154667,0.0,58,0,0.472051,0.0,premature_risk_off,no_material_gap,58
+window_005,2021-08-11,2021-12-11,123,0.08347,0.220919,0.254109,0.97561,1.0,0.02439,0.0,3,0,0.110432,0.0,premature_risk_off,no_material_gap,3
+window_006,2022-04-01,2022-04-26,26,-0.16255,-0.069749,-0.097136,0.230769,1.0,0.769231,0.0,20,0,-0.117159,0.0,broader_underexposure_policy_issue,no_material_gap,20
+window_007,2023-01-19,2023-06-08,141,0.281521,0.995896,0.995896,1.0,1.0,0.0,0.0,0,0,0.0,0.0,no_material_gap,no_material_gap,0
+window_008,2023-07-01,2023-08-22,53,-0.14492,-0.05006,-0.055119,0.90566,1.0,0.09434,0.0,5,0,-0.021312,0.0,premature_risk_off,no_material_gap,5
+window_009,2023-10-22,2024-06-27,250,1.063085,1.153751,1.16726,0.996,1.0,0.004,0.0,1,0,0.025089,0.0,premature_risk_off,no_material_gap,1
+window_010,2024-08-01,2024-08-08,8,-0.045522,0.0,0.00281,0.25,1.0,0.75,0.0,6,0,0.003051,0.0,broader_underexposure_policy_issue,no_material_gap,6
+window_011,2024-09-30,2025-02-22,146,0.471769,4.027042,4.093372,0.965753,1.0,0.034247,0.0,5,0,0.053116,0.0,premature_risk_off,no_material_gap,5
+window_012,2025-05-05,2025-10-23,172,0.167596,1.07094,1.090813,0.965116,1.0,0.034884,0.0,6,0,0.038404,0.0,premature_risk_off,no_material_gap,6

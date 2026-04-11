@@ -1,0 +1,52 @@
+{
+  "dev_only": true,
+  "error": "",
+  "evidence": {
+    "adapter_id": "safe_dev_only_artifact_adapter_v1",
+    "compare_metric_count": 4,
+    "guardrail_breaches": [
+      "dd below -1.0",
+      "trade days delta above 4",
+      "switch count delta above 4",
+      "turnover pressure above 0"
+    ],
+    "net_first_rules": {
+      "pause_if_dd_lt": -1.0,
+      "pause_if_switch_count_delta_gt": 4.0,
+      "pause_if_trade_days_delta_gt": 4.0,
+      "pause_if_turnover_pressure_gt": 0.0,
+      "stop_if_net_return_lte": 0.0
+    },
+    "stop_condition": "Reject if switch_count_delta > 4, turnover_pressure_delta > 0.0, max_drawdown_delta_pct < -1.0, net_cagr_delta_pct <= 0.0 after costs, or the mutation broadens into a parameter sweep or alternate mechanism."
+  },
+  "family_id": "cost_aware_hysteretic_pilot_to_full",
+  "generated_at": "2026-04-10T16:07:22+00:00",
+  "job_id": "real_heavy_validation_submit_smoke_critic",
+  "key_metrics": {
+    "dd": -5.722469,
+    "net_return": 35606.473036,
+    "switch_count_delta": 11.0,
+    "trade_days_delta": 7.0,
+    "turnover_pressure": 2.0
+  },
+  "live_trading": false,
+  "mechanism_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+  "next_action": "pause_family",
+  "non_authoritative": true,
+  "official_promotion_logic": false,
+  "official_truth": false,
+  "proposal_id": "real_mutation_smoke_cost_aware_hysteretic_pilot_to_full_mutation_proposal",
+  "request_id": "real_heavy_validation_submit_smoke",
+  "result_id": "real_heavy_validation_submit_smoke_heavy_validation_result",
+  "schema_version": "research_os_mvp.v1",
+  "source_compare_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\real_heavy_validation_submit_smoke_compare.csv",
+  "source_cost_metrics_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\real_heavy_validation_submit_smoke_cost_metrics.csv",
+  "source_of_truth_mutation": false,
+  "source_summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\real_heavy_validation_submit_smoke_summary.json",
+  "status": "critic_completed",
+  "strategy_advancement": false,
+  "strategy_code_executed": false,
+  "verdict": "pause",
+  "verdict_id": "real_heavy_validation_submit_smoke_critic_family_verdict",
+  "verdict_reason": "pause: net return remains positive, but guardrails breached: dd below -1.0, trade days delta above 4, switch count delta above 4, turnover pressure above 0"
+}

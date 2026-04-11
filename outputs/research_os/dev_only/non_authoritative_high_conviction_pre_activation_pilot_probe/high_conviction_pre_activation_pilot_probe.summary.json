@@ -1,0 +1,112 @@
+{
+  "artifact_id": "high_conviction_pre_activation_pilot_probe",
+  "generated_at_utc": "2026-04-09 20:54:40 UTC",
+  "final_verdict": "pause_condition_triggered",
+  "diagnosis_dominant_side": "mixed_late_risk_on_activation_dominant",
+  "diagnosis_evaluation": {
+    "late_risk_on_activation": {
+      "activation_windows_with_handoff": 1,
+      "avg_lead_days_before_baseline_handoff": 28.0,
+      "net_return_after_costs_delta_pct": 815.87191,
+      "supports_hypothesis": true
+    },
+    "premature_risk_off_exit": {
+      "cash_diagnostic_raw_verdict": "premature_risk_off_failure_to_stay_exposed",
+      "constructive_pilot_pilot_days": 193,
+      "constructive_pilot_max_drawdown_delta_pct": -5.443938,
+      "supports_hypothesis": true
+    },
+    "mixed_with_one_clearly_dominant_side": {
+      "diagnosis_dominant_side": "mixed_late_risk_on_activation_dominant",
+      "reason": "Raw constructive-window diagnostics point to premature risk-off, but the lower-churn net-of-cost probe signal is stronger on the late-activation side because the persistence fix needs far more pilot days and materially worse drawdown.",
+      "persistence_fix_is_costly": true
+    }
+  },
+  "mechanism_id": "high_conviction_pre_activation_pilot",
+  "compare_baseline": "phase67j_no_neo_main",
+  "compare_vs_pure_constructive_pilot": "dev_only_constructive_pilot_exposure_probe",
+  "constructive_participation_timing_baseline": {
+    "avg_lead_days_before_baseline_handoff": 0.0,
+    "median_lead_days_before_baseline_handoff": 0.0,
+    "activation_windows_with_handoff": 0
+  },
+  "constructive_participation_timing_probe": {
+    "avg_lead_days_before_baseline_handoff": 28.0,
+    "median_lead_days_before_baseline_handoff": 28.0,
+    "activation_windows_with_handoff": 1
+  },
+  "early_move_capture_baseline": {
+    "activation_window_count": 1,
+    "net_return_pct_during_pre_activation_windows": 0.0
+  },
+  "early_move_capture_probe": {
+    "activation_window_count": 1,
+    "net_return_pct_during_pre_activation_windows": 0.85003
+  },
+  "trade_count_baseline": 72,
+  "trade_count_probe": 73,
+  "switch_count_baseline": 72,
+  "switch_count_probe": 73,
+  "turnover_pressure_baseline": 72.0,
+  "turnover_pressure_probe": 72.0,
+  "net_return_after_costs_baseline": 93500.121242,
+  "net_return_after_costs_probe": 94315.993152,
+  "gross_return_baseline": 103793.757647,
+  "gross_return_probe": 104699.683865,
+  "max_drawdown_baseline": -26.377525,
+  "max_drawdown_probe": -26.377525,
+  "why_different_from_phase68k_l_m": "This probe does not broadly soften entry gates. It adds one narrow earlier high-conviction pre-activation pilot with low-churn holding and disciplined exits.",
+  "why_different_from_constructive_pilot_persistence": "This probe is designed to enter earlier before full activation bottlenecks, not to stay exposed longer after the fact. It preserves disciplined exits and does not rely on full-window persistence.",
+  "exact_earlier_activation_rule": {
+    "baseline_state_requirement": "baseline executed_regime must be CASH",
+    "pilot_weight": 0.15,
+    "pilot_asset_resolution": "use decision-time selected asset when available, otherwise BTCUSDT fallback",
+    "activation_requires_all_of": [
+      "benchmark constructive regime valid (BTC 20-day MA above BTC 100-day anchor)",
+      "benchmark close above BTC 100-day anchor",
+      "pilot asset above its own 100-day anchor",
+      "pilot asset 20-day relative strength versus BTC is non-negative",
+      "3-day persistence",
+      "fresh benchmark/pilot recapture within 7 days"
+    ],
+    "handoff_rule": "When the baseline leaves CASH, the pilot hands off immediately to the baseline state.",
+    "pilot_deactivation": [
+      "benchmark constructive failure",
+      "benchmark falls back below anchor",
+      "pilot local downside brake on 2-day persistence"
+    ]
+  },
+  "cost_model": {
+    "source_context": "phase68i dynamic ladder export fee/slippage fields used only as secondary cost assumptions",
+    "trading_fee_bps": 4.5,
+    "slippage_bps": 10.0,
+    "turnover_cost_per_unit": 0.00145
+  },
+  "stop_condition": {
+    "rule": "if earlier activation still cannot be achieved without churn or DD damage or if gains appear only in gross but not in net terms or if the mechanism effectively collapses back into persistence / looser exits",
+    "triggered": false
+  },
+  "pause_condition": {
+    "rule": "if earlier activation is real and promising but the tradeoff still needs one more confirmatory pass",
+    "triggered": true
+  },
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+    "cash_diagnostic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cash_diagnostics\\cash_overstay_diagnostic.summary.json",
+    "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+    "constructive_pilot_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.compare.csv",
+    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+  },
+  "status": "generated_dev_only_high_conviction_pre_activation_pilot_probe_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "high_conviction_pre_activation_pilot_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

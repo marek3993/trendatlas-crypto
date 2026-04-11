@@ -1,0 +1,6 @@
+model,state,days,share_of_total_days
+phase67j_no_neo_main,BASELINE_RISK,1671,0.577601
+phase67j_no_neo_main,CASH,1222,0.422399
+l1_trend_filter_regime_probe,BASELINE_RISK,1671,0.577601
+l1_trend_filter_regime_probe,L1_BTC_RISK,129,0.04459
+l1_trend_filter_regime_probe,CASH,1093,0.377809

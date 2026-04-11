@@ -2893,3 +2893,6 @@ date,strategy_return,base_return,btc_return,equity,executed_regime,executed_posi
 2026-04-04,0.0,0.0,0.0050193909291964,288.36937869520716,CASH,CASH,0.0,True,,,phase67b_top100_pruned_soft_filters
 2026-04-05,0.0,0.0,0.025761503420038,288.36937869520716,CASH,CASH,0.0,True,,,phase67b_top100_pruned_soft_filters
 2026-04-06,0.0,0.0,-0.0026149365430282,288.36937869520716,CASH,CASH,0.0,True,,,phase67b_top100_pruned_soft_filters
+2026-04-07,0.0,0.0,0.0445954506993526,288.36937869520716,CASH,CASH,0.0,True,,,phase67b_top100_pruned_soft_filters
+2026-04-08,0.0,0.0,-0.0118776401050996,288.36937869520716,CASH,CASH,0.0,True,,,phase67b_top100_pruned_soft_filters
+2026-04-09,0.0,0.0,0.0101032884090361,288.36937869520716,CASH,CASH,0.0,True,,,phase67b_top100_pruned_soft_filters

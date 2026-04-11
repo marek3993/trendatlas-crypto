@@ -23,6 +23,28 @@ class JobQueue(Protocol):
         raise NotImplementedError
 
 
+def publish_exactly_one(queue: JobQueue, stream: str, payload: dict[str, Any]) -> dict[str, Any]:
+    message_id = queue.publish(stream=stream, payload=payload)
+    return {
+        "published_count": 1,
+        "stream": stream,
+        "message_id": message_id,
+    }
+
+
+def consume_exactly_one(
+    queue: JobQueue,
+    stream: str,
+    group: str,
+    consumer: str,
+    block_ms: int = 1000,
+) -> QueueMessage | None:
+    messages = queue.consume(stream=stream, group=group, consumer=consumer, count=1, block_ms=block_ms)
+    if len(messages) > 1:
+        raise RuntimeError(f"queue returned more than one message from {stream}: {len(messages)}")
+    return messages[0] if messages else None
+
+
 class InMemoryStreamQueue:
     """Small local queue for smoke tests; production should use RedisStreamQueue."""
 
@@ -90,9 +112,9 @@ class RedisStreamQueue:
 
 
 def build_queue(backend: str, redis_url: str) -> JobQueue:
-    normalized = backend.strip().lower()
+    normalized = backend.strip().lower().replace("-", "_")
     if normalized == "memory":
         return InMemoryStreamQueue()
-    if normalized == "redis":
+    if normalized in {"redis", "redis_streams"}:
         return RedisStreamQueue(redis_url=redis_url)
     raise ValueError(f"unsupported queue backend: {backend}")

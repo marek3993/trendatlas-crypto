@@ -182,9 +182,10 @@ def validate_repo_relative_file(path_value: Any, context: str, errors: list[str]
         errors.append(f"{context} points to missing file: {path_value}")
 
 
-def require_equal(left: Any, right: Any, context: str, errors: list[str]) -> None:
-    if left != right:
-        errors.append(f"{context} mismatch: {left!r} != {right!r}")
+def forbid_keys(payload: dict[str, Any], keys: list[str], context: str, errors: list[str]) -> None:
+    for key in keys:
+        if key in payload:
+            errors.append(f"{context} contains forbidden legacy alias: {key}")
 
 
 def require_non_empty(payload: dict[str, Any], keys: list[str], context: str, errors: list[str]) -> None:
@@ -205,13 +206,11 @@ def validate_product_snapshot() -> dict[str, Any]:
         [
             "schema_version",
             "app_export_generated_at_utc",
-            "generated_at_utc",
             "product_name",
             "page_scope",
             "main_strategy_model",
             "strategy_last_closed_day",
             "freshness_target_closed_day",
-            "latest_closed_day",
             "freshness",
             "main_strategy_metrics",
             "live_public_state",
@@ -229,24 +228,18 @@ def validate_product_snapshot() -> dict[str, Any]:
         "app_product_snapshot",
         errors,
     )
-    require_equal(
-        payload.get("strategy_last_closed_day"),
-        payload.get("latest_closed_day"),
-        "app_product_snapshot strategy_last_closed_day/latest_closed_day compatibility alias",
-        errors,
-    )
-    require_equal(
-        payload.get("app_export_generated_at_utc"),
-        payload.get("generated_at_utc"),
-        "app_product_snapshot app_export_generated_at_utc/generated_at_utc compatibility alias",
+    forbid_keys(
+        payload,
+        ["generated_at_utc", "latest_closed_day"],
+        "app_product_snapshot",
         errors,
     )
 
     freshness = require_dict(payload, "freshness", "app_product_snapshot", errors)
-    require_equal(
-        payload.get("freshness_target_closed_day"),
-        freshness.get("latest_closed_utc_date"),
-        "app_product_snapshot freshness_target_closed_day/freshness.latest_closed_utc_date compatibility alias",
+    forbid_keys(
+        freshness,
+        ["latest_closed_utc_date"],
+        "app_product_snapshot.freshness",
         errors,
     )
 
@@ -328,7 +321,6 @@ def validate_runtime_snapshot() -> dict[str, Any]:
         [
             "schema_version",
             "app_export_generated_at_utc",
-            "generated_at_utc",
             "page_scope",
             "runtime_last_sync_utc",
             "account_snapshot_as_of_utc",
@@ -342,7 +334,6 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "runtime_health_summary",
             "execution_mode_posture",
             "live_order_policy_summary",
-            "last_wallet_sync",
             "source_metadata",
         ],
         "app_runtime_snapshot",
@@ -360,10 +351,18 @@ def validate_runtime_snapshot() -> dict[str, Any]:
         "app_runtime_snapshot",
         errors,
     )
-    require_equal(
-        payload.get("app_export_generated_at_utc"),
-        payload.get("generated_at_utc"),
-        "app_runtime_snapshot app_export_generated_at_utc/generated_at_utc compatibility alias",
+    forbid_keys(
+        payload,
+        ["generated_at_utc", "last_wallet_sync"],
+        "app_runtime_snapshot",
+        errors,
+    )
+
+    execution_status = require_dict(payload, "execution_status", "app_runtime_snapshot", errors)
+    forbid_keys(
+        execution_status,
+        ["as_of_utc"],
+        "app_runtime_snapshot.execution_status",
         errors,
     )
 
@@ -374,7 +373,6 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "status",
             "provider",
             "account_address",
-            "as_of_utc",
             "mode",
             "account_equity_usd",
             "available_balance_usd",
@@ -385,58 +383,52 @@ def validate_runtime_snapshot() -> dict[str, Any]:
         "app_runtime_snapshot.account_snapshot_summary",
         errors,
     )
-    require_equal(
-        payload.get("account_snapshot_as_of_utc"),
-        account_summary.get("as_of_utc"),
-        "app_runtime_snapshot account_snapshot_as_of_utc/account_snapshot_summary.as_of_utc",
-        errors,
-    )
-    require_equal(
-        payload.get("last_wallet_sync"),
-        payload.get("account_snapshot_as_of_utc"),
-        "app_runtime_snapshot last_wallet_sync/account_snapshot_as_of_utc compatibility alias",
+    forbid_keys(
+        account_summary,
+        ["as_of_utc"],
+        "app_runtime_snapshot.account_snapshot_summary",
         errors,
     )
 
     dry_run = require_dict(payload, "dry_run_summary", "app_runtime_snapshot", errors)
     require_keys(
         dry_run,
-        ["generated_at_utc", "signal_id", "target_asset", "recommended_action", "simulated_order", "guardrails"],
+        ["signal_id", "target_asset", "recommended_action", "simulated_order", "guardrails"],
         "app_runtime_snapshot.dry_run_summary",
         errors,
     )
-    require_equal(
-        payload.get("dry_run_generated_at_utc"),
-        dry_run.get("generated_at_utc"),
-        "app_runtime_snapshot dry_run_generated_at_utc/dry_run_summary.generated_at_utc",
+    forbid_keys(
+        dry_run,
+        ["generated_at_utc"],
+        "app_runtime_snapshot.dry_run_summary",
         errors,
     )
 
     gate = require_dict(payload, "gate_summary", "app_runtime_snapshot", errors)
     require_keys(
         gate,
-        ["generated_at_utc", "signal_id", "target_asset", "status", "would_place_real_order", "checks"],
+        ["signal_id", "target_asset", "status", "would_place_real_order", "checks"],
         "app_runtime_snapshot.gate_summary",
         errors,
     )
-    require_equal(
-        payload.get("gate_generated_at_utc"),
-        gate.get("generated_at_utc"),
-        "app_runtime_snapshot gate_generated_at_utc/gate_summary.generated_at_utc",
+    forbid_keys(
+        gate,
+        ["generated_at_utc"],
+        "app_runtime_snapshot.gate_summary",
         errors,
     )
 
     runtime_health = require_dict(payload, "runtime_health_summary", "app_runtime_snapshot", errors)
     require_keys(
         runtime_health,
-        ["status", "run_active", "stop_reason", "last_success_utc", "execution_mode_guardrail"],
+        ["status", "run_active", "stop_reason", "execution_mode_guardrail"],
         "app_runtime_snapshot.runtime_health_summary",
         errors,
     )
-    require_equal(
-        payload.get("runtime_last_sync_utc"),
-        runtime_health.get("last_success_utc"),
-        "app_runtime_snapshot runtime_last_sync_utc/runtime_health_summary.last_success_utc",
+    forbid_keys(
+        runtime_health,
+        ["last_success_utc"],
+        "app_runtime_snapshot.runtime_health_summary",
         errors,
     )
 
@@ -458,12 +450,17 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "gate_summary",
             "runtime_health_summary",
             "execution_mode_posture",
-            "last_wallet_sync",
             "runtime_last_sync_utc",
             "account_snapshot_as_of_utc",
             "dry_run_generated_at_utc",
             "gate_generated_at_utc",
         ],
+        "app_runtime_snapshot.source_metadata",
+        errors,
+    )
+    forbid_keys(
+        source_metadata,
+        ["last_wallet_sync"],
         "app_runtime_snapshot.source_metadata",
         errors,
     )

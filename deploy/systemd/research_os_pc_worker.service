@@ -1,0 +1,15 @@
+[Unit]
+Description=Research OS PC heavy-validation worker consumer
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/market_regime_v1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/market_regime_v1/.venv/bin/python -B -m services.pc.worker_service --config configs/runtime/runtime_config.pc_worker.template.json --run-pc-worker-consumer
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

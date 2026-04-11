@@ -1,0 +1,7 @@
+model,state,days,share_of_total_days
+phase67j_no_neo_main,BASELINE_FULL,1671,0.577601
+phase67j_no_neo_main,CASH,1222,0.422399
+cost_aware_hysteretic_pilot_to_full_recap_confirm_probe,BASELINE_FULL,1671,0.577601
+cost_aware_hysteretic_pilot_to_full_recap_confirm_probe,FULL_PRE_BASELINE,134,0.046319
+cost_aware_hysteretic_pilot_to_full_recap_confirm_probe,PILOT,5,0.001728
+cost_aware_hysteretic_pilot_to_full_recap_confirm_probe,CASH,1083,0.374352

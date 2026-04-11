@@ -1,0 +1,80 @@
+{
+  "artifact_id": "l1_trend_filter_regime_probe_quality",
+  "generated_at_utc": "2026-04-10 08:51:29 UTC",
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "btc_ohlcv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv"
+  },
+  "checks": [
+    {
+      "name": "one_sided_window_end_equals_current_day",
+      "ok": true,
+      "detail": "every computed L1 signal window ends on the same date receiving the signal"
+    },
+    {
+      "name": "full_window_required_before_signal",
+      "ok": true,
+      "detail": "first 125 rows have no L1 risk-on permission"
+    },
+    {
+      "name": "l1_risk_only_on_baseline_cash_days",
+      "ok": true,
+      "detail": "L1 BTC risk never overlaps with baseline risk-on exposure"
+    },
+    {
+      "name": "baseline_risk_days_unchanged",
+      "ok": true,
+      "detail": "baseline in-market daily returns pass through unchanged"
+    },
+    {
+      "name": "no_pilot_or_ladder_states",
+      "ok": true,
+      "detail": "probe states are CASH, L1_BTC_RISK, and BASELINE_RISK only"
+    },
+    {
+      "name": "single_lambda_rule_recorded",
+      "ok": true,
+      "detail": "For each causal 126-day BTC window, compute sigma as 1.4826 * MAD of daily BTC log returns in that window; set lambda = 2.0 * sigma * sqrt(2 * log(125)) for the 125-slope fused-L1 problem. This robust universal-threshold style rule is a single low-switch heuristic, not a sweep."
+    },
+    {
+      "name": "semantic_flags_locked",
+      "ok": true,
+      "detail": "dev_only=true, non_authoritative=true, official_truth=false, strategy_advancement=false, candidate_selection=false, official_edge_claim=false"
+    }
+  ],
+  "activation_window_count": 27,
+  "baseline_metrics": {
+    "model": "phase67j_no_neo_main",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "l1_risk_days": 0
+  },
+  "probe_metrics": {
+    "model": "l1_trend_filter_regime_probe",
+    "gross_return_pct": 710790.79245,
+    "net_return_after_costs_pct": 622989.635151,
+    "net_cagr_pct": 201.351586,
+    "max_drawdown_pct": -24.481788,
+    "trade_count": 92,
+    "switch_count": 109,
+    "turnover_pressure": 92.0,
+    "total_cost_pct": 13.34,
+    "l1_risk_days": 129
+  },
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "l1_trend_filter_regime_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

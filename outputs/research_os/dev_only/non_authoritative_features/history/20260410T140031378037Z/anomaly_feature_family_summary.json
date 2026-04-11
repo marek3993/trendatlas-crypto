@@ -1,0 +1,124 @@
+{
+  "artifact_type": "dev_only_anomaly_feature_family_summary",
+  "artifact_id": "anomaly_feature_family_summary",
+  "generated_at_utc": "2026-04-10 14:00:46 UTC",
+  "family_count": 5,
+  "families": [
+    {
+      "family_id": "pre_move_structure_quality_stack",
+      "row_count": 255,
+      "date_min": "2020-06-01",
+      "date_max": "2024-12-28",
+      "coverage_count": 5,
+      "coverage_values": [
+        "ADAUSDT",
+        "DOGEUSDT",
+        "ETHUSDT",
+        "LINKUSDT",
+        "TRXUSDT"
+      ],
+      "null_free_status": true,
+      "quality_status": "passed",
+      "top_anomaly_concentration_summary": "LINKUSDT appears in 3/5 top abnormal rows",
+      "major_guardrails_triggered": "extreme_wick_body_ratio_guardrail",
+      "readiness_note": "inspection-ready with guardrail review recommended",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_id": "participation_breadth_confirmation_stack",
+      "row_count": 348,
+      "date_min": "2020-02-09",
+      "date_max": "2024-12-20",
+      "coverage_count": 4,
+      "coverage_values": [
+        "DOGEUSDT",
+        "ICPUSDT",
+        "STXUSDT",
+        "XTZUSDT"
+      ],
+      "null_free_status": true,
+      "quality_status": "passed",
+      "top_anomaly_concentration_summary": "DOGEUSDT appears in 2/5 top abnormal rows",
+      "major_guardrails_triggered": "degenerate_empty_participation_guardrail",
+      "readiness_note": "inspection-ready with guardrail review recommended",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_id": "cross_asset_decoupling_stack",
+      "row_count": 329,
+      "date_min": "2020-02-09",
+      "date_max": "2024-12-20",
+      "coverage_count": 4,
+      "coverage_values": [
+        "DOGEUSDT",
+        "ICPUSDT",
+        "STXUSDT",
+        "XTZUSDT"
+      ],
+      "null_free_status": true,
+      "quality_status": "passed",
+      "top_anomaly_concentration_summary": "STXUSDT appears in 3/5 top abnormal rows",
+      "major_guardrails_triggered": "none",
+      "readiness_note": "inspection-ready with no active guardrail warnings",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_id": "liquidity_stress_anomaly_stack",
+      "row_count": 329,
+      "date_min": "2020-02-09",
+      "date_max": "2024-12-20",
+      "coverage_count": 4,
+      "coverage_values": [
+        "DOGEUSDT",
+        "ICPUSDT",
+        "STXUSDT",
+        "XTZUSDT"
+      ],
+      "null_free_status": true,
+      "quality_status": "passed",
+      "top_anomaly_concentration_summary": "STXUSDT appears in 3/5 top abnormal rows",
+      "major_guardrails_triggered": "none",
+      "readiness_note": "inspection-ready with no active guardrail warnings",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_id": "event_context_flags_stack",
+      "row_count": 329,
+      "date_min": "2020-02-09",
+      "date_max": "2024-12-20",
+      "coverage_count": 4,
+      "coverage_values": [
+        "DOGEUSDT",
+        "ICPUSDT",
+        "STXUSDT",
+        "XTZUSDT"
+      ],
+      "null_free_status": true,
+      "quality_status": "passed",
+      "top_anomaly_concentration_summary": "STXUSDT appears in 3/5 top abnormal rows",
+      "major_guardrails_triggered": "none",
+      "readiness_note": "inspection-ready with no active guardrail warnings",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    }
+  ],
+  "status": "generated_dev_only_unified_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

@@ -1,0 +1,13 @@
+[Unit]
+Description=Research OS Pi orchestrator one-shot cycle
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/market_regime_v1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/opt/market_regime_v1/.venv/bin/python -B -m services.pi.ingest_service --config configs/runtime/runtime_config.pi_orchestrator.template.json --family-registry configs/families/family_registry.template.json --run-pi-orchestrator-cycle
+
+[Install]
+WantedBy=multi-user.target

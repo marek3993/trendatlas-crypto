@@ -1,0 +1,15 @@
+metric,baseline_model,baseline_value,probe_model,probe_value,delta_probe_minus_baseline
+number_of_earlier_activation_windows,phase67j_no_neo_main,0.0,breadth_ignition_regime_probe,4.0,4.0
+avg_lead_days_vs_baseline,phase67j_no_neo_main,0.0,breadth_ignition_regime_probe,15.75,15.75
+median_lead_days_vs_baseline,phase67j_no_neo_main,0.0,breadth_ignition_regime_probe,3.0,3.0
+max_lead_days_vs_baseline,phase67j_no_neo_main,0.0,breadth_ignition_regime_probe,56.0,56.0
+net_early_move_capture_pct,phase67j_no_neo_main,0.0,breadth_ignition_regime_probe,49.690284,49.690284
+gross_early_move_capture_pct,phase67j_no_neo_main,0.0,breadth_ignition_regime_probe,49.113934,49.113934
+trade_count,phase67j_no_neo_main,72.0,breadth_ignition_regime_probe,66.0,-6.0
+switch_count,phase67j_no_neo_main,72.0,breadth_ignition_regime_probe,75.0,3.0
+turnover_pressure,phase67j_no_neo_main,72.0,breadth_ignition_regime_probe,66.0,-6.0
+net_max_drawdown_pct,phase67j_no_neo_main,-26.377525,breadth_ignition_regime_probe,-28.016079,-1.6385540000000027
+net_total_return_pct,phase67j_no_neo_main,93500.121242,breadth_ignition_regime_probe,139576.57969,46076.45844800002
+net_cagr_pct,phase67j_no_neo_main,137.209803,breadth_ignition_regime_probe,149.506214,12.296411000000006
+gross_total_return_pct,phase67j_no_neo_main,103793.757647,breadth_ignition_regime_probe,153607.307103,49813.54945599999
+breadth_risk_days,phase67j_no_neo_main,0.0,breadth_ignition_regime_probe,91.0,91.0

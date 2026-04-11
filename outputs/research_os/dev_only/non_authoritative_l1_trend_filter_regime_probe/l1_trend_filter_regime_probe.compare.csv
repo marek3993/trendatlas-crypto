@@ -1,0 +1,15 @@
+metric,baseline_model,baseline_value,probe_model,probe_value,delta_probe_minus_baseline
+number_of_earlier_activation_windows,phase67j_no_neo_main,0.0,l1_trend_filter_regime_probe,14.0,14.0
+avg_lead_days_vs_baseline,phase67j_no_neo_main,0.0,l1_trend_filter_regime_probe,4.928571428571429,4.928571428571429
+median_lead_days_vs_baseline,phase67j_no_neo_main,0.0,l1_trend_filter_regime_probe,1.5,1.5
+max_lead_days_vs_baseline,phase67j_no_neo_main,0.0,l1_trend_filter_regime_probe,23.0,23.0
+net_early_move_capture_pct,phase67j_no_neo_main,0.0,l1_trend_filter_regime_probe,204.875099,204.875099
+gross_early_move_capture_pct,phase67j_no_neo_main,0.0,l1_trend_filter_regime_probe,208.041278,208.041278
+trade_count,phase67j_no_neo_main,72.0,l1_trend_filter_regime_probe,92.0,20.0
+switch_count,phase67j_no_neo_main,72.0,l1_trend_filter_regime_probe,109.0,37.0
+turnover_pressure,phase67j_no_neo_main,72.0,l1_trend_filter_regime_probe,92.0,20.0
+net_max_drawdown_pct,phase67j_no_neo_main,-26.377525,l1_trend_filter_regime_probe,-24.481788,1.895736999999997
+net_total_return_pct,phase67j_no_neo_main,93500.121242,l1_trend_filter_regime_probe,622989.635151,529489.513909
+net_cagr_pct,phase67j_no_neo_main,137.209803,l1_trend_filter_regime_probe,201.351586,64.141783
+gross_total_return_pct,phase67j_no_neo_main,103793.757647,l1_trend_filter_regime_probe,710790.79245,606997.0348029999
+l1_risk_days,phase67j_no_neo_main,0.0,l1_trend_filter_regime_probe,129.0,129.0

@@ -1,0 +1,694 @@
+{
+  "artifact_type": "dev_only_anomaly_cross_family_interactions",
+  "artifact_id": "anomaly_cross_family_interactions",
+  "generated_at_utc": "2026-04-10 14:03:37 UTC",
+  "family_count": 5,
+  "interesting_row_count": 165,
+  "pair_interactions": [
+    {
+      "family_pair": "pre_move_structure_quality_stack__participation_breadth_confirmation_stack",
+      "family_a": "pre_move_structure_quality_stack",
+      "family_b": "participation_breadth_confirmation_stack",
+      "overlap_row_count": 2,
+      "shared_entity_count": 1,
+      "date_min": "2024-11-11",
+      "date_max": "2024-12-19",
+      "mean_joint_interestingness": 1.398582,
+      "top_entities": [
+        "DOGEUSDT"
+      ],
+      "interaction_note": "light shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "pre_move_structure_quality_stack__cross_asset_decoupling_stack",
+      "family_a": "pre_move_structure_quality_stack",
+      "family_b": "cross_asset_decoupling_stack",
+      "overlap_row_count": 2,
+      "shared_entity_count": 1,
+      "date_min": "2024-11-11",
+      "date_max": "2024-11-12",
+      "mean_joint_interestingness": 1.53435,
+      "top_entities": [
+        "DOGEUSDT"
+      ],
+      "interaction_note": "light shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "pre_move_structure_quality_stack__liquidity_stress_anomaly_stack",
+      "family_a": "pre_move_structure_quality_stack",
+      "family_b": "liquidity_stress_anomaly_stack",
+      "overlap_row_count": 3,
+      "shared_entity_count": 1,
+      "date_min": "2024-11-11",
+      "date_max": "2024-11-13",
+      "mean_joint_interestingness": 1.524765,
+      "top_entities": [
+        "DOGEUSDT"
+      ],
+      "interaction_note": "repeated shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "pre_move_structure_quality_stack__event_context_flags_stack",
+      "family_a": "pre_move_structure_quality_stack",
+      "family_b": "event_context_flags_stack",
+      "overlap_row_count": 0,
+      "shared_entity_count": 0,
+      "date_min": "",
+      "date_max": "",
+      "mean_joint_interestingness": 0.0,
+      "top_entities": [],
+      "interaction_note": "no shared interesting rows",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "participation_breadth_confirmation_stack__cross_asset_decoupling_stack",
+      "family_a": "participation_breadth_confirmation_stack",
+      "family_b": "cross_asset_decoupling_stack",
+      "overlap_row_count": 10,
+      "shared_entity_count": 3,
+      "date_min": "2020-07-08",
+      "date_max": "2024-11-11",
+      "mean_joint_interestingness": 1.541604,
+      "top_entities": [
+        "STXUSDT",
+        "DOGEUSDT",
+        "ICPUSDT"
+      ],
+      "interaction_note": "repeated shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "participation_breadth_confirmation_stack__liquidity_stress_anomaly_stack",
+      "family_a": "participation_breadth_confirmation_stack",
+      "family_b": "liquidity_stress_anomaly_stack",
+      "overlap_row_count": 8,
+      "shared_entity_count": 3,
+      "date_min": "2020-07-08",
+      "date_max": "2024-11-11",
+      "mean_joint_interestingness": 1.706702,
+      "top_entities": [
+        "STXUSDT",
+        "DOGEUSDT",
+        "ICPUSDT"
+      ],
+      "interaction_note": "repeated shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "participation_breadth_confirmation_stack__event_context_flags_stack",
+      "family_a": "participation_breadth_confirmation_stack",
+      "family_b": "event_context_flags_stack",
+      "overlap_row_count": 2,
+      "shared_entity_count": 1,
+      "date_min": "2021-10-15",
+      "date_max": "2023-03-31",
+      "mean_joint_interestingness": 1.230914,
+      "top_entities": [
+        "STXUSDT"
+      ],
+      "interaction_note": "light shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "cross_asset_decoupling_stack__liquidity_stress_anomaly_stack",
+      "family_a": "cross_asset_decoupling_stack",
+      "family_b": "liquidity_stress_anomaly_stack",
+      "overlap_row_count": 16,
+      "shared_entity_count": 3,
+      "date_min": "2020-07-07",
+      "date_max": "2024-11-12",
+      "mean_joint_interestingness": 1.794231,
+      "top_entities": [
+        "DOGEUSDT",
+        "STXUSDT",
+        "ICPUSDT"
+      ],
+      "interaction_note": "repeated shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "cross_asset_decoupling_stack__event_context_flags_stack",
+      "family_a": "cross_asset_decoupling_stack",
+      "family_b": "event_context_flags_stack",
+      "overlap_row_count": 6,
+      "shared_entity_count": 4,
+      "date_min": "2020-07-10",
+      "date_max": "2023-12-22",
+      "mean_joint_interestingness": 1.230196,
+      "top_entities": [
+        "XTZUSDT",
+        "STXUSDT",
+        "DOGEUSDT"
+      ],
+      "interaction_note": "repeated shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "family_pair": "liquidity_stress_anomaly_stack__event_context_flags_stack",
+      "family_a": "liquidity_stress_anomaly_stack",
+      "family_b": "event_context_flags_stack",
+      "overlap_row_count": 5,
+      "shared_entity_count": 4,
+      "date_min": "2020-07-10",
+      "date_max": "2023-12-18",
+      "mean_joint_interestingness": 1.401505,
+      "top_entities": [
+        "STXUSDT",
+        "DOGEUSDT",
+        "XTZUSDT"
+      ],
+      "interaction_note": "repeated shared anomaly surfacing",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    }
+  ],
+  "top_interaction_clusters": [
+    {
+      "date": "2024-11-11",
+      "entity": "DOGEUSDT",
+      "active_family_count": 4,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack",
+        "pre_move_structure_quality_stack"
+      ],
+      "interaction_interestingness": 6.557464,
+      "mean_active_score": 1.626309,
+      "max_active_score": 1.862311,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail",
+        "pre_move_structure_quality_stack:extreme_wick_body_ratio_guardrail"
+      ],
+      "interaction_note": "broad multi-family anomaly interaction",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-02-19",
+      "entity": "STXUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 6.802699,
+      "mean_active_score": 2.145621,
+      "max_active_score": 3.314156,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2020-07-08",
+      "entity": "DOGEUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 6.782138,
+      "mean_active_score": 2.293089,
+      "max_active_score": 2.978098,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-02-20",
+      "entity": "STXUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 6.20336,
+      "mean_active_score": 1.85682,
+      "max_active_score": 2.693081,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-02-21",
+      "entity": "STXUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 6.175284,
+      "mean_active_score": 1.873939,
+      "max_active_score": 2.602689,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2020-07-10",
+      "entity": "DOGEUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 5.655588,
+      "mean_active_score": 1.574122,
+      "max_active_score": 2.162932,
+      "guardrail_context": [],
+      "interaction_note": "liquidity stress aligned with context flags",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-12-17",
+      "entity": "ICPUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 5.608061,
+      "mean_active_score": 1.634883,
+      "max_active_score": 1.946357,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-02-23",
+      "entity": "STXUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 5.501985,
+      "mean_active_score": 1.477458,
+      "max_active_score": 2.049056,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2024-11-12",
+      "entity": "DOGEUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack",
+        "pre_move_structure_quality_stack"
+      ],
+      "interaction_interestingness": 5.298611,
+      "mean_active_score": 1.455377,
+      "max_active_score": 1.686467,
+      "guardrail_context": [
+        "pre_move_structure_quality_stack:extreme_wick_body_ratio_guardrail"
+      ],
+      "interaction_note": "pre-move shape aligned with decoupling behavior",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-02-27",
+      "entity": "STXUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 5.285604,
+      "mean_active_score": 1.410641,
+      "max_active_score": 1.749925,
+      "guardrail_context": [],
+      "interaction_note": "liquidity stress aligned with context flags",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2021-10-15",
+      "entity": "STXUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 5.075141,
+      "mean_active_score": 1.290564,
+      "max_active_score": 1.569155,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-03-31",
+      "entity": "STXUSDT",
+      "active_family_count": 3,
+      "active_families": [
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 4.995148,
+      "mean_active_score": 1.32121,
+      "max_active_score": 1.347877,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "liquidity stress aligned with context flags",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2020-07-09",
+      "entity": "DOGEUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 5.649397,
+      "mean_active_score": 2.255077,
+      "max_active_score": 2.788639,
+      "guardrail_context": [],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2020-07-07",
+      "entity": "DOGEUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 4.456167,
+      "mean_active_score": 1.595124,
+      "max_active_score": 1.722085,
+      "guardrail_context": [],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-03-12",
+      "entity": "STXUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 4.416896,
+      "mean_active_score": 1.554309,
+      "max_active_score": 1.725174,
+      "guardrail_context": [],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2021-10-10",
+      "entity": "STXUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 4.203511,
+      "mean_active_score": 1.414152,
+      "max_active_score": 1.578716,
+      "guardrail_context": [],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2024-11-13",
+      "entity": "DOGEUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "liquidity_stress_anomaly_stack",
+        "pre_move_structure_quality_stack"
+      ],
+      "interaction_interestingness": 4.110252,
+      "mean_active_score": 1.367001,
+      "max_active_score": 1.4865,
+      "guardrail_context": [
+        "pre_move_structure_quality_stack:extreme_wick_body_ratio_guardrail"
+      ],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-12-18",
+      "entity": "ICPUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 4.040925,
+      "mean_active_score": 1.287775,
+      "max_active_score": 1.5063,
+      "guardrail_context": [],
+      "interaction_note": "liquidity stress aligned with context flags",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2024-11-10",
+      "entity": "DOGEUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 3.975063,
+      "mean_active_score": 1.304798,
+      "max_active_score": 1.340532,
+      "guardrail_context": [],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2021-09-28",
+      "entity": "XTZUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "event_context_flags_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 3.943769,
+      "mean_active_score": 1.240718,
+      "max_active_score": 1.406101,
+      "guardrail_context": [],
+      "interaction_note": "liquidity stress aligned with context flags",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2021-09-24",
+      "entity": "XTZUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack"
+      ],
+      "interaction_interestingness": 3.899502,
+      "mean_active_score": 1.22326,
+      "max_active_score": 1.352483,
+      "guardrail_context": [],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-12-19",
+      "entity": "ICPUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "liquidity_stress_anomaly_stack"
+      ],
+      "interaction_interestingness": 3.860346,
+      "mean_active_score": 1.23571,
+      "max_active_score": 1.249273,
+      "guardrail_context": [],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2024-01-08",
+      "entity": "STXUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 3.813901,
+      "mean_active_score": 1.202206,
+      "max_active_score": 1.22339,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2024-01-11",
+      "entity": "STXUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "participation_breadth_confirmation_stack"
+      ],
+      "interaction_interestingness": 3.756484,
+      "mean_active_score": 1.168402,
+      "max_active_score": 1.176162,
+      "guardrail_context": [
+        "participation_breadth_confirmation_stack:degenerate_empty_participation_guardrail"
+      ],
+      "interaction_note": "breadth and decoupling moved together",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    },
+    {
+      "date": "2023-12-22",
+      "entity": "ICPUSDT",
+      "active_family_count": 2,
+      "active_families": [
+        "cross_asset_decoupling_stack",
+        "event_context_flags_stack"
+      ],
+      "interaction_interestingness": 3.747391,
+      "mean_active_score": 1.162928,
+      "max_active_score": 1.168925,
+      "guardrail_context": [],
+      "interaction_note": "compact multi-family anomaly cluster",
+      "dev_only": true,
+      "non_authoritative": true,
+      "official_truth": false,
+      "strategy_advancement": false
+    }
+  ],
+  "status": "generated_dev_only_cross_family_interactions",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

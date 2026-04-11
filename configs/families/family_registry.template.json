@@ -6,21 +6,119 @@
     "mode": "dev_only_research_os",
     "live_trading": false,
     "source_of_truth_mutation": false,
-    "strategy_logic": "placeholder_only"
+    "strategy_logic": "placeholder_only",
+    "official_promotion_logic": false,
+    "family_lifecycle_state_source": "registry.family_governor_state",
+    "planner_requires_active_family_state": true
   },
   "families": [
     {
-      "family_id": "environment_health_probe",
+      "family_id": "cost_aware_hysteretic_pilot_to_full",
       "owner": "MRV1 AI LAB",
       "status": "enabled",
-      "description": "Validate that the 24/7 Research OS runtime can scan, plan, queue, register, and write artifacts.",
+      "description": "Track cost-aware CASH to PILOT to FULL family state from two non-authoritative dev-only attempts.",
       "allowed_job_types": [
-        "validation_placeholder"
+        "analyze_family_state",
+        "propose_next_mutation",
+        "submit_heavy_validation_job"
       ],
-      "default_priority": 5,
+      "default_priority": 1,
+      "source_artifact_ids": [
+        "cost_aware_hysteretic_pilot_to_full_probe",
+        "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe"
+      ],
       "constraints": {
+        "dev_only": true,
+        "non_authoritative": true,
         "live_trading": false,
         "source_of_truth_mutation": false,
+        "official_promotion_logic": false,
+        "artifact_scope": "outputs/research_os/dev_only/mvp"
+      }
+    },
+    {
+      "family_id": "high_conviction_pre_activation_pilot",
+      "owner": "MRV1 AI LAB",
+      "status": "enabled",
+      "description": "Track high-conviction pre-activation pilot family state from initial and rearmed confirmatory attempts.",
+      "allowed_job_types": [
+        "analyze_family_state"
+      ],
+      "default_priority": 2,
+      "source_artifact_ids": [
+        "high_conviction_pre_activation_pilot_probe",
+        "rearmed_high_conviction_pre_activation_pilot_probe"
+      ],
+      "constraints": {
+        "dev_only": true,
+        "non_authoritative": true,
+        "live_trading": false,
+        "source_of_truth_mutation": false,
+        "official_promotion_logic": false,
+        "artifact_scope": "outputs/research_os/dev_only/mvp"
+      }
+    },
+    {
+      "family_id": "constructive_regime_pilot_exposure_persistence",
+      "owner": "MRV1 AI LAB",
+      "status": "enabled",
+      "description": "Track constructive-regime pilot exposure persistence family state from cash diagnostic and pilot probe artifacts.",
+      "allowed_job_types": [
+        "analyze_family_state"
+      ],
+      "default_priority": 3,
+      "source_artifact_ids": [
+        "cash_overstay_diagnostic",
+        "constructive_pilot_probe"
+      ],
+      "constraints": {
+        "dev_only": true,
+        "non_authoritative": true,
+        "live_trading": false,
+        "source_of_truth_mutation": false,
+        "official_promotion_logic": false,
+        "artifact_scope": "outputs/research_os/dev_only/mvp"
+      }
+    },
+    {
+      "family_id": "descriptive_subset_context",
+      "owner": "MRV1 AI LAB",
+      "status": "context_only",
+      "description": "Descriptive supportive versus caution subset context for future planner prompts.",
+      "allowed_job_types": [
+        "analyze_family_state"
+      ],
+      "default_priority": 90,
+      "source_artifact_ids": [
+        "supportive_vs_caution_subset_layer_v1"
+      ],
+      "constraints": {
+        "dev_only": true,
+        "non_authoritative": true,
+        "live_trading": false,
+        "source_of_truth_mutation": false,
+        "official_promotion_logic": false,
+        "artifact_scope": "outputs/research_os/dev_only/mvp"
+      }
+    },
+    {
+      "family_id": "response_shape_anomaly_aligned_context",
+      "owner": "MRV1 AI LAB",
+      "status": "context_only",
+      "description": "Descriptive anomaly-aligned response-shape profile context for future planner prompts.",
+      "allowed_job_types": [
+        "analyze_family_state"
+      ],
+      "default_priority": 91,
+      "source_artifact_ids": [
+        "response_shape_bot_v1_anomaly_aligned_profile"
+      ],
+      "constraints": {
+        "dev_only": true,
+        "non_authoritative": true,
+        "live_trading": false,
+        "source_of_truth_mutation": false,
+        "official_promotion_logic": false,
         "artifact_scope": "outputs/research_os/dev_only/mvp"
       }
     }

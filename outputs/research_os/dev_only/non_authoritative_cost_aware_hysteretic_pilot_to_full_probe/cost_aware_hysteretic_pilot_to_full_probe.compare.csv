@@ -1,0 +1,17 @@
+metric,baseline_model,baseline_value,probe_model,probe_value,delta_probe_minus_baseline
+net_return_after_costs_pct,phase67j_no_neo_main,93500.121242,cost_aware_hysteretic_pilot_to_full_probe,98925.069061,5424.947819000008
+net_cagr_pct,phase67j_no_neo_main,137.209803,cost_aware_hysteretic_pilot_to_full_probe,138.903156,1.6933530000000019
+max_drawdown_pct,phase67j_no_neo_main,-26.377525,cost_aware_hysteretic_pilot_to_full_probe,-26.377525,0.0
+trade_count,phase67j_no_neo_main,72.0,cost_aware_hysteretic_pilot_to_full_probe,73.0,1.0
+switch_count,phase67j_no_neo_main,72.0,cost_aware_hysteretic_pilot_to_full_probe,74.0,2.0
+turnover_pressure,phase67j_no_neo_main,72.0,cost_aware_hysteretic_pilot_to_full_probe,72.0,0.0
+total_cost_pct,phase67j_no_neo_main,10.44,cost_aware_hysteretic_pilot_to_full_probe,10.44,0.0
+gross_return_pct,phase67j_no_neo_main,103793.757647,cost_aware_hysteretic_pilot_to_full_probe,109817.897421,6024.139773999996
+activation_window_count,phase67j_no_neo_main,0.0,cost_aware_hysteretic_pilot_to_full_probe,1.0,1.0
+activation_window_handoff_count,phase67j_no_neo_main,0.0,cost_aware_hysteretic_pilot_to_full_probe,1.0,1.0
+avg_lead_days_vs_baseline,phase67j_no_neo_main,0.0,cost_aware_hysteretic_pilot_to_full_probe,29.0,29.0
+median_lead_days_vs_baseline,phase67j_no_neo_main,0.0,cost_aware_hysteretic_pilot_to_full_probe,29.0,29.0
+net_early_move_capture_pct,phase67j_no_neo_main,0.0,cost_aware_hysteretic_pilot_to_full_probe,5.644844,5.644844
+gross_early_move_capture_pct,phase67j_no_neo_main,0.0,cost_aware_hysteretic_pilot_to_full_probe,5.798365,5.798365
+pilot_days,phase67j_no_neo_main,0.0,cost_aware_hysteretic_pilot_to_full_probe,1.0,1.0
+full_prebaseline_days,phase67j_no_neo_main,0.0,cost_aware_hysteretic_pilot_to_full_probe,28.0,28.0

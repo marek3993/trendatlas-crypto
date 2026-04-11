@@ -1,0 +1,6 @@
+model,state,days,share_of_total_days
+phase67j_no_neo_main,BASELINE_RISK,1671,0.577601
+phase67j_no_neo_main,CASH,1222,0.422399
+breadth_ignition_regime_probe,BASELINE_RISK,1671,0.577601
+breadth_ignition_regime_probe,BREADTH_BTC_RISK,91,0.031455
+breadth_ignition_regime_probe,CASH,1131,0.390944

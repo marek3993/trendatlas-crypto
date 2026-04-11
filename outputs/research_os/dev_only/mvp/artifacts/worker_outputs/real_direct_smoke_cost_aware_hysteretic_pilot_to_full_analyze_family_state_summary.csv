@@ -1,0 +1,2 @@
+job_id,job_type,family_id,status
+real_direct_smoke_cost_aware_hysteretic_pilot_to_full_analyze_family_state,analyze_family_state,cost_aware_hysteretic_pilot_to_full,analyzed_family_state

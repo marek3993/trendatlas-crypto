@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Research OS Pi orchestrator cycle on a safe timer
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=30min
+Persistent=true
+Unit=research_os_pi_cycle.service
+
+[Install]
+WantedBy=timers.target

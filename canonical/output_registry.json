@@ -539,6 +539,18 @@
       "notes": "Dev-only non-authoritative cross-sectional breadth ignition regime probe outputs against phase67j_no_neo_main. Uses fixed data/ohlcv liquid core breadth with one 20/120 trend formula, one causal 21-day EWMA smoothing rule, one 2/3 threshold rule, and one 3-day ignition rule; no pilot state, persistence exposure logic, app/runtime change, leverage redesign, BTC endpoint-slope estimation, or parameter grid."
     },
     {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_probe/",
+      "generated_by": [
+        "scripts/dev_only_breadth_ignition_volatility_hostility_veto_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative smoothed breadth ignition plus volatility-hostility veto outputs against phase67j_no_neo_main. Uses the fixed pure-breadth source ratio with one causal 5-day EMA threshold-cross rule and one slow BTC realized-volatility veto; no pilot state, app/runtime change, leverage redesign, daily resizing, or parameter grid."
+    },
+    {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "generated_by": [
         "scripts/phase68h_dynamic_leverage_ladder_candidate.py"

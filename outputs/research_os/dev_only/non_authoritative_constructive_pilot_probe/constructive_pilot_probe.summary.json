@@ -1,0 +1,50 @@
+{
+  "artifact_id": "constructive_pilot_probe",
+  "generated_at_utc": "2026-04-09 19:36:53 UTC",
+  "final_verdict": "mixed_pause_recommended",
+  "mechanism_id": "constructive_regime_pilot_exposure_persistence",
+  "compare_baseline": "phase67j_no_neo_main",
+  "constructive_windows_count": 12,
+  "baseline_material_gap_windows": 10,
+  "probe_material_gap_windows": 0,
+  "baseline_time_in_market_share_in_constructive_windows": 0.87644,
+  "probe_time_in_market_share_in_constructive_windows": 1.0,
+  "baseline_cash_share_in_constructive_windows": 0.12356,
+  "probe_cash_share_in_constructive_windows": 0.0,
+  "baseline_missed_benchmark_return_while_underexposed": 0.231181,
+  "probe_missed_benchmark_return_while_underexposed": 0.0,
+  "why_meaningfully_different_from_phase68k_l_m": "phase68k/phase68l/phase68m primarily tested earlier or softer entry permission. This probe instead tests exposure persistence inside already-confirmed constructive windows by replacing binary cash fallback with a deterministic pilot exposure state.",
+  "pilot_exposure_rule": {
+    "constructive_regime_rule_reused_from": "scripts/dev_only_cash_overstay_diagnostic.py",
+    "pilot_asset": "BTCUSDT",
+    "pilot_weight": 0.25,
+    "activation_rule": "When phase67j baseline is in CASH inside an already-confirmed constructive window, replace full CASH with a small BTC pilot state.",
+    "persistence_rule": "Pilot stays active on baseline CASH days until the same explicit constructive invalidation rule ends the window.",
+    "full_risk_rule": "Baseline full-risk behavior remains unchanged and is not loosened."
+  },
+  "stop_condition": {
+    "rule": "if constructive-window participation does not improve materially or if missed benchmark return while underexposed does not shrink materially or if gains come only from one isolated window or if probe implicitly becomes broad entry softening",
+    "triggered": false
+  },
+  "pause_condition": {
+    "rule": "if results are mixed across windows or if improvement depends on one narrow episode or if persistence logic causes obvious drift away from mechanism-first scope",
+    "triggered": true
+  },
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "cash_diagnostic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cash_diagnostics\\cash_overstay_diagnostic.summary.json",
+    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+  },
+  "descriptive_only": true,
+  "status": "generated_dev_only_constructive_pilot_probe_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "constructive_pilot_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

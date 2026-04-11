@@ -1,0 +1,2 @@
+window_id,pilot_activation_date,full_activation_date,window_end_date,baseline_handoff_date,exit_reason,pilot_asset,asset_resolution,pilot_days,full_prebaseline_days,lead_days_vs_baseline,baseline_return_net,probe_return_net,net_early_move_capture,baseline_return_gross,probe_return_gross,gross_early_move_capture
+window_001,2019-02-27,2019-02-28,2019-03-27,2019-03-28,baseline_handoff,BTC,BTC_fallback,1,28,29,0.0,5.644844,5.644844,0.0,5.798365,5.798365

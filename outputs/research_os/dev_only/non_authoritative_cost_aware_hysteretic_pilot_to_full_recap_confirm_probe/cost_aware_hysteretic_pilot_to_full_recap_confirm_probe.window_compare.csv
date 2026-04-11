@@ -1,0 +1,6 @@
+window_id,pilot_activation_date,full_activation_date,window_end_date,baseline_handoff_date,exit_reason,pilot_asset,asset_resolution,pilot_days,full_prebaseline_days,lead_days_vs_baseline,baseline_return_net,probe_return_net,net_early_move_capture,baseline_return_gross,probe_return_gross,gross_early_move_capture
+window_001,2019-02-27,2019-02-28,2019-03-27,2019-03-28,baseline_handoff,BTC,BTC_fallback,1,28,29,0.0,5.644844,5.644844,0.0,5.798365,5.798365
+window_002,2019-06-06,2019-06-07,2019-06-10,2019-06-11,baseline_handoff,BTC,BTC_fallback,1,4,5,0.0,2.392345,2.392345,0.0,2.537925,2.537925
+window_003,2019-06-29,2019-06-30,2019-08-13,2019-08-14,baseline_handoff,BTC,BTC_fallback,1,45,46,0.0,-9.182213,-9.182213,0.0,-9.039392,-9.039392
+window_004,2021-01-15,2021-01-16,2021-03-10,2021-03-11,baseline_handoff,BTC,BTC_fallback,1,54,55,0.0,50.387484,50.387484,0.0,50.609985,50.609985
+window_005,2022-04-08,2022-04-09,2022-04-12,,hysteretic_failure_or_local_brake,BTC,BTC_fallback,1,3,0,0.0,-7.095087,-7.095087,0.0,-6.826367,-6.826367

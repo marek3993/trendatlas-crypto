@@ -1,0 +1,7 @@
+window_id,breadth_activation_date,window_end_date,baseline_handoff_date,activation_kind,lead_days_vs_baseline,breadth_risk_days,entry_breadth,entry_smoothed_breadth,entry_eligible_assets,entry_positive_assets,btc_return_gross,baseline_return_gross,probe_return_gross,baseline_return_net,probe_return_net,net_early_move_capture,gross_early_move_capture,exit_reason
+window_001,2019-06-06,2019-06-10,2019-06-11,cross_sectional_breadth_ignition,5,5,1.0,0.979562,8,8,2.652221,0.0,2.652221,0.0,2.503571,2.503571,2.652221,baseline_handoff
+window_002,2019-06-28,2019-07-22,,cross_sectional_breadth_ignition,0,25,1.0,0.997489,8,8,-8.735047,0.0,-8.735047,-0.145,-8.735047,-8.590047,-8.735047,breadth_ignition_off
+window_003,2020-03-09,2020-03-11,,cross_sectional_breadth_ignition,0,3,0.222222,0.775789,9,2,-1.229755,0.0,-1.229755,-0.145,-1.229755,-1.084755,-1.229755,breadth_ignition_off
+window_004,2021-01-14,2021-03-10,2021-03-11,cross_sectional_breadth_ignition,56,56,0.909091,0.824195,11,10,49.450167,0.0,49.450167,-0.145,49.450167,49.595167,49.450167,baseline_handoff
+window_005,2021-05-13,2021-05-13,2021-05-14,cross_sectional_breadth_ignition,1,1,0.916667,0.982923,12,11,0.079889,0.0,0.079889,-0.145,0.079889,0.224889,0.079889,baseline_handoff
+window_006,2021-09-22,2021-09-22,2021-09-23,cross_sectional_breadth_ignition,1,1,0.916667,0.831717,12,11,6.896459,0.0,6.896459,-0.145,6.896459,7.041459,6.896459,baseline_handoff

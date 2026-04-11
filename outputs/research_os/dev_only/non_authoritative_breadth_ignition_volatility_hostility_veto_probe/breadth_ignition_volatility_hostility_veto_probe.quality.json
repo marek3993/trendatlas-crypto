@@ -1,0 +1,126 @@
+{
+  "artifact_id": "breadth_ignition_volatility_hostility_veto_probe_quality",
+  "generated_at_utc": "2026-04-10 13:26:37 UTC",
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "universe_ohlcv": {
+      "ADA": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ADAUSDT_1d.csv",
+      "AVAX": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\AVAXUSDT_1d.csv",
+      "BNB": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BNBUSDT_1d.csv",
+      "BTC": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+      "DOGE": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOGEUSDT_1d.csv",
+      "DOT": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\DOTUSDT_1d.csv",
+      "ETH": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\ETHUSDT_1d.csv",
+      "LINK": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LINKUSDT_1d.csv",
+      "LTC": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\LTCUSDT_1d.csv",
+      "SOL": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\SOLUSDT_1d.csv",
+      "TRX": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\TRXUSDT_1d.csv",
+      "XRP": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\XRPUSDT_1d.csv"
+    },
+    "btc_volatility_source": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv"
+  },
+  "checks": [
+    {
+      "name": "fixed_universe_size",
+      "ok": true,
+      "detail": "ADA,AVAX,BNB,BTC,DOGE,DOT,ETH,LINK,LTC,SOL,TRX,XRP"
+    },
+    {
+      "name": "single_breadth_formula_recorded",
+      "ok": true,
+      "detail": "For each date, breadth = count(eligible assets with close > own 120-day SMA and own 20-day SMA > own 120-day SMA) / count(eligible assets)."
+    },
+    {
+      "name": "single_smoothing_rule_recorded",
+      "ok": true,
+      "detail": "Smoothed breadth is a single causal 5-day EMA of the existing pure breadth ignition source ratio, using span=5, adjust=False, and min_periods=5."
+    },
+    {
+      "name": "single_threshold_rule_recorded",
+      "ok": true,
+      "detail": "Breadth ignition starts when the causal 5-day EMA crosses above the exact existing pure breadth ignition threshold of 2/3, and remains ON while that smoothed breadth stays above 2/3."
+    },
+    {
+      "name": "single_volatility_measure_recorded",
+      "ok": true,
+      "detail": "Slow BTC realized volatility is the 20-day rolling standard deviation of BTC daily returns annualized with sqrt(365), using min_periods=20."
+    },
+    {
+      "name": "single_volatility_threshold_rule_recorded",
+      "ok": true,
+      "detail": "The raw volatility hostility condition is true when slow BTC realized volatility is greater than its own 63-day rolling median multiplied by 1.20, using min_periods=63."
+    },
+    {
+      "name": "ema_before_signal",
+      "ok": true,
+      "detail": "breadth ignition cannot turn on before the smoothed breadth series has enough causal history"
+    },
+    {
+      "name": "volatility_veto_is_binary",
+      "ok": true,
+      "detail": "volatility hostility veto is a binary state only"
+    },
+    {
+      "name": "volatility_veto_blocks_probe_risk",
+      "ok": true,
+      "detail": "probe breadth risk never remains active when volatility hostility veto is active"
+    },
+    {
+      "name": "breadth_risk_only_on_baseline_cash_days",
+      "ok": true,
+      "detail": "breadth BTC risk never overlaps with baseline risk-on exposure"
+    },
+    {
+      "name": "baseline_risk_days_unchanged",
+      "ok": true,
+      "detail": "baseline in-market daily returns pass through unchanged"
+    },
+    {
+      "name": "no_pilot_ladder_or_sizing_states",
+      "ok": true,
+      "detail": "probe states are CASH, BREADTH_BTC_RISK, and BASELINE_RISK only"
+    },
+    {
+      "name": "semantic_flags_locked",
+      "ok": true,
+      "detail": "dev_only=true, non_authoritative=true, official_truth=false, strategy_advancement=false, candidate_selection=false, official_edge_claim=false"
+    }
+  ],
+  "activation_window_count": 3,
+  "baseline_metrics": {
+    "model": "phase67j_no_neo_main",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "breadth_risk_days": 0,
+    "vol_hostility_veto_active_days": 0
+  },
+  "probe_metrics": {
+    "model": "breadth_ignition_volatility_hostility_veto_probe",
+    "gross_return_pct": 129287.629021,
+    "net_return_after_costs_pct": 117140.895186,
+    "net_cagr_pct": 144.050961,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 68,
+    "switch_count": 73,
+    "turnover_pressure": 68.0,
+    "total_cost_pct": 9.86,
+    "breadth_risk_days": 33,
+    "vol_hostility_veto_active_days": 771
+  },
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "breadth_ignition_volatility_hostility_veto_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

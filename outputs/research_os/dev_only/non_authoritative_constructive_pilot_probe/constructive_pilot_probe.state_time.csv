@@ -1,0 +1,6 @@
+model,state,days,share_of_total_days,constructive_window_days,share_of_constructive_window_days
+phase67j_no_neo_main,FULL_RISK,1671,0.577601,1369,0.87644
+phase67j_no_neo_main,CASH,1222,0.422399,193,0.12356
+constructive_regime_pilot_exposure_persistence_probe,FULL_RISK,1671,0.577601,1369,0.87644
+constructive_regime_pilot_exposure_persistence_probe,PILOT_RISK,193,0.066713,193,0.12356
+constructive_regime_pilot_exposure_persistence_probe,CASH,1029,0.355686,0,0.0
