@@ -2339,7 +2339,7 @@ def render_btc_side_indicator(indicator: dict[str, Any]) -> None:
     )
 
 
-def render_app_table(rows: list[dict[str, Any]]) -> None:
+def render_app_table(rows: list[dict[str, Any]], emphasize_first_column: bool = False) -> None:
     if not rows:
         return
 
@@ -2350,6 +2350,13 @@ def render_app_table(rows: list[dict[str, Any]]) -> None:
                 columns.append(key)
 
     frame = pd.DataFrame([{column: row.get(column, "") for column in columns} for row in rows])
+    if emphasize_first_column and columns:
+        styler = frame.style.set_properties(
+            subset=pd.IndexSlice[:, [columns[0]]],
+            **{"font-weight": "700"},
+        )
+        st.dataframe(styler, width="stretch", hide_index=True)
+        return
     st.dataframe(frame, width="stretch", hide_index=True)
 
 
@@ -3196,75 +3203,77 @@ with tabs[0]:
         or strategy_freshness_payload.get("freshness_detail_text")
         or FRESHNESS_SUMMARY_TEXT.get(refresh_currentness_state, FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"])
     ).strip()
+    refresh_label_column = "Preh\u013ead" if lang == "sk" else "Field"
+    refresh_value_column = "Hodnota" if lang == "sk" else "Value"
     refresh_rows = [
         {
-            "Pole" if lang == "sk" else "Field": "latest_successful_refresh_runtime_utc",
-            "Hodnota" if lang == "sk" else "Value": format_utc_text(
+            refresh_label_column: "Posledn\u00e9 \u00faspe\u0161n\u00e9 obnovenie" if lang == "sk" else "Latest successful refresh",
+            refresh_value_column: format_utc_text(
                 strategy_freshness_payload.get("latest_successful_refresh_runtime_utc"),
                 lang,
             ),
         },
         {
-            "Pole" if lang == "sk" else "Field": "latest_refresh_run_status",
-            "Hodnota" if lang == "sk" else "Value": safe_text_value(
+            refresh_label_column: "Stav posledn\u00e9ho refreshu" if lang == "sk" else "Last refresh status",
+            refresh_value_column: safe_text_value(
                 strategy_freshness_payload.get("latest_refresh_run_status")
                 or strategy_freshness_payload.get("refresh_status"),
                 lang=lang,
             ),
         },
         {
-            "Pole" if lang == "sk" else "Field": "latest_refresh_run_id",
-            "Hodnota" if lang == "sk" else "Value": safe_text_value(
+            refresh_label_column: "ID posledn\u00e9ho refreshu" if lang == "sk" else "Last refresh ID",
+            refresh_value_column: safe_text_value(
                 strategy_freshness_payload.get("latest_refresh_run_id")
                 or strategy_freshness_payload.get("refresh_run_id"),
                 lang=lang,
             ),
         },
         {
-            "Pole" if lang == "sk" else "Field": "latest_strategy_artifact_date",
-            "Hodnota" if lang == "sk" else "Value": format_date_text(
+            refresh_label_column: "D\u00e1tum d\u00e1t strat\u00e9gie" if lang == "sk" else "Strategy data date",
+            refresh_value_column: format_date_text(
                 strategy_freshness_payload.get("latest_strategy_artifact_date"),
                 lang,
             ),
         },
         {
-            "Pole" if lang == "sk" else "Field": "latest_trend_calculation_date",
-            "Hodnota" if lang == "sk" else "Value": format_date_text(
+            refresh_label_column: "D\u00e1tum v\u00fdpo\u010dtu trendu" if lang == "sk" else "Trend calculation date",
+            refresh_value_column: format_date_text(
                 strategy_freshness_payload.get("latest_trend_calculation_date"),
                 lang,
             ),
         },
         {
-            "Pole" if lang == "sk" else "Field": "latest_wallet_sync_utc",
-            "Hodnota" if lang == "sk" else "Value": format_utc_text(
+            refresh_label_column: "Posledn\u00e1 synchroniz\u00e1cia pe\u0148a\u017eenky" if lang == "sk" else "Last wallet sync",
+            refresh_value_column: format_utc_text(
                 strategy_freshness_payload.get("latest_wallet_sync_utc"),
                 lang,
             ),
         },
         {
-            "Pole" if lang == "sk" else "Field": "latest_available_closed_utc_date",
-            "Hodnota" if lang == "sk" else "Value": format_date_text(
+            refresh_label_column: "Posledn\u00fd dostupn\u00fd uzavret\u00fd de\u0148" if lang == "sk" else "Latest available closed day",
+            refresh_value_column: format_date_text(
                 strategy_freshness_payload.get("latest_available_closed_utc_date"),
                 lang,
             ),
         },
         {
-            "Pole" if lang == "sk" else "Field": "refresh_currentness_state",
-            "Hodnota" if lang == "sk" else "Value": safe_text_value(
+            refresh_label_column: "Stav aktu\u00e1lnosti" if lang == "sk" else "Currentness state",
+            refresh_value_column: safe_text_value(
                 refresh_currentness_state,
                 lang=lang,
             ),
         },
         {
-            "Pole" if lang == "sk" else "Field": "refresh_currentness_reason",
-            "Hodnota" if lang == "sk" else "Value": safe_text_value(
+            refresh_label_column: "D\u00f4vod stavu" if lang == "sk" else "Reason",
+            refresh_value_column: safe_text_value(
                 refresh_currentness_reason,
                 lang=lang,
             ),
         },
     ]
-    st.markdown("#### Denny refresh runtime" if lang == "sk" else "#### Daily Refresh Runtime")
-    render_app_table(refresh_rows)
+    st.markdown("#### Denn\u00fd refresh runtime" if lang == "sk" else "#### Daily Refresh Runtime")
+    render_app_table(refresh_rows, emphasize_first_column=True)
 
     available_dates = pd.to_datetime(main_equity_df["ts"], errors="coerce").dropna().dt.normalize()
     min_calc_date = available_dates.min().date()
