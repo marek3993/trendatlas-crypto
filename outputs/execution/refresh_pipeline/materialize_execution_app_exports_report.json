@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-04-11T07:30:26Z",
-  "started_at_utc": "2026-04-11T07:30:26Z",
+  "generated_at_utc": "2026-04-11T08:02:12Z",
+  "started_at_utc": "2026-04-11T08:02:12Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -55,12 +55,12 @@
       "source_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
         "size_bytes": 247,
-        "modified_utc": "2026-04-11T07:03:34Z"
+        "modified_utc": "2026-04-11T07:42:47Z"
       },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 507,
-        "modified_utc": "2026-04-11T07:30:26Z"
+        "modified_utc": "2026-04-11T08:02:12Z"
       },
       "added_fields": [
         "live_truth_mode",
@@ -108,7 +108,7 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_trend_barometer_history.csv",
         "size_bytes": 375785,
-        "modified_utc": "2026-04-11T07:03:22Z"
+        "modified_utc": "2026-04-11T07:42:36Z"
       }
     },
     {
@@ -121,7 +121,7 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
         "size_bytes": 1061,
-        "modified_utc": "2026-04-11T07:03:34Z"
+        "modified_utc": "2026-04-11T07:42:47Z"
       }
     },
     {
@@ -140,7 +140,7 @@
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
         "size_bytes": 809,
-        "modified_utc": "2026-04-11T07:30:26Z"
+        "modified_utc": "2026-04-11T08:02:12Z"
       },
       "computed_fields": [
         "total_return_pct",
@@ -184,7 +184,7 @@
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
         "size_bytes": 8795,
-        "modified_utc": "2026-04-11T07:30:26Z"
+        "modified_utc": "2026-04-11T08:02:12Z"
       }
     },
     {
@@ -194,7 +194,7 @@
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
         "size_bytes": 12921,
-        "modified_utc": "2026-04-11T07:30:26Z"
+        "modified_utc": "2026-04-11T08:02:12Z"
       }
     }
   ],

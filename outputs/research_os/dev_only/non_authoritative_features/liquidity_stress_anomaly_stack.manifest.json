@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_feature_output_manifest",
   "artifact_id": "liquidity_stress_anomaly_stack_manifest",
-  "generated_at_utc": "2026-04-11 07:03:44 UTC",
+  "generated_at_utc": "2026-04-11 07:42:57 UTC",
   "family_id": "liquidity_stress_anomaly_stack",
   "family_type": "toxic-subset",
   "output_files": {

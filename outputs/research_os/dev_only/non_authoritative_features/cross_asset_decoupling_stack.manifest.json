@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_feature_output_manifest",
   "artifact_id": "cross_asset_decoupling_stack_manifest",
-  "generated_at_utc": "2026-04-11 07:03:43 UTC",
+  "generated_at_utc": "2026-04-11 07:42:56 UTC",
   "family_id": "cross_asset_decoupling_stack",
   "family_type": "regime-context",
   "output_files": {

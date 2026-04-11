@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_feature_output_manifest",
   "artifact_id": "event_context_flags_stack_manifest",
-  "generated_at_utc": "2026-04-11 07:03:45 UTC",
+  "generated_at_utc": "2026-04-11 07:42:58 UTC",
   "family_id": "event_context_flags_stack",
   "family_type": "event-context",
   "output_files": {

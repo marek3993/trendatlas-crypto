@@ -1,7 +1,7 @@
 {
   "snapshot_type": "app_product_snapshot",
   "schema_version": 1,
-  "app_export_generated_at_utc": "2026-04-11T07:30:26Z",
+  "app_export_generated_at_utc": "2026-04-11T08:02:12Z",
   "product_name": "TrendAtlas Crypto",
   "page_scope": "homepage",
   "main_strategy_model": "phase68i_dynamic_ladder_candidate",
@@ -11,7 +11,7 @@
   "freshness_target_closed_day": "2026-04-10",
   "freshness": {
     "status": "ok",
-    "generated_at_utc": "2026-04-11T07:03:34+00:00",
+    "generated_at_utc": "2026-04-11T07:42:47+00:00",
     "checks": {
       "btc_raw_last_date": "2026-04-10",
       "phase66g_paper_last_date": "2026-04-09",
@@ -149,7 +149,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 809,
-      "modified_utc": "2026-04-11T07:30:26Z"
+      "modified_utc": "2026-04-11T08:02:12Z"
     },
     "strategy_last_closed_day": {
       "path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
@@ -166,7 +166,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 1061,
-      "modified_utc": "2026-04-11T07:03:34Z",
+      "modified_utc": "2026-04-11T07:42:47Z",
       "source_field": "latest_closed_utc_date"
     },
     "app_export_generated_at_utc": {
@@ -175,7 +175,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 8795,
-      "modified_utc": "2026-04-11T07:03:35Z",
+      "modified_utc": "2026-04-11T07:42:47Z",
       "source_field": "generated_by_materializer_clock"
     },
     "live_public_state": {
@@ -205,7 +205,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 1061,
-      "modified_utc": "2026-04-11T07:03:34Z"
+      "modified_utc": "2026-04-11T07:42:47Z"
     },
     "trend_barometer_summary": {
       "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -247,7 +247,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 375785,
-      "modified_utc": "2026-04-11T07:03:22Z"
+      "modified_utc": "2026-04-11T07:42:36Z"
     }
   }
 }
