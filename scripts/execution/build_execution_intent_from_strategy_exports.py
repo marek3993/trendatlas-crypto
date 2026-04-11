@@ -7,6 +7,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from scripts.execution.runtime_path_resolution import (
+    format_path_resolution_message,
+    resolve_registry_artifact_path,
+    resolve_runtime_path,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
@@ -70,23 +79,6 @@ def read_csv_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
     raise RuntimeError("unreachable")
 
 
-def resolve_repo_path(raw_path: str | Path) -> Path:
-    candidate = Path(raw_path)
-    if not candidate.is_absolute():
-        return ROOT / candidate
-    if candidate.exists():
-        return candidate
-
-    root_name = ROOT.name.lower()
-    lowered_parts = [part.lower() for part in candidate.parts]
-    if root_name in lowered_parts:
-        root_index = lowered_parts.index(root_name)
-        suffix_parts = candidate.parts[root_index + 1 :]
-        if suffix_parts:
-            return ROOT.joinpath(*suffix_parts)
-    return candidate
-
-
 def normalize_key(s: str) -> str:
     return "".join(ch.lower() for ch in s if ch.isalnum())
 
@@ -108,14 +100,26 @@ def first_nonempty(row: dict[str, str], columns: list[str]) -> str | None:
     return None
 
 
-def load_registered_path(artifacts: dict[str, Any], artifact_key: str) -> Path:
+def load_registered_path(
+    artifacts: dict[str, Any],
+    artifact_key: str,
+    *,
+    diagnostics: list[dict[str, Any]],
+) -> Path:
     entry = artifacts.get(artifact_key)
     if not isinstance(entry, dict):
         fail(f"paths_registry.json missing artifact entry: {artifact_key}")
     canonical_raw = entry.get("canonical")
     if not isinstance(canonical_raw, str) or not canonical_raw.strip():
         fail(f"Artifact {artifact_key} missing canonical path")
-    return resolve_repo_path(canonical_raw)
+    resolved_path, diagnostic = resolve_registry_artifact_path(
+        artifact_key,
+        entry,
+        root=ROOT,
+        context=f"registry:{artifact_key}",
+    )
+    diagnostics.append(diagnostic)
+    return resolved_path
 
 
 def load_app_export_contract() -> dict[str, Any]:
@@ -132,19 +136,56 @@ def load_model_source_path(
     model_key: str,
     field_name: str,
     fallback_path: Path,
+    diagnostics: list[dict[str, Any]],
 ) -> Path:
     model_sources = contract.get("model_sources")
     if not isinstance(model_sources, dict):
+        diagnostics.append(
+            {
+                "context": f"contract:{model_key}.{field_name}",
+                "original_path": "",
+                "resolved_path": str(fallback_path),
+                "reason": "contract_model_sources_missing_using_registry_fallback",
+                "exists": fallback_path.exists(),
+                "selected_source_path": str(fallback_path),
+            }
+        )
         return fallback_path
 
     source_cfg = model_sources.get(model_key)
     if not isinstance(source_cfg, dict):
+        diagnostics.append(
+            {
+                "context": f"contract:{model_key}.{field_name}",
+                "original_path": "",
+                "resolved_path": str(fallback_path),
+                "reason": "contract_model_missing_using_registry_fallback",
+                "exists": fallback_path.exists(),
+                "selected_source_path": str(fallback_path),
+            }
+        )
         return fallback_path
 
     raw_path = source_cfg.get(field_name)
     if not isinstance(raw_path, str) or not raw_path.strip():
+        diagnostics.append(
+            {
+                "context": f"contract:{model_key}.{field_name}",
+                "original_path": "",
+                "resolved_path": str(fallback_path),
+                "reason": "contract_field_missing_using_registry_fallback",
+                "exists": fallback_path.exists(),
+                "selected_source_path": str(fallback_path),
+            }
+        )
         return fallback_path
-    return resolve_repo_path(raw_path)
+    resolved_path, diagnostic = resolve_runtime_path(
+        raw_path,
+        root=ROOT,
+        context=f"contract:{model_key}.{field_name}",
+    )
+    diagnostics.append(diagnostic)
+    return resolved_path
 
 
 def derive_target_asset(
@@ -192,6 +233,7 @@ def main() -> None:
         fail("paths_registry.json missing top-level 'artifacts' object")
 
     contract = load_app_export_contract()
+    path_resolution_diagnostics: list[dict[str, Any]] = []
     strategy_model = str(
         contract.get("main_model_key") or contract.get("main_strategy_model") or "phase67j_no_neo_main"
     ).strip() or "phase67j_no_neo_main"
@@ -203,21 +245,43 @@ def main() -> None:
         contract,
         model_key=strategy_model,
         field_name="paper_path",
-        fallback_path=load_registered_path(artifacts, "phase67j_winner_paper"),
+        fallback_path=load_registered_path(
+            artifacts,
+            "phase67j_winner_paper",
+            diagnostics=path_resolution_diagnostics,
+        ),
+        diagnostics=path_resolution_diagnostics,
     )
     main_live_status_path = load_model_source_path(
         contract,
         model_key=strategy_model,
         field_name="live_status_path",
-        fallback_path=load_registered_path(artifacts, "phase67j_live_status"),
+        fallback_path=load_registered_path(
+            artifacts,
+            "phase67j_live_status",
+            diagnostics=path_resolution_diagnostics,
+        ),
+        diagnostics=path_resolution_diagnostics,
     )
     reference_paper_path = load_model_source_path(
         contract,
         model_key=reference_model,
         field_name="paper_path",
-        fallback_path=load_registered_path(artifacts, "phase66g_core_paper"),
+        fallback_path=load_registered_path(
+            artifacts,
+            "phase66g_core_paper",
+            diagnostics=path_resolution_diagnostics,
+        ),
+        diagnostics=path_resolution_diagnostics,
     )
-    app_freshness_report_path = load_registered_path(artifacts, "app_freshness_report")
+    app_freshness_report_path = load_registered_path(
+        artifacts,
+        "app_freshness_report",
+        diagnostics=path_resolution_diagnostics,
+    )
+
+    for diagnostic in path_resolution_diagnostics:
+        log(format_path_resolution_message(diagnostic))
 
     paper_header, paper_rows = read_csv_rows(main_paper_path)
     if not paper_rows:
@@ -367,6 +431,7 @@ def main() -> None:
             "reference_paper": str(reference_paper_path.resolve()),
             "app_freshness_report": str(app_freshness_report_path.resolve())
         },
+        "path_resolution_diagnostics": path_resolution_diagnostics,
         "resolved_columns": {
             "paper_date_col": paper_date_col,
             "paper_asset_col": paper_asset_col,

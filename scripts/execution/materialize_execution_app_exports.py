@@ -10,6 +10,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from scripts.execution.runtime_path_resolution import (
+    format_path_resolution_message,
+    resolve_runtime_path,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
@@ -332,36 +340,26 @@ def ensure_dirs() -> None:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def resolve_repo_path(raw_path: str | Path) -> Path:
-    candidate = Path(raw_path)
-    if not candidate.is_absolute():
-        return ROOT / candidate
-    if candidate.exists():
-        return candidate
-
-    root_name = ROOT.name.lower()
-    lowered_parts = [part.lower() for part in candidate.parts]
-    if root_name in lowered_parts:
-        root_index = lowered_parts.index(root_name)
-        suffix_parts = candidate.parts[root_index + 1 :]
-        if suffix_parts:
-            return ROOT.joinpath(*suffix_parts)
-    return candidate
-
-
-def find_existing_source(artifact_entry: dict[str, Any]) -> Path | None:
+def find_existing_source(
+    artifact_key: str,
+    artifact_entry: dict[str, Any],
+) -> tuple[Path | None, dict[str, Any] | None]:
     legacy_aliases = artifact_entry.get("legacy_aliases", [])
     if not isinstance(legacy_aliases, list):
-        return None
+        return None, None
 
     for raw_path in legacy_aliases:
         try:
-            candidate = resolve_repo_path(raw_path)
+            candidate, diagnostic = resolve_runtime_path(
+                raw_path,
+                root=ROOT,
+                context=f"legacy:{artifact_key}",
+            )
         except Exception:
             continue
         if candidate.exists() and candidate.is_file():
-            return candidate
-    return None
+            return candidate, diagnostic
+    return None, None
 
 
 def read_single_csv_row(path: Path) -> dict[str, str]:
@@ -1345,8 +1343,13 @@ def main() -> None:
             missing_registry_keys.append(artifact_key)
             continue
 
-        canonical_path = resolve_repo_path(canonical_raw)
+        canonical_path, canonical_diagnostic = resolve_runtime_path(
+            canonical_raw,
+            root=ROOT,
+            context=f"materialize:{artifact_key}:canonical",
+        )
         canonical_path.parent.mkdir(parents=True, exist_ok=True)
+        log(format_path_resolution_message(canonical_diagnostic))
 
         row: dict[str, Any] = {
             "artifact_key": artifact_key,
@@ -1354,9 +1357,13 @@ def main() -> None:
             "artifact_type": entry.get("artifact_type"),
             "owner": entry.get("owner"),
             "truth_domain": entry.get("truth_domain"),
+            "path_resolution": canonical_diagnostic,
         }
 
-        source_path = find_existing_source(entry)
+        source_path, source_diagnostic = find_existing_source(artifact_key, entry)
+        if source_diagnostic is not None:
+            row["legacy_source_path_resolution"] = source_diagnostic
+            log(format_path_resolution_message(source_diagnostic))
         if source_path is None and not canonical_path.exists():
             missing_legacy_sources.append(artifact_key)
             row["status"] = "missing_legacy_source"

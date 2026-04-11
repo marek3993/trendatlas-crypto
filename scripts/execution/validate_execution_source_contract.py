@@ -7,6 +7,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from scripts.execution.runtime_path_resolution import (
+    format_path_resolution_message,
+    resolve_runtime_path,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
@@ -65,20 +73,8 @@ def read_json(path: Path) -> dict[str, Any]:
 
 
 def resolve_repo_path(raw_path: str | Path) -> Path:
-    candidate = Path(raw_path)
-    if not candidate.is_absolute():
-        return ROOT / candidate
-    if candidate.exists():
-        return candidate
-
-    root_name = ROOT.name.lower()
-    lowered_parts = [part.lower() for part in candidate.parts]
-    if root_name in lowered_parts:
-        root_index = lowered_parts.index(root_name)
-        suffix_parts = candidate.parts[root_index + 1 :]
-        if suffix_parts:
-            return ROOT.joinpath(*suffix_parts)
-    return candidate
+    resolved_path, _diagnostic = resolve_runtime_path(raw_path, root=ROOT, context="validate")
+    return resolved_path
 
 
 def safe_file_info(path: Path) -> dict[str, Any]:
@@ -500,7 +496,12 @@ def main() -> None:
             missing_registry_keys.append(artifact_key)
             continue
 
-        canonical_path = resolve_repo_path(canonical_path_raw)
+        canonical_path, path_resolution = resolve_runtime_path(
+            canonical_path_raw,
+            root=ROOT,
+            context=f"validate:{artifact_key}:canonical",
+        )
+        log(format_path_resolution_message(path_resolution))
         artifact_report = {
             "artifact_key": artifact_key,
             "owner": artifact_entry.get("owner"),
@@ -508,6 +509,7 @@ def main() -> None:
             "truth_domain": artifact_entry.get("truth_domain"),
             "read_scope": artifact_entry.get("read_scope"),
             "write_mode": artifact_entry.get("write_mode"),
+            "path_resolution": path_resolution,
             "inspection": inspect_artifact(canonical_path),
         }
 

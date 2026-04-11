@@ -9,11 +9,14 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 SCRIPTS_DIR = ROOT / "scripts"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from freshness_lineage import parse_iso_date, read_last_date, read_single_csv_value, write_json
+from scripts.execution.runtime_path_resolution import resolve_registry_artifact_path, resolve_runtime_path
 
 
 REPORT_PATH = ROOT / "outputs" / "validation" / "reports" / "strategy_chain_freshness_report.json"
@@ -54,11 +57,37 @@ def manifest_lineage_value(manifest: dict[str, Any], field: str) -> str | None:
     return text or None
 
 
-def read_first_existing_last_date(*candidate_paths: Any) -> str | None:
+def resolve_runtime_candidate(
+    candidate_path: Any,
+    *,
+    context: str,
+    diagnostics: list[dict[str, Any]],
+) -> Path | None:
+    if not candidate_path:
+        return None
+    resolved_path, diagnostic = resolve_runtime_path(
+        Path(str(candidate_path)),
+        root=ROOT,
+        context=context,
+    )
+    diagnostics.append(diagnostic)
+    return resolved_path
+
+
+def read_first_existing_last_date(
+    *candidate_paths: Any,
+    context: str,
+    diagnostics: list[dict[str, Any]],
+) -> str | None:
     for candidate_path in candidate_paths:
-        if not candidate_path:
+        resolved_path = resolve_runtime_candidate(
+            candidate_path,
+            context=context,
+            diagnostics=diagnostics,
+        )
+        if resolved_path is None:
             continue
-        last_date = read_last_date(Path(str(candidate_path)))
+        last_date = read_last_date(resolved_path)
         if last_date:
             return last_date
     return None
@@ -80,11 +109,18 @@ def find_saved_model_output(manifest: dict[str, Any], phase_prefix: str, output_
     return output_path if output_path.exists() else None
 
 
-def read_phase60_last_date(phase62_manifest: dict[str, Any], phase63_manifest: dict[str, Any]) -> str | None:
+def read_phase60_last_date(
+    phase62_manifest: dict[str, Any],
+    phase63_manifest: dict[str, Any],
+    *,
+    diagnostics: list[dict[str, Any]],
+) -> str | None:
     artifact_last_date = read_first_existing_last_date(
         phase62_manifest.get("base_file"),
         phase63_manifest.get("base_file"),
         DEFAULT_PHASE60_PAPER,
+        context="freshness:phase60.base_file",
+        diagnostics=diagnostics,
     )
     if artifact_last_date:
         return artifact_last_date
@@ -125,9 +161,18 @@ def read_phase63_last_date(phase63_manifest: dict[str, Any]) -> str | None:
     return manifest_lineage_value(phase63_manifest, "output_last_date")
 
 
-def read_phase66g_last_date(phase66g_manifest: dict[str, Any]) -> str | None:
+def read_phase66g_last_date(
+    phase66g_manifest: dict[str, Any],
+    *,
+    diagnostics: list[dict[str, Any]],
+) -> str | None:
     output_path = phase66g_manifest.get("production_paper_saved")
-    artifact_last_date = read_last_date(Path(str(output_path))) if output_path else None
+    resolved_output_path = resolve_runtime_candidate(
+        output_path,
+        context="freshness:phase66g.production_paper_saved",
+        diagnostics=diagnostics,
+    )
+    artifact_last_date = read_last_date(resolved_output_path) if resolved_output_path else None
     if artifact_last_date:
         return artifact_last_date
 
@@ -172,19 +217,48 @@ def build_report() -> dict[str, Any]:
     phase67j_manifest = read_optional_manifest(PHASE67J_MANIFEST_PATH)
     paths_registry = read_json(PATHS_REGISTRY_PATH)
     artifacts = paths_registry.get("artifacts", {})
+    path_resolution_diagnostics: list[dict[str, Any]] = []
 
-    canonical_app_export_path = (
-        PHASE68I_CANONICAL_APP_EXPORT_PATH
-        if PHASE68I_CANONICAL_APP_EXPORT_PATH.exists()
-        else Path(artifacts["phase67j_winner_paper"]["canonical"])
+    if PHASE68I_CANONICAL_APP_EXPORT_PATH.exists():
+        canonical_app_export_path = PHASE68I_CANONICAL_APP_EXPORT_PATH
+        path_resolution_diagnostics.append(
+            {
+                "context": "freshness:canonical_app_export",
+                "original_path": str(PHASE68I_CANONICAL_APP_EXPORT_PATH),
+                "resolved_path": str(PHASE68I_CANONICAL_APP_EXPORT_PATH),
+                "reason": "preferred_canonical_app_export_exists",
+                "exists": True,
+            }
+        )
+    else:
+        canonical_app_export_path, canonical_app_export_diag = resolve_registry_artifact_path(
+            "phase67j_winner_paper",
+            artifacts["phase67j_winner_paper"],
+            root=ROOT,
+            context="freshness:canonical_app_export",
+        )
+        path_resolution_diagnostics.append(canonical_app_export_diag)
+
+    canonical_live_status_path, canonical_live_status_diag = resolve_registry_artifact_path(
+        "phase67j_live_status",
+        artifacts["phase67j_live_status"],
+        root=ROOT,
+        context="freshness:canonical_live_status",
     )
-    canonical_live_status_path = Path(artifacts["phase67j_live_status"]["canonical"])
+    path_resolution_diagnostics.append(canonical_live_status_diag)
 
     raw_btc_last_date = read_last_date(BTC_RAW_PATH)
-    phase60_last_date = read_phase60_last_date(phase62_manifest, phase63_manifest)
+    phase60_last_date = read_phase60_last_date(
+        phase62_manifest,
+        phase63_manifest,
+        diagnostics=path_resolution_diagnostics,
+    )
     phase62_last_date = read_phase62_last_date(phase62_manifest)
     phase63_last_date = read_phase63_last_date(phase63_manifest)
-    phase66g_last_date = read_phase66g_last_date(phase66g_manifest)
+    phase66g_last_date = read_phase66g_last_date(
+        phase66g_manifest,
+        diagnostics=path_resolution_diagnostics,
+    )
     phase67j_last_date = read_phase67j_last_date(phase67j_manifest)
     canonical_app_export_last_date = read_last_date(canonical_app_export_path)
     canonical_live_status_latest_available_date = read_single_csv_value(
@@ -216,6 +290,7 @@ def build_report() -> dict[str, Any]:
         "canonical_live_status_latest_available_date": canonical_live_status_latest_available_date,
         "first_broken_stage": first_broken_stage,
         "first_missing_date": first_missing_date,
+        "path_resolution_diagnostics": path_resolution_diagnostics,
     }
 
 
