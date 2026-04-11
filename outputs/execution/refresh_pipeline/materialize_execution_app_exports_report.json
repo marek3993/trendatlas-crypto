@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-04-11T08:02:12Z",
-  "started_at_utc": "2026-04-11T08:02:12Z",
+  "generated_at_utc": "2026-04-11T08:10:58Z",
+  "started_at_utc": "2026-04-11T08:10:56Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -27,9 +27,9 @@
   "missing_registry_keys": [],
   "missing_legacy_sources": [],
   "hard_required_missing": [],
-  "copied_count": 0,
+  "copied_count": 2,
   "transformed_count": 4,
-  "already_present_count": 5,
+  "already_present_count": 3,
   "rows": [
     {
       "artifact_key": "phase67j_winner_paper",
@@ -55,12 +55,12 @@
       "source_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
         "size_bytes": 247,
-        "modified_utc": "2026-04-11T07:42:47Z"
+        "modified_utc": "2026-04-11T08:10:56Z"
       },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
         "size_bytes": 507,
-        "modified_utc": "2026-04-11T08:02:12Z"
+        "modified_utc": "2026-04-11T08:10:56Z"
       },
       "added_fields": [
         "live_truth_mode",
@@ -90,13 +90,20 @@
       "artifact_type": "live_status",
       "owner": "DATA",
       "truth_domain": "product",
-      "status": "already_present",
+      "status": "refreshed_from_newer_legacy_alias",
+      "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv",
+      "source_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv",
+        "size_bytes": 619,
+        "modified_utc": "2026-04-11T08:10:44Z"
+      },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
         "size_bytes": 619,
-        "modified_utc": "2026-04-10T13:57:09Z"
+        "modified_utc": "2026-04-11T08:10:44Z"
       },
-      "refresh_reason": "canonical_phase66g_live_status_is_not_older_than_upstream"
+      "source_latest_available_date": "2026-04-10",
+      "canonical_latest_available_date": "2026-04-09"
     },
     {
       "artifact_key": "phase66g_trend_barometer_history",
@@ -104,12 +111,19 @@
       "artifact_type": "export",
       "owner": "DATA",
       "truth_domain": "product",
-      "status": "already_present",
+      "status": "refreshed_from_newer_legacy_alias",
+      "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+      "source_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+        "size_bytes": 375918,
+        "modified_utc": "2026-04-11T08:10:44Z"
+      },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_trend_barometer_history.csv",
-        "size_bytes": 375785,
-        "modified_utc": "2026-04-11T07:42:36Z"
-      }
+        "size_bytes": 375918,
+        "modified_utc": "2026-04-11T08:10:44Z"
+      },
+      "refresh_reason": "legacy_alias_mtime_newer_than_canonical"
     },
     {
       "artifact_key": "app_freshness_report",
@@ -121,7 +135,7 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
         "size_bytes": 1061,
-        "modified_utc": "2026-04-11T07:42:47Z"
+        "modified_utc": "2026-04-11T08:05:32Z"
       }
     },
     {
@@ -131,16 +145,16 @@
       "paper_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
       "paper_refresh_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68h_dynamic_leverage_ladder_candidate\\papers\\phase68h_dynamic_ladder_candidate_paper.csv",
       "paper_refresh_info": {
-        "phase66g_last_date": "2026-04-09",
+        "phase66g_last_date": "2026-04-10",
         "phase68h_last_date_before_refresh": "2026-04-09",
-        "phase68h_last_date_after_refresh": "2026-04-09",
-        "phase68h_refresh_triggered": false
+        "phase68h_last_date_after_refresh": "2026-04-10",
+        "phase68h_refresh_triggered": true
       },
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
         "size_bytes": 809,
-        "modified_utc": "2026-04-11T08:02:12Z"
+        "modified_utc": "2026-04-11T08:10:58Z"
       },
       "computed_fields": [
         "total_return_pct",
@@ -183,8 +197,8 @@
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
-        "size_bytes": 8795,
-        "modified_utc": "2026-04-11T08:02:12Z"
+        "size_bytes": 8794,
+        "modified_utc": "2026-04-11T08:10:58Z"
       }
     },
     {
@@ -193,8 +207,8 @@
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
-        "size_bytes": 12921,
-        "modified_utc": "2026-04-11T08:02:12Z"
+        "size_bytes": 12697,
+        "modified_utc": "2026-04-11T08:10:58Z"
       }
     }
   ],

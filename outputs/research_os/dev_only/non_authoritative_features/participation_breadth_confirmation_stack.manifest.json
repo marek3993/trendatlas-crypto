@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_feature_output_manifest",
   "artifact_id": "participation_breadth_confirmation_stack_manifest",
-  "generated_at_utc": "2026-04-11 07:42:51 UTC",
+  "generated_at_utc": "2026-04-11 08:05:37 UTC",
   "family_id": "participation_breadth_confirmation_stack",
   "family_type": "confidence-stack",
   "output_files": {

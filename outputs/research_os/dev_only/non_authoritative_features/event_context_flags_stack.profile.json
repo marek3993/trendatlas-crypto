@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_feature_profile_report",
   "artifact_id": "event_context_flags_stack_profile",
-  "generated_at_utc": "2026-04-11 07:43:01 UTC",
+  "generated_at_utc": "2026-04-11 08:05:47 UTC",
   "family_id": "event_context_flags_stack",
   "row_count": 329,
   "date_min": "2020-02-09",

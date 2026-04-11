@@ -1,17 +1,17 @@
 {
   "snapshot_type": "app_product_snapshot",
   "schema_version": 1,
-  "app_export_generated_at_utc": "2026-04-11T08:02:12Z",
+  "app_export_generated_at_utc": "2026-04-11T08:10:58Z",
   "product_name": "TrendAtlas Crypto",
   "page_scope": "homepage",
   "main_strategy_model": "phase68i_dynamic_ladder_candidate",
   "reference_strategy_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
-  "strategy_last_closed_day": "2026-04-09",
+  "strategy_last_closed_day": "2026-04-10",
   "freshness_target_closed_day": "2026-04-10",
   "freshness": {
     "status": "ok",
-    "generated_at_utc": "2026-04-11T07:42:47+00:00",
+    "generated_at_utc": "2026-04-11T08:05:32+00:00",
     "checks": {
       "btc_raw_last_date": "2026-04-10",
       "phase66g_paper_last_date": "2026-04-09",
@@ -47,23 +47,23 @@
     "total_return_pct": 37987.73,
     "total_return_pct_gross": 75100.16,
     "total_return_pct_net": 37987.73,
-    "cagr_pct": 111.59,
-    "cagr_pct_gross": 130.54,
-    "cagr_pct_net": 111.59,
+    "cagr_pct": 111.53,
+    "cagr_pct_gross": 130.48,
+    "cagr_pct_net": 111.53,
     "max_drawdown_pct": -29.28,
     "max_drawdown_pct_gross": -26.62,
     "max_drawdown_pct_net": -29.28,
-    "since2023_cagr_pct": 131.57,
-    "since2023_cagr_pct_gross": 159.7,
-    "since2023_cagr_pct_net": 131.57,
-    "since2025_cagr_pct": 91.98,
-    "since2025_cagr_pct_gross": 114.89,
-    "since2025_cagr_pct_net": 91.98,
-    "sharpe": 1.5609,
-    "sortino": 2.2467,
+    "since2023_cagr_pct": 131.4,
+    "since2023_cagr_pct_gross": 159.49,
+    "since2023_cagr_pct_net": 131.4,
+    "since2025_cagr_pct": 91.71,
+    "since2025_cagr_pct_gross": 114.54,
+    "since2025_cagr_pct_net": 91.71,
+    "sharpe": 1.5607,
+    "sortino": 2.2459,
     "switch_count": 744,
-    "cash_days_pct": 41.8019,
-    "btc_days_pct": 7.4215,
+    "cash_days_pct": 41.8219,
+    "btc_days_pct": 7.4189,
     "trading_fees_total_pct": 65.565,
     "funding_total_pct": 0.0,
     "borrow_cost_total_pct": 1.8645,
@@ -76,7 +76,7 @@
     "effective_trading_fee_bps": 4.5
   },
   "live_public_state": {
-    "date": "2026-04-09",
+    "date": "2026-04-10",
     "portfolio_held_asset": "CASH",
     "baseline_held_asset": "CASH",
     "tradable_governed_asset": null,
@@ -100,11 +100,11 @@
   },
   "trend_barometer_summary": {
     "model": "phase66g_production_soft_filters",
-    "latest_available_date": "2026-04-09",
+    "latest_available_date": "2026-04-10",
     "current_asset": "BASELINE",
     "latest_decision_date": "2026-04-05",
     "latest_period_start": "2026-04-06",
-    "latest_period_end": "2026-04-09",
+    "latest_period_end": "2026-04-10",
     "next_rebalance_date": "2026-04-12",
     "latest_keep_reason": "best_passed",
     "candidate_assets_loaded": 9,
@@ -120,7 +120,7 @@
     "trend_threshold_raw": 0.02,
     "trend_band": 0.12,
     "trend_score_raw": -0.16666666666666669,
-    "trend_calc_date": "2026-04-09"
+    "trend_calc_date": "2026-04-10"
   },
   "chart_source_paths": {
     "main_strategy": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
@@ -149,15 +149,15 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 809,
-      "modified_utc": "2026-04-11T08:02:12Z"
+      "modified_utc": "2026-04-11T08:10:58Z"
     },
     "strategy_last_closed_day": {
       "path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "source_type": "canonical_app_paper",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 1322269,
-      "modified_utc": "2026-04-10T13:57:20Z",
+      "size_bytes": 1322694,
+      "modified_utc": "2026-04-11T08:10:58Z",
       "source_field": "last_row.date"
     },
     "freshness_target_closed_day": {
@@ -166,7 +166,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 1061,
-      "modified_utc": "2026-04-11T07:42:47Z",
+      "modified_utc": "2026-04-11T08:05:32Z",
       "source_field": "latest_closed_utc_date"
     },
     "app_export_generated_at_utc": {
@@ -175,7 +175,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 8795,
-      "modified_utc": "2026-04-11T07:42:47Z",
+      "modified_utc": "2026-04-11T08:05:33Z",
       "source_field": "generated_by_materializer_clock"
     },
     "live_public_state": {
@@ -183,8 +183,8 @@
       "source_type": "canonical_app_paper",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 1322269,
-      "modified_utc": "2026-04-10T13:57:20Z",
+      "size_bytes": 1322694,
+      "modified_utc": "2026-04-11T08:10:58Z",
       "source_fields": [
         "date",
         "portfolio_held_asset",
@@ -205,7 +205,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 1061,
-      "modified_utc": "2026-04-11T07:42:47Z"
+      "modified_utc": "2026-04-11T08:05:32Z"
     },
     "trend_barometer_summary": {
       "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -213,7 +213,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 619,
-      "modified_utc": "2026-04-10T13:57:09Z"
+      "modified_utc": "2026-04-11T08:10:44Z"
     },
     "chart_source_paths": {
       "main_strategy": {
@@ -221,8 +221,8 @@
         "source_type": "canonical_app_paper",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 1322269,
-        "modified_utc": "2026-04-10T13:57:20Z"
+        "size_bytes": 1322694,
+        "modified_utc": "2026-04-11T08:10:58Z"
       },
       "reference_strategy": {
         "path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
@@ -246,8 +246,8 @@
       "source_type": "canonical_trend_history",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 375785,
-      "modified_utc": "2026-04-11T07:42:36Z"
+      "size_bytes": 375918,
+      "modified_utc": "2026-04-11T08:10:44Z"
     }
   }
 }

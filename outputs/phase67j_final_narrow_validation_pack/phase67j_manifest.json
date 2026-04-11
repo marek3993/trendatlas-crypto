@@ -56,9 +56,9 @@
   "freshness_lineage": {
     "producer_script": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67j_final_narrow_validation_pack.py",
     "source_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
-    "source_last_date": "2026-04-09",
+    "source_last_date": "2026-04-10",
     "raw_last_date": "2026-04-10",
-    "output_last_date": "2026-04-09",
+    "output_last_date": "2026-04-10",
     "first_missing_date_if_any": null,
     "date_semantics": "execution_date"
   }
