@@ -2,13 +2,13 @@
 
 ## Accepted current state
 - research/raw winner = phase68i_66g_1p50x_static
-- best deployment candidate = phase68i_dynamic_ladder_candidate
-- official softer fallback = phase68g_66g_1p25x_candidate
+- best deployment candidate = phase68g_66g_1p25x_candidate
+- official softer fallback = phase68i_dynamic_ladder_candidate
 - Phase68J simple tail-risk guardrails = rejected
-- ordering remains unchanged
-- leverage branch live truth has been promoted to phase68i_dynamic_ladder_candidate
+- ordering now places phase68g_66g_1p25x_candidate as current live/app truth and phase68i_dynamic_ladder_candidate as official softer fallback
+- leverage branch live truth has been promoted to phase68g_66g_1p25x_candidate
 - direct app/live truth switch is approved and applied
-- current live truth is phase68i_dynamic_ladder_candidate
+- current live truth is phase68g_66g_1p25x_candidate
 - approval_gate_status = approved_and_applied
 - real_order_gate_status = live_order_enabled_and_approved
 - only live_order_enabled_and_approved counts as real-order eligible
