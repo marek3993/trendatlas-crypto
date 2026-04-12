@@ -38,6 +38,7 @@ def resolve_project_path(path: str | Path, project_root: Path) -> Path:
 
 def _normalize_openai_payload(payload: dict[str, Any]) -> dict[str, Any]:
     normalized = dict(payload)
+    normalized["enabled"] = bool(normalized.get("enabled", False))
     normalized["api_key_env"] = str(normalized.get("api_key_env", "OPENAI_API_KEY") or "OPENAI_API_KEY")
     normalized["api_key_present"] = bool(os.environ.get(normalized["api_key_env"], "").strip())
     normalized["strict_schema_validation"] = bool(normalized.get("strict_schema_validation", True))
@@ -45,11 +46,38 @@ def _normalize_openai_payload(payload: dict[str, Any]) -> dict[str, Any]:
     return normalized
 
 
+def _derive_runtime_openai_payload(
+    runtime_payload: dict[str, Any] | None,
+    *component_payloads: dict[str, Any] | None,
+) -> dict[str, Any]:
+    resolved = dict(runtime_payload or {})
+    if not resolved:
+        for component_payload in component_payloads:
+            for key, value in dict(component_payload or {}).items():
+                resolved.setdefault(str(key), value)
+    runtime_enabled = bool(dict(runtime_payload or {}).get("enabled", False))
+    component_enabled = any(bool(dict(component_payload or {}).get("enabled", False)) for component_payload in component_payloads)
+    if resolved or runtime_enabled or component_enabled:
+        resolved["enabled"] = runtime_enabled or component_enabled
+    return _normalize_openai_payload(resolved)
+
+
+def _resolve_component_openai_payload(
+    component_payload: dict[str, Any] | None,
+    default_payload: dict[str, Any] | None,
+) -> dict[str, Any]:
+    defaults = dict(default_payload or {})
+    resolved = dict(defaults)
+    resolved.update(dict(component_payload or {}))
+    resolved["enabled"] = bool(defaults.get("enabled", False)) or bool(dict(component_payload or {}).get("enabled", False))
+    return _normalize_openai_payload(resolved)
+
+
 def planner_component_config(config: RuntimeConfig) -> dict[str, Any]:
     planner = dict(config.planner or {})
     planner.setdefault("enabled", True)
     planner.setdefault("output_dir", "planner_outputs")
-    planner["openai"] = _normalize_openai_payload(dict(planner.get("openai") or config.openai))
+    planner["openai"] = _resolve_component_openai_payload(dict(planner.get("openai") or {}), dict(config.openai))
     return planner
 
 
@@ -61,7 +89,7 @@ def critic_component_config(config: RuntimeConfig) -> dict[str, Any]:
     critic = dict(config.critic or {})
     critic.setdefault("enabled", True)
     critic.setdefault("output_dir", "critic_outputs")
-    critic["openai"] = _normalize_openai_payload(dict(critic.get("openai") or {}))
+    critic["openai"] = _resolve_component_openai_payload(dict(critic.get("openai") or {}), dict(config.openai))
     return critic
 
 
@@ -85,19 +113,45 @@ def load_runtime_config(path: str | Path, *, require_root_env: bool = False) -> 
     if env_redis_url:
         payload["redis_url"] = env_redis_url
 
+    raw_openai_payload = dict(payload.get("openai") or {})
+
     planner_payload = dict(payload.get("planner", {}))
     planner_payload.setdefault("enabled", True)
     planner_payload.setdefault("output_dir", "planner_outputs")
-    planner_payload["openai"] = _normalize_openai_payload(dict(planner_payload.get("openai") or payload.get("openai", {})))
-    payload["planner"] = planner_payload
+    raw_planner_openai_payload = dict(planner_payload.get("openai") or {})
+    planner_payload["_runtime_openai_enabled_present"] = "enabled" in raw_openai_payload
+    planner_payload["_runtime_openai_enabled_value"] = bool(raw_openai_payload.get("enabled", False))
+    planner_payload["_component_openai_enabled_present"] = "enabled" in raw_planner_openai_payload
+    planner_payload["_component_openai_enabled_value"] = bool(raw_planner_openai_payload.get("enabled", False))
 
     critic_payload = dict(payload.get("critic", {}))
     critic_payload.setdefault("enabled", True)
     critic_payload.setdefault("output_dir", "critic_outputs")
-    critic_payload["openai"] = _normalize_openai_payload(dict(critic_payload.get("openai") or {}))
+    raw_critic_openai_payload = dict(critic_payload.get("openai") or {})
+    critic_payload["_runtime_openai_enabled_present"] = "enabled" in raw_openai_payload
+    critic_payload["_runtime_openai_enabled_value"] = bool(raw_openai_payload.get("enabled", False))
+    critic_payload["_component_openai_enabled_present"] = "enabled" in raw_critic_openai_payload
+    critic_payload["_component_openai_enabled_value"] = bool(raw_critic_openai_payload.get("enabled", False))
+
+    runtime_openai_payload = _derive_runtime_openai_payload(
+        raw_openai_payload,
+        raw_planner_openai_payload,
+        raw_critic_openai_payload,
+    )
+
+    planner_payload["openai"] = _resolve_component_openai_payload(
+        raw_planner_openai_payload,
+        runtime_openai_payload,
+    )
+    payload["planner"] = planner_payload
+
+    critic_payload["openai"] = _resolve_component_openai_payload(
+        raw_critic_openai_payload,
+        runtime_openai_payload,
+    )
     payload["critic"] = critic_payload
 
-    payload["openai"] = dict(planner_payload["openai"])
+    payload["openai"] = runtime_openai_payload
 
     return RuntimeConfig.from_mapping(payload)
 
@@ -204,12 +258,15 @@ def collect_runtime_readiness(
         project_root = _DEFAULT_PROJECT_ROOT
 
     resolved_config_path = resolve_project_path(config_path, project_root)
+    resolved_registry_path = resolve_project_path(config.registry_path, project_root)
+    resolved_artifact_root = resolve_project_path(config.artifact_root, project_root)
+    resolved_runtime_root = resolve_project_path(config.runtime_root, project_root)
     checks.extend(
         [
             {"name": "config_path", "ok": resolved_config_path.exists(), "detail": str(resolved_config_path)},
-            {"name": "artifact_root", "ok": Path(config.artifact_root).is_absolute(), "detail": config.artifact_root},
-            {"name": "runtime_root", "ok": Path(config.runtime_root).is_absolute(), "detail": config.runtime_root},
-            {"name": "registry_parent", "ok": Path(config.registry_path).parent.exists(), "detail": str(Path(config.registry_path).parent)},
+            {"name": "artifact_root", "ok": resolved_artifact_root.is_dir(), "detail": str(resolved_artifact_root)},
+            {"name": "runtime_root", "ok": resolved_runtime_root.is_dir(), "detail": str(resolved_runtime_root)},
+            {"name": "registry_parent", "ok": resolved_registry_path.parent.exists(), "detail": str(resolved_registry_path.parent)},
         ]
     )
 
@@ -242,9 +299,9 @@ def collect_runtime_readiness(
         "project_root": str(project_root),
         "config_path": str(resolved_config_path),
         "queue_backend": config.queue_backend,
-        "registry_path": config.registry_path,
-        "artifact_root": config.artifact_root,
-        "runtime_root": config.runtime_root,
+        "registry_path": str(resolved_registry_path),
+        "artifact_root": str(resolved_artifact_root),
+        "runtime_root": str(resolved_runtime_root),
         "consumer_group": config.consumer_group,
         "consumer_name": config.consumer_name,
         "checks": checks,
