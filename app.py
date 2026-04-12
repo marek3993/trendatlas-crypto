@@ -706,6 +706,7 @@ def build_missing_runtime_snapshot(path: Path) -> dict:
     missing_freshness = {
         "latest_refresh_run_id": None,
         "latest_refresh_run_status": None,
+        "latest_successful_refresh_run_id": None,
         "refresh_currentness_state": "missing_runtime_artifact",
         "refresh_currentness_reason_code": "runtime_artifact_missing",
         "refresh_currentness_reason": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
@@ -717,6 +718,7 @@ def build_missing_runtime_snapshot(path: Path) -> dict:
         "refresh_success": None,
         "refresh_status": None,
         "refresh_finished_at_utc": None,
+        "refresh_manifest_path": None,
         "latest_strategy_artifact_date": None,
         "latest_successful_refresh_runtime_utc": None,
         "latest_trend_calculation_date": None,
@@ -769,10 +771,12 @@ def resolve_strategy_freshness(runtime_snapshot: dict) -> dict:
     for key in [
         "latest_refresh_run_id",
         "latest_refresh_run_status",
+        "latest_successful_refresh_run_id",
         "refresh_run_id",
         "refresh_success",
         "refresh_status",
         "refresh_finished_at_utc",
+        "refresh_manifest_path",
         "latest_strategy_artifact_date",
         "latest_successful_refresh_runtime_utc",
         "latest_trend_calculation_date",
@@ -820,6 +824,99 @@ def resolve_strategy_freshness(runtime_snapshot: dict) -> dict:
     resolved["freshness_detail_text"] = reason
     resolved.setdefault("freshness_summary_text", FRESHNESS_SUMMARY_TEXT[state])
     return resolved
+
+
+def parse_iso_datetime_optional(value: Any) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def normalize_utc_iso_text(value: Any) -> str | None:
+    parsed = parse_iso_datetime_optional(value)
+    if parsed is None:
+        return None
+    return parsed.isoformat().replace("+00:00", "Z")
+
+
+def newest_utc_timestamp(*values: Any) -> str | None:
+    newest: datetime | None = None
+    for value in values:
+        parsed = parse_iso_datetime_optional(value)
+        if parsed is None:
+            continue
+        if newest is None or parsed > newest:
+            newest = parsed
+    if newest is None:
+        return None
+    return newest.isoformat().replace("+00:00", "Z")
+
+
+def resolve_pi_runtime_update_utc(runtime_snapshot: dict) -> str | None:
+    return (
+        normalize_utc_iso_text(runtime_snapshot.get("app_runtime_snapshot_generated_at_utc"))
+        or normalize_utc_iso_text(runtime_snapshot.get("app_export_generated_at_utc"))
+    )
+
+
+def resolve_wallet_sync_utc(runtime_snapshot: dict, strategy_freshness: dict) -> str | None:
+    return newest_utc_timestamp(
+        strategy_freshness.get("latest_wallet_sync_utc"),
+        runtime_snapshot.get("latest_wallet_sync_utc"),
+        runtime_snapshot.get("account_snapshot_as_of_utc"),
+    )
+
+
+def resolve_backup_refresh_manifest_path(runtime_snapshot: dict, strategy_freshness: dict) -> Path | None:
+    manifest_path = normalize_path(strategy_freshness.get("refresh_manifest_path"))
+    if manifest_path is not None and manifest_path.exists():
+        return manifest_path
+
+    for run_id in [
+        strategy_freshness.get("latest_refresh_run_id"),
+        strategy_freshness.get("latest_successful_refresh_run_id"),
+        strategy_freshness.get("refresh_run_id"),
+        runtime_snapshot.get("latest_refresh_run_id"),
+        runtime_snapshot.get("latest_successful_refresh_run_id"),
+        runtime_snapshot.get("refresh_run_id"),
+    ]:
+        run_id_text = str(run_id or "").strip()
+        if not run_id_text:
+            continue
+        candidate = OUTPUTS / "app_refresh_pipeline" / run_id_text / "app_refresh_pipeline_manifest.json"
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def resolve_backup_refresh_finished_utc(runtime_snapshot: dict, strategy_freshness: dict) -> str | None:
+    manifest_path = resolve_backup_refresh_manifest_path(runtime_snapshot, strategy_freshness)
+    manifest = load_json_optional(manifest_path)
+    if not manifest:
+        return None
+
+    status_fields = [
+        manifest.get("status"),
+        manifest.get("main_refresh_chain_status"),
+        manifest.get("strategy_refresh_chain_status"),
+        manifest.get("post_strategy_runtime_refresh_status"),
+    ]
+    normalized_statuses = {str(value).strip().upper() for value in status_fields if str(value or "").strip()}
+    if normalized_statuses and "OK" not in normalized_statuses:
+        return None
+
+    return (
+        normalize_utc_iso_text(manifest.get("refresh_finished_at_utc"))
+        or normalize_utc_iso_text(manifest.get("main_refresh_chain_finished_at_utc"))
+        or normalize_utc_iso_text(manifest.get("strategy_refresh_chain_finished_at_utc"))
+    )
 
 
 def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot: dict) -> dict:
@@ -3193,13 +3290,23 @@ with tabs[0]:
         or strategy_freshness_payload.get("freshness_detail_text")
         or FRESHNESS_SUMMARY_TEXT.get(refresh_currentness_state, FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"])
     ).strip()
+    pi_runtime_update_utc = resolve_pi_runtime_update_utc(runtime_snapshot)
+    backup_refresh_finished_utc = resolve_backup_refresh_finished_utc(runtime_snapshot, strategy_freshness_payload)
+    wallet_sync_utc = resolve_wallet_sync_utc(runtime_snapshot, strategy_freshness_payload)
     refresh_label_column = "Preh\u013ead" if lang == "sk" else "Field"
     refresh_value_column = "Hodnota" if lang == "sk" else "Value"
     refresh_rows = [
         {
-            refresh_label_column: "Posledn\u00e9 \u00faspe\u0161n\u00e9 obnovenie" if lang == "sk" else "Latest successful refresh",
+            refresh_label_column: "Posledn\u00e1 aktualiz\u00e1cia z Pi" if lang == "sk" else "Latest Pi update",
             refresh_value_column: format_utc_text(
-                strategy_freshness_payload.get("latest_successful_refresh_runtime_utc"),
+                pi_runtime_update_utc,
+                lang,
+            ),
+        },
+        {
+            refresh_label_column: "Z\u00e1lo\u017en\u00fd refresh z PC" if lang == "sk" else "Backup PC refresh",
+            refresh_value_column: format_utc_text(
+                backup_refresh_finished_utc,
                 lang,
             ),
         },
@@ -3220,23 +3327,9 @@ with tabs[0]:
             ),
         },
         {
-            refresh_label_column: "Posledn\u00fd update strat\u00e9gie" if lang == "sk" else "Latest strategy update",
-            refresh_value_column: format_date_text(
-                strategy_freshness_payload.get("latest_trend_calculation_date"),
-                lang,
-            ),
-        },
-        {
             refresh_label_column: "Posledn\u00e1 synchroniz\u00e1cia pe\u0148a\u017eenky" if lang == "sk" else "Last wallet sync",
             refresh_value_column: format_utc_text(
-                strategy_freshness_payload.get("latest_wallet_sync_utc"),
-                lang,
-            ),
-        },
-        {
-            refresh_label_column: "Posledn\u00fd dostupn\u00fd uzavret\u00fd de\u0148" if lang == "sk" else "Latest available closed day",
-            refresh_value_column: format_date_text(
-                strategy_freshness_payload.get("latest_available_closed_utc_date"),
+                wallet_sync_utc,
                 lang,
             ),
         },
