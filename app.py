@@ -3174,11 +3174,7 @@ with tabs[0]:
         st.caption(t(lang, "trend_history_note"))
 
     st.markdown(f"### {t(lang, 'ops_title')}")
-    strategy_data_date = (
-        strategy_freshness_payload.get("latest_strategy_artifact_date")
-        or product_snapshot.get("strategy_last_closed_day")
-    )
-    ops = st.columns(5)
+    ops = st.columns(4)
     with ops[0]:
         render_color_card(t(lang, "total_return"), safe_metric_text(main_metrics.get("total_return_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "total_return")], "blue")
     with ops[1]:
@@ -3187,12 +3183,6 @@ with tabs[0]:
         render_color_card(t(lang, "cash_days"), safe_metric_text(main_metrics.get("cash_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cash_days")], "green")
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
-    with ops[4]:
-        metric_box(
-            t(lang, "strategy_last_update"),
-            format_date_text(strategy_data_date, lang),
-        )
-
     refresh_currentness_state = str(
         strategy_freshness_payload.get("refresh_currentness_state")
         or strategy_freshness_payload.get("freshness_state")
@@ -3230,14 +3220,7 @@ with tabs[0]:
             ),
         },
         {
-            refresh_label_column: "D\u00e1tum d\u00e1t strat\u00e9gie" if lang == "sk" else "Strategy data date",
-            refresh_value_column: format_date_text(
-                strategy_freshness_payload.get("latest_strategy_artifact_date"),
-                lang,
-            ),
-        },
-        {
-            refresh_label_column: "D\u00e1tum v\u00fdpo\u010dtu trendu" if lang == "sk" else "Trend calculation date",
+            refresh_label_column: "Posledn\u00fd update strat\u00e9gie" if lang == "sk" else "Latest strategy update",
             refresh_value_column: format_date_text(
                 strategy_freshness_payload.get("latest_trend_calculation_date"),
                 lang,
@@ -3274,55 +3257,6 @@ with tabs[0]:
     ]
     st.markdown("#### Denn\u00fd refresh runtime" if lang == "sk" else "#### Daily Refresh Runtime")
     render_app_table(refresh_rows, emphasize_first_column=True)
-
-    available_dates = pd.to_datetime(main_equity_df["ts"], errors="coerce").dropna().dt.normalize()
-    min_calc_date = available_dates.min().date()
-    max_calc_date = available_dates.max().date()
-    picked_date = st.date_input(
-        t(lang, "calc_date"),
-        value=min_calc_date,
-        min_value=min_calc_date,
-        max_value=max_calc_date,
-        key="investment_calc_date",
-    )
-    used_date, value_now, ret_pct = investment_value(main_equity_df, picked_date, amount=1000.0)
-
-    calc_df = pd.DataFrame(
-        [
-            {
-                t(lang, "calc_used_date"): format_date_text(used_date, lang),
-                t(lang, "calc_value"): f"{value_now:,.2f} €",
-                t(lang, "calc_return"): f"{ret_pct:+.2f}%",
-            }
-        ]
-    )
-    render_app_table(calc_df.to_dict("records"))
-    st.caption(t(lang, "calc_note"))
-
-    example_rows = []
-    example_points = [
-        available_dates.min(),
-        pd.Timestamp("2021-01-01"),
-        pd.Timestamp("2023-01-01"),
-        pd.Timestamp("2025-01-01"),
-    ]
-    seen = set()
-    for point in example_points:
-        dt = nearest_valid_date(available_dates, point)
-        if dt in seen:
-            continue
-        seen.add(dt)
-        e_used, e_value, e_ret = investment_value(main_equity_df, dt, amount=1000.0)
-        example_rows.append(
-            {
-                "Dátum" if lang == "sk" else "Date": format_date_text(e_used, lang),
-                "Hodnota" if lang == "sk" else "Value": f"{e_value:,.2f} €",
-                "Zhodnotenie" if lang == "sk" else "Return": f"{e_ret:+.2f}%",
-            }
-        )
-
-    st.markdown(f"#### {t(lang, 'quick_examples')}")
-    render_app_table(example_rows)
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))
