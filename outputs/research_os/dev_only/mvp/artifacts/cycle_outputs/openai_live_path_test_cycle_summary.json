@@ -1,0 +1,193 @@
+{
+  "completed_at": "2026-04-12T18:05:51+00:00",
+  "cycle_id": "openai_live_path_test",
+  "dev_only": true,
+  "errors": [],
+  "executed_steps": [
+    "environment_scan",
+    "market_snapshot",
+    "family_snapshot",
+    "planner",
+    "planner_job_registered",
+    "worker_proposal",
+    "heavy_validation_submission",
+    "heavy_validation_adapter",
+    "critic",
+    "governor"
+  ],
+  "family_ids_touched": [
+    "cost_aware_hysteretic_pilot_to_full"
+  ],
+  "final_governor_states": [
+    {
+      "attempt_count": 2,
+      "confirmatory_count": 1,
+      "family_id": "cost_aware_hysteretic_pilot_to_full",
+      "last_next_action": "pause_family",
+      "last_verdict": "pause",
+      "lifecycle_state": "paused",
+      "planning_eligible": false,
+      "status": "governor_completed"
+    }
+  ],
+  "final_status": "cycle_completed",
+  "live_trading": false,
+  "non_authoritative": true,
+  "official_promotion_logic": false,
+  "official_truth": false,
+  "planner_jobs_count": 1,
+  "produced_artifacts": [
+    {
+      "artifact_id": "planner_inputs__openai_live_path_test_environment_scan_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs\\openai_live_path_test_environment_scan.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "249deb3dd0fed71e9b30a6539221577c1280a6e31d7f2ac91f109d68e3dbc85e"
+    },
+    {
+      "artifact_id": "market_state__latest_market_state_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\market_state\\latest_market_state.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "a47b469a116c336aa3a801e71f77cf87ad8fe5af57afebbc8a7ff89d20277cd7"
+    },
+    {
+      "artifact_id": "family_state__latest_family_state_snapshot_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\family_state\\latest_family_state_snapshot.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "0bc413e0b54a2e2f0c65cf0f9cb327dff96712bdda5e5d05706537584d77d278"
+    },
+    {
+      "artifact_id": "planner_inputs__openai_live_path_test_planner_input_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs\\openai_live_path_test_planner_input.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "c3ee81d8537b122cb2305f074b370c37178bcf51050fbc93efd5da26eca80a13"
+    },
+    {
+      "artifact_id": "planner_outputs__openai_live_path_test_planner_output_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_outputs\\openai_live_path_test_planner_output.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "de696edd4dd71049276dd752f1e69fde51ab6f9f5aec44742a168db71890c767"
+    },
+    {
+      "artifact_id": "worker_outputs__openai_live_path_test_cost_aware_hysteretic_pilot_to_full_propose_next_mutation_mutation_proposal_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {
+        "job_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_propose_next_mutation",
+        "job_type": "propose_next_mutation"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\worker_outputs\\openai_live_path_test_cost_aware_hysteretic_pilot_to_full_propose_next_mutation_mutation_proposal.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "71fd22113876c6e55152f69a0d5b2336715d806a7a395c6d6d556dc1cfeeb3b2"
+    },
+    {
+      "artifact_id": "worker_outputs__openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_request_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {
+        "job_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "job_type": "submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\worker_outputs\\openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_request.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "41043cec476df1571a8315266147ae48ce94505399b0080b57604c487499b4dd"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_summary_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_summary.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "4a1350cef1d346a0c33bcf267e7c563e57a9051ed786767c0197f55911de5bbe"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_compare_csv",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "csv",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_compare.csv",
+      "row_count": 4,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "ef30da9aebacb74d2bbc57dffc1cd6725ee352f8f8fc7946734bc19103cc5956"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_cost_metrics_csv",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "csv",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_cost_metrics.csv",
+      "row_count": 3,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "9ca419a62ec7c62dc14b71f6acf3d6810d35c0057b2132804b9509a5a9f28091"
+    },
+    {
+      "artifact_id": "critic_outputs__openai_live_path_test_cost_aware_hysteretic_pilot_to_full_critic_family_verdict_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {
+        "family_id": "cost_aware_hysteretic_pilot_to_full",
+        "job_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_critic",
+        "request_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "result_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_result"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\critic_outputs\\openai_live_path_test_cost_aware_hysteretic_pilot_to_full_critic_family_verdict.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "0aa477c38a694e0dea652fc6afb7f8cc526b67fe7c557d24a0846e5b85264b29"
+    },
+    {
+      "artifact_id": "governor_outputs__openai_live_path_test_cost_aware_hysteretic_pilot_to_full_governor_family_governor_state_json",
+      "created_at": "2026-04-12T18:05:51+00:00",
+      "format": "json",
+      "metadata": {
+        "family_id": "cost_aware_hysteretic_pilot_to_full",
+        "job_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_governor",
+        "lifecycle_state": "paused",
+        "verdict_id": "openai_live_path_test_cost_aware_hysteretic_pilot_to_full_critic_family_verdict"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\governor_outputs\\openai_live_path_test_cost_aware_hysteretic_pilot_to_full_governor_family_governor_state.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "b5d2352b3c87d6a04bc6dd1bb7fa4886d1e28bbe3cd68faccbe787f223c5e135"
+    }
+  ],
+  "schema_version": "research_os_mvp.v1",
+  "source_of_truth_mutation": false,
+  "started_at": "2026-04-12T18:05:50+00:00",
+  "strategy_advancement": false
+}

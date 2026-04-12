@@ -10,9 +10,16 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import pandas as pd
+
 if str(Path(__file__).resolve().parents[2]) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+from scripts.approved_strategy_net_export_helper import (
+    NetCostExportConfig,
+    build_net_cost_export_frame,
+    summarize_net_cost_export,
+)
 from scripts.execution.runtime_path_resolution import (
     format_path_resolution_message,
     resolve_runtime_path,
@@ -60,6 +67,7 @@ PHASE68I_SUMMARY_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candid
 PHASE68I_AUTHORITATIVE_EXPORT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv"
 PHASE68I_PAPER_INPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_paper.csv"
 PHASE67J_PAPER_PATH = APP_EXPORTS_DIR / "phase67j_no_neo_main_paper.csv"
+PHASE67J_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase67j_live_status.csv"
 PHASE66G_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase66g_live_status.csv"
 PHASE66G_TREND_HISTORY_PATH = APP_EXPORTS_DIR / "phase66g_trend_barometer_history.csv"
 APP_FRESHNESS_REPORT_PATH = FRESHNESS_DIR / "app_freshness_report.json"
@@ -220,6 +228,29 @@ def read_trend_calculation_date_optional(path: Path) -> str | None:
     return str(row.get("trend_calc_date") or row.get("latest_available_date") or "").strip() or None
 
 
+def read_live_status_date_required(path: Path, field: str = "latest_available_date") -> str:
+    row = read_single_csv_row(path)
+    return parse_iso_date_required(row.get(field), f"{path} {field}")
+
+
+def build_canonical_product_freshness_checks(freshness_payload: dict[str, Any]) -> dict[str, Any]:
+    base_checks = freshness_payload.get("checks", {})
+    checks = dict(base_checks) if isinstance(base_checks, dict) else {}
+    phase66g_canonical_date = read_last_csv_date(PHASE66G_TREND_HISTORY_PATH)
+
+    checks.update(
+        {
+            "btc_raw_last_date": read_last_csv_date(BENCHMARK_BTC_SOURCE_PATH),
+            "phase66g_paper_last_date": phase66g_canonical_date,
+            "phase66g_live_latest_available_date": read_live_status_date_required(PHASE66G_LIVE_STATUS_PATH),
+            "phase66g_trend_last_date": phase66g_canonical_date,
+            "phase67j_paper_last_date": read_last_csv_date(PHASE67J_PAPER_PATH),
+            "phase67j_live_latest_available_date": read_live_status_date_required(PHASE67J_LIVE_STATUS_PATH),
+        }
+    )
+    return checks
+
+
 def freshness_detail(
     state: str,
     *,
@@ -330,6 +361,99 @@ def build_strategy_freshness_summary(
     }
 
 
+def build_runtime_table_snapshot(
+    *,
+    last_pi_update_utc: str | None,
+    last_wallet_sync_utc: str | None,
+    strategy_freshness: dict[str, Any],
+    evaluated_at_utc: str,
+) -> dict[str, Any]:
+    latest_refresh_manifest_metadata = source_metadata_from_path_text(
+        strategy_freshness.get("refresh_manifest_path"),
+        "app_refresh_pipeline_manifest",
+    )
+    runtime_health_metadata = source_metadata(RUNTIME_HEALTH_PATH, "runtime_health")
+    wallet_snapshot_metadata = source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot")
+    freshness_report_metadata = source_metadata(APP_FRESHNESS_REPORT_PATH, "canonical_product_freshness_report")
+    strategy_artifact_metadata = source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper")
+    trend_calculation_metadata = source_metadata(PHASE66G_LIVE_STATUS_PATH, "canonical_trend_live_status")
+
+    last_refresh_run_id = strategy_freshness.get("latest_refresh_run_id")
+    last_refresh_status = strategy_freshness.get("latest_refresh_run_status")
+    last_pc_refresh_utc = strategy_freshness.get("refresh_finished_at_utc")
+    currentness_state = (
+        str(strategy_freshness.get("refresh_currentness_state") or "").strip()
+        or "missing_runtime_artifact"
+    )
+    currentness_reason = (
+        str(strategy_freshness.get("refresh_currentness_reason") or "").strip()
+        or FRESHNESS_SUMMARY_TEXT.get(currentness_state, FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"])
+    )
+
+    if last_refresh_run_id is None and not str(last_refresh_status or "").strip():
+        last_refresh_status = "not_run"
+
+    return {
+        "last_pi_update_utc": last_pi_update_utc,
+        "last_pc_refresh_utc": last_pc_refresh_utc,
+        "last_refresh_status": last_refresh_status,
+        "last_refresh_run_id": last_refresh_run_id,
+        "last_wallet_sync_utc": last_wallet_sync_utc,
+        "currentness_state": currentness_state,
+        "currentness_reason": currentness_reason,
+        "source_metadata": {
+            "last_pi_update_utc": field_source_metadata(
+                source_path_metadata=runtime_health_metadata,
+                source_field="last_success_utc",
+                value=last_pi_update_utc,
+            ),
+            "last_pc_refresh_utc": field_source_metadata(
+                source_path_metadata=latest_refresh_manifest_metadata,
+                source_field="main_refresh_chain_finished_at_utc|finished_at_utc|generated_at_utc|started_at_utc",
+                value=last_pc_refresh_utc,
+            ),
+            "last_refresh_status": field_source_metadata(
+                source_path_metadata=latest_refresh_manifest_metadata,
+                source_field="main_refresh_chain_status|status",
+                value=last_refresh_status,
+            ),
+            "last_refresh_run_id": field_source_metadata(
+                source_path_metadata=latest_refresh_manifest_metadata,
+                source_field="manifest_parent_dir_name",
+                value=last_refresh_run_id,
+            ),
+            "last_wallet_sync_utc": field_source_metadata(
+                source_path_metadata=wallet_snapshot_metadata,
+                source_field="as_of_utc",
+                value=last_wallet_sync_utc,
+            ),
+            "currentness_state": field_source_metadata(
+                source_path_metadata=freshness_report_metadata,
+                source_field="latest_closed_utc_date",
+                value=currentness_state,
+                derived_from=["strategy_freshness.refresh_currentness_state"],
+                extra_inputs={
+                    "refresh_manifest": latest_refresh_manifest_metadata,
+                    "strategy_artifact": strategy_artifact_metadata,
+                    "trend_calculation": trend_calculation_metadata,
+                },
+            ),
+            "currentness_reason": field_source_metadata(
+                source_path_metadata=freshness_report_metadata,
+                source_field="latest_closed_utc_date",
+                value=currentness_reason,
+                derived_from=["strategy_freshness.refresh_currentness_reason"],
+                extra_inputs={
+                    "refresh_manifest": latest_refresh_manifest_metadata,
+                    "strategy_artifact": strategy_artifact_metadata,
+                    "trend_calculation": trend_calculation_metadata,
+                },
+            ),
+        },
+        "evaluated_at_utc": evaluated_at_utc,
+    }
+
+
 def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
@@ -422,6 +546,40 @@ def source_metadata(path: Path, source_type: str, owner: str = "DATA") -> dict[s
         metadata["modified_utc"] = datetime.fromtimestamp(
             stat.st_mtime, tz=timezone.utc
         ).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    return metadata
+
+
+def source_metadata_from_path_text(path_text: str | None, source_type: str, owner: str = "DATA") -> dict[str, Any]:
+    text = str(path_text or "").strip()
+    if not text:
+        return {
+            "path": None,
+            "source_type": source_type,
+            "owner": owner,
+            "exists": False,
+        }
+    path = Path(text)
+    if not path.is_absolute():
+        path = ROOT / path
+    return source_metadata(path, source_type, owner)
+
+
+def field_source_metadata(
+    *,
+    source_path_metadata: dict[str, Any],
+    source_field: str,
+    value: Any,
+    derived_from: list[str] | None = None,
+    extra_inputs: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    value_text = str(value).strip() if value is not None else ""
+    metadata = dict(source_path_metadata)
+    metadata["source_field"] = source_field
+    metadata["value_present"] = bool(value_text)
+    if derived_from:
+        metadata["derived_from"] = list(derived_from)
+    if extra_inputs:
+        metadata["inputs"] = dict(extra_inputs)
     return metadata
 
 
@@ -659,7 +817,8 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     if not paper_rows:
         fail(f"No rows found in {PHASE68I_PAPER_INPUT_PATH}")
 
-    if "date" not in paper_header and "ts" not in paper_header:
+    paper_date_col = "date" if "date" in paper_header else "ts" if "ts" in paper_header else None
+    if paper_date_col is None:
         fail("phase68i paper export missing date/ts column")
 
     if "equity_curve" not in paper_header and "equity" not in paper_header:
@@ -802,17 +961,40 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "effective_trading_fee_bps": format_float(parse_float_required(target_row, "effective_trading_fee_bps"), 4),
     }
 
+    authoritative_export = summarize_net_cost_export(
+        build_net_cost_export_frame(
+            pd.read_csv(PHASE68I_PAPER_INPUT_PATH),
+            date_col=paper_date_col,
+            gross_return_col="realistic_ret_gross",
+            held_asset_col="portfolio_held_asset",
+            leverage_col="effective_leverage",
+            daily_borrow_cost_col="daily_borrow_cost",
+            tradable_slippage_cost_col="tradable_slippage_cost",
+            trading_fees_daily_col="trading_fees_daily",
+            funding_daily_col="funding_daily",
+            config=NetCostExportConfig(
+                annual_borrow_cost=parse_float_required(target_row, "annual_borrow_cost_pct") / 100.0,
+                tradable_transition_slippage_bps=parse_float_required(target_row, "tradable_transition_slippage_bps"),
+                fee_side_mode=str(target_row.get("fee_side_mode", "")).strip(),
+                taker_fee_bps=parse_float_required(target_row, "taker_fee_bps"),
+                maker_fee_bps=parse_float_required(target_row, "maker_fee_bps"),
+                staking_discount_pct=parse_float_required(target_row, "staking_discount_pct"),
+                referral_discount_pct=parse_float_required(target_row, "referral_discount_pct"),
+            ),
+        ),
+        model="phase68i_dynamic_ladder_candidate",
+        switch_count=switch_count,
+        trade_count=switch_count,
+    )
+
     try:
         with PHASE68I_SUMMARY_OUTPUT_PATH.open("w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=output_header)
             writer.writeheader()
             writer.writerow(output_row)
-        with PHASE68I_AUTHORITATIVE_EXPORT_PATH.open("w", encoding="utf-8", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=output_header)
-            writer.writeheader()
-            writer.writerow(output_row)
+        pd.DataFrame([authoritative_export]).to_csv(PHASE68I_AUTHORITATIVE_EXPORT_PATH, index=False)
     except Exception as e:
-        fail(f"Failed writing phase68i summary export {PHASE68I_SUMMARY_OUTPUT_PATH}: {e}")
+        fail(f"Failed writing phase68i exports ({PHASE68I_SUMMARY_OUTPUT_PATH}, {PHASE68I_AUTHORITATIVE_EXPORT_PATH}): {e}")
 
     return {
         "status": "phase68i_summary_export_written",
@@ -977,6 +1159,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     main_paper_row = read_last_csv_row(PHASE68I_PAPER_INPUT_PATH)
     trend_row = read_optional_single_csv_row(PHASE66G_LIVE_STATUS_PATH)
     freshness_payload = read_json_optional(APP_FRESHNESS_REPORT_PATH)
+    freshness_checks = build_canonical_product_freshness_checks(freshness_payload)
 
     metric_fields = [
         "model",
@@ -1050,7 +1233,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     ]
 
     strategy_last_closed_day = parse_iso_date_required(main_paper_row.get("date"), f"{PHASE68I_PAPER_INPUT_PATH} date")
-    freshness_target_closed_day = freshness_payload.get("latest_closed_utc_date")
+    freshness_target_closed_day = freshness_payload.get("latest_closed_utc_date") or strategy_last_closed_day
     app_export_generated_at_utc = utc_now_iso()
     live_public_state = normalized_row(main_paper_row, live_fields)
     live_public_state.update({
@@ -1103,7 +1286,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "freshness": {
             "status": freshness_payload.get("status"),
             "generated_at_utc": freshness_payload.get("generated_at_utc"),
-            "checks": freshness_payload.get("checks", {}),
+            "checks": freshness_checks,
             "warnings": freshness_payload.get("warnings", []),
             "errors": freshness_payload.get("errors", []),
         },
@@ -1147,7 +1330,7 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
 
     account_summary = build_runtime_account_summary(status_payload, account_snapshot_payload)
     runtime_last_sync_utc = runtime_health_payload.get("last_success_utc")
-    account_snapshot_as_of_utc = status_payload.get("as_of_utc") or account_snapshot_payload.get("as_of_utc")
+    account_snapshot_as_of_utc = account_snapshot_payload.get("as_of_utc")
     dry_run_generated_at_utc = dry_run_payload.get("generated_at_utc")
     gate_generated_at_utc = gate_payload.get("generated_at_utc")
     app_runtime_generated_at_utc = utc_now_iso()
@@ -1169,6 +1352,12 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
         latest_wallet_sync_utc=latest_wallet_sync_utc,
         latest_available_closed_utc_date=latest_available_closed_utc_date,
     )
+    runtime_table_snapshot = build_runtime_table_snapshot(
+        last_pi_update_utc=runtime_last_sync_utc,
+        last_wallet_sync_utc=latest_wallet_sync_utc,
+        strategy_freshness=strategy_freshness,
+        evaluated_at_utc=app_runtime_generated_at_utc,
+    )
     execution_mode_posture = {
         "mode": execution_mode_payload.get("mode"),
         "trading_enabled": execution_mode_payload.get("trading_enabled"),
@@ -1187,7 +1376,7 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
 
     return {
         "snapshot_type": "app_runtime_snapshot",
-        "schema_version": 1,
+        "schema_version": 2,
         "app_export_generated_at_utc": resolved_app_export_generated_at_utc,
         "app_runtime_snapshot_generated_at_utc": app_runtime_generated_at_utc,
         "page_scope": "account_page",
@@ -1214,6 +1403,7 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
         "freshness_detail_text": strategy_freshness["freshness_detail_text"],
         "freshness_summary_text": strategy_freshness["freshness_summary_text"],
         "strategy_freshness": strategy_freshness,
+        "runtime_table_snapshot": runtime_table_snapshot,
         "account_observability_contract": {
             "enabled": True,
             "read_mode": "read_only_operational_view",
@@ -1296,6 +1486,15 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
                 "strategy_artifact": source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
                 "trend_calculation": source_metadata(PHASE66G_LIVE_STATUS_PATH, "canonical_trend_live_status"),
                 "wallet_sync": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
+            },
+            "runtime_table_snapshot": {
+                "source_type": "authoritative_runtime_table_snapshot",
+                "owner": "DATA",
+                "evaluated_at_utc": runtime_table_snapshot["evaluated_at_utc"],
+                "fields": {
+                    key: dict(value)
+                    for key, value in runtime_table_snapshot["source_metadata"].items()
+                },
             },
             "execution_status": source_metadata(EXECUTION_STATUS_PATH, "execution_status"),
             "account_snapshot_summary": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
@@ -1453,7 +1652,12 @@ def main() -> None:
             continue
 
         if (
-            artifact_key in {"app_freshness_report", "phase66g_trend_barometer_history"}
+            artifact_key in {
+                "app_freshness_report",
+                "phase66g_trend_barometer_history",
+                "phase67j_winner_paper",
+                "phase66g_core_paper",
+            }
             and source_path is not None
             and canonical_path.exists()
             and canonical_path.is_file()

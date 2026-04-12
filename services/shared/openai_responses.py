@@ -220,7 +220,11 @@ def invoke_structured_response(
 ) -> StructuredResponseResult:
     status = _bootstrap_openai_operation(openai_config)
     api_key = os.environ[str(status["api_key_env"])].strip()
-    user_text = user_payload if isinstance(user_payload, str) else json.dumps(user_payload, indent=2, sort_keys=True)
+    user_text = (
+        user_payload
+        if isinstance(user_payload, str)
+        else json.dumps(user_payload, separators=(",", ":"), sort_keys=True)
+    )
     payload: dict[str, Any] = {
         "model": status["model"],
         "input": [

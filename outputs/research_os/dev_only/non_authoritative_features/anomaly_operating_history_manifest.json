@@ -1,19 +1,19 @@
 {
   "artifact_type": "dev_only_anomaly_operating_history_manifest",
   "artifact_id": "anomaly_operating_history_manifest",
-  "generated_at_utc": "2026-04-11 08:05:49 UTC",
-  "latest_cycle_id": "20260411T080534093135Z",
-  "latest_cycle_generated_at_utc": "2026-04-11 08:05:34 UTC",
-  "history_cycle_count": 12,
+  "generated_at_utc": "2026-04-12 22:06:10 UTC",
+  "latest_cycle_id": "20260412T220558813592Z",
+  "latest_cycle_generated_at_utc": "2026-04-12 22:05:58 UTC",
+  "history_cycle_count": 14,
   "history_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history",
-  "latest_snapshot_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260411T080534093135Z",
+  "latest_snapshot_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260412T220558813592Z",
   "latest_snapshot_refs": {
-    "family_summary_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260411T080534093135Z\\anomaly_feature_family_summary.json",
-    "family_summary_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260411T080534093135Z\\anomaly_feature_family_summary.csv",
-    "cross_family_interactions_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260411T080534093135Z\\anomaly_cross_family_interactions.json",
-    "cross_family_interactions_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260411T080534093135Z\\anomaly_cross_family_interactions.csv",
-    "ranking_heuristics_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260411T080534093135Z\\anomaly_ranking_heuristics.json",
-    "ranking_heuristics_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260411T080534093135Z\\anomaly_ranking_heuristics.csv"
+    "family_summary_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260412T220558813592Z\\anomaly_feature_family_summary.json",
+    "family_summary_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260412T220558813592Z\\anomaly_feature_family_summary.csv",
+    "cross_family_interactions_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260412T220558813592Z\\anomaly_cross_family_interactions.json",
+    "cross_family_interactions_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260412T220558813592Z\\anomaly_cross_family_interactions.csv",
+    "ranking_heuristics_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260412T220558813592Z\\anomaly_ranking_heuristics.json",
+    "ranking_heuristics_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\history\\20260412T220558813592Z\\anomaly_ranking_heuristics.csv"
   },
   "output_refs": {
     "anomaly_cross_family_interactions_history_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_features\\anomaly_cross_family_interactions_history.json",

@@ -863,17 +863,118 @@ def _deterministic_family_verdict_data(
     }
 
 
+_CRITIC_LINEAGE_METRIC_KEYS = (
+    "net_total_return_delta_pct",
+    "net_cagr_delta_pct",
+    "max_drawdown_delta_pct",
+    "switch_count_delta",
+    "trade_days_delta",
+    "turnover_pressure_delta",
+)
+
+
+def _compact_lineage_metrics(metrics: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: metrics.get(key)
+        for key in _CRITIC_LINEAGE_METRIC_KEYS
+        if key in metrics
+    }
+
+
+def _compact_compare_rows(compare_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    compact_rows: list[dict[str, Any]] = []
+    for row in compare_rows:
+        compact_rows.append(
+            {
+                "metric": str(row.get("metric", "")),
+                "expected_direction": str(row.get("expected_direction", "")),
+                "target": str(row.get("target", "")),
+                "basis": _compare_basis([row], str(row.get("metric", ""))),
+            }
+        )
+    return compact_rows
+
+
+def _compact_cost_rows(cost_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        {
+            "metric": str(row.get("metric", "")),
+            "value": str(row.get("value", "")),
+            "unit": str(row.get("unit", "")),
+        }
+        for row in cost_rows
+    ]
+
+
+def _critic_review_packet(
+    *,
+    summary: dict[str, Any],
+    compare_rows: list[dict[str, Any]],
+    cost_rows: list[dict[str, Any]],
+    source_artifact: dict[str, Any],
+    deterministic: dict[str, Any],
+) -> dict[str, Any]:
+    proposal = dict(source_artifact.get("proposal", {}))
+    proposal_lineage = dict(source_artifact.get("proposal_lineage", {}))
+    mutation_target = dict(proposal.get("mutation_target", {}))
+    return {
+        "runtime_mode": {
+            "dev_only": True,
+            "non_authoritative": True,
+            "execution_allowed": False,
+        },
+        "validation_context": {
+            "request_id": str(summary.get("request_id", "")),
+            "family_id": str(summary.get("family_id", "")),
+            "proposal_id": str(summary.get("proposal_id", "")),
+            "status": str(summary.get("status", "")),
+            "adapter_id": str(summary.get("adapter_id", "")),
+            "compare_metrics": _compact_compare_rows(compare_rows),
+            "cost_metrics": _compact_cost_rows(cost_rows),
+        },
+        "proposal_context": {
+            "mechanism_hypothesis": str(proposal.get("mechanism_hypothesis", "")),
+            "mutation_target": {
+                "target_id": str(mutation_target.get("target_id", "")),
+                "target_type": str(mutation_target.get("target_type", "")),
+                "source_artifact_id": str(mutation_target.get("source_artifact_id", "")),
+                "exact_change": str(mutation_target.get("exact_change", "")),
+            },
+            "stop_condition": str(proposal.get("stop_condition") or summary.get("stop_condition", "")),
+        },
+        "lineage_context": {
+            "source_last_verdict": str(proposal_lineage.get("source_last_verdict", "")),
+            "source_last_metrics": _compact_lineage_metrics(dict(proposal_lineage.get("source_last_metrics", {}))),
+            "source_attempt_artifact_ids": list(proposal_lineage.get("source_attempt_artifact_ids", []))[-2:],
+        },
+        "net_first_policy": {
+            "stop_if_net_return_lte": 0.0,
+            "pause_if_dd_lt": -1.0,
+            "pause_if_trade_days_delta_gt": 4.0,
+            "pause_if_switch_count_delta_gt": 4.0,
+            "pause_if_turnover_pressure_gt": 0.0,
+        },
+        "derived_key_metrics": dict(deterministic["key_metrics"]),
+        "deterministic_reference": {
+            "verdict": str(deterministic["verdict"]),
+            "next_action": str(deterministic["next_action"]),
+            "guardrail_breaches": list(deterministic["breaches"]),
+        },
+    }
+
+
 def _critic_prompt_template(prompt_template: str) -> str:
     if prompt_template == "research_os_critic_family_verdict_v1":
         return (
             "You are the MRV1 critic for a dev-only, non-authoritative research runtime. "
             "Review one heavy-validation result pack and return a single family verdict recommendation. "
             "You must apply the supplied net-first policy exactly, and you must not authorize live trading, "
-            "source-of-truth mutation, official promotion logic, or strategy execution."
+            "source-of-truth mutation, official promotion logic, or strategy execution. "
+            "Keep recommended_reason and policy_alignment_note concise."
         )
     return (
         "You are the MRV1 critic for a dev-only, non-authoritative research runtime. "
-        "Return one verdict recommendation that strictly follows the supplied policy."
+        "Return one concise verdict recommendation that strictly follows the supplied policy."
     )
 
 
@@ -923,29 +1024,13 @@ def _critic_user_payload(
     source_artifact: dict[str, Any],
     deterministic: dict[str, Any],
 ) -> dict[str, Any]:
-    return {
-        "constraints": {
-            "dev_only": True,
-            "non_authoritative": True,
-            "live_trading": False,
-            "source_of_truth_mutation": False,
-            "official_promotion_logic": False,
-            "strategy_code_executed": False,
-        },
-        "heavy_validation_summary": summary,
-        "compare_rows": compare_rows,
-        "cost_rows": cost_rows,
-        "source_mutation_proposal": dict(source_artifact.get("proposal", {})),
-        "proposal_lineage": dict(source_artifact.get("proposal_lineage", {})),
-        "net_first_policy": {
-            "stop_if_net_return_lte": 0.0,
-            "pause_if_dd_lt": -1.0,
-            "pause_if_trade_days_delta_gt": 4.0,
-            "pause_if_switch_count_delta_gt": 4.0,
-            "pause_if_turnover_pressure_gt": 0.0,
-        },
-        "derived_key_metrics": dict(deterministic["key_metrics"]),
-    }
+    return _critic_review_packet(
+        summary=summary,
+        compare_rows=compare_rows,
+        cost_rows=cost_rows,
+        source_artifact=source_artifact,
+        deterministic=deterministic,
+    )
 
 
 def _run_openai_critic_review(
@@ -985,6 +1070,58 @@ def _run_openai_critic_review(
     }
 
 
+def _resolve_critic_openai_config(
+    runtime_openai_config: dict[str, Any] | None,
+    critic_component_openai_config: dict[str, Any] | None,
+    critic_config: dict[str, Any] | None = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    runtime_openai = dict(runtime_openai_config or {})
+    critic_component_openai = dict(critic_component_openai_config or {})
+    critic_config = dict(critic_config or {})
+    effective_openai_config = dict(runtime_openai)
+    effective_openai_config.update(critic_component_openai)
+    enabled_source = "default_false"
+    runtime_enabled_present = bool(critic_config.get("_runtime_openai_enabled_present", "enabled" in runtime_openai))
+    runtime_enabled = bool(critic_config.get("_runtime_openai_enabled_value", runtime_openai.get("enabled", False)))
+    component_enabled_present = bool(
+        critic_config.get("_component_openai_enabled_present", "enabled" in critic_component_openai)
+    )
+    component_enabled = bool(
+        critic_config.get("_component_openai_enabled_value", critic_component_openai.get("enabled", False))
+    )
+    raw_config_enabled_value = False
+    resolved_enabled_value = runtime_enabled or component_enabled
+    effective_openai_config["enabled"] = resolved_enabled_value
+    if component_enabled_present and component_enabled:
+        enabled_source = "critic.openai.enabled"
+        raw_config_enabled_value = component_enabled
+    elif runtime_enabled_present and runtime_enabled:
+        enabled_source = "runtime.openai.enabled"
+        raw_config_enabled_value = runtime_enabled
+    elif component_enabled_present:
+        enabled_source = "critic.openai.enabled"
+        raw_config_enabled_value = component_enabled
+    elif runtime_enabled_present:
+        enabled_source = "runtime.openai.enabled"
+        raw_config_enabled_value = runtime_enabled
+    return effective_openai_config, {
+        "base": "runtime.openai",
+        "overlay": "critic.openai",
+        "enabled_from": enabled_source,
+        "enabled_resolution_debug": {
+            "raw_config_enabled_value": raw_config_enabled_value,
+            "resolved_enabled_value": resolved_enabled_value,
+            "where_override_happened": (
+                "none"
+                if raw_config_enabled_value == resolved_enabled_value
+                else "services/pc/worker_service.py:_resolve_critic_openai_config"
+            ),
+        },
+        "runtime_keys": sorted(str(key) for key in runtime_openai.keys()),
+        "component_keys": sorted(str(key) for key in critic_component_openai.keys()),
+    }
+
+
 def build_family_verdict(
     summary: dict[str, Any],
     compare_rows: list[dict[str, Any]],
@@ -993,10 +1130,15 @@ def build_family_verdict(
     source_paths: dict[str, str],
     critic_job_id: str,
     critic_openai_config: dict[str, Any] | None = None,
+    effective_openai_source: dict[str, Any] | None = None,
 ) -> FamilyVerdict:
     deterministic = _deterministic_family_verdict_data(summary, compare_rows, source_artifact)
     critic_openai_config = dict(critic_openai_config or {})
-    openai_review = describe_openai_operation(critic_openai_config)
+    openai_review = {
+        **describe_openai_operation(critic_openai_config),
+        "effective_openai_config": dict(critic_openai_config),
+        "effective_openai_source": dict(effective_openai_source or {}),
+    }
     verdict_reason = str(deterministic["verdict_reason"])
     breaches = list(deterministic["breaches"])
     if bool(critic_openai_config.get("enabled", False)):
@@ -1008,6 +1150,8 @@ def build_family_verdict(
             deterministic=deterministic,
             critic_openai_config=critic_openai_config,
         )
+        openai_review["effective_openai_config"] = dict(critic_openai_config)
+        openai_review["effective_openai_source"] = dict(effective_openai_source or {})
         for item in list(openai_review.get("guardrail_breaches", [])):
             value = str(item).strip()
             if value and value not in breaches:
@@ -1072,6 +1216,7 @@ def _write_critic_error_artifact(
     job_id: str,
     family_id: str,
     critic_config: dict[str, Any],
+    effective_openai_source: dict[str, Any] | None,
     error: Exception,
 ) -> dict[str, Any]:
     payload = {
@@ -1089,7 +1234,11 @@ def _write_critic_error_artifact(
         "source_of_truth_mutation": False,
         "official_promotion_logic": False,
         "error": serialize_openai_error(error),
-        "openai_operation": describe_openai_operation(critic_config),
+        "openai_operation": {
+            **describe_openai_operation(critic_config),
+            "effective_openai_config": dict(critic_config),
+            "effective_openai_source": dict(effective_openai_source or {}),
+        },
         "notes": [
             "critic_failed_closed",
             "no_family_verdict_emitted",
@@ -1110,6 +1259,7 @@ def execute_critic_for_heavy_validation_result(
     registry: RegistryService,
     critic_job_id: str = "",
     critic_config: dict[str, Any] | None = None,
+    runtime_openai_config: dict[str, Any] | None = None,
 ) -> WorkerResult:
     started_at = utc_now_iso()
     writer = ArtifactWriter(artifact_root)
@@ -1118,7 +1268,11 @@ def execute_critic_for_heavy_validation_result(
     verdict_id = f"{job_id}_family_verdict"
     critic_component = dict(critic_config or {})
     critic_enabled = bool(critic_component.get("enabled", True))
-    critic_openai_config = dict(critic_component.get("openai") or {})
+    critic_openai_config, effective_openai_source = _resolve_critic_openai_config(
+        runtime_openai_config,
+        dict(critic_component.get("openai") or {}),
+        critic_component,
+    )
     try:
         raw_summary = json.loads(Path(summary_path).read_text(encoding="utf-8-sig"))
         job_id = critic_job_id or f"{raw_summary['job_id']}_critic"
@@ -1152,6 +1306,7 @@ def execute_critic_for_heavy_validation_result(
             source_paths=source_paths,
             critic_job_id=job_id,
             critic_openai_config=critic_openai_config,
+            effective_openai_source=effective_openai_source,
         )
         verdict_record = writer.write_json(
             f"critic_outputs/{job_id}_family_verdict.json",
@@ -1183,6 +1338,7 @@ def execute_critic_for_heavy_validation_result(
             job_id=job_id,
             family_id=family_id,
             critic_config=critic_openai_config,
+            effective_openai_source=effective_openai_source,
             error=exc,
         )
         registry.record_artifact(job_id, error_record)
@@ -1578,10 +1734,8 @@ def main() -> int:
             artifact_root=config.artifact_root,
             registry=registry,
             critic_job_id=args.critic_job_id,
-            critic_config={
-                **dict(config.critic),
-                "openai": dict(config.critic.get("openai") or config.openai),
-            },
+            critic_config=dict(config.critic),
+            runtime_openai_config=dict(config.openai),
         )
         print(json.dumps(result.to_dict(), indent=2, sort_keys=True))
         return 0 if result.status == JOB_STATUS_SUCCEEDED else 1

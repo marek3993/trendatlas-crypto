@@ -1,0 +1,175 @@
+{
+  "artifact_id": "btc_vol_standardized_cusum_upshift_hold_confirm_probe",
+  "generated_at_utc": "2026-04-12 10:48:04 UTC",
+  "final_verdict": "stop",
+  "mechanism_id": "btc_vol_standardized_cusum_upshift_hold_confirm",
+  "compare_baseline": "phase67j_no_neo_main",
+  "secondary_context_only": "phase68i_dynamic_ladder_candidate",
+  "all_activation_windows_count": 0,
+  "earlier_activation_windows_count": 0,
+  "lead_days_list": [],
+  "avg_lead_days": 0.0,
+  "net_early_move_capture_pct": 0,
+  "all_activation_windows_net_capture_pct": 0,
+  "trade_days_delta": 0,
+  "switch_count_delta": 0,
+  "turnover_pressure_delta": 0.0,
+  "net_max_drawdown_delta_pct": 0.0,
+  "net_total_return_delta_pct": 0.0,
+  "net_cagr_delta_pct": 0.0,
+  "gross_metrics_context": {
+    "gross_total_return_baseline_pct": 103793.757647,
+    "gross_total_return_probe_pct": 103793.757647,
+    "gross_total_return_delta_pct": 0.0
+  },
+  "baseline_metrics": {
+    "model": "phase67j_no_neo_main",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "cusum_risk_days": 0,
+    "all_activation_windows_count": 0,
+    "earlier_activation_windows_count": 0
+  },
+  "probe_metrics": {
+    "model": "btc_vol_standardized_cusum_upshift_hold_confirm_probe",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "cusum_risk_days": 0,
+    "all_activation_windows_count": 0,
+    "earlier_activation_windows_count": 0
+  },
+  "exact_confirmatory_cusum_implementation": {
+    "detector_type": "two_sided_page_cusum_on_standardized_btc_log_returns",
+    "positive_accumulator": "S_pos_t = max(0, S_pos_{t-1} + x_t - k)",
+    "negative_accumulator": "S_neg_t = max(0, S_neg_{t-1} - x_t - k)",
+    "trigger_event_rule": "A trigger event occurs on day t when S_pos_t >= h during a baseline CASH day and hard risk-off is false.",
+    "activation_permission_rule": "CUSUM_UPSHIFT_ACTIVE turns on only if the upshift condition still holds on each of the next 2 consecutive days after the trigger event, so activation can first occur on trigger+2.",
+    "confirmation_failure_rule": "If either post-trigger confirmation day fails because S_pos_t < h, hard risk-off becomes true, or the baseline leaves CASH, the trigger candidate resets and the probe remains off.",
+    "permission_clear_rule": "After activation, CUSUM_UPSHIFT_ACTIVE clears when S_neg_t >= h, when hard BTC risk-off invalidation is true, or when the baseline is no longer in CASH.",
+    "downstream_integration_rule": "Baseline risk-on days remain unchanged. On baseline CASH days only, the probe replaces CASH with full BTC risk while CUSUM_UPSHIFT_ACTIVE is true.",
+    "binary_states_only": [
+      "CASH",
+      "CUSUM_BTC_RISK",
+      "BASELINE_RISK"
+    ]
+  },
+  "why_same_family_not_duplicate": "This remains the same family because BTC log returns, causal 63-day realized-vol standardization, two-sided Page CUSUM, fixed k = 0.25, fixed h = 5.0, baseline-cash-only integration, and the clear logic all stay unchanged; only activation turns on after a 2-day post-trigger hold confirmation.",
+  "exact_no_lookahead_design": {
+    "btc_input_series": "BTCUSDT daily closes from data/ohlcv/BTCUSDT_1d.csv",
+    "return_transform": "daily BTC log return r_t = log(close_t / close_{t-1})",
+    "vol_standardization": "sigma_t is the causal 63-day rolling standard deviation of BTC daily log returns using only returns up to day t; x_t = r_t / sigma_t.",
+    "detector_update": "The positive and negative CUSUM accumulators are updated sequentially one day at a time using only x_t and the previous accumulator state.",
+    "confirmation_timing": "A trigger event is recorded on day t when S_pos_t >= h on a baseline CASH day and hard risk-off is false. Activation is allowed only if the upshift condition still holds on each of the next 2 consecutive days, so the earliest possible turn-on is day t+2 with no future data.",
+    "integration_reset": "CUSUM permission is reset whenever the baseline is not in CASH. This keeps the probe earlier-activation-only and prevents any persistence carryover through baseline risk-on days.",
+    "fitting": "No future-aware fitting, no return optimization, and no global calibration pass are used."
+  },
+  "exact_single_heuristic_used_to_set_parameters": {
+    "single_heuristic": "Use the smallest non-sweep anti-noise hold above the immediate trigger: require exactly 2 consecutive post-trigger days with S_pos_t >= h before activation. k = 0.25 and h = 5.0 remain fixed from the base family.",
+    "fixed_defaults": {
+      "vol_window_days": 63,
+      "cusum_reference_k": 0.25,
+      "cusum_threshold_h": 5.0,
+      "confirmation_days_after_trigger": 2
+    }
+  },
+  "exact_compare_vs_previous_cusum_result": {
+    "reference_probe": "btc_vol_standardized_cusum_upshift_probe",
+    "reference_final_verdict": "pause",
+    "reference_results": {
+      "final_verdict": "pause",
+      "earlier_activation_windows": 2,
+      "lead_days": [
+        1,
+        31
+      ],
+      "avg_lead_days": 16.0,
+      "net_early_move_capture_pct": 52.270647,
+      "trade_count": 74,
+      "switch_count": 76,
+      "turnover_pressure": 74.0,
+      "max_drawdown_pct": -26.377525,
+      "net_total_return_pct": 151179.440148,
+      "net_cagr_pct": 152.032665,
+      "gross_total_return_pct": 168240.432345
+    },
+    "probe_results": {
+      "final_verdict": "stop",
+      "earlier_activation_windows": 0,
+      "lead_days": [],
+      "avg_lead_days": 0.0,
+      "net_early_move_capture_pct": 0,
+      "trade_count": 72,
+      "switch_count": 72,
+      "turnover_pressure": 72.0,
+      "max_drawdown_pct": -26.377525,
+      "net_total_return_pct": 93500.121242,
+      "net_cagr_pct": 137.209803,
+      "gross_total_return_pct": 103793.757647
+    },
+    "delta_probe_minus_reference": {
+      "earlier_activation_windows": -2,
+      "avg_lead_days": -16.0,
+      "net_early_move_capture_pct": -52.270647,
+      "trade_count": -2,
+      "switch_count": -4,
+      "turnover_pressure": -2.0,
+      "net_max_drawdown_pct": 0.0,
+      "net_total_return_pct": -57679.318906,
+      "net_cagr_pct": -14.822862,
+      "gross_total_return_pct": -64446.674698
+    }
+  },
+  "cost_model": {
+    "source_context": "phase68i dynamic ladder export fee/slippage fields used only as secondary cost assumptions",
+    "trading_fee_bps": 4.5,
+    "slippage_bps": 10.0,
+    "turnover_cost_per_unit": 0.00145
+  },
+  "success_bar_check": {
+    "more_than_one_earlier_window": false,
+    "positive_net_early_move_capture": false,
+    "switch_count_improved_vs_previous_cusum": true,
+    "turnover_near_flat_vs_baseline": true,
+    "turnover_not_worse_vs_previous_cusum": true,
+    "net_drawdown_near_flat_vs_baseline": true,
+    "survives_net_of_fees": false
+  },
+  "stop_condition": {
+    "rule": "stop if confirmation kills most of the edge, or if switch/churn does not improve versus the prior CUSUM result, or if turnover worsens, or if the result collapses toward old-family behavior",
+    "triggered": true
+  },
+  "pause_condition": {
+    "rule": "pause if churn improves but the evidence breadth is still too narrow for a stronger claim",
+    "triggered": false
+  },
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "btc_ohlcv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+    "prior_cusum_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_probe\\btc_vol_standardized_cusum_upshift_probe.summary.json",
+    "prior_cusum_cost_metrics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_probe\\btc_vol_standardized_cusum_upshift_probe.cost_metrics.csv",
+    "l1_probe_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_l1_trend_filter_regime_probe\\l1_trend_filter_regime_probe.summary.json",
+    "breadth_veto_confirm_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_breadth_ignition_volatility_hostility_veto_confirm_probe\\breadth_ignition_volatility_hostility_veto_confirm_probe.summary.json"
+  },
+  "status": "generated_dev_only_btc_vol_standardized_cusum_upshift_hold_confirm_probe_summary",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "btc_vol_standardized_cusum_upshift_hold_confirm_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

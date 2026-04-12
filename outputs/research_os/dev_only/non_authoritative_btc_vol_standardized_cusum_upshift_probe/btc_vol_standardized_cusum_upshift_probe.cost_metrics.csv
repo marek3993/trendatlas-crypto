@@ -1,0 +1,3 @@
+model,gross_return_pct,net_return_after_costs_pct,net_cagr_pct,max_drawdown_pct,trade_count,switch_count,turnover_pressure,total_cost_pct,cusum_risk_days,all_activation_windows_count,earlier_activation_windows_count
+phase67j_no_neo_main,103793.757647,93500.121242,137.209803,-26.377525,72,72,72.0,10.44,0,0,0
+btc_vol_standardized_cusum_upshift_probe,168240.432345,151179.440148,152.032665,-26.377525,74,76,74.0,10.73,34,3,2

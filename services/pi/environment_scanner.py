@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 from typing import Any
 
+from services.shared.runtime_bootstrap import load_runtime_config as load_runtime_config_shared
 from services.shared.artifact_writer import ArtifactWriter
 from services.shared.schemas import EnvironmentScan, FamilyRegistry, FamilyStateSnapshot, MarketStateSnapshot, RuntimeConfig, SCHEMA_VERSION, utc_now_iso
 
@@ -14,8 +15,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def load_runtime_config(path: str | Path) -> RuntimeConfig:
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    return RuntimeConfig.from_mapping(payload)
+    return load_runtime_config_shared(path)
 
 
 def scan_environment(config: RuntimeConfig, project_root: Path = PROJECT_ROOT) -> EnvironmentScan:

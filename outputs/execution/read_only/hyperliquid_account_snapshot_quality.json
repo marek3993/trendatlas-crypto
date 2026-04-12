@@ -1,13 +1,16 @@
 {
   "snapshot_ok": true,
-  "mode": "live",
-  "trading_enabled": true,
-  "kill_switch": false,
+  "mode_ok": true,
+  "trading_disabled_ok": null,
+  "kill_switch_ok": null,
+  "runtime_posture": "live_runtime_read_only_observability",
   "account_address_present": true,
+  "http_source": "https://api.hyperliquid.xyz/info",
   "positions_count": 0,
   "open_orders_count": 0,
   "recent_fills_count": 12,
   "balance_source_of_truth": "spot_stable_balance",
   "account_equity_usd": 9.835466,
-  "available_balance_usd": 9.835466
+  "available_balance_usd": 9.835466,
+  "spot_source_available": true
 }

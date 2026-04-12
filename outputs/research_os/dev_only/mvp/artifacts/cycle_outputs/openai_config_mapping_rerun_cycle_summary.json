@@ -1,0 +1,87 @@
+{
+  "completed_at": "2026-04-12T18:03:50+00:00",
+  "cycle_id": "openai_config_mapping_rerun",
+  "dev_only": true,
+  "errors": [],
+  "executed_steps": [
+    "environment_scan",
+    "market_snapshot",
+    "family_snapshot",
+    "planner"
+  ],
+  "family_ids_touched": [],
+  "final_governor_states": [
+    {
+      "attempt_count": 2,
+      "confirmatory_count": 1,
+      "family_id": "cost_aware_hysteretic_pilot_to_full",
+      "last_next_action": "pause_family",
+      "last_verdict": "pause",
+      "lifecycle_state": "paused",
+      "planning_eligible": false,
+      "status": "governor_completed"
+    }
+  ],
+  "final_status": "completed_no_planner_jobs",
+  "live_trading": false,
+  "non_authoritative": true,
+  "official_promotion_logic": false,
+  "official_truth": false,
+  "planner_jobs_count": 0,
+  "produced_artifacts": [
+    {
+      "artifact_id": "planner_inputs__openai_config_mapping_rerun_environment_scan_json",
+      "created_at": "2026-04-12T18:03:50+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs\\openai_config_mapping_rerun_environment_scan.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "c954a126cf6ecc24c017bc8eb9bc072b13c065ce4eee49cee4e717a00993795f"
+    },
+    {
+      "artifact_id": "market_state__latest_market_state_json",
+      "created_at": "2026-04-12T18:03:50+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\market_state\\latest_market_state.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "c045ea75119cecdea46db313fb1d16c591e0a6e12219fd0bf1ceb806a14f1856"
+    },
+    {
+      "artifact_id": "family_state__latest_family_state_snapshot_json",
+      "created_at": "2026-04-12T18:03:50+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\family_state\\latest_family_state_snapshot.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "aa1fb0fcf315cd6584fd02175e9aec7c6aaae8c802e7d8dec134b442de1d7a7a"
+    },
+    {
+      "artifact_id": "planner_inputs__openai_config_mapping_rerun_planner_input_json",
+      "created_at": "2026-04-12T18:03:50+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs\\openai_config_mapping_rerun_planner_input.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "e87db1e3898004f7fa79cab2bc0bcfa0b82539cff59ef21f375a915c68824c58"
+    },
+    {
+      "artifact_id": "planner_outputs__openai_config_mapping_rerun_planner_output_json",
+      "created_at": "2026-04-12T18:03:50+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_outputs\\openai_config_mapping_rerun_planner_output.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "7c8c17d107c1ee9fb50086fe36796002b96ca3935799b1f67da37697b94ff682"
+    }
+  ],
+  "schema_version": "research_os_mvp.v1",
+  "source_of_truth_mutation": false,
+  "started_at": "2026-04-12T18:03:50+00:00",
+  "strategy_advancement": false
+}

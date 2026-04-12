@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-04-11T08:10:58Z",
-  "started_at_utc": "2026-04-11T08:10:56Z",
+  "generated_at_utc": "2026-04-12T22:51:13Z",
+  "started_at_utc": "2026-04-12T22:51:13Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -27,9 +27,9 @@
   "missing_registry_keys": [],
   "missing_legacy_sources": [],
   "hard_required_missing": [],
-  "copied_count": 2,
+  "copied_count": 3,
   "transformed_count": 4,
-  "already_present_count": 3,
+  "already_present_count": 2,
   "rows": [
     {
       "artifact_key": "phase67j_winner_paper",
@@ -37,12 +37,33 @@
       "artifact_type": "paper",
       "owner": "DATA",
       "truth_domain": "product",
-      "status": "already_present",
+      "path_resolution": {
+        "context": "materialize:phase67j_winner_paper:canonical",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "legacy_source_path_resolution": {
+        "context": "legacy:phase67j_winner_paper",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "status": "refreshed_from_newer_legacy_alias",
+      "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv",
+      "source_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_paper.csv",
+        "size_bytes": 155982,
+        "modified_utc": "2026-04-12T22:32:04Z"
+      },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
-        "size_bytes": 155574,
-        "modified_utc": "2026-04-06T09:30:17Z"
-      }
+        "size_bytes": 155982,
+        "modified_utc": "2026-04-12T22:32:04Z"
+      },
+      "refresh_reason": "legacy_alias_mtime_newer_than_canonical"
     },
     {
       "artifact_key": "phase67j_live_status",
@@ -50,17 +71,31 @@
       "artifact_type": "live_status",
       "owner": "DATA",
       "truth_domain": "product",
+      "path_resolution": {
+        "context": "materialize:phase67j_live_status:canonical",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "legacy_source_path_resolution": {
+        "context": "legacy:phase67j_live_status",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
       "status": "materialized_with_app_live_mode_contract",
       "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
       "source_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
         "size_bytes": 247,
-        "modified_utc": "2026-04-11T08:10:56Z"
+        "modified_utc": "2026-04-12T22:32:04Z"
       },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
-        "size_bytes": 507,
-        "modified_utc": "2026-04-11T08:10:56Z"
+        "size_bytes": 505,
+        "modified_utc": "2026-04-12T22:51:13Z"
       },
       "added_fields": [
         "live_truth_mode",
@@ -77,12 +112,33 @@
       "artifact_type": "paper",
       "owner": "DATA",
       "truth_domain": "product",
-      "status": "already_present",
+      "path_resolution": {
+        "context": "materialize:phase66g_core_paper:canonical",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "legacy_source_path_resolution": {
+        "context": "legacy:phase66g_core_paper",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "status": "refreshed_from_newer_legacy_alias",
+      "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+      "source_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+        "size_bytes": 383114,
+        "modified_utc": "2026-04-12T22:31:53Z"
+      },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
-        "size_bytes": 381990,
-        "modified_utc": "2026-04-06T09:29:46Z"
-      }
+        "size_bytes": 383114,
+        "modified_utc": "2026-04-12T22:31:53Z"
+      },
+      "refresh_reason": "legacy_alias_mtime_newer_than_canonical"
     },
     {
       "artifact_key": "phase66g_live_status",
@@ -90,20 +146,27 @@
       "artifact_type": "live_status",
       "owner": "DATA",
       "truth_domain": "product",
-      "status": "refreshed_from_newer_legacy_alias",
-      "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv",
-      "source_info": {
-        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv",
-        "size_bytes": 619,
-        "modified_utc": "2026-04-11T08:10:44Z"
+      "path_resolution": {
+        "context": "materialize:phase66g_live_status:canonical",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
+        "reason": "host_absolute_path",
+        "exists": true
       },
+      "legacy_source_path_resolution": {
+        "context": "legacy:phase66g_live_status",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_live_status.csv",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "status": "already_present",
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
         "size_bytes": 619,
-        "modified_utc": "2026-04-11T08:10:44Z"
+        "modified_utc": "2026-04-12T22:24:27Z"
       },
-      "source_latest_available_date": "2026-04-10",
-      "canonical_latest_available_date": "2026-04-09"
+      "refresh_reason": "canonical_phase66g_live_status_is_not_older_than_upstream"
     },
     {
       "artifact_key": "phase66g_trend_barometer_history",
@@ -111,19 +174,26 @@
       "artifact_type": "export",
       "owner": "DATA",
       "truth_domain": "product",
-      "status": "refreshed_from_newer_legacy_alias",
-      "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
-      "source_info": {
-        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
-        "size_bytes": 375918,
-        "modified_utc": "2026-04-11T08:10:44Z"
+      "path_resolution": {
+        "context": "materialize:phase66g_trend_barometer_history:canonical",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_trend_barometer_history.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_trend_barometer_history.csv",
+        "reason": "host_absolute_path",
+        "exists": true
       },
+      "legacy_source_path_resolution": {
+        "context": "legacy:phase66g_trend_barometer_history",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "status": "already_present",
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_trend_barometer_history.csv",
-        "size_bytes": 375918,
-        "modified_utc": "2026-04-11T08:10:44Z"
-      },
-      "refresh_reason": "legacy_alias_mtime_newer_than_canonical"
+        "size_bytes": 376051,
+        "modified_utc": "2026-04-12T22:31:53Z"
+      }
     },
     {
       "artifact_key": "app_freshness_report",
@@ -131,12 +201,33 @@
       "artifact_type": "validation_report",
       "owner": "DATA",
       "truth_domain": "product",
-      "status": "already_present",
+      "path_resolution": {
+        "context": "materialize:app_freshness_report:canonical",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "legacy_source_path_resolution": {
+        "context": "legacy:app_freshness_report",
+        "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json",
+        "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json",
+        "reason": "host_absolute_path",
+        "exists": true
+      },
+      "status": "refreshed_from_newer_legacy_alias",
+      "source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json",
+      "source_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json",
+        "size_bytes": 1061,
+        "modified_utc": "2026-04-12T22:51:09Z"
+      },
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
         "size_bytes": 1061,
-        "modified_utc": "2026-04-11T08:05:32Z"
-      }
+        "modified_utc": "2026-04-12T22:51:09Z"
+      },
+      "refresh_reason": "legacy_alias_mtime_newer_than_canonical"
     },
     {
       "artifact_key": "phase68i_dynamic_ladder_candidate_summary",
@@ -145,16 +236,22 @@
       "paper_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
       "paper_refresh_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68h_dynamic_leverage_ladder_candidate\\papers\\phase68h_dynamic_ladder_candidate_paper.csv",
       "paper_refresh_info": {
-        "phase66g_last_date": "2026-04-10",
-        "phase68h_last_date_before_refresh": "2026-04-09",
-        "phase68h_last_date_after_refresh": "2026-04-10",
-        "phase68h_refresh_triggered": true
+        "phase66g_last_date": "2026-04-11",
+        "phase68h_last_date_before_refresh": "2026-04-11",
+        "phase68h_last_date_after_refresh": "2026-04-11",
+        "phase68h_refresh_triggered": false
       },
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
-        "size_bytes": 809,
-        "modified_utc": "2026-04-11T08:10:58Z"
+        "size_bytes": 897,
+        "modified_utc": "2026-04-12T22:51:13Z"
+      },
+      "authoritative_export_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv",
+      "authoritative_export_info": {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv",
+        "size_bytes": 755,
+        "modified_utc": "2026-04-12T22:51:13Z"
       },
       "computed_fields": [
         "total_return_pct",
@@ -163,14 +260,19 @@
         "sharpe",
         "sortino",
         "switch_count",
+        "trade_count",
         "cash_days_pct",
         "btc_days_pct",
         "trading_fees_total_pct",
         "funding_total_pct",
         "borrow_cost_total_pct",
-        "tradable_slippage_cost_total_pct"
+        "tradable_slippage_cost_total_pct",
+        "annual_borrow_cost_pct",
+        "tradable_transition_slippage_bps"
       ],
       "copied_fields_from_summary_source": [
+        "annual_borrow_cost_pct",
+        "tradable_transition_slippage_bps",
         "fee_side_mode",
         "taker_fee_bps",
         "maker_fee_bps",
@@ -197,8 +299,8 @@
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
-        "size_bytes": 8794,
-        "modified_utc": "2026-04-11T08:10:58Z"
+        "size_bytes": 8793,
+        "modified_utc": "2026-04-12T22:51:13Z"
       }
     },
     {
@@ -207,8 +309,8 @@
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
-        "size_bytes": 12697,
-        "modified_utc": "2026-04-11T08:10:58Z"
+        "size_bytes": 12718,
+        "modified_utc": "2026-04-12T22:51:13Z"
       }
     }
   ],

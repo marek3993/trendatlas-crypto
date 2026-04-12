@@ -12,23 +12,28 @@
     "stress_lookback_days": 20,
     "stress_off_threshold": -0.08,
     "stress_on_threshold": -0.04,
+    "fee_side_mode": "taker",
+    "taker_fee_bps": 4.5,
+    "maker_fee_bps": 1.5,
+    "staking_discount_pct": 0.0,
+    "referral_discount_pct": 0.0,
     "cash_forced_1x": true,
     "switch_day_forced_1x": true,
     "entry_buffer_day_forced_1x": true,
     "exposure_basis_fix": "portfolio_held_asset = chosen_asset override else baseline held asset by same date"
   },
   "transition_mapping_meta": {
-    "decision_rows_total": 361,
+    "decision_rows_total": 362,
     "selected_rows_used": 45,
-    "governance_switch_rows": 3,
-    "mapped_transition_rows": 3,
+    "governance_switch_rows": 9,
+    "mapped_transition_rows": 9,
     "unmapped_transition_rows": 0,
     "mapping_sources": {
-      "period_start": 3
+      "period_start": 9
     }
   },
-  "governance_switch_count": 3,
-  "tradable_transition_count": 3,
+  "governance_switch_count": 9,
+  "tradable_transition_count": 9,
   "transition_calendar_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\phase68g_tradable_transition_calendar.csv",
   "variants": [
     {
@@ -46,6 +51,7 @@
   ],
   "summary_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\phase68g_portfolio_exposure_leverage_summary.csv",
   "compare_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\phase68g_portfolio_exposure_leverage_compare.csv",
+  "authoritative_net_compare_export_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
   "papers_dir": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\papers",
   "notes": [
     "Fixnut\u00fd exposure lineage: leverage u\u017e nepou\u017e\u00edva chosen_asset ako cel\u00fd held path.",

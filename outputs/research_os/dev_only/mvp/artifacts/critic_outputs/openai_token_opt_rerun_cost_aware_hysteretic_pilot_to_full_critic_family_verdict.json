@@ -1,0 +1,145 @@
+{
+  "dev_only": true,
+  "error": "",
+  "evidence": {
+    "adapter_id": "safe_dev_only_artifact_adapter_v1",
+    "compare_metric_count": 4,
+    "deterministic_policy_result": {
+      "next_action": "pause_family",
+      "verdict": "pause",
+      "verdict_reason": "pause: net return remains positive, but guardrails breached: dd below -1.0, trade days delta above 4, switch count delta above 4, turnover pressure above 0"
+    },
+    "guardrail_breaches": [
+      "dd below -1.0",
+      "trade days delta above 4",
+      "switch count delta above 4",
+      "turnover pressure above 0"
+    ],
+    "net_first_rules": {
+      "pause_if_dd_lt": -1.0,
+      "pause_if_switch_count_delta_gt": 4.0,
+      "pause_if_trade_days_delta_gt": 4.0,
+      "pause_if_turnover_pressure_gt": 0.0,
+      "stop_if_net_return_lte": 0.0
+    },
+    "openai_review": {
+      "api_key_env": "OPENAI_API_KEY",
+      "api_key_present": true,
+      "effective_openai_config": {
+        "api_key_env": "OPENAI_API_KEY",
+        "api_key_present": true,
+        "enabled": true,
+        "fail_closed": true,
+        "model": "gpt-5.4",
+        "prompt_template": "research_os_critic_family_verdict_v1",
+        "reasoning_effort": "low",
+        "reasoning_summary": "auto",
+        "responses_api": "https://api.openai.com/v1/responses",
+        "strict_schema_validation": true,
+        "timeout_seconds": 60
+      },
+      "effective_openai_source": {
+        "base": "runtime.openai",
+        "component_keys": [
+          "api_key_env",
+          "api_key_present",
+          "enabled",
+          "fail_closed",
+          "model",
+          "prompt_template",
+          "reasoning_effort",
+          "reasoning_summary",
+          "responses_api",
+          "strict_schema_validation",
+          "timeout_seconds"
+        ],
+        "enabled_from": "critic.openai.enabled",
+        "enabled_resolution_debug": {
+          "raw_config_enabled_value": true,
+          "resolved_enabled_value": true,
+          "where_override_happened": "none"
+        },
+        "overlay": "critic.openai",
+        "runtime_keys": [
+          "api_key_env",
+          "api_key_present",
+          "enabled",
+          "fail_closed",
+          "model",
+          "prompt_template",
+          "reasoning_effort",
+          "reasoning_summary",
+          "responses_api",
+          "strict_schema_validation",
+          "timeout_seconds"
+        ]
+      },
+      "enabled": true,
+      "fail_closed": true,
+      "guardrail_breaches": [
+        "dd below -1.0",
+        "trade days delta above 4",
+        "switch count delta above 4",
+        "turnover pressure above 0"
+      ],
+      "model": "gpt-5.4",
+      "network_call": "completed",
+      "policy_alignment_note": "Aligned to net-first policy exactly: net_return > 0 avoids stop, but any listed breach requires a pause; no live trading, mutation, promotion, or execution is authorized.",
+      "prompt_template": "research_os_critic_family_verdict_v1",
+      "reasoning_effort": "low",
+      "reasoning_summary": "auto",
+      "recommendation_applied": true,
+      "recommended_next_action": "pause_family",
+      "recommended_reason": "Pause under net-first policy: drawdown, switch-count delta, trade-days delta, and turnover-pressure thresholds were all breached, despite positive net return.",
+      "recommended_verdict": "pause",
+      "response_id": "resp_00811c300cbf540a0069dc07ecbda4819591fdf51df5ffb621",
+      "response_model": "gpt-5.4-2026-03-05",
+      "response_status": "completed",
+      "responses_api": "https://api.openai.com/v1/responses",
+      "strict_schema_validation": true,
+      "timeout_seconds": 60,
+      "usage": {
+        "input_tokens": 1024,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 188,
+        "output_tokens_details": {
+          "reasoning_tokens": 50
+        },
+        "total_tokens": 1212
+      }
+    },
+    "stop_condition": "Reject if switch_count_delta > 4, turnover_pressure_delta > 0.0, max_drawdown_delta_pct < -1.0, net_cagr_delta_pct <= 0.0 after costs, or if the change expands beyond this single rule restriction."
+  },
+  "family_id": "cost_aware_hysteretic_pilot_to_full",
+  "generated_at": "2026-04-12T21:00:32+00:00",
+  "job_id": "openai_token_opt_rerun_cost_aware_hysteretic_pilot_to_full_critic",
+  "key_metrics": {
+    "dd": -5.722469,
+    "net_return": 35606.473036,
+    "switch_count_delta": 11.0,
+    "trade_days_delta": 7.0,
+    "turnover_pressure": 2.0
+  },
+  "live_trading": false,
+  "mechanism_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+  "next_action": "pause_family",
+  "non_authoritative": true,
+  "official_promotion_logic": false,
+  "official_truth": false,
+  "proposal_id": "openai_token_opt_rerun_cost_aware_hysteretic_pilot_to_full_mutation_proposal",
+  "request_id": "openai_token_opt_rerun_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+  "result_id": "openai_token_opt_rerun_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_result",
+  "schema_version": "research_os_mvp.v1",
+  "source_compare_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\openai_token_opt_rerun_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_compare.csv",
+  "source_cost_metrics_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\openai_token_opt_rerun_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_cost_metrics.csv",
+  "source_of_truth_mutation": false,
+  "source_summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\openai_token_opt_rerun_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_summary.json",
+  "status": "critic_completed",
+  "strategy_advancement": false,
+  "strategy_code_executed": false,
+  "verdict": "pause",
+  "verdict_id": "openai_token_opt_rerun_cost_aware_hysteretic_pilot_to_full_critic_family_verdict",
+  "verdict_reason": "Pause under net-first policy: drawdown, switch-count delta, trade-days delta, and turnover-pressure thresholds were all breached, despite positive net return."
+}

@@ -1,0 +1,15 @@
+metric,baseline_model,baseline_value,probe_model,probe_value,delta_probe_minus_baseline
+all_activation_windows_count,phase67j_no_neo_main,0.0,btc_vol_standardized_cusum_upshift_probe,3.0,3.0
+earlier_activation_windows_count,phase67j_no_neo_main,0.0,btc_vol_standardized_cusum_upshift_probe,2.0,2.0
+avg_lead_days_vs_baseline,phase67j_no_neo_main,0.0,btc_vol_standardized_cusum_upshift_probe,16.0,16.0
+median_lead_days_vs_baseline,phase67j_no_neo_main,0.0,btc_vol_standardized_cusum_upshift_probe,16.0,16.0
+max_lead_days_vs_baseline,phase67j_no_neo_main,0.0,btc_vol_standardized_cusum_upshift_probe,31.0,31.0
+net_early_move_capture_pct,phase67j_no_neo_main,0.0,btc_vol_standardized_cusum_upshift_probe,52.270647000000004,52.270647000000004
+trade_count,phase67j_no_neo_main,72.0,btc_vol_standardized_cusum_upshift_probe,74.0,2.0
+switch_count,phase67j_no_neo_main,72.0,btc_vol_standardized_cusum_upshift_probe,76.0,4.0
+turnover_pressure,phase67j_no_neo_main,72.0,btc_vol_standardized_cusum_upshift_probe,74.0,2.0
+net_max_drawdown_pct,phase67j_no_neo_main,-26.377525,btc_vol_standardized_cusum_upshift_probe,-26.377525,0.0
+net_total_return_pct,phase67j_no_neo_main,93500.121242,btc_vol_standardized_cusum_upshift_probe,151179.440148,57679.318906
+net_cagr_pct,phase67j_no_neo_main,137.209803,btc_vol_standardized_cusum_upshift_probe,152.032665,14.822862000000015
+gross_total_return_pct,phase67j_no_neo_main,103793.757647,btc_vol_standardized_cusum_upshift_probe,168240.432345,64446.674698
+cusum_risk_days,phase67j_no_neo_main,0.0,btc_vol_standardized_cusum_upshift_probe,34.0,34.0

@@ -22,6 +22,12 @@ class JobQueue(Protocol):
     def ack(self, stream: str, group: str, message_id: str) -> None:
         raise NotImplementedError
 
+    def ping(self) -> bool:
+        raise NotImplementedError
+
+    def prepare_consumer_group(self, stream: str, group: str) -> None:
+        raise NotImplementedError
+
 
 def publish_exactly_one(queue: JobQueue, stream: str, payload: dict[str, Any]) -> dict[str, Any]:
     message_id = queue.publish(stream=stream, payload=payload)
@@ -70,6 +76,13 @@ class InMemoryStreamQueue:
     def ack(self, stream: str, group: str, message_id: str) -> None:
         del stream, group, message_id
 
+    def ping(self) -> bool:
+        return True
+
+    def prepare_consumer_group(self, stream: str, group: str) -> None:
+        del group
+        self._streams.setdefault(stream, [])
+
 
 class RedisStreamQueue:
     """Redis Streams adapter used by the Pi orchestrator and PC worker."""
@@ -102,6 +115,12 @@ class RedisStreamQueue:
 
     def ack(self, stream: str, group: str, message_id: str) -> None:
         self._client.xack(stream, group, message_id)
+
+    def ping(self) -> bool:
+        return bool(self._client.ping())
+
+    def prepare_consumer_group(self, stream: str, group: str) -> None:
+        self._ensure_group(stream=stream, group=group)
 
     def _ensure_group(self, stream: str, group: str) -> None:
         try:

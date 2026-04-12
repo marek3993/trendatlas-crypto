@@ -24,6 +24,7 @@ PHASE66G_SCRIPT = ROOT / "scripts" / "phase66g_production_candidate_live.py"
 PHASE67J_SCRIPT = ROOT / "scripts" / "phase67j_final_narrow_validation_pack.py"
 VERIFY_SCRIPT = ROOT / "scripts" / "verify_app_freshness.py"
 MATERIALIZE_SCRIPT = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
+SCHEDULER_ENTRY_SCRIPT = ROOT / "scripts" / "execution" / "run_full_auto_scheduler_entry.py"
 DEV_ONLY_ANOMALY_SCRIPT = ROOT / "scripts" / "dev_only_anomaly_operating_mode_runner.py"
 PHASE60_PINNED_MODEL = "phase60_restore_trx_sol_base"
 PHASE63_PINNED_MODEL = "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3"
@@ -233,29 +234,16 @@ def write_manifest(run_dir: Path, manifest: dict[str, Any]) -> Path:
     return manifest_path
 
 
-def run_runtime_snapshot_materialization(
+def run_post_strategy_runtime_refresh(
     env: dict[str, str],
     logs_dir: Path,
-    *,
-    required: bool,
 ) -> dict[str, Any]:
-    if required:
-        return run_step(
-            "materialize_app_runtime_snapshot",
-            MATERIALIZE_SCRIPT,
-            env,
-            logs_dir,
-            script_args=["--runtime-snapshot-only"],
-        )
-
-    return run_non_fatal_post_step(
-        "materialize_app_runtime_snapshot",
-        MATERIALIZE_SCRIPT,
+    return run_step(
+        "run_full_auto_scheduler_entry",
+        SCHEDULER_ENTRY_SCRIPT,
         env,
         logs_dir,
-        script_args=["--runtime-snapshot-only"],
-        dev_only=False,
-        non_authoritative_outputs_only=False,
+        script_args=[],
     )
 
 
@@ -287,6 +275,8 @@ def main() -> None:
         "skip_macro_refresh": bool(args.skip_macro_refresh),
         "skip_top100_refresh": bool(args.skip_top100_refresh),
         "main_refresh_chain_status": "RUNNING",
+        "strategy_refresh_chain_status": "RUNNING",
+        "post_strategy_runtime_refresh_status": "NOT_RUN",
         "steps": [],
         "dev_only_post_step": {
             "step_name": "dev_only_anomaly_operating_mode_runner",
@@ -365,13 +355,20 @@ def main() -> None:
         freshness = load_json(FRESHNESS_REPORT)
         macro_report = load_json(MACRO_REFRESH_REPORT)
 
-        manifest["main_refresh_chain_finished_at_utc"] = now_utc()
-        manifest["main_refresh_chain_status"] = "OK"
-        manifest["status"] = "OK"
+        manifest["strategy_refresh_chain_finished_at_utc"] = now_utc()
+        manifest["strategy_refresh_chain_status"] = "OK"
         manifest["freshness_report_path"] = str(FRESHNESS_REPORT)
         manifest["macro_refresh_report_path"] = str(MACRO_REFRESH_REPORT)
         manifest["freshness_report"] = freshness
         manifest["macro_refresh_report"] = macro_report
+        manifest["post_strategy_runtime_refresh"] = run_post_strategy_runtime_refresh(
+            env,
+            logs_dir,
+        )
+        manifest["post_strategy_runtime_refresh_status"] = "OK"
+        manifest["main_refresh_chain_finished_at_utc"] = now_utc()
+        manifest["main_refresh_chain_status"] = "OK"
+        manifest["status"] = "OK"
         manifest["dev_only_post_step"] = run_non_fatal_post_step(
             "dev_only_anomaly_operating_mode_runner",
             DEV_ONLY_ANOMALY_SCRIPT,
@@ -380,12 +377,6 @@ def main() -> None:
         )
         manifest["finished_at_utc"] = now_utc()
 
-        manifest_path = write_manifest(run_dir, manifest)
-        manifest["runtime_snapshot_materialization_step"] = run_runtime_snapshot_materialization(
-            env,
-            logs_dir,
-            required=True,
-        )
         manifest_path = write_manifest(run_dir, manifest)
 
         print("[APP-REFRESH] status=OK", flush=True)
@@ -398,16 +389,14 @@ def main() -> None:
 
     except Exception as exc:
         manifest["finished_at_utc"] = now_utc()
+        if manifest.get("strategy_refresh_chain_status") == "RUNNING":
+            manifest["strategy_refresh_chain_status"] = "FAIL"
+        if manifest.get("post_strategy_runtime_refresh_status") == "NOT_RUN":
+            manifest["post_strategy_runtime_refresh_status"] = "FAIL"
         manifest["main_refresh_chain_status"] = "FAIL"
         manifest["status"] = "FAIL"
         manifest["error"] = str(exc)
 
-        manifest_path = write_manifest(run_dir, manifest)
-        manifest["runtime_snapshot_materialization_step"] = run_runtime_snapshot_materialization(
-            env,
-            logs_dir,
-            required=False,
-        )
         manifest_path = write_manifest(run_dir, manifest)
 
         print("[APP-REFRESH] status=FAIL", flush=True)

@@ -1,0 +1,1303 @@
+{
+  "created_at": "2026-04-12T12:39:33+00:00",
+  "jobs": [
+    {
+      "artifact_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts",
+      "constraints": {
+        "artifact_scope": "outputs/research_os/dev_only/mvp",
+        "dev_only": true,
+        "live_trading": false,
+        "non_authoritative": true,
+        "official_promotion_logic": false,
+        "queue_ready_request_only": true,
+        "source_of_truth_mutation": false,
+        "strategy_mutation_execution": false
+      },
+      "created_at": "2026-04-12T12:39:33+00:00",
+      "family_id": "cost_aware_hysteretic_pilot_to_full",
+      "job_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_propose_next_mutation",
+      "job_type": "propose_next_mutation",
+      "payload": {
+        "description": "Track cost-aware CASH to PILOT to FULL family state from two non-authoritative dev-only attempts.",
+        "family_state_snapshot": {
+          "artifact_count": 8,
+          "dev_only": true,
+          "families": [
+            {
+              "attempt_count": 2,
+              "constraints": {
+                "artifact_scope": "outputs/research_os/dev_only/mvp",
+                "dev_only": true,
+                "live_trading": false,
+                "non_authoritative": true,
+                "official_promotion_logic": false,
+                "source_of_truth_mutation": false
+              },
+              "description": "Track cost-aware CASH to PILOT to FULL family state from two non-authoritative dev-only attempts.",
+              "family_id": "cost_aware_hysteretic_pilot_to_full",
+              "last_artifact_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+              "last_metrics": {
+                "lead_days_avg": 33.75,
+                "lead_days_max": 55,
+                "max_drawdown_delta_pct": -5.722469,
+                "net_cagr_delta_pct": 9.853988,
+                "net_early_move_capture_total_pct": 42.147373,
+                "net_total_return_delta_pct": 35606.473036,
+                "switch_count_delta": 11,
+                "trade_days_delta": 7,
+                "turnover_pressure_delta": 2.0
+              },
+              "last_verdict": "stop_condition_triggered",
+              "lineage": [
+                {
+                  "artifact_id": "cost_aware_hysteretic_pilot_to_full_probe",
+                  "artifact_type": "summary",
+                  "family_id": "cost_aware_hysteretic_pilot_to_full",
+                  "generated_at_utc": "2026-04-10 06:15:41 UTC",
+                  "governance": {
+                    "candidate_selection": false,
+                    "dev_only": true,
+                    "non_authoritative": true,
+                    "official_edge_claim": false,
+                    "official_truth": false,
+                    "strategy_advancement": false
+                  },
+                  "input_refs": {
+                    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                    "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                    "high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+                    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+                    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+                    "rearmed_high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json"
+                  },
+                  "mechanism_id": "cost_aware_hysteretic_pilot_to_full",
+                  "metrics": {
+                    "lead_days_avg": 29.0,
+                    "lead_days_max": 29,
+                    "net_cagr_delta_pct": 1.693353,
+                    "net_early_move_capture_total_pct": 5.644844,
+                    "net_total_return_delta_pct": 5424.947819,
+                    "switch_count_delta": 2,
+                    "trade_days_delta": 1,
+                    "turnover_pressure_delta": 0.0
+                  },
+                  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.summary.json",
+                  "raw_keys": [
+                    "analysis_mode",
+                    "artifact_id",
+                    "cagr_net",
+                    "candidate_selection",
+                    "compare_baseline",
+                    "cost_model",
+                    "dev_only",
+                    "final_verdict",
+                    "generated_at_utc",
+                    "gross_metrics_context",
+                    "input_refs",
+                    "lead_days_vs_baseline",
+                    "max_drawdown_net",
+                    "mechanism_id",
+                    "net_early_move_capture",
+                    "non_authoritative",
+                    "official_edge_claim",
+                    "official_truth",
+                    "pause_condition",
+                    "state_machine",
+                    "status",
+                    "stop_condition",
+                    "strategy_advancement",
+                    "switch_count_delta",
+                    "total_return_net",
+                    "trade_days_delta",
+                    "turnover_pressure",
+                    "why_different_from_constructive_pilot_persistence",
+                    "why_different_from_high_conviction_pre_activation",
+                    "why_different_from_phase68k_l_m"
+                  ],
+                  "status": "generated_dev_only_cost_aware_hysteretic_pilot_to_full_probe_summary",
+                  "verdict": "pause_condition_triggered"
+                },
+                {
+                  "artifact_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+                  "artifact_type": "summary",
+                  "family_id": "cost_aware_hysteretic_pilot_to_full",
+                  "generated_at_utc": "2026-04-10 06:52:54 UTC",
+                  "governance": {
+                    "candidate_selection": false,
+                    "dev_only": true,
+                    "non_authoritative": true,
+                    "official_edge_claim": false,
+                    "official_truth": false,
+                    "strategy_advancement": false
+                  },
+                  "input_refs": {
+                    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                    "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                    "high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+                    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+                    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+                    "previous_cost_aware_hysteretic_cost_metrics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.cost_metrics.csv",
+                    "previous_cost_aware_hysteretic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.summary.json",
+                    "rearmed_high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json"
+                  },
+                  "mechanism_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm",
+                  "metrics": {
+                    "lead_days_avg": 33.75,
+                    "lead_days_max": 55,
+                    "max_drawdown_delta_pct": -5.722469,
+                    "net_cagr_delta_pct": 9.853988,
+                    "net_early_move_capture_total_pct": 42.147373,
+                    "net_total_return_delta_pct": 35606.473036,
+                    "switch_count_delta": 11,
+                    "trade_days_delta": 7,
+                    "turnover_pressure_delta": 2.0
+                  },
+                  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe\\cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.summary.json",
+                  "raw_keys": [
+                    "analysis_mode",
+                    "artifact_id",
+                    "candidate_selection",
+                    "compare_baseline",
+                    "compare_vs_previous_cost_aware_hysteretic_pilot_to_full",
+                    "cost_model",
+                    "dev_only",
+                    "final_verdict",
+                    "generated_at_utc",
+                    "gross_metrics_context",
+                    "input_refs",
+                    "lead_days_vs_baseline",
+                    "meaningful_earlier_activation_windows",
+                    "mechanism_id",
+                    "net_cagr",
+                    "net_early_move_capture",
+                    "net_max_drawdown",
+                    "net_total_return",
+                    "non_authoritative",
+                    "official_edge_claim",
+                    "official_truth",
+                    "pause_condition",
+                    "state_machine",
+                    "status",
+                    "stop_condition",
+                    "strategy_advancement",
+                    "switch_count_delta",
+                    "trade_days_delta",
+                    "turnover_pressure",
+                    "why_same_family_not_duplicate"
+                  ],
+                  "status": "generated_dev_only_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe_summary",
+                  "verdict": "stop_condition_triggered"
+                }
+              ],
+              "owner": "MRV1 AI LAB",
+              "safe_next_job_type": "analyze_family_state",
+              "status": "enabled"
+            },
+            {
+              "attempt_count": 2,
+              "constraints": {
+                "artifact_scope": "outputs/research_os/dev_only/mvp",
+                "dev_only": true,
+                "live_trading": false,
+                "non_authoritative": true,
+                "official_promotion_logic": false,
+                "source_of_truth_mutation": false
+              },
+              "description": "Track high-conviction pre-activation pilot family state from initial and rearmed confirmatory attempts.",
+              "family_id": "high_conviction_pre_activation_pilot",
+              "last_artifact_id": "rearmed_high_conviction_pre_activation_pilot_probe",
+              "last_metrics": {
+                "max_drawdown_delta_pct": 0.0,
+                "net_early_move_capture_delta_pct": 0.85003,
+                "switch_count_delta": 1,
+                "trade_count_delta": 1,
+                "turnover_pressure_delta": 0.0
+              },
+              "last_verdict": "stop_condition_triggered",
+              "lineage": [
+                {
+                  "artifact_id": "high_conviction_pre_activation_pilot_probe",
+                  "artifact_type": "summary",
+                  "family_id": "high_conviction_pre_activation_pilot",
+                  "generated_at_utc": "2026-04-09 20:54:40 UTC",
+                  "governance": {
+                    "candidate_selection": false,
+                    "dev_only": true,
+                    "non_authoritative": true,
+                    "official_edge_claim": false,
+                    "official_truth": false,
+                    "strategy_advancement": false
+                  },
+                  "input_refs": {
+                    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                    "cash_diagnostic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cash_diagnostics\\cash_overstay_diagnostic.summary.json",
+                    "constructive_pilot_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.compare.csv",
+                    "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+                    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+                  },
+                  "mechanism_id": "high_conviction_pre_activation_pilot",
+                  "metrics": {},
+                  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+                  "raw_keys": [
+                    "analysis_mode",
+                    "artifact_id",
+                    "candidate_selection",
+                    "compare_baseline",
+                    "compare_vs_pure_constructive_pilot",
+                    "constructive_participation_timing_baseline",
+                    "constructive_participation_timing_probe",
+                    "cost_model",
+                    "dev_only",
+                    "diagnosis_dominant_side",
+                    "diagnosis_evaluation",
+                    "early_move_capture_baseline",
+                    "early_move_capture_probe",
+                    "exact_earlier_activation_rule",
+                    "final_verdict",
+                    "generated_at_utc",
+                    "gross_return_baseline",
+                    "gross_return_probe",
+                    "input_refs",
+                    "max_drawdown_baseline",
+                    "max_drawdown_probe",
+                    "mechanism_id",
+                    "net_return_after_costs_baseline",
+                    "net_return_after_costs_probe",
+                    "non_authoritative",
+                    "official_edge_claim",
+                    "official_truth",
+                    "pause_condition",
+                    "status",
+                    "stop_condition",
+                    "strategy_advancement",
+                    "switch_count_baseline",
+                    "switch_count_probe",
+                    "trade_count_baseline",
+                    "trade_count_probe",
+                    "turnover_pressure_baseline",
+                    "turnover_pressure_probe",
+                    "why_different_from_constructive_pilot_persistence",
+                    "why_different_from_phase68k_l_m"
+                  ],
+                  "status": "generated_dev_only_high_conviction_pre_activation_pilot_probe_summary",
+                  "verdict": "pause_condition_triggered"
+                },
+                {
+                  "artifact_id": "rearmed_high_conviction_pre_activation_pilot_probe",
+                  "artifact_type": "summary",
+                  "family_id": "high_conviction_pre_activation_pilot",
+                  "generated_at_utc": "2026-04-09 21:18:27 UTC",
+                  "governance": {
+                    "candidate_selection": false,
+                    "dev_only": true,
+                    "non_authoritative": true,
+                    "official_edge_claim": false,
+                    "official_truth": false,
+                    "strategy_advancement": false
+                  },
+                  "input_refs": {
+                    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                    "constructive_pilot_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.compare.csv",
+                    "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+                    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+                    "previous_pre_activation_probe_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.compare.csv",
+                    "previous_pre_activation_probe_cost_metrics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.cost_metrics.csv",
+                    "previous_pre_activation_probe_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json"
+                  },
+                  "mechanism_id": "rearmed_high_conviction_pre_activation_pilot",
+                  "metrics": {
+                    "max_drawdown_delta_pct": 0.0,
+                    "net_early_move_capture_delta_pct": 0.85003,
+                    "switch_count_delta": 1,
+                    "trade_count_delta": 1,
+                    "turnover_pressure_delta": 0.0
+                  },
+                  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json",
+                  "raw_keys": [
+                    "analysis_mode",
+                    "artifact_id",
+                    "candidate_selection",
+                    "compare_baseline",
+                    "compare_vs_previous_pre_activation_probe",
+                    "compare_vs_pure_constructive_pilot",
+                    "cost_model",
+                    "dev_only",
+                    "diagnosis_update",
+                    "earlier_activation_windows_count",
+                    "evaluation_answers",
+                    "exact_confirmatory_rule_implemented",
+                    "final_verdict",
+                    "generated_at_utc",
+                    "gross_metrics_context",
+                    "input_refs",
+                    "lead_time_vs_baseline",
+                    "max_drawdown",
+                    "mechanism_id",
+                    "net_early_move_capture",
+                    "non_authoritative",
+                    "official_edge_claim",
+                    "official_truth",
+                    "pause_condition",
+                    "status",
+                    "stop_condition",
+                    "strategy_advancement",
+                    "switch_count",
+                    "trade_count",
+                    "turnover_pressure",
+                    "why_in_family_not_duplicate"
+                  ],
+                  "status": "generated_dev_only_rearmed_high_conviction_pre_activation_pilot_probe_summary",
+                  "verdict": "stop_condition_triggered"
+                }
+              ],
+              "owner": "MRV1 AI LAB",
+              "safe_next_job_type": "analyze_family_state",
+              "status": "enabled"
+            },
+            {
+              "attempt_count": 2,
+              "constraints": {
+                "artifact_scope": "outputs/research_os/dev_only/mvp",
+                "dev_only": true,
+                "live_trading": false,
+                "non_authoritative": true,
+                "official_promotion_logic": false,
+                "source_of_truth_mutation": false
+              },
+              "description": "Track constructive-regime pilot exposure persistence family state from cash diagnostic and pilot probe artifacts.",
+              "family_id": "constructive_regime_pilot_exposure_persistence",
+              "last_artifact_id": "constructive_pilot_probe",
+              "last_metrics": {},
+              "last_verdict": "mixed_pause_recommended",
+              "lineage": [
+                {
+                  "artifact_id": "cash_overstay_diagnostic",
+                  "artifact_type": "summary",
+                  "family_id": "cash_overstay_diagnostic",
+                  "generated_at_utc": "2026-04-09 18:34:13 UTC",
+                  "governance": {
+                    "candidate_selection": false,
+                    "dev_only": true,
+                    "non_authoritative": true,
+                    "official_edge_claim": false,
+                    "official_truth": false,
+                    "strategy_advancement": false
+                  },
+                  "input_refs": {
+                    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                    "phase68_context_refs": {
+                      "phase68k_context": [
+                        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv"
+                      ],
+                      "phase68l_context": [
+                        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_state_time.csv"
+                      ],
+                      "phase68m_context": [
+                        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+                        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_state_time.csv"
+                      ]
+                    },
+                    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv"
+                  },
+                  "mechanism_id": "constructive_regime_pilot_exposure_persistence",
+                  "metrics": {},
+                  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cash_diagnostics\\cash_overstay_diagnostic.summary.json",
+                  "raw_keys": [
+                    "aggregate_metrics",
+                    "analysis_mode",
+                    "artifact_id",
+                    "candidate_selection",
+                    "constructive_window_rule",
+                    "dev_only",
+                    "final_diagnostic_verdict",
+                    "follow_up_recommendation",
+                    "generated_at_utc",
+                    "input_refs",
+                    "non_authoritative",
+                    "official_edge_claim",
+                    "official_truth",
+                    "row_counts",
+                    "source_compare_id",
+                    "status",
+                    "strategy_advancement",
+                    "why_phase68l_m_not_sufficient"
+                  ],
+                  "status": "generated_dev_only_cash_diagnostic_summary",
+                  "verdict": "premature_risk_off_failure_to_stay_exposed"
+                },
+                {
+                  "artifact_id": "constructive_pilot_probe",
+                  "artifact_type": "summary",
+                  "family_id": "constructive_regime_pilot_exposure_persistence",
+                  "generated_at_utc": "2026-04-09 19:36:53 UTC",
+                  "governance": {
+                    "candidate_selection": false,
+                    "dev_only": true,
+                    "non_authoritative": true,
+                    "official_edge_claim": false,
+                    "official_truth": false,
+                    "strategy_advancement": false
+                  },
+                  "input_refs": {
+                    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                    "cash_diagnostic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cash_diagnostics\\cash_overstay_diagnostic.summary.json",
+                    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+                  },
+                  "mechanism_id": "constructive_regime_pilot_exposure_persistence",
+                  "metrics": {},
+                  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                  "raw_keys": [
+                    "analysis_mode",
+                    "artifact_id",
+                    "baseline_cash_share_in_constructive_windows",
+                    "baseline_material_gap_windows",
+                    "baseline_missed_benchmark_return_while_underexposed",
+                    "baseline_time_in_market_share_in_constructive_windows",
+                    "candidate_selection",
+                    "compare_baseline",
+                    "constructive_windows_count",
+                    "descriptive_only",
+                    "dev_only",
+                    "final_verdict",
+                    "generated_at_utc",
+                    "input_refs",
+                    "mechanism_id",
+                    "non_authoritative",
+                    "official_edge_claim",
+                    "official_truth",
+                    "pause_condition",
+                    "pilot_exposure_rule",
+                    "probe_cash_share_in_constructive_windows",
+                    "probe_material_gap_windows",
+                    "probe_missed_benchmark_return_while_underexposed",
+                    "probe_time_in_market_share_in_constructive_windows",
+                    "status",
+                    "stop_condition",
+                    "strategy_advancement",
+                    "why_meaningfully_different_from_phase68k_l_m"
+                  ],
+                  "status": "generated_dev_only_constructive_pilot_probe_summary",
+                  "verdict": "mixed_pause_recommended"
+                }
+              ],
+              "owner": "MRV1 AI LAB",
+              "safe_next_job_type": "analyze_family_state",
+              "status": "enabled"
+            },
+            {
+              "attempt_count": 1,
+              "constraints": {
+                "artifact_scope": "outputs/research_os/dev_only/mvp",
+                "dev_only": true,
+                "live_trading": false,
+                "non_authoritative": true,
+                "official_promotion_logic": false,
+                "source_of_truth_mutation": false
+              },
+              "description": "Descriptive supportive versus caution subset context for future planner prompts.",
+              "family_id": "descriptive_subset_context",
+              "last_artifact_id": "supportive_vs_caution_subset_layer_v1",
+              "last_metrics": {},
+              "last_verdict": "generated_dev_only_subset_summary",
+              "lineage": [
+                {
+                  "artifact_id": "supportive_vs_caution_subset_layer_v1",
+                  "artifact_type": "summary",
+                  "family_id": "descriptive_subset_context",
+                  "generated_at_utc": "2026-04-09 17:36:58 UTC",
+                  "governance": {
+                    "candidate_selection": false,
+                    "dev_only": true,
+                    "non_authoritative": true,
+                    "official_edge_claim": false,
+                    "official_truth": false,
+                    "strategy_advancement": false
+                  },
+                  "input_refs": {
+                    "input_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_bot_compare\\anomaly_vs_response_shape_aligned_comparison.csv",
+                    "input_json_fallback": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_bot_compare\\anomaly_vs_response_shape_aligned_comparison.json"
+                  },
+                  "mechanism_id": "",
+                  "metrics": {},
+                  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_subset_layer\\supportive_vs_caution_subset_layer_v1.summary.json",
+                  "raw_keys": [
+                    "analysis_mode",
+                    "artifact_id",
+                    "candidate_selection",
+                    "concentration_dimensions",
+                    "dev_only",
+                    "exact_matching_metadata",
+                    "fuzzy_matching_used",
+                    "generated_at_utc",
+                    "input_refs",
+                    "non_authoritative",
+                    "official_edge_claim",
+                    "official_truth",
+                    "persistence_dimensions",
+                    "row_counts",
+                    "source_compare_id",
+                    "status",
+                    "strategy_advancement"
+                  ],
+                  "status": "generated_dev_only_subset_summary",
+                  "verdict": "generated_dev_only_subset_summary"
+                }
+              ],
+              "owner": "MRV1 AI LAB",
+              "safe_next_job_type": "analyze_family_state",
+              "status": "context_only"
+            },
+            {
+              "attempt_count": 1,
+              "constraints": {
+                "artifact_scope": "outputs/research_os/dev_only/mvp",
+                "dev_only": true,
+                "live_trading": false,
+                "non_authoritative": true,
+                "official_promotion_logic": false,
+                "source_of_truth_mutation": false
+              },
+              "description": "Descriptive anomaly-aligned response-shape profile context for future planner prompts.",
+              "family_id": "response_shape_anomaly_aligned_context",
+              "last_artifact_id": "response_shape_bot_v1_anomaly_aligned_profile",
+              "last_metrics": {},
+              "last_verdict": "generated_dev_only_response_shape_profile",
+              "lineage": [
+                {
+                  "artifact_id": "response_shape_bot_v1_anomaly_aligned_profile",
+                  "artifact_type": "profile",
+                  "family_id": "response_shape_anomaly_aligned_context",
+                  "generated_at_utc": "2026-04-08 18:19:11 UTC",
+                  "governance": {
+                    "candidate_selection": false,
+                    "dev_only": true,
+                    "non_authoritative": true,
+                    "official_edge_claim": false,
+                    "official_truth": false,
+                    "strategy_advancement": false
+                  },
+                  "input_refs": {},
+                  "mechanism_id": "",
+                  "metrics": {},
+                  "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_response_shape_aligned\\response_shape_bot_v1_anomaly_aligned.profile.json",
+                  "raw_keys": [
+                    "analysis_mode",
+                    "anomaly_score_definition",
+                    "artifact_id",
+                    "artifact_type",
+                    "bot_id",
+                    "date_max",
+                    "date_min",
+                    "dev_only",
+                    "entry_regime_distribution",
+                    "generated_at_utc",
+                    "live_decision_ready",
+                    "non_authoritative",
+                    "null_count_per_column",
+                    "numeric_feature_summary",
+                    "official_truth",
+                    "response_regime_context_distribution",
+                    "row_count",
+                    "selected_asset_coverage",
+                    "status",
+                    "strategy_advancement",
+                    "top_abnormal_rows"
+                  ],
+                  "status": "generated_dev_only_response_shape_profile",
+                  "verdict": "generated_dev_only_response_shape_profile"
+                }
+              ],
+              "owner": "MRV1 AI LAB",
+              "safe_next_job_type": "analyze_family_state",
+              "status": "context_only"
+            }
+          ],
+          "generated_at": "2026-04-12T12:39:18+00:00",
+          "mode": "dev_only_family_state_snapshot",
+          "non_authoritative": true,
+          "notes": [
+            "registry_lineage_snapshot_from_allowlisted_non_authoritative_artifacts"
+          ],
+          "official_truth": false,
+          "schema_version": "research_os_mvp.v1",
+          "snapshot_id": "latest_family_state_snapshot"
+        },
+        "family_state_snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\family_state\\latest_family_state_snapshot.json",
+        "market_state_snapshot": {
+          "dev_only": true,
+          "generated_at": "2026-04-12T12:39:18+00:00",
+          "governance": {
+            "dev_only": true,
+            "live_trading": false,
+            "non_authoritative": true,
+            "official_promotion_logic": false,
+            "official_truth": false,
+            "source_of_truth_mutation": false
+          },
+          "market_context": {
+            "artifact_ids": [
+              "cash_overstay_diagnostic",
+              "constructive_pilot_probe",
+              "high_conviction_pre_activation_pilot_probe",
+              "rearmed_high_conviction_pre_activation_pilot_probe",
+              "cost_aware_hysteretic_pilot_to_full_probe",
+              "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+              "supportive_vs_caution_subset_layer_v1",
+              "response_shape_bot_v1_anomaly_aligned_profile"
+            ],
+            "latest_generated_at_utc": "2026-04-10 06:52:54 UTC",
+            "response_shape_profile": {
+              "artifact_id": "response_shape_bot_v1_anomaly_aligned_profile",
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_response_shape_aligned\\response_shape_bot_v1_anomaly_aligned.profile.json"
+            },
+            "subset_layer": {
+              "artifact_id": "supportive_vs_caution_subset_layer_v1",
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_subset_layer\\supportive_vs_caution_subset_layer_v1.summary.json"
+            },
+            "verdict_counts": {
+              "generated_dev_only_response_shape_profile": 1,
+              "generated_dev_only_subset_summary": 1,
+              "mixed_pause_recommended": 1,
+              "pause_condition_triggered": 2,
+              "premature_risk_off_failure_to_stay_exposed": 1,
+              "stop_condition_triggered": 2
+            }
+          },
+          "mode": "dev_only_research_os_snapshot",
+          "non_authoritative": true,
+          "notes": [
+            "read_only_snapshot_from_allowlisted_dev_only_artifacts"
+          ],
+          "official_truth": false,
+          "schema_version": "research_os_mvp.v1",
+          "snapshot_id": "latest_market_state",
+          "source_artifact_count": 8,
+          "source_artifacts": [
+            {
+              "artifact_id": "cash_overstay_diagnostic",
+              "artifact_type": "summary",
+              "family_id": "cash_overstay_diagnostic",
+              "generated_at_utc": "2026-04-09 18:34:13 UTC",
+              "governance": {
+                "candidate_selection": false,
+                "dev_only": true,
+                "non_authoritative": true,
+                "official_edge_claim": false,
+                "official_truth": false,
+                "strategy_advancement": false
+              },
+              "input_refs": {
+                "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                "phase68_context_refs": {
+                  "phase68k_context": [
+                    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv"
+                  ],
+                  "phase68l_context": [
+                    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_state_time.csv"
+                  ],
+                  "phase68m_context": [
+                    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+                    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_state_time.csv"
+                  ]
+                },
+                "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv"
+              },
+              "mechanism_id": "constructive_regime_pilot_exposure_persistence",
+              "metrics": {},
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cash_diagnostics\\cash_overstay_diagnostic.summary.json",
+              "raw_keys": [
+                "aggregate_metrics",
+                "analysis_mode",
+                "artifact_id",
+                "candidate_selection",
+                "constructive_window_rule",
+                "dev_only",
+                "final_diagnostic_verdict",
+                "follow_up_recommendation",
+                "generated_at_utc",
+                "input_refs",
+                "non_authoritative",
+                "official_edge_claim",
+                "official_truth",
+                "row_counts",
+                "source_compare_id",
+                "status",
+                "strategy_advancement",
+                "why_phase68l_m_not_sufficient"
+              ],
+              "status": "generated_dev_only_cash_diagnostic_summary",
+              "verdict": "premature_risk_off_failure_to_stay_exposed"
+            },
+            {
+              "artifact_id": "constructive_pilot_probe",
+              "artifact_type": "summary",
+              "family_id": "constructive_regime_pilot_exposure_persistence",
+              "generated_at_utc": "2026-04-09 19:36:53 UTC",
+              "governance": {
+                "candidate_selection": false,
+                "dev_only": true,
+                "non_authoritative": true,
+                "official_edge_claim": false,
+                "official_truth": false,
+                "strategy_advancement": false
+              },
+              "input_refs": {
+                "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                "cash_diagnostic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cash_diagnostics\\cash_overstay_diagnostic.summary.json",
+                "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+              },
+              "mechanism_id": "constructive_regime_pilot_exposure_persistence",
+              "metrics": {},
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+              "raw_keys": [
+                "analysis_mode",
+                "artifact_id",
+                "baseline_cash_share_in_constructive_windows",
+                "baseline_material_gap_windows",
+                "baseline_missed_benchmark_return_while_underexposed",
+                "baseline_time_in_market_share_in_constructive_windows",
+                "candidate_selection",
+                "compare_baseline",
+                "constructive_windows_count",
+                "descriptive_only",
+                "dev_only",
+                "final_verdict",
+                "generated_at_utc",
+                "input_refs",
+                "mechanism_id",
+                "non_authoritative",
+                "official_edge_claim",
+                "official_truth",
+                "pause_condition",
+                "pilot_exposure_rule",
+                "probe_cash_share_in_constructive_windows",
+                "probe_material_gap_windows",
+                "probe_missed_benchmark_return_while_underexposed",
+                "probe_time_in_market_share_in_constructive_windows",
+                "status",
+                "stop_condition",
+                "strategy_advancement",
+                "why_meaningfully_different_from_phase68k_l_m"
+              ],
+              "status": "generated_dev_only_constructive_pilot_probe_summary",
+              "verdict": "mixed_pause_recommended"
+            },
+            {
+              "artifact_id": "high_conviction_pre_activation_pilot_probe",
+              "artifact_type": "summary",
+              "family_id": "high_conviction_pre_activation_pilot",
+              "generated_at_utc": "2026-04-09 20:54:40 UTC",
+              "governance": {
+                "candidate_selection": false,
+                "dev_only": true,
+                "non_authoritative": true,
+                "official_edge_claim": false,
+                "official_truth": false,
+                "strategy_advancement": false
+              },
+              "input_refs": {
+                "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                "cash_diagnostic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cash_diagnostics\\cash_overstay_diagnostic.summary.json",
+                "constructive_pilot_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.compare.csv",
+                "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+                "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv"
+              },
+              "mechanism_id": "high_conviction_pre_activation_pilot",
+              "metrics": {},
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+              "raw_keys": [
+                "analysis_mode",
+                "artifact_id",
+                "candidate_selection",
+                "compare_baseline",
+                "compare_vs_pure_constructive_pilot",
+                "constructive_participation_timing_baseline",
+                "constructive_participation_timing_probe",
+                "cost_model",
+                "dev_only",
+                "diagnosis_dominant_side",
+                "diagnosis_evaluation",
+                "early_move_capture_baseline",
+                "early_move_capture_probe",
+                "exact_earlier_activation_rule",
+                "final_verdict",
+                "generated_at_utc",
+                "gross_return_baseline",
+                "gross_return_probe",
+                "input_refs",
+                "max_drawdown_baseline",
+                "max_drawdown_probe",
+                "mechanism_id",
+                "net_return_after_costs_baseline",
+                "net_return_after_costs_probe",
+                "non_authoritative",
+                "official_edge_claim",
+                "official_truth",
+                "pause_condition",
+                "status",
+                "stop_condition",
+                "strategy_advancement",
+                "switch_count_baseline",
+                "switch_count_probe",
+                "trade_count_baseline",
+                "trade_count_probe",
+                "turnover_pressure_baseline",
+                "turnover_pressure_probe",
+                "why_different_from_constructive_pilot_persistence",
+                "why_different_from_phase68k_l_m"
+              ],
+              "status": "generated_dev_only_high_conviction_pre_activation_pilot_probe_summary",
+              "verdict": "pause_condition_triggered"
+            },
+            {
+              "artifact_id": "rearmed_high_conviction_pre_activation_pilot_probe",
+              "artifact_type": "summary",
+              "family_id": "high_conviction_pre_activation_pilot",
+              "generated_at_utc": "2026-04-09 21:18:27 UTC",
+              "governance": {
+                "candidate_selection": false,
+                "dev_only": true,
+                "non_authoritative": true,
+                "official_edge_claim": false,
+                "official_truth": false,
+                "strategy_advancement": false
+              },
+              "input_refs": {
+                "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                "constructive_pilot_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.compare.csv",
+                "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+                "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+                "previous_pre_activation_probe_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.compare.csv",
+                "previous_pre_activation_probe_cost_metrics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.cost_metrics.csv",
+                "previous_pre_activation_probe_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json"
+              },
+              "mechanism_id": "rearmed_high_conviction_pre_activation_pilot",
+              "metrics": {
+                "max_drawdown_delta_pct": 0.0,
+                "net_early_move_capture_delta_pct": 0.85003,
+                "switch_count_delta": 1,
+                "trade_count_delta": 1,
+                "turnover_pressure_delta": 0.0
+              },
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json",
+              "raw_keys": [
+                "analysis_mode",
+                "artifact_id",
+                "candidate_selection",
+                "compare_baseline",
+                "compare_vs_previous_pre_activation_probe",
+                "compare_vs_pure_constructive_pilot",
+                "cost_model",
+                "dev_only",
+                "diagnosis_update",
+                "earlier_activation_windows_count",
+                "evaluation_answers",
+                "exact_confirmatory_rule_implemented",
+                "final_verdict",
+                "generated_at_utc",
+                "gross_metrics_context",
+                "input_refs",
+                "lead_time_vs_baseline",
+                "max_drawdown",
+                "mechanism_id",
+                "net_early_move_capture",
+                "non_authoritative",
+                "official_edge_claim",
+                "official_truth",
+                "pause_condition",
+                "status",
+                "stop_condition",
+                "strategy_advancement",
+                "switch_count",
+                "trade_count",
+                "turnover_pressure",
+                "why_in_family_not_duplicate"
+              ],
+              "status": "generated_dev_only_rearmed_high_conviction_pre_activation_pilot_probe_summary",
+              "verdict": "stop_condition_triggered"
+            },
+            {
+              "artifact_id": "cost_aware_hysteretic_pilot_to_full_probe",
+              "artifact_type": "summary",
+              "family_id": "cost_aware_hysteretic_pilot_to_full",
+              "generated_at_utc": "2026-04-10 06:15:41 UTC",
+              "governance": {
+                "candidate_selection": false,
+                "dev_only": true,
+                "non_authoritative": true,
+                "official_edge_claim": false,
+                "official_truth": false,
+                "strategy_advancement": false
+              },
+              "input_refs": {
+                "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                "high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+                "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+                "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+                "rearmed_high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json"
+              },
+              "mechanism_id": "cost_aware_hysteretic_pilot_to_full",
+              "metrics": {
+                "lead_days_avg": 29.0,
+                "lead_days_max": 29,
+                "net_cagr_delta_pct": 1.693353,
+                "net_early_move_capture_total_pct": 5.644844,
+                "net_total_return_delta_pct": 5424.947819,
+                "switch_count_delta": 2,
+                "trade_days_delta": 1,
+                "turnover_pressure_delta": 0.0
+              },
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.summary.json",
+              "raw_keys": [
+                "analysis_mode",
+                "artifact_id",
+                "cagr_net",
+                "candidate_selection",
+                "compare_baseline",
+                "cost_model",
+                "dev_only",
+                "final_verdict",
+                "generated_at_utc",
+                "gross_metrics_context",
+                "input_refs",
+                "lead_days_vs_baseline",
+                "max_drawdown_net",
+                "mechanism_id",
+                "net_early_move_capture",
+                "non_authoritative",
+                "official_edge_claim",
+                "official_truth",
+                "pause_condition",
+                "state_machine",
+                "status",
+                "stop_condition",
+                "strategy_advancement",
+                "switch_count_delta",
+                "total_return_net",
+                "trade_days_delta",
+                "turnover_pressure",
+                "why_different_from_constructive_pilot_persistence",
+                "why_different_from_high_conviction_pre_activation",
+                "why_different_from_phase68k_l_m"
+              ],
+              "status": "generated_dev_only_cost_aware_hysteretic_pilot_to_full_probe_summary",
+              "verdict": "pause_condition_triggered"
+            },
+            {
+              "artifact_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+              "artifact_type": "summary",
+              "family_id": "cost_aware_hysteretic_pilot_to_full",
+              "generated_at_utc": "2026-04-10 06:52:54 UTC",
+              "governance": {
+                "candidate_selection": false,
+                "dev_only": true,
+                "non_authoritative": true,
+                "official_edge_claim": false,
+                "official_truth": false,
+                "strategy_advancement": false
+              },
+              "input_refs": {
+                "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+                "constructive_pilot_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_constructive_pilot_probe\\constructive_pilot_probe.summary.json",
+                "high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_high_conviction_pre_activation_pilot_probe\\high_conviction_pre_activation_pilot_probe.summary.json",
+                "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+                "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+                "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+                "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+                "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+                "previous_cost_aware_hysteretic_cost_metrics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.cost_metrics.csv",
+                "previous_cost_aware_hysteretic_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_probe\\cost_aware_hysteretic_pilot_to_full_probe.summary.json",
+                "rearmed_high_conviction_pre_activation_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_rearmed_high_conviction_pre_activation_pilot_probe\\rearmed_high_conviction_pre_activation_pilot_probe.summary.json"
+              },
+              "mechanism_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm",
+              "metrics": {
+                "lead_days_avg": 33.75,
+                "lead_days_max": 55,
+                "max_drawdown_delta_pct": -5.722469,
+                "net_cagr_delta_pct": 9.853988,
+                "net_early_move_capture_total_pct": 42.147373,
+                "net_total_return_delta_pct": 35606.473036,
+                "switch_count_delta": 11,
+                "trade_days_delta": 7,
+                "turnover_pressure_delta": 2.0
+              },
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe\\cost_aware_hysteretic_pilot_to_full_recap_confirm_probe.summary.json",
+              "raw_keys": [
+                "analysis_mode",
+                "artifact_id",
+                "candidate_selection",
+                "compare_baseline",
+                "compare_vs_previous_cost_aware_hysteretic_pilot_to_full",
+                "cost_model",
+                "dev_only",
+                "final_verdict",
+                "generated_at_utc",
+                "gross_metrics_context",
+                "input_refs",
+                "lead_days_vs_baseline",
+                "meaningful_earlier_activation_windows",
+                "mechanism_id",
+                "net_cagr",
+                "net_early_move_capture",
+                "net_max_drawdown",
+                "net_total_return",
+                "non_authoritative",
+                "official_edge_claim",
+                "official_truth",
+                "pause_condition",
+                "state_machine",
+                "status",
+                "stop_condition",
+                "strategy_advancement",
+                "switch_count_delta",
+                "trade_days_delta",
+                "turnover_pressure",
+                "why_same_family_not_duplicate"
+              ],
+              "status": "generated_dev_only_cost_aware_hysteretic_pilot_to_full_recap_confirm_probe_summary",
+              "verdict": "stop_condition_triggered"
+            },
+            {
+              "artifact_id": "supportive_vs_caution_subset_layer_v1",
+              "artifact_type": "summary",
+              "family_id": "descriptive_subset_context",
+              "generated_at_utc": "2026-04-09 17:36:58 UTC",
+              "governance": {
+                "candidate_selection": false,
+                "dev_only": true,
+                "non_authoritative": true,
+                "official_edge_claim": false,
+                "official_truth": false,
+                "strategy_advancement": false
+              },
+              "input_refs": {
+                "input_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_bot_compare\\anomaly_vs_response_shape_aligned_comparison.csv",
+                "input_json_fallback": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_bot_compare\\anomaly_vs_response_shape_aligned_comparison.json"
+              },
+              "mechanism_id": "",
+              "metrics": {},
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_subset_layer\\supportive_vs_caution_subset_layer_v1.summary.json",
+              "raw_keys": [
+                "analysis_mode",
+                "artifact_id",
+                "candidate_selection",
+                "concentration_dimensions",
+                "dev_only",
+                "exact_matching_metadata",
+                "fuzzy_matching_used",
+                "generated_at_utc",
+                "input_refs",
+                "non_authoritative",
+                "official_edge_claim",
+                "official_truth",
+                "persistence_dimensions",
+                "row_counts",
+                "source_compare_id",
+                "status",
+                "strategy_advancement"
+              ],
+              "status": "generated_dev_only_subset_summary",
+              "verdict": "generated_dev_only_subset_summary"
+            },
+            {
+              "artifact_id": "response_shape_bot_v1_anomaly_aligned_profile",
+              "artifact_type": "profile",
+              "family_id": "response_shape_anomaly_aligned_context",
+              "generated_at_utc": "2026-04-08 18:19:11 UTC",
+              "governance": {
+                "candidate_selection": false,
+                "dev_only": true,
+                "non_authoritative": true,
+                "official_edge_claim": false,
+                "official_truth": false,
+                "strategy_advancement": false
+              },
+              "input_refs": {},
+              "mechanism_id": "",
+              "metrics": {},
+              "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_response_shape_aligned\\response_shape_bot_v1_anomaly_aligned.profile.json",
+              "raw_keys": [
+                "analysis_mode",
+                "anomaly_score_definition",
+                "artifact_id",
+                "artifact_type",
+                "bot_id",
+                "date_max",
+                "date_min",
+                "dev_only",
+                "entry_regime_distribution",
+                "generated_at_utc",
+                "live_decision_ready",
+                "non_authoritative",
+                "null_count_per_column",
+                "numeric_feature_summary",
+                "official_truth",
+                "response_regime_context_distribution",
+                "row_count",
+                "selected_asset_coverage",
+                "status",
+                "strategy_advancement",
+                "top_abnormal_rows"
+              ],
+              "status": "generated_dev_only_response_shape_profile",
+              "verdict": "generated_dev_only_response_shape_profile"
+            }
+          ]
+        },
+        "market_state_snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\market_state\\latest_market_state.json",
+        "mutation_proposal": {
+          "dev_only": true,
+          "execution_allowed": false,
+          "expected_impact": {
+            "churn": {
+              "basis": {
+                "latest_turnover_pressure_delta": 2.0,
+                "previous_turnover_pressure_delta": 0.0
+              },
+              "direction": "decrease",
+              "target": "turnover_pressure_delta <= 0.0"
+            },
+            "dd": {
+              "basis": {
+                "latest_max_drawdown_delta_pct": -5.722469,
+                "previous_max_drawdown_delta_pct": null
+              },
+              "direction": "improve",
+              "target": "max_drawdown_delta_pct >= -1.0"
+            },
+            "net_benefit": {
+              "basis": {
+                "latest_net_cagr_delta_pct": 9.853988,
+                "previous_net_cagr_delta_pct": 1.693353
+              },
+              "direction": "retain_positive_after_costs",
+              "target": "net_cagr_delta_pct > 0.0 and net_total_return_delta_pct > 0.0"
+            },
+            "switch_count": {
+              "basis": {
+                "latest_switch_count_delta": 11,
+                "previous_switch_count_delta": 2
+              },
+              "direction": "decrease",
+              "target": "switch_count_delta <= 4"
+            }
+          },
+          "family_id": "cost_aware_hysteretic_pilot_to_full",
+          "lineage_refs": {
+            "family_attempt_artifact_ids": [
+              "cost_aware_hysteretic_pilot_to_full_probe",
+              "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe"
+            ],
+            "family_last_artifact_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+            "family_last_verdict": "stop_condition_triggered",
+            "market_artifact_ids": [
+              "cash_overstay_diagnostic",
+              "constructive_pilot_probe",
+              "high_conviction_pre_activation_pilot_probe",
+              "rearmed_high_conviction_pre_activation_pilot_probe",
+              "cost_aware_hysteretic_pilot_to_full_probe",
+              "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+              "supportive_vs_caution_subset_layer_v1",
+              "response_shape_bot_v1_anomaly_aligned_profile"
+            ],
+            "market_snapshot_id": "latest_market_state",
+            "planner_request_id": "second_openai_backed_cycle"
+          },
+          "mechanism_hypothesis": "The recap-confirm variant appears to have converted positive early capture into excess churn mainly through repeated PILOT re-entries inside the same constructive window; adding a single re-entry cap should directly reduce switch_count_delta and turnover_pressure_delta, and may improve drawdown behavior, while preserving the existing CASH -> PILOT -> FULL structure and after-cost upside.",
+          "mutation_target": {
+            "exact_change": "Keep CASH/PILOT/FULL states, 0.00/0.15/1.00 weights, existing recap-confirm timing, pilot_to_full rules, exit rules, and cost model unchanged; add one restriction to pilot_entry: allow at most one PILOT entry per constructive window.",
+            "execution_allowed": false,
+            "scope": "dev_only_queue_ready_heavy_job_request_only",
+            "source_artifact_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+            "target_id": "state_machine.pilot_entry.constructive_window_reentry_cap",
+            "target_type": "single_rule_restriction"
+          },
+          "non_authoritative": true,
+          "official_truth": false,
+          "proposal_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_mutation_proposal",
+          "schema_version": "research_os_mvp.v1",
+          "stop_condition": "Reject if switch_count_delta > 4, turnover_pressure_delta > 0.0, max_drawdown_delta_pct < -1.0, net_cagr_delta_pct <= 0.0 after costs, or if the proposal broadens beyond this single rule restriction into a parameter sweep or alternate mechanism."
+        },
+        "planner_request_id": "second_openai_backed_cycle",
+        "safe_mutation_planning": true,
+        "strategy_logic": "not_executed"
+      },
+      "priority": 1,
+      "schema_version": "research_os_mvp.v1"
+    }
+  ],
+  "notes": [
+    "single_mutation_proposal_plan",
+    "planner_openai_response_applied",
+    "job_type_propose_next_mutation_only",
+    "no_strategy_code_execution",
+    "planner_governor_override_enabled",
+    "governor_blocked_families=[]"
+  ],
+  "openai_hook": {
+    "api_key_env": "OPENAI_API_KEY",
+    "api_key_present": true,
+    "enabled": true,
+    "fail_closed": true,
+    "model": "gpt-5.4",
+    "network_call": "completed",
+    "prompt_template": "research_os_planner_mutation_proposal_v1",
+    "reasoning_effort": "medium",
+    "reasoning_summary": "auto",
+    "response_id": "resp_0310900eb55f7b260069db92788f4081979357cbf4b0679472",
+    "response_model": "gpt-5.4-2026-03-05",
+    "response_status": "completed",
+    "responses_api": "https://api.openai.com/v1/responses",
+    "selection_rationale": "This is the narrowest restriction that directly targets the observed regression from the prior family attempt: the earlier cost-aware hysteretic pilot-to-full probe had acceptable churn characteristics, while the recap-confirm follow-up increased switch_count_delta from 2 to 11 and turnover_pressure_delta from 0.0 to 2.0. A one-entry-per-window cap isolates the likely churn source without changing weights, promotion logic, exit rules, cost model, or introducing an alternate mechanism.",
+    "strict_schema_validation": true,
+    "timeout_seconds": 60,
+    "usage": {
+      "input_tokens": 3691,
+      "input_tokens_details": {
+        "cached_tokens": 0
+      },
+      "output_tokens": 833,
+      "output_tokens_details": {
+        "reasoning_tokens": 469
+      },
+      "total_tokens": 4524
+    }
+  },
+  "planner_id": "pi_planner_service",
+  "request_id": "second_openai_backed_cycle",
+  "schema_version": "research_os_mvp.v1"
+}

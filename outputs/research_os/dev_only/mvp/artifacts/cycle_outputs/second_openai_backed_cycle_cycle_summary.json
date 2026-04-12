@@ -1,0 +1,163 @@
+{
+  "completed_at": "2026-04-12T12:39:34+00:00",
+  "cycle_id": "second_openai_backed_cycle",
+  "dev_only": true,
+  "errors": [
+    "execute_critic_for_heavy_validation_result() got an unexpected keyword argument 'critic_config'"
+  ],
+  "executed_steps": [
+    "environment_scan",
+    "market_snapshot",
+    "family_snapshot",
+    "planner",
+    "planner_job_registered",
+    "worker_proposal",
+    "heavy_validation_submission",
+    "heavy_validation_adapter"
+  ],
+  "family_ids_touched": [
+    "cost_aware_hysteretic_pilot_to_full"
+  ],
+  "final_governor_states": [
+    {
+      "attempt_count": 2,
+      "confirmatory_count": 1,
+      "family_id": "cost_aware_hysteretic_pilot_to_full",
+      "last_next_action": "pause_family",
+      "last_verdict": "pause",
+      "lifecycle_state": "paused",
+      "planning_eligible": false,
+      "status": "governor_completed"
+    }
+  ],
+  "final_status": "cycle_failed",
+  "live_trading": false,
+  "non_authoritative": true,
+  "official_promotion_logic": false,
+  "official_truth": false,
+  "planner_jobs_count": 1,
+  "produced_artifacts": [
+    {
+      "artifact_id": "planner_inputs__second_openai_backed_cycle_environment_scan_json",
+      "created_at": "2026-04-12T12:39:18+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs\\second_openai_backed_cycle_environment_scan.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "73b519a422e4e8919adeb99d9902a7024653d09f220edbde8ef78bbb2cc2cf09"
+    },
+    {
+      "artifact_id": "market_state__latest_market_state_json",
+      "created_at": "2026-04-12T12:39:18+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\market_state\\latest_market_state.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "f282a2c76665fb62ad3250ab35fe218281d0a096189d6d92935bb071b3c33230"
+    },
+    {
+      "artifact_id": "family_state__latest_family_state_snapshot_json",
+      "created_at": "2026-04-12T12:39:18+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\runtime\\family_state\\latest_family_state_snapshot.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "6e59d2c8d6184edbf679696738e7a37abafc16280c566fb490ba01bad1a34068"
+    },
+    {
+      "artifact_id": "planner_inputs__second_openai_backed_cycle_planner_input_json",
+      "created_at": "2026-04-12T12:39:18+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs\\second_openai_backed_cycle_planner_input.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "aded1661794acf6ba324017e8b0ea0e7823264eddaf35190480a612e0badbadf"
+    },
+    {
+      "artifact_id": "planner_outputs__second_openai_backed_cycle_planner_output_json",
+      "created_at": "2026-04-12T12:39:33+00:00",
+      "format": "json",
+      "metadata": {},
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_outputs\\second_openai_backed_cycle_planner_output.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "2bdcb59012ce0067aad02d52feb3220b7b1915eb9262732fad614b527dfafb0f"
+    },
+    {
+      "artifact_id": "worker_outputs__second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_propose_next_mutation_mutation_proposal_json",
+      "created_at": "2026-04-12T12:39:33+00:00",
+      "format": "json",
+      "metadata": {
+        "job_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_propose_next_mutation",
+        "job_type": "propose_next_mutation"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\worker_outputs\\second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_propose_next_mutation_mutation_proposal.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "b732049e362c780042c7b3ca99fd7c18242930281a852add0241f25b2536f9bb"
+    },
+    {
+      "artifact_id": "worker_outputs__second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_request_json",
+      "created_at": "2026-04-12T12:39:34+00:00",
+      "format": "json",
+      "metadata": {
+        "job_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "job_type": "submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\worker_outputs\\second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_heavy_validation_request.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "6bdca5c2d14763c09868d828a6fde60ab4046f4fc181f7d5dcd015ddfd2086a0"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_summary_json",
+      "created_at": "2026-04-12T12:39:34+00:00",
+      "format": "json",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_summary.json",
+      "row_count": null,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "9aded6b86190f421164fa844162129bd6608bac7e0f1b0de09666d7c4db450db"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_compare_csv",
+      "created_at": "2026-04-12T12:39:34+00:00",
+      "format": "csv",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_compare.csv",
+      "row_count": 4,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "fdcb47fff5c08a20c67cb19c23496c145f19958ebf9a238ef069bf60c859166e"
+    },
+    {
+      "artifact_id": "heavy_validation_outputs__second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_cost_metrics_csv",
+      "created_at": "2026-04-12T12:39:34+00:00",
+      "format": "csv",
+      "metadata": {
+        "adapter_id": "safe_dev_only_artifact_adapter_v1",
+        "job_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+        "request_id": "second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job"
+      },
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs\\second_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job_cost_metrics.csv",
+      "row_count": 3,
+      "schema_version": "research_os_mvp.v1",
+      "sha256": "d5f767d202cc5d006325c908adc2eb1bc2a8dcedb6ec53af11039ae1117d1fd6"
+    }
+  ],
+  "schema_version": "research_os_mvp.v1",
+  "source_of_truth_mutation": false,
+  "started_at": "2026-04-12T12:39:18+00:00",
+  "strategy_advancement": false
+}

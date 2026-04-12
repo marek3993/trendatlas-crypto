@@ -725,12 +725,67 @@ def build_missing_runtime_snapshot(path: Path) -> dict:
         "latest_wallet_sync_utc": None,
         "latest_available_closed_utc_date": None,
     }
+    missing_runtime_table_snapshot = {
+        "last_pi_update_utc": None,
+        "last_pc_refresh_utc": None,
+        "last_refresh_status": None,
+        "last_refresh_run_id": None,
+        "last_wallet_sync_utc": None,
+        "currentness_state": "missing_runtime_artifact",
+        "currentness_reason": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
+        "source_metadata": {
+            "last_pi_update_utc": {
+                "path": str(path),
+                "exists": False,
+                "source_type": "app_runtime_snapshot",
+                "source_field": "runtime_table_snapshot.last_pi_update_utc",
+            },
+            "last_pc_refresh_utc": {
+                "path": str(path),
+                "exists": False,
+                "source_type": "app_runtime_snapshot",
+                "source_field": "runtime_table_snapshot.last_pc_refresh_utc",
+            },
+            "last_refresh_status": {
+                "path": str(path),
+                "exists": False,
+                "source_type": "app_runtime_snapshot",
+                "source_field": "runtime_table_snapshot.last_refresh_status",
+            },
+            "last_refresh_run_id": {
+                "path": str(path),
+                "exists": False,
+                "source_type": "app_runtime_snapshot",
+                "source_field": "runtime_table_snapshot.last_refresh_run_id",
+            },
+            "last_wallet_sync_utc": {
+                "path": str(path),
+                "exists": False,
+                "source_type": "app_runtime_snapshot",
+                "source_field": "runtime_table_snapshot.last_wallet_sync_utc",
+            },
+            "currentness_state": {
+                "path": str(path),
+                "exists": False,
+                "source_type": "app_runtime_snapshot",
+                "source_field": "runtime_table_snapshot.currentness_state",
+            },
+            "currentness_reason": {
+                "path": str(path),
+                "exists": False,
+                "source_type": "app_runtime_snapshot",
+                "source_field": "runtime_table_snapshot.currentness_reason",
+            },
+        },
+        "evaluated_at_utc": None,
+    }
     return {
         "snapshot_type": "app_runtime_snapshot",
-        "schema_version": 1,
+        "schema_version": 2,
         "app_export_generated_at_utc": None,
         "account_observability_contract": {"enabled": False},
         "strategy_freshness": missing_freshness,
+        "runtime_table_snapshot": missing_runtime_table_snapshot,
         **missing_freshness,
         "source_metadata": {
             "app_runtime_snapshot": {
@@ -749,136 +804,36 @@ def load_runtime_snapshot_for_app(path: Path) -> dict:
     return payload
 
 
-def utc_date_from_text(value: str | None) -> str | None:
-    text = str(value or "").strip()
-    if not text:
-        return None
-    try:
-        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
-    except ValueError:
-        return None
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
-    return parsed.astimezone(timezone.utc).date().isoformat()
+def build_missing_runtime_table_snapshot(runtime_snapshot_path: Path) -> dict:
+    return build_missing_runtime_snapshot(runtime_snapshot_path).get("runtime_table_snapshot") or {}
 
 
-def resolve_strategy_freshness(runtime_snapshot: dict) -> dict:
-    freshness = runtime_snapshot.get("strategy_freshness")
-    if not isinstance(freshness, dict):
-        freshness = {}
+def load_runtime_table_snapshot_for_app(runtime_snapshot: dict) -> dict:
+    payload = runtime_snapshot.get("runtime_table_snapshot")
+    if not isinstance(payload, dict):
+        return build_missing_runtime_table_snapshot(APP_RUNTIME_SNAPSHOT_PATH)
 
-    resolved = dict(freshness)
-    for key in [
-        "latest_refresh_run_id",
-        "latest_refresh_run_status",
-        "latest_successful_refresh_run_id",
-        "refresh_run_id",
-        "refresh_success",
-        "refresh_status",
-        "refresh_finished_at_utc",
-        "refresh_manifest_path",
-        "latest_strategy_artifact_date",
-        "latest_successful_refresh_runtime_utc",
-        "latest_trend_calculation_date",
-        "latest_wallet_sync_utc",
-        "latest_available_closed_utc_date",
-        "refresh_currentness_state",
-        "refresh_currentness_reason",
-        "refresh_currentness_reason_code",
-        "freshness_state",
-        "freshness_detail_code",
-        "freshness_detail_text",
-        "freshness_summary_text",
-    ]:
-        if key not in resolved and key in runtime_snapshot:
-            resolved[key] = runtime_snapshot.get(key)
+    resolved = dict(payload)
+    source_metadata = resolved.get("source_metadata")
+    if not isinstance(source_metadata, dict):
+        source_metadata = {}
 
-    if not resolved.get("latest_refresh_run_id") and resolved.get("refresh_run_id"):
-        resolved["latest_refresh_run_id"] = resolved.get("refresh_run_id")
-    if not resolved.get("latest_refresh_run_status") and resolved.get("refresh_status"):
-        resolved["latest_refresh_run_status"] = resolved.get("refresh_status")
+    required_fields = [
+        "last_pi_update_utc",
+        "last_pc_refresh_utc",
+        "last_refresh_status",
+        "last_refresh_run_id",
+        "last_wallet_sync_utc",
+        "currentness_state",
+        "currentness_reason",
+        "evaluated_at_utc",
+    ]
+    missing_fields = [field for field in required_fields if field not in resolved]
+    if missing_fields:
+        return build_missing_runtime_table_snapshot(APP_RUNTIME_SNAPSHOT_PATH)
 
-    state = (
-        str(resolved.get("refresh_currentness_state") or resolved.get("freshness_state") or "")
-        .strip()
-        or "missing_runtime_artifact"
-    )
-    if state not in FRESHNESS_SUMMARY_TEXT:
-        state = "missing_runtime_artifact"
-
-    reason = (
-        str(resolved.get("refresh_currentness_reason") or resolved.get("freshness_detail_text") or "")
-        .strip()
-        or FRESHNESS_SUMMARY_TEXT[state]
-    )
-    reason_code = (
-        str(resolved.get("refresh_currentness_reason_code") or resolved.get("freshness_detail_code") or "")
-        .strip()
-        or "runtime_artifact_missing"
-    )
-    resolved["refresh_currentness_state"] = state
-    resolved["refresh_currentness_reason"] = reason
-    resolved["refresh_currentness_reason_code"] = reason_code
-    resolved["freshness_state"] = state
-    resolved["freshness_detail_code"] = reason_code
-    resolved["freshness_detail_text"] = reason
-    resolved.setdefault("freshness_summary_text", FRESHNESS_SUMMARY_TEXT[state])
+    resolved["source_metadata"] = source_metadata
     return resolved
-
-
-def parse_iso_datetime_optional(value: Any) -> datetime | None:
-    text = str(value or "").strip()
-    if not text:
-        return None
-    try:
-        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
-    except ValueError:
-        return None
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
-    return parsed.astimezone(timezone.utc)
-
-
-def normalize_utc_iso_text(value: Any) -> str | None:
-    parsed = parse_iso_datetime_optional(value)
-    if parsed is None:
-        return None
-    return parsed.isoformat().replace("+00:00", "Z")
-
-
-def newest_utc_timestamp(*values: Any) -> str | None:
-    newest: datetime | None = None
-    for value in values:
-        parsed = parse_iso_datetime_optional(value)
-        if parsed is None:
-            continue
-        if newest is None or parsed > newest:
-            newest = parsed
-    if newest is None:
-        return None
-    return newest.isoformat().replace("+00:00", "Z")
-
-
-def resolve_pi_runtime_update_utc(runtime_snapshot: dict) -> str | None:
-    return (
-        normalize_utc_iso_text(runtime_snapshot.get("app_runtime_snapshot_generated_at_utc"))
-        or normalize_utc_iso_text(runtime_snapshot.get("app_export_generated_at_utc"))
-    )
-
-
-def resolve_wallet_sync_utc(runtime_snapshot: dict, strategy_freshness: dict) -> str | None:
-    return newest_utc_timestamp(
-        strategy_freshness.get("latest_wallet_sync_utc"),
-        runtime_snapshot.get("latest_wallet_sync_utc"),
-        runtime_snapshot.get("account_snapshot_as_of_utc"),
-    )
-
-
-def resolve_backup_refresh_finished_utc(runtime_snapshot: dict, strategy_freshness: dict) -> str | None:
-    return (
-        normalize_utc_iso_text(strategy_freshness.get("latest_successful_refresh_runtime_utc"))
-        or normalize_utc_iso_text(runtime_snapshot.get("latest_successful_refresh_runtime_utc"))
-    )
 
 
 def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot: dict) -> dict:
@@ -3101,7 +3056,7 @@ runtime_last_sync_utc = runtime_snapshot.get("runtime_last_sync_utc")
 account_snapshot_as_of_utc = runtime_snapshot.get("account_snapshot_as_of_utc")
 dry_run_generated_at_utc = runtime_snapshot.get("dry_run_generated_at_utc")
 gate_generated_at_utc = runtime_snapshot.get("gate_generated_at_utc")
-strategy_freshness_payload = resolve_strategy_freshness(runtime_snapshot)
+runtime_table_payload = load_runtime_table_snapshot_for_app(runtime_snapshot)
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 
 main_metrics = dict(product_snapshot.get("main_strategy_metrics") or {})
@@ -3243,18 +3198,15 @@ with tabs[0]:
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     refresh_currentness_state = str(
-        strategy_freshness_payload.get("refresh_currentness_state")
-        or strategy_freshness_payload.get("freshness_state")
-        or "missing_runtime_artifact"
+        runtime_table_payload.get("currentness_state") or "missing_runtime_artifact"
     ).strip()
     refresh_currentness_reason = str(
-        strategy_freshness_payload.get("refresh_currentness_reason")
-        or strategy_freshness_payload.get("freshness_detail_text")
+        runtime_table_payload.get("currentness_reason")
         or FRESHNESS_SUMMARY_TEXT.get(refresh_currentness_state, FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"])
     ).strip()
-    pi_runtime_update_utc = resolve_pi_runtime_update_utc(runtime_snapshot)
-    backup_refresh_finished_utc = resolve_backup_refresh_finished_utc(runtime_snapshot, strategy_freshness_payload)
-    wallet_sync_utc = resolve_wallet_sync_utc(runtime_snapshot, strategy_freshness_payload)
+    pi_runtime_update_utc = runtime_table_payload.get("last_pi_update_utc")
+    backup_refresh_finished_utc = runtime_table_payload.get("last_pc_refresh_utc")
+    wallet_sync_utc = runtime_table_payload.get("last_wallet_sync_utc")
     refresh_label_column = "Preh\u013ead" if lang == "sk" else "Field"
     refresh_value_column = "Hodnota" if lang == "sk" else "Value"
     refresh_rows = [
@@ -3275,16 +3227,14 @@ with tabs[0]:
         {
             refresh_label_column: "Stav posledn\u00e9ho refreshu" if lang == "sk" else "Last refresh status",
             refresh_value_column: safe_text_value(
-                strategy_freshness_payload.get("latest_refresh_run_status")
-                or strategy_freshness_payload.get("refresh_status"),
+                runtime_table_payload.get("last_refresh_status"),
                 lang=lang,
             ),
         },
         {
             refresh_label_column: "ID posledn\u00e9ho refreshu" if lang == "sk" else "Last refresh ID",
             refresh_value_column: safe_text_value(
-                strategy_freshness_payload.get("latest_refresh_run_id")
-                or strategy_freshness_payload.get("refresh_run_id"),
+                runtime_table_payload.get("last_refresh_run_id"),
                 lang=lang,
             ),
         },

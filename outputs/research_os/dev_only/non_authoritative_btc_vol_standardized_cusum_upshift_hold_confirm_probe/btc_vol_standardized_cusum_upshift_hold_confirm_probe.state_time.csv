@@ -1,0 +1,6 @@
+model,state,days,share_of_total_days
+phase67j_no_neo_main,BASELINE_RISK,1671,0.577601
+phase67j_no_neo_main,CASH,1222,0.422399
+btc_vol_standardized_cusum_upshift_hold_confirm_probe,BASELINE_RISK,1671,0.577601
+btc_vol_standardized_cusum_upshift_hold_confirm_probe,CUSUM_BTC_RISK,0,0.0
+btc_vol_standardized_cusum_upshift_hold_confirm_probe,CASH,1222,0.422399

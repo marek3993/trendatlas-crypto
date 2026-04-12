@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_dry_run_decision",
-  "generated_at_utc": "2026-04-08T22:10:05Z",
-  "started_at_utc": "2026-04-08T22:10:05Z",
+  "generated_at_utc": "2026-04-12T22:10:05Z",
+  "started_at_utc": "2026-04-12T22:10:05Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\run_dry_execution_bridge.py",
   "input_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",

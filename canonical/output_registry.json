@@ -527,6 +527,30 @@
       "notes": "Dev-only non-authoritative one-sided BTC L1 trend-filter regime probe outputs against phase67j_no_neo_main. Uses one causal 126-day rolling window and one robust MAD lambda rule; no pilot state, persistence exposure logic, app/runtime change, leverage redesign, or parameter grid."
     },
     {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_btc_vol_standardized_cusum_upshift_probe/",
+      "generated_by": [
+        "scripts/dev_only_btc_vol_standardized_cusum_upshift_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative BTC volatility-standardized CUSUM upshift probe outputs against phase67j_no_neo_main. Uses one causal 63-day realized-vol standardization rule and one two-sided Page CUSUM with fixed k=0.25 and h=5.0, resets outside baseline CASH episodes, and adds no pilot state, persistence carryover, leverage redesign, or parameter grid."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe/",
+      "generated_by": [
+        "scripts/dev_only_btc_vol_standardized_cusum_upshift_hold_confirm_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative confirmatory outputs for the same BTC volatility-standardized CUSUM family against phase67j_no_neo_main. Keeps the same causal 63-day realized-vol standardization, same two-sided Page CUSUM with fixed k=0.25 and h=5.0, same baseline-cash-only reset discipline, and adds only a 2-day post-trigger hold confirmation before activation turns ON."
+    },
+    {
       "output_path": "outputs/research_os/dev_only/non_authoritative_breadth_ignition_regime_probe/",
       "generated_by": [
         "scripts/dev_only_breadth_ignition_regime_probe.py"
@@ -549,6 +573,18 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Dev-only non-authoritative smoothed breadth ignition plus volatility-hostility veto outputs against phase67j_no_neo_main. Uses the fixed pure-breadth source ratio with one causal 5-day EMA threshold-cross rule and one slow BTC realized-volatility veto; no pilot state, app/runtime change, leverage redesign, daily resizing, or parameter grid."
+    },
+    {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_breadth_ignition_volatility_hostility_veto_confirm_probe/",
+      "generated_by": [
+        "scripts/dev_only_breadth_ignition_volatility_hostility_veto_confirm_probe.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_diagnostics",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative confirmatory outputs for the same breadth ignition plus volatility-hostility veto family against phase67j_no_neo_main. Keeps the same pure-breadth source ratio, same causal 5-day EMA smoothing, same >2/3 hold rule, and same slow BTC realized-volatility veto while adding only a 2-day smoothed breadth confirmation before ignition turns ON."
     },
     {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",

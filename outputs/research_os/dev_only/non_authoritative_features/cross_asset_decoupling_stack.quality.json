@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_feature_quality_report",
   "artifact_id": "cross_asset_decoupling_stack_quality",
-  "generated_at_utc": "2026-04-11 08:05:40 UTC",
+  "generated_at_utc": "2026-04-12 22:06:04 UTC",
   "family_id": "cross_asset_decoupling_stack",
   "row_count": 329,
   "required_columns": [

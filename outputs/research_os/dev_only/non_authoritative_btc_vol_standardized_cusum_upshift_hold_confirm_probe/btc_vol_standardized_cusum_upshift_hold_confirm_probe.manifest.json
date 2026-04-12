@@ -1,0 +1,35 @@
+{
+  "artifact_id": "btc_vol_standardized_cusum_upshift_hold_confirm_probe_manifest",
+  "generated_at_utc": "2026-04-12 10:48:04 UTC",
+  "output_namespace": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe",
+  "output_refs": {
+    "summary_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe\\btc_vol_standardized_cusum_upshift_hold_confirm_probe.summary.json",
+    "window_compare_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe\\btc_vol_standardized_cusum_upshift_hold_confirm_probe.window_compare.csv",
+    "state_time_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe\\btc_vol_standardized_cusum_upshift_hold_confirm_probe.state_time.csv",
+    "compare_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe\\btc_vol_standardized_cusum_upshift_hold_confirm_probe.compare.csv",
+    "cost_metrics_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe\\btc_vol_standardized_cusum_upshift_hold_confirm_probe.cost_metrics.csv",
+    "manifest_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe\\btc_vol_standardized_cusum_upshift_hold_confirm_probe.manifest.json",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_hold_confirm_probe\\btc_vol_standardized_cusum_upshift_hold_confirm_probe.quality.json"
+  },
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "btc_ohlcv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+    "prior_cusum_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_probe\\btc_vol_standardized_cusum_upshift_probe.summary.json",
+    "prior_cusum_cost_metrics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_vol_standardized_cusum_upshift_probe\\btc_vol_standardized_cusum_upshift_probe.cost_metrics.csv",
+    "l1_probe_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_l1_trend_filter_regime_probe\\l1_trend_filter_regime_probe.summary.json",
+    "breadth_veto_confirm_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_breadth_ignition_volatility_hostility_veto_confirm_probe\\breadth_ignition_volatility_hostility_veto_confirm_probe.summary.json"
+  },
+  "contract_refs": [],
+  "spec_refs": [],
+  "manifest_seed_refs": [],
+  "status": "implementation_pack_ready",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "btc_vol_standardized_cusum_upshift_hold_confirm_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

@@ -67,6 +67,38 @@ def ensure_dirs() -> None:
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 
+def validate_runtime_posture(mode_cfg: dict[str, Any]) -> dict[str, Any]:
+    mode = str(mode_cfg.get("mode") or "").strip().lower()
+    trading_enabled = bool(mode_cfg.get("trading_enabled"))
+    kill_switch = bool(mode_cfg.get("kill_switch"))
+
+    if mode == "read_only":
+        if trading_enabled:
+            fail("execution_mode.json has trading_enabled=true. Read-only posture is invalid.")
+        if not kill_switch:
+            fail("execution_mode.json must keep kill_switch=true for read-only posture.")
+        return {
+            "mode": mode,
+            "trading_enabled": trading_enabled,
+            "kill_switch": kill_switch,
+            "runtime_posture": "read_only_guarded",
+        }
+
+    if mode == "live":
+        return {
+            "mode": mode,
+            "trading_enabled": trading_enabled,
+            "kill_switch": kill_switch,
+            "runtime_posture": "live_runtime_read_only_observability",
+        }
+
+    fail(
+        "execution_mode.json must use mode='read_only' or mode='live' for account observability. "
+        f"Current: {mode_cfg.get('mode')}"
+    )
+    raise RuntimeError("unreachable")
+
+
 def post_info(payload: dict[str, Any]) -> Any:
     try:
         resp = requests.post(INFO_URL, json=payload, timeout=30)
@@ -267,12 +299,7 @@ def main() -> None:
     log("[START] hyperliquid_read_only_snapshot")
 
     mode_cfg = read_json(MODE_CONFIG_PATH)
-    if mode_cfg.get("mode") != "read_only":
-        fail(f"execution_mode.json must have mode='read_only'. Current: {mode_cfg.get('mode')}")
-    if bool(mode_cfg.get("trading_enabled")):
-        fail("execution_mode.json has trading_enabled=true. Read-only script refuses to run.")
-    if not bool(mode_cfg.get("kill_switch")):
-        fail("execution_mode.json must keep kill_switch=true for read-only milestone.")
+    runtime_posture = validate_runtime_posture(mode_cfg)
 
     if not ACCOUNT_CONFIG_PATH.exists():
         fail(
@@ -285,7 +312,13 @@ def main() -> None:
     if not account_address or "PASTE_" in account_address:
         fail(f"execution/config/hyperliquid_account.json must contain a real account_address.")
 
-    log(f"[CONFIG] mode=read_only trading_enabled={mode_cfg.get('trading_enabled')} kill_switch={mode_cfg.get('kill_switch')}")
+    log(
+        "[CONFIG] "
+        f"mode={runtime_posture['mode']} "
+        f"trading_enabled={runtime_posture['trading_enabled']} "
+        f"kill_switch={runtime_posture['kill_switch']} "
+        f"runtime_posture={runtime_posture['runtime_posture']}"
+    )
     log(f"[CONFIG] account_address={account_address}")
 
     payloads = {
@@ -355,6 +388,7 @@ def main() -> None:
             "positions_count": len(positions) if isinstance(positions, list) else 0,
             "open_orders_count": len(open_orders) if isinstance(open_orders, list) else 0,
             "recent_fills_count": len(user_fills) if isinstance(user_fills, list) else 0,
+            "runtime_posture": runtime_posture["runtime_posture"],
             "withdrawable": withdrawable,
             "margin_summary": margin_summary,
             "cross_margin_summary": balances,
@@ -373,9 +407,18 @@ def main() -> None:
 
     quality = {
         "snapshot_ok": True,
-        "mode_ok": mode_cfg.get("mode") == "read_only",
-        "trading_disabled_ok": bool(mode_cfg.get("trading_enabled")) is False,
-        "kill_switch_ok": bool(mode_cfg.get("kill_switch")) is True,
+        "mode_ok": runtime_posture["mode"] in {"read_only", "live"},
+        "trading_disabled_ok": (
+            bool(mode_cfg.get("trading_enabled")) is False
+            if runtime_posture["mode"] == "read_only"
+            else None
+        ),
+        "kill_switch_ok": (
+            bool(mode_cfg.get("kill_switch")) is True
+            if runtime_posture["mode"] == "read_only"
+            else None
+        ),
+        "runtime_posture": runtime_posture["runtime_posture"],
         "account_address_present": True,
         "http_source": INFO_URL,
         "positions_count": snapshot["summary"]["positions_count"],
@@ -401,7 +444,8 @@ def main() -> None:
             str(MANIFEST_PATH.resolve())
         ],
         "status": "success",
-        "started_at_utc": started_at
+        "started_at_utc": started_at,
+        "runtime_posture": runtime_posture["runtime_posture"],
     }
 
     SNAPSHOT_PATH.write_text(json.dumps(snapshot, indent=2, ensure_ascii=False), encoding="utf-8")

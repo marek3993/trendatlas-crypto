@@ -367,10 +367,8 @@ def run_research_cycle(
                 artifact_root=config.artifact_root,
                 registry=registry,
                 critic_job_id=f"{cycle_id}_{job.family_id}_critic",
-                critic_config={
-                    **dict(config.critic),
-                    "openai": dict(config.critic.get("openai") or config.openai),
-                },
+                critic_config=dict(config.critic),
+                runtime_openai_config=dict(config.openai),
             )
             executed_steps.append("critic")
             if critic_result.status != JOB_STATUS_SUCCEEDED:

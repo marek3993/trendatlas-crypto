@@ -8,6 +8,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from approved_strategy_net_export_helper import (
+    NetCostExportConfig,
+    build_net_cost_export_frame,
+    summarize_net_cost_export,
+)
 import phase66e_probation_governance as core
 from freshness_lineage import build_producer_lineage
 
@@ -152,6 +157,13 @@ def main() -> None:
         default=str(OUTPUTS / "phase66f_probation_robustness" / "phase66f_probation_robustness_summary.csv"),
     )
     parser.add_argument("--min-history-days", type=int, default=180)
+    parser.add_argument("--annual-borrow-cost", type=float, default=0.0)
+    parser.add_argument("--tradable-transition-slippage-bps", type=float, default=10.0)
+    parser.add_argument("--fee-side-mode", choices=["taker", "maker", "mixed"], default="taker")
+    parser.add_argument("--taker-fee-bps", type=float, default=4.5)
+    parser.add_argument("--maker-fee-bps", type=float, default=1.5)
+    parser.add_argument("--staking-discount-pct", type=float, default=0.0)
+    parser.add_argument("--referral-discount-pct", type=float, default=0.0)
     args = parser.parse_args()
 
     ensure_dir(PHASE66G_DIR)
@@ -322,7 +334,28 @@ def main() -> None:
     failed_assets_path = PHASE66G_DIR / "phase66g_production_candidate_failed_assets.csv"
     baseline_paper_path = PHASE66G_DIR / f"{CURRENT_WINNER_KEY}_paper.csv"
     production_paper_path = PHASE66G_DIR / f"{gov_cfg.profile_name}_paper.csv"
+    authoritative_export_path = PHASE66G_DIR / f"{gov_cfg.profile_name}_authoritative_net_compare_export.csv"
     manifest_path = PHASE66G_DIR / "phase66g_manifest.json"
+
+    authoritative_export = summarize_net_cost_export(
+        build_net_cost_export_frame(
+            governance.reset_index().rename(columns={governance.index.name or "index": "date"}),
+            gross_return_col="strategy_return",
+            regime_col="executed_regime",
+            position_col="executed_position",
+            config=NetCostExportConfig(
+                annual_borrow_cost=float(args.annual_borrow_cost),
+                tradable_transition_slippage_bps=float(args.tradable_transition_slippage_bps),
+                fee_side_mode=str(args.fee_side_mode),
+                taker_fee_bps=float(args.taker_fee_bps),
+                maker_fee_bps=float(args.maker_fee_bps),
+                staking_discount_pct=float(args.staking_discount_pct),
+                referral_discount_pct=float(args.referral_discount_pct),
+            ),
+        ),
+        model=gov_cfg.profile_name,
+        switch_count=prod_row.get("switch_count"),
+    )
 
     summary.to_csv(summary_path, index=False)
     summary.to_csv(compare_path, index=False)
@@ -338,6 +371,7 @@ def main() -> None:
 
     baseline.reset_index().rename(columns={baseline.index.name or "index": "date"}).to_csv(baseline_paper_path, index=False)
     governance.reset_index().rename(columns={governance.index.name or "index": "date"}).to_csv(production_paper_path, index=False)
+    pd.DataFrame([authoritative_export]).to_csv(authoritative_export_path, index=False)
 
     manifest = {
         "phase": "phase66g_production_candidate_live",
@@ -345,6 +379,15 @@ def main() -> None:
         "baseline_paper": str(args.baseline_paper),
         "phase66f_summary": str(args.phase66f_summary),
         "drop_file": str(args.drop_file),
+        "net_cost_export_config": {
+            "annual_borrow_cost": float(args.annual_borrow_cost),
+            "tradable_transition_slippage_bps": float(args.tradable_transition_slippage_bps),
+            "fee_side_mode": str(args.fee_side_mode),
+            "taker_fee_bps": float(args.taker_fee_bps),
+            "maker_fee_bps": float(args.maker_fee_bps),
+            "staking_discount_pct": float(args.staking_discount_pct),
+            "referral_discount_pct": float(args.referral_discount_pct),
+        },
         "removed_assets": remove_assets,
         "candidate_assets_loaded": int(len(asset_strategies)),
         "candidate_assets_failed": int(len(failed_assets)),
@@ -387,6 +430,7 @@ def main() -> None:
         "failed_assets_file": str(failed_assets_path),
         "baseline_paper_saved": str(baseline_paper_path),
         "production_paper_saved": str(production_paper_path),
+        "authoritative_net_compare_export_file": str(authoritative_export_path),
         "notes": [
             "Produkčný kandidát z víťazného Phase66F soft_filters profilu.",
             "Rovnou exportuje aj live weekly selector stav.",
@@ -444,6 +488,7 @@ def main() -> None:
     log(f"[PHASE66G] Saved failed assets -> {failed_assets_path}")
     log(f"[PHASE66G] Saved baseline paper -> {baseline_paper_path}")
     log(f"[PHASE66G] Saved production paper -> {production_paper_path}")
+    log(f"[PHASE66G] Saved authoritative net compare export -> {authoritative_export_path}")
     log(f"[PHASE66G] Saved manifest -> {manifest_path}")
 
 

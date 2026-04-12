@@ -1,0 +1,99 @@
+{
+  "dev_only": true,
+  "family_id": "cost_aware_hysteretic_pilot_to_full",
+  "generated_at": "2026-04-12T12:15:02+00:00",
+  "heavy_validation_request": {
+    "constraints": {
+      "dev_only": true,
+      "live_trading": false,
+      "non_authoritative": true,
+      "official_promotion_logic": false,
+      "official_truth": false,
+      "single_candidate_only": true,
+      "source_of_truth_mutation": false,
+      "strategy_mutation_execution": false
+    },
+    "dev_only": true,
+    "execution_allowed": false,
+    "expected_impact": {
+      "churn": {
+        "basis": {
+          "latest_turnover_pressure_delta": 2.0,
+          "previous_turnover_pressure_delta": 0.0
+        },
+        "direction": "decrease",
+        "target": "turnover_pressure_delta <= 0.0"
+      },
+      "dd": {
+        "basis": {
+          "latest_max_drawdown_delta_pct": -5.722469,
+          "previous_max_drawdown_delta_pct": null
+        },
+        "direction": "improve",
+        "target": "max_drawdown_delta_pct >= -1.0"
+      },
+      "net_benefit": {
+        "basis": {
+          "latest_net_cagr_delta_pct": 9.853988,
+          "previous_net_cagr_delta_pct": 1.693353
+        },
+        "direction": "retain_positive_after_costs",
+        "target": "net_cagr_delta_pct > 0.0 and net_total_return_delta_pct > 0.0"
+      },
+      "switch_count": {
+        "basis": {
+          "latest_switch_count_delta": 11,
+          "previous_switch_count_delta": 2
+        },
+        "direction": "decrease",
+        "target": "switch_count_delta <= 4"
+      }
+    },
+    "family_id": "cost_aware_hysteretic_pilot_to_full",
+    "mutation_target": {
+      "exact_change": "Keep the CASH/PILOT/FULL states, 0.00/0.15/1.00 weights, pilot_to_full rules, exit rules, and cost model unchanged; replace the recap-and-hold pilot_entry clause with: setup persists 2 days, fresh benchmark/pilot recapture occurs within 7 days, and at most one PILOT entry is allowed per constructive window.",
+      "execution_allowed": false,
+      "scope": "dev_only_queue_ready_heavy_job_request_only",
+      "source_artifact_id": "cost_aware_hysteretic_pilot_to_full_recap_confirm_probe",
+      "target_id": "state_machine.pilot_entry.recap_confirm_gate",
+      "target_type": "single_rule_restriction"
+    },
+    "non_authoritative": true,
+    "official_truth": false,
+    "proposal_id": "first_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_mutation_proposal",
+    "request_id": "first_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+    "schema_version": "research_os_mvp.v1",
+    "source_mutation_proposal_artifact": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\worker_outputs\\first_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_propose_next_mutation_mutation_proposal.json",
+    "status": "submitted_for_heavy_validation",
+    "stop_condition": "Reject if switch_count_delta > 4, turnover_pressure_delta > 0.0, max_drawdown_delta_pct < -1.0, net_cagr_delta_pct <= 0.0 after costs, or the mutation broadens into a parameter sweep or alternate mechanism.",
+    "strategy_code_executed": false
+  },
+  "job_id": "first_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_submit_heavy_validation_job",
+  "job_type": "submit_heavy_validation_job",
+  "live_trading": false,
+  "mode": "dev_only_heavy_validation_submission",
+  "non_authoritative": true,
+  "notes": [
+    "heavy_validation_request_artifact_only",
+    "published_one_queue_message",
+    "no_heavy_backtest_execution",
+    "no_strategy_code_execution"
+  ],
+  "official_promotion_logic": false,
+  "official_truth": false,
+  "queue_publish": {
+    "message_id": "1775996102400-0",
+    "published_count": 1,
+    "stream": "research_os:heavy_validation_jobs"
+  },
+  "schema_version": "research_os_mvp.v1",
+  "source_mutation_proposal": {
+    "job_id": "first_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_propose_next_mutation",
+    "proposal_id": "first_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_mutation_proposal",
+    "validation_status": "validated_queue_ready_request_only"
+  },
+  "source_mutation_proposal_artifact": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\worker_outputs\\first_openai_backed_cycle_cost_aware_hysteretic_pilot_to_full_propose_next_mutation_mutation_proposal.json",
+  "source_of_truth_mutation": false,
+  "status": "submitted_for_heavy_validation",
+  "strategy_mutation_execution": false
+}

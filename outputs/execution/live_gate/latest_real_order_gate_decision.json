@@ -1,7 +1,7 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-04-08T22:10:06Z",
-  "signal_id": "phase68i_dynamic_ladder_candidate::2026-04-06::CASH",
+  "generated_at_utc": "2026-04-12T22:10:05Z",
+  "signal_id": "phase68g_66g_1p25x_candidate::2026-04-10::CASH",
   "target_asset": "CASH",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",

@@ -1,14 +1,13 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-04-08T22:10:04Z",
+  "as_of_utc": "2026-04-12T22:10:08Z",
   "execution_mode": "live",
   "trading_enabled": true,
   "kill_switch": false,
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
   "source": {
     "provider": "Hyperliquid",
-    "info_url": "https://api.hyperliquid.xyz/info",
-    "bridge_source": "scripts/execution/app_execute_bridge.py"
+    "info_url": "https://api.hyperliquid.xyz/info"
   },
   "raw": {
     "clearinghouseState": {
@@ -27,7 +26,7 @@
       "crossMaintenanceMarginUsed": "0.0",
       "withdrawable": "0.0",
       "assetPositions": [],
-      "time": 1775686203053
+      "time": 1776031806775
     },
     "spotClearinghouseState": {
       "balances": [
@@ -279,6 +278,7 @@
     "positions_count": 0,
     "open_orders_count": 0,
     "recent_fills_count": 12,
+    "runtime_posture": "live_runtime_read_only_observability",
     "withdrawable": "0.0",
     "margin_summary": {
       "accountValue": "0.0",

@@ -4,3 +4,4 @@ plotly
 eth-account
 eth-utils
 msgpack
+redis

@@ -3,6 +3,15 @@
   "phase63_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
   "core_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
   "shortlist_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67b_top100_forensic_prune_and_rerun\\phase67b_asset_shortlist.csv",
+  "net_cost_export_config": {
+    "annual_borrow_cost": 0.0,
+    "tradable_transition_slippage_bps": 10.0,
+    "fee_side_mode": "taker",
+    "taker_fee_bps": 4.5,
+    "maker_fee_bps": 1.5,
+    "staking_discount_pct": 0.0,
+    "referral_discount_pct": 0.0
+  },
   "profiles": [
     {
       "overlay": {
@@ -52,13 +61,14 @@
   "asset_quality_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_final_narrow_validation_asset_quality.csv",
   "live_status_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_live_status.csv",
   "latest_top10_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_latest_decision_top10.csv",
+  "authoritative_net_compare_export_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase67j_final_narrow_validation_pack\\phase67j_no_neo_main_authoritative_net_compare_export.csv",
   "best_model": "phase67j_no_neo_main",
   "freshness_lineage": {
     "producer_script": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\phase67j_final_narrow_validation_pack.py",
     "source_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
-    "source_last_date": "2026-04-10",
-    "raw_last_date": "2026-04-10",
-    "output_last_date": "2026-04-10",
+    "source_last_date": "2026-04-11",
+    "raw_last_date": "2026-04-11",
+    "output_last_date": "2026-04-11",
     "first_missing_date_if_any": null,
     "date_semantics": "execution_date"
   }

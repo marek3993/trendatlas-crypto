@@ -1,0 +1,84 @@
+{
+  "artifact_id": "btc_vol_standardized_cusum_upshift_probe_quality",
+  "generated_at_utc": "2026-04-12 10:27:11 UTC",
+  "input_refs": {
+    "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+    "btc_ohlcv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "phase68i_paper_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+    "phase68i_summary_secondary_context": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
+    "phase68k_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68k_early_entry_ladder_probe\\phase68k_early_entry_compare.csv",
+    "phase68l_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68l_early_entry_soft_gate_probe\\phase68l_early_entry_soft_gate_compare.csv",
+    "phase68m_compare": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68m_early_entry_micro_confirm\\phase68m_early_entry_micro_confirm_compare.csv",
+    "l1_probe_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_l1_trend_filter_regime_probe\\l1_trend_filter_regime_probe.summary.json",
+    "breadth_veto_summary": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_breadth_ignition_volatility_hostility_veto_probe\\breadth_ignition_volatility_hostility_veto_probe.summary.json"
+  },
+  "checks": [
+    {
+      "name": "no_signal_before_vol_window_ready",
+      "ok": true,
+      "detail": "first 62 rows have no CUSUM activation"
+    },
+    {
+      "name": "cusum_resets_outside_baseline_cash",
+      "ok": true,
+      "detail": "positive and negative accumulators are zero whenever the baseline is not in CASH"
+    },
+    {
+      "name": "probe_risk_only_on_baseline_cash_days",
+      "ok": true,
+      "detail": "CUSUM BTC risk never overlaps with baseline risk-on exposure"
+    },
+    {
+      "name": "baseline_risk_days_unchanged",
+      "ok": true,
+      "detail": "baseline in-market daily returns pass through unchanged"
+    },
+    {
+      "name": "no_pilot_or_ladder_states",
+      "ok": true,
+      "detail": "probe states are CASH, CUSUM_BTC_RISK, and BASELINE_RISK only"
+    },
+    {
+      "name": "semantic_flags_locked",
+      "ok": true,
+      "detail": "dev_only=true, non_authoritative=true, official_truth=false, strategy_advancement=false, candidate_selection=false, official_edge_claim=false"
+    }
+  ],
+  "activation_window_count": 3,
+  "baseline_metrics": {
+    "model": "phase67j_no_neo_main",
+    "gross_return_pct": 103793.757647,
+    "net_return_after_costs_pct": 93500.121242,
+    "net_cagr_pct": 137.209803,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 72,
+    "switch_count": 72,
+    "turnover_pressure": 72.0,
+    "total_cost_pct": 10.44,
+    "cusum_risk_days": 0,
+    "all_activation_windows_count": 0,
+    "earlier_activation_windows_count": 0
+  },
+  "probe_metrics": {
+    "model": "btc_vol_standardized_cusum_upshift_probe",
+    "gross_return_pct": 168240.432345,
+    "net_return_after_costs_pct": 151179.440148,
+    "net_cagr_pct": 152.032665,
+    "max_drawdown_pct": -26.377525,
+    "trade_count": 74,
+    "switch_count": 76,
+    "turnover_pressure": 74.0,
+    "total_cost_pct": 10.73,
+    "cusum_risk_days": 34,
+    "all_activation_windows_count": 3,
+    "earlier_activation_windows_count": 2
+  },
+  "status": "passed",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "btc_vol_standardized_cusum_upshift_probe_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

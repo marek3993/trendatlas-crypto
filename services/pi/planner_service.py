@@ -71,6 +71,47 @@ def _previous_attempt(family_state: dict[str, Any]) -> dict[str, Any]:
     return dict(lineage[-2]) if len(lineage) >= 2 else {}
 
 
+_PLANNER_METRIC_KEYS = (
+    "net_total_return_delta_pct",
+    "net_cagr_delta_pct",
+    "max_drawdown_delta_pct",
+    "switch_count_delta",
+    "trade_days_delta",
+    "turnover_pressure_delta",
+    "lead_days_avg",
+    "lead_days_max",
+)
+
+
+def _compact_metric_view(metrics: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: metrics.get(key)
+        for key in _PLANNER_METRIC_KEYS
+        if key in metrics
+    }
+
+
+def _compact_lineage_attempt(attempt: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "artifact_id": str(attempt.get("artifact_id", "")),
+        "mechanism_id": str(attempt.get("mechanism_id", "")),
+        "verdict": str(attempt.get("verdict", "")),
+        "metrics": _compact_metric_view(dict(attempt.get("metrics", {}))),
+    }
+
+
+def _compact_expected_impact(expected_impact: dict[str, Any]) -> dict[str, Any]:
+    compact: dict[str, Any] = {}
+    for metric_name, details in dict(expected_impact).items():
+        detail_map = dict(details or {})
+        compact[metric_name] = {
+            "direction": str(detail_map.get("direction", "")),
+            "target": str(detail_map.get("target", "")),
+            "basis": dict(detail_map.get("basis", {})),
+        }
+    return compact
+
+
 def build_mutation_proposal(
     request_id: str,
     family_id: str,
@@ -163,11 +204,12 @@ def _planner_prompt_template(prompt_template: str) -> str:
             "You are the MRV1 planner for a dev-only, non-authoritative research runtime. "
             "Produce exactly one narrow mutation proposal for the already-selected family. "
             "Do not broaden into a sweep, do not permit execution, do not reference live trading, "
-            "and do not mutate any source of truth. Keep the proposal bounded to a single rule restriction."
+            "and do not mutate any source of truth. Keep the proposal bounded to a single rule restriction. "
+            "Keep every field concise and reuse the provided baseline target unless the compact evidence requires a tighter restriction."
         )
     return (
         "You are the MRV1 planner for a dev-only, non-authoritative research runtime. "
-        "Return one narrow, execution-disabled mutation proposal that preserves all hard safety boundaries."
+        "Return one narrow, execution-disabled mutation proposal that preserves all hard safety boundaries and uses concise field text."
     )
 
 
@@ -212,35 +254,38 @@ def _planner_user_payload(
     lineage = list(selected_family_state.get("lineage", []))
     return {
         "request_id": planner_input.request_id,
-        "constraints": {
+        "runtime_mode": {
             "dev_only": True,
             "non_authoritative": True,
-            "live_trading": False,
-            "source_of_truth_mutation": False,
-            "official_promotion_logic": False,
             "single_candidate_only": True,
             "execution_allowed": False,
         },
         "selected_family": {
             "family_id": selected_family.family_id,
             "description": selected_family.description,
-            "default_priority": selected_family.default_priority,
-            "allowed_job_types": list(selected_family.allowed_job_types),
-            "constraints": dict(selected_family.constraints),
         },
-        "selected_family_state": {
+        "selected_family_context": {
             "last_artifact_id": str(selected_family_state.get("last_artifact_id", "")),
             "last_verdict": str(selected_family_state.get("last_verdict", "")),
-            "last_metrics": dict(selected_family_state.get("last_metrics", {})),
-            "lineage_excerpt": [dict(item) for item in lineage[-2:]],
+            "last_metrics": _compact_metric_view(dict(selected_family_state.get("last_metrics", {}))),
+            "recent_attempts": [_compact_lineage_attempt(dict(item)) for item in lineage[-2:]],
         },
-        "market_state": {
+        "market_context": {
             "snapshot_id": str(market_state_payload.get("snapshot_id", "")),
             "artifact_ids": list(market_state_payload.get("market_context", {}).get("artifact_ids", [])),
-            "notes": list(market_state_payload.get("notes", [])),
         },
         "blocked_families": list(blocked_families),
-        "fallback_proposal": fallback_proposal.to_dict(),
+        "baseline_candidate": {
+            "mechanism_hypothesis": fallback_proposal.mechanism_hypothesis,
+            "mutation_target": {
+                "target_id": str(fallback_proposal.mutation_target.get("target_id", "")),
+                "target_type": str(fallback_proposal.mutation_target.get("target_type", "")),
+                "source_artifact_id": str(fallback_proposal.mutation_target.get("source_artifact_id", "")),
+                "exact_change": str(fallback_proposal.mutation_target.get("exact_change", "")),
+            },
+            "expected_impact": _compact_expected_impact(dict(fallback_proposal.expected_impact)),
+            "stop_condition": fallback_proposal.stop_condition,
+        },
     }
 
 
@@ -299,12 +344,58 @@ def _build_openai_mutation_proposal(
     return proposal, hook, "planner_openai_response_applied"
 
 
+def _planner_effective_openai_source(
+    runtime_openai_config: dict[str, Any],
+    planner_component_openai_config: dict[str, Any],
+    planner_config: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    planner_config = dict(planner_config or {})
+    enabled_source = "default_false"
+    planner_enabled_present = bool(planner_config.get("_component_openai_enabled_present", "enabled" in planner_component_openai_config))
+    planner_enabled = bool(
+        planner_config.get("_component_openai_enabled_value", planner_component_openai_config.get("enabled", False))
+    )
+    runtime_enabled_present = bool(planner_config.get("_runtime_openai_enabled_present", "enabled" in runtime_openai_config))
+    runtime_enabled = bool(planner_config.get("_runtime_openai_enabled_value", runtime_openai_config.get("enabled", False)))
+    raw_config_enabled_value = False
+    if planner_enabled_present and planner_enabled:
+        enabled_source = "planner.openai.enabled"
+        raw_config_enabled_value = planner_enabled
+    elif runtime_enabled_present and runtime_enabled:
+        enabled_source = "runtime.openai.enabled"
+        raw_config_enabled_value = runtime_enabled
+    elif planner_enabled_present:
+        enabled_source = "planner.openai.enabled"
+        raw_config_enabled_value = planner_enabled
+    elif runtime_enabled_present:
+        enabled_source = "runtime.openai.enabled"
+        raw_config_enabled_value = runtime_enabled
+    resolved_enabled_value = runtime_enabled or planner_enabled
+    return {
+        "base": "runtime.openai",
+        "overlay": "planner.openai",
+        "enabled_from": enabled_source,
+        "enabled_resolution_debug": {
+            "raw_config_enabled_value": raw_config_enabled_value,
+            "resolved_enabled_value": resolved_enabled_value,
+            "where_override_happened": (
+                "none"
+                if raw_config_enabled_value == resolved_enabled_value
+                else "services/pi/planner_service.py:plan_jobs.resolved_openai_config.enabled"
+            ),
+        },
+        "runtime_keys": sorted(str(key) for key in runtime_openai_config.keys()),
+        "component_keys": sorted(str(key) for key in planner_component_openai_config.keys()),
+    }
+
+
 def _write_planner_openai_error_artifact(
     *,
     artifact_root: str,
     request_id: str,
     family_id: str,
     openai_config: dict[str, Any],
+    effective_openai_source: dict[str, Any],
     error: Exception,
     blocked_families: list[dict[str, str]],
 ) -> dict[str, Any]:
@@ -326,7 +417,11 @@ def _write_planner_openai_error_artifact(
             "source_of_truth_mutation": False,
             "official_promotion_logic": False,
             "error": error_payload,
-            "openai_operation": describe_openai_operation(openai_config),
+            "openai_operation": {
+                **describe_openai_operation(openai_config),
+                "effective_openai_config": dict(openai_config),
+                "effective_openai_source": dict(effective_openai_source),
+            },
             "blocked_families": list(blocked_families),
             "notes": [
                 "planner_openai_failed_closed",
@@ -565,9 +660,23 @@ def plan_jobs(
     registry = FamilyRegistry.from_mapping(planner_input.family_registry)
     planner_config = dict(planner_config or {})
     planner_enabled = bool(planner_config.get("enabled", True))
-    openai_config = dict(planner_config.get("openai") or openai_config)
+    runtime_openai_config = dict(openai_config or {})
+    planner_component_openai_config = dict(planner_config.get("openai") or {})
+    effective_openai_source = _planner_effective_openai_source(
+        runtime_openai_config,
+        planner_component_openai_config,
+        planner_config,
+    )
+    resolved_openai_config = dict(runtime_openai_config)
+    resolved_openai_config.update(planner_component_openai_config)
+    resolved_openai_config["enabled"] = bool(
+        dict(effective_openai_source.get("enabled_resolution_debug", {})).get("resolved_enabled_value", False)
+    )
+    openai_config = resolved_openai_config
     openai_hook = {
         **describe_openai_operation(openai_config),
+        "effective_openai_config": dict(openai_config),
+        "effective_openai_source": dict(effective_openai_source),
         "planner_enabled": planner_enabled,
         "failure_closed": False,
     }
@@ -633,17 +742,22 @@ def plan_jobs(
                     fallback_proposal=proposal,
                     openai_config=openai_config,
                 )
+                openai_hook["effective_openai_config"] = dict(openai_config)
+                openai_hook["effective_openai_source"] = dict(effective_openai_source)
             except Exception as exc:
                 error_record = _write_planner_openai_error_artifact(
                     artifact_root=artifact_root,
                     request_id=planner_input.request_id,
                     family_id=selected_family.family_id,
                     openai_config=openai_config,
+                    effective_openai_source=effective_openai_source,
                     error=exc,
                     blocked_families=blocked_families,
                 )
                 openai_hook = {
                     **describe_openai_operation(openai_config),
+                    "effective_openai_config": dict(openai_config),
+                    "effective_openai_source": dict(effective_openai_source),
                     **serialize_openai_error(exc),
                     "planner_enabled": planner_enabled,
                     "network_call": "failed_closed",

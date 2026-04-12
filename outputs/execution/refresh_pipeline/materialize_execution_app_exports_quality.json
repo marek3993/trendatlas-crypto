@@ -3,12 +3,13 @@
   "missing_registry_key_count": 0,
   "missing_legacy_source_count": 0,
   "hard_required_missing_count": 0,
-  "copied_count": 2,
+  "copied_count": 3,
   "transformed_count": 4,
-  "already_present_count": 3,
+  "already_present_count": 2,
   "contract_ready_after_materialization": true,
   "app_live_mode_fields_written": true,
   "phase68i_summary_written": true,
+  "phase68i_authoritative_net_compare_export_written": true,
   "app_product_snapshot_written": true,
   "app_runtime_snapshot_written": true
 }

@@ -1,0 +1,84 @@
+{
+  "blocked_families": [],
+  "component": "planner",
+  "dev_only": true,
+  "error": {
+    "error_code": "missing_api_key",
+    "error_details": {
+      "api_key_env": "OPENAI_API_KEY"
+    },
+    "error_message": "required API key is missing from OPENAI_API_KEY"
+  },
+  "family_id": "cost_aware_hysteretic_pilot_to_full",
+  "generated_at": "2026-04-12T19:44:23+00:00",
+  "live_trading": false,
+  "non_authoritative": true,
+  "notes": [
+    "planner_openai_failed_closed",
+    "no_downstream_job_emitted",
+    "no_strategy_code_execution"
+  ],
+  "official_promotion_logic": false,
+  "official_truth": false,
+  "openai_operation": {
+    "api_key_env": "OPENAI_API_KEY",
+    "api_key_present": false,
+    "effective_openai_config": {
+      "api_key_env": "OPENAI_API_KEY",
+      "api_key_present": false,
+      "enabled": true,
+      "fail_closed": true,
+      "model": "planner-model",
+      "prompt_template": "research_os_planner_mutation_proposal_v1",
+      "reasoning_effort": "medium",
+      "reasoning_summary": "auto",
+      "responses_api": "https://api.openai.com/v1/responses",
+      "strict_schema_validation": true,
+      "timeout_seconds": 60
+    },
+    "effective_openai_source": {
+      "base": "runtime.openai",
+      "component_keys": [
+        "api_key_env",
+        "api_key_present",
+        "enabled",
+        "fail_closed",
+        "model",
+        "prompt_template",
+        "reasoning_effort",
+        "reasoning_summary",
+        "responses_api",
+        "strict_schema_validation",
+        "timeout_seconds"
+      ],
+      "enabled_from": "runtime.openai.enabled",
+      "overlay": "planner.openai",
+      "runtime_keys": [
+        "api_key_env",
+        "api_key_present",
+        "enabled",
+        "fail_closed",
+        "model",
+        "reasoning_effort",
+        "reasoning_summary",
+        "responses_api",
+        "strict_schema_validation",
+        "timeout_seconds"
+      ]
+    },
+    "enabled": true,
+    "fail_closed": true,
+    "model": "planner-model",
+    "network_call": "disabled_missing_api_key",
+    "prompt_template": "research_os_planner_mutation_proposal_v1",
+    "reasoning_effort": "medium",
+    "reasoning_summary": "auto",
+    "responses_api": "https://api.openai.com/v1/responses",
+    "strict_schema_validation": true,
+    "timeout_seconds": 60
+  },
+  "request_id": "precedence_check",
+  "schema_version": "research_os_mvp.v1",
+  "source_of_truth_mutation": false,
+  "status": "failed_closed"
+}

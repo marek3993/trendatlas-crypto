@@ -8,6 +8,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from approved_strategy_net_export_helper import (
+    NetCostExportConfig,
+    build_net_cost_export_frame,
+    summarize_net_cost_export,
+)
 import phase66e_probation_governance as core
 from freshness_lineage import build_producer_lineage
 
@@ -836,6 +841,13 @@ def main() -> None:
     parser.add_argument("--phase63-paper", type=str, default=str(PHASE63_PAPER))
     parser.add_argument("--shortlist-file", type=str, default=str(PHASE67B_SHORTLIST))
     parser.add_argument("--only-profile", type=str, default="")
+    parser.add_argument("--annual-borrow-cost", type=float, default=0.0)
+    parser.add_argument("--tradable-transition-slippage-bps", type=float, default=10.0)
+    parser.add_argument("--fee-side-mode", choices=["taker", "maker", "mixed"], default="taker")
+    parser.add_argument("--taker-fee-bps", type=float, default=4.5)
+    parser.add_argument("--maker-fee-bps", type=float, default=1.5)
+    parser.add_argument("--staking-discount-pct", type=float, default=0.0)
+    parser.add_argument("--referral-discount-pct", type=float, default=0.0)
     args = parser.parse_args()
 
     ensure_dir(PHASE67J_DIR)
@@ -1045,6 +1057,7 @@ def main() -> None:
     asset_quality_path = PHASE67J_DIR / "phase67j_final_narrow_validation_asset_quality.csv"
     live_status_path = PHASE67J_DIR / "phase67j_live_status.csv"
     latest_top10_path = PHASE67J_DIR / "phase67j_latest_decision_top10.csv"
+    authoritative_export_path = PHASE67J_DIR / "phase67j_no_neo_main_authoritative_net_compare_export.csv"
     manifest_path = PHASE67J_DIR / "phase67j_manifest.json"
 
     summary.to_csv(summary_path, index=False)
@@ -1061,11 +1074,45 @@ def main() -> None:
 
     best_model_output_path = PHASE67J_DIR / f"{best_model}_paper.csv"
 
+    authoritative_export = None
+    approved_export_row = summary.loc[summary["model"].astype(str) == "phase67j_no_neo_main"]
+    approved_paper = papers.get("phase67j_no_neo_main")
+    if approved_paper is not None and not approved_export_row.empty:
+        authoritative_export = summarize_net_cost_export(
+            build_net_cost_export_frame(
+                approved_paper.reset_index().rename(columns={approved_paper.index.name or "index": "date"}),
+                gross_return_col="strategy_return",
+                regime_col="executed_regime",
+                position_col="executed_position",
+                config=NetCostExportConfig(
+                    annual_borrow_cost=float(args.annual_borrow_cost),
+                    tradable_transition_slippage_bps=float(args.tradable_transition_slippage_bps),
+                    fee_side_mode=str(args.fee_side_mode),
+                    taker_fee_bps=float(args.taker_fee_bps),
+                    maker_fee_bps=float(args.maker_fee_bps),
+                    staking_discount_pct=float(args.staking_discount_pct),
+                    referral_discount_pct=float(args.referral_discount_pct),
+                ),
+            ),
+            model="phase67j_no_neo_main",
+            switch_count=approved_export_row.iloc[0].get("switch_count"),
+        )
+        pd.DataFrame([authoritative_export]).to_csv(authoritative_export_path, index=False)
+
     manifest = {
         "phase": "phase67j_final_narrow_validation_pack",
         "phase63_paper": str(args.phase63_paper),
         "core_paper": str(args.core_paper),
         "shortlist_file": str(args.shortlist_file),
+        "net_cost_export_config": {
+            "annual_borrow_cost": float(args.annual_borrow_cost),
+            "tradable_transition_slippage_bps": float(args.tradable_transition_slippage_bps),
+            "fee_side_mode": str(args.fee_side_mode),
+            "taker_fee_bps": float(args.taker_fee_bps),
+            "maker_fee_bps": float(args.maker_fee_bps),
+            "staking_discount_pct": float(args.staking_discount_pct),
+            "referral_discount_pct": float(args.referral_discount_pct),
+        },
         "profiles": [
             {
                 "overlay": asdict(overlay_cfg),
@@ -1081,6 +1128,9 @@ def main() -> None:
         "asset_quality_file": str(asset_quality_path),
         "live_status_file": str(live_status_path),
         "latest_top10_file": str(latest_top10_path),
+        "authoritative_net_compare_export_file": (
+            str(authoritative_export_path) if authoritative_export is not None else None
+        ),
         "best_model": best_model,
         "freshness_lineage": build_producer_lineage(
             producer_script=__file__,
@@ -1149,6 +1199,8 @@ def main() -> None:
     log(f"[PHASE67J] Saved asset quality -> {asset_quality_path}")
     log(f"[PHASE67J] Saved live status -> {live_status_path}")
     log(f"[PHASE67J] Saved latest top10 -> {latest_top10_path}")
+    if authoritative_export is not None:
+        log(f"[PHASE67J] Saved authoritative net compare export -> {authoritative_export_path}")
     log(f"[PHASE67J] Saved manifest -> {manifest_path}")
 
 

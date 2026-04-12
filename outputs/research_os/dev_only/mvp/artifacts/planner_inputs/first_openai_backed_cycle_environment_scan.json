@@ -1,0 +1,48 @@
+{
+  "cwd": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "environment": {
+    "COMPUTERNAME": "JARVIS",
+    "PROCESSOR_ARCHITECTURE": "AMD64",
+    "USERNAME": "benda"
+  },
+  "host": "Jarvis",
+  "notes": [
+    "dev_only_research_os_scan",
+    "no_live_trading_logic",
+    "source_of_truth_not_mutated"
+  ],
+  "path_checks": {
+    "configs/families/family_registry.template.json": {
+      "exists": true,
+      "is_dir": false,
+      "is_file": true,
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\configs\\families\\family_registry.template.json"
+    },
+    "configs/runtime/runtime_config.pi_orchestrator.template.json": {
+      "exists": true,
+      "is_dir": false,
+      "is_file": true,
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\configs\\runtime\\runtime_config.pi_orchestrator.template.json"
+    },
+    "outputs/research_os/dev_only": {
+      "exists": true,
+      "is_dir": true,
+      "is_file": false,
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only"
+    },
+    "research_os": {
+      "exists": true,
+      "is_dir": true,
+      "is_file": false,
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os"
+    }
+  },
+  "platform": "Windows-11-10.0.26200-SP0",
+  "project_root": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "python_executable": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "python_version": "3.12.5",
+  "role": "pi_orchestrator",
+  "scanned_at": "2026-04-12T12:15:02+00:00",
+  "scanner_id": "pi_environment_scanner",
+  "schema_version": "research_os_mvp.v1"
+}

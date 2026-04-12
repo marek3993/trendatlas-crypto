@@ -36,12 +36,16 @@ LIVE_STATUS_DIR = OUTPUTS_DIR / "live_status"
 LIVE_GATE_DIR = OUTPUTS_DIR / "live_gate"
 RECON_DIR = OUTPUTS_DIR / "reconciliation"
 SUBMIT_DIR = OUTPUTS_DIR / "submit_preview"
+APP_SNAPSHOT_DIR = OUTPUTS_DIR / "app_snapshot"
 SCHEDULER_DIR = OUTPUTS_DIR / "full_auto_scheduler"
 RUNS_DIR = SCHEDULER_DIR / "runs"
 LOGS_DIR = OUTPUTS_DIR / "logs"
 SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
 
 CHILD_SCRIPT_PATH = ROOT / "scripts" / "execution" / "run_full_auto_execution_cycle.py"
+ACCOUNT_SNAPSHOT_SCRIPT_PATH = ROOT / "scripts" / "execution" / "hyperliquid_read_only_snapshot.py"
+EXECUTION_STATUS_SCRIPT_PATH = ROOT / "scripts" / "execution" / "render_execution_app_status.py"
+MATERIALIZE_SCRIPT_PATH = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
 
 DECISION_PATH = SCHEDULER_DIR / "latest_scheduler_entry_decision.json"
 MANIFEST_PATH = SCHEDULER_DIR / "latest_scheduler_entry_manifest.json"
@@ -52,6 +56,7 @@ FULL_AUTO_RUNNER_DECISION_PATH = FULL_AUTO_DIR / "latest_full_auto_runner_decisi
 FULL_AUTO_RUNNER_MANIFEST_PATH = FULL_AUTO_DIR / "latest_full_auto_runner_manifest.json"
 FULL_AUTO_RUNNER_SNAPSHOT_PATH = FULL_AUTO_DIR / "latest_full_auto_runner_snapshot.json"
 FULL_AUTO_SKIP_REASON_PATH = FULL_AUTO_DIR / "latest_full_auto_skip_reason.json"
+APP_RUNTIME_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_runtime_snapshot.json"
 
 INFO_URL = "https://api.hyperliquid.xyz/info"
 MANUAL_CONFIRM_TOKEN = "FULL_AUTO_EXECUTION"
@@ -82,6 +87,11 @@ BASE_REQUIRED_DOWNSTREAM_ARTIFACTS: list[tuple[str, Path, list[str]]] = [
         "execution_status",
         LIVE_STATUS_DIR / "execution_status.json",
         ["status_type", "signal_id", "target_asset"],
+    ),
+    (
+        "app_runtime_snapshot",
+        APP_RUNTIME_SNAPSHOT_PATH,
+        ["snapshot_type", "strategy_freshness", "latest_wallet_sync_utc"],
     ),
     (
         "execution_intent",
@@ -515,6 +525,99 @@ def run_child_process(
     }
 
 
+def run_support_script(
+    *,
+    step_name: str,
+    script_path: Path,
+    env: dict[str, str],
+    run_dir: Path,
+    arguments: list[str] | None = None,
+) -> dict[str, Any]:
+    stdout_path = run_dir / f"{step_name}.stdout.log"
+    stderr_path = run_dir / f"{step_name}.stderr.log"
+    command = [sys.executable, str(script_path.resolve())]
+    if arguments:
+        command.extend(arguments)
+    started_at_utc = utc_now_iso()
+    started = time.monotonic()
+    result = subprocess.run(
+        command,
+        cwd=str(ROOT),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=False,
+        env=env,
+    )
+    elapsed_sec = round(time.monotonic() - started, 3)
+    stdout_text = result.stdout or ""
+    stderr_text = result.stderr or ""
+    stdout_path.write_text(stdout_text, encoding="utf-8")
+    stderr_path.write_text(stderr_text, encoding="utf-8")
+    return {
+        "step_name": step_name,
+        "script_path": str(script_path.resolve()),
+        "command": command,
+        "started_at_utc": started_at_utc,
+        "finished_at_utc": utc_now_iso(),
+        "elapsed_sec": elapsed_sec,
+        "returncode": result.returncode,
+        "stdout_log_path": str(stdout_path.resolve()),
+        "stderr_log_path": str(stderr_path.resolve()),
+    }
+
+
+def run_post_run_account_refresh(
+    *,
+    env: dict[str, str],
+    run_dir: Path,
+) -> dict[str, Any]:
+    steps = [
+        (
+            "post_run_hyperliquid_read_only_snapshot",
+            ACCOUNT_SNAPSHOT_SCRIPT_PATH,
+            [],
+        ),
+        (
+            "post_run_render_execution_app_status",
+            EXECUTION_STATUS_SCRIPT_PATH,
+            [],
+        ),
+        (
+            "post_run_materialize_app_runtime_snapshot",
+            MATERIALIZE_SCRIPT_PATH,
+            ["--runtime-snapshot-only"],
+        ),
+    ]
+    results: list[dict[str, Any]] = []
+    failed_step: dict[str, Any] | None = None
+
+    for step_name, script_path, arguments in steps:
+        result = run_support_script(
+            step_name=step_name,
+            script_path=script_path,
+            env=env,
+            run_dir=run_dir,
+            arguments=arguments,
+        )
+        results.append(result)
+        if result["returncode"] != 0:
+            failed_step = result
+            break
+
+    return {
+        "ok": failed_step is None,
+        "steps": results,
+        "failed_step": failed_step,
+        "expected_order": [
+            "hyperliquid_read_only_snapshot",
+            "render_execution_app_status",
+            "materialize_execution_app_exports --runtime-snapshot-only",
+        ],
+    }
+
+
 def verify_required_artifacts(
     required_artifacts: list[tuple[str, Path, list[str]]],
     before_states: dict[str, dict[str, Any]],
@@ -879,6 +982,7 @@ def resolve_exit_code(status: str) -> int:
         "failed_source_of_truth_write_check": 6,
         "failed_preflight": 7,
         "failed_base_chain": 8,
+        "failed_post_run_account_refresh": 9,
     }.get(status, 1)
 
 
@@ -905,6 +1009,7 @@ def main() -> None:
     source_of_truth_changes: list[str] = []
     bridge_result: dict[str, Any] | None = None
     auto_submit_evaluation: dict[str, Any] | None = None
+    post_run_account_refresh: dict[str, Any] | None = None
     trading_operation_mode = load_trading_operation_mode_payload(TRADING_OPERATION_MODE_PATH)
     requested_execute_live = bool(args.execute_live)
     effective_execute_live = bool(
@@ -991,6 +1096,19 @@ def main() -> None:
                         )
                         status = "failed_child_process"
 
+            if status not in {"failed_base_chain", "failed_child_process"}:
+                post_run_account_refresh = run_post_run_account_refresh(
+                    env=os.environ.copy(),
+                    run_dir=run_dir,
+                )
+                if not post_run_account_refresh["ok"]:
+                    failed_step = post_run_account_refresh["failed_step"] or {}
+                    abort_conditions.append(
+                        "post_run_account_refresh_failed::"
+                        f"{failed_step.get('step_name')}::returncode={failed_step.get('returncode')}"
+                    )
+                    status = "failed_post_run_account_refresh"
+
         source_of_truth_after = snapshot_source_of_truth_state()
         source_of_truth_changes = diff_source_of_truth_state(
             source_of_truth_before,
@@ -1010,7 +1128,12 @@ def main() -> None:
             required_artifacts,
             downstream_before_states,
         )
-        if status not in {"failed_base_chain", "failed_child_process", "failed_source_of_truth_write_check"} and not downstream_verification["ok"]:
+        if status not in {
+            "failed_base_chain",
+            "failed_child_process",
+            "failed_source_of_truth_write_check",
+            "failed_post_run_account_refresh",
+        } and not downstream_verification["ok"]:
             if downstream_verification["missing_labels"]:
                 abort_conditions.append(
                     "missing_downstream_artifacts::"
@@ -1082,6 +1205,7 @@ def main() -> None:
             "auto_submit_evaluation": auto_submit_evaluation,
             "execution_suppressed_reasons": execution_suppressed_reasons,
             "child_process": child_process,
+            "post_run_account_refresh": post_run_account_refresh,
             "downstream_verification": downstream_verification,
             "source_of_truth_write_check": {
                 "ok": not source_of_truth_changes,

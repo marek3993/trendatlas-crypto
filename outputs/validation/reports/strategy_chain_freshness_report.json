@@ -1,12 +1,45 @@
 {
-  "raw_btc_last_date": "2026-04-10",
-  "phase60_last_date": "2026-04-10",
-  "phase62_last_date": "2026-04-10",
-  "phase63_last_date": "2026-04-10",
-  "phase66g_last_date": "2026-04-10",
-  "phase67j_last_date": "2026-04-10",
-  "canonical_app_export_last_date": "2026-04-10",
-  "canonical_live_status_latest_available_date": "2026-04-10",
+  "raw_btc_last_date": "2026-04-11",
+  "phase60_last_date": "2026-04-11",
+  "phase62_last_date": "2026-04-11",
+  "phase63_last_date": "2026-04-11",
+  "phase66g_last_date": "2026-04-11",
+  "phase67j_last_date": "2026-04-11",
+  "canonical_app_export_last_date": "2026-04-11",
+  "canonical_live_status_latest_available_date": "2026-04-11",
   "first_broken_stage": null,
-  "first_missing_date": null
+  "first_missing_date": null,
+  "path_resolution_diagnostics": [
+    {
+      "context": "freshness:canonical_app_export",
+      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
+      "reason": "preferred_canonical_app_export_exists",
+      "exists": true
+    },
+    {
+      "context": "freshness:canonical_live_status",
+      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+      "reason": "host_absolute_path",
+      "exists": true,
+      "artifact_key": "phase67j_live_status",
+      "selected_source": "canonical",
+      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv"
+    },
+    {
+      "context": "freshness:phase60.base_file",
+      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase60_selective_restore_robustness\\phase60_restore_trx_sol_base_paper.csv",
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase60_selective_restore_robustness\\phase60_restore_trx_sol_base_paper.csv",
+      "reason": "host_absolute_path",
+      "exists": true
+    },
+    {
+      "context": "freshness:phase66g.production_paper_saved",
+      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
+      "reason": "host_absolute_path",
+      "exists": true
+    }
+  ]
 }

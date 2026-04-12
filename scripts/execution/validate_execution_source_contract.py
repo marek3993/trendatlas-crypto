@@ -322,6 +322,7 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "account_snapshot_as_of_utc",
             "dry_run_generated_at_utc",
             "gate_generated_at_utc",
+            "runtime_table_snapshot",
             "account_observability_contract",
             "execution_status",
             "account_snapshot_summary",
@@ -436,10 +437,92 @@ def validate_runtime_snapshot() -> dict[str, Any]:
         errors,
     )
 
+    runtime_table = require_dict(payload, "runtime_table_snapshot", "app_runtime_snapshot", errors)
+    require_keys(
+        runtime_table,
+        [
+            "last_pi_update_utc",
+            "last_pc_refresh_utc",
+            "last_refresh_status",
+            "last_refresh_run_id",
+            "last_wallet_sync_utc",
+            "currentness_state",
+            "currentness_reason",
+            "source_metadata",
+            "evaluated_at_utc",
+        ],
+        "app_runtime_snapshot.runtime_table_snapshot",
+        errors,
+    )
+    runtime_table_source_metadata = require_dict(
+        runtime_table,
+        "source_metadata",
+        "app_runtime_snapshot.runtime_table_snapshot",
+        errors,
+    )
+    require_keys(
+        runtime_table_source_metadata,
+        [
+            "last_pi_update_utc",
+            "last_pc_refresh_utc",
+            "last_refresh_status",
+            "last_refresh_run_id",
+            "last_wallet_sync_utc",
+            "currentness_state",
+            "currentness_reason",
+        ],
+        "app_runtime_snapshot.runtime_table_snapshot.source_metadata",
+        errors,
+    )
+
+    currentness_state = str(runtime_table.get("currentness_state") or "").strip()
+    if currentness_state not in {
+        "current",
+        "stale",
+        "not_run_today",
+        "failed_latest_refresh",
+        "missing_runtime_artifact",
+    }:
+        errors.append(
+            "app_runtime_snapshot.runtime_table_snapshot currentness_state has unsupported value"
+        )
+
+    currentness_reason = str(runtime_table.get("currentness_reason") or "").strip()
+    if not currentness_reason:
+        errors.append(
+            "app_runtime_snapshot.runtime_table_snapshot currentness_reason must be non-empty"
+        )
+
+    last_refresh_status = str(runtime_table.get("last_refresh_status") or "").strip()
+    last_refresh_run_id = runtime_table.get("last_refresh_run_id")
+    last_pc_refresh_utc = runtime_table.get("last_pc_refresh_utc")
+    if last_refresh_status == "not_run":
+        if last_refresh_run_id is not None:
+            errors.append(
+                "app_runtime_snapshot.runtime_table_snapshot last_refresh_run_id must be null when last_refresh_status=not_run"
+            )
+        if last_pc_refresh_utc is not None:
+            errors.append(
+                "app_runtime_snapshot.runtime_table_snapshot last_pc_refresh_utc must be null when last_refresh_status=not_run"
+            )
+
+    if last_refresh_status and last_refresh_status != "not_run":
+        status_meta = runtime_table_source_metadata.get("last_refresh_status") or {}
+        run_id_meta = runtime_table_source_metadata.get("last_refresh_run_id") or {}
+        pc_refresh_meta = runtime_table_source_metadata.get("last_pc_refresh_utc") or {}
+        status_path = status_meta.get("path")
+        run_id_path = run_id_meta.get("path")
+        pc_refresh_path = pc_refresh_meta.get("path")
+        if not status_path or status_path != run_id_path or status_path != pc_refresh_path:
+            errors.append(
+                "app_runtime_snapshot.runtime_table_snapshot refresh status/run_id/pc refresh must resolve from the same manifest source"
+            )
+
     source_metadata = require_dict(payload, "source_metadata", "app_runtime_snapshot", errors)
     require_keys(
         source_metadata,
         [
+            "runtime_table_snapshot",
             "execution_status",
             "account_snapshot_summary",
             "dry_run_summary",

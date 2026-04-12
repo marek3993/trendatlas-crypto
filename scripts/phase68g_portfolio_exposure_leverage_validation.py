@@ -8,6 +8,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from approved_strategy_net_export_helper import (
+    NetCostExportConfig,
+    build_net_cost_export_frame,
+    summarize_net_cost_export,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUTS = ROOT / "outputs"
@@ -688,6 +694,11 @@ def main() -> None:
     parser.add_argument("--stress-lookback-days", type=int, default=20)
     parser.add_argument("--stress-off-threshold", type=float, default=-0.08)
     parser.add_argument("--stress-on-threshold", type=float, default=-0.04)
+    parser.add_argument("--fee-side-mode", choices=["taker", "maker", "mixed"], default="taker")
+    parser.add_argument("--taker-fee-bps", type=float, default=4.5)
+    parser.add_argument("--maker-fee-bps", type=float, default=1.5)
+    parser.add_argument("--staking-discount-pct", type=float, default=0.0)
+    parser.add_argument("--referral-discount-pct", type=float, default=0.0)
     args = parser.parse_args()
 
     ensure_dir(PHASE68G_DIR)
@@ -717,6 +728,14 @@ def main() -> None:
     log(f"[PHASE68G] Tradable transition slippage bps: {args.tradable_transition_slippage_bps:.2f}")
     log(f"[PHASE68G] Trend activation threshold: {args.trend_activation_threshold:.4f}")
     log(f"[PHASE68G] Stress off / on: {args.stress_off_threshold:.4f} / {args.stress_on_threshold:.4f}")
+    log(
+        "[PHASE68G] Trading fees: "
+        f"mode={args.fee_side_mode} "
+        f"taker_bps={args.taker_fee_bps:.4f} "
+        f"maker_bps={args.maker_fee_bps:.4f} "
+        f"staking_discount_pct={args.staking_discount_pct:.2f} "
+        f"referral_discount_pct={args.referral_discount_pct:.2f}"
+    )
 
     governance_df = load_governance_paper(governance_paper_path)
     baseline_df = load_baseline_paper(baseline_paper_path)
@@ -734,6 +753,7 @@ def main() -> None:
     tradable_transition_df.to_csv(transition_calendar_path, index=False)
 
     summary_rows: list[dict] = []
+    wrapped_by_model: dict[str, pd.DataFrame] = {}
 
     for variant in VARIANTS:
         log(f"[PHASE68G] running {variant.model} | target_leverage={variant.target_leverage:.2f}x")
@@ -760,6 +780,7 @@ def main() -> None:
                 tradable_transition_count=int(tradable_transition_count),
             )
         )
+        wrapped_by_model[variant.model] = wrapped.copy()
 
         wrapped.to_csv(papers_dir / f"{variant.model}_paper.csv", index=False)
         log(f"[PHASE68G] done {variant.model}")
@@ -792,10 +813,37 @@ def main() -> None:
 
     summary_path = PHASE68G_DIR / "phase68g_portfolio_exposure_leverage_summary.csv"
     compare_path = PHASE68G_DIR / "phase68g_portfolio_exposure_leverage_compare.csv"
+    authoritative_export_path = PHASE68G_DIR / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
     manifest_path = PHASE68G_DIR / "phase68g_portfolio_exposure_leverage_manifest.json"
 
     summary_df.to_csv(summary_path, index=False)
     compare_df.to_csv(compare_path, index=False)
+
+    candidate_frame = wrapped_by_model.get("phase68g_66g_1p25x_candidate")
+    if candidate_frame is None:
+        raise ValueError("Chýba wrapped export pre phase68g_66g_1p25x_candidate.")
+    authoritative_export = summarize_net_cost_export(
+        build_net_cost_export_frame(
+            candidate_frame,
+            gross_return_col="realistic_ret_gross",
+            held_asset_col="portfolio_held_asset",
+            leverage_col="effective_leverage",
+            daily_borrow_cost_col="daily_borrow_cost",
+            tradable_slippage_cost_col="tradable_slippage_cost",
+            config=NetCostExportConfig(
+                annual_borrow_cost=float(args.annual_borrow_cost),
+                tradable_transition_slippage_bps=float(args.tradable_transition_slippage_bps),
+                fee_side_mode=str(args.fee_side_mode),
+                taker_fee_bps=float(args.taker_fee_bps),
+                maker_fee_bps=float(args.maker_fee_bps),
+                staking_discount_pct=float(args.staking_discount_pct),
+                referral_discount_pct=float(args.referral_discount_pct),
+            ),
+        ),
+        model="phase68g_66g_1p25x_candidate",
+        switch_count=governance_switch_count,
+    )
+    pd.DataFrame([authoritative_export]).to_csv(authoritative_export_path, index=False)
 
     manifest = {
         "phase": "phase68g_portfolio_exposure_leverage_validation",
@@ -811,6 +859,11 @@ def main() -> None:
             "stress_lookback_days": int(args.stress_lookback_days),
             "stress_off_threshold": float(args.stress_off_threshold),
             "stress_on_threshold": float(args.stress_on_threshold),
+            "fee_side_mode": str(args.fee_side_mode),
+            "taker_fee_bps": float(args.taker_fee_bps),
+            "maker_fee_bps": float(args.maker_fee_bps),
+            "staking_discount_pct": float(args.staking_discount_pct),
+            "referral_discount_pct": float(args.referral_discount_pct),
             "cash_forced_1x": True,
             "switch_day_forced_1x": True,
             "entry_buffer_day_forced_1x": True,
@@ -823,6 +876,7 @@ def main() -> None:
         "variants": [asdict(v) for v in VARIANTS],
         "summary_file": str(summary_path),
         "compare_file": str(compare_path),
+        "authoritative_net_compare_export_file": str(authoritative_export_path),
         "papers_dir": str(papers_dir),
         "notes": [
             "Fixnutý exposure lineage: leverage už nepoužíva chosen_asset ako celý held path.",
@@ -886,6 +940,7 @@ def main() -> None:
     log(f"[PHASE68G] Saved compare -> {compare_path}")
     log(f"[PHASE68G] Saved manifest -> {manifest_path}")
     log(f"[PHASE68G] Saved transition calendar -> {transition_calendar_path}")
+    log(f"[PHASE68G] Saved authoritative net compare export -> {authoritative_export_path}")
     log(f"[PHASE68G] Saved papers -> {papers_dir}")
 
 
