@@ -57,6 +57,7 @@ REQUIRED_APP_LIVE_MODE_FIELDS = [
 ]
 
 PHASE68I_SUMMARY_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_summary.csv"
+PHASE68I_AUTHORITATIVE_EXPORT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv"
 PHASE68I_PAPER_INPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_paper.csv"
 PHASE67J_PAPER_PATH = APP_EXPORTS_DIR / "phase67j_no_neo_main_paper.csv"
 PHASE66G_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase66g_live_status.csv"
@@ -78,9 +79,9 @@ PHASE66G_PRODUCTION_PAPER_PATH = ROOT / "outputs" / "phase66g_production_candida
 
 SUCCESS_REFRESH_STATUSES = {"OK", "SUCCESS", "PASS", "PASSED"}
 FRESHNESS_SUMMARY_TEXT = {
-    "current": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
-    "stale": "Stale: today's refresh ran, but strategy data is behind the latest closed UTC day.",
-    "not_run_today": "Not run today: today's daily refresh has not finished.",
+    "current": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
+    "stale": "Stale: strategy data is not aligned with the latest available closed UTC day.",
+    "not_run_today": "Not run today: the required refresh for the latest available closed UTC day has not completed successfully.",
     "failed_latest_refresh": "Failed latest refresh: the most recent daily refresh failed.",
     "missing_runtime_artifact": "Missing runtime artifact: app_runtime_snapshot.json is missing or invalid.",
 }
@@ -225,7 +226,6 @@ def freshness_detail(
     latest_refresh: dict[str, Any] | None,
     latest_strategy_artifact_date: str | None,
     latest_available_closed_utc_date: str | None,
-    today_utc: str,
 ) -> tuple[str, str]:
     if state == "current":
         return (
@@ -234,7 +234,7 @@ def freshness_detail(
         )
     if state == "stale":
         return (
-            "strategy_artifact_behind_latest_closed_day",
+            "strategy_artifact_not_aligned_with_latest_closed_day",
             (
                 f"{FRESHNESS_SUMMARY_TEXT[state]} "
                 f"strategy_date={latest_strategy_artifact_date or 'missing'} "
@@ -252,10 +252,13 @@ def freshness_detail(
         )
     if state == "not_run_today":
         return (
-            "daily_refresh_not_finished_today",
+            "required_refresh_not_completed_for_latest_closed_day",
             (
                 f"{FRESHNESS_SUMMARY_TEXT[state]} "
-                f"today_utc={today_utc} "
+                f"latest_refresh_run_id={(latest_refresh or {}).get('run_id') or 'missing'} "
+                f"latest_refresh_run_status={(latest_refresh or {}).get('status') or 'missing'} "
+                f"latest_strategy_artifact_date={latest_strategy_artifact_date or 'missing'} "
+                f"latest_available_closed_utc_date={latest_available_closed_utc_date or 'missing'} "
                 f"latest_refresh_finished_at_utc={(latest_refresh or {}).get('finished_at_utc') or 'missing'}."
             ),
         )
@@ -275,27 +278,27 @@ def build_strategy_freshness_summary(
     refresh_manifests = load_refresh_manifests()
     latest_refresh = refresh_manifests[0] if refresh_manifests else None
     latest_successful_refresh = next((item for item in refresh_manifests if item.get("success")), None)
-    today_utc = datetime.now(timezone.utc).date().isoformat()
+    latest_refresh_success = bool(latest_refresh and latest_refresh.get("success"))
+    strategy_dates_aligned = bool(
+        latest_strategy_artifact_date
+        and latest_available_closed_utc_date
+        and latest_strategy_artifact_date == latest_available_closed_utc_date
+    )
 
     if latest_refresh is None:
         state = "not_run_today"
-    elif not bool(latest_refresh.get("success")):
-        state = "failed_latest_refresh"
-    elif utc_date_from_iso(latest_refresh.get("finished_at_utc")) != today_utc:
-        state = "not_run_today"
-    elif not latest_strategy_artifact_date or not latest_available_closed_utc_date:
-        state = "stale"
-    elif latest_strategy_artifact_date < latest_available_closed_utc_date:
-        state = "stale"
-    else:
+    elif latest_refresh_success and strategy_dates_aligned:
         state = "current"
+    elif not latest_refresh_success:
+        state = "failed_latest_refresh"
+    else:
+        state = "stale"
 
     detail_code, detail_text = freshness_detail(
         state,
         latest_refresh=latest_refresh,
         latest_strategy_artifact_date=latest_strategy_artifact_date,
         latest_available_closed_utc_date=latest_available_closed_utc_date,
-        today_utc=today_utc,
     )
 
     return {
@@ -745,12 +748,15 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "sharpe",
         "sortino",
         "switch_count",
+        "trade_count",
         "cash_days_pct",
         "btc_days_pct",
         "trading_fees_total_pct",
         "funding_total_pct",
         "borrow_cost_total_pct",
         "tradable_slippage_cost_total_pct",
+        "annual_borrow_cost_pct",
+        "tradable_transition_slippage_bps",
         "fee_side_mode",
         "taker_fee_bps",
         "maker_fee_bps",
@@ -779,12 +785,15 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "sharpe": format_float(sharpe, 4),
         "sortino": format_float(sortino, 4),
         "switch_count": str(switch_count),
+        "trade_count": str(switch_count),
         "cash_days_pct": format_float(cash_days_pct, 4),
         "btc_days_pct": format_float(btc_days_pct, 4),
         "trading_fees_total_pct": format_float(trading_fees_total_pct, 4),
         "funding_total_pct": format_float(funding_total_pct, 4),
         "borrow_cost_total_pct": format_float(borrow_cost_total * 100.0, 4),
         "tradable_slippage_cost_total_pct": format_float(tradable_slippage_cost_total * 100.0, 4),
+        "annual_borrow_cost_pct": format_float(parse_float_required(target_row, "annual_borrow_cost_pct"), 4),
+        "tradable_transition_slippage_bps": format_float(parse_float_required(target_row, "tradable_transition_slippage_bps"), 4),
         "fee_side_mode": str(target_row.get("fee_side_mode", "")).strip(),
         "taker_fee_bps": format_float(parse_float_required(target_row, "taker_fee_bps"), 4),
         "maker_fee_bps": format_float(parse_float_required(target_row, "maker_fee_bps"), 4),
@@ -795,6 +804,10 @@ def build_phase68i_summary_export() -> dict[str, Any]:
 
     try:
         with PHASE68I_SUMMARY_OUTPUT_PATH.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=output_header)
+            writer.writeheader()
+            writer.writerow(output_row)
+        with PHASE68I_AUTHORITATIVE_EXPORT_PATH.open("w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=output_header)
             writer.writeheader()
             writer.writerow(output_row)
@@ -809,6 +822,8 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "paper_refresh_info": phase68h_refresh_info,
         "output_path": str(PHASE68I_SUMMARY_OUTPUT_PATH),
         "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
+        "authoritative_export_path": str(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
+        "authoritative_export_info": safe_stat(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
         "computed_fields": [
             "total_return_pct",
             "total_return_pct_gross",
@@ -816,14 +831,19 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             "sharpe",
             "sortino",
             "switch_count",
+            "trade_count",
             "cash_days_pct",
             "btc_days_pct",
             "trading_fees_total_pct",
             "funding_total_pct",
             "borrow_cost_total_pct",
             "tradable_slippage_cost_total_pct",
+            "annual_borrow_cost_pct",
+            "tradable_transition_slippage_bps",
         ],
         "copied_fields_from_summary_source": [
+            "annual_borrow_cost_pct",
+            "tradable_transition_slippage_bps",
             "fee_side_mode",
             "taker_fee_bps",
             "maker_fee_bps",
@@ -1477,6 +1497,8 @@ def main() -> None:
     transformed_count += 1
     log(f"[MATERIALIZED] phase68i_dynamic_ladder_candidate_summary")
     log(f"              target={PHASE68I_SUMMARY_OUTPUT_PATH}")
+    log(f"[MATERIALIZED] phase68i_dynamic_ladder_candidate_authoritative_net_compare_export")
+    log(f"              target={PHASE68I_AUTHORITATIVE_EXPORT_PATH}")
 
     product_snapshot = build_product_snapshot(app_live_mode_contract)
     runtime_snapshot = build_runtime_snapshot(
@@ -1548,6 +1570,7 @@ def main() -> None:
         "contract_ready_after_materialization": len(hard_required_missing) == 0,
         "app_live_mode_fields_written": True,
         "phase68i_summary_written": PHASE68I_SUMMARY_OUTPUT_PATH.exists(),
+        "phase68i_authoritative_net_compare_export_written": PHASE68I_AUTHORITATIVE_EXPORT_PATH.exists(),
         "app_product_snapshot_written": APP_PRODUCT_SNAPSHOT_PATH.exists(),
         "app_runtime_snapshot_written": APP_RUNTIME_SNAPSHOT_PATH.exists(),
     }
@@ -1567,6 +1590,7 @@ def main() -> None:
             str(QUALITY_PATH.resolve()),
             str(MANIFEST_PATH.resolve()),
             str(PHASE68I_SUMMARY_OUTPUT_PATH.resolve()),
+            str(PHASE68I_AUTHORITATIVE_EXPORT_PATH.resolve()),
             str(APP_PRODUCT_SNAPSHOT_PATH.resolve()),
             str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
         ],
