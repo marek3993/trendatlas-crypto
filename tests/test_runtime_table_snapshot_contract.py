@@ -70,6 +70,26 @@ class TestRuntimeTableSnapshotContract(unittest.TestCase):
         self.assertEqual(len(refresh_paths), 1)
         self.assertNotIn(None, refresh_paths)
 
+    def test_last_pi_update_uses_scheduler_manifest_not_runtime_health(self):
+        payload = load_json(APP_RUNTIME_SNAPSHOT_PATH)
+        runtime_table = payload["runtime_table_snapshot"]
+        source_metadata = runtime_table["source_metadata"]["last_pi_update_utc"]
+
+        self.assertEqual(
+            source_metadata.get("path"),
+            "outputs/execution/full_auto_scheduler/latest_scheduler_entry_manifest.json",
+        )
+        self.assertEqual(
+            source_metadata.get("source_type"),
+            "full_auto_scheduler_entry_manifest",
+        )
+        self.assertEqual(source_metadata.get("source_field"), "generated_at_utc")
+        self.assertNotEqual(
+            source_metadata.get("path"),
+            "outputs/execution/runtime_health/latest_runtime_health.json",
+        )
+        self.assertNotEqual(source_metadata.get("source_field"), "last_success_utc")
+
     def test_app_refresh_rows_read_runtime_table_snapshot_only(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")
         start_marker = "refresh_rows = ["

@@ -75,6 +75,7 @@ BENCHMARK_BTC_SOURCE_PATH = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
 EXECUTION_STATUS_PATH = OUTPUTS_DIR / "live_status" / "execution_status.json"
 ACCOUNT_SNAPSHOT_PATH = OUTPUTS_DIR / "read_only" / "hyperliquid_account_snapshot.json"
 RUNTIME_HEALTH_PATH = OUTPUTS_DIR / "runtime_health" / "latest_runtime_health.json"
+FULL_AUTO_SCHEDULER_MANIFEST_PATH = OUTPUTS_DIR / "full_auto_scheduler" / "latest_scheduler_entry_manifest.json"
 DRY_RUN_DECISION_PATH = OUTPUTS_DIR / "dry_run" / "latest_dry_run_decision.json"
 REAL_ORDER_GATE_PATH = OUTPUTS_DIR / "live_gate" / "latest_real_order_gate_decision.json"
 EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
@@ -364,6 +365,7 @@ def build_strategy_freshness_summary(
 def build_runtime_table_snapshot(
     *,
     last_pi_update_utc: str | None,
+    last_pi_update_metadata: dict[str, Any],
     last_wallet_sync_utc: str | None,
     strategy_freshness: dict[str, Any],
     evaluated_at_utc: str,
@@ -372,7 +374,6 @@ def build_runtime_table_snapshot(
         strategy_freshness.get("refresh_manifest_path"),
         "app_refresh_pipeline_manifest",
     )
-    runtime_health_metadata = source_metadata(RUNTIME_HEALTH_PATH, "runtime_health")
     wallet_snapshot_metadata = source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot")
     freshness_report_metadata = source_metadata(APP_FRESHNESS_REPORT_PATH, "canonical_product_freshness_report")
     strategy_artifact_metadata = source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper")
@@ -403,8 +404,8 @@ def build_runtime_table_snapshot(
         "currentness_reason": currentness_reason,
         "source_metadata": {
             "last_pi_update_utc": field_source_metadata(
-                source_path_metadata=runtime_health_metadata,
-                source_field="last_success_utc",
+                source_path_metadata=last_pi_update_metadata,
+                source_field="generated_at_utc",
                 value=last_pi_update_utc,
             ),
             "last_pc_refresh_utc": field_source_metadata(
@@ -452,6 +453,18 @@ def build_runtime_table_snapshot(
         },
         "evaluated_at_utc": evaluated_at_utc,
     }
+
+
+def resolve_last_pi_update_signal() -> tuple[str | None, dict[str, Any]]:
+    metadata = source_metadata(
+        FULL_AUTO_SCHEDULER_MANIFEST_PATH,
+        "full_auto_scheduler_entry_manifest",
+    )
+    payload = read_json_optional(FULL_AUTO_SCHEDULER_MANIFEST_PATH)
+    if not payload:
+        return None, metadata
+    value = str(payload.get("generated_at_utc") or "").strip() or None
+    return value, metadata
 
 
 def write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -1330,6 +1343,7 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
 
     account_summary = build_runtime_account_summary(status_payload, account_snapshot_payload)
     runtime_last_sync_utc = runtime_health_payload.get("last_success_utc")
+    last_pi_update_utc, last_pi_update_metadata = resolve_last_pi_update_signal()
     account_snapshot_as_of_utc = account_snapshot_payload.get("as_of_utc")
     dry_run_generated_at_utc = dry_run_payload.get("generated_at_utc")
     gate_generated_at_utc = gate_payload.get("generated_at_utc")
@@ -1353,7 +1367,8 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
         latest_available_closed_utc_date=latest_available_closed_utc_date,
     )
     runtime_table_snapshot = build_runtime_table_snapshot(
-        last_pi_update_utc=runtime_last_sync_utc,
+        last_pi_update_utc=last_pi_update_utc,
+        last_pi_update_metadata=last_pi_update_metadata,
         last_wallet_sync_utc=latest_wallet_sync_utc,
         strategy_freshness=strategy_freshness,
         evaluated_at_utc=app_runtime_generated_at_utc,

@@ -2,7 +2,7 @@
   "snapshot_type": "app_runtime_snapshot",
   "schema_version": 2,
   "app_export_generated_at_utc": "2026-04-12T22:51:13Z",
-  "app_runtime_snapshot_generated_at_utc": "2026-04-12T23:15:49Z",
+  "app_runtime_snapshot_generated_at_utc": "2026-04-12T23:36:57Z",
   "page_scope": "account_page",
   "runtime_last_sync_utc": "2026-04-06T09:16:26Z",
   "account_snapshot_as_of_utc": "2026-04-12T22:10:08Z",
@@ -47,10 +47,10 @@
     "latest_trend_calculation_date": "2026-04-11",
     "latest_wallet_sync_utc": "2026-04-12T22:10:08Z",
     "latest_available_closed_utc_date": "2026-04-11",
-    "evaluated_at_utc": "2026-04-12T23:15:49Z"
+    "evaluated_at_utc": "2026-04-12T23:36:57Z"
   },
   "runtime_table_snapshot": {
-    "last_pi_update_utc": "2026-04-06T09:16:26Z",
+    "last_pi_update_utc": "2026-04-12T22:10:09Z",
     "last_pc_refresh_utc": "2026-04-12T22:05:58+00:00",
     "last_refresh_status": "OK",
     "last_refresh_run_id": "20260412_220502",
@@ -59,13 +59,13 @@
     "currentness_reason": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
     "source_metadata": {
       "last_pi_update_utc": {
-        "path": "outputs/execution/runtime_health/latest_runtime_health.json",
-        "source_type": "runtime_health",
+        "path": "outputs/execution/full_auto_scheduler/latest_scheduler_entry_manifest.json",
+        "source_type": "full_auto_scheduler_entry_manifest",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 15036,
-        "modified_utc": "2026-04-06T09:16:26Z",
-        "source_field": "last_success_utc",
+        "size_bytes": 1490,
+        "modified_utc": "2026-04-12T22:10:09Z",
+        "source_field": "generated_at_utc",
         "value_present": true
       },
       "last_pc_refresh_utc": {
@@ -187,7 +187,7 @@
         }
       }
     },
-    "evaluated_at_utc": "2026-04-12T23:15:49Z"
+    "evaluated_at_utc": "2026-04-12T23:36:57Z"
   },
   "account_observability_contract": {
     "enabled": true,
@@ -390,16 +390,16 @@
     "runtime_table_snapshot": {
       "source_type": "authoritative_runtime_table_snapshot",
       "owner": "DATA",
-      "evaluated_at_utc": "2026-04-12T23:15:49Z",
+      "evaluated_at_utc": "2026-04-12T23:36:57Z",
       "fields": {
         "last_pi_update_utc": {
-          "path": "outputs/execution/runtime_health/latest_runtime_health.json",
-          "source_type": "runtime_health",
+          "path": "outputs/execution/full_auto_scheduler/latest_scheduler_entry_manifest.json",
+          "source_type": "full_auto_scheduler_entry_manifest",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 15036,
-          "modified_utc": "2026-04-06T09:16:26Z",
-          "source_field": "last_success_utc",
+          "size_bytes": 1490,
+          "modified_utc": "2026-04-12T22:10:09Z",
+          "source_field": "generated_at_utc",
           "value_present": true
         },
         "last_pc_refresh_utc": {
