@@ -5,6 +5,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from services.shared.openai_responses import describe_openai_operation, invoke_structured_response, serialize_openai_error
+from services.shared.runtime_bootstrap import load_runtime_config as load_runtime_config_shared
 from services.shared.artifact_writer import ArtifactWriter
 from services.shared.schemas import (
     CRITIC_STATUS_COMPLETED,
@@ -33,23 +35,6 @@ from services.shared.schemas import (
     utc_now_iso,
 )
 from services.pi.registry_service import RegistryService
-
-
-class ResponsesAPIHook:
-    """Prepared OpenAI Responses API hook; intentionally does not call the network."""
-
-    def __init__(self, enabled: bool, model: str, prompt_template: str) -> None:
-        self.enabled = enabled
-        self.model = model
-        self.prompt_template = prompt_template
-
-    def describe(self) -> dict[str, Any]:
-        return {
-            "enabled": self.enabled,
-            "model": self.model,
-            "prompt_template": self.prompt_template,
-            "network_call": "disabled_in_mvp",
-        }
 
 
 def load_family_registry(path: str | Path) -> FamilyRegistry:
@@ -172,9 +157,190 @@ def build_mutation_proposal(
     )
 
 
+def _planner_prompt_template(prompt_template: str) -> str:
+    if prompt_template == "research_os_planner_mutation_proposal_v1":
+        return (
+            "You are the MRV1 planner for a dev-only, non-authoritative research runtime. "
+            "Produce exactly one narrow mutation proposal for the already-selected family. "
+            "Do not broaden into a sweep, do not permit execution, do not reference live trading, "
+            "and do not mutate any source of truth. Keep the proposal bounded to a single rule restriction."
+        )
+    return (
+        "You are the MRV1 planner for a dev-only, non-authoritative research runtime. "
+        "Return one narrow, execution-disabled mutation proposal that preserves all hard safety boundaries."
+    )
+
+
+def _planner_response_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "mechanism_hypothesis": {"type": "string"},
+            "selection_rationale": {"type": "string"},
+            "mutation_target": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "target_id": {"type": "string"},
+                    "target_type": {"type": "string"},
+                    "source_artifact_id": {"type": "string"},
+                    "exact_change": {"type": "string"},
+                },
+                "required": ["target_id", "target_type", "source_artifact_id", "exact_change"],
+            },
+            "stop_condition": {"type": "string"},
+        },
+        "required": [
+            "mechanism_hypothesis",
+            "selection_rationale",
+            "mutation_target",
+            "stop_condition",
+        ],
+    }
+
+
+def _planner_user_payload(
+    *,
+    planner_input: PlannerInput,
+    selected_family: Any,
+    selected_family_state: dict[str, Any],
+    market_state_payload: dict[str, Any],
+    blocked_families: list[dict[str, str]],
+    fallback_proposal: MutationProposal,
+) -> dict[str, Any]:
+    lineage = list(selected_family_state.get("lineage", []))
+    return {
+        "request_id": planner_input.request_id,
+        "constraints": {
+            "dev_only": True,
+            "non_authoritative": True,
+            "live_trading": False,
+            "source_of_truth_mutation": False,
+            "official_promotion_logic": False,
+            "single_candidate_only": True,
+            "execution_allowed": False,
+        },
+        "selected_family": {
+            "family_id": selected_family.family_id,
+            "description": selected_family.description,
+            "default_priority": selected_family.default_priority,
+            "allowed_job_types": list(selected_family.allowed_job_types),
+            "constraints": dict(selected_family.constraints),
+        },
+        "selected_family_state": {
+            "last_artifact_id": str(selected_family_state.get("last_artifact_id", "")),
+            "last_verdict": str(selected_family_state.get("last_verdict", "")),
+            "last_metrics": dict(selected_family_state.get("last_metrics", {})),
+            "lineage_excerpt": [dict(item) for item in lineage[-2:]],
+        },
+        "market_state": {
+            "snapshot_id": str(market_state_payload.get("snapshot_id", "")),
+            "artifact_ids": list(market_state_payload.get("market_context", {}).get("artifact_ids", [])),
+            "notes": list(market_state_payload.get("notes", [])),
+        },
+        "blocked_families": list(blocked_families),
+        "fallback_proposal": fallback_proposal.to_dict(),
+    }
+
+
+def _build_openai_mutation_proposal(
+    *,
+    planner_input: PlannerInput,
+    selected_family: Any,
+    selected_family_state: dict[str, Any],
+    market_state_payload: dict[str, Any],
+    blocked_families: list[dict[str, str]],
+    fallback_proposal: MutationProposal,
+    openai_config: dict[str, Any],
+) -> tuple[MutationProposal, dict[str, Any], str]:
+    response = invoke_structured_response(
+        openai_config,
+        system_prompt=_planner_prompt_template(str(openai_config.get("prompt_template", ""))),
+        user_payload=_planner_user_payload(
+            planner_input=planner_input,
+            selected_family=selected_family,
+            selected_family_state=selected_family_state,
+            market_state_payload=market_state_payload,
+            blocked_families=blocked_families,
+            fallback_proposal=fallback_proposal,
+        ),
+        schema_name="research_os_planner_mutation_proposal",
+        schema=_planner_response_schema(),
+    )
+    fallback_payload = fallback_proposal.to_dict()
+    model_target = dict(response.parsed["mutation_target"])
+    mutation_target = {
+        **dict(fallback_payload["mutation_target"]),
+        "target_id": str(model_target["target_id"]),
+        "target_type": str(model_target["target_type"]),
+        "source_artifact_id": str(model_target["source_artifact_id"]),
+        "exact_change": str(model_target["exact_change"]),
+        "execution_allowed": False,
+        "scope": str(fallback_payload["mutation_target"].get("scope", "dev_only_queue_ready_heavy_job_request_only")),
+    }
+    proposal = MutationProposal.from_mapping(
+        {
+            **fallback_payload,
+            "mechanism_hypothesis": str(response.parsed["mechanism_hypothesis"]),
+            "mutation_target": mutation_target,
+            "stop_condition": str(response.parsed["stop_condition"]),
+        }
+    )
+    hook = {
+        **describe_openai_operation(openai_config),
+        "network_call": "completed",
+        "response_id": response.response_id,
+        "response_status": response.status,
+        "response_model": response.model,
+        "usage": response.usage,
+        "selection_rationale": str(response.parsed.get("selection_rationale", "")),
+    }
+    return proposal, hook, "planner_openai_response_applied"
+
+
+def _write_planner_openai_error_artifact(
+    *,
+    artifact_root: str,
+    request_id: str,
+    family_id: str,
+    openai_config: dict[str, Any],
+    error: Exception,
+    blocked_families: list[dict[str, str]],
+) -> dict[str, Any]:
+    writer = ArtifactWriter(artifact_root)
+    error_payload = serialize_openai_error(error)
+    record = writer.write_json(
+        f"planner_outputs/{request_id}_planner_openai_error.json",
+        {
+            "schema_version": SCHEMA_VERSION,
+            "request_id": request_id,
+            "family_id": family_id,
+            "component": "planner",
+            "status": "failed_closed",
+            "generated_at": utc_now_iso(),
+            "dev_only": True,
+            "non_authoritative": True,
+            "official_truth": False,
+            "live_trading": False,
+            "source_of_truth_mutation": False,
+            "official_promotion_logic": False,
+            "error": error_payload,
+            "openai_operation": describe_openai_operation(openai_config),
+            "blocked_families": list(blocked_families),
+            "notes": [
+                "planner_openai_failed_closed",
+                "no_downstream_job_emitted",
+                "no_strategy_code_execution",
+            ],
+        },
+        metadata={"request_id": request_id, "family_id": family_id, "component": "planner"},
+    )
+    return record.to_dict()
+
+
 def load_runtime_config(path: str | Path) -> RuntimeConfig:
-    payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    return RuntimeConfig.from_mapping(payload)
+    return load_runtime_config_shared(path)
 
 
 def load_family_verdict_artifact(path: str | Path) -> FamilyVerdict:
@@ -392,15 +558,19 @@ def plan_jobs(
     planner_input: PlannerInput,
     artifact_root: str,
     openai_config: dict[str, Any],
+    planner_config: dict[str, Any] | None = None,
     governor_config: dict[str, Any] | None = None,
     governor_state_by_family: dict[str, dict[str, Any]] | None = None,
 ) -> PlannerOutput:
     registry = FamilyRegistry.from_mapping(planner_input.family_registry)
-    hook = ResponsesAPIHook(
-        enabled=bool(openai_config.get("enabled", False)),
-        model=str(openai_config.get("model", "placeholder")),
-        prompt_template=str(openai_config.get("prompt_template", "research_os_planner_placeholder")),
-    )
+    planner_config = dict(planner_config or {})
+    planner_enabled = bool(planner_config.get("enabled", True))
+    openai_config = dict(planner_config.get("openai") or openai_config)
+    openai_hook = {
+        **describe_openai_operation(openai_config),
+        "planner_enabled": planner_enabled,
+        "failure_closed": False,
+    }
     governor_config = dict(governor_config or {})
     allow_governor_override = bool(governor_config.get("allow_paused_stopped_family_planning_override", False))
     governor_state_by_family = (
@@ -425,6 +595,21 @@ def plan_jobs(
     jobs: list[dict[str, Any]] = []
     family_state_snapshot = planner_input.environment_scan.get("family_state_snapshot", {})
     market_state_snapshot = planner_input.environment_scan.get("market_state_snapshot", {})
+    openai_note = f"planner_openai_{openai_hook['network_call']}"
+    if not planner_enabled:
+        return PlannerOutput(
+            schema_version=SCHEMA_VERSION,
+            planner_id="pi_planner_service",
+            created_at=utc_now_iso(),
+            request_id=planner_input.request_id,
+            jobs=[],
+            notes=[
+                "planner_disabled_by_config",
+                "no_strategy_code_execution",
+                "no_live_trading_logic",
+            ],
+            openai_hook=openai_hook,
+        )
     if selected_family:
         family_state_payload = dict(family_state_snapshot.get("payload", {}))
         market_state_payload = dict(market_state_snapshot.get("payload", {}))
@@ -437,6 +622,47 @@ def plan_jobs(
             family_state=selected_family_state,
             market_state_snapshot=market_state_payload,
         )
+        if bool(openai_config.get("enabled", False)):
+            try:
+                proposal, openai_hook, openai_note = _build_openai_mutation_proposal(
+                    planner_input=planner_input,
+                    selected_family=selected_family,
+                    selected_family_state=selected_family_state,
+                    market_state_payload=market_state_payload,
+                    blocked_families=blocked_families,
+                    fallback_proposal=proposal,
+                    openai_config=openai_config,
+                )
+            except Exception as exc:
+                error_record = _write_planner_openai_error_artifact(
+                    artifact_root=artifact_root,
+                    request_id=planner_input.request_id,
+                    family_id=selected_family.family_id,
+                    openai_config=openai_config,
+                    error=exc,
+                    blocked_families=blocked_families,
+                )
+                openai_hook = {
+                    **describe_openai_operation(openai_config),
+                    **serialize_openai_error(exc),
+                    "planner_enabled": planner_enabled,
+                    "network_call": "failed_closed",
+                    "failure_closed": True,
+                    "error_artifact": error_record,
+                }
+                return PlannerOutput(
+                    schema_version=SCHEMA_VERSION,
+                    planner_id="pi_planner_service",
+                    created_at=utc_now_iso(),
+                    request_id=planner_input.request_id,
+                    jobs=[],
+                    notes=[
+                        "planner_openai_failed_closed",
+                        "no_downstream_job_emitted",
+                        "no_strategy_code_execution",
+                    ],
+                    openai_hook=openai_hook,
+                )
         job = WorkerJob(
             schema_version=SCHEMA_VERSION,
             job_id=f"{planner_input.request_id}_{selected_family.family_id}_{JOB_TYPE_PROPOSE_NEXT_MUTATION}",
@@ -475,14 +701,14 @@ def plan_jobs(
         request_id=planner_input.request_id,
         jobs=jobs,
         notes=[
-            "deterministic_single_mutation_proposal_plan",
-            "openai_responses_api_hook_prepared_without_network_call",
+            "single_mutation_proposal_plan",
+            openai_note,
             "job_type_propose_next_mutation_only",
             "no_strategy_code_execution",
             "planner_governor_override_enabled" if allow_governor_override else "planner_governor_override_disabled",
             f"governor_blocked_families={json.dumps(blocked_families, sort_keys=True)}",
         ],
-        openai_hook=hook.describe(),
+        openai_hook=openai_hook,
     )
 
 
@@ -534,6 +760,7 @@ def main() -> int:
         planner_input=planner_input,
         artifact_root=artifact_root,
         openai_config=config.openai,
+        planner_config=config.planner,
         governor_config=config.governor,
     )
     if args.write_output:
@@ -542,9 +769,9 @@ def main() -> int:
             output.to_dict(),
         )
         print(json.dumps(record.to_dict(), indent=2, sort_keys=True))
-        return 0
+        return 1 if output.openai_hook.get("failure_closed", False) else 0
     print(json.dumps(output.to_dict(), indent=2, sort_keys=True))
-    return 0
+    return 1 if output.openai_hook.get("failure_closed", False) else 0
 
 
 if __name__ == "__main__":

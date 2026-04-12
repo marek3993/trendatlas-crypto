@@ -5,6 +5,9 @@
   "registry_path": "outputs/research_os/dev_only/mvp/registry/research_os_mvp.sqlite",
   "artifact_root": "outputs/research_os/dev_only/mvp/artifacts",
   "runtime_root": "outputs/research_os/dev_only/mvp/runtime",
+  "required_env_vars": [
+    "RESEARCH_OS_ROOT"
+  ],
   "queue_backend": "redis_streams",
   "redis_url": "redis://127.0.0.1:6379/0",
   "streams": {
@@ -15,10 +18,36 @@
   "consumer_group": "research_os_pc_workers",
   "consumer_name": "pc_worker_01",
   "max_jobs_per_cycle": 1,
+  "planner": {
+    "enabled": true,
+    "output_dir": "planner_outputs",
+    "openai": {
+      "enabled": false,
+      "model": "gpt-5.4",
+      "prompt_template": "research_os_planner_mutation_proposal_v1",
+      "responses_api": "https://api.openai.com/v1/responses",
+      "timeout_seconds": 60,
+      "reasoning_effort": "medium",
+      "reasoning_summary": "auto",
+      "strict_schema_validation": true,
+      "fail_closed": true
+    }
+  },
   "critic": {
     "enabled": true,
     "adapter_id": "safe_dev_only_family_verdict_critic_v1",
-    "output_dir": "critic_outputs"
+    "output_dir": "critic_outputs",
+    "openai": {
+      "enabled": false,
+      "model": "gpt-5.4",
+      "prompt_template": "research_os_critic_family_verdict_v1",
+      "responses_api": "https://api.openai.com/v1/responses",
+      "timeout_seconds": 60,
+      "reasoning_effort": "medium",
+      "reasoning_summary": "auto",
+      "strict_schema_validation": true,
+      "fail_closed": true
+    }
   },
   "governor": {
     "enabled": true,
@@ -35,12 +64,6 @@
     "run_heavy_validation_adapter": false,
     "run_critic": false,
     "run_governor": false
-  },
-  "openai": {
-    "enabled": false,
-    "model": "placeholder",
-    "prompt_template": "research_os_planner_mutation_proposal_v1",
-    "responses_api": "prepared_no_network_call"
   },
   "scanner_paths": [
     "research_os",

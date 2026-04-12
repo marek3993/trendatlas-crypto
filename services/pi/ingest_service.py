@@ -10,6 +10,13 @@ from services.pi.job_queue import build_queue
 from services.pi.planner_service import build_planner_input, load_family_registry, plan_jobs
 from services.pi.registry_service import RegistryService
 from services.shared.artifact_writer import ArtifactWriter
+from services.shared.runtime_bootstrap import (
+    assert_runtime_startup_ready,
+    build_service_status,
+    collect_runtime_readiness,
+    resolve_project_path,
+    resolve_project_root,
+)
 from services.shared.schemas import (
     JOB_STATUS_SUCCEEDED,
     JOB_TYPE_SUBMIT_HEAVY_VALIDATION_JOB,
@@ -19,20 +26,18 @@ from services.shared.schemas import (
     utc_now_iso,
 )
 
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-
 def run_ingest(config_path: str | Path, family_registry_path: str | Path, request_id: str, publish: bool) -> dict[str, object]:
     config = load_runtime_config(config_path)
-    family_registry = load_family_registry(family_registry_path)
+    assert_runtime_startup_ready(config, config_path=config_path, role=config.role)
+    project_root = resolve_project_root(require_env=True)
+    family_registry = load_family_registry(resolve_project_path(family_registry_path, project_root))
     registry = RegistryService(config.registry_path)
     writer = ArtifactWriter(config.artifact_root)
-    environment_scan = scan_environment(config=config, project_root=PROJECT_ROOT)
+    environment_scan = scan_environment(config=config, project_root=project_root)
     scan_record = writer.write_json(f"planner_inputs/{request_id}_environment_scan.json", environment_scan.to_dict())
     runtime_writer = ArtifactWriter(config.runtime_root)
-    market_state = build_market_state_snapshot(config=config, project_root=PROJECT_ROOT)
-    family_state = build_family_state_snapshot(config=config, family_registry=family_registry, project_root=PROJECT_ROOT)
+    market_state = build_market_state_snapshot(config=config, project_root=project_root)
+    family_state = build_family_state_snapshot(config=config, family_registry=family_registry, project_root=project_root)
     market_state_record = runtime_writer.write_json("market_state/latest_market_state.json", market_state.to_dict())
     family_state_record = runtime_writer.write_json("family_state/latest_family_state_snapshot.json", family_state.to_dict())
     registry.upsert_family_state_snapshot(family_state.to_dict())
@@ -53,8 +58,31 @@ def run_ingest(config_path: str | Path, family_registry_path: str | Path, reques
         },
     )
     planner_input_record = writer.write_json(f"planner_inputs/{request_id}_planner_input.json", planner_input.to_dict())
-    planner_output = plan_jobs(planner_input=planner_input, artifact_root=config.artifact_root, openai_config=config.openai)
+    planner_output = plan_jobs(
+        planner_input=planner_input,
+        artifact_root=config.artifact_root,
+        openai_config=config.openai,
+        planner_config=config.planner,
+    )
     planner_output_record = writer.write_json(f"planner_outputs/{request_id}_planner_output.json", planner_output.to_dict())
+    if planner_output.openai_hook.get("failure_closed", False):
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "request_id": request_id,
+            "publish": False,
+            "jobs_planned": 0,
+            "queue_ids": [],
+            "status": "planner_failed_closed",
+            "planner_openai_hook": dict(planner_output.openai_hook),
+            "artifact_records": [
+                scan_record.to_dict(),
+                market_state_record.to_dict(),
+                family_state_record.to_dict(),
+                planner_input_record.to_dict(),
+                planner_output_record.to_dict(),
+            ],
+            "registry_path": str(registry.registry_path),
+        }
 
     queue_ids: list[str] = []
     if publish:
@@ -166,9 +194,11 @@ def run_research_cycle(
 ) -> dict[str, Any]:
     started_at = utc_now_iso()
     config = load_runtime_config(config_path)
+    assert_runtime_startup_ready(config, config_path=config_path, role=config.role)
+    project_root = resolve_project_root(require_env=True)
     cycle_config = {**dict(config.research_cycle), **dict(cycle_overrides or {})}
     governor_config = {**dict(config.governor), **dict(governor_overrides or {})}
-    family_registry = load_family_registry(family_registry_path)
+    family_registry = load_family_registry(resolve_project_path(family_registry_path, project_root))
     registry = RegistryService(config.registry_path)
     writer = ArtifactWriter(config.artifact_root)
     runtime_writer = ArtifactWriter(config.runtime_root)
@@ -183,17 +213,17 @@ def run_research_cycle(
         if int(cycle_config.get("max_planner_jobs", 1)) != 1:
             raise ValueError("run_research_cycle requires max_planner_jobs=1")
         full_pipeline_enabled = bool(cycle_config.get("full_pipeline_enabled", False))
-        environment_scan = scan_environment(config=config, project_root=PROJECT_ROOT)
+        environment_scan = scan_environment(config=config, project_root=project_root)
         scan_record = writer.write_json(f"planner_inputs/{cycle_id}_environment_scan.json", environment_scan.to_dict())
         produced_artifacts.extend(_artifact_dicts(scan_record))
         executed_steps.append("environment_scan")
 
-        market_state = build_market_state_snapshot(config=config, project_root=PROJECT_ROOT)
+        market_state = build_market_state_snapshot(config=config, project_root=project_root)
         market_state_record = runtime_writer.write_json("market_state/latest_market_state.json", market_state.to_dict())
         produced_artifacts.extend(_artifact_dicts(market_state_record))
         executed_steps.append("market_snapshot")
 
-        family_state = build_family_state_snapshot(config=config, family_registry=family_registry, project_root=PROJECT_ROOT)
+        family_state = build_family_state_snapshot(config=config, family_registry=family_registry, project_root=project_root)
         family_state_record = runtime_writer.write_json("family_state/latest_family_state_snapshot.json", family_state.to_dict())
         produced_artifacts.extend(_artifact_dicts(family_state_record))
         registry.upsert_family_state_snapshot(family_state.to_dict())
@@ -220,6 +250,7 @@ def run_research_cycle(
             planner_input=planner_input,
             artifact_root=config.artifact_root,
             openai_config=config.openai,
+            planner_config=config.planner,
             governor_config=governor_config,
         )
         planner_jobs_count = len(planner_output.jobs)
@@ -230,6 +261,8 @@ def run_research_cycle(
         for artifact_record in (scan_record, market_state_record, family_state_record, planner_input_record, planner_output_record):
             registry.record_artifact(cycle_id, artifact_record.to_dict())
         executed_steps.append("planner")
+        if planner_output.openai_hook.get("failure_closed", False):
+            raise RuntimeError(str(planner_output.openai_hook.get("error_message", "planner failed closed")))
 
         if planner_jobs_count == 0:
             final_status = "completed_no_planner_jobs"
@@ -334,6 +367,10 @@ def run_research_cycle(
                 artifact_root=config.artifact_root,
                 registry=registry,
                 critic_job_id=f"{cycle_id}_{job.family_id}_critic",
+                critic_config={
+                    **dict(config.critic),
+                    "openai": dict(config.critic.get("openai") or config.openai),
+                },
             )
             executed_steps.append("critic")
             if critic_result.status != JOB_STATUS_SUCCEEDED:
@@ -394,6 +431,9 @@ def run_pi_orchestrator_cycle(
     full_pipeline: bool = False,
     allow_governor_override: bool = False,
 ) -> dict[str, Any]:
+    config = load_runtime_config(config_path)
+    if config.role != "pi_orchestrator":
+        raise ValueError(f"run_pi_orchestrator_cycle requires role=pi_orchestrator, got {config.role}")
     return run_research_cycle(
         config_path=config_path,
         family_registry_path=family_registry_path,
@@ -407,11 +447,41 @@ def run_pi_orchestrator_cycle(
     )
 
 
+def pi_health(config_path: str | Path) -> dict[str, Any]:
+    config = load_runtime_config(config_path)
+    readiness = collect_runtime_readiness(
+        config,
+        config_path=config_path,
+        role=config.role,
+        require_root_env=False,
+    )
+    return {
+        "service": "pi_orchestrator",
+        "status": "ok" if readiness["ok"] else "degraded",
+        "readiness": readiness,
+    }
+
+
+def pi_status(config_path: str | Path) -> dict[str, Any]:
+    config = load_runtime_config(config_path)
+    registry = RegistryService(config.registry_path)
+    return build_service_status(
+        service_name="pi_orchestrator",
+        role=config.role,
+        config=config,
+        config_path=config_path,
+        registry=registry,
+        require_root_env=False,
+    )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Pi ingest/orchestrator skeleton")
     parser.add_argument("--config", default="configs/runtime/runtime_config.template.json")
     parser.add_argument("--family-registry", default="configs/families/family_registry.template.json")
     parser.add_argument("--request-id", default="manual_smoke")
+    parser.add_argument("--health", action="store_true", help="Print Pi runtime readiness checks.")
+    parser.add_argument("--status", action="store_true", help="Print Pi runtime readiness plus registry status.")
     parser.add_argument("--publish", action="store_true", help="Publish jobs to configured queue.")
     parser.add_argument("--run-research-cycle", action="store_true", help="Run one dev-only research cycle.")
     parser.add_argument("--run-pi-orchestrator-cycle", action="store_true", help="Runtime entrypoint: run one Pi orchestrator cycle.")
@@ -427,6 +497,14 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    if args.health:
+        result = pi_health(args.config)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["status"] == "ok" else 1
+    if args.status:
+        result = pi_status(args.config)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["status"] == "ok" else 1
     if args.run_pi_orchestrator_cycle:
         result = run_pi_orchestrator_cycle(
             config_path=args.config,
@@ -458,7 +536,7 @@ def main() -> int:
         publish=args.publish,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
-    return 0
+    return 1 if str(result.get("status", "")) == "planner_failed_closed" else 0
 
 
 if __name__ == "__main__":

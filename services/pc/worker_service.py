@@ -11,6 +11,12 @@ from services.pi.environment_scanner import load_runtime_config
 from services.pi.job_queue import JobQueue, QueueMessage, build_queue, consume_exactly_one, publish_exactly_one
 from services.pi.registry_service import RegistryService
 from services.shared.artifact_writer import ArtifactWriter
+from services.shared.openai_responses import describe_openai_operation, invoke_structured_response, serialize_openai_error
+from services.shared.runtime_bootstrap import (
+    assert_runtime_startup_ready,
+    build_service_status,
+    collect_runtime_readiness,
+)
 from services.shared.schemas import (
     CRITIC_STATUS_COMPLETED,
     CRITIC_STATUS_FAILED,
@@ -785,15 +791,11 @@ def load_heavy_validation_result_pack(summary_path: str | Path) -> tuple[
     )
 
 
-def build_family_verdict(
+def _deterministic_family_verdict_data(
     summary: dict[str, Any],
     compare_rows: list[dict[str, Any]],
-    cost_rows: list[dict[str, Any]],
     source_artifact: dict[str, Any],
-    source_paths: dict[str, str],
-    critic_job_id: str,
-) -> FamilyVerdict:
-    del cost_rows
+) -> dict[str, Any]:
     lineage_metrics = dict(source_artifact.get("proposal_lineage", {}).get("source_last_metrics", {}))
     net_basis = _compare_basis(compare_rows, "net_benefit")
     dd_basis = _compare_basis(compare_rows, "dd")
@@ -851,7 +853,178 @@ def build_family_verdict(
     proposal = dict(source_artifact.get("proposal", {}))
     mutation_target = dict(proposal.get("mutation_target") or summary.get("mutation_target") or {})
     mechanism_id = str(mutation_target.get("source_artifact_id") or mutation_target.get("target_id") or "")
-    verdict = FamilyVerdict(
+    return {
+        "key_metrics": key_metrics,
+        "breaches": breaches,
+        "verdict": verdict,
+        "next_action": next_action,
+        "verdict_reason": verdict_reason,
+        "mechanism_id": mechanism_id,
+    }
+
+
+def _critic_prompt_template(prompt_template: str) -> str:
+    if prompt_template == "research_os_critic_family_verdict_v1":
+        return (
+            "You are the MRV1 critic for a dev-only, non-authoritative research runtime. "
+            "Review one heavy-validation result pack and return a single family verdict recommendation. "
+            "You must apply the supplied net-first policy exactly, and you must not authorize live trading, "
+            "source-of-truth mutation, official promotion logic, or strategy execution."
+        )
+    return (
+        "You are the MRV1 critic for a dev-only, non-authoritative research runtime. "
+        "Return one verdict recommendation that strictly follows the supplied policy."
+    )
+
+
+def _critic_response_schema() -> dict[str, Any]:
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "recommended_verdict": {
+                "type": "string",
+                "enum": [
+                    FAMILY_VERDICT_CONTINUE,
+                    FAMILY_VERDICT_PAUSE,
+                    FAMILY_VERDICT_STOP,
+                ],
+            },
+            "recommended_next_action": {
+                "type": "string",
+                "enum": [
+                    FAMILY_NEXT_ACTION_CONTINUE,
+                    FAMILY_NEXT_ACTION_PAUSE,
+                    FAMILY_NEXT_ACTION_STOP,
+                ],
+            },
+            "recommended_reason": {"type": "string"},
+            "guardrail_breaches": {
+                "type": "array",
+                "items": {"type": "string"},
+            },
+            "policy_alignment_note": {"type": "string"},
+        },
+        "required": [
+            "recommended_verdict",
+            "recommended_next_action",
+            "recommended_reason",
+            "guardrail_breaches",
+            "policy_alignment_note",
+        ],
+    }
+
+
+def _critic_user_payload(
+    *,
+    summary: dict[str, Any],
+    compare_rows: list[dict[str, Any]],
+    cost_rows: list[dict[str, Any]],
+    source_artifact: dict[str, Any],
+    deterministic: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "constraints": {
+            "dev_only": True,
+            "non_authoritative": True,
+            "live_trading": False,
+            "source_of_truth_mutation": False,
+            "official_promotion_logic": False,
+            "strategy_code_executed": False,
+        },
+        "heavy_validation_summary": summary,
+        "compare_rows": compare_rows,
+        "cost_rows": cost_rows,
+        "source_mutation_proposal": dict(source_artifact.get("proposal", {})),
+        "proposal_lineage": dict(source_artifact.get("proposal_lineage", {})),
+        "net_first_policy": {
+            "stop_if_net_return_lte": 0.0,
+            "pause_if_dd_lt": -1.0,
+            "pause_if_trade_days_delta_gt": 4.0,
+            "pause_if_switch_count_delta_gt": 4.0,
+            "pause_if_turnover_pressure_gt": 0.0,
+        },
+        "derived_key_metrics": dict(deterministic["key_metrics"]),
+    }
+
+
+def _run_openai_critic_review(
+    *,
+    summary: dict[str, Any],
+    compare_rows: list[dict[str, Any]],
+    cost_rows: list[dict[str, Any]],
+    source_artifact: dict[str, Any],
+    deterministic: dict[str, Any],
+    critic_openai_config: dict[str, Any],
+) -> dict[str, Any]:
+    response = invoke_structured_response(
+        critic_openai_config,
+        system_prompt=_critic_prompt_template(str(critic_openai_config.get("prompt_template", ""))),
+        user_payload=_critic_user_payload(
+            summary=summary,
+            compare_rows=compare_rows,
+            cost_rows=cost_rows,
+            source_artifact=source_artifact,
+            deterministic=deterministic,
+        ),
+        schema_name="research_os_critic_family_verdict",
+        schema=_critic_response_schema(),
+    )
+    return {
+        **describe_openai_operation(critic_openai_config),
+        "network_call": "completed",
+        "response_id": response.response_id,
+        "response_status": response.status,
+        "response_model": response.model,
+        "usage": response.usage,
+        "recommended_verdict": str(response.parsed.get("recommended_verdict", "")),
+        "recommended_next_action": str(response.parsed.get("recommended_next_action", "")),
+        "recommended_reason": str(response.parsed.get("recommended_reason", "")),
+        "guardrail_breaches": [str(item) for item in list(response.parsed.get("guardrail_breaches", []))],
+        "policy_alignment_note": str(response.parsed.get("policy_alignment_note", "")),
+    }
+
+
+def build_family_verdict(
+    summary: dict[str, Any],
+    compare_rows: list[dict[str, Any]],
+    cost_rows: list[dict[str, Any]],
+    source_artifact: dict[str, Any],
+    source_paths: dict[str, str],
+    critic_job_id: str,
+    critic_openai_config: dict[str, Any] | None = None,
+) -> FamilyVerdict:
+    deterministic = _deterministic_family_verdict_data(summary, compare_rows, source_artifact)
+    critic_openai_config = dict(critic_openai_config or {})
+    openai_review = describe_openai_operation(critic_openai_config)
+    verdict_reason = str(deterministic["verdict_reason"])
+    breaches = list(deterministic["breaches"])
+    if bool(critic_openai_config.get("enabled", False)):
+        openai_review = _run_openai_critic_review(
+            summary=summary,
+            compare_rows=compare_rows,
+            cost_rows=cost_rows,
+            source_artifact=source_artifact,
+            deterministic=deterministic,
+            critic_openai_config=critic_openai_config,
+        )
+        for item in list(openai_review.get("guardrail_breaches", [])):
+            value = str(item).strip()
+            if value and value not in breaches:
+                breaches.append(value)
+        if (
+            str(openai_review.get("recommended_verdict", "")) == str(deterministic["verdict"])
+            and str(openai_review.get("recommended_next_action", "")) == str(deterministic["next_action"])
+        ):
+            candidate_reason = str(openai_review.get("recommended_reason", "")).strip()
+            if candidate_reason:
+                verdict_reason = candidate_reason
+            openai_review["recommendation_applied"] = True
+        else:
+            openai_review["recommendation_applied"] = False
+            openai_review["deterministic_verdict"] = str(deterministic["verdict"])
+            openai_review["deterministic_next_action"] = str(deterministic["next_action"])
+    family_verdict = FamilyVerdict(
         schema_version=SCHEMA_VERSION,
         verdict_id=f"{critic_job_id}_family_verdict",
         job_id=critic_job_id,
@@ -859,12 +1032,12 @@ def build_family_verdict(
         request_id=str(summary["request_id"]),
         proposal_id=str(summary["proposal_id"]),
         family_id=str(summary["family_id"]),
-        mechanism_id=mechanism_id,
+        mechanism_id=str(deterministic["mechanism_id"]),
         status=CRITIC_STATUS_COMPLETED,
-        verdict=verdict,
+        verdict=str(deterministic["verdict"]),
         verdict_reason=verdict_reason,
-        key_metrics=key_metrics,
-        next_action=next_action,
+        key_metrics=dict(deterministic["key_metrics"]),
+        next_action=str(deterministic["next_action"]),
         generated_at=utc_now_iso(),
         source_summary_path=source_paths["summary"],
         source_compare_path=source_paths["compare"],
@@ -879,11 +1052,56 @@ def build_family_verdict(
                 "pause_if_switch_count_delta_gt": 4.0,
                 "pause_if_turnover_pressure_gt": 0.0,
             },
+            "deterministic_policy_result": {
+                "verdict": str(deterministic["verdict"]),
+                "next_action": str(deterministic["next_action"]),
+                "verdict_reason": str(deterministic["verdict_reason"]),
+            },
             "guardrail_breaches": breaches,
             "compare_metric_count": len(compare_rows),
+            "openai_review": openai_review,
         },
     )
-    return FamilyVerdict.from_mapping(verdict.to_dict())
+    return FamilyVerdict.from_mapping(family_verdict.to_dict())
+
+
+def _write_critic_error_artifact(
+    *,
+    writer: ArtifactWriter,
+    summary_path: str | Path,
+    job_id: str,
+    family_id: str,
+    critic_config: dict[str, Any],
+    error: Exception,
+) -> dict[str, Any]:
+    payload = {
+        "schema_version": SCHEMA_VERSION,
+        "job_id": job_id,
+        "family_id": family_id,
+        "component": "critic",
+        "status": "failed_closed",
+        "generated_at": utc_now_iso(),
+        "summary_path": str(Path(summary_path).resolve()),
+        "dev_only": True,
+        "non_authoritative": True,
+        "official_truth": False,
+        "live_trading": False,
+        "source_of_truth_mutation": False,
+        "official_promotion_logic": False,
+        "error": serialize_openai_error(error),
+        "openai_operation": describe_openai_operation(critic_config),
+        "notes": [
+            "critic_failed_closed",
+            "no_family_verdict_emitted",
+            "no_governor_transition_allowed",
+        ],
+    }
+    record = writer.write_json(
+        f"critic_outputs/{job_id}_family_verdict_error.json",
+        payload,
+        metadata={"job_id": job_id, "family_id": family_id, "component": "critic"},
+    )
+    return record.to_dict()
 
 
 def execute_critic_for_heavy_validation_result(
@@ -891,17 +1109,23 @@ def execute_critic_for_heavy_validation_result(
     artifact_root: str | Path,
     registry: RegistryService,
     critic_job_id: str = "",
+    critic_config: dict[str, Any] | None = None,
 ) -> WorkerResult:
     started_at = utc_now_iso()
     writer = ArtifactWriter(artifact_root)
     family_id = "unknown_family"
     job_id = critic_job_id or "unknown_critic_job"
     verdict_id = f"{job_id}_family_verdict"
+    critic_component = dict(critic_config or {})
+    critic_enabled = bool(critic_component.get("enabled", True))
+    critic_openai_config = dict(critic_component.get("openai") or {})
     try:
         raw_summary = json.loads(Path(summary_path).read_text(encoding="utf-8-sig"))
         job_id = critic_job_id or f"{raw_summary['job_id']}_critic"
         family_id = str(raw_summary.get("family_id", family_id))
         verdict_id = f"{job_id}_family_verdict"
+        if not critic_enabled:
+            raise ValueError("critic is disabled by config")
         registry.record_family_verdict_event(
             verdict_id=verdict_id,
             job_id=job_id,
@@ -927,6 +1151,7 @@ def execute_critic_for_heavy_validation_result(
             source_artifact=source_artifact,
             source_paths=source_paths,
             critic_job_id=job_id,
+            critic_openai_config=critic_openai_config,
         )
         verdict_record = writer.write_json(
             f"critic_outputs/{job_id}_family_verdict.json",
@@ -952,6 +1177,15 @@ def execute_critic_for_heavy_validation_result(
             notes=["critic family verdict completed"],
         )
     except Exception as exc:
+        error_record = _write_critic_error_artifact(
+            writer=writer,
+            summary_path=summary_path,
+            job_id=job_id,
+            family_id=family_id,
+            critic_config=critic_openai_config,
+            error=exc,
+        )
+        registry.record_artifact(job_id, error_record)
         registry.record_family_verdict_event(
             verdict_id=verdict_id,
             job_id=job_id,
@@ -976,7 +1210,7 @@ def execute_critic_for_heavy_validation_result(
             status=JOB_STATUS_FAILED,
             started_at=started_at,
             finished_at=utc_now_iso(),
-            artifact_refs=[],
+            artifact_refs=[error_record],
             metrics={"critic_status": CRITIC_STATUS_FAILED},
             notes=["critic family verdict failed"],
             error=str(exc),
@@ -1099,6 +1333,7 @@ def execute_job(job: WorkerJob, registry: RegistryService | None = None) -> Work
 
 def consume_once(config_path: str | Path) -> list[WorkerResult]:
     config = load_runtime_config(config_path)
+    assert_runtime_startup_ready(config, config_path=config_path, role=config.role)
     queue = build_queue(config.queue_backend, config.redis_url)
     registry = RegistryService(config.registry_path)
     messages = queue.consume(
@@ -1120,6 +1355,7 @@ def consume_once(config_path: str | Path) -> list[WorkerResult]:
 
 def consume_heavy_validation_once(config_path: str | Path, queue: JobQueue | None = None) -> list[WorkerResult]:
     config = load_runtime_config(config_path)
+    assert_runtime_startup_ready(config, config_path=config_path, role=config.role)
     queue = queue or build_queue(config.queue_backend, config.redis_url)
     registry = RegistryService(config.registry_path)
     message = consume_exactly_one(
@@ -1145,6 +1381,10 @@ def run_pc_worker_consumer(
     run_once: bool = False,
     idle_sleep_seconds: float = 15.0,
 ) -> list[WorkerResult]:
+    config = load_runtime_config(config_path)
+    if config.role != "pc_worker":
+        raise ValueError(f"run_pc_worker_consumer requires role=pc_worker, got {config.role}")
+    assert_runtime_startup_ready(config, config_path=config_path, role=config.role)
     collected: list[WorkerResult] = []
     while True:
         results = consume_heavy_validation_once(config_path=config_path)
@@ -1180,9 +1420,39 @@ def smoke_heavy_validation_once(config_path: str | Path, request_artifact_path: 
     return consume_heavy_validation_once(config_path=config_path, queue=queue)
 
 
+def pc_health(config_path: str | Path) -> dict[str, Any]:
+    config = load_runtime_config(config_path)
+    readiness = collect_runtime_readiness(
+        config,
+        config_path=config_path,
+        role=config.role,
+        require_root_env=False,
+    )
+    return {
+        "service": "pc_worker",
+        "status": "ok" if readiness["ok"] else "degraded",
+        "readiness": readiness,
+    }
+
+
+def pc_status(config_path: str | Path) -> dict[str, Any]:
+    config = load_runtime_config(config_path)
+    registry = RegistryService(config.registry_path)
+    return build_service_status(
+        service_name="pc_worker",
+        role=config.role,
+        config=config,
+        config_path=config_path,
+        registry=registry,
+        require_root_env=False,
+    )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="PC worker service skeleton")
     parser.add_argument("--config", default="configs/runtime/runtime_config.template.json")
+    parser.add_argument("--health", action="store_true", help="Print PC worker runtime readiness checks.")
+    parser.add_argument("--status", action="store_true", help="Print PC worker runtime readiness plus registry status.")
     parser.add_argument("--consume-once", action="store_true", help="Consume one batch from configured queue.")
     parser.add_argument(
         "--consume-heavy-validation-once",
@@ -1226,6 +1496,14 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    if args.health:
+        result = pc_health(args.config)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["status"] == "ok" else 1
+    if args.status:
+        result = pc_status(args.config)
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0 if result["status"] == "ok" else 1
     if args.run_pc_worker_consumer:
         results = run_pc_worker_consumer(
             config_path=args.config,
@@ -1300,6 +1578,10 @@ def main() -> int:
             artifact_root=config.artifact_root,
             registry=registry,
             critic_job_id=args.critic_job_id,
+            critic_config={
+                **dict(config.critic),
+                "openai": dict(config.critic.get("openai") or config.openai),
+            },
         )
         print(json.dumps(result.to_dict(), indent=2, sort_keys=True))
         return 0 if result.status == JOB_STATUS_SUCCEEDED else 1

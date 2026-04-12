@@ -125,12 +125,14 @@ class RuntimeConfig:
     consumer_group: str
     consumer_name: str
     openai: dict[str, Any]
+    planner: dict[str, Any]
     scanner_paths: list[str]
     scanner_env_keys: list[str]
     research_artifacts: list[dict[str, Any]] = field(default_factory=list)
     critic: dict[str, Any] = field(default_factory=dict)
     governor: dict[str, Any] = field(default_factory=dict)
     research_cycle: dict[str, Any] = field(default_factory=dict)
+    required_env_vars: list[str] = field(default_factory=list)
     max_jobs_per_cycle: int = 1
 
     @classmethod
@@ -166,12 +168,14 @@ class RuntimeConfig:
             consumer_group=str(payload["consumer_group"]),
             consumer_name=str(payload["consumer_name"]),
             openai=_dict(payload["openai"], "runtime_config.openai"),
+            planner=_dict(payload.get("planner", {}), "runtime_config.planner"),
             scanner_paths=_strings(payload["scanner_paths"], "runtime_config.scanner_paths"),
             scanner_env_keys=_strings(payload["scanner_env_keys"], "runtime_config.scanner_env_keys"),
             research_artifacts=_dicts(payload.get("research_artifacts", []), "runtime_config.research_artifacts"),
             critic=_dict(payload.get("critic", {}), "runtime_config.critic"),
             governor=_dict(payload.get("governor", {}), "runtime_config.governor"),
             research_cycle=_dict(payload.get("research_cycle", {}), "runtime_config.research_cycle"),
+            required_env_vars=_strings(payload.get("required_env_vars", []), "runtime_config.required_env_vars"),
             max_jobs_per_cycle=int(payload.get("max_jobs_per_cycle", 1)),
         )
 
