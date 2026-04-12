@@ -874,48 +874,10 @@ def resolve_wallet_sync_utc(runtime_snapshot: dict, strategy_freshness: dict) ->
     )
 
 
-def resolve_backup_refresh_manifest_path(runtime_snapshot: dict, strategy_freshness: dict) -> Path | None:
-    manifest_path = normalize_path(strategy_freshness.get("refresh_manifest_path"))
-    if manifest_path is not None and manifest_path.exists():
-        return manifest_path
-
-    for run_id in [
-        strategy_freshness.get("latest_refresh_run_id"),
-        strategy_freshness.get("latest_successful_refresh_run_id"),
-        strategy_freshness.get("refresh_run_id"),
-        runtime_snapshot.get("latest_refresh_run_id"),
-        runtime_snapshot.get("latest_successful_refresh_run_id"),
-        runtime_snapshot.get("refresh_run_id"),
-    ]:
-        run_id_text = str(run_id or "").strip()
-        if not run_id_text:
-            continue
-        candidate = OUTPUTS / "app_refresh_pipeline" / run_id_text / "app_refresh_pipeline_manifest.json"
-        if candidate.exists():
-            return candidate
-    return None
-
-
 def resolve_backup_refresh_finished_utc(runtime_snapshot: dict, strategy_freshness: dict) -> str | None:
-    manifest_path = resolve_backup_refresh_manifest_path(runtime_snapshot, strategy_freshness)
-    manifest = load_json_optional(manifest_path)
-    if not manifest:
-        return None
-
-    status_fields = [
-        manifest.get("status"),
-        manifest.get("main_refresh_chain_status"),
-        manifest.get("strategy_refresh_chain_status"),
-        manifest.get("post_strategy_runtime_refresh_status"),
-    ]
-    normalized_statuses = {str(value).strip().upper() for value in status_fields if str(value or "").strip()}
-    if normalized_statuses and "OK" not in normalized_statuses:
-        return None
-
     return (
-        normalize_utc_iso_text(manifest.get("refresh_finished_at_utc"))
-        or normalize_utc_iso_text(manifest.get("main_refresh_chain_finished_at_utc"))
-        or normalize_utc_iso_text(manifest.get("strategy_refresh_chain_finished_at_utc"))
+        normalize_utc_iso_text(strategy_freshness.get("latest_successful_refresh_runtime_utc"))
+        or normalize_utc_iso_text(runtime_snapshot.get("latest_successful_refresh_runtime_utc"))
     )
 
 
