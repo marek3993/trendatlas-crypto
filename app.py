@@ -1084,12 +1084,15 @@ def format_local_time_text(value: str | None, lang: str) -> str:
     text = str(value or "").strip()
     if not text:
         return t(lang, "na")
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        return format_date_text(text, lang)
     try:
         parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
         if parsed.tzinfo is None:
             parsed = parsed.replace(tzinfo=timezone.utc)
         parsed = parsed.astimezone(APP_DISPLAY_TIMEZONE)
-        return f"{parsed.day}.{parsed.month}.{parsed.year} {parsed.hour}:{parsed.minute:02d}"
+        tz_label = parsed.tzname() or "Europe/Bratislava"
+        return f"{parsed.day}.{parsed.month}.{parsed.year} {parsed.hour:02d}:{parsed.minute:02d} {tz_label}"
     except ValueError:
         return format_date_text(text, lang)
 
@@ -3212,14 +3215,14 @@ with tabs[0]:
     refresh_rows = [
         {
             refresh_label_column: "Posledn\u00e1 aktualiz\u00e1cia z Pi" if lang == "sk" else "Latest Pi update",
-            refresh_value_column: format_utc_text(
+            refresh_value_column: format_local_time_text(
                 pi_runtime_update_utc,
                 lang,
             ),
         },
         {
             refresh_label_column: "Z\u00e1lo\u017en\u00fd refresh z PC" if lang == "sk" else "Backup PC refresh",
-            refresh_value_column: format_utc_text(
+            refresh_value_column: format_local_time_text(
                 backup_refresh_finished_utc,
                 lang,
             ),
@@ -3240,7 +3243,7 @@ with tabs[0]:
         },
         {
             refresh_label_column: "Posledn\u00e1 synchroniz\u00e1cia pe\u0148a\u017eenky" if lang == "sk" else "Last wallet sync",
-            refresh_value_column: format_utc_text(
+            refresh_value_column: format_local_time_text(
                 wallet_sync_utc,
                 lang,
             ),
@@ -3386,8 +3389,8 @@ with tabs[1]:
         refresh_stop_reason = str(runtime_health_payload.get("stop_reason") or "").strip()
         dry_run_stop_reason = refresh_stop_reason
         live_stop_reason = str(real_order_gate_payload.get("status") or "").strip()
-        refresh_timestamp = format_utc_text(account_snapshot_as_of_utc, lang)
-        dry_run_timestamp = format_utc_text(dry_run_generated_at_utc, lang)
+        refresh_timestamp = format_local_time_text(account_snapshot_as_of_utc, lang)
+        dry_run_timestamp = format_local_time_text(dry_run_generated_at_utc, lang)
         dry_run_recommended_action = str(dry_run_decision_payload.get("recommended_action") or "").strip().lower()
         if lang == "sk" and dry_run_recommended_action == "hold_cash":
             dry_run_summary_text = "Dnes systém nevidí obchod, ktorý by mal odoslať."
@@ -3404,7 +3407,7 @@ with tabs[1]:
         runtime_error_text = safe_text_value(account_snapshot_view.get("error"), lang=lang)
         no_position = not isinstance(open_position, dict)
         open_position_subtitle = ""
-        sync_text = format_utc_text(account_snapshot_as_of_utc, lang)
+        sync_text = format_local_time_text(account_snapshot_as_of_utc, lang)
         account_status_text = connection_text if account_snapshot_view.get("status") else t(lang, "account_status_unavailable")
         proof_state_text = "Udaje su informativne" if lang == "sk" else "Informational only"
         placeholder_framing = (
@@ -3493,7 +3496,7 @@ with tabs[1]:
                 },
                 {
                     "label": t(lang, "account_last_sync"),
-                    "value": format_utc_text(account_snapshot_as_of_utc, lang),
+                    "value": format_local_time_text(account_snapshot_as_of_utc, lang),
                 },
                 {
                     "label": t(lang, "account_provider"),
