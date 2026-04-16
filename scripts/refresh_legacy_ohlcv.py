@@ -97,6 +97,41 @@ def merge_rows(existing: list[dict[str, str]], fresh: list[dict[str, str]]) -> l
     return [by_date[d] for d in sorted(by_date.keys())]
 
 
+def response_body_excerpt(response: requests.Response | None, limit: int = 240) -> str | None:
+    if response is None:
+        return None
+
+    try:
+        raw_text = response.text
+    except Exception:
+        return None
+
+    excerpt = " ".join(raw_text.split())
+    if not excerpt:
+        return None
+    if len(excerpt) > limit:
+        return excerpt[: limit - 3] + "..."
+    return excerpt
+
+
+def format_binance_error(symbol: str, exc: Exception) -> str:
+    response = getattr(exc, "response", None)
+    http_status = getattr(response, "status_code", None) if response is not None else None
+    body_excerpt = response_body_excerpt(response)
+
+    parts = [
+        f"symbol={symbol}",
+        f"error_type={type(exc).__name__}",
+        f"message={exc}",
+    ]
+    if http_status is not None:
+        parts.append(f"http_status={http_status}")
+    if body_excerpt is not None:
+        parts.append(f"body_excerpt={body_excerpt}")
+
+    return "Binance fetch failed: " + " | ".join(parts)
+
+
 def fetch_klines(symbol: str, start_ms: int, end_ms: int, session: requests.Session) -> list[dict[str, str]]:
     rows: list[dict[str, str]] = []
     cursor = start_ms
@@ -113,7 +148,7 @@ def fetch_klines(symbol: str, start_ms: int, end_ms: int, session: requests.Sess
         payload = None
         last_error: Exception | None = None
 
-        for _ in range(3):
+        for attempt in range(1, 4):
             try:
                 resp = session.get(API_URL, params=params, timeout=30)
                 resp.raise_for_status()
@@ -122,10 +157,15 @@ def fetch_klines(symbol: str, start_ms: int, end_ms: int, session: requests.Sess
                 break
             except Exception as exc:
                 last_error = exc
-                time.sleep(1.0)
+                print(
+                    f"[LEGACY] fetch_retry attempt={attempt}/3 cursor={cursor} {format_binance_error(symbol, exc)}",
+                    flush=True,
+                )
+                if attempt < 3:
+                    time.sleep(1.0)
 
         if last_error is not None:
-            raise RuntimeError(f"{symbol}: Binance fetch failed: {last_error}") from last_error
+            raise RuntimeError(format_binance_error(symbol, last_error)) from last_error
 
         if not payload:
             break
