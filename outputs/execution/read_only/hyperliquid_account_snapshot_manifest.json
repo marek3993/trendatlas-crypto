@@ -1,6 +1,6 @@
 {
   "artifact_name": "hyperliquid_read_only_account_snapshot",
-  "generated_at_utc": "2026-04-12T22:10:08Z",
+  "generated_at_utc": "2026-04-18T10:35:51Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\hyperliquid_read_only_snapshot.py",
   "config_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
@@ -12,6 +12,6 @@
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_manifest.json"
   ],
   "status": "success",
-  "started_at_utc": "2026-04-12T22:10:06Z",
+  "started_at_utc": "2026-04-18T10:35:49Z",
   "runtime_posture": "live_runtime_read_only_observability"
 }
