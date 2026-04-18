@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import os
 import subprocess
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -40,6 +41,8 @@ PHASE66G_LIVE = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase
 PHASE66G_TREND = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_trend_barometer_history.csv"
 
 BTC_RAW = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
+TOP100_DIR = ROOT / "data" / "ohlcv_phase67_top100"
+SHORTLIST_PATH = ROOT / "outputs" / "phase67b_top100_forensic_prune_and_rerun" / "phase67b_asset_shortlist.csv"
 MACRO_FILE = ROOT / "data" / "macro" / "global_liquidity_weekly.csv"
 
 FRESHNESS_REPORT = ROOT / "outputs" / "app_freshness_verification" / "app_freshness_report.json"
@@ -66,6 +69,15 @@ def now_utc() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
+def utc_today_start() -> datetime:
+    now = datetime.now(timezone.utc)
+    return datetime(now.year, now.month, now.day, tzinfo=timezone.utc)
+
+
+def latest_closed_utc_date() -> str:
+    return (utc_today_start() - timedelta(days=1)).date().isoformat()
+
+
 def ensure_file(path: Path, label: str) -> None:
     if not path.exists() or not path.is_file():
         raise FileNotFoundError(f"Missing required {label}: {path}")
@@ -77,6 +89,99 @@ def build_env() -> dict[str, str]:
     current = env.get("PYTHONPATH", "").strip()
     env["PYTHONPATH"] = wanted if not current else wanted + os.pathsep + current
     return env
+
+
+def read_csv_rows(path: Path) -> list[dict[str, str]]:
+    with path.open("r", encoding="utf-8-sig", newline="") as fh:
+        return list(csv.DictReader(fh))
+
+
+def read_last_csv_date(path: Path, date_field: str = "date") -> str:
+    rows = read_csv_rows(path)
+    if not rows:
+        raise ValueError(f"empty_csv::{path}")
+
+    last_value = str(rows[-1].get(date_field, "")).strip()
+    if not last_value:
+        raise ValueError(f"missing_date_field::{path}")
+    return last_value
+
+
+def read_shortlist_assets(path: Path) -> list[str]:
+    rows = read_csv_rows(path)
+    assets: list[str] = []
+    for row in rows:
+        asset = str(row.get("asset", "")).strip().upper()
+        if asset:
+            assets.append(asset)
+    return sorted(set(assets))
+
+
+def build_raw_skip_preflight(skip_legacy_refresh: bool, skip_top100_refresh: bool) -> dict[str, Any]:
+    target_date = latest_closed_utc_date()
+    result: dict[str, Any] = {
+        "target_last_closed_date": target_date,
+        "skip_legacy_refresh": skip_legacy_refresh,
+        "skip_top100_refresh": skip_top100_refresh,
+        "status": "NOT_NEEDED",
+        "checks": {},
+        "errors": [],
+    }
+
+    if not skip_legacy_refresh and not skip_top100_refresh:
+        return result
+
+    result["status"] = "OK"
+
+    if skip_legacy_refresh:
+        if not BTC_RAW.exists():
+            result["errors"].append(
+                f"skip_legacy_refresh_requested_but_missing::{BTC_RAW}"
+            )
+        else:
+            btc_last_date = read_last_csv_date(BTC_RAW)
+            result["checks"]["btc_raw_last_date"] = btc_last_date
+            if btc_last_date < target_date:
+                result["errors"].append(
+                    "skip_legacy_refresh_requested_but_stale::"
+                    f"btc_raw_last={btc_last_date} target_last_closed_date={target_date}"
+                )
+
+    if skip_top100_refresh:
+        if not SHORTLIST_PATH.exists():
+            result["errors"].append(
+                f"skip_top100_refresh_requested_but_missing_shortlist::{SHORTLIST_PATH}"
+            )
+        else:
+            assets = read_shortlist_assets(SHORTLIST_PATH)
+            result["checks"]["top100_assets_checked"] = assets
+            if not assets:
+                result["errors"].append(
+                    f"skip_top100_refresh_requested_but_empty_shortlist::{SHORTLIST_PATH}"
+                )
+            else:
+                asset_dates: dict[str, str] = {}
+                stale_assets: list[str] = []
+                for asset in assets:
+                    asset_path = TOP100_DIR / f"{asset}USDT_1d.csv"
+                    if not asset_path.exists():
+                        stale_assets.append(f"{asset}:missing")
+                        continue
+                    last_date = read_last_csv_date(asset_path)
+                    asset_dates[asset] = last_date
+                    if last_date < target_date:
+                        stale_assets.append(f"{asset}:{last_date}")
+                result["checks"]["top100_asset_last_dates"] = asset_dates
+                if stale_assets:
+                    result["errors"].append(
+                        "skip_top100_refresh_requested_but_stale::"
+                        f"target_last_closed_date={target_date} stale_assets={','.join(stale_assets)}"
+                    )
+
+    if result["errors"]:
+        result["status"] = "FAIL"
+
+    return result
 
 
 def run_step(
@@ -234,6 +339,27 @@ def write_manifest(run_dir: Path, manifest: dict[str, Any]) -> Path:
     return manifest_path
 
 
+def run_step_and_persist(
+    manifest: dict[str, Any],
+    run_dir: Path,
+    step_name: str,
+    script_path: Path,
+    env: dict[str, str],
+    step_logs_dir: Path,
+    script_args: list[str] | None = None,
+) -> dict[str, Any]:
+    step_result = run_step(
+        step_name,
+        script_path,
+        env,
+        step_logs_dir,
+        script_args=script_args,
+    )
+    manifest["steps"].append(step_result)
+    write_manifest(run_dir, manifest)
+    return step_result
+
+
 def run_post_strategy_runtime_refresh(
     env: dict[str, str],
     logs_dir: Path,
@@ -267,6 +393,7 @@ def main() -> None:
     env = build_env()
 
     manifest: dict[str, Any] = {
+        "run_id": run_stamp,
         "started_at_utc": now_utc(),
         "root": str(ROOT),
         "python": sys.executable,
@@ -277,6 +404,16 @@ def main() -> None:
         "main_refresh_chain_status": "RUNNING",
         "strategy_refresh_chain_status": "RUNNING",
         "post_strategy_runtime_refresh_status": "NOT_RUN",
+        "refresh_source_status": "NOT_READY",
+        "refresh_source_finished_at_utc": None,
+        "raw_skip_preflight": {
+            "target_last_closed_date": latest_closed_utc_date(),
+            "skip_legacy_refresh": bool(args.skip_legacy_refresh),
+            "skip_top100_refresh": bool(args.skip_top100_refresh),
+            "status": "NOT_RUN",
+            "checks": {},
+            "errors": [],
+        },
         "steps": [],
         "dev_only_post_step": {
             "step_name": "dev_only_anomaly_operating_mode_runner",
@@ -289,61 +426,111 @@ def main() -> None:
         },
         "required_outputs": [str(p) for p in REQUIRED_OUTPUTS],
     }
+    manifest_path = write_manifest(run_dir, manifest)
 
     try:
+        manifest["raw_skip_preflight"] = build_raw_skip_preflight(
+            bool(args.skip_legacy_refresh),
+            bool(args.skip_top100_refresh),
+        )
+        manifest_path = write_manifest(run_dir, manifest)
+        if manifest["raw_skip_preflight"]["status"] == "FAIL":
+            raise RuntimeError(
+                "Raw refresh skip preflight failed.\n"
+                + "\n".join(manifest["raw_skip_preflight"]["errors"])
+            )
+
         if not args.skip_legacy_refresh:
-            manifest["steps"].append(
-                run_step("refresh_legacy_ohlcv", LEGACY_REFRESH_SCRIPT, env, logs_dir)
+            run_step_and_persist(
+                manifest,
+                run_dir,
+                "refresh_legacy_ohlcv",
+                LEGACY_REFRESH_SCRIPT,
+                env,
+                logs_dir,
             )
 
         if not args.skip_macro_refresh:
-            manifest["steps"].append(
-                run_step("refresh_global_liquidity_weekly", MACRO_REFRESH_SCRIPT, env, logs_dir)
+            run_step_and_persist(
+                manifest,
+                run_dir,
+                "refresh_global_liquidity_weekly",
+                MACRO_REFRESH_SCRIPT,
+                env,
+                logs_dir,
             )
 
         if not args.skip_top100_refresh:
-            manifest["steps"].append(
-                run_step("refresh_phase67_top100_shortlist_ohlcv", TOP100_REFRESH_SCRIPT, env, logs_dir)
+            run_step_and_persist(
+                manifest,
+                run_dir,
+                "refresh_phase67_top100_shortlist_ohlcv",
+                TOP100_REFRESH_SCRIPT,
+                env,
+                logs_dir,
             )
 
-        manifest["steps"].append(
-            run_step("phase67b_top100_forensic_prune_and_rerun", PHASE67B_SCRIPT, env, logs_dir)
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "phase67b_top100_forensic_prune_and_rerun",
+            PHASE67B_SCRIPT,
+            env,
+            logs_dir,
         )
-        manifest["steps"].append(
-            run_step(
-                "phase60_selective_restore_robustness",
-                PHASE60_SCRIPT,
-                env,
-                logs_dir,
-                script_args=["--only-model", PHASE60_PINNED_MODEL],
-            )
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "phase60_selective_restore_robustness",
+            PHASE60_SCRIPT,
+            env,
+            logs_dir,
+            script_args=["--only-model", PHASE60_PINNED_MODEL],
         )
-        manifest["steps"].append(
-            run_step(
-                "phase63_btc_participation_overlay",
-                PHASE63_SCRIPT,
-                env,
-                logs_dir,
-                script_args=["--only-model", PHASE63_PINNED_MODEL],
-            )
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "phase63_btc_participation_overlay",
+            PHASE63_SCRIPT,
+            env,
+            logs_dir,
+            script_args=["--only-model", PHASE63_PINNED_MODEL],
         )
-        manifest["steps"].append(
-            run_step("phase66g_production_candidate_live", PHASE66G_SCRIPT, env, logs_dir)
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "phase66g_production_candidate_live",
+            PHASE66G_SCRIPT,
+            env,
+            logs_dir,
         )
-        manifest["steps"].append(
-            run_step(
-                "phase67j_final_narrow_validation_pack",
-                PHASE67J_SCRIPT,
-                env,
-                logs_dir,
-                script_args=["--only-profile", PHASE67J_PINNED_PROFILE],
-            )
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "phase67j_final_narrow_validation_pack",
+            PHASE67J_SCRIPT,
+            env,
+            logs_dir,
+            script_args=["--only-profile", PHASE67J_PINNED_PROFILE],
         )
-        manifest["steps"].append(
-            run_step("verify_app_freshness", VERIFY_SCRIPT, env, logs_dir)
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "verify_app_freshness",
+            VERIFY_SCRIPT,
+            env,
+            logs_dir,
         )
-        manifest["steps"].append(
-            run_step("materialize_execution_app_exports", MATERIALIZE_SCRIPT, env, logs_dir)
+        manifest["refresh_source_status"] = "OK"
+        manifest["refresh_source_finished_at_utc"] = now_utc()
+        manifest_path = write_manifest(run_dir, manifest)
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "materialize_execution_app_exports",
+            MATERIALIZE_SCRIPT,
+            env,
+            logs_dir,
         )
 
         missing_outputs = verify_outputs()
@@ -361,6 +548,7 @@ def main() -> None:
         manifest["macro_refresh_report_path"] = str(MACRO_REFRESH_REPORT)
         manifest["freshness_report"] = freshness
         manifest["macro_refresh_report"] = macro_report
+        manifest_path = write_manifest(run_dir, manifest)
         manifest["post_strategy_runtime_refresh"] = run_post_strategy_runtime_refresh(
             env,
             logs_dir,
@@ -391,6 +579,8 @@ def main() -> None:
         manifest["finished_at_utc"] = now_utc()
         if manifest.get("strategy_refresh_chain_status") == "RUNNING":
             manifest["strategy_refresh_chain_status"] = "FAIL"
+        if manifest.get("refresh_source_status") == "NOT_READY":
+            manifest["refresh_source_status"] = "FAIL"
         if manifest.get("post_strategy_runtime_refresh_status") == "NOT_RUN":
             manifest["post_strategy_runtime_refresh_status"] = "FAIL"
         manifest["main_refresh_chain_status"] = "FAIL"

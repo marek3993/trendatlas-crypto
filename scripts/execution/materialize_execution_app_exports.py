@@ -160,14 +160,20 @@ def utc_date_from_iso(value: Any) -> str | None:
 
 
 def normalize_refresh_status(payload: dict[str, Any]) -> str:
-    status = str(payload.get("main_refresh_chain_status") or payload.get("status") or "").strip().upper()
+    status = str(
+        payload.get("refresh_source_status")
+        or payload.get("main_refresh_chain_status")
+        or payload.get("status")
+        or ""
+    ).strip().upper()
     return status or "UNKNOWN"
 
 
 def refresh_manifest_finished_at(payload: dict[str, Any]) -> str | None:
     return (
         str(
-            payload.get("main_refresh_chain_finished_at_utc")
+            payload.get("refresh_source_finished_at_utc")
+            or payload.get("main_refresh_chain_finished_at_utc")
             or payload.get("finished_at_utc")
             or payload.get("generated_at_utc")
             or payload.get("started_at_utc")
