@@ -51,6 +51,8 @@ from services.shared.schemas import (
     utc_now_iso,
 )
 
+HEAVY_VALIDATION_STALE_CLAIM_IDLE_MS = 300_000
+
 
 def validate_safe_job(job: WorkerJob) -> None:
     if job.constraints.get("dev_only") is not True:
@@ -1569,6 +1571,8 @@ def consume_heavy_validation_once(config_path: str | Path, queue: JobQueue | Non
         stream=config.streams["heavy_validation_jobs"],
         group=config.consumer_group,
         consumer=f"{config.consumer_name}_heavy_validation",
+        include_pending=True,
+        stale_claim_idle_ms=HEAVY_VALIDATION_STALE_CLAIM_IDLE_MS,
     )
     if message is None:
         return []
