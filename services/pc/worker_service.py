@@ -3,8 +3,9 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import time
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 from services.pi.environment_scanner import load_runtime_config
@@ -758,6 +759,43 @@ def _compare_basis(compare_rows: list[dict[str, Any]], metric: str) -> dict[str,
     return {}
 
 
+def _heavy_validation_project_root(summary_path: Path) -> Path:
+    raw_root = os.environ.get("RESEARCH_OS_ROOT", "").strip()
+    if raw_root:
+        return Path(raw_root).expanduser().resolve()
+    for parent in summary_path.parents:
+        if parent.name == "outputs":
+            return parent.parent.resolve()
+    return Path(__file__).resolve().parents[2]
+
+
+def _rebase_legacy_project_path(raw_path: str, project_root: Path) -> Path | None:
+    if not raw_path.startswith("/"):
+        return None
+    posix_parts = tuple(part for part in PurePosixPath(raw_path).parts if part not in {"/", ""})
+    if not posix_parts:
+        return None
+    try:
+        project_index = posix_parts.index(project_root.name)
+    except ValueError:
+        return None
+    suffix = posix_parts[project_index + 1 :]
+    return (project_root / Path(*suffix)).resolve() if suffix else project_root
+
+
+def _resolve_heavy_validation_path(path_value: str | Path, *, project_root: Path, relative_base: Path) -> Path:
+    raw_path = str(path_value).strip()
+    if not raw_path:
+        raise ValueError("heavy validation path must not be empty")
+    rebased_path = _rebase_legacy_project_path(raw_path, project_root)
+    if rebased_path is not None:
+        return rebased_path
+    candidate = Path(raw_path).expanduser()
+    if candidate.is_absolute():
+        return candidate.resolve()
+    return (relative_base / candidate).resolve()
+
+
 def load_heavy_validation_result_pack(summary_path: str | Path) -> tuple[
     dict[str, Any],
     list[dict[str, Any]],
@@ -766,16 +804,28 @@ def load_heavy_validation_result_pack(summary_path: str | Path) -> tuple[
     dict[str, str],
 ]:
     summary_path = Path(summary_path).resolve()
+    project_root = _heavy_validation_project_root(summary_path)
     summary = json.loads(summary_path.read_text(encoding="utf-8-sig"))
     artifact_paths = dict(summary.get("artifact_paths", {}))
-    compare_path = str(artifact_paths.get("compare") or summary_path.with_name(summary_path.name.replace("_summary.json", "_compare.csv")))
-    cost_metrics_path = str(
-        artifact_paths.get("cost_metrics") or summary_path.with_name(summary_path.name.replace("_summary.json", "_cost_metrics.csv"))
+    compare_path = _resolve_heavy_validation_path(
+        artifact_paths.get("compare") or summary_path.with_name(summary_path.name.replace("_summary.json", "_compare.csv")),
+        project_root=project_root,
+        relative_base=summary_path.parent,
+    )
+    cost_metrics_path = _resolve_heavy_validation_path(
+        artifact_paths.get("cost_metrics") or summary_path.with_name(summary_path.name.replace("_summary.json", "_cost_metrics.csv")),
+        project_root=project_root,
+        relative_base=summary_path.parent,
     )
     compare_rows = _read_csv_rows(compare_path)
     cost_rows = _read_csv_rows(cost_metrics_path)
     validate_heavy_validation_result_pack(summary, compare_rows, cost_rows)
-    source_artifact = load_validated_mutation_proposal_artifact(str(summary["source_mutation_proposal_artifact"]))
+    source_mutation_proposal_path = _resolve_heavy_validation_path(
+        summary["source_mutation_proposal_artifact"],
+        project_root=project_root,
+        relative_base=summary_path.parent,
+    )
+    source_artifact = load_validated_mutation_proposal_artifact(str(source_mutation_proposal_path))
     if source_artifact.get("family_id") != summary.get("family_id"):
         raise ValueError("source mutation proposal family_id does not match heavy validation summary family_id")
     return (
@@ -785,8 +835,8 @@ def load_heavy_validation_result_pack(summary_path: str | Path) -> tuple[
         source_artifact,
         {
             "summary": str(summary_path),
-            "compare": str(Path(compare_path).resolve()),
-            "cost_metrics": str(Path(cost_metrics_path).resolve()),
+            "compare": str(compare_path),
+            "cost_metrics": str(cost_metrics_path),
         },
     )
 
