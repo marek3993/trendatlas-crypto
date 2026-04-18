@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-18T10:35:42+00:00",
+  "generated_at_utc": "2026-04-18T16:11:53+00:00",
   "latest_closed_utc_date": "2026-04-17",
   "status": "ok",
   "checks": {
@@ -31,5 +31,5 @@
   },
   "warnings": [],
   "errors": [],
-  "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json"
+  "report_path": "C:\\actions-runner-trendatlas\\_work\\trendatlas-crypto\\trendatlas-crypto\\outputs\\app_freshness_verification\\app_freshness_report.json"
 }
