@@ -27,19 +27,14 @@ jobs:
           python -c "import sys; print(sys.executable)"
 
       - name: Install dependencies
-        shell: python
+        shell: powershell
         run: |
-          import pathlib
-          import subprocess
-          import sys
-
-          pip_check = subprocess.run([sys.executable, "-m", "pip", "--version"], check=False)
-          if pip_check.returncode != 0:
-              subprocess.run([sys.executable, "-m", "ensurepip", "--upgrade", "--user"], check=True)
-          subprocess.run([sys.executable, "-m", "pip", "install", "--user", "--upgrade", "pip"], check=True)
-          if pathlib.Path("requirements.txt").is_file():
-              subprocess.run([sys.executable, "-m", "pip", "install", "--user", "-r", "requirements.txt"], check=True)
-          subprocess.run([sys.executable, "-m", "pip", "install", "--user", "requests", "pandas"], check=True)
+          python --version
+          python -m pip --version
+          python -m pip install --user requests pandas
+          if (Test-Path requirements.txt) {
+            python -m pip install --user -r requirements.txt
+          }
 
       - name: Run app refresh pipeline
         run: |
