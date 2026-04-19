@@ -43,7 +43,7 @@
     "producer_script": "C:\\actions-runner-trendatlas\\_work\\trendatlas-crypto\\trendatlas-crypto\\scripts\\phase66g_production_candidate_live.py",
     "source_file": "C:\\actions-runner-trendatlas\\_work\\trendatlas-crypto\\trendatlas-crypto\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
     "source_last_date": "2026-04-11",
-    "raw_last_date": "2026-04-17",
+    "raw_last_date": "2026-04-18",
     "output_last_date": "2026-04-11",
     "first_missing_date_if_any": null,
     "date_semantics": "execution_date"

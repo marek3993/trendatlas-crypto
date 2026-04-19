@@ -67,7 +67,7 @@
     "producer_script": "C:\\actions-runner-trendatlas\\_work\\trendatlas-crypto\\trendatlas-crypto\\scripts\\phase67j_final_narrow_validation_pack.py",
     "source_file": "C:\\actions-runner-trendatlas\\_work\\trendatlas-crypto\\trendatlas-crypto\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
     "source_last_date": "2026-04-11",
-    "raw_last_date": "2026-04-17",
+    "raw_last_date": "2026-04-18",
     "output_last_date": "2026-04-11",
     "first_missing_date_if_any": null,
     "date_semantics": "execution_date"
