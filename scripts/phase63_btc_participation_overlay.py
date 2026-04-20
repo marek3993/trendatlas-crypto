@@ -19,8 +19,8 @@ CURRENT_INTERNAL_WINNER_KEY = "phase61_restore_trx_sol_base"
 CURRENT_INTERNAL_WINNER_LABEL = "Restore BNB vs TRX/SOL"
 LATEST_BEST_BASELINE_KEY = "phase42 core"
 
-EXPLICIT_BASE_PAPER_PATH = Path(
-    r"C:\Users\benda\Desktop\market_regime_v1\outputs\phase60_selective_restore_robustness\phase60_restore_trx_sol_base_paper.csv"
+EXPLICIT_BASE_PAPER_PATH = (
+    OUTPUTS / "phase60_selective_restore_robustness" / "phase60_restore_trx_sol_base_paper.csv"
 )
 
 
@@ -287,16 +287,22 @@ def discover_candidate_files() -> list[Path]:
 
 def resolve_base_strategy_file(path: Path, winner_key: str) -> Path:
     explicit = Path(path)
+    explicit_name = explicit.name.lower()
 
     if explicit.exists():
-        explicit_name = explicit.name.lower()
-        if winner_key.lower() in explicit_name:
+        try:
+            preview = safe_read_table(explicit)
+            preview = normalize_columns(preview)
+            _ = detect_date_column(preview)
+            if detect_return_column(preview) is None and detect_equity_column(preview) is None:
+                raise ValueError("missing return/equity column")
             log(f"[BASE] Using explicit base paper: {explicit}")
             return explicit
-        log(f"[BASE] Explicit path exists but is stale for winner_key={winner_key}: {explicit}")
+        except Exception as exc:
+            log(f"[BASE] Explicit base paper unreadable, falling back to discovery: {explicit} | {exc}")
 
     candidates = []
-    target_name = f"{winner_key}_paper.csv".lower()
+    target_names = [explicit_name, f"{winner_key}_paper.csv".lower()]
 
     for candidate in discover_candidate_files():
         try:
@@ -307,8 +313,10 @@ def resolve_base_strategy_file(path: Path, winner_key: str) -> Path:
         if PHASE63_DIR.resolve() in candidate_resolved.parents:
             continue
 
-        if candidate.name.lower() == target_name:
-            candidates.append(candidate)
+        candidate_name = candidate.name.lower()
+        if candidate_name in target_names:
+            name_priority = 1 if candidate_name == explicit_name else 0
+            candidates.append((name_priority, candidate))
 
     if not candidates:
         raise FileNotFoundError(
@@ -318,10 +326,10 @@ def resolve_base_strategy_file(path: Path, winner_key: str) -> Path:
 
     candidates = sorted(
         candidates,
-        key=lambda p: (p.stat().st_mtime, str(p)),
+        key=lambda item: (item[0], item[1].stat().st_mtime, str(item[1])),
         reverse=True,
     )
-    resolved = candidates[0]
+    resolved = candidates[0][1]
     log(f"[BASE] Resolved winner base paper from upstream outputs: {resolved}")
     return resolved
 
