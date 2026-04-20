@@ -1,6 +1,6 @@
 asset,train_total_delta_pct,recent_total_delta_pct,train_dd_worsen_pct,downside_dd_worsen_pct,train_triggers,score,passed_filters,profile,decision_date,next_date_exclusive,probation_delta_pct,suspended,reentry_blocked,persistence_passes,persistence_ok,core_asset_today,core_is_bnb,required_recent_delta_pct,promotion_ok,incumbent_asset_before,selected_asset,keep_reason,dropped_assets
-APT,0.0,0.0,0.0,0.0,0,-1e+18,False,phase67j_no_neo_main,2026-04-05,2026-04-11,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-HBAR,0.0,0.0,0.0,0.0,0,-1e+18,False,phase67j_no_neo_main,2026-04-05,2026-04-11,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-LINK,-2.4168791152332574,0.0,-2.3435168433556974,0.0,19,-1e+18,False,phase67j_no_neo_main,2026-04-05,2026-04-11,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-STX,-20.161879642314133,0.0,-1.3103388566715424,0.0,3,-1e+18,False,phase67j_no_neo_main,2026-04-05,2026-04-11,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
-DOGE,-32.79480713731856,0.0,-3.7937194649451875,0.0,13,-1e+18,False,phase67j_no_neo_main,2026-04-05,2026-04-11,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+APT,0.0,0.0,0.0,0.0,0,-1e+18,False,phase67j_no_neo_main,2026-04-12,2026-04-19,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+HBAR,0.0,0.0,0.0,0.0,0,-1e+18,False,phase67j_no_neo_main,2026-04-12,2026-04-19,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+LINK,-2.4168791152332574,0.0,-2.3435168433556974,0.0,19,-1e+18,False,phase67j_no_neo_main,2026-04-12,2026-04-19,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+STX,-20.161879642314133,0.0,-1.3103388566715424,0.0,3,-1e+18,False,phase67j_no_neo_main,2026-04-12,2026-04-19,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
+DOGE,-32.79480713731856,0.0,-3.7937194649451875,0.0,13,-1e+18,False,phase67j_no_neo_main,2026-04-12,2026-04-19,0.0,False,False,0,False,CASH,False,2.0,False,,,best_passed,NEO
