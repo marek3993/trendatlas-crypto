@@ -185,3 +185,55 @@ Get-CimInstance Win32_Process |
   } |
   ForEach-Object { Stop-Process -Id $_.ProcessId -Force }
 ```
+
+## Authority publish bridge for deployed app input
+
+The deployed app input is repo content, not an implicit side channel:
+
+- `app.py` resolves authority inputs as repo-relative files under `outputs/execution/authority/`
+- the current project publish mechanism that reaches deployed app source content is `git push origin main`
+- therefore the Pi authority producer must publish the two authority files into repo `main`
+
+Use this exact Pi entrypoint for authoritative production publishing:
+
+```bash
+cd /opt/market_regime_v1
+export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
+.venv/bin/python scripts/execution/run_pi_authoritative_producer.py
+```
+
+What it does:
+
+- runs `scripts/daily_refresh_app_pipeline.py` with `MRV1_AUTHORITY_MODE=authoritative`
+- writes `outputs/execution/authority/latest_attempt_status.json`
+- writes `outputs/execution/authority/latest_successful_snapshot.json` on success
+- resolves the runtime checkout remote URL but does not push from the runtime checkout
+- bootstraps or reuses a dedicated clean publish clone at `MRV1_AUTHORITY_PUBLISH_TREE`
+- fetches `origin/main` into that clean publish clone, checks out `main`, hard-resets to `origin/main`, and cleans untracked files
+- copies only the two authority files into the clean publish clone
+- commits and pushes only from that clean publish clone
+- retries from a fresh fetch/reset if `git push` is rejected by remote drift
+
+Exact validation commands on the Pi:
+
+```bash
+cd /opt/market_regime_v1
+export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
+.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --skip-legacy-refresh --skip-macro-refresh --skip-top100-refresh
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" status --short
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" log -1 --stat -- outputs/execution/authority/latest_attempt_status.json outputs/execution/authority/latest_successful_snapshot.json
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show HEAD:outputs/execution/authority/latest_attempt_status.json
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show HEAD:outputs/execution/authority/latest_successful_snapshot.json
+git -C /opt/market_regime_v1 status --short
+```
+
+Exact rollback for the last authority publish commit:
+
+```bash
+cd /opt/market_regime_v1
+export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" fetch origin main
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" checkout -B main origin/main
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" revert --no-edit HEAD
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" push origin HEAD:main
+```

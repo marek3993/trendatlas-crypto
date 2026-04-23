@@ -1,6 +1,7 @@
 import argparse
 import json
 import shutil
+import subprocess
 import sys
 import unittest
 import uuid
@@ -17,6 +18,7 @@ if str(ROOT / "scripts") not in sys.path:
 from scripts import daily_refresh_app_pipeline as pipeline
 from scripts.execution import authority_contract as contract
 from scripts.execution import authority_publish_helpers as helpers
+from scripts.execution import run_pi_authoritative_producer as pi_producer
 from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
     SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
@@ -137,6 +139,76 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             extra_fields=extra_fields,
         )
         return attempt_payload, success_payload
+
+    def build_pi_repo_env(self, temp_root: Path) -> dict[str, str]:
+        env = pi_producer.build_pi_authoritative_env()
+        env["MRV1_AUTHORITY_PUBLISH_TREE"] = str(
+            temp_root.parent / f"{temp_root.name}__authority_publish"
+        )
+        env["MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS"] = "3"
+        return env
+
+    def seed_authority_payloads(
+        self,
+        temp_root: Path,
+        *,
+        run_id: str,
+        attempt_status: str,
+        include_snapshot: bool,
+    ) -> tuple[Path, Path]:
+        authority_dir = temp_root / "outputs" / "execution" / "authority"
+        authority_dir.mkdir(parents=True, exist_ok=True)
+        extra_fields = contract.build_authority_extra_fields(
+            run_id=run_id,
+            source_manifest_path=(
+                f"outputs/app_refresh_pipeline/{run_id}/app_refresh_pipeline_manifest.json"
+            ),
+            authority_role="pi_only_authoritative_producer",
+            automatic_producer_id="raspberry_pi",
+            latest_successful_snapshot_path="outputs/execution/authority/latest_successful_snapshot.json",
+            latest_attempt_status_path="outputs/execution/authority/latest_attempt_status.json",
+            generated_at_utc="2026-04-23T10:45:00Z",
+            attempt_stage="daily_refresh_app_pipeline",
+            attempt_stage_status="success" if attempt_status == "success" else "failed",
+            stage_history=[],
+        )
+        error = None if attempt_status == "success" else "simulated_failure"
+        attempt_payload = build_authority_payload(
+            artifact_type=ATTEMPT_STATUS_ARTIFACT_TYPE,
+            target_closed_day_utc="2026-04-22",
+            latest_available_closed_utc_day="2026-04-22",
+            refresh_started_at_utc="2026-04-23T10:00:00Z",
+            refresh_finished_at_utc="2026-04-23T10:45:00Z",
+            latest_authoritative_attempt_status=attempt_status,
+            latest_authoritative_attempt_error=error,
+            strategy_artifact_closed_day_utc="2026-04-22" if attempt_status == "success" else None,
+            extra_fields=extra_fields,
+        )
+        attempt_path = authority_dir / "latest_attempt_status.json"
+        attempt_path.write_text(
+            json.dumps(attempt_payload, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
+        snapshot_path = authority_dir / "latest_successful_snapshot.json"
+        if include_snapshot:
+            success_payload = build_authority_payload(
+                artifact_type=SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
+                target_closed_day_utc="2026-04-22",
+                latest_available_closed_utc_day="2026-04-22",
+                refresh_started_at_utc="2026-04-23T10:00:00Z",
+                refresh_finished_at_utc="2026-04-23T10:45:00Z",
+                latest_authoritative_attempt_status="success",
+                latest_authoritative_attempt_error=None,
+                strategy_artifact_closed_day_utc="2026-04-22",
+                extra_fields=extra_fields,
+            )
+            snapshot_path.write_text(
+                json.dumps(success_payload, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+
+        return attempt_path, snapshot_path
 
     def test_successful_publish_writes_both_authority_files_with_utc_and_local_fields(self):
         temp_root = self.make_temp_root()
@@ -433,6 +505,254 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
 
         publish_success.assert_not_called()
         publish_failure.assert_called_once()
+
+    def test_pi_repo_publish_commits_and_pushes_authority_files_from_clean_publish_tree(self):
+        temp_root = self.make_temp_root()
+        self.seed_authority_payloads(
+            temp_root,
+            run_id="20260423_104500",
+            attempt_status="success",
+            include_snapshot=True,
+        )
+        env = self.build_pi_repo_env(temp_root)
+        publish_tree = Path(env["MRV1_AUTHORITY_PUBLISH_TREE"])
+        remote_url = "git@github.com:example/market_regime_v1.git"
+        git_calls: list[list[str]] = []
+
+        def fake_run(args, cwd=None, env=None, text=None, capture_output=None, check=None):
+            git_calls.append(args)
+            if args[:2] == ["git", "clone"]:
+                (publish_tree / ".git").mkdir(parents=True, exist_ok=True)
+                return subprocess.CompletedProcess(args, 0, "", "")
+            if args[:4] == ["git", "remote", "get-url", "origin"]:
+                if cwd == str(temp_root):
+                    return subprocess.CompletedProcess(args, 0, remote_url + "\n", "")
+                if cwd == str(publish_tree):
+                    return subprocess.CompletedProcess(args, 0, remote_url + "\n", "")
+            if args[:3] == ["git", "diff", "--cached"]:
+                return subprocess.CompletedProcess(args, 1, "", "")
+            if args[:2] == ["git", "rev-parse"]:
+                return subprocess.CompletedProcess(args, 0, "abc123\n", "")
+            return subprocess.CompletedProcess(args, 0, "", "")
+
+        with mock.patch.object(pi_producer.subprocess, "run", side_effect=fake_run):
+            result = pi_producer.publish_authority_artifacts_to_repo(
+                root=temp_root,
+                env=env,
+            )
+
+        self.assertTrue(result["published"])
+        self.assertEqual(result["remote"], "origin")
+        self.assertEqual(result["branch"], "main")
+        self.assertEqual(result["remote_url"], remote_url)
+        self.assertEqual(result["publish_tree"], str(publish_tree))
+        self.assertEqual(result["push_attempts"], 1)
+        self.assertEqual(
+            result["pathspecs"],
+            [
+                "outputs/execution/authority/latest_attempt_status.json",
+                "outputs/execution/authority/latest_successful_snapshot.json",
+            ],
+        )
+        self.assertEqual(result["commit_sha"], "abc123")
+        self.assertEqual(
+            git_calls,
+            [
+                ["git", "remote", "get-url", "origin"],
+                [
+                    "git",
+                    "clone",
+                    "--origin",
+                    "origin",
+                    "--branch",
+                    "main",
+                    "--single-branch",
+                    remote_url,
+                    str(publish_tree),
+                ],
+                ["git", "remote", "get-url", "origin"],
+                ["git", "fetch", "origin", "main"],
+                ["git", "checkout", "-B", "main", "origin/main"],
+                ["git", "reset", "--hard", "origin/main"],
+                ["git", "clean", "-fd"],
+                [
+                    "git",
+                    "add",
+                    "--",
+                    "outputs/execution/authority/latest_attempt_status.json",
+                    "outputs/execution/authority/latest_successful_snapshot.json",
+                ],
+                [
+                    "git",
+                    "diff",
+                    "--cached",
+                    "--quiet",
+                    "--",
+                    "outputs/execution/authority/latest_attempt_status.json",
+                    "outputs/execution/authority/latest_successful_snapshot.json",
+                ],
+                [
+                    "git",
+                    "commit",
+                    "--only",
+                    "-m",
+                    "Publish Pi authority artifacts: success 2026-04-22 20260423_104500",
+                    "--",
+                    "outputs/execution/authority/latest_attempt_status.json",
+                    "outputs/execution/authority/latest_successful_snapshot.json",
+                ],
+                ["git", "push", "origin", "HEAD:main"],
+                ["git", "rev-parse", "HEAD"],
+            ],
+        )
+
+    def test_pi_repo_publish_pushes_attempt_only_for_first_failed_run(self):
+        temp_root = self.make_temp_root()
+        self.seed_authority_payloads(
+            temp_root,
+            run_id="20260423_111500",
+            attempt_status="failed",
+            include_snapshot=False,
+        )
+        env = self.build_pi_repo_env(temp_root)
+        publish_tree = Path(env["MRV1_AUTHORITY_PUBLISH_TREE"])
+        remote_url = "git@github.com:example/market_regime_v1.git"
+        git_calls: list[list[str]] = []
+
+        def fake_run(args, cwd=None, env=None, text=None, capture_output=None, check=None):
+            git_calls.append(args)
+            if args[:2] == ["git", "clone"]:
+                (publish_tree / ".git").mkdir(parents=True, exist_ok=True)
+                return subprocess.CompletedProcess(args, 0, "", "")
+            if args[:4] == ["git", "remote", "get-url", "origin"]:
+                if cwd == str(temp_root):
+                    return subprocess.CompletedProcess(args, 0, remote_url + "\n", "")
+                if cwd == str(publish_tree):
+                    return subprocess.CompletedProcess(args, 0, remote_url + "\n", "")
+            if args[:3] == ["git", "diff", "--cached"]:
+                return subprocess.CompletedProcess(args, 1, "", "")
+            if args[:2] == ["git", "rev-parse"]:
+                return subprocess.CompletedProcess(args, 0, "def456\n", "")
+            return subprocess.CompletedProcess(args, 0, "", "")
+
+        with mock.patch.object(pi_producer.subprocess, "run", side_effect=fake_run):
+            result = pi_producer.publish_authority_artifacts_to_repo(
+                root=temp_root,
+                env=env,
+            )
+
+        self.assertTrue(result["published"])
+        self.assertEqual(result["publish_tree"], str(publish_tree))
+        self.assertEqual(result["remote_url"], remote_url)
+        self.assertEqual(
+            result["pathspecs"],
+            ["outputs/execution/authority/latest_attempt_status.json"],
+        )
+        self.assertEqual(
+            git_calls,
+            [
+                ["git", "remote", "get-url", "origin"],
+                [
+                    "git",
+                    "clone",
+                    "--origin",
+                    "origin",
+                    "--branch",
+                    "main",
+                    "--single-branch",
+                    remote_url,
+                    str(publish_tree),
+                ],
+                ["git", "remote", "get-url", "origin"],
+                ["git", "fetch", "origin", "main"],
+                ["git", "checkout", "-B", "main", "origin/main"],
+                ["git", "reset", "--hard", "origin/main"],
+                ["git", "clean", "-fd"],
+                [
+                    "git",
+                    "add",
+                    "--",
+                    "outputs/execution/authority/latest_attempt_status.json",
+                ],
+                [
+                    "git",
+                    "diff",
+                    "--cached",
+                    "--quiet",
+                    "--",
+                    "outputs/execution/authority/latest_attempt_status.json",
+                ],
+                [
+                    "git",
+                    "commit",
+                    "--only",
+                    "-m",
+                    "Publish Pi authority artifacts: failed 2026-04-22 20260423_111500",
+                    "--",
+                    "outputs/execution/authority/latest_attempt_status.json",
+                ],
+                ["git", "push", "origin", "HEAD:main"],
+                ["git", "rev-parse", "HEAD"],
+            ],
+        )
+
+    def test_pi_repo_publish_retries_clean_publish_tree_after_remote_drift(self):
+        temp_root = self.make_temp_root()
+        self.seed_authority_payloads(
+            temp_root,
+            run_id="20260423_120000",
+            attempt_status="success",
+            include_snapshot=True,
+        )
+        env = self.build_pi_repo_env(temp_root)
+        publish_tree = Path(env["MRV1_AUTHORITY_PUBLISH_TREE"])
+        remote_url = "git@github.com:example/market_regime_v1.git"
+        git_calls: list[list[str]] = []
+        push_attempts = 0
+
+        def fake_run(args, cwd=None, env=None, text=None, capture_output=None, check=None):
+            nonlocal push_attempts
+            git_calls.append(args)
+            if args[:2] == ["git", "clone"]:
+                (publish_tree / ".git").mkdir(parents=True, exist_ok=True)
+                return subprocess.CompletedProcess(args, 0, "", "")
+            if args[:4] == ["git", "remote", "get-url", "origin"]:
+                if cwd == str(temp_root):
+                    return subprocess.CompletedProcess(args, 0, remote_url + "\n", "")
+                if cwd == str(publish_tree):
+                    return subprocess.CompletedProcess(args, 0, remote_url + "\n", "")
+            if args[:3] == ["git", "diff", "--cached"]:
+                return subprocess.CompletedProcess(args, 1, "", "")
+            if args[:2] == ["git", "push"]:
+                push_attempts += 1
+                if push_attempts == 1:
+                    return subprocess.CompletedProcess(
+                        args,
+                        1,
+                        "",
+                        "! [rejected]        HEAD -> main (non-fast-forward)\nerror: failed to push some refs",
+                    )
+                return subprocess.CompletedProcess(args, 0, "", "")
+            if args[:2] == ["git", "rev-parse"]:
+                return subprocess.CompletedProcess(args, 0, "fedcba\n", "")
+            return subprocess.CompletedProcess(args, 0, "", "")
+
+        with mock.patch.object(pi_producer.subprocess, "run", side_effect=fake_run):
+            result = pi_producer.publish_authority_artifacts_to_repo(
+                root=temp_root,
+                env=env,
+            )
+
+        self.assertTrue(result["published"])
+        self.assertEqual(result["push_attempts"], 2)
+        self.assertEqual(push_attempts, 2)
+        self.assertEqual(git_calls.count(["git", "fetch", "origin", "main"]), 2)
+        self.assertEqual(
+            git_calls.count(["git", "checkout", "-B", "main", "origin/main"]),
+            2,
+        )
+        self.assertEqual(git_calls.count(["git", "reset", "--hard", "origin/main"]), 2)
+        self.assertEqual(git_calls.count(["git", "clean", "-fd"]), 2)
 
 
 if __name__ == "__main__":
