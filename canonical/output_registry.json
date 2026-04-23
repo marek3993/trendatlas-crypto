@@ -587,6 +587,19 @@
       "notes": "Dev-only non-authoritative confirmatory outputs for the same breadth ignition plus volatility-hostility veto family against phase67j_no_neo_main. Keeps the same pure-breadth source ratio, same causal 5-day EMA smoothing, same >2/3 hold rule, and same slow BTC realized-volatility veto while adding only a 2-day smoothed breadth confirmation before ignition turns ON."
     },
     {
+      "output_path": "outputs/execution/authority/",
+      "generated_by": [
+        "scripts/daily_refresh_app_pipeline.py",
+        "scripts/execution/run_pi_authoritative_producer.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "producer_authority_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Producer-only Pi authority artifacts written under outputs/execution/authority/schemas/. No app/runtime/UI consumer cutover."
+    },
+    {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
       "generated_by": [
         "scripts/phase68h_dynamic_leverage_ladder_candidate.py"

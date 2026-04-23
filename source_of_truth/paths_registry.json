@@ -19,6 +19,7 @@
     "execution_app_exports": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports",
     "execution_freshness": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness",
     "execution_refresh_pipeline": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline",
+    "execution_authority": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority",
     "execution_read_only": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only",
     "execution_live_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_status",
     "execution_source_contract": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\source_contract",
@@ -53,7 +54,9 @@
     "account_snapshot": "read_only_exchange_account_snapshot_output",
     "execution_intent": "normalized_execution_intent_output",
     "dry_run_decision": "simulated_execution_decision_output",
-    "execution_log": "execution_runtime_log_output"
+    "execution_log": "execution_runtime_log_output",
+    "authority_snapshot": "producer_written_authoritative_refresh_snapshot_output",
+    "authority_status": "producer_written_authoritative_refresh_attempt_output"
   },
   "artifacts": {
     "phase67j_winner_paper": {
@@ -217,6 +220,28 @@
         "validation"
       ],
       "write_mode": "future_write_through_candidate"
+    },
+    "authority_latest_successful_snapshot": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\schemas\\latest_successful_snapshot.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "authority_snapshot",
+      "truth_domain": "authority",
+      "read_scope": [
+        "execution_producer"
+      ],
+      "write_mode": "producer_only_authoritative_write"
+    },
+    "authority_latest_attempt_status": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\schemas\\latest_attempt_status.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "authority_status",
+      "truth_domain": "authority",
+      "read_scope": [
+        "execution_producer"
+      ],
+      "write_mode": "producer_only_authoritative_write"
     },
     "research_os_zero_selection_diagnostics": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop\\zero_selection_diagnostics.json",

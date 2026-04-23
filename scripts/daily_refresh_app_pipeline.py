@@ -11,6 +11,14 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
+from execution.authority_publish_helpers import (
+    build_authority_manifest_stub,
+    build_authority_publish_state,
+    publish_authority_refresh_failure,
+    publish_authority_refresh_started,
+    publish_authority_refresh_success,
+)
+
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "outputs" / "app_refresh_pipeline"
@@ -391,10 +399,18 @@ def main() -> None:
     logs_dir.mkdir(parents=True, exist_ok=True)
 
     env = build_env()
+    authority_publish_state = build_authority_publish_state(
+        run_id=run_stamp,
+        run_dir=run_dir,
+        refresh_started_at_utc=now_utc(),
+        target_closed_day_utc=latest_closed_utc_date(),
+        env=env,
+    )
+    authority_success_published = False
 
     manifest: dict[str, Any] = {
         "run_id": run_stamp,
-        "started_at_utc": now_utc(),
+        "started_at_utc": authority_publish_state["refresh_started_at_utc"],
         "root": str(ROOT),
         "python": sys.executable,
         "mode": "fast_app_refresh",
@@ -424,6 +440,7 @@ def main() -> None:
             "non_authoritative_outputs_only": True,
             "reason": "main_refresh_chain_not_completed",
         },
+        "authority_publish": build_authority_manifest_stub(authority_publish_state),
         "required_outputs": [str(p) for p in REQUIRED_OUTPUTS],
     }
     manifest_path = write_manifest(run_dir, manifest)
@@ -439,6 +456,27 @@ def main() -> None:
                 "Raw refresh skip preflight failed.\n"
                 + "\n".join(manifest["raw_skip_preflight"]["errors"])
             )
+
+        authority_publish_state["target_closed_day_utc"] = manifest["raw_skip_preflight"]["target_last_closed_date"]
+        authority_publish_state["latest_available_closed_utc_day"] = manifest["raw_skip_preflight"]["target_last_closed_date"]
+        authority_start_result = publish_authority_refresh_started(
+            authority_publish_state,
+            env=env,
+        )
+        manifest["authority_publish"].update(
+            {
+                "published": bool(authority_start_result.get("published")),
+                "successful_snapshot_written": bool(
+                    authority_start_result.get("successful_snapshot_written")
+                ),
+                "status": "ATTEMPT_STARTED"
+                if authority_start_result.get("published")
+                else "SKIPPED",
+                "reason": authority_start_result.get("reason"),
+                "last_publish_result": authority_start_result,
+            }
+        )
+        manifest_path = write_manifest(run_dir, manifest)
 
         if not args.skip_legacy_refresh:
             run_step_and_persist(
@@ -542,12 +580,34 @@ def main() -> None:
         freshness = load_json(FRESHNESS_REPORT)
         macro_report = load_json(MACRO_REFRESH_REPORT)
 
-        manifest["strategy_refresh_chain_finished_at_utc"] = now_utc()
+        strategy_refresh_finished_at_utc = now_utc()
+        manifest["strategy_refresh_chain_finished_at_utc"] = strategy_refresh_finished_at_utc
         manifest["strategy_refresh_chain_status"] = "OK"
         manifest["freshness_report_path"] = str(FRESHNESS_REPORT)
         manifest["macro_refresh_report_path"] = str(MACRO_REFRESH_REPORT)
         manifest["freshness_report"] = freshness
         manifest["macro_refresh_report"] = macro_report
+        authority_success_result = publish_authority_refresh_success(
+            authority_publish_state,
+            refresh_finished_at_utc=strategy_refresh_finished_at_utc,
+            env=env,
+        )
+        authority_success_published = bool(
+            authority_success_result.get("successful_snapshot_written")
+        )
+        manifest["authority_publish"].update(
+            {
+                "published": bool(authority_success_result.get("published")),
+                "successful_snapshot_written": bool(
+                    authority_success_result.get("successful_snapshot_written")
+                ),
+                "status": "SUCCESS_SNAPSHOT_WRITTEN"
+                if authority_success_result.get("successful_snapshot_written")
+                else "SKIPPED",
+                "reason": authority_success_result.get("reason"),
+                "last_publish_result": authority_success_result,
+            }
+        )
         manifest_path = write_manifest(run_dir, manifest)
         manifest["post_strategy_runtime_refresh"] = run_post_strategy_runtime_refresh(
             env,
@@ -586,6 +646,26 @@ def main() -> None:
         manifest["main_refresh_chain_status"] = "FAIL"
         manifest["status"] = "FAIL"
         manifest["error"] = str(exc)
+        if not authority_success_published:
+            authority_failure_result = publish_authority_refresh_failure(
+                authority_publish_state,
+                refresh_finished_at_utc=manifest["finished_at_utc"],
+                error=str(exc),
+                env=env,
+            )
+            manifest["authority_publish"].update(
+                {
+                    "published": bool(authority_failure_result.get("published")),
+                    "successful_snapshot_written": bool(
+                        authority_failure_result.get("successful_snapshot_written")
+                    ),
+                    "status": "FAILURE_ATTEMPT_WRITTEN"
+                    if authority_failure_result.get("published")
+                    else "SKIPPED",
+                    "reason": authority_failure_result.get("reason"),
+                    "last_publish_result": authority_failure_result,
+                }
+            )
 
         manifest_path = write_manifest(run_dir, manifest)
 

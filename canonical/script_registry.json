@@ -806,6 +806,22 @@
       "notes": "Dev-only and non-authoritative. Same family only: fixed pure-breadth source ratio, same causal 5-day EMA smoothing, same >2/3 hold rule, same slow BTC realized-volatility veto using 20-day annualized vol versus 63-day median times 1.20 with 2-day set/clear persistence, and only one confirmatory breadth change: 2 consecutive smoothed breadth days above 2/3 before ignition turns ON."
     },
     {
+      "script_path": "scripts/execution/run_pi_authoritative_producer.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Pi-only wrapper that runs the official DATA refresh entrypoint with authoritative producer publish gates enabled.",
+      "primary_outputs": [
+        "outputs/app_refresh_pipeline/",
+        "outputs/execution/refresh_pipeline/",
+        "outputs/execution/app_exports/",
+        "outputs/execution/authority/schemas/"
+      ],
+      "output_type": "runtime_control",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Optional Pi-authoritative producer helper only. The official refresh entrypoint remains scripts/daily_refresh_app_pipeline.py and consumer paths stay unchanged."
+    },
+    {
       "script_path": "run_data_refresh.ps1",
       "layer": "execution_data",
       "status": "active",
