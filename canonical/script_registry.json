@@ -814,7 +814,7 @@
         "outputs/app_refresh_pipeline/",
         "outputs/execution/refresh_pipeline/",
         "outputs/execution/app_exports/",
-        "outputs/execution/authority/schemas/"
+        "outputs/execution/authority/"
       ],
       "output_type": "runtime_control",
       "decision_relevance": "support_only",

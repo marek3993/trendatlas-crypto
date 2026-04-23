@@ -29,9 +29,8 @@ from src.market_regime_v1.phase1_time_semantics import (
 
 ROOT = Path(__file__).resolve().parents[2]
 AUTHORITY_DIR = ROOT / "outputs" / "execution" / "authority"
-AUTHORITY_SCHEMAS_DIR = AUTHORITY_DIR / "schemas"
-LATEST_SUCCESSFUL_SNAPSHOT_PATH = AUTHORITY_SCHEMAS_DIR / "latest_successful_snapshot.json"
-LATEST_ATTEMPT_STATUS_PATH = AUTHORITY_SCHEMAS_DIR / "latest_attempt_status.json"
+LATEST_SUCCESSFUL_SNAPSHOT_PATH = AUTHORITY_DIR / "latest_successful_snapshot.json"
+LATEST_ATTEMPT_STATUS_PATH = AUTHORITY_DIR / "latest_attempt_status.json"
 STAGE_STATUSES = frozenset({"failed", "running", "success"})
 PI_ALLOWED_PLATFORM_SYSTEM = "linux"
 PI_ALLOWED_PLATFORM_MACHINES = frozenset({"arm64", "armv6l", "armv7l", "aarch64"})
@@ -54,9 +53,8 @@ def authority_paths(root: Path | None = None) -> dict[str, Path]:
     resolved_root = root if root is not None else ROOT
     return {
         "authority_dir": Path(resolved_root) / "outputs" / "execution" / "authority",
-        "schemas_dir": Path(resolved_root) / "outputs" / "execution" / "authority" / "schemas",
-        "latest_successful_snapshot": Path(resolved_root) / "outputs" / "execution" / "authority" / "schemas" / "latest_successful_snapshot.json",
-        "latest_attempt_status": Path(resolved_root) / "outputs" / "execution" / "authority" / "schemas" / "latest_attempt_status.json",
+        "latest_successful_snapshot": Path(resolved_root) / "outputs" / "execution" / "authority" / "latest_successful_snapshot.json",
+        "latest_attempt_status": Path(resolved_root) / "outputs" / "execution" / "authority" / "latest_attempt_status.json",
     }
 
 

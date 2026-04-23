@@ -597,7 +597,7 @@
       "output_kind": "producer_authority_outputs",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Producer-only Pi authority artifacts written under outputs/execution/authority/schemas/. No app/runtime/UI consumer cutover."
+      "notes": "Producer-only Pi authority artifacts written under outputs/execution/authority/. No app/runtime/UI consumer cutover."
     },
     {
       "output_path": "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",

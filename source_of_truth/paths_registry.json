@@ -222,7 +222,7 @@
       "write_mode": "future_write_through_candidate"
     },
     "authority_latest_successful_snapshot": {
-      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\schemas\\latest_successful_snapshot.json",
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
       "legacy_aliases": [],
       "owner": "DATA",
       "artifact_type": "authority_snapshot",
@@ -233,7 +233,7 @@
       "write_mode": "producer_only_authoritative_write"
     },
     "authority_latest_attempt_status": {
-      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\schemas\\latest_attempt_status.json",
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
       "legacy_aliases": [],
       "owner": "DATA",
       "artifact_type": "authority_status",
