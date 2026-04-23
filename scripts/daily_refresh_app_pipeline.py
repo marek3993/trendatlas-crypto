@@ -587,9 +587,14 @@ def main() -> None:
         manifest["macro_refresh_report_path"] = str(MACRO_REFRESH_REPORT)
         manifest["freshness_report"] = freshness
         manifest["macro_refresh_report"] = macro_report
+        manifest["post_strategy_runtime_refresh"] = run_post_strategy_runtime_refresh(
+            env,
+            logs_dir,
+        )
+        manifest["post_strategy_runtime_refresh_status"] = "OK"
         authority_success_result = publish_authority_refresh_success(
             authority_publish_state,
-            refresh_finished_at_utc=strategy_refresh_finished_at_utc,
+            refresh_finished_at_utc=now_utc(),
             env=env,
         )
         authority_success_published = bool(
@@ -608,12 +613,6 @@ def main() -> None:
                 "last_publish_result": authority_success_result,
             }
         )
-        manifest_path = write_manifest(run_dir, manifest)
-        manifest["post_strategy_runtime_refresh"] = run_post_strategy_runtime_refresh(
-            env,
-            logs_dir,
-        )
-        manifest["post_strategy_runtime_refresh_status"] = "OK"
         manifest["main_refresh_chain_finished_at_utc"] = now_utc()
         manifest["main_refresh_chain_status"] = "OK"
         manifest["status"] = "OK"

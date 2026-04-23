@@ -70,6 +70,7 @@ def build_authority_extra_fields(
     latest_successful_snapshot_path: str | Path | None = None,
     latest_attempt_status_path: str | Path | None = None,
     generated_at_utc: str | None = None,
+    display_timezone: str = DISPLAY_TIMEZONE,
     attempt_stage: str | None = None,
     attempt_stage_status: str | None = None,
     stage_history: list[dict[str, Any]] | None = None,
@@ -84,10 +85,15 @@ def build_authority_extra_fields(
     if not normalized_manifest_path:
         raise ValueError("source_manifest_path must be non-empty")
 
+    resolved_generated_at_utc = normalize_utc_timestamp(
+        generated_at_utc or utc_now_iso(),
+        field_name="generated_at_utc",
+    )
     payload: dict[str, Any] = {
-        "generated_at_utc": normalize_utc_timestamp(
-            generated_at_utc or utc_now_iso(),
-            field_name="generated_at_utc",
+        "generated_at_utc": resolved_generated_at_utc,
+        "generated_at_local": render_local_display_timestamp(
+            resolved_generated_at_utc,
+            display_timezone=display_timezone,
         ),
         "run_id": normalized_run_id,
         "authority_role": authority_role,
@@ -167,9 +173,13 @@ def build_stage_history_entry(
 
 
 def atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
+    rendered = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+    atomic_write_text(path, rendered)
+
+
+def atomic_write_text(path: Path, rendered: str) -> None:
     resolved_path = Path(path)
     resolved_path.parent.mkdir(parents=True, exist_ok=True)
-    rendered = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
 
     handle = None
     temp_path: str | None = None
@@ -194,6 +204,22 @@ def atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
             handle.close()
         if temp_path and os.path.exists(temp_path):
             os.unlink(temp_path)
+
+
+def read_text_if_exists(path: Path) -> str | None:
+    resolved_path = Path(path)
+    if not resolved_path.exists() or not resolved_path.is_file():
+        return None
+    return resolved_path.read_text(encoding="utf-8")
+
+
+def restore_text_or_remove(path: Path, previous_contents: str | None) -> None:
+    resolved_path = Path(path)
+    if previous_contents is None:
+        if resolved_path.exists():
+            resolved_path.unlink()
+        return
+    atomic_write_text(resolved_path, previous_contents)
 
 
 def authority_publish_context_from_env(
@@ -277,13 +303,25 @@ def publish_authority_artifacts(
     context = authority_publish_context_from_env(env)
     try:
         context = ensure_pi_only_publish_allowed(env)
-        atomic_write_json(paths["latest_attempt_status"], latest_attempt_payload)
         successful_snapshot_written = False
-        if latest_successful_snapshot_payload is not None:
+        if latest_successful_snapshot_payload is None:
+            atomic_write_json(paths["latest_attempt_status"], latest_attempt_payload)
+        else:
+            previous_snapshot_contents = read_text_if_exists(
+                paths["latest_successful_snapshot"]
+            )
             atomic_write_json(
                 paths["latest_successful_snapshot"],
                 latest_successful_snapshot_payload,
             )
+            try:
+                atomic_write_json(paths["latest_attempt_status"], latest_attempt_payload)
+            except Exception:
+                restore_text_or_remove(
+                    paths["latest_successful_snapshot"],
+                    previous_snapshot_contents,
+                )
+                raise
             successful_snapshot_written = True
 
         return {
