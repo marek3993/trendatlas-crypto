@@ -1840,15 +1840,36 @@ def prettify_trend_state(value: str | None, lang: str) -> str:
     return mapping.get(raw, {"sk": str(value), "en": str(value)})[lang]
 
 
-def prettify_asset_public(value: str | None, lang: str) -> str:
+def prettify_asset_public(value: Any, lang: str) -> str:
     if value is None:
+        return t(lang, "na")
+    numeric = as_float(value)
+    if numeric is not None:
+        if math.isclose(numeric, 0.0, abs_tol=1e-12):
+            return t(lang, "cash")
         return t(lang, "na")
     raw = str(value).strip().upper()
     if raw in {"", "NONE"}:
         return t(lang, "na")
-    if raw == "CASH":
+    if raw in {"CASH", "0", "0.0", "0.00", "ZERO", "ZERO EXPOSURE", "ZERO_EXPOSURE"}:
         return t(lang, "cash")
     return raw
+
+
+def resolve_homepage_held_state(live_public_state: dict, lang: str) -> str:
+    for key in (
+        "held_asset_public",
+        "execution_state",
+        "portfolio_held_asset",
+        "baseline_held_asset",
+        "tradable_governed_asset",
+    ):
+        display_value = prettify_asset_public(live_public_state.get(key), lang)
+        if display_value != t(lang, "na"):
+            return display_value
+    if as_bool(live_public_state.get("cash_day")) is True:
+        return t(lang, "cash")
+    return t(lang, "na")
 
 
 def trend_cross_text(trend_live: dict, lang: str) -> str:
@@ -3207,7 +3228,7 @@ with tabs[0]:
     home_cards = []
 
     if live_public_state.get("has_new_fields"):
-        held_value = safe_text_value(live_public_state.get("held_asset_public"), lang=lang)
+        held_value = resolve_homepage_held_state(live_public_state, lang=lang)
         if held_value != t(lang, "na"):
             home_cards.append(
                 {
