@@ -83,6 +83,7 @@ TEXT = {
         ),
         "home_title": "Prehľad",
         "currently_holding": "Modelová pozícia",
+        "model_exposure": "Expozícia modelu (x)",
         "trend_state": "Stav trendu",
         "trend_score": "Trend score",
         "buy_threshold": "Buy threshold",
@@ -277,6 +278,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         ),
         "home_title": "Overview",
         "currently_holding": "Model position",
+        "model_exposure": "Model exposure (x)",
         "trend_state": "Trend state",
         "trend_score": "Trend score",
         "buy_threshold": "Buy threshold",
@@ -464,6 +466,7 @@ Based on our tests, this approach is more stable and more profitable.
 METRIC_HELP = {
     "sk": {
         "Modelová pozícia": "Toto pole ide priamo z product snapshotu cez held_asset_public. App si ho sama nedopočítava.",
+        "Expozícia modelu (x)": "0.0 = CASH | 1.0 = plná trhová expozícia | > 1.0 = leverage. Toto pole ide priamo z product snapshotu cez held_asset_public. App ho len zobrazuje.",
         "Stav trendu": "Textový stav exportovaný zo stratégie, nie vypočítaný v appke.",
         "Trend score": "Source-of-truth trend hodnota od -1 po +1. Pod nulou je trend pod buy hranou, nad nulou nad ňou.",
         "Buy threshold": "Hranica 0.0, ktorú používa core vrstva.",
@@ -485,6 +488,7 @@ METRIC_HELP = {
     },
     "en": {
         "Model position": "This field is read directly from held_asset_public in the product snapshot.",
+        "Model exposure (x)": "0.0 = CASH | 1.0 = full market exposure | > 1.0 = leverage. This field is read directly from held_asset_public in the product snapshot.",
         "Trend state": "Text state exported by the strategy layer.",
         "Trend score": "Source-of-truth trend value from -1 to +1.",
         "Buy threshold": "The 0.0 threshold used by the core layer.",
@@ -3207,14 +3211,22 @@ with tabs[0]:
     home_cards = []
 
     if live_public_state.get("has_new_fields"):
-        held_value = safe_text_value(live_public_state.get("held_asset_public"), lang=lang)
+        raw_held_value = live_public_state.get("held_asset_public")
+        held_exposure = as_float(raw_held_value)
+        held_is_numeric = held_exposure is not None
+        held_label = t(lang, "model_exposure") if held_is_numeric else t(lang, "currently_holding")
+        held_value = (
+            safe_plain_number_text(held_exposure, decimals=1, lang=lang)
+            if held_is_numeric
+            else prettify_asset_public(raw_held_value, lang)
+        )
         if held_value != t(lang, "na"):
             home_cards.append(
                 {
-                    "label": t(lang, "currently_holding"),
+                    "label": held_label,
                     "value": held_value,
                     "subtitle": "",
-                    "help": METRIC_HELP[lang][t(lang, "currently_holding")],
+                    "help": METRIC_HELP[lang][held_label],
                     "accent": "blue",
                 }
             )
