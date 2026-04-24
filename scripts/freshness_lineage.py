@@ -8,6 +8,7 @@ from typing import Any
 
 
 DATE_COL_CANDIDATES = ("date", "datetime", "timestamp", "time", "dt", "ts")
+REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def ensure_dir(path: Path) -> None:
@@ -79,6 +80,22 @@ def compute_first_missing_date(
     return (output_last + timedelta(days=1)).isoformat()
 
 
+def to_portable_path(path: str | Path, repo_root: str | Path | None = None) -> str:
+    root = Path(repo_root).resolve() if repo_root is not None else REPO_ROOT
+    raw_path = Path(path)
+    try:
+        candidate = raw_path.resolve()
+    except Exception:
+        candidate = raw_path
+
+    try:
+        return candidate.relative_to(root).as_posix()
+    except ValueError:
+        if not raw_path.is_absolute():
+            return raw_path.as_posix()
+        return str(candidate)
+
+
 def build_producer_lineage(
     *,
     producer_script: str | Path,
@@ -86,6 +103,7 @@ def build_producer_lineage(
     raw_file: str | Path,
     output_file: str | Path,
     date_semantics: str,
+    repo_root: str | Path | None = None,
 ) -> dict[str, str | None]:
     source_path = Path(source_file)
     raw_path = Path(raw_file)
@@ -96,8 +114,8 @@ def build_producer_lineage(
     output_last_date = read_last_date(output_path)
 
     return {
-        "producer_script": str(Path(producer_script).resolve()),
-        "source_file": str(source_path),
+        "producer_script": to_portable_path(producer_script, repo_root),
+        "source_file": to_portable_path(source_path, repo_root),
         "source_last_date": source_last_date,
         "raw_last_date": raw_last_date,
         "output_last_date": output_last_date,

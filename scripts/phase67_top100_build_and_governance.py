@@ -11,6 +11,7 @@ import pandas as pd
 import requests
 
 import phase66e_probation_governance as core
+from freshness_lineage import to_portable_path
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,6 +50,10 @@ def log(msg: str) -> None:
 
 def ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
+
+
+def portable_path(path: str | Path) -> str:
+    return to_portable_path(path, ROOT)
 
 
 def make_session() -> requests.Session:
@@ -302,7 +307,7 @@ def update_or_download_asset_daily(
     merged.to_csv(out_path, index=False)
 
     q = {
-        "file": str(out_path),
+        "file": portable_path(out_path),
         "rows": int(len(merged)),
         "start_date": str(merged["date"].iloc[0]) if len(merged) else "",
         "end_date": str(merged["date"].iloc[-1]) if len(merged) else "",
@@ -465,7 +470,7 @@ def main() -> None:
                     "cg_id": row["cg_id"],
                     "name": row["name"],
                     **q,
-                    "file": str(out_path),
+                    "file": portable_path(out_path),
                 }
             )
             log(f"[PHASE67] done {asset}")
@@ -619,9 +624,9 @@ def main() -> None:
     manifest = {
         "phase": "phase67_top100_build_and_governance",
         "baseline_model": CURRENT_WINNER_KEY,
-        "baseline_paper": str(args.baseline_paper),
-        "phase66g_summary": str(PHASE66G_SUMMARY),
-        "data_dir": str(data_dir),
+        "baseline_paper": portable_path(args.baseline_paper),
+        "phase66g_summary": portable_path(PHASE66G_SUMMARY),
+        "data_dir": portable_path(data_dir),
         "max_assets_requested": int(args.max_assets),
         "target_max_rank": int(args.target_max_rank),
         "full_start_date": args.full_start_date,
@@ -634,21 +639,21 @@ def main() -> None:
         "latest_available_date": latest_available_date,
         "latest_decision_date": latest_decision_date,
         "next_rebalance_date": next_rebalance_date,
-        "mapping_file": str(mapping_path),
-        "unmatched_file": str(unmatched_path),
-        "downloads_file": str(downloads_path),
-        "failed_downloads_file": str(failed_downloads_path),
-        "summary_file": str(summary_path),
-        "compare_file": str(compare_path),
-        "live_status_file": str(live_status_path),
-        "decisions_file": str(decisions_path),
-        "leaderboard_file": str(leaderboard_path),
-        "latest_top10_file": str(latest_top10_path),
-        "suspended_now_file": str(suspended_now_path),
-        "asset_quality_file": str(asset_quality_path),
-        "asset_usage_file": str(asset_usage_path),
-        "baseline_paper_saved": str(baseline_paper_path),
-        "production_paper_saved": str(production_paper_path),
+        "mapping_file": portable_path(mapping_path),
+        "unmatched_file": portable_path(unmatched_path),
+        "downloads_file": portable_path(downloads_path),
+        "failed_downloads_file": portable_path(failed_downloads_path),
+        "summary_file": portable_path(summary_path),
+        "compare_file": portable_path(compare_path),
+        "live_status_file": portable_path(live_status_path),
+        "decisions_file": portable_path(decisions_path),
+        "leaderboard_file": portable_path(leaderboard_path),
+        "latest_top10_file": portable_path(latest_top10_path),
+        "suspended_now_file": portable_path(suspended_now_path),
+        "asset_quality_file": portable_path(asset_quality_path),
+        "asset_usage_file": portable_path(asset_usage_path),
+        "baseline_paper_saved": portable_path(baseline_paper_path),
+        "production_paper_saved": portable_path(production_paper_path),
         "notes": [
             "2 kroky naraz: broad top100 universe build + production governance rerun.",
             "CoinGecko top market cap sa mapuje na Binance spot USDT páry.",

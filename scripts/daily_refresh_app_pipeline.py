@@ -26,6 +26,7 @@ OUTPUT_DIR = ROOT / "outputs" / "app_refresh_pipeline"
 LEGACY_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_legacy_ohlcv.py"
 MACRO_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_global_liquidity_weekly.py"
 TOP100_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_phase67_top100_shortlist_ohlcv.py"
+PHASE67_SCRIPT = ROOT / "scripts" / "phase67_top100_build_and_governance.py"
 PHASE67B_SCRIPT = ROOT / "scripts" / "phase67b_top100_forensic_prune_and_rerun.py"
 PHASE60_SCRIPT = ROOT / "phase60_selective_restore_robustness.py"
 PHASE63_SCRIPT = ROOT / "scripts" / "phase63_btc_participation_overlay.py"
@@ -47,6 +48,8 @@ PHASE66G_PAPER = ROOT / "outputs" / "phase66g_production_candidate_live" / "phas
 PHASE66G_SUMMARY = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_production_candidate_summary.csv"
 PHASE66G_LIVE = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_live_status.csv"
 PHASE66G_TREND = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_trend_barometer_history.csv"
+PHASE67_SUMMARY = ROOT / "outputs" / "phase67_top100_build_and_governance" / "phase67_top100_production_summary.csv"
+PHASE67_ASSET_QUALITY = ROOT / "outputs" / "phase67_top100_build_and_governance" / "phase67_top100_asset_quality.csv"
 
 BTC_RAW = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
 TOP100_DIR = ROOT / "data" / "ohlcv_phase67_top100"
@@ -65,6 +68,8 @@ REQUIRED_OUTPUTS = [
     PHASE66G_SUMMARY,
     PHASE66G_LIVE,
     PHASE66G_TREND,
+    PHASE67_SUMMARY,
+    PHASE67_ASSET_QUALITY,
     BTC_RAW,
     MACRO_FILE,
     FRESHNESS_REPORT,
@@ -498,24 +503,6 @@ def main() -> None:
                 logs_dir,
             )
 
-        if not args.skip_top100_refresh:
-            run_step_and_persist(
-                manifest,
-                run_dir,
-                "refresh_phase67_top100_shortlist_ohlcv",
-                TOP100_REFRESH_SCRIPT,
-                env,
-                logs_dir,
-            )
-
-        run_step_and_persist(
-            manifest,
-            run_dir,
-            "phase67b_top100_forensic_prune_and_rerun",
-            PHASE67B_SCRIPT,
-            env,
-            logs_dir,
-        )
         run_step_and_persist(
             manifest,
             run_dir,
@@ -534,6 +521,31 @@ def main() -> None:
             logs_dir,
             script_args=["--only-model", PHASE63_PINNED_MODEL],
         )
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "phase67_top100_build_and_governance",
+            PHASE67_SCRIPT,
+            env,
+            logs_dir,
+        )
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "phase67b_top100_forensic_prune_and_rerun",
+            PHASE67B_SCRIPT,
+            env,
+            logs_dir,
+        )
+        if not args.skip_top100_refresh:
+            run_step_and_persist(
+                manifest,
+                run_dir,
+                "refresh_phase67_top100_shortlist_ohlcv",
+                TOP100_REFRESH_SCRIPT,
+                env,
+                logs_dir,
+            )
         run_step_and_persist(
             manifest,
             run_dir,

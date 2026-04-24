@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from freshness_lineage import build_producer_lineage
+from freshness_lineage import build_producer_lineage, to_portable_path
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -775,10 +775,10 @@ def main() -> None:
         "winner_input_key": args.winner_key,
         "winner_label": args.winner_label,
         "baseline_key": args.baseline_key,
-        "base_file": str(base_file),
-        "btc_file": str(btc_file),
-        "summary_file": str(summary_path),
-        "compare_file": str(compare_path),
+        "base_file": to_portable_path(base_file, ROOT),
+        "btc_file": to_portable_path(btc_file, ROOT),
+        "summary_file": to_portable_path(summary_path, ROOT),
+        "compare_file": to_portable_path(compare_path, ROOT),
         "top_saved_models": top_models,
         "variant_count_total": int(len(variants)),
         "execution_model": "signal_t -> execute_t_plus_1",
@@ -788,6 +788,7 @@ def main() -> None:
             raw_file=btc_file,
             output_file=primary_output_path,
             date_semantics="execution_date",
+            repo_root=ROOT,
         ),
         "notes": [
             "BASE = explicitný phase61 winner paper",

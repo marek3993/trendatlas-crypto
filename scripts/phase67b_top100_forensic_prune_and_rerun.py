@@ -9,10 +9,12 @@ import numpy as np
 import pandas as pd
 
 import phase66e_probation_governance as core
+from freshness_lineage import to_portable_path
 
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUTS = ROOT / "outputs"
+TOP100_DATA_DIR = ROOT / "data" / "ohlcv_phase67_top100"
 
 CURRENT_WINNER_KEY = core.CURRENT_WINNER_KEY
 CURRENT_WINNER_PAPER = core.CURRENT_WINNER_PAPER
@@ -44,6 +46,54 @@ def log(msg: str) -> None:
 
 def ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
+
+
+def portable_path(path: str | Path) -> str:
+    return to_portable_path(path, ROOT)
+
+
+def resolve_repo_relative_path(raw_path: str | Path) -> Path:
+    text = str(raw_path or "").strip()
+    if not text:
+        return Path()
+
+    candidate = Path(text)
+    if candidate.exists():
+        return candidate
+
+    if not candidate.is_absolute():
+        repo_candidate = ROOT / candidate
+        if repo_candidate.exists():
+            return repo_candidate
+
+    normalized = text.replace("\\", "/")
+    repo_marker = f"/{ROOT.name}/"
+    if repo_marker in normalized:
+        suffix = normalized.split(repo_marker, 1)[1]
+        repo_candidate = ROOT / Path(suffix)
+        if repo_candidate.exists():
+            return repo_candidate
+
+    return candidate
+
+
+def resolve_asset_daily_path(asset: str, raw_path: str | Path) -> Path:
+    candidates: list[Path] = []
+    resolved_raw = resolve_repo_relative_path(raw_path)
+    if str(raw_path or "").strip():
+        candidates.append(resolved_raw)
+    candidates.append(TOP100_DATA_DIR / f"{asset}USDT_1d.csv")
+
+    seen: set[str] = set()
+    for candidate in candidates:
+        key = str(candidate)
+        if key in seen:
+            continue
+        seen.add(key)
+        if candidate.exists():
+            return candidate
+
+    return candidates[-1]
 
 
 def build_production_config(min_history_days: int) -> core.GovernanceConfig:
@@ -239,7 +289,7 @@ def main() -> None:
 
     for _, r in aq.iterrows():
         asset = str(r["asset"]).strip().upper()
-        file_path = Path(str(r["file"]))
+        file_path = resolve_asset_daily_path(asset, r.get("file", ""))
         try:
             daily, q = load_local_daily_for_core(file_path)
             if q["history_days"] < gov_cfg.min_history_days:
@@ -249,7 +299,7 @@ def main() -> None:
             asset_strategies[asset] = strat
 
             row = compute_asset_row(asset, strat, phase63_row, phase66g_ref)
-            row["file"] = str(file_path)
+            row["file"] = portable_path(file_path)
             row["history_days"] = q["history_days"]
             row["start_date"] = q["start_date"]
             row["end_date"] = q["end_date"]
@@ -257,7 +307,7 @@ def main() -> None:
             row["name"] = r.get("name", "")
             asset_rows.append(row)
         except Exception as e:
-            failed_assets.append({"asset": asset, "file": str(file_path), "reason": str(e)})
+            failed_assets.append({"asset": asset, "file": portable_path(file_path), "reason": str(e)})
 
     asset_forensic = pd.DataFrame(asset_rows)
     if asset_forensic.empty:
@@ -417,10 +467,10 @@ def main() -> None:
     manifest = {
         "phase": "phase67b_top100_forensic_prune_and_rerun",
         "baseline_model": CURRENT_WINNER_KEY,
-        "baseline_paper": str(args.baseline_paper),
-        "phase66g_summary": str(args.phase66g_summary),
-        "phase67_summary": str(args.phase67_summary),
-        "asset_quality_file": str(args.asset_quality_file),
+        "baseline_paper": portable_path(args.baseline_paper),
+        "phase66g_summary": portable_path(args.phase66g_summary),
+        "phase67_summary": portable_path(args.phase67_summary),
+        "asset_quality_file": portable_path(args.asset_quality_file),
         "winner_profile": asdict(gov_cfg),
         "top_n": int(args.top_n),
         "shortlist_assets": shortlist_assets,
@@ -429,18 +479,18 @@ def main() -> None:
         "latest_available_date": latest_available_date,
         "latest_decision_date": latest_decision_date,
         "next_rebalance_date": next_rebalance_date,
-        "forensic_file": str(forensic_path),
-        "shortlist_file": str(shortlist_path),
-        "summary_file": str(summary_path),
-        "compare_file": str(compare_path),
-        "live_status_file": str(live_status_path),
-        "decisions_file": str(decisions_path),
-        "leaderboard_file": str(leaderboard_path),
-        "latest_top10_file": str(latest_top10_path),
-        "asset_usage_file": str(asset_usage_path),
-        "failed_assets_file": str(failed_assets_path),
-        "baseline_paper_saved": str(baseline_paper_path),
-        "production_paper_saved": str(production_paper_path),
+        "forensic_file": portable_path(forensic_path),
+        "shortlist_file": portable_path(shortlist_path),
+        "summary_file": portable_path(summary_path),
+        "compare_file": portable_path(compare_path),
+        "live_status_file": portable_path(live_status_path),
+        "decisions_file": portable_path(decisions_path),
+        "leaderboard_file": portable_path(leaderboard_path),
+        "latest_top10_file": portable_path(latest_top10_path),
+        "asset_usage_file": portable_path(asset_usage_path),
+        "failed_assets_file": portable_path(failed_assets_path),
+        "baseline_paper_saved": portable_path(baseline_paper_path),
+        "production_paper_saved": portable_path(production_paper_path),
         "notes": [
             "2 kroky naraz: forensic prune top100 + rerun produkčného governance profilu.",
             "Shortlist sa tvorí z assetov, ktoré zlepšujú since2023, nekazia since2025 a príliš neškodia DD.",
