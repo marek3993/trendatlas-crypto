@@ -1858,20 +1858,33 @@ def prettify_asset_public(value: Any, lang: str) -> str:
     return raw
 
 
-def resolve_homepage_held_state(live_public_state: dict, lang: str) -> str:
-    for key in (
-        "held_asset_public",
-        "execution_state",
-        "portfolio_held_asset",
-        "baseline_held_asset",
-        "tradable_governed_asset",
-    ):
-        display_value = prettify_asset_public(live_public_state.get(key), lang)
-        if display_value != t(lang, "na"):
-            return display_value
-    if as_bool(live_public_state.get("cash_day")) is True:
-        return t(lang, "cash")
-    return t(lang, "na")
+def resolve_homepage_held_state(live_public_state: dict[str, Any], lang: str) -> str:
+    held_asset_public = live_public_state.get("held_asset_public")
+    execution_state = str(live_public_state.get("execution_state") or "").strip().upper()
+    portfolio_held_asset = str(live_public_state.get("portfolio_held_asset") or "").strip().upper()
+    baseline_held_asset = str(live_public_state.get("baseline_held_asset") or "").strip().upper()
+    tradable_governed_asset = str(live_public_state.get("tradable_governed_asset") or "").strip().upper()
+    cash_day = as_bool(live_public_state.get("cash_day"))
+
+    cash_like_tokens = {"", "0", "0.0", "0.00", "CASH", "BASELINE_RISK", "EARLY_RISK", "FULL_RISK", "NONE", "NULL"}
+
+    for candidate in [held_asset_public, execution_state, portfolio_held_asset, tradable_governed_asset, baseline_held_asset]:
+        if candidate is None:
+            continue
+        text_value = str(candidate).strip().upper()
+        if text_value in cash_like_tokens:
+            continue
+        if re.fullmatch(r"[A-Z][A-Z0-9_\-]*", text_value):
+            return text_value
+
+    if cash_day is True:
+        return "CASH"
+
+    raw = str(held_asset_public or "").strip().upper()
+    if raw in cash_like_tokens or raw == "":
+        return "CASH"
+
+    return "CASH"
 
 
 def trend_cross_text(trend_live: dict, lang: str) -> str:
