@@ -272,6 +272,57 @@ class TestResearchOSTrendAtlasIMLayerReconcileV1(unittest.TestCase):
         self.assertEqual(report["true_read_back_parity"]["mismatches"], [])
         self.assertEqual(report["final_status"], "working")
 
+    def test_reconcile_accepts_semantic_payload_parity_when_only_freshness_hours_drift_is_within_tolerance(self) -> None:
+        batch_id, export_root, ingestion_manifest_path = self.create_batch_fixture(include_second_result=True)
+        alpha_episode = json.loads((export_root / "episodes/trendatlas.crypto.decision_episode.alpha.family.json").read_text(encoding="utf-8"))
+        beta_episode = json.loads((export_root / "episodes/trendatlas.crypto.decision_episode.beta.family.json").read_text(encoding="utf-8"))
+        alpha_response = self.build_read_response(
+            alpha_episode,
+            "wr_alpha",
+            "2026-04-24T17:52:34Z",
+        )
+        beta_response = self.build_read_response(
+            beta_episode,
+            "wr_beta",
+            "2026-04-24T17:52:35Z",
+        )
+        beta_response["record"]["payload"]["decision_packet"]["freshness_hours"] += 0.0002
+        responses = {
+            "trendatlas.crypto.decision_episode.alpha.family": alpha_response,
+            "trendatlas.crypto.decision_episode.beta.family": beta_response,
+        }
+
+        with mock.patch.object(
+            self.module.urllib.request,
+            "urlopen",
+            side_effect=self.mock_urlopen_factory(responses),
+        ):
+            report = self.module.reconcile_batch(
+                batch_id=batch_id,
+                batch_root=str(export_root),
+                ingestion_manifest=str(ingestion_manifest_path),
+                ingestion_root=None,
+                project_root=self.temp_dir,
+            )
+
+        self.assertEqual(report["write_ack_parity"]["status"], "passed")
+        self.assertEqual(report["true_read_back_parity"]["status"], "passed")
+        self.assertEqual(report["true_read_back_parity"]["semantic_parity"]["status"], "passed")
+        self.assertEqual(
+            report["true_read_back_parity"]["freshness_hours_drift_check"]["status"],
+            "passed",
+        )
+        self.assertEqual(report["true_read_back_parity"]["mismatches"], [])
+        beta_verified = next(
+            item
+            for item in report["true_read_back_parity"]["verified_records"]
+            if item["memory_id"] == "trendatlas.crypto.decision_episode.beta.family"
+        )
+        self.assertEqual(beta_verified["semantic_parity_status"], "passed")
+        self.assertEqual(beta_verified["freshness_hours_status"], "passed")
+        self.assertAlmostEqual(beta_verified["freshness_hours_drift_hours"], 0.0002)
+        self.assertEqual(report["final_status"], "working")
+
     def test_reconcile_fails_write_ack_when_memory_id_is_missing_from_acknowledged_results(self) -> None:
         batch_id, export_root, ingestion_manifest_path = self.create_batch_fixture(include_second_result=False)
 
@@ -335,6 +386,68 @@ class TestResearchOSTrendAtlasIMLayerReconcileV1(unittest.TestCase):
                 "actual": "wrong.contract.v1",
             },
             report["true_read_back_parity"]["mismatches"],
+        )
+
+    def test_reconcile_fails_closed_when_freshness_hours_drift_exceeds_tolerance(self) -> None:
+        batch_id, export_root, ingestion_manifest_path = self.create_batch_fixture(include_second_result=True)
+        alpha_episode = json.loads((export_root / "episodes/trendatlas.crypto.decision_episode.alpha.family.json").read_text(encoding="utf-8"))
+        beta_episode = json.loads((export_root / "episodes/trendatlas.crypto.decision_episode.beta.family.json").read_text(encoding="utf-8"))
+        alpha_response = self.build_read_response(
+            alpha_episode,
+            "wr_alpha",
+            "2026-04-24T17:52:34Z",
+        )
+        beta_response = self.build_read_response(
+            beta_episode,
+            "wr_beta",
+            "2026-04-24T17:52:35Z",
+        )
+        beta_response["record"]["payload"]["decision_packet"]["freshness_hours"] += 0.001
+        responses = {
+            "trendatlas.crypto.decision_episode.alpha.family": alpha_response,
+            "trendatlas.crypto.decision_episode.beta.family": beta_response,
+        }
+
+        with mock.patch.object(
+            self.module.urllib.request,
+            "urlopen",
+            side_effect=self.mock_urlopen_factory(responses),
+        ):
+            report = self.module.reconcile_batch(
+                batch_id=batch_id,
+                batch_root=str(export_root),
+                ingestion_manifest=str(ingestion_manifest_path),
+                ingestion_root=None,
+                project_root=self.temp_dir,
+            )
+
+        self.assertEqual(report["write_ack_parity"]["status"], "passed")
+        self.assertEqual(report["true_read_back_parity"]["status"], "failed")
+        self.assertEqual(report["true_read_back_parity"]["semantic_parity"]["status"], "passed")
+        self.assertEqual(
+            report["true_read_back_parity"]["freshness_hours_drift_check"]["status"],
+            "failed",
+        )
+        self.assertEqual(report["final_status"], "blocked")
+        freshness_mismatch = next(
+            item
+            for item in report["true_read_back_parity"]["mismatches"]
+            if item["field"] == "record.payload.decision_packet.freshness_hours"
+        )
+        self.assertEqual(
+            freshness_mismatch["memory_id"],
+            "trendatlas.crypto.decision_episode.beta.family",
+        )
+        self.assertEqual(
+            freshness_mismatch["episode_path"],
+            "episodes/trendatlas.crypto.decision_episode.beta.family.json",
+        )
+        self.assertAlmostEqual(freshness_mismatch["expected"], 0.876389)
+        self.assertAlmostEqual(freshness_mismatch["actual"], 0.877389)
+        self.assertAlmostEqual(freshness_mismatch["drift_hours"], 0.001)
+        self.assertEqual(
+            freshness_mismatch["tolerance_hours"],
+            self.module.FRESHNESS_HOURS_TOLERANCE_HOURS,
         )
 
 

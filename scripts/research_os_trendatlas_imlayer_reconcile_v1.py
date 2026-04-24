@@ -10,6 +10,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +45,8 @@ PERSISTENCE_CANDIDATE_PATTERNS = (
 )
 DEFAULT_TIMEOUT_SECONDS = 30
 DEFAULT_VERIFY_TLS = False
+FRESHNESS_HOURS_FIELD_PATH = ("decision_packet", "freshness_hours")
+FRESHNESS_HOURS_TOLERANCE_HOURS = 0.0005
 
 
 class ReconciliationFailure(RuntimeError):
@@ -62,6 +65,27 @@ def canonical_json_sha256(value: Any) -> str:
         sort_keys=True,
     ).encode("utf-8")
     return hashlib.sha256(canonical).hexdigest()
+
+
+def drop_nested_field(value: Any, path: tuple[str, ...]) -> Any:
+    cloned = deepcopy(value)
+    current = cloned
+    for key in path[:-1]:
+        if not isinstance(current, dict):
+            return cloned
+        current = current.get(key)
+    if isinstance(current, dict):
+        current.pop(path[-1], None)
+    return cloned
+
+
+def get_nested_field(value: Any, path: tuple[str, ...]) -> Any:
+    current = value
+    for key in path:
+        if not isinstance(current, dict):
+            return None
+        current = current.get(key)
+    return current
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -365,6 +389,10 @@ def build_true_read_back_parity(
     verified: list[dict[str, Any]] = []
     mismatches: list[dict[str, Any]] = []
     request_failures: list[dict[str, Any]] = []
+    semantic_parity_passed = 0
+    semantic_parity_failed = 0
+    freshness_within_tolerance = 0
+    freshness_outside_tolerance = 0
 
     for memory_id in export_batch["memory_ids"]:
         episode_entry = expected_by_memory_id[memory_id]
@@ -423,10 +451,23 @@ def build_true_read_back_parity(
             episode_entry["episode"],
             now_utc=parse_utc_timestamp(received_at_utc, label="record.received_at_utc"),
         )
-        expected_payload_sha256 = canonical_json_sha256(expected_payload)
-        observed_payload_sha256 = canonical_json_sha256(stored_payload)
+        expected_semantic_payload = drop_nested_field(
+            expected_payload,
+            FRESHNESS_HOURS_FIELD_PATH,
+        )
+        observed_semantic_payload = drop_nested_field(
+            stored_payload,
+            FRESHNESS_HOURS_FIELD_PATH,
+        )
+        expected_payload_sha256 = canonical_json_sha256(expected_semantic_payload)
+        observed_payload_sha256 = canonical_json_sha256(observed_semantic_payload)
+        expected_freshness_hours = get_nested_field(expected_payload, FRESHNESS_HOURS_FIELD_PATH)
+        observed_freshness_hours = get_nested_field(stored_payload, FRESHNESS_HOURS_FIELD_PATH)
 
         per_memory_mismatches: list[dict[str, Any]] = []
+        semantic_parity_status = "passed"
+        freshness_hours_status = "passed"
+        freshness_hours_drift_hours: float | None = None
         if response_payload.get("success") is not True:
             per_memory_mismatches.append(
                 {
@@ -492,13 +533,51 @@ def build_true_read_back_parity(
                 }
             )
         if observed_payload_sha256 != expected_payload_sha256:
+            semantic_parity_status = "failed"
             per_memory_mismatches.append(
                 {
-                    "field": "record.payload.sha256",
+                    "field": "record.payload.semantic_sha256",
                     "expected": expected_payload_sha256,
                     "actual": observed_payload_sha256,
+                    "excluded_fields": ["decision_packet.freshness_hours"],
                 }
             )
+        else:
+            semantic_parity_passed += 1
+        if observed_payload_sha256 == expected_payload_sha256:
+            semantic_parity_status = "passed"
+        else:
+            semantic_parity_failed += 1
+        if not isinstance(expected_freshness_hours, (int, float)) or not isinstance(observed_freshness_hours, (int, float)):
+            freshness_hours_status = "failed"
+            per_memory_mismatches.append(
+                {
+                    "field": "record.payload.decision_packet.freshness_hours",
+                    "expected": expected_freshness_hours,
+                    "actual": observed_freshness_hours,
+                    "tolerance_hours": FRESHNESS_HOURS_TOLERANCE_HOURS,
+                    "reason": "freshness_hours must be numeric on both expected and stored payloads",
+                }
+            )
+            freshness_outside_tolerance += 1
+        else:
+            freshness_hours_drift_hours = abs(
+                float(observed_freshness_hours) - float(expected_freshness_hours)
+            )
+            if freshness_hours_drift_hours > FRESHNESS_HOURS_TOLERANCE_HOURS:
+                freshness_hours_status = "failed"
+                per_memory_mismatches.append(
+                    {
+                        "field": "record.payload.decision_packet.freshness_hours",
+                        "expected": expected_freshness_hours,
+                        "actual": observed_freshness_hours,
+                        "drift_hours": freshness_hours_drift_hours,
+                        "tolerance_hours": FRESHNESS_HOURS_TOLERANCE_HOURS,
+                    }
+                )
+                freshness_outside_tolerance += 1
+            else:
+                freshness_within_tolerance += 1
         if ack_result is not None:
             ack_response = ack_result.get("response")
             if isinstance(ack_response, dict) and ack_response.get("write_id") and record.get("write_id") != ack_response.get("write_id"):
@@ -519,6 +598,12 @@ def build_true_read_back_parity(
                 "received_at_utc": received_at_utc,
                 "expected_payload_sha256": expected_payload_sha256,
                 "observed_payload_sha256": observed_payload_sha256,
+                "semantic_parity_status": semantic_parity_status,
+                "freshness_hours_status": freshness_hours_status,
+                "expected_freshness_hours": expected_freshness_hours,
+                "observed_freshness_hours": observed_freshness_hours,
+                "freshness_hours_drift_hours": freshness_hours_drift_hours,
+                "freshness_hours_tolerance_hours": FRESHNESS_HOURS_TOLERANCE_HOURS,
                 "status": "passed" if not per_memory_mismatches else "failed",
             }
         )
@@ -569,9 +654,23 @@ def build_true_read_back_parity(
             "record.payload.collection",
             "record.payload.schema_version",
             "record.payload.tenant_id",
-            "record.payload.sha256",
+            "record.payload.semantic_sha256 excluding decision_packet.freshness_hours",
+            f"record.payload.decision_packet.freshness_hours drift <= {FRESHNESS_HOURS_TOLERANCE_HOURS} hours",
             "record.write_id parity against ingestion acknowledgement when available",
         ],
+        "semantic_parity": {
+            "status": "passed" if semantic_parity_failed == 0 else "failed",
+            "excluded_fields": ["decision_packet.freshness_hours"],
+            "passed_records": semantic_parity_passed,
+            "failed_records": semantic_parity_failed,
+        },
+        "freshness_hours_drift_check": {
+            "status": "passed" if freshness_outside_tolerance == 0 else "failed",
+            "field": "decision_packet.freshness_hours",
+            "tolerance_hours": FRESHNESS_HOURS_TOLERANCE_HOURS,
+            "within_tolerance_records": freshness_within_tolerance,
+            "outside_tolerance_records": freshness_outside_tolerance,
+        },
         "verified_records": verified,
         "mismatches": mismatches,
         "request_failures": request_failures,
