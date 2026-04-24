@@ -19,6 +19,8 @@ REMOTE_DRIFT_PUSH_MARKERS = (
     "[rejected]",
     "failed to push some refs",
 )
+AUTHORITY_GIT_USER_NAME_ENV = "MRV1_AUTHORITY_GIT_USER_NAME"
+AUTHORITY_GIT_USER_EMAIL_ENV = "MRV1_AUTHORITY_GIT_USER_EMAIL"
 
 
 def authority_repo_publish_context_from_env(
@@ -142,6 +144,58 @@ def _resolve_git_remote_url(
     if not remote_url:
         raise RuntimeError(f"git remote get-url {remote} returned an empty URL")
     return remote_url
+
+
+def _resolve_authority_git_identity(
+    *,
+    runtime_root: Path,
+    env: Mapping[str, str] | None = None,
+) -> tuple[str, str]:
+    source = os.environ if env is None else env
+    configured_name = str(source.get(AUTHORITY_GIT_USER_NAME_ENV) or "").strip()
+    configured_email = str(source.get(AUTHORITY_GIT_USER_EMAIL_ENV) or "").strip()
+
+    if bool(configured_name) != bool(configured_email):
+        raise RuntimeError(
+            f"{AUTHORITY_GIT_USER_NAME_ENV} and {AUTHORITY_GIT_USER_EMAIL_ENV} must either both be set or both be unset"
+        )
+    if configured_name and configured_email:
+        return configured_name, configured_email
+
+    name_result = _run_git_command(
+        ["config", "--get", "user.name"],
+        root=runtime_root,
+        env=env,
+    )
+    email_result = _run_git_command(
+        ["config", "--get", "user.email"],
+        root=runtime_root,
+        env=env,
+    )
+    fallback_name = (name_result.stdout or "").strip() if name_result.returncode == 0 else ""
+    fallback_email = (email_result.stdout or "").strip() if email_result.returncode == 0 else ""
+    if fallback_name and fallback_email:
+        return fallback_name, fallback_email
+
+    raise RuntimeError(
+        "Authority repo publish requires a git commit identity. "
+        f"Set {AUTHORITY_GIT_USER_NAME_ENV}/{AUTHORITY_GIT_USER_EMAIL_ENV} "
+        "or configure git user.name/user.email in the runtime checkout."
+    )
+
+
+def _build_git_publish_env(
+    *,
+    git_user_name: str,
+    git_user_email: str,
+    env: Mapping[str, str] | None = None,
+) -> dict[str, str]:
+    git_env = dict(os.environ if env is None else env)
+    git_env["GIT_AUTHOR_NAME"] = git_user_name
+    git_env["GIT_AUTHOR_EMAIL"] = git_user_email
+    git_env["GIT_COMMITTER_NAME"] = git_user_name
+    git_env["GIT_COMMITTER_EMAIL"] = git_user_email
+    return git_env
 
 
 def _clone_publish_tree(
@@ -336,10 +390,19 @@ def publish_authority_artifacts_to_repo(
     branch = context["branch"]
     publish_tree = Path(context["publish_tree"])
     max_push_attempts = int(context["max_push_attempts"])
+    git_user_name, git_user_email = _resolve_authority_git_identity(
+        runtime_root=resolved_root,
+        env=env,
+    )
+    git_env = _build_git_publish_env(
+        git_user_name=git_user_name,
+        git_user_email=git_user_email,
+        env=env,
+    )
     remote_url = _resolve_git_remote_url(
         runtime_root=resolved_root,
         remote=remote,
-        env=env,
+        env=git_env,
     )
     commit_message = build_authority_publish_commit_message(attempt_payload)
     pathspecs: list[str] = []
@@ -350,7 +413,7 @@ def publish_authority_artifacts_to_repo(
             remote=remote,
             branch=branch,
             remote_url=remote_url,
-            env=env,
+            env=git_env,
         )
         pathspecs = _copy_publish_paths(
             runtime_root=resolved_root,
@@ -360,14 +423,14 @@ def publish_authority_artifacts_to_repo(
         add_result = _run_git_command(
             ["add", "--", *pathspecs],
             root=publish_tree,
-            env=env,
+            env=git_env,
         )
         _ensure_git_ok(add_result, label="git add authority artifacts")
 
         diff_result = _run_git_command(
             ["diff", "--cached", "--quiet", "--", *pathspecs],
             root=publish_tree,
-            env=env,
+            env=git_env,
         )
         if diff_result.returncode == 0:
             return {
@@ -388,14 +451,14 @@ def publish_authority_artifacts_to_repo(
         commit_result = _run_git_command(
             ["commit", "--only", "-m", commit_message, "--", *pathspecs],
             root=publish_tree,
-            env=env,
+            env=git_env,
         )
         _ensure_git_ok(commit_result, label="git commit authority artifacts")
 
         push_result = _run_git_command(
             ["push", remote, f"HEAD:{branch}"],
             root=publish_tree,
-            env=env,
+            env=git_env,
         )
         if push_result.returncode == 0:
             break
@@ -403,7 +466,7 @@ def publish_authority_artifacts_to_repo(
             continue
         _ensure_git_ok(push_result, label="git push authority artifacts")
 
-    head_result = _run_git_command(["rev-parse", "HEAD"], root=publish_tree, env=env)
+    head_result = _run_git_command(["rev-parse", "HEAD"], root=publish_tree, env=git_env)
     _ensure_git_ok(head_result, label="git rev-parse HEAD")
     commit_sha = (head_result.stdout or "").strip()
 

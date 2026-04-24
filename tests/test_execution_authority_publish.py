@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -41,6 +42,27 @@ def load_json(path: Path) -> dict:
 
 
 class TestExecutionAuthorityPublish(unittest.TestCase):
+    def run_git(
+        self,
+        args: list[str],
+        *,
+        cwd: Path,
+        env: dict[str, str] | None = None,
+    ) -> subprocess.CompletedProcess[str]:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=str(cwd),
+            text=True,
+            capture_output=True,
+            check=False,
+            env=(os.environ | env) if env is not None else None,
+        )
+        if result.returncode != 0:
+            raise AssertionError(
+                f"git {' '.join(args)} failed in {cwd}\nstdout={result.stdout}\nstderr={result.stderr}"
+            )
+        return result
+
     def make_temp_root(self) -> Path:
         base_dir = ROOT / "outputs" / "_tmp_test_execution_authority_publish"
         base_dir.mkdir(parents=True, exist_ok=True)
@@ -146,6 +168,8 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             temp_root.parent / f"{temp_root.name}__authority_publish"
         )
         env["MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS"] = "3"
+        env["MRV1_AUTHORITY_GIT_USER_NAME"] = "Pi Authority Publisher"
+        env["MRV1_AUTHORITY_GIT_USER_EMAIL"] = "pi-authority@example.com"
         return env
 
     def seed_authority_payloads(
@@ -753,6 +777,106 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         )
         self.assertEqual(git_calls.count(["git", "reset", "--hard", "origin/main"]), 2)
         self.assertEqual(git_calls.count(["git", "clean", "-fd"]), 2)
+
+    def test_pi_repo_publish_real_git_flow_commits_only_authority_files_in_clean_publish_tree(self):
+        temp_root = self.make_temp_root()
+        origin_repo = temp_root.parent / f"{temp_root.name}__origin"
+        runtime_root = temp_root.parent / f"{temp_root.name}__runtime"
+        publish_tree = temp_root.parent / f"{temp_root.name}__authority_publish"
+        self.addCleanup(shutil.rmtree, origin_repo, True)
+        self.addCleanup(shutil.rmtree, runtime_root, True)
+        self.addCleanup(shutil.rmtree, publish_tree, True)
+
+        origin_repo.mkdir(parents=True, exist_ok=True)
+        self.run_git(["init", "--initial-branch=main"], cwd=origin_repo)
+        (origin_repo / "README.md").write_text("seed\n", encoding="utf-8")
+        self.run_git(["add", "README.md"], cwd=origin_repo)
+        commit_env = {
+            "GIT_AUTHOR_NAME": "Seed Author",
+            "GIT_AUTHOR_EMAIL": "seed@example.com",
+            "GIT_COMMITTER_NAME": "Seed Author",
+            "GIT_COMMITTER_EMAIL": "seed@example.com",
+        }
+        self.run_git(["commit", "-m", "seed"], cwd=origin_repo, env=commit_env)
+
+        try:
+            self.run_git(["clone", "--branch", "main", str(origin_repo), str(runtime_root)], cwd=temp_root)
+        except AssertionError as exc:
+            if "couldn't create signal pipe" in str(exc).lower():
+                self.skipTest("local git clone transport is blocked in this Windows sandbox")
+            raise
+        self.seed_authority_payloads(
+            runtime_root,
+            run_id="20260423_130000",
+            attempt_status="success",
+            include_snapshot=True,
+        )
+        env = self.build_pi_repo_env(runtime_root)
+        env["MRV1_AUTHORITY_PUBLISH_TREE"] = str(publish_tree)
+        push_calls: list[list[str]] = []
+
+        real_run_git_command = pi_producer._run_git_command
+
+        def run_git_command_with_fake_push(
+            args: list[str],
+            *,
+            root: Path,
+            env: dict[str, str] | None = None,
+        ) -> subprocess.CompletedProcess[str]:
+            if args[:1] == ["push"]:
+                push_calls.append(args)
+                return subprocess.CompletedProcess(["git", *args], 0, "", "")
+            return real_run_git_command(args, root=root, env=env)
+
+        with mock.patch.object(
+            pi_producer,
+            "_run_git_command",
+            side_effect=run_git_command_with_fake_push,
+        ):
+            result = pi_producer.publish_authority_artifacts_to_repo(
+                root=runtime_root,
+                env=env,
+            )
+
+        self.assertTrue(result["published"])
+        self.assertEqual(result["publish_tree"], str(publish_tree))
+        self.assertEqual(
+            result["pathspecs"],
+            [
+                "outputs/execution/authority/latest_attempt_status.json",
+                "outputs/execution/authority/latest_successful_snapshot.json",
+            ],
+        )
+        self.assertEqual(push_calls, [["push", "origin", "HEAD:main"]])
+
+        latest_attempt = self.run_git(
+            ["show", "HEAD:outputs/execution/authority/latest_attempt_status.json"],
+            cwd=publish_tree,
+        ).stdout
+        latest_snapshot = self.run_git(
+            ["show", "HEAD:outputs/execution/authority/latest_successful_snapshot.json"],
+            cwd=publish_tree,
+        ).stdout
+        changed_paths = {
+            line.strip()
+            for line in self.run_git(
+                ["show", "--pretty=", "--name-only", "HEAD"],
+                cwd=publish_tree,
+            ).stdout.splitlines()
+            if line.strip()
+        }
+        publish_tree_status = self.run_git(["status", "--short"], cwd=publish_tree).stdout.strip()
+
+        self.assertIn('"latest_authoritative_attempt_status": "success"', latest_attempt)
+        self.assertIn('"artifact_type": "authority_success_snapshot_v1"', latest_snapshot)
+        self.assertEqual(
+            changed_paths,
+            {
+                "outputs/execution/authority/latest_attempt_status.json",
+                "outputs/execution/authority/latest_successful_snapshot.json",
+            },
+        )
+        self.assertEqual(publish_tree_status, "")
 
 
 if __name__ == "__main__":

@@ -194,11 +194,18 @@ The deployed app input is repo content, not an implicit side channel:
 - the current project publish mechanism that reaches deployed app source content is `git push origin main`
 - therefore the Pi authority producer must publish the two authority files into repo `main`
 
-Use this exact Pi entrypoint for authoritative production publishing:
+No app consumer cutover happens here. This is manual producer-side publishing only.
+
+Use this exact first-run Pi environment and entrypoint for authoritative production publishing:
 
 ```bash
 cd /opt/market_regime_v1
+export MRV1_AUTHORITY_REPO_REMOTE=origin
+export MRV1_AUTHORITY_REPO_BRANCH=main
 export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
+export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
+export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
+export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
 .venv/bin/python scripts/execution/run_pi_authoritative_producer.py
 ```
 
@@ -214,14 +221,20 @@ What it does:
 - commits and pushes only from that clean publish clone
 - retries from a fresh fetch/reset if `git push` is rejected by remote drift
 
-Exact validation commands on the Pi:
+Exact validation commands on the Pi after the first publish:
 
 ```bash
 cd /opt/market_regime_v1
+export MRV1_AUTHORITY_REPO_REMOTE=origin
+export MRV1_AUTHORITY_REPO_BRANCH=main
 export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
+export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
+export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
+export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
 .venv/bin/python scripts/execution/run_pi_authoritative_producer.py --skip-legacy-refresh --skip-macro-refresh --skip-top100-refresh
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" status --short
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" log -1 --stat -- outputs/execution/authority/latest_attempt_status.json outputs/execution/authority/latest_successful_snapshot.json
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show --pretty= --name-only HEAD
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show HEAD:outputs/execution/authority/latest_attempt_status.json
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show HEAD:outputs/execution/authority/latest_successful_snapshot.json
 git -C /opt/market_regime_v1 status --short
@@ -231,9 +244,14 @@ Exact rollback for the last authority publish commit:
 
 ```bash
 cd /opt/market_regime_v1
+export MRV1_AUTHORITY_REPO_REMOTE=origin
+export MRV1_AUTHORITY_REPO_BRANCH=main
 export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
-git -C "$MRV1_AUTHORITY_PUBLISH_TREE" fetch origin main
-git -C "$MRV1_AUTHORITY_PUBLISH_TREE" checkout -B main origin/main
+export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
+export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
+export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" fetch "$MRV1_AUTHORITY_REPO_REMOTE" "$MRV1_AUTHORITY_REPO_BRANCH"
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" checkout -B "$MRV1_AUTHORITY_REPO_BRANCH" "$MRV1_AUTHORITY_REPO_REMOTE/$MRV1_AUTHORITY_REPO_BRANCH"
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" revert --no-edit HEAD
-git -C "$MRV1_AUTHORITY_PUBLISH_TREE" push origin HEAD:main
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" push "$MRV1_AUTHORITY_REPO_REMOTE" "HEAD:$MRV1_AUTHORITY_REPO_BRANCH"
 ```

@@ -120,3 +120,77 @@ sudo -u mrv1 git -C /opt/market_regime_v1 status --short -- source_of_truth
 - `ExecStartPost=/usr/bin/test -f ...` checks make the unit fail if the expected execution artifacts were not produced.
 - Because `render_execution_app_status.py` runs last in this deployment, the final `outputs/execution/live_status/execution_status.json` reflects the snapshot renderer output; the dry-run decision remains in `outputs/execution/dry_run/latest_dry_run_decision.json`.
 - The service never calls a live-order script. It only refreshes data, rematerializes exports, fetches a read-only snapshot, builds intent, produces a dry-run decision, and refreshes app status.
+
+## Manual Pi authority publish
+
+This is the first real producer-side publish path only:
+
+- no `app.py` change
+- no app consumer cutover
+- no UI change
+- Pi stays the only automatic production producer
+- PC stays non-authoritative
+- GitHub Actions stays non-authoritative
+
+Exact first-run manual command on the Pi:
+
+```bash
+cd /opt/market_regime_v1
+export MRV1_AUTHORITY_REPO_REMOTE=origin
+export MRV1_AUTHORITY_REPO_BRANCH=main
+export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
+export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
+export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
+export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
+.venv/bin/python scripts/execution/run_pi_authoritative_producer.py
+```
+
+Files that must exist after a successful run:
+
+```bash
+/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
+/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json
+```
+
+Exact clean publish clone flow:
+
+1. Resolve the runtime checkout remote URL from `/opt/market_regime_v1`.
+2. Clone or reuse `/opt/market_regime_v1__authority_publish` as a separate clean git checkout.
+3. Fetch `origin/main`, check out `main`, hard-reset to `origin/main`, and clean untracked files in the publish clone.
+4. Copy only `outputs/execution/authority/latest_attempt_status.json` and `outputs/execution/authority/latest_successful_snapshot.json` into the publish clone.
+5. Commit only those pathspecs and push only from the publish clone.
+6. If push is rejected by remote drift, repeat from a fresh fetch/reset/clean cycle.
+
+Exact validation commands:
+
+```bash
+cd /opt/market_regime_v1
+export MRV1_AUTHORITY_REPO_REMOTE=origin
+export MRV1_AUTHORITY_REPO_BRANCH=main
+export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
+export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
+export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
+export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
+.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --skip-legacy-refresh --skip-macro-refresh --skip-top100-refresh
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" status --short
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show --pretty= --name-only HEAD
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show HEAD:outputs/execution/authority/latest_attempt_status.json
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show HEAD:outputs/execution/authority/latest_successful_snapshot.json
+git -C /opt/market_regime_v1 status --short
+```
+
+Exact rollback:
+
+```bash
+cd /opt/market_regime_v1
+export MRV1_AUTHORITY_REPO_REMOTE=origin
+export MRV1_AUTHORITY_REPO_BRANCH=main
+export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
+export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
+export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
+export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" fetch "$MRV1_AUTHORITY_REPO_REMOTE" "$MRV1_AUTHORITY_REPO_BRANCH"
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" checkout -B "$MRV1_AUTHORITY_REPO_BRANCH" "$MRV1_AUTHORITY_REPO_REMOTE/$MRV1_AUTHORITY_REPO_BRANCH"
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" revert --no-edit HEAD
+git -C "$MRV1_AUTHORITY_PUBLISH_TREE" push "$MRV1_AUTHORITY_REPO_REMOTE" "HEAD:$MRV1_AUTHORITY_REPO_BRANCH"
+```
