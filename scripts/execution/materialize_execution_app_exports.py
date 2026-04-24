@@ -37,6 +37,7 @@ APP_REFRESH_PIPELINE_DIR = ROOT / "outputs" / "app_refresh_pipeline"
 
 PATHS_REGISTRY_PATH = SOURCE_OF_TRUTH_DIR / "paths_registry.json"
 PROJECT_TRUTH_PATH = SOURCE_OF_TRUTH_DIR / "project_truth.json"
+EXPORT_CONTRACT_PATH = SOURCE_OF_TRUTH_DIR / "export_contract.json"
 
 REPORT_PATH = OUTPUTS_DIR / "refresh_pipeline" / "materialize_execution_app_exports_report.json"
 MANIFEST_PATH = OUTPUTS_DIR / "refresh_pipeline" / "materialize_execution_app_exports_manifest.json"
@@ -376,13 +377,15 @@ def build_runtime_table_snapshot(
     strategy_freshness: dict[str, Any],
     evaluated_at_utc: str,
 ) -> dict[str, Any]:
+    product_contract = load_app_product_export_contract()
+    main_paper_path = product_contract["main_paper_path"]
     latest_refresh_manifest_metadata = source_metadata_from_path_text(
         strategy_freshness.get("refresh_manifest_path"),
         "app_refresh_pipeline_manifest",
     )
     wallet_snapshot_metadata = source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot")
     freshness_report_metadata = source_metadata(APP_FRESHNESS_REPORT_PATH, "canonical_product_freshness_report")
-    strategy_artifact_metadata = source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper")
+    strategy_artifact_metadata = source_metadata(main_paper_path, "canonical_app_paper")
     trend_calculation_metadata = source_metadata(PHASE66G_LIVE_STATUS_PATH, "canonical_trend_live_status")
 
     last_refresh_run_id = strategy_freshness.get("latest_refresh_run_id")
@@ -619,6 +622,78 @@ def load_app_live_mode_contract() -> dict[str, str]:
             fail(f"app_live_mode_contract.current missing required field: {field}")
         normalized[field] = value
     return normalized
+
+
+def resolve_export_contract_path(raw_path: Any, *, context: str) -> Path:
+    text = str(raw_path or "").strip()
+    if not text:
+        fail(f"source_of_truth/export_contract.json missing {context}")
+    path = Path(text)
+    if not path.is_absolute():
+        path = ROOT / path
+    return path
+
+
+def load_app_product_export_contract() -> dict[str, Any]:
+    export_contract = read_json(EXPORT_CONTRACT_PATH)
+    app_export_contract = export_contract.get("app_export_contract")
+    if not isinstance(app_export_contract, dict):
+        fail("source_of_truth/export_contract.json missing app_export_contract")
+
+    model_sources = app_export_contract.get("model_sources")
+    if not isinstance(model_sources, dict):
+        fail("source_of_truth/export_contract.json missing app_export_contract.model_sources")
+
+    main_strategy_model = str(app_export_contract.get("main_strategy_model") or "").strip()
+    if not main_strategy_model:
+        fail("source_of_truth/export_contract.json missing app_export_contract.main_strategy_model")
+
+    reference_strategy_model = str(app_export_contract.get("reference_strategy_model") or "").strip()
+    if not reference_strategy_model:
+        fail("source_of_truth/export_contract.json missing app_export_contract.reference_strategy_model")
+
+    benchmark = str(app_export_contract.get("benchmark") or "").strip()
+    if not benchmark:
+        fail("source_of_truth/export_contract.json missing app_export_contract.benchmark")
+
+    main_source_entry = model_sources.get(main_strategy_model)
+    if not isinstance(main_source_entry, dict):
+        fail(
+            "source_of_truth/export_contract.json missing model_sources entry "
+            f"for main strategy '{main_strategy_model}'"
+        )
+
+    reference_source_entry = model_sources.get(reference_strategy_model)
+    if not isinstance(reference_source_entry, dict):
+        fail(
+            "source_of_truth/export_contract.json missing model_sources entry "
+            f"for reference strategy '{reference_strategy_model}'"
+        )
+
+    display_names = app_export_contract.get("display_names")
+    if not isinstance(display_names, dict):
+        display_names = {}
+
+    return {
+        "product_name": str(app_export_contract.get("product_name") or "TrendAtlas Crypto").strip()
+        or "TrendAtlas Crypto",
+        "main_strategy_model": main_strategy_model,
+        "reference_strategy_model": reference_strategy_model,
+        "benchmark": benchmark,
+        "display_names": display_names,
+        "main_summary_path": resolve_export_contract_path(
+            main_source_entry.get("summary_path"),
+            context=f"app_export_contract.model_sources.{main_strategy_model}.summary_path",
+        ),
+        "main_paper_path": resolve_export_contract_path(
+            main_source_entry.get("paper_path"),
+            context=f"app_export_contract.model_sources.{main_strategy_model}.paper_path",
+        ),
+        "reference_paper_path": resolve_export_contract_path(
+            reference_source_entry.get("paper_path"),
+            context=f"app_export_contract.model_sources.{reference_strategy_model}.paper_path",
+        ),
+    }
 
 
 def copy_plain_artifact(source_path: Path, canonical_path: Path) -> dict[str, Any]:
@@ -1148,6 +1223,63 @@ def read_last_csv_row(path: Path) -> dict[str, str]:
     return rows[-1]
 
 
+def derive_sharpe_sortino_from_paper(path: Path) -> dict[str, float]:
+    header, rows = read_csv_rows(path)
+    if "realistic_ret" not in header or not rows:
+        return {}
+
+    returns: list[float] = []
+    for row in rows:
+        ret = parse_float_maybe(row.get("realistic_ret"))
+        if ret is None:
+            return {}
+        returns.append(ret)
+
+    derived: dict[str, float] = {}
+    sharpe = annualized_sharpe_from_daily_returns(returns)
+    sortino = annualized_sortino_from_daily_returns(returns)
+    if sharpe is not None:
+        derived["sharpe"] = round(sharpe, 4)
+    if sortino is not None:
+        derived["sortino"] = round(sortino, 4)
+    return derived
+
+
+def normalize_homepage_main_strategy_metrics(
+    summary_row: dict[str, Any],
+    *,
+    main_strategy_model: str,
+    main_paper_path: Path,
+    metric_fields: list[str],
+) -> dict[str, Any]:
+    metrics = normalized_row(summary_row, metric_fields)
+    if "model" not in metrics:
+        metrics["model"] = main_strategy_model
+
+    fallback_fields = {
+        "total_return_pct": ["total_return_pct_net", "total_return_pct_gross"],
+        "cagr_pct": ["cagr_pct_net", "cagr_pct_gross"],
+        "max_drawdown_pct": ["max_drawdown_pct_net", "max_drawdown_pct_gross"],
+        "since2023_cagr_pct": ["since2023_cagr_pct_net", "since2023_cagr_pct_gross"],
+        "since2025_cagr_pct": ["since2025_cagr_pct_net", "since2025_cagr_pct_gross"],
+    }
+    for field, candidates in fallback_fields.items():
+        if field in metrics:
+            continue
+        for candidate in candidates:
+            if candidate in metrics:
+                metrics[field] = metrics[candidate]
+                break
+
+    if "sharpe" not in metrics or "sortino" not in metrics:
+        derived_risk_metrics = derive_sharpe_sortino_from_paper(main_paper_path)
+        for field in ("sharpe", "sortino"):
+            if field not in metrics and field in derived_risk_metrics:
+                metrics[field] = derived_risk_metrics[field]
+
+    return metrics
+
+
 def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_payload: dict[str, Any]) -> dict[str, Any]:
     snapshot_summary = snapshot_payload.get("summary", {}) if isinstance(snapshot_payload, dict) else {}
     snapshot_source = snapshot_payload.get("source", {}) if isinstance(snapshot_payload, dict) else {}
@@ -1174,8 +1306,14 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
 
 
 def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, Any]:
-    summary_row = read_single_csv_row(PHASE68I_SUMMARY_OUTPUT_PATH)
-    main_paper_row = read_last_csv_row(PHASE68I_PAPER_INPUT_PATH)
+    product_contract = load_app_product_export_contract()
+    main_strategy_model = product_contract["main_strategy_model"]
+    reference_strategy_model = product_contract["reference_strategy_model"]
+    main_summary_path = product_contract["main_summary_path"]
+    main_paper_path = product_contract["main_paper_path"]
+    reference_paper_path = product_contract["reference_paper_path"]
+    summary_row = read_single_csv_row(main_summary_path)
+    main_paper_row = read_last_csv_row(main_paper_path)
     trend_row = read_optional_single_csv_row(PHASE66G_LIVE_STATUS_PATH)
     freshness_payload = read_json_optional(APP_FRESHNESS_REPORT_PATH)
     freshness_checks = build_canonical_product_freshness_checks(freshness_payload)
@@ -1251,12 +1389,18 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "leverage_state_reason",
     ]
 
-    strategy_last_closed_day = parse_iso_date_required(main_paper_row.get("date"), f"{PHASE68I_PAPER_INPUT_PATH} date")
+    strategy_last_closed_day = parse_iso_date_required(main_paper_row.get("date"), f"{main_paper_path} date")
     freshness_target_closed_day = freshness_payload.get("latest_closed_utc_date") or strategy_last_closed_day
     app_export_generated_at_utc = utc_now_iso()
+    main_strategy_metrics = normalize_homepage_main_strategy_metrics(
+        summary_row,
+        main_strategy_model=main_strategy_model,
+        main_paper_path=main_paper_path,
+        metric_fields=metric_fields,
+    )
     live_public_state = normalized_row(main_paper_row, live_fields)
     live_public_state.update({
-        "model": "phase68i_dynamic_ladder_candidate",
+        "model": main_strategy_model,
         "held_asset_public": csv_json_value(main_paper_row.get("portfolio_held_asset")),
         "held_state_label": csv_json_value(main_paper_row.get("trend_state_label")),
         "execution_state": csv_json_value(main_paper_row.get("portfolio_held_asset")),
@@ -1264,9 +1408,9 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     })
 
     source_sections = {
-        "main_strategy_metrics": source_metadata(PHASE68I_SUMMARY_OUTPUT_PATH, "canonical_app_summary"),
+        "main_strategy_metrics": source_metadata(main_summary_path, "canonical_app_summary"),
         "strategy_last_closed_day": {
-            **source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
+            **source_metadata(main_paper_path, "canonical_app_paper"),
             "source_field": "last_row.date",
         },
         "freshness_target_closed_day": {
@@ -1278,14 +1422,14 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
             "source_field": "generated_by_materializer_clock",
         },
         "live_public_state": {
-            **source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
+            **source_metadata(main_paper_path, "canonical_app_paper"),
             "source_fields": live_fields,
         },
         "freshness": source_metadata(APP_FRESHNESS_REPORT_PATH, "canonical_product_freshness_report"),
         "trend_barometer_summary": source_metadata(PHASE66G_LIVE_STATUS_PATH, "canonical_trend_live_status"),
         "chart_source_paths": {
-            "main_strategy": source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
-            "reference_strategy": source_metadata(PHASE67J_PAPER_PATH, "canonical_app_paper"),
+            "main_strategy": source_metadata(main_paper_path, "canonical_app_paper"),
+            "reference_strategy": source_metadata(reference_paper_path, "canonical_app_paper"),
         },
         "benchmark_source_path": source_metadata(BENCHMARK_BTC_SOURCE_PATH, "benchmark_ohlcv"),
         "trend_history_source_path": source_metadata(PHASE66G_TREND_HISTORY_PATH, "canonical_trend_history"),
@@ -1295,11 +1439,11 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "snapshot_type": "app_product_snapshot",
         "schema_version": 1,
         "app_export_generated_at_utc": app_export_generated_at_utc,
-        "product_name": "TrendAtlas Crypto",
+        "product_name": product_contract["product_name"],
         "page_scope": "homepage",
-        "main_strategy_model": "phase68i_dynamic_ladder_candidate",
-        "reference_strategy_model": "phase67j_no_neo_main",
-        "benchmark": "BTC",
+        "main_strategy_model": main_strategy_model,
+        "reference_strategy_model": reference_strategy_model,
+        "benchmark": product_contract["benchmark"],
         "strategy_last_closed_day": strategy_last_closed_day,
         "freshness_target_closed_day": freshness_target_closed_day,
         "freshness": {
@@ -1309,29 +1453,16 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
             "warnings": freshness_payload.get("warnings", []),
             "errors": freshness_payload.get("errors", []),
         },
-        "main_strategy_metrics": normalized_row(summary_row, metric_fields),
+        "main_strategy_metrics": main_strategy_metrics,
         "live_public_state": live_public_state,
         "trend_barometer_summary": normalized_row(trend_row, trend_fields),
         "chart_source_paths": {
-            "main_strategy": path_for_app(PHASE68I_PAPER_INPUT_PATH),
-            "reference_strategy": path_for_app(PHASE67J_PAPER_PATH),
+            "main_strategy": path_for_app(main_paper_path),
+            "reference_strategy": path_for_app(reference_paper_path),
         },
         "benchmark_source_path": path_for_app(BENCHMARK_BTC_SOURCE_PATH),
         "trend_history_source_path": path_for_app(PHASE66G_TREND_HISTORY_PATH),
-        "display_names": {
-            "phase68i_dynamic_ladder_candidate": {
-                "sk": "Hlavna strategia",
-                "en": "Main strategy",
-            },
-            "phase67j_no_neo_main": {
-                "sk": "Referencna strategia",
-                "en": "Reference strategy",
-            },
-            "phase66g_production_soft_filters": {
-                "sk": "Trend / core vrstva",
-                "en": "Trend / core layer",
-            },
-        },
+        "display_names": product_contract["display_names"],
         "source_metadata": source_sections,
     }
 
@@ -1359,8 +1490,10 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
         or product_snapshot_payload.get("app_export_generated_at_utc")
         or app_runtime_generated_at_utc
     )
+    product_contract = load_app_product_export_contract()
+    main_paper_path = product_contract["main_paper_path"]
     freshness_payload = read_json_optional(APP_FRESHNESS_REPORT_PATH)
-    latest_strategy_artifact_date = read_last_csv_date_optional(PHASE68I_PAPER_INPUT_PATH)
+    latest_strategy_artifact_date = read_last_csv_date_optional(main_paper_path)
     latest_trend_calculation_date = read_trend_calculation_date_optional(PHASE66G_LIVE_STATUS_PATH)
     latest_available_closed_utc_date = (
         str(freshness_payload.get("latest_closed_utc_date") or "").strip() or None
@@ -1504,7 +1637,7 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
                 "refresh_manifest_path": strategy_freshness["refresh_manifest_path"],
                 "latest_successful_refresh_run_id": strategy_freshness["latest_successful_refresh_run_id"],
                 "freshness_report": source_metadata(APP_FRESHNESS_REPORT_PATH, "canonical_product_freshness_report"),
-                "strategy_artifact": source_metadata(PHASE68I_PAPER_INPUT_PATH, "canonical_app_paper"),
+                "strategy_artifact": source_metadata(main_paper_path, "canonical_app_paper"),
                 "trend_calculation": source_metadata(PHASE66G_LIVE_STATUS_PATH, "canonical_trend_live_status"),
                 "wallet_sync": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
             },
