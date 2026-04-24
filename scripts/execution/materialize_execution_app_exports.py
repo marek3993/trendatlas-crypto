@@ -1535,12 +1535,12 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Materialize canonical execution app exports and app-facing snapshots."
+        description="Materialize canonical execution app exports and non-authoritative app staging snapshots."
     )
     parser.add_argument(
         "--runtime-snapshot-only",
         action="store_true",
-        help="Only refresh outputs/execution/app_snapshot/app_runtime_snapshot.json.",
+        help="Only refresh the non-authoritative staging file outputs/execution/app_snapshot/app_runtime_snapshot.json.",
     )
     return parser.parse_args()
 
@@ -1780,7 +1780,8 @@ def main() -> None:
             "This script never fabricates strategy data.",
             "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
             "phase68i dynamic ladder summary export is built from phase68h summary source plus phase68i app paper-derived metrics.",
-            "Other artifacts are copied from existing legacy aliases only."
+            "Other artifacts are copied from existing legacy aliases only.",
+            "app_product_snapshot and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
         ],
     }
 

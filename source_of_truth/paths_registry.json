@@ -228,7 +228,9 @@
       "artifact_type": "authority_snapshot",
       "truth_domain": "authority",
       "read_scope": [
-        "execution_producer"
+        "execution_producer",
+        "app",
+        "validation"
       ],
       "write_mode": "producer_only_authoritative_write"
     },
@@ -239,7 +241,9 @@
       "artifact_type": "authority_status",
       "truth_domain": "authority",
       "read_scope": [
-        "execution_producer"
+        "execution_producer",
+        "app",
+        "validation"
       ],
       "write_mode": "producer_only_authoritative_write"
     },

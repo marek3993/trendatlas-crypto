@@ -21,6 +21,10 @@ if str(ROOT) not in sys.path:
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
+from src.market_regime_v1.phase1_time_semantics import (
+    ATTEMPT_STATUS_ARTIFACT_TYPE,
+    SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
+)
 from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
 )
@@ -46,8 +50,12 @@ st.set_page_config(page_title="TrendAtlas Crypto", layout="wide")
 
 ROOT = Path(__file__).resolve().parent
 OUTPUTS = ROOT / "outputs"
-APP_PRODUCT_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "app_product_snapshot.json"
-APP_RUNTIME_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json"
+AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH = (
+    ROOT / "outputs" / "execution" / "authority" / "latest_successful_snapshot.json"
+)
+AUTHORITY_LATEST_ATTEMPT_STATUS_PATH = (
+    ROOT / "outputs" / "execution" / "authority" / "latest_attempt_status.json"
+)
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 APP_DISPLAY_TIMEZONE = ZoneInfo("Europe/Bratislava")
@@ -679,12 +687,12 @@ def load_json_optional(path_value: str | Path | None) -> dict:
         return {}
 
 
-def load_required_app_snapshot(path: Path, expected_type: str) -> dict:
+def load_required_authority_payload(path: Path, expected_type: str) -> dict:
     payload = load_json_optional(path)
     if not payload:
         st.error(f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: missing {path}")
         st.stop()
-    if payload.get("snapshot_type") != expected_type:
+    if payload.get("artifact_type") != expected_type:
         st.error(
             f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: "
             f"{path} is not {expected_type}"
@@ -693,12 +701,45 @@ def load_required_app_snapshot(path: Path, expected_type: str) -> dict:
     return payload
 
 
+def load_optional_authority_payload(path: Path, expected_type: str) -> dict:
+    payload = load_json_optional(path)
+    if not payload:
+        return {}
+    if payload.get("artifact_type") != expected_type:
+        st.error(
+            f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: "
+            f"{path} is not {expected_type}"
+        )
+        st.stop()
+    return payload
+
+
+def require_snapshot_payload(
+    payload: dict,
+    expected_type: str,
+    source_path: Path,
+) -> dict:
+    if not payload:
+        st.error(
+            f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: "
+            f"missing nested {expected_type} in {source_path}"
+        )
+        st.stop()
+    if payload.get("snapshot_type") != expected_type:
+        st.error(
+            f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: "
+            f"{source_path} nested payload is not {expected_type}"
+        )
+        st.stop()
+    return payload
+
+
 FRESHNESS_SUMMARY_TEXT = {
-    "current": "Current: today's refresh ran successfully and strategy data is aligned with the latest closed UTC day.",
-    "stale": "Stale: today's refresh ran, but strategy data is behind the latest closed UTC day.",
-    "not_run_today": "Not run today: today's daily refresh has not finished.",
-    "failed_latest_refresh": "Failed latest refresh: the most recent daily refresh failed.",
-    "missing_runtime_artifact": "Missing runtime artifact: app_runtime_snapshot.json is missing or invalid.",
+    "current": "Current: the latest authority publish is aligned with the latest closed UTC day.",
+    "stale": "Stale: the latest authority snapshot is behind the latest closed UTC day.",
+    "refresh_in_progress": "Authority refresh in progress: the latest Pi publish attempt is still running.",
+    "refresh_failed": "Authority refresh failed: the latest Pi publish attempt failed.",
+    "missing_authority_artifact": "Missing authority artifact: latest_attempt_status.json is missing or invalid.",
 }
 
 
@@ -707,13 +748,13 @@ def build_missing_runtime_snapshot(path: Path) -> dict:
         "latest_refresh_run_id": None,
         "latest_refresh_run_status": None,
         "latest_successful_refresh_run_id": None,
-        "refresh_currentness_state": "missing_runtime_artifact",
-        "refresh_currentness_reason_code": "runtime_artifact_missing",
-        "refresh_currentness_reason": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
-        "freshness_state": "missing_runtime_artifact",
-        "freshness_detail_code": "runtime_artifact_missing",
-        "freshness_summary_text": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
-        "freshness_detail_text": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
+        "refresh_currentness_state": "missing_authority_artifact",
+        "refresh_currentness_reason_code": "authority_artifact_missing",
+        "refresh_currentness_reason": FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"],
+        "freshness_state": "missing_authority_artifact",
+        "freshness_detail_code": "authority_artifact_missing",
+        "freshness_summary_text": FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"],
+        "freshness_detail_text": FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"],
         "refresh_run_id": None,
         "refresh_success": None,
         "refresh_status": None,
@@ -731,50 +772,44 @@ def build_missing_runtime_snapshot(path: Path) -> dict:
         "last_refresh_status": None,
         "last_refresh_run_id": None,
         "last_wallet_sync_utc": None,
-        "currentness_state": "missing_runtime_artifact",
-        "currentness_reason": FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"],
+        "currentness_state": "missing_authority_artifact",
+        "currentness_reason": FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"],
         "source_metadata": {
             "last_pi_update_utc": {
                 "path": str(path),
                 "exists": False,
-                "source_type": "app_runtime_snapshot",
-                "source_field": "runtime_table_snapshot.last_pi_update_utc",
-            },
-            "last_pc_refresh_utc": {
-                "path": str(path),
-                "exists": False,
-                "source_type": "app_runtime_snapshot",
-                "source_field": "runtime_table_snapshot.last_pc_refresh_utc",
+                "source_type": "authority_latest_attempt_status",
+                "source_field": "generated_at_utc",
             },
             "last_refresh_status": {
                 "path": str(path),
                 "exists": False,
-                "source_type": "app_runtime_snapshot",
-                "source_field": "runtime_table_snapshot.last_refresh_status",
+                "source_type": "authority_latest_attempt_status",
+                "source_field": "latest_authoritative_attempt_status",
             },
             "last_refresh_run_id": {
                 "path": str(path),
                 "exists": False,
-                "source_type": "app_runtime_snapshot",
-                "source_field": "runtime_table_snapshot.last_refresh_run_id",
+                "source_type": "authority_latest_attempt_status",
+                "source_field": "run_id",
             },
             "last_wallet_sync_utc": {
                 "path": str(path),
                 "exists": False,
-                "source_type": "app_runtime_snapshot",
-                "source_field": "runtime_table_snapshot.last_wallet_sync_utc",
+                "source_type": "authority_latest_attempt_status",
+                "source_field": "app_runtime_snapshot.account_snapshot_as_of_utc",
             },
             "currentness_state": {
                 "path": str(path),
                 "exists": False,
-                "source_type": "app_runtime_snapshot",
-                "source_field": "runtime_table_snapshot.currentness_state",
+                "source_type": "authority_latest_attempt_status",
+                "source_field": "currentness_status",
             },
             "currentness_reason": {
                 "path": str(path),
                 "exists": False,
-                "source_type": "app_runtime_snapshot",
-                "source_field": "runtime_table_snapshot.currentness_reason",
+                "source_type": "authority_latest_attempt_status",
+                "source_field": "currentness_reason",
             },
         },
         "evaluated_at_utc": None,
@@ -788,52 +823,118 @@ def build_missing_runtime_snapshot(path: Path) -> dict:
         "runtime_table_snapshot": missing_runtime_table_snapshot,
         **missing_freshness,
         "source_metadata": {
-            "app_runtime_snapshot": {
+            "authority_latest_attempt_status": {
                 "path": str(path),
                 "exists": False,
-                "source_type": "app_runtime_snapshot",
+                "source_type": "authority_latest_attempt_status",
             },
         },
     }
 
 
-def load_runtime_snapshot_for_app(path: Path) -> dict:
-    payload = load_json_optional(path)
+def load_runtime_snapshot_for_app(payload: dict, path: Path) -> dict:
     if not payload or payload.get("snapshot_type") != "app_runtime_snapshot":
         return build_missing_runtime_snapshot(path)
     return payload
 
 
-def build_missing_runtime_table_snapshot(runtime_snapshot_path: Path) -> dict:
-    return build_missing_runtime_snapshot(runtime_snapshot_path).get("runtime_table_snapshot") or {}
-
-
-def load_runtime_table_snapshot_for_app(runtime_snapshot: dict) -> dict:
-    payload = runtime_snapshot.get("runtime_table_snapshot")
-    if not isinstance(payload, dict):
-        return build_missing_runtime_table_snapshot(APP_RUNTIME_SNAPSHOT_PATH)
-
-    resolved = dict(payload)
-    source_metadata = resolved.get("source_metadata")
-    if not isinstance(source_metadata, dict):
-        source_metadata = {}
-
-    required_fields = [
-        "last_pi_update_utc",
-        "last_pc_refresh_utc",
-        "last_refresh_status",
-        "last_refresh_run_id",
-        "last_wallet_sync_utc",
-        "currentness_state",
-        "currentness_reason",
-        "evaluated_at_utc",
-    ]
-    missing_fields = [field for field in required_fields if field not in resolved]
-    if missing_fields:
-        return build_missing_runtime_table_snapshot(APP_RUNTIME_SNAPSHOT_PATH)
-
-    resolved["source_metadata"] = source_metadata
-    return resolved
+def build_authority_runtime_table_snapshot(
+    latest_successful_snapshot: dict,
+    latest_attempt_status: dict,
+    runtime_snapshot: dict,
+) -> dict:
+    attempt_payload = latest_attempt_status if isinstance(latest_attempt_status, dict) else {}
+    success_payload = latest_successful_snapshot if isinstance(latest_successful_snapshot, dict) else {}
+    source_path = (
+        AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
+        if attempt_payload
+        else AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
+    )
+    source_type = (
+        ATTEMPT_STATUS_ARTIFACT_TYPE
+        if attempt_payload
+        else SUCCESS_SNAPSHOT_ARTIFACT_TYPE
+    )
+    authority_generated_at_utc = (
+        attempt_payload.get("generated_at_utc")
+        or attempt_payload.get("refresh_finished_at_utc")
+        or success_payload.get("generated_at_utc")
+        or success_payload.get("refresh_finished_at_utc")
+    )
+    authority_run_id = attempt_payload.get("run_id") or success_payload.get("run_id")
+    authority_attempt_status = (
+        str(
+            attempt_payload.get("latest_authoritative_attempt_status")
+            or success_payload.get("latest_authoritative_attempt_status")
+            or ""
+        ).strip().lower()
+        or None
+    )
+    authority_currentness_state = (
+        str(
+            attempt_payload.get("currentness_status")
+            or success_payload.get("currentness_status")
+            or "missing_authority_artifact"
+        ).strip()
+        or "missing_authority_artifact"
+    )
+    authority_currentness_reason = (
+        str(
+            attempt_payload.get("currentness_reason")
+            or success_payload.get("currentness_reason")
+            or FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"]
+        ).strip()
+        or FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"]
+    )
+    wallet_sync_utc = runtime_snapshot.get("account_snapshot_as_of_utc")
+    return {
+        "last_pi_update_utc": authority_generated_at_utc,
+        "last_pc_refresh_utc": None,
+        "last_refresh_status": authority_attempt_status,
+        "last_refresh_run_id": authority_run_id,
+        "last_wallet_sync_utc": wallet_sync_utc,
+        "currentness_state": authority_currentness_state,
+        "currentness_reason": authority_currentness_reason,
+        "source_metadata": {
+            "last_pi_update_utc": {
+                "path": str(source_path),
+                "exists": source_path.exists(),
+                "source_type": source_type,
+                "source_field": "generated_at_utc|refresh_finished_at_utc",
+            },
+            "last_refresh_status": {
+                "path": str(source_path),
+                "exists": source_path.exists(),
+                "source_type": source_type,
+                "source_field": "latest_authoritative_attempt_status",
+            },
+            "last_refresh_run_id": {
+                "path": str(source_path),
+                "exists": source_path.exists(),
+                "source_type": source_type,
+                "source_field": "run_id",
+            },
+            "last_wallet_sync_utc": {
+                "path": str(source_path),
+                "exists": source_path.exists(),
+                "source_type": source_type,
+                "source_field": "app_runtime_snapshot.account_snapshot_as_of_utc",
+            },
+            "currentness_state": {
+                "path": str(source_path),
+                "exists": source_path.exists(),
+                "source_type": source_type,
+                "source_field": "currentness_status",
+            },
+            "currentness_reason": {
+                "path": str(source_path),
+                "exists": source_path.exists(),
+                "source_type": source_type,
+                "source_field": "currentness_reason",
+            },
+        },
+        "evaluated_at_utc": authority_generated_at_utc,
+    }
 
 
 def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot: dict) -> dict:
@@ -2970,8 +3071,32 @@ if "account_authenticated" not in st.session_state:
 if "account_auth_error" not in st.session_state:
     st.session_state.account_auth_error = ""
 
-product_snapshot = load_required_app_snapshot(APP_PRODUCT_SNAPSHOT_PATH, "app_product_snapshot")
-runtime_snapshot = load_runtime_snapshot_for_app(APP_RUNTIME_SNAPSHOT_PATH)
+latest_successful_snapshot_payload = load_required_authority_payload(
+    AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
+    SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
+)
+latest_attempt_status_payload = load_optional_authority_payload(
+    AUTHORITY_LATEST_ATTEMPT_STATUS_PATH,
+    ATTEMPT_STATUS_ARTIFACT_TYPE,
+)
+product_snapshot = require_snapshot_payload(
+    dict(latest_successful_snapshot_payload.get("app_product_snapshot") or {}),
+    "app_product_snapshot",
+    AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
+)
+runtime_snapshot_source_path = (
+    AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
+    if latest_attempt_status_payload.get("app_runtime_snapshot")
+    else AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
+)
+runtime_snapshot = load_runtime_snapshot_for_app(
+    dict(
+        latest_attempt_status_payload.get("app_runtime_snapshot")
+        or latest_successful_snapshot_payload.get("app_runtime_snapshot")
+        or {}
+    ),
+    runtime_snapshot_source_path,
+)
 selector_cfg = build_selector_config_from_snapshot(product_snapshot, runtime_snapshot)
 
 hero_left, hero_right = st.columns([5, 1.6])
@@ -3059,7 +3184,11 @@ runtime_last_sync_utc = runtime_snapshot.get("runtime_last_sync_utc")
 account_snapshot_as_of_utc = runtime_snapshot.get("account_snapshot_as_of_utc")
 dry_run_generated_at_utc = runtime_snapshot.get("dry_run_generated_at_utc")
 gate_generated_at_utc = runtime_snapshot.get("gate_generated_at_utc")
-runtime_table_payload = load_runtime_table_snapshot_for_app(runtime_snapshot)
+runtime_table_payload = build_authority_runtime_table_snapshot(
+    latest_successful_snapshot_payload,
+    latest_attempt_status_payload,
+    runtime_snapshot,
+)
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 
 main_metrics = dict(product_snapshot.get("main_strategy_metrics") or {})
@@ -3201,41 +3330,33 @@ with tabs[0]:
     with ops[3]:
         render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     refresh_currentness_state = str(
-        runtime_table_payload.get("currentness_state") or "missing_runtime_artifact"
+        runtime_table_payload.get("currentness_state") or "missing_authority_artifact"
     ).strip()
     refresh_currentness_reason = str(
         runtime_table_payload.get("currentness_reason")
-        or FRESHNESS_SUMMARY_TEXT.get(refresh_currentness_state, FRESHNESS_SUMMARY_TEXT["missing_runtime_artifact"])
+        or FRESHNESS_SUMMARY_TEXT.get(refresh_currentness_state, FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"])
     ).strip()
     pi_runtime_update_utc = runtime_table_payload.get("last_pi_update_utc")
-    backup_refresh_finished_utc = runtime_table_payload.get("last_pc_refresh_utc")
     wallet_sync_utc = runtime_table_payload.get("last_wallet_sync_utc")
     refresh_label_column = "Preh\u013ead" if lang == "sk" else "Field"
     refresh_value_column = "Hodnota" if lang == "sk" else "Value"
     refresh_rows = [
         {
-            refresh_label_column: "Posledn\u00e1 aktualiz\u00e1cia z Pi" if lang == "sk" else "Latest Pi update",
+            refresh_label_column: "Posledn\u00e9 autoritativne publikovanie z Pi" if lang == "sk" else "Latest Pi authority publish",
             refresh_value_column: format_local_time_text(
                 pi_runtime_update_utc,
                 lang,
             ),
         },
         {
-            refresh_label_column: "Z\u00e1lo\u017en\u00fd refresh z PC" if lang == "sk" else "Backup PC refresh",
-            refresh_value_column: format_local_time_text(
-                backup_refresh_finished_utc,
-                lang,
-            ),
-        },
-        {
-            refresh_label_column: "Stav posledn\u00e9ho refreshu" if lang == "sk" else "Last refresh status",
+            refresh_label_column: "Stav posledneho autoritativneho pokusu" if lang == "sk" else "Latest authority attempt status",
             refresh_value_column: safe_text_value(
                 runtime_table_payload.get("last_refresh_status"),
                 lang=lang,
             ),
         },
         {
-            refresh_label_column: "ID posledn\u00e9ho refreshu" if lang == "sk" else "Last refresh ID",
+            refresh_label_column: "ID posledneho autoritativneho pokusu" if lang == "sk" else "Latest authority attempt ID",
             refresh_value_column: safe_text_value(
                 runtime_table_payload.get("last_refresh_run_id"),
                 lang=lang,
@@ -3249,7 +3370,7 @@ with tabs[0]:
             ),
         },
         {
-            refresh_label_column: "Stav aktu\u00e1lnosti" if lang == "sk" else "Currentness state",
+            refresh_label_column: "Autoritativna aktualnost" if lang == "sk" else "Authority currentness",
             refresh_value_column: safe_text_value(
                 refresh_currentness_state,
                 lang=lang,
@@ -3263,7 +3384,7 @@ with tabs[0]:
             ),
         },
     ]
-    st.markdown("#### Denn\u00fd refresh runtime" if lang == "sk" else "#### Daily Refresh Runtime")
+    st.markdown("#### Autoritativny runtime" if lang == "sk" else "#### Authority Runtime")
     render_app_table(refresh_rows, emphasize_first_column=True)
 
     st.markdown(f"### {t(lang, 'overview_title')}")

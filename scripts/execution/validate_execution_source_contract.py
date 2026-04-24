@@ -10,6 +10,12 @@ from typing import Any
 if str(Path(__file__).resolve().parents[2]) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
+from src.market_regime_v1.phase1_time_semantics import (
+    ATTEMPT_STATUSES,
+    ATTEMPT_STATUS_ARTIFACT_TYPE,
+    CURRENTNESS_STATUSES,
+    SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
+)
 from scripts.execution.runtime_path_resolution import (
     format_path_resolution_message,
     resolve_runtime_path,
@@ -20,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
 OUTPUT_DIR = ROOT / "outputs" / "execution" / "source_contract"
 LOGS_DIR = ROOT / "outputs" / "execution" / "logs"
-APP_SNAPSHOT_DIR = ROOT / "outputs" / "execution" / "app_snapshot"
+AUTHORITY_DIR = ROOT / "outputs" / "execution" / "authority"
 
 PATHS_REGISTRY_PATH = SOURCE_OF_TRUTH_DIR / "paths_registry.json"
 
@@ -28,15 +34,12 @@ REPORT_PATH = OUTPUT_DIR / "execution_source_contract_report.json"
 QUALITY_PATH = OUTPUT_DIR / "execution_source_contract_quality.json"
 MANIFEST_PATH = OUTPUT_DIR / "execution_source_contract_manifest.json"
 LOG_PATH = LOGS_DIR / "validate_execution_source_contract.log"
-APP_PRODUCT_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_product_snapshot.json"
-APP_RUNTIME_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_runtime_snapshot.json"
+LATEST_SUCCESSFUL_SNAPSHOT_PATH = AUTHORITY_DIR / "latest_successful_snapshot.json"
+LATEST_ATTEMPT_STATUS_PATH = AUTHORITY_DIR / "latest_attempt_status.json"
 
 REQUIRED_ARTIFACT_KEYS = [
-    "phase67j_winner_paper",
-    "phase67j_live_status",
-    "phase66g_core_paper",
-    "phase66g_live_status",
-    "app_freshness_report",
+    "authority_latest_successful_snapshot",
+    "authority_latest_attempt_status",
 ]
 
 
@@ -191,11 +194,15 @@ def require_non_empty(payload: dict[str, Any], keys: list[str], context: str, er
             errors.append(f"{context}.{key} must be present and non-empty")
 
 
-def validate_product_snapshot() -> dict[str, Any]:
+def validate_product_snapshot_payload(
+    payload: dict[str, Any],
+    *,
+    context: str,
+    source_path: Path,
+) -> dict[str, Any]:
     errors: list[str] = []
-    payload = read_json(APP_PRODUCT_SNAPSHOT_PATH)
     if payload.get("snapshot_type") != "app_product_snapshot":
-        errors.append("app_product_snapshot.json has wrong snapshot_type")
+        errors.append(f"{context} has wrong snapshot_type")
 
     require_keys(
         payload,
@@ -215,31 +222,31 @@ def validate_product_snapshot() -> dict[str, Any]:
             "benchmark_source_path",
             "source_metadata",
         ],
-        "app_product_snapshot",
+        context,
         errors,
     )
     require_non_empty(
         payload,
         ["strategy_last_closed_day", "freshness_target_closed_day", "app_export_generated_at_utc"],
-        "app_product_snapshot",
+        context,
         errors,
     )
     forbid_keys(
         payload,
         ["generated_at_utc", "latest_closed_day"],
-        "app_product_snapshot",
+        context,
         errors,
     )
 
-    freshness = require_dict(payload, "freshness", "app_product_snapshot", errors)
+    freshness = require_dict(payload, "freshness", context, errors)
     forbid_keys(
         freshness,
         ["latest_closed_utc_date"],
-        "app_product_snapshot.freshness",
+        f"{context}.freshness",
         errors,
     )
 
-    metrics = require_dict(payload, "main_strategy_metrics", "app_product_snapshot", errors)
+    metrics = require_dict(payload, "main_strategy_metrics", context, errors)
     require_keys(
         metrics,
         [
@@ -255,33 +262,33 @@ def validate_product_snapshot() -> dict[str, Any]:
             "cash_days_pct",
             "btc_days_pct",
         ],
-        "app_product_snapshot.main_strategy_metrics",
+        f"{context}.main_strategy_metrics",
         errors,
     )
 
-    trend = require_dict(payload, "trend_barometer_summary", "app_product_snapshot", errors)
+    trend = require_dict(payload, "trend_barometer_summary", context, errors)
     require_keys(
         trend,
         ["trend_score", "trend_state_label", "buy_threshold", "trend_calc_date"],
-        "app_product_snapshot.trend_barometer_summary",
+        f"{context}.trend_barometer_summary",
         errors,
     )
 
-    live_state = require_dict(payload, "live_public_state", "app_product_snapshot", errors)
+    live_state = require_dict(payload, "live_public_state", context, errors)
     require_keys(
         live_state,
         ["held_asset_public", "execution_state", "live_truth_mode", "execution_profile", "leverage_mode"],
-        "app_product_snapshot.live_public_state",
+        f"{context}.live_public_state",
         errors,
     )
 
-    chart_paths = require_dict(payload, "chart_source_paths", "app_product_snapshot", errors)
-    validate_repo_relative_file(chart_paths.get("main_strategy"), "app_product_snapshot.chart_source_paths.main_strategy", errors)
-    validate_repo_relative_file(payload.get("benchmark_source_path"), "app_product_snapshot.benchmark_source_path", errors)
+    chart_paths = require_dict(payload, "chart_source_paths", context, errors)
+    validate_repo_relative_file(chart_paths.get("main_strategy"), f"{context}.chart_source_paths.main_strategy", errors)
+    validate_repo_relative_file(payload.get("benchmark_source_path"), f"{context}.benchmark_source_path", errors)
     if payload.get("trend_history_source_path"):
-        validate_repo_relative_file(payload.get("trend_history_source_path"), "app_product_snapshot.trend_history_source_path", errors)
+        validate_repo_relative_file(payload.get("trend_history_source_path"), f"{context}.trend_history_source_path", errors)
 
-    source_metadata = require_dict(payload, "source_metadata", "app_product_snapshot", errors)
+    source_metadata = require_dict(payload, "source_metadata", context, errors)
     require_keys(
         source_metadata,
         [
@@ -294,23 +301,33 @@ def validate_product_snapshot() -> dict[str, Any]:
             "chart_source_paths",
             "benchmark_source_path",
         ],
-        "app_product_snapshot.source_metadata",
+        f"{context}.source_metadata",
         errors,
     )
 
     return {
-        "path": str(APP_PRODUCT_SNAPSHOT_PATH.resolve()),
-        "inspection": inspect_json(APP_PRODUCT_SNAPSHOT_PATH),
+        "path": str(source_path.resolve()),
+        "inspection": {
+            "exists": True,
+            "path": str(source_path.resolve()),
+            "file_type": "json",
+            "top_level_type": type(payload).__name__,
+            "top_level_keys": list(payload.keys()),
+        },
         "errors": errors,
         "valid": not errors,
     }
 
 
-def validate_runtime_snapshot() -> dict[str, Any]:
+def validate_runtime_snapshot_payload(
+    payload: dict[str, Any],
+    *,
+    context: str,
+    source_path: Path,
+) -> dict[str, Any]:
     errors: list[str] = []
-    payload = read_json(APP_RUNTIME_SNAPSHOT_PATH)
     if payload.get("snapshot_type") != "app_runtime_snapshot":
-        errors.append("app_runtime_snapshot.json has wrong snapshot_type")
+        errors.append(f"{context} has wrong snapshot_type")
 
     require_keys(
         payload,
@@ -333,7 +350,7 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "live_order_policy_summary",
             "source_metadata",
         ],
-        "app_runtime_snapshot",
+        context,
         errors,
     )
     require_non_empty(
@@ -345,25 +362,25 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "gate_generated_at_utc",
             "app_export_generated_at_utc",
         ],
-        "app_runtime_snapshot",
+        context,
         errors,
     )
     forbid_keys(
         payload,
         ["generated_at_utc", "last_wallet_sync"],
-        "app_runtime_snapshot",
+        context,
         errors,
     )
 
-    execution_status = require_dict(payload, "execution_status", "app_runtime_snapshot", errors)
+    execution_status = require_dict(payload, "execution_status", context, errors)
     forbid_keys(
         execution_status,
         ["as_of_utc"],
-        "app_runtime_snapshot.execution_status",
+        f"{context}.execution_status",
         errors,
     )
 
-    account_summary = require_dict(payload, "account_snapshot_summary", "app_runtime_snapshot", errors)
+    account_summary = require_dict(payload, "account_snapshot_summary", context, errors)
     require_keys(
         account_summary,
         [
@@ -377,67 +394,67 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "open_orders_count",
             "recent_fills_count",
         ],
-        "app_runtime_snapshot.account_snapshot_summary",
+        f"{context}.account_snapshot_summary",
         errors,
     )
     forbid_keys(
         account_summary,
         ["as_of_utc"],
-        "app_runtime_snapshot.account_snapshot_summary",
+        f"{context}.account_snapshot_summary",
         errors,
     )
 
-    dry_run = require_dict(payload, "dry_run_summary", "app_runtime_snapshot", errors)
+    dry_run = require_dict(payload, "dry_run_summary", context, errors)
     require_keys(
         dry_run,
         ["signal_id", "target_asset", "recommended_action", "simulated_order", "guardrails"],
-        "app_runtime_snapshot.dry_run_summary",
+        f"{context}.dry_run_summary",
         errors,
     )
     forbid_keys(
         dry_run,
         ["generated_at_utc"],
-        "app_runtime_snapshot.dry_run_summary",
+        f"{context}.dry_run_summary",
         errors,
     )
 
-    gate = require_dict(payload, "gate_summary", "app_runtime_snapshot", errors)
+    gate = require_dict(payload, "gate_summary", context, errors)
     require_keys(
         gate,
         ["signal_id", "target_asset", "status", "would_place_real_order", "checks"],
-        "app_runtime_snapshot.gate_summary",
+        f"{context}.gate_summary",
         errors,
     )
     forbid_keys(
         gate,
         ["generated_at_utc"],
-        "app_runtime_snapshot.gate_summary",
+        f"{context}.gate_summary",
         errors,
     )
 
-    runtime_health = require_dict(payload, "runtime_health_summary", "app_runtime_snapshot", errors)
+    runtime_health = require_dict(payload, "runtime_health_summary", context, errors)
     require_keys(
         runtime_health,
         ["status", "run_active", "stop_reason", "execution_mode_guardrail"],
-        "app_runtime_snapshot.runtime_health_summary",
+        f"{context}.runtime_health_summary",
         errors,
     )
     forbid_keys(
         runtime_health,
         ["last_success_utc"],
-        "app_runtime_snapshot.runtime_health_summary",
+        f"{context}.runtime_health_summary",
         errors,
     )
 
-    posture = require_dict(payload, "execution_mode_posture", "app_runtime_snapshot", errors)
+    posture = require_dict(payload, "execution_mode_posture", context, errors)
     require_keys(
         posture,
         ["mode", "trading_enabled", "dry_run_enabled", "kill_switch", "trading_operation_mode"],
-        "app_runtime_snapshot.execution_mode_posture",
+        f"{context}.execution_mode_posture",
         errors,
     )
 
-    runtime_table = require_dict(payload, "runtime_table_snapshot", "app_runtime_snapshot", errors)
+    runtime_table = require_dict(payload, "runtime_table_snapshot", context, errors)
     require_keys(
         runtime_table,
         [
@@ -451,13 +468,13 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "source_metadata",
             "evaluated_at_utc",
         ],
-        "app_runtime_snapshot.runtime_table_snapshot",
+        f"{context}.runtime_table_snapshot",
         errors,
     )
     runtime_table_source_metadata = require_dict(
         runtime_table,
         "source_metadata",
-        "app_runtime_snapshot.runtime_table_snapshot",
+        f"{context}.runtime_table_snapshot",
         errors,
     )
     require_keys(
@@ -471,7 +488,7 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "currentness_state",
             "currentness_reason",
         ],
-        "app_runtime_snapshot.runtime_table_snapshot.source_metadata",
+        f"{context}.runtime_table_snapshot.source_metadata",
         errors,
     )
 
@@ -481,16 +498,19 @@ def validate_runtime_snapshot() -> dict[str, Any]:
         "stale",
         "not_run_today",
         "failed_latest_refresh",
+        "refresh_in_progress",
+        "refresh_failed",
         "missing_runtime_artifact",
+        "missing_authority_artifact",
     }:
         errors.append(
-            "app_runtime_snapshot.runtime_table_snapshot currentness_state has unsupported value"
+            f"{context}.runtime_table_snapshot currentness_state has unsupported value"
         )
 
     currentness_reason = str(runtime_table.get("currentness_reason") or "").strip()
     if not currentness_reason:
         errors.append(
-            "app_runtime_snapshot.runtime_table_snapshot currentness_reason must be non-empty"
+            f"{context}.runtime_table_snapshot currentness_reason must be non-empty"
         )
 
     last_refresh_status = str(runtime_table.get("last_refresh_status") or "").strip()
@@ -499,11 +519,11 @@ def validate_runtime_snapshot() -> dict[str, Any]:
     if last_refresh_status == "not_run":
         if last_refresh_run_id is not None:
             errors.append(
-                "app_runtime_snapshot.runtime_table_snapshot last_refresh_run_id must be null when last_refresh_status=not_run"
+                f"{context}.runtime_table_snapshot last_refresh_run_id must be null when last_refresh_status=not_run"
             )
         if last_pc_refresh_utc is not None:
             errors.append(
-                "app_runtime_snapshot.runtime_table_snapshot last_pc_refresh_utc must be null when last_refresh_status=not_run"
+                f"{context}.runtime_table_snapshot last_pc_refresh_utc must be null when last_refresh_status=not_run"
             )
 
     if last_refresh_status and last_refresh_status != "not_run":
@@ -515,10 +535,10 @@ def validate_runtime_snapshot() -> dict[str, Any]:
         pc_refresh_path = pc_refresh_meta.get("path")
         if not status_path or status_path != run_id_path or status_path != pc_refresh_path:
             errors.append(
-                "app_runtime_snapshot.runtime_table_snapshot refresh status/run_id/pc refresh must resolve from the same manifest source"
+                f"{context}.runtime_table_snapshot refresh status/run_id/pc refresh must resolve from the same manifest source"
             )
 
-    source_metadata = require_dict(payload, "source_metadata", "app_runtime_snapshot", errors)
+    source_metadata = require_dict(payload, "source_metadata", context, errors)
     require_keys(
         source_metadata,
         [
@@ -534,19 +554,212 @@ def validate_runtime_snapshot() -> dict[str, Any]:
             "dry_run_generated_at_utc",
             "gate_generated_at_utc",
         ],
-        "app_runtime_snapshot.source_metadata",
+        f"{context}.source_metadata",
         errors,
     )
     forbid_keys(
         source_metadata,
         ["last_wallet_sync"],
-        "app_runtime_snapshot.source_metadata",
+        f"{context}.source_metadata",
         errors,
     )
 
     return {
-        "path": str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
-        "inspection": inspect_json(APP_RUNTIME_SNAPSHOT_PATH),
+        "path": str(source_path.resolve()),
+        "inspection": {
+            "exists": True,
+            "path": str(source_path.resolve()),
+            "file_type": "json",
+            "top_level_type": type(payload).__name__,
+            "top_level_keys": list(payload.keys()),
+        },
+        "errors": errors,
+        "valid": not errors,
+    }
+
+
+def validate_authority_latest_successful_snapshot() -> dict[str, Any]:
+    errors: list[str] = []
+    payload = read_json(LATEST_SUCCESSFUL_SNAPSHOT_PATH)
+    if payload.get("artifact_type") != SUCCESS_SNAPSHOT_ARTIFACT_TYPE:
+        errors.append("latest_successful_snapshot.json has wrong artifact_type")
+
+    require_keys(
+        payload,
+        [
+            "artifact_type",
+            "schema_version",
+            "target_closed_day_utc",
+            "latest_available_closed_utc_day",
+            "refresh_started_at_utc",
+            "refresh_finished_at_utc",
+            "display_timezone",
+            "latest_authoritative_attempt_status",
+            "strategy_artifact_closed_day_utc",
+            "currentness_status",
+            "currentness_reason",
+            "generated_at_utc",
+            "generated_at_local",
+            "run_id",
+            "authority_role",
+            "automatic_producer_id",
+            "manual_recovery_only",
+            "github_actions_role",
+            "source_manifest_path",
+            "app_product_snapshot",
+        ],
+        "authority_latest_successful_snapshot",
+        errors,
+    )
+    require_non_empty(
+        payload,
+        [
+            "target_closed_day_utc",
+            "latest_available_closed_utc_day",
+            "refresh_started_at_utc",
+            "refresh_finished_at_utc",
+            "generated_at_utc",
+            "run_id",
+            "authority_role",
+            "automatic_producer_id",
+            "source_manifest_path",
+            "currentness_status",
+            "currentness_reason",
+            "strategy_artifact_closed_day_utc",
+        ],
+        "authority_latest_successful_snapshot",
+        errors,
+    )
+
+    attempt_status = str(payload.get("latest_authoritative_attempt_status") or "").strip().lower()
+    if attempt_status != "success":
+        errors.append("authority_latest_successful_snapshot.latest_authoritative_attempt_status must be success")
+    currentness_status = str(payload.get("currentness_status") or "").strip()
+    if currentness_status not in CURRENTNESS_STATUSES:
+        errors.append("authority_latest_successful_snapshot.currentness_status has unsupported value")
+    if str(payload.get("automatic_producer_id") or "").strip().lower() != "raspberry_pi":
+        errors.append("authority_latest_successful_snapshot.automatic_producer_id must be raspberry_pi")
+    if payload.get("manual_recovery_only") is not True:
+        errors.append("authority_latest_successful_snapshot.manual_recovery_only must be true")
+    if str(payload.get("github_actions_role") or "").strip() != "validation_only":
+        errors.append("authority_latest_successful_snapshot.github_actions_role must be validation_only")
+
+    app_product_snapshot = payload.get("app_product_snapshot")
+    if not isinstance(app_product_snapshot, dict):
+        errors.append("authority_latest_successful_snapshot.app_product_snapshot must be an object")
+    else:
+        nested_report = validate_product_snapshot_payload(
+            app_product_snapshot,
+            context="authority_latest_successful_snapshot.app_product_snapshot",
+            source_path=LATEST_SUCCESSFUL_SNAPSHOT_PATH,
+        )
+        errors.extend(nested_report["errors"])
+
+    app_runtime_snapshot = payload.get("app_runtime_snapshot")
+    nested_runtime_report = None
+    if isinstance(app_runtime_snapshot, dict):
+        nested_runtime_report = validate_runtime_snapshot_payload(
+            app_runtime_snapshot,
+            context="authority_latest_successful_snapshot.app_runtime_snapshot",
+            source_path=LATEST_SUCCESSFUL_SNAPSHOT_PATH,
+        )
+        errors.extend(nested_runtime_report["errors"])
+
+    return {
+        "path": str(LATEST_SUCCESSFUL_SNAPSHOT_PATH.resolve()),
+        "inspection": inspect_json(LATEST_SUCCESSFUL_SNAPSHOT_PATH),
+        "errors": errors,
+        "valid": not errors,
+    }
+
+
+def validate_authority_latest_attempt_status() -> dict[str, Any]:
+    errors: list[str] = []
+    payload = read_json(LATEST_ATTEMPT_STATUS_PATH)
+    if payload.get("artifact_type") != ATTEMPT_STATUS_ARTIFACT_TYPE:
+        errors.append("latest_attempt_status.json has wrong artifact_type")
+
+    require_keys(
+        payload,
+        [
+            "artifact_type",
+            "schema_version",
+            "target_closed_day_utc",
+            "latest_available_closed_utc_day",
+            "refresh_started_at_utc",
+            "display_timezone",
+            "latest_authoritative_attempt_status",
+            "currentness_status",
+            "currentness_reason",
+            "generated_at_utc",
+            "generated_at_local",
+            "run_id",
+            "authority_role",
+            "automatic_producer_id",
+            "manual_recovery_only",
+            "github_actions_role",
+            "source_manifest_path",
+            "app_runtime_snapshot",
+        ],
+        "authority_latest_attempt_status",
+        errors,
+    )
+    require_non_empty(
+        payload,
+        [
+            "target_closed_day_utc",
+            "latest_available_closed_utc_day",
+            "refresh_started_at_utc",
+            "generated_at_utc",
+            "run_id",
+            "authority_role",
+            "automatic_producer_id",
+            "source_manifest_path",
+            "currentness_status",
+            "currentness_reason",
+        ],
+        "authority_latest_attempt_status",
+        errors,
+    )
+
+    attempt_status = str(payload.get("latest_authoritative_attempt_status") or "").strip().lower()
+    if attempt_status not in ATTEMPT_STATUSES:
+        errors.append("authority_latest_attempt_status.latest_authoritative_attempt_status has unsupported value")
+    if attempt_status != "in_progress" and not str(payload.get("refresh_finished_at_utc") or "").strip():
+        errors.append("authority_latest_attempt_status.refresh_finished_at_utc is required when attempt is not in_progress")
+    currentness_status = str(payload.get("currentness_status") or "").strip()
+    if currentness_status not in CURRENTNESS_STATUSES:
+        errors.append("authority_latest_attempt_status.currentness_status has unsupported value")
+    if str(payload.get("automatic_producer_id") or "").strip().lower() != "raspberry_pi":
+        errors.append("authority_latest_attempt_status.automatic_producer_id must be raspberry_pi")
+    if payload.get("manual_recovery_only") is not True:
+        errors.append("authority_latest_attempt_status.manual_recovery_only must be true")
+    if str(payload.get("github_actions_role") or "").strip() != "validation_only":
+        errors.append("authority_latest_attempt_status.github_actions_role must be validation_only")
+
+    app_runtime_snapshot = payload.get("app_runtime_snapshot")
+    if not isinstance(app_runtime_snapshot, dict):
+        errors.append("authority_latest_attempt_status.app_runtime_snapshot must be an object")
+    else:
+        nested_report = validate_runtime_snapshot_payload(
+            app_runtime_snapshot,
+            context="authority_latest_attempt_status.app_runtime_snapshot",
+            source_path=LATEST_ATTEMPT_STATUS_PATH,
+        )
+        errors.extend(nested_report["errors"])
+
+    app_product_snapshot = payload.get("app_product_snapshot")
+    if isinstance(app_product_snapshot, dict):
+        nested_product_report = validate_product_snapshot_payload(
+            app_product_snapshot,
+            context="authority_latest_attempt_status.app_product_snapshot",
+            source_path=LATEST_ATTEMPT_STATUS_PATH,
+        )
+        errors.extend(nested_product_report["errors"])
+
+    return {
+        "path": str(LATEST_ATTEMPT_STATUS_PATH.resolve()),
+        "inspection": inspect_json(LATEST_ATTEMPT_STATUS_PATH),
         "errors": errors,
         "valid": not errors,
     }
@@ -601,26 +814,23 @@ def main() -> None:
 
         artifact_reports[artifact_key] = artifact_report
 
-    app_snapshot_reports = {
-        "app_product_snapshot": validate_product_snapshot(),
-        "app_runtime_snapshot": validate_runtime_snapshot(),
+    authority_reports = {
+        "authority_latest_successful_snapshot": validate_authority_latest_successful_snapshot(),
+        "authority_latest_attempt_status": validate_authority_latest_attempt_status(),
     }
-    app_snapshot_errors = [
+    authority_errors = [
         error
-        for snapshot_report in app_snapshot_reports.values()
+        for snapshot_report in authority_reports.values()
         for error in snapshot_report.get("errors", [])
     ]
 
-    hard_required_for_execution = [
-        "phase67j_winner_paper",
-        "phase67j_live_status",
-    ]
+    hard_required_for_execution = list(REQUIRED_ARTIFACT_KEYS)
 
     hard_required_missing = [
         key for key in hard_required_for_execution
         if key in missing_registry_keys or key in missing_files
     ]
-    hard_required_missing.extend(app_snapshot_errors)
+    hard_required_missing.extend(authority_errors)
 
     report = {
         "report_type": "execution_source_contract_report",
@@ -632,14 +842,14 @@ def main() -> None:
         "missing_files": missing_files,
         "hard_required_missing": hard_required_missing,
         "artifact_reports": artifact_reports,
-        "app_snapshot_reports": app_snapshot_reports,
+        "authority_reports": authority_reports,
         "contract_status": "valid" if not hard_required_missing else "invalid",
         "notes": [
             "This validator checks existence and basic shape only.",
             "It does not infer trading logic.",
-            "Do not build execution intent until contract_status is valid.",
-            "The app homepage must be served from app_product_snapshot.json.",
-            "The app account page must be served from app_runtime_snapshot.json."
+            "Do not treat non-authoritative staging files as app truth.",
+            "The app homepage must be served from outputs/execution/authority/latest_successful_snapshot.json.",
+            "The app runtime path must be served from outputs/execution/authority/latest_attempt_status.json."
         ]
     }
 
@@ -649,9 +859,9 @@ def main() -> None:
         "missing_registry_key_count": len(missing_registry_keys),
         "missing_file_count": len(missing_files),
         "hard_required_missing_count": len(hard_required_missing),
-        "app_product_snapshot_valid": app_snapshot_reports["app_product_snapshot"]["valid"],
-        "app_runtime_snapshot_valid": app_snapshot_reports["app_runtime_snapshot"]["valid"],
-        "app_snapshot_error_count": len(app_snapshot_errors),
+        "authority_latest_successful_snapshot_valid": authority_reports["authority_latest_successful_snapshot"]["valid"],
+        "authority_latest_attempt_status_valid": authority_reports["authority_latest_attempt_status"]["valid"],
+        "authority_error_count": len(authority_errors),
         "contract_status": report["contract_status"],
         "ready_for_intent_builder": len(hard_required_missing) == 0,
     }
@@ -666,9 +876,9 @@ def main() -> None:
             str(QUALITY_PATH.resolve()),
             str(MANIFEST_PATH.resolve()),
         ],
-        "validated_app_snapshot_paths": [
-            str(APP_PRODUCT_SNAPSHOT_PATH.resolve()),
-            str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
+        "validated_authority_paths": [
+            str(LATEST_SUCCESSFUL_SNAPSHOT_PATH.resolve()),
+            str(LATEST_ATTEMPT_STATUS_PATH.resolve()),
         ],
         "started_at_utc": started_at,
         "status": "success",
