@@ -28,6 +28,7 @@ from src.market_regime_v1.phase1_time_semantics import (
 ROOT = Path(__file__).resolve().parents[2]
 APP_PRODUCT_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "app_product_snapshot.json"
 APP_RUNTIME_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json"
+EXPORT_CONTRACT_PATH = ROOT / "source_of_truth" / "export_contract.json"
 AUTHORITY_STAGE_NAME = "daily_refresh_app_pipeline"
 PIPELINE_SCRIPT_PATH = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
 
@@ -49,6 +50,106 @@ def read_json_optional(path: Path) -> dict[str, Any]:
     except Exception:
         return {}
     return payload if isinstance(payload, dict) else {}
+
+
+def _path_for_app(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path.resolve())
+
+
+def _resolve_export_contract_path_text(raw_path: Any, *, context: str) -> str:
+    text = str(raw_path or "").strip()
+    if not text:
+        raise ValueError(f"source_of_truth/export_contract.json missing {context}")
+    path = Path(text)
+    if not path.is_absolute():
+        path = ROOT / path
+    return _path_for_app(path)
+
+
+def _validate_authority_app_product_snapshot(app_product_snapshot: dict[str, Any]) -> None:
+    export_contract = read_json_required(EXPORT_CONTRACT_PATH)
+    app_export_contract = export_contract.get("app_export_contract")
+    if not isinstance(app_export_contract, dict):
+        raise ValueError("source_of_truth/export_contract.json missing app_export_contract")
+
+    model_sources = app_export_contract.get("model_sources")
+    if not isinstance(model_sources, dict):
+        raise ValueError("source_of_truth/export_contract.json missing app_export_contract.model_sources")
+
+    expected_main_strategy_model = str(app_export_contract.get("main_strategy_model") or "").strip()
+    if not expected_main_strategy_model:
+        raise ValueError("source_of_truth/export_contract.json missing app_export_contract.main_strategy_model")
+
+    main_source_entry = model_sources.get(expected_main_strategy_model)
+    if not isinstance(main_source_entry, dict):
+        raise ValueError(
+            "source_of_truth/export_contract.json missing model_sources entry "
+            f"for main strategy '{expected_main_strategy_model}'"
+        )
+
+    expected_main_summary_path = _resolve_export_contract_path_text(
+        main_source_entry.get("summary_path"),
+        context=f"app_export_contract.model_sources.{expected_main_strategy_model}.summary_path",
+    )
+    expected_main_chart_path = _resolve_export_contract_path_text(
+        main_source_entry.get("paper_path"),
+        context=f"app_export_contract.model_sources.{expected_main_strategy_model}.paper_path",
+    )
+
+    actual_main_strategy_model = str(app_product_snapshot.get("main_strategy_model") or "").strip()
+    if actual_main_strategy_model != expected_main_strategy_model:
+        raise ValueError(
+            "Authority publish blocked: app_product_snapshot.main_strategy_model diverged from "
+            "source_of_truth/export_contract.json "
+            f"(expected={expected_main_strategy_model} actual={actual_main_strategy_model or 'missing'})"
+        )
+
+    main_strategy_metrics = (
+        app_product_snapshot.get("main_strategy_metrics")
+        if isinstance(app_product_snapshot.get("main_strategy_metrics"), dict)
+        else {}
+    )
+    actual_metrics_model = str(main_strategy_metrics.get("model") or "").strip()
+    if actual_metrics_model != expected_main_strategy_model:
+        raise ValueError(
+            "Authority publish blocked: app_product_snapshot.main_strategy_metrics.model diverged from "
+            "source_of_truth/export_contract.json "
+            f"(expected={expected_main_strategy_model} actual={actual_metrics_model or 'missing'})"
+        )
+
+    chart_source_paths = (
+        app_product_snapshot.get("chart_source_paths")
+        if isinstance(app_product_snapshot.get("chart_source_paths"), dict)
+        else {}
+    )
+    actual_main_chart_path = str(chart_source_paths.get("main_strategy") or "").strip()
+    if actual_main_chart_path != expected_main_chart_path:
+        raise ValueError(
+            "Authority publish blocked: app_product_snapshot.chart_source_paths.main_strategy diverged from "
+            "source_of_truth/export_contract.json "
+            f"(expected={expected_main_chart_path} actual={actual_main_chart_path or 'missing'})"
+        )
+
+    source_metadata = (
+        app_product_snapshot.get("source_metadata")
+        if isinstance(app_product_snapshot.get("source_metadata"), dict)
+        else {}
+    )
+    metrics_metadata = (
+        source_metadata.get("main_strategy_metrics")
+        if isinstance(source_metadata.get("main_strategy_metrics"), dict)
+        else {}
+    )
+    actual_main_summary_path = str(metrics_metadata.get("path") or "").strip()
+    if actual_main_summary_path != expected_main_summary_path:
+        raise ValueError(
+            "Authority publish blocked: app_product_snapshot.source_metadata.main_strategy_metrics.path diverged from "
+            "source_of_truth/export_contract.json "
+            f"(expected={expected_main_summary_path} actual={actual_main_summary_path or 'missing'})"
+        )
 
 
 def build_authority_publish_state(
@@ -179,6 +280,7 @@ def publish_authority_refresh_success(
 ) -> dict[str, Any]:
     app_product_snapshot = read_json_required(APP_PRODUCT_SNAPSHOT_PATH)
     app_runtime_snapshot = read_json_required(APP_RUNTIME_SNAPSHOT_PATH)
+    _validate_authority_app_product_snapshot(app_product_snapshot)
     normalized_finished_at_utc = normalize_utc_timestamp(
         refresh_finished_at_utc,
         field_name="refresh_finished_at_utc",
