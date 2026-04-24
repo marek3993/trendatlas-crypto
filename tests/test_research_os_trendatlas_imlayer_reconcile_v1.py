@@ -147,6 +147,24 @@ class TestResearchOSTrendAtlasIMLayerReconcileV1(unittest.TestCase):
             "No repo-local imLayer read contract was found",
             report["true_read_back_parity"]["blocker"],
         )
+        minimal_read_surface = report["true_read_back_parity"]["minimal_read_surface_v1"]
+        self.assertEqual(minimal_read_surface["status"], "proposal_only")
+        self.assertEqual(
+            minimal_read_surface["required_iml_change"]["path_template"],
+            "/api/v1/reads/decision-episodes/{memory_id}",
+        )
+        self.assertEqual(
+            len(minimal_read_surface["batch_verification_targets"]),
+            2,
+        )
+        self.assertEqual(
+            minimal_read_surface["batch_verification_targets"][0]["memory_id"],
+            "trendatlas.crypto.decision_episode.alpha.family",
+        )
+        self.assertIn(
+            "sha256(canonical_json(response.record)) matches expected payload_sha256",
+            minimal_read_surface["trendatlas_verification_rule"]["required_checks"],
+        )
 
     def test_reconcile_fails_write_ack_when_memory_id_is_missing_from_acknowledged_results(self) -> None:
         batch_id, export_root, ingestion_manifest_path = self.create_batch_fixture(include_second_result=False)

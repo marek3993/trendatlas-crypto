@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import importlib.util
 import json
 import sys
 from pathlib import Path
@@ -40,6 +42,16 @@ class ReconciliationFailure(RuntimeError):
 
 def compact_json(value: Any) -> str:
     return json.dumps(value, indent=2, sort_keys=True)
+
+
+def canonical_json_sha256(value: Any) -> str:
+    canonical = json.dumps(
+        value,
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(canonical).hexdigest()
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -112,6 +124,7 @@ def load_export_batch(batch_root: Path) -> dict[str, Any]:
                 "relative_path": str(relative_path),
                 "path": episode_path.as_posix(),
                 "memory_id": memory_id,
+                "episode": episode,
             }
         )
 
@@ -328,15 +341,113 @@ def find_local_persistence_candidates(project_root: Path) -> list[str]:
     return sorted(set(candidates))
 
 
-def build_true_read_back_parity(project_root: Path) -> dict[str, Any]:
+def load_build_live_episode_payload():
+    ingest_path = Path(__file__).with_name("research_os_trendatlas_imlayer_ingest_v1.py")
+    spec = importlib.util.spec_from_file_location(
+        "research_os_trendatlas_imlayer_ingest_v1_for_reconcile",
+        ingest_path,
+    )
+    if spec is None or spec.loader is None:
+        raise ReconciliationFailure(
+            f"Unable to load ingest helper module: {ingest_path.as_posix()}"
+        )
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module.build_live_episode_payload
+
+
+def build_expected_stored_records(export_batch: dict[str, Any]) -> list[dict[str, Any]]:
+    build_live_episode_payload = load_build_live_episode_payload()
+    expected_records: list[dict[str, Any]] = []
+    for episode_entry in export_batch["episodes"]:
+        try:
+            stored_payload = build_live_episode_payload(episode_entry["episode"])
+        except Exception as exc:
+            expected_records.append(
+                {
+                    "memory_id": episode_entry["memory_id"],
+                    "payload_sha256": None,
+                    "derivation_error": str(exc),
+                }
+            )
+            continue
+        expected_records.append(
+            {
+                "memory_id": stored_payload["memory_id"],
+                "namespace": stored_payload["namespace"],
+                "collection": stored_payload["collection"],
+                "entity_id": stored_payload["entity_id"],
+                "episode_type": stored_payload["episode_type"],
+                "payload_sha256": canonical_json_sha256(stored_payload),
+            }
+        )
+    return expected_records
+
+
+def build_minimal_read_surface_v1(export_batch: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "status": "proposal_only",
+        "why": (
+            "TrendAtlas already has the exported source episodes and stable memory_ids; "
+            "the thinnest missing capability is a read-by-memory_id surface that returns "
+            "the exact stored record payload."
+        ),
+        "required_iml_change": {
+            "type": "local_dev_http_read_endpoint",
+            "env_var": "TRENDATLAS_IML_READ_URL",
+            "method": "GET",
+            "path_template": "/api/v1/reads/decision-episodes/{memory_id}",
+            "query": {
+                "namespace": EXPECTED_NAMESPACE,
+                "collection": EXPECTED_COLLECTION,
+            },
+            "auth": {
+                "header": "Authorization",
+                "scheme": "Bearer",
+            },
+            "success_response": {
+                "found": True,
+                "memory_id": "<memory_id>",
+                "namespace": EXPECTED_NAMESPACE,
+                "collection": EXPECTED_COLLECTION,
+                "record": "<exact stored decision episode payload object>",
+            },
+            "not_found_response": {
+                "found": False,
+                "memory_id": "<memory_id>",
+                "namespace": EXPECTED_NAMESPACE,
+                "collection": EXPECTED_COLLECTION,
+            },
+        },
+        "trendatlas_verification_rule": {
+            "for_each_memory_id": "call TRENDATLAS_IML_READ_URL with the memory_id path parameter",
+            "required_checks": [
+                "response.found == true",
+                "response.memory_id matches exported memory_id",
+                "response.namespace == trendatlas",
+                "response.collection == decision_episodes",
+                "sha256(canonical_json(response.record)) matches expected payload_sha256",
+            ],
+        },
+        "batch_verification_targets": build_expected_stored_records(export_batch),
+    }
+
+
+def build_true_read_back_parity(
+    project_root: Path,
+    export_batch: dict[str, Any],
+) -> dict[str, Any]:
     repo_markers = find_repo_read_contract_markers(project_root)
     persistence_candidates = find_local_persistence_candidates(project_root)
+    minimal_read_surface_v1 = build_minimal_read_surface_v1(export_batch)
     if repo_markers:
         return {
             "status": "blocked",
             "blocker": "Read contract markers exist, but this repo does not define a supported true read-back verifier yet.",
             "read_contract_markers": repo_markers,
             "persistence_candidates": persistence_candidates,
+            "minimal_read_surface_v1": minimal_read_surface_v1,
         }
     if persistence_candidates:
         return {
@@ -344,6 +455,7 @@ def build_true_read_back_parity(project_root: Path) -> dict[str, Any]:
             "blocker": "Local persistence candidates exist, but no repo-defined imLayer read contract or storage parser is available for true read-back parity.",
             "read_contract_markers": repo_markers,
             "persistence_candidates": persistence_candidates,
+            "minimal_read_surface_v1": minimal_read_surface_v1,
         }
     return {
         "status": "blocked",
@@ -353,6 +465,7 @@ def build_true_read_back_parity(project_root: Path) -> dict[str, Any]:
         ),
         "read_contract_markers": repo_markers,
         "persistence_candidates": persistence_candidates,
+        "minimal_read_surface_v1": minimal_read_surface_v1,
     }
 
 
@@ -383,7 +496,7 @@ def reconcile_batch(
         )
 
     write_ack_parity = build_write_ack_parity(export_batch, ingestion_data)
-    true_read_back_parity = build_true_read_back_parity(project_root)
+    true_read_back_parity = build_true_read_back_parity(project_root, export_batch)
 
     final_status = "working"
     if write_ack_parity["status"] != "passed" or true_read_back_parity["status"] != "passed":
