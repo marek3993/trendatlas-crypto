@@ -25,6 +25,9 @@ from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
     SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
 )
+from scripts.execution.authority_metric_derivation import (
+    derive_strategy_day_metrics_from_csv,
+)
 from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
 )
@@ -799,7 +802,7 @@ def build_missing_runtime_snapshot(path: Path) -> dict:
                 "path": str(path),
                 "exists": False,
                 "source_type": "authority_latest_attempt_status",
-                "source_field": "app_runtime_snapshot.account_snapshot_as_of_utc",
+                "source_field": "authority_wallet_sync_utc|authority_account_snapshot_as_of_utc",
             },
             "currentness_state": {
                 "path": str(path),
@@ -843,7 +846,6 @@ def load_runtime_snapshot_for_app(payload: dict, path: Path) -> dict:
 def build_authority_runtime_table_snapshot(
     latest_successful_snapshot: dict,
     latest_attempt_status: dict,
-    runtime_snapshot: dict,
 ) -> dict:
     attempt_payload = latest_attempt_status if isinstance(latest_attempt_status, dict) else {}
     success_payload = latest_successful_snapshot if isinstance(latest_successful_snapshot, dict) else {}
@@ -888,7 +890,19 @@ def build_authority_runtime_table_snapshot(
         ).strip()
         or FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"]
     )
-    wallet_sync_utc = runtime_snapshot.get("account_snapshot_as_of_utc")
+    wallet_sync_utc = (
+        attempt_payload.get("authority_wallet_sync_utc")
+        or attempt_payload.get("authority_account_snapshot_as_of_utc")
+    )
+    wallet_source_path = AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
+    wallet_source_type = ATTEMPT_STATUS_ARTIFACT_TYPE
+    if not wallet_sync_utc:
+        wallet_sync_utc = (
+            success_payload.get("authority_wallet_sync_utc")
+            or success_payload.get("authority_account_snapshot_as_of_utc")
+        )
+        wallet_source_path = AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
+        wallet_source_type = SUCCESS_SNAPSHOT_ARTIFACT_TYPE
     return {
         "last_pi_update_utc": authority_generated_at_utc,
         "last_pc_refresh_utc": None,
@@ -917,10 +931,10 @@ def build_authority_runtime_table_snapshot(
                 "source_field": "run_id",
             },
             "last_wallet_sync_utc": {
-                "path": str(source_path),
-                "exists": source_path.exists(),
-                "source_type": source_type,
-                "source_field": "app_runtime_snapshot.account_snapshot_as_of_utc",
+                "path": str(wallet_source_path),
+                "exists": wallet_source_path.exists(),
+                "source_type": wallet_source_type,
+                "source_field": "authority_wallet_sync_utc|authority_account_snapshot_as_of_utc",
             },
             "currentness_state": {
                 "path": str(source_path),
@@ -3223,11 +3237,11 @@ gate_generated_at_utc = runtime_snapshot.get("gate_generated_at_utc")
 runtime_table_payload = build_authority_runtime_table_snapshot(
     latest_successful_snapshot_payload,
     latest_attempt_status_payload,
-    runtime_snapshot,
 )
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 
 main_metrics = dict(product_snapshot.get("main_strategy_metrics") or {})
+main_metrics.update(derive_strategy_day_metrics_from_csv(main_paper_path))
 
 years = available_years_from_frames(list(papers.values()) + [btc_df])
 if not years:

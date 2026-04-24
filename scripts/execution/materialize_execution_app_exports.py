@@ -20,6 +20,9 @@ from scripts.approved_strategy_net_export_helper import (
     build_net_cost_export_frame,
     summarize_net_cost_export,
 )
+from scripts.execution.authority_metric_derivation import (
+    derive_strategy_day_metrics_from_csv,
+)
 from scripts.execution.runtime_path_resolution import (
     format_path_resolution_message,
     resolve_runtime_path,
@@ -1274,6 +1277,10 @@ def normalize_homepage_main_strategy_metrics(
         for field in ("sharpe", "sortino"):
             if field not in metrics and field in derived_risk_metrics:
                 metrics[field] = derived_risk_metrics[field]
+
+    derived_day_metrics = derive_strategy_day_metrics_from_csv(main_paper_path)
+    for field, value in derived_day_metrics.items():
+        metrics[field] = value
 
     metrics["model"] = main_strategy_model
     return metrics

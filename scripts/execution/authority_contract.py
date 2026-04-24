@@ -74,6 +74,9 @@ def build_authority_extra_fields(
     attempt_stage: str | None = None,
     attempt_stage_status: str | None = None,
     stage_history: list[dict[str, Any]] | None = None,
+    authority_wallet_sync_utc: str | None = None,
+    authority_account_snapshot_as_of_utc: str | None = None,
+    authority_runtime_snapshot_generated_at_utc: str | None = None,
     app_product_snapshot: dict[str, Any] | None = None,
     app_runtime_snapshot: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -124,6 +127,21 @@ def build_authority_extra_fields(
 
     if stage_history is not None:
         payload["stage_history"] = stage_history
+    if authority_wallet_sync_utc is not None:
+        payload["authority_wallet_sync_utc"] = normalize_utc_timestamp(
+            authority_wallet_sync_utc,
+            field_name="authority_wallet_sync_utc",
+        )
+    if authority_account_snapshot_as_of_utc is not None:
+        payload["authority_account_snapshot_as_of_utc"] = normalize_utc_timestamp(
+            authority_account_snapshot_as_of_utc,
+            field_name="authority_account_snapshot_as_of_utc",
+        )
+    if authority_runtime_snapshot_generated_at_utc is not None:
+        payload["authority_runtime_snapshot_generated_at_utc"] = normalize_utc_timestamp(
+            authority_runtime_snapshot_generated_at_utc,
+            field_name="authority_runtime_snapshot_generated_at_utc",
+        )
     if app_product_snapshot is not None:
         payload["app_product_snapshot"] = app_product_snapshot
     if app_runtime_snapshot is not None:

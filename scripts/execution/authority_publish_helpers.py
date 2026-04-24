@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -212,6 +213,9 @@ def _build_extra_fields(
     generated_at_utc: str,
     attempt_stage_status: str,
     stage_history: list[dict[str, Any]],
+    authority_wallet_sync_utc: str | None = None,
+    authority_account_snapshot_as_of_utc: str | None = None,
+    authority_runtime_snapshot_generated_at_utc: str | None = None,
     app_product_snapshot: dict[str, Any] | None = None,
     app_runtime_snapshot: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -226,9 +230,78 @@ def _build_extra_fields(
         attempt_stage=AUTHORITY_STAGE_NAME,
         attempt_stage_status=attempt_stage_status,
         stage_history=stage_history,
+        authority_wallet_sync_utc=authority_wallet_sync_utc,
+        authority_account_snapshot_as_of_utc=authority_account_snapshot_as_of_utc,
+        authority_runtime_snapshot_generated_at_utc=authority_runtime_snapshot_generated_at_utc,
         app_product_snapshot=app_product_snapshot,
         app_runtime_snapshot=app_runtime_snapshot,
     )
+
+
+def _parse_utc_datetime(value: str, *, field_name: str) -> datetime:
+    normalized = normalize_utc_timestamp(value, field_name=field_name)
+    parsed = datetime.fromisoformat(normalized.replace("Z", "+00:00"))
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def _resolve_runtime_sync_fields(app_runtime_snapshot: Mapping[str, Any]) -> dict[str, str]:
+    wallet_sync_utc = normalize_utc_timestamp(
+        app_runtime_snapshot.get("latest_wallet_sync_utc")
+        or app_runtime_snapshot.get("account_snapshot_as_of_utc"),
+        field_name="app_runtime_snapshot.latest_wallet_sync_utc",
+    )
+    account_snapshot_as_of_utc = normalize_utc_timestamp(
+        app_runtime_snapshot.get("account_snapshot_as_of_utc") or wallet_sync_utc,
+        field_name="app_runtime_snapshot.account_snapshot_as_of_utc",
+    )
+    runtime_snapshot_generated_at_utc = normalize_utc_timestamp(
+        app_runtime_snapshot.get("app_runtime_snapshot_generated_at_utc"),
+        field_name="app_runtime_snapshot.app_runtime_snapshot_generated_at_utc",
+    )
+    return {
+        "authority_wallet_sync_utc": wallet_sync_utc,
+        "authority_account_snapshot_as_of_utc": account_snapshot_as_of_utc,
+        "authority_runtime_snapshot_generated_at_utc": runtime_snapshot_generated_at_utc,
+    }
+
+
+def _validate_success_runtime_sync_fields(
+    state: Mapping[str, Any],
+    app_runtime_snapshot: Mapping[str, Any],
+) -> dict[str, str]:
+    sync_fields = _resolve_runtime_sync_fields(app_runtime_snapshot)
+    refresh_started_at_utc = normalize_utc_timestamp(
+        state.get("refresh_started_at_utc"),
+        field_name="refresh_started_at_utc",
+    )
+    refresh_started_at = _parse_utc_datetime(
+        refresh_started_at_utc,
+        field_name="refresh_started_at_utc",
+    )
+    wallet_sync_at = _parse_utc_datetime(
+        sync_fields["authority_wallet_sync_utc"],
+        field_name="authority_wallet_sync_utc",
+    )
+    runtime_snapshot_generated_at = _parse_utc_datetime(
+        sync_fields["authority_runtime_snapshot_generated_at_utc"],
+        field_name="authority_runtime_snapshot_generated_at_utc",
+    )
+
+    if wallet_sync_at < refresh_started_at:
+        raise ValueError(
+            "Authority publish blocked: app_runtime_snapshot wallet sync is stale for this run "
+            f"(wallet_sync_utc={sync_fields['authority_wallet_sync_utc']} "
+            f"refresh_started_at_utc={refresh_started_at_utc})"
+        )
+    if runtime_snapshot_generated_at < refresh_started_at:
+        raise ValueError(
+            "Authority publish blocked: app_runtime_snapshot was not regenerated during this run "
+            f"(app_runtime_snapshot_generated_at_utc={sync_fields['authority_runtime_snapshot_generated_at_utc']} "
+            f"refresh_started_at_utc={refresh_started_at_utc})"
+        )
+    return sync_fields
 
 
 def publish_authority_refresh_started(
@@ -281,6 +354,7 @@ def publish_authority_refresh_success(
     app_product_snapshot = read_json_required(APP_PRODUCT_SNAPSHOT_PATH)
     app_runtime_snapshot = read_json_required(APP_RUNTIME_SNAPSHOT_PATH)
     _validate_authority_app_product_snapshot(app_product_snapshot)
+    runtime_sync_fields = _validate_success_runtime_sync_fields(state, app_runtime_snapshot)
     normalized_finished_at_utc = normalize_utc_timestamp(
         refresh_finished_at_utc,
         field_name="refresh_finished_at_utc",
@@ -316,6 +390,9 @@ def publish_authority_refresh_success(
         generated_at_utc=normalized_finished_at_utc,
         attempt_stage_status="success",
         stage_history=stage_history,
+        authority_wallet_sync_utc=runtime_sync_fields["authority_wallet_sync_utc"],
+        authority_account_snapshot_as_of_utc=runtime_sync_fields["authority_account_snapshot_as_of_utc"],
+        authority_runtime_snapshot_generated_at_utc=runtime_sync_fields["authority_runtime_snapshot_generated_at_utc"],
         app_product_snapshot=app_product_snapshot,
         app_runtime_snapshot=app_runtime_snapshot,
     )
