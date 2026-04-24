@@ -87,6 +87,8 @@ outputs/**/logs/
 outputs/**/debug/
 outputs/**/plots_tmp/
 outputs/**/charts_tmp/
+outputs/research_os/dev_only/imlayer_exports/
+outputs/research_os/dev_only/imlayer_ingestion/
 
 # --- Large binary artifacts ---
 *.zip
