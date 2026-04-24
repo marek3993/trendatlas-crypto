@@ -1,47 +1,25 @@
 # Current Issues
 
 ## Accepted current state
-- research/raw winner = phase68i_66g_1p50x_static
-- best deployment candidate = phase68g_66g_1p25x_candidate
-- official softer fallback = phase68i_dynamic_ladder_candidate
-- Phase68J simple tail-risk guardrails = rejected
-- ordering now places phase68g_66g_1p25x_candidate as current live/app truth and phase68i_dynamic_ladder_candidate as official softer fallback
-- leverage branch live truth has been promoted to phase68g_66g_1p25x_candidate
-- direct app/live truth switch is approved and applied
-- current live truth is phase68g_66g_1p25x_candidate
-- approval_gate_status = approved_and_applied
-- real_order_gate_status = live_order_enabled_and_approved
-- only live_order_enabled_and_approved counts as real-order eligible
+- Pi-only authority model is active.
+- App authority source is the two-file model:
+  - `outputs/execution/authority/latest_successful_snapshot.json`
+  - `outputs/execution/authority/latest_attempt_status.json`
+- Legacy snapshot/runtime/refresh paths are non-authoritative for app reasoning.
 
-## Resolved blockers / completed accepted progress
-- DATA plumbing / execution-contract / source-mapping blocker is closed
-- APP final export-contract preparation for dynamic ladder is complete
-- AUTOMATION local-PC controlled runtime loop discipline is operational
-- validated safe posture:
-  - mode = read_only
-  - trading_enabled = false
-  - dry_run_enabled = true
-  - kill_switch = true
-- default runtime behavior is one_pass
-- continuous runtime loop requires explicit request
-- source_of_truth writes are not part of runtime loops
-- AI LAB schema_contract_expansion maintenance step is complete
-- AI LAB phase69 remains paused pending future objective reframing
-- AI LAB strategy advancement remains paused
-- AI LAB dev-only execution mode is approved
-- AI LAB dev-only runner/spec maintenance is allowed
-- AI LAB widened dev-only implementation is approved for:
-  - cross_asset_decoupling_stack
-  - liquidity_stress_anomaly_stack
-  - event_context_flags_stack
-- all such AI LAB outputs must remain:
-  - dev_only = true
-  - non_authoritative = true
-- no official truth mutation is allowed from AI LAB outputs themselves
-- no new strategy line, no phase69 reopening, no scoring loosening, and no APP / DATA / EXECUTION / live-order drift
+## Active operational focus
+- Complete soak test for unattended Pi authority publishing.
+- Monitor `latest_authoritative_attempt_status`, `currentness_status`, and target closed UTC day daily.
+- Confirm no remaining app reasoning path depends on legacy app snapshot/runtime/refresh files.
 
-## Operational posture
-- execution outputs are decision-relevant operational artifacts, not official truth
-- automation artifacts for execution refresh/runtime are not official truth
-- current local-PC runtime discipline is safe read_only + dry_run only
-- remaining work is controlled 24/7 runtime discipline, not DATA blocker analysis
+## Explicitly non-authoritative legacy paths
+- `outputs/execution/app_snapshot/*`
+- `outputs/app_refresh_pipeline/*`
+- `outputs/execution/full_auto_scheduler/*`
+- `outputs/execution/runtime_health/*`
+- `outputs/execution/live_status/*`
+
+## Authority runtime posture
+- Raspberry Pi is the only automatic production producer.
+- PC is manual recovery/debug only.
+- GitHub Actions is validation only.

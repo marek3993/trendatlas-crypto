@@ -1,45 +1,30 @@
 # Master State
 
 ## Official state snapshot
-- research/raw leverage winner: phase68i_66g_1p50x_static
-- best deployment candidate: phase68g_66g_1p25x_candidate
-- official softer fallback: phase68i_dynamic_ladder_candidate
-- Phase68J simple tail-risk guardrails: rejected
-- ordering: phase68g_66g_1p25x_candidate is now current live/app truth and phase68i_dynamic_ladder_candidate is now official softer fallback
-- leverage branch: live truth approved and applied
-- current live truth: phase68g_66g_1p25x_candidate
-- direct app/live truth switch: approved and applied
-- real-order gate: live_order_enabled_and_approved
-- only real-order eligible status: live_order_enabled_and_approved
+- Official core production baseline: `phase66g_production_soft_filters`
+- Official universe winner: `phase67j_no_neo_main`
+- Current live/app truth: `phase68g_66g_1p25x_candidate`
+- Current app main strategy model: `phase68g_66g_1p25x_candidate`
+- Reference strategy model: `phase67j_no_neo_main`
+- Benchmark: `BTC`
 
-## Accepted progress snapshot
-- DATA: plumbing / execution-contract / source-mapping blocker is closed
-- APP: final export-contract preparation for dynamic ladder is complete
-- AUTOMATION: local-PC controlled runtime loop discipline is operational
-- validated safe posture:
-  - mode = read_only
-  - trading_enabled = false
-  - dry_run_enabled = true
-  - kill_switch = true
-- default runtime behavior: one_pass
-- continuous runtime loop: explicit request only
-- source_of_truth writes are not part of runtime loops
-- AI LAB: schema_contract_expansion maintenance step is complete
-- AI LAB: phase69 remains paused pending future objective reframing
-- AI LAB: strategy advancement remains paused
-- AI LAB: dev-only execution mode is approved
-- AI LAB: dev-only runner/spec maintenance is allowed
-- AI LAB: widened dev-only implementation is approved for:
-  - cross_asset_decoupling_stack
-  - liquidity_stress_anomaly_stack
-  - event_context_flags_stack
-- all such AI LAB outputs must remain:
-  - dev_only = true
-  - non_authoritative = true
-- no new strategy line, no phase69 reopening, no scoring loosening, and no APP / DATA / EXECUTION / live-order drift
+## Production authority model
+- Jediný automatický production producer: `raspberry_pi`
+- PC rola: `manual_recovery_debug_only`
+- GitHub Actions rola: `validation_only`
+- App authority source je dvoj-súborový model:
+  - `outputs/execution/authority/latest_successful_snapshot.json`
+  - `outputs/execution/authority/latest_attempt_status.json`
 
-## Workflow rules
-- Repo-heavy / multi-step workflow: Codex should be used for repo patching/execution.
-- Heavy validations are run locally by the user.
-- Segment chat interprets validation results and gives the next exact step.
-- Truth-sensitive workflow: repo-based conclusions must include a FILES READ header listing the actual SSOT/README files read.
+## Legacy paths are not app authority
+- `outputs/execution/app_snapshot/*`
+- `outputs/app_refresh_pipeline/*`
+- `outputs/execution/full_auto_scheduler/*`
+- `outputs/execution/runtime_health/*`
+- `outputs/execution/live_status/*`
+
+## Authority rules
+- `latest_successful_snapshot.json` je posledný úspešný autoritatívny snapshot.
+- `latest_attempt_status.json` je posledný autoritatívny attempt status.
+- Failed attempt nesmie prepísať posledný úspešný snapshot.
+- App a všetky MRV1 chaty majú reasonovať z Pi-authority modelu, nie z legacy PC/refresh snapshotov.
