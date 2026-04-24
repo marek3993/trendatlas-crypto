@@ -18,12 +18,18 @@ CASH_EQUIVALENT_ASSETS = {
     "NONE",
     "NULL",
 }
-BTC_PROXY_ASSETS = {
-    "BTC",
+UNSUPPORTED_PROXY_ASSETS = {
     "BASELINE_RISK",
     "EARLY_RISK",
     "FULL_RISK",
 }
+AUTHORITATIVE_HELD_ASSET_FIELDS = (
+    "portfolio_held_asset",
+    "held_asset_public",
+    "held_asset",
+    "tradable_governed_asset",
+    "baseline_held_asset",
+)
 
 
 def _normalize_asset_token(value: Any) -> str:
@@ -44,57 +50,48 @@ def _as_bool(value: Any) -> bool | None:
     return None
 
 
-def resolve_authoritative_held_asset(row: pd.Series) -> str:
+def resolve_authoritative_day_metric_state(row: pd.Series) -> str:
     if _as_bool(row.get("cash_day")) is True:
         return "CASH"
 
-    for field in (
-        "portfolio_held_asset",
-        "held_asset_public",
-        "held_asset",
-        "tradable_governed_asset",
-        "baseline_held_asset",
-    ):
+    for field in AUTHORITATIVE_HELD_ASSET_FIELDS:
         token = _normalize_asset_token(row.get(field))
         if not token:
             continue
         if token in CASH_EQUIVALENT_ASSETS:
             return "CASH"
-        if token in BTC_PROXY_ASSETS:
+        if token in UNSUPPORTED_PROXY_ASSETS:
+            return "UNSUPPORTED"
+        if token == "BTC":
             return "BTC"
-        return token
+        return "OTHER"
 
-    return "CASH"
+    return "OTHER"
 
 
-def derive_strategy_day_metrics_from_frame(frame: pd.DataFrame) -> dict[str, float]:
+def derive_strategy_day_metrics_from_frame(frame: pd.DataFrame) -> dict[str, float] | None:
     if frame.empty:
         return {}
 
-    relevant_columns = {
-        "cash_day",
-        "portfolio_held_asset",
-        "held_asset_public",
-        "held_asset",
-        "tradable_governed_asset",
-        "baseline_held_asset",
-    }
+    relevant_columns = {"cash_day", *AUTHORITATIVE_HELD_ASSET_FIELDS}
     if not any(column in frame.columns for column in relevant_columns):
         return {}
 
-    held_assets = frame.apply(resolve_authoritative_held_asset, axis=1)
-    if held_assets.empty:
+    day_metric_states = frame.apply(resolve_authoritative_day_metric_state, axis=1)
+    if day_metric_states.empty:
         return {}
+    if bool((day_metric_states == "UNSUPPORTED").any()):
+        return None
 
-    cash_days_pct = round(float(held_assets.isin(CASH_EQUIVALENT_ASSETS).mean() * 100.0), 4)
-    btc_days_pct = round(float((held_assets == "BTC").mean() * 100.0), 4)
+    cash_days_pct = round(float((day_metric_states == "CASH").mean() * 100.0), 4)
+    btc_days_pct = round(float((day_metric_states == "BTC").mean() * 100.0), 4)
     return {
         "cash_days_pct": cash_days_pct,
         "btc_days_pct": btc_days_pct,
     }
 
 
-def derive_strategy_day_metrics_from_csv(path: str | Path) -> dict[str, float]:
+def derive_strategy_day_metrics_from_csv(path: str | Path) -> dict[str, float] | None:
     csv_path = Path(path)
     if not csv_path.exists() or not csv_path.is_file():
         return {}

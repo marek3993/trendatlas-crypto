@@ -972,11 +972,14 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     if total_days == 0:
         fail("No held asset rows found in phase68i paper export")
 
-    cash_days = sum(1 for asset in held_assets if asset in {"CASH", "BASELINE_RISK"})
-    btc_days = sum(1 for asset in held_assets if asset == "BTC")
+    derived_day_metrics = derive_strategy_day_metrics_from_csv(PHASE68I_PAPER_INPUT_PATH)
+    if derived_day_metrics is None:
+        fail("phase68i paper export day metrics are unsupported by authoritative strategy semantics")
+    if "cash_days_pct" not in derived_day_metrics or "btc_days_pct" not in derived_day_metrics:
+        fail("phase68i paper export missing authoritative day metrics")
 
-    cash_days_pct = (cash_days / total_days) * 100.0
-    btc_days_pct = (btc_days / total_days) * 100.0
+    cash_days_pct = float(derived_day_metrics["cash_days_pct"])
+    btc_days_pct = float(derived_day_metrics["btc_days_pct"])
 
     last_paper_row = paper_rows[-1]
     total_return_pct_gross = (parse_float_required(last_paper_row, "equity_curve_gross") - 1.0) * 100.0
@@ -1278,9 +1281,12 @@ def normalize_homepage_main_strategy_metrics(
             if field not in metrics and field in derived_risk_metrics:
                 metrics[field] = derived_risk_metrics[field]
 
+    metrics.pop("cash_days_pct", None)
+    metrics.pop("btc_days_pct", None)
     derived_day_metrics = derive_strategy_day_metrics_from_csv(main_paper_path)
-    for field, value in derived_day_metrics.items():
-        metrics[field] = value
+    if derived_day_metrics:
+        for field, value in derived_day_metrics.items():
+            metrics[field] = value
 
     metrics["model"] = main_strategy_model
     return metrics
