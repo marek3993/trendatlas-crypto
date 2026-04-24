@@ -100,6 +100,7 @@ TEXT = {
         "chart_note": "Graf ukazuje hlavnú stratégiu a BTC benchmark bez referenčnej stratégie.",
         "chart_year": "Začať graf od roku",
         "performance_title": "Výkon na prvý pohľad",
+        "performance_fee_note": "Výsledky sú už po započítaní poplatkov Hyperliquid.",
         "ops_title": "Prevádzkové metriky",
         "total_return": "Celkové zhodnotenie",
         "cagr": "Priemerný ročný rast",
@@ -294,6 +295,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "chart_note": "The chart shows the main strategy and the BTC benchmark, without the reference strategy.",
         "chart_year": "Start chart from year",
         "performance_title": "Performance at a glance",
+        "performance_fee_note": "Results already include Hyperliquid fees.",
         "ops_title": "Operational metrics",
         "total_return": "Total return",
         "cagr": "Average annual growth",
@@ -3287,6 +3289,7 @@ with tabs[0]:
     )
 
     st.markdown(f"### {t(lang, 'performance_title')}")
+    st.caption(t(lang, "performance_fee_note"))
     perf1 = st.columns(3)
     with perf1[0]:
         render_color_card(t(lang, "cagr"), safe_metric_text(main_metrics.get("cagr_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cagr")], "blue")
