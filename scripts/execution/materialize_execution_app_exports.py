@@ -1253,8 +1253,6 @@ def normalize_homepage_main_strategy_metrics(
     metric_fields: list[str],
 ) -> dict[str, Any]:
     metrics = normalized_row(summary_row, metric_fields)
-    if "model" not in metrics:
-        metrics["model"] = main_strategy_model
 
     fallback_fields = {
         "total_return_pct": ["total_return_pct_net", "total_return_pct_gross"],
@@ -1277,7 +1275,63 @@ def normalize_homepage_main_strategy_metrics(
             if field not in metrics and field in derived_risk_metrics:
                 metrics[field] = derived_risk_metrics[field]
 
+    metrics["model"] = main_strategy_model
     return metrics
+
+
+def validate_homepage_snapshot_contract(
+    snapshot: dict[str, Any],
+    *,
+    product_contract: dict[str, Any],
+) -> None:
+    expected_main_strategy_model = str(product_contract["main_strategy_model"]).strip()
+    expected_main_summary_path = path_for_app(product_contract["main_summary_path"])
+    expected_main_chart_path = path_for_app(product_contract["main_paper_path"])
+
+    actual_main_strategy_model = str(snapshot.get("main_strategy_model") or "").strip()
+    if actual_main_strategy_model != expected_main_strategy_model:
+        fail(
+            "app_product_snapshot.main_strategy_model diverged from source_of_truth/export_contract.json: "
+            f"expected={expected_main_strategy_model} actual={actual_main_strategy_model or 'missing'}"
+        )
+
+    main_strategy_metrics = (
+        snapshot.get("main_strategy_metrics")
+        if isinstance(snapshot.get("main_strategy_metrics"), dict)
+        else {}
+    )
+    actual_metrics_model = str(main_strategy_metrics.get("model") or "").strip()
+    if actual_metrics_model != expected_main_strategy_model:
+        fail(
+            "app_product_snapshot.main_strategy_metrics.model diverged from source_of_truth/export_contract.json: "
+            f"expected={expected_main_strategy_model} actual={actual_metrics_model or 'missing'}"
+        )
+
+    chart_source_paths = (
+        snapshot.get("chart_source_paths")
+        if isinstance(snapshot.get("chart_source_paths"), dict)
+        else {}
+    )
+    actual_main_chart_path = str(chart_source_paths.get("main_strategy") or "").strip()
+    if actual_main_chart_path != expected_main_chart_path:
+        fail(
+            "app_product_snapshot.chart_source_paths.main_strategy diverged from source_of_truth/export_contract.json: "
+            f"expected={expected_main_chart_path} actual={actual_main_chart_path or 'missing'}"
+        )
+
+    source_metadata = snapshot.get("source_metadata") if isinstance(snapshot.get("source_metadata"), dict) else {}
+    metrics_metadata = (
+        source_metadata.get("main_strategy_metrics")
+        if isinstance(source_metadata.get("main_strategy_metrics"), dict)
+        else {}
+    )
+    actual_main_summary_path = str(metrics_metadata.get("path") or "").strip()
+    if actual_main_summary_path != expected_main_summary_path:
+        fail(
+            "app_product_snapshot.source_metadata.main_strategy_metrics.path diverged from "
+            "source_of_truth/export_contract.json: "
+            f"expected={expected_main_summary_path} actual={actual_main_summary_path or 'missing'}"
+        )
 
 
 def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_payload: dict[str, Any]) -> dict[str, Any]:
@@ -1435,7 +1489,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "trend_history_source_path": source_metadata(PHASE66G_TREND_HISTORY_PATH, "canonical_trend_history"),
     }
 
-    return {
+    snapshot = {
         "snapshot_type": "app_product_snapshot",
         "schema_version": 1,
         "app_export_generated_at_utc": app_export_generated_at_utc,
@@ -1465,6 +1519,8 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "display_names": product_contract["display_names"],
         "source_metadata": source_sections,
     }
+    validate_homepage_snapshot_contract(snapshot, product_contract=product_contract)
+    return snapshot
 
 
 def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> dict[str, Any]:
