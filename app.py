@@ -640,6 +640,13 @@ def safe_metric_text(value, decimals: int = 2, suffix: str = "%", lang: str = "s
     return f"{number:.{decimals}f}{suffix}"
 
 
+def safe_day_metric_text(value, lang: str = "sk") -> str:
+    number = as_float(value)
+    if number is None:
+        return "—"
+    return safe_metric_text(number, lang=lang)
+
+
 def safe_int_text(value, lang: str = "sk") -> str:
     number = as_float(value)
     if number is None:
@@ -666,6 +673,23 @@ def safe_signed_usd_text(value, decimals: int = 2, lang: str = "sk") -> str:
     if number is None:
         return t(lang, "na")
     return f"{number:+,.{decimals}f} USD"
+
+
+def resolve_main_metrics_for_display(
+    snapshot_metrics: dict[str, Any],
+    main_paper_path: Path | None,
+) -> dict[str, Any]:
+    metrics = dict(snapshot_metrics or {})
+    metrics.pop("cash_days_pct", None)
+    metrics.pop("btc_days_pct", None)
+
+    if main_paper_path is None:
+        return metrics
+
+    derived_day_metrics = derive_strategy_day_metrics_from_csv(main_paper_path)
+    if isinstance(derived_day_metrics, dict):
+        metrics.update(derived_day_metrics)
+    return metrics
 
 
 def safe_plain_number_text(value, decimals: int = 4, lang: str = "sk") -> str:
@@ -3240,8 +3264,10 @@ runtime_table_payload = build_authority_runtime_table_snapshot(
 )
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 
-main_metrics = dict(product_snapshot.get("main_strategy_metrics") or {})
-main_metrics.update(derive_strategy_day_metrics_from_csv(main_paper_path))
+main_metrics = resolve_main_metrics_for_display(
+    dict(product_snapshot.get("main_strategy_metrics") or {}),
+    main_paper_path,
+)
 
 years = available_years_from_frames(list(papers.values()) + [btc_df])
 if not years:
@@ -3377,9 +3403,9 @@ with tabs[0]:
     with ops[1]:
         render_color_card(t(lang, "switch_count"), safe_int_text(main_metrics.get("switch_count"), lang=lang), "", METRIC_HELP[lang][t(lang, "switch_count")], "neutral")
     with ops[2]:
-        render_color_card(t(lang, "cash_days"), safe_metric_text(main_metrics.get("cash_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cash_days")], "green")
+        render_color_card(t(lang, "cash_days"), safe_day_metric_text(main_metrics.get("cash_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cash_days")], "green")
     with ops[3]:
-        render_color_card(t(lang, "btc_days"), safe_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
+        render_color_card(t(lang, "btc_days"), safe_day_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
     refresh_currentness_state = str(
         runtime_table_payload.get("currentness_state") or "missing_authority_artifact"
     ).strip()
