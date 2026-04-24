@@ -521,6 +521,15 @@ def main() -> None:
             logs_dir,
             script_args=["--only-model", PHASE63_PINNED_MODEL],
         )
+        if not args.skip_top100_refresh:
+            run_step_and_persist(
+                manifest,
+                run_dir,
+                "refresh_phase67_top100_shortlist_ohlcv",
+                TOP100_REFRESH_SCRIPT,
+                env,
+                logs_dir,
+            )
         run_step_and_persist(
             manifest,
             run_dir,
@@ -537,15 +546,6 @@ def main() -> None:
             env,
             logs_dir,
         )
-        if not args.skip_top100_refresh:
-            run_step_and_persist(
-                manifest,
-                run_dir,
-                "refresh_phase67_top100_shortlist_ohlcv",
-                TOP100_REFRESH_SCRIPT,
-                env,
-                logs_dir,
-            )
         run_step_and_persist(
             manifest,
             run_dir,
