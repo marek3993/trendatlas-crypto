@@ -260,12 +260,16 @@ def resolve_confidence(episode: dict[str, Any]) -> float:
     return DEFAULT_CONFIDENCE
 
 
-def compute_freshness_hours(decision_timestamp_utc: str) -> float:
+def compute_freshness_hours(
+    decision_timestamp_utc: str,
+    *,
+    now_utc: datetime | None = None,
+) -> float:
     decision_time = parse_utc_timestamp(
         decision_timestamp_utc,
         label="decision_timestamp_utc",
     )
-    freshness_hours = (utc_now() - decision_time).total_seconds() / 3600.0
+    freshness_hours = ((now_utc or utc_now()) - decision_time).total_seconds() / 3600.0
     return round(max(freshness_hours, 0.0), 6)
 
 
@@ -304,7 +308,11 @@ def build_salient_facts(episode: dict[str, Any]) -> list[str]:
     return facts
 
 
-def build_live_episode_payload(episode: dict[str, Any]) -> dict[str, Any]:
+def build_live_episode_payload(
+    episode: dict[str, Any],
+    *,
+    now_utc: datetime | None = None,
+) -> dict[str, Any]:
     memory_id = require_non_empty_string("memory_id", episode.get("memory_id"))
     entity_id = require_non_empty_string(
         "planner_proposal.mutation_target.target_id",
@@ -399,7 +407,10 @@ def build_live_episode_payload(episode: dict[str, Any]) -> dict[str, Any]:
             "risk_flags": guardrail_breaches,
             "unknownness_score": 0.0,
             "contradiction_load": float(len(guardrail_breaches)),
-            "freshness_hours": compute_freshness_hours(decision_timestamp_utc),
+            "freshness_hours": compute_freshness_hours(
+                decision_timestamp_utc,
+                now_utc=now_utc,
+            ),
         },
         "metadata": {
             "authoritative": False,

@@ -4,16 +4,24 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
+import ssl
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Any
 
 EXPECTED_EXPORT_MANIFEST_SCHEMA = "trendatlas.imlayer.export_manifest.v1"
 EXPECTED_INGESTION_MANIFEST_SCHEMA = "trendatlas.imlayer.ingestion_manifest.v1"
+EXPECTED_READ_CONTRACT = "imlayer.trendatlas.v1"
 DEFAULT_EXPORTS_ROOT = Path("outputs/research_os/dev_only/imlayer_exports")
 DEFAULT_INGESTION_ROOT = Path("outputs/research_os/dev_only/imlayer_ingestion")
+DEFAULT_READ_URL = "http://127.0.0.1:8000/api/v1/reads/decision-episodes/{memory_id}"
 EXPECTED_NAMESPACE = "trendatlas"
 EXPECTED_COLLECTION = "decision_episodes"
+EXPECTED_TENANT_ID = "research_os_prod"
 READ_CONTRACT_MARKERS = (
     "TRENDATLAS_IML_READ_URL",
     "/api/v1/reads",
@@ -34,6 +42,8 @@ PERSISTENCE_CANDIDATE_PATTERNS = (
     "*.ndjson",
     "*.parquet",
 )
+DEFAULT_TIMEOUT_SECONDS = 30
+DEFAULT_VERIFY_TLS = False
 
 
 class ReconciliationFailure(RuntimeError):
@@ -293,55 +303,7 @@ def build_write_ack_parity(
     }
 
 
-def find_repo_read_contract_markers(project_root: Path) -> list[dict[str, Any]]:
-    matches: list[dict[str, Any]] = []
-    for relative_root in READ_CONTRACT_SEARCH_ROOTS:
-        root = project_root / relative_root
-        if not root.exists():
-            continue
-        for path in root.rglob("*"):
-            if not path.is_file():
-                continue
-            if path.name in READ_CONTRACT_EXCLUDED_FILES:
-                continue
-            if path.suffix.lower() not in {".py", ".json", ".env", ".example", ".md", ".toml", ".yaml", ".yml"}:
-                continue
-            try:
-                text = path.read_text(encoding="utf-8")
-            except UnicodeDecodeError:
-                continue
-            for marker in READ_CONTRACT_MARKERS:
-                if marker in text:
-                    matches.append(
-                        {
-                            "path": path.relative_to(project_root).as_posix(),
-                            "marker": marker,
-                        }
-                    )
-    return matches
-
-
-def find_local_persistence_candidates(project_root: Path) -> list[str]:
-    outputs_root = project_root / "outputs" / "research_os" / "dev_only"
-    if not outputs_root.exists():
-        return []
-    excluded_roots = {
-        (outputs_root / "imlayer_exports").resolve(),
-        (outputs_root / "imlayer_ingestion").resolve(),
-    }
-    candidates: list[str] = []
-    for pattern in PERSISTENCE_CANDIDATE_PATTERNS:
-        for path in outputs_root.rglob(pattern):
-            resolved = path.resolve()
-            if any(str(resolved).startswith(str(excluded_root)) for excluded_root in excluded_roots):
-                continue
-            lowered = path.as_posix().lower()
-            if "imlayer" in lowered or "decision_episode" in lowered or "decision_episodes" in lowered:
-                candidates.append(path.relative_to(project_root).as_posix())
-    return sorted(set(candidates))
-
-
-def load_build_live_episode_payload():
+def load_ingest_helper_module():
     ingest_path = Path(__file__).with_name("research_os_trendatlas_imlayer_ingest_v1.py")
     spec = importlib.util.spec_from_file_location(
         "research_os_trendatlas_imlayer_ingest_v1_for_reconcile",
@@ -354,119 +316,325 @@ def load_build_live_episode_payload():
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
-    return module.build_live_episode_payload
-
-
-def build_expected_stored_records(export_batch: dict[str, Any]) -> list[dict[str, Any]]:
-    build_live_episode_payload = load_build_live_episode_payload()
-    expected_records: list[dict[str, Any]] = []
-    for episode_entry in export_batch["episodes"]:
-        try:
-            stored_payload = build_live_episode_payload(episode_entry["episode"])
-        except Exception as exc:
-            expected_records.append(
-                {
-                    "memory_id": episode_entry["memory_id"],
-                    "payload_sha256": None,
-                    "derivation_error": str(exc),
-                }
-            )
-            continue
-        expected_records.append(
-            {
-                "memory_id": stored_payload["memory_id"],
-                "namespace": stored_payload["namespace"],
-                "collection": stored_payload["collection"],
-                "entity_id": stored_payload["entity_id"],
-                "episode_type": stored_payload["episode_type"],
-                "payload_sha256": canonical_json_sha256(stored_payload),
-            }
-        )
-    return expected_records
-
-
-def build_minimal_read_surface_v1(export_batch: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "status": "proposal_only",
-        "why": (
-            "TrendAtlas already has the exported source episodes and stable memory_ids; "
-            "the thinnest missing capability is a read-by-memory_id surface that returns "
-            "the exact stored record payload."
-        ),
-        "required_iml_change": {
-            "type": "local_dev_http_read_endpoint",
-            "env_var": "TRENDATLAS_IML_READ_URL",
-            "method": "GET",
-            "path_template": "/api/v1/reads/decision-episodes/{memory_id}",
-            "query": {
-                "namespace": EXPECTED_NAMESPACE,
-                "collection": EXPECTED_COLLECTION,
-            },
-            "auth": {
-                "header": "Authorization",
-                "scheme": "Bearer",
-            },
-            "success_response": {
-                "found": True,
-                "memory_id": "<memory_id>",
-                "namespace": EXPECTED_NAMESPACE,
-                "collection": EXPECTED_COLLECTION,
-                "record": "<exact stored decision episode payload object>",
-            },
-            "not_found_response": {
-                "found": False,
-                "memory_id": "<memory_id>",
-                "namespace": EXPECTED_NAMESPACE,
-                "collection": EXPECTED_COLLECTION,
-            },
-        },
-        "trendatlas_verification_rule": {
-            "for_each_memory_id": "call TRENDATLAS_IML_READ_URL with the memory_id path parameter",
-            "required_checks": [
-                "response.found == true",
-                "response.memory_id matches exported memory_id",
-                "response.namespace == trendatlas",
-                "response.collection == decision_episodes",
-                "sha256(canonical_json(response.record)) matches expected payload_sha256",
-            ],
-        },
-        "batch_verification_targets": build_expected_stored_records(export_batch),
-    }
+    return module
 
 
 def build_true_read_back_parity(
-    project_root: Path,
     export_batch: dict[str, Any],
+    ingestion_manifest: dict[str, Any],
 ) -> dict[str, Any]:
-    repo_markers = find_repo_read_contract_markers(project_root)
-    persistence_candidates = find_local_persistence_candidates(project_root)
-    minimal_read_surface_v1 = build_minimal_read_surface_v1(export_batch)
-    if repo_markers:
-        return {
-            "status": "blocked",
-            "blocker": "Read contract markers exist, but this repo does not define a supported true read-back verifier yet.",
-            "read_contract_markers": repo_markers,
-            "persistence_candidates": persistence_candidates,
-            "minimal_read_surface_v1": minimal_read_surface_v1,
-        }
-    if persistence_candidates:
-        return {
-            "status": "blocked",
-            "blocker": "Local persistence candidates exist, but no repo-defined imLayer read contract or storage parser is available for true read-back parity.",
-            "read_contract_markers": repo_markers,
-            "persistence_candidates": persistence_candidates,
-            "minimal_read_surface_v1": minimal_read_surface_v1,
-        }
-    return {
-        "status": "blocked",
-        "blocker": (
-            "No repo-local imLayer read contract was found and no workspace-local persisted imLayer store "
-            "was discoverable outside export/ingestion artifacts, so true read-back parity cannot be proven."
-        ),
-        "read_contract_markers": repo_markers,
-        "persistence_candidates": persistence_candidates,
-        "minimal_read_surface_v1": minimal_read_surface_v1,
+    ingest_module = load_ingest_helper_module()
+    build_live_episode_payload = ingest_module.build_live_episode_payload
+    parse_utc_timestamp = ingest_module.parse_utc_timestamp
+
+    read_url_template = os.environ.get("TRENDATLAS_IML_READ_URL", DEFAULT_READ_URL)
+    auth_header = os.environ.get("TRENDATLAS_IML_AUTH_HEADER", "Authorization")
+    auth_scheme = os.environ.get("TRENDATLAS_IML_AUTH_SCHEME", "Bearer")
+    auth_token = os.environ.get("TRENDATLAS_IML_AUTH_TOKEN", "")
+    timeout_seconds_raw = os.environ.get("TRENDATLAS_IML_TIMEOUT_SECONDS", str(DEFAULT_TIMEOUT_SECONDS))
+    verify_tls_raw = os.environ.get(
+        "TRENDATLAS_IML_VERIFY_TLS",
+        "true" if DEFAULT_VERIFY_TLS else "false",
+    )
+
+    try:
+        timeout_seconds = int(timeout_seconds_raw)
+    except ValueError as exc:
+        raise ReconciliationFailure(
+            f"TRENDATLAS_IML_TIMEOUT_SECONDS must be an integer, got {timeout_seconds_raw!r}"
+        ) from exc
+    if timeout_seconds <= 0:
+        raise ReconciliationFailure("TRENDATLAS_IML_TIMEOUT_SECONDS must be positive")
+    try:
+        verify_tls = ingest_module.parse_bool(verify_tls_raw)
+    except Exception as exc:
+        raise ReconciliationFailure(
+            f"TRENDATLAS_IML_VERIFY_TLS must be a boolean, got {verify_tls_raw!r}"
+        ) from exc
+
+    expected_by_memory_id = {
+        episode_entry["memory_id"]: episode_entry
+        for episode_entry in export_batch["episodes"]
     }
+    acked_by_memory_id = {
+        item["memory_id"]: item
+        for item in ingestion_manifest["results"]
+        if item.get("status") in {"ingested", "deduplicated"} and item.get("memory_id")
+    }
+
+    verified: list[dict[str, Any]] = []
+    mismatches: list[dict[str, Any]] = []
+    request_failures: list[dict[str, Any]] = []
+
+    for memory_id in export_batch["memory_ids"]:
+        episode_entry = expected_by_memory_id[memory_id]
+        ack_result = acked_by_memory_id.get(memory_id)
+        url = resolve_read_url(read_url_template, memory_id)
+        try:
+            response_payload = read_memory_record(
+                url=url,
+                timeout_seconds=timeout_seconds,
+                verify_tls=verify_tls,
+                auth_header=auth_header,
+                auth_scheme=auth_scheme,
+                auth_token=auth_token,
+            )
+        except ReconciliationFailure as exc:
+            request_failures.append(
+                {
+                    "memory_id": memory_id,
+                    "episode_path": episode_entry["relative_path"],
+                    "url": url,
+                    "reason": str(exc),
+                }
+            )
+            continue
+
+        record = response_payload.get("record")
+        if not isinstance(record, dict):
+            request_failures.append(
+                {
+                    "memory_id": memory_id,
+                    "episode_path": episode_entry["relative_path"],
+                    "url": url,
+                    "reason": "read response record must be an object",
+                    "response": response_payload,
+                }
+            )
+            continue
+        stored_payload = record.get("payload")
+        if not isinstance(stored_payload, dict):
+            request_failures.append(
+                {
+                    "memory_id": memory_id,
+                    "episode_path": episode_entry["relative_path"],
+                    "url": url,
+                    "reason": "read response record.payload must be an object",
+                    "response": response_payload,
+                }
+            )
+            continue
+
+        received_at_utc = require_non_empty_string(
+            "record.received_at_utc",
+            record.get("received_at_utc"),
+        )
+        expected_payload = build_live_episode_payload(
+            episode_entry["episode"],
+            now_utc=parse_utc_timestamp(received_at_utc, label="record.received_at_utc"),
+        )
+        expected_payload_sha256 = canonical_json_sha256(expected_payload)
+        observed_payload_sha256 = canonical_json_sha256(stored_payload)
+
+        per_memory_mismatches: list[dict[str, Any]] = []
+        if response_payload.get("success") is not True:
+            per_memory_mismatches.append(
+                {
+                    "field": "success",
+                    "expected": True,
+                    "actual": response_payload.get("success"),
+                }
+            )
+        if response_payload.get("contract") != EXPECTED_READ_CONTRACT:
+            per_memory_mismatches.append(
+                {
+                    "field": "contract",
+                    "expected": EXPECTED_READ_CONTRACT,
+                    "actual": response_payload.get("contract"),
+                }
+            )
+        if response_payload.get("memory_id") != memory_id:
+            per_memory_mismatches.append(
+                {
+                    "field": "memory_id",
+                    "expected": memory_id,
+                    "actual": response_payload.get("memory_id"),
+                }
+            )
+        if stored_payload.get("memory_id") != memory_id:
+            per_memory_mismatches.append(
+                {
+                    "field": "record.payload.memory_id",
+                    "expected": memory_id,
+                    "actual": stored_payload.get("memory_id"),
+                }
+            )
+        if stored_payload.get("namespace") != EXPECTED_NAMESPACE:
+            per_memory_mismatches.append(
+                {
+                    "field": "record.payload.namespace",
+                    "expected": EXPECTED_NAMESPACE,
+                    "actual": stored_payload.get("namespace"),
+                }
+            )
+        if stored_payload.get("collection") != EXPECTED_COLLECTION:
+            per_memory_mismatches.append(
+                {
+                    "field": "record.payload.collection",
+                    "expected": EXPECTED_COLLECTION,
+                    "actual": stored_payload.get("collection"),
+                }
+            )
+        if stored_payload.get("schema_version") != EXPECTED_READ_CONTRACT:
+            per_memory_mismatches.append(
+                {
+                    "field": "record.payload.schema_version",
+                    "expected": EXPECTED_READ_CONTRACT,
+                    "actual": stored_payload.get("schema_version"),
+                }
+            )
+        if stored_payload.get("tenant_id") != EXPECTED_TENANT_ID:
+            per_memory_mismatches.append(
+                {
+                    "field": "record.payload.tenant_id",
+                    "expected": EXPECTED_TENANT_ID,
+                    "actual": stored_payload.get("tenant_id"),
+                }
+            )
+        if observed_payload_sha256 != expected_payload_sha256:
+            per_memory_mismatches.append(
+                {
+                    "field": "record.payload.sha256",
+                    "expected": expected_payload_sha256,
+                    "actual": observed_payload_sha256,
+                }
+            )
+        if ack_result is not None:
+            ack_response = ack_result.get("response")
+            if isinstance(ack_response, dict) and ack_response.get("write_id") and record.get("write_id") != ack_response.get("write_id"):
+                per_memory_mismatches.append(
+                    {
+                        "field": "record.write_id",
+                        "expected": ack_response.get("write_id"),
+                        "actual": record.get("write_id"),
+                    }
+                )
+
+        verified.append(
+            {
+                "memory_id": memory_id,
+                "episode_path": episode_entry["relative_path"],
+                "url": url,
+                "write_id": record.get("write_id"),
+                "received_at_utc": received_at_utc,
+                "expected_payload_sha256": expected_payload_sha256,
+                "observed_payload_sha256": observed_payload_sha256,
+                "status": "passed" if not per_memory_mismatches else "failed",
+            }
+        )
+        for mismatch in per_memory_mismatches:
+            mismatches.append(
+                {
+                    "memory_id": memory_id,
+                    "episode_path": episode_entry["relative_path"],
+                    **mismatch,
+                }
+            )
+
+    missing_reads = sorted(set(export_batch["memory_ids"]) - {item["memory_id"] for item in verified})
+    unexpected_reads = sorted({item["memory_id"] for item in verified} - set(export_batch["memory_ids"]))
+
+    status = "passed"
+    reasons: list[str] = []
+    if request_failures:
+        status = "failed"
+        reasons.append("read-back requests failed")
+    if mismatches:
+        status = "failed"
+        reasons.append("read-back parity mismatches detected")
+    if len(verified) != len(export_batch["memory_ids"]):
+        status = "failed"
+        reasons.append("not every exported memory_id produced a readable stored record")
+    if missing_reads or unexpected_reads:
+        status = "failed"
+        reasons.append("memory_id read-back set parity failed")
+
+    return {
+        "status": status,
+        "reason": "; ".join(reasons) if reasons else None,
+        "contract": EXPECTED_READ_CONTRACT,
+        "read_url_template": read_url_template,
+        "expected_count": len(export_batch["memory_ids"]),
+        "verified_count": len(verified),
+        "memory_ids_expected": sorted(export_batch["memory_ids"]),
+        "memory_ids_verified": sorted(item["memory_id"] for item in verified),
+        "missing_on_imlayer": missing_reads,
+        "unexpected_on_imlayer": unexpected_reads,
+        "checks_performed": [
+            "response.success",
+            "response.contract",
+            "response.memory_id",
+            "record.payload.memory_id",
+            "record.payload.namespace",
+            "record.payload.collection",
+            "record.payload.schema_version",
+            "record.payload.tenant_id",
+            "record.payload.sha256",
+            "record.write_id parity against ingestion acknowledgement when available",
+        ],
+        "verified_records": verified,
+        "mismatches": mismatches,
+        "request_failures": request_failures,
+    }
+
+
+def resolve_read_url(read_url_template: str, memory_id: str) -> str:
+    encoded_memory_id = urllib.parse.quote(memory_id, safe="")
+    if "{memory_id}" in read_url_template:
+        return read_url_template.replace("{memory_id}", encoded_memory_id)
+    return f"{read_url_template.rstrip('/')}/{encoded_memory_id}"
+
+
+def decode_json_bytes(value: bytes) -> Any:
+    text = value.decode("utf-8", errors="replace")
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        return text
+
+
+def read_memory_record(
+    *,
+    url: str,
+    timeout_seconds: int,
+    verify_tls: bool,
+    auth_header: str,
+    auth_scheme: str,
+    auth_token: str,
+) -> dict[str, Any]:
+    headers = {
+        "Accept": "application/json",
+    }
+    if auth_token:
+        headers[auth_header] = f"{auth_scheme} {auth_token}"
+    request = urllib.request.Request(
+        url,
+        headers=headers,
+        method="GET",
+    )
+    context = None
+    if url.startswith("https://") and not verify_tls:
+        context = ssl._create_unverified_context()
+    try:
+        with urllib.request.urlopen(
+            request,
+            timeout=timeout_seconds,
+            context=context,
+        ) as response:
+            payload = decode_json_bytes(response.read())
+    except urllib.error.HTTPError as exc:
+        payload = decode_json_bytes(exc.read())
+        raise ReconciliationFailure(
+            f"read-back HTTP {exc.code} for {url}: {payload}"
+        ) from exc
+    except urllib.error.URLError as exc:
+        raise ReconciliationFailure(
+            f"read-back transport error for {url}: {exc.reason}"
+        ) from exc
+
+    if not isinstance(payload, dict):
+        raise ReconciliationFailure(f"read response must be a JSON object for {url}")
+    return payload
 
 
 def reconcile_batch(
@@ -496,7 +664,7 @@ def reconcile_batch(
         )
 
     write_ack_parity = build_write_ack_parity(export_batch, ingestion_data)
-    true_read_back_parity = build_true_read_back_parity(project_root, export_batch)
+    true_read_back_parity = build_true_read_back_parity(export_batch, ingestion_data)
 
     final_status = "working"
     if write_ack_parity["status"] != "passed" or true_read_back_parity["status"] != "passed":
