@@ -70,6 +70,63 @@ def load_json_required(path: Path) -> dict[str, Any]:
     return payload
 
 
+def _resolve_canonical_app_export_path(
+    raw_path: Any,
+    *,
+    root: Path,
+    field_name: str,
+) -> Path:
+    path_text = str(raw_path or "").strip()
+    if not path_text:
+        raise ValueError(f"Missing required canonical app export path: {field_name}")
+    candidate = Path(path_text)
+    if not candidate.is_absolute():
+        candidate = root / candidate
+    resolved_candidate = candidate.resolve()
+    resolved_root = root.resolve()
+    try:
+        relative_path = resolved_candidate.relative_to(resolved_root)
+    except ValueError as exc:
+        raise ValueError(
+            f"Canonical app export path must stay inside the runtime checkout: {field_name}={path_text}"
+        ) from exc
+    expected_prefix = ("outputs", "execution", "app_exports")
+    if relative_path.parts[: len(expected_prefix)] != expected_prefix:
+        raise ValueError(
+            "Canonical app export path must stay inside outputs/execution/app_exports: "
+            f"{field_name}={path_text}"
+        )
+    if not resolved_candidate.exists() or not resolved_candidate.is_file():
+        raise FileNotFoundError(
+            f"Missing required canonical app export artifact: {resolved_candidate}"
+        )
+    return resolved_candidate
+
+
+def _resolve_required_app_publish_paths(
+    latest_successful_snapshot_payload: Mapping[str, Any],
+    *,
+    root: Path,
+) -> list[Path]:
+    product_snapshot = latest_successful_snapshot_payload.get("app_product_snapshot")
+    if not isinstance(product_snapshot, dict):
+        raise ValueError(
+            "Authority latest_successful_snapshot missing app_product_snapshot"
+        )
+    chart_source_paths = product_snapshot.get("chart_source_paths")
+    if not isinstance(chart_source_paths, dict):
+        raise ValueError(
+            "Authority latest_successful_snapshot missing app_product_snapshot.chart_source_paths"
+        )
+    return [
+        _resolve_canonical_app_export_path(
+            chart_source_paths.get("main_strategy"),
+            root=root,
+            field_name="app_product_snapshot.chart_source_paths.main_strategy",
+        )
+    ]
+
+
 def resolve_authority_publish_paths(root: Path | None = None) -> list[Path]:
     resolved_root = Path(root) if root is not None else ROOT
     publish_paths = [resolved_root / "outputs" / "execution" / "authority" / "latest_attempt_status.json"]
@@ -77,8 +134,23 @@ def resolve_authority_publish_paths(root: Path | None = None) -> list[Path]:
         resolved_root / "outputs" / "execution" / "authority" / "latest_successful_snapshot.json"
     )
     if snapshot_path.exists():
+        latest_successful_snapshot_payload = load_json_required(snapshot_path)
         publish_paths.append(snapshot_path)
-    return publish_paths
+        publish_paths.extend(
+            _resolve_required_app_publish_paths(
+                latest_successful_snapshot_payload,
+                root=resolved_root,
+            )
+        )
+    deduped_paths: list[Path] = []
+    seen_paths: set[Path] = set()
+    for path in publish_paths:
+        resolved_path = path.resolve()
+        if resolved_path in seen_paths:
+            continue
+        seen_paths.add(resolved_path)
+        deduped_paths.append(resolved_path)
+    return deduped_paths
 
 
 def _run_git_command(
