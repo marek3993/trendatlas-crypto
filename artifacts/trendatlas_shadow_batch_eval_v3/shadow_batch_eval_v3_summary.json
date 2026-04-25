@@ -1,0 +1,437 @@
+{
+  "cases": [
+    {
+      "critic": {
+        "authoritative_prompt_metrics": {
+          "estimated_input_tokens_char_div4": 844,
+          "json_char_count": 3374,
+          "payload_sha256": "8595dfa8541192a710e288847ebb26f5f328f17be608efeed84e80207c1c0b7e",
+          "utf8_byte_count": 3374
+        },
+        "authoritative_prompt_sha256": "8595dfa8541192a710e288847ebb26f5f328f17be608efeed84e80207c1c0b7e",
+        "authoritative_response": {
+          "network_call": "completed",
+          "response_id": "resp_critic_authoritative_shadow_verify",
+          "response_model": "gpt-5.4-local-shadow-verifier",
+          "response_status": "completed",
+          "usage": {
+            "input_tokens": 138,
+            "output_tokens": 20,
+            "total_tokens": 158
+          }
+        },
+        "candidate_error": "",
+        "candidate_prompt_metrics": {
+          "estimated_input_tokens_char_div4": 2959,
+          "json_char_count": 11834,
+          "payload_sha256": "93d26f80d9e048003e6c797ba66e232fdc5169d0011e18e9aa039baebf0691b8",
+          "utf8_byte_count": 11834
+        },
+        "candidate_prompt_sha256": "93d26f80d9e048003e6c797ba66e232fdc5169d0011e18e9aa039baebf0691b8",
+        "candidate_response": {
+          "response_id": "resp_critic_candidate_shadow_verify",
+          "response_model": "gpt-5.4-local-shadow-verifier",
+          "response_status": "completed",
+          "usage": {
+            "input_tokens": 176,
+            "output_tokens": 24,
+            "total_tokens": 200
+          }
+        },
+        "candidate_status": "completed",
+        "changed_decision_fields": [],
+        "changed_note_fields": [
+          "policy_alignment_note",
+          "recommended_reason"
+        ],
+        "changed_reasoning_fields": [
+          "policy_alignment_note",
+          "recommended_reason"
+        ],
+        "component": "critic",
+        "decision_behavior_changed": false,
+        "decision_stayed_identical": true,
+        "fail_closed_preserved": true,
+        "passive_retrieval_comparison": {
+          "comparison_bucket": "with_retrieval_packet",
+          "latest_memory_id": "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+          "load_error": "",
+          "retrieval_packet_present": true,
+          "retrieval_packet_status": "loaded",
+          "semantic_sha256": "591a4e4eabc4c5f9dc53f22636cf99826e2b44201ec08063c8f7b4dc9e4e80e7"
+        },
+        "prompt_estimated_input_tokens_delta": 2115,
+        "proposal_content_fields_changed": [],
+        "proposal_content_fields_preserved": true,
+        "reasoning_changed": true,
+        "reasoning_changed_decision_identical": true,
+        "reasoning_only_change": true,
+        "response_input_tokens_delta": 38,
+        "response_output_tokens_delta": 4,
+        "response_total_tokens_delta": 42
+      },
+      "cycle_label": "openai_token_opt_rerun",
+      "execution_mode": "mock",
+      "family_id": "cost_aware_hysteretic_pilot_to_full",
+      "planner": {
+        "authoritative_prompt_metrics": {
+          "estimated_input_tokens_char_div4": 932,
+          "json_char_count": 3728,
+          "payload_sha256": "cf400163fc5300447c9fd811e9576072270b62de009767214fdfa6e11cbf5d0b",
+          "utf8_byte_count": 3728
+        },
+        "authoritative_prompt_sha256": "cf400163fc5300447c9fd811e9576072270b62de009767214fdfa6e11cbf5d0b",
+        "authoritative_response": {
+          "network_call": "completed",
+          "response_id": "resp_planner_authoritative_shadow_verify",
+          "response_model": "gpt-5.4-local-shadow-verifier",
+          "response_status": "completed",
+          "usage": {
+            "input_tokens": 110,
+            "output_tokens": 18,
+            "total_tokens": 128
+          }
+        },
+        "candidate_error": "",
+        "candidate_prompt_metrics": {
+          "estimated_input_tokens_char_div4": 3055,
+          "json_char_count": 12220,
+          "payload_sha256": "5e3e34e6b16d51d9609f44ec55e198e4e7f215b3caacef51573b706f3dacdfb6",
+          "utf8_byte_count": 12220
+        },
+        "candidate_prompt_sha256": "5e3e34e6b16d51d9609f44ec55e198e4e7f215b3caacef51573b706f3dacdfb6",
+        "candidate_response": {
+          "response_id": "resp_planner_candidate_shadow_verify",
+          "response_model": "gpt-5.4-local-shadow-verifier",
+          "response_status": "completed",
+          "usage": {
+            "input_tokens": 146,
+            "output_tokens": 21,
+            "total_tokens": 167
+          }
+        },
+        "candidate_status": "completed",
+        "changed_decision_fields": [],
+        "changed_note_fields": [
+          "mechanism_hypothesis",
+          "selection_rationale"
+        ],
+        "changed_reasoning_fields": [
+          "mechanism_hypothesis",
+          "selection_rationale"
+        ],
+        "component": "planner",
+        "decision_behavior_changed": false,
+        "decision_stayed_identical": true,
+        "fail_closed_preserved": true,
+        "passive_retrieval_comparison": {
+          "comparison_bucket": "with_retrieval_packet",
+          "latest_memory_id": "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+          "load_error": "",
+          "retrieval_packet_present": true,
+          "retrieval_packet_status": "loaded",
+          "semantic_sha256": "591a4e4eabc4c5f9dc53f22636cf99826e2b44201ec08063c8f7b4dc9e4e80e7"
+        },
+        "prompt_estimated_input_tokens_delta": 2123,
+        "proposal_content_fields_changed": [],
+        "proposal_content_fields_preserved": true,
+        "reasoning_changed": true,
+        "reasoning_changed_decision_identical": true,
+        "reasoning_only_change": true,
+        "response_input_tokens_delta": 36,
+        "response_output_tokens_delta": 3,
+        "response_total_tokens_delta": 39
+      },
+      "policy": {
+        "authoritative_decision_behavior_changed": false,
+        "fail_closed_preserved": true,
+        "governor_mutated": false,
+        "production_changes_required": false,
+        "source_of_truth_mutation": false,
+        "strategy_logic_mutation": false
+      },
+      "retrieval_latest_memory_id": "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+      "retrieval_packet_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\imlayer_retrieval\\20260424T220103Z\\cost_aware_hysteretic_pilot_to_full.latest.retrieval_packet.json",
+      "retrieval_semantic_sha256": "591a4e4eabc4c5f9dc53f22636cf99826e2b44201ec08063c8f7b4dc9e4e80e7",
+      "status": "working"
+    }
+  ],
+  "compact_summary_rows": [
+    {
+      "critic_decision_fields_changed": "",
+      "critic_decision_stayed_identical": true,
+      "critic_input_token_delta": 38,
+      "critic_output_token_delta": 4,
+      "critic_prompt_input_token_delta": 2115,
+      "critic_reasoning_changed": true,
+      "critic_reasoning_changed_decision_identical": true,
+      "critic_reasoning_fields_changed": "policy_alignment_note,recommended_reason",
+      "critic_total_token_delta": 42,
+      "cycle_label": "openai_token_opt_rerun",
+      "fail_closed_preserved": true,
+      "family_id": "cost_aware_hysteretic_pilot_to_full",
+      "planner_decision_fields_changed": "",
+      "planner_decision_stayed_identical": true,
+      "planner_input_token_delta": 36,
+      "planner_output_token_delta": 3,
+      "planner_prompt_input_token_delta": 2123,
+      "planner_reasoning_changed": true,
+      "planner_reasoning_changed_decision_identical": true,
+      "planner_reasoning_fields_changed": "mechanism_hypothesis,selection_rationale",
+      "planner_total_token_delta": 39,
+      "status": "working"
+    }
+  ],
+  "evaluated_at_utc": "2026-04-25T19:48:28Z",
+  "execution_mode": "mock",
+  "final_status": "working",
+  "inputs": {
+    "compact_summary_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\artifacts\\trendatlas_shadow_batch_eval_v3\\shadow_batch_eval_v3_manual_review.csv",
+    "discovery_details": {
+      "cost_aware_hysteretic_pilot_to_full": {
+        "common_cycles": [
+          "first_openai_backed_cycle",
+          "first_real_bringup_cycle",
+          "openai_enabled_true_rerun",
+          "openai_final_enable_rerun",
+          "openai_live_path_test",
+          "openai_resolution_debug_rerun",
+          "openai_runtime_debug_rerun",
+          "openai_token_opt_rerun",
+          "real_full_pipeline_cycle_smoke",
+          "second_openai_backed_cycle",
+          "third_openai_backed_cycle"
+        ],
+        "missing_requested_cycles": [],
+        "planner_cycles": [
+          "first_openai_backed_cycle",
+          "first_real_bringup_cycle",
+          "openai_config_mapping_rerun",
+          "openai_enabled_true_rerun",
+          "openai_final_enable_rerun",
+          "openai_live_path_test",
+          "openai_resolution_debug_rerun",
+          "openai_runtime_debug_rerun",
+          "openai_token_opt_rerun",
+          "real_full_pipeline_cycle_smoke",
+          "real_governor_gate_cycle_smoke",
+          "real_mutation_smoke",
+          "second_openai_backed_cycle",
+          "third_openai_backed_cycle"
+        ],
+        "selected_common_cycles": [
+          "openai_token_opt_rerun"
+        ],
+        "summary_cycles": [
+          "first_openai_backed_cycle",
+          "first_real_bringup_cycle",
+          "openai_enabled_true_rerun",
+          "openai_final_enable_rerun",
+          "openai_live_path_test",
+          "openai_resolution_debug_rerun",
+          "openai_runtime_debug_rerun",
+          "openai_token_opt_rerun",
+          "real_full_pipeline_cycle_smoke",
+          "second_openai_backed_cycle",
+          "third_openai_backed_cycle"
+        ]
+      }
+    },
+    "heavy_validation_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\heavy_validation_outputs",
+    "markdown_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\artifacts\\trendatlas_shadow_batch_eval_v3\\shadow_batch_eval_v3_summary.md",
+    "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\artifacts\\trendatlas_shadow_batch_eval_v3\\shadow_batch_eval_v3_summary.json",
+    "planner_input_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\mvp\\artifacts\\planner_inputs",
+    "requested_cycle_labels": [
+      "openai_token_opt_rerun"
+    ],
+    "requested_family_ids": [
+      "cost_aware_hysteretic_pilot_to_full"
+    ],
+    "retrieval_packets_considered": [
+      {
+        "family_id": "cost_aware_hysteretic_pilot_to_full",
+        "latest_cycle_id": "openai_token_opt_rerun",
+        "latest_memory_id": "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+        "memory_query_target": "latest",
+        "resolved_batch_id": "20260424T175234Z",
+        "retrieval_generated_at_utc": "2026-04-24T22:01:03Z",
+        "retrieval_packet_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\imlayer_retrieval\\20260424T220103Z\\cost_aware_hysteretic_pilot_to_full.latest.retrieval_packet.json"
+      }
+    ],
+    "retrieval_root": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\imlayer_retrieval",
+    "skipped_discovery": []
+  },
+  "policy": {
+    "authoritative_decision_behavior_changed_cases": 0,
+    "fail_closed_preserved": true,
+    "governor_mutated": false,
+    "official_promotion_logic_changed": false,
+    "source_of_truth_mutation": false,
+    "strategy_mutation": false
+  },
+  "schema_version": "trendatlas.shadow_batch_eval.v3",
+  "summary": {
+    "blocked_conditions": {
+      "evaluation_errors": 0,
+      "missing_requested_cases": 0,
+      "real_openai_failure_cases": 0,
+      "retrieval_missing_cases": 0
+    },
+    "blocked_reasons": [],
+    "cases_evaluated": 1,
+    "critic_changed_fields_frequency": {
+      "policy_alignment_note": 1,
+      "recommended_reason": 1
+    },
+    "critic_decision_field_change_counts": {
+      "recommended_next_action": 0,
+      "recommended_verdict": 0
+    },
+    "critic_decision_field_changes": [],
+    "critic_decision_fields_changed_any": false,
+    "critic_reasoning_changed_decision_identical_cases": 1,
+    "critic_reasoning_field_differences_frequency": {
+      "policy_alignment_note": 1,
+      "recommended_reason": 1
+    },
+    "critic_reasoning_only_change_cases": 1,
+    "cycles_tested": [
+      {
+        "cycle_label": "openai_token_opt_rerun",
+        "family_id": "cost_aware_hysteretic_pilot_to_full"
+      }
+    ],
+    "evaluation_errors": [],
+    "families_tested": [
+      "cost_aware_hysteretic_pilot_to_full"
+    ],
+    "missing_requested_cases": [],
+    "planner_changed_fields_frequency": {
+      "mechanism_hypothesis": 1,
+      "selection_rationale": 1
+    },
+    "planner_decision_field_change_counts": {
+      "exact_change": 0,
+      "source_artifact_id": 0,
+      "stop_condition": 0,
+      "target_id": 0,
+      "target_type": 0
+    },
+    "planner_decision_field_changes": [],
+    "planner_decision_fields_changed_any": false,
+    "planner_reasoning_changed_decision_identical_cases": 1,
+    "planner_reasoning_field_differences_frequency": {
+      "mechanism_hypothesis": 1,
+      "selection_rationale": 1
+    },
+    "planner_reasoning_only_change_cases": 1,
+    "prompt_input_token_deltas": {
+      "critic": {
+        "prompt_estimated_input_tokens_delta": {
+          "avg": 2115.0,
+          "count": 1,
+          "max": 2115,
+          "min": 2115,
+          "sum": 2115
+        },
+        "response_input_tokens_delta": {
+          "avg": 38.0,
+          "count": 1,
+          "max": 38,
+          "min": 38,
+          "sum": 38
+        }
+      },
+      "planner": {
+        "prompt_estimated_input_tokens_delta": {
+          "avg": 2123.0,
+          "count": 1,
+          "max": 2123,
+          "min": 2123,
+          "sum": 2123
+        },
+        "response_input_tokens_delta": {
+          "avg": 36.0,
+          "count": 1,
+          "max": 36,
+          "min": 36,
+          "sum": 36
+        }
+      }
+    },
+    "real_openai_failure_cases": [],
+    "reasoning_changed_decision_identical_case_count": 1,
+    "reasoning_changed_decision_identical_cases": [
+      {
+        "critic": true,
+        "cycle_label": "openai_token_opt_rerun",
+        "family_id": "cost_aware_hysteretic_pilot_to_full",
+        "planner": true
+      }
+    ],
+    "requested_case_set_complete": true,
+    "retrieval_missing_cases": [],
+    "token_deltas": {
+      "critic": {
+        "prompt_estimated_input_tokens_delta": {
+          "avg": 2115.0,
+          "count": 1,
+          "max": 2115,
+          "min": 2115,
+          "sum": 2115
+        },
+        "response_input_tokens_delta": {
+          "avg": 38.0,
+          "count": 1,
+          "max": 38,
+          "min": 38,
+          "sum": 38
+        },
+        "response_output_tokens_delta": {
+          "avg": 4.0,
+          "count": 1,
+          "max": 4,
+          "min": 4,
+          "sum": 4
+        },
+        "response_total_tokens_delta": {
+          "avg": 42.0,
+          "count": 1,
+          "max": 42,
+          "min": 42,
+          "sum": 42
+        }
+      },
+      "planner": {
+        "prompt_estimated_input_tokens_delta": {
+          "avg": 2123.0,
+          "count": 1,
+          "max": 2123,
+          "min": 2123,
+          "sum": 2123
+        },
+        "response_input_tokens_delta": {
+          "avg": 36.0,
+          "count": 1,
+          "max": 36,
+          "min": 36,
+          "sum": 36
+        },
+        "response_output_tokens_delta": {
+          "avg": 3.0,
+          "count": 1,
+          "max": 3,
+          "min": 3,
+          "sum": 3
+        },
+        "response_total_tokens_delta": {
+          "avg": 39.0,
+          "count": 1,
+          "max": 39,
+          "min": 39,
+          "sum": 39
+        }
+      }
+    }
+  }
+}

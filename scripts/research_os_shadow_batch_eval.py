@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import sys
 from collections import Counter
@@ -15,12 +16,14 @@ if str(PROJECT_ROOT) not in sys.path:
 from scripts import research_os_local_shadow_run_verification as verifier
 
 
-DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "artifacts" / "trendatlas_shadow_batch_eval"
-DEFAULT_OUTPUT_PATH = DEFAULT_OUTPUT_DIR / "shadow_batch_eval_summary.json"
-DEFAULT_MARKDOWN_PATH = DEFAULT_OUTPUT_DIR / "shadow_batch_eval_summary.md"
-REAL_OUTPUT_DIR = PROJECT_ROOT / "artifacts" / "trendatlas_shadow_batch_eval_real"
-REAL_OUTPUT_PATH = REAL_OUTPUT_DIR / "shadow_batch_eval_real_summary.json"
-REAL_MARKDOWN_PATH = REAL_OUTPUT_DIR / "shadow_batch_eval_real_summary.md"
+DEFAULT_OUTPUT_DIR = PROJECT_ROOT / "artifacts" / "trendatlas_shadow_batch_eval_v3"
+DEFAULT_OUTPUT_PATH = DEFAULT_OUTPUT_DIR / "shadow_batch_eval_v3_summary.json"
+DEFAULT_MARKDOWN_PATH = DEFAULT_OUTPUT_DIR / "shadow_batch_eval_v3_summary.md"
+DEFAULT_COMPACT_SUMMARY_PATH = DEFAULT_OUTPUT_DIR / "shadow_batch_eval_v3_manual_review.csv"
+REAL_OUTPUT_DIR = PROJECT_ROOT / "artifacts" / "trendatlas_shadow_batch_eval_real_v3"
+REAL_OUTPUT_PATH = REAL_OUTPUT_DIR / "shadow_batch_eval_real_v3_summary.json"
+REAL_MARKDOWN_PATH = REAL_OUTPUT_DIR / "shadow_batch_eval_real_v3_summary.md"
+REAL_COMPACT_SUMMARY_PATH = REAL_OUTPUT_DIR / "shadow_batch_eval_real_v3_manual_review.csv"
 REAL_SHADOW_FAMILY_ID = "cost_aware_hysteretic_pilot_to_full"
 REAL_SHADOW_CYCLE_LABELS = (
     "first_openai_backed_cycle",
@@ -62,6 +65,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--heavy-validation-root", default=str(verifier.DEFAULT_HEAVY_VALIDATION_ROOT))
     parser.add_argument("--output-path", default="")
     parser.add_argument("--markdown-path", default="")
+    parser.add_argument("--compact-summary-path", default="")
     parser.add_argument("--mode-config", default="")
     parser.add_argument("--family-id", action="append", dest="family_ids", default=[])
     parser.add_argument("--cycle-label", action="append", dest="cycle_labels", default=[])
@@ -294,6 +298,8 @@ def summarize_component(
     reasoning_only_change = bool(changed_fields) and not changed_decision_fields and set(changed_fields).issubset(
         reasoning_fields
     )
+    reasoning_changed = bool(changed_reasoning_fields)
+    decision_stayed_identical = not changed_decision_fields and not bool(controlled.get("decision_behavior_changed", False))
     return {
         "component": component_name,
         "passive_retrieval_comparison": {
@@ -309,7 +315,10 @@ def summarize_component(
         "changed_decision_fields": changed_decision_fields,
         "proposal_content_fields_changed": proposal_content_fields_changed,
         "proposal_content_fields_preserved": bool(diff.get("proposal_content_fields_preserved", True)),
+        "reasoning_changed": reasoning_changed,
         "reasoning_only_change": reasoning_only_change,
+        "decision_stayed_identical": decision_stayed_identical,
+        "reasoning_changed_decision_identical": reasoning_changed and decision_stayed_identical,
         "decision_behavior_changed": bool(controlled.get("decision_behavior_changed", False)),
         "fail_closed_preserved": bool(controlled.get("fail_closed_preserved", False)),
         "candidate_status": str(candidate.get("status", "")),
@@ -328,6 +337,7 @@ def summarize_component(
         "prompt_estimated_input_tokens_delta": candidate_prompt_metrics["estimated_input_tokens_char_div4"]
         - authoritative_prompt_metrics["estimated_input_tokens_char_div4"],
         "response_input_tokens_delta": candidate_usage["input_tokens"] - authoritative_usage["input_tokens"],
+        "response_output_tokens_delta": candidate_usage["output_tokens"] - authoritative_usage["output_tokens"],
         "response_total_tokens_delta": candidate_usage["total_tokens"] - authoritative_usage["total_tokens"],
     }
 
@@ -392,6 +402,78 @@ def build_decision_field_counts(counter: Counter[str], field_names: frozenset[st
     return {field_name: int(counter.get(field_name, 0)) for field_name in sorted(field_names)}
 
 
+def write_compact_summary(path: Path, rows: list[dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames = [
+        "family_id",
+        "cycle_label",
+        "status",
+        "fail_closed_preserved",
+        "planner_reasoning_fields_changed",
+        "planner_decision_fields_changed",
+        "planner_reasoning_changed",
+        "planner_decision_stayed_identical",
+        "planner_reasoning_changed_decision_identical",
+        "planner_prompt_input_token_delta",
+        "planner_input_token_delta",
+        "planner_output_token_delta",
+        "planner_total_token_delta",
+        "critic_reasoning_fields_changed",
+        "critic_decision_fields_changed",
+        "critic_reasoning_changed",
+        "critic_decision_stayed_identical",
+        "critic_reasoning_changed_decision_identical",
+        "critic_prompt_input_token_delta",
+        "critic_input_token_delta",
+        "critic_output_token_delta",
+        "critic_total_token_delta",
+    ]
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow({name: row.get(name, "") for name in fieldnames})
+
+
+def build_compact_summary_rows(case_results: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for case_result in case_results:
+        planner = dict(case_result.get("planner", {}))
+        critic = dict(case_result.get("critic", {}))
+        policy = dict(case_result.get("policy", {}))
+        rows.append(
+            {
+                "family_id": str(case_result.get("family_id", "")),
+                "cycle_label": str(case_result.get("cycle_label", "")),
+                "status": str(case_result.get("status", "")),
+                "fail_closed_preserved": bool(policy.get("fail_closed_preserved", False)),
+                "planner_reasoning_fields_changed": ",".join(planner.get("changed_reasoning_fields", [])),
+                "planner_decision_fields_changed": ",".join(planner.get("changed_decision_fields", [])),
+                "planner_reasoning_changed": bool(planner.get("reasoning_changed", False)),
+                "planner_decision_stayed_identical": bool(planner.get("decision_stayed_identical", False)),
+                "planner_reasoning_changed_decision_identical": bool(
+                    planner.get("reasoning_changed_decision_identical", False)
+                ),
+                "planner_prompt_input_token_delta": int(planner.get("prompt_estimated_input_tokens_delta", 0) or 0),
+                "planner_input_token_delta": int(planner.get("response_input_tokens_delta", 0) or 0),
+                "planner_output_token_delta": int(planner.get("response_output_tokens_delta", 0) or 0),
+                "planner_total_token_delta": int(planner.get("response_total_tokens_delta", 0) or 0),
+                "critic_reasoning_fields_changed": ",".join(critic.get("changed_reasoning_fields", [])),
+                "critic_decision_fields_changed": ",".join(critic.get("changed_decision_fields", [])),
+                "critic_reasoning_changed": bool(critic.get("reasoning_changed", False)),
+                "critic_decision_stayed_identical": bool(critic.get("decision_stayed_identical", False)),
+                "critic_reasoning_changed_decision_identical": bool(
+                    critic.get("reasoning_changed_decision_identical", False)
+                ),
+                "critic_prompt_input_token_delta": int(critic.get("prompt_estimated_input_tokens_delta", 0) or 0),
+                "critic_input_token_delta": int(critic.get("response_input_tokens_delta", 0) or 0),
+                "critic_output_token_delta": int(critic.get("response_output_tokens_delta", 0) or 0),
+                "critic_total_token_delta": int(critic.get("response_total_tokens_delta", 0) or 0),
+            }
+        )
+    return rows
+
+
 def blocked_reasons_for_real_mode(
     *,
     case_results: list[dict[str, Any]],
@@ -428,6 +510,7 @@ def blocked_reasons_for_real_mode(
 def build_markdown_report(summary_payload: dict[str, Any]) -> str:
     summary = dict(summary_payload.get("summary", {}))
     blocked_conditions = dict(summary.get("blocked_conditions", {}))
+    compact_summary_path = str(dict(summary_payload.get("inputs", {})).get("compact_summary_path", ""))
     lines = [
         "# TrendAtlas Shadow Batch Eval",
         "",
@@ -437,6 +520,7 @@ def build_markdown_report(summary_payload: dict[str, Any]) -> str:
         f"- Cases evaluated: `{summary.get('cases_evaluated', 0)}`",
         f"- Fail-closed preserved across all cases: `{dict(summary_payload.get('policy', {})).get('fail_closed_preserved', False)}`",
         f"- Requested case set complete: `{summary.get('requested_case_set_complete', True)}`",
+        f"- Compact manual review artifact: `{compact_summary_path}`",
         "",
         "## Decision Field Counts",
         "",
@@ -455,6 +539,19 @@ def build_markdown_report(summary_payload: dict[str, Any]) -> str:
         "",
         f"- Planner reasoning-only cases: `{summary.get('planner_reasoning_only_change_cases', 0)}`",
         f"- Critic reasoning-only cases: `{summary.get('critic_reasoning_only_change_cases', 0)}`",
+        f"- Planner reasoning field diff frequency: `{json.dumps(summary.get('planner_reasoning_field_differences_frequency', {}), sort_keys=True)}`",
+        f"- Critic reasoning field diff frequency: `{json.dumps(summary.get('critic_reasoning_field_differences_frequency', {}), sort_keys=True)}`",
+        "",
+        "## Token Deltas",
+        "",
+        f"- Planner prompt/input/output deltas: `{json.dumps(dict(summary.get('token_deltas', {})).get('planner', {}), sort_keys=True)}`",
+        f"- Critic prompt/input/output deltas: `{json.dumps(dict(summary.get('token_deltas', {})).get('critic', {}), sort_keys=True)}`",
+        "",
+        "## Reasoning Changed, Decision Identical",
+        "",
+        f"- Planner cases: `{summary.get('planner_reasoning_changed_decision_identical_cases', 0)}`",
+        f"- Critic cases: `{summary.get('critic_reasoning_changed_decision_identical_cases', 0)}`",
+        f"- Combined cases: `{summary.get('reasoning_changed_decision_identical_case_count', 0)}`",
         "",
         "## Cases",
         "",
@@ -467,8 +564,10 @@ def build_markdown_report(summary_payload: dict[str, Any]) -> str:
                 f"- `{case_result.get('family_id', '')} / {case_result.get('cycle_label', '')}`: "
                 f"planner_candidate_status=`{planner.get('candidate_status', '')}`, "
                 f"critic_candidate_status=`{critic.get('candidate_status', '')}`, "
-                f"planner_changed_note_fields=`{','.join(planner.get('changed_note_fields', [])) or 'none'}`, "
-                f"critic_changed_note_fields=`{','.join(critic.get('changed_note_fields', [])) or 'none'}`",
+                f"planner_reasoning_changed_decision_identical=`{planner.get('reasoning_changed_decision_identical', False)}`, "
+                f"critic_reasoning_changed_decision_identical=`{critic.get('reasoning_changed_decision_identical', False)}`, "
+                f"planner_output_delta=`{planner.get('response_output_tokens_delta', 0)}`, "
+                f"critic_output_delta=`{critic.get('response_output_tokens_delta', 0)}`",
             ]
         )
     if not list(summary_payload.get("cases", [])):
@@ -483,6 +582,7 @@ def build_summary(
     heavy_validation_root: Path,
     output_path: Path,
     markdown_path: Path,
+    compact_summary_path: Path,
     execution_mode: str,
     requested_family_ids: list[str],
     requested_cycle_labels: list[str],
@@ -493,14 +593,21 @@ def build_summary(
 ) -> dict[str, Any]:
     planner_changed_field_counter: Counter[str] = Counter()
     critic_changed_field_counter: Counter[str] = Counter()
+    planner_reasoning_field_counter: Counter[str] = Counter()
+    critic_reasoning_field_counter: Counter[str] = Counter()
     planner_decision_field_counter: Counter[str] = Counter()
     critic_decision_field_counter: Counter[str] = Counter()
     planner_prompt_deltas: list[int] = []
     planner_input_deltas: list[int] = []
+    planner_output_deltas: list[int] = []
+    planner_total_deltas: list[int] = []
     critic_prompt_deltas: list[int] = []
     critic_input_deltas: list[int] = []
+    critic_output_deltas: list[int] = []
+    critic_total_deltas: list[int] = []
     planner_decision_field_changes: list[dict[str, Any]] = []
     critic_decision_field_changes: list[dict[str, Any]] = []
+    reasoning_changed_decision_identical_cases: list[dict[str, Any]] = []
     retrieval_missing_cases: list[dict[str, Any]] = []
     real_openai_failure_cases: list[dict[str, Any]] = []
     case_results: list[dict[str, Any]] = []
@@ -537,12 +644,18 @@ def build_summary(
 
         planner_changed_field_counter.update(planner["changed_note_fields"])
         critic_changed_field_counter.update(critic["changed_note_fields"])
+        planner_reasoning_field_counter.update(planner["changed_reasoning_fields"])
+        critic_reasoning_field_counter.update(critic["changed_reasoning_fields"])
         planner_decision_field_counter.update(planner["changed_decision_fields"])
         critic_decision_field_counter.update(critic["changed_decision_fields"])
         planner_prompt_deltas.append(int(planner["prompt_estimated_input_tokens_delta"]))
         planner_input_deltas.append(int(planner["response_input_tokens_delta"]))
+        planner_output_deltas.append(int(planner["response_output_tokens_delta"]))
+        planner_total_deltas.append(int(planner["response_total_tokens_delta"]))
         critic_prompt_deltas.append(int(critic["prompt_estimated_input_tokens_delta"]))
         critic_input_deltas.append(int(critic["response_input_tokens_delta"]))
+        critic_output_deltas.append(int(critic["response_output_tokens_delta"]))
+        critic_total_deltas.append(int(critic["response_total_tokens_delta"]))
 
         if planner["changed_decision_fields"]:
             planner_decision_field_changes.append(
@@ -558,6 +671,17 @@ def build_summary(
                     "family_id": str(case["family_id"]),
                     "cycle_label": str(case["cycle_label"]),
                     "changed_fields": list(critic["changed_decision_fields"]),
+                }
+            )
+        if planner.get("reasoning_changed_decision_identical", False) or critic.get(
+            "reasoning_changed_decision_identical", False
+        ):
+            reasoning_changed_decision_identical_cases.append(
+                {
+                    "family_id": str(case["family_id"]),
+                    "cycle_label": str(case["cycle_label"]),
+                    "planner": bool(planner.get("reasoning_changed_decision_identical", False)),
+                    "critic": bool(critic.get("reasoning_changed_decision_identical", False)),
                 }
             )
         if not bool(dict(planner.get("passive_retrieval_comparison", {})).get("retrieval_packet_present", False)) or not bool(
@@ -631,9 +755,10 @@ def build_summary(
         }
         for case_result in case_results
     ]
+    compact_summary_rows = build_compact_summary_rows(case_results)
 
     return {
-        "schema_version": "trendatlas.shadow_batch_eval.v2",
+        "schema_version": "trendatlas.shadow_batch_eval.v3",
         "evaluated_at_utc": verifier.utc_now_iso(),
         "execution_mode": execution_mode,
         "final_status": final_status,
@@ -652,6 +777,7 @@ def build_summary(
             "heavy_validation_root": str(heavy_validation_root),
             "output_path": str(output_path),
             "markdown_path": str(markdown_path),
+            "compact_summary_path": str(compact_summary_path),
             "requested_family_ids": requested_family_ids,
             "requested_cycle_labels": requested_cycle_labels,
             "retrieval_packets_considered": packets,
@@ -665,18 +791,46 @@ def build_summary(
             "requested_case_set_complete": not missing_requested_cases,
             "planner_changed_fields_frequency": dict(sorted(planner_changed_field_counter.items())),
             "critic_changed_fields_frequency": dict(sorted(critic_changed_field_counter.items())),
+            "planner_reasoning_field_differences_frequency": dict(sorted(planner_reasoning_field_counter.items())),
+            "critic_reasoning_field_differences_frequency": dict(sorted(critic_reasoning_field_counter.items())),
             "planner_reasoning_only_change_cases": sum(
                 1 for case_result in case_results if bool(dict(case_result["planner"]).get("reasoning_only_change", False))
             ),
             "critic_reasoning_only_change_cases": sum(
                 1 for case_result in case_results if bool(dict(case_result["critic"]).get("reasoning_only_change", False))
             ),
+            "planner_reasoning_changed_decision_identical_cases": sum(
+                1
+                for case_result in case_results
+                if bool(dict(case_result["planner"]).get("reasoning_changed_decision_identical", False))
+            ),
+            "critic_reasoning_changed_decision_identical_cases": sum(
+                1
+                for case_result in case_results
+                if bool(dict(case_result["critic"]).get("reasoning_changed_decision_identical", False))
+            ),
+            "reasoning_changed_decision_identical_case_count": len(reasoning_changed_decision_identical_cases),
+            "reasoning_changed_decision_identical_cases": reasoning_changed_decision_identical_cases,
             "planner_decision_field_change_counts": planner_decision_counts,
             "critic_decision_field_change_counts": critic_decision_counts,
             "planner_decision_fields_changed_any": any(planner_decision_counts.values()),
             "critic_decision_fields_changed_any": any(critic_decision_counts.values()),
             "planner_decision_field_changes": planner_decision_field_changes,
             "critic_decision_field_changes": critic_decision_field_changes,
+            "token_deltas": {
+                "planner": {
+                    "prompt_estimated_input_tokens_delta": aggregate_deltas(planner_prompt_deltas),
+                    "response_input_tokens_delta": aggregate_deltas(planner_input_deltas),
+                    "response_output_tokens_delta": aggregate_deltas(planner_output_deltas),
+                    "response_total_tokens_delta": aggregate_deltas(planner_total_deltas),
+                },
+                "critic": {
+                    "prompt_estimated_input_tokens_delta": aggregate_deltas(critic_prompt_deltas),
+                    "response_input_tokens_delta": aggregate_deltas(critic_input_deltas),
+                    "response_output_tokens_delta": aggregate_deltas(critic_output_deltas),
+                    "response_total_tokens_delta": aggregate_deltas(critic_total_deltas),
+                },
+            },
             "prompt_input_token_deltas": {
                 "planner": {
                     "prompt_estimated_input_tokens_delta": aggregate_deltas(planner_prompt_deltas),
@@ -699,6 +853,7 @@ def build_summary(
             "real_openai_failure_cases": real_openai_failure_cases,
             "evaluation_errors": evaluation_errors,
         },
+        "compact_summary_rows": compact_summary_rows,
         "cases": case_results,
     }
 
@@ -710,6 +865,7 @@ def run_batch_eval(
     heavy_validation_root: Path,
     output_path: Path,
     markdown_path: Path,
+    compact_summary_path: Path,
     family_ids: list[str],
     cycle_labels: list[str],
     limit: int,
@@ -733,6 +889,7 @@ def run_batch_eval(
         heavy_validation_root=heavy_validation_root,
         output_path=output_path,
         markdown_path=markdown_path,
+        compact_summary_path=compact_summary_path,
         execution_mode=execution_mode,
         requested_family_ids=requested_family_ids,
         requested_cycle_labels=requested_cycle_labels,
@@ -742,12 +899,14 @@ def run_batch_eval(
         cases=cases,
     )
     verifier.write_json(output_path, summary_payload)
+    write_compact_summary(compact_summary_path, list(summary_payload.get("compact_summary_rows", [])))
     verifier.write_text(markdown_path, build_markdown_report(summary_payload))
     return {
         "status": summary_payload["final_status"],
         "execution_mode": execution_mode,
         "output_path": str(output_path),
         "markdown_path": str(markdown_path),
+        "compact_summary_path": str(compact_summary_path),
         "cases_evaluated": int(dict(summary_payload["summary"]).get("cases_evaluated", 0)),
         "families_tested": list(dict(summary_payload["summary"]).get("families_tested", [])),
     }
@@ -763,11 +922,13 @@ def main(argv: list[str] | None = None) -> int:
     cycle_labels = list(args.cycle_labels)
     default_output_path = DEFAULT_OUTPUT_PATH
     default_markdown_path = DEFAULT_MARKDOWN_PATH
+    default_compact_summary_path = DEFAULT_COMPACT_SUMMARY_PATH
     if execution_mode == verifier.REAL_OPENAI_SHADOW_EXECUTION_MODE:
         family_ids = [REAL_SHADOW_FAMILY_ID]
         cycle_labels = list(REAL_SHADOW_CYCLE_LABELS)
         default_output_path = REAL_OUTPUT_PATH
         default_markdown_path = REAL_MARKDOWN_PATH
+        default_compact_summary_path = REAL_COMPACT_SUMMARY_PATH
 
     result = run_batch_eval(
         retrieval_root=resolve_path(args.retrieval_root),
@@ -775,6 +936,9 @@ def main(argv: list[str] | None = None) -> int:
         heavy_validation_root=resolve_path(args.heavy_validation_root),
         output_path=resolve_path(args.output_path) if args.output_path else default_output_path,
         markdown_path=resolve_path(args.markdown_path) if args.markdown_path else default_markdown_path,
+        compact_summary_path=resolve_path(args.compact_summary_path)
+        if args.compact_summary_path
+        else default_compact_summary_path,
         family_ids=family_ids,
         cycle_labels=cycle_labels,
         limit=int(args.limit or 0),
