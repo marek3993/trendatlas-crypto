@@ -772,6 +772,113 @@ FRESHNESS_SUMMARY_TEXT = {
 }
 
 
+def _derive_authority_currentness(
+    latest_successful_snapshot: dict,
+    latest_attempt_status: dict,
+) -> tuple[str, str, Path, str]:
+    attempt_payload = latest_attempt_status if isinstance(latest_attempt_status, dict) else {}
+    success_payload = latest_successful_snapshot if isinstance(latest_successful_snapshot, dict) else {}
+
+    def first_present(*values: Any) -> str | None:
+        for value in values:
+            text = str(value or "").strip()
+            if text:
+                return text
+        return None
+
+    def source_details(using_attempt_payload: bool) -> tuple[Path, str]:
+        if using_attempt_payload:
+            return AUTHORITY_LATEST_ATTEMPT_STATUS_PATH, ATTEMPT_STATUS_ARTIFACT_TYPE
+        return AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH, SUCCESS_SNAPSHOT_ARTIFACT_TYPE
+
+    attempt_status = first_present(
+        attempt_payload.get("latest_authoritative_attempt_status"),
+        success_payload.get("latest_authoritative_attempt_status"),
+    )
+    normalized_attempt_status = str(attempt_status or "").strip().lower()
+
+    if normalized_attempt_status == "in_progress":
+        source_path, source_type = source_details(bool(attempt_payload))
+        return "refresh_in_progress", FRESHNESS_SUMMARY_TEXT["refresh_in_progress"], source_path, source_type
+
+    if normalized_attempt_status == "failed":
+        source_path, source_type = source_details(bool(attempt_payload))
+        attempt_error = first_present(
+            attempt_payload.get("latest_authoritative_attempt_error"),
+            success_payload.get("latest_authoritative_attempt_error"),
+        )
+        reason = FRESHNESS_SUMMARY_TEXT["refresh_failed"]
+        if attempt_error:
+            reason = f"{reason} error={attempt_error}."
+        return "refresh_failed", reason, source_path, source_type
+
+    attempt_target_day = first_present(attempt_payload.get("target_closed_day_utc"))
+    attempt_strategy_day = first_present(attempt_payload.get("strategy_artifact_closed_day_utc"))
+    success_target_day = first_present(success_payload.get("target_closed_day_utc"))
+    success_strategy_day = first_present(success_payload.get("strategy_artifact_closed_day_utc"))
+
+    if attempt_target_day and attempt_strategy_day:
+        target_closed_day_utc = attempt_target_day
+        strategy_artifact_closed_day_utc = attempt_strategy_day
+        source_path, source_type = source_details(True)
+    elif success_target_day and success_strategy_day:
+        target_closed_day_utc = success_target_day
+        strategy_artifact_closed_day_utc = success_strategy_day
+        source_path, source_type = source_details(False)
+    else:
+        target_closed_day_utc = first_present(attempt_target_day, success_target_day)
+        strategy_artifact_closed_day_utc = first_present(
+            attempt_strategy_day,
+            success_strategy_day,
+        )
+        source_path, source_type = source_details(bool(attempt_target_day or attempt_strategy_day or attempt_payload))
+
+    if target_closed_day_utc and strategy_artifact_closed_day_utc:
+        if target_closed_day_utc == strategy_artifact_closed_day_utc:
+            return (
+                "current",
+                (
+                    "Current: authority target closed UTC day "
+                    f"{target_closed_day_utc} matches authority strategy artifact closed UTC day "
+                    f"{strategy_artifact_closed_day_utc}."
+                ),
+                source_path,
+                source_type,
+            )
+        return (
+            "stale",
+            (
+                "Stale: authority target closed UTC day "
+                f"{target_closed_day_utc} does not match authority strategy artifact closed UTC day "
+                f"{strategy_artifact_closed_day_utc}."
+            ),
+            source_path,
+            source_type,
+        )
+
+    if target_closed_day_utc:
+        return (
+            "stale",
+            (
+                "Stale: authority target closed UTC day "
+                f"{target_closed_day_utc} is present but authority strategy artifact closed UTC day is missing."
+            ),
+            source_path,
+            source_type,
+        )
+
+    if normalized_attempt_status == "success":
+        return (
+            "stale",
+            "Stale: authority publish succeeded but target/strategy closed UTC day fields are missing.",
+            source_path,
+            source_type,
+        )
+
+    source_path, source_type = source_details(bool(attempt_payload))
+    return "missing_authority_artifact", FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"], source_path, source_type
+
+
 def build_missing_runtime_snapshot(path: Path) -> dict:
     missing_freshness = {
         "latest_refresh_run_id": None,
@@ -898,21 +1005,14 @@ def build_authority_runtime_table_snapshot(
         ).strip().lower()
         or None
     )
-    authority_currentness_state = (
-        str(
-            attempt_payload.get("currentness_status")
-            or success_payload.get("currentness_status")
-            or "missing_authority_artifact"
-        ).strip()
-        or "missing_authority_artifact"
-    )
-    authority_currentness_reason = (
-        str(
-            attempt_payload.get("currentness_reason")
-            or success_payload.get("currentness_reason")
-            or FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"]
-        ).strip()
-        or FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"]
+    (
+        authority_currentness_state,
+        authority_currentness_reason,
+        currentness_source_path,
+        currentness_source_type,
+    ) = _derive_authority_currentness(
+        success_payload,
+        attempt_payload,
     )
     wallet_sync_utc = (
         attempt_payload.get("authority_wallet_sync_utc")
@@ -961,16 +1061,16 @@ def build_authority_runtime_table_snapshot(
                 "source_field": "authority_wallet_sync_utc|authority_account_snapshot_as_of_utc",
             },
             "currentness_state": {
-                "path": str(source_path),
-                "exists": source_path.exists(),
-                "source_type": source_type,
-                "source_field": "currentness_status",
+                "path": str(currentness_source_path),
+                "exists": currentness_source_path.exists(),
+                "source_type": currentness_source_type,
+                "source_field": "target_closed_day_utc|strategy_artifact_closed_day_utc|latest_authoritative_attempt_status",
             },
             "currentness_reason": {
-                "path": str(source_path),
-                "exists": source_path.exists(),
-                "source_type": source_type,
-                "source_field": "currentness_reason",
+                "path": str(currentness_source_path),
+                "exists": currentness_source_path.exists(),
+                "source_type": currentness_source_type,
+                "source_field": "target_closed_day_utc|strategy_artifact_closed_day_utc|latest_authoritative_attempt_status|latest_authoritative_attempt_error",
             },
         },
         "evaluated_at_utc": authority_generated_at_utc,
