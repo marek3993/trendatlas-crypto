@@ -141,6 +141,7 @@ def _target_family_from_snapshot(job: WorkerJob) -> dict[str, Any]:
 def build_mutation_proposal_artifact(job: WorkerJob) -> dict[str, Any]:
     proposal = MutationProposal.from_mapping(job.payload.get("mutation_proposal", {}))
     family_state = _target_family_from_snapshot(job)
+    optional_input_artifacts = dict(job.payload.get("optional_input_artifacts", {}))
     lineage = {
         "planner_request_id": str(job.payload.get("planner_request_id", "")),
         "family_state_snapshot_path": str(job.payload.get("family_state_snapshot_path", "")),
@@ -196,6 +197,7 @@ def build_mutation_proposal_artifact(job: WorkerJob) -> dict[str, Any]:
         },
         "proposal": proposal.to_dict(),
         "proposal_lineage": lineage,
+        "optional_input_artifacts": optional_input_artifacts,
         "queue_ready_heavy_job_request": heavy_job_request,
         "notes": [
             "mutation_proposal_validated_only",
@@ -287,6 +289,7 @@ def build_heavy_validation_artifact_payload(
             "proposal_id": source_artifact.get("proposal", {}).get("proposal_id", ""),
             "validation_status": source_artifact.get("validation", {}).get("status", ""),
         },
+        "optional_input_artifacts": dict(source_artifact.get("optional_input_artifacts", {})),
         "heavy_validation_request": {
             **request.to_dict(),
             "status": status,
@@ -1255,6 +1258,7 @@ def build_family_verdict(
             },
             "guardrail_breaches": breaches,
             "compare_metric_count": len(compare_rows),
+            "optional_input_artifacts": dict(source_artifact.get("optional_input_artifacts", {})),
             "openai_review": openai_review,
         },
     )

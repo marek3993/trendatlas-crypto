@@ -11,6 +11,9 @@ from services.shared.runtime_bootstrap import collect_runtime_readiness, load_ru
 from services.shared.schemas import (
     FamilyRegistry,
     JOB_TYPE_PROPOSE_NEXT_MUTATION,
+    SCHEMA_VERSION,
+    WorkerJob,
+    utc_now_iso,
 )
 
 
@@ -100,6 +103,54 @@ def build_environment_scan() -> dict:
             },
         },
     }
+
+
+def write_retrieval_packet(root: Path, *, family_id: str) -> Path:
+    packet_path = root / "20260424T220103Z" / f"{family_id}.latest.retrieval_packet.json"
+    packet_path.parent.mkdir(parents=True, exist_ok=True)
+    packet_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "trendatlas.imlayer.retrieval_packet.v1",
+                "retrieval_generated_at_utc": "2026-04-24T22:01:03Z",
+                "query": {
+                    "family_id": family_id,
+                    "memory_query_target": "latest",
+                    "resolved_batch_id": "20260424T175234Z",
+                },
+                "family_summary": {
+                    "latest_cycle_id": "openai_token_opt_rerun",
+                    "latest_memory_id": f"trendatlas.crypto.decision_episode.openai_token_opt_rerun.{family_id}",
+                    "latest_verdict": "pause",
+                    "latest_action": "pause_family",
+                    "selected_count": 1,
+                    "risk_flag_union": ["dd below -1.0"],
+                },
+                "records": [
+                    {
+                        "decision": {
+                            "verdict": "pause",
+                            "action": "pause_family",
+                        },
+                        "decision_packet": {
+                            "semantic_sha256": "abc123",
+                        },
+                        "run_context": {
+                            "family_id": family_id,
+                            "proposal_id": "proposal_01",
+                            "critic_run_id": "critic_01",
+                            "governor_run_id": "governor_01",
+                            "validation_job_id": "validation_01",
+                        },
+                    }
+                ],
+            },
+            indent=2,
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+    return packet_path
 
 
 class TestResearchOSOpenAIRuntime(unittest.TestCase):
@@ -403,6 +454,62 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
         self.assertFalse(proposal["mutation_target"]["execution_allowed"])
         self.assertEqual(proposal["mutation_target"]["scope"], "dev_only_queue_ready_heavy_job_request_only")
 
+    def test_plan_jobs_threads_retrieval_packet_passively_without_changing_openai_input(self):
+        planner_input = planner_service.build_planner_input(
+            request_id="planner_retrieval_packet_test",
+            family_registry=build_family_registry(),
+            environment_scan=build_environment_scan(),
+        )
+        retrieval_root = Path.cwd() / "tests_runtime_retrieval_packet_case"
+        shutil.rmtree(retrieval_root, ignore_errors=True)
+        try:
+            write_retrieval_packet(retrieval_root, family_id="cost_aware_hysteretic_pilot_to_full")
+            mocked_response = StructuredResponseResult(
+                response_id="resp_planner_retrieval_packet_123",
+                model="gpt-5.4",
+                status="completed",
+                parsed={
+                    "mechanism_hypothesis": "Keep the same family, but narrow the recap gate.",
+                    "selection_rationale": "A single rule restriction is the narrowest valid next step.",
+                    "mutation_target": {
+                        "target_id": "state_machine.pilot_entry.narrow_recap_gate",
+                        "target_type": "single_rule_restriction",
+                        "source_artifact_id": "cost_probe_recap_confirm",
+                        "exact_change": "Cap PILOT re-entry attempts at one per constructive stretch.",
+                    },
+                    "stop_condition": "Reject if turnover pressure remains above 0.",
+                },
+                output_text="{}",
+                usage={"input_tokens": 1, "output_tokens": 1, "total_tokens": 2},
+            )
+
+            with mock.patch.object(planner_service, "invoke_structured_response", return_value=mocked_response) as invoke_mock:
+                output = planner_service.plan_jobs(
+                    planner_input=planner_input,
+                    artifact_root="outputs/research_os/dev_only/test_openai_runtime_artifacts",
+                    openai_config={
+                        "enabled": True,
+                        "model": "gpt-5.4",
+                        "prompt_template": "research_os_planner_mutation_proposal_v1",
+                        "responses_api": "https://api.openai.com/v1/responses",
+                    },
+                    planner_config={
+                        "enabled": True,
+                        "retrieval_packet": {
+                            "enabled": True,
+                            "root_dir": str(retrieval_root),
+                        },
+                    },
+                )
+        finally:
+            shutil.rmtree(retrieval_root, ignore_errors=True)
+
+        retrieval_packet = output.jobs[0]["payload"]["optional_input_artifacts"]["retrieval_packet"]
+        self.assertEqual(retrieval_packet["status"], "loaded")
+        self.assertEqual(retrieval_packet["summary"]["latest_memory_id"], "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full")
+        self.assertIn("passive_retrieval_packet_status=loaded", output.notes)
+        self.assertNotIn("optional_input_artifacts", invoke_mock.call_args.kwargs["user_payload"])
+
     def test_build_family_verdict_keeps_deterministic_guardrails_authoritative(self):
         mocked_response = StructuredResponseResult(
             response_id="resp_critic_123",
@@ -498,6 +605,154 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
         self.assertEqual(verdict.evidence["openai_review"]["network_call"], "completed")
         self.assertFalse(verdict.evidence["openai_review"]["recommendation_applied"])
         self.assertEqual(verdict.evidence["deterministic_policy_result"]["verdict"], "pause")
+
+    def test_build_family_verdict_surfaces_retrieval_packet_only_in_evidence(self):
+        mocked_response = StructuredResponseResult(
+            response_id="resp_critic_retrieval_packet_123",
+            model="gpt-5.4",
+            status="completed",
+            parsed={
+                "recommended_verdict": "pause",
+                "recommended_next_action": "pause_family",
+                "recommended_reason": "pause: guardrails remain breached.",
+                "guardrail_breaches": ["dd below -1.0"],
+                "policy_alignment_note": "Matches policy.",
+            },
+            output_text="{}",
+            usage={"input_tokens": 1, "output_tokens": 1, "total_tokens": 2},
+        )
+        summary = {
+            "request_id": "critic_retrieval_packet_request",
+            "proposal_id": "critic_retrieval_packet_proposal",
+            "family_id": "cost_aware_hysteretic_pilot_to_full",
+            "job_id": "critic_retrieval_packet_job",
+            "adapter_id": "safe_dev_only_artifact_adapter_v1",
+            "stop_condition": "Reject if switch_count_delta > 4 or turnover_pressure_delta > 0.0.",
+            "mutation_target": {
+                "source_artifact_id": "cost_probe_recap_confirm",
+            },
+        }
+        compare_rows = [
+            {
+                "metric": "net_benefit",
+                "basis_json": "{\"latest_net_total_return_delta_pct\": 125.0}",
+            },
+            {
+                "metric": "dd",
+                "basis_json": "{\"latest_max_drawdown_delta_pct\": -4.0}",
+            },
+        ]
+        cost_rows = [
+            {
+                "metric": "strategy_code_executed",
+                "value": "false",
+            }
+        ]
+        source_artifact = {
+            "proposal": {
+                "mutation_target": {
+                    "source_artifact_id": "cost_probe_recap_confirm",
+                    "target_id": "state_machine.pilot_entry.recap_confirm_gate",
+                }
+            },
+            "proposal_lineage": {
+                "source_last_metrics": {
+                    "net_total_return_delta_pct": 125.0,
+                    "max_drawdown_delta_pct": -4.0,
+                    "trade_days_delta": 6,
+                    "switch_count_delta": 8,
+                    "turnover_pressure_delta": 1.0,
+                }
+            },
+            "optional_input_artifacts": {
+                "retrieval_packet": {
+                    "status": "loaded",
+                    "family_id": "cost_aware_hysteretic_pilot_to_full",
+                    "summary": {
+                        "latest_memory_id": "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+                    },
+                    "payload": {
+                        "schema_version": "trendatlas.imlayer.retrieval_packet.v1",
+                    },
+                }
+            },
+        }
+        source_paths = {
+            "summary": "summary.json",
+            "compare": "compare.csv",
+            "cost_metrics": "cost.csv",
+        }
+
+        with mock.patch.object(worker_service, "invoke_structured_response", return_value=mocked_response) as invoke_mock:
+            verdict = worker_service.build_family_verdict(
+                summary=summary,
+                compare_rows=compare_rows,
+                cost_rows=cost_rows,
+                source_artifact=source_artifact,
+                source_paths=source_paths,
+                critic_job_id="critic_job_retrieval_packet_01",
+                critic_openai_config={
+                    "enabled": True,
+                    "model": "gpt-5.4",
+                    "prompt_template": "research_os_critic_family_verdict_v1",
+                    "responses_api": "https://api.openai.com/v1/responses",
+                },
+            )
+
+        self.assertIn("optional_input_artifacts", verdict.evidence)
+        self.assertEqual(
+            verdict.evidence["optional_input_artifacts"]["retrieval_packet"]["summary"]["latest_memory_id"],
+            "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+        )
+        self.assertNotIn("optional_input_artifacts", invoke_mock.call_args.kwargs["user_payload"])
+
+    def test_build_mutation_proposal_artifact_carries_optional_retrieval_packet(self):
+        job = WorkerJob(
+            schema_version=SCHEMA_VERSION,
+            job_id="planner_retrieval_packet_job",
+            job_type=JOB_TYPE_PROPOSE_NEXT_MUTATION,
+            family_id="cost_aware_hysteretic_pilot_to_full",
+            priority=1,
+            payload={
+                "planner_request_id": "planner_retrieval_packet_request",
+                "mutation_proposal": planner_service.build_mutation_proposal(
+                    request_id="planner_retrieval_packet_request",
+                    family_id="cost_aware_hysteretic_pilot_to_full",
+                    family_state=build_environment_scan()["family_state_snapshot"]["payload"]["families"][0],
+                    market_state_snapshot=build_environment_scan()["market_state_snapshot"]["payload"],
+                ).to_dict(),
+                "family_state_snapshot": build_environment_scan()["family_state_snapshot"]["payload"],
+                "family_state_snapshot_path": "family_state.json",
+                "market_state_snapshot": build_environment_scan()["market_state_snapshot"]["payload"],
+                "market_state_snapshot_path": "market_state.json",
+                "optional_input_artifacts": {
+                    "retrieval_packet": {
+                        "status": "loaded",
+                        "family_id": "cost_aware_hysteretic_pilot_to_full",
+                        "summary": {
+                            "latest_memory_id": "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+                        },
+                    }
+                },
+            },
+            artifact_root="outputs/research_os/dev_only/test_openai_runtime_artifacts",
+            created_at=utc_now_iso(),
+            constraints={
+                "dev_only": True,
+                "non_authoritative": True,
+                "live_trading": False,
+                "source_of_truth_mutation": False,
+                "official_promotion_logic": False,
+            },
+        )
+
+        artifact = worker_service.build_mutation_proposal_artifact(job)
+
+        self.assertIn("optional_input_artifacts", artifact)
+        self.assertEqual(
+            artifact["optional_input_artifacts"]["retrieval_packet"]["summary"]["latest_memory_id"],
+            "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+        )
 
 
 if __name__ == "__main__":

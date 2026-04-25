@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from services.shared.openai_responses import describe_openai_operation, invoke_structured_response, serialize_openai_error
+from services.shared.retrieval_packet import load_passive_retrieval_packet
 from services.shared.runtime_bootstrap import load_runtime_config as load_runtime_config_shared
 from services.shared.artifact_writer import ArtifactWriter
 from services.shared.schemas import (
@@ -705,6 +706,7 @@ def plan_jobs(
     family_state_snapshot = planner_input.environment_scan.get("family_state_snapshot", {})
     market_state_snapshot = planner_input.environment_scan.get("market_state_snapshot", {})
     openai_note = f"planner_openai_{openai_hook['network_call']}"
+    retrieval_packet_status = "not_evaluated"
     if not planner_enabled:
         return PlannerOutput(
             schema_version=SCHEMA_VERSION,
@@ -725,6 +727,11 @@ def plan_jobs(
         selected_family_state = _snapshot_family(family_state_payload, selected_family.family_id)
         if not selected_family_state:
             raise ValueError(f"family_id not found in planner family state snapshot: {selected_family.family_id}")
+        retrieval_packet = load_passive_retrieval_packet(
+            selected_family.family_id,
+            dict(planner_config.get("retrieval_packet") or {}),
+        )
+        retrieval_packet_status = str(retrieval_packet.get("status", "missing"))
         proposal = build_mutation_proposal(
             request_id=planner_input.request_id,
             family_id=selected_family.family_id,
@@ -793,6 +800,9 @@ def plan_jobs(
                 "family_state_snapshot": family_state_snapshot.get("payload", {}),
                 "market_state_snapshot_path": market_state_snapshot.get("path", ""),
                 "market_state_snapshot": market_state_snapshot.get("payload", {}),
+                "optional_input_artifacts": {
+                    "retrieval_packet": retrieval_packet,
+                },
             },
             artifact_root=artifact_root,
             created_at=utc_now_iso(),
@@ -821,6 +831,7 @@ def plan_jobs(
             "no_strategy_code_execution",
             "planner_governor_override_enabled" if allow_governor_override else "planner_governor_override_disabled",
             f"governor_blocked_families={json.dumps(blocked_families, sort_keys=True)}",
+            f"passive_retrieval_packet_status={retrieval_packet_status}",
         ],
         openai_hook=openai_hook,
     )
