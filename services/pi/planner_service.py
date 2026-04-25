@@ -6,7 +6,11 @@ from pathlib import Path
 from typing import Any
 
 from services.shared.openai_responses import describe_openai_operation, invoke_structured_response, serialize_openai_error
-from services.shared.retrieval_packet import build_passive_retrieval_comparison, load_passive_retrieval_packet
+from services.shared.retrieval_packet import (
+    build_controlled_retrieval_comparison_harness,
+    build_passive_retrieval_comparison,
+    load_passive_retrieval_packet,
+)
 from services.shared.runtime_bootstrap import load_runtime_config as load_runtime_config_shared
 from services.shared.artifact_writer import ArtifactWriter
 from services.shared.schemas import (
@@ -290,29 +294,59 @@ def _planner_user_payload(
     }
 
 
-def _build_openai_mutation_proposal(
+def _planner_note_fields_from_response(parsed: dict[str, Any]) -> dict[str, Any]:
+    mutation_target = dict(parsed.get("mutation_target", {}))
+    return {
+        "mechanism_hypothesis": str(parsed.get("mechanism_hypothesis", "")),
+        "selection_rationale": str(parsed.get("selection_rationale", "")),
+        "target_id": str(mutation_target.get("target_id", "")),
+        "target_type": str(mutation_target.get("target_type", "")),
+        "source_artifact_id": str(mutation_target.get("source_artifact_id", "")),
+        "exact_change": str(mutation_target.get("exact_change", "")),
+        "stop_condition": str(parsed.get("stop_condition", "")),
+    }
+
+
+def _planner_note_field_diff(
+    authoritative_note_fields: dict[str, Any],
+    candidate_note_fields: dict[str, Any],
+) -> dict[str, Any]:
+    fields_compared = sorted(set(authoritative_note_fields) | set(candidate_note_fields))
+    changed_fields = [
+        field_name
+        for field_name in fields_compared
+        if authoritative_note_fields.get(field_name) != candidate_note_fields.get(field_name)
+    ]
+    return {
+        "fields_compared": fields_compared,
+        "changed_fields": changed_fields,
+        "has_note_differences": bool(changed_fields),
+    }
+
+
+def _invoke_planner_openai_response(
     *,
-    planner_input: PlannerInput,
-    selected_family: Any,
-    selected_family_state: dict[str, Any],
-    market_state_payload: dict[str, Any],
-    blocked_families: list[dict[str, str]],
-    fallback_proposal: MutationProposal,
+    user_payload: dict[str, Any],
     openai_config: dict[str, Any],
-) -> tuple[MutationProposal, dict[str, Any], str]:
-    response = invoke_structured_response(
+) -> Any:
+    return invoke_structured_response(
         openai_config,
         system_prompt=_planner_prompt_template(str(openai_config.get("prompt_template", ""))),
-        user_payload=_planner_user_payload(
-            planner_input=planner_input,
-            selected_family=selected_family,
-            selected_family_state=selected_family_state,
-            market_state_payload=market_state_payload,
-            blocked_families=blocked_families,
-            fallback_proposal=fallback_proposal,
-        ),
+        user_payload=user_payload,
         schema_name="research_os_planner_mutation_proposal",
         schema=_planner_response_schema(),
+    )
+
+
+def _build_openai_mutation_proposal(
+    *,
+    user_payload: dict[str, Any],
+    fallback_proposal: MutationProposal,
+    openai_config: dict[str, Any],
+) -> tuple[MutationProposal, dict[str, Any], str, dict[str, Any]]:
+    response = _invoke_planner_openai_response(
+        user_payload=user_payload,
+        openai_config=openai_config,
     )
     fallback_payload = fallback_proposal.to_dict()
     model_target = dict(response.parsed["mutation_target"])
@@ -342,7 +376,27 @@ def _build_openai_mutation_proposal(
         "usage": response.usage,
         "selection_rationale": str(response.parsed.get("selection_rationale", "")),
     }
-    return proposal, hook, "planner_openai_response_applied"
+    return proposal, hook, "planner_openai_response_applied", _planner_note_fields_from_response(response.parsed)
+
+
+def _run_shadow_planner_comparison(
+    *,
+    user_payload: dict[str, Any],
+    openai_config: dict[str, Any],
+) -> dict[str, Any]:
+    response = _invoke_planner_openai_response(
+        user_payload=user_payload,
+        openai_config=openai_config,
+    )
+    return {
+        "status": "completed",
+        "response_id": response.response_id,
+        "response_status": response.status,
+        "response_model": response.model,
+        "usage": dict(response.usage),
+        "note_fields": _planner_note_fields_from_response(response.parsed),
+        "error": "",
+    }
 
 
 def _planner_effective_openai_source(
@@ -711,6 +765,38 @@ def plan_jobs(
         {"status": retrieval_packet_status},
         component="planner",
     )
+    controlled_retrieval_comparison = {
+        "component": "planner",
+        "comparison_only": True,
+        "decision_behavior_changed": False,
+        "fail_closed_preserved": True,
+        "explicitly_enabled": False,
+        "authoritative_variant": "without_retrieval_packet",
+        "candidate_variant": "with_retrieval_packet",
+        "candidate_available": False,
+        "retrieval_packet_status": retrieval_packet_status,
+        "authoritative_prompt_metrics": {},
+        "candidate_prompt_metrics": {},
+        "observations": {
+            "authoritative": {
+                "user_payload_includes_retrieval_packet": False,
+                "usage": {},
+                "note_fields": {},
+            },
+            "candidate": {
+                "status": "disabled",
+                "user_payload_includes_retrieval_packet": False,
+                "usage": {},
+                "note_fields": {},
+                "error": "",
+            },
+            "diff": {
+                "fields_compared": [],
+                "changed_fields": [],
+                "has_note_differences": False,
+            },
+        },
+    }
     if not planner_enabled:
         return PlannerOutput(
             schema_version=SCHEMA_VERSION,
@@ -746,19 +832,49 @@ def plan_jobs(
             family_state=selected_family_state,
             market_state_snapshot=market_state_payload,
         )
+        authoritative_user_payload = _planner_user_payload(
+            planner_input=planner_input,
+            selected_family=selected_family,
+            selected_family_state=selected_family_state,
+            market_state_payload=market_state_payload,
+            blocked_families=blocked_families,
+            fallback_proposal=proposal,
+        )
+        controlled_retrieval_comparison, candidate_user_payload = build_controlled_retrieval_comparison_harness(
+            authoritative_user_payload=authoritative_user_payload,
+            packet=retrieval_packet,
+            component="planner",
+            comparison_config=dict(planner_config.get("controlled_comparison") or {}),
+        )
         if bool(openai_config.get("enabled", False)):
             try:
-                proposal, openai_hook, openai_note = _build_openai_mutation_proposal(
-                    planner_input=planner_input,
-                    selected_family=selected_family,
-                    selected_family_state=selected_family_state,
-                    market_state_payload=market_state_payload,
-                    blocked_families=blocked_families,
+                proposal, openai_hook, openai_note, authoritative_note_fields = _build_openai_mutation_proposal(
+                    user_payload=authoritative_user_payload,
                     fallback_proposal=proposal,
                     openai_config=openai_config,
                 )
                 openai_hook["effective_openai_config"] = dict(openai_config)
                 openai_hook["effective_openai_source"] = dict(effective_openai_source)
+                controlled_retrieval_comparison["observations"]["authoritative"]["usage"] = dict(
+                    openai_hook.get("usage", {})
+                )
+                controlled_retrieval_comparison["observations"]["authoritative"]["note_fields"] = authoritative_note_fields
+                if controlled_retrieval_comparison["observations"]["candidate"]["status"] == "ready":
+                    try:
+                        shadow_result = _run_shadow_planner_comparison(
+                            user_payload=candidate_user_payload or {},
+                            openai_config=openai_config,
+                        )
+                        controlled_retrieval_comparison["observations"]["candidate"].update(shadow_result)
+                        controlled_retrieval_comparison["observations"]["diff"] = _planner_note_field_diff(
+                            authoritative_note_fields,
+                            dict(shadow_result.get("note_fields", {})),
+                        )
+                    except Exception as shadow_exc:
+                        controlled_retrieval_comparison["observations"]["candidate"]["status"] = (
+                            "failed_observation_only"
+                        )
+                        controlled_retrieval_comparison["observations"]["candidate"]["error"] = str(shadow_exc)
             except Exception as exc:
                 error_record = _write_planner_openai_error_artifact(
                     artifact_root=artifact_root,
@@ -792,6 +908,10 @@ def plan_jobs(
                     ],
                     openai_hook=openai_hook,
                 )
+        elif controlled_retrieval_comparison["observations"]["candidate"]["status"] == "ready":
+            controlled_retrieval_comparison["observations"]["candidate"]["status"] = (
+                "skipped_authoritative_openai_disabled"
+            )
         job = WorkerJob(
             schema_version=SCHEMA_VERSION,
             job_id=f"{planner_input.request_id}_{selected_family.family_id}_{JOB_TYPE_PROPOSE_NEXT_MUTATION}",
@@ -813,6 +933,7 @@ def plan_jobs(
                 },
                 "runtime_debug": {
                     "passive_retrieval_comparison": retrieval_comparison,
+                    "controlled_retrieval_comparison": controlled_retrieval_comparison,
                 },
             },
             artifact_root=artifact_root,
@@ -845,10 +966,20 @@ def plan_jobs(
             f"passive_retrieval_packet_status={retrieval_packet_status}",
             f"passive_retrieval_packet_present={str(retrieval_comparison['retrieval_packet_present']).lower()}",
             f"passive_retrieval_comparison_bucket={retrieval_comparison['comparison_bucket']}",
+            (
+                "controlled_retrieval_comparison_enabled"
+                if controlled_retrieval_comparison["explicitly_enabled"]
+                else "controlled_retrieval_comparison_disabled"
+            ),
+            (
+                "controlled_retrieval_candidate_status="
+                f"{controlled_retrieval_comparison['observations']['candidate']['status']}"
+            ),
         ],
         openai_hook={
             **openai_hook,
             "passive_retrieval_comparison": retrieval_comparison,
+            "controlled_retrieval_comparison": controlled_retrieval_comparison,
         },
     )
 

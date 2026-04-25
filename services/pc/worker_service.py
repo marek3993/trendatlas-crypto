@@ -13,7 +13,10 @@ from services.pi.job_queue import JobQueue, QueueMessage, build_queue, consume_e
 from services.pi.registry_service import RegistryService
 from services.shared.artifact_writer import ArtifactWriter
 from services.shared.openai_responses import describe_openai_operation, invoke_structured_response, serialize_openai_error
-from services.shared.retrieval_packet import build_passive_retrieval_comparison
+from services.shared.retrieval_packet import (
+    build_controlled_retrieval_comparison_harness,
+    build_passive_retrieval_comparison,
+)
 from services.shared.runtime_bootstrap import (
     assert_runtime_startup_ready,
     build_service_status,
@@ -1089,25 +1092,41 @@ def _critic_user_payload(
     )
 
 
-def _run_openai_critic_review(
+def _critic_note_fields_from_review(review: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "recommended_verdict": str(review.get("recommended_verdict", "")),
+        "recommended_next_action": str(review.get("recommended_next_action", "")),
+        "recommended_reason": str(review.get("recommended_reason", "")),
+        "policy_alignment_note": str(review.get("policy_alignment_note", "")),
+    }
+
+
+def _critic_note_field_diff(
+    authoritative_note_fields: dict[str, Any],
+    candidate_note_fields: dict[str, Any],
+) -> dict[str, Any]:
+    fields_compared = sorted(set(authoritative_note_fields) | set(candidate_note_fields))
+    changed_fields = [
+        field_name
+        for field_name in fields_compared
+        if authoritative_note_fields.get(field_name) != candidate_note_fields.get(field_name)
+    ]
+    return {
+        "fields_compared": fields_compared,
+        "changed_fields": changed_fields,
+        "has_note_differences": bool(changed_fields),
+    }
+
+
+def _invoke_critic_openai_review(
     *,
-    summary: dict[str, Any],
-    compare_rows: list[dict[str, Any]],
-    cost_rows: list[dict[str, Any]],
-    source_artifact: dict[str, Any],
-    deterministic: dict[str, Any],
+    user_payload: dict[str, Any],
     critic_openai_config: dict[str, Any],
 ) -> dict[str, Any]:
     response = invoke_structured_response(
         critic_openai_config,
         system_prompt=_critic_prompt_template(str(critic_openai_config.get("prompt_template", ""))),
-        user_payload=_critic_user_payload(
-            summary=summary,
-            compare_rows=compare_rows,
-            cost_rows=cost_rows,
-            source_artifact=source_artifact,
-            deterministic=deterministic,
-        ),
+        user_payload=user_payload,
         schema_name="research_os_critic_family_verdict",
         schema=_critic_response_schema(),
     )
@@ -1124,6 +1143,17 @@ def _run_openai_critic_review(
         "guardrail_breaches": [str(item) for item in list(response.parsed.get("guardrail_breaches", []))],
         "policy_alignment_note": str(response.parsed.get("policy_alignment_note", "")),
     }
+
+
+def _run_openai_critic_review(
+    *,
+    user_payload: dict[str, Any],
+    critic_openai_config: dict[str, Any],
+) -> dict[str, Any]:
+    return _invoke_critic_openai_review(
+        user_payload=user_payload,
+        critic_openai_config=critic_openai_config,
+    )
 
 
 def _resolve_critic_openai_config(
@@ -1187,33 +1217,75 @@ def build_family_verdict(
     critic_job_id: str,
     critic_openai_config: dict[str, Any] | None = None,
     effective_openai_source: dict[str, Any] | None = None,
+    critic_config: dict[str, Any] | None = None,
 ) -> FamilyVerdict:
     deterministic = _deterministic_family_verdict_data(summary, compare_rows, source_artifact)
     critic_openai_config = dict(critic_openai_config or {})
+    critic_config = dict(critic_config or {})
+    authoritative_user_payload = _critic_user_payload(
+        summary=summary,
+        compare_rows=compare_rows,
+        cost_rows=cost_rows,
+        source_artifact=source_artifact,
+        deterministic=deterministic,
+    )
     retrieval_comparison = build_passive_retrieval_comparison(
         dict(dict(source_artifact.get("optional_input_artifacts", {})).get("retrieval_packet", {})),
         component="critic",
+    )
+    controlled_retrieval_comparison, candidate_user_payload = build_controlled_retrieval_comparison_harness(
+        authoritative_user_payload=authoritative_user_payload,
+        packet=dict(dict(source_artifact.get("optional_input_artifacts", {})).get("retrieval_packet", {})),
+        component="critic",
+        comparison_config=dict(critic_config.get("controlled_comparison") or {}),
     )
     openai_review = {
         **describe_openai_operation(critic_openai_config),
         "effective_openai_config": dict(critic_openai_config),
         "effective_openai_source": dict(effective_openai_source or {}),
         "passive_retrieval_comparison": retrieval_comparison,
+        "controlled_retrieval_comparison": controlled_retrieval_comparison,
     }
     verdict_reason = str(deterministic["verdict_reason"])
     breaches = list(deterministic["breaches"])
     if bool(critic_openai_config.get("enabled", False)):
         openai_review = _run_openai_critic_review(
-            summary=summary,
-            compare_rows=compare_rows,
-            cost_rows=cost_rows,
-            source_artifact=source_artifact,
-            deterministic=deterministic,
+            user_payload=authoritative_user_payload,
             critic_openai_config=critic_openai_config,
         )
         openai_review["effective_openai_config"] = dict(critic_openai_config)
         openai_review["effective_openai_source"] = dict(effective_openai_source or {})
         openai_review["passive_retrieval_comparison"] = retrieval_comparison
+        authoritative_note_fields = _critic_note_fields_from_review(openai_review)
+        controlled_retrieval_comparison["observations"]["authoritative"]["usage"] = dict(
+            openai_review.get("usage", {})
+        )
+        controlled_retrieval_comparison["observations"]["authoritative"]["note_fields"] = authoritative_note_fields
+        if controlled_retrieval_comparison["observations"]["candidate"]["status"] == "ready":
+            try:
+                shadow_review = _invoke_critic_openai_review(
+                    user_payload=candidate_user_payload or {},
+                    critic_openai_config=critic_openai_config,
+                )
+                controlled_retrieval_comparison["observations"]["candidate"].update(
+                    {
+                        "status": "completed",
+                        "response_id": shadow_review.get("response_id", ""),
+                        "response_status": shadow_review.get("response_status", ""),
+                        "response_model": shadow_review.get("response_model", ""),
+                        "usage": dict(shadow_review.get("usage", {})),
+                        "note_fields": _critic_note_fields_from_review(shadow_review),
+                        "error": "",
+                    }
+                )
+                controlled_retrieval_comparison["observations"]["diff"] = _critic_note_field_diff(
+                    authoritative_note_fields,
+                    dict(controlled_retrieval_comparison["observations"]["candidate"]["note_fields"]),
+                )
+            except Exception as shadow_exc:
+                controlled_retrieval_comparison["observations"]["candidate"]["status"] = "failed_observation_only"
+                controlled_retrieval_comparison["observations"]["candidate"]["error"] = str(shadow_exc)
+        openai_review["controlled_retrieval_comparison"] = controlled_retrieval_comparison
         for item in list(openai_review.get("guardrail_breaches", [])):
             value = str(item).strip()
             if value and value not in breaches:
@@ -1230,6 +1302,9 @@ def build_family_verdict(
             openai_review["recommendation_applied"] = False
             openai_review["deterministic_verdict"] = str(deterministic["verdict"])
             openai_review["deterministic_next_action"] = str(deterministic["next_action"])
+    elif controlled_retrieval_comparison["observations"]["candidate"]["status"] == "ready":
+        controlled_retrieval_comparison["observations"]["candidate"]["status"] = "skipped_authoritative_openai_disabled"
+        openai_review["controlled_retrieval_comparison"] = controlled_retrieval_comparison
     family_verdict = FamilyVerdict(
         schema_version=SCHEMA_VERSION,
         verdict_id=f"{critic_job_id}_family_verdict",
@@ -1266,6 +1341,7 @@ def build_family_verdict(
             "guardrail_breaches": breaches,
             "compare_metric_count": len(compare_rows),
             "passive_retrieval_comparison": retrieval_comparison,
+            "controlled_retrieval_comparison": controlled_retrieval_comparison,
             "optional_input_artifacts": dict(source_artifact.get("optional_input_artifacts", {})),
             "openai_review": openai_review,
         },
@@ -1371,6 +1447,7 @@ def execute_critic_for_heavy_validation_result(
             critic_job_id=job_id,
             critic_openai_config=critic_openai_config,
             effective_openai_source=effective_openai_source,
+            critic_config=critic_config,
         )
         verdict_record = writer.write_json(
             f"critic_outputs/{job_id}_family_verdict.json",

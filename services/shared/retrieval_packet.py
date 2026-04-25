@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import hashlib
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -10,6 +12,8 @@ from services.shared.runtime_bootstrap import resolve_project_root
 DEFAULT_RETRIEVAL_ROOT = "outputs/research_os/dev_only/imlayer_retrieval"
 DEFAULT_RETRIEVAL_SUFFIX = ".latest.retrieval_packet.json"
 PASSIVE_RETRIEVAL_COMPARISON_AXIS = "passive_retrieval_packet_presence"
+CONTROLLED_RETRIEVAL_AUTHORITATIVE_VARIANT = "without_retrieval_packet"
+CONTROLLED_RETRIEVAL_CANDIDATE_VARIANT = "with_retrieval_packet"
 
 
 def _resolve_packet_path(
@@ -165,3 +169,77 @@ def build_passive_retrieval_comparison(
         "semantic_sha256": str(summary.get("semantic_sha256", "")),
         "load_error": str(packet.get("load_error", "")),
     }
+
+
+def _clone_json_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    return json.loads(json.dumps(payload, sort_keys=True))
+
+
+def _payload_prompt_metrics(payload: dict[str, Any]) -> dict[str, Any]:
+    serialized = json.dumps(payload, separators=(",", ":"), sort_keys=True)
+    serialized_bytes = serialized.encode("utf-8")
+    return {
+        "json_char_count": len(serialized),
+        "utf8_byte_count": len(serialized_bytes),
+        "estimated_input_tokens_char_div4": int(math.ceil(len(serialized) / 4.0)),
+        "payload_sha256": hashlib.sha256(serialized_bytes).hexdigest(),
+    }
+
+
+def build_controlled_retrieval_comparison_harness(
+    *,
+    authoritative_user_payload: dict[str, Any],
+    packet: dict[str, Any] | None,
+    component: str,
+    comparison_config: dict[str, Any] | None = None,
+) -> tuple[dict[str, Any], dict[str, Any] | None]:
+    packet = dict(packet or {})
+    comparison_config = dict(comparison_config or {})
+    candidate_user_payload: dict[str, Any] | None = None
+    packet_status = str(packet.get("status", "missing")).strip() or "missing"
+    candidate_available = packet_status == "loaded"
+    if candidate_available:
+        candidate_user_payload = _clone_json_payload(authoritative_user_payload)
+        optional_input_artifacts = dict(candidate_user_payload.get("optional_input_artifacts", {}))
+        optional_input_artifacts["retrieval_packet"] = packet
+        candidate_user_payload["optional_input_artifacts"] = optional_input_artifacts
+    shadow_status = "disabled"
+    if bool(comparison_config.get("enabled", False)):
+        shadow_status = "ready" if candidate_available else "unavailable_missing_retrieval_packet"
+    harness = {
+        "component": component,
+        "comparison_only": True,
+        "decision_behavior_changed": False,
+        "fail_closed_preserved": True,
+        "explicitly_enabled": bool(comparison_config.get("enabled", False)),
+        "authoritative_variant": CONTROLLED_RETRIEVAL_AUTHORITATIVE_VARIANT,
+        "candidate_variant": CONTROLLED_RETRIEVAL_CANDIDATE_VARIANT,
+        "candidate_available": candidate_available,
+        "retrieval_packet_status": packet_status,
+        "authoritative_prompt_metrics": _payload_prompt_metrics(authoritative_user_payload),
+        "candidate_prompt_metrics": (
+            _payload_prompt_metrics(candidate_user_payload)
+            if candidate_user_payload is not None
+            else {}
+        ),
+        "observations": {
+            "authoritative": {
+                "user_payload_includes_retrieval_packet": False,
+                "usage": {},
+                "note_fields": {},
+            },
+            "candidate": {
+                "status": shadow_status,
+                "user_payload_includes_retrieval_packet": candidate_user_payload is not None,
+                "usage": {},
+                "note_fields": {},
+                "error": "",
+            },
+            "diff": {
+                "fields_compared": [],
+                "changed_fields": [],
+                "has_note_differences": False,
+            },
+        },
+    }
+    return harness, candidate_user_payload

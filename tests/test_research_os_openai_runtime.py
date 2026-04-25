@@ -516,9 +516,20 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
             output.jobs[0]["payload"]["runtime_debug"]["passive_retrieval_comparison"]["comparison_bucket"],
             "with_retrieval_packet",
         )
+        controlled = output.openai_hook["controlled_retrieval_comparison"]
+        self.assertEqual(controlled["authoritative_variant"], "without_retrieval_packet")
+        self.assertEqual(controlled["candidate_variant"], "with_retrieval_packet")
+        self.assertTrue(controlled["candidate_available"])
+        self.assertEqual(controlled["observations"]["candidate"]["status"], "disabled")
+        self.assertGreater(
+            controlled["candidate_prompt_metrics"]["json_char_count"],
+            controlled["authoritative_prompt_metrics"]["json_char_count"],
+        )
         self.assertIn("passive_retrieval_packet_status=loaded", output.notes)
         self.assertIn("passive_retrieval_packet_present=true", output.notes)
         self.assertIn("passive_retrieval_comparison_bucket=with_retrieval_packet", output.notes)
+        self.assertIn("controlled_retrieval_comparison_disabled", output.notes)
+        self.assertIn("controlled_retrieval_candidate_status=disabled", output.notes)
         self.assertNotIn("optional_input_artifacts", invoke_mock.call_args.kwargs["user_payload"])
 
     def test_plan_jobs_surfaces_missing_retrieval_packet_as_without_packet_bucket(self):
@@ -555,6 +566,10 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
             output.jobs[0]["payload"]["runtime_debug"]["passive_retrieval_comparison"]["retrieval_packet_status"],
             "missing",
         )
+        controlled = output.openai_hook["controlled_retrieval_comparison"]
+        self.assertFalse(controlled["candidate_available"])
+        self.assertEqual(controlled["candidate_prompt_metrics"], {})
+        self.assertEqual(controlled["observations"]["candidate"]["status"], "disabled")
         self.assertIn("passive_retrieval_packet_status=missing", output.notes)
         self.assertIn("passive_retrieval_packet_present=false", output.notes)
         self.assertIn("passive_retrieval_comparison_bucket=without_retrieval_packet", output.notes)
@@ -762,7 +777,225 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
             verdict.evidence["openai_review"]["passive_retrieval_comparison"]["comparison_bucket"],
             "with_retrieval_packet",
         )
+        controlled = verdict.evidence["controlled_retrieval_comparison"]
+        self.assertTrue(controlled["candidate_available"])
+        self.assertEqual(controlled["observations"]["candidate"]["status"], "disabled")
+        self.assertGreater(
+            controlled["candidate_prompt_metrics"]["json_char_count"],
+            controlled["authoritative_prompt_metrics"]["json_char_count"],
+        )
         self.assertNotIn("optional_input_artifacts", invoke_mock.call_args.kwargs["user_payload"])
+
+    def test_plan_jobs_runs_shadow_retrieval_comparison_only_when_explicitly_enabled(self):
+        planner_input = planner_service.build_planner_input(
+            request_id="planner_shadow_retrieval_packet_test",
+            family_registry=build_family_registry(),
+            environment_scan=build_environment_scan(),
+        )
+        retrieval_root = Path.cwd() / "tests_runtime_shadow_retrieval_packet_case"
+        shutil.rmtree(retrieval_root, ignore_errors=True)
+        try:
+            write_retrieval_packet(retrieval_root, family_id="cost_aware_hysteretic_pilot_to_full")
+            authoritative_response = StructuredResponseResult(
+                response_id="resp_planner_authoritative_123",
+                model="gpt-5.4",
+                status="completed",
+                parsed={
+                    "mechanism_hypothesis": "Keep the same family, but narrow the recap gate.",
+                    "selection_rationale": "Authoritative path keeps the baseline packet-free prompt.",
+                    "mutation_target": {
+                        "target_id": "state_machine.pilot_entry.narrow_recap_gate",
+                        "target_type": "single_rule_restriction",
+                        "source_artifact_id": "cost_probe_recap_confirm",
+                        "exact_change": "Cap PILOT re-entry attempts at one per constructive stretch.",
+                    },
+                    "stop_condition": "Reject if turnover pressure remains above 0.",
+                },
+                output_text="{}",
+                usage={"input_tokens": 10, "output_tokens": 1, "total_tokens": 11},
+            )
+            shadow_response = StructuredResponseResult(
+                response_id="resp_planner_shadow_123",
+                model="gpt-5.4",
+                status="completed",
+                parsed={
+                    "mechanism_hypothesis": "Keep the same family, but use the retrieved episode context as a sidecar.",
+                    "selection_rationale": "Shadow path observed retrieval context but did not affect the proposal.",
+                    "mutation_target": {
+                        "target_id": "state_machine.pilot_entry.narrow_recap_gate",
+                        "target_type": "single_rule_restriction",
+                        "source_artifact_id": "cost_probe_recap_confirm",
+                        "exact_change": "Cap PILOT re-entry attempts at one per constructive stretch.",
+                    },
+                    "stop_condition": "Reject if turnover pressure remains above 0.",
+                },
+                output_text="{}",
+                usage={"input_tokens": 22, "output_tokens": 1, "total_tokens": 23},
+            )
+
+            with mock.patch.object(
+                planner_service,
+                "invoke_structured_response",
+                side_effect=[authoritative_response, shadow_response],
+            ) as invoke_mock:
+                output = planner_service.plan_jobs(
+                    planner_input=planner_input,
+                    artifact_root="outputs/research_os/dev_only/test_openai_runtime_artifacts",
+                    openai_config={
+                        "enabled": True,
+                        "model": "gpt-5.4",
+                        "prompt_template": "research_os_planner_mutation_proposal_v1",
+                        "responses_api": "https://api.openai.com/v1/responses",
+                    },
+                    planner_config={
+                        "enabled": True,
+                        "retrieval_packet": {
+                            "enabled": True,
+                            "root_dir": str(retrieval_root),
+                        },
+                        "controlled_comparison": {
+                            "enabled": True,
+                        },
+                    },
+                )
+        finally:
+            shutil.rmtree(retrieval_root, ignore_errors=True)
+
+        controlled = output.openai_hook["controlled_retrieval_comparison"]
+        self.assertTrue(controlled["explicitly_enabled"])
+        self.assertEqual(controlled["observations"]["candidate"]["status"], "completed")
+        self.assertEqual(controlled["observations"]["authoritative"]["usage"]["input_tokens"], 10)
+        self.assertEqual(controlled["observations"]["candidate"]["usage"]["input_tokens"], 22)
+        self.assertTrue(controlled["observations"]["diff"]["has_note_differences"])
+        self.assertEqual(invoke_mock.call_count, 2)
+        self.assertNotIn("optional_input_artifacts", invoke_mock.call_args_list[0].kwargs["user_payload"])
+        self.assertIn("optional_input_artifacts", invoke_mock.call_args_list[1].kwargs["user_payload"])
+
+    def test_build_family_verdict_runs_shadow_retrieval_comparison_only_when_explicitly_enabled(self):
+        authoritative_response = StructuredResponseResult(
+            response_id="resp_critic_authoritative_123",
+            model="gpt-5.4",
+            status="completed",
+            parsed={
+                "recommended_verdict": "pause",
+                "recommended_next_action": "pause_family",
+                "recommended_reason": "Authoritative path follows the packet-free review.",
+                "guardrail_breaches": ["dd below -1.0"],
+                "policy_alignment_note": "Authoritative packet-free note.",
+            },
+            output_text="{}",
+            usage={"input_tokens": 14, "output_tokens": 1, "total_tokens": 15},
+        )
+        shadow_response = StructuredResponseResult(
+            response_id="resp_critic_shadow_123",
+            model="gpt-5.4",
+            status="completed",
+            parsed={
+                "recommended_verdict": "pause",
+                "recommended_next_action": "pause_family",
+                "recommended_reason": "Shadow path saw retrieval context but did not change the verdict.",
+                "guardrail_breaches": ["dd below -1.0"],
+                "policy_alignment_note": "Shadow retrieval note.",
+            },
+            output_text="{}",
+            usage={"input_tokens": 29, "output_tokens": 1, "total_tokens": 30},
+        )
+        summary = {
+            "request_id": "critic_shadow_retrieval_packet_request",
+            "proposal_id": "critic_shadow_retrieval_packet_proposal",
+            "family_id": "cost_aware_hysteretic_pilot_to_full",
+            "job_id": "critic_shadow_retrieval_packet_job",
+            "adapter_id": "safe_dev_only_artifact_adapter_v1",
+            "stop_condition": "Reject if switch_count_delta > 4 or turnover_pressure_delta > 0.0.",
+            "mutation_target": {
+                "source_artifact_id": "cost_probe_recap_confirm",
+            },
+        }
+        compare_rows = [
+            {
+                "metric": "net_benefit",
+                "basis_json": "{\"latest_net_total_return_delta_pct\": 125.0}",
+            },
+            {
+                "metric": "dd",
+                "basis_json": "{\"latest_max_drawdown_delta_pct\": -4.0}",
+            },
+        ]
+        cost_rows = [
+            {
+                "metric": "strategy_code_executed",
+                "value": "false",
+            }
+        ]
+        source_artifact = {
+            "proposal": {
+                "mutation_target": {
+                    "source_artifact_id": "cost_probe_recap_confirm",
+                    "target_id": "state_machine.pilot_entry.recap_confirm_gate",
+                }
+            },
+            "proposal_lineage": {
+                "source_last_metrics": {
+                    "net_total_return_delta_pct": 125.0,
+                    "max_drawdown_delta_pct": -4.0,
+                    "trade_days_delta": 6,
+                    "switch_count_delta": 8,
+                    "turnover_pressure_delta": 1.0,
+                }
+            },
+            "optional_input_artifacts": {
+                "retrieval_packet": {
+                    "status": "loaded",
+                    "family_id": "cost_aware_hysteretic_pilot_to_full",
+                    "summary": {
+                        "latest_memory_id": "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+                    },
+                    "payload": {
+                        "schema_version": "trendatlas.imlayer.retrieval_packet.v1",
+                    },
+                }
+            },
+        }
+        source_paths = {
+            "summary": "summary.json",
+            "compare": "compare.csv",
+            "cost_metrics": "cost.csv",
+        }
+
+        with mock.patch.object(
+            worker_service,
+            "invoke_structured_response",
+            side_effect=[authoritative_response, shadow_response],
+        ) as invoke_mock:
+            verdict = worker_service.build_family_verdict(
+                summary=summary,
+                compare_rows=compare_rows,
+                cost_rows=cost_rows,
+                source_artifact=source_artifact,
+                source_paths=source_paths,
+                critic_job_id="critic_job_shadow_retrieval_packet_01",
+                critic_openai_config={
+                    "enabled": True,
+                    "model": "gpt-5.4",
+                    "prompt_template": "research_os_critic_family_verdict_v1",
+                    "responses_api": "https://api.openai.com/v1/responses",
+                },
+                critic_config={
+                    "controlled_comparison": {
+                        "enabled": True,
+                    }
+                },
+            )
+
+        controlled = verdict.evidence["controlled_retrieval_comparison"]
+        self.assertTrue(controlled["explicitly_enabled"])
+        self.assertEqual(controlled["observations"]["candidate"]["status"], "completed")
+        self.assertEqual(controlled["observations"]["authoritative"]["usage"]["input_tokens"], 14)
+        self.assertEqual(controlled["observations"]["candidate"]["usage"]["input_tokens"], 29)
+        self.assertTrue(controlled["observations"]["diff"]["has_note_differences"])
+        self.assertEqual(invoke_mock.call_count, 2)
+        self.assertNotIn("optional_input_artifacts", invoke_mock.call_args_list[0].kwargs["user_payload"])
+        self.assertIn("optional_input_artifacts", invoke_mock.call_args_list[1].kwargs["user_payload"])
 
     def test_build_mutation_proposal_artifact_carries_optional_retrieval_packet(self):
         job = WorkerJob(
