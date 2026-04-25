@@ -153,6 +153,169 @@ def _validate_authority_app_product_snapshot(app_product_snapshot: dict[str, Any
         )
 
 
+def _payload_mapping(
+    value: Any,
+    *,
+    field_name: str,
+) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError(f"Authority publish blocked: {field_name} must be an object")
+    return value
+
+
+def _require_source_modified_during_run(
+    source_metadata: Mapping[str, Any],
+    *,
+    field_name: str,
+    refresh_started_at_utc: str,
+) -> None:
+    modified_utc = normalize_utc_timestamp(
+        source_metadata.get("modified_utc"),
+        field_name=f"{field_name}.modified_utc",
+    )
+    if _parse_utc_datetime(modified_utc, field_name=f"{field_name}.modified_utc") < _parse_utc_datetime(
+        refresh_started_at_utc,
+        field_name="refresh_started_at_utc",
+    ):
+        raise ValueError(
+            "Authority publish blocked: strategy source was not regenerated during this authoritative run "
+            f"({field_name}.modified_utc={modified_utc} refresh_started_at_utc={refresh_started_at_utc})"
+        )
+
+
+def _validate_success_strategy_source_of_truth(
+    state: Mapping[str, Any],
+    app_product_snapshot: dict[str, Any],
+    app_runtime_snapshot: Mapping[str, Any],
+) -> dict[str, str]:
+    refresh_started_at_utc = normalize_utc_timestamp(
+        state.get("refresh_started_at_utc"),
+        field_name="refresh_started_at_utc",
+    )
+    target_closed_day_utc = normalize_utc_day(
+        state.get("target_closed_day_utc"),
+        field_name="target_closed_day_utc",
+    )
+    latest_available_closed_utc_day = normalize_utc_day(
+        app_runtime_snapshot.get("latest_available_closed_utc_date")
+        or app_product_snapshot.get("freshness_target_closed_day")
+        or state.get("latest_available_closed_utc_day"),
+        field_name="latest_available_closed_utc_day",
+    )
+    strategy_artifact_closed_day_utc = normalize_utc_day(
+        app_product_snapshot.get("strategy_last_closed_day"),
+        field_name="app_product_snapshot.strategy_last_closed_day",
+    )
+    live_public_state = _payload_mapping(
+        app_product_snapshot.get("live_public_state"),
+        field_name="app_product_snapshot.live_public_state",
+    )
+    live_public_state_date = normalize_utc_day(
+        live_public_state.get("date"),
+        field_name="app_product_snapshot.live_public_state.date",
+    )
+    runtime_strategy_artifact_closed_day_utc = normalize_utc_day(
+        app_runtime_snapshot.get("latest_strategy_artifact_date"),
+        field_name="app_runtime_snapshot.latest_strategy_artifact_date",
+    )
+
+    if latest_available_closed_utc_day != target_closed_day_utc:
+        raise ValueError(
+            "Authority publish blocked: authoritative run target day is not the same as the latest available closed day "
+            f"(target_closed_day_utc={target_closed_day_utc} "
+            f"latest_available_closed_utc_day={latest_available_closed_utc_day})"
+        )
+
+    expected_day_fields = {
+        "app_product_snapshot.strategy_last_closed_day": strategy_artifact_closed_day_utc,
+        "app_product_snapshot.live_public_state.date": live_public_state_date,
+        "app_runtime_snapshot.latest_strategy_artifact_date": runtime_strategy_artifact_closed_day_utc,
+    }
+    for field_name, value in expected_day_fields.items():
+        if value != target_closed_day_utc:
+            raise ValueError(
+                "Authority publish blocked: strategy truth does not come from the just-finished authoritative run "
+                f"({field_name}={value} target_closed_day_utc={target_closed_day_utc})"
+            )
+
+    main_strategy_model = str(app_product_snapshot.get("main_strategy_model") or "").strip()
+    if not main_strategy_model:
+        raise ValueError("Authority publish blocked: app_product_snapshot.main_strategy_model is missing")
+    main_strategy_metrics = _payload_mapping(
+        app_product_snapshot.get("main_strategy_metrics"),
+        field_name="app_product_snapshot.main_strategy_metrics",
+    )
+    metrics_model = str(main_strategy_metrics.get("model") or "").strip()
+    if metrics_model != main_strategy_model:
+        raise ValueError(
+            "Authority publish blocked: app_product_snapshot.main_strategy_metrics.model diverged from main_strategy_model "
+            f"(expected={main_strategy_model} actual={metrics_model or 'missing'})"
+        )
+
+    chart_source_paths = _payload_mapping(
+        app_product_snapshot.get("chart_source_paths"),
+        field_name="app_product_snapshot.chart_source_paths",
+    )
+    main_strategy_chart_path = str(chart_source_paths.get("main_strategy") or "").strip()
+    if not main_strategy_chart_path:
+        raise ValueError(
+            "Authority publish blocked: app_product_snapshot.chart_source_paths.main_strategy is missing"
+        )
+
+    source_metadata = _payload_mapping(
+        app_product_snapshot.get("source_metadata"),
+        field_name="app_product_snapshot.source_metadata",
+    )
+    main_strategy_metrics_source = _payload_mapping(
+        source_metadata.get("main_strategy_metrics"),
+        field_name="app_product_snapshot.source_metadata.main_strategy_metrics",
+    )
+    strategy_last_closed_day_source = _payload_mapping(
+        source_metadata.get("strategy_last_closed_day"),
+        field_name="app_product_snapshot.source_metadata.strategy_last_closed_day",
+    )
+    live_public_state_source = _payload_mapping(
+        source_metadata.get("live_public_state"),
+        field_name="app_product_snapshot.source_metadata.live_public_state",
+    )
+
+    strategy_last_closed_day_source_path = str(
+        strategy_last_closed_day_source.get("path") or ""
+    ).strip()
+    live_public_state_source_path = str(live_public_state_source.get("path") or "").strip()
+    if strategy_last_closed_day_source_path != main_strategy_chart_path:
+        raise ValueError(
+            "Authority publish blocked: strategy_last_closed_day path diverged from chart_source_paths.main_strategy "
+            f"(expected={main_strategy_chart_path} actual={strategy_last_closed_day_source_path or 'missing'})"
+        )
+    if live_public_state_source_path != main_strategy_chart_path:
+        raise ValueError(
+            "Authority publish blocked: live_public_state path diverged from chart_source_paths.main_strategy "
+            f"(expected={main_strategy_chart_path} actual={live_public_state_source_path or 'missing'})"
+        )
+
+    _require_source_modified_during_run(
+        main_strategy_metrics_source,
+        field_name="app_product_snapshot.source_metadata.main_strategy_metrics",
+        refresh_started_at_utc=refresh_started_at_utc,
+    )
+    _require_source_modified_during_run(
+        strategy_last_closed_day_source,
+        field_name="app_product_snapshot.source_metadata.strategy_last_closed_day",
+        refresh_started_at_utc=refresh_started_at_utc,
+    )
+    _require_source_modified_during_run(
+        live_public_state_source,
+        field_name="app_product_snapshot.source_metadata.live_public_state",
+        refresh_started_at_utc=refresh_started_at_utc,
+    )
+
+    return {
+        "latest_available_closed_utc_day": latest_available_closed_utc_day,
+        "strategy_artifact_closed_day_utc": strategy_artifact_closed_day_utc,
+    }
+
+
 def build_authority_publish_state(
     *,
     run_id: str,
@@ -354,23 +517,19 @@ def publish_authority_refresh_success(
     app_product_snapshot = read_json_required(APP_PRODUCT_SNAPSHOT_PATH)
     app_runtime_snapshot = read_json_required(APP_RUNTIME_SNAPSHOT_PATH)
     _validate_authority_app_product_snapshot(app_product_snapshot)
+    strategy_source_truth = _validate_success_strategy_source_of_truth(
+        state,
+        app_product_snapshot,
+        app_runtime_snapshot,
+    )
     runtime_sync_fields = _validate_success_runtime_sync_fields(state, app_runtime_snapshot)
     normalized_finished_at_utc = normalize_utc_timestamp(
         refresh_finished_at_utc,
         field_name="refresh_finished_at_utc",
     )
 
-    latest_available_closed_utc_day = normalize_utc_day(
-        app_runtime_snapshot.get("latest_available_closed_utc_date")
-        or app_product_snapshot.get("freshness_target_closed_day")
-        or state["latest_available_closed_utc_day"],
-        field_name="latest_available_closed_utc_day",
-    )
-    strategy_artifact_closed_day_utc = normalize_utc_day(
-        app_product_snapshot.get("strategy_last_closed_day")
-        or app_runtime_snapshot.get("latest_strategy_artifact_date"),
-        field_name="strategy_artifact_closed_day_utc",
-    )
+    latest_available_closed_utc_day = strategy_source_truth["latest_available_closed_utc_day"]
+    strategy_artifact_closed_day_utc = strategy_source_truth["strategy_artifact_closed_day_utc"]
     state["latest_available_closed_utc_day"] = latest_available_closed_utc_day
     stage_history = list(state.get("stage_history") or [])
     stage_history.append(

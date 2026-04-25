@@ -62,6 +62,17 @@ def _parse_bool(value: Any) -> bool:
     return str(value or "").strip().lower() in {"1", "on", "yes", "true"}
 
 
+def _is_pi_runtime(context: Mapping[str, Any]) -> bool:
+    platform_machine = str(context.get("platform_machine") or "").strip().lower()
+    return (
+        str(context.get("platform_system") or "").strip().lower() == PI_ALLOWED_PLATFORM_SYSTEM
+        and (
+            platform_machine in PI_ALLOWED_PLATFORM_MACHINES
+            or platform_machine.startswith("armv")
+        )
+    )
+
+
 def build_authority_extra_fields(
     run_id: str,
     source_manifest_path: str,
@@ -266,19 +277,12 @@ def authority_publish_context_from_env(
 
 def resolve_authority_publish_mode(env: Mapping[str, str] | None = None) -> str:
     context = authority_publish_context_from_env(env)
-    pi_runtime_ok = (
-        context["platform_system"] == PI_ALLOWED_PLATFORM_SYSTEM
-        and (
-            context["platform_machine"] in PI_ALLOWED_PLATFORM_MACHINES
-            or str(context["platform_machine"]).startswith("armv")
-        )
-    )
 
     if (
         context["authority_publish_enabled"]
         and context["authority_mode"] == "authoritative"
         and context["automatic_producer_id"] == "raspberry_pi"
-        and ((not context["require_pi_runtime"]) or pi_runtime_ok)
+        and _is_pi_runtime(context)
     ):
         return "pi_only_authoritative_producer"
     return "non_authoritative_manual_or_validation"
@@ -298,16 +302,15 @@ def ensure_pi_only_publish_allowed(
         raise AuthorityPublishGuardError(
             "authority publish requires MRV1_AUTOMATIC_PRODUCER_ID=raspberry_pi"
         )
-    if context["require_pi_runtime"]:
-        if context["platform_system"] != PI_ALLOWED_PLATFORM_SYSTEM:
-            raise AuthorityPublishGuardError(
-                "authority publish requires Linux Pi runtime when MRV1_REQUIRE_PI_RUNTIME=1"
-            )
-        machine = str(context["platform_machine"] or "").strip().lower()
-        if machine not in PI_ALLOWED_PLATFORM_MACHINES and not machine.startswith("armv"):
-            raise AuthorityPublishGuardError(
-                "authority publish requires ARM Pi runtime when MRV1_REQUIRE_PI_RUNTIME=1"
-            )
+    if str(context["platform_system"] or "").strip().lower() != PI_ALLOWED_PLATFORM_SYSTEM:
+        raise AuthorityPublishGuardError(
+            "authority publish requires Linux Pi runtime"
+        )
+    machine = str(context["platform_machine"] or "").strip().lower()
+    if machine not in PI_ALLOWED_PLATFORM_MACHINES and not machine.startswith("armv"):
+        raise AuthorityPublishGuardError(
+            "authority publish requires ARM Pi runtime"
+        )
     return context
 
 
