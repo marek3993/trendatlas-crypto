@@ -643,7 +643,7 @@ def safe_metric_text(value, decimals: int = 2, suffix: str = "%", lang: str = "s
 def safe_day_metric_text(value, lang: str = "sk") -> str:
     number = as_float(value)
     if number is None:
-        return "—"
+        return "N/A"
     return safe_metric_text(number, lang=lang)
 
 
@@ -678,6 +678,7 @@ def safe_signed_usd_text(value, decimals: int = 2, lang: str = "sk") -> str:
 def resolve_main_metrics_for_display(
     snapshot_metrics: dict[str, Any],
     main_paper_path: Path | None,
+    main_strategy_model: str | None,
 ) -> dict[str, Any]:
     metrics = dict(snapshot_metrics or {})
     metrics.pop("cash_days_pct", None)
@@ -686,9 +687,15 @@ def resolve_main_metrics_for_display(
     if main_paper_path is None:
         return metrics
 
-    derived_day_metrics = derive_strategy_day_metrics_from_csv(main_paper_path)
+    derived_day_metrics = derive_strategy_day_metrics_from_csv(
+        main_paper_path,
+        model=main_strategy_model,
+    )
     if isinstance(derived_day_metrics, dict):
         metrics.update(derived_day_metrics)
+    elif derived_day_metrics is None:
+        metrics["cash_days_pct"] = None
+        metrics["btc_days_pct"] = None
     return metrics
 
 
@@ -3367,6 +3374,7 @@ runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_m
 main_metrics = resolve_main_metrics_for_display(
     dict(product_snapshot.get("main_strategy_metrics") or {}),
     main_paper_path,
+    str(product_snapshot.get("main_strategy_model") or main_key),
 )
 
 years = available_years_from_frames(list(papers.values()) + [btc_df])

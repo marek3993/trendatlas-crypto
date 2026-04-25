@@ -972,7 +972,10 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     if total_days == 0:
         fail("No held asset rows found in phase68i paper export")
 
-    derived_day_metrics = derive_strategy_day_metrics_from_csv(PHASE68I_PAPER_INPUT_PATH)
+    derived_day_metrics = derive_strategy_day_metrics_from_csv(
+        PHASE68I_PAPER_INPUT_PATH,
+        model="phase68i_dynamic_ladder_candidate",
+    )
     if derived_day_metrics is None:
         fail("phase68i paper export day metrics are unsupported by authoritative strategy semantics")
     if "cash_days_pct" not in derived_day_metrics or "btc_days_pct" not in derived_day_metrics:
@@ -1283,10 +1286,16 @@ def normalize_homepage_main_strategy_metrics(
 
     metrics.pop("cash_days_pct", None)
     metrics.pop("btc_days_pct", None)
-    derived_day_metrics = derive_strategy_day_metrics_from_csv(main_paper_path)
-    if derived_day_metrics:
+    derived_day_metrics = derive_strategy_day_metrics_from_csv(
+        main_paper_path,
+        model=main_strategy_model,
+    )
+    if isinstance(derived_day_metrics, dict):
         for field, value in derived_day_metrics.items():
             metrics[field] = value
+    elif derived_day_metrics is None:
+        metrics["cash_days_pct"] = None
+        metrics["btc_days_pct"] = None
 
     metrics["model"] = main_strategy_model
     return metrics

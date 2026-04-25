@@ -23,6 +23,7 @@ UNSUPPORTED_PROXY_ASSETS = {
     "EARLY_RISK",
     "FULL_RISK",
 }
+PHASE68G_ACTIVE_MODEL = "phase68g_66g_1p25x_candidate"
 AUTHORITATIVE_HELD_ASSET_FIELDS = (
     "portfolio_held_asset",
     "held_asset_public",
@@ -50,6 +51,10 @@ def _as_bool(value: Any) -> bool | None:
     return None
 
 
+def _is_explicit_cash_token(token: str) -> bool:
+    return bool(token) and token in CASH_EQUIVALENT_ASSETS
+
+
 def resolve_authoritative_day_metric_state(row: pd.Series) -> str:
     if _as_bool(row.get("cash_day")) is True:
         return "CASH"
@@ -69,7 +74,42 @@ def resolve_authoritative_day_metric_state(row: pd.Series) -> str:
     return "OTHER"
 
 
-def derive_strategy_day_metrics_from_frame(frame: pd.DataFrame) -> dict[str, float] | None:
+def resolve_phase68g_day_metric_state(row: pd.Series) -> str:
+    if _as_bool(row.get("cash_day")) is True:
+        return "CASH"
+
+    portfolio_token = _normalize_asset_token(row.get("portfolio_held_asset"))
+    if _is_explicit_cash_token(portfolio_token):
+        return "CASH"
+    if portfolio_token == "BTC":
+        return "BTC"
+    if portfolio_token and portfolio_token not in UNSUPPORTED_PROXY_ASSETS:
+        return "OTHER"
+
+    if _as_bool(row.get("use_baseline_exposure")) is True:
+        baseline_token = _normalize_asset_token(row.get("baseline_held_asset"))
+        if _is_explicit_cash_token(baseline_token):
+            return "CASH"
+        if baseline_token in {"BTC", "BASELINE_RISK"}:
+            return "BTC"
+        if baseline_token and baseline_token not in UNSUPPORTED_PROXY_ASSETS:
+            return "OTHER"
+        return "UNSUPPORTED"
+
+    if portfolio_token in UNSUPPORTED_PROXY_ASSETS:
+        return "UNSUPPORTED"
+
+    if not portfolio_token:
+        return "UNSUPPORTED"
+
+    return "OTHER"
+
+
+def derive_strategy_day_metrics_from_frame(
+    frame: pd.DataFrame,
+    *,
+    model: str | None = None,
+) -> dict[str, float] | None:
     if frame.empty:
         return {}
 
@@ -77,7 +117,11 @@ def derive_strategy_day_metrics_from_frame(frame: pd.DataFrame) -> dict[str, flo
     if not any(column in frame.columns for column in relevant_columns):
         return {}
 
-    day_metric_states = frame.apply(resolve_authoritative_day_metric_state, axis=1)
+    model_key = str(model or "").strip()
+    if model_key == PHASE68G_ACTIVE_MODEL:
+        day_metric_states = frame.apply(resolve_phase68g_day_metric_state, axis=1)
+    else:
+        day_metric_states = frame.apply(resolve_authoritative_day_metric_state, axis=1)
     if day_metric_states.empty:
         return {}
     if bool((day_metric_states == "UNSUPPORTED").any()):
@@ -91,9 +135,13 @@ def derive_strategy_day_metrics_from_frame(frame: pd.DataFrame) -> dict[str, flo
     }
 
 
-def derive_strategy_day_metrics_from_csv(path: str | Path) -> dict[str, float] | None:
+def derive_strategy_day_metrics_from_csv(
+    path: str | Path,
+    *,
+    model: str | None = None,
+) -> dict[str, float] | None:
     csv_path = Path(path)
     if not csv_path.exists() or not csv_path.is_file():
         return {}
     frame = pd.read_csv(csv_path)
-    return derive_strategy_day_metrics_from_frame(frame)
+    return derive_strategy_day_metrics_from_frame(frame, model=model)
