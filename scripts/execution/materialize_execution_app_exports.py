@@ -1110,7 +1110,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         )
 
     return {
-        "status": "phase68i_summary_export_written",
+        "status": "phase68i_summary_export_and_phase68g_aliases_written",
         "summary_source_path": str(PHASE68H_SUMMARY_INPUT_PATH),
         "paper_source_path": str(PHASE68I_PAPER_INPUT_PATH),
         "paper_refresh_source_path": str(PHASE68H_DYNAMIC_PAPER_INPUT_PATH),
@@ -2005,6 +2005,7 @@ def main() -> None:
             "This script never fabricates strategy data.",
             "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
             "phase68i dynamic ladder summary export is built from phase68h summary source plus phase68i app paper-derived metrics.",
+            "phase68g current main strategy contract paths are canonical aliases under outputs/execution/app_exports/, not legacy outputs/phase68g_portfolio_exposure_leverage_validation/ paths.",
             "Other artifacts are copied from existing legacy aliases only.",
             "app_product_snapshot and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
         ],
@@ -2022,6 +2023,8 @@ def main() -> None:
         "app_live_mode_fields_written": True,
         "phase68i_summary_written": PHASE68I_SUMMARY_OUTPUT_PATH.exists(),
         "phase68i_authoritative_net_compare_export_written": PHASE68I_AUTHORITATIVE_EXPORT_PATH.exists(),
+        "phase68g_main_strategy_paper_alias_written": PHASE68G_MAIN_PAPER_OUTPUT_PATH.exists(),
+        "phase68g_main_strategy_authoritative_export_alias_written": PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.exists(),
         "app_product_snapshot_written": APP_PRODUCT_SNAPSHOT_PATH.exists(),
         "app_runtime_snapshot_written": APP_RUNTIME_SNAPSHOT_PATH.exists(),
     }
@@ -2042,6 +2045,8 @@ def main() -> None:
             str(MANIFEST_PATH.resolve()),
             str(PHASE68I_SUMMARY_OUTPUT_PATH.resolve()),
             str(PHASE68I_AUTHORITATIVE_EXPORT_PATH.resolve()),
+            str(PHASE68G_MAIN_PAPER_OUTPUT_PATH.resolve()),
+            str(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.resolve()),
             str(APP_PRODUCT_SNAPSHOT_PATH.resolve()),
             str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
         ],

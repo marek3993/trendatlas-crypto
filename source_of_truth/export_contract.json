@@ -6,7 +6,7 @@
     "truth_status":  "official",
     "generated_at":  "2026-04-05T00:00:00Z",
     "effective_date":  "2026-04-05",
-    "producer_script":  "manual_codex_patch",
+    "producer_script":  "scripts/execution/materialize_execution_app_exports.py",
     "authoritative_contract_path":  "source_of_truth/export_contract.json",
     "source_run_id":  null,
     "consumer_scope":  [
