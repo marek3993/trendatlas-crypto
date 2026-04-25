@@ -14,6 +14,12 @@ DEFAULT_RETRIEVAL_SUFFIX = ".latest.retrieval_packet.json"
 PASSIVE_RETRIEVAL_COMPARISON_AXIS = "passive_retrieval_packet_presence"
 CONTROLLED_RETRIEVAL_AUTHORITATIVE_VARIANT = "without_retrieval_packet"
 CONTROLLED_RETRIEVAL_CANDIDATE_VARIANT = "with_retrieval_packet"
+FULL_RETRIEVAL_PROMPT_MODE = "full"
+COMPACT_RETRIEVAL_PROMPT_MODE = "compact"
+DEFAULT_RETRIEVAL_PROMPT_MODE = COMPACT_RETRIEVAL_PROMPT_MODE
+DEFAULT_COMPACT_RETRIEVAL_TOP_K = 1
+MAX_COMPACT_RETRIEVAL_BULLETS = 4
+COMPACT_RETRIEVAL_SUMMARY_MAX_CHARS = 220
 CONSTRAINED_INFLUENCE_SCHEMA_VERSION = "trendatlas.imlayer.constrained_influence.v2"
 CONSTRAINED_INFLUENCE_CONFIG_KEY = "constrained_influence_v2"
 CONSTRAINED_INFLUENCE_FIELD_CONTRACTS = {
@@ -213,6 +219,123 @@ def _payload_prompt_metrics(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _normalize_compact_text(value: Any, *, max_chars: int) -> str:
+    text = " ".join(str(value or "").split())
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 3].rstrip() + "..."
+
+
+def _ordered_unique_non_empty(items: list[Any], *, max_items: int | None = None) -> list[str]:
+    unique_items: list[str] = []
+    seen: set[str] = set()
+    for item in items:
+        text = " ".join(str(item or "").split())
+        if not text or text in seen:
+            continue
+        unique_items.append(text)
+        seen.add(text)
+        if max_items is not None and len(unique_items) >= max_items:
+            break
+    return unique_items
+
+
+def _compact_retrieval_prompt_mode(comparison_config: dict[str, Any]) -> str:
+    raw_mode = str(
+        comparison_config.get("retrieval_prompt_mode")
+        or comparison_config.get("prompt_retrieval_mode")
+        or DEFAULT_RETRIEVAL_PROMPT_MODE
+    ).strip().lower()
+    if raw_mode == FULL_RETRIEVAL_PROMPT_MODE:
+        return FULL_RETRIEVAL_PROMPT_MODE
+    return COMPACT_RETRIEVAL_PROMPT_MODE
+
+
+def _build_compact_retrieval_prompt_packet(packet: dict[str, Any]) -> dict[str, Any]:
+    summary = dict(packet.get("summary", {}))
+    payload = dict(packet.get("payload", {}))
+    records = [dict(item) for item in list(payload.get("records", []))]
+    latest_record = records[0] if records else {}
+    latest_decision = dict(latest_record.get("decision", {}))
+    latest_outcome = dict(latest_record.get("outcome", {}))
+    latest_decision_packet = dict(latest_record.get("decision_packet", {}))
+    risk_failure_bullets = _ordered_unique_non_empty(
+        list(latest_decision_packet.get("risk_flags", []))
+        + list(latest_outcome.get("failure_modes", []))
+        + list(latest_outcome.get("contradiction_flags", [])),
+        max_items=MAX_COMPACT_RETRIEVAL_BULLETS,
+    )
+    memory_summary_parts = _ordered_unique_non_empty(
+        [
+            latest_decision.get("rationale_summary", ""),
+            latest_outcome.get("actual_impact_summary_text", ""),
+            latest_outcome.get("delta_summary_text", ""),
+            latest_outcome.get("cost_summary_text", ""),
+            latest_decision_packet.get("packet_text", ""),
+        ],
+        max_items=2,
+    )
+    memory_summary = _normalize_compact_text(
+        " | ".join(memory_summary_parts),
+        max_chars=COMPACT_RETRIEVAL_SUMMARY_MAX_CHARS,
+    )
+    return {
+        "retrieval_prompt_mode": COMPACT_RETRIEVAL_PROMPT_MODE,
+        "top_k": DEFAULT_COMPACT_RETRIEVAL_TOP_K,
+        "latest_memory_id": str(summary.get("latest_memory_id", latest_record.get("memory_id", ""))),
+        "latest_verdict": str(summary.get("latest_verdict", latest_decision.get("verdict", ""))),
+        "latest_action": str(summary.get("latest_action", latest_decision.get("action", ""))),
+        "risk_failure_bullets": risk_failure_bullets,
+        "memory_summary": memory_summary,
+    }
+
+
+def _build_full_retrieval_prompt_packet(packet: dict[str, Any]) -> dict[str, Any]:
+    return _clone_json_payload(packet)
+
+
+def _candidate_user_payload_with_retrieval_packet(
+    authoritative_user_payload: dict[str, Any],
+    *,
+    prompt_packet: dict[str, Any],
+    component: str,
+    constrained_influence: dict[str, Any],
+) -> dict[str, Any]:
+    candidate_user_payload = _clone_json_payload(authoritative_user_payload)
+    optional_input_artifacts = dict(candidate_user_payload.get("optional_input_artifacts", {}))
+    optional_input_artifacts["retrieval_packet"] = prompt_packet
+    candidate_user_payload["optional_input_artifacts"] = optional_input_artifacts
+    if bool(constrained_influence.get("enabled", False)):
+        candidate_user_payload["retrieval_influence_contract"] = {
+            "schema_version": str(constrained_influence.get("schema_version", "")),
+            "component": component,
+            "mode": str(constrained_influence.get("mode", "")),
+            "allowed_influence_fields": list(constrained_influence.get("allowed_influence_fields", [])),
+            "blocked_frozen_fields": list(constrained_influence.get("blocked_frozen_fields", [])),
+            "retrieval_influence_scope": "allowed_fields_only",
+            "decision_critical_fields_must_match_authoritative_baseline": True,
+            "official_decision_behavior_changed": False,
+            "production_authority_transfer_enabled": False,
+        }
+    return candidate_user_payload
+
+
+def _prompt_metric_delta(
+    baseline_metrics: dict[str, Any],
+    candidate_metrics: dict[str, Any],
+) -> dict[str, int]:
+    return {
+        "json_char_count_delta": int(candidate_metrics.get("json_char_count", 0))
+        - int(baseline_metrics.get("json_char_count", 0)),
+        "utf8_byte_count_delta": int(candidate_metrics.get("utf8_byte_count", 0))
+        - int(baseline_metrics.get("utf8_byte_count", 0)),
+        "estimated_input_tokens_char_div4_delta": int(
+            candidate_metrics.get("estimated_input_tokens_char_div4", 0)
+        )
+        - int(baseline_metrics.get("estimated_input_tokens_char_div4", 0)),
+    }
+
+
 def build_retrieval_constrained_influence_contract(
     *,
     component: str,
@@ -324,28 +447,48 @@ def build_controlled_retrieval_comparison_harness(
         comparison_config=comparison_config,
     )
     candidate_user_payload: dict[str, Any] | None = None
+    candidate_user_payload_full: dict[str, Any] | None = None
+    candidate_user_payload_compact: dict[str, Any] | None = None
     packet_status = str(packet.get("status", "missing")).strip() or "missing"
     candidate_available = packet_status == "loaded"
+    selected_prompt_mode = _compact_retrieval_prompt_mode(comparison_config)
     if candidate_available:
-        candidate_user_payload = _clone_json_payload(authoritative_user_payload)
-        optional_input_artifacts = dict(candidate_user_payload.get("optional_input_artifacts", {}))
-        optional_input_artifacts["retrieval_packet"] = packet
-        candidate_user_payload["optional_input_artifacts"] = optional_input_artifacts
-        if bool(constrained_influence.get("enabled", False)):
-            candidate_user_payload["retrieval_influence_contract"] = {
-                "schema_version": str(constrained_influence.get("schema_version", "")),
-                "component": component,
-                "mode": str(constrained_influence.get("mode", "")),
-                "allowed_influence_fields": list(constrained_influence.get("allowed_influence_fields", [])),
-                "blocked_frozen_fields": list(constrained_influence.get("blocked_frozen_fields", [])),
-                "retrieval_influence_scope": "allowed_fields_only",
-                "decision_critical_fields_must_match_authoritative_baseline": True,
-                "official_decision_behavior_changed": False,
-                "production_authority_transfer_enabled": False,
-            }
+        candidate_user_payload_full = _candidate_user_payload_with_retrieval_packet(
+            authoritative_user_payload,
+            prompt_packet=_build_full_retrieval_prompt_packet(packet),
+            component=component,
+            constrained_influence=constrained_influence,
+        )
+        candidate_user_payload_compact = _candidate_user_payload_with_retrieval_packet(
+            authoritative_user_payload,
+            prompt_packet=_build_compact_retrieval_prompt_packet(packet),
+            component=component,
+            constrained_influence=constrained_influence,
+        )
+        candidate_user_payload = (
+            candidate_user_payload_full
+            if selected_prompt_mode == FULL_RETRIEVAL_PROMPT_MODE
+            else candidate_user_payload_compact
+        )
     shadow_status = "disabled"
     if bool(comparison_config.get("enabled", False)):
         shadow_status = "ready" if candidate_available else "unavailable_missing_retrieval_packet"
+    authoritative_prompt_metrics = _payload_prompt_metrics(authoritative_user_payload)
+    selected_candidate_prompt_metrics = (
+        _payload_prompt_metrics(candidate_user_payload)
+        if candidate_user_payload is not None
+        else {}
+    )
+    full_candidate_prompt_metrics = (
+        _payload_prompt_metrics(candidate_user_payload_full)
+        if candidate_user_payload_full is not None
+        else {}
+    )
+    compact_candidate_prompt_metrics = (
+        _payload_prompt_metrics(candidate_user_payload_compact)
+        if candidate_user_payload_compact is not None
+        else {}
+    )
     harness = {
         "component": component,
         "comparison_only": True,
@@ -356,13 +499,42 @@ def build_controlled_retrieval_comparison_harness(
         "candidate_variant": CONTROLLED_RETRIEVAL_CANDIDATE_VARIANT,
         "candidate_available": candidate_available,
         "retrieval_packet_status": packet_status,
+        "candidate_prompt_mode": selected_prompt_mode,
         "constrained_influence": constrained_influence,
-        "authoritative_prompt_metrics": _payload_prompt_metrics(authoritative_user_payload),
-        "candidate_prompt_metrics": (
-            _payload_prompt_metrics(candidate_user_payload)
-            if candidate_user_payload is not None
-            else {}
-        ),
+        "authoritative_prompt_metrics": authoritative_prompt_metrics,
+        "candidate_prompt_metrics": selected_candidate_prompt_metrics,
+        "retrieval_prompt_observability": {
+            "selected_mode": selected_prompt_mode,
+            "full_retrieval_mode": {
+                "candidate_available": candidate_user_payload_full is not None,
+                "prompt_metrics": full_candidate_prompt_metrics,
+            },
+            "compact_retrieval_mode": {
+                "candidate_available": candidate_user_payload_compact is not None,
+                "top_k": DEFAULT_COMPACT_RETRIEVAL_TOP_K,
+                "prompt_metrics": compact_candidate_prompt_metrics,
+            },
+            "token_delta_impact": {
+                "full_vs_authoritative": _prompt_metric_delta(
+                    authoritative_prompt_metrics,
+                    full_candidate_prompt_metrics,
+                )
+                if full_candidate_prompt_metrics
+                else {},
+                "compact_vs_authoritative": _prompt_metric_delta(
+                    authoritative_prompt_metrics,
+                    compact_candidate_prompt_metrics,
+                )
+                if compact_candidate_prompt_metrics
+                else {},
+                "compact_vs_full": _prompt_metric_delta(
+                    full_candidate_prompt_metrics,
+                    compact_candidate_prompt_metrics,
+                )
+                if full_candidate_prompt_metrics and compact_candidate_prompt_metrics
+                else {},
+            },
+        },
         "observations": {
             "authoritative": {
                 "user_payload_includes_retrieval_packet": False,
@@ -373,6 +545,7 @@ def build_controlled_retrieval_comparison_harness(
             "candidate": {
                 "status": shadow_status,
                 "user_payload_includes_retrieval_packet": candidate_user_payload is not None,
+                "retrieval_prompt_mode": selected_prompt_mode,
                 "usage": {},
                 "note_fields": {},
                 "proposal_content_fields": {},

@@ -786,14 +786,23 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
         controlled = verdict.evidence["controlled_retrieval_comparison"]
         self.assertTrue(controlled["candidate_available"])
         self.assertFalse(controlled["constrained_influence"]["enabled"])
+        self.assertEqual(controlled["candidate_prompt_mode"], "compact")
         self.assertEqual(
             controlled["constrained_influence"]["allowed_influence_fields"],
             ["policy_alignment_note", "recommended_reason"],
         )
         self.assertEqual(controlled["observations"]["candidate"]["status"], "disabled")
+        self.assertEqual(
+            controlled["candidate_prompt_metrics"]["payload_sha256"],
+            controlled["retrieval_prompt_observability"]["compact_retrieval_mode"]["prompt_metrics"]["payload_sha256"],
+        )
         self.assertGreater(
-            controlled["candidate_prompt_metrics"]["json_char_count"],
-            controlled["authoritative_prompt_metrics"]["json_char_count"],
+            controlled["retrieval_prompt_observability"]["full_retrieval_mode"]["prompt_metrics"]["json_char_count"],
+            controlled["retrieval_prompt_observability"]["compact_retrieval_mode"]["prompt_metrics"]["json_char_count"],
+        )
+        self.assertLess(
+            controlled["retrieval_prompt_observability"]["token_delta_impact"]["compact_vs_full"]["estimated_input_tokens_char_div4_delta"],
+            0,
         )
         self.assertNotIn("optional_input_artifacts", invoke_mock.call_args.kwargs["user_payload"])
 
@@ -882,6 +891,24 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
         self.assertEqual(invoke_mock.call_count, 2)
         self.assertNotIn("optional_input_artifacts", invoke_mock.call_args_list[0].kwargs["user_payload"])
         self.assertIn("optional_input_artifacts", invoke_mock.call_args_list[1].kwargs["user_payload"])
+        candidate_packet = invoke_mock.call_args_list[1].kwargs["user_payload"]["optional_input_artifacts"]["retrieval_packet"]
+        self.assertEqual(controlled["candidate_prompt_mode"], "compact")
+        self.assertEqual(candidate_packet["retrieval_prompt_mode"], "compact")
+        self.assertEqual(candidate_packet["top_k"], 1)
+        self.assertEqual(
+            candidate_packet["latest_memory_id"],
+            "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+        )
+        self.assertIn("latest_verdict", candidate_packet)
+        self.assertIn("latest_action", candidate_packet)
+        self.assertIn("risk_failure_bullets", candidate_packet)
+        self.assertIn("memory_summary", candidate_packet)
+        self.assertNotIn("payload", candidate_packet)
+        self.assertNotIn("path", candidate_packet)
+        self.assertLess(
+            controlled["retrieval_prompt_observability"]["token_delta_impact"]["compact_vs_full"]["estimated_input_tokens_char_div4_delta"],
+            0,
+        )
         self.assertNotIn("retrieval_influence_contract", invoke_mock.call_args_list[1].kwargs["user_payload"])
 
     def test_plan_jobs_v2_constrains_shadow_retrieval_influence_to_allowed_fields(self):
@@ -984,6 +1011,22 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
         self.assertTrue(diff["proposal_content_fields_preserved"])
         self.assertTrue(diff["forbidden_field_change_attempted"])
         self.assertEqual(invoke_mock.call_count, 2)
+        candidate_packet = invoke_mock.call_args_list[1].kwargs["user_payload"]["optional_input_artifacts"]["retrieval_packet"]
+        self.assertEqual(controlled["candidate_prompt_mode"], "compact")
+        self.assertEqual(candidate_packet["retrieval_prompt_mode"], "compact")
+        self.assertEqual(candidate_packet["top_k"], 1)
+        self.assertEqual(
+            candidate_packet["latest_memory_id"],
+            "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+        )
+        self.assertIn("latest_verdict", candidate_packet)
+        self.assertIn("latest_action", candidate_packet)
+        self.assertNotIn("payload", candidate_packet)
+        self.assertNotIn("path", candidate_packet)
+        self.assertLess(
+            controlled["retrieval_prompt_observability"]["token_delta_impact"]["compact_vs_full"]["estimated_input_tokens_char_div4_delta"],
+            0,
+        )
         self.assertIn("retrieval_influence_contract", invoke_mock.call_args_list[1].kwargs["user_payload"])
 
     def test_build_family_verdict_runs_shadow_retrieval_comparison_only_when_explicitly_enabled(self):
@@ -1112,6 +1155,22 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
         self.assertEqual(invoke_mock.call_count, 2)
         self.assertNotIn("optional_input_artifacts", invoke_mock.call_args_list[0].kwargs["user_payload"])
         self.assertIn("optional_input_artifacts", invoke_mock.call_args_list[1].kwargs["user_payload"])
+        candidate_packet = invoke_mock.call_args_list[1].kwargs["user_payload"]["optional_input_artifacts"]["retrieval_packet"]
+        self.assertEqual(controlled["candidate_prompt_mode"], "compact")
+        self.assertEqual(candidate_packet["retrieval_prompt_mode"], "compact")
+        self.assertEqual(candidate_packet["top_k"], 1)
+        self.assertEqual(
+            candidate_packet["latest_memory_id"],
+            "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+        )
+        self.assertIn("latest_verdict", candidate_packet)
+        self.assertIn("latest_action", candidate_packet)
+        self.assertNotIn("payload", candidate_packet)
+        self.assertNotIn("path", candidate_packet)
+        self.assertLess(
+            controlled["retrieval_prompt_observability"]["token_delta_impact"]["compact_vs_full"]["estimated_input_tokens_char_div4_delta"],
+            0,
+        )
         self.assertNotIn("retrieval_influence_contract", invoke_mock.call_args_list[1].kwargs["user_payload"])
 
     def test_build_family_verdict_v2_freezes_forbidden_shadow_fields(self):
@@ -1250,6 +1309,22 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
             ["recommended_next_action", "recommended_verdict"],
         )
         self.assertEqual(invoke_mock.call_count, 2)
+        candidate_packet = invoke_mock.call_args_list[1].kwargs["user_payload"]["optional_input_artifacts"]["retrieval_packet"]
+        self.assertEqual(controlled["candidate_prompt_mode"], "compact")
+        self.assertEqual(candidate_packet["retrieval_prompt_mode"], "compact")
+        self.assertEqual(candidate_packet["top_k"], 1)
+        self.assertEqual(
+            candidate_packet["latest_memory_id"],
+            "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+        )
+        self.assertIn("latest_verdict", candidate_packet)
+        self.assertIn("latest_action", candidate_packet)
+        self.assertNotIn("payload", candidate_packet)
+        self.assertNotIn("path", candidate_packet)
+        self.assertLess(
+            controlled["retrieval_prompt_observability"]["token_delta_impact"]["compact_vs_full"]["estimated_input_tokens_char_div4_delta"],
+            0,
+        )
         self.assertIn("retrieval_influence_contract", invoke_mock.call_args_list[1].kwargs["user_payload"])
 
     def test_build_mutation_proposal_artifact_carries_optional_retrieval_packet(self):

@@ -295,6 +295,14 @@ def summarize_component(
     candidate_usage = usage_snapshot(dict(candidate.get("usage", {})))
     authoritative_prompt_metrics = prompt_metrics_snapshot(dict(controlled.get("authoritative_prompt_metrics", {})))
     candidate_prompt_metrics = prompt_metrics_snapshot(dict(controlled.get("candidate_prompt_metrics", {})))
+    retrieval_prompt_observability = dict(controlled.get("retrieval_prompt_observability", {}))
+    full_retrieval_prompt_metrics = prompt_metrics_snapshot(
+        dict(dict(retrieval_prompt_observability.get("full_retrieval_mode", {})).get("prompt_metrics", {}))
+    )
+    compact_retrieval_prompt_metrics = prompt_metrics_snapshot(
+        dict(dict(retrieval_prompt_observability.get("compact_retrieval_mode", {})).get("prompt_metrics", {}))
+    )
+    token_delta_impact = dict(retrieval_prompt_observability.get("token_delta_impact", {}))
     reasoning_only_change = bool(changed_fields) and not changed_decision_fields and set(changed_fields).issubset(
         reasoning_fields
     )
@@ -325,6 +333,41 @@ def summarize_component(
         "candidate_error": str(candidate.get("error", "")),
         "authoritative_prompt_metrics": authoritative_prompt_metrics,
         "candidate_prompt_metrics": candidate_prompt_metrics,
+        "candidate_prompt_mode": str(controlled.get("candidate_prompt_mode", "")),
+        "retrieval_prompt_observability": {
+            "selected_mode": str(retrieval_prompt_observability.get("selected_mode", "")),
+            "full_retrieval_prompt_metrics": full_retrieval_prompt_metrics,
+            "compact_retrieval_prompt_metrics": compact_retrieval_prompt_metrics,
+            "token_delta_impact": {
+                "full_vs_authoritative_prompt_estimated_input_tokens_delta": int(
+                    dict(token_delta_impact.get("full_vs_authoritative", {})).get(
+                        "estimated_input_tokens_char_div4_delta",
+                        0,
+                    )
+                    or 0
+                ),
+                "compact_vs_authoritative_prompt_estimated_input_tokens_delta": int(
+                    dict(token_delta_impact.get("compact_vs_authoritative", {})).get(
+                        "estimated_input_tokens_char_div4_delta",
+                        0,
+                    )
+                    or 0
+                ),
+                "compact_vs_full_prompt_estimated_input_tokens_delta": int(
+                    dict(token_delta_impact.get("compact_vs_full", {})).get(
+                        "estimated_input_tokens_char_div4_delta",
+                        0,
+                    )
+                    or 0
+                ),
+                "compact_vs_full_json_char_count_delta": int(
+                    dict(token_delta_impact.get("compact_vs_full", {})).get("json_char_count_delta", 0) or 0
+                ),
+                "compact_vs_full_utf8_byte_count_delta": int(
+                    dict(token_delta_impact.get("compact_vs_full", {})).get("utf8_byte_count_delta", 0) or 0
+                ),
+            },
+        },
         "authoritative_prompt_sha256": authoritative_prompt_metrics["payload_sha256"],
         "candidate_prompt_sha256": candidate_prompt_metrics["payload_sha256"],
         "authoritative_response": authoritative_response_snapshot(authoritative_operation),
@@ -601,10 +644,12 @@ def build_summary(
     planner_input_deltas: list[int] = []
     planner_output_deltas: list[int] = []
     planner_total_deltas: list[int] = []
+    planner_compact_vs_full_prompt_deltas: list[int] = []
     critic_prompt_deltas: list[int] = []
     critic_input_deltas: list[int] = []
     critic_output_deltas: list[int] = []
     critic_total_deltas: list[int] = []
+    critic_compact_vs_full_prompt_deltas: list[int] = []
     planner_decision_field_changes: list[dict[str, Any]] = []
     critic_decision_field_changes: list[dict[str, Any]] = []
     reasoning_changed_decision_identical_cases: list[dict[str, Any]] = []
@@ -652,10 +697,26 @@ def build_summary(
         planner_input_deltas.append(int(planner["response_input_tokens_delta"]))
         planner_output_deltas.append(int(planner["response_output_tokens_delta"]))
         planner_total_deltas.append(int(planner["response_total_tokens_delta"]))
+        planner_compact_vs_full_prompt_deltas.append(
+            int(
+                dict(dict(planner.get("retrieval_prompt_observability", {})).get("token_delta_impact", {})).get(
+                    "compact_vs_full_prompt_estimated_input_tokens_delta",
+                    0,
+                )
+            )
+        )
         critic_prompt_deltas.append(int(critic["prompt_estimated_input_tokens_delta"]))
         critic_input_deltas.append(int(critic["response_input_tokens_delta"]))
         critic_output_deltas.append(int(critic["response_output_tokens_delta"]))
         critic_total_deltas.append(int(critic["response_total_tokens_delta"]))
+        critic_compact_vs_full_prompt_deltas.append(
+            int(
+                dict(dict(critic.get("retrieval_prompt_observability", {})).get("token_delta_impact", {})).get(
+                    "compact_vs_full_prompt_estimated_input_tokens_delta",
+                    0,
+                )
+            )
+        )
 
         if planner["changed_decision_fields"]:
             planner_decision_field_changes.append(
@@ -823,12 +884,18 @@ def build_summary(
                     "response_input_tokens_delta": aggregate_deltas(planner_input_deltas),
                     "response_output_tokens_delta": aggregate_deltas(planner_output_deltas),
                     "response_total_tokens_delta": aggregate_deltas(planner_total_deltas),
+                    "compact_vs_full_prompt_estimated_input_tokens_delta": aggregate_deltas(
+                        planner_compact_vs_full_prompt_deltas
+                    ),
                 },
                 "critic": {
                     "prompt_estimated_input_tokens_delta": aggregate_deltas(critic_prompt_deltas),
                     "response_input_tokens_delta": aggregate_deltas(critic_input_deltas),
                     "response_output_tokens_delta": aggregate_deltas(critic_output_deltas),
                     "response_total_tokens_delta": aggregate_deltas(critic_total_deltas),
+                    "compact_vs_full_prompt_estimated_input_tokens_delta": aggregate_deltas(
+                        critic_compact_vs_full_prompt_deltas
+                    ),
                 },
             },
             "prompt_input_token_deltas": {

@@ -380,6 +380,8 @@ def build_markdown_report(summary: dict[str, Any]) -> str:
     critic_candidate = dict(dict(critic_controlled.get("observations", {})).get("candidate", {}))
     planner_diff = dict(dict(planner_controlled.get("observations", {})).get("diff", {}))
     critic_diff = dict(dict(critic_controlled.get("observations", {})).get("diff", {}))
+    planner_prompt_observability = dict(planner_controlled.get("retrieval_prompt_observability", {}))
+    critic_prompt_observability = dict(critic_controlled.get("retrieval_prompt_observability", {}))
     retrieval_packet = dict(summary["inputs"]["retrieval_packet"])
     governor_reference = dict(summary["governor_reference"])
     return f"""# TrendAtlas Local Shadow-Run Verification
@@ -400,6 +402,10 @@ def build_markdown_report(summary: dict[str, Any]) -> str:
 - Allowed influence fields: `{", ".join(planner_controlled["constrained_influence"].get("allowed_influence_fields", [])) or "none"}`
 - Blocked/frozen fields: `{", ".join(planner_controlled["constrained_influence"].get("blocked_frozen_fields", [])) or "none"}`
 - Candidate status: `{planner_candidate["status"]}`
+- Retrieval prompt mode: `{planner_controlled.get("candidate_prompt_mode", "")}`
+- Full prompt est tokens: `{dict(dict(planner_prompt_observability.get("full_retrieval_mode", {})).get("prompt_metrics", {})).get("estimated_input_tokens_char_div4", 0)}`
+- Compact prompt est tokens: `{dict(dict(planner_prompt_observability.get("compact_retrieval_mode", {})).get("prompt_metrics", {})).get("estimated_input_tokens_char_div4", 0)}`
+- Compact vs full est token delta: `{dict(planner_prompt_observability.get("token_delta_impact", {})).get("compact_vs_full", {}).get("estimated_input_tokens_char_div4_delta", 0)}`
 - Forbidden field change attempted: `{planner_candidate.get("enforcement", {}).get("forbidden_field_change_attempted", False)}`
 - Fail-closed preserved: `{planner_controlled["fail_closed_preserved"]}`
 - Authoritative mutation target: `{planner["authoritative_mutation_target"].get("target_id", "")}`
@@ -413,6 +419,10 @@ def build_markdown_report(summary: dict[str, Any]) -> str:
 - Allowed influence fields: `{", ".join(critic_controlled["constrained_influence"].get("allowed_influence_fields", [])) or "none"}`
 - Blocked/frozen fields: `{", ".join(critic_controlled["constrained_influence"].get("blocked_frozen_fields", [])) or "none"}`
 - Candidate status: `{critic_candidate["status"]}`
+- Retrieval prompt mode: `{critic_controlled.get("candidate_prompt_mode", "")}`
+- Full prompt est tokens: `{dict(dict(critic_prompt_observability.get("full_retrieval_mode", {})).get("prompt_metrics", {})).get("estimated_input_tokens_char_div4", 0)}`
+- Compact prompt est tokens: `{dict(dict(critic_prompt_observability.get("compact_retrieval_mode", {})).get("prompt_metrics", {})).get("estimated_input_tokens_char_div4", 0)}`
+- Compact vs full est token delta: `{dict(critic_prompt_observability.get("token_delta_impact", {})).get("compact_vs_full", {}).get("estimated_input_tokens_char_div4_delta", 0)}`
 - Forbidden field change attempted: `{critic_candidate.get("enforcement", {}).get("forbidden_field_change_attempted", False)}`
 - Fail-closed preserved: `{critic_controlled["fail_closed_preserved"]}`
 - Authoritative verdict: `{critic["verdict"]}`

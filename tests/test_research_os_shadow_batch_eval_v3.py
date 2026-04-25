@@ -50,6 +50,43 @@ class ResearchOsShadowBatchEvalV3Tests(unittest.TestCase):
                     "utf8_byte_count": 1040,
                     "payload_sha256": "bbb",
                 },
+                "candidate_prompt_mode": "compact",
+                "retrieval_prompt_observability": {
+                    "selected_mode": "compact",
+                    "full_retrieval_mode": {
+                        "prompt_metrics": {
+                            "estimated_input_tokens_char_div4": 360,
+                            "json_char_count": 1440,
+                            "utf8_byte_count": 1440,
+                            "payload_sha256": "full-bbb",
+                        }
+                    },
+                    "compact_retrieval_mode": {
+                        "prompt_metrics": {
+                            "estimated_input_tokens_char_div4": 260,
+                            "json_char_count": 1040,
+                            "utf8_byte_count": 1040,
+                            "payload_sha256": "bbb",
+                        }
+                    },
+                    "token_delta_impact": {
+                        "full_vs_authoritative": {
+                            "estimated_input_tokens_char_div4_delta": 160,
+                            "json_char_count_delta": 640,
+                            "utf8_byte_count_delta": 640,
+                        },
+                        "compact_vs_authoritative": {
+                            "estimated_input_tokens_char_div4_delta": 60,
+                            "json_char_count_delta": 240,
+                            "utf8_byte_count_delta": 240,
+                        },
+                        "compact_vs_full": {
+                            "estimated_input_tokens_char_div4_delta": -100,
+                            "json_char_count_delta": -400,
+                            "utf8_byte_count_delta": -400,
+                        },
+                    },
+                },
                 "decision_behavior_changed": False,
                 "fail_closed_preserved": True,
             },
@@ -135,6 +172,43 @@ class ResearchOsShadowBatchEvalV3Tests(unittest.TestCase):
                         "utf8_byte_count": 1040,
                         "payload_sha256": "planner-candidate",
                     },
+                    "candidate_prompt_mode": "compact",
+                    "retrieval_prompt_observability": {
+                        "selected_mode": "compact",
+                        "full_retrieval_mode": {
+                            "prompt_metrics": {
+                                "estimated_input_tokens_char_div4": 360,
+                                "json_char_count": 1440,
+                                "utf8_byte_count": 1440,
+                                "payload_sha256": "planner-full",
+                            }
+                        },
+                        "compact_retrieval_mode": {
+                            "prompt_metrics": {
+                                "estimated_input_tokens_char_div4": 260,
+                                "json_char_count": 1040,
+                                "utf8_byte_count": 1040,
+                                "payload_sha256": "planner-candidate",
+                            }
+                        },
+                        "token_delta_impact": {
+                            "full_vs_authoritative": {
+                                "estimated_input_tokens_char_div4_delta": 160,
+                                "json_char_count_delta": 640,
+                                "utf8_byte_count_delta": 640,
+                            },
+                            "compact_vs_authoritative": {
+                                "estimated_input_tokens_char_div4_delta": 60,
+                                "json_char_count_delta": 240,
+                                "utf8_byte_count_delta": 240,
+                            },
+                            "compact_vs_full": {
+                                "estimated_input_tokens_char_div4_delta": -100,
+                                "json_char_count_delta": -400,
+                                "utf8_byte_count_delta": -400,
+                            },
+                        },
+                    },
                     "decision_behavior_changed": False,
                     "fail_closed_preserved": True,
                 },
@@ -185,6 +259,43 @@ class ResearchOsShadowBatchEvalV3Tests(unittest.TestCase):
                         "json_char_count": 960,
                         "utf8_byte_count": 960,
                         "payload_sha256": "critic-candidate",
+                    },
+                    "candidate_prompt_mode": "compact",
+                    "retrieval_prompt_observability": {
+                        "selected_mode": "compact",
+                        "full_retrieval_mode": {
+                            "prompt_metrics": {
+                                "estimated_input_tokens_char_div4": 330,
+                                "json_char_count": 1320,
+                                "utf8_byte_count": 1320,
+                                "payload_sha256": "critic-full",
+                            }
+                        },
+                        "compact_retrieval_mode": {
+                            "prompt_metrics": {
+                                "estimated_input_tokens_char_div4": 240,
+                                "json_char_count": 960,
+                                "utf8_byte_count": 960,
+                                "payload_sha256": "critic-candidate",
+                            }
+                        },
+                        "token_delta_impact": {
+                            "full_vs_authoritative": {
+                                "estimated_input_tokens_char_div4_delta": 150,
+                                "json_char_count_delta": 600,
+                                "utf8_byte_count_delta": 600,
+                            },
+                            "compact_vs_authoritative": {
+                                "estimated_input_tokens_char_div4_delta": 60,
+                                "json_char_count_delta": 240,
+                                "utf8_byte_count_delta": 240,
+                            },
+                            "compact_vs_full": {
+                                "estimated_input_tokens_char_div4_delta": -90,
+                                "json_char_count_delta": -360,
+                                "utf8_byte_count_delta": -360,
+                            },
+                        },
                     },
                     "decision_behavior_changed": False,
                     "fail_closed_preserved": True,
@@ -241,6 +352,14 @@ class ResearchOsShadowBatchEvalV3Tests(unittest.TestCase):
         self.assertEqual(
             built["summary"]["token_deltas"]["critic"]["response_output_tokens_delta"]["sum"],
             10,
+        )
+        self.assertEqual(
+            built["summary"]["token_deltas"]["planner"]["compact_vs_full_prompt_estimated_input_tokens_delta"]["sum"],
+            -100,
+        )
+        self.assertEqual(
+            built["summary"]["token_deltas"]["critic"]["compact_vs_full_prompt_estimated_input_tokens_delta"]["sum"],
+            -90,
         )
         self.assertEqual(built["summary"]["planner_reasoning_changed_decision_identical_cases"], 1)
         self.assertEqual(built["summary"]["critic_reasoning_changed_decision_identical_cases"], 1)
