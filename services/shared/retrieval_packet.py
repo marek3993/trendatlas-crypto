@@ -9,6 +9,7 @@ from services.shared.runtime_bootstrap import resolve_project_root
 
 DEFAULT_RETRIEVAL_ROOT = "outputs/research_os/dev_only/imlayer_retrieval"
 DEFAULT_RETRIEVAL_SUFFIX = ".latest.retrieval_packet.json"
+PASSIVE_RETRIEVAL_COMPARISON_AXIS = "passive_retrieval_packet_presence"
 
 
 def _resolve_packet_path(
@@ -135,3 +136,32 @@ def load_passive_retrieval_packet(
     packet["summary"] = _payload_summary(payload)
     packet["payload"] = payload
     return packet
+
+
+def build_passive_retrieval_comparison(
+    packet: dict[str, Any] | None,
+    *,
+    component: str,
+) -> dict[str, Any]:
+    packet = dict(packet or {})
+    status = str(packet.get("status", "missing")).strip() or "missing"
+    summary = dict(packet.get("summary", {}))
+    retrieval_packet_present = status == "loaded"
+    return {
+        "component": component,
+        "comparison_axis": PASSIVE_RETRIEVAL_COMPARISON_AXIS,
+        "comparison_bucket": (
+            "with_retrieval_packet"
+            if retrieval_packet_present
+            else "without_retrieval_packet"
+        ),
+        "retrieval_packet_present": retrieval_packet_present,
+        "retrieval_packet_status": status,
+        "passive_integration": True,
+        "decision_behavior_changed": False,
+        "fail_closed": True,
+        "retrieval_packet_path": str(packet.get("path", "")),
+        "latest_memory_id": str(summary.get("latest_memory_id", "")),
+        "semantic_sha256": str(summary.get("semantic_sha256", "")),
+        "load_error": str(packet.get("load_error", "")),
+    }

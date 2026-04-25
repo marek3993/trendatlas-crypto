@@ -507,8 +507,57 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
         retrieval_packet = output.jobs[0]["payload"]["optional_input_artifacts"]["retrieval_packet"]
         self.assertEqual(retrieval_packet["status"], "loaded")
         self.assertEqual(retrieval_packet["summary"]["latest_memory_id"], "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full")
+        self.assertTrue(output.openai_hook["passive_retrieval_comparison"]["retrieval_packet_present"])
+        self.assertEqual(
+            output.openai_hook["passive_retrieval_comparison"]["comparison_bucket"],
+            "with_retrieval_packet",
+        )
+        self.assertEqual(
+            output.jobs[0]["payload"]["runtime_debug"]["passive_retrieval_comparison"]["comparison_bucket"],
+            "with_retrieval_packet",
+        )
         self.assertIn("passive_retrieval_packet_status=loaded", output.notes)
+        self.assertIn("passive_retrieval_packet_present=true", output.notes)
+        self.assertIn("passive_retrieval_comparison_bucket=with_retrieval_packet", output.notes)
         self.assertNotIn("optional_input_artifacts", invoke_mock.call_args.kwargs["user_payload"])
+
+    def test_plan_jobs_surfaces_missing_retrieval_packet_as_without_packet_bucket(self):
+        planner_input = planner_service.build_planner_input(
+            request_id="planner_missing_retrieval_packet_test",
+            family_registry=build_family_registry(),
+            environment_scan=build_environment_scan(),
+        )
+
+        output = planner_service.plan_jobs(
+            planner_input=planner_input,
+            artifact_root="outputs/research_os/dev_only/test_openai_runtime_artifacts",
+            openai_config={
+                "enabled": False,
+                "model": "gpt-5.4",
+                "prompt_template": "research_os_planner_mutation_proposal_v1",
+                "responses_api": "https://api.openai.com/v1/responses",
+            },
+            planner_config={
+                "enabled": True,
+                "retrieval_packet": {
+                    "enabled": True,
+                    "root_dir": str(Path.cwd() / "tests_runtime_missing_retrieval_packet_case"),
+                },
+            },
+        )
+
+        self.assertFalse(output.openai_hook["passive_retrieval_comparison"]["retrieval_packet_present"])
+        self.assertEqual(
+            output.openai_hook["passive_retrieval_comparison"]["comparison_bucket"],
+            "without_retrieval_packet",
+        )
+        self.assertEqual(
+            output.jobs[0]["payload"]["runtime_debug"]["passive_retrieval_comparison"]["retrieval_packet_status"],
+            "missing",
+        )
+        self.assertIn("passive_retrieval_packet_status=missing", output.notes)
+        self.assertIn("passive_retrieval_packet_present=false", output.notes)
+        self.assertIn("passive_retrieval_comparison_bucket=without_retrieval_packet", output.notes)
 
     def test_build_family_verdict_keeps_deterministic_guardrails_authoritative(self):
         mocked_response = StructuredResponseResult(
@@ -703,6 +752,15 @@ class TestResearchOSOpenAIRuntime(unittest.TestCase):
         self.assertEqual(
             verdict.evidence["optional_input_artifacts"]["retrieval_packet"]["summary"]["latest_memory_id"],
             "trendatlas.crypto.decision_episode.openai_token_opt_rerun.cost_aware_hysteretic_pilot_to_full",
+        )
+        self.assertTrue(verdict.evidence["passive_retrieval_comparison"]["retrieval_packet_present"])
+        self.assertEqual(
+            verdict.evidence["passive_retrieval_comparison"]["comparison_bucket"],
+            "with_retrieval_packet",
+        )
+        self.assertEqual(
+            verdict.evidence["openai_review"]["passive_retrieval_comparison"]["comparison_bucket"],
+            "with_retrieval_packet",
         )
         self.assertNotIn("optional_input_artifacts", invoke_mock.call_args.kwargs["user_payload"])
 

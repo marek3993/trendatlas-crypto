@@ -13,6 +13,7 @@ from services.pi.job_queue import JobQueue, QueueMessage, build_queue, consume_e
 from services.pi.registry_service import RegistryService
 from services.shared.artifact_writer import ArtifactWriter
 from services.shared.openai_responses import describe_openai_operation, invoke_structured_response, serialize_openai_error
+from services.shared.retrieval_packet import build_passive_retrieval_comparison
 from services.shared.runtime_bootstrap import (
     assert_runtime_startup_ready,
     build_service_status,
@@ -1189,10 +1190,15 @@ def build_family_verdict(
 ) -> FamilyVerdict:
     deterministic = _deterministic_family_verdict_data(summary, compare_rows, source_artifact)
     critic_openai_config = dict(critic_openai_config or {})
+    retrieval_comparison = build_passive_retrieval_comparison(
+        dict(dict(source_artifact.get("optional_input_artifacts", {})).get("retrieval_packet", {})),
+        component="critic",
+    )
     openai_review = {
         **describe_openai_operation(critic_openai_config),
         "effective_openai_config": dict(critic_openai_config),
         "effective_openai_source": dict(effective_openai_source or {}),
+        "passive_retrieval_comparison": retrieval_comparison,
     }
     verdict_reason = str(deterministic["verdict_reason"])
     breaches = list(deterministic["breaches"])
@@ -1207,6 +1213,7 @@ def build_family_verdict(
         )
         openai_review["effective_openai_config"] = dict(critic_openai_config)
         openai_review["effective_openai_source"] = dict(effective_openai_source or {})
+        openai_review["passive_retrieval_comparison"] = retrieval_comparison
         for item in list(openai_review.get("guardrail_breaches", [])):
             value = str(item).strip()
             if value and value not in breaches:
@@ -1258,6 +1265,7 @@ def build_family_verdict(
             },
             "guardrail_breaches": breaches,
             "compare_metric_count": len(compare_rows),
+            "passive_retrieval_comparison": retrieval_comparison,
             "optional_input_artifacts": dict(source_artifact.get("optional_input_artifacts", {})),
             "openai_review": openai_review,
         },
