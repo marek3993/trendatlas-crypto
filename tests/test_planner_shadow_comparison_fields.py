@@ -67,7 +67,17 @@ class PlannerShadowComparisonFieldsTests(unittest.TestCase):
             shadow_result = planner_service._run_shadow_planner_comparison(
                 user_payload={"prompt": "shadow"},
                 openai_config={"enabled": True},
+                authoritative_note_fields={
+                    "mechanism_hypothesis": "authoritative reasoning",
+                    "selection_rationale": "authoritative rationale",
+                },
                 frozen_proposal_content_fields=frozen_fields,
+                comparison_config={
+                    "enabled": True,
+                    "constrained_influence_v2": {
+                        "enabled": True,
+                    },
+                },
             )
         finally:
             planner_service._invoke_planner_openai_response = original
@@ -90,6 +100,12 @@ class PlannerShadowComparisonFieldsTests(unittest.TestCase):
                 "target_type": "different_type",
             },
         )
+        self.assertTrue(shadow_result["enforcement"]["blocked_fields_frozen"])
+        self.assertTrue(shadow_result["enforcement"]["forbidden_field_change_attempted"])
+        self.assertEqual(
+            shadow_result["enforcement"]["attempted_forbidden_fields"],
+            ["exact_change", "stop_condition", "target_id", "target_type", "source_artifact_id"],
+        )
 
     def test_assert_planner_invariants_rejects_unpreserved_proposal_content(self) -> None:
         output = SimpleNamespace(
@@ -99,14 +115,21 @@ class PlannerShadowComparisonFieldsTests(unittest.TestCase):
                     "explicitly_enabled": True,
                     "decision_behavior_changed": False,
                     "fail_closed_preserved": True,
+                    "constrained_influence": {
+                        "enabled": True,
+                    },
                     "observations": {
                         "candidate": {
                             "status": "completed",
                             "error": "",
+                            "enforcement": {
+                                "blocked_fields_frozen": True,
+                            },
                         },
                         "diff": {
                             "proposal_content_fields_preserved": False,
                             "proposal_content_fields_changed": ["exact_change"],
+                            "forbidden_field_change_attempted": True,
                         },
                     },
                 },

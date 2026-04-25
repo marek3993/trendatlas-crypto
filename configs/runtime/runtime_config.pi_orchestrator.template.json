@@ -21,6 +21,12 @@
     "planner":  {
                     "enabled":  true,
                     "output_dir":  "planner_outputs",
+                    "controlled_comparison":  {
+                                                  "enabled":  false,
+                                                  "constrained_influence_v2":  {
+                                                                                 "enabled":  false
+                                                                             }
+                                              },
                     "openai":  {
                                    "enabled":  true,
                                    "model":  "gpt-5.4",
@@ -37,6 +43,12 @@
                    "enabled":  true,
                    "adapter_id":  "safe_dev_only_family_verdict_critic_v1",
                    "output_dir":  "critic_outputs",
+                   "controlled_comparison":  {
+                                                 "enabled":  false,
+                                                 "constrained_influence_v2":  {
+                                                                                "enabled":  false
+                                                                            }
+                                             },
                    "openai":  {
                                   "enabled":  true,
                                   "model":  "gpt-5.4",

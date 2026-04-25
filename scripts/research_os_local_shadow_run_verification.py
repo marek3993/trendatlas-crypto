@@ -241,8 +241,11 @@ def assert_planner_invariants(output: Any) -> None:
         raise VerificationFailure(f"planner authoritative OpenAI failed closed: {error_code}: {error_message}")
     controlled = dict(openai_hook.get("controlled_retrieval_comparison", {}))
     passive = dict(openai_hook.get("passive_retrieval_comparison", {}))
+    constrained = dict(controlled.get("constrained_influence", {}))
     if not controlled.get("explicitly_enabled", False):
         raise VerificationFailure("planner controlled retrieval comparison was not explicitly enabled")
+    if not constrained.get("enabled", False):
+        raise VerificationFailure("planner constrained influence v2 was not enabled")
     if controlled.get("decision_behavior_changed", True):
         raise VerificationFailure("planner controlled retrieval comparison changed authoritative decision behavior")
     if not controlled.get("fail_closed_preserved", False):
@@ -261,14 +264,20 @@ def assert_planner_invariants(output: Any) -> None:
             "planner shadow candidate changed proposal content fields"
             f": changed={list(diff.get('proposal_content_fields_changed', []))}"
         )
+    candidate_enforcement = dict(candidate.get("enforcement", {}))
+    if not candidate_enforcement.get("blocked_fields_frozen", False):
+        raise VerificationFailure("planner constrained influence did not freeze blocked fields")
 
 
 def assert_critic_invariants(verdict: Any) -> None:
     evidence = dict(verdict.evidence)
     controlled = dict(evidence.get("controlled_retrieval_comparison", {}))
     passive = dict(evidence.get("passive_retrieval_comparison", {}))
+    constrained = dict(controlled.get("constrained_influence", {}))
     if not controlled.get("explicitly_enabled", False):
         raise VerificationFailure("critic controlled retrieval comparison was not explicitly enabled")
+    if not constrained.get("enabled", False):
+        raise VerificationFailure("critic constrained influence v2 was not enabled")
     if controlled.get("decision_behavior_changed", True):
         raise VerificationFailure("critic controlled retrieval comparison changed authoritative verdict behavior")
     if not controlled.get("fail_closed_preserved", False):
@@ -280,6 +289,15 @@ def assert_critic_invariants(verdict: Any) -> None:
         raise VerificationFailure(
             "critic shadow candidate did not complete"
             f": status={candidate.get('status', '')} error={candidate.get('error', '')}"
+        )
+    candidate_enforcement = dict(candidate.get("enforcement", {}))
+    if not candidate_enforcement.get("blocked_fields_frozen", False):
+        raise VerificationFailure("critic constrained influence did not freeze blocked fields")
+    diff = dict(dict(controlled.get("observations", {})).get("diff", {}))
+    if list(diff.get("forbidden_fields_changed", [])):
+        raise VerificationFailure(
+            "critic shadow candidate changed forbidden fields after enforcement"
+            f": changed={list(diff.get('forbidden_fields_changed', []))}"
         )
 
 
@@ -378,7 +396,11 @@ def build_markdown_report(summary: dict[str, Any]) -> str:
 
 - Passive comparison bucket: `{planner["passive_retrieval_comparison"]["comparison_bucket"]}`
 - Controlled enabled: `{planner_controlled["explicitly_enabled"]}`
+- Constrained influence V2 enabled: `{planner_controlled["constrained_influence"]["enabled"]}`
+- Allowed influence fields: `{", ".join(planner_controlled["constrained_influence"].get("allowed_influence_fields", [])) or "none"}`
+- Blocked/frozen fields: `{", ".join(planner_controlled["constrained_influence"].get("blocked_frozen_fields", [])) or "none"}`
 - Candidate status: `{planner_candidate["status"]}`
+- Forbidden field change attempted: `{planner_candidate.get("enforcement", {}).get("forbidden_field_change_attempted", False)}`
 - Fail-closed preserved: `{planner_controlled["fail_closed_preserved"]}`
 - Authoritative mutation target: `{planner["authoritative_mutation_target"].get("target_id", "")}`
 - Changed note fields: `{", ".join(planner_diff.get("changed_fields", [])) or "none"}`
@@ -387,7 +409,11 @@ def build_markdown_report(summary: dict[str, Any]) -> str:
 
 - Passive comparison bucket: `{critic["passive_retrieval_comparison"]["comparison_bucket"]}`
 - Controlled enabled: `{critic_controlled["explicitly_enabled"]}`
+- Constrained influence V2 enabled: `{critic_controlled["constrained_influence"]["enabled"]}`
+- Allowed influence fields: `{", ".join(critic_controlled["constrained_influence"].get("allowed_influence_fields", [])) or "none"}`
+- Blocked/frozen fields: `{", ".join(critic_controlled["constrained_influence"].get("blocked_frozen_fields", [])) or "none"}`
 - Candidate status: `{critic_candidate["status"]}`
+- Forbidden field change attempted: `{critic_candidate.get("enforcement", {}).get("forbidden_field_change_attempted", False)}`
 - Fail-closed preserved: `{critic_controlled["fail_closed_preserved"]}`
 - Authoritative verdict: `{critic["verdict"]}`
 - Authoritative next action: `{critic["next_action"]}`
@@ -455,6 +481,9 @@ def evaluate_verification_case(
         },
         "controlled_comparison": {
             "enabled": True,
+            "constrained_influence_v2": {
+                "enabled": True,
+            },
         },
         "openai": dict(planner_openai_config),
     }
@@ -558,7 +587,14 @@ def evaluate_verification_case(
             critic_job_id=f"{request_id}_{family_id}_critic",
             critic_openai_config=dict(critic_openai_config),
             effective_openai_source={"base": "local_shadow_run_verification_real_openai"},
-            critic_config={"controlled_comparison": {"enabled": True}},
+            critic_config={
+                "controlled_comparison": {
+                    "enabled": True,
+                    "constrained_influence_v2": {
+                        "enabled": True,
+                    },
+                }
+            },
         )
     else:
         with temporary_openai_api_key(), mock.patch.object(
@@ -575,7 +611,14 @@ def evaluate_verification_case(
                 critic_job_id=f"{request_id}_{family_id}_critic",
                 critic_openai_config=dict(critic_openai_config),
                 effective_openai_source={"base": "local_shadow_run_verification"},
-                critic_config={"controlled_comparison": {"enabled": True}},
+                critic_config={
+                    "controlled_comparison": {
+                        "enabled": True,
+                        "constrained_influence_v2": {
+                            "enabled": True,
+                        },
+                    }
+                },
             )
     assert_critic_invariants(critic_verdict)
 

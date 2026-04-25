@@ -14,6 +14,7 @@ from services.pi.registry_service import RegistryService
 from services.shared.artifact_writer import ArtifactWriter
 from services.shared.openai_responses import describe_openai_operation, invoke_structured_response, serialize_openai_error
 from services.shared.retrieval_packet import (
+    apply_retrieval_constrained_influence_contract,
     build_controlled_retrieval_comparison_harness,
     build_passive_retrieval_comparison,
 )
@@ -1104,6 +1105,8 @@ def _critic_note_fields_from_review(review: dict[str, Any]) -> dict[str, Any]:
 def _critic_note_field_diff(
     authoritative_note_fields: dict[str, Any],
     candidate_note_fields: dict[str, Any],
+    *,
+    raw_candidate_note_fields: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     fields_compared = sorted(set(authoritative_note_fields) | set(candidate_note_fields))
     changed_fields = [
@@ -1111,10 +1114,20 @@ def _critic_note_field_diff(
         for field_name in fields_compared
         if authoritative_note_fields.get(field_name) != candidate_note_fields.get(field_name)
     ]
+    raw_candidate_note_fields = dict(raw_candidate_note_fields or {})
+    forbidden_fields_changed = [
+        field_name
+        for field_name in fields_compared
+        if authoritative_note_fields.get(field_name) != raw_candidate_note_fields.get(field_name)
+        and field_name in {"recommended_verdict", "recommended_next_action"}
+    ]
     return {
         "fields_compared": fields_compared,
         "changed_fields": changed_fields,
         "has_note_differences": bool(changed_fields),
+        "forbidden_fields_compared": ["recommended_next_action", "recommended_verdict"],
+        "forbidden_fields_changed": forbidden_fields_changed,
+        "forbidden_field_change_attempted": bool(forbidden_fields_changed),
     }
 
 
@@ -1267,6 +1280,15 @@ def build_family_verdict(
                     user_payload=candidate_user_payload or {},
                     critic_openai_config=critic_openai_config,
                 )
+                contract_result = apply_retrieval_constrained_influence_contract(
+                    component="critic",
+                    authoritative_fields=authoritative_note_fields,
+                    candidate_fields=_critic_note_fields_from_review(shadow_review),
+                    comparison_config=dict(critic_config.get("controlled_comparison") or {}),
+                    freeze_blocked_fields=bool(
+                        dict(controlled_retrieval_comparison.get("constrained_influence", {})).get("enabled", False)
+                    ),
+                )
                 controlled_retrieval_comparison["observations"]["candidate"].update(
                     {
                         "status": "completed",
@@ -1274,13 +1296,26 @@ def build_family_verdict(
                         "response_status": shadow_review.get("response_status", ""),
                         "response_model": shadow_review.get("response_model", ""),
                         "usage": dict(shadow_review.get("usage", {})),
-                        "note_fields": _critic_note_fields_from_review(shadow_review),
+                        "note_fields": dict(contract_result.get("enforced_candidate_fields", {})),
+                        "raw_note_fields": dict(contract_result.get("raw_candidate_fields", {})),
+                        "enforcement": {
+                            "blocked_fields_frozen": bool(contract_result.get("blocked_fields_frozen", False)),
+                            "forbidden_field_change_attempted": bool(
+                                contract_result.get("forbidden_field_change_attempted", False)
+                            ),
+                            "attempted_forbidden_fields": list(
+                                contract_result.get("attempted_forbidden_fields", [])
+                            ),
+                        },
                         "error": "",
                     }
                 )
                 controlled_retrieval_comparison["observations"]["diff"] = _critic_note_field_diff(
                     authoritative_note_fields,
                     dict(controlled_retrieval_comparison["observations"]["candidate"]["note_fields"]),
+                    raw_candidate_note_fields=dict(
+                        controlled_retrieval_comparison["observations"]["candidate"].get("raw_note_fields", {})
+                    ),
                 )
             except Exception as shadow_exc:
                 controlled_retrieval_comparison["observations"]["candidate"]["status"] = "failed_observation_only"

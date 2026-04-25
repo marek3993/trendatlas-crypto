@@ -7,8 +7,10 @@ from typing import Any
 
 from services.shared.openai_responses import describe_openai_operation, invoke_structured_response, serialize_openai_error
 from services.shared.retrieval_packet import (
+    apply_retrieval_constrained_influence_contract,
     build_controlled_retrieval_comparison_harness,
     build_passive_retrieval_comparison,
+    build_retrieval_constrained_influence_contract,
     load_passive_retrieval_packet,
 )
 from services.shared.runtime_bootstrap import load_runtime_config as load_runtime_config_shared
@@ -352,6 +354,7 @@ def _planner_note_field_diff(
     *,
     authoritative_proposal_content_fields: dict[str, Any],
     candidate_proposal_content_fields: dict[str, Any],
+    raw_candidate_proposal_content_fields: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     fields_compared = sorted(set(authoritative_note_fields) | set(candidate_note_fields))
     changed_fields = [
@@ -367,6 +370,12 @@ def _planner_note_field_diff(
         for field_name in proposal_content_fields_compared
         if authoritative_proposal_content_fields.get(field_name) != candidate_proposal_content_fields.get(field_name)
     ]
+    raw_candidate_proposal_content_fields = dict(raw_candidate_proposal_content_fields or {})
+    forbidden_fields_changed = [
+        field_name
+        for field_name in proposal_content_fields_compared
+        if authoritative_proposal_content_fields.get(field_name) != raw_candidate_proposal_content_fields.get(field_name)
+    ]
     return {
         "fields_compared": fields_compared,
         "changed_fields": changed_fields,
@@ -374,6 +383,9 @@ def _planner_note_field_diff(
         "proposal_content_fields_compared": proposal_content_fields_compared,
         "proposal_content_fields_changed": proposal_content_fields_changed,
         "proposal_content_fields_preserved": not proposal_content_fields_changed,
+        "forbidden_fields_compared": proposal_content_fields_compared,
+        "forbidden_fields_changed": forbidden_fields_changed,
+        "forbidden_field_change_attempted": bool(forbidden_fields_changed),
     }
 
 
@@ -436,25 +448,54 @@ def _run_shadow_planner_comparison(
     *,
     user_payload: dict[str, Any],
     openai_config: dict[str, Any],
+    authoritative_note_fields: dict[str, Any],
     frozen_proposal_content_fields: dict[str, Any],
+    comparison_config: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     response = _invoke_planner_openai_response(
         user_payload=user_payload,
         openai_config=openai_config,
     )
-    raw_proposal_content_fields = _planner_proposal_content_fields_from_response(response.parsed)
+    contract_result = apply_retrieval_constrained_influence_contract(
+        component="planner",
+        authoritative_fields={
+            **authoritative_note_fields,
+            **frozen_proposal_content_fields,
+        },
+        candidate_fields={
+            **_planner_note_fields_from_response(response.parsed),
+            **_planner_proposal_content_fields_from_response(response.parsed),
+        },
+        comparison_config=comparison_config,
+        freeze_blocked_fields=True,
+    )
+    enforced_candidate_fields = dict(contract_result.get("enforced_candidate_fields", {}))
+    raw_candidate_fields = dict(contract_result.get("raw_candidate_fields", {}))
     return {
         "status": "completed",
         "response_id": response.response_id,
         "response_status": response.status,
         "response_model": response.model,
         "usage": dict(response.usage),
-        "note_fields": _planner_note_fields_from_response(response.parsed),
+        "note_fields": {
+            field_name: str(enforced_candidate_fields.get(field_name, ""))
+            for field_name in _PLANNER_REASONING_NOTE_FIELDS
+        },
         "proposal_content_fields": {
-            field_name: str(frozen_proposal_content_fields.get(field_name, ""))
+            field_name: str(enforced_candidate_fields.get(field_name, ""))
             for field_name in _PLANNER_PROPOSAL_CONTENT_FIELDS
         },
-        "raw_proposal_content_fields": raw_proposal_content_fields,
+        "raw_proposal_content_fields": {
+            field_name: str(raw_candidate_fields.get(field_name, ""))
+            for field_name in _PLANNER_PROPOSAL_CONTENT_FIELDS
+        },
+        "enforcement": {
+            "blocked_fields_frozen": bool(contract_result.get("blocked_fields_frozen", False)),
+            "forbidden_field_change_attempted": bool(
+                contract_result.get("forbidden_field_change_attempted", False)
+            ),
+            "attempted_forbidden_fields": list(contract_result.get("attempted_forbidden_fields", [])),
+        },
         "error": "",
     }
 
@@ -835,6 +876,7 @@ def plan_jobs(
         "candidate_variant": "with_retrieval_packet",
         "candidate_available": False,
         "retrieval_packet_status": retrieval_packet_status,
+        "constrained_influence": build_retrieval_constrained_influence_contract(component="planner"),
         "authoritative_prompt_metrics": {},
         "candidate_prompt_metrics": {},
         "observations": {
@@ -848,12 +890,24 @@ def plan_jobs(
                 "user_payload_includes_retrieval_packet": False,
                 "usage": {},
                 "note_fields": {},
+                "proposal_content_fields": {},
+                "enforcement": {
+                    "blocked_fields_frozen": False,
+                    "forbidden_field_change_attempted": False,
+                    "attempted_forbidden_fields": [],
+                },
                 "error": "",
             },
             "diff": {
                 "fields_compared": [],
                 "changed_fields": [],
                 "has_note_differences": False,
+                "proposal_content_fields_compared": [],
+                "proposal_content_fields_changed": [],
+                "proposal_content_fields_preserved": True,
+                "forbidden_fields_compared": [],
+                "forbidden_fields_changed": [],
+                "forbidden_field_change_attempted": False,
             },
         },
     }
@@ -928,7 +982,9 @@ def plan_jobs(
                         shadow_result = _run_shadow_planner_comparison(
                             user_payload=candidate_user_payload or {},
                             openai_config=openai_config,
+                            authoritative_note_fields=authoritative_note_fields,
                             frozen_proposal_content_fields=authoritative_proposal_content_fields,
+                            comparison_config=dict(planner_config.get("controlled_comparison") or {}),
                         )
                         controlled_retrieval_comparison["observations"]["candidate"].update(shadow_result)
                         controlled_retrieval_comparison["observations"]["diff"] = _planner_note_field_diff(
@@ -937,6 +993,9 @@ def plan_jobs(
                             authoritative_proposal_content_fields=authoritative_proposal_content_fields,
                             candidate_proposal_content_fields=dict(
                                 shadow_result.get("proposal_content_fields", {})
+                            ),
+                            raw_candidate_proposal_content_fields=dict(
+                                shadow_result.get("raw_proposal_content_fields", {})
                             ),
                         )
                     except Exception as shadow_exc:
@@ -1043,6 +1102,34 @@ def plan_jobs(
             (
                 "controlled_retrieval_candidate_status="
                 f"{controlled_retrieval_comparison['observations']['candidate']['status']}"
+            ),
+            (
+                "constrained_influence_v2_enabled"
+                if controlled_retrieval_comparison["constrained_influence"]["enabled"]
+                else "constrained_influence_v2_disabled"
+            ),
+            (
+                "constrained_influence_allowed_fields="
+                + json.dumps(
+                    controlled_retrieval_comparison["constrained_influence"]["allowed_influence_fields"],
+                    sort_keys=True,
+                )
+            ),
+            (
+                "constrained_influence_blocked_fields="
+                + json.dumps(
+                    controlled_retrieval_comparison["constrained_influence"]["blocked_frozen_fields"],
+                    sort_keys=True,
+                )
+            ),
+            (
+                "constrained_influence_forbidden_field_change_attempted="
+                + str(
+                    controlled_retrieval_comparison["observations"]["diff"].get(
+                        "forbidden_field_change_attempted",
+                        False,
+                    )
+                ).lower()
             ),
         ],
         openai_hook={

@@ -14,6 +14,33 @@ DEFAULT_RETRIEVAL_SUFFIX = ".latest.retrieval_packet.json"
 PASSIVE_RETRIEVAL_COMPARISON_AXIS = "passive_retrieval_packet_presence"
 CONTROLLED_RETRIEVAL_AUTHORITATIVE_VARIANT = "without_retrieval_packet"
 CONTROLLED_RETRIEVAL_CANDIDATE_VARIANT = "with_retrieval_packet"
+CONSTRAINED_INFLUENCE_SCHEMA_VERSION = "trendatlas.imlayer.constrained_influence.v2"
+CONSTRAINED_INFLUENCE_CONFIG_KEY = "constrained_influence_v2"
+CONSTRAINED_INFLUENCE_FIELD_CONTRACTS = {
+    "planner": {
+        "allowed_influence_fields": (
+            "mechanism_hypothesis",
+            "selection_rationale",
+        ),
+        "blocked_frozen_fields": (
+            "exact_change",
+            "stop_condition",
+            "target_id",
+            "target_type",
+            "source_artifact_id",
+        ),
+    },
+    "critic": {
+        "allowed_influence_fields": (
+            "policy_alignment_note",
+            "recommended_reason",
+        ),
+        "blocked_frozen_fields": (
+            "recommended_verdict",
+            "recommended_next_action",
+        ),
+    },
+}
 
 
 def _resolve_packet_path(
@@ -186,6 +213,103 @@ def _payload_prompt_metrics(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def build_retrieval_constrained_influence_contract(
+    *,
+    component: str,
+    comparison_config: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    comparison_config = dict(comparison_config or {})
+    v2_config = dict(comparison_config.get(CONSTRAINED_INFLUENCE_CONFIG_KEY) or {})
+    field_contract = dict(CONSTRAINED_INFLUENCE_FIELD_CONTRACTS.get(component, {}))
+    allowed_influence_fields = [
+        str(field_name)
+        for field_name in list(field_contract.get("allowed_influence_fields", ()))
+    ]
+    blocked_frozen_fields = [
+        str(field_name)
+        for field_name in list(field_contract.get("blocked_frozen_fields", ()))
+    ]
+    comparison_enabled = bool(comparison_config.get("enabled", False))
+    requested = bool(v2_config.get("enabled", False))
+    return {
+        "schema_version": CONSTRAINED_INFLUENCE_SCHEMA_VERSION,
+        "component": component,
+        "enabled": comparison_enabled and requested,
+        "requested": requested,
+        "controlled_comparison_enabled": comparison_enabled,
+        "mode": (
+            "v2_constrained_reasoning_only"
+            if comparison_enabled and requested
+            else "v1_default_controlled_comparison"
+        ),
+        "allowed_influence_fields": allowed_influence_fields,
+        "blocked_frozen_fields": blocked_frozen_fields,
+        "decision_critical_fields_frozen": True,
+        "future_decision_critical_field_unlock_requested": bool(
+            v2_config.get("allow_decision_critical_field_influence", False)
+        ),
+        "future_decision_critical_field_unlock_honored": False,
+        "official_decision_behavior_changed": False,
+        "production_authority_transfer_enabled": False,
+        "fail_closed_preserved": True,
+    }
+
+
+def apply_retrieval_constrained_influence_contract(
+    *,
+    component: str,
+    authoritative_fields: dict[str, Any],
+    candidate_fields: dict[str, Any],
+    comparison_config: dict[str, Any] | None = None,
+    freeze_blocked_fields: bool,
+) -> dict[str, Any]:
+    contract = build_retrieval_constrained_influence_contract(
+        component=component,
+        comparison_config=comparison_config,
+    )
+    allowed_influence_fields = list(contract.get("allowed_influence_fields", []))
+    blocked_frozen_fields = list(contract.get("blocked_frozen_fields", []))
+    contract_fields = allowed_influence_fields + blocked_frozen_fields
+    normalized_authoritative_fields = {
+        field_name: str(authoritative_fields.get(field_name, ""))
+        for field_name in contract_fields
+    }
+    raw_candidate_fields = {
+        field_name: str(candidate_fields.get(field_name, ""))
+        for field_name in contract_fields
+    }
+    enforced_candidate_fields = dict(raw_candidate_fields)
+    if freeze_blocked_fields:
+        for field_name in blocked_frozen_fields:
+            enforced_candidate_fields[field_name] = normalized_authoritative_fields.get(field_name, "")
+    allowed_fields_changed = [
+        field_name
+        for field_name in allowed_influence_fields
+        if normalized_authoritative_fields.get(field_name) != enforced_candidate_fields.get(field_name)
+    ]
+    blocked_fields_changed = [
+        field_name
+        for field_name in blocked_frozen_fields
+        if normalized_authoritative_fields.get(field_name) != enforced_candidate_fields.get(field_name)
+    ]
+    attempted_forbidden_fields = [
+        field_name
+        for field_name in blocked_frozen_fields
+        if normalized_authoritative_fields.get(field_name) != raw_candidate_fields.get(field_name)
+    ]
+    return {
+        "contract": contract,
+        "blocked_fields_frozen": freeze_blocked_fields,
+        "forbidden_field_change_attempted": bool(attempted_forbidden_fields),
+        "attempted_forbidden_fields": attempted_forbidden_fields,
+        "raw_candidate_fields": raw_candidate_fields,
+        "enforced_candidate_fields": enforced_candidate_fields,
+        "allowed_fields_changed": allowed_fields_changed,
+        "blocked_fields_changed": blocked_fields_changed,
+        "blocked_fields_preserved": not blocked_fields_changed,
+    }
+
+
 def build_controlled_retrieval_comparison_harness(
     *,
     authoritative_user_payload: dict[str, Any],
@@ -195,6 +319,10 @@ def build_controlled_retrieval_comparison_harness(
 ) -> tuple[dict[str, Any], dict[str, Any] | None]:
     packet = dict(packet or {})
     comparison_config = dict(comparison_config or {})
+    constrained_influence = build_retrieval_constrained_influence_contract(
+        component=component,
+        comparison_config=comparison_config,
+    )
     candidate_user_payload: dict[str, Any] | None = None
     packet_status = str(packet.get("status", "missing")).strip() or "missing"
     candidate_available = packet_status == "loaded"
@@ -203,6 +331,18 @@ def build_controlled_retrieval_comparison_harness(
         optional_input_artifacts = dict(candidate_user_payload.get("optional_input_artifacts", {}))
         optional_input_artifacts["retrieval_packet"] = packet
         candidate_user_payload["optional_input_artifacts"] = optional_input_artifacts
+        if bool(constrained_influence.get("enabled", False)):
+            candidate_user_payload["retrieval_influence_contract"] = {
+                "schema_version": str(constrained_influence.get("schema_version", "")),
+                "component": component,
+                "mode": str(constrained_influence.get("mode", "")),
+                "allowed_influence_fields": list(constrained_influence.get("allowed_influence_fields", [])),
+                "blocked_frozen_fields": list(constrained_influence.get("blocked_frozen_fields", [])),
+                "retrieval_influence_scope": "allowed_fields_only",
+                "decision_critical_fields_must_match_authoritative_baseline": True,
+                "official_decision_behavior_changed": False,
+                "production_authority_transfer_enabled": False,
+            }
     shadow_status = "disabled"
     if bool(comparison_config.get("enabled", False)):
         shadow_status = "ready" if candidate_available else "unavailable_missing_retrieval_packet"
@@ -216,6 +356,7 @@ def build_controlled_retrieval_comparison_harness(
         "candidate_variant": CONTROLLED_RETRIEVAL_CANDIDATE_VARIANT,
         "candidate_available": candidate_available,
         "retrieval_packet_status": packet_status,
+        "constrained_influence": constrained_influence,
         "authoritative_prompt_metrics": _payload_prompt_metrics(authoritative_user_payload),
         "candidate_prompt_metrics": (
             _payload_prompt_metrics(candidate_user_payload)
@@ -235,6 +376,11 @@ def build_controlled_retrieval_comparison_harness(
                 "usage": {},
                 "note_fields": {},
                 "proposal_content_fields": {},
+                "enforcement": {
+                    "blocked_fields_frozen": False,
+                    "forbidden_field_change_attempted": False,
+                    "attempted_forbidden_fields": [],
+                },
                 "error": "",
             },
             "diff": {
@@ -244,6 +390,9 @@ def build_controlled_retrieval_comparison_harness(
                 "proposal_content_fields_compared": [],
                 "proposal_content_fields_changed": [],
                 "proposal_content_fields_preserved": True,
+                "forbidden_fields_compared": list(constrained_influence.get("blocked_frozen_fields", [])),
+                "forbidden_fields_changed": [],
+                "forbidden_field_change_attempted": False,
             },
         },
     }
