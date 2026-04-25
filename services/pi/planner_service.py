@@ -86,6 +86,17 @@ _PLANNER_METRIC_KEYS = (
     "lead_days_avg",
     "lead_days_max",
 )
+_PLANNER_REASONING_NOTE_FIELDS = (
+    "mechanism_hypothesis",
+    "selection_rationale",
+)
+_PLANNER_PROPOSAL_CONTENT_FIELDS = (
+    "exact_change",
+    "source_artifact_id",
+    "stop_condition",
+    "target_id",
+    "target_type",
+)
 
 
 def _compact_metric_view(metrics: dict[str, Any]) -> dict[str, Any]:
@@ -295,21 +306,52 @@ def _planner_user_payload(
 
 
 def _planner_note_fields_from_response(parsed: dict[str, Any]) -> dict[str, Any]:
-    mutation_target = dict(parsed.get("mutation_target", {}))
-    return {
+    note_fields = {
         "mechanism_hypothesis": str(parsed.get("mechanism_hypothesis", "")),
         "selection_rationale": str(parsed.get("selection_rationale", "")),
+    }
+    return {
+        field_name: note_fields.get(field_name, "")
+        for field_name in _PLANNER_REASONING_NOTE_FIELDS
+    }
+
+
+def _planner_proposal_content_fields_from_response(parsed: dict[str, Any]) -> dict[str, Any]:
+    mutation_target = dict(parsed.get("mutation_target", {}))
+    proposal_content_fields = {
         "target_id": str(mutation_target.get("target_id", "")),
         "target_type": str(mutation_target.get("target_type", "")),
         "source_artifact_id": str(mutation_target.get("source_artifact_id", "")),
         "exact_change": str(mutation_target.get("exact_change", "")),
         "stop_condition": str(parsed.get("stop_condition", "")),
     }
+    return {
+        field_name: proposal_content_fields.get(field_name, "")
+        for field_name in _PLANNER_PROPOSAL_CONTENT_FIELDS
+    }
+
+
+def _planner_proposal_content_fields_from_proposal(proposal: MutationProposal) -> dict[str, Any]:
+    mutation_target = dict(proposal.mutation_target)
+    proposal_content_fields = {
+        "target_id": str(mutation_target.get("target_id", "")),
+        "target_type": str(mutation_target.get("target_type", "")),
+        "source_artifact_id": str(mutation_target.get("source_artifact_id", "")),
+        "exact_change": str(mutation_target.get("exact_change", "")),
+        "stop_condition": str(proposal.stop_condition),
+    }
+    return {
+        field_name: proposal_content_fields.get(field_name, "")
+        for field_name in _PLANNER_PROPOSAL_CONTENT_FIELDS
+    }
 
 
 def _planner_note_field_diff(
     authoritative_note_fields: dict[str, Any],
     candidate_note_fields: dict[str, Any],
+    *,
+    authoritative_proposal_content_fields: dict[str, Any],
+    candidate_proposal_content_fields: dict[str, Any],
 ) -> dict[str, Any]:
     fields_compared = sorted(set(authoritative_note_fields) | set(candidate_note_fields))
     changed_fields = [
@@ -317,10 +359,21 @@ def _planner_note_field_diff(
         for field_name in fields_compared
         if authoritative_note_fields.get(field_name) != candidate_note_fields.get(field_name)
     ]
+    proposal_content_fields_compared = sorted(
+        set(authoritative_proposal_content_fields) | set(candidate_proposal_content_fields)
+    )
+    proposal_content_fields_changed = [
+        field_name
+        for field_name in proposal_content_fields_compared
+        if authoritative_proposal_content_fields.get(field_name) != candidate_proposal_content_fields.get(field_name)
+    ]
     return {
         "fields_compared": fields_compared,
         "changed_fields": changed_fields,
         "has_note_differences": bool(changed_fields),
+        "proposal_content_fields_compared": proposal_content_fields_compared,
+        "proposal_content_fields_changed": proposal_content_fields_changed,
+        "proposal_content_fields_preserved": not proposal_content_fields_changed,
     }
 
 
@@ -383,11 +436,13 @@ def _run_shadow_planner_comparison(
     *,
     user_payload: dict[str, Any],
     openai_config: dict[str, Any],
+    frozen_proposal_content_fields: dict[str, Any],
 ) -> dict[str, Any]:
     response = _invoke_planner_openai_response(
         user_payload=user_payload,
         openai_config=openai_config,
     )
+    raw_proposal_content_fields = _planner_proposal_content_fields_from_response(response.parsed)
     return {
         "status": "completed",
         "response_id": response.response_id,
@@ -395,6 +450,11 @@ def _run_shadow_planner_comparison(
         "response_model": response.model,
         "usage": dict(response.usage),
         "note_fields": _planner_note_fields_from_response(response.parsed),
+        "proposal_content_fields": {
+            field_name: str(frozen_proposal_content_fields.get(field_name, ""))
+            for field_name in _PLANNER_PROPOSAL_CONTENT_FIELDS
+        },
+        "raw_proposal_content_fields": raw_proposal_content_fields,
         "error": "",
     }
 
@@ -853,22 +913,31 @@ def plan_jobs(
                     fallback_proposal=proposal,
                     openai_config=openai_config,
                 )
+                authoritative_proposal_content_fields = _planner_proposal_content_fields_from_proposal(proposal)
                 openai_hook["effective_openai_config"] = dict(openai_config)
                 openai_hook["effective_openai_source"] = dict(effective_openai_source)
                 controlled_retrieval_comparison["observations"]["authoritative"]["usage"] = dict(
                     openai_hook.get("usage", {})
                 )
                 controlled_retrieval_comparison["observations"]["authoritative"]["note_fields"] = authoritative_note_fields
+                controlled_retrieval_comparison["observations"]["authoritative"]["proposal_content_fields"] = (
+                    authoritative_proposal_content_fields
+                )
                 if controlled_retrieval_comparison["observations"]["candidate"]["status"] == "ready":
                     try:
                         shadow_result = _run_shadow_planner_comparison(
                             user_payload=candidate_user_payload or {},
                             openai_config=openai_config,
+                            frozen_proposal_content_fields=authoritative_proposal_content_fields,
                         )
                         controlled_retrieval_comparison["observations"]["candidate"].update(shadow_result)
                         controlled_retrieval_comparison["observations"]["diff"] = _planner_note_field_diff(
                             authoritative_note_fields,
                             dict(shadow_result.get("note_fields", {})),
+                            authoritative_proposal_content_fields=authoritative_proposal_content_fields,
+                            candidate_proposal_content_fields=dict(
+                                shadow_result.get("proposal_content_fields", {})
+                            ),
                         )
                     except Exception as shadow_exc:
                         controlled_retrieval_comparison["observations"]["candidate"]["status"] = (

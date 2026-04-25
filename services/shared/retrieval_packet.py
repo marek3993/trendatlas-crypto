@@ -227,18 +227,23 @@ def build_controlled_retrieval_comparison_harness(
                 "user_payload_includes_retrieval_packet": False,
                 "usage": {},
                 "note_fields": {},
+                "proposal_content_fields": {},
             },
             "candidate": {
                 "status": shadow_status,
                 "user_payload_includes_retrieval_packet": candidate_user_payload is not None,
                 "usage": {},
                 "note_fields": {},
+                "proposal_content_fields": {},
                 "error": "",
             },
             "diff": {
                 "fields_compared": [],
                 "changed_fields": [],
                 "has_note_differences": False,
+                "proposal_content_fields_compared": [],
+                "proposal_content_fields_changed": [],
+                "proposal_content_fields_preserved": True,
             },
         },
     }

@@ -7,7 +7,7 @@ from contextlib import contextmanager
 from copy import deepcopy
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any, Iterator, Mapping
 from unittest import mock
 
 
@@ -27,10 +27,61 @@ DEFAULT_PLANNER_INPUT_ROOT = PROJECT_ROOT / "outputs" / "research_os" / "dev_onl
 DEFAULT_HEAVY_VALIDATION_ROOT = PROJECT_ROOT / "outputs" / "research_os" / "dev_only" / "mvp" / "artifacts" / "heavy_validation_outputs"
 DEFAULT_GOVERNOR_ROOT = PROJECT_ROOT / "outputs" / "research_os" / "dev_only" / "mvp" / "artifacts" / "governor_outputs"
 DEFAULT_RETRIEVAL_ROOT = PROJECT_ROOT / "outputs" / "research_os" / "dev_only" / "imlayer_retrieval"
+DEFAULT_SHADOW_EXECUTION_MODE = "mock"
+REAL_OPENAI_SHADOW_EXECUTION_MODE = "real_openai"
+SHADOW_MODE_ENV_VAR = "TRENDATLAS_SHADOW_MODE"
+USE_REAL_OPENAI_ENV_VAR = "TRENDATLAS_SHADOW_USE_REAL_OPENAI"
 
 
 class VerificationFailure(RuntimeError):
     pass
+
+
+def _parse_env_bool(raw_value: str) -> bool:
+    return raw_value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _load_mode_config(mode_config_path: str | None) -> dict[str, Any]:
+    if not mode_config_path:
+        return {}
+    path = Path(mode_config_path)
+    path = path if path.is_absolute() else (PROJECT_ROOT / path).resolve()
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise VerificationFailure(f"mode config must be a JSON object: {path}")
+    return dict(payload)
+
+
+def normalize_shadow_execution_mode(raw_mode: str) -> str:
+    normalized = raw_mode.strip().lower().replace("-", "_")
+    if normalized in {"", DEFAULT_SHADOW_EXECUTION_MODE}:
+        return DEFAULT_SHADOW_EXECUTION_MODE
+    if normalized in {REAL_OPENAI_SHADOW_EXECUTION_MODE, "real"}:
+        return REAL_OPENAI_SHADOW_EXECUTION_MODE
+    raise VerificationFailure(f"Unsupported shadow execution mode: {raw_mode!r}")
+
+
+def resolve_shadow_execution_mode(
+    *,
+    use_real_openai: bool = False,
+    mode_config_path: str | None = None,
+    env: Mapping[str, str] | None = None,
+) -> str:
+    if use_real_openai:
+        return REAL_OPENAI_SHADOW_EXECUTION_MODE
+    mode_config = _load_mode_config(mode_config_path)
+    env_map = env or os.environ
+    for candidate in (
+        str(mode_config.get("shadow_mode", "")),
+        str(env_map.get(SHADOW_MODE_ENV_VAR, "")),
+    ):
+        if candidate.strip():
+            return normalize_shadow_execution_mode(candidate)
+    if bool(mode_config.get("use_real_openai", False)):
+        return REAL_OPENAI_SHADOW_EXECUTION_MODE
+    if _parse_env_bool(str(env_map.get(USE_REAL_OPENAI_ENV_VAR, ""))):
+        return REAL_OPENAI_SHADOW_EXECUTION_MODE
+    return DEFAULT_SHADOW_EXECUTION_MODE
 
 
 def utc_now_iso() -> str:
@@ -183,8 +234,13 @@ def build_critic_mock_response(
 
 
 def assert_planner_invariants(output: Any) -> None:
-    controlled = dict(output.openai_hook.get("controlled_retrieval_comparison", {}))
-    passive = dict(output.openai_hook.get("passive_retrieval_comparison", {}))
+    openai_hook = dict(output.openai_hook)
+    if bool(openai_hook.get("failure_closed", False)):
+        error_code = str(openai_hook.get("error_code", "unexpected_openai_error"))
+        error_message = str(openai_hook.get("error_message", "planner authoritative OpenAI failed closed"))
+        raise VerificationFailure(f"planner authoritative OpenAI failed closed: {error_code}: {error_message}")
+    controlled = dict(openai_hook.get("controlled_retrieval_comparison", {}))
+    passive = dict(openai_hook.get("passive_retrieval_comparison", {}))
     if not controlled.get("explicitly_enabled", False):
         raise VerificationFailure("planner controlled retrieval comparison was not explicitly enabled")
     if controlled.get("decision_behavior_changed", True):
@@ -193,8 +249,18 @@ def assert_planner_invariants(output: Any) -> None:
         raise VerificationFailure("planner controlled retrieval comparison did not preserve fail-closed behavior")
     if passive.get("comparison_bucket") != "with_retrieval_packet":
         raise VerificationFailure("planner passive retrieval comparison did not load a retrieval packet")
-    if dict(controlled.get("observations", {})).get("candidate", {}).get("status") != "completed":
-        raise VerificationFailure("planner shadow candidate did not complete")
+    candidate = dict(dict(controlled.get("observations", {})).get("candidate", {}))
+    if candidate.get("status") != "completed":
+        raise VerificationFailure(
+            "planner shadow candidate did not complete"
+            f": status={candidate.get('status', '')} error={candidate.get('error', '')}"
+        )
+    diff = dict(dict(controlled.get("observations", {})).get("diff", {}))
+    if not diff.get("proposal_content_fields_preserved", False):
+        raise VerificationFailure(
+            "planner shadow candidate changed proposal content fields"
+            f": changed={list(diff.get('proposal_content_fields_changed', []))}"
+        )
 
 
 def assert_critic_invariants(verdict: Any) -> None:
@@ -209,8 +275,12 @@ def assert_critic_invariants(verdict: Any) -> None:
         raise VerificationFailure("critic controlled retrieval comparison did not preserve fail-closed behavior")
     if passive.get("comparison_bucket") != "with_retrieval_packet":
         raise VerificationFailure("critic passive retrieval comparison did not load a retrieval packet")
-    if dict(controlled.get("observations", {})).get("candidate", {}).get("status") != "completed":
-        raise VerificationFailure("critic shadow candidate did not complete")
+    candidate = dict(dict(controlled.get("observations", {})).get("candidate", {}))
+    if candidate.get("status") != "completed":
+        raise VerificationFailure(
+            "critic shadow candidate did not complete"
+            f": status={candidate.get('status', '')} error={candidate.get('error', '')}"
+        )
 
 
 def summarize_planner(output: Any) -> dict[str, Any]:
@@ -298,6 +368,7 @@ def build_markdown_report(summary: dict[str, Any]) -> str:
 
 - Verified at: `{summary["verified_at_utc"]}`
 - Family: `{summary["family_id"]}`
+- Execution mode: `{summary.get("execution_mode", DEFAULT_SHADOW_EXECUTION_MODE)}`
 - Final status: `{summary["final_status"]}`
 - Retrieval packet: `{retrieval_packet["path"]}`
 - Retrieval memory id: `{retrieval_packet["latest_memory_id"]}`
@@ -330,13 +401,14 @@ def build_markdown_report(summary: dict[str, Any]) -> str:
 """
 
 
-def run_verification(
+def evaluate_verification_case(
     *,
     retrieval_packet_path: str | None,
     planner_input_path: str | None,
     heavy_validation_summary_path: str | None,
-    output_dir: str | None,
+    execution_mode: str = DEFAULT_SHADOW_EXECUTION_MODE,
 ) -> dict[str, Any]:
+    execution_mode = normalize_shadow_execution_mode(execution_mode)
     resolved_retrieval_packet_path = resolve_retrieval_packet_path(retrieval_packet_path)
     retrieval_payload = read_json(resolved_retrieval_packet_path)
     family_id = str(dict(retrieval_payload.get("query", {})).get("family_id", "")).strip()
@@ -406,11 +478,7 @@ def run_verification(
         usage={"input_tokens": 146, "output_tokens": 21, "total_tokens": 167},
     )
 
-    with temporary_openai_api_key(), mock.patch.object(
-        planner_service,
-        "invoke_structured_response",
-        side_effect=[planner_authoritative, planner_shadow],
-    ):
+    if execution_mode == REAL_OPENAI_SHADOW_EXECUTION_MODE:
         planner_output = planner_service.plan_jobs(
             planner_input=planner_input,
             artifact_root=str(PROJECT_ROOT / "outputs" / "research_os" / "dev_only" / "mvp" / "artifacts"),
@@ -419,6 +487,20 @@ def run_verification(
             governor_config={"allow_paused_stopped_family_planning_override": True},
             governor_state_by_family={},
         )
+    else:
+        with temporary_openai_api_key(), mock.patch.object(
+            planner_service,
+            "invoke_structured_response",
+            side_effect=[planner_authoritative, planner_shadow],
+        ):
+            planner_output = planner_service.plan_jobs(
+                planner_input=planner_input,
+                artifact_root=str(PROJECT_ROOT / "outputs" / "research_os" / "dev_only" / "mvp" / "artifacts"),
+                openai_config=dict(planner_openai_config),
+                planner_config=planner_config,
+                governor_config={"allow_paused_stopped_family_planning_override": True},
+                governor_state_by_family={},
+            )
     assert_planner_invariants(planner_output)
 
     resolved_summary_path = resolve_heavy_validation_summary_path(family_id, heavy_validation_summary_path)
@@ -466,11 +548,7 @@ def run_verification(
         usage={"input_tokens": 176, "output_tokens": 24, "total_tokens": 200},
     )
 
-    with temporary_openai_api_key(), mock.patch.object(
-        worker_service,
-        "invoke_structured_response",
-        side_effect=[critic_authoritative, critic_shadow],
-    ):
+    if execution_mode == REAL_OPENAI_SHADOW_EXECUTION_MODE:
         critic_verdict = worker_service.build_family_verdict(
             summary=summary,
             compare_rows=compare_rows,
@@ -479,9 +557,26 @@ def run_verification(
             source_paths=source_paths,
             critic_job_id=f"{request_id}_{family_id}_critic",
             critic_openai_config=dict(critic_openai_config),
-            effective_openai_source={"base": "local_shadow_run_verification"},
+            effective_openai_source={"base": "local_shadow_run_verification_real_openai"},
             critic_config={"controlled_comparison": {"enabled": True}},
         )
+    else:
+        with temporary_openai_api_key(), mock.patch.object(
+            worker_service,
+            "invoke_structured_response",
+            side_effect=[critic_authoritative, critic_shadow],
+        ):
+            critic_verdict = worker_service.build_family_verdict(
+                summary=summary,
+                compare_rows=compare_rows,
+                cost_rows=cost_rows,
+                source_artifact=source_artifact,
+                source_paths=source_paths,
+                critic_job_id=f"{request_id}_{family_id}_critic",
+                critic_openai_config=dict(critic_openai_config),
+                effective_openai_source={"base": "local_shadow_run_verification"},
+                critic_config={"controlled_comparison": {"enabled": True}},
+            )
     assert_critic_invariants(critic_verdict)
 
     latest_governor_artifact = resolve_latest_governor_artifact_path(family_id)
@@ -505,14 +600,12 @@ def run_verification(
 
     planner_summary = summarize_planner(planner_output)
     critic_summary = summarize_critic(critic_verdict)
-    output_root = Path(output_dir) if output_dir else DEFAULT_OUTPUT_DIR
-    output_root = output_root if output_root.is_absolute() else (PROJECT_ROOT / output_root).resolve()
-
-    summary_payload = {
+    return {
         "schema_version": "trendatlas.shadow_run_verification.v1",
         "verified_at_utc": utc_now_iso(),
         "family_id": family_id,
         "final_status": "working",
+        "execution_mode": execution_mode,
         "policy": {
             "authoritative_decision_behavior_changed": False,
             "fail_closed_preserved": True,
@@ -539,6 +632,23 @@ def run_verification(
         "governor_reference": governor_reference,
     }
 
+
+def run_verification(
+    *,
+    retrieval_packet_path: str | None,
+    planner_input_path: str | None,
+    heavy_validation_summary_path: str | None,
+    output_dir: str | None,
+    execution_mode: str = DEFAULT_SHADOW_EXECUTION_MODE,
+) -> dict[str, Any]:
+    summary_payload = evaluate_verification_case(
+        retrieval_packet_path=retrieval_packet_path,
+        planner_input_path=planner_input_path,
+        heavy_validation_summary_path=heavy_validation_summary_path,
+        execution_mode=execution_mode,
+    )
+    output_root = Path(output_dir) if output_dir else DEFAULT_OUTPUT_DIR
+    output_root = output_root if output_root.is_absolute() else (PROJECT_ROOT / output_root).resolve()
     json_path = output_root / "shadow_run_verification.json"
     md_path = output_root / "shadow_run_verification.md"
     write_json(json_path, summary_payload)
@@ -561,12 +671,19 @@ def main() -> int:
     parser.add_argument("--planner-input-path", default="")
     parser.add_argument("--heavy-validation-summary-path", default="")
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
+    parser.add_argument("--mode-config", default="")
+    parser.add_argument("--use-real-openai", action="store_true")
     args = parser.parse_args()
+    execution_mode = resolve_shadow_execution_mode(
+        use_real_openai=bool(args.use_real_openai),
+        mode_config_path=args.mode_config or None,
+    )
     result = run_verification(
         retrieval_packet_path=args.retrieval_packet_path or None,
         planner_input_path=args.planner_input_path or None,
         heavy_validation_summary_path=args.heavy_validation_summary_path or None,
         output_dir=args.output_dir or None,
+        execution_mode=execution_mode,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
