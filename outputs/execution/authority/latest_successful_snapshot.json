@@ -3,24 +3,24 @@
   "schema_version": 1,
   "target_closed_day_utc": "2026-04-24",
   "latest_available_closed_utc_day": "2026-04-24",
-  "refresh_started_at_utc": "2026-04-25T22:57:55Z",
-  "refresh_finished_at_utc": "2026-04-25T23:02:04Z",
-  "refresh_started_at_local": "2026-04-26T00:57:55+02:00",
-  "refresh_finished_at_local": "2026-04-26T01:02:04+02:00",
+  "refresh_started_at_utc": "2026-04-25T23:18:34Z",
+  "refresh_finished_at_utc": "2026-04-25T23:22:46Z",
+  "refresh_started_at_local": "2026-04-26T01:18:34+02:00",
+  "refresh_finished_at_local": "2026-04-26T01:22:46+02:00",
   "display_timezone": "Europe/Bratislava",
   "latest_authoritative_attempt_status": "success",
   "latest_authoritative_attempt_error": null,
   "strategy_artifact_closed_day_utc": "2026-04-24",
   "currentness_status": "current",
   "currentness_reason": "The authoritative strategy artifact is aligned with the latest closed UTC market day 2026-04-24.",
-  "generated_at_utc": "2026-04-25T23:02:04Z",
-  "generated_at_local": "2026-04-26T01:02:04+02:00",
-  "run_id": "20260425_225755",
+  "generated_at_utc": "2026-04-25T23:22:46Z",
+  "generated_at_local": "2026-04-26T01:22:46+02:00",
+  "run_id": "20260425_231834",
   "authority_role": "pi_only_authoritative_producer",
   "automatic_producer_id": "raspberry_pi",
   "manual_recovery_only": true,
   "github_actions_role": "validation_only",
-  "source_manifest_path": "/opt/market_regime_v1/outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+  "source_manifest_path": "/opt/market_regime_v1/outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
   "latest_successful_snapshot_path": "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
   "latest_attempt_status_path": "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json",
   "attempt_stage": "daily_refresh_app_pipeline",
@@ -29,7 +29,7 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "running",
-      "started_at_utc": "2026-04-25T22:57:55Z",
+      "started_at_utc": "2026-04-25T23:18:34Z",
       "finished_at_utc": null,
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
@@ -40,8 +40,8 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "success",
-      "started_at_utc": "2026-04-25T22:57:55Z",
-      "finished_at_utc": "2026-04-25T23:02:04Z",
+      "started_at_utc": "2026-04-25T23:18:34Z",
+      "finished_at_utc": "2026-04-25T23:22:46Z",
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
       "stderr_log": null,
@@ -49,13 +49,13 @@
       "non_authoritative_support_only": false
     }
   ],
-  "authority_wallet_sync_utc": "2026-04-25T23:02:03Z",
-  "authority_account_snapshot_as_of_utc": "2026-04-25T23:02:03Z",
-  "authority_runtime_snapshot_generated_at_utc": "2026-04-25T23:02:04Z",
+  "authority_wallet_sync_utc": "2026-04-25T23:22:45Z",
+  "authority_account_snapshot_as_of_utc": "2026-04-25T23:22:45Z",
+  "authority_runtime_snapshot_generated_at_utc": "2026-04-25T23:22:46Z",
   "app_product_snapshot": {
     "snapshot_type": "app_product_snapshot",
     "schema_version": 1,
-    "app_export_generated_at_utc": "2026-04-25T23:02:01Z",
+    "app_export_generated_at_utc": "2026-04-25T23:22:43Z",
     "product_name": "TrendAtlas Crypto",
     "page_scope": "homepage",
     "main_strategy_model": "phase68g_66g_1p25x_candidate",
@@ -65,7 +65,7 @@
     "freshness_target_closed_day": "2026-04-24",
     "freshness": {
       "status": "ok",
-      "generated_at_utc": "2026-04-25T23:01:56+00:00",
+      "generated_at_utc": "2026-04-25T23:22:38+00:00",
       "checks": {
         "btc_raw_last_date": "2026-04-24",
         "phase66g_paper_last_date": "2026-04-24",
@@ -207,7 +207,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 746,
-        "modified_utc": "2026-04-25T23:02:01Z"
+        "modified_utc": "2026-04-25T23:22:43Z"
       },
       "strategy_last_closed_day": {
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
@@ -215,7 +215,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1325750,
-        "modified_utc": "2026-04-25T23:01:58Z",
+        "modified_utc": "2026-04-25T23:22:40Z",
         "source_field": "last_row.date"
       },
       "freshness_target_closed_day": {
@@ -224,7 +224,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1002,
-        "modified_utc": "2026-04-25T23:01:56Z",
+        "modified_utc": "2026-04-25T23:22:38Z",
         "source_field": "latest_closed_utc_date"
       },
       "app_export_generated_at_utc": {
@@ -233,7 +233,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 8645,
-        "modified_utc": "2026-04-25T23:01:58Z",
+        "modified_utc": "2026-04-25T23:22:41Z",
         "source_field": "generated_by_materializer_clock"
       },
       "live_public_state": {
@@ -242,7 +242,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1325750,
-        "modified_utc": "2026-04-25T23:01:58Z",
+        "modified_utc": "2026-04-25T23:22:40Z",
         "source_fields": [
           "date",
           "portfolio_held_asset",
@@ -263,7 +263,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1002,
-        "modified_utc": "2026-04-25T23:01:56Z"
+        "modified_utc": "2026-04-25T23:22:38Z"
       },
       "trend_barometer_summary": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -271,7 +271,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 617,
-        "modified_utc": "2026-04-25T23:01:42Z"
+        "modified_utc": "2026-04-25T23:22:24Z"
       },
       "chart_source_paths": {
         "main_strategy": {
@@ -280,7 +280,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1325750,
-          "modified_utc": "2026-04-25T23:01:58Z"
+          "modified_utc": "2026-04-25T23:22:40Z"
         },
         "reference_strategy": {
           "path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
@@ -288,7 +288,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 153665,
-          "modified_utc": "2026-04-25T23:01:56Z"
+          "modified_utc": "2026-04-25T23:22:38Z"
         }
       },
       "benchmark_source_path": {
@@ -297,7 +297,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 273417,
-        "modified_utc": "2026-04-25T22:57:55Z"
+        "modified_utc": "2026-04-25T23:18:34Z"
       },
       "trend_history_source_path": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
@@ -305,30 +305,30 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 374867,
-        "modified_utc": "2026-04-25T23:01:42Z"
+        "modified_utc": "2026-04-25T23:22:24Z"
       }
     }
   },
   "app_runtime_snapshot": {
     "snapshot_type": "app_runtime_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-04-25T23:02:01Z",
-    "app_runtime_snapshot_generated_at_utc": "2026-04-25T23:02:04Z",
+    "app_export_generated_at_utc": "2026-04-25T23:22:43Z",
+    "app_runtime_snapshot_generated_at_utc": "2026-04-25T23:22:46Z",
     "page_scope": "account_page",
     "runtime_last_sync_utc": "2026-04-06T09:16:26Z",
-    "account_snapshot_as_of_utc": "2026-04-25T23:02:03Z",
-    "dry_run_generated_at_utc": "2026-04-25T23:02:02Z",
-    "gate_generated_at_utc": "2026-04-25T23:02:02Z",
-    "latest_refresh_run_id": "20260425_225755",
+    "account_snapshot_as_of_utc": "2026-04-25T23:22:45Z",
+    "dry_run_generated_at_utc": "2026-04-25T23:22:44Z",
+    "gate_generated_at_utc": "2026-04-25T23:22:44Z",
+    "latest_refresh_run_id": "20260425_231834",
     "latest_refresh_run_status": "OK",
-    "refresh_run_id": "20260425_225755",
+    "refresh_run_id": "20260425_231834",
     "refresh_success": true,
     "refresh_status": "OK",
-    "refresh_finished_at_utc": "2026-04-25T23:01:56+00:00",
+    "refresh_finished_at_utc": "2026-04-25T23:22:38+00:00",
     "latest_strategy_artifact_date": "2026-04-24",
-    "latest_successful_refresh_runtime_utc": "2026-04-25T23:01:56+00:00",
+    "latest_successful_refresh_runtime_utc": "2026-04-25T23:22:38+00:00",
     "latest_trend_calculation_date": "2026-04-24",
-    "latest_wallet_sync_utc": "2026-04-25T23:02:03Z",
+    "latest_wallet_sync_utc": "2026-04-25T23:22:45Z",
     "latest_available_closed_utc_date": "2026-04-24",
     "refresh_currentness_state": "current",
     "refresh_currentness_reason": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
@@ -338,7 +338,7 @@
     "freshness_detail_text": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
     "freshness_summary_text": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
     "strategy_freshness": {
-      "latest_refresh_run_id": "20260425_225755",
+      "latest_refresh_run_id": "20260425_231834",
       "latest_refresh_run_status": "OK",
       "refresh_currentness_state": "current",
       "refresh_currentness_reason_code": "strategy_refresh_current",
@@ -347,25 +347,25 @@
       "freshness_detail_code": "strategy_refresh_current",
       "freshness_summary_text": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
       "freshness_detail_text": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
-      "refresh_run_id": "20260425_225755",
+      "refresh_run_id": "20260425_231834",
       "refresh_success": true,
       "refresh_status": "OK",
-      "refresh_finished_at_utc": "2026-04-25T23:01:56+00:00",
-      "refresh_manifest_path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
-      "latest_successful_refresh_runtime_utc": "2026-04-25T23:01:56+00:00",
-      "latest_successful_refresh_run_id": "20260425_225755",
+      "refresh_finished_at_utc": "2026-04-25T23:22:38+00:00",
+      "refresh_manifest_path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
+      "latest_successful_refresh_runtime_utc": "2026-04-25T23:22:38+00:00",
+      "latest_successful_refresh_run_id": "20260425_231834",
       "latest_strategy_artifact_date": "2026-04-24",
       "latest_trend_calculation_date": "2026-04-24",
-      "latest_wallet_sync_utc": "2026-04-25T23:02:03Z",
+      "latest_wallet_sync_utc": "2026-04-25T23:22:45Z",
       "latest_available_closed_utc_date": "2026-04-24",
-      "evaluated_at_utc": "2026-04-25T23:02:04Z"
+      "evaluated_at_utc": "2026-04-25T23:22:46Z"
     },
     "runtime_table_snapshot": {
       "last_pi_update_utc": "2026-04-12T22:10:09Z",
-      "last_pc_refresh_utc": "2026-04-25T23:01:56+00:00",
+      "last_pc_refresh_utc": "2026-04-25T23:22:38+00:00",
       "last_refresh_status": "OK",
-      "last_refresh_run_id": "20260425_225755",
-      "last_wallet_sync_utc": "2026-04-25T23:02:03Z",
+      "last_refresh_run_id": "20260425_231834",
+      "last_wallet_sync_utc": "2026-04-25T23:22:45Z",
       "currentness_state": "current",
       "currentness_reason": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
       "source_metadata": {
@@ -375,37 +375,37 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1469,
-          "modified_utc": "2026-04-25T22:57:54Z",
+          "modified_utc": "2026-04-25T23:18:33Z",
           "source_field": "generated_at_utc",
           "value_present": true
         },
         "last_pc_refresh_utc": {
-          "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+          "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
           "source_type": "app_refresh_pipeline_manifest",
           "owner": "DATA",
           "exists": true,
           "size_bytes": 9029,
-          "modified_utc": "2026-04-25T23:01:59Z",
+          "modified_utc": "2026-04-25T23:22:41Z",
           "source_field": "main_refresh_chain_finished_at_utc|finished_at_utc|generated_at_utc|started_at_utc",
           "value_present": true
         },
         "last_refresh_status": {
-          "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+          "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
           "source_type": "app_refresh_pipeline_manifest",
           "owner": "DATA",
           "exists": true,
           "size_bytes": 9029,
-          "modified_utc": "2026-04-25T23:01:59Z",
+          "modified_utc": "2026-04-25T23:22:41Z",
           "source_field": "main_refresh_chain_status|status",
           "value_present": true
         },
         "last_refresh_run_id": {
-          "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+          "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
           "source_type": "app_refresh_pipeline_manifest",
           "owner": "DATA",
           "exists": true,
           "size_bytes": 9029,
-          "modified_utc": "2026-04-25T23:01:59Z",
+          "modified_utc": "2026-04-25T23:22:41Z",
           "source_field": "manifest_parent_dir_name",
           "value_present": true
         },
@@ -415,7 +415,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 8407,
-          "modified_utc": "2026-04-25T23:02:03Z",
+          "modified_utc": "2026-04-25T23:22:45Z",
           "source_field": "as_of_utc",
           "value_present": true
         },
@@ -425,7 +425,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-04-25T23:01:56Z",
+          "modified_utc": "2026-04-25T23:22:38Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -433,12 +433,12 @@
           ],
           "inputs": {
             "refresh_manifest": {
-              "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+              "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
               "source_type": "app_refresh_pipeline_manifest",
               "owner": "DATA",
               "exists": true,
               "size_bytes": 9029,
-              "modified_utc": "2026-04-25T23:01:59Z"
+              "modified_utc": "2026-04-25T23:22:41Z"
             },
             "strategy_artifact": {
               "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
@@ -446,7 +446,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 1325750,
-              "modified_utc": "2026-04-25T23:01:58Z"
+              "modified_utc": "2026-04-25T23:22:40Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -454,7 +454,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 617,
-              "modified_utc": "2026-04-25T23:01:42Z"
+              "modified_utc": "2026-04-25T23:22:24Z"
             }
           }
         },
@@ -464,7 +464,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-04-25T23:01:56Z",
+          "modified_utc": "2026-04-25T23:22:38Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -472,12 +472,12 @@
           ],
           "inputs": {
             "refresh_manifest": {
-              "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+              "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
               "source_type": "app_refresh_pipeline_manifest",
               "owner": "DATA",
               "exists": true,
               "size_bytes": 9029,
-              "modified_utc": "2026-04-25T23:01:59Z"
+              "modified_utc": "2026-04-25T23:22:41Z"
             },
             "strategy_artifact": {
               "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
@@ -485,7 +485,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 1325750,
-              "modified_utc": "2026-04-25T23:01:58Z"
+              "modified_utc": "2026-04-25T23:22:40Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -493,12 +493,12 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 617,
-              "modified_utc": "2026-04-25T23:01:42Z"
+              "modified_utc": "2026-04-25T23:22:24Z"
             }
           }
         }
       },
-      "evaluated_at_utc": "2026-04-25T23:02:04Z"
+      "evaluated_at_utc": "2026-04-25T23:22:46Z"
     },
     "account_observability_contract": {
       "enabled": true,
@@ -665,15 +665,15 @@
     },
     "source_metadata": {
       "strategy_freshness": {
-        "refresh_manifest_path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
-        "latest_successful_refresh_run_id": "20260425_225755",
+        "refresh_manifest_path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
+        "latest_successful_refresh_run_id": "20260425_231834",
         "freshness_report": {
           "path": "outputs/execution/freshness/app_freshness_report.json",
           "source_type": "canonical_product_freshness_report",
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-04-25T23:01:56Z"
+          "modified_utc": "2026-04-25T23:22:38Z"
         },
         "strategy_artifact": {
           "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
@@ -681,7 +681,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1325750,
-          "modified_utc": "2026-04-25T23:01:58Z"
+          "modified_utc": "2026-04-25T23:22:40Z"
         },
         "trend_calculation": {
           "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -689,7 +689,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 617,
-          "modified_utc": "2026-04-25T23:01:42Z"
+          "modified_utc": "2026-04-25T23:22:24Z"
         },
         "wallet_sync": {
           "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
@@ -697,13 +697,13 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 8407,
-          "modified_utc": "2026-04-25T23:02:03Z"
+          "modified_utc": "2026-04-25T23:22:45Z"
         }
       },
       "runtime_table_snapshot": {
         "source_type": "authoritative_runtime_table_snapshot",
         "owner": "DATA",
-        "evaluated_at_utc": "2026-04-25T23:02:04Z",
+        "evaluated_at_utc": "2026-04-25T23:22:46Z",
         "fields": {
           "last_pi_update_utc": {
             "path": "outputs/execution/full_auto_scheduler/latest_scheduler_entry_manifest.json",
@@ -711,37 +711,37 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1469,
-            "modified_utc": "2026-04-25T22:57:54Z",
+            "modified_utc": "2026-04-25T23:18:33Z",
             "source_field": "generated_at_utc",
             "value_present": true
           },
           "last_pc_refresh_utc": {
-            "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+            "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
             "source_type": "app_refresh_pipeline_manifest",
             "owner": "DATA",
             "exists": true,
             "size_bytes": 9029,
-            "modified_utc": "2026-04-25T23:01:59Z",
+            "modified_utc": "2026-04-25T23:22:41Z",
             "source_field": "main_refresh_chain_finished_at_utc|finished_at_utc|generated_at_utc|started_at_utc",
             "value_present": true
           },
           "last_refresh_status": {
-            "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+            "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
             "source_type": "app_refresh_pipeline_manifest",
             "owner": "DATA",
             "exists": true,
             "size_bytes": 9029,
-            "modified_utc": "2026-04-25T23:01:59Z",
+            "modified_utc": "2026-04-25T23:22:41Z",
             "source_field": "main_refresh_chain_status|status",
             "value_present": true
           },
           "last_refresh_run_id": {
-            "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+            "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
             "source_type": "app_refresh_pipeline_manifest",
             "owner": "DATA",
             "exists": true,
             "size_bytes": 9029,
-            "modified_utc": "2026-04-25T23:01:59Z",
+            "modified_utc": "2026-04-25T23:22:41Z",
             "source_field": "manifest_parent_dir_name",
             "value_present": true
           },
@@ -751,7 +751,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 8407,
-            "modified_utc": "2026-04-25T23:02:03Z",
+            "modified_utc": "2026-04-25T23:22:45Z",
             "source_field": "as_of_utc",
             "value_present": true
           },
@@ -761,7 +761,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1002,
-            "modified_utc": "2026-04-25T23:01:56Z",
+            "modified_utc": "2026-04-25T23:22:38Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -769,12 +769,12 @@
             ],
             "inputs": {
               "refresh_manifest": {
-                "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+                "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
                 "source_type": "app_refresh_pipeline_manifest",
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 9029,
-                "modified_utc": "2026-04-25T23:01:59Z"
+                "modified_utc": "2026-04-25T23:22:41Z"
               },
               "strategy_artifact": {
                 "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
@@ -782,7 +782,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 1325750,
-                "modified_utc": "2026-04-25T23:01:58Z"
+                "modified_utc": "2026-04-25T23:22:40Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -790,7 +790,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 617,
-                "modified_utc": "2026-04-25T23:01:42Z"
+                "modified_utc": "2026-04-25T23:22:24Z"
               }
             }
           },
@@ -800,7 +800,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1002,
-            "modified_utc": "2026-04-25T23:01:56Z",
+            "modified_utc": "2026-04-25T23:22:38Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -808,12 +808,12 @@
             ],
             "inputs": {
               "refresh_manifest": {
-                "path": "outputs/app_refresh_pipeline/20260425_225755/app_refresh_pipeline_manifest.json",
+                "path": "outputs/app_refresh_pipeline/20260425_231834/app_refresh_pipeline_manifest.json",
                 "source_type": "app_refresh_pipeline_manifest",
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 9029,
-                "modified_utc": "2026-04-25T23:01:59Z"
+                "modified_utc": "2026-04-25T23:22:41Z"
               },
               "strategy_artifact": {
                 "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
@@ -821,7 +821,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 1325750,
-                "modified_utc": "2026-04-25T23:01:58Z"
+                "modified_utc": "2026-04-25T23:22:40Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -829,7 +829,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 617,
-                "modified_utc": "2026-04-25T23:01:42Z"
+                "modified_utc": "2026-04-25T23:22:24Z"
               }
             }
           }
@@ -841,7 +841,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 3746,
-        "modified_utc": "2026-04-25T23:02:03Z"
+        "modified_utc": "2026-04-25T23:22:45Z"
       },
       "account_snapshot_summary": {
         "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
@@ -849,7 +849,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 8407,
-        "modified_utc": "2026-04-25T23:02:03Z"
+        "modified_utc": "2026-04-25T23:22:45Z"
       },
       "dry_run_summary": {
         "path": "outputs/execution/dry_run/latest_dry_run_decision.json",
@@ -857,7 +857,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1631,
-        "modified_utc": "2026-04-25T23:02:02Z"
+        "modified_utc": "2026-04-25T23:22:44Z"
       },
       "gate_summary": {
         "path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
@@ -865,7 +865,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1816,
-        "modified_utc": "2026-04-25T23:02:02Z"
+        "modified_utc": "2026-04-25T23:22:44Z"
       },
       "runtime_health_summary": {
         "path": "outputs/execution/runtime_health/latest_runtime_health.json",
@@ -913,7 +913,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 8407,
-        "modified_utc": "2026-04-25T23:02:03Z"
+        "modified_utc": "2026-04-25T23:22:45Z"
       },
       "dry_run_generated_at_utc": {
         "path": "outputs/execution/dry_run/latest_dry_run_decision.json",
@@ -921,7 +921,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1631,
-        "modified_utc": "2026-04-25T23:02:02Z"
+        "modified_utc": "2026-04-25T23:22:44Z"
       },
       "gate_generated_at_utc": {
         "path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
@@ -929,7 +929,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1816,
-        "modified_utc": "2026-04-25T23:02:02Z"
+        "modified_utc": "2026-04-25T23:22:44Z"
       }
     }
   }
