@@ -70,6 +70,8 @@ REQUIRED_APP_LIVE_MODE_FIELDS = [
 PHASE68I_SUMMARY_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_summary.csv"
 PHASE68I_AUTHORITATIVE_EXPORT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv"
 PHASE68I_PAPER_INPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_paper.csv"
+PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH = APP_EXPORTS_DIR / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
+PHASE68G_MAIN_PAPER_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68g_66g_1p25x_candidate_paper.csv"
 PHASE67J_PAPER_PATH = APP_EXPORTS_DIR / "phase67j_no_neo_main_paper.csv"
 PHASE67J_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase67j_live_status.csv"
 PHASE66G_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase66g_live_status.csv"
@@ -1089,6 +1091,8 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         switch_count=switch_count,
         trade_count=switch_count,
     )
+    phase68g_authoritative_export = dict(authoritative_export)
+    phase68g_authoritative_export["model"] = "phase68g_66g_1p25x_candidate"
 
     try:
         with PHASE68I_SUMMARY_OUTPUT_PATH.open("w", encoding="utf-8", newline="") as f:
@@ -1096,8 +1100,14 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             writer.writeheader()
             writer.writerow(output_row)
         pd.DataFrame([authoritative_export]).to_csv(PHASE68I_AUTHORITATIVE_EXPORT_PATH, index=False)
+        shutil.copy2(PHASE68I_PAPER_INPUT_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
+        pd.DataFrame([phase68g_authoritative_export]).to_csv(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH, index=False)
     except Exception as e:
-        fail(f"Failed writing phase68i exports ({PHASE68I_SUMMARY_OUTPUT_PATH}, {PHASE68I_AUTHORITATIVE_EXPORT_PATH}): {e}")
+        fail(
+            "Failed writing canonical main strategy exports "
+            f"({PHASE68I_SUMMARY_OUTPUT_PATH}, {PHASE68I_AUTHORITATIVE_EXPORT_PATH}, "
+            f"{PHASE68G_MAIN_PAPER_OUTPUT_PATH}, {PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH}): {e}"
+        )
 
     return {
         "status": "phase68i_summary_export_written",
@@ -1109,6 +1119,10 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
         "authoritative_export_path": str(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
         "authoritative_export_info": safe_stat(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
+        "main_strategy_paper_alias_path": str(PHASE68G_MAIN_PAPER_OUTPUT_PATH),
+        "main_strategy_paper_alias_info": safe_stat(PHASE68G_MAIN_PAPER_OUTPUT_PATH),
+        "main_strategy_authoritative_export_alias_path": str(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH),
+        "main_strategy_authoritative_export_alias_info": safe_stat(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH),
         "computed_fields": [
             "total_return_pct",
             "total_return_pct_gross",

@@ -86,8 +86,8 @@
                                                                                                "live_status_path":  "outputs/execution/app_exports/phase66g_live_status.csv"
                                                                                            },
                                                       "phase68g_66g_1p25x_candidate":  {
-                                                                                           "summary_path":  "outputs/phase68g_portfolio_exposure_leverage_validation/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-                                                                                           "paper_path":  "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p25x_candidate_paper.csv",
+                                                                                           "summary_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+                                                                                           "paper_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
                                                                                            "live_status_path":  "outputs/execution/app_exports/phase67j_live_status.csv"
                                                                                        }
                                                   },
