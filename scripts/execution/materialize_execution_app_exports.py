@@ -902,6 +902,151 @@ def find_summary_row_required(
     raise RuntimeError("unreachable")
 
 
+def require_uniform_paper_value(
+    rows: list[dict[str, Any]],
+    *,
+    field: str,
+    context: Path,
+) -> str:
+    values = sorted({
+        str(row.get(field, "")).strip()
+        for row in rows
+        if str(row.get(field, "")).strip() != ""
+    })
+    if not values:
+        fail(f"{context} missing required non-empty paper field '{field}'")
+    if len(values) != 1:
+        fail(f"{context} expected uniform paper field '{field}', got {values}")
+    return values[0]
+
+
+def infer_annual_borrow_cost_pct_from_paper(
+    rows: list[dict[str, Any]],
+    *,
+    context: Path,
+) -> float:
+    derived_values: list[float] = []
+    for row in rows:
+        effective_leverage = parse_float_maybe(row.get("effective_leverage"))
+        daily_borrow_cost = parse_float_maybe(row.get("daily_borrow_cost"))
+        if effective_leverage is None or daily_borrow_cost is None:
+            continue
+        borrowed_fraction = effective_leverage - 1.0
+        if borrowed_fraction <= 0.0 or daily_borrow_cost <= 0.0:
+            continue
+        derived_values.append((daily_borrow_cost * 365.25 / borrowed_fraction) * 100.0)
+
+    if not derived_values:
+        fail(f"{context} could not infer annual_borrow_cost_pct from live paper rows")
+
+    baseline = derived_values[0]
+    for value in derived_values[1:]:
+        if abs(value - baseline) > 1e-6:
+            fail(
+                f"{context} produced inconsistent inferred annual_borrow_cost_pct values: "
+                f"{baseline} vs {value}"
+            )
+    return round(baseline, 4)
+
+
+def build_current_paper_backed_authoritative_export_payload(
+    *,
+    source_paper_path: Path,
+    output_model: str,
+) -> dict[str, Any]:
+    if not source_paper_path.exists():
+        fail(f"Missing required source paper for {output_model}: {source_paper_path}")
+
+    paper_header, paper_rows = read_csv_rows(source_paper_path)
+    if not paper_rows:
+        fail(f"No rows found in {source_paper_path}")
+
+    paper_date_col = "date" if "date" in paper_header else "ts" if "ts" in paper_header else None
+    if paper_date_col is None:
+        fail(f"{source_paper_path} missing date/ts column")
+
+    required_fields = [
+        "realistic_ret_gross",
+        "realistic_ret",
+        "portfolio_held_asset",
+        "effective_leverage",
+        "daily_borrow_cost",
+        "tradable_slippage_cost",
+        "trading_fees_daily",
+        "funding_daily",
+        "fee_side_mode",
+        "taker_fee_bps",
+        "maker_fee_bps",
+        "staking_discount_pct",
+        "referral_discount_pct",
+        "tradable_transition_slippage_bps",
+    ]
+    missing_fields = [field for field in required_fields if field not in paper_header]
+    if missing_fields:
+        fail(f"{source_paper_path} missing required paper fields: {missing_fields}")
+
+    annual_borrow_cost_pct = (
+        parse_float_maybe(require_uniform_paper_value(paper_rows, field="annual_borrow_cost_pct", context=source_paper_path))
+        if "annual_borrow_cost_pct" in paper_header
+        else infer_annual_borrow_cost_pct_from_paper(paper_rows, context=source_paper_path)
+    )
+    if annual_borrow_cost_pct is None:
+        fail(f"{source_paper_path} annual_borrow_cost_pct could not be resolved from live paper")
+
+    config = NetCostExportConfig(
+        annual_borrow_cost=annual_borrow_cost_pct / 100.0,
+        tradable_transition_slippage_bps=parse_float_required(
+            {"value": require_uniform_paper_value(paper_rows, field="tradable_transition_slippage_bps", context=source_paper_path)},
+            "value",
+        ),
+        fee_side_mode=require_uniform_paper_value(paper_rows, field="fee_side_mode", context=source_paper_path),
+        taker_fee_bps=parse_float_required(
+            {"value": require_uniform_paper_value(paper_rows, field="taker_fee_bps", context=source_paper_path)},
+            "value",
+        ),
+        maker_fee_bps=parse_float_required(
+            {"value": require_uniform_paper_value(paper_rows, field="maker_fee_bps", context=source_paper_path)},
+            "value",
+        ),
+        staking_discount_pct=parse_float_required(
+            {"value": require_uniform_paper_value(paper_rows, field="staking_discount_pct", context=source_paper_path)},
+            "value",
+        ),
+        referral_discount_pct=parse_float_required(
+            {"value": require_uniform_paper_value(paper_rows, field="referral_discount_pct", context=source_paper_path)},
+            "value",
+        ),
+    )
+
+    export_frame = build_net_cost_export_frame(
+        pd.read_csv(source_paper_path),
+        date_col=paper_date_col,
+        gross_return_col="realistic_ret_gross",
+        held_asset_col="portfolio_held_asset",
+        leverage_col="effective_leverage",
+        daily_borrow_cost_col="daily_borrow_cost",
+        tradable_slippage_cost_col="tradable_slippage_cost",
+        trading_fees_daily_col="trading_fees_daily",
+        funding_daily_col="funding_daily",
+        config=config,
+    )
+    switch_count = int(export_frame["asset_transition_day"].sum())
+    authoritative_export = summarize_net_cost_export(
+        export_frame,
+        model=output_model,
+        switch_count=switch_count,
+        trade_count=switch_count,
+    )
+    authoritative_export.update(derive_sharpe_sortino_from_paper(source_paper_path))
+
+    last_paper_row = paper_rows[-1]
+    return {
+        "authoritative_export": authoritative_export,
+        "source_paper_path": str(source_paper_path),
+        "source_latest_available_date": str(last_paper_row.get(paper_date_col) or "").strip() or None,
+    }
+
+
 def build_phase68h_backed_authoritative_export_payload(
     summary_row: dict[str, Any],
     *,
@@ -1074,11 +1219,6 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         model="phase68h_dynamic_ladder_candidate",
         context=str(PHASE68H_SUMMARY_INPUT_PATH),
     )
-    phase68g_summary_source_row = find_summary_row_required(
-        summary_rows,
-        model="phase68h_66g_1p25x_static_reference",
-        context=str(PHASE68H_SUMMARY_INPUT_PATH),
-    )
 
     if not PHASE68H_DYNAMIC_PAPER_INPUT_PATH.exists():
         fail(f"Missing required phase68h dynamic paper: {PHASE68H_DYNAMIC_PAPER_INPUT_PATH}")
@@ -1133,12 +1273,6 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         source_paper_path=PHASE68I_PAPER_INPUT_PATH,
         output_model="phase68i_dynamic_ladder_candidate",
     )
-    phase68g_payload = build_phase68h_backed_authoritative_export_payload(
-        phase68g_summary_source_row,
-        source_summary_model="phase68h_66g_1p25x_static_reference",
-        source_paper_path=PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH,
-        output_model="phase68g_66g_1p25x_candidate",
-    )
 
     try:
         with PHASE68I_SUMMARY_OUTPUT_PATH.open("w", encoding="utf-8", newline="") as f:
@@ -1147,6 +1281,10 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             writer.writerow(phase68i_payload["summary_export_row"])
         pd.DataFrame([phase68i_payload["authoritative_export"]]).to_csv(PHASE68I_AUTHORITATIVE_EXPORT_PATH, index=False)
         shutil.copy2(PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
+        phase68g_payload = build_current_paper_backed_authoritative_export_payload(
+            source_paper_path=PHASE68G_MAIN_PAPER_OUTPUT_PATH,
+            output_model="phase68g_66g_1p25x_candidate",
+        )
         pd.DataFrame([phase68g_payload["authoritative_export"]]).to_csv(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH, index=False)
     except Exception as e:
         fail(
@@ -1156,7 +1294,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         )
 
     return {
-        "status": "phase68i_summary_export_and_phase68g_aliases_written",
+        "status": "phase68i_summary_export_and_phase68g_exact_metrics_written",
         "summary_source_path": str(PHASE68H_SUMMARY_INPUT_PATH),
         "paper_source_path": str(PHASE68I_PAPER_INPUT_PATH),
         "paper_refresh_source_path": str(PHASE68H_DYNAMIC_PAPER_INPUT_PATH),
@@ -1167,7 +1305,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
         "authoritative_export_path": str(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
         "authoritative_export_info": safe_stat(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
-        "phase68g_source_summary_model": phase68g_payload["source_summary_model"],
+        "phase68g_metrics_source_kind": "current_canonical_main_strategy_paper",
         "phase68g_source_paper_path": phase68g_payload["source_paper_path"],
         "phase68g_source_latest_available_date": phase68g_payload["source_latest_available_date"],
         "main_strategy_paper_alias_path": str(PHASE68G_MAIN_PAPER_OUTPUT_PATH),
@@ -2056,7 +2194,7 @@ def main() -> None:
             "This script never fabricates strategy data.",
             "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
             "phase68i dynamic ladder summary export is built from phase68h summary source plus phase68i app paper-derived metrics.",
-            "phase68g current main strategy aliases are built explicitly from phase68h_66g_1p25x_static_reference source artifacts, never from phase68i dynamic ladder artifacts.",
+            "phase68g current main strategy homepage metrics are rebuilt from the current canonical phase68g paper under outputs/execution/app_exports/, never from any phase68h summary/static-reference row.",
             "phase68g current main strategy contract paths are canonical aliases under outputs/execution/app_exports/, not legacy outputs/phase68g_portfolio_exposure_leverage_validation/ paths.",
             "Other artifacts are copied from existing legacy aliases only.",
             "app_product_snapshot and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
