@@ -25,7 +25,7 @@ from scripts.execution.authority_metric_derivation import (
 )
 from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
-    resolve_homepage_top_performance_source_contract,
+    resolve_validated_homepage_top_performance_source_contract,
     serialize_current_main_strategy_root_contract,
     validate_product_snapshot_current_strategy_contract,
 )
@@ -1727,25 +1727,16 @@ def build_full_canonical_main_strategy_metrics_row(
 def build_homepage_top_performance_metrics(
     *,
     main_strategy_model: str,
-    fallback_metrics: dict[str, Any],
-    fallback_summary_path: Path,
+    current_strategy_contract: dict[str, Any],
 ) -> tuple[dict[str, Any], Path, str, list[str]]:
-    source_contract = resolve_homepage_top_performance_source_contract(
+    # Homepage top cards must read the current live/main strategy metrics source,
+    # not a separate compare/ranking artifact.
+    source_contract = resolve_validated_homepage_top_performance_source_contract(
         main_strategy_model,
+        current_strategy_contract,
         root=ROOT,
         require_file=False,
     )
-    if source_contract is None:
-        return (
-            {
-                "cagr_pct": fallback_metrics.get("cagr_pct"),
-                "since2023_cagr_pct": fallback_metrics.get("since2023_cagr_pct"),
-                "since2025_cagr_pct": fallback_metrics.get("since2025_cagr_pct"),
-            },
-            fallback_summary_path,
-            "canonical_app_summary_top_performance_fallback",
-            ["cagr_pct", "since2023_cagr_pct", "since2025_cagr_pct"],
-        )
 
     source_path = Path(source_contract["metrics_path"])
     source_row = read_single_csv_row(source_path)
@@ -1768,6 +1759,8 @@ def build_homepage_top_performance_metrics(
                 f"{source_field} for {main_strategy_model} in {source_path}"
             )
         resolved_metrics[display_field] = value
+
+    resolved_metrics["model"] = expected_model or source_row.get("model")
 
     return (
         resolved_metrics,
@@ -1881,8 +1874,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     main_strategy_top_performance_metrics, top_performance_source_path, top_performance_source_type, top_performance_source_fields = (
         build_homepage_top_performance_metrics(
             main_strategy_model=main_strategy_model,
-            fallback_metrics=main_strategy_metrics,
-            fallback_summary_path=main_summary_path,
+            current_strategy_contract=current_strategy_contract,
         )
     )
     live_public_state = normalized_row(main_paper_row, live_fields)

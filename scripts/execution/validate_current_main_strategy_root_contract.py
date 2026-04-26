@@ -12,6 +12,8 @@ from scripts.execution.current_strategy_root_contract import (
     CurrentMainStrategyContractError,
     load_current_main_strategy_root_contract,
     resolve_homepage_current_strategy_sources,
+    resolve_validated_homepage_top_performance_source_contract,
+    validate_homepage_top_card_source_path,
 )
 
 
@@ -30,6 +32,10 @@ def read_json_required(path: Path) -> dict[str, Any]:
 
 def main() -> None:
     current_strategy_contract = load_current_main_strategy_root_contract()
+    homepage_top_card_source_contract = resolve_validated_homepage_top_performance_source_contract(
+        str(current_strategy_contract["main_strategy_model"]),
+        current_strategy_contract,
+    )
     authority_snapshot = read_json_required(AUTHORITY_SNAPSHOT_PATH)
     product_snapshot = authority_snapshot.get("app_product_snapshot")
     if not isinstance(product_snapshot, dict):
@@ -45,29 +51,30 @@ def main() -> None:
         raise ValueError("authority app_product_snapshot missing source_metadata.main_strategy_metrics")
 
     current_truth_model = str(current_strategy_contract["main_strategy_model"])
-    canonical_metrics_source_path = str(current_strategy_contract["canonical_metrics_source_path"])
-    canonical_paper_source_path = str(current_strategy_contract["canonical_paper_source_path"])
     authority_snapshot_source_path = str(main_strategy_metrics_metadata.get("path") or "").strip()
-    homepage_metric_source_path = canonical_metrics_source_path
+    homepage_top_card_source_path = str(homepage_top_card_source_contract["metrics_source_path"])
 
-    print(f"current truth model: {current_truth_model}")
-    print(f"canonical metrics source path: {canonical_metrics_source_path}")
-    print(f"canonical paper path: {canonical_paper_source_path}")
-    print(f"authority snapshot source path: {authority_snapshot_source_path}")
-    print(f"homepage metric source path: {homepage_metric_source_path}")
+    print(f"truth model: {current_truth_model}")
+    print(f"homepage top-card source path: {homepage_top_card_source_path}")
+    print(f"authority main_strategy_metrics source path: {authority_snapshot_source_path}")
 
     try:
         resolve_homepage_current_strategy_sources(
             product_snapshot,
             current_strategy_contract,
         )
+        validate_homepage_top_card_source_path(
+            homepage_top_card_source_path,
+            current_strategy_contract,
+            context="Homepage top-card smoke validation blocked:",
+        )
+        validate_homepage_top_card_source_path(
+            authority_snapshot_source_path,
+            current_strategy_contract,
+            context="Authority main_strategy_metrics smoke validation blocked:",
+        )
     except CurrentMainStrategyContractError as exc:
         raise SystemExit(str(exc)) from exc
-
-    if authority_snapshot_source_path != canonical_metrics_source_path:
-        raise SystemExit(
-            "Authority snapshot source path diverged from canonical current main strategy metrics source path"
-        )
 
 
 if __name__ == "__main__":

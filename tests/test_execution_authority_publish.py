@@ -644,6 +644,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             [
                 "outputs/execution/authority/latest_attempt_status.json",
                 "outputs/execution/authority/latest_successful_snapshot.json",
+                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                 "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
             ],
         )
@@ -674,6 +675,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                     "--",
                     "outputs/execution/authority/latest_attempt_status.json",
                     "outputs/execution/authority/latest_successful_snapshot.json",
+                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                     "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
                 ],
                 [
@@ -684,6 +686,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                     "--",
                     "outputs/execution/authority/latest_attempt_status.json",
                     "outputs/execution/authority/latest_successful_snapshot.json",
+                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                     "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
                 ],
                 [
@@ -695,6 +698,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                     "--",
                     "outputs/execution/authority/latest_attempt_status.json",
                     "outputs/execution/authority/latest_successful_snapshot.json",
+                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                     "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
                 ],
                 ["git", "push", "origin", "HEAD:main"],
@@ -917,6 +921,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             [
                 "outputs/execution/authority/latest_attempt_status.json",
                 "outputs/execution/authority/latest_successful_snapshot.json",
+                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                 "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
             ],
         )
@@ -947,6 +952,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             {
                 "outputs/execution/authority/latest_attempt_status.json",
                 "outputs/execution/authority/latest_successful_snapshot.json",
+                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                 "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
             },
         )

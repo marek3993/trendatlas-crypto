@@ -29,7 +29,8 @@ from src.market_regime_v1.phase1_time_semantics import (
 from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
     resolve_homepage_current_strategy_sources,
-    resolve_homepage_top_performance_source_contract,
+    resolve_validated_homepage_top_performance_source_contract,
+    validate_homepage_top_card_source_path,
 )
 from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
@@ -514,6 +515,55 @@ METRIC_HELP = {
     },
 }
 
+TEXT["sk"]["performance_fee_note"] = (
+    "Top karty zobrazuju aktualne live/main strategia metriky z publikovaneho "
+    "hlavneho exportu. Nejde o samostatny compare/ranking vystup a vysledky uz "
+    "zahrnaju Hyperliquid poplatky."
+)
+TEXT["en"]["performance_fee_note"] = (
+    "Top cards show the current live/main strategy metrics from the published "
+    "main-strategy export. They are not fed by a separate compare/ranking "
+    "artifact, and results already include Hyperliquid fees."
+)
+METRIC_HELP["sk"].update(
+    {
+        TEXT["sk"]["cagr"]: (
+            "Tato top karta ukazuje aktualny live/main strategy CAGR z rovnakeho "
+            "canonical metrics exportu ako zvysok hlavnej strategie, nie zo "
+            "samostatneho compare/ranking artefaktu."
+        ),
+        TEXT["sk"]["since2023"]: (
+            "Tato top karta ukazuje aktualny live/main strategy CAGR okno od 2023 "
+            "z canonical main-strategy metrics exportu, nie zo samostatneho "
+            "compare/ranking artefaktu."
+        ),
+        TEXT["sk"]["since2025"]: (
+            "Tato top karta ukazuje aktualny live/main strategy CAGR okno od 2025 "
+            "z canonical main-strategy metrics exportu, nie zo samostatneho "
+            "compare/ranking artefaktu."
+        ),
+    }
+)
+METRIC_HELP["en"].update(
+    {
+        TEXT["en"]["cagr"]: (
+            "This top card shows the current live/main strategy CAGR from the same "
+            "canonical metrics export as the published main strategy, not from a "
+            "separate compare/ranking artifact."
+        ),
+        TEXT["en"]["since2023"]: (
+            "This top card shows the current live/main strategy since-2023 CAGR "
+            "from the canonical main-strategy metrics export, not from a separate "
+            "compare/ranking artifact."
+        ),
+        TEXT["en"]["since2025"]: (
+            "This top card shows the current live/main strategy since-2025 CAGR "
+            "from the canonical main-strategy metrics export, not from a separate "
+            "compare/ranking artifact."
+        ),
+    }
+)
+
 ACCOUNT_UI_COPY = {
     "sk": {
         "observability_disabled": "Prevadzkovy prehlad uctu je v oficialnom kontrakte momentalne vypnuty.",
@@ -715,27 +765,30 @@ def resolve_top_performance_metrics_for_display(
     *,
     product_snapshot: dict[str, Any],
     main_strategy_model: str | None,
-    fallback_metrics: dict[str, Any],
+    current_strategy_contract: dict[str, Any],
 ) -> dict[str, Any]:
     source_metrics = product_snapshot.get("main_strategy_top_performance_metrics")
     if isinstance(source_metrics, dict) and source_metrics:
+        top_performance_metadata = dict(
+            (dict(product_snapshot.get("source_metadata") or {})).get("main_strategy_top_performance_metrics")
+            or {}
+        )
+        validate_homepage_top_card_source_path(
+            top_performance_metadata.get("path"),
+            current_strategy_contract,
+            context="Homepage load blocked:",
+        )
         metrics = dict(source_metrics)
         if not metrics.get("model") and main_strategy_model:
             metrics["model"] = main_strategy_model
         return resolve_main_metrics_for_display(metrics, main_strategy_model)
 
-    source_contract = resolve_homepage_top_performance_source_contract(
+    source_contract = resolve_validated_homepage_top_performance_source_contract(
         str(main_strategy_model or "").strip(),
+        current_strategy_contract,
         root=ROOT,
         require_file=False,
     )
-    if source_contract is None:
-        return {
-            "model": main_strategy_model,
-            "cagr_pct": fallback_metrics.get("cagr_pct"),
-            "since2023_cagr_pct": fallback_metrics.get("since2023_cagr_pct"),
-            "since2025_cagr_pct": fallback_metrics.get("since2025_cagr_pct"),
-        }
 
     source_path = Path(source_contract["metrics_path"])
     source_row = load_single_csv_row(
@@ -3458,10 +3511,12 @@ main_metrics = resolve_main_metrics_for_display(
     main_metrics_source_row,
     str(product_snapshot.get("main_strategy_model") or main_key),
 )
+# Homepage top cards are a live/main strategy surface and must not switch to a
+# separate compare/ranking metrics artifact.
 top_performance_metrics = resolve_top_performance_metrics_for_display(
     product_snapshot=product_snapshot,
     main_strategy_model=str(product_snapshot.get("main_strategy_model") or main_key),
-    fallback_metrics=main_metrics,
+    current_strategy_contract=current_strategy_contract,
 )
 
 years = available_years_from_frames(list(papers.values()) + [btc_df])

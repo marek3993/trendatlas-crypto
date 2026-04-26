@@ -10,9 +10,14 @@ SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
 PROJECT_TRUTH_PATH = SOURCE_OF_TRUTH_DIR / "project_truth.json"
 EXPORT_CONTRACT_PATH = SOURCE_OF_TRUTH_DIR / "export_contract.json"
 DEFAULT_ALLOWED_CANONICAL_ROOT = "outputs/execution/app_exports"
+# Homepage top cards are a current live/main strategy surface. Even though the
+# canonical filename contains "net_compare_export", homepage top cards must read
+# the same canonical metrics artifact as current_main_strategy_root_contract and
+# must never switch to a separate compare/ranking-only artifact.
 HOMEPAGE_TOP_PERFORMANCE_SOURCE_CONTRACTS: dict[str, dict[str, Any]] = {
     "phase68g_66g_1p25x_candidate": {
         "source_family": "canonical_phase68g_authoritative_net_compare_top_cards",
+        "semantic_role": "current_live_main_strategy_top_cards",
         "metrics_source_path": (
             "outputs/execution/app_exports/"
             "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
@@ -316,6 +321,19 @@ def validate_product_snapshot_current_strategy_contract(
             f"(expected={expected_model} actual={metrics_model})"
         )
 
+    top_performance_metrics_payload = product_snapshot.get("main_strategy_top_performance_metrics")
+    if top_performance_metrics_payload is not None:
+        top_performance_metrics = _require_mapping(
+            top_performance_metrics_payload,
+            f"{context} product_snapshot.main_strategy_top_performance_metrics",
+        )
+        top_performance_model = str(top_performance_metrics.get("model") or "").strip()
+        if top_performance_model and top_performance_model != expected_model:
+            raise CurrentMainStrategyContractError(
+                f"{context} product_snapshot.main_strategy_top_performance_metrics.model diverged "
+                f"(expected={expected_model} actual={top_performance_model})"
+            )
+
     chart_source_paths = _require_mapping(
         product_snapshot.get("chart_source_paths"),
         f"{context} product_snapshot.chart_source_paths",
@@ -346,6 +364,18 @@ def validate_product_snapshot_current_strategy_contract(
         raise CurrentMainStrategyContractError(
             f"{context} product_snapshot.source_metadata.main_strategy_metrics.path diverged "
             f"(expected={expected_metrics_path} actual={actual_metrics_path})"
+        )
+
+    top_performance_metadata_payload = source_metadata.get("main_strategy_top_performance_metrics")
+    if top_performance_metadata_payload is not None:
+        top_performance_metadata = _require_mapping(
+            top_performance_metadata_payload,
+            f"{context} product_snapshot.source_metadata.main_strategy_top_performance_metrics",
+        )
+        validate_homepage_top_card_source_path(
+            top_performance_metadata.get("path"),
+            contract,
+            context=f"{context} product_snapshot.source_metadata.main_strategy_top_performance_metrics.path",
         )
 
     for field_name in ("strategy_last_closed_day", "live_public_state"):
@@ -416,6 +446,10 @@ def resolve_homepage_top_performance_source_contract(
         source_contract.get("source_family"),
         f"homepage top performance source contract {main_strategy_model}.source_family",
     )
+    semantic_role = _require_text(
+        source_contract.get("semantic_role"),
+        f"homepage top performance source contract {main_strategy_model}.semantic_role",
+    )
     metrics_source_path_text = _normalize_app_path_text(
         _require_text(
             source_contract.get("metrics_source_path"),
@@ -448,7 +482,68 @@ def resolve_homepage_top_performance_source_contract(
     return {
         "main_strategy_model": main_strategy_model,
         "source_family": source_family,
+        "semantic_role": semantic_role,
         "metrics_source_path": _path_for_app(resolved_metrics_path, root=repo_root),
         "metric_aliases": metric_aliases,
         "metrics_path": resolved_metrics_path,
     }
+
+
+def validate_homepage_top_card_source_path(
+    source_path: Any,
+    contract: Mapping[str, Any],
+    *,
+    context: str,
+) -> str:
+    actual_source_path = _normalize_app_path_text(
+        _require_text(source_path, f"{context} homepage top-card source path")
+    )
+    expected_source_path = _normalize_app_path_text(str(contract["canonical_metrics_source_path"]))
+    if actual_source_path != expected_source_path:
+        raise CurrentMainStrategyContractError(
+            f"{context} homepage top-card metrics must use "
+            "current_main_strategy_root_contract.canonical_metrics_source_path and must not "
+            "use a separate compare/ranking artifact "
+            f"(expected={expected_source_path} actual={actual_source_path})"
+        )
+    return actual_source_path
+
+
+def resolve_validated_homepage_top_performance_source_contract(
+    main_strategy_model: str,
+    contract: Mapping[str, Any],
+    *,
+    root: Path | None = None,
+    require_file: bool = True,
+) -> dict[str, Any]:
+    expected_model = _require_text(
+        contract.get("main_strategy_model"),
+        "current main strategy root contract.main_strategy_model",
+    )
+    source_contract = resolve_homepage_top_performance_source_contract(
+        main_strategy_model,
+        root=root,
+        require_file=require_file,
+    )
+    if source_contract is None:
+        raise CurrentMainStrategyContractError(
+            "Homepage top-card source contract is missing for the current live/main strategy "
+            f"model {expected_model}"
+        )
+
+    actual_model = _require_text(
+        source_contract.get("main_strategy_model"),
+        f"homepage top performance source contract {main_strategy_model}.main_strategy_model",
+    )
+    if actual_model != expected_model:
+        raise CurrentMainStrategyContractError(
+            "Homepage top-card source contract model diverged from the current live/main "
+            f"strategy truth (expected={expected_model} actual={actual_model})"
+        )
+
+    validate_homepage_top_card_source_path(
+        source_contract.get("metrics_source_path"),
+        contract,
+        context="Homepage top-card source contract blocked:",
+    )
+    return source_contract
