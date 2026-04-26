@@ -113,6 +113,48 @@ FRESHNESS_SUMMARY_TEXT = {
     "missing_runtime_artifact": "Missing runtime artifact: app_runtime_snapshot.json is missing or invalid.",
 }
 
+HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS = [
+    "model",
+    "total_return_pct",
+    "total_return_pct_gross",
+    "total_return_pct_net",
+    "cagr_pct",
+    "cagr_pct_gross",
+    "cagr_pct_net",
+    "max_drawdown_pct",
+    "max_drawdown_pct_gross",
+    "max_drawdown_pct_net",
+    "since2023_cagr_pct",
+    "since2023_cagr_pct_gross",
+    "since2023_cagr_pct_net",
+    "since2025_cagr_pct",
+    "since2025_cagr_pct_gross",
+    "since2025_cagr_pct_net",
+    "sharpe",
+    "sortino",
+    "switch_count",
+    "cash_days_pct",
+    "btc_days_pct",
+    "trading_fees_total_pct",
+    "funding_total_pct",
+    "borrow_cost_total_pct",
+    "tradable_slippage_cost_total_pct",
+    "fee_side_mode",
+    "taker_fee_bps",
+    "maker_fee_bps",
+    "staking_discount_pct",
+    "referral_discount_pct",
+    "effective_trading_fee_bps",
+]
+
+NET_ALIAS_METRIC_FALLBACKS = {
+    "total_return_pct": ["total_return_pct_net", "total_return_pct_gross"],
+    "cagr_pct": ["cagr_pct_net", "cagr_pct_gross"],
+    "max_drawdown_pct": ["max_drawdown_pct_net", "max_drawdown_pct_gross"],
+    "since2023_cagr_pct": ["since2023_cagr_pct_net", "since2023_cagr_pct_gross"],
+    "since2025_cagr_pct": ["since2025_cagr_pct_net", "since2025_cagr_pct_gross"],
+}
+
 
 def utc_now_iso() -> str:
     return (
@@ -1362,6 +1404,13 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         output_model="phase68i_dynamic_ladder_candidate",
     )
     phase68g_refresh_info = refresh_phase68g_native_outputs_if_needed()
+    phase68g_source_export_row = read_single_csv_row(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH)
+    phase68g_canonical_metrics_row = build_full_canonical_main_strategy_metrics_row(
+        phase68g_source_export_row,
+        main_strategy_model="phase68g_66g_1p25x_candidate",
+        main_paper_path=PHASE68G_SOURCE_PAPER_PATH,
+        metric_fields=HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS,
+    )
 
     try:
         with PHASE68I_SUMMARY_OUTPUT_PATH.open("w", encoding="utf-8", newline="") as f:
@@ -1370,7 +1419,10 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             writer.writerow(phase68i_payload["summary_export_row"])
         pd.DataFrame([phase68i_payload["authoritative_export"]]).to_csv(PHASE68I_AUTHORITATIVE_EXPORT_PATH, index=False)
         shutil.copy2(PHASE68G_SOURCE_PAPER_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
-        shutil.copy2(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH, PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH)
+        with PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=list(phase68g_canonical_metrics_row.keys()))
+            writer.writeheader()
+            writer.writerow(phase68g_canonical_metrics_row)
     except Exception as e:
         fail(
             "Failed writing canonical main strategy exports "
@@ -1403,6 +1455,18 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             "total_return_pct",
             "total_return_pct_gross",
             "total_return_pct_net",
+            "cagr_pct",
+            "cagr_pct_gross",
+            "cagr_pct_net",
+            "since2023_cagr_pct",
+            "since2023_cagr_pct_gross",
+            "since2023_cagr_pct_net",
+            "since2025_cagr_pct",
+            "since2025_cagr_pct_gross",
+            "since2025_cagr_pct_net",
+            "max_drawdown_pct",
+            "max_drawdown_pct_gross",
+            "max_drawdown_pct_net",
             "sharpe",
             "sortino",
             "switch_count",
@@ -1417,6 +1481,8 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             "tradable_transition_slippage_bps",
         ],
         "copied_fields_from_summary_source": [
+            "total_return_pct_gross",
+            "total_return_pct_net",
             "annual_borrow_cost_pct",
             "tradable_transition_slippage_bps",
             "fee_side_mode",
@@ -1425,18 +1491,30 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             "staking_discount_pct",
             "referral_discount_pct",
             "effective_trading_fee_bps",
-            "cagr_pct",
             "cagr_pct_gross",
             "cagr_pct_net",
-            "max_drawdown_pct",
             "max_drawdown_pct_gross",
             "max_drawdown_pct_net",
-            "since2023_cagr_pct",
             "since2023_cagr_pct_gross",
             "since2023_cagr_pct_net",
-            "since2025_cagr_pct",
             "since2025_cagr_pct_gross",
             "since2025_cagr_pct_net",
+            "switch_count",
+            "cash_days_pct",
+            "btc_days_pct",
+            "trading_fees_total_pct",
+            "funding_total_pct",
+            "borrow_cost_total_pct",
+            "tradable_slippage_cost_total_pct",
+        ],
+        "derived_fields_written_into_canonical_phase68g_metrics_row": [
+            "total_return_pct",
+            "cagr_pct",
+            "since2023_cagr_pct",
+            "since2025_cagr_pct",
+            "max_drawdown_pct",
+            "sharpe",
+            "sortino",
         ],
     }
 
@@ -1502,6 +1580,10 @@ def csv_json_value(raw: Any) -> Any:
         return text
 
 
+def csv_text_value(raw: Any) -> str:
+    return str(raw).strip() if raw is not None else ""
+
+
 def normalized_row(row: dict[str, Any], fields: list[str]) -> dict[str, Any]:
     return {field: csv_json_value(row.get(field)) for field in fields if field in row}
 
@@ -1544,51 +1626,100 @@ def derive_sharpe_sortino_from_paper(path: Path) -> dict[str, float]:
     return derived
 
 
+def derive_switch_count_from_paper(path: Path) -> int | None:
+    header, rows = read_csv_rows(path)
+    if not rows:
+        return None
+
+    for field in ("tradable_transition_day", "asset_transition_day"):
+        if field not in header:
+            continue
+        count = 0
+        for row in rows:
+            value = csv_json_value(row.get(field))
+            if value is True:
+                count += 1
+            elif isinstance(value, (int, float)) and float(value) != 0.0:
+                count += 1
+        return count
+    return None
+
+
 def normalize_homepage_main_strategy_metrics(
+    summary_row: dict[str, Any],
+    *,
+    main_strategy_model: str,
+    metric_fields: list[str],
+    summary_path: Path,
+) -> dict[str, Any]:
+    metrics = normalized_row(summary_row, metric_fields)
+
+    metrics["model"] = main_strategy_model
+    missing_fields = [field for field in metric_fields if field not in metrics]
+    if missing_fields:
+        fail(
+            f"{summary_path} missing required canonical main strategy metric fields: {missing_fields}"
+        )
+    return metrics
+
+
+def build_full_canonical_main_strategy_metrics_row(
     summary_row: dict[str, Any],
     *,
     main_strategy_model: str,
     main_paper_path: Path,
     metric_fields: list[str],
-) -> dict[str, Any]:
-    metrics = normalized_row(summary_row, metric_fields)
-
-    fallback_fields = {
-        "total_return_pct": ["total_return_pct_net", "total_return_pct_gross"],
-        "cagr_pct": ["cagr_pct_net", "cagr_pct_gross"],
-        "max_drawdown_pct": ["max_drawdown_pct_net", "max_drawdown_pct_gross"],
-        "since2023_cagr_pct": ["since2023_cagr_pct_net", "since2023_cagr_pct_gross"],
-        "since2025_cagr_pct": ["since2025_cagr_pct_net", "since2025_cagr_pct_gross"],
+) -> dict[str, str]:
+    canonical_row = {
+        str(key): csv_text_value(value)
+        for key, value in summary_row.items()
     }
-    for field, candidates in fallback_fields.items():
-        if field in metrics:
+
+    for field, candidates in NET_ALIAS_METRIC_FALLBACKS.items():
+        if canonical_row.get(field):
             continue
         for candidate in candidates:
-            if candidate in metrics:
-                metrics[field] = metrics[candidate]
+            candidate_value = canonical_row.get(candidate)
+            if candidate_value:
+                canonical_row[field] = candidate_value
                 break
 
-    if "sharpe" not in metrics or "sortino" not in metrics:
+    if not canonical_row.get("sharpe") or not canonical_row.get("sortino"):
         derived_risk_metrics = derive_sharpe_sortino_from_paper(main_paper_path)
         for field in ("sharpe", "sortino"):
-            if field not in metrics and field in derived_risk_metrics:
-                metrics[field] = derived_risk_metrics[field]
+            if canonical_row.get(field):
+                continue
+            fallback_value = csv_text_value(derived_risk_metrics.get(field))
+            if fallback_value:
+                canonical_row[field] = fallback_value
 
-    metrics.pop("cash_days_pct", None)
-    metrics.pop("btc_days_pct", None)
-    derived_day_metrics = derive_strategy_day_metrics_from_csv(
-        main_paper_path,
-        model=main_strategy_model,
-    )
-    if isinstance(derived_day_metrics, dict):
-        for field, value in derived_day_metrics.items():
-            metrics[field] = value
-    elif derived_day_metrics is None:
-        metrics["cash_days_pct"] = None
-        metrics["btc_days_pct"] = None
+    if not canonical_row.get("cash_days_pct") or not canonical_row.get("btc_days_pct"):
+        derived_day_metrics = derive_strategy_day_metrics_from_csv(
+            main_paper_path,
+            model=main_strategy_model,
+        )
+        if isinstance(derived_day_metrics, dict):
+            for field in ("cash_days_pct", "btc_days_pct"):
+                if canonical_row.get(field):
+                    continue
+                fallback_value = csv_text_value(derived_day_metrics.get(field))
+                if fallback_value:
+                    canonical_row[field] = fallback_value
 
-    metrics["model"] = main_strategy_model
-    return metrics
+    if not canonical_row.get("switch_count"):
+        derived_switch_count = derive_switch_count_from_paper(main_paper_path)
+        if derived_switch_count is not None:
+            canonical_row["switch_count"] = csv_text_value(derived_switch_count)
+
+    canonical_row["model"] = main_strategy_model
+
+    missing_fields = [field for field in metric_fields if not canonical_row.get(field)]
+    if missing_fields:
+        fail(
+            "Full canonical phase68g metrics record is incomplete after materialization "
+            f"for {main_paper_path}: missing {missing_fields}"
+        )
+    return canonical_row
 
 
 def validate_homepage_snapshot_contract(
@@ -1644,39 +1775,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     freshness_payload = read_json_optional(APP_FRESHNESS_REPORT_PATH)
     freshness_checks = build_canonical_product_freshness_checks(freshness_payload)
 
-    metric_fields = [
-        "model",
-        "total_return_pct",
-        "total_return_pct_gross",
-        "total_return_pct_net",
-        "cagr_pct",
-        "cagr_pct_gross",
-        "cagr_pct_net",
-        "max_drawdown_pct",
-        "max_drawdown_pct_gross",
-        "max_drawdown_pct_net",
-        "since2023_cagr_pct",
-        "since2023_cagr_pct_gross",
-        "since2023_cagr_pct_net",
-        "since2025_cagr_pct",
-        "since2025_cagr_pct_gross",
-        "since2025_cagr_pct_net",
-        "sharpe",
-        "sortino",
-        "switch_count",
-        "cash_days_pct",
-        "btc_days_pct",
-        "trading_fees_total_pct",
-        "funding_total_pct",
-        "borrow_cost_total_pct",
-        "tradable_slippage_cost_total_pct",
-        "fee_side_mode",
-        "taker_fee_bps",
-        "maker_fee_bps",
-        "staking_discount_pct",
-        "referral_discount_pct",
-        "effective_trading_fee_bps",
-    ]
+    metric_fields = list(HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS)
     trend_fields = [
         "model",
         "latest_available_date",
@@ -1721,8 +1820,8 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     main_strategy_metrics = normalize_homepage_main_strategy_metrics(
         summary_row,
         main_strategy_model=main_strategy_model,
-        main_paper_path=main_paper_path,
         metric_fields=metric_fields,
+        summary_path=main_summary_path,
     )
     live_public_state = normalized_row(main_paper_row, live_fields)
     live_public_state.update({
