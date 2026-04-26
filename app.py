@@ -29,6 +29,7 @@ from src.market_regime_v1.phase1_time_semantics import (
 from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
     resolve_homepage_current_strategy_sources,
+    resolve_homepage_top_performance_source_contract,
 )
 from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
@@ -708,6 +709,45 @@ def resolve_main_metrics_for_display(
     if expected_model and not actual_model:
         metrics["model"] = expected_model
     return metrics
+
+
+def resolve_top_performance_metrics_for_display(
+    *,
+    product_snapshot: dict[str, Any],
+    main_strategy_model: str | None,
+    fallback_metrics: dict[str, Any],
+) -> dict[str, Any]:
+    source_metrics = product_snapshot.get("main_strategy_top_performance_metrics")
+    if isinstance(source_metrics, dict) and source_metrics:
+        metrics = dict(source_metrics)
+        if not metrics.get("model") and main_strategy_model:
+            metrics["model"] = main_strategy_model
+        return resolve_main_metrics_for_display(metrics, main_strategy_model)
+
+    source_contract = resolve_homepage_top_performance_source_contract(
+        str(main_strategy_model or "").strip(),
+        root=ROOT,
+        require_file=False,
+    )
+    if source_contract is None:
+        return {
+            "model": main_strategy_model,
+            "cagr_pct": fallback_metrics.get("cagr_pct"),
+            "since2023_cagr_pct": fallback_metrics.get("since2023_cagr_pct"),
+            "since2025_cagr_pct": fallback_metrics.get("since2025_cagr_pct"),
+        }
+
+    source_path = Path(source_contract["metrics_path"])
+    source_row = load_single_csv_row(
+        source_path,
+        context="homepage top performance metrics",
+    )
+    metrics: dict[str, Any] = {
+        "model": source_row.get("model") or main_strategy_model,
+    }
+    for display_field, source_field in dict(source_contract["metric_aliases"]).items():
+        metrics[display_field] = source_row.get(source_field)
+    return resolve_main_metrics_for_display(metrics, main_strategy_model)
 
 
 def safe_plain_number_text(value, decimals: int = 4, lang: str = "sk") -> str:
@@ -3418,6 +3458,11 @@ main_metrics = resolve_main_metrics_for_display(
     main_metrics_source_row,
     str(product_snapshot.get("main_strategy_model") or main_key),
 )
+top_performance_metrics = resolve_top_performance_metrics_for_display(
+    product_snapshot=product_snapshot,
+    main_strategy_model=str(product_snapshot.get("main_strategy_model") or main_key),
+    fallback_metrics=main_metrics,
+)
 
 years = available_years_from_frames(list(papers.values()) + [btc_df])
 if not years:
@@ -3495,11 +3540,11 @@ with tabs[0]:
     st.caption(t(lang, "performance_fee_note"))
     perf1 = st.columns(3)
     with perf1[0]:
-        render_color_card(t(lang, "cagr"), safe_metric_text(main_metrics.get("cagr_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cagr")], "blue")
+        render_color_card(t(lang, "cagr"), safe_metric_text(top_performance_metrics.get("cagr_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cagr")], "blue")
     with perf1[1]:
-        render_color_card(t(lang, "since2023"), safe_metric_text(main_metrics.get("since2023_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2023")], "green")
+        render_color_card(t(lang, "since2023"), safe_metric_text(top_performance_metrics.get("since2023_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2023")], "green")
     with perf1[2]:
-        render_color_card(t(lang, "since2025"), safe_metric_text(main_metrics.get("since2025_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2025")], "violet")
+        render_color_card(t(lang, "since2025"), safe_metric_text(top_performance_metrics.get("since2025_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2025")], "violet")
 
     perf2 = st.columns(3)
     with perf2[0]:
