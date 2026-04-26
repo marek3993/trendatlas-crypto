@@ -89,6 +89,7 @@ LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json
 TRADING_OPERATION_MODE_PATH = ROOT / "execution" / "config" / "trading_operation_mode.json"
 PHASE68H_SUMMARY_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "phase68h_dynamic_leverage_ladder_summary.csv"
 PHASE68H_DYNAMIC_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "papers" / "phase68h_dynamic_ladder_candidate_paper.csv"
+PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "papers" / "phase68h_66g_1p25x_static_reference_paper.csv"
 PHASE68H_SCRIPT_PATH = ROOT / "scripts" / "phase68h_dynamic_leverage_ladder_candidate.py"
 PHASE66G_PRODUCTION_PAPER_PATH = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_production_soft_filters_paper.csv"
 
@@ -888,57 +889,55 @@ def format_float(value: float | None, decimals: int = 4) -> str:
     return f"{value:.{decimals}f}"
 
 
-def build_phase68i_summary_export() -> dict[str, Any]:
-    phase68h_refresh_info = refresh_phase68h_dynamic_paper_if_needed()
+def find_summary_row_required(
+    rows: list[dict[str, Any]],
+    *,
+    model: str,
+    context: str,
+) -> dict[str, Any]:
+    for row in rows:
+        if str(row.get("model", "")).strip() == model:
+            return row
+    fail(f"Could not find {model} row in {context}")
+    raise RuntimeError("unreachable")
 
-    _, summary_rows = read_csv_rows(PHASE68H_SUMMARY_INPUT_PATH)
-    if not summary_rows:
-        fail(f"No rows found in {PHASE68H_SUMMARY_INPUT_PATH}")
 
-    target_row = None
-    for row in summary_rows:
-        if str(row.get("model", "")).strip() == "phase68h_dynamic_ladder_candidate":
-            target_row = row
-            break
+def build_phase68h_backed_authoritative_export_payload(
+    summary_row: dict[str, Any],
+    *,
+    source_summary_model: str,
+    source_paper_path: Path,
+    output_model: str,
+) -> dict[str, Any]:
+    if not source_paper_path.exists():
+        fail(f"Missing required source paper for {output_model}: {source_paper_path}")
 
-    if target_row is None:
-        fail("Could not find phase68h_dynamic_ladder_candidate row in phase68h summary source")
-
-    if not PHASE68H_DYNAMIC_PAPER_INPUT_PATH.exists():
-        fail(f"Missing required phase68h dynamic paper: {PHASE68H_DYNAMIC_PAPER_INPUT_PATH}")
-
-    try:
-        shutil.copy2(PHASE68H_DYNAMIC_PAPER_INPUT_PATH, PHASE68I_PAPER_INPUT_PATH)
-    except Exception as e:
-        fail(f"Failed refreshing phase68i canonical paper from phase68h producer output: {e}")
-
-    paper_header, paper_rows = read_csv_rows(PHASE68I_PAPER_INPUT_PATH)
+    paper_header, paper_rows = read_csv_rows(source_paper_path)
     if not paper_rows:
-        fail(f"No rows found in {PHASE68I_PAPER_INPUT_PATH}")
+        fail(f"No rows found in {source_paper_path}")
 
     paper_date_col = "date" if "date" in paper_header else "ts" if "ts" in paper_header else None
     if paper_date_col is None:
-        fail("phase68i paper export missing date/ts column")
+        fail(f"{source_paper_path} missing date/ts column")
 
     if "equity_curve" not in paper_header and "equity" not in paper_header:
-        fail("phase68i paper export missing equity-compatible column")
+        fail(f"{source_paper_path} missing equity-compatible column")
     if "equity_curve_gross" not in paper_header:
-        fail("phase68i paper export missing equity_curve_gross required for gross/net export")
+        fail(f"{source_paper_path} missing equity_curve_gross required for gross/net export")
     if "equity_curve_net" not in paper_header:
-        fail("phase68i paper export missing equity_curve_net required for gross/net export")
-
+        fail(f"{source_paper_path} missing equity_curve_net required for gross/net export")
     if "realistic_ret" not in paper_header:
-        fail("phase68i paper export missing realistic_ret required for sharpe/sortino")
+        fail(f"{source_paper_path} missing realistic_ret required for sharpe/sortino")
     if "trading_fees_daily" not in paper_header:
-        fail("phase68i paper export missing trading_fees_daily required for fee decomposition")
+        fail(f"{source_paper_path} missing trading_fees_daily required for fee decomposition")
     if "trading_fees_cumulative" not in paper_header:
-        fail("phase68i paper export missing trading_fees_cumulative required for fee decomposition")
+        fail(f"{source_paper_path} missing trading_fees_cumulative required for fee decomposition")
     if "funding_daily" not in paper_header:
-        fail("phase68i paper export missing funding_daily required for funding decomposition")
+        fail(f"{source_paper_path} missing funding_daily required for funding decomposition")
     if "funding_cumulative" not in paper_header:
-        fail("phase68i paper export missing funding_cumulative required for funding decomposition")
+        fail(f"{source_paper_path} missing funding_cumulative required for funding decomposition")
     if "portfolio_held_asset" not in paper_header:
-        fail("phase68i paper export missing portfolio_held_asset required for switch/cash/btc metrics")
+        fail(f"{source_paper_path} missing portfolio_held_asset required for switch/cash/btc metrics")
 
     returns: list[float] = []
     held_assets: list[str] = []
@@ -947,7 +946,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     for row in paper_rows:
         ret = parse_float_maybe(row.get("realistic_ret"))
         if ret is None:
-            fail("phase68i paper export contains empty/invalid realistic_ret")
+            fail(f"{source_paper_path} contains empty/invalid realistic_ret")
         returns.append(ret)
         held_assets.append(str(row.get("portfolio_held_asset", "")).strip().upper())
         borrow_cost_total += parse_float_maybe(row.get("daily_borrow_cost")) or 0.0
@@ -956,9 +955,9 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     sharpe = annualized_sharpe_from_daily_returns(returns)
     sortino = annualized_sortino_from_daily_returns(returns)
     if sharpe is None:
-        fail("Could not compute sharpe reliably from realistic_ret")
+        fail(f"Could not compute sharpe reliably from {source_paper_path}")
     if sortino is None:
-        fail("Could not compute sortino reliably from realistic_ret")
+        fail(f"Could not compute sortino reliably from {source_paper_path}")
 
     switch_count = 0
     prev_asset = None
@@ -970,18 +969,17 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             switch_count += 1
         prev_asset = asset
 
-    total_days = len(held_assets)
-    if total_days == 0:
-        fail("No held asset rows found in phase68i paper export")
+    if not held_assets:
+        fail(f"No held asset rows found in {source_paper_path}")
 
     derived_day_metrics = derive_strategy_day_metrics_from_csv(
-        PHASE68I_PAPER_INPUT_PATH,
-        model="phase68i_dynamic_ladder_candidate",
+        source_paper_path,
+        model=output_model,
     )
     if derived_day_metrics is None:
-        fail("phase68i paper export day metrics are unsupported by authoritative strategy semantics")
+        fail(f"{source_paper_path} day metrics are unsupported by authoritative strategy semantics")
     if "cash_days_pct" not in derived_day_metrics or "btc_days_pct" not in derived_day_metrics:
-        fail("phase68i paper export missing authoritative day metrics")
+        fail(f"{source_paper_path} missing authoritative day metrics")
 
     cash_days_pct = float(derived_day_metrics["cash_days_pct"])
     btc_days_pct = float(derived_day_metrics["btc_days_pct"])
@@ -991,6 +989,106 @@ def build_phase68i_summary_export() -> dict[str, Any]:
     total_return_pct_net = (parse_float_required(last_paper_row, "equity_curve_net") - 1.0) * 100.0
     trading_fees_total_pct = parse_float_required(last_paper_row, "trading_fees_cumulative") * 100.0
     funding_total_pct = parse_float_required(last_paper_row, "funding_cumulative") * 100.0
+
+    summary_export_row = {
+        "model": output_model,
+        "total_return_pct": format_float(total_return_pct_net, 2),
+        "total_return_pct_gross": format_float(total_return_pct_gross, 2),
+        "total_return_pct_net": format_float(total_return_pct_net, 2),
+        "cagr_pct": format_float(parse_float_required(summary_row, "cagr_pct_net"), 2),
+        "cagr_pct_gross": format_float(parse_float_required(summary_row, "cagr_pct_gross"), 2),
+        "cagr_pct_net": format_float(parse_float_required(summary_row, "cagr_pct_net"), 2),
+        "max_drawdown_pct": format_float(parse_float_required(summary_row, "max_drawdown_pct_net"), 2),
+        "max_drawdown_pct_gross": format_float(parse_float_required(summary_row, "max_drawdown_pct_gross"), 2),
+        "max_drawdown_pct_net": format_float(parse_float_required(summary_row, "max_drawdown_pct_net"), 2),
+        "since2023_cagr_pct": format_float(parse_float_required(summary_row, "since2023_cagr_pct_net"), 2),
+        "since2023_cagr_pct_gross": format_float(parse_float_required(summary_row, "since2023_cagr_pct_gross"), 2),
+        "since2023_cagr_pct_net": format_float(parse_float_required(summary_row, "since2023_cagr_pct_net"), 2),
+        "since2025_cagr_pct": format_float(parse_float_required(summary_row, "since2025_cagr_pct_net"), 2),
+        "since2025_cagr_pct_gross": format_float(parse_float_required(summary_row, "since2025_cagr_pct_gross"), 2),
+        "since2025_cagr_pct_net": format_float(parse_float_required(summary_row, "since2025_cagr_pct_net"), 2),
+        "sharpe": format_float(sharpe, 4),
+        "sortino": format_float(sortino, 4),
+        "switch_count": str(switch_count),
+        "trade_count": str(switch_count),
+        "cash_days_pct": format_float(cash_days_pct, 4),
+        "btc_days_pct": format_float(btc_days_pct, 4),
+        "trading_fees_total_pct": format_float(trading_fees_total_pct, 4),
+        "funding_total_pct": format_float(funding_total_pct, 4),
+        "borrow_cost_total_pct": format_float(borrow_cost_total * 100.0, 4),
+        "tradable_slippage_cost_total_pct": format_float(tradable_slippage_cost_total * 100.0, 4),
+        "annual_borrow_cost_pct": format_float(parse_float_required(summary_row, "annual_borrow_cost_pct"), 4),
+        "tradable_transition_slippage_bps": format_float(parse_float_required(summary_row, "tradable_transition_slippage_bps"), 4),
+        "fee_side_mode": str(summary_row.get("fee_side_mode", "")).strip(),
+        "taker_fee_bps": format_float(parse_float_required(summary_row, "taker_fee_bps"), 4),
+        "maker_fee_bps": format_float(parse_float_required(summary_row, "maker_fee_bps"), 4),
+        "staking_discount_pct": format_float(parse_float_required(summary_row, "staking_discount_pct"), 4),
+        "referral_discount_pct": format_float(parse_float_required(summary_row, "referral_discount_pct"), 4),
+        "effective_trading_fee_bps": format_float(parse_float_required(summary_row, "effective_trading_fee_bps"), 4),
+    }
+
+    authoritative_export = summarize_net_cost_export(
+        build_net_cost_export_frame(
+            pd.read_csv(source_paper_path),
+            date_col=paper_date_col,
+            gross_return_col="realistic_ret_gross",
+            held_asset_col="portfolio_held_asset",
+            leverage_col="effective_leverage",
+            daily_borrow_cost_col="daily_borrow_cost",
+            tradable_slippage_cost_col="tradable_slippage_cost",
+            trading_fees_daily_col="trading_fees_daily",
+            funding_daily_col="funding_daily",
+            config=NetCostExportConfig(
+                annual_borrow_cost=parse_float_required(summary_row, "annual_borrow_cost_pct") / 100.0,
+                tradable_transition_slippage_bps=parse_float_required(summary_row, "tradable_transition_slippage_bps"),
+                fee_side_mode=str(summary_row.get("fee_side_mode", "")).strip(),
+                taker_fee_bps=parse_float_required(summary_row, "taker_fee_bps"),
+                maker_fee_bps=parse_float_required(summary_row, "maker_fee_bps"),
+                staking_discount_pct=parse_float_required(summary_row, "staking_discount_pct"),
+                referral_discount_pct=parse_float_required(summary_row, "referral_discount_pct"),
+            ),
+        ),
+        model=output_model,
+        switch_count=switch_count,
+        trade_count=switch_count,
+    )
+
+    return {
+        "summary_export_row": summary_export_row,
+        "authoritative_export": authoritative_export,
+        "source_summary_model": source_summary_model,
+        "source_paper_path": str(source_paper_path),
+        "source_latest_available_date": str(last_paper_row.get(paper_date_col) or "").strip() or None,
+    }
+
+
+def build_phase68i_summary_export() -> dict[str, Any]:
+    phase68h_refresh_info = refresh_phase68h_dynamic_paper_if_needed()
+
+    _, summary_rows = read_csv_rows(PHASE68H_SUMMARY_INPUT_PATH)
+    if not summary_rows:
+        fail(f"No rows found in {PHASE68H_SUMMARY_INPUT_PATH}")
+
+    phase68i_summary_source_row = find_summary_row_required(
+        summary_rows,
+        model="phase68h_dynamic_ladder_candidate",
+        context=str(PHASE68H_SUMMARY_INPUT_PATH),
+    )
+    phase68g_summary_source_row = find_summary_row_required(
+        summary_rows,
+        model="phase68h_66g_1p25x_static_reference",
+        context=str(PHASE68H_SUMMARY_INPUT_PATH),
+    )
+
+    if not PHASE68H_DYNAMIC_PAPER_INPUT_PATH.exists():
+        fail(f"Missing required phase68h dynamic paper: {PHASE68H_DYNAMIC_PAPER_INPUT_PATH}")
+    if not PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH.exists():
+        fail(f"Missing required phase68h static 1.25x paper: {PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH}")
+
+    try:
+        shutil.copy2(PHASE68H_DYNAMIC_PAPER_INPUT_PATH, PHASE68I_PAPER_INPUT_PATH)
+    except Exception as e:
+        fail(f"Failed refreshing phase68i canonical paper from phase68h producer output: {e}")
 
     output_header = [
         "model",
@@ -1029,79 +1127,27 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "effective_trading_fee_bps",
     ]
 
-    output_row = {
-        "model": "phase68i_dynamic_ladder_candidate",
-        "total_return_pct": format_float(total_return_pct_net, 2),
-        "total_return_pct_gross": format_float(total_return_pct_gross, 2),
-        "total_return_pct_net": format_float(total_return_pct_net, 2),
-        "cagr_pct": format_float(parse_float_required(target_row, "cagr_pct_net"), 2),
-        "cagr_pct_gross": format_float(parse_float_required(target_row, "cagr_pct_gross"), 2),
-        "cagr_pct_net": format_float(parse_float_required(target_row, "cagr_pct_net"), 2),
-        "max_drawdown_pct": format_float(parse_float_required(target_row, "max_drawdown_pct_net"), 2),
-        "max_drawdown_pct_gross": format_float(parse_float_required(target_row, "max_drawdown_pct_gross"), 2),
-        "max_drawdown_pct_net": format_float(parse_float_required(target_row, "max_drawdown_pct_net"), 2),
-        "since2023_cagr_pct": format_float(parse_float_required(target_row, "since2023_cagr_pct_net"), 2),
-        "since2023_cagr_pct_gross": format_float(parse_float_required(target_row, "since2023_cagr_pct_gross"), 2),
-        "since2023_cagr_pct_net": format_float(parse_float_required(target_row, "since2023_cagr_pct_net"), 2),
-        "since2025_cagr_pct": format_float(parse_float_required(target_row, "since2025_cagr_pct_net"), 2),
-        "since2025_cagr_pct_gross": format_float(parse_float_required(target_row, "since2025_cagr_pct_gross"), 2),
-        "since2025_cagr_pct_net": format_float(parse_float_required(target_row, "since2025_cagr_pct_net"), 2),
-        "sharpe": format_float(sharpe, 4),
-        "sortino": format_float(sortino, 4),
-        "switch_count": str(switch_count),
-        "trade_count": str(switch_count),
-        "cash_days_pct": format_float(cash_days_pct, 4),
-        "btc_days_pct": format_float(btc_days_pct, 4),
-        "trading_fees_total_pct": format_float(trading_fees_total_pct, 4),
-        "funding_total_pct": format_float(funding_total_pct, 4),
-        "borrow_cost_total_pct": format_float(borrow_cost_total * 100.0, 4),
-        "tradable_slippage_cost_total_pct": format_float(tradable_slippage_cost_total * 100.0, 4),
-        "annual_borrow_cost_pct": format_float(parse_float_required(target_row, "annual_borrow_cost_pct"), 4),
-        "tradable_transition_slippage_bps": format_float(parse_float_required(target_row, "tradable_transition_slippage_bps"), 4),
-        "fee_side_mode": str(target_row.get("fee_side_mode", "")).strip(),
-        "taker_fee_bps": format_float(parse_float_required(target_row, "taker_fee_bps"), 4),
-        "maker_fee_bps": format_float(parse_float_required(target_row, "maker_fee_bps"), 4),
-        "staking_discount_pct": format_float(parse_float_required(target_row, "staking_discount_pct"), 4),
-        "referral_discount_pct": format_float(parse_float_required(target_row, "referral_discount_pct"), 4),
-        "effective_trading_fee_bps": format_float(parse_float_required(target_row, "effective_trading_fee_bps"), 4),
-    }
-
-    authoritative_export = summarize_net_cost_export(
-        build_net_cost_export_frame(
-            pd.read_csv(PHASE68I_PAPER_INPUT_PATH),
-            date_col=paper_date_col,
-            gross_return_col="realistic_ret_gross",
-            held_asset_col="portfolio_held_asset",
-            leverage_col="effective_leverage",
-            daily_borrow_cost_col="daily_borrow_cost",
-            tradable_slippage_cost_col="tradable_slippage_cost",
-            trading_fees_daily_col="trading_fees_daily",
-            funding_daily_col="funding_daily",
-            config=NetCostExportConfig(
-                annual_borrow_cost=parse_float_required(target_row, "annual_borrow_cost_pct") / 100.0,
-                tradable_transition_slippage_bps=parse_float_required(target_row, "tradable_transition_slippage_bps"),
-                fee_side_mode=str(target_row.get("fee_side_mode", "")).strip(),
-                taker_fee_bps=parse_float_required(target_row, "taker_fee_bps"),
-                maker_fee_bps=parse_float_required(target_row, "maker_fee_bps"),
-                staking_discount_pct=parse_float_required(target_row, "staking_discount_pct"),
-                referral_discount_pct=parse_float_required(target_row, "referral_discount_pct"),
-            ),
-        ),
-        model="phase68i_dynamic_ladder_candidate",
-        switch_count=switch_count,
-        trade_count=switch_count,
+    phase68i_payload = build_phase68h_backed_authoritative_export_payload(
+        phase68i_summary_source_row,
+        source_summary_model="phase68h_dynamic_ladder_candidate",
+        source_paper_path=PHASE68I_PAPER_INPUT_PATH,
+        output_model="phase68i_dynamic_ladder_candidate",
     )
-    phase68g_authoritative_export = dict(authoritative_export)
-    phase68g_authoritative_export["model"] = "phase68g_66g_1p25x_candidate"
+    phase68g_payload = build_phase68h_backed_authoritative_export_payload(
+        phase68g_summary_source_row,
+        source_summary_model="phase68h_66g_1p25x_static_reference",
+        source_paper_path=PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH,
+        output_model="phase68g_66g_1p25x_candidate",
+    )
 
     try:
         with PHASE68I_SUMMARY_OUTPUT_PATH.open("w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=output_header)
             writer.writeheader()
-            writer.writerow(output_row)
-        pd.DataFrame([authoritative_export]).to_csv(PHASE68I_AUTHORITATIVE_EXPORT_PATH, index=False)
-        shutil.copy2(PHASE68I_PAPER_INPUT_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
-        pd.DataFrame([phase68g_authoritative_export]).to_csv(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH, index=False)
+            writer.writerow(phase68i_payload["summary_export_row"])
+        pd.DataFrame([phase68i_payload["authoritative_export"]]).to_csv(PHASE68I_AUTHORITATIVE_EXPORT_PATH, index=False)
+        shutil.copy2(PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
+        pd.DataFrame([phase68g_payload["authoritative_export"]]).to_csv(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH, index=False)
     except Exception as e:
         fail(
             "Failed writing canonical main strategy exports "
@@ -1115,10 +1161,15 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "paper_source_path": str(PHASE68I_PAPER_INPUT_PATH),
         "paper_refresh_source_path": str(PHASE68H_DYNAMIC_PAPER_INPUT_PATH),
         "paper_refresh_info": phase68h_refresh_info,
+        "phase68i_source_summary_model": phase68i_payload["source_summary_model"],
+        "phase68i_source_paper_path": phase68i_payload["source_paper_path"],
         "output_path": str(PHASE68I_SUMMARY_OUTPUT_PATH),
         "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
         "authoritative_export_path": str(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
         "authoritative_export_info": safe_stat(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
+        "phase68g_source_summary_model": phase68g_payload["source_summary_model"],
+        "phase68g_source_paper_path": phase68g_payload["source_paper_path"],
+        "phase68g_source_latest_available_date": phase68g_payload["source_latest_available_date"],
         "main_strategy_paper_alias_path": str(PHASE68G_MAIN_PAPER_OUTPUT_PATH),
         "main_strategy_paper_alias_info": safe_stat(PHASE68G_MAIN_PAPER_OUTPUT_PATH),
         "main_strategy_authoritative_export_alias_path": str(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH),
@@ -2005,6 +2056,7 @@ def main() -> None:
             "This script never fabricates strategy data.",
             "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
             "phase68i dynamic ladder summary export is built from phase68h summary source plus phase68i app paper-derived metrics.",
+            "phase68g current main strategy aliases are built explicitly from phase68h_66g_1p25x_static_reference source artifacts, never from phase68i dynamic ladder artifacts.",
             "phase68g current main strategy contract paths are canonical aliases under outputs/execution/app_exports/, not legacy outputs/phase68g_portfolio_exposure_leverage_validation/ paths.",
             "Other artifacts are copied from existing legacy aliases only.",
             "app_product_snapshot and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
