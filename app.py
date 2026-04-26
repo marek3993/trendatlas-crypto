@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 import hmac
+import csv
 import json
 import math
 import os
@@ -25,8 +26,9 @@ from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
     SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
 )
-from scripts.execution.authority_metric_derivation import (
-    derive_strategy_day_metrics_from_csv,
+from scripts.execution.current_strategy_root_contract import (
+    load_current_main_strategy_root_contract,
+    resolve_homepage_current_strategy_sources,
 )
 from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
@@ -676,26 +678,35 @@ def safe_signed_usd_text(value, decimals: int = 2, lang: str = "sk") -> str:
 
 
 def resolve_main_metrics_for_display(
-    snapshot_metrics: dict[str, Any],
-    main_paper_path: Path | None,
+    source_metrics: dict[str, Any],
     main_strategy_model: str | None,
 ) -> dict[str, Any]:
-    metrics = dict(snapshot_metrics or {})
-    metrics.pop("cash_days_pct", None)
-    metrics.pop("btc_days_pct", None)
+    metrics = dict(source_metrics or {})
 
-    if main_paper_path is None:
-        return metrics
+    fallback_fields = {
+        "total_return_pct": ["total_return_pct_net", "total_return_pct_gross"],
+        "cagr_pct": ["cagr_pct_net", "cagr_pct_gross"],
+        "max_drawdown_pct": ["max_drawdown_pct_net", "max_drawdown_pct_gross"],
+        "since2023_cagr_pct": ["since2023_cagr_pct_net", "since2023_cagr_pct_gross"],
+        "since2025_cagr_pct": ["since2025_cagr_pct_net", "since2025_cagr_pct_gross"],
+    }
+    for field, candidates in fallback_fields.items():
+        if field in metrics:
+            continue
+        for candidate in candidates:
+            if candidate in metrics:
+                metrics[field] = metrics[candidate]
+                break
 
-    derived_day_metrics = derive_strategy_day_metrics_from_csv(
-        main_paper_path,
-        model=main_strategy_model,
-    )
-    if isinstance(derived_day_metrics, dict):
-        metrics.update(derived_day_metrics)
-    elif derived_day_metrics is None:
-        metrics["cash_days_pct"] = None
-        metrics["btc_days_pct"] = None
+    expected_model = str(main_strategy_model or "").strip()
+    actual_model = str(metrics.get("model") or "").strip()
+    if expected_model and actual_model and actual_model != expected_model:
+        raise ValueError(
+            "Homepage load blocked: current main strategy metric source model diverged "
+            f"(expected={expected_model} actual={actual_model})"
+        )
+    if expected_model and not actual_model:
+        metrics["model"] = expected_model
     return metrics
 
 
@@ -1111,6 +1122,20 @@ def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot
             "current": runtime_snapshot.get("account_observability_contract") or {}
         },
     }
+
+
+def load_single_csv_row(path: Path, *, context: str) -> dict[str, Any]:
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            rows = list(reader)
+    except Exception as exc:
+        raise ValueError(f"{context}: failed reading CSV {path}: {exc}") from exc
+
+    if len(rows) != 1:
+        raise ValueError(f"{context}: expected exactly 1 row in {path}, got {len(rows)}")
+
+    return {str(key).strip(): value for key, value in rows[0].items()}
 
 
 def get_current_account_observability_contract(selector_cfg: dict) -> dict:
@@ -3278,6 +3303,15 @@ runtime_snapshot = load_runtime_snapshot_for_app(
     ),
     runtime_snapshot_source_path,
 )
+try:
+    current_strategy_contract = load_current_main_strategy_root_contract()
+    homepage_current_strategy_sources = resolve_homepage_current_strategy_sources(
+        product_snapshot,
+        current_strategy_contract,
+    )
+except Exception as e:
+    st.error(f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: {e}")
+    st.stop()
 selector_cfg = build_selector_config_from_snapshot(product_snapshot, runtime_snapshot)
 
 hero_left, hero_right = st.columns([5, 1.6])
@@ -3308,10 +3342,10 @@ main_key = selector_cfg.get("main_model_key")
 reference_key = selector_cfg.get("reference_model_key")
 labels = build_display_map(selector_cfg, lang)
 
-main_source = resolve_model_source(selector_cfg, main_key)
-main_paper_path = normalize_path(main_source.get("paper_path"))
+main_summary_path = Path(homepage_current_strategy_sources["metrics_path"])
+main_paper_path = Path(homepage_current_strategy_sources["paper_path"])
 benchmark_path = normalize_path(product_snapshot.get("benchmark_source_path"))
-required = [p for p in [main_paper_path, benchmark_path] if p is not None]
+required = [p for p in [main_summary_path, main_paper_path, benchmark_path] if p is not None]
 missing = [str(p) for p in required if not p.exists()]
 if missing:
     st.error(t(lang, "missing_files"))
@@ -3343,6 +3377,15 @@ if main_key not in papers:
         st.write(f"- {msg}")
     st.stop()
 
+try:
+    main_metrics_source_row = load_single_csv_row(
+        main_summary_path,
+        context="homepage current main strategy metrics",
+    )
+except Exception as e:
+    st.error(f"{t(lang, 'load_failed')}: {e}")
+    st.stop()
+
 trend_source_cfg = selector_cfg.get("trend_barometer_source", {}) or {}
 live_public_state = dict(product_snapshot.get("live_public_state") or {})
 if live_public_state:
@@ -3372,8 +3415,7 @@ runtime_table_payload = build_authority_runtime_table_snapshot(
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 
 main_metrics = resolve_main_metrics_for_display(
-    dict(product_snapshot.get("main_strategy_metrics") or {}),
-    main_paper_path,
+    main_metrics_source_row,
     str(product_snapshot.get("main_strategy_model") or main_key),
 )
 

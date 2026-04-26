@@ -85,12 +85,30 @@
                                                                                                "paper_path":  "outputs/execution/app_exports/phase66g_production_soft_filters_paper.csv",
                                                                                                "live_status_path":  "outputs/execution/app_exports/phase66g_live_status.csv"
                                                                                            },
-                                                      "phase68g_66g_1p25x_candidate":  {
+                                "phase68g_66g_1p25x_candidate":  {
                                                                                            "summary_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                                                                                            "paper_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
                                                                                            "live_status_path":  "outputs/execution/app_exports/phase67j_live_status.csv"
                                                                                        }
                                                   },
+                               "current_main_strategy_root_contract":  {
+                                                                            "contract_version":  1,
+                                                                            "source_family":  "canonical_current_main_strategy_app_exports",
+                                                                            "main_strategy_model":  "phase68g_66g_1p25x_candidate",
+                                                                            "canonical_metrics_source_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+                                                                            "canonical_paper_source_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+                                                                            "allowed_canonical_root":  "outputs/execution/app_exports",
+                                                                            "forbidden_source_roots":  [
+                                                                                                           "outputs/execution/app_snapshot",
+                                                                                                           "outputs/app_refresh_pipeline",
+                                                                                                           "outputs/execution/live_status",
+                                                                                                           "outputs/execution/full_auto_scheduler",
+                                                                                                           "outputs/execution/runtime_health",
+                                                                                                           "outputs/phase68h_dynamic_leverage_ladder_candidate",
+                                                                                                           "outputs/phase68i_dynamic_leverage_ladder_candidate",
+                                                                                                           "outputs/validation/bundles"
+                                                                                                       ]
+                                                                        },
                                 "trend_barometer_source":  {
                                                                "live_status_path":  "outputs/execution/app_exports/phase66g_live_status.csv",
                                                                "history_path":  "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",

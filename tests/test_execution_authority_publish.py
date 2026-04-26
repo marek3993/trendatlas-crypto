@@ -19,6 +19,7 @@ if str(ROOT / "scripts") not in sys.path:
 from scripts import daily_refresh_app_pipeline as pipeline
 from scripts.execution import authority_contract as contract
 from scripts.execution import authority_publish_helpers as helpers
+from scripts.execution import current_strategy_root_contract as current_strategy_contract
 from scripts.execution import run_pi_authoritative_producer as pi_producer
 from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
@@ -71,25 +72,89 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         self.addCleanup(shutil.rmtree, temp_root, True)
         return temp_root
 
+    def build_minimal_app_product_snapshot_payload(self) -> dict:
+        root_contract = current_strategy_contract.load_current_main_strategy_root_contract(
+            root=ROOT,
+            require_files=False,
+        )
+        serialized_root_contract = (
+            current_strategy_contract.serialize_current_main_strategy_root_contract(root_contract)
+        )
+        modified_utc = "2026-04-23T12:00:00Z"
+        return {
+            "current_main_strategy_root_contract": serialized_root_contract,
+            "main_strategy_model": root_contract["main_strategy_model"],
+            "main_strategy_metrics": {
+                "model": root_contract["main_strategy_model"],
+            },
+            "chart_source_paths": {
+                "main_strategy": root_contract["canonical_paper_source_path"],
+            },
+            "source_metadata": {
+                "main_strategy_metrics": {
+                    "path": root_contract["canonical_metrics_source_path"],
+                    "modified_utc": modified_utc,
+                },
+                "strategy_last_closed_day": {
+                    "path": root_contract["canonical_paper_source_path"],
+                    "modified_utc": modified_utc,
+                },
+                "live_public_state": {
+                    "path": root_contract["canonical_paper_source_path"],
+                    "modified_utc": modified_utc,
+                },
+                "chart_source_paths": {
+                    "main_strategy": {
+                        "path": root_contract["canonical_paper_source_path"],
+                        "modified_utc": modified_utc,
+                    }
+                },
+            },
+            "freshness_target_closed_day": "2026-04-22",
+            "strategy_last_closed_day": "2026-04-22",
+            "live_public_state": {
+                "date": "2026-04-22",
+            },
+        }
+
+    def build_minimal_app_runtime_snapshot_payload(self) -> dict:
+        return {
+            "latest_available_closed_utc_date": "2026-04-22",
+            "latest_strategy_artifact_date": "2026-04-22",
+            "latest_wallet_sync_utc": "2026-04-23T10:45:00Z",
+            "account_snapshot_as_of_utc": "2026-04-23T10:45:00Z",
+            "app_runtime_snapshot_generated_at_utc": "2026-04-23T10:45:00Z",
+        }
+
+    def seed_canonical_app_export_artifacts(self, temp_root: Path) -> None:
+        product_snapshot = self.build_minimal_app_product_snapshot_payload()
+        chart_source_paths = product_snapshot["chart_source_paths"]
+        metrics_source_path = product_snapshot["source_metadata"]["main_strategy_metrics"]["path"]
+        main_paper_path = temp_root / Path(chart_source_paths["main_strategy"])
+        main_summary_path = temp_root / Path(metrics_source_path)
+
+        main_paper_path.parent.mkdir(parents=True, exist_ok=True)
+        main_summary_path.parent.mkdir(parents=True, exist_ok=True)
+
+        main_paper_path.write_text(
+            "date,equity\n2026-04-22,1.0\n",
+            encoding="utf-8",
+        )
+        main_summary_path.write_text(
+            "model,total_return_pct,cagr_pct,max_drawdown_pct,since2023_cagr_pct,since2025_cagr_pct,sharpe,sortino,switch_count,cash_days_pct,btc_days_pct\n"
+            "phase68g_66g_1p25x_candidate,0,0,0,0,0,0,0,0,0,0\n",
+            encoding="utf-8",
+        )
+
     def seed_app_snapshots(self, temp_root: Path) -> None:
         app_snapshot_dir = temp_root / "outputs" / "execution" / "app_snapshot"
         app_snapshot_dir.mkdir(parents=True, exist_ok=True)
         (app_snapshot_dir / "app_product_snapshot.json").write_text(
-            json.dumps(
-                {
-                    "freshness_target_closed_day": "2026-04-22",
-                    "strategy_last_closed_day": "2026-04-22",
-                }
-            ),
+            json.dumps(self.build_minimal_app_product_snapshot_payload()),
             encoding="utf-8",
         )
         (app_snapshot_dir / "app_runtime_snapshot.json").write_text(
-            json.dumps(
-                {
-                    "latest_available_closed_utc_date": "2026-04-22",
-                    "latest_strategy_artifact_date": "2026-04-22",
-                }
-            ),
+            json.dumps(self.build_minimal_app_runtime_snapshot_payload()),
             encoding="utf-8",
         )
 
@@ -182,6 +247,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
     ) -> tuple[Path, Path]:
         authority_dir = temp_root / "outputs" / "execution" / "authority"
         authority_dir.mkdir(parents=True, exist_ok=True)
+        self.seed_canonical_app_export_artifacts(temp_root)
         extra_fields = contract.build_authority_extra_fields(
             run_id=run_id,
             source_manifest_path=(
@@ -195,6 +261,8 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             attempt_stage="daily_refresh_app_pipeline",
             attempt_stage_status="success" if attempt_status == "success" else "failed",
             stage_history=[],
+            app_product_snapshot=self.build_minimal_app_product_snapshot_payload(),
+            app_runtime_snapshot=self.build_minimal_app_runtime_snapshot_payload(),
         )
         error = None if attempt_status == "success" else "simulated_failure"
         attempt_payload = build_authority_payload(
@@ -576,6 +644,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             [
                 "outputs/execution/authority/latest_attempt_status.json",
                 "outputs/execution/authority/latest_successful_snapshot.json",
+                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
             ],
         )
         self.assertEqual(result["commit_sha"], "abc123")
@@ -605,6 +674,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                     "--",
                     "outputs/execution/authority/latest_attempt_status.json",
                     "outputs/execution/authority/latest_successful_snapshot.json",
+                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
                 ],
                 [
                     "git",
@@ -614,6 +684,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                     "--",
                     "outputs/execution/authority/latest_attempt_status.json",
                     "outputs/execution/authority/latest_successful_snapshot.json",
+                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
                 ],
                 [
                     "git",
@@ -624,6 +695,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                     "--",
                     "outputs/execution/authority/latest_attempt_status.json",
                     "outputs/execution/authority/latest_successful_snapshot.json",
+                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
                 ],
                 ["git", "push", "origin", "HEAD:main"],
                 ["git", "rev-parse", "HEAD"],
@@ -845,6 +917,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             [
                 "outputs/execution/authority/latest_attempt_status.json",
                 "outputs/execution/authority/latest_successful_snapshot.json",
+                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
             ],
         )
         self.assertEqual(push_calls, [["push", "origin", "HEAD:main"]])
@@ -874,6 +947,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             {
                 "outputs/execution/authority/latest_attempt_status.json",
                 "outputs/execution/authority/latest_successful_snapshot.json",
+                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
             },
         )
         self.assertEqual(publish_tree_status, "")

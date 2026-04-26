@@ -191,6 +191,52 @@
       ],
       "write_mode": "future_write_through_candidate"
     },
+    "phase68g_66g_1p25x_candidate_paper": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\papers\\phase68g_66g_1p25x_candidate_paper.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "paper",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate"
+    },
+    "phase68g_66g_1p25x_candidate_summary": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+      "legacy_aliases": [
+        "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
+      ],
+      "owner": "DATA",
+      "artifact_type": "summary",
+      "truth_domain": "product",
+      "read_scope": [
+        "app",
+        "product",
+        "validation"
+      ],
+      "write_mode": "future_write_through_candidate",
+      "field_contract": {
+        "required_fields": [
+          "model",
+          "total_return_pct",
+          "cagr_pct",
+          "max_drawdown_pct",
+          "since2023_cagr_pct",
+          "since2025_cagr_pct",
+          "sharpe",
+          "sortino",
+          "switch_count",
+          "cash_days_pct",
+          "btc_days_pct"
+        ],
+        "app_must_not_infer": true
+      }
+    },
     "app_freshness_report": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
       "legacy_aliases": [

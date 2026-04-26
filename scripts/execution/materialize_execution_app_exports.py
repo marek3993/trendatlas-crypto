@@ -23,6 +23,11 @@ from scripts.approved_strategy_net_export_helper import (
 from scripts.execution.authority_metric_derivation import (
     derive_strategy_day_metrics_from_csv,
 )
+from scripts.execution.current_strategy_root_contract import (
+    load_current_main_strategy_root_contract,
+    serialize_current_main_strategy_root_contract,
+    validate_product_snapshot_current_strategy_contract,
+)
 from scripts.execution.runtime_path_resolution import (
     format_path_resolution_message,
     resolve_runtime_path,
@@ -1588,57 +1593,16 @@ def normalize_homepage_main_strategy_metrics(
 
 def validate_homepage_snapshot_contract(
     snapshot: dict[str, Any],
-    *,
-    product_contract: dict[str, Any],
+    current_strategy_contract: dict[str, Any],
 ) -> None:
-    expected_main_strategy_model = str(product_contract["main_strategy_model"]).strip()
-    expected_main_summary_path = path_for_app(product_contract["main_summary_path"])
-    expected_main_chart_path = path_for_app(product_contract["main_paper_path"])
-
-    actual_main_strategy_model = str(snapshot.get("main_strategy_model") or "").strip()
-    if actual_main_strategy_model != expected_main_strategy_model:
-        fail(
-            "app_product_snapshot.main_strategy_model diverged from source_of_truth/export_contract.json: "
-            f"expected={expected_main_strategy_model} actual={actual_main_strategy_model or 'missing'}"
+    try:
+        validate_product_snapshot_current_strategy_contract(
+            snapshot,
+            current_strategy_contract,
+            context="app_product_snapshot build blocked:",
         )
-
-    main_strategy_metrics = (
-        snapshot.get("main_strategy_metrics")
-        if isinstance(snapshot.get("main_strategy_metrics"), dict)
-        else {}
-    )
-    actual_metrics_model = str(main_strategy_metrics.get("model") or "").strip()
-    if actual_metrics_model != expected_main_strategy_model:
-        fail(
-            "app_product_snapshot.main_strategy_metrics.model diverged from source_of_truth/export_contract.json: "
-            f"expected={expected_main_strategy_model} actual={actual_metrics_model or 'missing'}"
-        )
-
-    chart_source_paths = (
-        snapshot.get("chart_source_paths")
-        if isinstance(snapshot.get("chart_source_paths"), dict)
-        else {}
-    )
-    actual_main_chart_path = str(chart_source_paths.get("main_strategy") or "").strip()
-    if actual_main_chart_path != expected_main_chart_path:
-        fail(
-            "app_product_snapshot.chart_source_paths.main_strategy diverged from source_of_truth/export_contract.json: "
-            f"expected={expected_main_chart_path} actual={actual_main_chart_path or 'missing'}"
-        )
-
-    source_metadata = snapshot.get("source_metadata") if isinstance(snapshot.get("source_metadata"), dict) else {}
-    metrics_metadata = (
-        source_metadata.get("main_strategy_metrics")
-        if isinstance(source_metadata.get("main_strategy_metrics"), dict)
-        else {}
-    )
-    actual_main_summary_path = str(metrics_metadata.get("path") or "").strip()
-    if actual_main_summary_path != expected_main_summary_path:
-        fail(
-            "app_product_snapshot.source_metadata.main_strategy_metrics.path diverged from "
-            "source_of_truth/export_contract.json: "
-            f"expected={expected_main_summary_path} actual={actual_main_summary_path or 'missing'}"
-        )
+    except ValueError as exc:
+        fail(str(exc))
 
 
 def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_payload: dict[str, Any]) -> dict[str, Any]:
@@ -1668,10 +1632,11 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
 
 def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, Any]:
     product_contract = load_app_product_export_contract()
+    current_strategy_contract = load_current_main_strategy_root_contract()
     main_strategy_model = product_contract["main_strategy_model"]
     reference_strategy_model = product_contract["reference_strategy_model"]
-    main_summary_path = product_contract["main_summary_path"]
-    main_paper_path = product_contract["main_paper_path"]
+    main_summary_path = current_strategy_contract["metrics_path"]
+    main_paper_path = current_strategy_contract["paper_path"]
     reference_paper_path = product_contract["reference_paper_path"]
     summary_row = read_single_csv_row(main_summary_path)
     main_paper_row = read_last_csv_row(main_paper_path)
@@ -1802,6 +1767,9 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "app_export_generated_at_utc": app_export_generated_at_utc,
         "product_name": product_contract["product_name"],
         "page_scope": "homepage",
+        "current_main_strategy_root_contract": serialize_current_main_strategy_root_contract(
+            current_strategy_contract
+        ),
         "main_strategy_model": main_strategy_model,
         "reference_strategy_model": reference_strategy_model,
         "benchmark": product_contract["benchmark"],
@@ -1826,7 +1794,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "display_names": product_contract["display_names"],
         "source_metadata": source_sections,
     }
-    validate_homepage_snapshot_contract(snapshot, product_contract=product_contract)
+    validate_homepage_snapshot_contract(snapshot, current_strategy_contract=current_strategy_contract)
     return snapshot
 
 
