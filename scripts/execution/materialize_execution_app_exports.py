@@ -72,6 +72,12 @@ PHASE68I_AUTHORITATIVE_EXPORT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_
 PHASE68I_PAPER_INPUT_PATH = APP_EXPORTS_DIR / "phase68i_dynamic_ladder_candidate_paper.csv"
 PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH = APP_EXPORTS_DIR / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
 PHASE68G_MAIN_PAPER_OUTPUT_PATH = APP_EXPORTS_DIR / "phase68g_66g_1p25x_candidate_paper.csv"
+PHASE68G_SOURCE_DIR = ROOT / "outputs" / "phase68g_portfolio_exposure_leverage_validation"
+PHASE68G_SOURCE_PAPER_PATH = PHASE68G_SOURCE_DIR / "papers" / "phase68g_66g_1p25x_candidate_paper.csv"
+PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH = (
+    PHASE68G_SOURCE_DIR / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
+)
+PHASE68G_SCRIPT_PATH = ROOT / "scripts" / "phase68g_portfolio_exposure_leverage_validation.py"
 PHASE67J_PAPER_PATH = APP_EXPORTS_DIR / "phase67j_no_neo_main_paper.csv"
 PHASE67J_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase67j_live_status.csv"
 PHASE66G_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase66g_live_status.csv"
@@ -89,9 +95,9 @@ LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json
 TRADING_OPERATION_MODE_PATH = ROOT / "execution" / "config" / "trading_operation_mode.json"
 PHASE68H_SUMMARY_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "phase68h_dynamic_leverage_ladder_summary.csv"
 PHASE68H_DYNAMIC_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "papers" / "phase68h_dynamic_ladder_candidate_paper.csv"
-PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "papers" / "phase68h_66g_1p25x_static_reference_paper.csv"
 PHASE68H_SCRIPT_PATH = ROOT / "scripts" / "phase68h_dynamic_leverage_ladder_candidate.py"
 PHASE66G_PRODUCTION_PAPER_PATH = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_production_soft_filters_paper.csv"
+PHASE66G_DECISIONS_PATH = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_production_candidate_decisions.csv"
 
 SUCCESS_REFRESH_STATUSES = {"OK", "SUCCESS", "PASS", "PASSED"}
 FRESHNESS_SUMMARY_TEXT = {
@@ -800,6 +806,85 @@ def refresh_phase68h_dynamic_paper_if_needed() -> dict[str, Any]:
     }
 
 
+def refresh_phase68g_native_outputs_if_needed() -> dict[str, Any]:
+    if not PHASE66G_PRODUCTION_PAPER_PATH.exists():
+        fail(f"Missing required phase66g production paper: {PHASE66G_PRODUCTION_PAPER_PATH}")
+    if not PHASE68G_SCRIPT_PATH.exists():
+        fail(f"Missing required phase68g producer script: {PHASE68G_SCRIPT_PATH}")
+    if not PHASE67J_PAPER_PATH.exists():
+        fail(f"Missing required phase68g baseline paper: {PHASE67J_PAPER_PATH}")
+    if not PHASE66G_DECISIONS_PATH.exists():
+        fail(f"Missing required phase68g decisions source: {PHASE66G_DECISIONS_PATH}")
+
+    phase66g_last_date = read_last_csv_date(PHASE66G_PRODUCTION_PAPER_PATH)
+    phase68g_last_date = (
+        read_last_csv_date(PHASE68G_SOURCE_PAPER_PATH)
+        if PHASE68G_SOURCE_PAPER_PATH.exists()
+        else ""
+    )
+
+    refreshed = False
+    if phase68g_last_date < phase66g_last_date:
+        log("[REFRESH] phase68g native paper is stale vs phase66g production paper")
+        log(f"          phase68g_last_date={phase68g_last_date or 'missing'}")
+        log(f"          phase66g_last_date={phase66g_last_date}")
+        try:
+            subprocess.run(
+                [
+                    sys.executable,
+                    str(PHASE68G_SCRIPT_PATH),
+                    "--baseline-paper",
+                    str(PHASE67J_PAPER_PATH),
+                    "--governance-paper",
+                    str(PHASE66G_PRODUCTION_PAPER_PATH),
+                    "--trend-history",
+                    str(PHASE66G_TREND_HISTORY_PATH),
+                    "--decisions",
+                    str(PHASE66G_DECISIONS_PATH),
+                ],
+                check=True,
+                cwd=str(ROOT),
+            )
+        except subprocess.CalledProcessError as e:
+            fail(f"Failed refreshing phase68g native outputs via {PHASE68G_SCRIPT_PATH}: {e}")
+        refreshed = True
+
+    if not PHASE68G_SOURCE_PAPER_PATH.exists():
+        fail(f"Missing required phase68g native paper: {PHASE68G_SOURCE_PAPER_PATH}")
+    if not PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH.exists():
+        fail(
+            "Missing required phase68g native authoritative export: "
+            f"{PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH}"
+        )
+
+    refreshed_phase68g_last_date = read_last_csv_date(PHASE68G_SOURCE_PAPER_PATH)
+    if refreshed_phase68g_last_date < phase66g_last_date:
+        fail(
+            "phase68g native paper remained stale after refresh "
+            f"(phase68g_last_date={refreshed_phase68g_last_date}, phase66g_last_date={phase66g_last_date})"
+        )
+
+    source_export_row = read_single_csv_row(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH)
+    source_export_last_date = str(source_export_row.get("latest_available_date") or "").strip()
+    if source_export_last_date != refreshed_phase68g_last_date:
+        fail(
+            "phase68g native authoritative export diverged from its refreshed paper date "
+            f"(export_latest_available_date={source_export_last_date or 'missing'}, "
+            f"paper_last_date={refreshed_phase68g_last_date})"
+        )
+
+    return {
+        "phase66g_last_date": phase66g_last_date,
+        "phase68g_last_date_before_refresh": phase68g_last_date or None,
+        "phase68g_last_date_after_refresh": refreshed_phase68g_last_date,
+        "phase68g_export_latest_available_date": source_export_last_date or None,
+        "phase68g_refresh_triggered": refreshed,
+        "phase68g_baseline_paper_path": str(PHASE67J_PAPER_PATH),
+        "phase68g_source_paper_path": str(PHASE68G_SOURCE_PAPER_PATH),
+        "phase68g_source_authoritative_export_path": str(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH),
+    }
+
+
 def newer_phase66g_live_status_available(
     source_path: Path,
     canonical_path: Path,
@@ -1222,8 +1307,6 @@ def build_phase68i_summary_export() -> dict[str, Any]:
 
     if not PHASE68H_DYNAMIC_PAPER_INPUT_PATH.exists():
         fail(f"Missing required phase68h dynamic paper: {PHASE68H_DYNAMIC_PAPER_INPUT_PATH}")
-    if not PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH.exists():
-        fail(f"Missing required phase68h static 1.25x paper: {PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH}")
 
     try:
         shutil.copy2(PHASE68H_DYNAMIC_PAPER_INPUT_PATH, PHASE68I_PAPER_INPUT_PATH)
@@ -1273,6 +1356,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         source_paper_path=PHASE68I_PAPER_INPUT_PATH,
         output_model="phase68i_dynamic_ladder_candidate",
     )
+    phase68g_refresh_info = refresh_phase68g_native_outputs_if_needed()
 
     try:
         with PHASE68I_SUMMARY_OUTPUT_PATH.open("w", encoding="utf-8", newline="") as f:
@@ -1280,12 +1364,8 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             writer.writeheader()
             writer.writerow(phase68i_payload["summary_export_row"])
         pd.DataFrame([phase68i_payload["authoritative_export"]]).to_csv(PHASE68I_AUTHORITATIVE_EXPORT_PATH, index=False)
-        shutil.copy2(PHASE68H_STATIC_1P25X_PAPER_INPUT_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
-        phase68g_payload = build_current_paper_backed_authoritative_export_payload(
-            source_paper_path=PHASE68G_MAIN_PAPER_OUTPUT_PATH,
-            output_model="phase68g_66g_1p25x_candidate",
-        )
-        pd.DataFrame([phase68g_payload["authoritative_export"]]).to_csv(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH, index=False)
+        shutil.copy2(PHASE68G_SOURCE_PAPER_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
+        shutil.copy2(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH, PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH)
     except Exception as e:
         fail(
             "Failed writing canonical main strategy exports "
@@ -1305,9 +1385,11 @@ def build_phase68i_summary_export() -> dict[str, Any]:
         "output_info": safe_stat(PHASE68I_SUMMARY_OUTPUT_PATH),
         "authoritative_export_path": str(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
         "authoritative_export_info": safe_stat(PHASE68I_AUTHORITATIVE_EXPORT_PATH),
-        "phase68g_metrics_source_kind": "current_canonical_main_strategy_paper",
-        "phase68g_source_paper_path": phase68g_payload["source_paper_path"],
-        "phase68g_source_latest_available_date": phase68g_payload["source_latest_available_date"],
+        "phase68g_refresh_info": phase68g_refresh_info,
+        "phase68g_metrics_source_kind": "native_phase68g_authoritative_export_and_paper",
+        "phase68g_source_paper_path": str(PHASE68G_SOURCE_PAPER_PATH),
+        "phase68g_source_authoritative_export_path": str(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH),
+        "phase68g_source_latest_available_date": phase68g_refresh_info["phase68g_last_date_after_refresh"],
         "main_strategy_paper_alias_path": str(PHASE68G_MAIN_PAPER_OUTPUT_PATH),
         "main_strategy_paper_alias_info": safe_stat(PHASE68G_MAIN_PAPER_OUTPUT_PATH),
         "main_strategy_authoritative_export_alias_path": str(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH),
@@ -2194,8 +2276,8 @@ def main() -> None:
             "This script never fabricates strategy data.",
             "phase67j_live_status is rematerialized deterministically with official app_live_mode_contract.current fields from source_of_truth/project_truth.json.",
             "phase68i dynamic ladder summary export is built from phase68h summary source plus phase68i app paper-derived metrics.",
-            "phase68g current main strategy homepage metrics are rebuilt from the current canonical phase68g paper under outputs/execution/app_exports/, never from any phase68h summary/static-reference row.",
-            "phase68g current main strategy contract paths are canonical aliases under outputs/execution/app_exports/, not legacy outputs/phase68g_portfolio_exposure_leverage_validation/ paths.",
+            "phase68g canonical main strategy paper/export aliases are refreshed from the native phase68g validation family with the official phase67j baseline paper, never from any phase68h static-reference row.",
+            "phase68g current main strategy contract paths remain canonical aliases under outputs/execution/app_exports/ while sourcing their contents from refreshed native phase68g producer outputs.",
             "Other artifacts are copied from existing legacy aliases only.",
             "app_product_snapshot and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
         ],
