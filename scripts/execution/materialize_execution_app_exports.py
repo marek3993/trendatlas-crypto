@@ -25,6 +25,7 @@ from scripts.execution.authority_metric_derivation import (
 )
 from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
+    resolve_homepage_top_performance_source_contract,
     serialize_current_main_strategy_root_contract,
     validate_product_snapshot_current_strategy_contract,
 )
@@ -1676,13 +1677,14 @@ def build_full_canonical_main_strategy_metrics_row(
     }
 
     for field, candidates in NET_ALIAS_METRIC_FALLBACKS.items():
-        if canonical_row.get(field):
-            continue
+        resolved_value = ""
         for candidate in candidates:
             candidate_value = canonical_row.get(candidate)
             if candidate_value:
-                canonical_row[field] = candidate_value
+                resolved_value = candidate_value
                 break
+        if resolved_value:
+            canonical_row[field] = resolved_value
 
     if not canonical_row.get("sharpe") or not canonical_row.get("sortino"):
         derived_risk_metrics = derive_sharpe_sortino_from_paper(main_paper_path)
@@ -1720,6 +1722,59 @@ def build_full_canonical_main_strategy_metrics_row(
             f"for {main_paper_path}: missing {missing_fields}"
         )
     return canonical_row
+
+
+def build_homepage_top_performance_metrics(
+    *,
+    main_strategy_model: str,
+    fallback_metrics: dict[str, Any],
+    fallback_summary_path: Path,
+) -> tuple[dict[str, Any], Path, str, list[str]]:
+    source_contract = resolve_homepage_top_performance_source_contract(
+        main_strategy_model,
+        root=ROOT,
+        require_file=False,
+    )
+    if source_contract is None:
+        return (
+            {
+                "cagr_pct": fallback_metrics.get("cagr_pct"),
+                "since2023_cagr_pct": fallback_metrics.get("since2023_cagr_pct"),
+                "since2025_cagr_pct": fallback_metrics.get("since2025_cagr_pct"),
+            },
+            fallback_summary_path,
+            "canonical_app_summary_top_performance_fallback",
+            ["cagr_pct", "since2023_cagr_pct", "since2025_cagr_pct"],
+        )
+
+    source_path = Path(source_contract["metrics_path"])
+    source_row = read_single_csv_row(source_path)
+    expected_model = str(main_strategy_model or "").strip()
+    actual_model = str(source_row.get("model") or "").strip()
+    if expected_model and actual_model and actual_model != expected_model:
+        fail(
+            "Homepage top performance metric source model diverged "
+            f"(expected={expected_model} actual={actual_model} path={source_path})"
+        )
+
+    resolved_metrics: dict[str, Any] = {}
+    source_fields: list[str] = []
+    for display_field, source_field in dict(source_contract["metric_aliases"]).items():
+        source_fields.append(source_field)
+        value = csv_json_value(source_row.get(source_field))
+        if value is None:
+            fail(
+                "Homepage top performance metric source is missing required field "
+                f"{source_field} for {main_strategy_model} in {source_path}"
+            )
+        resolved_metrics[display_field] = value
+
+    return (
+        resolved_metrics,
+        source_path,
+        str(source_contract["source_family"]),
+        source_fields,
+    )
 
 
 def validate_homepage_snapshot_contract(
@@ -1823,6 +1878,13 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         metric_fields=metric_fields,
         summary_path=main_summary_path,
     )
+    main_strategy_top_performance_metrics, top_performance_source_path, top_performance_source_type, top_performance_source_fields = (
+        build_homepage_top_performance_metrics(
+            main_strategy_model=main_strategy_model,
+            fallback_metrics=main_strategy_metrics,
+            fallback_summary_path=main_summary_path,
+        )
+    )
     live_public_state = normalized_row(main_paper_row, live_fields)
     live_public_state.update({
         "model": main_strategy_model,
@@ -1834,6 +1896,10 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
 
     source_sections = {
         "main_strategy_metrics": source_metadata(main_summary_path, "canonical_app_summary"),
+        "main_strategy_top_performance_metrics": {
+            **source_metadata(top_performance_source_path, top_performance_source_type),
+            "source_fields": top_performance_source_fields,
+        },
         "strategy_last_closed_day": {
             **source_metadata(main_paper_path, "canonical_app_paper"),
             "source_field": "last_row.date",
@@ -1862,7 +1928,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
 
     snapshot = {
         "snapshot_type": "app_product_snapshot",
-        "schema_version": 1,
+        "schema_version": 2,
         "app_export_generated_at_utc": app_export_generated_at_utc,
         "product_name": product_contract["product_name"],
         "page_scope": "homepage",
@@ -1882,6 +1948,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
             "errors": freshness_payload.get("errors", []),
         },
         "main_strategy_metrics": main_strategy_metrics,
+        "main_strategy_top_performance_metrics": main_strategy_top_performance_metrics,
         "live_public_state": live_public_state,
         "trend_barometer_summary": normalized_row(trend_row, trend_fields),
         "chart_source_paths": {

@@ -10,6 +10,20 @@ SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
 PROJECT_TRUTH_PATH = SOURCE_OF_TRUTH_DIR / "project_truth.json"
 EXPORT_CONTRACT_PATH = SOURCE_OF_TRUTH_DIR / "export_contract.json"
 DEFAULT_ALLOWED_CANONICAL_ROOT = "outputs/execution/app_exports"
+HOMEPAGE_TOP_PERFORMANCE_SOURCE_CONTRACTS: dict[str, dict[str, Any]] = {
+    "phase68g_66g_1p25x_candidate": {
+        "source_family": "canonical_phase68g_authoritative_net_compare_top_cards",
+        "metrics_source_path": (
+            "outputs/execution/app_exports/"
+            "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
+        ),
+        "metric_aliases": {
+            "cagr_pct": "cagr_pct",
+            "since2023_cagr_pct": "since2023_cagr_pct",
+            "since2025_cagr_pct": "since2025_cagr_pct",
+        },
+    },
+}
 
 
 class CurrentMainStrategyContractError(ValueError):
@@ -384,4 +398,57 @@ def resolve_homepage_current_strategy_sources(
         "paper_source_path": str(contract["canonical_paper_source_path"]),
         "metrics_path": Path(contract["metrics_path"]),
         "paper_path": Path(contract["paper_path"]),
+    }
+
+
+def resolve_homepage_top_performance_source_contract(
+    main_strategy_model: str,
+    *,
+    root: Path | None = None,
+    require_file: bool = True,
+) -> dict[str, Any] | None:
+    repo_root = (root or ROOT).resolve()
+    source_contract = HOMEPAGE_TOP_PERFORMANCE_SOURCE_CONTRACTS.get(main_strategy_model)
+    if source_contract is None:
+        return None
+
+    source_family = _require_text(
+        source_contract.get("source_family"),
+        f"homepage top performance source contract {main_strategy_model}.source_family",
+    )
+    metrics_source_path_text = _normalize_app_path_text(
+        _require_text(
+            source_contract.get("metrics_source_path"),
+            f"homepage top performance source contract {main_strategy_model}.metrics_source_path",
+        )
+    )
+    metric_aliases_raw = source_contract.get("metric_aliases")
+    if not isinstance(metric_aliases_raw, dict) or not metric_aliases_raw:
+        raise CurrentMainStrategyContractError(
+            f"homepage top performance source contract {main_strategy_model}.metric_aliases must be a non-empty object"
+        )
+    metric_aliases = {
+        _require_text(display_field, "homepage top performance metric alias display field"): _require_text(
+            source_field,
+            f"homepage top performance source contract {main_strategy_model}.metric_aliases.{display_field}",
+        )
+        for display_field, source_field in metric_aliases_raw.items()
+    }
+
+    resolved_metrics_path = _resolve_path(
+        metrics_source_path_text,
+        context=f"homepage top performance metrics source path for {main_strategy_model}",
+        root=repo_root,
+    )
+    if require_file and (not resolved_metrics_path.exists() or not resolved_metrics_path.is_file()):
+        raise CurrentMainStrategyContractError(
+            f"Homepage top performance metrics source path is missing for {main_strategy_model}: {resolved_metrics_path}"
+        )
+
+    return {
+        "main_strategy_model": main_strategy_model,
+        "source_family": source_family,
+        "metrics_source_path": _path_for_app(resolved_metrics_path, root=repo_root),
+        "metric_aliases": metric_aliases,
+        "metrics_path": resolved_metrics_path,
     }
