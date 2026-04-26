@@ -118,7 +118,23 @@ def _resolve_required_app_publish_paths(
         raise ValueError(
             "Authority latest_successful_snapshot missing app_product_snapshot.chart_source_paths"
         )
+    source_metadata = product_snapshot.get("source_metadata")
+    if not isinstance(source_metadata, dict):
+        raise ValueError(
+            "Authority latest_successful_snapshot missing app_product_snapshot.source_metadata"
+        )
+    main_strategy_metrics_metadata = source_metadata.get("main_strategy_metrics")
+    if not isinstance(main_strategy_metrics_metadata, dict):
+        raise ValueError(
+            "Authority latest_successful_snapshot missing "
+            "app_product_snapshot.source_metadata.main_strategy_metrics"
+        )
     return [
+        _resolve_canonical_app_export_path(
+            main_strategy_metrics_metadata.get("path"),
+            root=root,
+            field_name="app_product_snapshot.source_metadata.main_strategy_metrics.path",
+        ),
         _resolve_canonical_app_export_path(
             chart_source_paths.get("main_strategy"),
             root=root,
