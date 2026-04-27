@@ -3094,6 +3094,54 @@ def filter_from_year(df: pd.DataFrame, year: int) -> pd.DataFrame:
     return out[out["ts"].dt.year >= year].copy()
 
 
+def clip_homepage_chart_frames(
+    main_df: pd.DataFrame,
+    btc_df: pd.DataFrame,
+    year: int,
+) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, pd.Timestamp]]:
+    main_plot = filter_from_year(main_df, year).dropna(subset=["ts", "equity"]).copy()
+    btc_plot = filter_from_year(btc_df, year).dropna(subset=["ts", "close"]).copy()
+    if main_plot.empty:
+        raise ValueError("homepage main chart has no main strategy rows for the selected year")
+    if btc_plot.empty:
+        raise ValueError("homepage main chart has no BTC benchmark rows for the selected year")
+
+    main_plot["ts"] = pd.to_datetime(main_plot["ts"], errors="coerce").dt.normalize()
+    btc_plot["ts"] = pd.to_datetime(btc_plot["ts"], errors="coerce").dt.normalize()
+    main_plot = (
+        main_plot.dropna(subset=["ts", "equity"])
+        .sort_values("ts")
+        .drop_duplicates(subset=["ts"], keep="last")
+        .reset_index(drop=True)
+    )
+    btc_plot = (
+        btc_plot.dropna(subset=["ts", "close"])
+        .sort_values("ts")
+        .drop_duplicates(subset=["ts"], keep="last")
+        .reset_index(drop=True)
+    )
+
+    visible_start = max(main_plot["ts"].min(), btc_plot["ts"].min())
+    visible_end = min(main_plot["ts"].max(), btc_plot["ts"].max())
+    if pd.isna(visible_start) or pd.isna(visible_end) or visible_start > visible_end:
+        raise ValueError(
+            "homepage main chart has no overlapping visible date window for the selected year"
+        )
+
+    main_plot = main_plot[
+        (main_plot["ts"] >= visible_start) & (main_plot["ts"] <= visible_end)
+    ].copy()
+    btc_plot = btc_plot[
+        (btc_plot["ts"] >= visible_start) & (btc_plot["ts"] <= visible_end)
+    ].copy()
+    if main_plot.empty or btc_plot.empty:
+        raise ValueError(
+            "homepage main chart has no overlapping visible date window for the selected year"
+        )
+
+    return main_plot, btc_plot, {"start": visible_start, "end": visible_end}
+
+
 def rebase_series(series: pd.Series) -> pd.Series:
     s = pd.to_numeric(series, errors="coerce")
     first_valid = s.dropna()
@@ -3166,8 +3214,11 @@ def make_capital_chart(
 ) -> go.Figure:
     fig = go.Figure()
 
-    main_plot = filter_from_year(main_df, year)
-    btc_plot = filter_from_year(btc_df, year)
+    main_plot, btc_plot, _visible_window = clip_homepage_chart_frames(
+        main_df,
+        btc_df,
+        year,
+    )
 
     fig.add_trace(
         go.Scatter(

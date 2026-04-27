@@ -338,15 +338,11 @@ def validate_product_snapshot_current_strategy_contract(
         product_snapshot.get("chart_source_paths"),
         f"{context} product_snapshot.chart_source_paths",
     )
-    main_strategy_chart_path = _require_text(
+    validate_homepage_main_chart_source_path(
         chart_source_paths.get("main_strategy"),
-        f"{context} product_snapshot.chart_source_paths.main_strategy",
+        contract,
+        context=f"{context} product_snapshot.chart_source_paths.main_strategy",
     )
-    if _normalize_app_path_text(main_strategy_chart_path) != expected_paper_path:
-        raise CurrentMainStrategyContractError(
-            f"{context} product_snapshot.chart_source_paths.main_strategy diverged "
-            f"(expected={expected_paper_path} actual={main_strategy_chart_path})"
-        )
 
     source_metadata = _require_mapping(
         product_snapshot.get("source_metadata"),
@@ -383,15 +379,11 @@ def validate_product_snapshot_current_strategy_contract(
             source_metadata.get(field_name),
             f"{context} product_snapshot.source_metadata.{field_name}",
         )
-        actual_field_path = _require_text(
+        validate_homepage_main_chart_source_path(
             field_metadata.get("path"),
-            f"{context} product_snapshot.source_metadata.{field_name}.path",
+            contract,
+            context=f"{context} product_snapshot.source_metadata.{field_name}.path",
         )
-        if _normalize_app_path_text(actual_field_path) != expected_paper_path:
-            raise CurrentMainStrategyContractError(
-                f"{context} product_snapshot.source_metadata.{field_name}.path diverged "
-                f"(expected={expected_paper_path} actual={actual_field_path})"
-            )
 
     chart_source_metadata = _require_mapping(
         source_metadata.get("chart_source_paths"),
@@ -401,15 +393,31 @@ def validate_product_snapshot_current_strategy_contract(
         chart_source_metadata.get("main_strategy"),
         f"{context} product_snapshot.source_metadata.chart_source_paths.main_strategy",
     )
-    chart_main_source_path = _require_text(
+    validate_homepage_main_chart_source_path(
         chart_main_source_metadata.get("path"),
-        f"{context} product_snapshot.source_metadata.chart_source_paths.main_strategy.path",
+        contract,
+        context=f"{context} product_snapshot.source_metadata.chart_source_paths.main_strategy.path",
     )
-    if _normalize_app_path_text(chart_main_source_path) != expected_paper_path:
+
+
+def validate_homepage_main_chart_source_path(
+    source_path: Any,
+    contract: Mapping[str, Any],
+    *,
+    context: str,
+) -> str:
+    actual_source_path = _normalize_app_path_text(
+        _require_text(source_path, f"{context} homepage main-chart source path")
+    )
+    expected_source_path = _normalize_app_path_text(str(contract["canonical_paper_source_path"]))
+    if actual_source_path != expected_source_path:
         raise CurrentMainStrategyContractError(
-            f"{context} product_snapshot.source_metadata.chart_source_paths.main_strategy.path diverged "
-            f"(expected={expected_paper_path} actual={chart_main_source_path})"
+            f"{context} homepage main chart must use "
+            "current_main_strategy_root_contract.canonical_paper_source_path and must not "
+            "switch to a stale/native/non-canonical paper artifact "
+            f"(expected={expected_source_path} actual={actual_source_path})"
         )
+    return actual_source_path
 
 
 def resolve_homepage_current_strategy_sources(
@@ -421,11 +429,21 @@ def resolve_homepage_current_strategy_sources(
         contract,
         context="Homepage load blocked:",
     )
+    paper_source_path = validate_homepage_main_chart_source_path(
+        (
+            _require_mapping(
+                product_snapshot.get("chart_source_paths"),
+                "Homepage load blocked: product_snapshot.chart_source_paths",
+            )
+        ).get("main_strategy"),
+        contract,
+        context="Homepage load blocked:",
+    )
     return {
         "source_family": str(contract["source_family"]),
         "main_strategy_model": str(contract["main_strategy_model"]),
         "metrics_source_path": str(contract["canonical_metrics_source_path"]),
-        "paper_source_path": str(contract["canonical_paper_source_path"]),
+        "paper_source_path": paper_source_path,
         "metrics_path": Path(contract["metrics_path"]),
         "paper_path": Path(contract["paper_path"]),
     }

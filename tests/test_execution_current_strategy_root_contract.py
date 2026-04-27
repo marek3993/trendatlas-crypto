@@ -9,6 +9,7 @@ from scripts.execution.current_strategy_root_contract import (
     resolve_homepage_current_strategy_sources,
     resolve_validated_homepage_top_performance_source_contract,
     serialize_current_main_strategy_root_contract,
+    validate_homepage_main_chart_source_path,
     validate_product_snapshot_current_strategy_contract,
 )
 
@@ -106,6 +107,30 @@ class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
         with self.assertRaises(CurrentMainStrategyContractError):
             resolve_homepage_current_strategy_sources(product_snapshot, contract)
 
+    def test_homepage_main_chart_source_path_must_match_current_main_strategy_paper_path(self):
+        contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
+
+        resolved_path = validate_homepage_main_chart_source_path(
+            contract["canonical_paper_source_path"],
+            contract,
+            context="test:",
+        )
+
+        self.assertEqual(resolved_path, contract["canonical_paper_source_path"])
+
+    def test_homepage_main_chart_source_path_rejects_non_canonical_paper_artifact(self):
+        contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
+
+        with self.assertRaisesRegex(
+            CurrentMainStrategyContractError,
+            "must not switch to a stale/native/non-canonical paper artifact",
+        ):
+            validate_homepage_main_chart_source_path(
+                "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p25x_candidate_paper.csv",
+                contract,
+                context="test:",
+            )
+
     def test_homepage_top_card_source_contract_must_match_current_main_strategy_metrics_path(self):
         contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
 
@@ -196,6 +221,45 @@ class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
         with self.assertRaisesRegex(
             CurrentMainStrategyContractError,
             "must not use a separate compare/ranking artifact",
+        ):
+            validate_product_snapshot_current_strategy_contract(
+                product_snapshot,
+                contract,
+                context="test:",
+            )
+
+    def test_product_snapshot_validation_rejects_chart_source_metadata_divergence(self):
+        contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
+        product_snapshot = {
+            "current_main_strategy_root_contract": serialize_current_main_strategy_root_contract(contract),
+            "main_strategy_model": contract["main_strategy_model"],
+            "main_strategy_metrics": {
+                "model": contract["main_strategy_model"],
+            },
+            "chart_source_paths": {
+                "main_strategy": contract["canonical_paper_source_path"],
+            },
+            "source_metadata": {
+                "main_strategy_metrics": {
+                    "path": contract["canonical_metrics_source_path"],
+                },
+                "strategy_last_closed_day": {
+                    "path": contract["canonical_paper_source_path"],
+                },
+                "live_public_state": {
+                    "path": contract["canonical_paper_source_path"],
+                },
+                "chart_source_paths": {
+                    "main_strategy": {
+                        "path": "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p25x_candidate_paper.csv",
+                    }
+                },
+            },
+        }
+
+        with self.assertRaisesRegex(
+            CurrentMainStrategyContractError,
+            "must not switch to a stale/native/non-canonical paper artifact",
         ):
             validate_product_snapshot_current_strategy_contract(
                 product_snapshot,

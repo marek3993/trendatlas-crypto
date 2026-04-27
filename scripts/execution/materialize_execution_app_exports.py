@@ -27,6 +27,7 @@ from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
     resolve_validated_homepage_top_performance_source_contract,
     serialize_current_main_strategy_root_contract,
+    validate_homepage_main_chart_source_path,
     validate_product_snapshot_current_strategy_contract,
 )
 from scripts.execution.runtime_path_resolution import (
@@ -1816,6 +1817,11 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     reference_strategy_model = product_contract["reference_strategy_model"]
     main_summary_path = current_strategy_contract["metrics_path"]
     main_paper_path = current_strategy_contract["paper_path"]
+    homepage_main_chart_source_path = validate_homepage_main_chart_source_path(
+        current_strategy_contract["canonical_paper_source_path"],
+        current_strategy_contract,
+        context="materialize_execution_app_exports build_product_snapshot:",
+    )
     reference_paper_path = product_contract["reference_paper_path"]
     summary_row = read_single_csv_row(main_summary_path)
     main_paper_row = read_last_csv_row(main_paper_path)
@@ -1944,7 +1950,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "live_public_state": live_public_state,
         "trend_barometer_summary": normalized_row(trend_row, trend_fields),
         "chart_source_paths": {
-            "main_strategy": path_for_app(main_paper_path),
+            "main_strategy": homepage_main_chart_source_path,
             "reference_strategy": path_for_app(reference_paper_path),
         },
         "benchmark_source_path": path_for_app(BENCHMARK_BTC_SOURCE_PATH),
