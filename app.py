@@ -3070,7 +3070,7 @@ def load_paper_frame(path: Path, model_key: str) -> pd.DataFrame:
     df["ts"] = pd.to_datetime(df["date"], errors="coerce").dt.normalize()
     df["equity"] = pd.to_numeric(df["equity"], errors="coerce")
     df = (
-        df.dropna(subset=["ts", "equity"])
+        df.dropna(subset=["ts"])
         .sort_values("ts")
         .drop_duplicates(subset=["ts"], keep="last")
         .reset_index(drop=True)
@@ -3099,7 +3099,7 @@ def clip_homepage_chart_frames(
     btc_df: pd.DataFrame,
     year: int,
 ) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, pd.Timestamp]]:
-    main_plot = filter_from_year(main_df, year).dropna(subset=["ts", "equity"]).copy()
+    main_plot = filter_from_year(main_df, year).copy()
     btc_plot = filter_from_year(btc_df, year).dropna(subset=["ts", "close"]).copy()
     if main_plot.empty:
         raise ValueError("homepage main chart has no main strategy rows for the selected year")
@@ -3109,7 +3109,7 @@ def clip_homepage_chart_frames(
     main_plot["ts"] = pd.to_datetime(main_plot["ts"], errors="coerce").dt.normalize()
     btc_plot["ts"] = pd.to_datetime(btc_plot["ts"], errors="coerce").dt.normalize()
     main_plot = (
-        main_plot.dropna(subset=["ts", "equity"])
+        main_plot.dropna(subset=["ts"])
         .sort_values("ts")
         .drop_duplicates(subset=["ts"], keep="last")
         .reset_index(drop=True)
@@ -3138,6 +3138,21 @@ def clip_homepage_chart_frames(
         raise ValueError(
             "homepage main chart has no overlapping visible date window for the selected year"
         )
+
+    null_equity_rows = main_plot["equity"].isna()
+    if null_equity_rows.any():
+        bad_dates = (
+            main_plot.loc[null_equity_rows, "ts"]
+            .dt.strftime("%Y-%m-%d")
+            .head(5)
+            .tolist()
+        )
+        raise ValueError(
+            "homepage main chart aborted because the visible main strategy horizon "
+            f"contains null equity rows: {bad_dates}"
+        )
+
+    main_plot = main_plot.dropna(subset=["equity"]).copy()
 
     return main_plot, btc_plot, {"start": visible_start, "end": visible_end}
 

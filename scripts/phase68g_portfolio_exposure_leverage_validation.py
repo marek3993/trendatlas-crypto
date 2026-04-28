@@ -560,6 +560,18 @@ def build_validation_wrapper(
     merged["realistic_ret"] = merged["realistic_ret"].clip(lower=-0.999999)
 
     merged["equity_curve"] = (1.0 + merged["realistic_ret"]).cumprod()
+    merged["equity"] = pd.to_numeric(merged["equity_curve"], errors="coerce").ffill()
+    if merged["equity"].isna().any():
+        missing_dates = (
+            merged.loc[merged["equity"].isna(), "date"]
+            .dt.strftime("%Y-%m-%d")
+            .head(5)
+            .tolist()
+        )
+        raise ValueError(
+            "Phase68g paper equity could not be materialized for all rows; "
+            f"first missing dates: {missing_dates}"
+        )
     merged["leverage_active"] = merged["effective_leverage"] > 1.0
 
     merged["leverage_state_reason"] = np.where(

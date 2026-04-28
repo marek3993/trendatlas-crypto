@@ -781,6 +781,44 @@ def read_csv_rows(path: Path) -> tuple[list[str], list[dict[str, str]]]:
     raise RuntimeError("unreachable")
 
 
+def write_canonical_phase68g_paper_alias(source_path: Path, canonical_path: Path) -> None:
+    if not source_path.exists():
+        fail(f"Missing required phase68g source paper: {source_path}")
+
+    df = pd.read_csv(source_path)
+    df.columns = [str(col).strip() for col in df.columns]
+
+    equity_candidate = next(
+        (col for col in ["equity", "equity_curve", "portfolio_value", "nav"] if col in df.columns),
+        None,
+    )
+    if equity_candidate is None:
+        fail(f"{source_path} missing canonical equity source column")
+
+    equity_series = pd.to_numeric(df[equity_candidate], errors="coerce")
+    if equity_candidate != "equity_curve" and "equity_curve" in df.columns:
+        equity_series = equity_series.where(
+            equity_series.notna(),
+            pd.to_numeric(df["equity_curve"], errors="coerce"),
+        )
+    equity_series = equity_series.ffill()
+
+    if equity_series.isna().any():
+        date_col = "date" if "date" in df.columns else "ts" if "ts" in df.columns else None
+        missing_dates = (
+            df.loc[equity_series.isna(), date_col].astype(str).head(5).tolist()
+            if date_col is not None
+            else []
+        )
+        fail(
+            "phase68g canonical paper alias would contain null equity rows "
+            f"after normalization; first missing dates: {missing_dates}"
+        )
+
+    df["equity"] = equity_series
+    df.to_csv(canonical_path, index=False)
+
+
 def parse_iso_date_required(raw: str | None, context: str) -> str:
     text = str(raw or "").strip()
     if not text:
@@ -1420,7 +1458,7 @@ def build_phase68i_summary_export() -> dict[str, Any]:
             writer.writeheader()
             writer.writerow(phase68i_payload["summary_export_row"])
         pd.DataFrame([phase68i_payload["authoritative_export"]]).to_csv(PHASE68I_AUTHORITATIVE_EXPORT_PATH, index=False)
-        shutil.copy2(PHASE68G_SOURCE_PAPER_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
+        write_canonical_phase68g_paper_alias(PHASE68G_SOURCE_PAPER_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
         with PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.open("w", encoding="utf-8", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=list(phase68g_canonical_metrics_row.keys()))
             writer.writeheader()
