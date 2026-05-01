@@ -22,6 +22,8 @@ PHASE66G_DIR = OUTPUTS / "phase66g_production_candidate_live"
 DEFAULT_GOVERNANCE_PAPER = PHASE66G_DIR / "phase66g_production_soft_filters_paper.csv"
 DEFAULT_TREND = PHASE66G_DIR / "phase66g_trend_barometer_history.csv"
 DEFAULT_DECISIONS = PHASE66G_DIR / "phase66g_production_candidate_decisions.csv"
+PHASE67J_DIR = OUTPUTS / "phase67j_final_narrow_validation_pack"
+DEFAULT_BASELINE_PAPER = PHASE67J_DIR / "phase67j_no_neo_main_paper.csv"
 
 PHASE68G_DIR = OUTPUTS / "phase68g_portfolio_exposure_leverage_validation"
 
@@ -171,19 +173,6 @@ def load_baseline_paper(path: Path) -> pd.DataFrame:
         ],
     )
 
-    ret_col = try_pick_col(
-        df,
-        [
-            "strategy_ret",
-            "daily_ret",
-            "ret",
-            "return",
-            "strategy_return",
-            "portfolio_ret",
-            "equity_ret",
-        ],
-    )
-
     if asset_col is not None:
         out["baseline_held_asset"] = df[asset_col].astype(str).map(normalize_asset_label)
         out["baseline_asset_source"] = f"asset_col:{asset_col}"
@@ -207,19 +196,12 @@ def load_baseline_paper(path: Path) -> pd.DataFrame:
         out["baseline_held_asset"] = np.where(cash_mask, "CASH", "BASELINE_RISK")
         out["baseline_asset_source"] = f"cash_col:{cash_col}"
 
-    elif ret_col is not None:
-        ret_series = pd.to_numeric(df[ret_col], errors="coerce").fillna(0.0)
-        inferred_series = pd.Series(
-            np.where(np.abs(ret_series) > 1e-12, "BASELINE_RISK", None),
-            index=df.index,
-            dtype="object",
-        ).ffill().bfill().fillna("CASH")
-        out["baseline_held_asset"] = inferred_series
-        out["baseline_asset_source"] = f"ret_fallback:{ret_col}"
-
     else:
-        out["baseline_held_asset"] = "BASELINE_RISK"
-        out["baseline_asset_source"] = "hard_fallback_all_exposed"
+        available_columns = ", ".join(str(col) for col in df.columns)
+        raise ValueError(
+            "Baseline paper missing explicit asset/exposure/cash lineage columns; "
+            f"refusing ambiguous fallback for {path}. Available columns: {available_columns}"
+        )
 
     out["baseline_held_asset"] = out["baseline_held_asset"].map(normalize_asset_label)
     out = out.dropna(subset=["date"]).sort_values("date").drop_duplicates(subset=["date"]).reset_index(drop=True)
@@ -697,7 +679,7 @@ def add_delta_cols(row: dict, ref: dict) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description="PHASE68G portfolio exposure leverage validation")
     parser.add_argument("--governance-paper", type=str, default=str(DEFAULT_GOVERNANCE_PAPER))
-    parser.add_argument("--baseline-paper", type=str, default="")
+    parser.add_argument("--baseline-paper", type=str, default=str(DEFAULT_BASELINE_PAPER))
     parser.add_argument("--trend-history", type=str, default=str(DEFAULT_TREND))
     parser.add_argument("--decisions", type=str, default=str(DEFAULT_DECISIONS))
     parser.add_argument("--annual-borrow-cost", type=float, default=0.12)
@@ -718,7 +700,7 @@ def main() -> None:
     ensure_dir(papers_dir)
 
     governance_paper_path = Path(args.governance_paper)
-    baseline_paper_path = Path(args.baseline_paper) if args.baseline_paper else find_baseline_paper_in_phase66g_dir()
+    baseline_paper_path = Path(args.baseline_paper)
     trend_path = Path(args.trend_history)
     decisions_path = Path(args.decisions)
 

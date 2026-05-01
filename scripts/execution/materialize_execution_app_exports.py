@@ -84,8 +84,10 @@ PHASE68G_SOURCE_PAPER_PATH = PHASE68G_SOURCE_DIR / "papers" / "phase68g_66g_1p25
 PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH = (
     PHASE68G_SOURCE_DIR / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
 )
+PHASE68G_SOURCE_MANIFEST_PATH = PHASE68G_SOURCE_DIR / "phase68g_portfolio_exposure_leverage_manifest.json"
 PHASE68G_SCRIPT_PATH = ROOT / "scripts" / "phase68g_portfolio_exposure_leverage_validation.py"
 PHASE67J_PAPER_PATH = APP_EXPORTS_DIR / "phase67j_no_neo_main_paper.csv"
+PHASE67J_NATIVE_PAPER_PATH = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_no_neo_main_paper.csv"
 PHASE67J_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase67j_live_status.csv"
 PHASE66G_LIVE_STATUS_PATH = APP_EXPORTS_DIR / "phase66g_live_status.csv"
 PHASE66G_TREND_HISTORY_PATH = APP_EXPORTS_DIR / "phase66g_trend_barometer_history.csv"
@@ -847,6 +849,62 @@ def read_last_csv_date(path: Path) -> str:
     return parse_iso_date_required(rows[-1].get(date_field), f"{path} {date_field}")
 
 
+def normalize_path_for_compare(path_like: str | Path | None) -> str:
+    text = str(path_like or "").strip()
+    if not text:
+        return ""
+    return str(Path(text).resolve(strict=False))
+
+
+def collect_phase68g_source_validation_issues() -> list[str]:
+    issues: list[str] = []
+
+    if not PHASE68G_SOURCE_MANIFEST_PATH.exists():
+        return ["missing_phase68g_manifest"]
+
+    manifest_payload = read_json_optional(PHASE68G_SOURCE_MANIFEST_PATH)
+    if not manifest_payload:
+        return ["invalid_phase68g_manifest"]
+
+    allowed_baseline_paths = {
+        normalize_path_for_compare(PHASE67J_PAPER_PATH),
+        normalize_path_for_compare(PHASE67J_NATIVE_PAPER_PATH),
+    }
+    manifest_baseline_path = normalize_path_for_compare(manifest_payload.get("baseline_paper"))
+    if manifest_baseline_path not in allowed_baseline_paths:
+        issues.append("baseline_paper_path_mismatch")
+
+    manifest_governance_path = normalize_path_for_compare(manifest_payload.get("governance_paper"))
+    if manifest_governance_path != normalize_path_for_compare(PHASE66G_PRODUCTION_PAPER_PATH):
+        issues.append("governance_paper_path_mismatch")
+
+    if not PHASE68G_SOURCE_PAPER_PATH.exists():
+        issues.append("missing_phase68g_source_paper")
+        return issues
+
+    try:
+        paper_df = pd.read_csv(PHASE68G_SOURCE_PAPER_PATH, usecols=["baseline_asset_source"])
+    except ValueError:
+        issues.append("missing_baseline_asset_source_column")
+        return issues
+    except Exception:
+        issues.append("unreadable_phase68g_source_paper")
+        return issues
+
+    baseline_sources = (
+        paper_df["baseline_asset_source"]
+        .dropna()
+        .astype(str)
+        .str.strip()
+        .unique()
+        .tolist()
+    )
+    if any(source.startswith("ret_fallback:") or source == "hard_fallback_all_exposed" for source in baseline_sources):
+        issues.append("ambiguous_baseline_lineage_fallback")
+
+    return issues
+
+
 def refresh_phase68h_dynamic_paper_if_needed() -> dict[str, Any]:
     if not PHASE66G_PRODUCTION_PAPER_PATH.exists():
         fail(f"Missing required phase66g production paper: {PHASE66G_PRODUCTION_PAPER_PATH}")
@@ -909,12 +967,16 @@ def refresh_phase68g_native_outputs_if_needed() -> dict[str, Any]:
         if PHASE68G_SOURCE_PAPER_PATH.exists()
         else ""
     )
+    validation_issues = collect_phase68g_source_validation_issues()
 
     refreshed = False
-    if phase68g_last_date < phase66g_last_date:
-        log("[REFRESH] phase68g native paper is stale vs phase66g production paper")
+    needs_refresh = phase68g_last_date < phase66g_last_date or bool(validation_issues)
+    if needs_refresh:
+        log("[REFRESH] phase68g native outputs require rematerialization")
         log(f"          phase68g_last_date={phase68g_last_date or 'missing'}")
         log(f"          phase66g_last_date={phase66g_last_date}")
+        if validation_issues:
+            log(f"          validation_issues={validation_issues}")
         try:
             subprocess.run(
                 [
@@ -951,6 +1013,13 @@ def refresh_phase68g_native_outputs_if_needed() -> dict[str, Any]:
             f"(phase68g_last_date={refreshed_phase68g_last_date}, phase66g_last_date={phase66g_last_date})"
         )
 
+    post_refresh_validation_issues = collect_phase68g_source_validation_issues()
+    if post_refresh_validation_issues:
+        fail(
+            "phase68g native outputs failed provenance validation after refresh "
+            f"(issues={post_refresh_validation_issues})"
+        )
+
     source_export_row = read_single_csv_row(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH)
     source_export_last_date = str(source_export_row.get("latest_available_date") or "").strip()
     if source_export_last_date != refreshed_phase68g_last_date:
@@ -966,6 +1035,7 @@ def refresh_phase68g_native_outputs_if_needed() -> dict[str, Any]:
         "phase68g_last_date_after_refresh": refreshed_phase68g_last_date,
         "phase68g_export_latest_available_date": source_export_last_date or None,
         "phase68g_refresh_triggered": refreshed,
+        "phase68g_refresh_reason_validation_issues": validation_issues,
         "phase68g_baseline_paper_path": str(PHASE67J_PAPER_PATH),
         "phase68g_source_paper_path": str(PHASE68G_SOURCE_PAPER_PATH),
         "phase68g_source_authoritative_export_path": str(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH),
