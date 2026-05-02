@@ -110,6 +110,8 @@ TEXT = {
         "chart_current_regime_label": "Aktuálny režim",
         "chart_current_regime_cash": "CASH / bez trhovej expozície. Rovnejšie úseky sú v tomto stave očakávané.",
         "chart_current_regime_exposed": "Expozícia v aktíve {asset}.",
+        "chart_visible_cash_explainer": "Rovné úseky počas stavu CASH znamenajú, že model stál mimo trhu. Nejde o zaseknutý ani chýbajúci graf.",
+        "chart_visible_state_explainer": "Spodný pás ukazuje, čo model reálne držal. Koniec aktuálne viditeľného grafu je v režime {regime}.",
         "chart_year": "Začať graf od roku",
         "chart_performance_axis": "Indexovaný rast",
         "chart_state_axis": "Držaný stav",
@@ -316,6 +318,8 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "chart_current_regime_label": "Current regime",
         "chart_current_regime_cash": "CASH / no market exposure. Flatter sections are expected in this state.",
         "chart_current_regime_exposed": "{asset} exposure.",
+        "chart_visible_cash_explainer": "Flat sections during CASH mean the model was out of the market. The chart is not stuck or missing.",
+        "chart_visible_state_explainer": "The lower strip shows what the model was actually holding. The visible end of the chart is currently in regime {regime}.",
         "chart_year": "Start chart from year",
         "chart_performance_axis": "Indexed growth",
         "chart_state_axis": "Held state",
@@ -3424,6 +3428,32 @@ def build_homepage_chart_context_note(live_public_state: dict[str, Any], lang: s
     return f"{label}: {t(lang, 'chart_current_regime_exposed').format(asset=asset_label)}"
 
 
+def build_homepage_chart_explainer_line(
+    main_df: pd.DataFrame,
+    btc_df: pd.DataFrame,
+    year: int,
+    live_public_state: dict[str, Any],
+    lang: str,
+) -> str:
+    try:
+        main_plot, _btc_plot, _visible_window = clip_homepage_chart_frames(main_df, btc_df, year)
+    except Exception:
+        return build_homepage_chart_context_note(live_public_state, lang)
+
+    state_details = homepage_chart_state_details(main_plot, lang)
+    if state_details.empty:
+        return build_homepage_chart_context_note(live_public_state, lang)
+
+    latest_row = state_details.iloc[-1]
+    latest_bucket = str(latest_row.get("state_bucket") or "").strip().upper()
+    latest_label = str(latest_row.get("state_label") or "").strip()
+    if latest_bucket == "CASH":
+        return t(lang, "chart_visible_cash_explainer")
+    if latest_label:
+        return t(lang, "chart_visible_state_explainer").format(regime=latest_label)
+    return build_homepage_chart_context_note(live_public_state, lang)
+
+
 def nearest_valid_date(dates: pd.Series, picked_date) -> pd.Timestamp:
     picked = pd.Timestamp(picked_date).normalize()
     valid = pd.to_datetime(dates).dt.normalize().sort_values().drop_duplicates()
@@ -3586,7 +3616,7 @@ def make_capital_chart(
         cols=1,
         shared_xaxes=True,
         vertical_spacing=0.03,
-        row_heights=[0.84, 0.16],
+        row_heights=[0.82, 0.18],
     )
 
     main_plot, btc_plot, _visible_window = clip_homepage_chart_frames(
@@ -3623,7 +3653,7 @@ def make_capital_chart(
     )
 
     state_palette = {
-        "CASH": "#f59e0b",
+        "CASH": "#fbbf24",
         "BASE": "#94a3b8",
         "BTC": "#22c55e",
         "ALT": "#ff6b6b",
@@ -3635,6 +3665,7 @@ def make_capital_chart(
         "ALT": t(lang, "chart_state_alt"),
     }
     grouped_periods: dict[str, dict[str, list[Any]]] = {}
+    cash_label_annotations: list[dict[str, Any]] = []
     for period in state_periods:
         bucket = period["bucket"]
         duration = (period["end"] - period["start"]) + pd.Timedelta(days=1)
@@ -3652,6 +3683,14 @@ def make_capital_chart(
                 period["label"],
             ]
         )
+        if bucket == "CASH" and duration >= pd.Timedelta(days=21):
+            cash_label_annotations.append(
+                {
+                    "x": midpoint,
+                    "y": 0.5,
+                    "text": t(lang, "chart_state_cash"),
+                }
+            )
 
     if truth_warnings:
         fig.add_annotation(
@@ -3675,14 +3714,22 @@ def make_capital_chart(
             bucket_group = grouped_periods.get(bucket)
             if not bucket_group:
                 continue
+            marker = dict(color=state_palette[bucket], line=dict(width=0))
+            opacity = 0.94
+            if bucket == "CASH":
+                marker = dict(
+                    color=state_palette[bucket],
+                    line=dict(color="rgba(255,255,255,0.95)", width=1.4),
+                )
+                opacity = 0.98
             fig.add_trace(
                 go.Bar(
                     x=bucket_group["x"],
                     y=[1] * len(bucket_group["x"]),
                     width=bucket_group["width"],
                     name=state_names[bucket],
-                    marker=dict(color=state_palette[bucket], line=dict(width=0)),
-                    opacity=0.94,
+                    marker=marker,
+                    opacity=opacity,
                     customdata=bucket_group["customdata"],
                     hovertemplate=(
                         f"{t(lang, 'chart_state_period')}: %{{customdata[2]}}"
@@ -3693,10 +3740,24 @@ def make_capital_chart(
                 row=2,
                 col=1,
             )
+        for annotation in cash_label_annotations:
+            fig.add_annotation(
+                x=annotation["x"],
+                y=annotation["y"],
+                text=annotation["text"],
+                showarrow=False,
+                font=dict(size=11, color="#111827"),
+                bgcolor="rgba(255,255,255,0.45)",
+                bordercolor="rgba(255,255,255,0.22)",
+                borderwidth=1,
+                borderpad=3,
+                row=2,
+                col=1,
+            )
 
     fig.update_layout(
         barmode="overlay",
-        height=640,
+        height=660,
         title=title,
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
@@ -4112,6 +4173,13 @@ with tabs[0]:
         index=years.index(2025) if 2025 in years else 0,
         key="selected_year_home",
     )
+    chart_explainer_line = build_homepage_chart_explainer_line(
+        main_df=papers[main_key],
+        btc_df=btc_df,
+        year=selected_year_home,
+        live_public_state=live_public_state,
+        lang=lang,
+    )
     st.plotly_chart(
         make_capital_chart(
             main_df=papers[main_key],
@@ -4126,10 +4194,7 @@ with tabs[0]:
         ),
         width="stretch",
     )
-    st.caption(
-        f"{t(lang, 'chart_regime_strip_note')} "
-        f"{build_homepage_chart_context_note(live_public_state, lang)}"
-    )
+    st.info(chart_explainer_line, icon="ℹ️")
 
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
