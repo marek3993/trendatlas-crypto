@@ -1248,6 +1248,7 @@ def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot
             "live_status_path": trend_summary_source.get("path"),
             "history_path": product_snapshot.get("trend_history_source_path"),
             "model_key": str(trend_summary_snapshot.get("model") or "phase66g_production_soft_filters").strip(),
+            "authority_live_summary": dict(trend_summary_snapshot),
         },
         "app_live_mode_contract": {"current": product_snapshot.get("live_public_state") or {}},
         "account_observability_contract": {
@@ -3479,43 +3480,7 @@ def investment_value(equity_df: pd.DataFrame, picked_date, amount: float = 1000.
 # TREND BAROMETER
 # =========================================================
 
-def load_trend_barometer_history(source_cfg: dict) -> pd.DataFrame:
-    path = normalize_path(source_cfg.get("history_path"))
-    if path is None or not path.exists():
-        return pd.DataFrame(columns=["ts", "trend_score", "buy_threshold"])
-
-    df = pd.read_csv(path)
-    df.columns = [str(c).strip() for c in df.columns]
-
-    date_col = next((c for c in ["trend_calc_date", "date", "ts", "datetime", "timestamp"] if c in df.columns), None)
-    if date_col is None or "trend_score" not in df.columns:
-        return pd.DataFrame(columns=["ts", "trend_score", "buy_threshold"])
-
-    df["ts"] = pd.to_datetime(df[date_col], errors="coerce")
-    df["trend_score"] = pd.to_numeric(df["trend_score"], errors="coerce")
-    if "buy_threshold" in df.columns:
-        df["buy_threshold"] = pd.to_numeric(df["buy_threshold"], errors="coerce")
-    else:
-        df["buy_threshold"] = 0.0
-
-    df = df.dropna(subset=["ts", "trend_score"]).sort_values("ts").reset_index(drop=True)
-    return df[["ts", "trend_score", "buy_threshold"]]
-
-
-def load_trend_barometer_live(source_cfg: dict) -> dict[str, Any]:
-    path = normalize_path(source_cfg.get("live_status_path"))
-    if path is None or not path.exists():
-        raise ValueError("trend barometer canonical live status CSV is missing")
-
-    row = load_single_csv_row(path, context="trend barometer live status")
-    expected_model = str(source_cfg.get("model_key") or "").strip()
-    actual_model = str(row.get("model") or "").strip()
-    if expected_model and actual_model and actual_model != expected_model:
-        raise ValueError(
-            "trend barometer canonical live status model diverged "
-            f"(expected={expected_model} actual={actual_model})"
-        )
-
+def coerce_trend_barometer_live_row(row: dict[str, Any]) -> dict[str, Any]:
     numeric_fields = [
         "trend_score",
         "buy_threshold",
@@ -3537,6 +3502,79 @@ def load_trend_barometer_live(source_cfg: dict) -> dict[str, Any]:
         if field in live_row:
             live_row[field] = as_bool(live_row.get(field))
     return live_row
+
+
+def load_trend_barometer_history(
+    source_cfg: dict,
+    trend_live: dict[str, Any] | None = None,
+) -> pd.DataFrame:
+    path = normalize_path(source_cfg.get("history_path"))
+    if path is None or not path.exists():
+        df = pd.DataFrame(columns=["ts", "trend_score", "buy_threshold"])
+    else:
+        df = pd.read_csv(path)
+        df.columns = [str(c).strip() for c in df.columns]
+
+        date_col = next((c for c in ["trend_calc_date", "date", "ts", "datetime", "timestamp"] if c in df.columns), None)
+        if date_col is None or "trend_score" not in df.columns:
+            df = pd.DataFrame(columns=["ts", "trend_score", "buy_threshold"])
+        else:
+            df["ts"] = pd.to_datetime(df[date_col], errors="coerce")
+            df["trend_score"] = pd.to_numeric(df["trend_score"], errors="coerce")
+            if "buy_threshold" in df.columns:
+                df["buy_threshold"] = pd.to_numeric(df["buy_threshold"], errors="coerce")
+            else:
+                df["buy_threshold"] = 0.0
+            df = df.dropna(subset=["ts", "trend_score"]).sort_values("ts").reset_index(drop=True)
+
+    if trend_live:
+        live_day_text = resolve_trend_barometer_live_day(trend_live)
+        live_day = pd.to_datetime(live_day_text, errors="coerce")
+        live_score = as_float(trend_live.get("trend_score"))
+        live_threshold = as_float(trend_live.get("buy_threshold"))
+        if not pd.isna(live_day) and live_score is not None:
+            live_ts = pd.Timestamp(live_day).normalize()
+            if not df.empty:
+                df = df[df["ts"].dt.normalize() <= live_ts].copy()
+                df = df[df["ts"].dt.normalize() != live_ts]
+            df = pd.concat(
+                [
+                    df,
+                    pd.DataFrame(
+                        [
+                            {
+                                "ts": live_ts,
+                                "trend_score": live_score,
+                                "buy_threshold": live_threshold if live_threshold is not None else 0.0,
+                            }
+                        ]
+                    ),
+                ],
+                ignore_index=True,
+            ).sort_values("ts").reset_index(drop=True)
+
+    return df[["ts", "trend_score", "buy_threshold"]]
+
+
+def load_trend_barometer_live(source_cfg: dict) -> dict[str, Any]:
+    expected_model = str(source_cfg.get("model_key") or "").strip()
+    snapshot_row = source_cfg.get("authority_live_summary")
+    if isinstance(snapshot_row, dict) and snapshot_row:
+        row = dict(snapshot_row)
+    else:
+        path = normalize_path(source_cfg.get("live_status_path"))
+        if path is None or not path.exists():
+            raise ValueError("trend barometer canonical live status CSV is missing")
+        row = load_single_csv_row(path, context="trend barometer live status")
+
+    actual_model = str(row.get("model") or "").strip()
+    if expected_model and actual_model and actual_model != expected_model:
+        raise ValueError(
+            "trend barometer canonical live status model diverged "
+            f"(expected={expected_model} actual={actual_model})"
+        )
+
+    return coerce_trend_barometer_live_row(row)
 
 
 def resolve_trend_barometer_live_day(trend_live: dict[str, Any]) -> str:
@@ -4076,7 +4114,7 @@ try:
 except Exception as e:
     st.error(f"{t(lang, 'load_failed')}: {e}")
     st.stop()
-trend_history_df = load_trend_barometer_history(trend_source_cfg)
+trend_history_df = load_trend_barometer_history(trend_source_cfg, trend_live)
 trend_barometer_warnings = build_trend_barometer_consistency_warnings(
     trend_live,
     trend_history_df,
