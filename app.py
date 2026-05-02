@@ -3282,33 +3282,18 @@ def homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
     label_values: list[str] = []
     semantic_cash_like_values: list[bool] = []
 
-    candidate_columns = [
-        "portfolio_held_asset",
-        "held_asset",
-        "executed_position",
-        "tradable_governed_asset",
-        "baseline_held_asset",
-        "executed_regime",
-    ]
-
     for idx, row in state_df.iterrows():
         asset_token = ""
-        for col in candidate_columns:
-            if col not in state_df.columns:
-                continue
-            candidate = normalize_homepage_chart_asset_token(row.get(col))
-            if candidate in {"", "NONE", "NULL"}:
-                continue
-            asset_token = candidate
-            break
+        if "portfolio_held_asset" in state_df.columns:
+            asset_token = normalize_homepage_chart_asset_token(row.get("portfolio_held_asset"))
 
         semantic_cash_like = bool(cash_mask.iloc[idx]) or homepage_chart_semantic_cash_like(row)
         if semantic_cash_like:
             bucket = "CASH"
             label = t(lang, "chart_state_cash")
         elif asset_token in {"BASE", "BASELINE", "BASELINE_RISK", "EARLY_RISK", "FULL_RISK"}:
-            bucket = "BASE"
-            label = t(lang, "chart_state_base")
+            bucket = "CASH"
+            label = t(lang, "chart_state_cash")
         elif asset_token == "BTC":
             bucket = "BTC"
             label = t(lang, "chart_state_btc")
@@ -3317,7 +3302,7 @@ def homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
             label = t(lang, "chart_state_cash")
         else:
             bucket = "ALT"
-            label = f"{t(lang, 'chart_state_alt')} · {prettify_asset_public(asset_token, lang)}"
+            label = prettify_asset_public(asset_token, lang)
 
         bucket_values.append(bucket)
         label_values.append(label)
@@ -4211,13 +4196,6 @@ with tabs[0]:
         index=years.index(2025) if 2025 in years else 0,
         key="selected_year_home",
     )
-    chart_explainer_line = build_homepage_chart_explainer_line(
-        main_df=papers[main_key],
-        btc_df=btc_df,
-        year=selected_year_home,
-        live_public_state=live_public_state,
-        lang=lang,
-    )
     st.plotly_chart(
         make_capital_chart(
             main_df=papers[main_key],
@@ -4232,7 +4210,6 @@ with tabs[0]:
         ),
         width="stretch",
     )
-    st.info(chart_explainer_line, icon="ℹ️")
 
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
