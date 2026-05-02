@@ -1,6 +1,6 @@
 {
   "artifact_name": "materialize_execution_app_exports",
-  "generated_at_utc": "2026-04-24T17:36:56Z",
+  "generated_at_utc": "2026-05-02T13:38:55Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\materialize_execution_app_exports.py",
   "input_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
@@ -14,6 +14,8 @@
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline\\materialize_execution_app_exports_manifest.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json"
   ],

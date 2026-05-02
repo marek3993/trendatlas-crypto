@@ -1,12 +1,13 @@
 {
   "artifact_name": "latest_execution_intent",
-  "generated_at_utc": "2026-04-12T22:10:05Z",
-  "started_at_utc": "2026-04-12T22:10:05Z",
+  "generated_at_utc": "2026-05-02T13:39:37Z",
+  "started_at_utc": "2026-05-02T13:39:37Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\build_execution_intent_from_strategy_exports.py",
   "input_paths": [
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\export_contract.json",
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\papers\\phase68g_66g_1p25x_candidate_paper.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json"

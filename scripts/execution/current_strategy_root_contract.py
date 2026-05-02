@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 from pathlib import Path
 from typing import Any, Mapping
@@ -416,8 +417,412 @@ def validate_homepage_main_chart_source_path(
             "current_main_strategy_root_contract.canonical_paper_source_path and must not "
             "switch to a stale/native/non-canonical paper artifact "
             f"(expected={expected_source_path} actual={actual_source_path})"
-        )
+    )
     return actual_source_path
+
+
+def _read_csv_rows_required(path: Path, *, context: str) -> list[dict[str, str]]:
+    if not path.exists() or not path.is_file():
+        raise CurrentMainStrategyContractError(f"{context} is missing: {path}")
+    try:
+        with path.open("r", encoding="utf-8-sig", newline="") as handle:
+            reader = csv.DictReader(handle)
+            rows = list(reader)
+    except Exception as exc:
+        raise CurrentMainStrategyContractError(f"{context} is unreadable: {path} ({exc})") from exc
+    if not rows:
+        raise CurrentMainStrategyContractError(f"{context} has no rows: {path}")
+    return rows
+
+
+def _normalize_iso_day_text(value: Any, *, context: str) -> str:
+    text = _require_text(value, context)
+    normalized = text.replace("\\", "/").strip()
+    if "T" in normalized:
+        normalized = normalized.split("T", 1)[0]
+    if len(normalized) != 10:
+        raise CurrentMainStrategyContractError(f"{context} is not an ISO day: {text}")
+    return normalized
+
+
+def validate_current_main_strategy_source_files_against_snapshot(
+    product_snapshot: Mapping[str, Any],
+    contract: Mapping[str, Any],
+    *,
+    context: str,
+) -> dict[str, str]:
+    validate_product_snapshot_current_strategy_contract(
+        product_snapshot,
+        contract,
+        context=context,
+    )
+
+    expected_model = _require_text(
+        product_snapshot.get("main_strategy_model"),
+        f"{context} product_snapshot.main_strategy_model",
+    )
+    expected_closed_day = _normalize_iso_day_text(
+        product_snapshot.get("strategy_last_closed_day"),
+        context=f"{context} product_snapshot.strategy_last_closed_day",
+    )
+
+    metrics_path = Path(contract["metrics_path"])
+    paper_path = Path(contract["paper_path"])
+
+    metrics_rows = _read_csv_rows_required(
+        metrics_path,
+        context=f"{context} canonical main strategy metrics export",
+    )
+    metrics_row = metrics_rows[-1]
+    metrics_model = _require_text(
+        metrics_row.get("model"),
+        f"{context} canonical main strategy metrics export model",
+    )
+    if metrics_model != expected_model:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical main strategy metrics export model diverged "
+            f"(expected={expected_model} actual={metrics_model})"
+        )
+
+    metrics_latest_available_day = _normalize_iso_day_text(
+        metrics_row.get("latest_available_date"),
+        context=f"{context} canonical main strategy metrics export latest_available_date",
+    )
+    if metrics_latest_available_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical main strategy metrics export is stale versus authority snapshot "
+            f"(expected={expected_closed_day} actual={metrics_latest_available_day} path={metrics_path})"
+        )
+
+    paper_rows = _read_csv_rows_required(
+        paper_path,
+        context=f"{context} canonical main strategy paper",
+    )
+    paper_last_row = paper_rows[-1]
+    paper_last_day = _normalize_iso_day_text(
+        paper_last_row.get("date"),
+        context=f"{context} canonical main strategy paper last_row.date",
+    )
+    if paper_last_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical main strategy paper is stale versus authority snapshot "
+            f"(expected={expected_closed_day} actual={paper_last_day} path={paper_path})"
+        )
+
+    return {
+        "main_strategy_model": expected_model,
+        "expected_closed_day": expected_closed_day,
+        "metrics_latest_available_day": metrics_latest_available_day,
+        "paper_last_day": paper_last_day,
+    }
+
+
+def _resolve_source_metadata_path(
+    source_metadata: Mapping[str, Any],
+    *,
+    key: str,
+    context: str,
+    root: Path,
+) -> Path:
+    metadata = _require_mapping(
+        source_metadata.get(key),
+        f"{context} product_snapshot.source_metadata.{key}",
+    )
+    return _resolve_path(
+        metadata.get("path"),
+        context=f"{context} product_snapshot.source_metadata.{key}.path",
+        root=root,
+    )
+
+
+def _resolve_nested_source_metadata_path(
+    source_metadata: Mapping[str, Any],
+    *,
+    parent_key: str,
+    child_key: str,
+    context: str,
+    root: Path,
+) -> Path:
+    parent_metadata = _require_mapping(
+        source_metadata.get(parent_key),
+        f"{context} product_snapshot.source_metadata.{parent_key}",
+    )
+    child_metadata = _require_mapping(
+        parent_metadata.get(child_key),
+        f"{context} product_snapshot.source_metadata.{parent_key}.{child_key}",
+    )
+    return _resolve_path(
+        child_metadata.get("path"),
+        context=f"{context} product_snapshot.source_metadata.{parent_key}.{child_key}.path",
+        root=root,
+    )
+
+
+def _normalize_row_day(
+    row: Mapping[str, Any],
+    candidates: list[str],
+    *,
+    context: str,
+) -> str:
+    for candidate in candidates:
+        value = row.get(candidate)
+        if value is None:
+            continue
+        text = str(value).strip()
+        if not text:
+            continue
+        return _normalize_iso_day_text(text, context=f"{context}.{candidate}")
+    raise CurrentMainStrategyContractError(
+        f"{context} is missing all supported day fields: {', '.join(candidates)}"
+    )
+
+
+def _load_export_contract_model_source_path(
+    model_key: str,
+    field_name: str,
+    *,
+    root: Path,
+    context: str,
+) -> Path:
+    export_contract = _read_json_required(root / "source_of_truth" / "export_contract.json")
+    app_export_contract = _require_mapping(
+        export_contract.get("app_export_contract"),
+        f"{context} source_of_truth/export_contract.json app_export_contract",
+    )
+    model_sources = _require_mapping(
+        app_export_contract.get("model_sources"),
+        f"{context} source_of_truth/export_contract.json app_export_contract.model_sources",
+    )
+    model_source = _require_mapping(
+        model_sources.get(model_key),
+        f"{context} source_of_truth/export_contract.json app_export_contract.model_sources.{model_key}",
+    )
+    return _resolve_path(
+        model_source.get(field_name),
+        context=(
+            f"{context} source_of_truth/export_contract.json "
+            f"app_export_contract.model_sources.{model_key}.{field_name}"
+        ),
+        root=root,
+    )
+
+
+def validate_authoritative_dependency_closure(
+    product_snapshot: Mapping[str, Any],
+    contract: Mapping[str, Any],
+    *,
+    root: Path | None = None,
+    context: str,
+) -> dict[str, Any]:
+    repo_root = (root or ROOT).resolve()
+    current_strategy_validation = validate_current_main_strategy_source_files_against_snapshot(
+        product_snapshot,
+        contract,
+        context=context,
+    )
+
+    source_metadata = _require_mapping(
+        product_snapshot.get("source_metadata"),
+        f"{context} product_snapshot.source_metadata",
+    )
+    chart_source_paths = _require_mapping(
+        product_snapshot.get("chart_source_paths"),
+        f"{context} product_snapshot.chart_source_paths",
+    )
+
+    expected_closed_day = current_strategy_validation["expected_closed_day"]
+    freshness_target_closed_day = _normalize_iso_day_text(
+        product_snapshot.get("freshness_target_closed_day"),
+        context=f"{context} product_snapshot.freshness_target_closed_day",
+    )
+    if freshness_target_closed_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.freshness_target_closed_day diverged "
+            f"(expected={expected_closed_day} actual={freshness_target_closed_day})"
+        )
+
+    reference_strategy_model = _require_text(
+        product_snapshot.get("reference_strategy_model"),
+        f"{context} product_snapshot.reference_strategy_model",
+    )
+    reference_paper_path = _resolve_path(
+        chart_source_paths.get("reference_strategy"),
+        context=f"{context} product_snapshot.chart_source_paths.reference_strategy",
+        root=repo_root,
+    )
+    reference_paper_metadata_path = _resolve_nested_source_metadata_path(
+        source_metadata,
+        parent_key="chart_source_paths",
+        child_key="reference_strategy",
+        context=context,
+        root=repo_root,
+    )
+    if reference_paper_metadata_path.resolve() != reference_paper_path.resolve():
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.source_metadata.chart_source_paths.reference_strategy.path diverged "
+            f"(expected={reference_paper_path.resolve()} actual={reference_paper_metadata_path.resolve()})"
+        )
+    reference_paper_last_row = _read_csv_rows_required(
+        reference_paper_path,
+        context=f"{context} canonical reference strategy paper",
+    )[-1]
+    reference_paper_last_day = _normalize_row_day(
+        reference_paper_last_row,
+        ["date"],
+        context=f"{context} canonical reference strategy paper last_row",
+    )
+    if reference_paper_last_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical reference strategy paper is stale versus authority snapshot "
+            f"(expected={expected_closed_day} actual={reference_paper_last_day} path={reference_paper_path})"
+        )
+
+    reference_live_status_path = _load_export_contract_model_source_path(
+        reference_strategy_model,
+        "live_status_path",
+        root=repo_root,
+        context=context,
+    )
+    reference_live_status_last_row = _read_csv_rows_required(
+        reference_live_status_path,
+        context=f"{context} canonical reference live status",
+    )[-1]
+    reference_live_status_model = _require_text(
+        reference_live_status_last_row.get("model"),
+        f"{context} canonical reference live status model",
+    )
+    if reference_live_status_model != reference_strategy_model:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical reference live status model diverged "
+            f"(expected={reference_strategy_model} actual={reference_live_status_model})"
+        )
+    reference_live_status_day = _normalize_row_day(
+        reference_live_status_last_row,
+        ["latest_available_date", "date"],
+        context=f"{context} canonical reference live status last_row",
+    )
+    if reference_live_status_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical reference live status is stale versus authority snapshot "
+            f"(expected={expected_closed_day} actual={reference_live_status_day} path={reference_live_status_path})"
+        )
+
+    phase66g_live_status_path = _resolve_source_metadata_path(
+        source_metadata,
+        key="trend_barometer_summary",
+        context=context,
+        root=repo_root,
+    )
+    phase66g_live_status_last_row = _read_csv_rows_required(
+        phase66g_live_status_path,
+        context=f"{context} canonical phase66g live status",
+    )[-1]
+    phase66g_live_status_day = _normalize_row_day(
+        phase66g_live_status_last_row,
+        ["latest_available_date", "trend_calc_date", "date"],
+        context=f"{context} canonical phase66g live status last_row",
+    )
+    if phase66g_live_status_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical phase66g live status is stale versus authority snapshot "
+            f"(expected={expected_closed_day} actual={phase66g_live_status_day} path={phase66g_live_status_path})"
+        )
+    phase66g_trend_calc_day = _normalize_row_day(
+        phase66g_live_status_last_row,
+        ["trend_calc_date", "latest_available_date", "date"],
+        context=f"{context} canonical phase66g live status trend calc",
+    )
+    if phase66g_trend_calc_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical phase66g trend calculation day diverged "
+            f"(expected={expected_closed_day} actual={phase66g_trend_calc_day} path={phase66g_live_status_path})"
+        )
+
+    trend_history_path = _resolve_path(
+        product_snapshot.get("trend_history_source_path"),
+        context=f"{context} product_snapshot.trend_history_source_path",
+        root=repo_root,
+    )
+    trend_history_metadata_path = _resolve_source_metadata_path(
+        source_metadata,
+        key="trend_history_source_path",
+        context=context,
+        root=repo_root,
+    )
+    if trend_history_metadata_path.resolve() != trend_history_path.resolve():
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.source_metadata.trend_history_source_path.path diverged "
+            f"(expected={trend_history_path.resolve()} actual={trend_history_metadata_path.resolve()})"
+        )
+    trend_history_last_row = _read_csv_rows_required(
+        trend_history_path,
+        context=f"{context} canonical phase66g trend history",
+    )[-1]
+    trend_history_last_day = _normalize_row_day(
+        trend_history_last_row,
+        ["trend_calc_date", "date", "latest_available_date"],
+        context=f"{context} canonical phase66g trend history last_row",
+    )
+    if trend_history_last_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical phase66g trend history is stale versus authority snapshot "
+            f"(expected={expected_closed_day} actual={trend_history_last_day} path={trend_history_path})"
+        )
+
+    freshness_report_path = _resolve_source_metadata_path(
+        source_metadata,
+        key="freshness",
+        context=context,
+        root=repo_root,
+    )
+    freshness_target_metadata_path = _resolve_source_metadata_path(
+        source_metadata,
+        key="freshness_target_closed_day",
+        context=context,
+        root=repo_root,
+    )
+    if freshness_target_metadata_path.resolve() != freshness_report_path.resolve():
+        raise CurrentMainStrategyContractError(
+            f"{context} freshness metadata paths diverged "
+            f"(freshness={freshness_report_path.resolve()} freshness_target_closed_day={freshness_target_metadata_path.resolve()})"
+        )
+    freshness_payload = _read_json_required(freshness_report_path)
+    freshness_report_day = _normalize_iso_day_text(
+        freshness_payload.get("latest_closed_utc_date"),
+        context=f"{context} canonical freshness report latest_closed_utc_date",
+    )
+    if freshness_report_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical freshness report diverged from authority snapshot "
+            f"(expected={expected_closed_day} actual={freshness_report_day} path={freshness_report_path})"
+        )
+    freshness_status = str(freshness_payload.get("status") or "").strip().lower()
+    if freshness_status not in {"ok", "success", "current"}:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical freshness report is not green "
+            f"(status={freshness_status or 'missing'} path={freshness_report_path})"
+        )
+    freshness_errors = freshness_payload.get("errors")
+    if isinstance(freshness_errors, list) and freshness_errors:
+        raise CurrentMainStrategyContractError(
+            f"{context} canonical freshness report contains errors "
+            f"(path={freshness_report_path})"
+        )
+
+    return {
+        **current_strategy_validation,
+        "reference_strategy_model": reference_strategy_model,
+        "reference_paper_path": reference_paper_path,
+        "reference_paper_last_day": reference_paper_last_day,
+        "reference_live_status_path": reference_live_status_path,
+        "reference_live_status_day": reference_live_status_day,
+        "phase66g_live_status_path": phase66g_live_status_path,
+        "phase66g_live_status_day": phase66g_live_status_day,
+        "phase66g_trend_history_path": trend_history_path,
+        "phase66g_trend_history_day": trend_history_last_day,
+        "freshness_report_path": freshness_report_path,
+        "freshness_report_day": freshness_report_day,
+    }
 
 
 def resolve_homepage_current_strategy_sources(

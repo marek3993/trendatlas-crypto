@@ -9,6 +9,14 @@ import sys
 from pathlib import Path
 from typing import Any, Mapping
 
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from scripts.execution.current_strategy_root_contract import (
+    load_current_main_strategy_root_contract,
+    validate_authoritative_dependency_closure,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 PIPELINE_SCRIPT = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
@@ -129,6 +137,13 @@ def _resolve_required_app_publish_paths(
             "Authority latest_successful_snapshot missing "
             "app_product_snapshot.source_metadata.main_strategy_metrics"
         )
+    current_strategy_contract = load_current_main_strategy_root_contract(root=root)
+    dependency_closure = validate_authoritative_dependency_closure(
+        product_snapshot,
+        current_strategy_contract,
+        root=root,
+        context="Authority repo publish blocked:",
+    )
     return [
         _resolve_canonical_app_export_path(
             main_strategy_metrics_metadata.get("path"),
@@ -139,7 +154,32 @@ def _resolve_required_app_publish_paths(
             chart_source_paths.get("main_strategy"),
             root=root,
             field_name="app_product_snapshot.chart_source_paths.main_strategy",
-        )
+        ),
+        _resolve_canonical_app_export_path(
+            str(dependency_closure["reference_paper_path"]),
+            root=root,
+            field_name="app_product_snapshot.chart_source_paths.reference_strategy",
+        ),
+        _resolve_canonical_app_export_path(
+            str(dependency_closure["reference_live_status_path"]),
+            root=root,
+            field_name="app_export_contract.model_sources.reference_strategy.live_status_path",
+        ),
+        _resolve_canonical_app_export_path(
+            str(dependency_closure["phase66g_live_status_path"]),
+            root=root,
+            field_name="app_product_snapshot.source_metadata.trend_barometer_summary.path",
+        ),
+        _resolve_canonical_app_export_path(
+            str(dependency_closure["phase66g_trend_history_path"]),
+            root=root,
+            field_name="app_product_snapshot.trend_history_source_path",
+        ),
+        _resolve_canonical_app_export_path(
+            str(dependency_closure["freshness_report_path"]),
+            root=root,
+            field_name="app_product_snapshot.source_metadata.freshness.path",
+        ),
     ]
 
 

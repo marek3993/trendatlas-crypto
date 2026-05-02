@@ -1,31 +1,32 @@
 {
-  "raw_btc_last_date": "2026-04-11",
-  "phase60_last_date": "2026-04-11",
-  "phase62_last_date": "2026-04-11",
-  "phase63_last_date": "2026-04-11",
-  "phase66g_last_date": "2026-04-11",
-  "phase67j_last_date": "2026-04-11",
-  "canonical_app_export_last_date": "2026-04-11",
-  "canonical_live_status_latest_available_date": "2026-04-11",
+  "current_main_strategy_model_monitored": "phase68g_66g_1p25x_candidate",
+  "current_main_strategy_paper_path_monitored": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+  "current_main_strategy_live_status_path_monitored": "outputs/execution/app_exports/phase67j_live_status.csv",
+  "raw_btc_last_date": "2026-04-30",
+  "phase60_last_date": "2026-04-30",
+  "phase62_last_date": "2026-04-30",
+  "phase63_last_date": "2026-04-30",
+  "phase66g_last_date": "2026-04-30",
+  "phase67j_last_date": "2026-04-30",
+  "canonical_app_export_last_date": "2026-04-30",
+  "canonical_live_status_latest_available_date": "2026-04-30",
   "first_broken_stage": null,
   "first_missing_date": null,
   "path_resolution_diagnostics": [
     {
-      "context": "freshness:canonical_app_export",
-      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
-      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_paper.csv",
-      "reason": "preferred_canonical_app_export_exists",
-      "exists": true
+      "context": "freshness:current_main_strategy_paper",
+      "original_path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv",
+      "reason": "resolved_from_current_main_strategy_root_contract",
+      "exists": true,
+      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv"
     },
     {
-      "context": "freshness:canonical_live_status",
-      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+      "context": "freshness:current_main_strategy_live_status",
+      "original_path": "outputs/execution/app_exports/phase67j_live_status.csv",
       "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
-      "reason": "host_absolute_path",
-      "exists": true,
-      "artifact_key": "phase67j_live_status",
-      "selected_source": "canonical",
-      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv"
+      "reason": "repo_relative_path",
+      "exists": true
     },
     {
       "context": "freshness:phase60.base_file",

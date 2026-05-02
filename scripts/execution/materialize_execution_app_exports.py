@@ -27,6 +27,7 @@ from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
     resolve_validated_homepage_top_performance_source_contract,
     serialize_current_main_strategy_root_contract,
+    validate_authoritative_dependency_closure,
     validate_homepage_main_chart_source_path,
     validate_product_snapshot_current_strategy_contract,
 )
@@ -1935,6 +1936,8 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     main_paper_row = read_last_csv_row(main_paper_path)
     trend_row = read_optional_single_csv_row(PHASE66G_LIVE_STATUS_PATH)
     freshness_payload = read_json_optional(APP_FRESHNESS_REPORT_PATH)
+    if not freshness_payload:
+        fail(f"Missing or unreadable canonical freshness report: {APP_FRESHNESS_REPORT_PATH}")
     freshness_checks = build_canonical_product_freshness_checks(freshness_payload)
 
     metric_fields = list(HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS)
@@ -1977,7 +1980,54 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     ]
 
     strategy_last_closed_day = parse_iso_date_required(main_paper_row.get("date"), f"{main_paper_path} date")
-    freshness_target_closed_day = freshness_payload.get("latest_closed_utc_date") or strategy_last_closed_day
+    summary_latest_available_date = parse_iso_date_required(
+        summary_row.get("latest_available_date"),
+        f"{main_summary_path} latest_available_date",
+    )
+    if summary_latest_available_date != strategy_last_closed_day:
+        fail(
+            "Canonical main strategy metrics export diverged from canonical main strategy paper "
+            f"(metrics_latest_available_date={summary_latest_available_date} "
+            f"paper_last_date={strategy_last_closed_day})"
+        )
+    freshness_target_closed_day = parse_iso_date_required(
+        freshness_payload.get("latest_closed_utc_date"),
+        f"{APP_FRESHNESS_REPORT_PATH} latest_closed_utc_date",
+    )
+    if freshness_target_closed_day != strategy_last_closed_day:
+        fail(
+            "Canonical freshness report diverged from canonical main strategy paper "
+            f"(freshness_latest_closed_utc_date={freshness_target_closed_day} "
+            f"paper_last_date={strategy_last_closed_day})"
+        )
+    freshness_status = str(freshness_payload.get("status") or "").strip().lower()
+    if freshness_status not in {"ok", "success", "current"}:
+        fail(
+            "Canonical freshness report is not green "
+            f"(status={freshness_status or 'missing'} path={APP_FRESHNESS_REPORT_PATH})"
+        )
+    freshness_errors = freshness_payload.get("errors")
+    if isinstance(freshness_errors, list) and freshness_errors:
+        fail(
+            "Canonical freshness report contains errors "
+            f"(path={APP_FRESHNESS_REPORT_PATH})"
+        )
+    for check_name in (
+        "phase66g_paper_last_date",
+        "phase66g_live_latest_available_date",
+        "phase66g_trend_last_date",
+        "phase67j_paper_last_date",
+        "phase67j_live_latest_available_date",
+    ):
+        check_value = parse_iso_date_required(
+            freshness_checks.get(check_name),
+            f"{APP_FRESHNESS_REPORT_PATH} checks.{check_name}",
+        )
+        if check_value != freshness_target_closed_day:
+            fail(
+                "Canonical dependency closure day mismatch detected while building app_product_snapshot "
+                f"(check={check_name} expected={freshness_target_closed_day} actual={check_value})"
+            )
     app_export_generated_at_utc = utc_now_iso()
     main_strategy_metrics = normalize_homepage_main_strategy_metrics(
         summary_row,
@@ -2067,6 +2117,15 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
         "source_metadata": source_sections,
     }
     validate_homepage_snapshot_contract(snapshot, current_strategy_contract=current_strategy_contract)
+    try:
+        validate_authoritative_dependency_closure(
+            snapshot,
+            current_strategy_contract,
+            root=ROOT,
+            context="materialize_execution_app_exports build_product_snapshot blocked:",
+        )
+    except Exception as exc:
+        fail(str(exc))
     return snapshot
 
 

@@ -20,6 +20,11 @@ from scripts.execution.runtime_path_resolution import (
     format_path_resolution_message,
     resolve_runtime_path,
 )
+from scripts.execution.current_strategy_root_contract import (
+    load_current_main_strategy_root_contract,
+    validate_authoritative_dependency_closure,
+    validate_current_main_strategy_source_files_against_snapshot,
+)
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,6 +41,9 @@ MANIFEST_PATH = OUTPUT_DIR / "execution_source_contract_manifest.json"
 LOG_PATH = LOGS_DIR / "validate_execution_source_contract.log"
 LATEST_SUCCESSFUL_SNAPSHOT_PATH = AUTHORITY_DIR / "latest_successful_snapshot.json"
 LATEST_ATTEMPT_STATUS_PATH = AUTHORITY_DIR / "latest_attempt_status.json"
+STRATEGY_CHAIN_FRESHNESS_REPORT_PATH = (
+    ROOT / "outputs" / "validation" / "reports" / "strategy_chain_freshness_report.json"
+)
 
 REQUIRED_ARTIFACT_KEYS = [
     "authority_latest_successful_snapshot",
@@ -156,6 +164,10 @@ def inspect_artifact(path: Path) -> dict[str, Any]:
     result = safe_file_info(path)
     result["file_type"] = suffix or "unknown"
     return result
+
+
+def normalize_path_text(value: Any) -> str:
+    return str(value or "").replace("\\", "/").strip()
 
 
 def require_keys(payload: dict[str, Any], keys: list[str], context: str, errors: list[str]) -> None:
@@ -654,6 +666,40 @@ def validate_authority_latest_successful_snapshot() -> dict[str, Any]:
             source_path=LATEST_SUCCESSFUL_SNAPSHOT_PATH,
         )
         errors.extend(nested_report["errors"])
+        try:
+            current_strategy_contract = load_current_main_strategy_root_contract()
+            validate_current_main_strategy_source_files_against_snapshot(
+                app_product_snapshot,
+                current_strategy_contract,
+                context="authority_latest_successful_snapshot canonical source validation blocked:",
+            )
+            validate_authoritative_dependency_closure(
+                app_product_snapshot,
+                current_strategy_contract,
+                root=ROOT,
+                context="authority_latest_successful_snapshot closure validation blocked:",
+            )
+        except Exception as exc:
+            errors.append(str(exc))
+        strategy_last_closed_day = str(app_product_snapshot.get("strategy_last_closed_day") or "").strip()
+        freshness_target_closed_day = str(app_product_snapshot.get("freshness_target_closed_day") or "").strip()
+        target_closed_day_utc = str(payload.get("target_closed_day_utc") or "").strip()
+        latest_available_closed_utc_day = str(payload.get("latest_available_closed_utc_day") or "").strip()
+        if strategy_last_closed_day and target_closed_day_utc and strategy_last_closed_day != target_closed_day_utc:
+            errors.append(
+                "authority_latest_successful_snapshot target_closed_day_utc diverged from "
+                f"app_product_snapshot.strategy_last_closed_day (target={target_closed_day_utc} strategy={strategy_last_closed_day})"
+            )
+        if freshness_target_closed_day and target_closed_day_utc and freshness_target_closed_day != target_closed_day_utc:
+            errors.append(
+                "authority_latest_successful_snapshot target_closed_day_utc diverged from "
+                f"app_product_snapshot.freshness_target_closed_day (target={target_closed_day_utc} freshness={freshness_target_closed_day})"
+            )
+        if latest_available_closed_utc_day and target_closed_day_utc and latest_available_closed_utc_day != target_closed_day_utc:
+            errors.append(
+                "authority_latest_successful_snapshot latest_available_closed_utc_day diverged from "
+                f"target_closed_day_utc (target={target_closed_day_utc} latest_available={latest_available_closed_utc_day})"
+            )
 
     app_runtime_snapshot = payload.get("app_runtime_snapshot")
     nested_runtime_report = None
@@ -747,6 +793,19 @@ def validate_authority_latest_attempt_status() -> dict[str, Any]:
             source_path=LATEST_ATTEMPT_STATUS_PATH,
         )
         errors.extend(nested_report["errors"])
+        target_closed_day_utc = str(payload.get("target_closed_day_utc") or "").strip()
+        latest_available_closed_utc_date = str(app_runtime_snapshot.get("latest_available_closed_utc_date") or "").strip()
+        latest_strategy_artifact_date = str(app_runtime_snapshot.get("latest_strategy_artifact_date") or "").strip()
+        if latest_available_closed_utc_date and target_closed_day_utc and latest_available_closed_utc_date != target_closed_day_utc:
+            errors.append(
+                "authority_latest_attempt_status target_closed_day_utc diverged from "
+                f"app_runtime_snapshot.latest_available_closed_utc_date (target={target_closed_day_utc} runtime={latest_available_closed_utc_date})"
+            )
+        if latest_strategy_artifact_date and target_closed_day_utc and latest_strategy_artifact_date != target_closed_day_utc:
+            errors.append(
+                "authority_latest_attempt_status target_closed_day_utc diverged from "
+                f"app_runtime_snapshot.latest_strategy_artifact_date (target={target_closed_day_utc} strategy={latest_strategy_artifact_date})"
+            )
 
     app_product_snapshot = payload.get("app_product_snapshot")
     if isinstance(app_product_snapshot, dict):
@@ -756,10 +815,83 @@ def validate_authority_latest_attempt_status() -> dict[str, Any]:
             source_path=LATEST_ATTEMPT_STATUS_PATH,
         )
         errors.extend(nested_product_report["errors"])
+        try:
+            current_strategy_contract = load_current_main_strategy_root_contract()
+            validate_current_main_strategy_source_files_against_snapshot(
+                app_product_snapshot,
+                current_strategy_contract,
+                context="authority_latest_attempt_status canonical source validation blocked:",
+            )
+            validate_authoritative_dependency_closure(
+                app_product_snapshot,
+                current_strategy_contract,
+                root=ROOT,
+                context="authority_latest_attempt_status closure validation blocked:",
+            )
+        except Exception as exc:
+            errors.append(str(exc))
+        strategy_last_closed_day = str(app_product_snapshot.get("strategy_last_closed_day") or "").strip()
+        target_closed_day_utc = str(payload.get("target_closed_day_utc") or "").strip()
+        if strategy_last_closed_day and target_closed_day_utc and strategy_last_closed_day != target_closed_day_utc:
+            errors.append(
+                "authority_latest_attempt_status target_closed_day_utc diverged from "
+                f"app_product_snapshot.strategy_last_closed_day (target={target_closed_day_utc} strategy={strategy_last_closed_day})"
+            )
 
     return {
         "path": str(LATEST_ATTEMPT_STATUS_PATH.resolve()),
         "inspection": inspect_json(LATEST_ATTEMPT_STATUS_PATH),
+        "errors": errors,
+        "valid": not errors,
+    }
+
+
+def validate_strategy_chain_freshness_monitoring() -> dict[str, Any]:
+    errors: list[str] = []
+    inspection = inspect_json(STRATEGY_CHAIN_FRESHNESS_REPORT_PATH)
+    if not STRATEGY_CHAIN_FRESHNESS_REPORT_PATH.exists():
+        errors.append(
+            "strategy_chain_freshness_report.json is missing; monitoring target cannot be verified fail-closed"
+        )
+        return {
+            "path": str(STRATEGY_CHAIN_FRESHNESS_REPORT_PATH.resolve()),
+            "inspection": inspection,
+            "errors": errors,
+            "valid": False,
+        }
+
+    payload = read_json(STRATEGY_CHAIN_FRESHNESS_REPORT_PATH)
+    current_strategy_contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
+    expected_model = str(current_strategy_contract["main_strategy_model"]).strip()
+    expected_paper_path = normalize_path_text(current_strategy_contract["canonical_paper_source_path"])
+
+    monitored_model = str(payload.get("current_main_strategy_model_monitored") or "").strip()
+    if not monitored_model:
+        errors.append(
+            "strategy_chain_freshness_report.json missing current_main_strategy_model_monitored"
+        )
+    elif monitored_model != expected_model:
+        errors.append(
+            "strategy_chain_freshness_report.json monitored model diverged from SSOT "
+            f"(expected={expected_model} actual={monitored_model})"
+        )
+
+    monitored_paper_path = normalize_path_text(
+        payload.get("current_main_strategy_paper_path_monitored")
+    )
+    if not monitored_paper_path:
+        errors.append(
+            "strategy_chain_freshness_report.json missing current_main_strategy_paper_path_monitored"
+        )
+    elif monitored_paper_path != expected_paper_path:
+        errors.append(
+            "strategy_chain_freshness_report.json monitored paper path diverged from SSOT "
+            f"(expected={expected_paper_path} actual={monitored_paper_path})"
+        )
+
+    return {
+        "path": str(STRATEGY_CHAIN_FRESHNESS_REPORT_PATH.resolve()),
+        "inspection": inspection,
         "errors": errors,
         "valid": not errors,
     }
@@ -818,11 +950,13 @@ def main() -> None:
         "authority_latest_successful_snapshot": validate_authority_latest_successful_snapshot(),
         "authority_latest_attempt_status": validate_authority_latest_attempt_status(),
     }
+    freshness_monitoring_report = validate_strategy_chain_freshness_monitoring()
     authority_errors = [
         error
         for snapshot_report in authority_reports.values()
         for error in snapshot_report.get("errors", [])
     ]
+    authority_errors.extend(freshness_monitoring_report.get("errors", []))
 
     hard_required_for_execution = list(REQUIRED_ARTIFACT_KEYS)
 
@@ -843,6 +977,7 @@ def main() -> None:
         "hard_required_missing": hard_required_missing,
         "artifact_reports": artifact_reports,
         "authority_reports": authority_reports,
+        "freshness_monitoring_report": freshness_monitoring_report,
         "contract_status": "valid" if not hard_required_missing else "invalid",
         "notes": [
             "This validator checks existence and basic shape only.",
@@ -861,6 +996,7 @@ def main() -> None:
         "hard_required_missing_count": len(hard_required_missing),
         "authority_latest_successful_snapshot_valid": authority_reports["authority_latest_successful_snapshot"]["valid"],
         "authority_latest_attempt_status_valid": authority_reports["authority_latest_attempt_status"]["valid"],
+        "strategy_chain_freshness_monitoring_valid": freshness_monitoring_report["valid"],
         "authority_error_count": len(authority_errors),
         "contract_status": report["contract_status"],
         "ready_for_intent_builder": len(hard_required_missing) == 0,

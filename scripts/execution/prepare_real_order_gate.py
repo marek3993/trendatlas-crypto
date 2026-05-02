@@ -22,6 +22,9 @@ MODE_CONFIG_PATH = CONFIG_DIR / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = CONFIG_DIR / "live_order_policy.json"
 INTENT_PATH = INTENTS_DIR / "latest_execution_intent.json"
 SNAPSHOT_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot.json"
+AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH = (
+    OUTPUTS_DIR / "authority" / "latest_successful_snapshot.json"
+)
 
 DECISION_PATH = LIVE_GATE_DIR / "latest_real_order_gate_decision.json"
 QUALITY_PATH = LIVE_GATE_DIR / "latest_real_order_gate_quality.json"
@@ -74,33 +77,52 @@ def extract_open_orders_count(snapshot: dict[str, Any]) -> int:
     return 0
 
 
+def normalize_iso_day_text(value: Any, *, context: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        raise ValueError(f"{context} is missing")
+    if "T" in text:
+        text = text.split("T", 1)[0]
+    if len(text) != 10:
+        raise ValueError(f"{context} is not an ISO day: {value}")
+    return text
 
-def extract_approval_gate_status() -> str:
-    import csv
 
-    live_status_path = ROOT / "outputs" / "execution" / "app_exports" / "phase67j_live_status.csv"
-    if live_status_path.exists():
-        try:
-            with live_status_path.open(encoding="utf-8-sig", newline="") as f:
-                rows = list(csv.DictReader(f))
-            if rows:
-                candidate = str(rows[-1].get("approval_gate_status", "")).strip()
-                if candidate:
-                    return candidate
-        except Exception:
-            pass
-
-    previous_gate_path = ROOT / "outputs" / "execution" / "live_gate" / "latest_real_order_gate_decision.json"
-    if previous_gate_path.exists():
-        try:
-            prev_gate = read_json(previous_gate_path)
-            candidate = str(prev_gate.get("approval_gate_status", "")).strip()
-            if candidate:
-                return candidate
-        except Exception:
-            pass
-
-    return "approved_and_applied"
+def extract_authority_approval_gate_context(
+    *,
+    expected_strategy_model: str,
+    expected_closed_day: str,
+) -> dict[str, Any]:
+    payload = read_json(AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH)
+    product_snapshot = payload.get("app_product_snapshot")
+    if not isinstance(product_snapshot, dict):
+        raise ValueError(
+            "authority latest_successful_snapshot missing app_product_snapshot"
+        )
+    live_public_state = product_snapshot.get("live_public_state")
+    if not isinstance(live_public_state, dict):
+        raise ValueError(
+            "authority latest_successful_snapshot missing app_product_snapshot.live_public_state"
+        )
+    approval_gate_status = str(live_public_state.get("approval_gate_status") or "").strip()
+    strategy_model = str(product_snapshot.get("main_strategy_model") or "").strip()
+    product_closed_day = normalize_iso_day_text(
+        product_snapshot.get("strategy_last_closed_day"),
+        context="authority latest_successful_snapshot app_product_snapshot.strategy_last_closed_day",
+    )
+    target_closed_day = normalize_iso_day_text(
+        payload.get("target_closed_day_utc"),
+        context="authority latest_successful_snapshot target_closed_day_utc",
+    )
+    return {
+        "approval_gate_status": approval_gate_status,
+        "strategy_model": strategy_model,
+        "product_closed_day": product_closed_day,
+        "target_closed_day": target_closed_day,
+        "expected_strategy_model": expected_strategy_model,
+        "expected_closed_day": expected_closed_day,
+        "source_path": str(AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH.resolve()),
+    }
 
 
 def parse_args() -> argparse.Namespace:
@@ -144,7 +166,7 @@ def main() -> None:
         if str(x).strip()
     }
 
-    signal_id = str(intent.get("signal_id", "")).strip()
+    signal_id = str(intent.get("signal_id") or "").strip()
     target_asset = normalize_asset(intent.get("target_asset"))
     stale_signal = bool(intent.get("stale_signal", False))
     guardrail_flags = intent.get("guardrail_flags", {}) if isinstance(intent.get("guardrail_flags"), dict) else {}
@@ -152,7 +174,19 @@ def main() -> None:
     duplicate_order_risk = bool(intent.get("duplicate_order_risk", False))
     leverage_live_truth_allowed = bool(guardrail_flags.get("leverage_live_truth_allowed", False))
 
-    approval_gate_status = extract_approval_gate_status()
+    signal_as_of_source = str(intent.get("as_of_source") or "").strip()
+    authority_approval_context: dict[str, Any] | None = None
+    approval_source_error: str | None = None
+    try:
+        authority_approval_context = extract_authority_approval_gate_context(
+            expected_strategy_model=str(intent.get("strategy_model") or "").strip(),
+            expected_closed_day=signal_as_of_source,
+        )
+    except Exception as exc:
+        approval_source_error = str(exc)
+    approval_gate_status = (
+        str((authority_approval_context or {}).get("approval_gate_status") or "").strip()
+    )
     open_orders_count = extract_open_orders_count(snapshot)
     account_address = str(snapshot.get("account_address", "")).strip()
 
@@ -170,7 +204,18 @@ def main() -> None:
         "duplicate_order_risk": duplicate_order_risk,
         "open_orders_present": open_orders_count > 0,
         "manual_approval_required": manual_approval_required,
+        "approval_source_readable": approval_source_error is None,
         "approval_gate_status": approval_gate_status,
+        "approval_status_present": bool(approval_gate_status),
+        "approval_source_model_match": (
+            authority_approval_context is not None
+            and str(authority_approval_context.get("strategy_model") or "").strip() == str(intent.get("strategy_model") or "").strip()
+        ),
+        "approval_source_day_match": (
+            authority_approval_context is not None
+            and str(authority_approval_context.get("product_closed_day") or "").strip() == signal_as_of_source
+            and str(authority_approval_context.get("target_closed_day") or "").strip() == signal_as_of_source
+        ),
         "approval_status_allowed": approval_gate_status in allowed_approval_gate_statuses,
         "leverage_live_truth_allowed": leverage_live_truth_allowed,
         "max_order_notional_usd": max_order_notional_usd,
@@ -197,6 +242,14 @@ def main() -> None:
         block_reasons.append("kill_switch_enabled")
     if not checks["account_address_present"]:
         block_reasons.append("missing_account_address")
+    if not checks["approval_source_readable"]:
+        block_reasons.append(f"approval_source_unreadable:{approval_source_error}")
+    if not checks["approval_status_present"]:
+        block_reasons.append("missing_approval_gate_status")
+    if not checks["approval_source_model_match"]:
+        block_reasons.append("approval_source_model_mismatch")
+    if not checks["approval_source_day_match"]:
+        block_reasons.append("approval_source_day_mismatch")
     if checks["manual_approval_required"]:
         block_reasons.append("manual_approval_required")
     if not checks["approval_status_allowed"]:
@@ -239,6 +292,7 @@ def main() -> None:
             "live_order_policy_path": str(args.live_order_policy_path.resolve()),
             "intent_path": str(args.intent_path.resolve()),
             "snapshot_path": str(args.snapshot_path.resolve()),
+            "authority_latest_successful_snapshot_path": str(AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH.resolve()),
         },
     }
 

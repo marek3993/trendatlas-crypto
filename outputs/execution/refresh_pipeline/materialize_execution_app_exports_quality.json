@@ -3,13 +3,15 @@
   "missing_registry_key_count": 0,
   "missing_legacy_source_count": 0,
   "hard_required_missing_count": 0,
-  "copied_count": 0,
+  "copied_count": 5,
   "transformed_count": 4,
-  "already_present_count": 5,
+  "already_present_count": 0,
   "contract_ready_after_materialization": true,
   "app_live_mode_fields_written": true,
   "phase68i_summary_written": true,
   "phase68i_authoritative_net_compare_export_written": true,
+  "phase68g_main_strategy_paper_alias_written": true,
+  "phase68g_main_strategy_authoritative_export_alias_written": true,
   "app_product_snapshot_written": true,
   "app_runtime_snapshot_written": true
 }

@@ -1,7 +1,7 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-04-18T10:35:48Z",
-  "signal_id": "phase68g_66g_1p25x_candidate::2026-04-17::CASH",
+  "generated_at_utc": "2026-05-02T13:39:41Z",
+  "signal_id": "phase68g_66g_1p25x_candidate::2026-04-30::CASH",
   "target_asset": "CASH",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
@@ -24,7 +24,11 @@
     "duplicate_order_risk": false,
     "open_orders_present": false,
     "manual_approval_required": false,
+    "approval_source_readable": true,
     "approval_gate_status": "approved_and_applied",
+    "approval_status_present": true,
+    "approval_source_model_match": true,
+    "approval_source_day_match": true,
     "approval_status_allowed": true,
     "leverage_live_truth_allowed": false,
     "max_order_notional_usd": 250.0,
@@ -40,6 +44,7 @@
     "mode_config_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
     "live_order_policy_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json",
     "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
-    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json"
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+    "authority_latest_successful_snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json"
   }
 }

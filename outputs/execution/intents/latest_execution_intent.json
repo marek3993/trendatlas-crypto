@@ -1,14 +1,14 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-04-12T22:10:05Z",
-  "as_of_source": "2026-04-10",
+  "generated_at_utc": "2026-05-02T13:39:37Z",
+  "as_of_source": "2026-04-30",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
   "kill_switch_required": true,
   "strategy_model": "phase68g_66g_1p25x_candidate",
   "reference_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
-  "signal_id": "phase68g_66g_1p25x_candidate::2026-04-10::CASH",
+  "signal_id": "phase68g_66g_1p25x_candidate::2026-04-30::CASH",
   "target_asset": "CASH",
   "target_side": "long_only_hold_selected_asset_or_cash",
   "target_regime": "Držíme CASH",
@@ -26,38 +26,21 @@
     "leverage_live_truth_allowed": false
   },
   "source_paths": {
-    "strategy_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\papers\\phase68g_66g_1p25x_candidate_paper.csv",
+    "strategy_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv",
     "strategy_live_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
     "reference_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
-    "app_freshness_report": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json"
+    "app_freshness_report": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
+    "authority_latest_successful_snapshot": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
+    "authority_latest_attempt_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json"
   },
   "path_resolution_diagnostics": [
     {
-      "context": "registry:phase67j_winner_paper",
-      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
-      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
-      "reason": "host_absolute_path",
-      "exists": true,
-      "artifact_key": "phase67j_winner_paper",
-      "selected_source": "canonical",
-      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv"
-    },
-    {
       "context": "contract:phase68g_66g_1p25x_candidate.paper_path",
-      "original_path": "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p25x_candidate_paper.csv",
-      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase68g_portfolio_exposure_leverage_validation\\papers\\phase68g_66g_1p25x_candidate_paper.csv",
-      "reason": "repo_relative_path",
-      "exists": true
-    },
-    {
-      "context": "registry:phase67j_live_status",
-      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
-      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
-      "reason": "host_absolute_path",
+      "original_path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv",
+      "reason": "resolved_from_current_main_strategy_root_contract",
       "exists": true,
-      "artifact_key": "phase67j_live_status",
-      "selected_source": "canonical",
-      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv"
+      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv"
     },
     {
       "context": "contract:phase68g_66g_1p25x_candidate.live_status_path",
@@ -67,16 +50,6 @@
       "exists": true
     },
     {
-      "context": "registry:phase66g_core_paper",
-      "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
-      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
-      "reason": "host_absolute_path",
-      "exists": true,
-      "artifact_key": "phase66g_core_paper",
-      "selected_source": "canonical",
-      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv"
-    },
-    {
       "context": "contract:phase67j_no_neo_main.paper_path",
       "original_path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
       "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
@@ -84,13 +57,11 @@
       "exists": true
     },
     {
-      "context": "registry:app_freshness_report",
+      "context": "canonical:app_freshness_report",
       "original_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
       "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
-      "reason": "host_absolute_path",
+      "reason": "canonical_execution_freshness_report_path",
       "exists": true,
-      "artifact_key": "app_freshness_report",
-      "selected_source": "canonical",
       "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json"
     }
   ],
@@ -108,15 +79,15 @@
   },
   "source_samples": {
     "strategy_last_paper_row": {
-      "date": "2026-04-10",
+      "date": "2026-04-30",
       "base_ret": "0.0",
       "overlay_candidate_raw": "",
-      "baseline_held_asset": "BASELINE_RISK",
-      "baseline_asset_source": "ret_fallback:strategy_return",
+      "baseline_held_asset": "CASH",
+      "baseline_asset_source": "asset_col:weekly_authorized_asset",
       "overlay_candidate_clean": "",
       "use_baseline_exposure": "True",
-      "portfolio_held_asset": "BASELINE_RISK",
-      "is_exposed": "True",
+      "portfolio_held_asset": "CASH",
+      "is_exposed": "False",
       "trend_score": "-0.1666666666666666",
       "trend_state_label": "pod_buy_hranicou",
       "buy_threshold": "0.0",
@@ -124,17 +95,17 @@
       "crossed_up_today": "False",
       "crossed_down_today": "False",
       "asset_transition_day": "False",
-      "days_in_position": "468",
+      "days_in_position": "488",
       "switch_day_forced_1x": "False",
       "entry_buffer_day_forced_1x": "False",
-      "baseline_equity_curve": "366.3880497850815",
-      "baseline_dd_lookback": "0.0",
+      "baseline_equity_curve": "357.6796961380159",
+      "baseline_dd_lookback": "-0.0365832650521148",
       "stress_block_active": "False",
       "tradable_transition_day": "False",
       "tradable_governed_asset": "",
-      "cash_day": "False",
+      "cash_day": "True",
       "trend_gate_pass": "False",
-      "trend_block_day": "True",
+      "trend_block_day": "False",
       "stress_block_day": "False",
       "leverage_eligible": "False",
       "target_leverage": "1.25",
@@ -143,9 +114,10 @@
       "tradable_slippage_cost": "0.0",
       "realistic_ret_gross": "0.0",
       "realistic_ret": "0.0",
-      "equity_curve": "1417.9605922561277",
+      "equity_curve": "477.2804033345004",
+      "equity": "477.2804033345004",
       "leverage_active": "False",
-      "leverage_state_reason": "trend_gate",
+      "leverage_state_reason": "cash",
       "trend_activation_threshold": "0.1",
       "stress_off_threshold": "-0.08",
       "stress_on_threshold": "-0.04",
@@ -153,14 +125,14 @@
     },
     "strategy_last_live_status_row": {
       "model": "phase67j_no_neo_main",
-      "latest_available_date": "2026-04-10",
+      "latest_available_date": "2026-04-30",
       "current_asset": "CORE",
       "held_asset_public": "CASH",
       "held_state_label": "Držíme CASH",
       "execution_state": "CASH",
-      "next_rebalance_date": "2026-04-12",
+      "next_rebalance_date": "2026-05-03",
       "dropped_assets": "NEO",
-      "final_shortlist": "APT,DOGE,HBAR,LINK,STX",
+      "final_shortlist": "APT,DOGE,HBAR,LINK,LUNC,MORPHO,RUNE,SKY,STX",
       "live_truth_mode": "phase68g_66g_1p25x_candidate",
       "execution_profile": "static_1p25x",
       "leverage_mode": "static_1p25x",
@@ -169,9 +141,9 @@
       "approval_gate_status": "approved_and_applied"
     },
     "reference_last_paper_row": {
-      "date": "2026-04-04",
+      "date": "2026-04-30",
       "strategy_return": "0.0",
-      "equity": "1038.9375764729098",
+      "equity": "359.4420345071784",
       "executed_regime": "CASH",
       "executed_position": "CASH",
       "chosen_asset": "",
@@ -180,6 +152,7 @@
   },
   "notes": [
     "Deterministic intent from official execution app exports.",
+    "Authority day alignment is required across the full canonical dependency closure.",
     "Uses the current strategy contract from source_of_truth/export_contract.json.",
     "Supports current canonical export schema with chosen_asset / held_asset_public / execution_state.",
     "No order sizing logic yet.",

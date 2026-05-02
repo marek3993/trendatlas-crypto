@@ -17,6 +17,7 @@ if str(SCRIPTS_DIR) not in sys.path:
 
 from freshness_lineage import parse_iso_date, read_last_date, read_single_csv_value, write_json
 from scripts.execution.runtime_path_resolution import resolve_registry_artifact_path, resolve_runtime_path
+from scripts.execution.current_strategy_root_contract import load_current_main_strategy_root_contract
 
 
 REPORT_PATH = ROOT / "outputs" / "validation" / "reports" / "strategy_chain_freshness_report.json"
@@ -26,13 +27,13 @@ PHASE63_MANIFEST_PATH = ROOT / "outputs" / "phase63_btc_participation_overlay" /
 PHASE66G_MANIFEST_PATH = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_manifest.json"
 PHASE67J_MANIFEST_PATH = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_manifest.json"
 PATHS_REGISTRY_PATH = ROOT / "source_of_truth" / "paths_registry.json"
+EXPORT_CONTRACT_PATH = ROOT / "source_of_truth" / "export_contract.json"
 DEFAULT_PHASE60_PAPER = (
     ROOT
     / "outputs"
     / "phase60_selective_restore_robustness"
     / "phase60_restore_trx_sol_base_paper.csv"
 )
-PHASE68I_CANONICAL_APP_EXPORT_PATH = ROOT / "outputs" / "execution" / "app_exports" / "phase68i_dynamic_ladder_candidate_paper.csv"
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -191,6 +192,51 @@ def read_phase67j_last_date(phase67j_manifest: dict[str, Any]) -> str | None:
     return manifest_lineage_value(phase67j_manifest, "output_last_date")
 
 
+def resolve_current_main_strategy_monitoring_targets(
+    *,
+    diagnostics: list[dict[str, Any]],
+) -> tuple[str, Path, Path]:
+    current_strategy_contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
+    export_contract = read_json(EXPORT_CONTRACT_PATH)
+    app_export_contract = export_contract.get("app_export_contract")
+    if not isinstance(app_export_contract, dict):
+        raise ValueError("export_contract.json missing app_export_contract object")
+    model_sources = app_export_contract.get("model_sources")
+    if not isinstance(model_sources, dict):
+        raise ValueError("export_contract.json missing app_export_contract.model_sources object")
+
+    main_strategy_model = str(current_strategy_contract["main_strategy_model"]).strip()
+    main_paper_path = Path(current_strategy_contract["paper_path"])
+    diagnostics.append(
+        {
+            "context": "freshness:current_main_strategy_paper",
+            "original_path": str(current_strategy_contract["canonical_paper_source_path"]),
+            "resolved_path": str(main_paper_path.resolve()),
+            "reason": "resolved_from_current_main_strategy_root_contract",
+            "exists": main_paper_path.exists(),
+            "selected_source_path": str(main_paper_path.resolve()),
+        }
+    )
+
+    model_source = model_sources.get(main_strategy_model)
+    if not isinstance(model_source, dict):
+        raise ValueError(
+            f"export_contract.json missing model_sources entry for {main_strategy_model}"
+        )
+    live_status_raw = model_source.get("live_status_path")
+    if not isinstance(live_status_raw, str) or not live_status_raw.strip():
+        raise ValueError(
+            f"export_contract.json missing {main_strategy_model}.live_status_path"
+        )
+    main_live_status_path, live_status_diag = resolve_runtime_path(
+        live_status_raw,
+        root=ROOT,
+        context="freshness:current_main_strategy_live_status",
+    )
+    diagnostics.append(live_status_diag)
+    return main_strategy_model, main_paper_path, main_live_status_path
+
+
 def determine_first_break(stage_dates: list[tuple[str, str | None]]) -> tuple[str | None, str | None]:
     previous_date = None
 
@@ -219,33 +265,11 @@ def build_report() -> dict[str, Any]:
     artifacts = paths_registry.get("artifacts", {})
     path_resolution_diagnostics: list[dict[str, Any]] = []
 
-    if PHASE68I_CANONICAL_APP_EXPORT_PATH.exists():
-        canonical_app_export_path = PHASE68I_CANONICAL_APP_EXPORT_PATH
-        path_resolution_diagnostics.append(
-            {
-                "context": "freshness:canonical_app_export",
-                "original_path": str(PHASE68I_CANONICAL_APP_EXPORT_PATH),
-                "resolved_path": str(PHASE68I_CANONICAL_APP_EXPORT_PATH),
-                "reason": "preferred_canonical_app_export_exists",
-                "exists": True,
-            }
+    current_main_strategy_model, canonical_app_export_path, canonical_live_status_path = (
+        resolve_current_main_strategy_monitoring_targets(
+            diagnostics=path_resolution_diagnostics,
         )
-    else:
-        canonical_app_export_path, canonical_app_export_diag = resolve_registry_artifact_path(
-            "phase67j_winner_paper",
-            artifacts["phase67j_winner_paper"],
-            root=ROOT,
-            context="freshness:canonical_app_export",
-        )
-        path_resolution_diagnostics.append(canonical_app_export_diag)
-
-    canonical_live_status_path, canonical_live_status_diag = resolve_registry_artifact_path(
-        "phase67j_live_status",
-        artifacts["phase67j_live_status"],
-        root=ROOT,
-        context="freshness:canonical_live_status",
     )
-    path_resolution_diagnostics.append(canonical_live_status_diag)
 
     raw_btc_last_date = read_last_date(BTC_RAW_PATH)
     phase60_last_date = read_phase60_last_date(
@@ -280,6 +304,9 @@ def build_report() -> dict[str, Any]:
     )
 
     return {
+        "current_main_strategy_model_monitored": current_main_strategy_model,
+        "current_main_strategy_paper_path_monitored": str(canonical_app_export_path.resolve().relative_to(ROOT).as_posix()),
+        "current_main_strategy_live_status_path_monitored": str(canonical_live_status_path.resolve().relative_to(ROOT).as_posix()),
         "raw_btc_last_date": raw_btc_last_date,
         "phase60_last_date": phase60_last_date,
         "phase62_last_date": phase62_last_date,
