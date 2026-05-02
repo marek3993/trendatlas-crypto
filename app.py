@@ -21,6 +21,7 @@ if str(ROOT) not in sys.path:
 
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import streamlit as st
 from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
@@ -104,12 +105,19 @@ TEXT = {
         "trend_cross_none": "Bez prechodu k dátumu výpočtu",
         "na": "Nedostupné",
         "chart_title": "Vývoj kapitálu",
-        "chart_note": "Graf ukazuje hlavnú stratégiu a BTC benchmark bez referenčnej stratégie.",
-        "chart_cash_periods_note": "Jemne zafarbené pásy označujú dni bez trhovej expozície (CASH).",
+        "chart_note": "Horná krivka ukazuje výkon hlavného modelu proti BTC benchmarku. Spodný pás ukazuje, čo stratégia reálne držala v čase.",
+        "chart_regime_strip_note": "Rovné úseky počas stavu CASH znamenajú, že model stál mimo trhu. Nejde o zaseknutý ani chýbajúci graf.",
         "chart_current_regime_label": "Aktuálny režim",
         "chart_current_regime_cash": "CASH / bez trhovej expozície. Rovnejšie úseky sú v tomto stave očakávané.",
         "chart_current_regime_exposed": "Expozícia v aktíve {asset}.",
         "chart_year": "Začať graf od roku",
+        "chart_performance_axis": "Indexovaný rast",
+        "chart_state_axis": "Držaný stav",
+        "chart_state_cash": "CASH",
+        "chart_state_base": "BASE",
+        "chart_state_btc": "BTC",
+        "chart_state_alt": "ALT",
+        "chart_state_period": "Držané",
         "performance_title": "Výkon na prvý pohľad",
         "performance_fee_note": "Výsledky sú už po započítaní poplatkov Hyperliquid.",
         "ops_title": "Prevádzkové metriky",
@@ -303,12 +311,19 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "trend_cross_none": "No cross on calc date",
         "na": "Unavailable",
         "chart_title": "Capital curve",
-        "chart_note": "The chart shows the main strategy and the BTC benchmark, without the reference strategy.",
-        "chart_cash_periods_note": "Subtle shaded bands mark CASH / no market exposure days.",
+        "chart_note": "The top line shows the main model versus the BTC benchmark. The lower strip shows what the strategy was actually holding through time.",
+        "chart_regime_strip_note": "Flat sections during CASH mean the model stayed out of the market. This is intentional, not broken chart data.",
         "chart_current_regime_label": "Current regime",
         "chart_current_regime_cash": "CASH / no market exposure. Flatter sections are expected in this state.",
         "chart_current_regime_exposed": "{asset} exposure.",
         "chart_year": "Start chart from year",
+        "chart_performance_axis": "Indexed growth",
+        "chart_state_axis": "Held state",
+        "chart_state_cash": "CASH",
+        "chart_state_base": "BASE",
+        "chart_state_btc": "BTC",
+        "chart_state_alt": "ALT",
+        "chart_state_period": "Held",
         "performance_title": "Performance at a glance",
         "performance_fee_note": "Results already include Hyperliquid fees.",
         "ops_title": "Operational metrics",
@@ -3188,6 +3203,68 @@ def homepage_cash_mask(df: pd.DataFrame) -> pd.Series:
     return pd.Series(False, index=df.index, dtype=bool)
 
 
+def normalize_homepage_chart_asset_token(value: Any) -> str:
+    if value is None:
+        return ""
+    numeric = as_float(value)
+    if numeric is not None:
+        if math.isclose(numeric, 0.0, abs_tol=1e-12):
+            return "CASH"
+        return ""
+    return str(value).strip().upper()
+
+
+def homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
+    state_df = df.copy().reset_index(drop=True)
+    state_df["ts"] = pd.to_datetime(state_df["ts"], errors="coerce").dt.normalize()
+    cash_mask = homepage_cash_mask(state_df).reset_index(drop=True)
+    bucket_values: list[str] = []
+    label_values: list[str] = []
+
+    candidate_columns = [
+        "portfolio_held_asset",
+        "held_asset",
+        "executed_position",
+        "tradable_governed_asset",
+        "baseline_held_asset",
+        "executed_regime",
+    ]
+
+    for idx, row in state_df.iterrows():
+        asset_token = ""
+        for col in candidate_columns:
+            if col not in state_df.columns:
+                continue
+            candidate = normalize_homepage_chart_asset_token(row.get(col))
+            if candidate in {"", "NONE", "NULL"}:
+                continue
+            asset_token = candidate
+            break
+
+        if cash_mask.iloc[idx]:
+            bucket = "CASH"
+            label = t(lang, "chart_state_cash")
+        elif asset_token in {"BASE", "BASELINE", "BASELINE_RISK", "EARLY_RISK", "FULL_RISK"}:
+            bucket = "BASE"
+            label = t(lang, "chart_state_base")
+        elif asset_token == "BTC":
+            bucket = "BTC"
+            label = t(lang, "chart_state_btc")
+        elif asset_token in {"", "CASH", "USD", "USDT", "NONE", "NULL", "ZERO", "ZERO_EXPOSURE"}:
+            bucket = "CASH"
+            label = t(lang, "chart_state_cash")
+        else:
+            bucket = "ALT"
+            label = f"{t(lang, 'chart_state_alt')} · {prettify_asset_public(asset_token, lang)}"
+
+        bucket_values.append(bucket)
+        label_values.append(label)
+
+    state_df["state_bucket"] = bucket_values
+    state_df["state_label"] = label_values
+    return state_df[["ts", "state_bucket", "state_label"]].dropna(subset=["ts"]).copy()
+
+
 def cash_regime_spans(dates: pd.Series, cash_mask: pd.Series) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
     ts = pd.to_datetime(dates, errors="coerce").dt.normalize().reset_index(drop=True)
     mask = pd.Series(cash_mask, index=dates.index).fillna(False).astype(bool).reset_index(drop=True)
@@ -3209,6 +3286,54 @@ def cash_regime_spans(dates: pd.Series, cash_mask: pd.Series) -> list[tuple[pd.T
         spans.append((start, prev))
 
     return spans
+
+
+def homepage_chart_state_periods(state_df: pd.DataFrame) -> list[dict[str, Any]]:
+    periods: list[dict[str, Any]] = []
+    if state_df.empty:
+        return periods
+
+    current_bucket: str | None = None
+    current_label: str | None = None
+    start: pd.Timestamp | None = None
+    prev: pd.Timestamp | None = None
+
+    for row in state_df.itertuples(index=False):
+        dt = pd.to_datetime(row.ts, errors="coerce")
+        if pd.isna(dt):
+            continue
+
+        bucket = str(row.state_bucket)
+        label = str(row.state_label)
+        if current_bucket is None:
+            current_bucket = bucket
+            current_label = label
+            start = dt
+        elif bucket != current_bucket or label != current_label:
+            periods.append(
+                {
+                    "bucket": current_bucket,
+                    "label": current_label,
+                    "start": start,
+                    "end": prev if prev is not None else dt,
+                }
+            )
+            current_bucket = bucket
+            current_label = label
+            start = dt
+        prev = dt
+
+    if current_bucket is not None and current_label is not None and start is not None and prev is not None:
+        periods.append(
+            {
+                "bucket": current_bucket,
+                "label": current_label,
+                "start": start,
+                "end": prev,
+            }
+        )
+
+    return periods
 
 
 def build_homepage_chart_context_note(live_public_state: dict[str, Any], lang: str) -> str:
@@ -3278,29 +3403,28 @@ def make_capital_chart(
     reference_df: pd.DataFrame | None,
     btc_df: pd.DataFrame,
     year: int,
+    lang: str,
     main_label: str,
     reference_label: str,
     btc_label: str,
     title: str,
 ) -> go.Figure:
-    fig = go.Figure()
+    del reference_df, reference_label
+    fig = make_subplots(
+        rows=2,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.03,
+        row_heights=[0.84, 0.16],
+    )
 
     main_plot, btc_plot, _visible_window = clip_homepage_chart_frames(
         main_df,
         btc_df,
         year,
     )
-    cash_spans = cash_regime_spans(main_plot["ts"], homepage_cash_mask(main_plot))
-
-    for start, end in cash_spans:
-        fig.add_vrect(
-            x0=start,
-            x1=end + pd.Timedelta(days=1),
-            fillcolor="#f59e0b",
-            opacity=0.08,
-            line_width=0,
-            layer="below",
-        )
+    state_details = homepage_chart_state_details(main_plot, lang)
+    state_periods = homepage_chart_state_periods(state_details)
 
     fig.add_trace(
         go.Scatter(
@@ -3309,7 +3433,9 @@ def make_capital_chart(
             mode="lines",
             name=main_label,
             line=dict(width=4.8, color="#ff6b6b"),
-        )
+        ),
+        row=1,
+        col=1,
     )
 
     fig.add_trace(
@@ -3319,11 +3445,68 @@ def make_capital_chart(
             mode="lines",
             name=btc_label,
             line=dict(width=2.4, color="#60a5fa", dash="solid"),
-        )
+        ),
+        row=1,
+        col=1,
     )
 
+    state_palette = {
+        "CASH": "#f59e0b",
+        "BASE": "#94a3b8",
+        "BTC": "#22c55e",
+        "ALT": "#ff6b6b",
+    }
+    state_names = {
+        "CASH": t(lang, "chart_state_cash"),
+        "BASE": t(lang, "chart_state_base"),
+        "BTC": t(lang, "chart_state_btc"),
+        "ALT": t(lang, "chart_state_alt"),
+    }
+    grouped_periods: dict[str, dict[str, list[Any]]] = {}
+    for period in state_periods:
+        bucket = period["bucket"]
+        duration = (period["end"] - period["start"]) + pd.Timedelta(days=1)
+        midpoint = period["start"] + (duration / 2)
+        bucket_group = grouped_periods.setdefault(
+            bucket,
+            {"x": [], "width": [], "customdata": []},
+        )
+        bucket_group["x"].append(midpoint)
+        bucket_group["width"].append(duration.total_seconds() * 1000.0)
+        bucket_group["customdata"].append(
+            [
+                period["start"].strftime("%Y-%m-%d"),
+                period["end"].strftime("%Y-%m-%d"),
+                period["label"],
+            ]
+        )
+
+    for bucket in ["CASH", "BASE", "BTC", "ALT"]:
+        bucket_group = grouped_periods.get(bucket)
+        if not bucket_group:
+            continue
+        fig.add_trace(
+            go.Bar(
+                x=bucket_group["x"],
+                y=[1] * len(bucket_group["x"]),
+                width=bucket_group["width"],
+                name=state_names[bucket],
+                marker=dict(color=state_palette[bucket], line=dict(width=0)),
+                opacity=0.94,
+                customdata=bucket_group["customdata"],
+                hovertemplate=(
+                    f"{t(lang, 'chart_state_period')}: %{{customdata[2]}}"
+                    "<br>%{customdata[0]} - %{customdata[1]}"
+                    "<extra></extra>"
+                ),
+            ),
+            row=2,
+            col=1,
+        )
+
     fig.update_layout(
-        height=560,
+        barmode="overlay",
+        height=640,
         title=title,
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
@@ -3340,16 +3523,37 @@ def make_capital_chart(
             bordercolor="rgba(255,255,255,0.08)",
             borderwidth=1,
         ),
-        xaxis_title="",
-        yaxis_title="Indexed growth",
-        hovermode="closest",
-        xaxis=dict(showgrid=False, showspikes=True, spikemode="across", spikesnap="cursor"),
-        yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.06)"),
+        hovermode="x unified",
         hoverlabel=dict(
             bgcolor="rgba(10,15,24,0.96)",
             bordercolor="rgba(255,255,255,0.10)",
             font=dict(size=12),
         ),
+    )
+    fig.update_xaxes(
+        showgrid=False,
+        showspikes=True,
+        spikemode="across",
+        spikesnap="cursor",
+        row=1,
+        col=1,
+    )
+    fig.update_xaxes(showgrid=False, row=2, col=1)
+    fig.update_yaxes(
+        title=t(lang, "chart_performance_axis"),
+        showgrid=True,
+        gridcolor="rgba(255,255,255,0.06)",
+        row=1,
+        col=1,
+    )
+    fig.update_yaxes(
+        title=t(lang, "chart_state_axis"),
+        showgrid=False,
+        showticklabels=False,
+        fixedrange=True,
+        range=[0, 1],
+        row=2,
+        col=1,
     )
     return fig
 
@@ -3716,6 +3920,7 @@ with tabs[0]:
             reference_df=reference_equity_df,
             btc_df=btc_df,
             year=selected_year_home,
+            lang=lang,
             main_label=labels.get(main_key, main_key),
             reference_label=labels.get(reference_key, reference_key),
             btc_label=t(lang, "btc_label"),
@@ -3724,7 +3929,7 @@ with tabs[0]:
         width="stretch",
     )
     st.caption(
-        f"{t(lang, 'chart_cash_periods_note')} "
+        f"{t(lang, 'chart_regime_strip_note')} "
         f"{build_homepage_chart_context_note(live_public_state, lang)}"
     )
 
