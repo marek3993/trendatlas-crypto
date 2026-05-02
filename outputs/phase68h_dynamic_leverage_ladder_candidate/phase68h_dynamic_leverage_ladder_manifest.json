@@ -29,7 +29,7 @@
     "exposure_basis_fix": "portfolio_held_asset = chosen_asset override else baseline held asset by same date"
   },
   "transition_mapping_meta": {
-    "decision_rows_total": 362,
+    "decision_rows_total": 363,
     "selected_rows_used": 45,
     "governance_switch_rows": 9,
     "mapped_transition_rows": 9,

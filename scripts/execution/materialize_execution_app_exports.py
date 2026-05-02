@@ -107,6 +107,7 @@ PHASE68H_SUMMARY_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladd
 PHASE68H_DYNAMIC_PAPER_INPUT_PATH = ROOT / "outputs" / "phase68h_dynamic_leverage_ladder_candidate" / "papers" / "phase68h_dynamic_ladder_candidate_paper.csv"
 PHASE68H_SCRIPT_PATH = ROOT / "scripts" / "phase68h_dynamic_leverage_ladder_candidate.py"
 PHASE66G_PRODUCTION_PAPER_PATH = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_production_soft_filters_paper.csv"
+PHASE66G_CANONICAL_PAPER_PATH = APP_EXPORTS_DIR / "phase66g_production_soft_filters_paper.csv"
 PHASE66G_DECISIONS_PATH = ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_production_candidate_decisions.csv"
 
 SUCCESS_REFRESH_STATUSES = {"OK", "SUCCESS", "PASS", "PASSED"}
@@ -592,6 +593,17 @@ def phase66g_live_status_refresh_tuple(path: Path) -> tuple[str, str]:
     )
 
 
+def phase67j_live_status_refresh_key(path: Path) -> str:
+    row = read_single_csv_row(path)
+    return str(row.get("latest_available_date", "")).strip()
+
+
+def should_refresh_phase67j_live_status(source_path: Path, canonical_path: Path) -> bool:
+    if not canonical_path.exists() or not canonical_path.is_file():
+        return True
+    return phase67j_live_status_refresh_key(source_path) > phase67j_live_status_refresh_key(canonical_path)
+
+
 def should_refresh_phase66g_live_status(source_path: Path, canonical_path: Path) -> bool:
     if not canonical_path.exists() or not canonical_path.is_file():
         return True
@@ -876,7 +888,7 @@ def collect_phase68g_source_validation_issues() -> list[str]:
         issues.append("baseline_paper_path_mismatch")
 
     manifest_governance_path = normalize_path_for_compare(manifest_payload.get("governance_paper"))
-    if manifest_governance_path != normalize_path_for_compare(PHASE66G_PRODUCTION_PAPER_PATH):
+    if manifest_governance_path != normalize_path_for_compare(PHASE66G_CANONICAL_PAPER_PATH):
         issues.append("governance_paper_path_mismatch")
 
     if not PHASE68G_SOURCE_PAPER_PATH.exists():
@@ -902,6 +914,36 @@ def collect_phase68g_source_validation_issues() -> list[str]:
     )
     if any(source.startswith("ret_fallback:") or source == "hard_fallback_all_exposed" for source in baseline_sources):
         issues.append("ambiguous_baseline_lineage_fallback")
+
+    if "asset_col:weekly_authorized_asset" in baseline_sources:
+        try:
+            baseline_df = pd.read_csv(
+                PHASE67J_PAPER_PATH,
+                usecols=["executed_regime", "weekly_authorized_asset"],
+            )
+        except ValueError:
+            baseline_df = pd.DataFrame()
+        except Exception:
+            baseline_df = pd.DataFrame()
+
+        if not baseline_df.empty:
+            regime_series = (
+                baseline_df["executed_regime"]
+                .fillna("")
+                .astype(str)
+                .str.strip()
+                .str.upper()
+            )
+            weekly_series = (
+                baseline_df["weekly_authorized_asset"]
+                .fillna("")
+                .astype(str)
+                .str.strip()
+                .str.upper()
+            )
+            risky_blank_rows = (weekly_series == "") & regime_series.isin({"BTC", "BASE", "CANDIDATE"})
+            if risky_blank_rows.any():
+                issues.append("weekly_authorized_asset_blank_on_risk_days")
 
     return issues
 
@@ -953,8 +995,8 @@ def refresh_phase68h_dynamic_paper_if_needed() -> dict[str, Any]:
 
 
 def refresh_phase68g_native_outputs_if_needed() -> dict[str, Any]:
-    if not PHASE66G_PRODUCTION_PAPER_PATH.exists():
-        fail(f"Missing required phase66g production paper: {PHASE66G_PRODUCTION_PAPER_PATH}")
+    if not PHASE66G_CANONICAL_PAPER_PATH.exists():
+        fail(f"Missing required phase66g canonical paper: {PHASE66G_CANONICAL_PAPER_PATH}")
     if not PHASE68G_SCRIPT_PATH.exists():
         fail(f"Missing required phase68g producer script: {PHASE68G_SCRIPT_PATH}")
     if not PHASE67J_PAPER_PATH.exists():
@@ -962,7 +1004,7 @@ def refresh_phase68g_native_outputs_if_needed() -> dict[str, Any]:
     if not PHASE66G_DECISIONS_PATH.exists():
         fail(f"Missing required phase68g decisions source: {PHASE66G_DECISIONS_PATH}")
 
-    phase66g_last_date = read_last_csv_date(PHASE66G_PRODUCTION_PAPER_PATH)
+    phase66g_last_date = read_last_csv_date(PHASE66G_CANONICAL_PAPER_PATH)
     phase68g_last_date = (
         read_last_csv_date(PHASE68G_SOURCE_PAPER_PATH)
         if PHASE68G_SOURCE_PAPER_PATH.exists()
@@ -986,7 +1028,7 @@ def refresh_phase68g_native_outputs_if_needed() -> dict[str, Any]:
                     "--baseline-paper",
                     str(PHASE67J_PAPER_PATH),
                     "--governance-paper",
-                    str(PHASE66G_PRODUCTION_PAPER_PATH),
+                    str(PHASE66G_CANONICAL_PAPER_PATH),
                     "--trend-history",
                     str(PHASE66G_TREND_HISTORY_PATH),
                     "--decisions",
@@ -1038,6 +1080,7 @@ def refresh_phase68g_native_outputs_if_needed() -> dict[str, Any]:
         "phase68g_refresh_triggered": refreshed,
         "phase68g_refresh_reason_validation_issues": validation_issues,
         "phase68g_baseline_paper_path": str(PHASE67J_PAPER_PATH),
+        "phase68g_governance_paper_path": str(PHASE66G_CANONICAL_PAPER_PATH),
         "phase68g_source_paper_path": str(PHASE68G_SOURCE_PAPER_PATH),
         "phase68g_source_authoritative_export_path": str(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH),
     }
@@ -2410,13 +2453,19 @@ def main() -> None:
         if artifact_key == "phase67j_live_status":
             if source_path is None:
                 fail("phase67j_live_status requires legacy source for deterministic rematerialization")
-            transform_result = materialize_phase67j_live_status_with_contract(
-                source_path=source_path,
-                canonical_path=canonical_path,
-                app_live_mode_contract=app_live_mode_contract,
-            )
-            transformed_count += 1
-            row.update(transform_result)
+            if should_refresh_phase67j_live_status(source_path, canonical_path):
+                transform_result = materialize_phase67j_live_status_with_contract(
+                    source_path=source_path,
+                    canonical_path=canonical_path,
+                    app_live_mode_contract=app_live_mode_contract,
+                )
+                transformed_count += 1
+                row.update(transform_result)
+            else:
+                row["status"] = "canonical_phase67j_live_status_is_not_older_than_upstream"
+                row["canonical_info"] = safe_stat(canonical_path)
+                row["source_path"] = str(source_path)
+                row["source_info"] = safe_stat(source_path)
             report_rows.append(row)
             log(f"[MATERIALIZED] {artifact_key}")
             log(f"              source={source_path}")

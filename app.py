@@ -105,6 +105,10 @@ TEXT = {
         "na": "Nedostupné",
         "chart_title": "Vývoj kapitálu",
         "chart_note": "Graf ukazuje hlavnú stratégiu a BTC benchmark bez referenčnej stratégie.",
+        "chart_cash_periods_note": "Jemne zafarbené pásy označujú dni bez trhovej expozície (CASH).",
+        "chart_current_regime_label": "Aktuálny režim",
+        "chart_current_regime_cash": "CASH / bez trhovej expozície. Rovnejšie úseky sú v tomto stave očakávané.",
+        "chart_current_regime_exposed": "Expozícia v aktíve {asset}.",
         "chart_year": "Začať graf od roku",
         "performance_title": "Výkon na prvý pohľad",
         "performance_fee_note": "Výsledky sú už po započítaní poplatkov Hyperliquid.",
@@ -300,6 +304,10 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "na": "Unavailable",
         "chart_title": "Capital curve",
         "chart_note": "The chart shows the main strategy and the BTC benchmark, without the reference strategy.",
+        "chart_cash_periods_note": "Subtle shaded bands mark CASH / no market exposure days.",
+        "chart_current_regime_label": "Current regime",
+        "chart_current_regime_cash": "CASH / no market exposure. Flatter sections are expected in this state.",
+        "chart_current_regime_exposed": "{asset} exposure.",
         "chart_year": "Start chart from year",
         "performance_title": "Performance at a glance",
         "performance_fee_note": "Results already include Hyperliquid fees.",
@@ -3165,6 +3173,54 @@ def rebase_series(series: pd.Series) -> pd.Series:
     return s / first_valid.iloc[0]
 
 
+def homepage_cash_mask(df: pd.DataFrame) -> pd.Series:
+    if "cash_day" in df.columns:
+        cash_values = df["cash_day"].map(as_bool)
+        if cash_values.notna().any():
+            return cash_values.fillna(False).astype(bool)
+
+    for col in ["portfolio_held_asset", "held_asset", "baseline_held_asset"]:
+        if col not in df.columns:
+            continue
+        assets = df[col].fillna("").astype(str).str.strip().str.upper()
+        return assets.isin({"", "CASH", "USD", "USDT", "NONE", "NULL"})
+
+    return pd.Series(False, index=df.index, dtype=bool)
+
+
+def cash_regime_spans(dates: pd.Series, cash_mask: pd.Series) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
+    ts = pd.to_datetime(dates, errors="coerce").dt.normalize().reset_index(drop=True)
+    mask = pd.Series(cash_mask, index=dates.index).fillna(False).astype(bool).reset_index(drop=True)
+    spans: list[tuple[pd.Timestamp, pd.Timestamp]] = []
+    start: pd.Timestamp | None = None
+    prev: pd.Timestamp | None = None
+
+    for dt, is_cash in zip(ts, mask, strict=False):
+        if pd.isna(dt):
+            continue
+        if is_cash and start is None:
+            start = dt
+        if not is_cash and start is not None:
+            spans.append((start, prev if prev is not None else dt))
+            start = None
+        prev = dt
+
+    if start is not None and prev is not None:
+        spans.append((start, prev))
+
+    return spans
+
+
+def build_homepage_chart_context_note(live_public_state: dict[str, Any], lang: str) -> str:
+    label = t(lang, "chart_current_regime_label")
+    if as_bool(live_public_state.get("cash_day")) is True:
+        return f"{label}: {t(lang, 'chart_current_regime_cash')}"
+
+    held_asset = resolve_homepage_held_state(live_public_state, lang)
+    asset_label = prettify_asset_public(held_asset, lang)
+    return f"{label}: {t(lang, 'chart_current_regime_exposed').format(asset=asset_label)}"
+
+
 def nearest_valid_date(dates: pd.Series, picked_date) -> pd.Timestamp:
     picked = pd.Timestamp(picked_date).normalize()
     valid = pd.to_datetime(dates).dt.normalize().sort_values().drop_duplicates()
@@ -3234,6 +3290,17 @@ def make_capital_chart(
         btc_df,
         year,
     )
+    cash_spans = cash_regime_spans(main_plot["ts"], homepage_cash_mask(main_plot))
+
+    for start, end in cash_spans:
+        fig.add_vrect(
+            x0=start,
+            x1=end + pd.Timedelta(days=1),
+            fillcolor="#f59e0b",
+            opacity=0.08,
+            line_width=0,
+            layer="below",
+        )
 
     fig.add_trace(
         go.Scatter(
@@ -3655,6 +3722,10 @@ with tabs[0]:
             title=t(lang, "chart_title"),
         ),
         width="stretch",
+    )
+    st.caption(
+        f"{t(lang, 'chart_cash_periods_note')} "
+        f"{build_homepage_chart_context_note(live_public_state, lang)}"
     )
 
     st.markdown(f"### {t(lang, 'performance_title')}")

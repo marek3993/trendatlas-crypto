@@ -1,7 +1,7 @@
 {
   "snapshot_type": "app_product_snapshot",
   "schema_version": 2,
-  "app_export_generated_at_utc": "2026-05-02T13:38:55Z",
+  "app_export_generated_at_utc": "2026-05-02T14:09:51Z",
   "product_name": "TrendAtlas Crypto",
   "page_scope": "homepage",
   "current_main_strategy_root_contract": {
@@ -31,7 +31,7 @@
     "status": "ok",
     "generated_at_utc": "2026-05-02T13:38:46+00:00",
     "checks": {
-      "btc_raw_last_date": "2026-04-30",
+      "btc_raw_last_date": "2026-04-19",
       "phase66g_paper_last_date": "2026-04-30",
       "phase66g_live_latest_available_date": "2026-04-30",
       "phase66g_trend_last_date": "2026-04-30",
@@ -70,29 +70,29 @@
   },
   "main_strategy_metrics": {
     "model": "phase68g_66g_1p25x_candidate",
-    "total_return_pct": 44306.97,
-    "total_return_pct_gross": 48453.96,
-    "total_return_pct_net": 44306.97,
-    "cagr_pct": 114.54,
-    "cagr_pct_gross": 116.95,
-    "cagr_pct_net": 114.54,
-    "max_drawdown_pct": -27.98,
-    "max_drawdown_pct_gross": -27.51,
-    "max_drawdown_pct_net": -27.98,
-    "since2023_cagr_pct": 137.55,
-    "since2023_cagr_pct_gross": 141.32,
-    "since2023_cagr_pct_net": 137.55,
-    "since2025_cagr_pct": 100.94,
-    "since2025_cagr_pct_gross": 100.94,
-    "since2025_cagr_pct_net": 100.94,
-    "sharpe": 1.6273,
-    "sortino": 2.2196,
+    "total_return_pct": 112186.53,
+    "total_return_pct_gross": 137451.16,
+    "total_return_pct_net": 112186.53,
+    "cagr_pct": 140.96,
+    "cagr_pct_gross": 147.16,
+    "cagr_pct_net": 140.96,
+    "max_drawdown_pct": -28.74,
+    "max_drawdown_pct_gross": -27.57,
+    "max_drawdown_pct_net": -28.74,
+    "since2023_cagr_pct": 165.08,
+    "since2023_cagr_pct_gross": 174.03,
+    "since2023_cagr_pct_net": 165.08,
+    "since2025_cagr_pct": 149.21,
+    "since2025_cagr_pct_gross": 152.44,
+    "since2025_cagr_pct_net": 149.21,
+    "sharpe": 1.7695,
+    "sortino": 2.5114,
     "switch_count": 9,
-    "cash_days_pct": 85.1953,
-    "btc_days_pct": 0.0,
-    "trading_fees_total_pct": 7.245,
+    "cash_days_pct": 41.878,
+    "btc_days_pct": 7.3681,
+    "trading_fees_total_pct": 15.8625,
     "funding_total_pct": 0.0,
-    "borrow_cost_total_pct": 0.846,
+    "borrow_cost_total_pct": 3.614,
     "tradable_slippage_cost_total_pct": 0.9,
     "fee_side_mode": "taker",
     "taker_fee_bps": 4.5,
@@ -102,9 +102,9 @@
     "effective_trading_fee_bps": 4.5
   },
   "main_strategy_top_performance_metrics": {
-    "cagr_pct": 114.54,
-    "since2023_cagr_pct": 137.55,
-    "since2025_cagr_pct": 100.94,
+    "cagr_pct": 140.96,
+    "since2023_cagr_pct": 165.08,
+    "since2025_cagr_pct": 149.21,
     "model": "phase68g_66g_1p25x_candidate"
   },
   "live_public_state": {
@@ -184,16 +184,16 @@
       "source_type": "canonical_app_summary",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 892,
-      "modified_utc": "2026-05-02T13:38:55Z"
+      "size_bytes": 899,
+      "modified_utc": "2026-05-02T14:09:51Z"
     },
     "main_strategy_top_performance_metrics": {
       "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
       "source_type": "canonical_phase68g_authoritative_net_compare_top_cards",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 892,
-      "modified_utc": "2026-05-02T13:38:55Z",
+      "size_bytes": 899,
+      "modified_utc": "2026-05-02T14:09:51Z",
       "source_fields": [
         "cagr_pct",
         "since2023_cagr_pct",
@@ -205,8 +205,8 @@
       "source_type": "canonical_app_paper",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 979569,
-      "modified_utc": "2026-05-02T13:38:55Z",
+      "size_bytes": 1052505,
+      "modified_utc": "2026-05-02T14:09:51Z",
       "source_field": "last_row.date"
     },
     "freshness_target_closed_day": {
@@ -215,7 +215,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 1239,
-      "modified_utc": "2026-05-02T13:38:47Z",
+      "modified_utc": "2026-05-02T13:48:18Z",
       "source_field": "latest_closed_utc_date"
     },
     "app_export_generated_at_utc": {
@@ -223,8 +223,8 @@
       "source_type": "app_product_snapshot",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 10468,
-      "modified_utc": "2026-05-02T12:40:00Z",
+      "size_bytes": 10694,
+      "modified_utc": "2026-05-02T13:48:18Z",
       "source_field": "generated_by_materializer_clock"
     },
     "live_public_state": {
@@ -232,8 +232,8 @@
       "source_type": "canonical_app_paper",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 979569,
-      "modified_utc": "2026-05-02T13:38:55Z",
+      "size_bytes": 1052505,
+      "modified_utc": "2026-05-02T14:09:51Z",
       "source_fields": [
         "date",
         "portfolio_held_asset",
@@ -254,7 +254,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 1239,
-      "modified_utc": "2026-05-02T13:38:47Z"
+      "modified_utc": "2026-05-02T13:48:18Z"
     },
     "trend_barometer_summary": {
       "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -262,7 +262,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 619,
-      "modified_utc": "2026-05-02T13:36:44Z"
+      "modified_utc": "2026-05-02T13:48:18Z"
     },
     "chart_source_paths": {
       "main_strategy": {
@@ -270,8 +270,8 @@
         "source_type": "canonical_app_paper",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 979569,
-        "modified_utc": "2026-05-02T13:38:55Z"
+        "size_bytes": 1052505,
+        "modified_utc": "2026-05-02T14:09:51Z"
       },
       "reference_strategy": {
         "path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
@@ -279,7 +279,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 156910,
-        "modified_utc": "2026-05-02T13:37:10Z"
+        "modified_utc": "2026-05-02T13:48:18Z"
       }
     },
     "benchmark_source_path": {
@@ -287,8 +287,8 @@
       "source_type": "benchmark_ohlcv",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 273937,
-      "modified_utc": "2026-05-02T13:31:24Z"
+      "size_bytes": 272982,
+      "modified_utc": "2026-05-02T13:48:16Z"
     },
     "trend_history_source_path": {
       "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
@@ -296,7 +296,7 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 378578,
-      "modified_utc": "2026-05-02T13:36:44Z"
+      "modified_utc": "2026-05-02T13:48:18Z"
     }
   }
 }

@@ -11,6 +11,7 @@ import pandas as pd
 from approved_strategy_net_export_helper import (
     NetCostExportConfig,
     build_net_cost_export_frame,
+    normalize_regime_position_to_asset,
     summarize_net_cost_export,
 )
 
@@ -128,6 +129,24 @@ def load_baseline_paper(path: Path) -> pd.DataFrame:
     out = pd.DataFrame()
     out["date"] = pd.to_datetime(df[date_col], errors="coerce").dt.tz_localize(None)
 
+    regime_col = try_pick_col(
+        df,
+        [
+            "executed_regime",
+            "regime",
+            "held_regime",
+            "portfolio_regime",
+        ],
+    )
+    position_col = try_pick_col(
+        df,
+        [
+            "executed_position",
+            "position",
+            "held_position",
+            "portfolio_position",
+        ],
+    )
     asset_col = try_pick_col(
         df,
         [
@@ -173,7 +192,20 @@ def load_baseline_paper(path: Path) -> pd.DataFrame:
         ],
     )
 
-    if asset_col is not None:
+    if regime_col is not None:
+        if position_col is not None:
+            position_values = df[position_col]
+            baseline_source = f"regime_position_cols:{regime_col}+{position_col}"
+        else:
+            position_values = pd.Series([""] * len(df), index=df.index)
+            baseline_source = f"regime_col:{regime_col}"
+        out["baseline_held_asset"] = [
+            normalize_regime_position_to_asset(regime=row_regime, position=row_position)
+            for row_regime, row_position in zip(df[regime_col], position_values, strict=False)
+        ]
+        out["baseline_asset_source"] = baseline_source
+
+    elif asset_col is not None:
         out["baseline_held_asset"] = df[asset_col].astype(str).map(normalize_asset_label)
         out["baseline_asset_source"] = f"asset_col:{asset_col}"
 

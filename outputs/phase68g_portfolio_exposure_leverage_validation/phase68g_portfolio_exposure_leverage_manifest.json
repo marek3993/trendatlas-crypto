@@ -1,10 +1,10 @@
 {
   "phase": "phase68g_portfolio_exposure_leverage_validation",
   "official_compare_baseline": "phase68g_66g_1p00x_portfolio_exposure_baseline",
-  "governance_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_soft_filters_paper.csv",
-  "baseline_paper": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
-  "trend_history": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_trend_barometer_history.csv",
-  "decisions_file": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_decisions.csv",
+  "governance_paper": "outputs\\execution\\app_exports\\phase66g_production_soft_filters_paper.csv",
+  "baseline_paper": "outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
+  "trend_history": "outputs\\execution\\app_exports\\phase66g_trend_barometer_history.csv",
+  "decisions_file": "outputs\\phase66g_production_candidate_live\\phase66g_production_candidate_decisions.csv",
   "params": {
     "annual_borrow_cost": 0.12,
     "tradable_transition_slippage_bps": 10.0,
@@ -23,7 +23,7 @@
     "exposure_basis_fix": "portfolio_held_asset = chosen_asset override else baseline held asset by same date"
   },
   "transition_mapping_meta": {
-    "decision_rows_total": 362,
+    "decision_rows_total": 363,
     "selected_rows_used": 45,
     "governance_switch_rows": 9,
     "mapped_transition_rows": 9,
