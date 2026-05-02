@@ -1215,6 +1215,17 @@ def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot
     main_key = str(product_snapshot.get("main_strategy_model") or "").strip()
     reference_key = str(product_snapshot.get("reference_strategy_model") or "").strip()
     chart_paths = product_snapshot.get("chart_source_paths") if isinstance(product_snapshot.get("chart_source_paths"), dict) else {}
+    source_metadata = product_snapshot.get("source_metadata") if isinstance(product_snapshot.get("source_metadata"), dict) else {}
+    trend_summary_source = (
+        source_metadata.get("trend_barometer_summary")
+        if isinstance(source_metadata.get("trend_barometer_summary"), dict)
+        else {}
+    )
+    trend_summary_snapshot = (
+        product_snapshot.get("trend_barometer_summary")
+        if isinstance(product_snapshot.get("trend_barometer_summary"), dict)
+        else {}
+    )
     model_sources: dict[str, dict[str, str]] = {}
     if main_key:
         model_sources[main_key] = {"paper_path": str(chart_paths.get("main_strategy") or "").strip()}
@@ -1230,8 +1241,9 @@ def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot
         "display_names": product_snapshot.get("display_names") or {},
         "model_sources": model_sources,
         "trend_barometer_source": {
+            "live_status_path": trend_summary_source.get("path"),
             "history_path": product_snapshot.get("trend_history_source_path"),
-            "model_key": "phase66g_production_soft_filters",
+            "model_key": str(trend_summary_snapshot.get("model") or "phase66g_production_soft_filters").strip(),
         },
         "app_live_mode_contract": {"current": product_snapshot.get("live_public_state") or {}},
         "account_observability_contract": {
@@ -1252,6 +1264,18 @@ def load_single_csv_row(path: Path, *, context: str) -> dict[str, Any]:
         raise ValueError(f"{context}: expected exactly 1 row in {path}, got {len(rows)}")
 
     return {str(key).strip(): value for key, value in rows[0].items()}
+
+
+def sanitize_snapshot_value(value: Any) -> Any:
+    if isinstance(value, pd.Timestamp):
+        return value.strftime("%Y-%m-%d")
+    if pd.isna(value):
+        return None
+    return value
+
+
+def sanitize_row_dict(row: dict[str, Any]) -> dict[str, Any]:
+    return {str(key).strip(): sanitize_snapshot_value(value) for key, value in row.items()}
 
 
 def get_current_account_observability_contract(selector_cfg: dict) -> dict:
@@ -3214,12 +3238,44 @@ def normalize_homepage_chart_asset_token(value: Any) -> str:
     return str(value).strip().upper()
 
 
+def homepage_chart_daily_return_series(df: pd.DataFrame) -> pd.Series:
+    for col in ["realistic_ret", "realistic_ret_gross", "base_ret"]:
+        if col in df.columns:
+            return pd.to_numeric(df[col], errors="coerce")
+    return pd.Series([math.nan] * len(df), index=df.index, dtype="float64")
+
+
+def homepage_chart_semantic_cash_like(row: pd.Series) -> bool:
+    if as_bool(row.get("cash_day")) is True:
+        return True
+
+    no_movement_reasons = {
+        "CASH",
+        "SWITCH_DAY",
+        "ENTRY_BUFFER_DAY",
+        "STRESS_BLOCK",
+        "TREND_GATE",
+    }
+    reason = normalize_homepage_chart_asset_token(row.get("leverage_state_reason"))
+    equity_delta = as_float(row.get("equity_delta"))
+    daily_return = as_float(row.get("daily_return_used"))
+    zero_equity_delta = equity_delta is not None and math.isclose(equity_delta, 0.0, abs_tol=1e-12)
+    zero_daily_return = daily_return is not None and math.isclose(daily_return, 0.0, abs_tol=1e-12)
+    if reason in no_movement_reasons and (zero_equity_delta or zero_daily_return):
+        return True
+
+    return False
+
+
 def homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
     state_df = df.copy().reset_index(drop=True)
     state_df["ts"] = pd.to_datetime(state_df["ts"], errors="coerce").dt.normalize()
+    state_df["equity_delta"] = pd.to_numeric(state_df.get("equity"), errors="coerce").diff()
+    state_df["daily_return_used"] = homepage_chart_daily_return_series(state_df)
     cash_mask = homepage_cash_mask(state_df).reset_index(drop=True)
     bucket_values: list[str] = []
     label_values: list[str] = []
+    semantic_cash_like_values: list[bool] = []
 
     candidate_columns = [
         "portfolio_held_asset",
@@ -3241,7 +3297,8 @@ def homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
             asset_token = candidate
             break
 
-        if cash_mask.iloc[idx]:
+        semantic_cash_like = bool(cash_mask.iloc[idx]) or homepage_chart_semantic_cash_like(row)
+        if semantic_cash_like:
             bucket = "CASH"
             label = t(lang, "chart_state_cash")
         elif asset_token in {"BASE", "BASELINE", "BASELINE_RISK", "EARLY_RISK", "FULL_RISK"}:
@@ -3259,10 +3316,31 @@ def homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
 
         bucket_values.append(bucket)
         label_values.append(label)
+        semantic_cash_like_values.append(semantic_cash_like)
 
     state_df["state_bucket"] = bucket_values
     state_df["state_label"] = label_values
-    return state_df[["ts", "state_bucket", "state_label"]].dropna(subset=["ts"]).copy()
+    state_df["semantic_cash_like"] = semantic_cash_like_values
+    return state_df[["ts", "state_bucket", "state_label", "semantic_cash_like"]].dropna(subset=["ts"]).copy()
+
+
+def build_homepage_chart_truth_warnings(state_df: pd.DataFrame) -> list[str]:
+    if state_df.empty or "semantic_cash_like" not in state_df.columns:
+        return []
+
+    mismatches = state_df[
+        state_df["semantic_cash_like"].fillna(False).astype(bool)
+        & (state_df["state_bucket"].astype(str) != "CASH")
+    ].copy()
+    if mismatches.empty:
+        return []
+
+    dates = mismatches["ts"].dt.strftime("%Y-%m-%d").head(5).tolist()
+    return [
+        "Varovanie: spodny pas homepage chartu bol zablokovany, pretoze canonical paper "
+        "riadky maju nezhodu medzi drzanym stavom a cash / nulovou pohybovou semantikou "
+        f"na datumoch: {', '.join(dates)}."
+    ]
 
 
 def cash_regime_spans(dates: pd.Series, cash_mask: pd.Series) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
@@ -3394,6 +3472,99 @@ def load_trend_barometer_history(source_cfg: dict) -> pd.DataFrame:
     return df[["ts", "trend_score", "buy_threshold"]]
 
 
+def load_trend_barometer_live(source_cfg: dict) -> dict[str, Any]:
+    path = normalize_path(source_cfg.get("live_status_path"))
+    if path is None or not path.exists():
+        raise ValueError("trend barometer canonical live status CSV is missing")
+
+    row = load_single_csv_row(path, context="trend barometer live status")
+    expected_model = str(source_cfg.get("model_key") or "").strip()
+    actual_model = str(row.get("model") or "").strip()
+    if expected_model and actual_model and actual_model != expected_model:
+        raise ValueError(
+            "trend barometer canonical live status model diverged "
+            f"(expected={expected_model} actual={actual_model})"
+        )
+
+    numeric_fields = [
+        "trend_score",
+        "buy_threshold",
+        "prev_trend_score",
+        "trend_input_raw",
+        "trend_threshold_raw",
+        "trend_band",
+        "trend_score_raw",
+        "candidate_assets_loaded",
+        "failed_assets_count",
+        "suspended_assets_now",
+    ]
+    bool_fields = ["crossed_up_today", "crossed_down_today"]
+    live_row = dict(row)
+    for field in numeric_fields:
+        if field in live_row:
+            live_row[field] = as_float(live_row.get(field))
+    for field in bool_fields:
+        if field in live_row:
+            live_row[field] = as_bool(live_row.get(field))
+    return live_row
+
+
+def resolve_trend_barometer_live_day(trend_live: dict[str, Any]) -> str:
+    for field in ["trend_calc_date", "latest_available_date", "date"]:
+        value = trend_live.get(field)
+        if value is None:
+            continue
+        text = str(value).strip()
+        if text:
+            return text[:10]
+    return ""
+
+
+def build_trend_barometer_consistency_warnings(
+    trend_live: dict[str, Any],
+    history_df: pd.DataFrame,
+) -> list[str]:
+    if not trend_live or history_df.empty:
+        return []
+
+    warnings: list[str] = []
+    history_last_row = history_df.sort_values("ts").iloc[-1]
+    live_day = resolve_trend_barometer_live_day(trend_live)
+    history_day = pd.to_datetime(history_last_row["ts"], errors="coerce")
+    history_day_text = history_day.strftime("%Y-%m-%d") if not pd.isna(history_day) else ""
+    if live_day and history_day_text and live_day != history_day_text:
+        warnings.append(
+            "Varovanie: Trend barometer je zablokovany, pretoze live row a mini historia "
+            f"nemaju rovnaky datum ({live_day} vs {history_day_text})."
+        )
+
+    live_score = as_float(trend_live.get("trend_score"))
+    history_score = as_float(history_last_row.get("trend_score"))
+    if (
+        live_score is not None
+        and history_score is not None
+        and not math.isclose(live_score, history_score, abs_tol=1e-12)
+    ):
+        warnings.append(
+            "Varovanie: Trend barometer je zablokovany, pretoze live row a mini historia "
+            "maju odlisny trend score v poslednom dni."
+        )
+
+    live_threshold = as_float(trend_live.get("buy_threshold"))
+    history_threshold = as_float(history_last_row.get("buy_threshold"))
+    if (
+        live_threshold is not None
+        and history_threshold is not None
+        and not math.isclose(live_threshold, history_threshold, abs_tol=1e-12)
+    ):
+        warnings.append(
+            "Varovanie: Trend barometer je zablokovany, pretoze live row a mini historia "
+            "maju odlisny buy threshold v poslednom dni."
+        )
+
+    return warnings
+
+
 # =========================================================
 # CHARTS
 # =========================================================
@@ -3425,6 +3596,7 @@ def make_capital_chart(
     )
     state_details = homepage_chart_state_details(main_plot, lang)
     state_periods = homepage_chart_state_periods(state_details)
+    truth_warnings = build_homepage_chart_truth_warnings(state_details)
 
     fig.add_trace(
         go.Scatter(
@@ -3481,28 +3653,46 @@ def make_capital_chart(
             ]
         )
 
-    for bucket in ["CASH", "BASE", "BTC", "ALT"]:
-        bucket_group = grouped_periods.get(bucket)
-        if not bucket_group:
-            continue
-        fig.add_trace(
-            go.Bar(
-                x=bucket_group["x"],
-                y=[1] * len(bucket_group["x"]),
-                width=bucket_group["width"],
-                name=state_names[bucket],
-                marker=dict(color=state_palette[bucket], line=dict(width=0)),
-                opacity=0.94,
-                customdata=bucket_group["customdata"],
-                hovertemplate=(
-                    f"{t(lang, 'chart_state_period')}: %{{customdata[2]}}"
-                    "<br>%{customdata[0]} - %{customdata[1]}"
-                    "<extra></extra>"
-                ),
-            ),
+    if truth_warnings:
+        fig.add_annotation(
+            x=0.5,
+            y=0.5,
+            xref="x2 domain",
+            yref="y2 domain",
+            text="<br>".join(truth_warnings),
+            showarrow=False,
+            font=dict(size=12, color="#f8fafc"),
+            align="center",
+            bgcolor="rgba(185,28,28,0.92)",
+            bordercolor="rgba(254,202,202,0.65)",
+            borderwidth=1,
+            borderpad=10,
             row=2,
             col=1,
         )
+    else:
+        for bucket in ["CASH", "BASE", "BTC", "ALT"]:
+            bucket_group = grouped_periods.get(bucket)
+            if not bucket_group:
+                continue
+            fig.add_trace(
+                go.Bar(
+                    x=bucket_group["x"],
+                    y=[1] * len(bucket_group["x"]),
+                    width=bucket_group["width"],
+                    name=state_names[bucket],
+                    marker=dict(color=state_palette[bucket], line=dict(width=0)),
+                    opacity=0.94,
+                    customdata=bucket_group["customdata"],
+                    hovertemplate=(
+                        f"{t(lang, 'chart_state_period')}: %{{customdata[2]}}"
+                        "<br>%{customdata[0]} - %{customdata[1]}"
+                        "<extra></extra>"
+                    ),
+                ),
+                row=2,
+                col=1,
+            )
 
     fig.update_layout(
         barmode="overlay",
@@ -3817,13 +4007,21 @@ except Exception as e:
     st.stop()
 
 trend_source_cfg = selector_cfg.get("trend_barometer_source", {}) or {}
-live_public_state = dict(product_snapshot.get("live_public_state") or {})
+live_public_state = sanitize_row_dict(papers[main_key].iloc[-1].to_dict())
 if live_public_state:
     live_public_state["has_new_fields"] = True
-trend_live = dict(product_snapshot.get("trend_barometer_summary") or {})
+try:
+    trend_live = load_trend_barometer_live(trend_source_cfg)
+except Exception as e:
+    st.error(f"{t(lang, 'load_failed')}: {e}")
+    st.stop()
+trend_history_df = load_trend_barometer_history(trend_source_cfg)
+trend_barometer_warnings = build_trend_barometer_consistency_warnings(
+    trend_live,
+    trend_history_df,
+)
 if trend_live.get("trend_state_label"):
     trend_live["trend_state_label"] = prettify_trend_state(trend_live.get("trend_state_label"), lang)
-trend_history_df = load_trend_barometer_history(trend_source_cfg)
 account_observability_cfg = get_current_account_observability_contract(selector_cfg)
 account_status_payload = dict(runtime_snapshot.get("execution_status") or {})
 account_snapshot_payload = dict(runtime_snapshot.get("account_snapshot_summary") or {})
@@ -3954,39 +4152,43 @@ with tabs[0]:
     st.markdown(f"### {t(lang, 'trend_title')}")
     st.caption(t(lang, "trend_desc"))
 
-    trend_cols = st.columns([1.35, 1.65])
-    with trend_cols[0]:
-        st.plotly_chart(make_trend_gauge(trend_live, lang), width="stretch")
+    if trend_barometer_warnings:
+        for warning_text in trend_barometer_warnings:
+            st.warning(warning_text)
+    else:
+        trend_cols = st.columns([1.35, 1.65])
+        with trend_cols[0]:
+            st.plotly_chart(make_trend_gauge(trend_live, lang), width="stretch")
 
-    with trend_cols[1]:
-        tc1 = st.columns(2)
-        with tc1[0]:
-            render_color_card(
-                t(lang, "trend_state"),
-                safe_text_value(trend_live.get("trend_state_label"), lang=lang),
-                "",
-                METRIC_HELP[lang][t(lang, "trend_state")],
-                "orange",
-            )
-        with tc1[1]:
-            render_color_card(
-                t(lang, "buy_threshold"),
-                safe_metric_text(trend_live.get("buy_threshold"), decimals=4, suffix="", lang=lang),
-                trend_cross_text(trend_live, lang),
-                METRIC_HELP[lang][t(lang, "buy_threshold")],
-                "violet",
-            )
+        with trend_cols[1]:
+            tc1 = st.columns(2)
+            with tc1[0]:
+                render_color_card(
+                    t(lang, "trend_state"),
+                    safe_text_value(trend_live.get("trend_state_label"), lang=lang),
+                    "",
+                    METRIC_HELP[lang][t(lang, "trend_state")],
+                    "orange",
+                )
+            with tc1[1]:
+                render_color_card(
+                    t(lang, "buy_threshold"),
+                    safe_metric_text(trend_live.get("buy_threshold"), decimals=4, suffix="", lang=lang),
+                    trend_cross_text(trend_live, lang),
+                    METRIC_HELP[lang][t(lang, "buy_threshold")],
+                    "violet",
+                )
 
-        st.caption(t(lang, "trend_threshold_note"))
-        if trend_live.get("trend_calc_date"):
-            st.caption(
-                f"{'Datum vypoctu' if lang == 'sk' else 'Calc date'}: "
-                f"{format_date_text(trend_live.get('trend_calc_date'), lang)}"
-            )
+            st.caption(t(lang, "trend_threshold_note"))
+            if trend_live.get("trend_calc_date"):
+                st.caption(
+                    f"{'Datum vypoctu' if lang == 'sk' else 'Calc date'}: "
+                    f"{format_date_text(trend_live.get('trend_calc_date'), lang)}"
+                )
 
-    if not trend_history_df.empty:
-        st.plotly_chart(make_trend_history_chart(trend_history_df, lang), width="stretch")
-        st.caption(t(lang, "trend_history_note"))
+        if not trend_history_df.empty:
+            st.plotly_chart(make_trend_history_chart(trend_history_df, lang), width="stretch")
+            st.caption(t(lang, "trend_history_note"))
 
     st.markdown(f"### {t(lang, 'ops_title')}")
     ops = st.columns(4)
