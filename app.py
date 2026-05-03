@@ -552,6 +552,16 @@ TEXT["en"]["performance_fee_note"] = (
     "main-strategy export. They are not fed by a separate compare/ranking "
     "artifact, and results already include Hyperliquid fees."
 )
+TEXT["sk"]["chart_note_strip_hidden"] = (
+    "Horna krivka ukazuje vykon hlavneho modelu proti BTC benchmarku. "
+    "Spodny pas je skryty, pretoze canonical paper rows momentalne "
+    "nedovoluju pravdive zobrazenie drzaneho stavu."
+)
+TEXT["en"]["chart_note_strip_hidden"] = (
+    "The top line shows the main model versus the BTC benchmark. "
+    "The lower strip is hidden because the canonical paper rows do not "
+    "currently allow a truthful held-state rendering."
+)
 METRIC_HELP["sk"].update(
     {
         TEXT["sk"]["cagr"]: (
@@ -849,6 +859,8 @@ def load_json_optional(path_value: str | Path | None) -> dict:
     if path is None or not path.exists():
         return {}
     try:
+        # Authority JSON must stay uncached in Streamlit so each rerun reads the
+        # latest on-disk payload directly.
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
@@ -1213,6 +1225,163 @@ def build_authority_runtime_table_snapshot(
         },
         "evaluated_at_utc": authority_generated_at_utc,
     }
+
+
+def build_authority_verification_rows(
+    runtime_snapshot: dict,
+    runtime_source_path: Path,
+    runtime_authority_payload: dict,
+) -> list[dict[str, Any]]:
+    authority_source_path = str(AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH)
+    if runtime_source_path != AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH:
+        authority_source_path = (
+            f"homepage={AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH} | "
+            f"runtime={runtime_source_path}"
+        )
+
+    refresh_success = runtime_snapshot.get("refresh_success")
+    if refresh_success is None:
+        refresh_success = (
+            str(runtime_authority_payload.get("latest_authoritative_attempt_status") or "").strip().lower()
+            == "success"
+        )
+
+    return [
+        {
+            "Pole": "authority source path",
+            "Hodnota": authority_source_path,
+        },
+        {
+            "Pole": "run_id",
+            "Hodnota": safe_text_value(
+                runtime_authority_payload.get("run_id") or runtime_snapshot.get("refresh_run_id"),
+                lang="sk",
+            ),
+        },
+        {
+            "Pole": "generated_at_utc",
+            "Hodnota": safe_text_value(
+                runtime_authority_payload.get("generated_at_utc")
+                or runtime_authority_payload.get("refresh_finished_at_utc"),
+                lang="sk",
+            ),
+        },
+        {
+            "Pole": "latest_available_closed_utc_date",
+            "Hodnota": safe_text_value(
+                runtime_snapshot.get("latest_available_closed_utc_date")
+                or runtime_authority_payload.get("latest_available_closed_utc_day"),
+                lang="sk",
+            ),
+        },
+        {
+            "Pole": "latest_strategy_artifact_date",
+            "Hodnota": safe_text_value(
+                runtime_snapshot.get("latest_strategy_artifact_date")
+                or runtime_authority_payload.get("strategy_artifact_closed_day_utc"),
+                lang="sk",
+            ),
+        },
+        {
+            "Pole": "refresh_status",
+            "Hodnota": safe_text_value(
+                runtime_snapshot.get("refresh_status")
+                or runtime_authority_payload.get("latest_authoritative_attempt_status"),
+                lang="sk",
+            ),
+        },
+        {
+            "Pole": "refresh_success",
+            "Hodnota": str(bool(refresh_success)).lower() if refresh_success is not None else t("sk", "na"),
+        },
+    ]
+
+
+def values_match_for_integrity(left: Any, right: Any) -> bool:
+    left_text = str(left or "").strip()
+    right_text = str(right or "").strip()
+    if not left_text and not right_text:
+        return True
+
+    left_number = as_float(left)
+    right_number = as_float(right)
+    if left_number is not None and right_number is not None:
+        return math.isclose(left_number, right_number, rel_tol=1e-9, abs_tol=1e-9)
+
+    left_bool = as_bool(left)
+    right_bool = as_bool(right)
+    if left_bool is not None and right_bool is not None:
+        return left_bool == right_bool
+
+    return left_text == right_text
+
+
+def build_homepage_authority_integrity_findings(
+    product_snapshot: dict,
+    runtime_snapshot: dict,
+    csv_live_public_state: dict[str, Any],
+    csv_metrics_row: dict[str, Any],
+) -> list[str]:
+    findings: list[str] = []
+    authority_live_public_state = dict(product_snapshot.get("live_public_state") or {})
+    authority_main_metrics = dict(product_snapshot.get("main_strategy_metrics") or {})
+
+    authority_strategy_day = str(product_snapshot.get("strategy_last_closed_day") or "").strip()
+    csv_strategy_day = str(csv_live_public_state.get("date") or "").strip()[:10]
+    if authority_strategy_day and csv_strategy_day and authority_strategy_day != csv_strategy_day:
+        findings.append(
+            "Mismatch: homepage paper posledny den je "
+            f"{csv_strategy_day}, ale authority strategy_last_closed_day je {authority_strategy_day}."
+        )
+
+    authority_closed_day = str(runtime_snapshot.get("latest_available_closed_utc_date") or "").strip()
+    if authority_strategy_day and authority_closed_day and authority_strategy_day != authority_closed_day:
+        findings.append(
+            "Mismatch: authority strategy_last_closed_day je "
+            f"{authority_strategy_day}, ale authority latest_available_closed_utc_date je {authority_closed_day}."
+        )
+
+    live_field_labels = {
+        "portfolio_held_asset": "portfolio_held_asset",
+        "held_asset_public": "held_asset_public",
+        "trend_state_label": "trend_state_label",
+        "trend_score": "trend_score",
+        "buy_threshold": "buy_threshold",
+        "cash_day": "cash_day",
+    }
+    for field, label in live_field_labels.items():
+        authority_value = authority_live_public_state.get(field)
+        csv_value = csv_live_public_state.get(field)
+        if authority_value is None and csv_value is None:
+            continue
+        if not values_match_for_integrity(authority_value, csv_value):
+            findings.append(
+                f"Mismatch: homepage {label} je {csv_value!r}, ale authority JSON ma {authority_value!r}."
+            )
+
+    metric_labels = {
+        "total_return_pct": "total_return_pct",
+        "cagr_pct": "cagr_pct",
+        "max_drawdown_pct": "max_drawdown_pct",
+        "since2023_cagr_pct": "since2023_cagr_pct",
+        "since2025_cagr_pct": "since2025_cagr_pct",
+        "sharpe": "sharpe",
+        "sortino": "sortino",
+        "switch_count": "switch_count",
+        "cash_days_pct": "cash_days_pct",
+        "btc_days_pct": "btc_days_pct",
+    }
+    for field, label in metric_labels.items():
+        authority_value = authority_main_metrics.get(field)
+        csv_value = csv_metrics_row.get(field)
+        if authority_value is None and csv_value is None:
+            continue
+        if not values_match_for_integrity(authority_value, csv_value):
+            findings.append(
+                f"Mismatch: homepage {label} je {csv_value!r}, ale authority JSON ma {authority_value!r}."
+            )
+
+    return findings
 
 
 def build_selector_config_from_snapshot(product_snapshot: dict, runtime_snapshot: dict) -> dict:
@@ -3348,6 +3517,105 @@ def build_homepage_chart_truth_warnings(state_df: pd.DataFrame) -> list[str]:
     ]
 
 
+def homepage_chart_has_material_movement(row: pd.Series) -> bool:
+    equity_delta = as_float(row.get("equity_delta"))
+    daily_return = as_float(row.get("daily_return_used"))
+    if equity_delta is not None and not math.isclose(equity_delta, 0.0, abs_tol=1e-12):
+        return True
+    if daily_return is not None and not math.isclose(daily_return, 0.0, abs_tol=1e-12):
+        return True
+    return False
+
+
+def homepage_chart_truthful_strip_source_column(df: pd.DataFrame) -> str | None:
+    trusted_columns = ["held_asset_public", "portfolio_held_asset", "held_asset", "executed_position"]
+    candidate_values: dict[str, pd.Series] = {}
+
+    for col in trusted_columns:
+        if col not in df.columns:
+            continue
+        normalized = df[col].map(normalize_homepage_chart_asset_token)
+        meaningful = normalized[~normalized.isin({"", "NONE", "NULL"})]
+        if meaningful.empty:
+            continue
+        candidate_values[col] = normalized
+
+    if not candidate_values:
+        return None
+
+    for idx in df.index:
+        row_values = {
+            values.loc[idx]
+            for values in candidate_values.values()
+            if values.loc[idx] not in {"", "NONE", "NULL"}
+        }
+        if len(row_values) > 1:
+            return None
+
+    return next(iter(candidate_values))
+
+
+def homepage_chart_is_cash_token(token: str) -> bool:
+    return token in {"", "CASH", "USD", "USDT", "NONE", "NULL", "ZERO", "ZERO_EXPOSURE"}
+
+
+def build_truthful_homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
+    state_df = df.copy().reset_index(drop=True)
+    state_df["ts"] = pd.to_datetime(state_df["ts"], errors="coerce").dt.normalize()
+    state_df["equity_delta"] = pd.to_numeric(state_df.get("equity"), errors="coerce").diff()
+    state_df["daily_return_used"] = homepage_chart_daily_return_series(state_df)
+
+    source_column = homepage_chart_truthful_strip_source_column(state_df)
+    if source_column is None:
+        return pd.DataFrame(columns=["ts", "state_bucket", "state_label"])
+
+    source_tokens = state_df[source_column].map(normalize_homepage_chart_asset_token)
+    if source_tokens.isin({"", "NONE", "NULL"}).any():
+        return pd.DataFrame(columns=["ts", "state_bucket", "state_label"])
+
+    cash_day_values = state_df["cash_day"].map(as_bool) if "cash_day" in state_df.columns else None
+    bucket_values: list[str] = []
+    label_values: list[str] = []
+
+    for idx, token in source_tokens.items():
+        token_is_cash = homepage_chart_is_cash_token(token)
+        if token_is_cash and homepage_chart_has_material_movement(state_df.loc[idx]):
+            return pd.DataFrame(columns=["ts", "state_bucket", "state_label"])
+        if cash_day_values is not None:
+            cash_flag = cash_day_values.loc[idx]
+            if cash_flag is True and not token_is_cash:
+                return pd.DataFrame(columns=["ts", "state_bucket", "state_label"])
+            if cash_flag is False and token_is_cash:
+                return pd.DataFrame(columns=["ts", "state_bucket", "state_label"])
+
+        if token_is_cash:
+            bucket_values.append("CASH")
+            label_values.append(t(lang, "chart_state_cash"))
+        elif token == "BTC":
+            bucket_values.append("BTC")
+            label_values.append(t(lang, "chart_state_btc"))
+        else:
+            bucket_values.append("ALT")
+            label_values.append(f"{t(lang, 'chart_state_alt')} · {prettify_asset_public(token, lang)}")
+
+    state_df["state_bucket"] = bucket_values
+    state_df["state_label"] = label_values
+    return state_df[["ts", "state_bucket", "state_label"]].dropna(subset=["ts"]).copy()
+
+
+def homepage_chart_strip_is_truthful(
+    main_df: pd.DataFrame,
+    btc_df: pd.DataFrame,
+    year: int,
+    lang: str,
+) -> bool:
+    try:
+        main_plot, _btc_plot, _visible_window = clip_homepage_chart_frames(main_df, btc_df, year)
+    except Exception:
+        return False
+    return not build_truthful_homepage_chart_state_details(main_plot, lang).empty
+
+
 def cash_regime_spans(dates: pd.Series, cash_mask: pd.Series) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
     ts = pd.to_datetime(dates, errors="coerce").dt.normalize().reset_index(drop=True)
     mask = pd.Series(cash_mask, index=dates.index).fillna(False).astype(bool).reset_index(drop=True)
@@ -3441,7 +3709,7 @@ def build_homepage_chart_explainer_line(
     except Exception:
         return build_homepage_chart_context_note(live_public_state, lang)
 
-    state_details = homepage_chart_state_details(main_plot, lang)
+    state_details = build_truthful_homepage_chart_state_details(main_plot, lang)
     if state_details.empty:
         return build_homepage_chart_context_note(live_public_state, lang)
 
@@ -3649,23 +3917,21 @@ def make_capital_chart(
     title: str,
 ) -> go.Figure:
     del reference_df, reference_label
-    fig = make_subplots(
-        rows=2,
-        cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.03,
-        row_heights=[0.82, 0.18],
-    )
-
     main_plot, btc_plot, _visible_window = clip_homepage_chart_frames(
         main_df,
         btc_df,
         year,
     )
-    state_details = homepage_chart_state_details(main_plot, lang)
+    state_details = build_truthful_homepage_chart_state_details(main_plot, lang)
+    show_state_strip = not state_details.empty
+    fig = make_subplots(
+        rows=2 if show_state_strip else 1,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.03,
+        row_heights=[0.82, 0.18] if show_state_strip else [1.0],
+    )
     state_periods = homepage_chart_state_periods(state_details)
-    truth_warnings = build_homepage_chart_truth_warnings(state_details)
-
     fig.add_trace(
         go.Scatter(
             x=main_plot["ts"],
@@ -3690,65 +3956,46 @@ def make_capital_chart(
         col=1,
     )
 
-    state_palette = {
-        "CASH": "#fbbf24",
-        "BASE": "#94a3b8",
-        "BTC": "#22c55e",
-        "ALT": "#ff6b6b",
-    }
-    state_names = {
-        "CASH": t(lang, "chart_state_cash"),
-        "BASE": t(lang, "chart_state_base"),
-        "BTC": t(lang, "chart_state_btc"),
-        "ALT": t(lang, "chart_state_alt"),
-    }
-    grouped_periods: dict[str, dict[str, list[Any]]] = {}
-    cash_label_annotations: list[dict[str, Any]] = []
-    for period in state_periods:
-        bucket = period["bucket"]
-        duration = (period["end"] - period["start"]) + pd.Timedelta(days=1)
-        midpoint = period["start"] + (duration / 2)
-        bucket_group = grouped_periods.setdefault(
-            bucket,
-            {"x": [], "width": [], "customdata": []},
-        )
-        bucket_group["x"].append(midpoint)
-        bucket_group["width"].append(duration.total_seconds() * 1000.0)
-        bucket_group["customdata"].append(
-            [
-                period["start"].strftime("%Y-%m-%d"),
-                period["end"].strftime("%Y-%m-%d"),
-                period["label"],
-            ]
-        )
-        if bucket == "CASH" and duration >= pd.Timedelta(days=21):
-            cash_label_annotations.append(
-                {
-                    "x": midpoint,
-                    "y": 0.5,
-                    "text": t(lang, "chart_state_cash"),
-                }
+    if show_state_strip:
+        state_palette = {
+            "CASH": "#fbbf24",
+            "BTC": "#22c55e",
+            "ALT": "#ff6b6b",
+        }
+        state_names = {
+            "CASH": t(lang, "chart_state_cash"),
+            "BTC": t(lang, "chart_state_btc"),
+            "ALT": t(lang, "chart_state_alt"),
+        }
+        grouped_periods: dict[str, dict[str, list[Any]]] = {}
+        cash_label_annotations: list[dict[str, Any]] = []
+        for period in state_periods:
+            bucket = period["bucket"]
+            duration = (period["end"] - period["start"]) + pd.Timedelta(days=1)
+            midpoint = period["start"] + (duration / 2)
+            bucket_group = grouped_periods.setdefault(
+                bucket,
+                {"x": [], "width": [], "customdata": []},
             )
+            bucket_group["x"].append(midpoint)
+            bucket_group["width"].append(duration.total_seconds() * 1000.0)
+            bucket_group["customdata"].append(
+                [
+                    period["start"].strftime("%Y-%m-%d"),
+                    period["end"].strftime("%Y-%m-%d"),
+                    period["label"],
+                ]
+            )
+            if bucket == "CASH" and duration >= pd.Timedelta(days=21):
+                cash_label_annotations.append(
+                    {
+                        "x": midpoint,
+                        "y": 0.5,
+                        "text": t(lang, "chart_state_cash"),
+                    }
+                )
 
-    if truth_warnings:
-        fig.add_annotation(
-            x=0.5,
-            y=0.5,
-            xref="x2 domain",
-            yref="y2 domain",
-            text="<br>".join(truth_warnings),
-            showarrow=False,
-            font=dict(size=12, color="#f8fafc"),
-            align="center",
-            bgcolor="rgba(185,28,28,0.92)",
-            bordercolor="rgba(254,202,202,0.65)",
-            borderwidth=1,
-            borderpad=10,
-            row=2,
-            col=1,
-        )
-    else:
-        for bucket in ["CASH", "BASE", "BTC", "ALT"]:
+        for bucket in ["CASH", "BTC", "ALT"]:
             bucket_group = grouped_periods.get(bucket)
             if not bucket_group:
                 continue
@@ -3795,7 +4042,7 @@ def make_capital_chart(
 
     fig.update_layout(
         barmode="overlay",
-        height=660,
+        height=660 if show_state_strip else 560,
         title=title,
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
@@ -3827,7 +4074,8 @@ def make_capital_chart(
         row=1,
         col=1,
     )
-    fig.update_xaxes(showgrid=False, row=2, col=1)
+    if show_state_strip:
+        fig.update_xaxes(showgrid=False, row=2, col=1)
     fig.update_yaxes(
         title=t(lang, "chart_performance_axis"),
         showgrid=True,
@@ -3835,15 +4083,16 @@ def make_capital_chart(
         row=1,
         col=1,
     )
-    fig.update_yaxes(
-        title=t(lang, "chart_state_axis"),
-        showgrid=False,
-        showticklabels=False,
-        fixedrange=True,
-        range=[0, 1],
-        row=2,
-        col=1,
-    )
+    if show_state_strip:
+        fig.update_yaxes(
+            title=t(lang, "chart_state_axis"),
+            showgrid=False,
+            showticklabels=False,
+            fixedrange=True,
+            range=[0, 1],
+            row=2,
+            col=1,
+        )
     return fig
 
 
@@ -4014,6 +4263,11 @@ runtime_snapshot_source_path = (
     if latest_attempt_status_payload.get("app_runtime_snapshot")
     else AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
 )
+runtime_authority_payload = (
+    latest_attempt_status_payload
+    if runtime_snapshot_source_path == AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
+    else latest_successful_snapshot_payload
+)
 runtime_snapshot = load_runtime_snapshot_for_app(
     dict(
         latest_attempt_status_payload.get("app_runtime_snapshot")
@@ -4106,7 +4360,10 @@ except Exception as e:
     st.stop()
 
 trend_source_cfg = selector_cfg.get("trend_barometer_source", {}) or {}
-live_public_state = sanitize_row_dict(papers[main_key].iloc[-1].to_dict())
+csv_live_public_state = sanitize_row_dict(papers[main_key].iloc[-1].to_dict())
+live_public_state = sanitize_row_dict(
+    dict(product_snapshot.get("live_public_state") or {})
+) or dict(csv_live_public_state)
 if live_public_state:
     live_public_state["has_new_fields"] = True
 try:
@@ -4141,8 +4398,9 @@ runtime_table_payload = build_authority_runtime_table_snapshot(
 )
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 
+authority_main_metrics_source = dict(product_snapshot.get("main_strategy_metrics") or {})
 main_metrics = resolve_main_metrics_for_display(
-    main_metrics_source_row,
+    authority_main_metrics_source or main_metrics_source_row,
     str(product_snapshot.get("main_strategy_model") or main_key),
 )
 # Homepage top cards are a live/main strategy surface and must not switch to a
@@ -4151,6 +4409,17 @@ top_performance_metrics = resolve_top_performance_metrics_for_display(
     product_snapshot=product_snapshot,
     main_strategy_model=str(product_snapshot.get("main_strategy_model") or main_key),
     current_strategy_contract=current_strategy_contract,
+)
+authority_verification_rows = build_authority_verification_rows(
+    runtime_snapshot,
+    runtime_snapshot_source_path,
+    runtime_authority_payload,
+)
+homepage_authority_integrity_findings = build_homepage_authority_integrity_findings(
+    product_snapshot,
+    runtime_snapshot,
+    csv_live_public_state,
+    main_metrics_source_row,
 )
 
 years = available_years_from_frames(list(papers.values()) + [btc_df])
@@ -4164,6 +4433,18 @@ reference_equity_df = None
 tabs = st.tabs(t(lang, "tabs"))
 
 with tabs[0]:
+    st.markdown("#### Dočasné overenie authority/source")
+    st.caption("Dočasný verifikačný blok pre kontrolu authority zdroja.")
+    render_app_table(authority_verification_rows, emphasize_first_column=True)
+
+    if homepage_authority_integrity_findings:
+        st.error(
+            "Kritická chyba integrity APP: homepage helper zdroje sa rozchádzajú s authority JSON. "
+            "Zobrazené hodnoty nesmú byť považované za autoritatívne, kým sa nesúlad neodstráni."
+        )
+        for finding in homepage_authority_integrity_findings:
+            st.write(f"- {finding}")
+
     home_cards = []
 
     if live_public_state.get("has_new_fields"):
@@ -4204,13 +4485,19 @@ with tabs[0]:
     
 
     st.markdown(f"### {t(lang, 'chart_title')}")
-    st.caption(t(lang, "chart_note"))
     selected_year_home = st.selectbox(
         t(lang, "chart_year"),
         options=years,
         index=years.index(2025) if 2025 in years else 0,
         key="selected_year_home",
     )
+    strip_is_truthful = homepage_chart_strip_is_truthful(
+        main_df=papers[main_key],
+        btc_df=btc_df,
+        year=selected_year_home,
+        lang=lang,
+    )
+    st.caption(t(lang, "chart_note") if strip_is_truthful else t(lang, "chart_note_strip_hidden"))
     chart_explainer_line = build_homepage_chart_explainer_line(
         main_df=papers[main_key],
         btc_df=btc_df,
