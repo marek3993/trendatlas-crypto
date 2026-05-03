@@ -4512,8 +4512,6 @@ with tabs[0]:
         ),
         width="stretch",
     )
-    st.info(chart_explainer_line, icon="ℹ️")
-
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
     perf1 = st.columns(3)
