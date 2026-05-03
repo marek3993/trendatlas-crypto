@@ -21,7 +21,6 @@ if str(ROOT) not in sys.path:
 
 import pandas as pd
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import streamlit as st
 from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
@@ -3922,16 +3921,7 @@ def make_capital_chart(
         btc_df,
         year,
     )
-    state_details = build_truthful_homepage_chart_state_details(main_plot, lang)
-    show_state_strip = not state_details.empty
-    fig = make_subplots(
-        rows=2 if show_state_strip else 1,
-        cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.03,
-        row_heights=[0.82, 0.18] if show_state_strip else [1.0],
-    )
-    state_periods = homepage_chart_state_periods(state_details)
+    fig = go.Figure()
     fig.add_trace(
         go.Scatter(
             x=main_plot["ts"],
@@ -3940,8 +3930,6 @@ def make_capital_chart(
             name=main_label,
             line=dict(width=4.8, color="#ff6b6b"),
         ),
-        row=1,
-        col=1,
     )
 
     fig.add_trace(
@@ -3952,97 +3940,10 @@ def make_capital_chart(
             name=btc_label,
             line=dict(width=2.4, color="#60a5fa", dash="solid"),
         ),
-        row=1,
-        col=1,
     )
 
-    if show_state_strip:
-        state_palette = {
-            "CASH": "#fbbf24",
-            "BTC": "#22c55e",
-            "ALT": "#ff6b6b",
-        }
-        state_names = {
-            "CASH": t(lang, "chart_state_cash"),
-            "BTC": t(lang, "chart_state_btc"),
-            "ALT": t(lang, "chart_state_alt"),
-        }
-        grouped_periods: dict[str, dict[str, list[Any]]] = {}
-        cash_label_annotations: list[dict[str, Any]] = []
-        for period in state_periods:
-            bucket = period["bucket"]
-            duration = (period["end"] - period["start"]) + pd.Timedelta(days=1)
-            midpoint = period["start"] + (duration / 2)
-            bucket_group = grouped_periods.setdefault(
-                bucket,
-                {"x": [], "width": [], "customdata": []},
-            )
-            bucket_group["x"].append(midpoint)
-            bucket_group["width"].append(duration.total_seconds() * 1000.0)
-            bucket_group["customdata"].append(
-                [
-                    period["start"].strftime("%Y-%m-%d"),
-                    period["end"].strftime("%Y-%m-%d"),
-                    period["label"],
-                ]
-            )
-            if bucket == "CASH" and duration >= pd.Timedelta(days=21):
-                cash_label_annotations.append(
-                    {
-                        "x": midpoint,
-                        "y": 0.5,
-                        "text": t(lang, "chart_state_cash"),
-                    }
-                )
-
-        for bucket in ["CASH", "BTC", "ALT"]:
-            bucket_group = grouped_periods.get(bucket)
-            if not bucket_group:
-                continue
-            marker = dict(color=state_palette[bucket], line=dict(width=0))
-            opacity = 0.94
-            if bucket == "CASH":
-                marker = dict(
-                    color=state_palette[bucket],
-                    line=dict(color="rgba(255,255,255,0.95)", width=1.4),
-                )
-                opacity = 0.98
-            fig.add_trace(
-                go.Bar(
-                    x=bucket_group["x"],
-                    y=[1] * len(bucket_group["x"]),
-                    width=bucket_group["width"],
-                    name=state_names[bucket],
-                    marker=marker,
-                    opacity=opacity,
-                    customdata=bucket_group["customdata"],
-                    hovertemplate=(
-                        f"{t(lang, 'chart_state_period')}: %{{customdata[2]}}"
-                        "<br>%{customdata[0]} - %{customdata[1]}"
-                        "<extra></extra>"
-                    ),
-                ),
-                row=2,
-                col=1,
-            )
-        for annotation in cash_label_annotations:
-            fig.add_annotation(
-                x=annotation["x"],
-                y=annotation["y"],
-                text=annotation["text"],
-                showarrow=False,
-                font=dict(size=11, color="#111827"),
-                bgcolor="rgba(255,255,255,0.45)",
-                bordercolor="rgba(255,255,255,0.22)",
-                borderwidth=1,
-                borderpad=3,
-                row=2,
-                col=1,
-            )
-
     fig.update_layout(
-        barmode="overlay",
-        height=660 if show_state_strip else 560,
+        height=560,
         title=title,
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
@@ -4071,28 +3972,12 @@ def make_capital_chart(
         showspikes=True,
         spikemode="across",
         spikesnap="cursor",
-        row=1,
-        col=1,
     )
-    if show_state_strip:
-        fig.update_xaxes(showgrid=False, row=2, col=1)
     fig.update_yaxes(
         title=t(lang, "chart_performance_axis"),
         showgrid=True,
         gridcolor="rgba(255,255,255,0.06)",
-        row=1,
-        col=1,
     )
-    if show_state_strip:
-        fig.update_yaxes(
-            title=t(lang, "chart_state_axis"),
-            showgrid=False,
-            showticklabels=False,
-            fixedrange=True,
-            range=[0, 1],
-            row=2,
-            col=1,
-        )
     return fig
 
 
@@ -4483,20 +4368,6 @@ with tabs[0]:
         options=years,
         index=years.index(2025) if 2025 in years else 0,
         key="selected_year_home",
-    )
-    strip_is_truthful = homepage_chart_strip_is_truthful(
-        main_df=papers[main_key],
-        btc_df=btc_df,
-        year=selected_year_home,
-        lang=lang,
-    )
-    st.caption(t(lang, "chart_note") if strip_is_truthful else t(lang, "chart_note_strip_hidden"))
-    chart_explainer_line = build_homepage_chart_explainer_line(
-        main_df=papers[main_key],
-        btc_df=btc_df,
-        year=selected_year_home,
-        live_public_state=live_public_state,
-        lang=lang,
     )
     st.plotly_chart(
         make_capital_chart(
