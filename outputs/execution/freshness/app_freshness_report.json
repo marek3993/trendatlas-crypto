@@ -1,14 +1,14 @@
 {
-  "generated_at_utc": "2026-05-02T13:38:46+00:00",
-  "latest_closed_utc_date": "2026-04-30",
+  "generated_at_utc": "2026-05-03T11:09:30+00:00",
+  "latest_closed_utc_date": "2026-05-02",
   "status": "ok",
   "checks": {
-    "btc_raw_last_date": "2026-04-30",
-    "phase66g_paper_last_date": "2026-04-30",
-    "phase66g_live_latest_available_date": "2026-04-30",
-    "phase66g_trend_last_date": "2026-04-30",
-    "phase67j_paper_last_date": "2026-04-30",
-    "phase67j_live_latest_available_date": "2026-04-30",
+    "btc_raw_last_date": "2026-05-02",
+    "phase66g_paper_last_date": "2026-05-02",
+    "phase66g_live_latest_available_date": "2026-05-02",
+    "phase66g_trend_last_date": "2026-05-02",
+    "phase67j_paper_last_date": "2026-05-02",
+    "phase67j_live_latest_available_date": "2026-05-02",
     "macro_last_date": "2026-03-08",
     "top100_assets_checked": [
       "LUNC",
@@ -23,21 +23,21 @@
       "LINK"
     ],
     "top100_asset_last_dates": {
-      "LUNC": "2026-04-30",
-      "NEO": "2026-04-30",
-      "DOGE": "2026-04-30",
-      "STX": "2026-04-30",
-      "MORPHO": "2026-04-30",
-      "APT": "2026-04-30",
-      "HBAR": "2026-04-30",
-      "SKY": "2026-04-30",
-      "RUNE": "2026-04-30",
-      "LINK": "2026-04-30"
+      "LUNC": "2026-05-03",
+      "NEO": "2026-05-03",
+      "DOGE": "2026-05-03",
+      "STX": "2026-05-03",
+      "MORPHO": "2026-05-03",
+      "APT": "2026-05-03",
+      "HBAR": "2026-05-03",
+      "SKY": "2026-05-03",
+      "RUNE": "2026-05-03",
+      "LINK": "2026-05-03"
     },
-    "top100_min_last_date": "2026-04-30",
-    "top100_max_last_date": "2026-04-30"
+    "top100_min_last_date": "2026-05-03",
+    "top100_max_last_date": "2026-05-03"
   },
   "warnings": [],
   "errors": [],
-  "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\app_freshness_verification\\app_freshness_report.json"
+  "report_path": "/opt/market_regime_v1/outputs/app_freshness_verification/app_freshness_report.json"
 }
