@@ -4433,18 +4433,6 @@ reference_equity_df = None
 tabs = st.tabs(t(lang, "tabs"))
 
 with tabs[0]:
-    st.markdown("#### Dočasné overenie authority/source")
-    st.caption("Dočasný verifikačný blok pre kontrolu authority zdroja.")
-    render_app_table(authority_verification_rows, emphasize_first_column=True)
-
-    if homepage_authority_integrity_findings:
-        st.error(
-            "Kritická chyba integrity APP: homepage helper zdroje sa rozchádzajú s authority JSON. "
-            "Zobrazené hodnoty nesmú byť považované za autoritatívne, kým sa nesúlad neodstráni."
-        )
-        for finding in homepage_authority_integrity_findings:
-            st.write(f"- {finding}")
-
     home_cards = []
 
     if live_public_state.get("has_new_fields"):
