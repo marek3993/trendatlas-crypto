@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import csv
+import errno
 import hashlib
+import io
 import json
+import os
 import subprocess
 import sys
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+import traceback
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS_DIR = ROOT / "scripts"
@@ -19,6 +24,8 @@ for candidate in (ROOT, SCRIPTS_DIR):
         sys.path.insert(0, candidate_text)
 
 OUTPUT_DIR = ROOT / "outputs" / "execution" / "watchdog"
+LOGS_DIR = OUTPUT_DIR / "logs"
+LOCK_PATH = OUTPUT_DIR / "watchdog.lock"
 REPORT_PATH = OUTPUT_DIR / "latest_watchdog_report.json"
 SUMMARY_PATH = OUTPUT_DIR / "latest_watchdog_summary.txt"
 ACTIONS_PATH = OUTPUT_DIR / "latest_watchdog_actions.json"
@@ -38,6 +45,7 @@ LATEST_MANIFEST_GLOB = "*/app_refresh_pipeline_manifest.json"
 
 DAILY_REFRESH_SCRIPT = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
 MATERIALIZE_SCRIPT = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
+PI_AUTHORITY_PRODUCER_SCRIPT = ROOT / "scripts" / "execution" / "run_pi_authoritative_producer.py"
 
 UPSTREAM_PHASE68G_SOURCE_PAPER_PATH = (
     ROOT
@@ -69,7 +77,7 @@ INCIDENT_CLASSES = {
     "AUTHORITY_ATTEMPT_FAILED",
     "AUTHORITY_SNAPSHOT_STALE",
     "AUTHORITY_SUPPORT_FILES_MISMATCH",
-    "APP_DEPLOY_OR_CACHE_STALE",
+    "AUTHORITY_PUBLISH_STALE",
     "UNKNOWN_NEEDS_HUMAN",
 }
 CURRENT_STATUSES = {"current", "stale", "not_time_yet"}
@@ -136,6 +144,92 @@ def relative_path(path: Path) -> str:
         return path.resolve().relative_to(ROOT.resolve()).as_posix()
     except ValueError:
         return str(path.resolve())
+
+
+def ensure_output_dirs() -> None:
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def safe_token(value: str) -> str:
+    sanitized = "".join(char if char.isalnum() else "_" for char in value.strip().lower())
+    compact = "_".join(part for part in sanitized.split("_") if part)
+    return compact or "unknown"
+
+
+def build_log_paths(action: str, started_at_utc: str) -> tuple[Path, Path]:
+    timestamp_token = safe_token(started_at_utc.replace("T", "_"))
+    action_token = safe_token(action)
+    stem = f"{timestamp_token}_{action_token}"
+    return (
+        LOGS_DIR / f"{stem}_stdout.log",
+        LOGS_DIR / f"{stem}_stderr.log",
+    )
+
+
+def write_log_file(path: Path, content: str) -> str:
+    ensure_output_dirs()
+    path.write_text(content, encoding="utf-8")
+    return relative_path(path)
+
+
+def read_lock_payload() -> dict[str, Any]:
+    return read_json_optional(LOCK_PATH)
+
+
+def lock_pid_is_running(pid: Any) -> bool:
+    try:
+        pid_value = int(pid)
+    except (TypeError, ValueError):
+        return False
+    if pid_value <= 0:
+        return False
+    try:
+        os.kill(pid_value, 0)
+    except OSError as exc:
+        return exc.errno == errno.EPERM
+    return True
+
+
+@contextlib.contextmanager
+def acquire_watchdog_lock(*, remediation_enabled: bool) -> Any:
+    ensure_output_dirs()
+    lock_payload = {
+        "pid": os.getpid(),
+        "acquired_at_utc": utc_now_iso(),
+        "mode": "remediate_safe" if remediation_enabled else "check_only",
+        "lock_path": relative_path(LOCK_PATH),
+    }
+
+    while True:
+        try:
+            fd = os.open(str(LOCK_PATH), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError as exc:
+            existing_payload = read_lock_payload()
+            if existing_payload and not lock_pid_is_running(existing_payload.get("pid")):
+                try:
+                    LOCK_PATH.unlink()
+                    continue
+                except FileNotFoundError:
+                    continue
+            owner_pid = existing_payload.get("pid")
+            acquired_at = existing_payload.get("acquired_at_utc")
+            raise RuntimeError(
+                "Watchdog lock is already held "
+                f"(pid={owner_pid}, acquired_at_utc={acquired_at}, path={relative_path(LOCK_PATH)})"
+            ) from exc
+        else:
+            try:
+                with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                    json.dump(lock_payload, handle, indent=2, ensure_ascii=False)
+                    handle.write("\n")
+                yield lock_payload
+            finally:
+                try:
+                    LOCK_PATH.unlink()
+                except FileNotFoundError:
+                    pass
+            return
 
 
 def parse_iso_datetime(value: Any) -> datetime | None:
@@ -695,9 +789,9 @@ def classify_incident(state: dict[str, Any], truths: dict[str, Any]) -> tuple[st
     ):
         return (
             "needs_attention",
-            "APP_DEPLOY_OR_CACHE_STALE",
-            "Backend artifacts are current locally, but the downstream published/deployed app-facing layer is stale.",
-            "Refresh the downstream publish/deploy/cache layer without changing the authority strategy truth.",
+            "AUTHORITY_PUBLISH_STALE",
+            "Authority artifacts are current locally, but the authority publish tree is stale or mixed.",
+            "Republish authority artifacts only; do not change strategy truth or live-order state.",
         )
 
     if truths["local_backend_current"] and truths["publish_current"] is not False:
@@ -720,64 +814,128 @@ def choose_safe_action(incident_class: str, truths: dict[str, Any]) -> dict[str,
     if incident_class == "SCHEDULER_NOT_RUN":
         return {
             "eligible": True,
-            "action": "rerun_daily_refresh_app_pipeline",
-            "command": [sys.executable, str(DAILY_REFRESH_SCRIPT)],
-            "reason": "Local scheduler/pipeline has not produced a successful current-day manifest.",
+            "action": "run_pi_authoritative_producer",
+            "kind": "subprocess",
+            "command": [sys.executable, str(PI_AUTHORITY_PRODUCER_SCRIPT)],
+            "reason": "Scheduler has not produced the required current-day authority run.",
         }
     if incident_class == "APP_EXPORT_STALE" and truths["upstream_phase_outputs_current"]:
         return {
             "eligible": True,
-            "action": "rerun_materialize_execution_app_exports",
+            "action": "materialize_execution_app_exports",
+            "kind": "subprocess",
             "command": [sys.executable, str(MATERIALIZE_SCRIPT)],
             "reason": "Canonical app exports are stale while upstream phase outputs are already current.",
         }
     if incident_class == "AUTHORITY_SUPPORT_FILES_MISMATCH" and truths["authority_current"]:
         return {
             "eligible": True,
-            "action": "restore_or_republish_support_files",
+            "action": "run_pi_authoritative_producer",
+            "kind": "subprocess",
+            "command": [sys.executable, str(PI_AUTHORITY_PRODUCER_SCRIPT)],
+            "reason": "Authority is current, but support files are stale or mixed and should be rebuilt from the producer.",
+        }
+    if incident_class == "AUTHORITY_PUBLISH_STALE":
+        return {
+            "eligible": True,
+            "action": "publish_authority_artifacts_to_repo",
+            "kind": "callable",
             "command": None,
-            "reason": "Authority is current, but one or more local support/app-facing files are stale or mixed.",
+            "reason": "Local authority artifacts are current and only the authority publish tree needs refresh.",
         }
     return {
         "eligible": False,
         "action": None,
+        "kind": None,
         "command": None,
         "reason": "No safe remediation action is allowed for this incident class.",
     }
 
 
-def run_safe_action(action: dict[str, Any]) -> dict[str, Any]:
-    if not action.get("eligible"):
-        return {
-            "status": "skipped",
-            "action": action.get("action"),
-            "reason": action.get("reason"),
-        }
+def build_skipped_action_result(action: dict[str, Any], *, reason: str) -> dict[str, Any]:
+    return {
+        "status": "skipped",
+        "action": action.get("action"),
+        "reason": reason,
+        "exit_code": None,
+        "command": action.get("command"),
+        "stdout_log": None,
+        "stderr_log": None,
+        "started_at_utc": None,
+        "finished_at_utc": None,
+    }
 
-    if action["action"] == "restore_or_republish_support_files":
-        return {
-            "status": "skipped",
-            "action": action["action"],
-            "reason": "safe_remediation_not_implemented_for_support_file_mismatch",
-        }
 
-    command = action["command"]
+def run_subprocess_action(action: dict[str, Any]) -> dict[str, Any]:
+    started_at_utc = utc_now_iso()
+    stdout_log_path, stderr_log_path = build_log_paths(action["action"], started_at_utc)
     completed = subprocess.run(
-        command,
+        action["command"],
         cwd=str(ROOT),
         text=True,
         capture_output=True,
         check=False,
     )
+    finished_at_utc = utc_now_iso()
     return {
         "status": "completed" if completed.returncode == 0 else "failed",
         "action": action["action"],
         "reason": action["reason"],
-        "returncode": completed.returncode,
-        "command": command,
-        "stdout": completed.stdout[-12000:],
-        "stderr": completed.stderr[-12000:],
+        "exit_code": completed.returncode,
+        "command": action["command"],
+        "stdout_log": write_log_file(stdout_log_path, completed.stdout),
+        "stderr_log": write_log_file(stderr_log_path, completed.stderr),
+        "started_at_utc": started_at_utc,
+        "finished_at_utc": finished_at_utc,
     }
+
+
+def run_publish_authority_action(action: dict[str, Any]) -> dict[str, Any]:
+    started_at_utc = utc_now_iso()
+    stdout_log_path, stderr_log_path = build_log_paths(action["action"], started_at_utc)
+    stdout_buffer = io.StringIO()
+    stderr_buffer = io.StringIO()
+    exit_code = 0
+    status = "completed"
+    try:
+        from scripts.execution.run_pi_authoritative_producer import (
+            build_pi_authoritative_env,
+            publish_authority_artifacts_to_repo,
+        )
+
+        with contextlib.redirect_stdout(stdout_buffer), contextlib.redirect_stderr(stderr_buffer):
+            result = publish_authority_artifacts_to_repo(
+                root=ROOT,
+                env=build_pi_authoritative_env(),
+            )
+        stdout_buffer.write(json.dumps({"publish_result": result}, indent=2, ensure_ascii=False))
+        stdout_buffer.write("\n")
+    except Exception:
+        exit_code = 1
+        status = "failed"
+        stderr_buffer.write(traceback.format_exc())
+    finished_at_utc = utc_now_iso()
+    return {
+        "status": status,
+        "action": action["action"],
+        "reason": action["reason"],
+        "exit_code": exit_code,
+        "command": None,
+        "stdout_log": write_log_file(stdout_log_path, stdout_buffer.getvalue()),
+        "stderr_log": write_log_file(stderr_log_path, stderr_buffer.getvalue()),
+        "started_at_utc": started_at_utc,
+        "finished_at_utc": finished_at_utc,
+    }
+
+
+def run_safe_action(action: dict[str, Any]) -> dict[str, Any]:
+    if not action.get("eligible"):
+        return build_skipped_action_result(action, reason=action.get("reason") or "not_eligible")
+    if action.get("kind") == "subprocess":
+        return run_subprocess_action(action)
+    if action.get("kind") == "callable" and action.get("action") == "publish_authority_artifacts_to_repo":
+        return run_publish_authority_action(action)
+    return build_skipped_action_result(action, reason="unsupported_safe_action")
 
 
 def build_summary(report: dict[str, Any]) -> str:
@@ -798,8 +956,11 @@ def build_summary(report: dict[str, Any]) -> str:
             "github_published_local_files_current: "
             + json.dumps(report["github_published_local_files_current"]["current"])
         ),
-        f"action_taken: {report['action_taken']}",
-        f"action_result: {report['action_result'].get('status')}",
+        f"remediation_allowed: {report['remediation_allowed']}",
+        f"remediation_action: {report['remediation_action']}",
+        f"remediation_status: {report['action_result'].get('status')}",
+        f"post_remediation_status: {report['post_remediation_status']}",
+        f"post_remediation_incident_class: {report['post_remediation_incident_class']}",
     ]
     if report.get("manual_next_step"):
         lines.append(f"manual_next_step: {report['manual_next_step']}")
@@ -829,26 +990,40 @@ def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str
     final_incident_class = incident_class
     final_root_cause = root_cause
     final_manual_next_step = manual_next_step
+    post_remediation_status: str | None = None
+    post_remediation_incident_class: str | None = None
 
-    if remediation_enabled:
+    if remediation_enabled and safe_action.get("eligible"):
         action_result = run_safe_action(safe_action)
-        if action_result.get("status") == "completed":
+        try:
             final_state = collect_state()
             final_truths = state_truths(final_state)
             (
-                final_status,
-                final_incident_class,
+                post_remediation_status,
+                post_remediation_incident_class,
                 final_root_cause,
                 final_manual_next_step,
             ) = classify_incident(final_state, final_truths)
-        elif action_result.get("status") == "failed":
+            final_incident_class = post_remediation_incident_class
+        except Exception as exc:
+            post_remediation_status = "unknown"
+            post_remediation_incident_class = "UNKNOWN_NEEDS_HUMAN"
             final_status = "remediation_failed"
+            final_incident_class = "UNKNOWN_NEEDS_HUMAN"
+            final_root_cause = f"Safe remediation post-check failed: {exc}"
+            final_manual_next_step = "Inspect watchdog remediation logs and rerun the watchdog after resolving the post-check failure."
+        else:
+            if action_result.get("status") == "completed":
+                final_status = post_remediation_status
+            elif action_result.get("status") == "failed":
+                final_status = "remediation_failed"
+            else:
+                final_status = status
     else:
-        action_result = {
-            "status": "skipped",
-            "reason": "check_only_mode",
-            "eligible": safe_action.get("eligible"),
-        }
+        action_result = build_skipped_action_result(
+            safe_action,
+            reason="check_only_mode" if not remediation_enabled else (safe_action.get("reason") or "not_eligible"),
+        )
 
     report = {
         "generated_at_utc": utc_now_iso(),
@@ -889,6 +1064,15 @@ def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str
             "app_exports": final_truths["export_date_values"],
             "upstream_phase_outputs": final_truths["upstream_date_values"],
         },
+        "remediation_allowed": bool(safe_action.get("eligible")),
+        "remediation_action": safe_action.get("action"),
+        "remediation_started_at_utc": action_result.get("started_at_utc"),
+        "remediation_finished_at_utc": action_result.get("finished_at_utc"),
+        "remediation_exit_code": action_result.get("exit_code"),
+        "remediation_stdout_log": action_result.get("stdout_log"),
+        "remediation_stderr_log": action_result.get("stderr_log"),
+        "post_remediation_status": post_remediation_status,
+        "post_remediation_incident_class": post_remediation_incident_class,
         "action_taken": safe_action["action"] if remediation_enabled and safe_action.get("eligible") else "none",
         "action_result": action_result,
         "manual_next_step": final_manual_next_step,
@@ -914,12 +1098,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     remediation_enabled = bool(args.remediate_safe)
-    report, actions_payload = build_report(remediation_enabled=remediation_enabled)
+    with acquire_watchdog_lock(remediation_enabled=remediation_enabled):
+        report, actions_payload = build_report(remediation_enabled=remediation_enabled)
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    REPORT_PATH.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    SUMMARY_PATH.write_text(build_summary(report), encoding="utf-8")
-    ACTIONS_PATH.write_text(json.dumps(actions_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        ensure_output_dirs()
+        REPORT_PATH.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        SUMMARY_PATH.write_text(build_summary(report), encoding="utf-8")
+        ACTIONS_PATH.write_text(json.dumps(actions_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     if args.json:
         print(json.dumps(report, indent=2, ensure_ascii=False))

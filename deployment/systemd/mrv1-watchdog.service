@@ -1,0 +1,14 @@
+[Unit]
+Description=MRV1 safe self-healing watchdog
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/market_regime_v1
+ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/mrv1_self_healing_watchdog.py --remediate-safe --json
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

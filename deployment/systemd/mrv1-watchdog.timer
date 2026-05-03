@@ -1,0 +1,11 @@
+[Unit]
+Description=Run MRV1 safe self-healing watchdog timer
+
+[Timer]
+Unit=mrv1-watchdog.service
+OnCalendar=*-*-* *:25:00 UTC
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target
