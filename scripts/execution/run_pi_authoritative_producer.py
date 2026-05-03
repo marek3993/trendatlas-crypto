@@ -21,6 +21,12 @@ from scripts.execution.current_strategy_root_contract import (
 ROOT = Path(__file__).resolve().parents[2]
 PIPELINE_SCRIPT = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
 TERMINAL_ATTEMPT_STATUSES = frozenset({"success", "failed"})
+CANONICAL_APP_EXPORT_PREFIX = ("outputs", "execution", "app_exports")
+ALLOWED_SUPPORT_ARTIFACT_RELATIVE_PATHS = frozenset(
+    {
+        Path("outputs/execution/freshness/app_freshness_report.json").as_posix(),
+    }
+)
 REMOTE_DRIFT_PUSH_MARKERS = (
     "non-fast-forward",
     "fetch first",
@@ -98,8 +104,7 @@ def _resolve_canonical_app_export_path(
         raise ValueError(
             f"Canonical app export path must stay inside the runtime checkout: {field_name}={path_text}"
         ) from exc
-    expected_prefix = ("outputs", "execution", "app_exports")
-    if relative_path.parts[: len(expected_prefix)] != expected_prefix:
+    if relative_path.parts[: len(CANONICAL_APP_EXPORT_PREFIX)] != CANONICAL_APP_EXPORT_PREFIX:
         raise ValueError(
             "Canonical app export path must stay inside outputs/execution/app_exports: "
             f"{field_name}={path_text}"
@@ -107,6 +112,39 @@ def _resolve_canonical_app_export_path(
     if not resolved_candidate.exists() or not resolved_candidate.is_file():
         raise FileNotFoundError(
             f"Missing required canonical app export artifact: {resolved_candidate}"
+        )
+    return resolved_candidate
+
+
+def _resolve_canonical_support_artifact_path(
+    raw_path: Any,
+    *,
+    root: Path,
+    field_name: str,
+) -> Path:
+    path_text = str(raw_path or "").strip()
+    if not path_text:
+        raise ValueError(f"Missing required canonical support artifact path: {field_name}")
+    candidate = Path(path_text)
+    if not candidate.is_absolute():
+        candidate = root / candidate
+    resolved_candidate = candidate.resolve()
+    resolved_root = root.resolve()
+    try:
+        relative_path = resolved_candidate.relative_to(resolved_root).as_posix()
+    except ValueError as exc:
+        raise ValueError(
+            f"Canonical support artifact path must stay inside the runtime checkout: {field_name}={path_text}"
+        ) from exc
+    if relative_path not in ALLOWED_SUPPORT_ARTIFACT_RELATIVE_PATHS:
+        allowed_display = ", ".join(sorted(ALLOWED_SUPPORT_ARTIFACT_RELATIVE_PATHS))
+        raise ValueError(
+            "Canonical support artifact path is not allowlisted: "
+            f"{field_name}={path_text} allowed={allowed_display}"
+        )
+    if not resolved_candidate.exists() or not resolved_candidate.is_file():
+        raise FileNotFoundError(
+            f"Missing required canonical support artifact: {resolved_candidate}"
         )
     return resolved_candidate
 
@@ -175,7 +213,7 @@ def _resolve_required_app_publish_paths(
             root=root,
             field_name="app_product_snapshot.trend_history_source_path",
         ),
-        _resolve_canonical_app_export_path(
+        _resolve_canonical_support_artifact_path(
             str(dependency_closure["freshness_report_path"]),
             root=root,
             field_name="app_product_snapshot.source_metadata.freshness.path",

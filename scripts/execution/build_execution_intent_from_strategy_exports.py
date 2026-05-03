@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -41,6 +42,10 @@ AUTHORITY_LATEST_ATTEMPT_STATUS_PATH = (
     ROOT / "outputs" / "execution" / "authority" / "latest_attempt_status.json"
 )
 APP_FRESHNESS_REPORT_PATH = ROOT / "outputs" / "execution" / "freshness" / "app_freshness_report.json"
+APP_REFRESH_PIPELINE_DIR = ROOT / "outputs" / "app_refresh_pipeline"
+ALLOW_IN_PROGRESS_AUTHORITY_ENV = "MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN"
+CURRENT_AUTHORITY_RUN_ID_ENV = "MRV1_CURRENT_AUTHORITY_RUN_ID"
+CURRENT_AUTHORITY_TARGET_CLOSED_DAY_ENV = "MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY"
 
 
 def utc_now_iso() -> str:
@@ -107,6 +112,231 @@ def normalize_iso_day_text(value: Any, *, context: str) -> str:
         fail(f"{context} is not an ISO day: {value}")
     return text
     raise RuntimeError("unreachable")
+
+
+def strict_normalize_iso_day_text(value: Any, *, context: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        raise ValueError(f"{context} is missing")
+    if "T" in text:
+        text = text.split("T", 1)[0]
+    if len(text) != 10:
+        raise ValueError(f"{context} is not an ISO day: {value}")
+    return text
+
+
+def env_flag_enabled(name: str) -> bool:
+    return str(os.environ.get(name) or "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def load_json_strict(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing required file: {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected JSON object in {path}")
+    return payload
+
+
+def read_csv_rows_strict(path: Path) -> tuple[list[str], list[dict[str, str]]]:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing required CSV: {path}")
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        header = reader.fieldnames or []
+        rows = list(reader)
+        return header, rows
+
+
+def read_required_csv_last_day(
+    path: Path,
+    *,
+    context: str,
+    day_candidates: list[str],
+) -> str:
+    header, rows = read_csv_rows_strict(path)
+    if not rows:
+        raise ValueError(f"{context} has no rows: {path}")
+    last_row = rows[-1]
+    column = find_column(header, day_candidates)
+    if column is None:
+        raise ValueError(
+            f"{context} is missing supported day columns: {', '.join(day_candidates)}"
+        )
+    value = str(last_row.get(column, "")).strip()
+    if not value:
+        raise ValueError(f"{context}.{column} is missing in last row")
+    return strict_normalize_iso_day_text(value, context=f"{context}.{column}")
+
+
+def normalize_optional_resolved_path_text(raw_path: Any) -> str | None:
+    text = str(raw_path or "").strip()
+    if not text:
+        return None
+    try:
+        return str(Path(text).resolve())
+    except Exception:
+        return text
+
+
+def evaluate_same_run_in_progress_authority_allowance(
+    *,
+    latest_attempt_status: dict[str, Any],
+    main_paper_path: Path,
+    app_freshness_report_path: Path,
+) -> dict[str, Any]:
+    evaluation: dict[str, Any] = {
+        "requested": env_flag_enabled(ALLOW_IN_PROGRESS_AUTHORITY_ENV),
+        "allowed": False,
+        "same_run_allowance_applied": False,
+        "decision_reason": "allowance_not_requested",
+        "live_order_execution_permitted": False,
+        "authority_mode": str(os.environ.get("MRV1_AUTHORITY_MODE") or "").strip().lower(),
+        "automatic_producer_id": str(os.environ.get("MRV1_AUTOMATIC_PRODUCER_ID") or "").strip().lower(),
+        "expected_run_id": str(os.environ.get(CURRENT_AUTHORITY_RUN_ID_ENV) or "").strip(),
+        "expected_target_closed_day_utc": str(
+            os.environ.get(CURRENT_AUTHORITY_TARGET_CLOSED_DAY_ENV) or ""
+        ).strip(),
+        "attempt_run_id": str(latest_attempt_status.get("run_id") or "").strip(),
+        "attempt_source_manifest_path": normalize_optional_resolved_path_text(
+            latest_attempt_status.get("source_manifest_path")
+        ),
+        "attempt_target_closed_day_utc": str(
+            latest_attempt_status.get("target_closed_day_utc") or ""
+        ).strip(),
+        "attempt_latest_available_closed_utc_day": str(
+            latest_attempt_status.get("latest_available_closed_utc_day") or ""
+        ).strip(),
+        "attempt_currentness_status": str(
+            latest_attempt_status.get("currentness_status") or ""
+        ).strip().lower(),
+        "attempt_status": str(
+            latest_attempt_status.get("latest_authoritative_attempt_status") or ""
+        ).strip().lower(),
+    }
+
+    expected_run_id = str(evaluation["expected_run_id"])
+    if expected_run_id:
+        expected_manifest_path = (
+            APP_REFRESH_PIPELINE_DIR / expected_run_id / "app_refresh_pipeline_manifest.json"
+        ).resolve()
+        evaluation["expected_source_manifest_path"] = str(expected_manifest_path)
+    else:
+        expected_manifest_path = None
+        evaluation["expected_source_manifest_path"] = None
+
+    if not evaluation["requested"]:
+        return evaluation
+
+    try:
+        expected_target_closed_day = strict_normalize_iso_day_text(
+            evaluation["expected_target_closed_day_utc"],
+            context=CURRENT_AUTHORITY_TARGET_CLOSED_DAY_ENV,
+        )
+        evaluation["expected_target_closed_day_utc"] = expected_target_closed_day
+
+        same_run_match = False
+        same_run_match_via = None
+        if expected_run_id and evaluation["attempt_run_id"] == expected_run_id:
+            same_run_match = True
+            same_run_match_via = "run_id"
+        elif (
+            expected_manifest_path is not None
+            and evaluation["attempt_source_manifest_path"] == str(expected_manifest_path)
+        ):
+            same_run_match = True
+            same_run_match_via = "source_manifest_path"
+        evaluation["same_run_match"] = same_run_match
+        evaluation["same_run_match_via"] = same_run_match_via
+
+        main_paper_last_day = read_required_csv_last_day(
+            main_paper_path,
+            context="canonical main strategy paper",
+            day_candidates=["date"],
+        )
+        evaluation["main_paper_last_day"] = main_paper_last_day
+
+        freshness_report = load_json_strict(app_freshness_report_path)
+        freshness_report_day = strict_normalize_iso_day_text(
+            freshness_report.get("latest_closed_utc_date"),
+            context="canonical freshness report latest_closed_utc_date",
+        )
+        freshness_report_status = str(freshness_report.get("status") or "").strip().lower()
+        freshness_report_errors = freshness_report.get("errors")
+        freshness_report_has_errors = bool(
+            isinstance(freshness_report_errors, list) and freshness_report_errors
+        )
+        evaluation["freshness_report_day"] = freshness_report_day
+        evaluation["freshness_report_status"] = freshness_report_status
+        evaluation["freshness_report_has_errors"] = freshness_report_has_errors
+
+        decision_checks = [
+            (
+                evaluation["authority_mode"] == "authoritative"
+                and evaluation["automatic_producer_id"] == "raspberry_pi",
+                "not_pi_authoritative_post_refresh_context",
+            ),
+            (bool(expected_run_id), "missing_current_authority_run_id"),
+            (same_run_match, "same_run_identity_mismatch"),
+            (
+                evaluation["attempt_status"] == "in_progress",
+                "latest_authoritative_attempt_status_not_in_progress",
+            ),
+            (
+                evaluation["attempt_currentness_status"] == "refresh_in_progress",
+                "currentness_status_not_refresh_in_progress",
+            ),
+            (
+                strict_normalize_iso_day_text(
+                    evaluation["attempt_target_closed_day_utc"],
+                    context="latest_attempt_status.target_closed_day_utc",
+                )
+                == expected_target_closed_day,
+                "target_closed_day_mismatch",
+            ),
+            (
+                strict_normalize_iso_day_text(
+                    evaluation["attempt_latest_available_closed_utc_day"],
+                    context="latest_attempt_status.latest_available_closed_utc_day",
+                )
+                == expected_target_closed_day,
+                "latest_available_closed_day_mismatch",
+            ),
+            (
+                main_paper_last_day == expected_target_closed_day,
+                "canonical_main_strategy_paper_not_current",
+            ),
+            (
+                freshness_report_day == expected_target_closed_day,
+                "canonical_freshness_report_not_current",
+            ),
+            (
+                freshness_report_status in {"ok", "success", "current"},
+                "canonical_freshness_report_not_green",
+            ),
+            (
+                not freshness_report_has_errors,
+                "canonical_freshness_report_contains_errors",
+            ),
+        ]
+        for passed, reason in decision_checks:
+            if not passed:
+                evaluation["decision_reason"] = reason
+                return evaluation
+
+        evaluation["allowed"] = True
+        evaluation["same_run_allowance_applied"] = True
+        evaluation["decision_reason"] = "accepted_same_run_in_progress_authority_allowance"
+        evaluation["notes"] = [
+            "Same-run in-progress authority allowance was accepted only for read-only intent generation.",
+            "This intent builder still emits trading_enabled=false and does not enable live order placement.",
+        ]
+        return evaluation
+    except Exception as exc:
+        evaluation["decision_reason"] = (
+            f"allowance_validation_error::{type(exc).__name__}: {exc}"
+        )
+        return evaluation
 
 
 def normalize_key(s: str) -> str:
@@ -196,6 +426,7 @@ def write_fail_closed_intent(
     input_paths: list[str],
     source_paths: dict[str, str],
     path_resolution_diagnostics: list[dict[str, Any]],
+    authority_currentness_evaluation: dict[str, Any] | None = None,
 ) -> None:
     intent = {
         "intent_type": "normalized_execution_intent",
@@ -228,6 +459,7 @@ def write_fail_closed_intent(
         },
         "source_paths": source_paths,
         "path_resolution_diagnostics": path_resolution_diagnostics,
+        "authority_currentness_evaluation": authority_currentness_evaluation,
         "resolved_columns": {},
         "source_samples": {},
         "notes": [
@@ -247,6 +479,7 @@ def write_fail_closed_intent(
         "kill_switch_required": True,
         "leverage_live_truth_allowed": False,
         "blocked_reason": blocked_reason,
+        "authority_currentness_evaluation": authority_currentness_evaluation,
     }
     manifest = {
         "artifact_name": "latest_execution_intent",
@@ -260,6 +493,7 @@ def write_fail_closed_intent(
             str(MANIFEST_PATH.resolve()),
         ],
         "status": "blocked",
+        "authority_currentness_evaluation": authority_currentness_evaluation,
     }
     INTENT_PATH.write_text(json.dumps(intent, indent=2, ensure_ascii=False), encoding="utf-8")
     QUALITY_PATH.write_text(json.dumps(quality, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -275,6 +509,7 @@ def fail_closed_intent(
     input_paths: list[str],
     source_paths: dict[str, str],
     path_resolution_diagnostics: list[dict[str, Any]],
+    authority_currentness_evaluation: dict[str, Any] | None = None,
 ) -> None:
     write_fail_closed_intent(
         started_at=started_at,
@@ -284,6 +519,7 @@ def fail_closed_intent(
         input_paths=input_paths,
         source_paths=source_paths,
         path_resolution_diagnostics=path_resolution_diagnostics,
+        authority_currentness_evaluation=authority_currentness_evaluation,
     )
     fail(blocked_reason)
 
@@ -403,42 +639,7 @@ def main() -> None:
         "authority_latest_attempt_status": str(AUTHORITY_LATEST_ATTEMPT_STATUS_PATH.resolve()),
     }
 
-    latest_successful_snapshot = read_json(AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH)
     latest_attempt_status = read_json(AUTHORITY_LATEST_ATTEMPT_STATUS_PATH)
-    authority_product_snapshot = require_mapping(
-        latest_successful_snapshot.get("app_product_snapshot"),
-        "latest_successful_snapshot.app_product_snapshot",
-    )
-    try:
-        validate_authoritative_dependency_closure(
-            authority_product_snapshot,
-            current_strategy_contract,
-            root=ROOT,
-            context="Execution intent blocked:",
-        )
-    except Exception as exc:
-        fail_closed_intent(
-            str(exc),
-            started_at=started_at,
-            strategy_model=strategy_model,
-            reference_model=reference_model,
-            input_paths=input_paths_for_failure,
-            source_paths=source_paths_for_failure,
-            path_resolution_diagnostics=path_resolution_diagnostics,
-        )
-
-    authority_target_closed_day = normalize_iso_day_text(
-        latest_successful_snapshot.get("target_closed_day_utc"),
-        context="latest_successful_snapshot.target_closed_day_utc",
-    )
-    authority_strategy_closed_day = normalize_iso_day_text(
-        authority_product_snapshot.get("strategy_last_closed_day"),
-        context="latest_successful_snapshot.app_product_snapshot.strategy_last_closed_day",
-    )
-    authority_freshness_closed_day = normalize_iso_day_text(
-        authority_product_snapshot.get("freshness_target_closed_day"),
-        context="latest_successful_snapshot.app_product_snapshot.freshness_target_closed_day",
-    )
     attempt_currentness_status = str(latest_attempt_status.get("currentness_status") or "").strip().lower()
     attempt_target_closed_day = normalize_iso_day_text(
         latest_attempt_status.get("target_closed_day_utc"),
@@ -448,17 +649,99 @@ def main() -> None:
         latest_attempt_status.get("latest_available_closed_utc_day"),
         context="latest_attempt_status.latest_available_closed_utc_day",
     )
-    if attempt_currentness_status != "current":
+    authority_currentness_evaluation = evaluate_same_run_in_progress_authority_allowance(
+        latest_attempt_status=latest_attempt_status,
+        main_paper_path=main_paper_path,
+        app_freshness_report_path=app_freshness_report_path,
+    )
+    authority_target_closed_day: str
+    authority_strategy_closed_day: str | None
+    authority_freshness_closed_day: str | None
+
+    if attempt_currentness_status == "current":
+        latest_successful_snapshot = read_json(AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH)
+        authority_product_snapshot = require_mapping(
+            latest_successful_snapshot.get("app_product_snapshot"),
+            "latest_successful_snapshot.app_product_snapshot",
+        )
+        try:
+            validate_authoritative_dependency_closure(
+                authority_product_snapshot,
+                current_strategy_contract,
+                root=ROOT,
+                context="Execution intent blocked:",
+            )
+        except Exception as exc:
+            fail_closed_intent(
+                str(exc),
+                started_at=started_at,
+                strategy_model=strategy_model,
+                reference_model=reference_model,
+                input_paths=input_paths_for_failure,
+                source_paths=source_paths_for_failure,
+                path_resolution_diagnostics=path_resolution_diagnostics,
+                authority_currentness_evaluation=authority_currentness_evaluation,
+            )
+
+        authority_target_closed_day = normalize_iso_day_text(
+            latest_successful_snapshot.get("target_closed_day_utc"),
+            context="latest_successful_snapshot.target_closed_day_utc",
+        )
+        authority_strategy_closed_day = normalize_iso_day_text(
+            authority_product_snapshot.get("strategy_last_closed_day"),
+            context="latest_successful_snapshot.app_product_snapshot.strategy_last_closed_day",
+        )
+        authority_freshness_closed_day = normalize_iso_day_text(
+            authority_product_snapshot.get("freshness_target_closed_day"),
+            context="latest_successful_snapshot.app_product_snapshot.freshness_target_closed_day",
+        )
+    elif authority_currentness_evaluation.get("allowed"):
+        authority_target_closed_day = str(
+            authority_currentness_evaluation["expected_target_closed_day_utc"]
+        )
+        authority_strategy_closed_day = None
+        authority_freshness_closed_day = None
+        log(
+            "[AUTHORITY_CURRENTNESS] "
+            "accepted_same_run_in_progress_authority_allowance "
+            f"run_id={authority_currentness_evaluation.get('expected_run_id')} "
+            f"match_via={authority_currentness_evaluation.get('same_run_match_via')} "
+            f"target_closed_day_utc={authority_target_closed_day}"
+        )
+    else:
+        blocked_reason = (
+            "Execution intent blocked: authority currentness is not current "
+            f"(currentness_status={attempt_currentness_status or 'missing'})"
+        )
+        allowance_reason = str(
+            authority_currentness_evaluation.get("decision_reason") or ""
+        ).strip()
+        if allowance_reason:
+            blocked_reason += f" allowance_reason={allowance_reason}"
         fail_closed_intent(
-            f"Execution intent blocked: authority currentness is not current (currentness_status={attempt_currentness_status or 'missing'})",
+            blocked_reason,
             started_at=started_at,
             strategy_model=strategy_model,
             reference_model=reference_model,
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
-    if len({authority_target_closed_day, authority_strategy_closed_day, authority_freshness_closed_day, attempt_target_closed_day, attempt_latest_available_closed_day}) != 1:
+
+    if (
+        attempt_currentness_status == "current"
+        and len(
+            {
+                authority_target_closed_day,
+                authority_strategy_closed_day,
+                authority_freshness_closed_day,
+                attempt_target_closed_day,
+                attempt_latest_available_closed_day,
+            }
+        )
+        != 1
+    ):
         fail_closed_intent(
             "Execution intent blocked: authority target day is not aligned across authoritative inputs "
             f"(success_target={authority_target_closed_day} strategy={authority_strategy_closed_day} "
@@ -470,6 +753,7 @@ def main() -> None:
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
 
     paper_header, paper_rows = read_csv_rows(main_paper_path)
@@ -482,6 +766,7 @@ def main() -> None:
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
 
     live_header, live_rows = read_csv_rows(main_live_status_path)
@@ -494,6 +779,7 @@ def main() -> None:
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
 
     reference_header, reference_rows = read_csv_rows(reference_paper_path)
@@ -506,6 +792,7 @@ def main() -> None:
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
 
     freshness_report = read_json(app_freshness_report_path)
@@ -525,6 +812,7 @@ def main() -> None:
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
     if freshness_report_status not in {"ok", "success", "current"}:
         fail_closed_intent(
@@ -535,6 +823,7 @@ def main() -> None:
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
     if isinstance(freshness_report_errors, list) and freshness_report_errors:
         fail_closed_intent(
@@ -545,6 +834,7 @@ def main() -> None:
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
 
     paper_last = paper_rows[-1]
@@ -636,6 +926,7 @@ def main() -> None:
             input_paths=input_paths_for_failure,
             source_paths=source_paths_for_failure,
             path_resolution_diagnostics=path_resolution_diagnostics,
+            authority_currentness_evaluation=authority_currentness_evaluation,
         )
 
     target_asset = derive_target_asset(
@@ -698,6 +989,7 @@ def main() -> None:
             "authority_latest_attempt_status": str(AUTHORITY_LATEST_ATTEMPT_STATUS_PATH.resolve()),
         },
         "path_resolution_diagnostics": path_resolution_diagnostics,
+        "authority_currentness_evaluation": authority_currentness_evaluation,
         "resolved_columns": {
             "paper_date_col": paper_date_col,
             "paper_asset_col": paper_asset_col,
@@ -734,7 +1026,12 @@ def main() -> None:
         "staleness_ok": bool(intent["staleness_ok"]),
         "trading_enabled": bool(intent["trading_enabled"]),
         "kill_switch_required": bool(intent["kill_switch_required"]),
-        "leverage_live_truth_allowed": False
+        "leverage_live_truth_allowed": False,
+        "authority_currentness_status": attempt_currentness_status,
+        "same_run_allowance_applied": bool(
+            authority_currentness_evaluation.get("same_run_allowance_applied")
+        ),
+        "authority_currentness_evaluation": authority_currentness_evaluation,
     }
 
     manifest = {
@@ -756,7 +1053,8 @@ def main() -> None:
             str(QUALITY_PATH.resolve()),
             str(MANIFEST_PATH.resolve())
         ],
-        "status": "success"
+        "status": "success",
+        "authority_currentness_evaluation": authority_currentness_evaluation,
     }
 
     INTENT_PATH.write_text(json.dumps(intent, indent=2, ensure_ascii=False), encoding="utf-8")

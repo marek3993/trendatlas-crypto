@@ -778,11 +778,20 @@ def run_step_and_persist(
 def run_post_strategy_runtime_refresh(
     env: dict[str, str],
     logs_dir: Path,
+    *,
+    authority_run_id: str,
+    target_closed_day_utc: str,
 ) -> dict[str, Any]:
+    post_refresh_env = env.copy()
+    post_refresh_env["MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN"] = "1"
+    post_refresh_env["MRV1_CURRENT_AUTHORITY_RUN_ID"] = str(authority_run_id).strip()
+    post_refresh_env["MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY"] = str(
+        target_closed_day_utc
+    ).strip()
     return run_step(
         "run_full_auto_scheduler_entry",
         SCHEDULER_ENTRY_SCRIPT,
-        env,
+        post_refresh_env,
         logs_dir,
         script_args=[],
     )
@@ -1006,6 +1015,8 @@ def main() -> None:
         manifest["post_strategy_runtime_refresh"] = run_post_strategy_runtime_refresh(
             env,
             logs_dir,
+            authority_run_id=run_stamp,
+            target_closed_day_utc=str(manifest["raw_skip_preflight"]["target_last_closed_date"]),
         )
         manifest["post_strategy_runtime_refresh_status"] = "OK"
         authority_success_result = publish_authority_refresh_success(
