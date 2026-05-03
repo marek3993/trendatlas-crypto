@@ -68,13 +68,50 @@ INCIDENT_CLASSES = {
     "APP_EXPORT_STALE",
     "AUTHORITY_ATTEMPT_FAILED",
     "AUTHORITY_SNAPSHOT_STALE",
-    "AUTHORITY_PUBLISH_STALE",
+    "AUTHORITY_SUPPORT_FILES_MISMATCH",
     "APP_DEPLOY_OR_CACHE_STALE",
     "UNKNOWN_NEEDS_HUMAN",
 }
 CURRENT_STATUSES = {"current", "stale", "not_time_yet"}
 SUCCESS_STATUSES = {"OK", "SUCCESS", "PASS", "PASSED"}
 NOT_TIME_YET_GRACE_HOURS = 6
+SUPPORT_FILE_SPECS = [
+    {
+        "path": FRESHNESS_REPORT_PATH,
+        "observed_key": "freshness_report_latest_closed_utc_date",
+        "source_field": "latest_closed_utc_date",
+    },
+    {
+        "path": APP_EXPORT_REFERENCE_PAPER_PATH,
+        "observed_key": "app_export_reference_paper_last_date",
+        "source_field": "date",
+    },
+    {
+        "path": APP_EXPORT_PHASE66G_LIVE_PATH,
+        "observed_key": "app_export_phase66g_live_latest_available_date",
+        "source_field": "latest_available_date",
+    },
+    {
+        "path": APP_PRODUCT_SNAPSHOT_PATH,
+        "observed_key": "local_app_product_strategy_last_closed_day",
+        "source_field": "strategy_last_closed_day",
+    },
+    {
+        "path": APP_RUNTIME_SNAPSHOT_PATH,
+        "observed_key": "local_app_runtime_latest_strategy_artifact_date",
+        "source_field": "latest_strategy_artifact_date",
+    },
+    {
+        "path": APP_RUNTIME_SNAPSHOT_PATH,
+        "observed_key": "local_app_runtime_latest_available_closed_utc_date",
+        "source_field": "latest_available_closed_utc_date",
+    },
+    {
+        "path": BTC_RAW_PATH,
+        "observed_key": "btc_raw_last_date",
+        "source_field": "date",
+    },
+]
 
 
 def utc_now() -> datetime:
@@ -221,6 +258,23 @@ def summarize_path(
     if extra_fields:
         record.update(extra_fields)
     return record
+
+
+def support_file_mismatches(observed_dates: dict[str, Any], expected_closed_utc_day: str | None) -> list[dict[str, Any]]:
+    mismatches: list[dict[str, Any]] = []
+    for spec in SUPPORT_FILE_SPECS:
+        observed_date = str(observed_dates.get(spec["observed_key"]) or "").strip() or None
+        if observed_date == expected_closed_utc_day:
+            continue
+        mismatches.append(
+            {
+                "path": relative_path(spec["path"]),
+                "observed_date": observed_date,
+                "expected_date": expected_closed_utc_day,
+                "source_field": spec["source_field"],
+            }
+        )
+    return mismatches
 
 
 def discover_latest_manifest() -> Path | None:
@@ -448,6 +502,8 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
         "reference_paper": parse_iso_date(observed["app_export_reference_paper_last_date"]),
         "phase66g_live": parse_iso_date(observed["app_export_phase66g_live_latest_available_date"]),
     }
+    mismatched_support_files = support_file_mismatches(observed, state["expected_closed_utc_day"])
+    support_files_current = not mismatched_support_files
 
     app_exports_current = bool(comparison_target) and all(
         value == comparison_target for value in export_date_values.values() if value is not None
@@ -457,14 +513,14 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
         and parse_iso_date(observed["local_app_runtime_latest_strategy_artifact_date"]) == comparison_target
         and parse_iso_date(observed["freshness_report_latest_closed_utc_date"]) == comparison_target
     )
-    authority_current = bool(comparison_target) and (
+    authority_current = bool(expected_day) and (
         str(authority_attempt.get("latest_authoritative_attempt_status") or "").strip().lower() == "success"
-        and parse_iso_date(observed["authority_attempt_target_closed_day_utc"]) == comparison_target
-        and parse_iso_date(observed["authority_attempt_strategy_artifact_closed_day_utc"]) == comparison_target
-        and parse_iso_date(observed["authority_success_target_closed_day_utc"]) == comparison_target
-        and parse_iso_date(observed["authority_success_strategy_artifact_closed_day_utc"]) == comparison_target
-        and parse_iso_date(observed["authority_success_app_product_strategy_last_closed_day"]) == comparison_target
-        and parse_iso_date(observed["authority_success_app_runtime_latest_strategy_artifact_date"]) == comparison_target
+        and parse_iso_date(observed["authority_attempt_target_closed_day_utc"]) == expected_day
+        and parse_iso_date(observed["authority_attempt_strategy_artifact_closed_day_utc"]) == expected_day
+        and parse_iso_date(observed["authority_success_target_closed_day_utc"]) == expected_day
+        and parse_iso_date(observed["authority_success_strategy_artifact_closed_day_utc"]) == expected_day
+        and parse_iso_date(observed["authority_success_app_product_strategy_last_closed_day"]) == expected_day
+        and parse_iso_date(observed["authority_success_app_runtime_latest_strategy_artifact_date"]) == expected_day
     )
 
     manifest_status = str(
@@ -475,7 +531,8 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
     ).strip().upper()
     manifest_success = manifest_status in SUCCESS_STATUSES
     manifest_target = parse_iso_date(observed["latest_manifest_target_closed_day_utc"])
-    scheduler_has_current_run = bool(comparison_target and manifest_target == comparison_target and manifest_success)
+    scheduler_has_target_day_run = bool(expected_day and manifest_target == expected_day)
+    scheduler_has_current_run = bool(expected_day and manifest_target == expected_day and manifest_success)
 
     authority_attempt_status = str(authority_attempt.get("latest_authoritative_attempt_status") or "").strip().lower()
     authority_attempt_failed = authority_attempt_status == "failed"
@@ -495,7 +552,14 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
         and authority_current
     )
 
-    local_backend_current = app_exports_current and app_snapshots_current and freshness_status_ok and raw_data_current
+    local_backend_current = (
+        authority_current
+        and support_files_current
+        and app_exports_current
+        and app_snapshots_current
+        and freshness_status_ok
+        and raw_data_current
+    )
 
     publish_state = state["github_published_local_files_current"]
     publish_current = publish_state.get("current")
@@ -521,6 +585,8 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
         "app_exports_current": app_exports_current,
         "app_snapshots_current": app_snapshots_current,
         "authority_current": authority_current,
+        "support_files_current": support_files_current,
+        "mismatched_support_files": mismatched_support_files,
         "authority_attempt_failed": authority_attempt_failed,
         "authority_attempt_success": authority_attempt_success,
         "authority_snapshot_present": authority_snapshot_present,
@@ -528,6 +594,7 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
         "manifest_success": manifest_success,
         "manifest_status": manifest_status or None,
         "manifest_target": iso_date(manifest_target),
+        "scheduler_has_target_day_run": scheduler_has_target_day_run,
         "scheduler_has_current_run": scheduler_has_current_run,
         "freshness_status_ok": freshness_status_ok,
         "raw_data_current": raw_data_current,
@@ -543,14 +610,6 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
 def classify_incident(state: dict[str, Any], truths: dict[str, Any]) -> tuple[str, str, str, str | None]:
     comparison_target = truths["comparison_target"]
     expected_day = state["expected_closed_utc_day"]
-
-    if truths["local_backend_current"] and truths["authority_current"] and truths["publish_current"] is not False:
-        return (
-            "ok",
-            "OK_CURRENT",
-            f"Local backend artifacts and authority artifacts are aligned with {comparison_target}.",
-            None,
-        )
 
     if truths["not_time_yet"]:
         return (
@@ -571,31 +630,28 @@ def classify_incident(state: dict[str, Any], truths: dict[str, Any]) -> tuple[st
             "Inspect outputs/execution/authority/latest_attempt_status.json and the upstream authoritative run logs.",
         )
 
-    if state["latest_manifest_path"] and truths["manifest_target"] == comparison_target and not truths["manifest_success"]:
+    if not truths["authority_current"] and not truths["scheduler_has_target_day_run"]:
+        return (
+            "needs_attention",
+            "SCHEDULER_NOT_RUN",
+            (
+                "The local app refresh pipeline has not produced a run for the latest required closed day, "
+                "so the local support/app-facing layer is missing a current rebuild."
+            ),
+            f"Rerun {relative_path(DAILY_REFRESH_SCRIPT)} to rebuild the local app-facing layer for {expected_day}.",
+        )
+
+    if (
+        not truths["authority_current"]
+        and state["latest_manifest_path"]
+        and truths["manifest_target"] == expected_day
+        and not truths["manifest_success"]
+    ):
         return (
             "needs_attention",
             "PIPELINE_FAILED",
             "The latest local app refresh manifest targeted the expected day but did not finish successfully.",
             "Inspect the latest app refresh pipeline logs and rerun the refresh pipeline after fixing the failing step.",
-        )
-
-    if not truths["scheduler_has_current_run"]:
-        return (
-            "needs_attention",
-            "SCHEDULER_NOT_RUN",
-            (
-                "The local app refresh pipeline has not produced a successful manifest for the latest required closed day, "
-                "so the app snapshot/runtime layer is stale even though some authority files may already be current."
-            ),
-            f"Rerun {relative_path(DAILY_REFRESH_SCRIPT)} to rebuild the local app-facing layer for {comparison_target or expected_day}.",
-        )
-
-    if truths["raw_data_stale"]:
-        return (
-            "needs_attention",
-            "RAW_DATA_STALE",
-            f"BTC raw daily data is still behind the expected latest closed UTC day {expected_day}.",
-            "Refresh the raw OHLCV source before attempting further app-facing rebuilds.",
         )
 
     if truths["authority_snapshot_stale"] or not truths["authority_snapshot_present"]:
@@ -606,6 +662,22 @@ def classify_incident(state: dict[str, Any], truths: dict[str, Any]) -> tuple[st
             "Repair the authority publish step on the authoritative producer and republish the snapshot.",
         )
 
+    if truths["authority_current"] and not truths["support_files_current"]:
+        return (
+            "needs_attention",
+            "AUTHORITY_SUPPORT_FILES_MISMATCH",
+            "Authority is current, but one or more local support/app-facing files are stale or mixed.",
+            "Run the Pi authoritative producer or restore/publish the missing support files; do not change strategy truth.",
+        )
+
+    if truths["raw_data_stale"]:
+        return (
+            "needs_attention",
+            "RAW_DATA_STALE",
+            f"BTC raw daily data is still behind the expected latest closed UTC day {expected_day}.",
+            "Refresh the raw OHLCV source before attempting further app-facing rebuilds.",
+        )
+
     if not truths["app_exports_current"] and truths["upstream_phase_outputs_current"]:
         return (
             "needs_attention",
@@ -614,20 +686,26 @@ def classify_incident(state: dict[str, Any], truths: dict[str, Any]) -> tuple[st
             f"Rerun {relative_path(MATERIALIZE_SCRIPT)} to rematerialize canonical app exports.",
         )
 
-    if truths["authority_current"] and truths["publish_known_stale"]:
-        return (
-            "needs_attention",
-            "AUTHORITY_PUBLISH_STALE",
-            "Authority artifacts are current locally, but the local authority publish tree diverges from those files.",
-            "Rerun the authority repo publish helper and verify the publish tree can fetch/push the remote branch.",
-        )
-
-    if truths["authority_current"] and truths["app_exports_current"] and truths["app_snapshots_current"]:
+    if (
+        truths["authority_current"]
+        and truths["support_files_current"]
+        and truths["app_exports_current"]
+        and truths["app_snapshots_current"]
+        and truths["publish_known_stale"]
+    ):
         return (
             "needs_attention",
             "APP_DEPLOY_OR_CACHE_STALE",
-            "Backend artifacts are current, which points to a downstream deploy or cache issue outside this repository.",
-            "Invalidate the downstream app cache or redeploy the app layer that reads these artifacts.",
+            "Backend artifacts are current locally, but the downstream published/deployed app-facing layer is stale.",
+            "Refresh the downstream publish/deploy/cache layer without changing the authority strategy truth.",
+        )
+
+    if truths["local_backend_current"] and truths["publish_current"] is not False:
+        return (
+            "ok",
+            "OK_CURRENT",
+            f"Local backend artifacts and authority artifacts are aligned with {comparison_target or expected_day}.",
+            None,
         )
 
     return (
@@ -653,12 +731,12 @@ def choose_safe_action(incident_class: str, truths: dict[str, Any]) -> dict[str,
             "command": [sys.executable, str(MATERIALIZE_SCRIPT)],
             "reason": "Canonical app exports are stale while upstream phase outputs are already current.",
         }
-    if incident_class == "AUTHORITY_PUBLISH_STALE" and truths["authority_current"]:
+    if incident_class == "AUTHORITY_SUPPORT_FILES_MISMATCH" and truths["authority_current"]:
         return {
             "eligible": True,
-            "action": "rerun_authority_repo_publish_helper",
+            "action": "restore_or_republish_support_files",
             "command": None,
-            "reason": "Authority artifacts are current locally, but the publish tree is stale.",
+            "reason": "Authority is current, but one or more local support/app-facing files are stale or mixed.",
         }
     return {
         "eligible": False,
@@ -676,24 +754,12 @@ def run_safe_action(action: dict[str, Any]) -> dict[str, Any]:
             "reason": action.get("reason"),
         }
 
-    if action["action"] == "rerun_authority_repo_publish_helper":
-        try:
-            from scripts.execution.run_pi_authoritative_producer import publish_authority_artifacts_to_repo
-
-            publish_result = publish_authority_artifacts_to_repo(root=ROOT)
-            return {
-                "status": "completed" if publish_result.get("published") else "failed",
-                "action": action["action"],
-                "reason": action["reason"],
-                "publish_result": publish_result,
-            }
-        except Exception as exc:
-            return {
-                "status": "failed",
-                "action": action["action"],
-                "reason": action["reason"],
-                "error": str(exc),
-            }
+    if action["action"] == "restore_or_republish_support_files":
+        return {
+            "status": "skipped",
+            "action": action["action"],
+            "reason": "safe_remediation_not_implemented_for_support_file_mismatch",
+        }
 
     command = action["command"]
     completed = subprocess.run(
@@ -724,6 +790,8 @@ def build_summary(report: dict[str, Any]) -> str:
         f"latest_strategy_artifact_date: {report['latest_strategy_artifact_date']}",
         f"latest_authoritative_attempt_status: {report['latest_authoritative_attempt_status']}",
         f"currentness_status: {report['currentness_status']}",
+        f"authority_current: {report['authority_current']}",
+        f"support_files_current: {report['support_files_current']}",
         f"last_successful_run_id: {report['last_successful_run_id']}",
         f"last_attempt_run_id: {report['last_attempt_run_id']}",
         (
@@ -793,6 +861,9 @@ def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str
         "latest_strategy_artifact_date": final_state["latest_strategy_artifact_date"],
         "latest_authoritative_attempt_status": final_state["latest_authoritative_attempt_status"],
         "currentness_status": currentness_status_from_incident(final_incident_class),
+        "authority_current": final_truths["authority_current"],
+        "support_files_current": final_truths["support_files_current"],
+        "mismatched_support_files": final_truths["mismatched_support_files"],
         "last_successful_run_id": final_state["last_successful_run_id"],
         "last_attempt_run_id": final_state["last_attempt_run_id"],
         "github_published_local_files_current": final_state["github_published_local_files_current"],
@@ -806,8 +877,10 @@ def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str
             "app_exports_current": final_truths["app_exports_current"],
             "app_snapshots_current": final_truths["app_snapshots_current"],
             "authority_current": final_truths["authority_current"],
+            "support_files_current": final_truths["support_files_current"],
             "raw_data_current": final_truths["raw_data_current"],
             "raw_data_stale": final_truths["raw_data_stale"],
+            "scheduler_has_target_day_run": final_truths["scheduler_has_target_day_run"],
             "scheduler_has_current_run": final_truths["scheduler_has_current_run"],
             "upstream_phase_outputs_current": final_truths["upstream_phase_outputs_current"],
             "not_time_yet": final_truths["not_time_yet"],
