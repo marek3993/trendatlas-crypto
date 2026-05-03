@@ -82,7 +82,7 @@ APP_SELECTOR_DEFAULTS = {
 TEXT = {
     "sk": {
         "language": "Jazyk",
-        "tabs": ["Domov", "Účet", "Ako to funguje", "Kontakt"],
+        "tabs": ["Domov", "Účet", "Overenie", "Ako to funguje", "Kontakt"],
         "hero": "Pravidlami riadená crypto rotačná stratégia pre meniace sa trhové podmienky",
         "subhero": (
             "TrendAtlas Crypto je navrhnutý pre ľudí, ktorí chcú disciplinovaný spôsob, ako sa pohybovať v crypto trhu "
@@ -290,7 +290,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
     },
     "en": {
         "language": "Language",
-        "tabs": ["Home", "Account", "How it works", "Contact"],
+        "tabs": ["Home", "Account", "Verification", "How it works", "Contact"],
         "hero": "A rules-based crypto rotation strategy built for changing market conditions",
         "subhero": (
             "TrendAtlas Crypto is designed for people who want a disciplined way to navigate crypto without manually watching "
@@ -543,14 +543,10 @@ METRIC_HELP = {
 }
 
 TEXT["sk"]["performance_fee_note"] = (
-    "Top karty zobrazuju aktualne live/main strategia metriky z publikovaneho "
-    "hlavneho exportu. Nejde o samostatny compare/ranking vystup a vysledky uz "
-    "zahrnaju Hyperliquid poplatky."
+    "Výsledky sú už po započítaní poplatkov Hyperliquid."
 )
 TEXT["en"]["performance_fee_note"] = (
-    "Top cards show the current live/main strategy metrics from the published "
-    "main-strategy export. They are not fed by a separate compare/ranking "
-    "artifact, and results already include Hyperliquid fees."
+    "Results already include Hyperliquid fees."
 )
 TEXT["sk"]["chart_note_strip_hidden"] = (
     "Horna krivka ukazuje vykon hlavneho modelu proti BTC benchmarku. "
@@ -660,6 +656,102 @@ ACCOUNT_UI_COPY["sk"].update(
     }
 )
 
+TEXT["sk"].update(
+    {
+        "hero": "Disciplínovaná crypto stratégia pre meniace sa trhové podmienky",
+        "subhero": (
+            "TrendAtlas Crypto sleduje fixný shortlist aktív a po uzavretí dennej sviečky "
+            "rozhoduje, či je rozumnejšie zostať v CASH alebo držať jednu trhovú pozíciu. "
+            "Neobchoduje každý deň a výsledky sú modelové, nie garantované."
+        ),
+        "switch_count": "Zmeny pozície",
+        "cash_days": "Dni v hotovosti",
+        "btc_days": "Dni v BTC",
+        "chart_year": "Zobraziť od roku",
+        "buy_threshold": "Hranica nákupu",
+        "trend_desc": "Ukazuje, kde sa aktuálny trend nachádza voči nákupnej hranici.",
+        "trend_threshold_note": "Hranica oddeľuje slabšie a silnejšie trhové prostredie.",
+        "trend_history_note": "Mini história ukazuje vývoj trend score v čase.",
+        "overview_md": """
+Stratégia pracuje s úzkym shortlistom sledovaných aktív.
+
+Rozhoduje medzi stavom **CASH** a jednou trhovou pozíciou.
+
+Neobchoduje každý deň. Keď podmienky nie sú presvedčivé, radšej zostáva bokom.
+
+Výsledky v aplikácii sú modelové a nepredstavujú garanciu budúceho výnosu.
+""",
+        "method_md": """
+### Ako to funguje
+
+- **CASH** znamená, že stratégia momentálne nie je v trhovej pozícii.
+- **Trend score** ukazuje silu trendu voči nákupnej hranici. Čím je vyššie nad hranicou, tým priaznivejšie je prostredie.
+- Stratégia niekedy neurobí nič, pretože po uzavretí dennej sviečky nevidí dostatočne silný dôvod na zmenu.
+- Výsledky v aplikácii sú modelové, nie garantované.
+- Výsledky sú už po započítaní poplatkov Hyperliquid.
+- Stratégia sa obnovuje po uzavretí dennej sviečky.
+""",
+        "account_snapshot_note": "Chránený dashboard účtu a stavu stratégie.",
+        "contact_desc": "Ak sa chceš ozvať, nechaj email a krátku správu.",
+        "contact_files": "",
+    }
+)
+
+TEXT["en"].update(
+    {
+        "hero": "A disciplined crypto strategy for changing market conditions",
+        "subhero": (
+            "TrendAtlas Crypto follows a fixed shortlist of assets and, after the daily candle closes, "
+            "decides whether it is better to stay in CASH or hold a single market position. "
+            "It does not trade every day and the results are model-based, not guaranteed."
+        ),
+        "switch_count": "Position changes",
+        "cash_days": "Days in cash",
+        "btc_days": "Days in BTC",
+        "chart_year": "Show from year",
+        "buy_threshold": "Buy threshold",
+        "trend_desc": "Shows where the current trend sits relative to the buy threshold.",
+        "trend_threshold_note": "The threshold separates weaker and stronger market conditions.",
+        "trend_history_note": "The mini history shows how the trend score has evolved over time.",
+        "overview_md": """
+The strategy works with a narrow shortlist of tracked assets.
+
+It decides between **CASH** and one market position.
+
+It does not trade every day. When conditions are not convincing, it stays aside.
+
+Results in the app are model-based and are not a guarantee of future returns.
+""",
+        "method_md": """
+### How it works
+
+- **CASH** means the strategy is currently not in a market position.
+- **Trend score** shows the strength of the trend relative to the buy threshold. The further it is above the threshold, the more supportive the environment is.
+- Sometimes the strategy does nothing because, after the daily candle closes, it does not see a strong enough reason to change.
+- Results in the app are model-based, not guaranteed.
+- Results already include Hyperliquid fees.
+- The strategy refreshes after the daily candle closes.
+""",
+        "account_snapshot_note": "Protected account and strategy dashboard.",
+        "contact_desc": "If you want to reach out, leave your email and a short message.",
+        "contact_files": "",
+    }
+)
+
+HOMEPAGE_FORBIDDEN_SNIPPETS = [
+    "Dočasné",
+    "authority source path",
+    "source_metadata",
+    "outputs/",
+    "/mount/src",
+    "run_id",
+    "Kritická chyba integrity",
+    "phase68",
+    "phase67",
+    "app_product_snapshot",
+    "latest_successful_snapshot",
+]
+
 # =========================================================
 # HELPERS
 # =========================================================
@@ -749,6 +841,22 @@ def safe_text_value(value, lang: str = "sk") -> str:
         return t(lang, "na")
     text = str(value).strip()
     return text if text else t(lang, "na")
+
+
+def homepage_text_contains_forbidden_content(value: Any) -> bool:
+    text = str(value or "").strip().lower()
+    if not text:
+        return False
+    return any(snippet.lower() in text for snippet in HOMEPAGE_FORBIDDEN_SNIPPETS)
+
+
+def sanitize_homepage_public_text(value: Any, lang: str = "sk") -> str:
+    text = safe_text_value(value, lang=lang)
+    if text == t(lang, "na"):
+        return text
+    if homepage_text_contains_forbidden_content(text):
+        return t(lang, "na")
+    return text
 
 
 def safe_usd_text(value, decimals: int = 2, lang: str = "sk") -> str:
@@ -4235,6 +4343,336 @@ def load_account_login_credentials() -> tuple[str, str, str]:
     return "", "", ""
 
 
+VERIFICATION_STATUS_LABELS = {
+    "ok": "✅ OK",
+    "warn": "⚠️ Pozor",
+    "error": "❌ Chyba",
+}
+
+
+def build_verification_status_row(label: str, level: str, detail: str) -> dict[str, str]:
+    normalized_level = level if level in VERIFICATION_STATUS_LABELS else "warn"
+    return {
+        "Kontrola": label,
+        "Stav": VERIFICATION_STATUS_LABELS[normalized_level],
+        "Detail": detail,
+    }
+
+
+def build_overenie_integrity_rows(
+    *,
+    product_snapshot: dict,
+    runtime_snapshot: dict,
+    current_strategy_contract: dict[str, Any],
+    homepage_current_strategy_sources: dict[str, Any],
+    trend_live: dict[str, Any],
+    trend_barometer_warnings: list[str],
+    runtime_table_payload: dict,
+    runtime_authority_payload: dict,
+) -> list[dict[str, str]]:
+    rows: list[dict[str, str]] = []
+
+    homepage_main_model = str(product_snapshot.get("main_strategy_model") or "").strip()
+    contract_main_model = str(current_strategy_contract.get("main_strategy_model") or "").strip()
+    homepage_metrics_path = normalize_path(homepage_current_strategy_sources.get("metrics_path"))
+    contract_metrics_path = normalize_path(current_strategy_contract.get("metrics_path"))
+    strategy_contract_ok = (
+        bool(homepage_main_model)
+        and bool(contract_main_model)
+        and homepage_main_model == contract_main_model
+        and homepage_metrics_path == contract_metrics_path
+    )
+    if strategy_contract_ok:
+        rows.append(
+            build_verification_status_row(
+                "Homepage main strategy matches export contract",
+                "ok",
+                f"Model {homepage_main_model} aj metrics export sedia na kontrakt.",
+            )
+        )
+    else:
+        rows.append(
+            build_verification_status_row(
+                "Homepage main strategy matches export contract",
+                "error",
+                (
+                    f"Homepage model={safe_text_value(homepage_main_model, lang='sk')}, "
+                    f"contract model={safe_text_value(contract_main_model, lang='sk')}."
+                ),
+            )
+        )
+
+    metrics_model = str(
+        get_nested_value(product_snapshot, "main_strategy_metrics", "model")
+        or ""
+    ).strip()
+    if metrics_model and homepage_main_model:
+        metrics_level = "ok" if metrics_model == homepage_main_model else "error"
+        metrics_detail = f"Metrics model={metrics_model}, main strategy={homepage_main_model}."
+    else:
+        metrics_level = "warn"
+        metrics_detail = "Chýba model v main_strategy_metrics alebo main_strategy_model."
+    rows.append(
+        build_verification_status_row(
+            "Metrics model matches main strategy",
+            metrics_level,
+            metrics_detail,
+        )
+    )
+
+    chart_main_path = normalize_path(
+        get_nested_value(product_snapshot, "chart_source_paths", "main_strategy")
+    )
+    contract_paper_path = normalize_path(homepage_current_strategy_sources.get("paper_path"))
+    if chart_main_path and contract_paper_path:
+        chart_level = "ok" if chart_main_path == contract_paper_path else "error"
+        chart_detail = f"Chart path={chart_main_path} | contract path={contract_paper_path}"
+    else:
+        chart_level = "warn"
+        chart_detail = "Chýba chart_source_paths.main_strategy alebo contract paper path."
+    rows.append(
+        build_verification_status_row(
+            "Chart main path matches contract",
+            chart_level,
+            chart_detail,
+        )
+    )
+
+    strategy_day = str(product_snapshot.get("strategy_last_closed_day") or "").strip()
+    latest_available_day = str(
+        runtime_snapshot.get("latest_available_closed_utc_date")
+        or runtime_authority_payload.get("latest_available_closed_utc_day")
+        or ""
+    ).strip()
+    if strategy_day and latest_available_day:
+        strategy_day_level = "ok" if strategy_day == latest_available_day else "error"
+        strategy_day_detail = (
+            f"Strategy day={strategy_day}, latest available closed day={latest_available_day}."
+        )
+    else:
+        strategy_day_level = "warn"
+        strategy_day_detail = "Chýba strategy_last_closed_day alebo latest available closed day."
+    rows.append(
+        build_verification_status_row(
+            "Strategy date equals latest available closed day",
+            strategy_day_level,
+            strategy_day_detail,
+        )
+    )
+
+    trend_live_day = resolve_trend_barometer_live_day(trend_live)
+    if trend_barometer_warnings:
+        trend_level = "warn"
+        trend_detail = " | ".join(trend_barometer_warnings)
+    elif trend_live_day and strategy_day:
+        trend_level = "ok" if trend_live_day == strategy_day else "warn"
+        trend_detail = f"Trend live day={trend_live_day}, strategy day={strategy_day}."
+    else:
+        trend_level = "warn"
+        trend_detail = "Chýba trend live day alebo strategy day."
+    rows.append(
+        build_verification_status_row(
+            "Trend barometer date consistency",
+            trend_level,
+            trend_detail,
+        )
+    )
+
+    wallet_sync_utc = (
+        runtime_snapshot.get("latest_wallet_sync_utc")
+        or runtime_table_payload.get("last_wallet_sync_utc")
+        or runtime_authority_payload.get("authority_wallet_sync_utc")
+        or runtime_authority_payload.get("authority_account_snapshot_as_of_utc")
+    )
+    wallet_level = "ok" if wallet_sync_utc else "warn"
+    wallet_detail = (
+        f"Wallet sync={wallet_sync_utc}."
+        if wallet_sync_utc
+        else "Wallet sync timestamp nie je prítomný."
+    )
+    rows.append(
+        build_verification_status_row(
+            "Wallet sync present",
+            wallet_level,
+            wallet_detail,
+        )
+    )
+
+    authority_attempt_status = str(
+        runtime_authority_payload.get("latest_authoritative_attempt_status")
+        or runtime_table_payload.get("last_refresh_status")
+        or ""
+    ).strip().lower()
+    if authority_attempt_status == "success":
+        authority_level = "ok"
+        authority_detail = "Latest authority attempt status je success."
+    elif authority_attempt_status == "in_progress":
+        authority_level = "warn"
+        authority_detail = "Latest authority attempt status je in_progress."
+    elif authority_attempt_status:
+        authority_level = "error"
+        authority_detail = f"Latest authority attempt status je {authority_attempt_status}."
+    else:
+        authority_level = "warn"
+        authority_detail = "Latest authority attempt status chýba."
+    rows.append(
+        build_verification_status_row(
+            "Authority attempt status success",
+            authority_level,
+            authority_detail,
+        )
+    )
+
+    return rows
+
+
+def render_protected_tab_gate(
+    *,
+    lang: str,
+    title: str,
+    tab_key: str,
+    authenticated_note: str | None = None,
+) -> tuple[bool, bool]:
+    configured_account_username, configured_account_password, _account_login_source = load_account_login_credentials()
+    account_login_available = bool(configured_account_username and configured_account_password)
+    if not account_login_available:
+        st.session_state.account_authenticated = False
+
+    title_col, action_col = st.columns([6, 1])
+    with title_col:
+        st.subheader(title)
+    with action_col:
+        if account_login_available and st.session_state.account_authenticated:
+            logout_label = "Odhlásiť" if lang == "sk" else "Log out"
+            if st.button(logout_label, key=f"{tab_key}_logout", width="stretch"):
+                st.session_state.account_authenticated = False
+                st.session_state.account_auth_error = ""
+                st.rerun()
+
+    if not account_login_available:
+        unavailable_text = (
+            "Prístup je dočasne nedostupný."
+            if lang == "sk"
+            else "Access is temporarily unavailable."
+        )
+        st.warning(unavailable_text)
+        return False, False
+
+    if not st.session_state.account_authenticated:
+        login_heading = "Prihlásenie" if lang == "sk" else "Sign in"
+        access_target = "účtu" if tab_key == "account" else "overeniu"
+        access_message = (
+            f"Pre prístup k {access_target} sa najprv prihláste."
+            if lang == "sk"
+            else f"Sign in first to access {title.lower()}."
+        )
+        username_label = "Používateľské meno" if lang == "sk" else "Username"
+        password_label = "Heslo" if lang == "sk" else "Password"
+        submit_label = "Prihlásiť sa" if lang == "sk" else "Sign in"
+        invalid_credentials_text = (
+            "Nesprávne prihlasovacie údaje."
+            if lang == "sk"
+            else "Incorrect login credentials."
+        )
+
+        st.markdown(f"#### {login_heading}")
+        st.info(access_message)
+        with st.form(f"{tab_key}_login_form", clear_on_submit=True):
+            username_input = st.text_input(username_label)
+            password_input = st.text_input(password_label, type="password")
+            login_submitted = st.form_submit_button(submit_label, width="stretch")
+
+        if login_submitted:
+            username_ok = hmac.compare_digest(username_input.strip(), configured_account_username)
+            password_ok = hmac.compare_digest(password_input, configured_account_password)
+            if username_ok and password_ok:
+                st.session_state.account_authenticated = True
+                st.session_state.account_auth_error = ""
+                st.rerun()
+            st.session_state.account_authenticated = False
+            st.session_state.account_auth_error = invalid_credentials_text
+
+        if st.session_state.account_auth_error:
+            st.error(st.session_state.account_auth_error)
+        return True, False
+
+    if authenticated_note:
+        st.caption(authenticated_note)
+    return True, True
+
+
+def render_raw_json_expander(label: str, payload: Any) -> None:
+    with st.expander(label, expanded=False):
+        st.json(payload if payload is not None else {})
+
+
+def localize_overenie_rows(rows: list[dict[str, Any]], lang: str) -> list[dict[str, Any]]:
+    normalized_rows: list[dict[str, Any]] = []
+    label_map = {
+        "Current main strategy model": "Hlavný model stratégie",
+        "Strategy last closed day": "Posledný uzavretý deň stratégie",
+        "Main metrics model": "Model metrík",
+        "Chart source path": "Chart source path",
+        "Benchmark source path": "Benchmark source path",
+        "Freshness status": "Stav čerstvosti",
+        "Last Pi update": "Posledná aktualizácia z Pi",
+        "Last PC refresh": "Záložný refresh z PC",
+        "Refresh status": "Stav refreshu",
+        "Refresh success": "Úspešnosť refreshu",
+        "Wallet sync": "Synchronizácia peňaženky",
+        "Runtime snapshot generated at": "Runtime snapshot vytvorený",
+        "Account equity": "Hodnota účtu",
+        "Available balance": "Dostupný zostatok",
+        "Current position": "Aktuálna pozícia",
+        "Open orders count": "Počet otvorených príkazov",
+        "Positions count": "Počet pozícií",
+        "Latest wallet sync": "Posledná synchronizácia peňaženky",
+        "Latest run id": "Posledné ID behu",
+        "Latest attempt status": "Stav posledného pokusu",
+        "Target closed day": "Cieľový uzavretý deň",
+        "Latest available closed day": "Posledný dostupný uzavretý deň",
+        "Strategy artifact closed day": "Uzavretý deň strategy artefaktu",
+        "Currentness status": "Stav aktuálnosti",
+        "Generated at": "Vygenerované",
+        "Authority role / producer id": "Authority role / producer id",
+    }
+    label_column = "Prehľad" if lang == "sk" else "Field"
+    for row in rows:
+        normalized_row: dict[str, Any] = {}
+        for key, value in row.items():
+            key_text = str(key)
+            if key_text.startswith("Preh"):
+                normalized_row[label_column] = (
+                    label_map.get(str(value), value)
+                    if lang == "sk"
+                    else value
+                )
+            else:
+                normalized_row[key] = value
+        normalized_rows.append(normalized_row)
+    return normalized_rows
+
+
+def localize_integrity_rows(rows: list[dict[str, str]], lang: str) -> list[dict[str, str]]:
+    if lang != "sk":
+        return rows
+    label_map = {
+        "Homepage main strategy matches export contract": "Homepage hlavná stratégia sedí na export kontrakt",
+        "Metrics model matches main strategy": "Model metrík sedí na hlavnú stratégiu",
+        "Chart main path matches contract": "Hlavná chart path sedí na kontrakt",
+        "Strategy date equals latest available closed day": "Dátum stratégie sa rovná latest available closed day",
+        "Trend barometer date consistency": "Konzistencia dátumu trend barometra",
+        "Wallet sync present": "Synchronizácia peňaženky je prítomná",
+        "Authority attempt status success": "Authority attempt status je success",
+    }
+    localized_rows: list[dict[str, str]] = []
+    for row in rows:
+        localized_row = dict(row)
+        localized_row["Kontrola"] = label_map.get(row.get("Kontrola", ""), row.get("Kontrola", ""))
+        localized_rows.append(localized_row)
+    return localized_rows
+
+
 # =========================================================
 # APP
 # =========================================================
@@ -4249,6 +4687,10 @@ if "account_authenticated" not in st.session_state:
     st.session_state.account_authenticated = False
 if "account_auth_error" not in st.session_state:
     st.session_state.account_auth_error = ""
+if "overenie_show_raw" not in st.session_state:
+    st.session_state.overenie_show_raw = False
+if "overenie_last_integrity_check_utc" not in st.session_state:
+    st.session_state.overenie_last_integrity_check_utc = ""
 
 latest_successful_snapshot_payload = load_required_authority_payload(
     AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
@@ -4441,27 +4883,35 @@ with tabs[0]:
     home_cards = []
 
     if live_public_state.get("has_new_fields"):
-        held_value = resolve_homepage_held_state(live_public_state, lang=lang)
+        held_value = sanitize_homepage_public_text(
+            resolve_homepage_held_state(live_public_state, lang=lang),
+            lang=lang,
+        )
+        trend_state_value = sanitize_homepage_public_text(
+            safe_text_value(trend_live.get("trend_state_label"), lang=lang),
+            lang=lang,
+        )
         if held_value != t(lang, "na"):
             home_cards.append(
                 {
                     "label": t(lang, "currently_holding"),
                     "value": held_value,
                     "subtitle": "",
-                    "help": METRIC_HELP[lang][t(lang, "currently_holding")],
+                    "help": None,
                     "accent": "blue",
                 }
             )
 
-        home_cards.append(
-            {
-                "label": t(lang, "trend_state"),
-                "value": safe_metric_text(trend_live.get("trend_score"), decimals=4, suffix="", lang=lang),
-                "subtitle": safe_text_value(trend_live.get("trend_state_label"), lang=lang),
-                "help": METRIC_HELP[lang][t(lang, "trend_score")],
-                "accent": "orange",
-            }
-        )
+        if trend_state_value != t(lang, "na"):
+            home_cards.append(
+                {
+                    "label": t(lang, "trend_state"),
+                    "value": trend_state_value,
+                    "subtitle": "",
+                    "help": None,
+                    "accent": "orange",
+                }
+            )
 
     if home_cards:
         home_cols = st.columns(len(home_cards))
@@ -4483,20 +4933,6 @@ with tabs[0]:
         options=years,
         index=years.index(2025) if 2025 in years else 0,
         key="selected_year_home",
-    )
-    strip_is_truthful = homepage_chart_strip_is_truthful(
-        main_df=papers[main_key],
-        btc_df=btc_df,
-        year=selected_year_home,
-        lang=lang,
-    )
-    st.caption(t(lang, "chart_note") if strip_is_truthful else t(lang, "chart_note_strip_hidden"))
-    chart_explainer_line = build_homepage_chart_explainer_line(
-        main_df=papers[main_key],
-        btc_df=btc_df,
-        year=selected_year_home,
-        live_public_state=live_public_state,
-        lang=lang,
     )
     st.plotly_chart(
         make_capital_chart(
@@ -4636,8 +5072,8 @@ with tabs[0]:
             ),
         },
     ]
-    st.markdown("#### Autoritativny runtime" if lang == "sk" else "#### Authority Runtime")
-    render_app_table(refresh_rows, emphasize_first_column=True)
+    with st.expander("Stav dát" if lang == "sk" else "Data status", expanded=False):
+        render_app_table(refresh_rows, emphasize_first_column=True)
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))
@@ -4646,51 +5082,17 @@ with tabs[0]:
         st.warning(" / ".join(paper_errors))
 
 with tabs[1]:
-    configured_account_username, configured_account_password, _account_login_source = load_account_login_credentials()
-    account_login_available = bool(configured_account_username and configured_account_password)
-    if not account_login_available:
-        st.session_state.account_authenticated = False
-
-    title_col, action_col = st.columns([6, 1])
-    with title_col:
-        st.subheader(t(lang, "account_title"))
-    with action_col:
-        if account_login_available and st.session_state.account_authenticated:
-            if st.button("Odhlásiť", key="account_logout", width="stretch"):
-                st.session_state.account_authenticated = False
-                st.session_state.account_auth_error = ""
-                st.rerun()
-
+    account_login_available, account_authenticated = render_protected_tab_gate(
+        lang=lang,
+        title=t(lang, "account_title"),
+        tab_key="account",
+        authenticated_note=t(lang, "account_snapshot_note"),
+    )
     account_enabled_cfg = as_bool(account_observability_cfg.get("enabled"))
-    account_enabled = account_enabled_cfg if account_login_available and st.session_state.account_authenticated else False
-
-    if not account_login_available:
-        st.warning("Prístup k účtu je dočasne nedostupný.")
-    elif not st.session_state.account_authenticated:
-        st.markdown("#### Prihlásenie")
-        st.info("Pre prístup k účtu sa najprv prihláste.")
-        with st.form("account_login_form", clear_on_submit=True):
-            username_input = st.text_input("Používateľské meno")
-            password_input = st.text_input("Heslo", type="password")
-            login_submitted = st.form_submit_button("Prihlásiť sa", width="stretch")
-
-        if login_submitted:
-            username_ok = hmac.compare_digest(username_input.strip(), configured_account_username)
-            password_ok = hmac.compare_digest(password_input, configured_account_password)
-            if username_ok and password_ok:
-                st.session_state.account_authenticated = True
-                st.session_state.account_auth_error = ""
-                st.rerun()
-            st.session_state.account_authenticated = False
-            st.session_state.account_auth_error = "Nesprávne prihlasovacie údaje."
-
-        if st.session_state.account_auth_error:
-            st.error(st.session_state.account_auth_error)
-    else:
-        st.caption(t(lang, "account_snapshot_note"))
+    account_enabled = account_enabled_cfg if account_login_available and account_authenticated else False
 
     if account_enabled is False:
-        if account_login_available and st.session_state.account_authenticated and account_enabled_cfg is False:
+        if account_login_available and account_authenticated and account_enabled_cfg is False:
             st.info(account_ui_text(lang, "observability_disabled"))
     else:
         bridge_available = callable(run_app_execute_action)
@@ -4948,10 +5350,307 @@ with tabs[1]:
             )
 
 with tabs[2]:
+    verification_title = "Overenie" if lang == "sk" else "Verification"
+    verification_note = (
+        "Interný read-only diagnostický prehľad nad autoritatívnymi exportmi a runtime snapshotom."
+        if lang == "sk"
+        else "Internal read-only diagnostic view over authority exports and the runtime snapshot."
+    )
+    overenie_login_available, overenie_authenticated = render_protected_tab_gate(
+        lang=lang,
+        title=verification_title,
+        tab_key="overenie",
+        authenticated_note=verification_note,
+    )
+
+    if overenie_login_available and overenie_authenticated:
+        latest_authority_run_id = first_present_value(
+            latest_attempt_status_payload.get("run_id"),
+            latest_successful_snapshot_payload.get("run_id"),
+        )
+        latest_authority_attempt_status = first_present_value(
+            latest_attempt_status_payload.get("latest_authoritative_attempt_status"),
+            latest_successful_snapshot_payload.get("latest_authoritative_attempt_status"),
+        )
+        target_closed_day = first_present_value(
+            latest_attempt_status_payload.get("target_closed_day_utc"),
+            latest_successful_snapshot_payload.get("target_closed_day_utc"),
+        )
+        latest_available_closed_day = first_present_value(
+            latest_attempt_status_payload.get("latest_available_closed_utc_day"),
+            latest_successful_snapshot_payload.get("latest_available_closed_utc_day"),
+            runtime_snapshot.get("latest_available_closed_utc_date"),
+        )
+        strategy_artifact_closed_day = first_present_value(
+            latest_attempt_status_payload.get("strategy_artifact_closed_day_utc"),
+            latest_successful_snapshot_payload.get("strategy_artifact_closed_day_utc"),
+            runtime_snapshot.get("latest_strategy_artifact_date"),
+        )
+        authority_currentness_status = first_present_value(
+            latest_attempt_status_payload.get("currentness_status"),
+            latest_successful_snapshot_payload.get("currentness_status"),
+            runtime_table_payload.get("currentness_state"),
+        )
+        authority_generated_at = first_present_value(
+            latest_attempt_status_payload.get("generated_at_utc"),
+            latest_attempt_status_payload.get("refresh_finished_at_utc"),
+            latest_successful_snapshot_payload.get("generated_at_utc"),
+            latest_successful_snapshot_payload.get("refresh_finished_at_utc"),
+        )
+        authority_role = first_present_value(
+            latest_attempt_status_payload.get("authority_role"),
+            latest_successful_snapshot_payload.get("authority_role"),
+        )
+        authority_producer_id = first_present_value(
+            latest_attempt_status_payload.get("automatic_producer_id"),
+            latest_successful_snapshot_payload.get("automatic_producer_id"),
+            latest_attempt_status_payload.get("github_actions_role"),
+            latest_successful_snapshot_payload.get("github_actions_role"),
+        )
+        authority_role_detail = authority_role or ""
+        if authority_producer_id:
+            authority_role_detail = (
+                f"{authority_role_detail} | {authority_producer_id}"
+                if authority_role_detail
+                else str(authority_producer_id)
+            )
+
+        strategy_rows = [
+            {
+                "Prehľad": "Current main strategy model",
+                "Hodnota": safe_text_value(product_snapshot.get("main_strategy_model"), lang=lang),
+            },
+            {
+                "Prehľad": "Strategy last closed day",
+                "Hodnota": safe_text_value(product_snapshot.get("strategy_last_closed_day"), lang=lang),
+            },
+            {
+                "Prehľad": "Main metrics model",
+                "Hodnota": safe_text_value(
+                    get_nested_value(product_snapshot, "main_strategy_metrics", "model")
+                    or product_snapshot.get("main_strategy_model"),
+                    lang=lang,
+                ),
+            },
+            {
+                "Prehľad": "Chart source path",
+                "Hodnota": safe_text_value(
+                    get_nested_value(product_snapshot, "chart_source_paths", "main_strategy"),
+                    lang=lang,
+                ),
+            },
+            {
+                "Prehľad": "Benchmark source path",
+                "Hodnota": safe_text_value(product_snapshot.get("benchmark_source_path"), lang=lang),
+            },
+            {
+                "Prehľad": "Freshness status",
+                "Hodnota": safe_text_value(
+                    get_nested_value(product_snapshot, "freshness", "status"),
+                    lang=lang,
+                ),
+            },
+        ]
+        strategy_rows = localize_overenie_rows(strategy_rows, lang)
+
+        runtime_rows = [
+            {
+                "Prehľad": "Last Pi update",
+                "Hodnota": format_local_time_text(runtime_table_payload.get("last_pi_update_utc"), lang),
+            },
+            {
+                "Prehľad": "Last PC refresh",
+                "Hodnota": format_local_time_text(
+                    first_present_value(
+                        runtime_snapshot.get("latest_successful_refresh_runtime_utc"),
+                        runtime_snapshot.get("refresh_finished_at_utc"),
+                        runtime_snapshot.get("runtime_last_sync_utc"),
+                    ),
+                    lang,
+                ),
+            },
+            {
+                "Prehľad": "Refresh status",
+                "Hodnota": safe_text_value(
+                    runtime_snapshot.get("refresh_status")
+                    or runtime_table_payload.get("last_refresh_status"),
+                    lang=lang,
+                ),
+            },
+            {
+                "Prehľad": "Refresh success",
+                "Hodnota": safe_text_value(runtime_snapshot.get("refresh_success"), lang=lang),
+            },
+            {
+                "Prehľad": "Wallet sync",
+                "Hodnota": format_local_time_text(
+                    first_present_value(
+                        runtime_snapshot.get("latest_wallet_sync_utc"),
+                        runtime_table_payload.get("last_wallet_sync_utc"),
+                    ),
+                    lang,
+                ),
+            },
+            {
+                "Prehľad": "Runtime snapshot generated at",
+                "Hodnota": format_local_time_text(
+                    first_present_value(
+                        runtime_snapshot.get("app_runtime_snapshot_generated_at_utc"),
+                        runtime_snapshot.get("app_export_generated_at_utc"),
+                    ),
+                    lang,
+                ),
+            },
+        ]
+        runtime_rows = localize_overenie_rows(runtime_rows, lang)
+
+        account_rows = [
+            {
+                "Prehľad": "Account equity",
+                "Hodnota": safe_usd_text(account_snapshot_view.get("account_equity_usd"), lang=lang),
+            },
+            {
+                "Prehľad": "Available balance",
+                "Hodnota": safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang),
+            },
+            {
+                "Prehľad": "Current position",
+                "Hodnota": safe_text_value(account_snapshot_view.get("current_position"), lang=lang),
+            },
+            {
+                "Prehľad": "Open orders count",
+                "Hodnota": safe_int_text(account_snapshot_view.get("open_orders_count"), lang=lang),
+            },
+            {
+                "Prehľad": "Positions count",
+                "Hodnota": safe_int_text(account_snapshot_view.get("positions_count"), lang=lang),
+            },
+            {
+                "Prehľad": "Latest wallet sync",
+                "Hodnota": format_local_time_text(
+                    first_present_value(
+                        runtime_snapshot.get("latest_wallet_sync_utc"),
+                        runtime_table_payload.get("last_wallet_sync_utc"),
+                        latest_successful_snapshot_payload.get("authority_wallet_sync_utc"),
+                    ),
+                    lang,
+                ),
+            },
+        ]
+        account_rows = localize_overenie_rows(account_rows, lang)
+
+        integrity_rows = build_overenie_integrity_rows(
+            product_snapshot=product_snapshot,
+            runtime_snapshot=runtime_snapshot,
+            current_strategy_contract=current_strategy_contract,
+            homepage_current_strategy_sources=homepage_current_strategy_sources,
+            trend_live=trend_live,
+            trend_barometer_warnings=trend_barometer_warnings,
+            runtime_table_payload=runtime_table_payload,
+            runtime_authority_payload=runtime_authority_payload,
+        )
+        integrity_rows = localize_integrity_rows(integrity_rows, lang)
+        integrity_ok_count = sum(1 for row in integrity_rows if row.get("Stav") == VERIFICATION_STATUS_LABELS["ok"])
+        integrity_warn_count = sum(1 for row in integrity_rows if row.get("Stav") == VERIFICATION_STATUS_LABELS["warn"])
+        integrity_error_count = sum(1 for row in integrity_rows if row.get("Stav") == VERIFICATION_STATUS_LABELS["error"])
+
+        action_cols = st.columns(3)
+        with action_cols[0]:
+            if st.button("Obnoviť zobrazenie", key="overenie_refresh_view", width="stretch"):
+                st.rerun()
+        with action_cols[1]:
+            if st.button("Skontrolovať integritu", key="overenie_check_integrity", width="stretch"):
+                st.session_state.overenie_last_integrity_check_utc = datetime.now(timezone.utc).isoformat()
+        with action_cols[2]:
+            raw_toggle_label = "Zobraziť raw authority" if not st.session_state.overenie_show_raw else "Skryť raw authority"
+            if st.button(raw_toggle_label, key="overenie_toggle_raw_authority", width="stretch"):
+                st.session_state.overenie_show_raw = not st.session_state.overenie_show_raw
+
+        if st.session_state.overenie_last_integrity_check_utc:
+            checked_at_text = format_local_time_text(
+                st.session_state.overenie_last_integrity_check_utc,
+                lang,
+            )
+            if integrity_error_count == 0 and integrity_warn_count == 0:
+                st.success(f"Integrita skontrolovaná: {checked_at_text}")
+            elif integrity_error_count == 0:
+                st.warning(f"Integrita skontrolovaná s upozorneniami: {checked_at_text}")
+            else:
+                st.error(f"Integrita skontrolovaná, nájdené chyby: {checked_at_text}")
+
+        st.markdown("### Autoritatívny stav" if lang == "sk" else "### Authority status")
+        authority_rows = [
+            {
+                "Prehľad": "Latest run id",
+                "Hodnota": safe_text_value(latest_authority_run_id, lang=lang),
+            },
+            {
+                "Prehľad": "Latest attempt status",
+                "Hodnota": safe_text_value(latest_authority_attempt_status, lang=lang),
+            },
+            {
+                "Prehľad": "Target closed day",
+                "Hodnota": safe_text_value(target_closed_day, lang=lang),
+            },
+            {
+                "Prehľad": "Latest available closed day",
+                "Hodnota": safe_text_value(latest_available_closed_day, lang=lang),
+            },
+            {
+                "Prehľad": "Strategy artifact closed day",
+                "Hodnota": safe_text_value(strategy_artifact_closed_day, lang=lang),
+            },
+            {
+                "Prehľad": "Currentness status",
+                "Hodnota": safe_text_value(authority_currentness_status, lang=lang),
+            },
+            {
+                "Prehľad": "Generated at",
+                "Hodnota": format_local_time_text(authority_generated_at, lang),
+            },
+            {
+                "Prehľad": "Authority role / producer id",
+                "Hodnota": safe_text_value(authority_role_detail, lang=lang),
+            },
+        ]
+        authority_rows = localize_overenie_rows(authority_rows, lang)
+        render_app_table(authority_rows, emphasize_first_column=True)
+
+        st.markdown("### Dáta stratégie" if lang == "sk" else "### Strategy data")
+        render_app_table(strategy_rows, emphasize_first_column=True)
+
+        st.markdown("### Runtime a refresh" if lang == "sk" else "### Runtime and refresh")
+        render_app_table(runtime_rows, emphasize_first_column=True)
+
+        st.markdown("### Účet / peňaženka" if lang == "sk" else "### Account / wallet")
+        render_app_table(account_rows, emphasize_first_column=True)
+
+        st.markdown("### Integrita" if lang == "sk" else "### Integrity")
+        integrity_summary_cols = st.columns(3)
+        with integrity_summary_cols[0]:
+            render_color_card("OK", str(integrity_ok_count), "", "Počet kontrol bez odchýlky.", "green")
+        with integrity_summary_cols[1]:
+            render_color_card("Pozor", str(integrity_warn_count), "", "Počet kontrol s upozornením.", "orange")
+        with integrity_summary_cols[2]:
+            render_color_card("Chyba", str(integrity_error_count), "", "Počet kontrol s chybou.", "blue")
+        render_app_table(integrity_rows, emphasize_first_column=True)
+        if homepage_authority_integrity_findings:
+            with st.expander("Detaily homepage integrity", expanded=False):
+                for finding in homepage_authority_integrity_findings:
+                    st.write(f"- {finding}")
+
+        if st.session_state.overenie_show_raw:
+            st.markdown("### Raw dáta" if lang == "sk" else "### Raw data")
+            render_raw_json_expander("latest_attempt_status.json", latest_attempt_status_payload)
+            render_raw_json_expander("latest_successful_snapshot.json", latest_successful_snapshot_payload)
+            render_raw_json_expander("app_product_snapshot", product_snapshot)
+            render_raw_json_expander("app_runtime_snapshot", runtime_snapshot)
+
+with tabs[3]:
     st.subheader(t(lang, "method_title"))
     st.markdown(t(lang, "method_md"))
 
-with tabs[3]:
+with tabs[4]:
     st.subheader(t(lang, "contact_title"))
     st.caption(t(lang, "contact_desc"))
 
