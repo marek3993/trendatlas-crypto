@@ -4138,7 +4138,12 @@ def make_trend_gauge(trend_live: dict, lang: str) -> go.Figure:
 
 def make_trend_history_chart(history_df: pd.DataFrame, lang: str) -> go.Figure:
     fig = go.Figure()
+    default_xaxis_range = None
     if not history_df.empty:
+        range_start = pd.Timestamp("2025-01-01")
+        latest_trend_ts = pd.to_datetime(history_df["ts"], errors="coerce").max()
+        if not pd.isna(latest_trend_ts) and (pd.to_datetime(history_df["ts"], errors="coerce") >= range_start).any():
+            default_xaxis_range = [range_start, latest_trend_ts]
         fig.add_trace(
             go.Scatter(
                 x=history_df["ts"],
@@ -4166,7 +4171,7 @@ def make_trend_history_chart(history_df: pd.DataFrame, lang: str) -> go.Figure:
         plot_bgcolor="rgba(255,255,255,0.015)",
         margin=dict(l=20, r=20, t=50, b=20),
         yaxis=dict(range=[-1.05, 1.05], gridcolor="rgba(255,255,255,0.06)"),
-        xaxis=dict(showgrid=False),
+        xaxis=dict(showgrid=False, range=default_xaxis_range),
         xaxis_title="",
         legend_title="",
     )
