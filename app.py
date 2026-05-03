@@ -4636,8 +4636,9 @@ with tabs[0]:
             ),
         },
     ]
-    st.markdown("#### Autoritativny runtime" if lang == "sk" else "#### Authority Runtime")
-    render_app_table(refresh_rows, emphasize_first_column=True)
+    with st.expander("Stav dát", expanded=False):
+        st.markdown("#### Autoritativny runtime" if lang == "sk" else "#### Authority Runtime")
+        render_app_table(refresh_rows, emphasize_first_column=True)
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))
