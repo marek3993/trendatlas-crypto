@@ -30,6 +30,16 @@ HOMEPAGE_TOP_PERFORMANCE_SOURCE_CONTRACTS: dict[str, dict[str, Any]] = {
         },
     },
 }
+HOMEPAGE_OPERATIONAL_METRIC_CONTRACTS: dict[str, dict[str, Any]] = {
+    "phase68g_66g_1p25x_candidate": {
+        "semantic_role": "current_live_main_strategy_operational_metrics",
+        "expected_switch_count": 9,
+        "expected_cash_days_pct": 85.17,
+        "cash_days_tolerance_pct": 0.25,
+        "expected_btc_days_pct": 0.0,
+        "btc_days_tolerance_pct": 0.01,
+    },
+}
 
 
 class CurrentMainStrategyContractError(ValueError):
@@ -59,6 +69,14 @@ def _require_text(value: Any, context: str) -> str:
     if not text:
         raise CurrentMainStrategyContractError(f"{context} is missing")
     return text
+
+
+def _require_float(value: Any, context: str) -> float:
+    text = _require_text(value, context)
+    try:
+        return float(text)
+    except ValueError as exc:
+        raise CurrentMainStrategyContractError(f"{context} must be numeric (actual={text})") from exc
 
 
 def _normalize_app_path_text(path_text: str) -> str:
@@ -321,6 +339,11 @@ def validate_product_snapshot_current_strategy_contract(
             f"{context} product_snapshot.main_strategy_metrics.model diverged "
             f"(expected={expected_model} actual={metrics_model})"
         )
+    validate_homepage_operational_metrics_contract(
+        main_strategy_metrics,
+        main_strategy_model=expected_model,
+        context=f"{context} product_snapshot.main_strategy_metrics",
+    )
 
     top_performance_metrics_payload = product_snapshot.get("main_strategy_top_performance_metrics")
     if top_performance_metrics_payload is not None:
@@ -443,6 +466,43 @@ def _normalize_iso_day_text(value: Any, *, context: str) -> str:
     if len(normalized) != 10:
         raise CurrentMainStrategyContractError(f"{context} is not an ISO day: {text}")
     return normalized
+
+
+def validate_homepage_operational_metrics_contract(
+    metrics: Mapping[str, Any],
+    *,
+    main_strategy_model: str,
+    context: str,
+) -> None:
+    contract = HOMEPAGE_OPERATIONAL_METRIC_CONTRACTS.get(str(main_strategy_model or "").strip())
+    if contract is None:
+        return
+
+    actual_switch_count = int(round(_require_float(metrics.get("switch_count"), f"{context}.switch_count")))
+    expected_switch_count = int(contract["expected_switch_count"])
+    if actual_switch_count != expected_switch_count:
+        raise CurrentMainStrategyContractError(
+            f"{context}.switch_count diverged from {main_strategy_model} operational metric contract "
+            f"(expected={expected_switch_count} actual={actual_switch_count})"
+        )
+
+    actual_cash_days_pct = _require_float(metrics.get("cash_days_pct"), f"{context}.cash_days_pct")
+    expected_cash_days_pct = float(contract["expected_cash_days_pct"])
+    cash_days_tolerance_pct = float(contract["cash_days_tolerance_pct"])
+    if abs(actual_cash_days_pct - expected_cash_days_pct) > cash_days_tolerance_pct:
+        raise CurrentMainStrategyContractError(
+            f"{context}.cash_days_pct diverged from {main_strategy_model} operational metric contract "
+            f"(expected={expected_cash_days_pct} +/- {cash_days_tolerance_pct} actual={actual_cash_days_pct})"
+        )
+
+    actual_btc_days_pct = _require_float(metrics.get("btc_days_pct"), f"{context}.btc_days_pct")
+    expected_btc_days_pct = float(contract["expected_btc_days_pct"])
+    btc_days_tolerance_pct = float(contract["btc_days_tolerance_pct"])
+    if abs(actual_btc_days_pct - expected_btc_days_pct) > btc_days_tolerance_pct:
+        raise CurrentMainStrategyContractError(
+            f"{context}.btc_days_pct diverged from {main_strategy_model} operational metric contract "
+            f"(expected={expected_btc_days_pct} +/- {btc_days_tolerance_pct} actual={actual_btc_days_pct})"
+        )
 
 
 def validate_current_main_strategy_source_files_against_snapshot(

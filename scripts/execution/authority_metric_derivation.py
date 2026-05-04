@@ -55,6 +55,16 @@ def _is_explicit_cash_token(token: str) -> bool:
     return bool(token) and token in CASH_EQUIVALENT_ASSETS
 
 
+def _parse_float_maybe(value: Any) -> float | None:
+    try:
+        text = str(value).strip()
+        if not text:
+            return None
+        return float(text)
+    except (TypeError, ValueError):
+        return None
+
+
 def resolve_authoritative_day_metric_state(row: pd.Series) -> str:
     if _as_bool(row.get("cash_day")) is True:
         return "CASH"
@@ -105,6 +115,33 @@ def resolve_phase68g_day_metric_state(row: pd.Series) -> str:
     return "OTHER"
 
 
+def derive_phase68g_operational_day_metrics_from_frame(
+    frame: pd.DataFrame,
+) -> dict[str, float] | None:
+    # Current live phase68g homepage operational metrics track leverage posture.
+    # Compare-export held-asset-family metrics are a different metric family and
+    # must not be reused for the lower homepage cards.
+    if "effective_leverage" in frame.columns:
+        leverage_values = frame["effective_leverage"].map(_parse_float_maybe)
+        if leverage_values.notna().all():
+            inactive_days = leverage_values <= 1.0 + 1e-9
+            return {
+                "cash_days_pct": round(float(inactive_days.mean() * 100.0), 4),
+                "btc_days_pct": 0.0,
+            }
+
+    if "leverage_active" in frame.columns:
+        leverage_active = frame["leverage_active"].map(_as_bool)
+        if leverage_active.notna().all():
+            inactive_days = leverage_active == False  # noqa: E712 - explicit vector comparison
+            return {
+                "cash_days_pct": round(float(inactive_days.mean() * 100.0), 4),
+                "btc_days_pct": 0.0,
+            }
+
+    return None
+
+
 def derive_strategy_day_metrics_from_frame(
     frame: pd.DataFrame,
     *,
@@ -119,6 +156,9 @@ def derive_strategy_day_metrics_from_frame(
 
     model_key = str(model or "").strip()
     if model_key == PHASE68G_ACTIVE_MODEL:
+        phase68g_operational_metrics = derive_phase68g_operational_day_metrics_from_frame(frame)
+        if phase68g_operational_metrics is not None:
+            return phase68g_operational_metrics
         day_metric_states = frame.apply(resolve_phase68g_day_metric_state, axis=1)
     else:
         day_metric_states = frame.apply(resolve_authoritative_day_metric_state, axis=1)

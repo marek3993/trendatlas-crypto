@@ -29,6 +29,7 @@ from scripts.execution.current_strategy_root_contract import (
     serialize_current_main_strategy_root_contract,
     validate_authoritative_dependency_closure,
     validate_homepage_main_chart_source_path,
+    validate_homepage_operational_metrics_contract,
     validate_product_snapshot_current_strategy_contract,
 )
 from scripts.execution.runtime_path_resolution import (
@@ -1814,7 +1815,52 @@ def normalize_homepage_main_strategy_metrics(
         fail(
             f"{summary_path} missing required canonical main strategy metric fields: {missing_fields}"
         )
+    try:
+        validate_homepage_operational_metrics_contract(
+            metrics,
+            main_strategy_model=main_strategy_model,
+            context=f"{summary_path} canonical main strategy metrics",
+        )
+    except ValueError as exc:
+        fail(str(exc))
     return metrics
+
+
+def derive_homepage_operational_metrics_from_paper(
+    main_paper_path: Path,
+    *,
+    main_strategy_model: str,
+) -> dict[str, str]:
+    derived_day_metrics = derive_strategy_day_metrics_from_csv(
+        main_paper_path,
+        model=main_strategy_model,
+    )
+    if derived_day_metrics is None:
+        fail(
+            f"{main_paper_path} operational day metrics are unsupported for "
+            f"{main_strategy_model}"
+        )
+    if "cash_days_pct" not in derived_day_metrics or "btc_days_pct" not in derived_day_metrics:
+        fail(f"{main_paper_path} missing operational day metrics for {main_strategy_model}")
+
+    derived_switch_count = derive_switch_count_from_paper(main_paper_path)
+    if derived_switch_count is None:
+        fail(f"{main_paper_path} missing operational switch_count for {main_strategy_model}")
+
+    operational_metrics = {
+        "switch_count": csv_text_value(derived_switch_count),
+        "cash_days_pct": csv_text_value(derived_day_metrics["cash_days_pct"]),
+        "btc_days_pct": csv_text_value(derived_day_metrics["btc_days_pct"]),
+    }
+    try:
+        validate_homepage_operational_metrics_contract(
+            operational_metrics,
+            main_strategy_model=main_strategy_model,
+            context=f"{main_paper_path} derived homepage operational metrics",
+        )
+    except ValueError as exc:
+        fail(str(exc))
+    return operational_metrics
 
 
 def build_full_canonical_main_strategy_metrics_row(
@@ -1848,23 +1894,12 @@ def build_full_canonical_main_strategy_metrics_row(
             if fallback_value:
                 canonical_row[field] = fallback_value
 
-    if not canonical_row.get("cash_days_pct") or not canonical_row.get("btc_days_pct"):
-        derived_day_metrics = derive_strategy_day_metrics_from_csv(
-            main_paper_path,
-            model=main_strategy_model,
-        )
-        if isinstance(derived_day_metrics, dict):
-            for field in ("cash_days_pct", "btc_days_pct"):
-                if canonical_row.get(field):
-                    continue
-                fallback_value = csv_text_value(derived_day_metrics.get(field))
-                if fallback_value:
-                    canonical_row[field] = fallback_value
-
-    if not canonical_row.get("switch_count"):
-        derived_switch_count = derive_switch_count_from_paper(main_paper_path)
-        if derived_switch_count is not None:
-            canonical_row["switch_count"] = csv_text_value(derived_switch_count)
+    operational_metrics = derive_homepage_operational_metrics_from_paper(
+        main_paper_path,
+        main_strategy_model=main_strategy_model,
+    )
+    for field, value in operational_metrics.items():
+        canonical_row[field] = value
 
     canonical_row["model"] = main_strategy_model
 
@@ -1874,6 +1909,14 @@ def build_full_canonical_main_strategy_metrics_row(
             "Full canonical phase68g metrics record is incomplete after materialization "
             f"for {main_paper_path}: missing {missing_fields}"
         )
+    try:
+        validate_homepage_operational_metrics_contract(
+            canonical_row,
+            main_strategy_model=main_strategy_model,
+            context=f"{main_paper_path} canonical metrics row",
+        )
+    except ValueError as exc:
+        fail(str(exc))
     return canonical_row
 
 
