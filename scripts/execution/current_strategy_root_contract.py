@@ -6,6 +6,10 @@ import math
 from pathlib import Path
 from typing import Any, Mapping
 
+from scripts.execution.authority_metric_derivation import (
+    derive_homepage_operational_metrics_from_paper,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
@@ -34,11 +38,10 @@ HOMEPAGE_TOP_PERFORMANCE_SOURCE_CONTRACTS: dict[str, dict[str, Any]] = {
 HOMEPAGE_OPERATIONAL_METRIC_CONTRACTS: dict[str, dict[str, Any]] = {
     "phase68g_66g_1p25x_candidate": {
         "semantic_role": "current_live_main_strategy_operational_metrics",
-        "expected_switch_count": 9,
-        "expected_cash_days_pct": 85.17,
-        "cash_days_tolerance_pct": 0.25,
-        "expected_btc_days_pct": 0.0,
-        "btc_days_tolerance_pct": 0.01,
+        "source_family": "current_main_strategy_paper_held_state_series",
+        "series_semantics": "homepage_model_state_and_chart_strip",
+        "required_source_metadata_key": "operational_metrics",
+        "rounding_tolerance_pct": 0.0001,
     },
 }
 
@@ -353,6 +356,7 @@ def validate_product_snapshot_current_strategy_contract(
         main_strategy_metrics,
         main_strategy_model=expected_model,
         context=f"{context} product_snapshot.main_strategy_metrics",
+        paper_path=Path(contract["paper_path"]),
     )
 
     top_performance_metrics_payload = product_snapshot.get("main_strategy_top_performance_metrics")
@@ -395,6 +399,64 @@ def validate_product_snapshot_current_strategy_contract(
             f"{context} product_snapshot.source_metadata.main_strategy_metrics.path diverged "
             f"(expected={expected_metrics_path} actual={actual_metrics_path})"
         )
+    operational_metrics_metadata = _require_mapping(
+        metrics_metadata.get("operational_metrics"),
+        f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics",
+    )
+    validate_homepage_main_chart_source_path(
+        operational_metrics_metadata.get("path"),
+        contract,
+        context=(
+            f"{context} product_snapshot.source_metadata.main_strategy_metrics."
+            "operational_metrics.path"
+        ),
+    )
+    _require_text(
+        operational_metrics_metadata.get("held_state_column"),
+        f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics.held_state_column",
+    )
+    _require_text(
+        operational_metrics_metadata.get("series_semantics"),
+        f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics.series_semantics",
+    )
+    expected_operational_metrics = derive_homepage_operational_metrics_from_paper(Path(contract["paper_path"]))
+    if not expected_operational_metrics:
+        raise CurrentMainStrategyContractError(
+            f"{context} could not derive homepage operational metrics metadata from current main strategy paper "
+            f"(path={contract['paper_path']})"
+        )
+    expected_held_state_column = _require_text(
+        expected_operational_metrics.get("held_state_column"),
+        f"{context}.derived.held_state_column",
+    )
+    actual_held_state_column = _require_text(
+        operational_metrics_metadata.get("held_state_column"),
+        f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics.held_state_column",
+    )
+    if actual_held_state_column != expected_held_state_column:
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics.held_state_column diverged "
+            f"(expected={expected_held_state_column} actual={actual_held_state_column})"
+        )
+    expected_denominator_rows = int(
+        _require_float(
+            expected_operational_metrics.get("held_state_denominator_rows"),
+            f"{context}.derived.held_state_denominator_rows",
+        )
+    )
+    actual_denominator_rows = operational_metrics_metadata.get("held_state_denominator_rows")
+    if actual_denominator_rows is not None:
+        normalized_actual_denominator_rows = int(
+            _require_float(
+                actual_denominator_rows,
+                f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics.held_state_denominator_rows",
+            )
+        )
+        if normalized_actual_denominator_rows != expected_denominator_rows:
+            raise CurrentMainStrategyContractError(
+                f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics.held_state_denominator_rows diverged "
+                f"(expected={expected_denominator_rows} actual={normalized_actual_denominator_rows})"
+            )
 
     top_performance_metadata_payload = source_metadata.get("main_strategy_top_performance_metrics")
     if top_performance_metadata_payload is not None:
@@ -483,35 +545,55 @@ def validate_homepage_operational_metrics_contract(
     *,
     main_strategy_model: str,
     context: str,
+    paper_path: Path,
 ) -> None:
     contract = HOMEPAGE_OPERATIONAL_METRIC_CONTRACTS.get(str(main_strategy_model or "").strip())
     if contract is None:
         return
 
+    derived_metrics = derive_homepage_operational_metrics_from_paper(paper_path)
+    if not derived_metrics:
+        raise CurrentMainStrategyContractError(
+            f"{context} could not derive homepage operational metrics from current main strategy paper "
+            f"(path={paper_path})"
+        )
+
+    held_state_column = _require_text(
+        derived_metrics.get("held_state_column"),
+        f"{context}.derived.held_state_column",
+    )
+    rounding_tolerance_pct = float(contract.get("rounding_tolerance_pct") or 0.0001)
+
     actual_switch_count = int(round(_require_float(metrics.get("switch_count"), f"{context}.switch_count")))
-    expected_switch_count = int(contract["expected_switch_count"])
+    expected_switch_count = int(
+        round(_require_float(derived_metrics.get("switch_count"), f"{context}.derived.switch_count"))
+    )
     if actual_switch_count != expected_switch_count:
         raise CurrentMainStrategyContractError(
-            f"{context}.switch_count diverged from {main_strategy_model} operational metric contract "
-            f"(expected={expected_switch_count} actual={actual_switch_count})"
+            f"{context}.switch_count diverged from {main_strategy_model} current main strategy paper held-state series "
+            f"(expected={expected_switch_count} actual={actual_switch_count} held_state_column={held_state_column} path={paper_path})"
         )
 
     actual_cash_days_pct = _require_float(metrics.get("cash_days_pct"), f"{context}.cash_days_pct")
-    expected_cash_days_pct = float(contract["expected_cash_days_pct"])
-    cash_days_tolerance_pct = float(contract["cash_days_tolerance_pct"])
-    if abs(actual_cash_days_pct - expected_cash_days_pct) > cash_days_tolerance_pct:
+    expected_cash_days_pct = _require_float(
+        derived_metrics.get("cash_days_pct"),
+        f"{context}.derived.cash_days_pct",
+    )
+    if abs(actual_cash_days_pct - expected_cash_days_pct) > rounding_tolerance_pct:
         raise CurrentMainStrategyContractError(
-            f"{context}.cash_days_pct diverged from {main_strategy_model} operational metric contract "
-            f"(expected={expected_cash_days_pct} +/- {cash_days_tolerance_pct} actual={actual_cash_days_pct})"
+            f"{context}.cash_days_pct diverged from {main_strategy_model} current main strategy paper held-state series "
+            f"(expected={expected_cash_days_pct} +/- {rounding_tolerance_pct} actual={actual_cash_days_pct} held_state_column={held_state_column} path={paper_path})"
         )
 
     actual_btc_days_pct = _require_float(metrics.get("btc_days_pct"), f"{context}.btc_days_pct")
-    expected_btc_days_pct = float(contract["expected_btc_days_pct"])
-    btc_days_tolerance_pct = float(contract["btc_days_tolerance_pct"])
-    if abs(actual_btc_days_pct - expected_btc_days_pct) > btc_days_tolerance_pct:
+    expected_btc_days_pct = _require_float(
+        derived_metrics.get("btc_days_pct"),
+        f"{context}.derived.btc_days_pct",
+    )
+    if abs(actual_btc_days_pct - expected_btc_days_pct) > rounding_tolerance_pct:
         raise CurrentMainStrategyContractError(
-            f"{context}.btc_days_pct diverged from {main_strategy_model} operational metric contract "
-            f"(expected={expected_btc_days_pct} +/- {btc_days_tolerance_pct} actual={actual_btc_days_pct})"
+            f"{context}.btc_days_pct diverged from {main_strategy_model} current main strategy paper held-state series "
+            f"(expected={expected_btc_days_pct} +/- {rounding_tolerance_pct} actual={actual_btc_days_pct} held_state_column={held_state_column} path={paper_path})"
         )
 
 

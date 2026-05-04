@@ -1,147 +1,91 @@
 from __future__ import annotations
 
-import math
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
 
-CASH_EQUIVALENT_ASSETS = {
-    "",
-    "0",
-    "0.0",
-    "0.00",
-    "CASH",
-    "USD",
-    "USDT",
-    "NAN",
-    "NONE",
-    "NULL",
-}
-UNSUPPORTED_PROXY_ASSETS = {
-    "BASELINE_RISK",
-    "EARLY_RISK",
-    "FULL_RISK",
-}
-PHASE68G_ACTIVE_MODEL = "phase68g_66g_1p25x_candidate"
-AUTHORITATIVE_HELD_ASSET_FIELDS = (
+HOMEPAGE_HELD_STATE_COLUMN_PRIORITY = (
     "portfolio_held_asset",
     "held_asset_public",
+    "execution_state",
     "held_asset",
-    "tradable_governed_asset",
-    "baseline_held_asset",
+    "state",
 )
 
 
-def _normalize_asset_token(value: Any) -> str:
+def _normalize_state_token(value: Any) -> str:
     text = str(value or "").strip().upper()
     if text in {"NAN", "NONE", "NULL"}:
         return ""
     return text
 
 
-def _as_bool(value: Any) -> bool | None:
-    if isinstance(value, bool):
-        return value
-    text = str(value or "").strip().lower()
-    if text in {"1", "true", "yes", "y"}:
-        return True
-    if text in {"0", "false", "no", "n"}:
-        return False
-    return None
-
-
-def _is_explicit_cash_token(token: str) -> bool:
-    return bool(token) and token in CASH_EQUIVALENT_ASSETS
-
-
-def _parse_float_maybe(value: Any) -> float | None:
-    try:
-        text = str(value).strip()
-        if not text:
-            return None
-        parsed = float(text)
-    except (TypeError, ValueError):
-        return None
-    return parsed if math.isfinite(parsed) else None
-
-
-def resolve_authoritative_day_metric_state(row: pd.Series) -> str:
-    if _as_bool(row.get("cash_day")) is True:
-        return "CASH"
-
-    for field in AUTHORITATIVE_HELD_ASSET_FIELDS:
-        token = _normalize_asset_token(row.get(field))
-        if not token:
+def _select_held_state_column(frame: pd.DataFrame) -> str | None:
+    for column in HOMEPAGE_HELD_STATE_COLUMN_PRIORITY:
+        if column not in frame.columns:
             continue
-        if token in CASH_EQUIVALENT_ASSETS:
-            return "CASH"
-        if token in UNSUPPORTED_PROXY_ASSETS:
-            return "UNSUPPORTED"
-        if token == "BTC":
-            return "BTC"
-        return "OTHER"
-
-    return "OTHER"
-
-
-def resolve_phase68g_day_metric_state(row: pd.Series) -> str:
-    if _as_bool(row.get("cash_day")) is True:
-        return "CASH"
-
-    portfolio_token = _normalize_asset_token(row.get("portfolio_held_asset"))
-    if _is_explicit_cash_token(portfolio_token):
-        return "CASH"
-    if portfolio_token == "BTC":
-        return "BTC"
-    if portfolio_token and portfolio_token not in UNSUPPORTED_PROXY_ASSETS:
-        return "OTHER"
-
-    if _as_bool(row.get("use_baseline_exposure")) is True:
-        baseline_token = _normalize_asset_token(row.get("baseline_held_asset"))
-        if _is_explicit_cash_token(baseline_token):
-            return "CASH"
-        if baseline_token in {"BTC", "BASELINE_RISK"}:
-            return "BTC"
-        if baseline_token and baseline_token not in UNSUPPORTED_PROXY_ASSETS:
-            return "OTHER"
-        return "UNSUPPORTED"
-
-    if portfolio_token in UNSUPPORTED_PROXY_ASSETS:
-        return "UNSUPPORTED"
-
-    if not portfolio_token:
-        return "UNSUPPORTED"
-
-    return "OTHER"
-
-
-def derive_phase68g_operational_day_metrics_from_frame(
-    frame: pd.DataFrame,
-) -> dict[str, float] | None:
-    # Current live phase68g homepage operational metrics track leverage posture.
-    # Compare-export held-asset-family metrics are a different metric family and
-    # must not be reused for the lower homepage cards.
-    if "effective_leverage" in frame.columns:
-        leverage_values = frame["effective_leverage"].map(_parse_float_maybe)
-        if leverage_values.notna().all():
-            inactive_days = leverage_values <= 1.0 + 1e-9
-            return {
-                "cash_days_pct": round(float(inactive_days.mean() * 100.0), 4),
-                "btc_days_pct": 0.0,
-            }
-
-    if "leverage_active" in frame.columns:
-        leverage_active = frame["leverage_active"].map(_as_bool)
-        if leverage_active.notna().all():
-            inactive_days = leverage_active == False  # noqa: E712 - explicit vector comparison
-            return {
-                "cash_days_pct": round(float(inactive_days.mean() * 100.0), 4),
-                "btc_days_pct": 0.0,
-            }
-
+        normalized = frame[column].map(_normalize_state_token)
+        if bool((normalized != "").any()):
+            return column
     return None
+
+
+def derive_homepage_operational_metrics_from_frame(
+    frame: pd.DataFrame,
+    *,
+    source_path: str | Path | None = None,
+) -> dict[str, Any] | None:
+    if frame.empty:
+        return {}
+
+    held_state_column = _select_held_state_column(frame)
+    if not held_state_column:
+        return {}
+
+    held_state_series = frame[held_state_column].map(_normalize_state_token).tolist()
+    non_empty_held_state_series = [state for state in held_state_series if state]
+    if not non_empty_held_state_series:
+        return {}
+
+    switch_count = 0
+    prev_state: str | None = None
+    for state in non_empty_held_state_series:
+        if prev_state is not None and state != prev_state:
+            switch_count += 1
+        prev_state = state
+
+    row_count = len(non_empty_held_state_series)
+    cash_days_pct = round(
+        float(sum(1 for state in non_empty_held_state_series if state == "CASH") / row_count * 100.0),
+        4,
+    )
+    btc_days_pct = round(
+        float(sum(1 for state in non_empty_held_state_series if state == "BTC") / row_count * 100.0),
+        4,
+    )
+    return {
+        "held_state_column": held_state_column,
+        "held_state_column_priority": list(HOMEPAGE_HELD_STATE_COLUMN_PRIORITY),
+        "held_state_series_semantics": "homepage_current_main_strategy_held_state_history",
+        "operational_metrics_source_path": None if source_path is None else str(Path(source_path)),
+        "held_state_total_rows": len(held_state_series),
+        "held_state_non_empty_rows": row_count,
+        "held_state_denominator_rows": row_count,
+        "held_state_last_value": non_empty_held_state_series[-1],
+        "switch_count": switch_count,
+        "cash_days_pct": cash_days_pct,
+        "btc_days_pct": btc_days_pct,
+    }
+
+
+def derive_homepage_operational_metrics_from_paper(path: str | Path) -> dict[str, Any] | None:
+    csv_path = Path(path)
+    if not csv_path.exists() or not csv_path.is_file():
+        return {}
+    frame = pd.read_csv(csv_path, dtype=str, keep_default_na=False)
+    return derive_homepage_operational_metrics_from_frame(frame, source_path=csv_path)
 
 
 def derive_strategy_day_metrics_from_frame(
@@ -149,31 +93,13 @@ def derive_strategy_day_metrics_from_frame(
     *,
     model: str | None = None,
 ) -> dict[str, float] | None:
-    if frame.empty:
-        return {}
-
-    relevant_columns = {"cash_day", *AUTHORITATIVE_HELD_ASSET_FIELDS}
-    if not any(column in frame.columns for column in relevant_columns):
-        return {}
-
-    model_key = str(model or "").strip()
-    if model_key == PHASE68G_ACTIVE_MODEL:
-        phase68g_operational_metrics = derive_phase68g_operational_day_metrics_from_frame(frame)
-        if phase68g_operational_metrics is not None:
-            return phase68g_operational_metrics
-        day_metric_states = frame.apply(resolve_phase68g_day_metric_state, axis=1)
-    else:
-        day_metric_states = frame.apply(resolve_authoritative_day_metric_state, axis=1)
-    if day_metric_states.empty:
-        return {}
-    if bool((day_metric_states == "UNSUPPORTED").any()):
-        return None
-
-    cash_days_pct = round(float((day_metric_states == "CASH").mean() * 100.0), 4)
-    btc_days_pct = round(float((day_metric_states == "BTC").mean() * 100.0), 4)
+    del model
+    derived = derive_homepage_operational_metrics_from_frame(frame)
+    if derived is None or not derived:
+        return derived
     return {
-        "cash_days_pct": cash_days_pct,
-        "btc_days_pct": btc_days_pct,
+        "cash_days_pct": float(derived["cash_days_pct"]),
+        "btc_days_pct": float(derived["btc_days_pct"]),
     }
 
 
@@ -182,8 +108,11 @@ def derive_strategy_day_metrics_from_csv(
     *,
     model: str | None = None,
 ) -> dict[str, float] | None:
-    csv_path = Path(path)
-    if not csv_path.exists() or not csv_path.is_file():
-        return {}
-    frame = pd.read_csv(csv_path)
-    return derive_strategy_day_metrics_from_frame(frame, model=model)
+    derived = derive_homepage_operational_metrics_from_paper(path)
+    if derived is None or not derived:
+        return derived
+    del model
+    return {
+        "cash_days_pct": float(derived["cash_days_pct"]),
+        "btc_days_pct": float(derived["btc_days_pct"]),
+    }

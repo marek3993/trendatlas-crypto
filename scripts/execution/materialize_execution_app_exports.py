@@ -22,7 +22,7 @@ from scripts.approved_strategy_net_export_helper import (
     summarize_net_cost_export,
 )
 from scripts.execution.authority_metric_derivation import (
-    derive_strategy_day_metrics_from_csv,
+    derive_homepage_operational_metrics_from_paper as derive_operational_metrics_from_paper_source,
 )
 from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
@@ -1441,30 +1441,22 @@ def build_phase68h_backed_authoritative_export_payload(
     if sortino is None:
         fail(f"Could not compute sortino reliably from {source_paper_path}")
 
-    switch_count = 0
-    prev_asset = None
-    for asset in held_assets:
-        if prev_asset is None:
-            prev_asset = asset
-            continue
-        if asset != prev_asset:
-            switch_count += 1
-        prev_asset = asset
-
     if not held_assets:
         fail(f"No held asset rows found in {source_paper_path}")
 
-    derived_day_metrics = derive_strategy_day_metrics_from_csv(
-        source_paper_path,
-        model=output_model,
-    )
-    if derived_day_metrics is None:
+    derived_operational_metrics = derive_operational_metrics_from_paper_source(source_paper_path)
+    if derived_operational_metrics is None:
         fail(f"{source_paper_path} day metrics are unsupported by authoritative strategy semantics")
-    if "cash_days_pct" not in derived_day_metrics or "btc_days_pct" not in derived_day_metrics:
+    if not derived_operational_metrics:
+        fail(f"{source_paper_path} missing authoritative operational metrics")
+    if "cash_days_pct" not in derived_operational_metrics or "btc_days_pct" not in derived_operational_metrics:
         fail(f"{source_paper_path} missing authoritative day metrics")
+    if "switch_count" not in derived_operational_metrics:
+        fail(f"{source_paper_path} missing authoritative switch_count")
 
-    cash_days_pct = float(derived_day_metrics["cash_days_pct"])
-    btc_days_pct = float(derived_day_metrics["btc_days_pct"])
+    cash_days_pct = float(derived_operational_metrics["cash_days_pct"])
+    btc_days_pct = float(derived_operational_metrics["btc_days_pct"])
+    switch_count = int(derived_operational_metrics["switch_count"])
 
     last_paper_row = paper_rows[-1]
     total_return_pct_gross = (parse_float_required(last_paper_row, "equity_curve_gross") - 1.0) * 100.0
@@ -1832,28 +1824,20 @@ def derive_sharpe_sortino_from_paper(path: Path) -> dict[str, float]:
 
 
 def derive_switch_count_from_paper(path: Path) -> int | None:
-    header, rows = read_csv_rows(path)
-    if not rows:
+    derived_metrics = derive_operational_metrics_from_paper_source(path)
+    if not derived_metrics:
         return None
-
-    for field in ("tradable_transition_day", "asset_transition_day"):
-        if field not in header:
-            continue
-        count = 0
-        for row in rows:
-            value = csv_json_value(row.get(field))
-            if value is True:
-                count += 1
-            elif isinstance(value, (int, float)) and float(value) != 0.0:
-                count += 1
-        return count
-    return None
+    switch_count = derived_metrics.get("switch_count")
+    if switch_count is None:
+        return None
+    return int(switch_count)
 
 
 def normalize_homepage_main_strategy_metrics(
     summary_row: dict[str, Any],
     *,
     main_strategy_model: str,
+    main_paper_path: Path,
     metric_fields: list[str],
     summary_path: Path,
 ) -> dict[str, Any]:
@@ -1870,6 +1854,7 @@ def normalize_homepage_main_strategy_metrics(
             metrics,
             main_strategy_model=main_strategy_model,
             context=f"{summary_path} canonical main strategy metrics",
+            paper_path=main_paper_path,
         )
     except ValueError as exc:
         fail(str(exc))
@@ -1881,32 +1866,30 @@ def derive_homepage_operational_metrics_from_paper(
     *,
     main_strategy_model: str,
 ) -> dict[str, str]:
-    derived_day_metrics = derive_strategy_day_metrics_from_csv(
-        main_paper_path,
-        model=main_strategy_model,
-    )
-    if derived_day_metrics is None:
+    derived_metrics = derive_operational_metrics_from_paper_source(main_paper_path)
+    if derived_metrics is None:
         fail(
-            f"{main_paper_path} operational day metrics are unsupported for "
+            f"{main_paper_path} homepage operational metrics are unsupported for "
             f"{main_strategy_model}"
         )
-    if "cash_days_pct" not in derived_day_metrics or "btc_days_pct" not in derived_day_metrics:
+    if not derived_metrics:
+        fail(f"{main_paper_path} missing homepage operational metrics for {main_strategy_model}")
+    if "cash_days_pct" not in derived_metrics or "btc_days_pct" not in derived_metrics:
         fail(f"{main_paper_path} missing operational day metrics for {main_strategy_model}")
-
-    derived_switch_count = derive_switch_count_from_paper(main_paper_path)
-    if derived_switch_count is None:
+    if "switch_count" not in derived_metrics:
         fail(f"{main_paper_path} missing operational switch_count for {main_strategy_model}")
 
     operational_metrics = {
-        "switch_count": csv_text_value(derived_switch_count),
-        "cash_days_pct": csv_text_value(derived_day_metrics["cash_days_pct"]),
-        "btc_days_pct": csv_text_value(derived_day_metrics["btc_days_pct"]),
+        "switch_count": csv_text_value(derived_metrics["switch_count"]),
+        "cash_days_pct": csv_text_value(derived_metrics["cash_days_pct"]),
+        "btc_days_pct": csv_text_value(derived_metrics["btc_days_pct"]),
     }
     try:
         validate_homepage_operational_metrics_contract(
             operational_metrics,
             main_strategy_model=main_strategy_model,
             context=f"{main_paper_path} derived homepage operational metrics",
+            paper_path=main_paper_path,
         )
     except ValueError as exc:
         fail(str(exc))
@@ -1966,6 +1949,7 @@ def build_full_canonical_main_strategy_metrics_row(
             canonical_row,
             main_strategy_model=main_strategy_model,
             context=f"{main_paper_path} canonical metrics row",
+            paper_path=main_paper_path,
         )
     except ValueError as exc:
         fail(str(exc))
@@ -2170,6 +2154,7 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     main_strategy_metrics = normalize_homepage_main_strategy_metrics(
         summary_row,
         main_strategy_model=main_strategy_model,
+        main_paper_path=main_paper_path,
         metric_fields=metric_fields,
         summary_path=main_summary_path,
     )
@@ -2179,6 +2164,12 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
             current_strategy_contract=current_strategy_contract,
         )
     )
+    operational_metrics_source_details = derive_operational_metrics_from_paper_source(main_paper_path)
+    if not operational_metrics_source_details:
+        fail(
+            f"{main_paper_path} missing held-state operational metrics source details for "
+            f"{main_strategy_model}"
+        )
     live_public_state = normalized_row(main_paper_row, live_fields)
     live_public_state.update({
         "model": main_strategy_model,
@@ -2189,7 +2180,42 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     })
 
     source_sections = {
-        "main_strategy_metrics": source_metadata(main_summary_path, "canonical_app_summary"),
+        "main_strategy_metrics": {
+            **source_metadata(main_summary_path, "canonical_app_summary"),
+            "operational_metrics": {
+                **source_metadata(main_paper_path, "canonical_app_paper_held_state_series"),
+                "semantic_role": "current_live_main_strategy_operational_metrics",
+                "series_semantics": str(
+                    operational_metrics_source_details.get("held_state_series_semantics") or ""
+                ).strip(),
+                "held_state_column": str(
+                    operational_metrics_source_details.get("held_state_column") or ""
+                ).strip(),
+                "held_state_column_priority": list(
+                    operational_metrics_source_details.get("held_state_column_priority") or []
+                ),
+                "held_state_total_rows": csv_json_value(
+                    operational_metrics_source_details.get("held_state_total_rows")
+                ),
+                "held_state_non_empty_rows": csv_json_value(
+                    operational_metrics_source_details.get("held_state_non_empty_rows")
+                ),
+                "held_state_denominator_rows": csv_json_value(
+                    operational_metrics_source_details.get("held_state_denominator_rows")
+                ),
+                "held_state_last_value": csv_json_value(
+                    operational_metrics_source_details.get("held_state_last_value")
+                ),
+                "derived_fields": [
+                    "switch_count",
+                    "cash_days_pct",
+                    "btc_days_pct",
+                ],
+                "switch_count_semantics": "count_of_consecutive_held_state_changes",
+                "cash_days_pct_semantics": "percent_of_rows_where_held_state_is_CASH",
+                "btc_days_pct_semantics": "percent_of_rows_where_held_state_is_BTC",
+            },
+        },
         "main_strategy_top_performance_metrics": {
             **source_metadata(top_performance_source_path, top_performance_source_type),
             "source_fields": top_performance_source_fields,
