@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 from pathlib import Path
 from typing import Any, Mapping
 
@@ -72,11 +73,20 @@ def _require_text(value: Any, context: str) -> str:
 
 
 def _require_float(value: Any, context: str) -> float:
-    text = _require_text(value, context)
+    if value is None:
+        raise CurrentMainStrategyContractError(f"{context} is missing")
+    text = str(value).strip()
+    if not text:
+        raise CurrentMainStrategyContractError(f"{context} is missing")
     try:
-        return float(text)
+        numeric = float(text)
     except ValueError as exc:
         raise CurrentMainStrategyContractError(f"{context} must be numeric (actual={text})") from exc
+    if not math.isfinite(numeric):
+        raise CurrentMainStrategyContractError(
+            f"{context} must be a finite numeric value (actual={text})"
+        )
+    return numeric
 
 
 def _normalize_app_path_text(path_text: str) -> str:

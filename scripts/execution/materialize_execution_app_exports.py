@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import shutil
 import subprocess
 import sys
@@ -160,6 +161,11 @@ NET_ALIAS_METRIC_FALLBACKS = {
     "max_drawdown_pct": ["max_drawdown_pct_net", "max_drawdown_pct_gross"],
     "since2023_cagr_pct": ["since2023_cagr_pct_net", "since2023_cagr_pct_gross"],
     "since2025_cagr_pct": ["since2025_cagr_pct_net", "since2025_cagr_pct_gross"],
+}
+
+NUMERIC_HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS = {
+    field for field in HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS
+    if field not in {"model", "fee_side_mode"}
 }
 
 
@@ -1122,9 +1128,12 @@ def parse_float_required(row: dict[str, str], key: str) -> float:
     if raw == "":
         fail(f"Missing required numeric field '{key}' in summary source row")
     try:
-        return float(raw)
+        value = float(raw)
     except Exception:
         fail(f"Invalid numeric field '{key}' in summary source row: {raw}")
+    if not math.isfinite(value):
+        fail(f"Invalid non-finite numeric field '{key}' in summary source row: {raw}")
+    return value
     raise RuntimeError("unreachable")
 
 
@@ -1135,9 +1144,50 @@ def parse_float_maybe(raw: str | None) -> float | None:
     if text == "":
         return None
     try:
-        return float(text)
+        value = float(text)
     except Exception:
         return None
+    return value if math.isfinite(value) else None
+
+
+def required_metric_field_issue(field: str, value: Any) -> str | None:
+    if value is None:
+        return "missing"
+
+    text = str(value).strip()
+    if text == "":
+        return "missing"
+
+    if field in NUMERIC_HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS:
+        try:
+            numeric = float(text)
+        except (TypeError, ValueError):
+            return "invalid"
+        if not math.isfinite(numeric):
+            return "missing"
+
+    return None
+
+
+def fail_on_required_metric_field_issues(
+    metrics: dict[str, Any],
+    metric_fields: list[str],
+    *,
+    context: str,
+) -> None:
+    missing_fields = [
+        field for field in metric_fields
+        if required_metric_field_issue(field, metrics.get(field)) == "missing"
+    ]
+    if missing_fields:
+        fail(f"{context} missing required canonical main strategy metric fields: {missing_fields}")
+
+    invalid_fields = [
+        field for field in metric_fields
+        if required_metric_field_issue(field, metrics.get(field)) == "invalid"
+    ]
+    if invalid_fields:
+        fail(f"{context} has invalid required canonical main strategy metric fields: {invalid_fields}")
 
 
 def annualized_sharpe_from_daily_returns(daily_returns: list[float]) -> float | None:
@@ -1810,11 +1860,11 @@ def normalize_homepage_main_strategy_metrics(
     metrics = normalized_row(summary_row, metric_fields)
 
     metrics["model"] = main_strategy_model
-    missing_fields = [field for field in metric_fields if field not in metrics]
-    if missing_fields:
-        fail(
-            f"{summary_path} missing required canonical main strategy metric fields: {missing_fields}"
-        )
+    fail_on_required_metric_field_issues(
+        metrics,
+        metric_fields,
+        context=str(summary_path),
+    )
     try:
         validate_homepage_operational_metrics_contract(
             metrics,
@@ -1903,12 +1953,14 @@ def build_full_canonical_main_strategy_metrics_row(
 
     canonical_row["model"] = main_strategy_model
 
-    missing_fields = [field for field in metric_fields if not canonical_row.get(field)]
-    if missing_fields:
-        fail(
+    fail_on_required_metric_field_issues(
+        canonical_row,
+        metric_fields,
+        context=(
             "Full canonical phase68g metrics record is incomplete after materialization "
-            f"for {main_paper_path}: missing {missing_fields}"
-        )
+            f"for {main_paper_path}"
+        ),
+    )
     try:
         validate_homepage_operational_metrics_contract(
             canonical_row,

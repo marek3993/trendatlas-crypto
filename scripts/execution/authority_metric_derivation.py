@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any
 
@@ -60,9 +61,10 @@ def _parse_float_maybe(value: Any) -> float | None:
         text = str(value).strip()
         if not text:
             return None
-        return float(text)
+        parsed = float(text)
     except (TypeError, ValueError):
         return None
+    return parsed if math.isfinite(parsed) else None
 
 
 def resolve_authoritative_day_metric_state(row: pd.Series) -> str:
