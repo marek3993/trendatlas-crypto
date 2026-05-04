@@ -8,6 +8,7 @@ import hashlib
 import io
 import json
 import os
+import shutil
 import subprocess
 import sys
 from datetime import date, datetime, timedelta, timezone
@@ -46,6 +47,8 @@ LATEST_MANIFEST_GLOB = "*/app_refresh_pipeline_manifest.json"
 DAILY_REFRESH_SCRIPT = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
 MATERIALIZE_SCRIPT = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
 PI_AUTHORITY_PRODUCER_SCRIPT = ROOT / "scripts" / "execution" / "run_pi_authoritative_producer.py"
+DAILY_LIVE_SERVICE_NAME = "mrv1-daily-live.service"
+AUTHORITY_PUBLISH_TREE_ENV = "MRV1_AUTHORITY_PUBLISH_TREE"
 
 UPSTREAM_PHASE68G_SOURCE_PAPER_PATH = (
     ROOT
@@ -78,6 +81,7 @@ INCIDENT_CLASSES = {
     "AUTHORITY_SNAPSHOT_STALE",
     "AUTHORITY_SUPPORT_FILES_MISMATCH",
     "AUTHORITY_PUBLISH_STALE",
+    "DAILY_SERVICE_FAILED_BUT_AUTHORITY_CURRENT",
     "UNKNOWN_NEEDS_HUMAN",
 }
 CURRENT_STATUSES = {"current", "stale", "not_time_yet"}
@@ -383,6 +387,150 @@ def discover_latest_manifest() -> Path | None:
     return manifests[0] if manifests else None
 
 
+def parse_systemctl_show_output(output: str) -> dict[str, str]:
+    properties: dict[str, str] = {}
+    for raw_line in output.splitlines():
+        line = raw_line.strip()
+        if not line or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        properties[key.strip()] = value.strip()
+    return properties
+
+
+def detect_daily_live_service_state() -> dict[str, Any]:
+    result: dict[str, Any] = {
+        "daily_service_status_checked": False,
+        "daily_service_result": None,
+        "daily_service_exec_status": None,
+        "daily_service_active_state": None,
+        "daily_service_sub_state": None,
+        "daily_service_invocation": None,
+        "daily_service_failed": False,
+        "daily_service_check_reason": "systemctl_unavailable",
+    }
+    systemctl_path = shutil.which("systemctl")
+    if not systemctl_path:
+        return result
+
+    command = [
+        systemctl_path,
+        "show",
+        DAILY_LIVE_SERVICE_NAME,
+        "--property",
+        "Result",
+        "--property",
+        "ExecMainStatus",
+        "--property",
+        "ActiveState",
+        "--property",
+        "SubState",
+        "--property",
+        "InvocationID",
+        "--property",
+        "ExecMainExitTimestamp",
+        "--property",
+        "ActiveEnterTimestamp",
+        "--property",
+        "InactiveEnterTimestamp",
+    ]
+    completed = subprocess.run(
+        command,
+        cwd=str(ROOT),
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        stderr_text = (completed.stderr or "").strip()
+        stdout_text = (completed.stdout or "").strip()
+        details = stderr_text or stdout_text or f"returncode={completed.returncode}"
+        result["daily_service_check_reason"] = f"systemctl_show_failed::{details}"
+        return result
+
+    props = parse_systemctl_show_output(completed.stdout or "")
+    result_value = str(props.get("Result") or "").strip() or None
+    exec_status = str(props.get("ExecMainStatus") or "").strip() or None
+    active_state = str(props.get("ActiveState") or "").strip() or None
+    sub_state = str(props.get("SubState") or "").strip() or None
+    invocation = (
+        str(props.get("InvocationID") or "").strip()
+        or str(props.get("ExecMainExitTimestamp") or "").strip()
+        or str(props.get("ActiveEnterTimestamp") or "").strip()
+        or str(props.get("InactiveEnterTimestamp") or "").strip()
+        or None
+    )
+    normalized_result = str(result_value or "").strip().lower()
+    normalized_active_state = str(active_state or "").strip().lower()
+    normalized_sub_state = str(sub_state or "").strip().lower()
+    daily_service_failed = (
+        normalized_result not in {"", "success"}
+        or normalized_active_state == "failed"
+        or normalized_sub_state == "failed"
+        or (exec_status not in {None, "", "0"})
+    )
+    result.update(
+        {
+            "daily_service_status_checked": True,
+            "daily_service_result": result_value,
+            "daily_service_exec_status": exec_status,
+            "daily_service_active_state": active_state,
+            "daily_service_sub_state": sub_state,
+            "daily_service_invocation": invocation,
+            "daily_service_failed": daily_service_failed,
+            "daily_service_check_reason": "ok",
+        }
+    )
+    return result
+
+
+def ensure_publish_tree_writable(publish_tree: Path) -> None:
+    probe_root = publish_tree if publish_tree.exists() else publish_tree.parent
+    if not probe_root.exists():
+        raise RuntimeError(f"Authority publish tree parent is missing: {publish_tree.parent}")
+    if publish_tree.exists() and not publish_tree.is_dir():
+        raise RuntimeError(f"Authority publish tree path is not a directory: {publish_tree}")
+
+    probe_path = probe_root / f".watchdog_write_probe_{os.getpid()}"
+    try:
+        probe_path.write_text("watchdog\n", encoding="utf-8")
+    except OSError as exc:
+        raise RuntimeError(f"Authority publish tree is not writable: {probe_root}") from exc
+    finally:
+        with contextlib.suppress(FileNotFoundError):
+            probe_path.unlink()
+
+
+def validate_publish_remediation_env(env: dict[str, str]) -> dict[str, Any]:
+    publish_tree_raw = str(os.environ.get(AUTHORITY_PUBLISH_TREE_ENV) or "").strip()
+    if not publish_tree_raw:
+        raise RuntimeError(
+            f"Safe publish remediation requires {AUTHORITY_PUBLISH_TREE_ENV} to be set in the environment."
+        )
+    env[AUTHORITY_PUBLISH_TREE_ENV] = publish_tree_raw
+
+    try:
+        from scripts.execution.run_pi_authoritative_producer import (
+            _resolve_authority_git_identity,
+            authority_repo_publish_context_from_env,
+        )
+    except Exception as exc:
+        raise RuntimeError(f"Failed to import authority publish helpers: {exc}") from exc
+
+    context = authority_repo_publish_context_from_env(env, root=ROOT)
+    publish_tree = Path(str(context["publish_tree"]))
+    ensure_publish_tree_writable(publish_tree)
+    git_user_name, git_user_email = _resolve_authority_git_identity(
+        runtime_root=ROOT,
+        env=env,
+    )
+    return {
+        "publish_tree": str(publish_tree),
+        "git_user_name": git_user_name,
+        "git_user_email": git_user_email,
+    }
+
+
 def compute_publish_tree_state() -> dict[str, Any]:
     result: dict[str, Any] = {
         "current": None,
@@ -453,6 +601,7 @@ def collect_state() -> dict[str, Any]:
     freshness_payload = read_json_optional(FRESHNESS_REPORT_PATH)
     local_product_snapshot = read_json_optional(APP_PRODUCT_SNAPSHOT_PATH)
     local_runtime_snapshot = read_json_optional(APP_RUNTIME_SNAPSHOT_PATH)
+    daily_service_state = detect_daily_live_service_state()
 
     checked_files = [
         summarize_path(AUTHORITY_ATTEMPT_PATH),
@@ -575,6 +724,7 @@ def collect_state() -> dict[str, Any]:
         ).strip()
         or None,
         "github_published_local_files_current": publish_tree_state,
+        "daily_service_state": daily_service_state,
     }
 
 
@@ -658,6 +808,10 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
     publish_state = state["github_published_local_files_current"]
     publish_current = publish_state.get("current")
     publish_known_stale = publish_current is False
+    publish_current_verified = publish_current is not None
+    daily_service_state = state["daily_service_state"]
+    daily_service_status_checked = bool(daily_service_state.get("daily_service_status_checked"))
+    daily_service_failed = bool(daily_service_state.get("daily_service_failed"))
 
     upstream_date_values = {
         "phase68g_source_paper": read_last_csv_date(UPSTREAM_PHASE68G_SOURCE_PAPER_PATH, ["date"]),
@@ -697,6 +851,9 @@ def state_truths(state: dict[str, Any]) -> dict[str, Any]:
         "local_backend_current": local_backend_current,
         "publish_current": publish_current,
         "publish_known_stale": publish_known_stale,
+        "publish_current_verified": publish_current_verified,
+        "daily_service_status_checked": daily_service_status_checked,
+        "daily_service_failed": daily_service_failed,
         "upstream_phase_outputs_current": upstream_phase_outputs_current,
     }
 
@@ -785,6 +942,24 @@ def classify_incident(state: dict[str, Any], truths: dict[str, Any]) -> tuple[st
         and truths["support_files_current"]
         and truths["app_exports_current"]
         and truths["app_snapshots_current"]
+        and truths["daily_service_failed"]
+        and truths["publish_current"] is not True
+    ):
+        return (
+            "needs_attention",
+            "DAILY_SERVICE_FAILED_BUT_AUTHORITY_CURRENT",
+            (
+                "Local authority artifacts are current for the expected closed day, but the latest "
+                f"{DAILY_LIVE_SERVICE_NAME} execution ended in failed state and the publish tree could not prove current."
+            ),
+            "Run publish-only remediation and inspect the daily live service failure that blocked the original publish.",
+        )
+
+    if (
+        truths["authority_current"]
+        and truths["support_files_current"]
+        and truths["app_exports_current"]
+        and truths["app_snapshots_current"]
         and truths["publish_known_stale"]
     ):
         return (
@@ -843,6 +1018,14 @@ def choose_safe_action(incident_class: str, truths: dict[str, Any]) -> dict[str,
             "command": None,
             "reason": "Local authority artifacts are current and only the authority publish tree needs refresh.",
         }
+    if incident_class == "DAILY_SERVICE_FAILED_BUT_AUTHORITY_CURRENT":
+        return {
+            "eligible": True,
+            "action": "publish_authority_artifacts_to_repo",
+            "kind": "callable",
+            "command": None,
+            "reason": "Local authority artifacts are current, but the failed daily service likely prevented publish-only completion.",
+        }
     return {
         "eligible": False,
         "action": None,
@@ -863,6 +1046,7 @@ def build_skipped_action_result(action: dict[str, Any], *, reason: str) -> dict[
         "stderr_log": None,
         "started_at_utc": None,
         "finished_at_utc": None,
+        "error": None,
     }
 
 
@@ -887,6 +1071,7 @@ def run_subprocess_action(action: dict[str, Any]) -> dict[str, Any]:
         "stderr_log": write_log_file(stderr_log_path, completed.stderr),
         "started_at_utc": started_at_utc,
         "finished_at_utc": finished_at_utc,
+        "error": None if completed.returncode == 0 else (completed.stderr or completed.stdout or "").strip() or None,
     }
 
 
@@ -897,22 +1082,35 @@ def run_publish_authority_action(action: dict[str, Any]) -> dict[str, Any]:
     stderr_buffer = io.StringIO()
     exit_code = 0
     status = "completed"
+    error: str | None = None
     try:
         from scripts.execution.run_pi_authoritative_producer import (
             build_pi_authoritative_env,
             publish_authority_artifacts_to_repo,
         )
 
+        publish_env = build_pi_authoritative_env()
+        preflight = validate_publish_remediation_env(publish_env)
         with contextlib.redirect_stdout(stdout_buffer), contextlib.redirect_stderr(stderr_buffer):
             result = publish_authority_artifacts_to_repo(
                 root=ROOT,
-                env=build_pi_authoritative_env(),
+                env=publish_env,
             )
-        stdout_buffer.write(json.dumps({"publish_result": result}, indent=2, ensure_ascii=False))
+        stdout_buffer.write(
+            json.dumps(
+                {
+                    "preflight": preflight,
+                    "publish_result": result,
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+        )
         stdout_buffer.write("\n")
-    except Exception:
+    except Exception as exc:
         exit_code = 1
         status = "failed"
+        error = str(exc)
         stderr_buffer.write(traceback.format_exc())
     finished_at_utc = utc_now_iso()
     return {
@@ -925,6 +1123,7 @@ def run_publish_authority_action(action: dict[str, Any]) -> dict[str, Any]:
         "stderr_log": write_log_file(stderr_log_path, stderr_buffer.getvalue()),
         "started_at_utc": started_at_utc,
         "finished_at_utc": finished_at_utc,
+        "error": error,
     }
 
 
@@ -950,15 +1149,22 @@ def build_summary(report: dict[str, Any]) -> str:
         f"currentness_status: {report['currentness_status']}",
         f"authority_current: {report['authority_current']}",
         f"support_files_current: {report['support_files_current']}",
+        f"daily_service_status_checked: {report['daily_service_status_checked']}",
+        f"daily_service_result: {report['daily_service_result']}",
+        f"daily_service_exec_status: {report['daily_service_exec_status']}",
+        f"daily_service_failed: {report['daily_service_failed']}",
         f"last_successful_run_id: {report['last_successful_run_id']}",
         f"last_attempt_run_id: {report['last_attempt_run_id']}",
         (
             "github_published_local_files_current: "
             + json.dumps(report["github_published_local_files_current"]["current"])
         ),
+        f"publish_current_verified: {report['publish_current_verified']}",
         f"remediation_allowed: {report['remediation_allowed']}",
         f"remediation_action: {report['remediation_action']}",
         f"remediation_status: {report['action_result'].get('status')}",
+        f"publish_remediation_attempted: {report['publish_remediation_attempted']}",
+        f"publish_remediation_result: {report['publish_remediation_result']}",
         f"post_remediation_status: {report['post_remediation_status']}",
         f"post_remediation_incident_class: {report['post_remediation_incident_class']}",
     ]
@@ -1016,7 +1222,17 @@ def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str
             if action_result.get("status") == "completed":
                 final_status = post_remediation_status
             elif action_result.get("status") == "failed":
-                final_status = "remediation_failed"
+                if safe_action.get("action") == "publish_authority_artifacts_to_repo":
+                    final_status = post_remediation_status or status
+                    final_root_cause = (
+                        f"{final_root_cause} Publish remediation failed: {action_result.get('error') or 'unknown error'}."
+                    )
+                    final_manual_next_step = (
+                        "Inspect watchdog publish remediation logs, fix publish auth/tree issues, "
+                        "and rerun the watchdog."
+                    )
+                else:
+                    final_status = "remediation_failed"
             else:
                 final_status = status
     else:
@@ -1038,10 +1254,18 @@ def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str
         "currentness_status": currentness_status_from_incident(final_incident_class),
         "authority_current": final_truths["authority_current"],
         "support_files_current": final_truths["support_files_current"],
+        "daily_service_status_checked": final_state["daily_service_state"]["daily_service_status_checked"],
+        "daily_service_result": final_state["daily_service_state"]["daily_service_result"],
+        "daily_service_exec_status": final_state["daily_service_state"]["daily_service_exec_status"],
+        "daily_service_active_state": final_state["daily_service_state"]["daily_service_active_state"],
+        "daily_service_sub_state": final_state["daily_service_state"]["daily_service_sub_state"],
+        "daily_service_invocation": final_state["daily_service_state"]["daily_service_invocation"],
+        "daily_service_failed": final_truths["daily_service_failed"],
         "mismatched_support_files": final_truths["mismatched_support_files"],
         "last_successful_run_id": final_state["last_successful_run_id"],
         "last_attempt_run_id": final_state["last_attempt_run_id"],
         "github_published_local_files_current": final_state["github_published_local_files_current"],
+        "publish_current_verified": final_truths["publish_current_verified"],
         "observed_dates": final_state["observed_dates"],
         "checked_files": final_state["checked_files"],
         "latest_manifest_path": final_state["latest_manifest_path"],
@@ -1059,6 +1283,9 @@ def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str
             "scheduler_has_current_run": final_truths["scheduler_has_current_run"],
             "upstream_phase_outputs_current": final_truths["upstream_phase_outputs_current"],
             "not_time_yet": final_truths["not_time_yet"],
+            "daily_service_status_checked": final_truths["daily_service_status_checked"],
+            "daily_service_failed": final_truths["daily_service_failed"],
+            "publish_current_verified": final_truths["publish_current_verified"],
         },
         "date_breakdown": {
             "app_exports": final_truths["export_date_values"],
@@ -1073,6 +1300,14 @@ def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str
         "remediation_stderr_log": action_result.get("stderr_log"),
         "post_remediation_status": post_remediation_status,
         "post_remediation_incident_class": post_remediation_incident_class,
+        "publish_remediation_attempted": bool(
+            remediation_enabled and safe_action.get("action") == "publish_authority_artifacts_to_repo"
+        ),
+        "publish_remediation_result": (
+            action_result.get("status")
+            if remediation_enabled and safe_action.get("action") == "publish_authority_artifacts_to_repo"
+            else None
+        ),
         "action_taken": safe_action["action"] if remediation_enabled and safe_action.get("eligible") else "none",
         "action_result": action_result,
         "manual_next_step": final_manual_next_step,
