@@ -4,8 +4,12 @@
   "signal_id_present": true,
   "target_asset_present": true,
   "target_regime_present": true,
+  "target_size_present": true,
   "staleness_ok": true,
   "trading_enabled": false,
   "kill_switch_required": true,
-  "leverage_live_truth_allowed": false
+  "leverage_live_truth_allowed": false,
+  "production_snapshot_validation_status": "passed",
+  "authority_currentness_status": "current",
+  "strategy_signal_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json"
 }

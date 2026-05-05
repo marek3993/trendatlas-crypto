@@ -214,7 +214,7 @@
       "script_path": "scripts/execution/validate_execution_source_contract.py",
       "layer": "execution_data",
       "status": "active",
-      "purpose": "Validates canonical execution input contract presence and basic shape before intent build.",
+      "purpose": "Validates execution readiness across the authority files plus the Production Core current strategy snapshot before intent build.",
       "primary_outputs": [
         "outputs/execution/source_contract/execution_source_contract_report.json",
         "outputs/execution/source_contract/execution_source_contract_quality.json",
@@ -258,7 +258,7 @@
       "script_path": "scripts/execution/build_execution_intent_from_strategy_exports.py",
       "layer": "execution_data",
       "status": "active",
-      "purpose": "Builds deterministic normalized execution intent from canonical strategy exports and freshness report.",
+      "purpose": "Builds deterministic normalized execution intent from the Production Core current strategy snapshot with authority day alignment.",
       "primary_outputs": [
         "outputs/execution/intents/latest_execution_intent.json",
         "outputs/execution/intents/latest_execution_intent_quality.json",
@@ -337,7 +337,7 @@
       "script_path": "scripts/execution/prepare_real_order_gate.py",
       "layer": "execution_data",
       "status": "active",
-      "purpose": "Builds the latest real-order gate decision from current mode, policy, intent, and snapshot inputs.",
+      "purpose": "Builds the latest real-order gate decision from current mode, policy, account snapshot, intent, and the Production Core current strategy snapshot.",
       "primary_outputs": [
         "outputs/execution/live_gate/latest_real_order_gate_decision.json",
         "outputs/execution/live_gate/latest_real_order_gate_quality.json",

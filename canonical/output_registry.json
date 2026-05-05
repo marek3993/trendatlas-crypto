@@ -202,7 +202,7 @@
       "output_kind": "execution_contract_validation_outputs",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Contract validation artifacts for execution pipeline."
+      "notes": "Contract validation artifacts for execution pipeline readiness, including the Production Core current strategy snapshot."
     },
     {
       "output_path": "outputs/execution/intents/",
@@ -214,7 +214,7 @@
       "output_kind": "normalized_execution_intent_outputs",
       "decision_relevance": "decision_relevant",
       "official_truth": false,
-      "notes": "Deterministic intent artifacts derived from canonical strategy exports."
+      "notes": "Deterministic intent artifacts derived from outputs/production/current_strategy_snapshot.json with authority day alignment."
     },
     {
       "output_path": "outputs/execution/dry_run/",
@@ -279,7 +279,7 @@
       "output_kind": "execution_gate_outputs",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Real-order gate preparation artifacts. Not official truth and no orders are placed here."
+      "notes": "Real-order gate preparation artifacts driven by outputs/production/current_strategy_snapshot.json plus policy and account checks. Not official truth and no orders are placed here."
     },
     {
       "output_path": "outputs/execution/submit_preview/",

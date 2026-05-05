@@ -1,6 +1,6 @@
 {
   "report_type": "execution_source_contract_report",
-  "generated_at_utc": "2026-05-02T13:39:34Z",
+  "generated_at_utc": "2026-05-05T06:05:03Z",
   "source_of_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "required_artifact_keys": [
     "authority_latest_successful_snapshot",
@@ -8,7 +8,8 @@
   ],
   "hard_required_for_execution": [
     "authority_latest_successful_snapshot",
-    "authority_latest_attempt_status"
+    "authority_latest_attempt_status",
+    "outputs/production/current_strategy_snapshot.json"
   ],
   "missing_registry_keys": [],
   "missing_files": [],
@@ -35,8 +36,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
-        "size_bytes": 39178,
-        "modified_utc": "2026-05-01T17:37:40Z",
+        "size_bytes": 40759,
+        "modified_utc": "2026-05-05T05:26:16Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -96,8 +97,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
-        "size_bytes": 39173,
-        "modified_utc": "2026-05-01T17:37:40Z",
+        "size_bytes": 40754,
+        "modified_utc": "2026-05-05T05:26:16Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -143,8 +144,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
-        "size_bytes": 39178,
-        "modified_utc": "2026-05-01T17:37:40Z",
+        "size_bytes": 40759,
+        "modified_utc": "2026-05-05T05:26:16Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -190,8 +191,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
-        "size_bytes": 39173,
-        "modified_utc": "2026-05-01T17:37:40Z",
+        "size_bytes": 40754,
+        "modified_utc": "2026-05-05T05:26:16Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -233,13 +234,54 @@
       "valid": true
     }
   },
+  "production_report": {
+    "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
+    "inspection": {
+      "exists": true,
+      "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
+      "size_bytes": 5165,
+      "modified_utc": "2026-05-05T05:49:43Z",
+      "file_type": "json",
+      "top_level_type": "dict",
+      "top_level_keys": [
+        "artifact_type",
+        "schema_version",
+        "generated_at_utc",
+        "strategy_id",
+        "strategy_version",
+        "closed_day",
+        "strategy_status",
+        "current_asset",
+        "current_exposure",
+        "current_regime",
+        "execution_state",
+        "trend_state",
+        "trend_score",
+        "next_rebalance_date",
+        "metrics",
+        "decision_context",
+        "execution_intent",
+        "source_inputs",
+        "validation",
+        "provenance"
+      ]
+    },
+    "errors": [],
+    "valid": true,
+    "closed_day": "2026-05-04",
+    "strategy_version": "phase68g_66g_1p25x_candidate",
+    "validation_status": "passed",
+    "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::BTC",
+    "target_asset": "BTC",
+    "stale_signal": false
+  },
   "freshness_monitoring_report": {
     "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\reports\\strategy_chain_freshness_report.json",
     "inspection": {
       "exists": true,
       "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\reports\\strategy_chain_freshness_report.json",
       "size_bytes": 2571,
-      "modified_utc": "2026-05-02T13:39:31Z",
+      "modified_utc": "2026-05-02T13:48:18Z",
       "file_type": "json",
       "top_level_type": "dict",
       "top_level_keys": [
@@ -268,6 +310,7 @@
     "It does not infer trading logic.",
     "Do not treat non-authoritative staging files as app truth.",
     "The app homepage must be served from outputs/execution/authority/latest_successful_snapshot.json.",
-    "The app runtime path must be served from outputs/execution/authority/latest_attempt_status.json."
+    "The app runtime path must be served from outputs/execution/authority/latest_attempt_status.json.",
+    "Execution signal truth must read outputs/production/current_strategy_snapshot.json."
   ]
 }

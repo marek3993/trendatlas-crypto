@@ -32,6 +32,7 @@ SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
 OUTPUT_DIR = ROOT / "outputs" / "execution" / "source_contract"
 LOGS_DIR = ROOT / "outputs" / "execution" / "logs"
 AUTHORITY_DIR = ROOT / "outputs" / "execution" / "authority"
+PRODUCTION_DIR = ROOT / "outputs" / "production"
 
 PATHS_REGISTRY_PATH = SOURCE_OF_TRUTH_DIR / "paths_registry.json"
 
@@ -41,6 +42,7 @@ MANIFEST_PATH = OUTPUT_DIR / "execution_source_contract_manifest.json"
 LOG_PATH = LOGS_DIR / "validate_execution_source_contract.log"
 LATEST_SUCCESSFUL_SNAPSHOT_PATH = AUTHORITY_DIR / "latest_successful_snapshot.json"
 LATEST_ATTEMPT_STATUS_PATH = AUTHORITY_DIR / "latest_attempt_status.json"
+PRODUCTION_SNAPSHOT_PATH = PRODUCTION_DIR / "current_strategy_snapshot.json"
 STRATEGY_CHAIN_FRESHNESS_REPORT_PATH = (
     ROOT / "outputs" / "validation" / "reports" / "strategy_chain_freshness_report.json"
 )
@@ -168,6 +170,19 @@ def inspect_artifact(path: Path) -> dict[str, Any]:
 
 def normalize_path_text(value: Any) -> str:
     return str(value or "").replace("\\", "/").strip()
+
+
+def normalize_iso_day_text(value: Any, *, context: str, errors: list[str]) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        errors.append(f"{context} is missing")
+        return None
+    if "T" in text:
+        text = text.split("T", 1)[0]
+    if len(text) != 10:
+        errors.append(f"{context} is not an ISO day: {value}")
+        return None
+    return text
 
 
 def require_keys(payload: dict[str, Any], keys: list[str], context: str, errors: list[str]) -> None:
@@ -897,6 +912,82 @@ def validate_strategy_chain_freshness_monitoring() -> dict[str, Any]:
     }
 
 
+def validate_production_current_strategy_snapshot() -> dict[str, Any]:
+    errors: list[str] = []
+    inspection = inspect_json(PRODUCTION_SNAPSHOT_PATH)
+    if not PRODUCTION_SNAPSHOT_PATH.exists():
+        errors.append(
+            "outputs/production/current_strategy_snapshot.json is missing; execution signal truth cannot be verified"
+        )
+        return {
+            "path": str(PRODUCTION_SNAPSHOT_PATH.resolve()),
+            "inspection": inspection,
+            "errors": errors,
+            "valid": False,
+        }
+
+    payload = read_json(PRODUCTION_SNAPSHOT_PATH)
+    if str(payload.get("artifact_type") or "").strip() != "current_strategy_snapshot":
+        errors.append("production current_strategy_snapshot has wrong artifact_type")
+
+    closed_day = normalize_iso_day_text(
+        payload.get("closed_day"),
+        context="production current_strategy_snapshot.closed_day",
+        errors=errors,
+    )
+    strategy_version = str(payload.get("strategy_version") or "").strip()
+    if not strategy_version:
+        errors.append("production current_strategy_snapshot.strategy_version is missing")
+
+    validation = payload.get("validation")
+    if not isinstance(validation, dict):
+        errors.append("production current_strategy_snapshot.validation must be an object")
+        validation_status = None
+    else:
+        validation_status = str(validation.get("status") or "").strip().lower()
+        if validation_status != "passed":
+            errors.append(
+                "production current_strategy_snapshot.validation.status must be passed "
+                f"(actual={validation_status or 'missing'})"
+            )
+
+    execution_intent = payload.get("execution_intent")
+    if not isinstance(execution_intent, dict):
+        errors.append("production current_strategy_snapshot.execution_intent must be an object")
+        signal_id = None
+        target_asset = None
+        stale_signal = None
+    else:
+        signal_id = str(execution_intent.get("signal_id") or "").strip()
+        target_asset = str(execution_intent.get("target_asset") or "").strip()
+        if not signal_id:
+            errors.append(
+                "production current_strategy_snapshot.execution_intent.signal_id is missing"
+            )
+        if not target_asset:
+            errors.append(
+                "production current_strategy_snapshot.execution_intent.target_asset is missing"
+            )
+        stale_signal = bool(execution_intent.get("stale_signal", False))
+        if stale_signal:
+            errors.append(
+                "production current_strategy_snapshot.execution_intent.stale_signal must be false for execution readiness"
+            )
+
+    return {
+        "path": str(PRODUCTION_SNAPSHOT_PATH.resolve()),
+        "inspection": inspection,
+        "errors": errors,
+        "valid": not errors,
+        "closed_day": closed_day,
+        "strategy_version": strategy_version,
+        "validation_status": validation_status,
+        "signal_id": signal_id,
+        "target_asset": target_asset,
+        "stale_signal": stale_signal,
+    }
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -950,21 +1041,67 @@ def main() -> None:
         "authority_latest_successful_snapshot": validate_authority_latest_successful_snapshot(),
         "authority_latest_attempt_status": validate_authority_latest_attempt_status(),
     }
+    production_report = validate_production_current_strategy_snapshot()
     freshness_monitoring_report = validate_strategy_chain_freshness_monitoring()
     authority_errors = [
         error
         for snapshot_report in authority_reports.values()
         for error in snapshot_report.get("errors", [])
     ]
+    production_errors = list(production_report.get("errors", []))
     authority_errors.extend(freshness_monitoring_report.get("errors", []))
 
-    hard_required_for_execution = list(REQUIRED_ARTIFACT_KEYS)
+    success_inspection = authority_reports["authority_latest_successful_snapshot"]["inspection"]
+    success_top_level_type = success_inspection.get("top_level_type")
+    success_payload = read_json(LATEST_SUCCESSFUL_SNAPSHOT_PATH) if success_top_level_type == "dict" else {}
+    success_closed_day = None
+    success_closed_day_errors: list[str] = []
+    if success_payload:
+        success_closed_day = normalize_iso_day_text(
+            success_payload.get("target_closed_day_utc"),
+            context="authority_latest_successful_snapshot.target_closed_day_utc",
+            errors=success_closed_day_errors,
+        )
+
+    attempt_inspection = authority_reports["authority_latest_attempt_status"]["inspection"]
+    attempt_top_level_type = attempt_inspection.get("top_level_type")
+    attempt_payload = read_json(LATEST_ATTEMPT_STATUS_PATH) if attempt_top_level_type == "dict" else {}
+    attempt_closed_day = None
+    attempt_closed_day_errors: list[str] = []
+    if attempt_payload:
+        attempt_closed_day = normalize_iso_day_text(
+            attempt_payload.get("target_closed_day_utc"),
+            context="authority_latest_attempt_status.target_closed_day_utc",
+            errors=attempt_closed_day_errors,
+        )
+
+    production_closed_day = production_report.get("closed_day")
+    alignment_errors = [*success_closed_day_errors, *attempt_closed_day_errors]
+    if (
+        production_closed_day
+        and success_closed_day
+        and attempt_closed_day
+        and len({production_closed_day, success_closed_day, attempt_closed_day}) != 1
+    ):
+        alignment_errors.append(
+            "production current_strategy_snapshot.closed_day diverged from authority target day "
+            f"(production={production_closed_day} success={success_closed_day} attempt={attempt_closed_day})"
+        )
+    production_errors.extend(alignment_errors)
+    production_report["errors"] = production_errors
+    production_report["valid"] = not production_errors
+
+    hard_required_for_execution = [
+        *REQUIRED_ARTIFACT_KEYS,
+        "outputs/production/current_strategy_snapshot.json",
+    ]
 
     hard_required_missing = [
         key for key in hard_required_for_execution
         if key in missing_registry_keys or key in missing_files
     ]
     hard_required_missing.extend(authority_errors)
+    hard_required_missing.extend(production_errors)
 
     report = {
         "report_type": "execution_source_contract_report",
@@ -977,6 +1114,7 @@ def main() -> None:
         "hard_required_missing": hard_required_missing,
         "artifact_reports": artifact_reports,
         "authority_reports": authority_reports,
+        "production_report": production_report,
         "freshness_monitoring_report": freshness_monitoring_report,
         "contract_status": "valid" if not hard_required_missing else "invalid",
         "notes": [
@@ -984,7 +1122,8 @@ def main() -> None:
             "It does not infer trading logic.",
             "Do not treat non-authoritative staging files as app truth.",
             "The app homepage must be served from outputs/execution/authority/latest_successful_snapshot.json.",
-            "The app runtime path must be served from outputs/execution/authority/latest_attempt_status.json."
+            "The app runtime path must be served from outputs/execution/authority/latest_attempt_status.json.",
+            "Execution signal truth must read outputs/production/current_strategy_snapshot.json."
         ]
     }
 
@@ -996,8 +1135,10 @@ def main() -> None:
         "hard_required_missing_count": len(hard_required_missing),
         "authority_latest_successful_snapshot_valid": authority_reports["authority_latest_successful_snapshot"]["valid"],
         "authority_latest_attempt_status_valid": authority_reports["authority_latest_attempt_status"]["valid"],
+        "production_current_strategy_snapshot_valid": production_report["valid"],
         "strategy_chain_freshness_monitoring_valid": freshness_monitoring_report["valid"],
         "authority_error_count": len(authority_errors),
+        "production_error_count": len(production_errors),
         "contract_status": report["contract_status"],
         "ready_for_intent_builder": len(hard_required_missing) == 0,
     }
@@ -1015,6 +1156,9 @@ def main() -> None:
         "validated_authority_paths": [
             str(LATEST_SUCCESSFUL_SNAPSHOT_PATH.resolve()),
             str(LATEST_ATTEMPT_STATUS_PATH.resolve()),
+        ],
+        "validated_production_paths": [
+            str(PRODUCTION_SNAPSHOT_PATH.resolve()),
         ],
         "started_at_utc": started_at,
         "status": "success",
