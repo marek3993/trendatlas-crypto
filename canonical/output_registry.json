@@ -660,6 +660,43 @@
       "notes": "Production Core v1 manifest with source hashes, output paths, build command, and git provenance."
     },
     {
+      "output_path": "outputs/production/data_health_report.json",
+      "generated_by": [
+        "scripts/production/build_data_health_report.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_validation",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Centralized machine-readable data health report across production, execution, research, and API-key availability sources."
+    },
+    {
+      "output_path": "outputs/production/data_health_report.quality.json",
+      "generated_by": [
+        "scripts/production/build_data_health_report.py",
+        "scripts/production/validate_data_health_report.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_validation",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Validation verdict for the centralized data health report contract."
+    },
+    {
+      "output_path": "outputs/production/data_health_report.manifest.json",
+      "generated_by": [
+        "scripts/production/build_data_health_report.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_manifest",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Manifest for the centralized data health report artifact family."
+    },
+    {
       "output_path": "outputs/execution/authority/",
       "generated_by": [
         "scripts/daily_refresh_app_pipeline.py",

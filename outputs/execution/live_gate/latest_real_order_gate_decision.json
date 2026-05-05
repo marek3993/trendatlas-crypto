@@ -1,6 +1,6 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-05-05T08:41:12Z",
+  "generated_at_utc": "2026-05-05T15:04:22Z",
   "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::target_CASH::candidate_BTC",
   "target_asset": "CASH",
   "mode": "live",

@@ -7,6 +7,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from scripts.production.data_health_common import (
+    REPORT_PATH as DATA_HEALTH_REPORT_PATH,
+    build_report_bundle,
+    execution_blocking_sources,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE_OF_TRUTH_DIR = ROOT / "source_of_truth"
@@ -510,6 +519,7 @@ def main() -> None:
         str(args.production_snapshot_path.resolve()),
         str(args.authority_latest_successful_snapshot_path.resolve()),
         str(args.authority_latest_attempt_status_path.resolve()),
+        str((PRODUCTION_DIR / DATA_HEALTH_REPORT_PATH.name).resolve()),
     ]
     source_paths = {
         "production_snapshot": str(args.production_snapshot_path.resolve()),
@@ -519,12 +529,43 @@ def main() -> None:
         "authority_latest_attempt_status": str(
             args.authority_latest_attempt_status_path.resolve()
         ),
+        "data_health_report": str((PRODUCTION_DIR / DATA_HEALTH_REPORT_PATH.name).resolve()),
     }
 
     strategy_model = "unknown"
     authority_day_context: dict[str, Any] | None = None
 
     try:
+        data_health_bundle = build_report_bundle(
+            root=ROOT,
+            output_dir=PRODUCTION_DIR,
+            write_outputs=True,
+        )
+        data_health_report = data_health_bundle["report"]
+        health_blockers = execution_blocking_sources(
+            data_health_report,
+            exclude_source_ids={
+                "execution_latest_execution_intent",
+                "execution_latest_real_order_gate_decision",
+            },
+        )
+        if health_blockers:
+            blocker_summary = " | ".join(
+                f"{item['source_id']}:{item['status']}" for item in health_blockers
+            )
+            fail_closed_intent(
+                f"Execution intent blocked by data_health_report: {blocker_summary}",
+                started_at=started_at,
+                strategy_model=strategy_model,
+                reference_model=reference_model,
+                input_paths=input_paths,
+                source_paths=source_paths,
+                authority_day_context=authority_day_context,
+                output_intent_path=args.intent_path,
+                output_quality_path=args.quality_path,
+                output_manifest_path=args.manifest_path,
+            )
+
         production_snapshot = read_json(args.production_snapshot_path)
         snapshot_context = validate_production_snapshot(
             production_snapshot,

@@ -1,0 +1,37 @@
+{
+  "artifact_type": "data_health_report_manifest",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-05T15:04:22Z",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\data_health_common.py",
+  "root_path": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "output_paths": {
+    "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.json",
+    "quality_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.quality.json",
+    "manifest_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.manifest.json"
+  },
+  "source_ids": [
+    "production_current_strategy_snapshot",
+    "production_current_strategy_timeseries",
+    "production_current_strategy_diagnostics",
+    "production_current_strategy_snapshot_quality",
+    "data_ohlcv_btcusdt_1d",
+    "execution_authority_latest_successful_snapshot",
+    "execution_authority_latest_attempt_status",
+    "execution_latest_execution_intent",
+    "execution_latest_real_order_gate_decision",
+    "research_btc_etf_flow_daily_panel_csv",
+    "research_btc_etf_flow_daily_panel_quality",
+    "research_btc_derivatives_daily_panel_csv",
+    "research_btc_derivatives_daily_panel_quality",
+    "env_mrv1_btc_etf_flow_primary_provider",
+    "env_mrv1_coinglass_api_key",
+    "env_mrv1_sosovalue_api_key"
+  ],
+  "reference_closed_day_utc": "2026-05-04",
+  "context": {
+    "latest_closed_utc_day": "2026-05-04",
+    "btc_last_day": "2026-05-04"
+  },
+  "path_overrides": {},
+  "env_override_source_ids": []
+}

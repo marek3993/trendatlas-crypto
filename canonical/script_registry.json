@@ -878,6 +878,34 @@
       "notes": "Standalone fail-closed validator for the production snapshot, timeseries, and diagnostics contract."
     },
     {
+      "script_path": "scripts/production/build_data_health_report.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Builds the centralized data health report across production, authority, execution, research, and API-key availability sources.",
+      "primary_outputs": [
+        "outputs/production/data_health_report.json",
+        "outputs/production/data_health_report.quality.json",
+        "outputs/production/data_health_report.manifest.json"
+      ],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Central fail-closed/warn-only health registry for app, execution, and future automation consumers."
+    },
+    {
+      "script_path": "scripts/production/validate_data_health_report.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Validates the centralized data health report schema and enum contracts.",
+      "primary_outputs": [
+        "outputs/production/data_health_report.quality.json"
+      ],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only validator for the data health report artifact family."
+    },
+    {
       "script_path": "run_data_refresh.ps1",
       "layer": "execution_data",
       "status": "active",

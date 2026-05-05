@@ -1,13 +1,14 @@
 {
   "artifact_name": "latest_execution_intent",
-  "generated_at_utc": "2026-05-05T08:41:12Z",
-  "started_at_utc": "2026-05-05T08:41:12Z",
+  "generated_at_utc": "2026-05-05T15:04:22Z",
+  "started_at_utc": "2026-05-05T15:04:22Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\build_execution_intent_from_strategy_exports.py",
   "input_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\export_contract.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json"
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.json"
   ],
   "output_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",

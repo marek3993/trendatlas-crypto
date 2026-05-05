@@ -7,6 +7,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+if str(Path(__file__).resolve().parents[2]) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+
+from scripts.production.data_health_common import (
+    build_report_bundle,
+    execution_blocking_sources,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -281,6 +289,22 @@ def main() -> None:
 
     started_at = utc_now_iso()
     log("[START] prepare_real_order_gate")
+
+    data_health_bundle = build_report_bundle(
+        root=ROOT,
+        output_dir=PRODUCTION_DIR,
+        write_outputs=True,
+    )
+    data_health_report = data_health_bundle["report"]
+    health_blockers = execution_blocking_sources(
+        data_health_report,
+        exclude_source_ids={"execution_latest_real_order_gate_decision"},
+    )
+    if health_blockers:
+        blocker_summary = " | ".join(
+            f"{item['source_id']}:{item['status']}" for item in health_blockers
+        )
+        fail(f"Real-order gate blocked by data_health_report: {blocker_summary}")
 
     mode_cfg = read_json(args.mode_config_path)
     policy_cfg = read_json(args.live_order_policy_path)
@@ -609,6 +633,11 @@ def main() -> None:
     log(f"[SAVED] {args.decision_path}")
     log(f"[SAVED] {args.quality_path}")
     log(f"[SAVED] {args.manifest_path}")
+    build_report_bundle(
+        root=ROOT,
+        output_dir=PRODUCTION_DIR,
+        write_outputs=True,
+    )
     log(f"[END] prepare_real_order_gate success status={decision['status']}")
 
 

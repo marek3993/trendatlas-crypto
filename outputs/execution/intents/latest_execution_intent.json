@@ -1,6 +1,6 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-05-05T08:41:12Z",
+  "generated_at_utc": "2026-05-05T15:04:22Z",
   "as_of_source": "2026-05-04",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
@@ -30,7 +30,8 @@
   "source_paths": {
     "production_snapshot": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
     "authority_latest_successful_snapshot": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
-    "authority_latest_attempt_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json"
+    "authority_latest_attempt_status": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
+    "data_health_report": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.json"
   },
   "authority_day_context": {
     "attempt_currentness_status": "current",

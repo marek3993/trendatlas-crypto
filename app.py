@@ -30,6 +30,11 @@ from src.market_regime_v1.phase1_time_semantics import (
 from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
 )
+from scripts.production.data_health_common import (
+    app_blocking_sources,
+    build_report_bundle,
+    research_warning_sources,
+)
 
 APP_EXECUTE_BRIDGE_IMPORT_ERROR = ""
 try:
@@ -996,6 +1001,71 @@ def load_json_optional(path_value: str | Path | None) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
+
+
+def build_live_data_health_report() -> dict[str, Any]:
+    bundle = build_report_bundle(
+        root=ROOT,
+        output_dir=PRODUCTION_OUTPUTS,
+        write_outputs=False,
+    )
+    return dict(bundle["report"])
+
+
+def render_data_health_banner(report: dict[str, Any], lang: str) -> bool:
+    blocking_sources = app_blocking_sources(report)
+    research_sources = research_warning_sources(report)
+    if not blocking_sources and not research_sources:
+        return False
+
+    title = "Stav dát" if lang == "sk" else "Data Health"
+    st.markdown(f"### {title}")
+
+    if blocking_sources:
+        blocking_messages = [
+            str(source.get("user_message_sk") if lang == "sk" else source.get("user_message_en") or "").strip()
+            for source in blocking_sources
+        ]
+        blocking_messages = [message for message in blocking_messages if message]
+        prefix = (
+            "Produkčné alebo autoritatívne zdroje zlyhali. Aplikácia zostáva fail-closed."
+            if lang == "sk"
+            else "Production or authority sources failed. The app remains fail-closed."
+        )
+        details = "\n".join(f"- {message}" for message in blocking_messages[:4])
+        suffix = ""
+        if len(blocking_messages) > 4:
+            remaining = len(blocking_messages) - 4
+            suffix = (
+                f"\n- Ďalšie zasiahnuté zdroje: {remaining}"
+                if lang == "sk"
+                else f"\n- Additional affected sources: {remaining}"
+            )
+        st.error(prefix + ("\n" + details if details else "") + suffix)
+
+    if research_sources:
+        research_messages = [
+            str(source.get("user_message_sk") if lang == "sk" else source.get("user_message_en") or "").strip()
+            for source in research_sources
+        ]
+        research_messages = [message for message in research_messages if message]
+        prefix = (
+            "Research-only zdroje majú problém. Produkcia tým nie je ovplyvnená, ale príslušné research probes sú zablokované."
+            if lang == "sk"
+            else "Research-only sources have issues. Production is unaffected, but the related research probes are blocked."
+        )
+        details = "\n".join(f"- {message}" for message in research_messages[:4])
+        suffix = ""
+        if len(research_messages) > 4:
+            remaining = len(research_messages) - 4
+            suffix = (
+                f"\n- Ďalšie research warnings: {remaining}"
+                if lang == "sk"
+                else f"\n- Additional research warnings: {remaining}"
+            )
+        st.warning(prefix + ("\n" + details if details else "") + suffix)
+
+    return bool(blocking_sources)
 
 
 def stop_for_production_homepage_block(message: str) -> None:
@@ -5315,6 +5385,27 @@ if "account_authenticated" not in st.session_state:
 if "account_auth_error" not in st.session_state:
     st.session_state.account_auth_error = ""
 
+hero_left, hero_right = st.columns([5, 1.6])
+
+with hero_right:
+    st.markdown('<div class="lang-wrap">', unsafe_allow_html=True)
+    lang_choice = st.radio(
+        label=t(st.session_state.lang, "language"),
+        options=["SK", "EN"],
+        index=0 if st.session_state.lang == "sk" else 1,
+        horizontal=True,
+    )
+    st.markdown("</div>", unsafe_allow_html=True)
+    btc_indicator_slot = st.empty()
+
+st.session_state.lang = "sk" if lang_choice == "SK" else "en"
+lang = st.session_state.lang
+
+data_health_report = build_live_data_health_report()
+data_health_blocking_app = bool(app_blocking_sources(data_health_report))
+if render_data_health_banner(data_health_report, lang) or data_health_blocking_app:
+    st.stop()
+
 latest_successful_snapshot_payload = load_required_authority_payload(
     AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
     SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
@@ -5347,22 +5438,6 @@ runtime_snapshot = load_runtime_snapshot_for_app(
     runtime_snapshot_source_path,
 )
 selector_cfg = build_selector_config_from_snapshot(product_snapshot, runtime_snapshot)
-
-hero_left, hero_right = st.columns([5, 1.6])
-
-with hero_right:
-    st.markdown('<div class="lang-wrap">', unsafe_allow_html=True)
-    lang_choice = st.radio(
-        label=t(st.session_state.lang, "language"),
-        options=["SK", "EN"],
-        index=0 if st.session_state.lang == "sk" else 1,
-        horizontal=True,
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
-    btc_indicator_slot = st.empty()
-
-st.session_state.lang = "sk" if lang_choice == "SK" else "en"
-lang = st.session_state.lang
 
 with hero_left:
     st.markdown('<div class="hero-wrap">', unsafe_allow_html=True)
