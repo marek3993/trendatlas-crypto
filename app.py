@@ -26,12 +26,6 @@ from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
     SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
 )
-from scripts.execution.current_strategy_root_contract import (
-    load_current_main_strategy_root_contract,
-    resolve_homepage_current_strategy_sources,
-    resolve_validated_homepage_top_performance_source_contract,
-    validate_homepage_top_card_source_path,
-)
 from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
 )
@@ -57,12 +51,17 @@ st.set_page_config(page_title="TrendAtlas Crypto", layout="wide")
 
 ROOT = Path(__file__).resolve().parent
 OUTPUTS = ROOT / "outputs"
+PRODUCTION_OUTPUTS = OUTPUTS / "production"
 AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH = (
     ROOT / "outputs" / "execution" / "authority" / "latest_successful_snapshot.json"
 )
 AUTHORITY_LATEST_ATTEMPT_STATUS_PATH = (
     ROOT / "outputs" / "execution" / "authority" / "latest_attempt_status.json"
 )
+PRODUCTION_SNAPSHOT_PATH = PRODUCTION_OUTPUTS / "current_strategy_snapshot.json"
+PRODUCTION_TIMESERIES_PATH = PRODUCTION_OUTPUTS / "current_strategy_timeseries.csv"
+PRODUCTION_DIAGNOSTICS_PATH = PRODUCTION_OUTPUTS / "current_strategy_diagnostics.json"
+PRODUCTION_QUALITY_PATH = PRODUCTION_OUTPUTS / "current_strategy_snapshot.quality.json"
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 APP_DISPLAY_TIMEZONE = ZoneInfo("Europe/Bratislava")
@@ -542,13 +541,13 @@ METRIC_HELP = {
 }
 
 TEXT["sk"]["performance_fee_note"] = (
-    "Top karty zobrazuju aktualne live/main strategia metriky z publikovaneho "
-    "hlavneho exportu. Nejde o samostatny compare/ranking vystup a vysledky uz "
+    "Top karty zobrazuju aktualne metriky z Production Core snapshotu. "
+    "Nejde o samostatny compare/ranking vystup a vysledky uz "
     "zahrnaju Hyperliquid poplatky."
 )
 TEXT["en"]["performance_fee_note"] = (
-    "Top cards show the current live/main strategy metrics from the published "
-    "main-strategy export. They are not fed by a separate compare/ranking "
+    "Top cards show the current metrics from the Production Core snapshot. "
+    "They are not fed by a separate compare/ranking "
     "artifact, and results already include Hyperliquid fees."
 )
 TEXT["sk"]["chart_note_strip_hidden"] = (
@@ -561,42 +560,94 @@ TEXT["en"]["chart_note_strip_hidden"] = (
     "The lower strip is hidden because the canonical paper rows do not "
     "currently allow a truthful held-state rendering."
 )
+TEXT["sk"].update(
+    {
+        "production_core_error_prefix": "Production Core v1 homepage blocked",
+        "production_exposure": "Expozicia",
+        "production_closed_day": "Posledny uzavrety den",
+        "production_next_rebalance": "Najblizsi rebalance",
+        "production_chart_note": "Horna krivka ukazuje equity seriu priamo z Production Core timeseries bez legacy fallbacku.",
+        "production_reason_title": "Preco je strategia v tomto stave",
+        "production_wait_title": "Na co strategia caka",
+        "production_pain_title": "Aktualne pain points",
+        "production_recent_rebalances": "Nedavne rebalance udalosti",
+        "production_recent_regimes": "Nedavne zmeny rezimu",
+        "production_wait_current": "Aktualne hodnoty",
+        "production_wait_target": "Cielova podmienka",
+        "production_signal_health": "Signal health",
+        "production_validation_passed": "Production Core validacia presla",
+        "production_validation_failed": "Production Core validacia zlyhala",
+        "production_waiting_yes": "Ano",
+        "production_waiting_no": "Nie",
+    }
+)
+TEXT["en"].update(
+    {
+        "production_core_error_prefix": "Production Core v1 homepage blocked",
+        "production_exposure": "Exposure",
+        "production_closed_day": "Last closed day",
+        "production_next_rebalance": "Next rebalance",
+        "production_chart_note": "The top line shows the equity series directly from the Production Core timeseries with no legacy fallback.",
+        "production_reason_title": "Why the strategy is in this state",
+        "production_wait_title": "What the strategy is waiting for",
+        "production_pain_title": "Current pain points",
+        "production_recent_rebalances": "Recent rebalance events",
+        "production_recent_regimes": "Recent regime changes",
+        "production_wait_current": "Current values",
+        "production_wait_target": "Target condition",
+        "production_signal_health": "Signal health",
+        "production_validation_passed": "Production Core validation passed",
+        "production_validation_failed": "Production Core validation failed",
+        "production_waiting_yes": "Yes",
+        "production_waiting_no": "No",
+    }
+)
 METRIC_HELP["sk"].update(
     {
         TEXT["sk"]["cagr"]: (
-            "Tato top karta ukazuje aktualny live/main strategy CAGR z rovnakeho "
-            "canonical metrics exportu ako zvysok hlavnej strategie, nie zo "
-            "samostatneho compare/ranking artefaktu."
+            "Tato top karta ukazuje aktualny CAGR priamo z Production Core snapshotu."
         ),
         TEXT["sk"]["since2023"]: (
-            "Tato top karta ukazuje aktualny live/main strategy CAGR okno od 2023 "
-            "z canonical main-strategy metrics exportu, nie zo samostatneho "
-            "compare/ranking artefaktu."
+            "Tato top karta ukazuje okno CAGR od 2023 priamo z Production Core snapshotu."
         ),
         TEXT["sk"]["since2025"]: (
-            "Tato top karta ukazuje aktualny live/main strategy CAGR okno od 2025 "
-            "z canonical main-strategy metrics exportu, nie zo samostatneho "
-            "compare/ranking artefaktu."
+            "Tato top karta ukazuje okno CAGR od 2025 priamo z Production Core snapshotu."
         ),
+        TEXT["sk"]["currently_holding"]: "Toto pole ide priamo z Production Core snapshotu ako oficialny aktualny asset.",
+        TEXT["sk"]["trend_state"]: "Textovy trend stav ide z Production Core snapshotu, nie z legacy live exportu.",
+        TEXT["sk"]["trend_score"]: "Trend score je z Production Core snapshotu a jeho historia z Production Core timeseries.",
+        TEXT["sk"]["buy_threshold"]: "Buy threshold sa cita z posledneho validovaneho riadku Production Core timeseries.",
+        TEXT["sk"]["total_return"]: "Celkovy vynos je citany z Production Core snapshot metrics.",
+        TEXT["sk"]["max_dd"]: "Max drawdown je citany z Production Core snapshot metrics.",
+        TEXT["sk"]["switch_count"]: "Pocet prepnuti je citany z Production Core snapshot metrics.",
+        TEXT["sk"]["cash_days"]: "Cash Days su citane z Production Core snapshot metrics.",
+        TEXT["sk"]["btc_days"]: "BTC Days su citane z Production Core snapshot metrics.",
+        TEXT["sk"]["production_exposure"]: "Expozicia ide priamo z Production Core snapshotu ako aktualne oficialne nastavenie.",
+        TEXT["sk"]["production_closed_day"]: "Posledny uzavrety den ide z Production Core snapshotu a musi sediet s diagnostics aj timeseries.",
     }
 )
 METRIC_HELP["en"].update(
     {
         TEXT["en"]["cagr"]: (
-            "This top card shows the current live/main strategy CAGR from the same "
-            "canonical metrics export as the published main strategy, not from a "
-            "separate compare/ranking artifact."
+            "This top card shows the current CAGR directly from the Production Core snapshot."
         ),
         TEXT["en"]["since2023"]: (
-            "This top card shows the current live/main strategy since-2023 CAGR "
-            "from the canonical main-strategy metrics export, not from a separate "
-            "compare/ranking artifact."
+            "This top card shows the since-2023 CAGR directly from the Production Core snapshot."
         ),
         TEXT["en"]["since2025"]: (
-            "This top card shows the current live/main strategy since-2025 CAGR "
-            "from the canonical main-strategy metrics export, not from a separate "
-            "compare/ranking artifact."
+            "This top card shows the since-2025 CAGR directly from the Production Core snapshot."
         ),
+        TEXT["en"]["currently_holding"]: "This field is read directly from the Production Core snapshot as the official current asset.",
+        TEXT["en"]["trend_state"]: "The trend state is read from the Production Core snapshot, not from the legacy live export.",
+        TEXT["en"]["trend_score"]: "The trend score comes from the Production Core snapshot and its history from the Production Core timeseries.",
+        TEXT["en"]["buy_threshold"]: "The buy threshold is read from the latest validated row of the Production Core timeseries.",
+        TEXT["en"]["total_return"]: "Total return is read from the Production Core snapshot metrics.",
+        TEXT["en"]["max_dd"]: "Max drawdown is read from the Production Core snapshot metrics.",
+        TEXT["en"]["switch_count"]: "Switch count is read from the Production Core snapshot metrics.",
+        TEXT["en"]["cash_days"]: "Cash Days are read from the Production Core snapshot metrics.",
+        TEXT["en"]["btc_days"]: "BTC Days are read from the Production Core snapshot metrics.",
+        TEXT["en"]["production_exposure"]: "Exposure comes directly from the Production Core snapshot as the official current setting.",
+        TEXT["en"]["production_closed_day"]: "The last closed day comes from the Production Core snapshot and must match diagnostics and timeseries.",
     }
 )
 
@@ -797,48 +848,6 @@ def resolve_main_metrics_for_display(
     return metrics
 
 
-def resolve_top_performance_metrics_for_display(
-    *,
-    product_snapshot: dict[str, Any],
-    main_strategy_model: str | None,
-    current_strategy_contract: dict[str, Any],
-) -> dict[str, Any]:
-    source_metrics = product_snapshot.get("main_strategy_top_performance_metrics")
-    if isinstance(source_metrics, dict) and source_metrics:
-        top_performance_metadata = dict(
-            (dict(product_snapshot.get("source_metadata") or {})).get("main_strategy_top_performance_metrics")
-            or {}
-        )
-        validate_homepage_top_card_source_path(
-            top_performance_metadata.get("path"),
-            current_strategy_contract,
-            context="Homepage load blocked:",
-        )
-        metrics = dict(source_metrics)
-        if not metrics.get("model") and main_strategy_model:
-            metrics["model"] = main_strategy_model
-        return resolve_main_metrics_for_display(metrics, main_strategy_model)
-
-    source_contract = resolve_validated_homepage_top_performance_source_contract(
-        str(main_strategy_model or "").strip(),
-        current_strategy_contract,
-        root=ROOT,
-        require_file=False,
-    )
-
-    source_path = Path(source_contract["metrics_path"])
-    source_row = load_single_csv_row(
-        source_path,
-        context="homepage top performance metrics",
-    )
-    metrics: dict[str, Any] = {
-        "model": source_row.get("model") or main_strategy_model,
-    }
-    for display_field, source_field in dict(source_contract["metric_aliases"]).items():
-        metrics[display_field] = source_row.get(source_field)
-    return resolve_main_metrics_for_display(metrics, main_strategy_model)
-
-
 def safe_plain_number_text(value, decimals: int = 4, lang: str = "sk") -> str:
     number = as_float(value)
     if number is None:
@@ -863,6 +872,200 @@ def load_json_optional(path_value: str | Path | None) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError):
         return {}
+
+
+def stop_for_production_homepage_block(message: str) -> None:
+    lang = st.session_state.get("lang", "sk")
+    st.error(
+        f"{t(lang, 'load_failed')}: {t(lang, 'production_core_error_prefix')}: {message}"
+    )
+    st.stop()
+
+
+def load_required_production_payload(
+    path: Path,
+    expected_type: str,
+    *,
+    context: str,
+) -> dict[str, Any]:
+    payload = load_json_optional(path)
+    if not payload:
+        stop_for_production_homepage_block(f"{context}: missing {path}")
+    if payload.get("artifact_type") != expected_type:
+        stop_for_production_homepage_block(
+            f"{context}: expected {expected_type} at {path}"
+        )
+    return payload
+
+
+def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        stop_for_production_homepage_block(f"timeseries missing {path}")
+    try:
+        frame = pd.read_csv(path)
+    except Exception as exc:
+        stop_for_production_homepage_block(f"timeseries unreadable {path}: {exc}")
+        return pd.DataFrame()
+
+    required_columns = {
+        "date",
+        "strategy_id",
+        "strategy_version",
+        "held_asset",
+        "exposure",
+        "regime",
+        "execution_state",
+        "trend_state",
+        "trend_score",
+        "buy_threshold",
+        "equity",
+        "reason_code",
+        "source_validated",
+    }
+    missing_columns = sorted(required_columns - set(frame.columns))
+    if missing_columns:
+        stop_for_production_homepage_block(
+            "timeseries missing columns: " + ", ".join(missing_columns)
+        )
+
+    frame["ts"] = pd.to_datetime(frame["date"], errors="coerce").dt.normalize()
+    for numeric_column in [
+        "exposure",
+        "trend_score",
+        "buy_threshold",
+        "equity",
+        "drawdown_pct",
+        "rolling_return_7d",
+        "rolling_return_30d",
+        "rolling_return_90d",
+        "rolling_vol_30d",
+        "rolling_sharpe_90d",
+    ]:
+        if numeric_column in frame.columns:
+            frame[numeric_column] = pd.to_numeric(frame[numeric_column], errors="coerce")
+
+    frame = (
+        frame.dropna(subset=["ts", "equity"])
+        .sort_values("ts")
+        .drop_duplicates(subset=["ts"], keep="last")
+        .reset_index(drop=True)
+    )
+    if frame.empty:
+        stop_for_production_homepage_block("timeseries has no usable rows")
+    return frame
+
+
+def _production_compare_float(
+    expected: Any,
+    actual: Any,
+    *,
+    field_name: str,
+    abs_tol: float = 1e-9,
+) -> None:
+    expected_value = as_float(expected)
+    actual_value = as_float(actual)
+    if expected_value is None or actual_value is None:
+        stop_for_production_homepage_block(
+            f"{field_name} missing in production snapshot or timeseries"
+        )
+    if not math.isclose(expected_value, actual_value, abs_tol=abs_tol):
+        stop_for_production_homepage_block(
+            f"{field_name} mismatch between production snapshot and timeseries"
+        )
+
+
+def validate_production_homepage_bundle(
+    snapshot: dict[str, Any],
+    diagnostics: dict[str, Any],
+    quality: dict[str, Any],
+    timeseries_df: pd.DataFrame,
+) -> None:
+    if str(quality.get("status") or "").strip().lower() != "passed":
+        stop_for_production_homepage_block("quality report status is not passed")
+    if str(get_nested_value(snapshot, "validation", "status") or "").strip().lower() != "passed":
+        stop_for_production_homepage_block("snapshot validation status is not passed")
+    if str(get_nested_value(diagnostics, "validation", "status") or "").strip().lower() != "passed":
+        stop_for_production_homepage_block("diagnostics validation status is not passed")
+    if str(snapshot.get("strategy_status") or "").strip().lower() != "ready":
+        stop_for_production_homepage_block("strategy_status is not ready")
+
+    snapshot_day = str(snapshot.get("closed_day") or "").strip()
+    diagnostics_day = str(diagnostics.get("closed_day") or "").strip()
+    last_timeseries_day = str(timeseries_df.iloc[-1]["date"] or "").strip()
+    if not snapshot_day or not diagnostics_day or not last_timeseries_day:
+        stop_for_production_homepage_block("closed_day is missing")
+    if snapshot_day != diagnostics_day or snapshot_day != last_timeseries_day:
+        stop_for_production_homepage_block(
+            "closed_day mismatch across snapshot, diagnostics, and timeseries"
+        )
+
+    snapshot_strategy_id = str(snapshot.get("strategy_id") or "").strip()
+    diagnostics_strategy_id = str(diagnostics.get("strategy_id") or "").strip()
+    timeseries_strategy_id = str(timeseries_df.iloc[-1]["strategy_id"] or "").strip()
+    if not snapshot_strategy_id or snapshot_strategy_id != diagnostics_strategy_id or snapshot_strategy_id != timeseries_strategy_id:
+        stop_for_production_homepage_block("strategy_id mismatch across production artifacts")
+
+    snapshot_strategy_version = str(snapshot.get("strategy_version") or "").strip()
+    diagnostics_strategy_version = str(diagnostics.get("strategy_version") or "").strip()
+    timeseries_strategy_version = str(timeseries_df.iloc[-1]["strategy_version"] or "").strip()
+    if (
+        not snapshot_strategy_version
+        or snapshot_strategy_version != diagnostics_strategy_version
+        or snapshot_strategy_version != timeseries_strategy_version
+    ):
+        stop_for_production_homepage_block("strategy_version mismatch across production artifacts")
+
+    last_row = sanitize_row_dict(timeseries_df.iloc[-1].to_dict())
+    if str(last_row.get("held_asset") or "").strip().upper() != str(snapshot.get("current_asset") or "").strip().upper():
+        stop_for_production_homepage_block("current asset mismatch between snapshot and timeseries")
+    if str(last_row.get("regime") or "").strip().upper() != str(snapshot.get("current_regime") or "").strip().upper():
+        stop_for_production_homepage_block("current regime mismatch between snapshot and timeseries")
+    if str(last_row.get("execution_state") or "").strip().upper() != str(snapshot.get("execution_state") or "").strip().upper():
+        stop_for_production_homepage_block("execution state mismatch between snapshot and timeseries")
+    if str(last_row.get("trend_state") or "").strip() != str(snapshot.get("trend_state") or "").strip():
+        stop_for_production_homepage_block("trend state mismatch between snapshot and timeseries")
+    _production_compare_float(
+        snapshot.get("current_exposure"),
+        last_row.get("exposure"),
+        field_name="current_exposure",
+    )
+    _production_compare_float(
+        snapshot.get("trend_score"),
+        last_row.get("trend_score"),
+        field_name="trend_score",
+        abs_tol=1e-6,
+    )
+
+    if as_bool(last_row.get("source_validated")) is not True:
+        stop_for_production_homepage_block("latest timeseries row is not source_validated")
+    if str(get_nested_value(diagnostics, "current_data_health_summary", "status") or "").strip().lower() not in {"", "passed"}:
+        stop_for_production_homepage_block("diagnostics current_data_health_summary status is not passed")
+
+
+def load_production_homepage_bundle() -> dict[str, Any]:
+    snapshot = load_required_production_payload(
+        PRODUCTION_SNAPSHOT_PATH,
+        "current_strategy_snapshot",
+        context="production snapshot",
+    )
+    diagnostics = load_required_production_payload(
+        PRODUCTION_DIAGNOSTICS_PATH,
+        "current_strategy_diagnostics",
+        context="production diagnostics",
+    )
+    quality = load_required_production_payload(
+        PRODUCTION_QUALITY_PATH,
+        "current_strategy_snapshot_quality",
+        context="production quality",
+    )
+    timeseries_df = load_production_timeseries_frame(PRODUCTION_TIMESERIES_PATH)
+    validate_production_homepage_bundle(snapshot, diagnostics, quality, timeseries_df)
+    return {
+        "snapshot": snapshot,
+        "diagnostics": diagnostics,
+        "quality": quality,
+        "timeseries": timeseries_df,
+    }
 
 
 def load_required_authority_payload(path: Path, expected_type: str) -> dict:
@@ -3299,6 +3502,45 @@ def load_paper_frame(path: Path, model_key: str) -> pd.DataFrame:
     return df
 
 
+def build_production_trend_live(
+    snapshot: dict[str, Any],
+    timeseries_df: pd.DataFrame,
+) -> dict[str, Any]:
+    last_row = sanitize_row_dict(timeseries_df.iloc[-1].to_dict())
+    previous_row = sanitize_row_dict(timeseries_df.iloc[-2].to_dict()) if len(timeseries_df) > 1 else {}
+    trend_score = as_float(snapshot.get("trend_score"))
+    buy_threshold = as_float(last_row.get("buy_threshold"))
+    previous_trend_score = as_float(previous_row.get("trend_score"))
+
+    crossed_up_today = (
+        previous_trend_score is not None
+        and trend_score is not None
+        and buy_threshold is not None
+        and previous_trend_score < buy_threshold <= trend_score
+    )
+    crossed_down_today = (
+        previous_trend_score is not None
+        and trend_score is not None
+        and buy_threshold is not None
+        and previous_trend_score > buy_threshold >= trend_score
+    )
+
+    return {
+        "trend_score": trend_score,
+        "buy_threshold": buy_threshold,
+        "trend_state_label": snapshot.get("trend_state"),
+        "trend_calc_date": snapshot.get("closed_day"),
+        "crossed_up_today": crossed_up_today,
+        "crossed_down_today": crossed_down_today,
+    }
+
+
+def build_production_trend_history(timeseries_df: pd.DataFrame) -> pd.DataFrame:
+    history = timeseries_df[["ts", "trend_score", "buy_threshold"]].copy()
+    history = history.dropna(subset=["ts", "trend_score", "buy_threshold"]).reset_index(drop=True)
+    return history
+
+
 def available_years_from_frames(frames: list[pd.DataFrame]) -> list[int]:
     years: set[int] = set()
     for df in frames:
@@ -3981,6 +4223,67 @@ def make_capital_chart(
     return fig
 
 
+def make_production_equity_chart(
+    timeseries_df: pd.DataFrame,
+    year: int,
+    lang: str,
+    main_label: str,
+    title: str,
+) -> go.Figure:
+    main_plot = filter_from_year(timeseries_df, year).copy()
+    if main_plot.empty:
+        raise ValueError("homepage production chart has no rows for the selected year")
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=main_plot["ts"],
+            y=rebase_series(main_plot["equity"]),
+            mode="lines",
+            name=main_label,
+            line=dict(width=4.8, color="#ff6b6b"),
+        ),
+    )
+
+    fig.update_layout(
+        height=560,
+        title=title,
+        template="plotly_dark",
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(255,255,255,0.015)",
+        margin=dict(l=20, r=20, t=60, b=20),
+        legend_title="",
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            bgcolor="rgba(10,15,24,0.72)",
+            bordercolor="rgba(255,255,255,0.08)",
+            borderwidth=1,
+        ),
+        hovermode="x unified",
+        hoverlabel=dict(
+            bgcolor="rgba(10,15,24,0.96)",
+            bordercolor="rgba(255,255,255,0.10)",
+            font=dict(size=12),
+        ),
+    )
+    fig.update_xaxes(
+        showgrid=False,
+        showspikes=True,
+        spikemode="across",
+        spikesnap="cursor",
+    )
+    fig.update_yaxes(
+        title=t(lang, "chart_performance_axis"),
+        showgrid=True,
+        gridcolor="rgba(255,255,255,0.06)",
+    )
+    return fig
+
+
 def make_trend_gauge(trend_live: dict, lang: str) -> go.Figure:
     score = trend_live.get("trend_score")
     threshold = trend_live.get("buy_threshold")
@@ -4166,15 +4469,6 @@ runtime_snapshot = load_runtime_snapshot_for_app(
     ),
     runtime_snapshot_source_path,
 )
-try:
-    current_strategy_contract = load_current_main_strategy_root_contract()
-    homepage_current_strategy_sources = resolve_homepage_current_strategy_sources(
-        product_snapshot,
-        current_strategy_contract,
-    )
-except Exception as e:
-    st.error(f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: {e}")
-    st.stop()
 selector_cfg = build_selector_config_from_snapshot(product_snapshot, runtime_snapshot)
 
 hero_left, hero_right = st.columns([5, 1.6])
@@ -4201,71 +4495,22 @@ with hero_left:
     st.caption(t(lang, "subhero"))
     st.markdown("</div>", unsafe_allow_html=True)
 
-main_key = selector_cfg.get("main_model_key")
-reference_key = selector_cfg.get("reference_model_key")
+production_bundle = load_production_homepage_bundle()
+production_snapshot = dict(production_bundle["snapshot"])
+production_diagnostics = dict(production_bundle["diagnostics"])
+production_quality = dict(production_bundle["quality"])
+production_timeseries_df = production_bundle["timeseries"].copy()
+
+main_key = str(production_snapshot.get("strategy_version") or "").strip()
 labels = build_display_map(selector_cfg, lang)
-
-main_summary_path = Path(homepage_current_strategy_sources["metrics_path"])
-main_paper_path = Path(homepage_current_strategy_sources["paper_path"])
-benchmark_path = normalize_path(product_snapshot.get("benchmark_source_path"))
-required = [p for p in [main_summary_path, main_paper_path, benchmark_path] if p is not None]
-missing = [str(p) for p in required if not p.exists()]
-if missing:
-    st.error(t(lang, "missing_files"))
-    for path in missing:
-        st.write(f"- {path}")
-    st.stop()
-
-try:
-    btc_df = load_benchmark_df(product_snapshot.get("benchmark_source_path"))
-except Exception as e:
-    st.error(f"{t(lang, 'load_failed')}: {e}")
-    st.stop()
-
-btc_side_indicator = build_btc_side_indicator_data(btc_df)
+labels[main_key] = main_key
+btc_side_indicator = build_btc_side_indicator_data()
 with btc_indicator_slot.container():
     render_btc_side_indicator(btc_side_indicator)
 
-papers: dict[str, pd.DataFrame] = {}
-paper_errors: list[str] = []
-
-try:
-    papers[main_key] = load_paper_frame(main_paper_path, main_key)
-except Exception as e:
-    paper_errors.append(f"{main_key}: {e}")
-
-if main_key not in papers:
-    st.error(f"{t(lang, 'load_failed')}: missing main model paper for {main_key}")
-    for msg in paper_errors:
-        st.write(f"- {msg}")
-    st.stop()
-
-try:
-    main_metrics_source_row = load_single_csv_row(
-        main_summary_path,
-        context="homepage current main strategy metrics",
-    )
-except Exception as e:
-    st.error(f"{t(lang, 'load_failed')}: {e}")
-    st.stop()
-
-trend_source_cfg = selector_cfg.get("trend_barometer_source", {}) or {}
-csv_live_public_state = sanitize_row_dict(papers[main_key].iloc[-1].to_dict())
-live_public_state = sanitize_row_dict(
-    dict(product_snapshot.get("live_public_state") or {})
-) or dict(csv_live_public_state)
-if live_public_state:
-    live_public_state["has_new_fields"] = True
-try:
-    trend_live = load_trend_barometer_live(trend_source_cfg)
-except Exception as e:
-    st.error(f"{t(lang, 'load_failed')}: {e}")
-    st.stop()
-trend_history_df = load_trend_barometer_history(trend_source_cfg, trend_live)
-trend_barometer_warnings = build_trend_barometer_consistency_warnings(
-    trend_live,
-    trend_history_df,
-)
+trend_live = build_production_trend_live(production_snapshot, production_timeseries_df)
+trend_history_df = build_production_trend_history(production_timeseries_df)
+trend_barometer_warnings: list[str] = []
 if trend_live.get("trend_state_label"):
     trend_live["trend_state_label"] = prettify_trend_state(trend_live.get("trend_state_label"), lang)
 account_observability_cfg = get_current_account_observability_contract(selector_cfg)
@@ -4288,79 +4533,94 @@ runtime_table_payload = build_authority_runtime_table_snapshot(
 )
 runtime_guardrail_payload = get_nested_dict(runtime_health_payload, "execution_mode_guardrail")
 
-authority_main_metrics_source = dict(product_snapshot.get("main_strategy_metrics") or {})
 main_metrics = resolve_main_metrics_for_display(
-    authority_main_metrics_source or main_metrics_source_row,
-    str(product_snapshot.get("main_strategy_model") or main_key),
+    dict(production_snapshot.get("metrics") or {}),
+    main_key,
 )
-# Homepage top cards are a live/main strategy surface and must not switch to a
-# separate compare/ranking metrics artifact.
-top_performance_metrics = resolve_top_performance_metrics_for_display(
-    product_snapshot=product_snapshot,
-    main_strategy_model=str(product_snapshot.get("main_strategy_model") or main_key),
-    current_strategy_contract=current_strategy_contract,
-)
-authority_verification_rows = build_authority_verification_rows(
-    runtime_snapshot,
-    runtime_snapshot_source_path,
-    runtime_authority_payload,
-)
-homepage_authority_integrity_findings = build_homepage_authority_integrity_findings(
-    product_snapshot,
-    runtime_snapshot,
-    csv_live_public_state,
-    main_metrics_source_row,
-)
+top_performance_metrics = dict(main_metrics)
 
-years = available_years_from_frames(list(papers.values()) + [btc_df])
+years = available_years_from_frames([production_timeseries_df])
 if not years:
     st.error(f"{t(lang, 'load_failed')}: no usable dates")
     st.stop()
 
-main_equity_df = papers[main_key][["ts", "equity"]].dropna().copy()
-reference_equity_df = None
+main_equity_df = production_timeseries_df[["ts", "equity"]].dropna().copy()
 
 tabs = st.tabs(t(lang, "tabs"))
 
 with tabs[0]:
-    home_cards = []
+    trade_count_label = "Pocet obchodov" if lang == "sk" else "Trade count"
+    current_drawdown_label = "Aktualny drawdown" if lang == "sk" else "Current drawdown"
+    reason_text = str(
+        production_diagnostics.get("latest_state_explanation")
+        or get_nested_value(production_snapshot, "decision_context", "current_reason_text")
+        or ""
+    ).strip()
+    wait_condition = dict(production_diagnostics.get("current_wait_condition") or {})
+    current_trade_state = dict(production_diagnostics.get("current_trade_state") or {})
+    pain_points = list(production_diagnostics.get("current_pain_points") or [])
+    recent_rebalance_rows = [
+        {
+            "Date" if lang == "en" else "Datum": format_date_text(item.get("date"), lang),
+            "Asset": safe_text_value(item.get("held_asset"), lang=lang),
+            "Exposure" if lang == "en" else "Expozicia": safe_text_value(item.get("exposure"), lang=lang),
+            "Reason" if lang == "en" else "Dovod": safe_text_value(item.get("reason_code"), lang=lang),
+        }
+        for item in list(production_diagnostics.get("recent_rebalance_events") or [])[:5]
+    ]
+    recent_regime_rows = [
+        {
+            "Date" if lang == "en" else "Datum": format_date_text(item.get("date"), lang),
+            "Asset": safe_text_value(item.get("held_asset"), lang=lang),
+            "Regime": safe_text_value(item.get("regime"), lang=lang),
+            "Reason" if lang == "en" else "Dovod": safe_text_value(item.get("reason_code"), lang=lang),
+        }
+        for item in list(production_diagnostics.get("recent_regime_changes") or [])[:5]
+    ]
 
-    if live_public_state.get("has_new_fields"):
-        held_value = resolve_homepage_held_state(live_public_state, lang=lang)
-        if held_value != t(lang, "na"):
-            home_cards.append(
-                {
-                    "label": t(lang, "currently_holding"),
-                    "value": held_value,
-                    "subtitle": "",
-                    "help": METRIC_HELP[lang][t(lang, "currently_holding")],
-                    "accent": "blue",
-                }
+    home_cards = [
+        {
+            "label": t(lang, "currently_holding"),
+            "value": safe_text_value(production_snapshot.get("current_asset"), lang=lang),
+            "subtitle": safe_text_value(production_snapshot.get("current_regime"), lang=lang),
+            "help": METRIC_HELP[lang][t(lang, "currently_holding")],
+            "accent": "blue",
+        },
+        {
+            "label": t(lang, "production_exposure"),
+            "value": f"{as_float(production_snapshot.get('current_exposure')):.2f}x" if as_float(production_snapshot.get("current_exposure")) is not None else t(lang, "na"),
+            "subtitle": safe_text_value(production_snapshot.get("execution_state"), lang=lang),
+            "help": METRIC_HELP[lang][t(lang, "production_exposure")],
+            "accent": "green",
+        },
+        {
+            "label": t(lang, "trend_state"),
+            "value": safe_text_value(trend_live.get("trend_state_label"), lang=lang),
+            "subtitle": safe_metric_text(trend_live.get("trend_score"), decimals=4, suffix="", lang=lang),
+            "help": METRIC_HELP[lang][t(lang, "trend_state")],
+            "accent": "orange",
+        },
+        {
+            "label": t(lang, "production_closed_day"),
+            "value": format_date_text(production_snapshot.get("closed_day"), lang),
+            "subtitle": (
+                f"{t(lang, 'production_next_rebalance')}: "
+                f"{format_date_text(production_snapshot.get('next_rebalance_date'), lang)}"
+            ),
+            "help": METRIC_HELP[lang][t(lang, "production_closed_day")],
+            "accent": "violet",
+        },
+    ]
+    home_cols = st.columns(len(home_cards))
+    for col, item in zip(home_cols, home_cards):
+        with col:
+            render_color_card(
+                item["label"],
+                item["value"],
+                item["subtitle"],
+                item["help"],
+                item["accent"],
             )
-
-        home_cards.append(
-            {
-                "label": t(lang, "trend_state"),
-                "value": safe_metric_text(trend_live.get("trend_score"), decimals=4, suffix="", lang=lang),
-                "subtitle": safe_text_value(trend_live.get("trend_state_label"), lang=lang),
-                "help": METRIC_HELP[lang][t(lang, "trend_score")],
-                "accent": "orange",
-            }
-        )
-
-    if home_cards:
-        home_cols = st.columns(len(home_cards))
-        for col, item in zip(home_cols, home_cards):
-            with col:
-                render_color_card(
-                    item["label"],
-                    item["value"],
-                    item["subtitle"],
-                    item["help"],
-                    item["accent"],
-                )
-
-    
 
     st.markdown(f"### {t(lang, 'chart_title')}")
     selected_year_home = st.selectbox(
@@ -4370,19 +4630,16 @@ with tabs[0]:
         key="selected_year_home",
     )
     st.plotly_chart(
-        make_capital_chart(
-            main_df=papers[main_key],
-            reference_df=reference_equity_df,
-            btc_df=btc_df,
+        make_production_equity_chart(
+            timeseries_df=production_timeseries_df,
             year=selected_year_home,
             lang=lang,
             main_label=labels.get(main_key, main_key),
-            reference_label=labels.get(reference_key, reference_key),
-            btc_label=t(lang, "btc_label"),
             title=t(lang, "chart_title"),
         ),
         width="stretch",
     )
+    st.caption(t(lang, "production_chart_note"))
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
     perf1 = st.columns(3)
@@ -4397,9 +4654,9 @@ with tabs[0]:
     with perf2[0]:
         render_color_card(t(lang, "max_dd"), safe_metric_text(main_metrics.get("max_drawdown_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "max_dd")], "orange")
     with perf2[1]:
-        render_color_card(t(lang, "sharpe"), safe_metric_text(main_metrics.get("sharpe"), decimals=3, suffix="", lang=lang), "", METRIC_HELP[lang][t(lang, "sharpe")], "neutral")
+        render_color_card(t(lang, "total_return"), safe_metric_text(main_metrics.get("total_return_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "total_return")], "neutral")
     with perf2[2]:
-        render_color_card(t(lang, "sortino"), safe_metric_text(main_metrics.get("sortino"), decimals=3, suffix="", lang=lang), "", METRIC_HELP[lang][t(lang, "sortino")], "neutral")
+        render_color_card(trade_count_label, safe_int_text(main_metrics.get("trade_count"), lang=lang), "", "", "neutral")
 
     st.markdown(f"### {t(lang, 'trend_title')}")
     st.caption(t(lang, "trend_desc"))
@@ -4407,51 +4664,103 @@ with tabs[0]:
     if trend_barometer_warnings:
         for warning_text in trend_barometer_warnings:
             st.warning(warning_text)
-    else:
-        trend_cols = st.columns([1.35, 1.65])
-        with trend_cols[0]:
-            st.plotly_chart(make_trend_gauge(trend_live, lang), width="stretch")
+    trend_cols = st.columns([1.35, 1.65])
+    with trend_cols[0]:
+        st.plotly_chart(make_trend_gauge(trend_live, lang), width="stretch")
 
-        with trend_cols[1]:
-            tc1 = st.columns(2)
-            with tc1[0]:
-                render_color_card(
-                    t(lang, "trend_state"),
-                    safe_text_value(trend_live.get("trend_state_label"), lang=lang),
-                    "",
-                    METRIC_HELP[lang][t(lang, "trend_state")],
-                    "orange",
-                )
-            with tc1[1]:
-                render_color_card(
-                    t(lang, "buy_threshold"),
-                    safe_metric_text(trend_live.get("buy_threshold"), decimals=4, suffix="", lang=lang),
-                    trend_cross_text(trend_live, lang),
-                    METRIC_HELP[lang][t(lang, "buy_threshold")],
-                    "violet",
-                )
+    with trend_cols[1]:
+        tc1 = st.columns(2)
+        with tc1[0]:
+            render_color_card(
+                t(lang, "trend_state"),
+                safe_text_value(trend_live.get("trend_state_label"), lang=lang),
+                "",
+                METRIC_HELP[lang][t(lang, "trend_state")],
+                "orange",
+            )
+        with tc1[1]:
+            render_color_card(
+                t(lang, "buy_threshold"),
+                safe_metric_text(trend_live.get("buy_threshold"), decimals=4, suffix="", lang=lang),
+                trend_cross_text(trend_live, lang),
+                METRIC_HELP[lang][t(lang, "buy_threshold")],
+                "violet",
+            )
 
-            st.caption(t(lang, "trend_threshold_note"))
-            if trend_live.get("trend_calc_date"):
-                st.caption(
-                    f"{'Datum vypoctu' if lang == 'sk' else 'Calc date'}: "
-                    f"{format_date_text(trend_live.get('trend_calc_date'), lang)}"
-                )
+        st.caption(t(lang, "trend_threshold_note"))
+        if trend_live.get("trend_calc_date"):
+            st.caption(
+                f"{'Datum vypoctu' if lang == 'sk' else 'Calc date'}: "
+                f"{format_date_text(trend_live.get('trend_calc_date'), lang)}"
+            )
 
-        if not trend_history_df.empty:
-            st.plotly_chart(make_trend_history_chart(trend_history_df, lang), width="stretch")
-            st.caption(t(lang, "trend_history_note"))
+    if not trend_history_df.empty:
+        st.plotly_chart(make_trend_history_chart(trend_history_df, lang), width="stretch")
+        st.caption(t(lang, "trend_history_note"))
 
     st.markdown(f"### {t(lang, 'ops_title')}")
     ops = st.columns(4)
     with ops[0]:
-        render_color_card(t(lang, "total_return"), safe_metric_text(main_metrics.get("total_return_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "total_return")], "blue")
+        render_color_card(t(lang, "switch_count"), safe_int_text(main_metrics.get("switch_count"), lang=lang), "", METRIC_HELP[lang][t(lang, "switch_count")], "blue")
     with ops[1]:
-        render_color_card(t(lang, "switch_count"), safe_int_text(main_metrics.get("switch_count"), lang=lang), "", METRIC_HELP[lang][t(lang, "switch_count")], "neutral")
+        render_color_card(t(lang, "cash_days"), safe_day_metric_text(main_metrics.get("cash_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cash_days")], "neutral")
     with ops[2]:
-        render_color_card(t(lang, "cash_days"), safe_day_metric_text(main_metrics.get("cash_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cash_days")], "green")
+        render_color_card(t(lang, "btc_days"), safe_day_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "green")
     with ops[3]:
-        render_color_card(t(lang, "btc_days"), safe_day_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "violet")
+        render_color_card(current_drawdown_label, safe_metric_text(get_nested_value(production_snapshot, "decision_context", "current_drawdown_pct"), lang=lang), "", "", "violet")
+
+    st.markdown(f"### {t(lang, 'production_reason_title')}")
+    diag_cols = st.columns(3)
+    with diag_cols[0]:
+        st.info(reason_text or t(lang, "na"))
+        validation_label = (
+            t(lang, "production_validation_passed")
+            if str(production_quality.get("status") or "").strip().lower() == "passed"
+            else t(lang, "production_validation_failed")
+        )
+        st.caption(
+            f"{t(lang, 'production_signal_health')}: {validation_label} | "
+            f"{safe_text_value(production_snapshot.get('strategy_version'), lang=lang)}"
+        )
+    with diag_cols[1]:
+        st.markdown(f"#### {t(lang, 'production_wait_title')}")
+        st.write(
+            str(wait_condition.get("text") or current_trade_state.get("waiting_reason_text") or t(lang, "na"))
+        )
+        st.caption(
+            f"{'Waiting' if lang == 'en' else 'Cakanie'}: "
+            f"{t(lang, 'production_waiting_yes') if as_bool(current_trade_state.get('is_waiting')) else t(lang, 'production_waiting_no')}"
+        )
+        wait_current_rows = [
+            {"Field" if lang == "en" else "Pole": key, "Value" if lang == "en" else "Hodnota": safe_text_value(value, lang=lang)}
+            for key, value in dict(wait_condition.get("current_values") or {}).items()
+        ]
+        wait_target_rows = [
+            {"Field" if lang == "en" else "Pole": key, "Value" if lang == "en" else "Hodnota": safe_text_value(value, lang=lang)}
+            for key, value in dict(wait_condition.get("target_condition") or {}).items()
+        ]
+        if wait_current_rows:
+            st.caption(t(lang, "production_wait_current"))
+            render_app_table(wait_current_rows, emphasize_first_column=True)
+        if wait_target_rows:
+            st.caption(t(lang, "production_wait_target"))
+            render_app_table(wait_target_rows, emphasize_first_column=True)
+    with diag_cols[2]:
+        st.markdown(f"#### {t(lang, 'production_pain_title')}")
+        if pain_points:
+            for pain_point in pain_points:
+                severity = safe_text_value(pain_point.get("severity"), lang=lang).upper()
+                st.markdown(f"- **{severity}** {safe_text_value(pain_point.get('text'), lang=lang)}")
+        else:
+            st.caption(t(lang, "na"))
+
+    if recent_rebalance_rows:
+        with st.expander(t(lang, "production_recent_rebalances"), expanded=False):
+            render_app_table(recent_rebalance_rows, emphasize_first_column=True)
+    if recent_regime_rows:
+        with st.expander(t(lang, "production_recent_regimes"), expanded=False):
+            render_app_table(recent_regime_rows, emphasize_first_column=True)
+
     refresh_currentness_state = str(
         runtime_table_payload.get("currentness_state") or "missing_authority_artifact"
     ).strip()
@@ -4513,9 +4822,6 @@ with tabs[0]:
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))
-
-    if paper_errors:
-        st.warning(" / ".join(paper_errors))
 
 with tabs[1]:
     configured_account_username, configured_account_password, _account_login_source = load_account_login_credentials()
