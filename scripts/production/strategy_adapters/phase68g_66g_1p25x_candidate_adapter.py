@@ -24,10 +24,10 @@ ROOT = Path(__file__).resolve().parents[3]
 PRODUCTION_STRATEGY_ID = "current_strategy"
 SOURCE_STRATEGY_VERSION = "phase68g_66g_1p25x_candidate"
 ADAPTER_NAME = "phase68g_66g_1p25x_candidate_adapter"
-SNAPSHOT_SCHEMA_VERSION = 3
-DIAGNOSTICS_SCHEMA_VERSION = 3
-QUALITY_SCHEMA_VERSION = 3
-MANIFEST_SCHEMA_VERSION = 3
+SNAPSHOT_SCHEMA_VERSION = 4
+DIAGNOSTICS_SCHEMA_VERSION = 4
+QUALITY_SCHEMA_VERSION = 4
+MANIFEST_SCHEMA_VERSION = 4
 SUMMARY_TOLERANCE = 1e-6
 
 
@@ -234,6 +234,61 @@ def _rolling_sharpe(series: pd.Series, window: int) -> pd.Series:
     return sharpe.replace([np.inf, -np.inf], np.nan)
 
 
+def _annualized_sharpe_from_daily_returns(series: pd.Series) -> float | None:
+    daily_returns = pd.to_numeric(series, errors="coerce").dropna().tolist()
+    if len(daily_returns) < 2:
+        return None
+    mean_ret = sum(daily_returns) / len(daily_returns)
+    variance = sum((value - mean_ret) ** 2 for value in daily_returns) / (len(daily_returns) - 1)
+    if variance <= 0:
+        return None
+    std = variance**0.5
+    if std == 0:
+        return None
+    return (mean_ret / std) * (365**0.5)
+
+
+def _annualized_sortino_from_daily_returns(series: pd.Series) -> float | None:
+    daily_returns = pd.to_numeric(series, errors="coerce").dropna().tolist()
+    if len(daily_returns) < 2:
+        return None
+    mean_ret = sum(daily_returns) / len(daily_returns)
+    downside = [value for value in daily_returns if value < 0]
+    if len(downside) < 2:
+        return None
+    downside_mean = sum(downside) / len(downside)
+    downside_variance = sum((value - downside_mean) ** 2 for value in downside) / (
+        len(downside) - 1
+    )
+    if downside_variance <= 0:
+        return None
+    downside_std = downside_variance**0.5
+    if downside_std == 0:
+        return None
+    return (mean_ret / downside_std) * (365**0.5)
+
+
+def _prepare_btc_benchmark_frame(frame: pd.DataFrame) -> pd.DataFrame:
+    if "date" not in frame.columns:
+        raise KeyError("benchmark_ohlcv is missing required date column")
+    if "close" not in frame.columns:
+        raise KeyError("benchmark_ohlcv is missing required close column")
+    prepared = pd.DataFrame()
+    prepared["date"] = pd.to_datetime(frame["date"], errors="coerce").dt.normalize()
+    prepared["btc_close"] = pd.to_numeric(frame["close"], errors="coerce")
+    prepared = (
+        prepared.dropna(subset=["date", "btc_close"])
+        .sort_values("date")
+        .drop_duplicates(subset=["date"], keep="last")
+        .reset_index(drop=True)
+    )
+    if prepared.empty:
+        raise ValueError("benchmark_ohlcv has no usable date/close rows")
+    if (prepared["btc_close"] <= 0).any():
+        raise ValueError("benchmark_ohlcv.close must stay strictly positive")
+    return prepared
+
+
 def _consecutive_tail_length(series: pd.Series) -> int:
     if series.empty:
         return 0
@@ -305,6 +360,7 @@ class Phase68g66g1p25xCandidateAdapter:
             / "execution"
             / "freshness"
             / "app_freshness_report.json",
+            "benchmark_ohlcv": repo_root / "data" / "ohlcv" / "BTCUSDT_1d.csv",
         }
 
     def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
@@ -316,6 +372,9 @@ class Phase68g66g1p25xCandidateAdapter:
         trend_status_row = _read_single_csv_row_required(source_paths["trend_status"])
         trend_history_df = _read_dataframe_required(source_paths["trend_history"])
         freshness_payload = _read_json_required(source_paths["freshness_report"])
+        benchmark_df = _prepare_btc_benchmark_frame(
+            _read_dataframe_required(source_paths["benchmark_ohlcv"])
+        )
 
         closed_day = _normalize_iso_day_text(
             summary_row.get("latest_available_date"),
@@ -339,6 +398,10 @@ class Phase68g66g1p25xCandidateAdapter:
             freshness_payload.get("latest_closed_utc_date"),
             context="freshness_report.latest_closed_utc_date",
         )
+        benchmark_last_day = _normalize_iso_day_text(
+            benchmark_df["date"].iloc[-1].strftime("%Y-%m-%d"),
+            context="benchmark_ohlcv.last_row.date",
+        )
         freshness_status = str(freshness_payload.get("status") or "").strip().lower()
         freshness_errors = freshness_payload.get("errors")
         if freshness_status not in {"ok", "success", "current"}:
@@ -347,6 +410,11 @@ class Phase68g66g1p25xCandidateAdapter:
             )
         if isinstance(freshness_errors, list) and freshness_errors:
             raise ValueError("freshness_report.errors must be empty for production build")
+        if benchmark_last_day != closed_day:
+            raise ValueError(
+                "benchmark_ohlcv last date must match the production closed day "
+                f"(actual={benchmark_last_day} expected={closed_day})"
+            )
 
         config = NetCostExportConfig(
             annual_borrow_cost=_to_float(
@@ -379,16 +447,19 @@ class Phase68g66g1p25xCandidateAdapter:
             "trend_status_row": trend_status_row,
             "trend_history_df": trend_history_df,
             "freshness_payload": freshness_payload,
+            "benchmark_df": benchmark_df,
             "closed_day": closed_day,
             "paper_last_day": paper_last_day,
             "trend_status_day": trend_status_day,
             "trend_history_last_day": trend_history_last_day,
             "freshness_closed_day": freshness_closed_day,
+            "benchmark_last_day": benchmark_last_day,
             "config": config,
         }
 
     def build_timeseries(self, inputs: dict[str, Any]) -> pd.DataFrame:
         paper_df = inputs["paper_df"].copy()
+        benchmark_df = inputs["benchmark_df"].copy()
         model_export_df = build_net_cost_export_frame(
             paper_df,
             date_col="date",
@@ -448,6 +519,25 @@ class Phase68g66g1p25xCandidateAdapter:
             leverage_col="authorized_effective_leverage",
             config=inputs["config"],
         )
+        benchmark_aligned = pd.DataFrame({"date": model_export_df["date"]}).merge(
+            benchmark_df,
+            on="date",
+            how="left",
+        )
+        if benchmark_aligned["btc_close"].isna().any():
+            missing_dates = (
+                benchmark_aligned.loc[benchmark_aligned["btc_close"].isna(), "date"]
+                .dt.strftime("%Y-%m-%d")
+                .head(5)
+                .tolist()
+            )
+            raise ValueError(
+                "benchmark_ohlcv is missing rows required for Production Core timeseries "
+                f"(examples: {', '.join(missing_dates)})"
+            )
+        btc_return = benchmark_aligned["btc_close"].pct_change().fillna(0.0)
+        btc_baseline_equity = (1.0 + btc_return).cumprod()
+        btc_baseline_index = btc_baseline_equity * 100.0
 
         timeseries = pd.DataFrame()
         timeseries["date"] = model_export_df["date"].dt.strftime("%Y-%m-%d")
@@ -490,6 +580,10 @@ class Phase68g66g1p25xCandidateAdapter:
         timeseries["authorized_return_gross"] = authorized_export_df["gross_return"]
         timeseries["authorized_return_net"] = authorized_export_df["net_return"]
         timeseries["authorized_equity"] = authorized_export_df["equity_curve_net"]
+        timeseries["btc_close"] = benchmark_aligned["btc_close"]
+        timeseries["btc_return"] = btc_return
+        timeseries["btc_baseline_equity"] = btc_baseline_equity
+        timeseries["btc_baseline_index"] = btc_baseline_index
         timeseries["return_gross"] = timeseries["authorized_return_gross"]
         timeseries["return_net"] = timeseries["authorized_return_net"]
         timeseries["equity"] = timeseries["authorized_equity"]
@@ -559,6 +653,11 @@ class Phase68g66g1p25xCandidateAdapter:
                 ),
                 "status": str(inputs["freshness_payload"].get("status") or "").strip().lower(),
             },
+            "benchmark_ohlcv": _source_file_metadata(
+                inputs["source_paths"]["benchmark_ohlcv"],
+                last_date=inputs["benchmark_last_day"],
+                row_count=len(inputs["benchmark_df"]),
+            ),
         }
 
     def build_source_inputs(self, inputs: dict[str, Any]) -> dict[str, Any]:
@@ -641,12 +740,22 @@ class Phase68g66g1p25xCandidateAdapter:
 
     def build_snapshot_metrics(self, inputs: dict[str, Any], timeseries: pd.DataFrame) -> dict[str, Any]:
         derived_summary = self.derive_summary_from_timeseries(inputs, timeseries)
+        sharpe = _annualized_sharpe_from_daily_returns(timeseries["authorized_return_net"])
+        sortino = _annualized_sortino_from_daily_returns(timeseries["authorized_return_net"])
+        if sharpe is None or not np.isfinite(sharpe):
+            raise ValueError("Unable to compute authorized Sharpe ratio from Production Core timeseries")
+        if sortino is None or not np.isfinite(sortino):
+            raise ValueError(
+                "Unable to compute authorized Sortino ratio from Production Core timeseries"
+            )
         return {
             "total_return_pct_net": round(float(derived_summary["total_return_pct_net"]), 4),
             "cagr_pct_net": round(float(derived_summary["cagr_pct_net"]), 4),
             "max_drawdown_pct_net": round(float(derived_summary["max_drawdown_pct_net"]), 4),
             "since2023_cagr_pct_net": round(float(derived_summary["since2023_cagr_pct_net"]), 4),
             "since2025_cagr_pct_net": round(float(derived_summary["since2025_cagr_pct_net"]), 4),
+            "sharpe": round(float(sharpe), 4),
+            "sortino": round(float(sortino), 4),
             "trading_fees_total_pct": round(float(derived_summary["trading_fees_total_pct"]), 6),
             "funding_total_pct": round(float(derived_summary["funding_total_pct"]), 6),
             "borrow_cost_total_pct": round(float(derived_summary["borrow_cost_total_pct"]), 6),

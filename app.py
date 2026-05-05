@@ -643,6 +643,7 @@ TEXT["sk"].update(
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
         "production_chart_note": "Graf ukazuje iba autorizovanu krivku kapitalu strategie po povoleni expozicie. Samotna krivka nehovori, aky kandidat aktiva model prave preferuje.",
+        "production_chart_baseline_note": "Cervena krivka je autorizovana strategia. Zlata krivka je BTC baseline prepocitana zo zaverecnych cien a rebased na rovnaky zaciatok zobrazeneho obdobia.",
         "production_chart_flat_note": "Ked strategia nema povolenu trhovu expoziciu, autorizovany kapital zostava rovny okrem explicitnych nakladov na prechod.",
         "production_chart_participation_note": "Stavovy banner a spodny strip ukazuju, kedy bola strategia realne v trhu a aku autorizovanu expoziciu mala.",
         "production_reason_title": "Preto je strategia teraz v tomto stave",
@@ -658,10 +659,14 @@ TEXT["sk"].update(
         "production_waiting_yes": "Ano",
         "production_waiting_no": "Nie",
         "production_chart_exposure_legend": "Autorizovana expozicia",
+        "production_chart_btc_legend": "BTC baseline",
         "production_chart_exposure_axis": "Autorizovana expozicia",
         "production_hover_market_state": "Stav trhu",
         "production_hover_authorized_exposure": "Autorizovana expozicia",
         "production_hover_candidate_asset": "Kandidat strategie",
+        "production_hover_btc_close": "BTC close",
+        "production_hover_btc_return": "Denny pohyb BTC",
+        "production_hover_btc_index": "BTC index",
         "production_hover_market_state_in": "V TRHU",
         "production_hover_market_state_out": "MIMO TRHU",
         "production_chart_current_prefix": "Aktualne",
@@ -676,6 +681,7 @@ TEXT["en"].update(
         "production_closed_day": "Last closed day",
         "production_next_rebalance": "Next rebalance",
         "production_chart_note": "This chart shows only the authorized strategy capital curve after exposure permission. The line alone does not tell you which candidate asset the model currently prefers.",
+        "production_chart_baseline_note": "The red line is the authorized strategy. The gold line is a BTC baseline built from closing prices and rebased to the same start of the visible period.",
         "production_chart_flat_note": "When the strategy has no authorized market exposure, authorized capital should stay flat except for explicit transition costs.",
         "production_chart_participation_note": "The state banner and the lower strip show when the strategy was actually in market and what authorized exposure it had.",
         "production_reason_title": "Why the strategy is in this state",
@@ -691,10 +697,14 @@ TEXT["en"].update(
         "production_waiting_yes": "Yes",
         "production_waiting_no": "No",
         "production_chart_exposure_legend": "Authorized exposure",
+        "production_chart_btc_legend": "BTC baseline",
         "production_chart_exposure_axis": "Authorized exposure",
         "production_hover_market_state": "Market state",
         "production_hover_authorized_exposure": "Authorized exposure",
         "production_hover_candidate_asset": "Strategy candidate",
+        "production_hover_btc_close": "BTC close",
+        "production_hover_btc_return": "BTC daily move",
+        "production_hover_btc_index": "BTC index",
         "production_hover_market_state_in": "IN MARKET",
         "production_hover_market_state_out": "OUT OF MARKET",
         "production_chart_current_prefix": "Current",
@@ -718,6 +728,8 @@ METRIC_HELP["sk"].update(
         TEXT["sk"]["trend_score"]: "Trend score je z Production Core snapshotu a jeho historia z Production Core timeseries.",
         TEXT["sk"]["buy_threshold"]: "Hranica vstupu sa cita z posledneho validovaneho riadku Production Core timeseries.",
         TEXT["sk"]["total_return"]: "Celkovy vynos je citany z Production Core snapshot metrics.",
+        TEXT["sk"]["sharpe"]: "Sharpe ratio sa pocita z autorizovanych dennych netto vynosov a cita z Production Core snapshot metrics.",
+        TEXT["sk"]["sortino"]: "Sortino ratio sa pocita z autorizovanych dennych netto vynosov a cita z Production Core snapshot metrics.",
         TEXT["sk"]["max_dd"]: "Max drawdown je citany z Production Core snapshot metrics.",
         TEXT["sk"]["switch_count"]: "Pocet prepnuti je citany z Production Core snapshot metrics.",
         TEXT["sk"]["trade_count"]: "Pocet obchodov je citany priamo z Production Core snapshotu.",
@@ -747,6 +759,8 @@ METRIC_HELP["en"].update(
         TEXT["en"]["trend_score"]: "The trend score comes from the Production Core snapshot and its history from the Production Core timeseries.",
         TEXT["en"]["buy_threshold"]: "The entry threshold is read from the latest validated row of the Production Core timeseries.",
         TEXT["en"]["total_return"]: "Total return is read from the Production Core snapshot metrics.",
+        TEXT["en"]["sharpe"]: "Sharpe ratio is computed from authorized daily net returns and read from the Production Core snapshot metrics.",
+        TEXT["en"]["sortino"]: "Sortino ratio is computed from authorized daily net returns and read from the Production Core snapshot metrics.",
         TEXT["en"]["max_dd"]: "Max drawdown is read from the Production Core snapshot metrics.",
         TEXT["en"]["switch_count"]: "Switch count is read from the Production Core snapshot metrics.",
         TEXT["en"]["trade_count"]: "Trade count is read directly from the Production Core snapshot.",
@@ -1044,6 +1058,10 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
         "authorized_return_gross",
         "authorized_return_net",
         "authorized_equity",
+        "btc_close",
+        "btc_return",
+        "btc_baseline_equity",
+        "btc_baseline_index",
         "equity",
         "reason_code",
         "source_validated",
@@ -1069,6 +1087,10 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
         "authorized_return_gross",
         "authorized_return_net",
         "authorized_equity",
+        "btc_close",
+        "btc_return",
+        "btc_baseline_equity",
+        "btc_baseline_index",
         "equity",
         "drawdown_pct",
         "rolling_return_7d",
@@ -1081,7 +1103,15 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
             frame[numeric_column] = pd.to_numeric(frame[numeric_column], errors="coerce")
 
     frame = (
-        frame.dropna(subset=["ts", "authorized_equity"])
+        frame.dropna(
+            subset=[
+                "ts",
+                "authorized_equity",
+                "btc_close",
+                "btc_baseline_equity",
+                "btc_baseline_index",
+            ]
+        )
         .sort_values("ts")
         .drop_duplicates(subset=["ts"], keep="last")
         .reset_index(drop=True)
@@ -1150,6 +1180,14 @@ def validate_production_homepage_bundle(
         stop_for_production_homepage_block("diagnostics validation status is not passed")
     if str(snapshot.get("strategy_status") or "").strip().lower() != "ready":
         stop_for_production_homepage_block("strategy_status is not ready")
+    metrics = snapshot.get("metrics")
+    if not isinstance(metrics, dict):
+        stop_for_production_homepage_block("snapshot.metrics is missing")
+    for metric_name in ("sharpe", "sortino"):
+        if as_float(metrics.get(metric_name)) is None:
+            stop_for_production_homepage_block(
+                f"snapshot.metrics.{metric_name} is missing or non-numeric"
+            )
 
     snapshot_day = str(snapshot.get("closed_day") or "").strip()
     diagnostics_day = str(diagnostics.get("closed_day") or "").strip()
@@ -1222,6 +1260,53 @@ def validate_production_homepage_bundle(
         "equity",
         field_name="primary equity semantics",
     )
+    btc_close_series = pd.to_numeric(timeseries_df["btc_close"], errors="coerce")
+    btc_return_series = pd.to_numeric(timeseries_df["btc_return"], errors="coerce")
+    btc_baseline_equity_series = pd.to_numeric(
+        timeseries_df["btc_baseline_equity"],
+        errors="coerce",
+    )
+    btc_baseline_index_series = pd.to_numeric(
+        timeseries_df["btc_baseline_index"],
+        errors="coerce",
+    )
+    if (
+        btc_close_series.isna().any()
+        or btc_return_series.isna().any()
+        or btc_baseline_equity_series.isna().any()
+        or btc_baseline_index_series.isna().any()
+    ):
+        stop_for_production_homepage_block("BTC baseline fields contain non-numeric values")
+    if (btc_close_series <= 0).any():
+        stop_for_production_homepage_block("BTC baseline close must stay strictly positive")
+    reconstructed_btc_return_series = btc_close_series.pct_change().fillna(0.0)
+    btc_return_mismatch = (
+        reconstructed_btc_return_series - btc_return_series
+    ).abs() > 1e-9
+    if btc_return_mismatch.any():
+        bad_dates = timeseries_df.loc[btc_return_mismatch, "date"].astype(str).head(5).tolist()
+        stop_for_production_homepage_block(
+            "BTC baseline return mismatch in production timeseries on dates: "
+            + ", ".join(bad_dates)
+        )
+    btc_equity_mismatch = (
+        (1.0 + btc_return_series).cumprod() - btc_baseline_equity_series
+    ).abs() > 1e-9
+    if btc_equity_mismatch.any():
+        bad_dates = timeseries_df.loc[btc_equity_mismatch, "date"].astype(str).head(5).tolist()
+        stop_for_production_homepage_block(
+            "BTC baseline equity mismatch in production timeseries on dates: "
+            + ", ".join(bad_dates)
+        )
+    btc_index_mismatch = (
+        (btc_baseline_equity_series * 100.0) - btc_baseline_index_series
+    ).abs() > 1e-9
+    if btc_index_mismatch.any():
+        bad_dates = timeseries_df.loc[btc_index_mismatch, "date"].astype(str).head(5).tolist()
+        stop_for_production_homepage_block(
+            "BTC baseline index mismatch in production timeseries on dates: "
+            + ", ".join(bad_dates)
+        )
     _production_compare_float(
         snapshot.get("model_candidate_exposure"),
         last_row.get("model_candidate_exposure"),
@@ -4854,7 +4939,15 @@ def make_production_equity_chart(
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
     rebased_equity = rebase_series(main_plot["authorized_equity"])
-    daily_return_pct = pd.to_numeric(main_plot.get("authorized_return_net"), errors="coerce").fillna(0.0) * 100.0
+    rebased_btc_baseline = rebase_series(main_plot["btc_baseline_equity"])
+    daily_return_pct = (
+        pd.to_numeric(main_plot.get("authorized_return_net"), errors="coerce").fillna(0.0)
+        * 100.0
+    )
+    btc_return_pct = (
+        pd.to_numeric(main_plot.get("btc_return"), errors="coerce").fillna(0.0) * 100.0
+    )
+    btc_close_series = pd.to_numeric(main_plot.get("btc_close"), errors="coerce")
     legend_label = t(lang, "production_chart_legend") if str(t(lang, "production_chart_legend")).strip() else main_label
     exposure_series = pd.to_numeric(main_plot.get("effective_market_exposure"), errors="coerce").fillna(0.0)
     max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
@@ -4872,12 +4965,18 @@ def make_production_equity_chart(
             main_plot.get("trend_permission_active", pd.Series([False] * len(main_plot), index=main_plot.index)).tolist(),
         )
     ]
-    hover_customdata = list(
+    strategy_hover_customdata = list(
         zip(
             [f"{value:+.2f}%" for value in daily_return_pct.tolist()],
             market_state_labels,
             [f"{value:.2f}x" for value in exposure_series.tolist()],
             candidate_labels.tolist(),
+        )
+    )
+    btc_hover_customdata = list(
+        zip(
+            [f"{value:+.2f}%" for value in btc_return_pct.tolist()],
+            [f"${value:,.2f}" for value in btc_close_series.tolist()],
         )
     )
     market_state_flags = [
@@ -4932,7 +5031,7 @@ def make_production_equity_chart(
             mode="lines",
             name=legend_label or main_label,
             line=dict(width=4.8, color="#ff6b6b"),
-            customdata=hover_customdata,
+            customdata=strategy_hover_customdata,
             hovertemplate=(
                 f"{t(lang, 'production_hover_date')}: %{{x|%d.%m.%Y}}<br>"
                 f"{t(lang, 'production_hover_index')}: %{{y:.2f}}<br>"
@@ -4940,6 +5039,23 @@ def make_production_equity_chart(
                 f"{t(lang, 'production_hover_market_state')}: %{{customdata[1]}}<br>"
                 f"{t(lang, 'production_hover_authorized_exposure')}: %{{customdata[2]}}<br>"
                 f"{t(lang, 'production_hover_candidate_asset')}: %{{customdata[3]}}<extra></extra>"
+            ),
+        ),
+        row=1,
+        col=1,
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=main_plot["ts"],
+            y=rebased_btc_baseline,
+            mode="lines",
+            name=t(lang, "production_chart_btc_legend"),
+            line=dict(width=2.8, color="#f4b942"),
+            customdata=btc_hover_customdata,
+            hovertemplate=(
+                f"{t(lang, 'production_hover_btc_index')}: %{{y:.2f}}<br>"
+                f"{t(lang, 'production_hover_btc_return')}: %{{customdata[0]}}<br>"
+                f"{t(lang, 'production_hover_btc_close')}: %{{customdata[1]}}<extra></extra>"
             ),
         ),
         row=1,
@@ -5405,25 +5521,30 @@ with tabs[0]:
         width="stretch",
     )
     st.caption(t(lang, "production_chart_note"))
+    st.caption(t(lang, "production_chart_baseline_note"))
     st.caption(t(lang, "production_chart_flat_note"))
     st.caption(t(lang, "production_chart_participation_note"))
     st.caption(build_production_chart_current_state_note(production_snapshot, production_diagnostics, lang))
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
-    perf1 = st.columns(3)
+    perf1 = st.columns(4)
     with perf1[0]:
         render_color_card(t(lang, "cagr"), safe_metric_text(top_performance_metrics.get("cagr_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cagr")], "blue")
     with perf1[1]:
         render_color_card(t(lang, "since2023"), safe_metric_text(top_performance_metrics.get("since2023_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2023")], "green")
     with perf1[2]:
         render_color_card(t(lang, "since2025"), safe_metric_text(top_performance_metrics.get("since2025_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2025")], "violet")
-
-    perf2 = st.columns(3)
-    with perf2[0]:
-        render_color_card(t(lang, "max_dd"), safe_metric_text(main_metrics.get("max_drawdown_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "max_dd")], "orange")
-    with perf2[1]:
+    with perf1[3]:
         render_color_card(t(lang, "total_return"), safe_metric_text(main_metrics.get("total_return_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "total_return")], "neutral")
+
+    perf2 = st.columns(4)
+    with perf2[0]:
+        render_color_card(t(lang, "sharpe"), safe_plain_number_text(main_metrics.get("sharpe"), lang=lang), "", METRIC_HELP[lang][t(lang, "sharpe")], "blue")
+    with perf2[1]:
+        render_color_card(t(lang, "sortino"), safe_plain_number_text(main_metrics.get("sortino"), lang=lang), "", METRIC_HELP[lang][t(lang, "sortino")], "green")
     with perf2[2]:
+        render_color_card(t(lang, "max_dd"), safe_metric_text(main_metrics.get("max_drawdown_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "max_dd")], "orange")
+    with perf2[3]:
         render_color_card(
             trade_count_label,
             safe_int_text(main_metrics.get("trade_count"), lang=lang),

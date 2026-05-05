@@ -91,6 +91,10 @@ REQUIRED_TIMESERIES_COLUMNS = [
     "authorized_return_gross",
     "authorized_return_net",
     "authorized_equity",
+    "btc_close",
+    "btc_return",
+    "btc_baseline_equity",
+    "btc_baseline_index",
     "return_gross",
     "return_net",
     "equity",
@@ -265,6 +269,7 @@ def validate_production_payloads(
         and inputs["trend_status_day"] == closed_day
         and inputs["trend_history_last_day"] == closed_day
         and inputs["freshness_closed_day"] == closed_day
+        and inputs["benchmark_last_day"] == closed_day
         and timeseries_last_day == closed_day
     )
     if not checks["source_day_alignment"]:
@@ -454,6 +459,10 @@ def validate_production_payloads(
     authorized_return_gross = pd.to_numeric(timeseries["authorized_return_gross"], errors="coerce").fillna(0.0)
     authorized_return_net = pd.to_numeric(timeseries["authorized_return_net"], errors="coerce").fillna(0.0)
     authorized_equity = pd.to_numeric(timeseries["authorized_equity"], errors="coerce")
+    btc_close = pd.to_numeric(timeseries["btc_close"], errors="coerce")
+    btc_return = pd.to_numeric(timeseries["btc_return"], errors="coerce").fillna(0.0)
+    btc_baseline_equity = pd.to_numeric(timeseries["btc_baseline_equity"], errors="coerce")
+    btc_baseline_index = pd.to_numeric(timeseries["btc_baseline_index"], errors="coerce")
     model_candidate_return_net = pd.to_numeric(
         timeseries["model_candidate_return_net"],
         errors="coerce",
@@ -558,6 +567,53 @@ def validate_production_payloads(
             f"(examples: {_summarize_bad_dates(authorized_equity_curve_mismatch, row_dates)})"
         )
 
+    if btc_close.isna().any():
+        errors.append(
+            "btc_close must be numeric on every row "
+            f"(examples: {_summarize_bad_dates(btc_close.isna(), row_dates)})"
+        )
+    elif (btc_close <= 0).any():
+        errors.append(
+            "btc_close must stay strictly positive "
+            f"(examples: {_summarize_bad_dates(btc_close <= 0, row_dates)})"
+        )
+
+    if btc_baseline_equity.isna().any():
+        errors.append(
+            "btc_baseline_equity must be numeric on every row "
+            f"(examples: {_summarize_bad_dates(btc_baseline_equity.isna(), row_dates)})"
+        )
+    if btc_baseline_index.isna().any():
+        errors.append(
+            "btc_baseline_index must be numeric on every row "
+            f"(examples: {_summarize_bad_dates(btc_baseline_index.isna(), row_dates)})"
+        )
+    if not btc_close.isna().any():
+        reconstructed_btc_return = btc_close.pct_change().fillna(0.0)
+        btc_return_mismatch = (reconstructed_btc_return - btc_return).abs() > SUMMARY_TOLERANCE
+        if btc_return_mismatch.any():
+            errors.append(
+                "btc_return must match close-to-close BTC benchmark moves "
+                f"(examples: {_summarize_bad_dates(btc_return_mismatch, row_dates)})"
+            )
+        reconstructed_btc_baseline_equity = (1.0 + btc_return).cumprod()
+        btc_equity_mismatch = (
+            reconstructed_btc_baseline_equity - btc_baseline_equity
+        ).abs() > SUMMARY_TOLERANCE
+        if btc_equity_mismatch.any():
+            errors.append(
+                "btc_baseline_equity must equal the cumulative btc_return curve "
+                f"(examples: {_summarize_bad_dates(btc_equity_mismatch, row_dates)})"
+            )
+        btc_index_mismatch = (
+            (btc_baseline_equity * 100.0) - btc_baseline_index
+        ).abs() > SUMMARY_TOLERANCE
+        if btc_index_mismatch.any():
+            errors.append(
+                "btc_baseline_index must equal btc_baseline_equity * 100 "
+                f"(examples: {_summarize_bad_dates(btc_index_mismatch, row_dates)})"
+            )
+
     checks["primary_series_use_authorized_equity_semantics"] = not (
         primary_gross_mismatch.any()
         or primary_net_mismatch.any()
@@ -571,6 +627,15 @@ def validate_production_payloads(
         or out_of_market_transition_net_mismatch.any()
     )
     checks["authorized_equity_curve_reconstructs_from_returns"] = not authorized_equity_curve_mismatch.any()
+    checks["btc_baseline_reconstructs_from_close_series"] = not (
+        btc_close.isna().any()
+        or (btc_close <= 0).any()
+        or btc_baseline_equity.isna().any()
+        or btc_baseline_index.isna().any()
+        or ((btc_close.pct_change().fillna(0.0) - btc_return).abs() > SUMMARY_TOLERANCE).any()
+        or (((1.0 + btc_return).cumprod() - btc_baseline_equity).abs() > SUMMARY_TOLERANCE).any()
+        or ((((btc_baseline_equity * 100.0) - btc_baseline_index).abs()) > SUMMARY_TOLERANCE).any()
+    )
 
     expected_source_inputs = adapter.build_source_inputs(inputs)
     source_inputs = snapshot.get("source_inputs")

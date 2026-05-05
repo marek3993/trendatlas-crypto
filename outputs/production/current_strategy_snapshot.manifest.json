@@ -1,12 +1,12 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
-  "schema_version": 3,
-  "generated_at_utc": "2026-05-05T08:41:10Z",
+  "schema_version": 4,
+  "generated_at_utc": "2026-05-05T09:48:02Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
   "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
-  "git_commit": "0d006f877b1ac8d52520ee5d856ff11672a076b1",
+  "git_commit": "16795df708c81540203f3f290729d097eb2fccb0",
   "source_inputs": {
     "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
     "strategy_id": "current_strategy",
@@ -52,6 +52,14 @@
         "modified_utc": "2026-05-05T05:26:16Z",
         "last_date": "2026-05-04",
         "status": "ok"
+      },
+      "benchmark_ohlcv": {
+        "path": "data/ohlcv/BTCUSDT_1d.csv",
+        "sha256": "ef60cbdf790d1c8feca224cde78b3b7295522d62502e96f39b1a84362a18ec57",
+        "size_bytes": 274283,
+        "modified_utc": "2026-05-05T09:29:40Z",
+        "last_date": "2026-05-04",
+        "row_count": 3183
       }
     }
   },

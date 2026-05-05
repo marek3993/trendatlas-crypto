@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot",
-  "schema_version": 3,
-  "generated_at_utc": "2026-05-05T08:41:10Z",
+  "schema_version": 4,
+  "generated_at_utc": "2026-05-05T09:48:02Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "closed_day": "2026-05-04",
@@ -27,6 +27,8 @@
     "max_drawdown_pct_net": -12.93,
     "since2023_cagr_pct_net": 198.7,
     "since2025_cagr_pct_net": 224.28,
+    "sharpe": 2.1184,
+    "sortino": 3.1919,
     "trading_fees_total_pct": 10.8225,
     "funding_total_pct": 0.0,
     "borrow_cost_total_pct": 3.614,
@@ -100,6 +102,14 @@
         "modified_utc": "2026-05-05T05:26:16Z",
         "last_date": "2026-05-04",
         "status": "ok"
+      },
+      "benchmark_ohlcv": {
+        "path": "data/ohlcv/BTCUSDT_1d.csv",
+        "sha256": "ef60cbdf790d1c8feca224cde78b3b7295522d62502e96f39b1a84362a18ec57",
+        "size_bytes": 274283,
+        "modified_utc": "2026-05-05T09:29:40Z",
+        "last_date": "2026-05-04",
+        "row_count": 3183
       }
     }
   },
@@ -115,10 +125,11 @@
       "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
       "outputs/execution/app_exports/phase66g_live_status.csv",
       "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
-      "outputs/execution/freshness/app_freshness_report.json"
+      "outputs/execution/freshness/app_freshness_report.json",
+      "data/ohlcv/BTCUSDT_1d.csv"
     ],
     "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
-    "git_commit": "0d006f877b1ac8d52520ee5d856ff11672a076b1",
+    "git_commit": "16795df708c81540203f3f290729d097eb2fccb0",
     "wait_condition": {
       "code": "trend_confirmation_pending_for_candidate_entry",
       "text": "BTC is the current candidate, but the strategy stays in CASH until trend confirmation returns (-0.1667 vs 0.1000).",

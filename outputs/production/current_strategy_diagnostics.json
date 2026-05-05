@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_diagnostics",
-  "schema_version": 3,
-  "generated_at_utc": "2026-05-05T08:41:10Z",
+  "schema_version": 4,
+  "generated_at_utc": "2026-05-05T09:48:02Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "closed_day": "2026-05-04",
