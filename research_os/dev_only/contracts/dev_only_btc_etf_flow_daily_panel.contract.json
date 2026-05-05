@@ -1,0 +1,49 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_btc_etf_flow_daily_panel_contract",
+  "artifact_id": "dev_only_btc_etf_flow_daily_panel",
+  "created_at_utc": "2026-05-05 00:00:00 UTC",
+  "owner": "MRV1 DATA",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "btc_etf_flow_data_plumbing_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "mechanism_id": "btc_etf_flow_daily_panel",
+  "mechanism_description": "Dev-only BTC ETF-flow data plumbing layer with strict U.S. trading-session semantics and causal alignment to BTC UTC daily usage.",
+  "selected_primary_source": {
+    "provider": "coinglass",
+    "endpoint": "https://open-api-v4.coinglass.com/api/etf/bitcoin/flow-history",
+    "why": "Provides historical aggregate BTC ETF flow plus per-ETF ticker breakdown in one machine-readable endpoint."
+  },
+  "optional_secondary_source": {
+    "provider": "sosovalue",
+    "endpoint": "https://api.sosovalue.xyz/openapi/v2/etf/historicalInflowChart",
+    "why": "Provides aggregate-only enrichment for cumulative net inflow, total net assets, and total value traded."
+  },
+  "required_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+    "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_per_etf_daily_child.csv",
+    "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.quality.json"
+  ],
+  "causal_alignment_rule": {
+    "us_trading_session_date": "Provider session date for the U.S. ETF trading day.",
+    "date": "BTC UTC day when the prior U.S. trading-session ETF flow first becomes causally usable.",
+    "shift_rule": "date = us_trading_session_date + 1 calendar day.",
+    "btc_spot_join_rule": "btc_spot_close is joined on us_trading_session_date only.",
+    "weekend_holiday_policy": "No synthetic weekend or U.S. holiday rows are emitted. Rolling flow features run across the last three U.S. trading sessions only."
+  },
+  "forbidden_semantics": [
+    "source_of_truth_mutation",
+    "official_truth_write",
+    "strategy_logic_materialization",
+    "synthetic_flow_backfill",
+    "scraped_html_without_machine_readable_contract",
+    "fake_data",
+    "app_runtime_change"
+  ],
+  "status": "defined_dev_only_btc_etf_flow_daily_panel"
+}
