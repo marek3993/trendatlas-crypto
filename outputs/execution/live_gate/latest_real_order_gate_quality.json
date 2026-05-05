@@ -7,8 +7,8 @@
   "production_snapshot_validation_passed": true,
   "intent_day_matches_production_snapshot": true,
   "intent_signal_matches_production_snapshot": true,
-  "blocked": false,
-  "block_reason_count": 0,
-  "would_place_real_order": true,
-  "status": "ready_if_enabled"
+  "blocked": true,
+  "block_reason_count": 4,
+  "would_place_real_order": false,
+  "status": "blocked"
 }

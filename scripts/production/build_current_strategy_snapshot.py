@@ -13,6 +13,7 @@ if str(Path(__file__).resolve().parents[2]) not in sys.path:
 
 from scripts.production.strategy_adapters.phase68g_66g_1p25x_candidate_adapter import (
     ADAPTER_NAME,
+    CASH_EQUIVALENT_ASSETS,
     MANIFEST_SCHEMA_VERSION,
     PRODUCTION_STRATEGY_ID,
     ROOT,
@@ -105,61 +106,67 @@ def _atomic_write_csv(path: Path, frame) -> None:
 
 
 def _build_wait_condition(current_row, metrics: dict[str, Any]) -> dict[str, Any]:
-    held_asset = str(current_row["held_asset"])
+    candidate_asset = str(current_row.get("candidate_asset") or "CASH").strip().upper() or "CASH"
+    actual_asset = str(
+        current_row.get("actual_held_asset", current_row.get("held_asset")) or "CASH"
+    ).strip().upper() or "CASH"
     trend_score = float(current_row["trend_score"])
     buy_threshold = float(current_row["buy_threshold"])
     activation_threshold = float(current_row["trend_activation_threshold"])
+    trend_permission_active = bool(current_row.get("trend_permission_active", False))
+    effective_market_exposure = float(
+        current_row.get("effective_market_exposure", current_row.get("exposure", 0.0))
+    )
+    model_candidate_exposure = float(current_row.get("model_candidate_exposure", 0.0))
+    trigger_threshold = activation_threshold if activation_threshold > 0.0 else buy_threshold
     if bool(current_row["cash_day"]) and bool(current_row["stress_block_day"]):
         return {
             "code": "stress_block_active",
             "text": "The strategy is waiting for the stress block to clear before taking market exposure.",
             "current_values": {
                 "stress_block_day": True,
+                "candidate_asset": candidate_asset,
+                "actual_held_asset": actual_asset,
                 "trend_score": trend_score,
                 "buy_threshold": buy_threshold,
+                "trend_permission_active": trend_permission_active,
             },
             "target_condition": {
                 "stress_block_day": False,
             },
         }
-    if bool(current_row["cash_day"]):
+    if not trend_permission_active and candidate_asset not in CASH_EQUIVALENT_ASSETS:
         return {
-            "code": "trend_score_below_buy_threshold",
+            "code": "trend_confirmation_pending_for_candidate_entry",
             "text": (
-                "The strategy is waiting for the trend gate to move back above the buy threshold "
-                f"before leaving CASH ({trend_score:.4f} vs {buy_threshold:.4f})."
+                f"{candidate_asset} is the current candidate, but the strategy stays in CASH until trend "
+                f"confirmation returns ({trend_score:.4f} vs {trigger_threshold:.4f})."
             ),
             "current_values": {
+                "candidate_asset": candidate_asset,
+                "actual_held_asset": actual_asset,
                 "trend_score": trend_score,
                 "buy_threshold": buy_threshold,
-            },
-            "target_condition": {
-                "trend_score_min": buy_threshold,
-            },
-        }
-    if str(current_row["leverage_state_reason"]).strip().lower() == "trend_gate":
-        return {
-            "code": "trend_score_below_leverage_activation",
-            "text": (
-                f"The strategy is holding {held_asset} but waiting for the trend score to reach the leverage "
-                f"activation threshold before increasing exposure ({trend_score:.4f} vs {activation_threshold:.4f})."
-            ),
-            "current_values": {
-                "held_asset": held_asset,
-                "trend_score": trend_score,
                 "trend_activation_threshold": activation_threshold,
-                "current_exposure": float(current_row["exposure"]),
+                "trend_permission_active": trend_permission_active,
+                "effective_market_exposure": effective_market_exposure,
+                "model_candidate_exposure": model_candidate_exposure,
             },
             "target_condition": {
-                "trend_score_min": activation_threshold,
+                "trend_score_min": trigger_threshold,
+                "trend_permission_active": True,
+                "execution_target_asset": candidate_asset,
+                "execution_target_exposure": model_candidate_exposure,
             },
         }
     return {
         "code": "already_in_target_state",
-        "text": f"The strategy is already in its current target state for {held_asset}.",
+        "text": f"The strategy is already in its current authorized state for {actual_asset}.",
         "current_values": {
-            "held_asset": held_asset,
-            "current_exposure": float(current_row["exposure"]),
+            "candidate_asset": candidate_asset,
+            "actual_held_asset": actual_asset,
+            "current_exposure": effective_market_exposure,
+            "trend_permission_active": trend_permission_active,
         },
         "target_condition": {
             "next_rebalance_date": None,
@@ -205,6 +212,19 @@ def _build_pain_points(timeseries, metrics: dict[str, Any], current_row, wait_co
                 "metric_unit": "notional_multiple",
             }
         )
+    if wait_condition["code"] == "trend_confirmation_pending_for_candidate_entry":
+        pain_points.append(
+            {
+                "code": "trend_entry_not_confirmed",
+                "severity": "medium",
+                "text": (
+                    f"{str(current_row.get('candidate_asset') or 'CASH').strip().upper()} is the preferred "
+                    "candidate, but trend confirmation is still missing for market entry."
+                ),
+                "metric_value": float(current_row["trend_score"]),
+                "metric_unit": "trend_score",
+            }
+        )
     if wait_condition["code"] != "already_in_target_state":
         pain_points.append(
             {
@@ -241,6 +261,13 @@ def _build_snapshot(
     metrics = adapter.build_snapshot_metrics(inputs, timeseries)
     decision_context = adapter.build_decision_context(timeseries)
     wait_condition = _build_wait_condition(current_row, metrics)
+    candidate_asset = str(current_row["candidate_asset"])
+    actual_held_asset = str(current_row["actual_held_asset"])
+    effective_market_exposure = round(float(current_row["effective_market_exposure"]), 6)
+    model_candidate_exposure = round(float(current_row["model_candidate_exposure"]), 6)
+    trend_permission_active = bool(current_row["trend_permission_active"])
+    execution_target_asset = str(current_row["execution_target_asset"])
+    execution_target_exposure = round(float(current_row["execution_target_exposure"]), 6)
     return {
         "artifact_type": "current_strategy_snapshot",
         "schema_version": SNAPSHOT_SCHEMA_VERSION,
@@ -249,8 +276,16 @@ def _build_snapshot(
         "strategy_version": SOURCE_STRATEGY_VERSION,
         "closed_day": inputs["closed_day"],
         "strategy_status": "ready",
-        "current_asset": str(current_row["held_asset"]),
-        "current_exposure": round(float(current_row["exposure"]), 6),
+        "candidate_asset": candidate_asset,
+        "selected_asset": str(current_row["selected_asset"]),
+        "actual_held_asset": actual_held_asset,
+        "authorized_tradable_asset": actual_held_asset,
+        "market_state": str(current_row["market_state"]),
+        "current_asset": actual_held_asset,
+        "current_exposure": effective_market_exposure,
+        "effective_market_exposure": effective_market_exposure,
+        "model_candidate_exposure": model_candidate_exposure,
+        "trend_permission_active": trend_permission_active,
         "current_regime": str(current_row["regime"]),
         "execution_state": str(current_row["execution_state"]),
         "trend_state": str(current_row["trend_state"]),
@@ -259,14 +294,16 @@ def _build_snapshot(
         "metrics": metrics,
         "decision_context": decision_context,
         "execution_intent": {
-            "target_asset": str(current_row["held_asset"]),
-            "target_exposure": round(float(current_row["exposure"]), 6),
+            "target_asset": execution_target_asset,
+            "target_exposure": execution_target_exposure,
             "signal_id": (
                 f"{PRODUCTION_STRATEGY_ID}::{SOURCE_STRATEGY_VERSION}::{inputs['closed_day']}::"
-                f"{str(current_row['held_asset'])}"
+                f"target_{execution_target_asset}::candidate_{candidate_asset}"
             ),
             "stale_signal": False,
-            "allow_live_order_candidate": True,
+            "allow_live_order_candidate": bool(
+                trend_permission_active and execution_target_exposure > 0.0
+            ),
         },
         "source_inputs": adapter.build_source_inputs(inputs),
         "validation": {
@@ -308,6 +345,14 @@ def _build_diagnostics(
     diagnostics["current_trade_state"] = {
         "is_cash": bool(current_row["cash_day"]),
         "is_waiting": wait_condition["code"] != "already_in_target_state",
+        "state_code": str(current_row["market_state"]),
+        "candidate_asset": str(current_row["candidate_asset"]),
+        "selected_asset": str(current_row["selected_asset"]),
+        "actual_held_asset": str(current_row["actual_held_asset"]),
+        "authorized_tradable_asset": str(current_row["actual_held_asset"]),
+        "effective_market_exposure": round(float(current_row["effective_market_exposure"]), 6),
+        "model_candidate_exposure": round(float(current_row["model_candidate_exposure"]), 6),
+        "trend_permission_active": bool(current_row["trend_permission_active"]),
         "waiting_reason_code": str(current_row["reason_code"]),
         "waiting_reason_text": build_reason_text(current_row),
         "waiting_condition_code": wait_condition["code"],

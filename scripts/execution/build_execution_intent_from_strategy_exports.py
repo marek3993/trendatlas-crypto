@@ -29,6 +29,7 @@ AUTHORITY_LATEST_ATTEMPT_STATUS_PATH = (
 LOG_PATH = LOGS_DIR / "build_execution_intent_from_strategy_exports.log"
 
 DEFAULT_REFERENCE_MODEL = "phase67j_no_neo_main"
+CASH_LIKE_ASSETS = {"CASH", "USD", "USDC", "USDT", "NONE", "OUT_OF_MARKET"}
 
 
 def utc_now_iso() -> str:
@@ -95,7 +96,9 @@ def require_text(value: Any, *, context: str) -> str:
 
 
 def require_float(value: Any, *, context: str) -> float:
-    text = str(value or "").strip()
+    if value is None:
+        fail(f"{context} is missing")
+    text = str(value).strip()
     if not text:
         fail(f"{context} is missing")
     try:
@@ -103,6 +106,10 @@ def require_float(value: Any, *, context: str) -> float:
     except ValueError as exc:
         fail(f"{context} must be numeric (actual={text})")
     raise RuntimeError("unreachable")
+
+
+def is_cash_like_asset(value: Any) -> bool:
+    return str(value or "").strip().upper() in CASH_LIKE_ASSETS
 
 
 def load_reference_model(export_contract_path: Path) -> str:
@@ -158,6 +165,23 @@ def validate_production_snapshot(snapshot: dict[str, Any], *, source_path: Path)
         execution_intent.get("target_exposure"),
         context="production snapshot execution_intent.target_exposure",
     )
+    current_asset = require_text(
+        snapshot.get("current_asset"),
+        context="production snapshot current_asset",
+    ).upper()
+    candidate_asset = require_text(
+        snapshot.get("candidate_asset"),
+        context="production snapshot candidate_asset",
+    ).upper()
+    effective_market_exposure = require_float(
+        snapshot.get("effective_market_exposure"),
+        context="production snapshot effective_market_exposure",
+    )
+    model_candidate_exposure = require_float(
+        snapshot.get("model_candidate_exposure"),
+        context="production snapshot model_candidate_exposure",
+    )
+    trend_permission_active = bool(snapshot.get("trend_permission_active", False))
     stale_signal = bool(execution_intent.get("stale_signal", False))
     if stale_signal:
         fail(
@@ -175,6 +199,43 @@ def validate_production_snapshot(snapshot: dict[str, Any], *, source_path: Path)
     allow_live_order_candidate = bool(
         execution_intent.get("allow_live_order_candidate", False)
     )
+    if not trend_permission_active:
+        if effective_market_exposure > 1e-9:
+            fail(
+                "Execution intent blocked: production snapshot reports market exposure while "
+                f"trend_permission_active=false (path={source_path} exposure={effective_market_exposure})"
+            )
+        if not is_cash_like_asset(current_asset):
+            fail(
+                "Execution intent blocked: production snapshot current_asset must be CASH when "
+                f"trend_permission_active=false (path={source_path} current_asset={current_asset})"
+            )
+        if not is_cash_like_asset(target_asset):
+            fail(
+                "Execution intent blocked: production snapshot execution target must be CASH when "
+                f"trend_permission_active=false (path={source_path} target_asset={target_asset})"
+            )
+        if target_exposure > 1e-9:
+            fail(
+                "Execution intent blocked: production snapshot execution target exposure must be 0.0 when "
+                f"trend_permission_active=false (path={source_path} target_exposure={target_exposure})"
+            )
+        if allow_live_order_candidate:
+            fail(
+                "Execution intent blocked: production snapshot allow_live_order_candidate must be false when "
+                f"trend_permission_active=false (path={source_path})"
+            )
+    else:
+        if effective_market_exposure <= 1e-9:
+            fail(
+                "Execution intent blocked: production snapshot effective_market_exposure must be above zero when "
+                f"trend_permission_active=true (path={source_path})"
+            )
+        if is_cash_like_asset(target_asset):
+            fail(
+                "Execution intent blocked: production snapshot execution target must not be CASH when "
+                f"trend_permission_active=true (path={source_path})"
+            )
 
     return {
         "strategy_version": strategy_version,
@@ -186,6 +247,11 @@ def validate_production_snapshot(snapshot: dict[str, Any], *, source_path: Path)
         "target_regime": str(snapshot.get("current_regime") or "").strip() or target_asset,
         "stale_signal": stale_signal,
         "allow_live_order_candidate": allow_live_order_candidate,
+        "current_asset": current_asset,
+        "candidate_asset": candidate_asset,
+        "effective_market_exposure": effective_market_exposure,
+        "model_candidate_exposure": model_candidate_exposure,
+        "trend_permission_active": trend_permission_active,
         "execution_intent": execution_intent,
     }
 
@@ -503,7 +569,11 @@ def main() -> None:
         "benchmark": "BTC",
         "signal_id": snapshot_context["signal_id"],
         "target_asset": snapshot_context["target_asset"],
-        "target_side": "long_only_hold_selected_asset_or_cash",
+        "target_side": (
+            "hold_cash_no_market_entry"
+            if is_cash_like_asset(snapshot_context["target_asset"])
+            else "long_only_hold_selected_asset_or_cash"
+        ),
         "target_regime": snapshot_context["target_regime"],
         "size_mode": "production_snapshot_target_exposure",
         "target_size_pct": snapshot_context["target_exposure"],
@@ -526,7 +596,10 @@ def main() -> None:
             "production_snapshot_execution_intent": snapshot_context["execution_intent"],
             "production_snapshot_summary": {
                 "strategy_status": production_snapshot.get("strategy_status"),
+                "candidate_asset": production_snapshot.get("candidate_asset"),
                 "current_asset": production_snapshot.get("current_asset"),
+                "effective_market_exposure": production_snapshot.get("effective_market_exposure"),
+                "trend_permission_active": production_snapshot.get("trend_permission_active"),
                 "current_regime": production_snapshot.get("current_regime"),
                 "validation_status": (
                     require_mapping(
@@ -541,6 +614,7 @@ def main() -> None:
             "Execution signal truth no longer reads canonical app_exports directly.",
             "Authority target day must match production snapshot closed_day.",
             "No order sizing beyond production snapshot target exposure is inferred here.",
+            "If trend permission is inactive, the execution target must stay in CASH with 0.0 exposure.",
             "No live order execution is allowed by this script.",
         ],
     }

@@ -13,6 +13,7 @@ if str(Path(__file__).resolve().parents[2]) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.production.strategy_adapters.phase68g_66g_1p25x_candidate_adapter import (
+    CASH_EQUIVALENT_ASSETS,
     DIAGNOSTICS_SCHEMA_VERSION,
     PRODUCTION_STRATEGY_ID,
     QUALITY_SCHEMA_VERSION,
@@ -40,8 +41,16 @@ REQUIRED_SNAPSHOT_KEYS = [
     "strategy_version",
     "closed_day",
     "strategy_status",
+    "candidate_asset",
+    "selected_asset",
+    "actual_held_asset",
+    "authorized_tradable_asset",
+    "market_state",
     "current_asset",
     "current_exposure",
+    "effective_market_exposure",
+    "model_candidate_exposure",
+    "trend_permission_active",
     "current_regime",
     "execution_state",
     "trend_state",
@@ -59,10 +68,20 @@ REQUIRED_TIMESERIES_COLUMNS = [
     "date",
     "strategy_id",
     "strategy_version",
+    "candidate_asset",
+    "selected_asset",
+    "actual_held_asset",
+    "authorized_tradable_asset",
     "held_asset",
+    "market_state",
+    "effective_market_exposure",
+    "model_candidate_exposure",
+    "trend_permission_active",
     "exposure",
     "regime",
     "execution_state",
+    "execution_target_asset",
+    "execution_target_exposure",
     "trend_state",
     "trend_score",
     "buy_threshold",
@@ -113,6 +132,11 @@ REQUIRED_DIAGNOSTICS_KEYS = [
     "strategy_improvement_signals",
     "validation",
 ]
+
+
+def _is_cash_like_asset(value: Any) -> bool:
+    normalized = str(value or "").strip().upper()
+    return normalized in CASH_EQUIVALENT_ASSETS or normalized in {"OUT_OF_MARKET", "NONE", ""}
 
 
 def utc_now_iso() -> str:
@@ -245,8 +269,52 @@ def validate_production_payloads(
         errors.append("diagnostics.artifact_type must be current_strategy_diagnostics")
 
     last_row = timeseries.iloc[-1]
+    _compare_text(
+        snapshot.get("candidate_asset"),
+        str(last_row["candidate_asset"]),
+        context="snapshot.candidate_asset",
+        errors=errors,
+    )
+    _compare_text(
+        snapshot.get("selected_asset"),
+        str(last_row["selected_asset"]),
+        context="snapshot.selected_asset",
+        errors=errors,
+    )
+    _compare_text(
+        snapshot.get("actual_held_asset"),
+        str(last_row["actual_held_asset"]),
+        context="snapshot.actual_held_asset",
+        errors=errors,
+    )
+    _compare_text(
+        snapshot.get("authorized_tradable_asset"),
+        str(last_row["authorized_tradable_asset"]),
+        context="snapshot.authorized_tradable_asset",
+        errors=errors,
+    )
+    _compare_text(
+        snapshot.get("market_state"),
+        str(last_row["market_state"]),
+        context="snapshot.market_state",
+        errors=errors,
+    )
     _compare_text(snapshot.get("current_asset"), str(last_row["held_asset"]), context="snapshot.current_asset", errors=errors)
     _compare_float(snapshot.get("current_exposure"), float(last_row["exposure"]), context="snapshot.current_exposure", errors=errors)
+    _compare_float(
+        snapshot.get("effective_market_exposure"),
+        float(last_row["effective_market_exposure"]),
+        context="snapshot.effective_market_exposure",
+        errors=errors,
+    )
+    _compare_float(
+        snapshot.get("model_candidate_exposure"),
+        float(last_row["model_candidate_exposure"]),
+        context="snapshot.model_candidate_exposure",
+        errors=errors,
+    )
+    if bool(snapshot.get("trend_permission_active")) != bool(last_row["trend_permission_active"]):
+        errors.append("snapshot.trend_permission_active mismatch between snapshot and timeseries")
     _compare_text(snapshot.get("current_regime"), str(last_row["regime"]), context="snapshot.current_regime", errors=errors)
     _compare_text(
         snapshot.get("execution_state"),
@@ -309,20 +377,65 @@ def validate_production_payloads(
     else:
         _compare_text(
             execution_intent.get("target_asset"),
-            str(last_row["held_asset"]),
+            str(last_row["execution_target_asset"]),
             context="snapshot.execution_intent.target_asset",
             errors=errors,
         )
         _compare_float(
             execution_intent.get("target_exposure"),
-            float(last_row["exposure"]),
+            float(last_row["execution_target_exposure"]),
             context="snapshot.execution_intent.target_exposure",
             errors=errors,
         )
         if bool(execution_intent.get("stale_signal")):
             errors.append("snapshot.execution_intent.stale_signal must be false for a validated build")
-        if not bool(execution_intent.get("allow_live_order_candidate")):
-            warnings.append("snapshot.execution_intent.allow_live_order_candidate is false")
+
+    trend_permission_active = bool(snapshot.get("trend_permission_active"))
+    current_asset = str(snapshot.get("current_asset") or "").strip().upper()
+    candidate_asset = str(snapshot.get("candidate_asset") or "").strip().upper()
+    effective_market_exposure = float(snapshot.get("effective_market_exposure") or 0.0)
+    current_exposure = float(snapshot.get("current_exposure") or 0.0)
+    model_candidate_exposure = float(snapshot.get("model_candidate_exposure") or 0.0)
+    execution_target_asset = str((execution_intent or {}).get("target_asset") or "").strip().upper()
+    execution_target_exposure = float((execution_intent or {}).get("target_exposure") or 0.0)
+    allow_live_order_candidate = bool((execution_intent or {}).get("allow_live_order_candidate"))
+
+    checks["candidate_asset_separated_from_actual_exposure"] = (
+        not trend_permission_active
+        and candidate_asset not in CASH_EQUIVALENT_ASSETS
+        and _is_cash_like_asset(current_asset)
+        and _is_cash_like_asset(execution_target_asset)
+        and effective_market_exposure <= SUMMARY_TOLERANCE
+    ) or trend_permission_active
+    checks["trend_permission_blocks_market_exposure"] = (
+        trend_permission_active or effective_market_exposure <= SUMMARY_TOLERANCE
+    )
+    checks["trend_permission_blocks_execution_target"] = (
+        trend_permission_active
+        or (_is_cash_like_asset(execution_target_asset) and execution_target_exposure <= SUMMARY_TOLERANCE)
+    )
+    if not checks["trend_permission_blocks_market_exposure"]:
+        errors.append("trend_permission_active=false but effective_market_exposure is above zero")
+    if not checks["trend_permission_blocks_execution_target"]:
+        errors.append("trend_permission_active=false but execution_intent target is not CASH/0.0")
+    if not trend_permission_active and not _is_cash_like_asset(current_asset):
+        errors.append("trend_permission_active=false but current_asset is not CASH")
+    if not trend_permission_active and current_exposure > SUMMARY_TOLERANCE:
+        errors.append("trend_permission_active=false but current_exposure is above zero")
+    if effective_market_exposure <= SUMMARY_TOLERANCE and not _is_cash_like_asset(current_asset):
+        errors.append("effective_market_exposure is zero but current_asset is not CASH")
+    if effective_market_exposure > SUMMARY_TOLERANCE and _is_cash_like_asset(current_asset):
+        errors.append("effective_market_exposure is above zero but current_asset is CASH")
+    if not trend_permission_active and candidate_asset == current_asset and not _is_cash_like_asset(candidate_asset):
+        errors.append("candidate asset is incorrectly mixed into current_asset while trend permission is inactive")
+    if not trend_permission_active and allow_live_order_candidate:
+        errors.append("trend_permission_active=false but allow_live_order_candidate is true")
+    if trend_permission_active and execution_target_exposure <= SUMMARY_TOLERANCE:
+        errors.append("trend_permission_active=true but execution target exposure is zero")
+    if trend_permission_active and _is_cash_like_asset(execution_target_asset):
+        errors.append("trend_permission_active=true but execution target asset is CASH")
+    if model_candidate_exposure < effective_market_exposure - SUMMARY_TOLERANCE:
+        errors.append("model_candidate_exposure must be greater than or equal to effective_market_exposure")
 
     expected_source_inputs = adapter.build_source_inputs(inputs)
     source_inputs = snapshot.get("source_inputs")
@@ -363,6 +476,32 @@ def validate_production_payloads(
     if not isinstance(trade_state, dict):
         errors.append("diagnostics.current_trade_state must be an object")
     else:
+        _compare_text(
+            trade_state.get("candidate_asset"),
+            candidate_asset,
+            context="diagnostics.current_trade_state.candidate_asset",
+            errors=errors,
+        )
+        _compare_text(
+            trade_state.get("actual_held_asset"),
+            current_asset,
+            context="diagnostics.current_trade_state.actual_held_asset",
+            errors=errors,
+        )
+        _compare_float(
+            trade_state.get("effective_market_exposure"),
+            effective_market_exposure,
+            context="diagnostics.current_trade_state.effective_market_exposure",
+            errors=errors,
+        )
+        _compare_float(
+            trade_state.get("model_candidate_exposure"),
+            model_candidate_exposure,
+            context="diagnostics.current_trade_state.model_candidate_exposure",
+            errors=errors,
+        )
+        if bool(trade_state.get("trend_permission_active")) != trend_permission_active:
+            errors.append("diagnostics.current_trade_state.trend_permission_active mismatch")
         _compare_text(
             trade_state.get("waiting_reason_code"),
             str(last_row["reason_code"]),

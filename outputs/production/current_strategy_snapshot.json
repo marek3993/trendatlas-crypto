@@ -1,15 +1,23 @@
 {
   "artifact_type": "current_strategy_snapshot",
-  "schema_version": 1,
-  "generated_at_utc": "2026-05-05T05:49:42Z",
+  "schema_version": 2,
+  "generated_at_utc": "2026-05-05T07:51:21Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "closed_day": "2026-05-04",
   "strategy_status": "ready",
-  "current_asset": "BTC",
-  "current_exposure": 1.0,
-  "current_regime": "BTC",
-  "execution_state": "BTC",
+  "candidate_asset": "BTC",
+  "selected_asset": "BTC",
+  "actual_held_asset": "CASH",
+  "authorized_tradable_asset": "CASH",
+  "market_state": "OUT_OF_MARKET",
+  "current_asset": "CASH",
+  "current_exposure": 0.0,
+  "effective_market_exposure": 0.0,
+  "model_candidate_exposure": 1.0,
+  "trend_permission_active": false,
+  "current_regime": "CASH",
+  "execution_state": "OUT_OF_MARKET",
   "trend_state": "pod_buy_hranicou",
   "trend_score": -0.166667,
   "next_rebalance_date": "2026-05-10",
@@ -23,29 +31,29 @@
     "funding_total_pct": 0.0,
     "borrow_cost_total_pct": 3.614,
     "slippage_cost_total_pct": 0.9,
-    "cash_days_pct": 41.8207,
-    "btc_days_pct": 7.4949,
+    "cash_days_pct": 81.622177,
+    "btc_days_pct": 0.718686,
     "switch_count": 198,
     "trade_count": 198
   },
   "decision_context": {
-    "current_reason_code": "trend_gate_hold",
-    "current_reason_text": "The strategy keeps BTC but holds exposure at 1.00x because the trend score -0.1667 is below the leverage activation threshold 0.1000.",
-    "current_regime_duration_days": 4,
+    "current_reason_code": "candidate_wait_trend_confirmation",
+    "current_reason_text": "The strategy keeps BTC as the current candidate but remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000).",
+    "current_regime_duration_days": 186,
     "days_since_last_trade": 3,
-    "days_since_last_risk_on": 3,
+    "days_since_last_risk_on": 187,
     "days_since_last_equity_high": 208,
     "current_drawdown_pct": -16.018077,
-    "current_cash_streak_days": 0,
+    "current_cash_streak_days": 186,
     "latest_rebalance_date": "2026-05-01",
-    "latest_rebalance_reason": "rebalance_to_btc"
+    "latest_rebalance_reason": "candidate_wait_trend_confirmation"
   },
   "execution_intent": {
-    "target_asset": "BTC",
-    "target_exposure": 1.0,
-    "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::BTC",
+    "target_asset": "CASH",
+    "target_exposure": 0.0,
+    "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::target_CASH::candidate_BTC",
     "stale_signal": false,
-    "allow_live_order_candidate": true
+    "allow_live_order_candidate": false
   },
   "source_inputs": {
     "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
@@ -110,18 +118,25 @@
       "outputs/execution/freshness/app_freshness_report.json"
     ],
     "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
-    "git_commit": "56be07dfbbd3fdab43503b8a9dd65be03adc53da",
+    "git_commit": "a5d1ad5f4a1b72ef4dd47ac87c3a4d125a4d54b3",
     "wait_condition": {
-      "code": "trend_score_below_leverage_activation",
-      "text": "The strategy is holding BTC but waiting for the trend score to reach the leverage activation threshold before increasing exposure (-0.1667 vs 0.1000).",
+      "code": "trend_confirmation_pending_for_candidate_entry",
+      "text": "BTC is the current candidate, but the strategy stays in CASH until trend confirmation returns (-0.1667 vs 0.1000).",
       "current_values": {
-        "held_asset": "BTC",
+        "candidate_asset": "BTC",
+        "actual_held_asset": "CASH",
         "trend_score": -0.1666666666666666,
+        "buy_threshold": 0.0,
         "trend_activation_threshold": 0.1,
-        "current_exposure": 1.0
+        "trend_permission_active": false,
+        "effective_market_exposure": 0.0,
+        "model_candidate_exposure": 1.0
       },
       "target_condition": {
-        "trend_score_min": 0.1
+        "trend_score_min": 0.1,
+        "trend_permission_active": true,
+        "execution_target_asset": "BTC",
+        "execution_target_exposure": 1.0
       }
     }
   }

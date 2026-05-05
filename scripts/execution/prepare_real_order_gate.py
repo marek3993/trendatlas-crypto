@@ -18,6 +18,7 @@ READ_ONLY_DIR = OUTPUTS_DIR / "read_only"
 LIVE_GATE_DIR = OUTPUTS_DIR / "live_gate"
 LOGS_DIR = OUTPUTS_DIR / "logs"
 PRODUCTION_DIR = ROOT / "outputs" / "production"
+CASH_LIKE_ASSETS = {"CASH", "USD", "USDC", "USDT", "NONE", "OUT_OF_MARKET"}
 
 MODE_CONFIG_PATH = CONFIG_DIR / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = CONFIG_DIR / "live_order_policy.json"
@@ -74,6 +75,10 @@ def normalize_asset(value: Any) -> str:
     return str(value or "").strip().upper()
 
 
+def is_cash_like_asset(value: Any) -> bool:
+    return normalize_asset(value) in CASH_LIKE_ASSETS
+
+
 def extract_open_orders_count(snapshot: dict[str, Any]) -> int:
     raw = snapshot.get("raw", {})
     open_orders = raw.get("openOrders", [])
@@ -107,7 +112,9 @@ def require_text(value: Any, context: str) -> str:
 
 
 def require_float(value: Any, context: str) -> float:
-    text = str(value or "").strip()
+    if value is None:
+        raise ValueError(f"{context} is missing")
+    text = str(value).strip()
     if not text:
         raise ValueError(f"{context} is missing")
     return float(text)
@@ -146,6 +153,27 @@ def load_production_snapshot_context(snapshot: dict[str, Any]) -> dict[str, Any]
         execution_intent.get("target_exposure"),
         "production snapshot execution_intent.target_exposure",
     )
+    current_asset = normalize_asset(
+        require_text(
+            snapshot.get("current_asset"),
+            "production snapshot current_asset",
+        )
+    )
+    candidate_asset = normalize_asset(
+        require_text(
+            snapshot.get("candidate_asset"),
+            "production snapshot candidate_asset",
+        )
+    )
+    effective_market_exposure = require_float(
+        snapshot.get("effective_market_exposure"),
+        "production snapshot effective_market_exposure",
+    )
+    model_candidate_exposure = require_float(
+        snapshot.get("model_candidate_exposure"),
+        "production snapshot model_candidate_exposure",
+    )
+    trend_permission_active = bool(snapshot.get("trend_permission_active", False))
     stale_signal = bool(execution_intent.get("stale_signal", False))
     allow_live_order_candidate = bool(
         execution_intent.get("allow_live_order_candidate", False)
@@ -154,12 +182,33 @@ def load_production_snapshot_context(snapshot: dict[str, Any]) -> dict[str, Any]
         snapshot.get("strategy_version"),
         "production snapshot strategy_version",
     )
+    if not trend_permission_active:
+        if effective_market_exposure > 1e-9:
+            raise ValueError("production snapshot reports exposure while trend_permission_active=false")
+        if not is_cash_like_asset(current_asset):
+            raise ValueError("production snapshot current_asset must be CASH while trend_permission_active=false")
+        if not is_cash_like_asset(target_asset):
+            raise ValueError("production snapshot execution target must be CASH while trend_permission_active=false")
+        if target_exposure > 1e-9:
+            raise ValueError("production snapshot execution target exposure must be 0.0 while trend_permission_active=false")
+        if allow_live_order_candidate:
+            raise ValueError("production snapshot allow_live_order_candidate must be false while trend_permission_active=false")
+    else:
+        if effective_market_exposure <= 1e-9:
+            raise ValueError("production snapshot effective_market_exposure must be above zero while trend_permission_active=true")
+        if is_cash_like_asset(target_asset):
+            raise ValueError("production snapshot execution target must not be CASH while trend_permission_active=true")
 
     return {
         "closed_day": closed_day,
         "signal_id": signal_id,
         "target_asset": target_asset,
         "target_exposure": target_exposure,
+        "candidate_asset": candidate_asset,
+        "current_asset": current_asset,
+        "effective_market_exposure": effective_market_exposure,
+        "model_candidate_exposure": model_candidate_exposure,
+        "trend_permission_active": trend_permission_active,
         "stale_signal": stale_signal,
         "allow_live_order_candidate": allow_live_order_candidate,
         "validation_status": validation_status,
@@ -265,6 +314,7 @@ def main() -> None:
 
     signal_id = str(intent.get("signal_id") or "").strip()
     target_asset = normalize_asset(intent.get("target_asset"))
+    target_size_pct = float(intent.get("target_size_pct", 0.0) or 0.0)
     stale_signal = bool(intent.get("stale_signal", False))
     allow_live_order_candidate = bool(intent.get("allow_live_order_candidate", False))
     guardrail_flags = (
@@ -299,7 +349,11 @@ def main() -> None:
     checks = {
         "signal_present": bool(signal_id),
         "target_asset_present": bool(target_asset),
-        "target_asset_allowed": target_asset in allowed_assets if target_asset else False,
+        "target_asset_allowed": (
+            True if is_cash_like_asset(target_asset) else (target_asset in allowed_assets if target_asset else False)
+        ),
+        "target_asset_is_cash": is_cash_like_asset(target_asset),
+        "target_exposure_positive": target_size_pct > 1e-9,
         "contract_validated": contract_validated,
         "mode_known": bool(mode),
         "execution_trading_enabled": execution_trading_enabled,
@@ -337,6 +391,12 @@ def main() -> None:
         "production_snapshot_target_asset_present": bool(
             production_context["target_asset"]
         ),
+        "production_snapshot_target_exposure_positive": (
+            production_context["target_exposure"] > 1e-9
+        ),
+        "production_snapshot_trend_permission_active": production_context[
+            "trend_permission_active"
+        ],
         "production_snapshot_allow_live_order_candidate": production_context[
             "allow_live_order_candidate"
         ],
@@ -349,6 +409,9 @@ def main() -> None:
         ),
         "intent_target_asset_matches_production_snapshot": (
             target_asset == production_context["target_asset"]
+        ),
+        "intent_target_exposure_matches_production_snapshot": (
+            abs(target_size_pct - production_context["target_exposure"]) <= 1e-9
         ),
         "intent_stale_signal_matches_production_snapshot": (
             stale_signal == production_context["stale_signal"]
@@ -368,6 +431,8 @@ def main() -> None:
         block_reasons.append("missing_signal_id")
     if not checks["target_asset_present"]:
         block_reasons.append("missing_target_asset")
+    if checks["target_asset_is_cash"] or not checks["target_exposure_positive"]:
+        block_reasons.append("no_market_entry_authorized")
     if not checks["target_asset_allowed"]:
         block_reasons.append("target_asset_not_allowlisted")
     if not checks["contract_validated"]:
@@ -408,6 +473,10 @@ def main() -> None:
         block_reasons.append("production_snapshot_signal_missing")
     if not checks["production_snapshot_target_asset_present"]:
         block_reasons.append("production_snapshot_target_asset_missing")
+    if not checks["production_snapshot_target_exposure_positive"]:
+        block_reasons.append("production_snapshot_target_exposure_zero")
+    if not checks["production_snapshot_trend_permission_active"]:
+        block_reasons.append("production_snapshot_trend_permission_inactive")
     if not checks["production_snapshot_allow_live_order_candidate"]:
         block_reasons.append("production_snapshot_allow_live_order_candidate=false")
     if checks["production_snapshot_stale_signal"]:
@@ -418,6 +487,8 @@ def main() -> None:
         block_reasons.append("intent_signal_mismatch_vs_production_snapshot")
     if not checks["intent_target_asset_matches_production_snapshot"]:
         block_reasons.append("intent_target_asset_mismatch_vs_production_snapshot")
+    if not checks["intent_target_exposure_matches_production_snapshot"]:
+        block_reasons.append("intent_target_exposure_mismatch_vs_production_snapshot")
     if not checks["intent_stale_signal_matches_production_snapshot"]:
         block_reasons.append("intent_stale_signal_mismatch_vs_production_snapshot")
     if not checks["intent_strategy_model_matches_production_snapshot"]:
@@ -447,9 +518,14 @@ def main() -> None:
             "strategy_version": production_context["strategy_version"],
             "closed_day": production_context["closed_day"],
             "validation_status": production_context["validation_status"],
+            "candidate_asset": production_context["candidate_asset"],
+            "current_asset": production_context["current_asset"],
             "signal_id": production_context["signal_id"],
             "target_asset": production_context["target_asset"],
             "target_exposure": production_context["target_exposure"],
+            "effective_market_exposure": production_context["effective_market_exposure"],
+            "model_candidate_exposure": production_context["model_candidate_exposure"],
+            "trend_permission_active": production_context["trend_permission_active"],
             "allow_live_order_candidate": production_context[
                 "allow_live_order_candidate"
             ],

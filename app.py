@@ -553,6 +553,17 @@ TEXT["en"]["performance_fee_note"] = (
 TEXT["sk"].update(
     {
         "currently_holding": "Aktualny stav",
+        "production_candidate_asset": "Kandidat strategie",
+        "production_market_state": "Stav",
+        "production_market_exposure": "Aktualna trhova expozicia",
+        "production_state_out_of_market": "Mimo trhu",
+        "production_state_in_market": "V trhu",
+        "production_wait_reason_pending": "Trend zatial nepotvrdil vstup",
+        "production_wait_reason_active": "Vstup je potvrdeny",
+        "production_candidate_hint": "Preferovane aktivum po potvrdeni vstupu",
+        "production_exposure_hint_out": "Bez autorizovaneho vstupu do trhu",
+        "production_exposure_hint_in": "Autorizovana trhova expozicia",
+        "buy_threshold": "Hranica vstupu",
         "trend_desc": "Toto je oficialny pohlad na stav trendu. Aplikacia ho nepocita nanovo, len zobrazuje validovanu hodnotu z Production Core.",
         "trend_threshold_note": "Biela hranica ukazuje bod, od ktoreho sa trend povazuje za dostatocne silny. Pod nou je strategia opatrnejsia.",
         "chart_title": "Vyvoj kapitalu strategie",
@@ -586,6 +597,17 @@ TEXT["sk"].update(
 )
 TEXT["en"].update(
     {
+        "production_candidate_asset": "Strategy candidate",
+        "production_market_state": "State",
+        "production_market_exposure": "Current market exposure",
+        "production_state_out_of_market": "Out of market",
+        "production_state_in_market": "In market",
+        "production_wait_reason_pending": "Trend has not confirmed entry yet",
+        "production_wait_reason_active": "Entry is confirmed",
+        "production_candidate_hint": "Preferred asset after entry confirmation",
+        "production_exposure_hint_out": "No authorized market entry",
+        "production_exposure_hint_in": "Authorized market exposure",
+        "buy_threshold": "Entry threshold",
         "trade_count": "Trade count",
         "current_drawdown": "Current drawdown",
         "production_chart_note": "This chart shows only the strategy equity curve. It is not a record of a physically bought coin or a list of open positions.",
@@ -669,7 +691,7 @@ METRIC_HELP["sk"].update(
         TEXT["sk"]["currently_holding"]: "Toto pole ide priamo z Production Core snapshotu ako oficialny aktualny asset.",
         TEXT["sk"]["trend_state"]: "Textovy trend stav ide z Production Core snapshotu, nie z legacy live exportu.",
         TEXT["sk"]["trend_score"]: "Trend score je z Production Core snapshotu a jeho historia z Production Core timeseries.",
-        TEXT["sk"]["buy_threshold"]: "Buy threshold sa cita z posledneho validovaneho riadku Production Core timeseries.",
+        TEXT["sk"]["buy_threshold"]: "Hranica vstupu sa cita z posledneho validovaneho riadku Production Core timeseries.",
         TEXT["sk"]["total_return"]: "Celkovy vynos je citany z Production Core snapshot metrics.",
         TEXT["sk"]["max_dd"]: "Max drawdown je citany z Production Core snapshot metrics.",
         TEXT["sk"]["switch_count"]: "Pocet prepnuti je citany z Production Core snapshot metrics.",
@@ -678,6 +700,9 @@ METRIC_HELP["sk"].update(
         TEXT["sk"]["cash_days"]: "Cash Days su citane z Production Core snapshot metrics.",
         TEXT["sk"]["btc_days"]: "BTC Days su citane z Production Core snapshot metrics.",
         TEXT["sk"]["production_exposure"]: "Expozicia ide priamo z Production Core snapshotu ako aktualne oficialne nastavenie.",
+        TEXT["sk"]["production_candidate_asset"]: "Kandidat strategie ide z Production Core snapshotu ako aktualne vybrane aktivum modelu, este nie nutne ako povolena expozicia.",
+        TEXT["sk"]["production_market_state"]: "Stav rozlisuje medzi kandidatom modelu a realne povolenou trhovou expoziciou.",
+        TEXT["sk"]["production_market_exposure"]: "Aktualna trhova expozicia ide z Production Core snapshotu ako autorizovana expozicia po trend gate.",
         TEXT["sk"]["production_closed_day"]: "Posledny uzavrety den ide z Production Core snapshotu a musi sediet s diagnostics aj timeseries.",
     }
 )
@@ -695,7 +720,7 @@ METRIC_HELP["en"].update(
         TEXT["en"]["currently_holding"]: "This field is read directly from the Production Core snapshot as the official current asset.",
         TEXT["en"]["trend_state"]: "The trend state is read from the Production Core snapshot, not from the legacy live export.",
         TEXT["en"]["trend_score"]: "The trend score comes from the Production Core snapshot and its history from the Production Core timeseries.",
-        TEXT["en"]["buy_threshold"]: "The buy threshold is read from the latest validated row of the Production Core timeseries.",
+        TEXT["en"]["buy_threshold"]: "The entry threshold is read from the latest validated row of the Production Core timeseries.",
         TEXT["en"]["total_return"]: "Total return is read from the Production Core snapshot metrics.",
         TEXT["en"]["max_dd"]: "Max drawdown is read from the Production Core snapshot metrics.",
         TEXT["en"]["switch_count"]: "Switch count is read from the Production Core snapshot metrics.",
@@ -704,6 +729,9 @@ METRIC_HELP["en"].update(
         TEXT["en"]["cash_days"]: "Cash Days are read from the Production Core snapshot metrics.",
         TEXT["en"]["btc_days"]: "BTC Days are read from the Production Core snapshot metrics.",
         TEXT["en"]["production_exposure"]: "Exposure comes directly from the Production Core snapshot as the official current setting.",
+        TEXT["en"]["production_candidate_asset"]: "The strategy candidate comes from the Production Core snapshot as the current model-selected asset, not necessarily as live exposure.",
+        TEXT["en"]["production_market_state"]: "State separates the model candidate from the actually authorized market exposure.",
+        TEXT["en"]["production_market_exposure"]: "Current market exposure comes from the Production Core snapshot after the trend-permission gate.",
         TEXT["en"]["production_closed_day"]: "The last closed day comes from the Production Core snapshot and must match diagnostics and timeseries.",
     }
 )
@@ -968,10 +996,20 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
         "date",
         "strategy_id",
         "strategy_version",
+        "candidate_asset",
+        "selected_asset",
+        "actual_held_asset",
+        "authorized_tradable_asset",
         "held_asset",
+        "market_state",
+        "effective_market_exposure",
+        "model_candidate_exposure",
+        "trend_permission_active",
         "exposure",
         "regime",
         "execution_state",
+        "execution_target_asset",
+        "execution_target_exposure",
         "trend_state",
         "trend_score",
         "buy_threshold",
@@ -988,8 +1026,12 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
     frame["ts"] = pd.to_datetime(frame["date"], errors="coerce").dt.normalize()
     for numeric_column in [
         "exposure",
+        "effective_market_exposure",
+        "model_candidate_exposure",
+        "execution_target_exposure",
         "trend_score",
         "buy_threshold",
+        "trend_activation_threshold",
         "equity",
         "drawdown_pct",
         "rolling_return_7d",
@@ -1073,6 +1115,14 @@ def validate_production_homepage_bundle(
         stop_for_production_homepage_block("strategy_version mismatch across production artifacts")
 
     last_row = sanitize_row_dict(timeseries_df.iloc[-1].to_dict())
+    if str(last_row.get("candidate_asset") or "").strip().upper() != str(snapshot.get("candidate_asset") or "").strip().upper():
+        stop_for_production_homepage_block("candidate asset mismatch between snapshot and timeseries")
+    if str(last_row.get("actual_held_asset") or "").strip().upper() != str(snapshot.get("actual_held_asset") or "").strip().upper():
+        stop_for_production_homepage_block("actual held asset mismatch between snapshot and timeseries")
+    if str(last_row.get("authorized_tradable_asset") or "").strip().upper() != str(snapshot.get("authorized_tradable_asset") or "").strip().upper():
+        stop_for_production_homepage_block("authorized tradable asset mismatch between snapshot and timeseries")
+    if str(last_row.get("market_state") or "").strip().upper() != str(snapshot.get("market_state") or "").strip().upper():
+        stop_for_production_homepage_block("market_state mismatch between snapshot and timeseries")
     if str(last_row.get("held_asset") or "").strip().upper() != str(snapshot.get("current_asset") or "").strip().upper():
         stop_for_production_homepage_block("current asset mismatch between snapshot and timeseries")
     if str(last_row.get("regime") or "").strip().upper() != str(snapshot.get("current_regime") or "").strip().upper():
@@ -1087,11 +1137,41 @@ def validate_production_homepage_bundle(
         field_name="current_exposure",
     )
     _production_compare_float(
+        snapshot.get("effective_market_exposure"),
+        last_row.get("effective_market_exposure"),
+        field_name="effective_market_exposure",
+    )
+    _production_compare_float(
+        snapshot.get("model_candidate_exposure"),
+        last_row.get("model_candidate_exposure"),
+        field_name="model_candidate_exposure",
+    )
+    _production_compare_float(
         snapshot.get("trend_score"),
         last_row.get("trend_score"),
         field_name="trend_score",
         abs_tol=1e-6,
     )
+    if as_bool(last_row.get("trend_permission_active")) != as_bool(snapshot.get("trend_permission_active")):
+        stop_for_production_homepage_block("trend_permission_active mismatch between snapshot and timeseries")
+
+    trend_permission_active = as_bool(snapshot.get("trend_permission_active")) is True
+    current_asset = str(snapshot.get("current_asset") or "").strip().upper()
+    candidate_asset = str(snapshot.get("candidate_asset") or "").strip().upper()
+    current_exposure = as_float(snapshot.get("current_exposure")) or 0.0
+    execution_target_asset = str(get_nested_value(snapshot, "execution_intent", "target_asset") or "").strip().upper()
+    execution_target_exposure = as_float(get_nested_value(snapshot, "execution_intent", "target_exposure")) or 0.0
+    if not trend_permission_active:
+        if current_asset not in {"CASH"}:
+            stop_for_production_homepage_block("trend_permission_active=false but current_asset is not CASH")
+        if current_exposure > 1e-9:
+            stop_for_production_homepage_block("trend_permission_active=false but current_exposure is above zero")
+        if execution_target_asset not in {"CASH"} or execution_target_exposure > 1e-9:
+            stop_for_production_homepage_block("trend_permission_active=false but execution target is not CASH/0.0")
+        if candidate_asset == current_asset and candidate_asset not in {"", "CASH"}:
+            stop_for_production_homepage_block("candidate asset is mixed into current asset while trend permission is inactive")
+    elif current_exposure <= 1e-9:
+        stop_for_production_homepage_block("trend_permission_active=true but current_exposure is zero")
 
     if as_bool(last_row.get("source_validated")) is not True:
         stop_for_production_homepage_block("latest timeseries row is not source_validated")
@@ -3677,7 +3757,12 @@ def build_production_trend_live(
     last_row = sanitize_row_dict(timeseries_df.iloc[-1].to_dict())
     previous_row = sanitize_row_dict(timeseries_df.iloc[-2].to_dict()) if len(timeseries_df) > 1 else {}
     trend_score = as_float(snapshot.get("trend_score"))
-    buy_threshold = as_float(last_row.get("buy_threshold"))
+    buy_threshold = as_float(
+        first_present_value(
+            last_row.get("trend_activation_threshold"),
+            last_row.get("buy_threshold"),
+        )
+    )
     previous_trend_score = as_float(previous_row.get("trend_score"))
 
     crossed_up_today = (
@@ -3704,7 +3789,13 @@ def build_production_trend_live(
 
 
 def build_production_trend_history(timeseries_df: pd.DataFrame) -> pd.DataFrame:
-    history = timeseries_df[["ts", "trend_score", "buy_threshold"]].copy()
+    threshold_column = (
+        "trend_activation_threshold"
+        if "trend_activation_threshold" in timeseries_df.columns
+        else "buy_threshold"
+    )
+    history = timeseries_df[["ts", "trend_score", threshold_column]].copy()
+    history = history.rename(columns={threshold_column: "buy_threshold"})
     history = history.dropna(subset=["ts", "trend_score", "buy_threshold"]).reset_index(drop=True)
     return history
 
@@ -3713,6 +3804,8 @@ def product_asset_label(asset_code: Any, lang: str) -> str:
     asset = str(asset_code or "").strip().upper()
     if asset in {"", "NONE"}:
         return t(lang, "na")
+    if asset == "OUT_OF_MARKET":
+        return "mimo trhu" if lang == "sk" else "out of market"
     if asset == "CASH":
         return "hotovosti" if lang == "sk" else "cash"
     if asset == "BASE":
@@ -3724,6 +3817,8 @@ def product_asset_label(asset_code: Any, lang: str) -> str:
 
 def product_asset_label_nominative(asset_code: Any, lang: str) -> str:
     asset = str(asset_code or "").strip().upper()
+    if asset == "OUT_OF_MARKET":
+        return "Mimo trhu" if lang == "sk" else "Out of market"
     if asset == "CASH":
         return "Hotovost" if lang == "sk" else "Cash"
     if asset == "BASE":
@@ -3739,6 +3834,7 @@ def _sk_reason_code_label(reason_code: str) -> str:
         "rebalance_to_btc": "presun do BTC",
         "rebalance_to_base": "presun do zakladnej zlozky",
         "trend_gate_hold": "cakanie na silnejsi trend",
+        "candidate_wait_trend_confirmation": "cakanie na potvrdenie trendu pre vstup",
         "entry_buffer_hold": "povinne potvrdenie po zmene",
         "hold_cash": "zotrvanie v hotovosti",
     }
@@ -3753,11 +3849,53 @@ def humanize_production_pain_point(pain_point: dict[str, Any], lang: str) -> str
             return f"Strategia travi v hotovosti velku cast historie ({metric_value:.2f} %), co tlmi rast v silnych trhoch."
         if code == "lifetime_cost_drag_elevated" and metric_value is not None:
             return f"Historicke naklady uz ubrali zhruba {metric_value:.2f} % vykonu, takze kazda zbytocna zmena boli viac."
+        if code == "trend_entry_not_confirmed":
+            return "Vybrany kandidat este nema potvrdeny vstup do trhu, preto zostava strategia mimo trhu."
         if code == "active_wait_condition":
-            return "Signal je aktivny, ale strategia zatial nema dost silny dovod pridat viac rizika."
-        fallback = str(pain_point.get("text") or "").strip()
-        return fallback or "Aktualne nie je dostupne dalsie zrozumitelne vysvetlenie."
+            return "Strategia ma vybrany kandidat, ale zatial nema potvrdeny bezpecny vstup do trhu."
+        return "Strategia zatial nema potvrdeny dost silny signal na novu trhovu expoziciu."
     return str(pain_point.get("text") or "").strip()
+
+
+def production_market_state_label(
+    snapshot: dict[str, Any],
+    diagnostics: dict[str, Any],
+    lang: str,
+) -> str:
+    trade_state = dict(diagnostics.get("current_trade_state") or {})
+    trend_permission_active = as_bool(
+        first_present_value(
+            trade_state.get("trend_permission_active"),
+            snapshot.get("trend_permission_active"),
+        )
+    )
+    exposure = as_float(
+        first_present_value(
+            trade_state.get("effective_market_exposure"),
+            snapshot.get("effective_market_exposure"),
+            snapshot.get("current_exposure"),
+        )
+    )
+    if trend_permission_active is not True or exposure is None or math.isclose(exposure, 0.0, abs_tol=1e-12):
+        return t(lang, "production_state_out_of_market")
+    return t(lang, "production_state_in_market")
+
+
+def production_wait_reason_short(
+    snapshot: dict[str, Any],
+    diagnostics: dict[str, Any],
+    lang: str,
+) -> str:
+    trade_state = dict(diagnostics.get("current_trade_state") or {})
+    trend_permission_active = as_bool(
+        first_present_value(
+            trade_state.get("trend_permission_active"),
+            snapshot.get("trend_permission_active"),
+        )
+    )
+    if trend_permission_active is not True:
+        return t(lang, "production_wait_reason_pending")
+    return t(lang, "production_wait_reason_active")
 
 
 def build_homepage_state_story(
@@ -3765,9 +3903,47 @@ def build_homepage_state_story(
     diagnostics: dict[str, Any],
     lang: str,
 ) -> dict[str, Any]:
-    asset = str(snapshot.get("current_asset") or "").strip().upper()
-    exposure = as_float(snapshot.get("current_exposure"))
+    trade_state = dict(diagnostics.get("current_trade_state") or {})
+    candidate_asset = str(
+        first_present_value(
+            trade_state.get("candidate_asset"),
+            snapshot.get("candidate_asset"),
+            snapshot.get("selected_asset"),
+            snapshot.get("current_asset"),
+        )
+        or ""
+    ).strip().upper()
+    actual_asset = str(
+        first_present_value(
+            trade_state.get("actual_held_asset"),
+            snapshot.get("actual_held_asset"),
+            snapshot.get("current_asset"),
+        )
+        or ""
+    ).strip().upper()
+    exposure = as_float(
+        first_present_value(
+            trade_state.get("effective_market_exposure"),
+            snapshot.get("effective_market_exposure"),
+            snapshot.get("current_exposure"),
+        )
+    )
+    candidate_exposure = as_float(
+        first_present_value(
+            trade_state.get("model_candidate_exposure"),
+            snapshot.get("model_candidate_exposure"),
+        )
+    )
+    trend_permission_active = as_bool(
+        first_present_value(
+            trade_state.get("trend_permission_active"),
+            snapshot.get("trend_permission_active"),
+        )
+    )
     exposure_text = f"{exposure:.2f}x" if exposure is not None else t(lang, "na")
+    candidate_exposure_text = (
+        f"{candidate_exposure:.2f}x" if candidate_exposure is not None else t(lang, "na")
+    )
     wait_condition = dict(diagnostics.get("current_wait_condition") or {})
     current_values = dict(wait_condition.get("current_values") or {})
     target_condition = dict(wait_condition.get("target_condition") or {})
@@ -3783,33 +3959,46 @@ def build_homepage_state_story(
     latest_rebalance_date = get_nested_value(snapshot, "decision_context", "latest_rebalance_date")
     latest_rebalance_reason = str(get_nested_value(snapshot, "decision_context", "latest_rebalance_reason") or "").strip().lower()
     pain_points = list(diagnostics.get("current_pain_points") or [])
+    candidate_label = product_asset_label_nominative(candidate_asset, lang)
+    actual_label = product_asset_label_nominative(actual_asset, lang)
+    is_out_of_market = trend_permission_active is not True or exposure is None or math.isclose(exposure, 0.0, abs_tol=1e-12)
 
     if lang == "sk":
-        if asset == "CASH":
-            now_text = f"Strategia je momentalne v hotovosti a nema otvorenu trhovu expoziciu."
-        else:
-            now_text = f"Strategia je momentalne v stave {product_asset_label_nominative(asset, lang)} a drzi expoziciu {exposure_text}."
-
-        if trend_score is not None and threshold is not None:
-            why_text = (
-                f"Dnesny trend score je {trend_score_text}, kym hranica pre silnejsi risk-on stav je {threshold_text}. "
-                f"Preto strategia zostava opatrna a drzi len to, co uz oficialny signal potvrdil."
+        if is_out_of_market:
+            now_text = (
+                f"Kandidat strategie je {candidate_label}, ale strategia je momentalne mimo trhu. "
+                f"Aktualna trhova expozicia je {exposure_text}."
             )
         else:
-            why_text = "Aktualny signal zatial nepotvrdil dovod na agresivnejsiu zmenu spravania."
+            now_text = (
+                f"Strategia je momentalne aktivne v trhu a ma autorizovanu expoziciu "
+                f"{exposure_text} v aktive {actual_label}."
+            )
+
+        if is_out_of_market and trend_score is not None and threshold is not None:
+            why_text = (
+                f"Dovod je jednoduchy: trend zatial nepotvrdil vstup. Dnesny trend score je "
+                f"{trend_score_text}, kym potrebna hranica je {threshold_text}."
+            )
+        elif trend_score is not None and threshold is not None:
+            why_text = (
+                f"Trend score je {trend_score_text}, teda nad rozhodujucou hranicou {threshold_text}. "
+                f"Preto je aktualna expozicia povolena a strategia moze byt v trhu."
+            )
+        else:
+            why_text = "Aktualny signal zatial nepotvrdil dovod na zmenu autorizovanej trhovej expozicie."
 
         wait_text = (
-            f"Caka najma na to, aby sa trend zlepsil aspon na {threshold_text}. "
-            f"Kym sa to nestane, nema dovod zvysovat riziko ani menit rezim len preto, ze sa trh hybe."
-            if threshold is not None
-            else "Caka na dalsi validovany signal, ktory zmeni dnesny opatrny postoj."
+            f"Cakame na trend_score >= {threshold_text}. Az potom moze strategia povolit vstup do {candidate_label}."
+            if is_out_of_market and threshold is not None
+            else "Aktualne necaka na potvrdenie vstupu. Caka len na dalsi validovany signal alebo novy rebalance."
         )
 
         change_text = (
-            f"Ak by trend score vystupil aspon na {threshold_text}, dnesna blokacia by sa uvolnila a strategia by mohla prejst do aktivnejsieho nastavenia. "
-            f"Ak by prisiel novy oficialny rebalance signal, mohla by sa zmenit aj drzana zlozka."
-            if threshold is not None
-            else "Spravanie by sa zmenilo az vtedy, ked Production Core potvrdi novy silnejsi signal alebo novy rebalance."
+            f"Ak trend score vystupi aspon na {threshold_text}, kandidat {candidate_label} sa moze zmenit na realnu "
+            f"trhovu expoziciu s cielovou velkostou {candidate_exposure_text}."
+            if is_out_of_market and threshold is not None
+            else "Spravanie sa zmeni, az ked Production Core potvrdi novy signal, novy rebalance alebo vypnutie aktualnej expozicie."
         )
 
         risk_items = [humanize_production_pain_point(item, lang) for item in pain_points]
@@ -3826,9 +4015,21 @@ def build_homepage_state_story(
         }
 
     return {
-        "now": f"The strategy is currently in {product_asset_label_nominative(asset, lang)} with exposure {exposure_text}.",
-        "why": str(diagnostics.get("latest_state_explanation") or ""),
-        "wait": str(wait_condition.get("text") or ""),
+        "now": (
+            f"The current candidate is {candidate_label}, but the strategy stays out of market with {exposure_text} exposure."
+            if is_out_of_market
+            else f"The strategy is in market with {exposure_text} exposure to {actual_label}."
+        ),
+        "why": (
+            f"Trend has not confirmed entry yet ({trend_score_text} vs {threshold_text})."
+            if is_out_of_market and threshold is not None
+            else "The current exposure is authorized by the latest Production Core signal."
+        ),
+        "wait": (
+            f"Waiting for trend_score >= {threshold_text} before entering {candidate_label}."
+            if is_out_of_market and threshold is not None
+            else "Waiting for the next validated signal or rebalance."
+        ),
         "change": "Behavior changes only after Production Core confirms a stronger signal or a new rebalance.",
         "risks": [humanize_production_pain_point(item, lang) for item in pain_points],
     }
@@ -4877,24 +5078,28 @@ with tabs[0]:
 
     home_cards = [
         {
-            "label": t(lang, "currently_holding"),
-            "value": product_asset_label_nominative(production_snapshot.get("current_asset"), lang),
-            "subtitle": safe_text_value(production_snapshot.get("current_regime"), lang=lang),
-            "help": METRIC_HELP[lang][t(lang, "currently_holding")],
+            "label": t(lang, "production_market_state"),
+            "value": production_market_state_label(production_snapshot, production_diagnostics, lang),
+            "subtitle": production_wait_reason_short(production_snapshot, production_diagnostics, lang),
+            "help": METRIC_HELP[lang][t(lang, "production_market_state")],
             "accent": "blue",
         },
         {
-            "label": t(lang, "production_exposure"),
-            "value": f"{as_float(production_snapshot.get('current_exposure')):.2f}x" if as_float(production_snapshot.get("current_exposure")) is not None else t(lang, "na"),
-            "subtitle": safe_text_value(production_snapshot.get("execution_state"), lang=lang),
-            "help": METRIC_HELP[lang][t(lang, "production_exposure")],
+            "label": t(lang, "production_candidate_asset"),
+            "value": product_asset_label_nominative(production_snapshot.get("candidate_asset"), lang),
+            "subtitle": t(lang, "production_candidate_hint"),
+            "help": METRIC_HELP[lang][t(lang, "production_candidate_asset")],
             "accent": "green",
         },
         {
-            "label": t(lang, "trend_state"),
-            "value": safe_text_value(trend_live.get("trend_state_label"), lang=lang),
-            "subtitle": safe_metric_text(trend_live.get("trend_score"), decimals=4, suffix="", lang=lang),
-            "help": METRIC_HELP[lang][t(lang, "trend_state")],
+            "label": t(lang, "production_market_exposure"),
+            "value": f"{as_float(production_snapshot.get('effective_market_exposure')):.2f}x" if as_float(production_snapshot.get("effective_market_exposure")) is not None else t(lang, "na"),
+            "subtitle": (
+                t(lang, "production_exposure_hint_out")
+                if production_market_state_label(production_snapshot, production_diagnostics, lang) == t(lang, "production_state_out_of_market")
+                else t(lang, "production_exposure_hint_in")
+            ),
+            "help": METRIC_HELP[lang][t(lang, "production_market_exposure")],
             "accent": "orange",
         },
         {
@@ -5034,7 +5239,7 @@ with tabs[0]:
         render_story_panel(
             t(lang, "production_status_now"),
             state_story["now"],
-            eyebrow=t(lang, "currently_holding"),
+            eyebrow=t(lang, "production_market_state"),
             tone="cool",
         )
     with story_top[1]:

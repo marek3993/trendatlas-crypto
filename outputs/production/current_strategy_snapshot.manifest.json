@@ -1,12 +1,12 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
-  "schema_version": 1,
-  "generated_at_utc": "2026-05-05T05:49:42Z",
+  "schema_version": 2,
+  "generated_at_utc": "2026-05-05T07:51:21Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
   "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
-  "git_commit": "56be07dfbbd3fdab43503b8a9dd65be03adc53da",
+  "git_commit": "a5d1ad5f4a1b72ef4dd47ac87c3a4d125a4d54b3",
   "source_inputs": {
     "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
     "strategy_id": "current_strategy",

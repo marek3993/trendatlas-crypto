@@ -24,10 +24,10 @@ ROOT = Path(__file__).resolve().parents[3]
 PRODUCTION_STRATEGY_ID = "current_strategy"
 SOURCE_STRATEGY_VERSION = "phase68g_66g_1p25x_candidate"
 ADAPTER_NAME = "phase68g_66g_1p25x_candidate_adapter"
-SNAPSHOT_SCHEMA_VERSION = 1
-DIAGNOSTICS_SCHEMA_VERSION = 1
-QUALITY_SCHEMA_VERSION = 1
-MANIFEST_SCHEMA_VERSION = 1
+SNAPSHOT_SCHEMA_VERSION = 2
+DIAGNOSTICS_SCHEMA_VERSION = 2
+QUALITY_SCHEMA_VERSION = 2
+MANIFEST_SCHEMA_VERSION = 2
 SUMMARY_TOLERANCE = 1e-6
 
 
@@ -133,18 +133,37 @@ def _classify_regime(held_asset: str) -> str:
     return "ALT"
 
 
+def _normalize_asset_code(value: Any) -> str:
+    normalized = str(value or "").strip().upper()
+    if not normalized or normalized in {"NONE", "OUT_OF_MARKET"}:
+        return "CASH"
+    if normalized in CASH_EQUIVALENT_ASSETS:
+        return "CASH"
+    return normalized
+
+
+def _resolve_trend_permission_active(
+    *,
+    trend_gate_pass: bool,
+    stress_block_day: bool,
+) -> bool:
+    if stress_block_day:
+        return False
+    return bool(trend_gate_pass)
+
+
 def _build_reason_code(row: pd.Series) -> str:
-    held_asset = str(row["held_asset"]).strip().upper()
+    candidate_asset = _normalize_asset_code(row.get("candidate_asset"))
+    actual_asset = _normalize_asset_code(row.get("actual_held_asset", row.get("held_asset")))
     regime = str(row["regime"]).strip().upper()
-    if bool(row["is_rebalance_day"]):
-        return f"rebalance_to_{held_asset.lower()}" if held_asset else "rebalance"
+    trend_permission_active = bool(row.get("trend_permission_active", False))
     if bool(row["cash_day"]) and bool(row["stress_block_day"]):
         return "cash_stress_block"
-    if bool(row["cash_day"]) and bool(row["trend_block_day"]):
-        return "cash_trend_block"
+    if not trend_permission_active and candidate_asset not in CASH_EQUIVALENT_ASSETS:
+        return "candidate_wait_trend_confirmation"
+    if bool(row["is_rebalance_day"]):
+        return f"rebalance_to_{actual_asset.lower()}" if actual_asset else "rebalance"
     state_reason = str(row["leverage_state_reason"] or "").strip().lower()
-    if state_reason == "trend_gate":
-        return "trend_gate_hold"
     if state_reason == "switch_day":
         return "switch_day_hold"
     if state_reason == "entry_buffer_day":
@@ -161,30 +180,35 @@ def _build_reason_code(row: pd.Series) -> str:
 
 
 def build_reason_text(row: pd.Series) -> str:
-    held_asset = str(row["held_asset"]).strip().upper() or "CASH"
+    candidate_asset = _normalize_asset_code(row.get("candidate_asset"))
+    held_asset = _normalize_asset_code(row.get("actual_held_asset", row.get("held_asset"))) or "CASH"
     trend_score = float(row["trend_score"])
     buy_threshold = float(row["buy_threshold"])
     activation_threshold = float(row["trend_activation_threshold"])
-    exposure = float(row["exposure"])
+    exposure = float(row.get("effective_market_exposure", row.get("exposure", 0.0)))
+    trend_permission_active = bool(row.get("trend_permission_active", False))
+    trigger_threshold = activation_threshold if activation_threshold > 0.0 else buy_threshold
+    if bool(row["cash_day"]) and bool(row["stress_block_day"]) and candidate_asset not in CASH_EQUIVALENT_ASSETS:
+        return (
+            f"The strategy keeps {candidate_asset} as the current candidate but remains in CASH because "
+            "the stress block is active."
+        )
+    if bool(row["cash_day"]) and bool(row["stress_block_day"]):
+        return "The strategy remains in CASH because the stress block is active."
+    if not trend_permission_active and candidate_asset not in CASH_EQUIVALENT_ASSETS:
+        return (
+            f"The strategy keeps {candidate_asset} as the current candidate but remains in CASH because "
+            f"trend has not confirmed entry ({trend_score:.4f} vs {trigger_threshold:.4f})."
+        )
     if bool(row["is_rebalance_day"]) and held_asset == "CASH":
         return "The strategy rebalanced into CASH on the latest closed day."
     if bool(row["is_rebalance_day"]):
         return f"The strategy rebalanced into {held_asset} on the latest closed day."
-    if bool(row["cash_day"]) and bool(row["stress_block_day"]):
-        return "The strategy remains in CASH because the stress block is active."
-    if bool(row["cash_day"]) and bool(row["trend_block_day"]):
-        return (
-            "The strategy remains in CASH because the trend gate is below the buy threshold "
-            f"({trend_score:.4f} vs {buy_threshold:.4f})."
-        )
-    if str(row["leverage_state_reason"]).strip().lower() == "trend_gate":
-        return (
-            f"The strategy keeps {held_asset} but holds exposure at {exposure:.2f}x because the "
-            f"trend score {trend_score:.4f} is below the leverage activation threshold {activation_threshold:.4f}."
-        )
+    if held_asset in CASH_EQUIVALENT_ASSETS:
+        return "The strategy remains in CASH with no authorized market exposure."
     if bool(row["leverage_active"]):
-        return f"The strategy holds {held_asset} with active leverage at {exposure:.2f}x."
-    return f"The strategy keeps {held_asset} with {exposure:.2f}x exposure."
+        return f"The strategy holds {held_asset} with authorized leverage at {exposure:.2f}x."
+    return f"The strategy holds {held_asset} with authorized market exposure at {exposure:.2f}x."
 
 
 def _rolling_compound_return(series: pd.Series, window: int) -> pd.Series:
@@ -369,18 +393,67 @@ class Phase68g66g1p25xCandidateAdapter:
             config=inputs["config"],
         )
 
+        candidate_asset = export_df["held_asset"].astype(str).map(_normalize_asset_code)
+        trend_block_day = _to_bool_series(paper_df["trend_block_day"])
+        stress_block_day = _to_bool_series(paper_df["stress_block_day"])
+        trend_gate_pass = _to_bool_series(paper_df["trend_gate_pass"])
+        trend_permission_active = pd.Series(
+            [
+                _resolve_trend_permission_active(
+                    trend_gate_pass=bool(gate_pass),
+                    stress_block_day=bool(stress_block),
+                )
+                for gate_pass, stress_block in zip(
+                    trend_gate_pass.tolist(),
+                    stress_block_day.tolist(),
+                )
+            ],
+            index=paper_df.index,
+        )
+        model_candidate_exposure = np.where(
+            candidate_asset.isin(CASH_EQUIVALENT_ASSETS),
+            0.0,
+            export_df["effective_leverage"],
+        )
+        actual_held_asset = np.where(trend_permission_active, candidate_asset, "CASH")
+        effective_market_exposure = np.where(
+            trend_permission_active,
+            model_candidate_exposure,
+            0.0,
+        )
+
         timeseries = pd.DataFrame()
         timeseries["date"] = export_df["date"].dt.strftime("%Y-%m-%d")
         timeseries["strategy_id"] = self.strategy_id
         timeseries["strategy_version"] = self.strategy_version
-        timeseries["held_asset"] = export_df["held_asset"].astype(str)
-        timeseries["exposure"] = np.where(
-            export_df["held_asset"].isin(CASH_EQUIVALENT_ASSETS),
-            0.0,
-            export_df["effective_leverage"],
-        )
+        timeseries["candidate_asset"] = candidate_asset
+        timeseries["selected_asset"] = candidate_asset
+        timeseries["model_candidate_exposure"] = model_candidate_exposure
+        timeseries["trend_permission_active"] = trend_permission_active
+        timeseries["actual_held_asset"] = actual_held_asset
+        timeseries["authorized_tradable_asset"] = actual_held_asset
+        timeseries["held_asset"] = actual_held_asset
+        timeseries["current_asset"] = actual_held_asset
+        timeseries["effective_market_exposure"] = effective_market_exposure
+        timeseries["current_exposure"] = effective_market_exposure
+        timeseries["exposure"] = effective_market_exposure
         timeseries["regime"] = timeseries["held_asset"].map(_classify_regime)
-        timeseries["execution_state"] = timeseries["held_asset"]
+        timeseries["market_state"] = np.where(
+            timeseries["effective_market_exposure"] > 0.0,
+            "IN_MARKET",
+            "OUT_OF_MARKET",
+        )
+        timeseries["execution_state"] = np.where(
+            timeseries["effective_market_exposure"] > 0.0,
+            timeseries["held_asset"],
+            "OUT_OF_MARKET",
+        )
+        timeseries["execution_target_asset"] = np.where(
+            timeseries["effective_market_exposure"] > 0.0,
+            timeseries["held_asset"],
+            "CASH",
+        )
+        timeseries["execution_target_exposure"] = timeseries["effective_market_exposure"]
         timeseries["trend_state"] = paper_df["trend_state_label"].fillna("").astype(str)
         timeseries["trend_score"] = _to_float_series(paper_df["trend_score"])
         timeseries["buy_threshold"] = _to_float_series(paper_df["buy_threshold"])
@@ -398,20 +471,21 @@ class Phase68g66g1p25xCandidateAdapter:
         timeseries["slippage_cost_daily"] = export_df["tradable_slippage_cost"]
         timeseries["slippage_cost_cumulative"] = export_df["tradable_slippage_cost"].cumsum()
         timeseries["turnover"] = export_df["trading_turnover_notional"]
-        timeseries["cash_day"] = export_df["held_asset"].isin(CASH_EQUIVALENT_ASSETS)
-        timeseries["btc_day"] = export_df["held_asset"] == "BTC"
-        timeseries["in_market"] = ~timeseries["cash_day"]
+        timeseries["cash_day"] = timeseries["effective_market_exposure"] <= 0.0
+        timeseries["btc_day"] = (timeseries["held_asset"] == "BTC") & (
+            timeseries["effective_market_exposure"] > 0.0
+        )
+        timeseries["in_market"] = timeseries["effective_market_exposure"] > 0.0
         timeseries["is_rebalance_day"] = export_df["asset_transition_day"].astype(bool)
         timeseries["asset_transition_day"] = export_df["asset_transition_day"].astype(bool)
-        timeseries["trend_block_day"] = _to_bool_series(paper_df["trend_block_day"])
-        timeseries["stress_block_day"] = _to_bool_series(paper_df["stress_block_day"])
-        timeseries["trend_gate_pass"] = _to_bool_series(paper_df["trend_gate_pass"])
+        timeseries["trend_block_day"] = trend_block_day
+        timeseries["stress_block_day"] = stress_block_day
+        timeseries["trend_gate_pass"] = trend_gate_pass
         timeseries["leverage_active"] = _to_bool_series(paper_df["leverage_active"])
         timeseries["leverage_state_reason"] = paper_df["leverage_state_reason"].fillna("").astype(str)
         timeseries["trend_activation_threshold"] = _to_float_series(
             paper_df["trend_activation_threshold"]
         )
-        timeseries["current_asset"] = timeseries["held_asset"]
         timeseries["reason_code"] = timeseries.apply(_build_reason_code, axis=1)
         timeseries["rolling_return_7d"] = _rolling_compound_return(timeseries["return_net"], 7)
         timeseries["rolling_return_30d"] = _rolling_compound_return(timeseries["return_net"], 30)
@@ -533,6 +607,8 @@ class Phase68g66g1p25xCandidateAdapter:
 
     def build_snapshot_metrics(self, inputs: dict[str, Any], timeseries: pd.DataFrame) -> dict[str, Any]:
         source_metrics = self.source_summary_metrics(inputs)
+        cash_days_pct = float(timeseries["cash_day"].mean() * 100.0)
+        btc_days_pct = float(timeseries["btc_day"].mean() * 100.0)
         return {
             **source_metrics,
             "total_return_pct_net": round(source_metrics["total_return_pct_net"], 4),
@@ -544,8 +620,8 @@ class Phase68g66g1p25xCandidateAdapter:
             "funding_total_pct": round(source_metrics["funding_total_pct"], 6),
             "borrow_cost_total_pct": round(source_metrics["borrow_cost_total_pct"], 6),
             "slippage_cost_total_pct": round(source_metrics["slippage_cost_total_pct"], 6),
-            "cash_days_pct": round(source_metrics["cash_days_pct"], 6),
-            "btc_days_pct": round(source_metrics["btc_days_pct"], 6),
+            "cash_days_pct": round(cash_days_pct, 6),
+            "btc_days_pct": round(btc_days_pct, 6),
         }
 
     def build_decision_context(self, timeseries: pd.DataFrame) -> dict[str, Any]:
@@ -696,7 +772,7 @@ class Phase68g66g1p25xCandidateAdapter:
                 },
                 "current_research_questions": [
                     "Can churn be reduced without losing the current net-return profile?",
-                    "Is the current leverage gate too conservative when BTC remains held but leverage stays off?",
+                    "Is the current trend confirmation gate too conservative when BTC stays the candidate but market entry remains blocked?",
                     "How much of lifetime cost drag comes from transition frequency versus borrow carry?",
                 ],
             },

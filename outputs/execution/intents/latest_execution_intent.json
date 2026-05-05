@@ -1,6 +1,6 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-05-05T06:05:03Z",
+  "generated_at_utc": "2026-05-05T07:51:23Z",
   "as_of_source": "2026-05-04",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
@@ -8,17 +8,17 @@
   "strategy_model": "phase68g_66g_1p25x_candidate",
   "reference_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
-  "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::BTC",
-  "target_asset": "BTC",
-  "target_side": "long_only_hold_selected_asset_or_cash",
-  "target_regime": "BTC",
+  "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::target_CASH::candidate_BTC",
+  "target_asset": "CASH",
+  "target_side": "hold_cash_no_market_entry",
+  "target_regime": "CASH",
   "size_mode": "production_snapshot_target_exposure",
-  "target_size_pct": 1.0,
+  "target_size_pct": 0.0,
   "target_notional_usd": null,
   "reference_asset": null,
   "staleness_ok": true,
   "stale_signal": false,
-  "allow_live_order_candidate": true,
+  "allow_live_order_candidate": false,
   "guardrail_flags": {
     "contract_validated": true,
     "trading_disabled": true,
@@ -43,16 +43,19 @@
   },
   "source_samples": {
     "production_snapshot_execution_intent": {
-      "target_asset": "BTC",
-      "target_exposure": 1.0,
-      "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::BTC",
+      "target_asset": "CASH",
+      "target_exposure": 0.0,
+      "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::target_CASH::candidate_BTC",
       "stale_signal": false,
-      "allow_live_order_candidate": true
+      "allow_live_order_candidate": false
     },
     "production_snapshot_summary": {
       "strategy_status": "ready",
-      "current_asset": "BTC",
-      "current_regime": "BTC",
+      "candidate_asset": "BTC",
+      "current_asset": "CASH",
+      "effective_market_exposure": 0.0,
+      "trend_permission_active": false,
+      "current_regime": "CASH",
       "validation_status": "passed"
     }
   },
@@ -61,6 +64,7 @@
     "Execution signal truth no longer reads canonical app_exports directly.",
     "Authority target day must match production snapshot closed_day.",
     "No order sizing beyond production snapshot target exposure is inferred here.",
+    "If trend permission is inactive, the execution target must stay in CASH with 0.0 exposure.",
     "No live order execution is allowed by this script."
   ]
 }
