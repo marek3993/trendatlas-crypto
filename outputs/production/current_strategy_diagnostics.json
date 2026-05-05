@@ -1,0 +1,215 @@
+{
+  "artifact_type": "current_strategy_diagnostics",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-05T05:49:42Z",
+  "strategy_id": "current_strategy",
+  "strategy_version": "phase68g_66g_1p25x_candidate",
+  "closed_day": "2026-05-04",
+  "latest_state_explanation": "The strategy keeps BTC but holds exposure at 1.00x because the trend score -0.1667 is below the leverage activation threshold 0.1000.",
+  "current_flatline_explanation": null,
+  "current_cash_or_risk_reason": "The strategy keeps BTC but holds exposure at 1.00x because the trend score -0.1667 is below the leverage activation threshold 0.1000.",
+  "recent_regime_changes": [
+    {
+      "date": "2025-11-04",
+      "held_asset": "CASH",
+      "regime": "CASH",
+      "reason_code": "rebalance_to_cash"
+    },
+    {
+      "date": "2026-04-23",
+      "held_asset": "BASE",
+      "regime": "BASE",
+      "reason_code": "rebalance_to_base"
+    },
+    {
+      "date": "2026-04-26",
+      "held_asset": "BTC",
+      "regime": "BTC",
+      "reason_code": "rebalance_to_btc"
+    },
+    {
+      "date": "2026-04-30",
+      "held_asset": "CASH",
+      "regime": "CASH",
+      "reason_code": "rebalance_to_cash"
+    },
+    {
+      "date": "2026-05-01",
+      "held_asset": "BTC",
+      "regime": "BTC",
+      "reason_code": "rebalance_to_btc"
+    }
+  ],
+  "recent_rebalance_events": [
+    {
+      "date": "2025-11-04",
+      "held_asset": "CASH",
+      "exposure": 0.0,
+      "reason_code": "rebalance_to_cash",
+      "reason_text": "The strategy rebalanced into CASH on the latest closed day."
+    },
+    {
+      "date": "2026-04-23",
+      "held_asset": "BASE",
+      "exposure": 1.0,
+      "reason_code": "rebalance_to_base",
+      "reason_text": "The strategy rebalanced into BASE on the latest closed day."
+    },
+    {
+      "date": "2026-04-26",
+      "held_asset": "BTC",
+      "exposure": 1.0,
+      "reason_code": "rebalance_to_btc",
+      "reason_text": "The strategy rebalanced into BTC on the latest closed day."
+    },
+    {
+      "date": "2026-04-30",
+      "held_asset": "CASH",
+      "exposure": 0.0,
+      "reason_code": "rebalance_to_cash",
+      "reason_text": "The strategy rebalanced into CASH on the latest closed day."
+    },
+    {
+      "date": "2026-05-01",
+      "held_asset": "BTC",
+      "exposure": 1.0,
+      "reason_code": "rebalance_to_btc",
+      "reason_text": "The strategy rebalanced into BTC on the latest closed day."
+    }
+  ],
+  "current_cost_pressure": {
+    "current_effective_exposure": 1.0,
+    "trailing_30d_fees_pct": 0.225,
+    "trailing_30d_funding_pct": 0.0,
+    "trailing_30d_borrow_pct": 0.0,
+    "trailing_30d_slippage_pct": 0.0
+  },
+  "current_fee_drag_summary": {
+    "lifetime_trading_fees_total_pct": 15.9075,
+    "lifetime_funding_total_pct": 0.0,
+    "lifetime_borrow_cost_total_pct": 3.613963,
+    "lifetime_slippage_cost_total_pct": 0.9,
+    "lifetime_total_cost_pct": 20.421463,
+    "trailing_90d_turnover": 5.0
+  },
+  "current_data_health_summary": {
+    "status": "passed",
+    "closed_day": "2026-05-04",
+    "summary_latest_available_date": "2026-05-04",
+    "paper_last_day": "2026-05-04",
+    "trend_status_day": "2026-05-04",
+    "trend_history_last_day": "2026-05-04",
+    "freshness_closed_day": "2026-05-04",
+    "freshness_status": "ok",
+    "freshness_errors": [],
+    "warnings": []
+  },
+  "strategy_improvement_signals": {
+    "churn_pressure": {
+      "status": "contained",
+      "trade_count": 198,
+      "switch_count": 198,
+      "trailing_90d_turnover": 5.0
+    },
+    "fee_sensitivity": {
+      "status": "elevated",
+      "lifetime_total_cost_pct": 20.421463,
+      "effective_trading_fee_bps": 4.5
+    },
+    "cash_drag": {
+      "status": "elevated",
+      "cash_days_pct": 41.8207,
+      "current_cash_streak_days": 0
+    },
+    "flatline_duration": {
+      "status": "inactive",
+      "current_cash_streak_days": 0
+    },
+    "current_research_questions": [
+      "Can churn be reduced without losing the current net-return profile?",
+      "Is the current leverage gate too conservative when BTC remains held but leverage stays off?",
+      "How much of lifetime cost drag comes from transition frequency versus borrow carry?"
+    ]
+  },
+  "validation": {
+    "status": "passed",
+    "errors": [],
+    "warnings": []
+  },
+  "current_trade_state": {
+    "is_cash": false,
+    "is_waiting": true,
+    "waiting_reason_code": "trend_gate_hold",
+    "waiting_reason_text": "The strategy keeps BTC but holds exposure at 1.00x because the trend score -0.1667 is below the leverage activation threshold 0.1000.",
+    "waiting_condition_code": "trend_score_below_leverage_activation",
+    "waiting_condition_text": "The strategy is holding BTC but waiting for the trend score to reach the leverage activation threshold before increasing exposure (-0.1667 vs 0.1000).",
+    "waiting_condition_values": {
+      "held_asset": "BTC",
+      "trend_score": -0.1666666666666666,
+      "trend_activation_threshold": 0.1,
+      "current_exposure": 1.0
+    },
+    "target_condition": {
+      "trend_score_min": 0.1
+    },
+    "pain_points": [
+      {
+        "code": "cash_drag_elevated",
+        "severity": "medium",
+        "text": "Cash participation remains elevated at 41.8207% of history.",
+        "metric_value": 41.8207,
+        "metric_unit": "pct"
+      },
+      {
+        "code": "lifetime_cost_drag_elevated",
+        "severity": "medium",
+        "text": "Lifetime modeled cost drag totals 20.4215%.",
+        "metric_value": 20.421499999999998,
+        "metric_unit": "pct"
+      },
+      {
+        "code": "active_wait_condition",
+        "severity": "low",
+        "text": "The strategy is holding BTC but waiting for the trend score to reach the leverage activation threshold before increasing exposure (-0.1667 vs 0.1000).",
+        "metric_value": null,
+        "metric_unit": null
+      }
+    ]
+  },
+  "current_pain_points": [
+    {
+      "code": "cash_drag_elevated",
+      "severity": "medium",
+      "text": "Cash participation remains elevated at 41.8207% of history.",
+      "metric_value": 41.8207,
+      "metric_unit": "pct"
+    },
+    {
+      "code": "lifetime_cost_drag_elevated",
+      "severity": "medium",
+      "text": "Lifetime modeled cost drag totals 20.4215%.",
+      "metric_value": 20.421499999999998,
+      "metric_unit": "pct"
+    },
+    {
+      "code": "active_wait_condition",
+      "severity": "low",
+      "text": "The strategy is holding BTC but waiting for the trend score to reach the leverage activation threshold before increasing exposure (-0.1667 vs 0.1000).",
+      "metric_value": null,
+      "metric_unit": null
+    }
+  ],
+  "current_wait_condition": {
+    "code": "trend_score_below_leverage_activation",
+    "text": "The strategy is holding BTC but waiting for the trend score to reach the leverage activation threshold before increasing exposure (-0.1667 vs 0.1000).",
+    "current_values": {
+      "held_asset": "BTC",
+      "trend_score": -0.1666666666666666,
+      "trend_activation_threshold": 0.1,
+      "current_exposure": 1.0
+    },
+    "target_condition": {
+      "trend_score_min": 0.1
+    }
+  }
+}

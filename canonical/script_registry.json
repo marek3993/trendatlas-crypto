@@ -837,6 +837,47 @@
       "notes": "Optional Pi-authoritative producer helper only. The official refresh entrypoint remains scripts/daily_refresh_app_pipeline.py and the app consumer now reads the authority files directly."
     },
     {
+      "script_path": "scripts/production/strategy_adapters/phase68g_66g_1p25x_candidate_adapter.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Normalizes the current official phase68g canonical export chain into a clean adapter contract for Production Core v1.",
+      "primary_outputs": [],
+      "output_type": "production_adapter",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only adapter. Consumes only canonical current strategy exports plus freshness support artifacts."
+    },
+    {
+      "script_path": "scripts/production/build_current_strategy_snapshot.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Builds the clean Production Core v1 snapshot, timeseries, diagnostics, manifest, and quality artifacts for the current official strategy.",
+      "primary_outputs": [
+        "outputs/production/current_strategy_snapshot.json",
+        "outputs/production/current_strategy_timeseries.csv",
+        "outputs/production/current_strategy_diagnostics.json",
+        "outputs/production/current_strategy_snapshot.quality.json",
+        "outputs/production/current_strategy_snapshot.manifest.json"
+      ],
+      "output_type": "production_snapshot",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Fail-closed producer. Reads the current official strategy only through the production adapter."
+    },
+    {
+      "script_path": "scripts/production/validate_current_strategy_snapshot.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Validates Production Core v1 outputs against the current canonical phase68g source chain and blocks on any model/day/hash mismatch.",
+      "primary_outputs": [
+        "outputs/production/current_strategy_snapshot.quality.json"
+      ],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Standalone fail-closed validator for the production snapshot, timeseries, and diagnostics contract."
+    },
+    {
       "script_path": "run_data_refresh.ps1",
       "layer": "execution_data",
       "status": "active",

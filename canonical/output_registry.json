@@ -599,6 +599,67 @@
       "notes": "Dev-only non-authoritative daily BTC derivatives panel with UTC closed-day semantics, explicit source/coverage flags, Binance-only funding/basis/premium/open-interest inputs, and an explicit leverage proxy instead of exact ELR."
     },
     {
+      "output_path": "outputs/production/current_strategy_snapshot.json",
+      "generated_by": [
+        "scripts/production/build_current_strategy_snapshot.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_truth_snapshot",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Single Production Core v1 truth artifact for the current strategy contract. Built from canonical strategy exports through the production adapter."
+    },
+    {
+      "output_path": "outputs/production/current_strategy_timeseries.csv",
+      "generated_by": [
+        "scripts/production/build_current_strategy_snapshot.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_diagnostic_timeseries",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Clean Production Core v1 timeseries for research, monitoring, and future strategy comparison."
+    },
+    {
+      "output_path": "outputs/production/current_strategy_diagnostics.json",
+      "generated_by": [
+        "scripts/production/build_current_strategy_snapshot.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_diagnostics",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Required Production Core v1 diagnostics contract with human-readable and machine-readable current wait-condition and pain-point context."
+    },
+    {
+      "output_path": "outputs/production/current_strategy_snapshot.quality.json",
+      "generated_by": [
+        "scripts/production/build_current_strategy_snapshot.py",
+        "scripts/production/validate_current_strategy_snapshot.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_validation",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Fail-closed validation verdict for the Production Core v1 snapshot/timeseries/diagnostics bundle."
+    },
+    {
+      "output_path": "outputs/production/current_strategy_snapshot.manifest.json",
+      "generated_by": [
+        "scripts/production/build_current_strategy_snapshot.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_manifest",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Production Core v1 manifest with source hashes, output paths, build command, and git provenance."
+    },
+    {
       "output_path": "outputs/execution/authority/",
       "generated_by": [
         "scripts/daily_refresh_app_pipeline.py",

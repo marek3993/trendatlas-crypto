@@ -1,0 +1,20 @@
+{
+  "artifact_type": "current_strategy_snapshot_quality",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-05T05:49:43Z",
+  "status": "passed",
+  "error_count": 0,
+  "warning_count": 0,
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "source_day_alignment": true,
+    "strategy_status_ready": true,
+    "summary_parity": true
+  },
+  "validated_paths": {
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
+    "timeseries_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_timeseries.csv",
+    "diagnostics_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_diagnostics.json"
+  }
+}

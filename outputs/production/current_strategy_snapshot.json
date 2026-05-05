@@ -1,0 +1,128 @@
+{
+  "artifact_type": "current_strategy_snapshot",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-05T05:49:42Z",
+  "strategy_id": "current_strategy",
+  "strategy_version": "phase68g_66g_1p25x_candidate",
+  "closed_day": "2026-05-04",
+  "strategy_status": "ready",
+  "current_asset": "BTC",
+  "current_exposure": 1.0,
+  "current_regime": "BTC",
+  "execution_state": "BTC",
+  "trend_state": "pod_buy_hranicou",
+  "trend_score": -0.166667,
+  "next_rebalance_date": "2026-05-10",
+  "metrics": {
+    "total_return_pct_net": 117303.8,
+    "cagr_pct_net": 142.01,
+    "max_drawdown_pct_net": -28.74,
+    "since2023_cagr_pct_net": 167.78,
+    "since2025_cagr_pct_net": 155.74,
+    "trading_fees_total_pct": 15.9075,
+    "funding_total_pct": 0.0,
+    "borrow_cost_total_pct": 3.614,
+    "slippage_cost_total_pct": 0.9,
+    "cash_days_pct": 41.8207,
+    "btc_days_pct": 7.4949,
+    "switch_count": 198,
+    "trade_count": 198
+  },
+  "decision_context": {
+    "current_reason_code": "trend_gate_hold",
+    "current_reason_text": "The strategy keeps BTC but holds exposure at 1.00x because the trend score -0.1667 is below the leverage activation threshold 0.1000.",
+    "current_regime_duration_days": 4,
+    "days_since_last_trade": 3,
+    "days_since_last_risk_on": 3,
+    "days_since_last_equity_high": 208,
+    "current_drawdown_pct": -16.018077,
+    "current_cash_streak_days": 0,
+    "latest_rebalance_date": "2026-05-01",
+    "latest_rebalance_reason": "rebalance_to_btc"
+  },
+  "execution_intent": {
+    "target_asset": "BTC",
+    "target_exposure": 1.0,
+    "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::BTC",
+    "stale_signal": false,
+    "allow_live_order_candidate": true
+  },
+  "source_inputs": {
+    "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
+    "strategy_id": "current_strategy",
+    "strategy_version": "phase68g_66g_1p25x_candidate",
+    "validated_closed_day": "2026-05-04",
+    "files": {
+      "strategy_summary": {
+        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+        "sha256": "dad8650d2377259c610f61f874e7804237edf155ff1d58a0e7c7063cec314d6d",
+        "size_bytes": 900,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "row_count": 1
+      },
+      "strategy_paper": {
+        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+        "sha256": "3212a57d377eac61b51a5ac5af639a462dd024bb42397d053c3d7169b35defa7",
+        "size_bytes": 1054133,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "row_count": 2922
+      },
+      "trend_status": {
+        "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+        "sha256": "ad4bd956ef792c43efd113644413364f13a39cae7af7c1d9dd2ee932c55ddfea",
+        "size_bytes": 619,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "row_count": 1
+      },
+      "trend_history": {
+        "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+        "sha256": "62667cd4f53dff60e15943a1aee973a92d19f37b3ae5f53b4488fb15b0383664",
+        "size_bytes": 379110,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "row_count": 2922
+      },
+      "freshness_report": {
+        "path": "outputs/execution/freshness/app_freshness_report.json",
+        "sha256": "208a86f74282b837ee60e265bcde6bdd972427ea2b930e6e0030576cdb466882",
+        "size_bytes": 1214,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "status": "ok"
+      }
+    }
+  },
+  "validation": {
+    "status": "passed",
+    "errors": [],
+    "warnings": []
+  },
+  "provenance": {
+    "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
+    "source_strategy_export_paths": [
+      "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+      "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+      "outputs/execution/app_exports/phase66g_live_status.csv",
+      "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+      "outputs/execution/freshness/app_freshness_report.json"
+    ],
+    "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
+    "git_commit": "56be07dfbbd3fdab43503b8a9dd65be03adc53da",
+    "wait_condition": {
+      "code": "trend_score_below_leverage_activation",
+      "text": "The strategy is holding BTC but waiting for the trend score to reach the leverage activation threshold before increasing exposure (-0.1667 vs 0.1000).",
+      "current_values": {
+        "held_asset": "BTC",
+        "trend_score": -0.1666666666666666,
+        "trend_activation_threshold": 0.1,
+        "current_exposure": 1.0
+      },
+      "target_condition": {
+        "trend_score_min": 0.1
+      }
+    }
+  }
+}

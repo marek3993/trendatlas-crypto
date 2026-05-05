@@ -1,0 +1,66 @@
+{
+  "artifact_type": "current_strategy_snapshot_manifest",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-05T05:49:42Z",
+  "strategy_id": "current_strategy",
+  "strategy_version": "phase68g_66g_1p25x_candidate",
+  "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
+  "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
+  "git_commit": "56be07dfbbd3fdab43503b8a9dd65be03adc53da",
+  "source_inputs": {
+    "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
+    "strategy_id": "current_strategy",
+    "strategy_version": "phase68g_66g_1p25x_candidate",
+    "validated_closed_day": "2026-05-04",
+    "files": {
+      "strategy_summary": {
+        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+        "sha256": "dad8650d2377259c610f61f874e7804237edf155ff1d58a0e7c7063cec314d6d",
+        "size_bytes": 900,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "row_count": 1
+      },
+      "strategy_paper": {
+        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+        "sha256": "3212a57d377eac61b51a5ac5af639a462dd024bb42397d053c3d7169b35defa7",
+        "size_bytes": 1054133,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "row_count": 2922
+      },
+      "trend_status": {
+        "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+        "sha256": "ad4bd956ef792c43efd113644413364f13a39cae7af7c1d9dd2ee932c55ddfea",
+        "size_bytes": 619,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "row_count": 1
+      },
+      "trend_history": {
+        "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+        "sha256": "62667cd4f53dff60e15943a1aee973a92d19f37b3ae5f53b4488fb15b0383664",
+        "size_bytes": 379110,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "row_count": 2922
+      },
+      "freshness_report": {
+        "path": "outputs/execution/freshness/app_freshness_report.json",
+        "sha256": "208a86f74282b837ee60e265bcde6bdd972427ea2b930e6e0030576cdb466882",
+        "size_bytes": 1214,
+        "modified_utc": "2026-05-05T05:26:16Z",
+        "last_date": "2026-05-04",
+        "status": "ok"
+      }
+    }
+  },
+  "output_paths": {
+    "snapshot": "outputs/production/current_strategy_snapshot.json",
+    "timeseries": "outputs/production/current_strategy_timeseries.csv",
+    "diagnostics": "outputs/production/current_strategy_diagnostics.json",
+    "quality": "outputs/production/current_strategy_snapshot.quality.json",
+    "manifest": "outputs/production/current_strategy_snapshot.manifest.json"
+  },
+  "validation_status": "passed"
+}

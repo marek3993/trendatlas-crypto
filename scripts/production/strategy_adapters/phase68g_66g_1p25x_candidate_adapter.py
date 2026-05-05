@@ -1,0 +1,761 @@
+from __future__ import annotations
+
+import csv
+import hashlib
+import json
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+import pandas as pd
+
+from scripts.approved_strategy_net_export_helper import (
+    CASH_EQUIVALENT_ASSETS,
+    NetCostExportConfig,
+    build_net_cost_export_frame,
+    summarize_net_cost_export,
+)
+
+
+ROOT = Path(__file__).resolve().parents[3]
+
+PRODUCTION_STRATEGY_ID = "current_strategy"
+SOURCE_STRATEGY_VERSION = "phase68g_66g_1p25x_candidate"
+ADAPTER_NAME = "phase68g_66g_1p25x_candidate_adapter"
+SNAPSHOT_SCHEMA_VERSION = 1
+DIAGNOSTICS_SCHEMA_VERSION = 1
+QUALITY_SCHEMA_VERSION = 1
+MANIFEST_SCHEMA_VERSION = 1
+SUMMARY_TOLERANCE = 1e-6
+
+
+def _read_json_required(path: Path) -> dict[str, Any]:
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Missing required JSON file: {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected JSON object in {path}")
+    return payload
+
+
+def _read_csv_rows_required(path: Path) -> tuple[list[str], list[dict[str, str]]]:
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Missing required CSV file: {path}")
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.DictReader(handle)
+        header = reader.fieldnames or []
+        rows = list(reader)
+    if not header:
+        raise ValueError(f"CSV header is missing in {path}")
+    if not rows:
+        raise ValueError(f"CSV has no rows in {path}")
+    return header, rows
+
+
+def _read_single_csv_row_required(path: Path) -> dict[str, str]:
+    _header, rows = _read_csv_rows_required(path)
+    if len(rows) != 1:
+        raise ValueError(f"Expected exactly one row in {path}, found {len(rows)}")
+    return rows[0]
+
+
+def _read_dataframe_required(path: Path) -> pd.DataFrame:
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Missing required CSV file: {path}")
+    frame = pd.read_csv(path, encoding="utf-8-sig")
+    if frame.empty:
+        raise ValueError(f"CSV has no rows in {path}")
+    return frame
+
+
+def _path_for_manifest(path: Path, *, root: Path) -> str:
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return str(path.resolve())
+
+
+def _normalize_iso_day_text(value: Any, *, context: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        raise ValueError(f"{context} is missing")
+    if "T" in text:
+        text = text.split("T", 1)[0]
+    if len(text) != 10:
+        raise ValueError(f"{context} is not an ISO day: {value}")
+    return text
+
+
+def _to_float(value: Any, *, context: str) -> float:
+    text = str(value or "").strip()
+    if not text:
+        raise ValueError(f"{context} is missing")
+    try:
+        numeric = float(text)
+    except ValueError as exc:
+        raise ValueError(f"{context} must be numeric (actual={value})") from exc
+    if not np.isfinite(numeric):
+        raise ValueError(f"{context} must be finite (actual={value})")
+    return numeric
+
+
+def _to_int(value: Any, *, context: str) -> int:
+    return int(round(_to_float(value, context=context)))
+
+
+def _to_bool_series(series: pd.Series) -> pd.Series:
+    normalized = series.fillna("").astype(str).str.strip().str.lower()
+    return normalized.isin({"1", "true", "yes", "y"})
+
+
+def _to_float_series(series: pd.Series) -> pd.Series:
+    return pd.to_numeric(series, errors="coerce").fillna(0.0)
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _classify_regime(held_asset: str) -> str:
+    normalized = str(held_asset or "").strip().upper()
+    if normalized in CASH_EQUIVALENT_ASSETS:
+        return "CASH"
+    if normalized == "BTC":
+        return "BTC"
+    if normalized == "BASE":
+        return "BASE"
+    return "ALT"
+
+
+def _build_reason_code(row: pd.Series) -> str:
+    held_asset = str(row["held_asset"]).strip().upper()
+    regime = str(row["regime"]).strip().upper()
+    if bool(row["is_rebalance_day"]):
+        return f"rebalance_to_{held_asset.lower()}" if held_asset else "rebalance"
+    if bool(row["cash_day"]) and bool(row["stress_block_day"]):
+        return "cash_stress_block"
+    if bool(row["cash_day"]) and bool(row["trend_block_day"]):
+        return "cash_trend_block"
+    state_reason = str(row["leverage_state_reason"] or "").strip().lower()
+    if state_reason == "trend_gate":
+        return "trend_gate_hold"
+    if state_reason == "switch_day":
+        return "switch_day_hold"
+    if state_reason == "entry_buffer_day":
+        return "entry_buffer_hold"
+    if bool(row["leverage_active"]):
+        return "leveraged_hold"
+    if regime == "BTC":
+        return "hold_btc"
+    if regime == "BASE":
+        return "hold_base"
+    if regime == "ALT":
+        return "hold_alt"
+    return "hold_cash"
+
+
+def build_reason_text(row: pd.Series) -> str:
+    held_asset = str(row["held_asset"]).strip().upper() or "CASH"
+    trend_score = float(row["trend_score"])
+    buy_threshold = float(row["buy_threshold"])
+    activation_threshold = float(row["trend_activation_threshold"])
+    exposure = float(row["exposure"])
+    if bool(row["is_rebalance_day"]) and held_asset == "CASH":
+        return "The strategy rebalanced into CASH on the latest closed day."
+    if bool(row["is_rebalance_day"]):
+        return f"The strategy rebalanced into {held_asset} on the latest closed day."
+    if bool(row["cash_day"]) and bool(row["stress_block_day"]):
+        return "The strategy remains in CASH because the stress block is active."
+    if bool(row["cash_day"]) and bool(row["trend_block_day"]):
+        return (
+            "The strategy remains in CASH because the trend gate is below the buy threshold "
+            f"({trend_score:.4f} vs {buy_threshold:.4f})."
+        )
+    if str(row["leverage_state_reason"]).strip().lower() == "trend_gate":
+        return (
+            f"The strategy keeps {held_asset} but holds exposure at {exposure:.2f}x because the "
+            f"trend score {trend_score:.4f} is below the leverage activation threshold {activation_threshold:.4f}."
+        )
+    if bool(row["leverage_active"]):
+        return f"The strategy holds {held_asset} with active leverage at {exposure:.2f}x."
+    return f"The strategy keeps {held_asset} with {exposure:.2f}x exposure."
+
+
+def _rolling_compound_return(series: pd.Series, window: int) -> pd.Series:
+    return (
+        (1.0 + series)
+        .rolling(window=window, min_periods=window)
+        .apply(np.prod, raw=True)
+        - 1.0
+    )
+
+
+def _rolling_sharpe(series: pd.Series, window: int) -> pd.Series:
+    mean = series.rolling(window=window, min_periods=window).mean()
+    std = series.rolling(window=window, min_periods=window).std(ddof=0)
+    sharpe = (mean / std.replace(0.0, np.nan)) * np.sqrt(365.25)
+    return sharpe.replace([np.inf, -np.inf], np.nan)
+
+
+def _consecutive_tail_length(series: pd.Series) -> int:
+    if series.empty:
+        return 0
+    last_value = series.iloc[-1]
+    streak = 0
+    for value in reversed(series.tolist()):
+        if value != last_value:
+            break
+        streak += 1
+    return streak
+
+
+def _days_since_last_true(mask: pd.Series, dates: pd.Series) -> int | None:
+    hits = dates.loc[mask.fillna(False)]
+    if hits.empty:
+        return None
+    return int((pd.Timestamp(dates.iloc[-1]) - pd.Timestamp(hits.iloc[-1])).days)
+
+
+def _source_file_metadata(path: Path, *, last_date: str | None = None, row_count: int | None = None) -> dict[str, Any]:
+    stat = path.stat()
+    payload: dict[str, Any] = {
+        "path": _path_for_manifest(path, root=ROOT),
+        "sha256": _sha256_file(path),
+        "size_bytes": stat.st_size,
+        "modified_utc": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z"),
+    }
+    if last_date is not None:
+        payload["last_date"] = last_date
+    if row_count is not None:
+        payload["row_count"] = int(row_count)
+    return payload
+
+
+@dataclass(frozen=True)
+class Phase68g66g1p25xCandidateAdapter:
+    strategy_id: str = PRODUCTION_STRATEGY_ID
+    strategy_version: str = SOURCE_STRATEGY_VERSION
+    adapter_name: str = ADAPTER_NAME
+
+    def resolve_source_paths(self, *, root: Path | None = None) -> dict[str, Path]:
+        repo_root = (root or ROOT).resolve()
+        return {
+            "strategy_summary": repo_root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+            "strategy_paper": repo_root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase68g_66g_1p25x_candidate_paper.csv",
+            "trend_status": repo_root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase66g_live_status.csv",
+            "trend_history": repo_root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase66g_trend_barometer_history.csv",
+            "freshness_report": repo_root
+            / "outputs"
+            / "execution"
+            / "freshness"
+            / "app_freshness_report.json",
+        }
+
+    def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
+        repo_root = (root or ROOT).resolve()
+        source_paths = self.resolve_source_paths(root=repo_root)
+
+        summary_row = _read_single_csv_row_required(source_paths["strategy_summary"])
+        paper_df = _read_dataframe_required(source_paths["strategy_paper"])
+        trend_status_row = _read_single_csv_row_required(source_paths["trend_status"])
+        trend_history_df = _read_dataframe_required(source_paths["trend_history"])
+        freshness_payload = _read_json_required(source_paths["freshness_report"])
+
+        closed_day = _normalize_iso_day_text(
+            summary_row.get("latest_available_date"),
+            context="strategy_summary.latest_available_date",
+        )
+        paper_last_day = _normalize_iso_day_text(
+            paper_df["date"].iloc[-1],
+            context="strategy_paper.last_row.date",
+        )
+        trend_status_day = _normalize_iso_day_text(
+            trend_status_row.get("latest_available_date"),
+            context="trend_status.latest_available_date",
+        )
+        trend_history_last_day = _normalize_iso_day_text(
+            trend_history_df["trend_calc_date"].iloc[-1]
+            if "trend_calc_date" in trend_history_df.columns
+            else trend_history_df["date"].iloc[-1],
+            context="trend_history.last_row.day",
+        )
+        freshness_closed_day = _normalize_iso_day_text(
+            freshness_payload.get("latest_closed_utc_date"),
+            context="freshness_report.latest_closed_utc_date",
+        )
+        freshness_status = str(freshness_payload.get("status") or "").strip().lower()
+        freshness_errors = freshness_payload.get("errors")
+        if freshness_status not in {"ok", "success", "current"}:
+            raise ValueError(
+                f"freshness_report.status must be green for production build (actual={freshness_status or 'missing'})"
+            )
+        if isinstance(freshness_errors, list) and freshness_errors:
+            raise ValueError("freshness_report.errors must be empty for production build")
+
+        config = NetCostExportConfig(
+            annual_borrow_cost=_to_float(
+                summary_row.get("annual_borrow_cost_pct"),
+                context="strategy_summary.annual_borrow_cost_pct",
+            )
+            / 100.0,
+            tradable_transition_slippage_bps=_to_float(
+                summary_row.get("tradable_transition_slippage_bps"),
+                context="strategy_summary.tradable_transition_slippage_bps",
+            ),
+            fee_side_mode=str(summary_row.get("fee_side_mode") or "").strip() or "taker",
+            taker_fee_bps=_to_float(summary_row.get("taker_fee_bps"), context="strategy_summary.taker_fee_bps"),
+            maker_fee_bps=_to_float(summary_row.get("maker_fee_bps"), context="strategy_summary.maker_fee_bps"),
+            staking_discount_pct=_to_float(
+                summary_row.get("staking_discount_pct"),
+                context="strategy_summary.staking_discount_pct",
+            ),
+            referral_discount_pct=_to_float(
+                summary_row.get("referral_discount_pct"),
+                context="strategy_summary.referral_discount_pct",
+            ),
+        )
+
+        return {
+            "repo_root": repo_root,
+            "source_paths": source_paths,
+            "summary_row": summary_row,
+            "paper_df": paper_df,
+            "trend_status_row": trend_status_row,
+            "trend_history_df": trend_history_df,
+            "freshness_payload": freshness_payload,
+            "closed_day": closed_day,
+            "paper_last_day": paper_last_day,
+            "trend_status_day": trend_status_day,
+            "trend_history_last_day": trend_history_last_day,
+            "freshness_closed_day": freshness_closed_day,
+            "config": config,
+        }
+
+    def build_timeseries(self, inputs: dict[str, Any]) -> pd.DataFrame:
+        paper_df = inputs["paper_df"].copy()
+        export_df = build_net_cost_export_frame(
+            paper_df,
+            date_col="date",
+            gross_return_col="realistic_ret_gross",
+            held_asset_col="portfolio_held_asset",
+            leverage_col="effective_leverage",
+            daily_borrow_cost_col="daily_borrow_cost",
+            tradable_slippage_cost_col="tradable_slippage_cost",
+            config=inputs["config"],
+        )
+
+        timeseries = pd.DataFrame()
+        timeseries["date"] = export_df["date"].dt.strftime("%Y-%m-%d")
+        timeseries["strategy_id"] = self.strategy_id
+        timeseries["strategy_version"] = self.strategy_version
+        timeseries["held_asset"] = export_df["held_asset"].astype(str)
+        timeseries["exposure"] = np.where(
+            export_df["held_asset"].isin(CASH_EQUIVALENT_ASSETS),
+            0.0,
+            export_df["effective_leverage"],
+        )
+        timeseries["regime"] = timeseries["held_asset"].map(_classify_regime)
+        timeseries["execution_state"] = timeseries["held_asset"]
+        timeseries["trend_state"] = paper_df["trend_state_label"].fillna("").astype(str)
+        timeseries["trend_score"] = _to_float_series(paper_df["trend_score"])
+        timeseries["buy_threshold"] = _to_float_series(paper_df["buy_threshold"])
+        timeseries["return_gross"] = export_df["gross_return"]
+        timeseries["return_net"] = export_df["net_return"]
+        timeseries["equity"] = export_df["equity_curve_net"]
+        drawdown = (export_df["equity_curve_net"] / export_df["equity_curve_net"].cummax()) - 1.0
+        timeseries["drawdown_pct"] = drawdown * 100.0
+        timeseries["fees_daily"] = export_df["trading_fees_daily"]
+        timeseries["fees_cumulative"] = export_df["trading_fees_daily"].cumsum()
+        timeseries["funding_daily"] = export_df["funding_daily"]
+        timeseries["funding_cumulative"] = export_df["funding_daily"].cumsum()
+        timeseries["borrow_cost_daily"] = export_df["daily_borrow_cost"]
+        timeseries["borrow_cost_cumulative"] = export_df["daily_borrow_cost"].cumsum()
+        timeseries["slippage_cost_daily"] = export_df["tradable_slippage_cost"]
+        timeseries["slippage_cost_cumulative"] = export_df["tradable_slippage_cost"].cumsum()
+        timeseries["turnover"] = export_df["trading_turnover_notional"]
+        timeseries["cash_day"] = export_df["held_asset"].isin(CASH_EQUIVALENT_ASSETS)
+        timeseries["btc_day"] = export_df["held_asset"] == "BTC"
+        timeseries["in_market"] = ~timeseries["cash_day"]
+        timeseries["is_rebalance_day"] = export_df["asset_transition_day"].astype(bool)
+        timeseries["asset_transition_day"] = export_df["asset_transition_day"].astype(bool)
+        timeseries["trend_block_day"] = _to_bool_series(paper_df["trend_block_day"])
+        timeseries["stress_block_day"] = _to_bool_series(paper_df["stress_block_day"])
+        timeseries["trend_gate_pass"] = _to_bool_series(paper_df["trend_gate_pass"])
+        timeseries["leverage_active"] = _to_bool_series(paper_df["leverage_active"])
+        timeseries["leverage_state_reason"] = paper_df["leverage_state_reason"].fillna("").astype(str)
+        timeseries["trend_activation_threshold"] = _to_float_series(
+            paper_df["trend_activation_threshold"]
+        )
+        timeseries["current_asset"] = timeseries["held_asset"]
+        timeseries["reason_code"] = timeseries.apply(_build_reason_code, axis=1)
+        timeseries["rolling_return_7d"] = _rolling_compound_return(timeseries["return_net"], 7)
+        timeseries["rolling_return_30d"] = _rolling_compound_return(timeseries["return_net"], 30)
+        timeseries["rolling_return_90d"] = _rolling_compound_return(timeseries["return_net"], 90)
+        timeseries["rolling_vol_30d"] = (
+            timeseries["return_net"].rolling(window=30, min_periods=30).std(ddof=0) * np.sqrt(365.25)
+        )
+        timeseries["rolling_sharpe_90d"] = _rolling_sharpe(timeseries["return_net"], 90)
+        timeseries["source_validated"] = True
+        return timeseries
+
+    def summarize_source_metrics(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "strategy_summary": _source_file_metadata(
+                inputs["source_paths"]["strategy_summary"],
+                last_date=inputs["closed_day"],
+                row_count=1,
+            ),
+            "strategy_paper": _source_file_metadata(
+                inputs["source_paths"]["strategy_paper"],
+                last_date=inputs["paper_last_day"],
+                row_count=len(inputs["paper_df"]),
+            ),
+            "trend_status": _source_file_metadata(
+                inputs["source_paths"]["trend_status"],
+                last_date=inputs["trend_status_day"],
+                row_count=1,
+            ),
+            "trend_history": _source_file_metadata(
+                inputs["source_paths"]["trend_history"],
+                last_date=inputs["trend_history_last_day"],
+                row_count=len(inputs["trend_history_df"]),
+            ),
+            "freshness_report": {
+                **_source_file_metadata(
+                    inputs["source_paths"]["freshness_report"],
+                    last_date=inputs["freshness_closed_day"],
+                ),
+                "status": str(inputs["freshness_payload"].get("status") or "").strip().lower(),
+            },
+        }
+
+    def build_source_inputs(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "adapter_name": self.adapter_name,
+            "strategy_id": self.strategy_id,
+            "strategy_version": self.strategy_version,
+            "validated_closed_day": inputs["closed_day"],
+            "files": self.summarize_source_metrics(inputs),
+        }
+
+    def derive_summary_from_timeseries(
+        self,
+        inputs: dict[str, Any],
+        timeseries: pd.DataFrame,
+    ) -> dict[str, Any]:
+        export_df = pd.DataFrame(
+            {
+                "date": pd.to_datetime(timeseries["date"], errors="coerce"),
+                "gross_return": timeseries["return_gross"],
+                "net_return": timeseries["return_net"],
+                "held_asset": timeseries["held_asset"],
+                "trading_fees_daily": timeseries["fees_daily"],
+                "funding_daily": timeseries["funding_daily"],
+                "daily_borrow_cost": timeseries["borrow_cost_daily"],
+                "tradable_slippage_cost": timeseries["slippage_cost_daily"],
+                "asset_transition_day": timeseries["asset_transition_day"],
+                "annual_borrow_cost_pct": float(inputs["summary_row"]["annual_borrow_cost_pct"]),
+                "tradable_transition_slippage_bps": float(
+                    inputs["summary_row"]["tradable_transition_slippage_bps"]
+                ),
+                "fee_side_mode": inputs["summary_row"]["fee_side_mode"],
+                "taker_fee_bps": float(inputs["summary_row"]["taker_fee_bps"]),
+                "maker_fee_bps": float(inputs["summary_row"]["maker_fee_bps"]),
+                "staking_discount_pct": float(inputs["summary_row"]["staking_discount_pct"]),
+                "referral_discount_pct": float(inputs["summary_row"]["referral_discount_pct"]),
+                "effective_trading_fee_bps": float(inputs["summary_row"]["effective_trading_fee_bps"]),
+            }
+        )
+        return summarize_net_cost_export(
+            export_df,
+            model=self.strategy_version,
+            switch_count=_to_int(inputs["summary_row"]["switch_count"], context="summary.switch_count"),
+            trade_count=_to_int(inputs["summary_row"]["trade_count"], context="summary.trade_count"),
+        )
+
+    def source_summary_metrics(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        summary = inputs["summary_row"]
+        return {
+            "total_return_pct_net": _to_float(summary["total_return_pct_net"], context="summary.total_return_pct_net"),
+            "cagr_pct_net": _to_float(summary["cagr_pct_net"], context="summary.cagr_pct_net"),
+            "max_drawdown_pct_net": _to_float(
+                summary["max_drawdown_pct_net"], context="summary.max_drawdown_pct_net"
+            ),
+            "since2023_cagr_pct_net": _to_float(
+                summary["since2023_cagr_pct_net"],
+                context="summary.since2023_cagr_pct_net",
+            ),
+            "since2025_cagr_pct_net": _to_float(
+                summary["since2025_cagr_pct_net"],
+                context="summary.since2025_cagr_pct_net",
+            ),
+            "trading_fees_total_pct": _to_float(
+                summary["trading_fees_total_pct"], context="summary.trading_fees_total_pct"
+            ),
+            "funding_total_pct": _to_float(summary["funding_total_pct"], context="summary.funding_total_pct"),
+            "borrow_cost_total_pct": _to_float(
+                summary["borrow_cost_total_pct"], context="summary.borrow_cost_total_pct"
+            ),
+            "slippage_cost_total_pct": _to_float(
+                summary["tradable_slippage_cost_total_pct"],
+                context="summary.tradable_slippage_cost_total_pct",
+            ),
+            "cash_days_pct": _to_float(summary["cash_days_pct"], context="summary.cash_days_pct"),
+            "btc_days_pct": _to_float(summary["btc_days_pct"], context="summary.btc_days_pct"),
+            "switch_count": _to_int(summary["switch_count"], context="summary.switch_count"),
+            "trade_count": _to_int(summary["trade_count"], context="summary.trade_count"),
+        }
+
+    def build_snapshot_metrics(self, inputs: dict[str, Any], timeseries: pd.DataFrame) -> dict[str, Any]:
+        source_metrics = self.source_summary_metrics(inputs)
+        return {
+            **source_metrics,
+            "total_return_pct_net": round(source_metrics["total_return_pct_net"], 4),
+            "cagr_pct_net": round(source_metrics["cagr_pct_net"], 4),
+            "max_drawdown_pct_net": round(source_metrics["max_drawdown_pct_net"], 4),
+            "since2023_cagr_pct_net": round(source_metrics["since2023_cagr_pct_net"], 4),
+            "since2025_cagr_pct_net": round(source_metrics["since2025_cagr_pct_net"], 4),
+            "trading_fees_total_pct": round(source_metrics["trading_fees_total_pct"], 6),
+            "funding_total_pct": round(source_metrics["funding_total_pct"], 6),
+            "borrow_cost_total_pct": round(source_metrics["borrow_cost_total_pct"], 6),
+            "slippage_cost_total_pct": round(source_metrics["slippage_cost_total_pct"], 6),
+            "cash_days_pct": round(source_metrics["cash_days_pct"], 6),
+            "btc_days_pct": round(source_metrics["btc_days_pct"], 6),
+        }
+
+    def build_decision_context(self, timeseries: pd.DataFrame) -> dict[str, Any]:
+        current_row = timeseries.iloc[-1]
+        dates = pd.to_datetime(timeseries["date"], errors="coerce")
+        latest_rebalance_rows = timeseries.loc[timeseries["is_rebalance_day"]]
+        latest_rebalance_date = (
+            None if latest_rebalance_rows.empty else str(latest_rebalance_rows.iloc[-1]["date"])
+        )
+        current_regime_duration_days = _consecutive_tail_length(timeseries["regime"])
+        current_cash_streak_days = (
+            _consecutive_tail_length(timeseries["cash_day"]) if bool(current_row["cash_day"]) else 0
+        )
+        risk_on_entry_mask = (~timeseries["cash_day"]) & timeseries["cash_day"].shift(1, fill_value=True)
+        return {
+            "current_reason_code": str(current_row["reason_code"]),
+            "current_reason_text": build_reason_text(current_row),
+            "current_regime_duration_days": int(current_regime_duration_days),
+            "days_since_last_trade": _days_since_last_true(timeseries["is_rebalance_day"], dates),
+            "days_since_last_risk_on": _days_since_last_true(risk_on_entry_mask, dates),
+            "days_since_last_equity_high": _days_since_last_true(
+                timeseries["equity"] == timeseries["equity"].cummax(),
+                dates,
+            ),
+            "current_drawdown_pct": round(float(current_row["drawdown_pct"]), 6),
+            "current_cash_streak_days": int(current_cash_streak_days),
+            "latest_rebalance_date": latest_rebalance_date,
+            "latest_rebalance_reason": (
+                None if latest_rebalance_rows.empty else str(latest_rebalance_rows.iloc[-1]["reason_code"])
+            ),
+        }
+
+    def build_diagnostics_payload(
+        self,
+        *,
+        generated_at_utc: str,
+        inputs: dict[str, Any],
+        timeseries: pd.DataFrame,
+        validation: dict[str, Any],
+    ) -> dict[str, Any]:
+        current_row = timeseries.iloc[-1]
+        recent_regime_rows = timeseries.loc[
+            timeseries["regime"] != timeseries["regime"].shift(1, fill_value=timeseries["regime"].iloc[0])
+        ].tail(5)
+        recent_rebalance_rows = timeseries.loc[timeseries["is_rebalance_day"]].tail(5)
+        trailing_30 = timeseries.tail(30)
+        trailing_90 = timeseries.tail(90)
+        lifetime_cost_pct = (
+            float(timeseries["fees_daily"].sum())
+            + float(timeseries["funding_daily"].sum())
+            + float(timeseries["borrow_cost_daily"].sum())
+            + float(timeseries["slippage_cost_daily"].sum())
+        ) * 100.0
+        churn_status = "elevated" if float(trailing_90["turnover"].sum()) >= 8.0 else "contained"
+        fee_status = "elevated" if lifetime_cost_pct >= 20.0 else "contained"
+        cash_days_pct = float(self.build_snapshot_metrics(inputs, timeseries)["cash_days_pct"])
+        cash_status = "elevated" if cash_days_pct >= 40.0 else "contained"
+        flatline_days = (
+            self.build_decision_context(timeseries)["current_cash_streak_days"]
+            if bool(current_row["cash_day"])
+            else 0
+        )
+        diagnostics = {
+            "artifact_type": "current_strategy_diagnostics",
+            "schema_version": DIAGNOSTICS_SCHEMA_VERSION,
+            "generated_at_utc": generated_at_utc,
+            "strategy_id": self.strategy_id,
+            "strategy_version": self.strategy_version,
+            "closed_day": inputs["closed_day"],
+            "latest_state_explanation": build_reason_text(current_row),
+            "current_flatline_explanation": (
+                f"Equity flatlines are expected during the current CASH streak of {flatline_days} days."
+                if flatline_days > 0
+                else None
+            ),
+            "current_cash_or_risk_reason": build_reason_text(current_row),
+            "recent_regime_changes": [
+                {
+                    "date": str(row["date"]),
+                    "held_asset": str(row["held_asset"]),
+                    "regime": str(row["regime"]),
+                    "reason_code": str(row["reason_code"]),
+                }
+                for _, row in recent_regime_rows.iterrows()
+            ],
+            "recent_rebalance_events": [
+                {
+                    "date": str(row["date"]),
+                    "held_asset": str(row["held_asset"]),
+                    "exposure": round(float(row["exposure"]), 6),
+                    "reason_code": str(row["reason_code"]),
+                    "reason_text": build_reason_text(row),
+                }
+                for _, row in recent_rebalance_rows.iterrows()
+            ],
+            "current_cost_pressure": {
+                "current_effective_exposure": round(float(current_row["exposure"]), 6),
+                "trailing_30d_fees_pct": round(float(trailing_30["fees_daily"].sum() * 100.0), 6),
+                "trailing_30d_funding_pct": round(float(trailing_30["funding_daily"].sum() * 100.0), 6),
+                "trailing_30d_borrow_pct": round(float(trailing_30["borrow_cost_daily"].sum() * 100.0), 6),
+                "trailing_30d_slippage_pct": round(float(trailing_30["slippage_cost_daily"].sum() * 100.0), 6),
+            },
+            "current_fee_drag_summary": {
+                "lifetime_trading_fees_total_pct": round(float(timeseries["fees_daily"].sum() * 100.0), 6),
+                "lifetime_funding_total_pct": round(float(timeseries["funding_daily"].sum() * 100.0), 6),
+                "lifetime_borrow_cost_total_pct": round(float(timeseries["borrow_cost_daily"].sum() * 100.0), 6),
+                "lifetime_slippage_cost_total_pct": round(float(timeseries["slippage_cost_daily"].sum() * 100.0), 6),
+                "lifetime_total_cost_pct": round(lifetime_cost_pct, 6),
+                "trailing_90d_turnover": round(float(trailing_90["turnover"].sum()), 6),
+            },
+            "current_data_health_summary": {
+                "status": validation["status"],
+                "closed_day": inputs["closed_day"],
+                "summary_latest_available_date": inputs["closed_day"],
+                "paper_last_day": inputs["paper_last_day"],
+                "trend_status_day": inputs["trend_status_day"],
+                "trend_history_last_day": inputs["trend_history_last_day"],
+                "freshness_closed_day": inputs["freshness_closed_day"],
+                "freshness_status": str(inputs["freshness_payload"].get("status") or "").strip().lower(),
+                "freshness_errors": inputs["freshness_payload"].get("errors", []),
+                "warnings": validation["warnings"],
+            },
+            "strategy_improvement_signals": {
+                "churn_pressure": {
+                    "status": churn_status,
+                    "trade_count": int(self.source_summary_metrics(inputs)["trade_count"]),
+                    "switch_count": int(self.source_summary_metrics(inputs)["switch_count"]),
+                    "trailing_90d_turnover": round(float(trailing_90["turnover"].sum()), 6),
+                },
+                "fee_sensitivity": {
+                    "status": fee_status,
+                    "lifetime_total_cost_pct": round(lifetime_cost_pct, 6),
+                    "effective_trading_fee_bps": _to_float(
+                        inputs["summary_row"]["effective_trading_fee_bps"],
+                        context="summary.effective_trading_fee_bps",
+                    ),
+                },
+                "cash_drag": {
+                    "status": cash_status,
+                    "cash_days_pct": round(cash_days_pct, 6),
+                    "current_cash_streak_days": int(
+                        self.build_decision_context(timeseries)["current_cash_streak_days"]
+                    ),
+                },
+                "flatline_duration": {
+                    "status": "active" if flatline_days > 0 else "inactive",
+                    "current_cash_streak_days": int(flatline_days),
+                },
+                "current_research_questions": [
+                    "Can churn be reduced without losing the current net-return profile?",
+                    "Is the current leverage gate too conservative when BTC remains held but leverage stays off?",
+                    "How much of lifetime cost drag comes from transition frequency versus borrow carry?",
+                ],
+            },
+            "validation": {
+                "status": validation["status"],
+                "errors": list(validation["errors"]),
+                "warnings": list(validation["warnings"]),
+            },
+        }
+        return diagnostics
+
+    def compare_summary_metrics(
+        self,
+        *,
+        inputs: dict[str, Any],
+        timeseries: pd.DataFrame,
+    ) -> list[str]:
+        source_summary = self.source_summary_metrics(inputs)
+        derived_summary = self.derive_summary_from_timeseries(inputs, timeseries)
+        comparisons = [
+            ("total_return_pct_net", derived_summary["total_return_pct_net"], source_summary["total_return_pct_net"]),
+            ("cagr_pct_net", derived_summary["cagr_pct_net"], source_summary["cagr_pct_net"]),
+            ("max_drawdown_pct_net", derived_summary["max_drawdown_pct_net"], source_summary["max_drawdown_pct_net"]),
+            (
+                "since2023_cagr_pct_net",
+                derived_summary["since2023_cagr_pct_net"],
+                source_summary["since2023_cagr_pct_net"],
+            ),
+            (
+                "since2025_cagr_pct_net",
+                derived_summary["since2025_cagr_pct_net"],
+                source_summary["since2025_cagr_pct_net"],
+            ),
+            (
+                "trading_fees_total_pct",
+                derived_summary["trading_fees_total_pct"],
+                source_summary["trading_fees_total_pct"],
+            ),
+            ("funding_total_pct", derived_summary["funding_total_pct"], source_summary["funding_total_pct"]),
+            (
+                "borrow_cost_total_pct",
+                derived_summary["borrow_cost_total_pct"],
+                source_summary["borrow_cost_total_pct"],
+            ),
+            (
+                "tradable_slippage_cost_total_pct",
+                derived_summary["tradable_slippage_cost_total_pct"],
+                source_summary["slippage_cost_total_pct"],
+            ),
+        ]
+        mismatches: list[str] = []
+        for field_name, derived_value, source_value in comparisons:
+            if abs(float(derived_value) - float(source_value)) > SUMMARY_TOLERANCE:
+                mismatches.append(
+                    f"source summary mismatch for {field_name}: source={source_value} derived={derived_value}"
+                )
+        if int(derived_summary["trade_count"]) != int(source_summary["trade_count"]):
+            mismatches.append(
+                "source summary mismatch for trade_count: "
+                f"source={source_summary['trade_count']} derived={derived_summary['trade_count']}"
+            )
+        return mismatches
