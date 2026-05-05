@@ -21,6 +21,7 @@ if str(ROOT) not in sys.path:
 
 import pandas as pd
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 import streamlit as st
 from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
@@ -641,7 +642,9 @@ TEXT["sk"].update(
         "production_exposure": "Expozicia",
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
-        "production_chart_note": "Graf ukazuje len vyvoj kapitalu strategie. Nejde o zaznam fyzicky nakupenej mince ani o vypis otvorenych pozicii.",
+        "production_chart_note": "Graf ukazuje iba krivku kapitalu strategie. Samotna krivka nehovori, ci je strategia prave v trhu.",
+        "production_chart_flat_note": "Zmena kapitalu ani rovnejsi usek automaticky neznamenaju otvorenu trhovu poziciu.",
+        "production_chart_participation_note": "Stavovy banner a spodny strip ukazuju, kedy bola strategia realne v trhu a aku autorizovanu expoziciu mala.",
         "production_reason_title": "Preto je strategia teraz v tomto stave",
         "production_wait_title": "Na co strategia caka",
         "production_pain_title": "Co ju teraz brzdi",
@@ -654,6 +657,16 @@ TEXT["sk"].update(
         "production_validation_failed": "nevalidne",
         "production_waiting_yes": "Ano",
         "production_waiting_no": "Nie",
+        "production_chart_exposure_legend": "Autorizovana expozicia",
+        "production_chart_exposure_axis": "Autorizovana expozicia",
+        "production_hover_market_state": "Stav trhu",
+        "production_hover_authorized_exposure": "Autorizovana expozicia",
+        "production_hover_candidate_asset": "Kandidat strategie",
+        "production_hover_market_state_in": "V TRHU",
+        "production_hover_market_state_out": "MIMO TRHU",
+        "production_chart_current_prefix": "Aktualne",
+        "production_chart_current_out_note": "Aktualne je strategia mimo trhu. Zobrazeny je kapital, nie otvorena pozicia. Kandidat strategie je {candidate} a autorizovana expozicia je {exposure}.",
+        "production_chart_current_in_note": "Aktualne je strategia v trhu s autorizovanou expoziciou {exposure}. Kandidat strategie je {candidate}.",
     }
 )
 TEXT["en"].update(
@@ -662,7 +675,9 @@ TEXT["en"].update(
         "production_exposure": "Exposure",
         "production_closed_day": "Last closed day",
         "production_next_rebalance": "Next rebalance",
-        "production_chart_note": "This chart shows only the strategy equity curve. It is not a record of a physically bought coin or a list of open positions.",
+        "production_chart_note": "This chart shows only the strategy capital curve. The line alone does not mean the strategy is currently in market.",
+        "production_chart_flat_note": "A flatter section or a capital change does not automatically mean an open market position.",
+        "production_chart_participation_note": "The state banner and the lower strip show when the strategy was actually in market and what authorized exposure it had.",
         "production_reason_title": "Why the strategy is in this state",
         "production_wait_title": "What the strategy is waiting for",
         "production_pain_title": "Current pain points",
@@ -675,6 +690,16 @@ TEXT["en"].update(
         "production_validation_failed": "invalid",
         "production_waiting_yes": "Yes",
         "production_waiting_no": "No",
+        "production_chart_exposure_legend": "Authorized exposure",
+        "production_chart_exposure_axis": "Authorized exposure",
+        "production_hover_market_state": "Market state",
+        "production_hover_authorized_exposure": "Authorized exposure",
+        "production_hover_candidate_asset": "Strategy candidate",
+        "production_hover_market_state_in": "IN MARKET",
+        "production_hover_market_state_out": "OUT OF MARKET",
+        "production_chart_current_prefix": "Current",
+        "production_chart_current_out_note": "The strategy is currently out of market. The chart shows capital, not an open position. The strategy candidate is {candidate} and authorized exposure is {exposure}.",
+        "production_chart_current_in_note": "The strategy is currently in market with authorized exposure {exposure}. The strategy candidate is {candidate}.",
     }
 )
 METRIC_HELP["sk"].update(
@@ -3857,6 +3882,18 @@ def humanize_production_pain_point(pain_point: dict[str, Any], lang: str) -> str
     return str(pain_point.get("text") or "").strip()
 
 
+def production_market_state_label_from_values(
+    exposure: Any,
+    trend_permission_active: Any,
+    lang: str,
+) -> str:
+    exposure_value = as_float(exposure)
+    permission_active = as_bool(trend_permission_active)
+    if permission_active is True and exposure_value is not None and not math.isclose(exposure_value, 0.0, abs_tol=1e-12):
+        return t(lang, "production_hover_market_state_in")
+    return t(lang, "production_hover_market_state_out")
+
+
 def production_market_state_label(
     snapshot: dict[str, Any],
     diagnostics: dict[str, Any],
@@ -3876,9 +3913,14 @@ def production_market_state_label(
             snapshot.get("current_exposure"),
         )
     )
-    if trend_permission_active is not True or exposure is None or math.isclose(exposure, 0.0, abs_tol=1e-12):
-        return t(lang, "production_state_out_of_market")
-    return t(lang, "production_state_in_market")
+    market_state = production_market_state_label_from_values(
+        exposure=exposure,
+        trend_permission_active=trend_permission_active,
+        lang=lang,
+    )
+    if market_state == t(lang, "production_hover_market_state_in"):
+        return t(lang, "production_state_in_market")
+    return t(lang, "production_state_out_of_market")
 
 
 def production_wait_reason_short(
@@ -3896,6 +3938,34 @@ def production_wait_reason_short(
     if trend_permission_active is not True:
         return t(lang, "production_wait_reason_pending")
     return t(lang, "production_wait_reason_active")
+
+
+def build_production_chart_current_state_note(
+    snapshot: dict[str, Any],
+    diagnostics: dict[str, Any],
+    lang: str,
+) -> str:
+    candidate_asset = product_asset_label_nominative(
+        first_present_value(snapshot.get("candidate_asset"), snapshot.get("selected_asset")),
+        lang,
+    )
+    exposure = as_float(
+        first_present_value(
+            snapshot.get("effective_market_exposure"),
+            snapshot.get("current_exposure"),
+        )
+    )
+    exposure_text = f"{exposure:.2f}x" if exposure is not None else t(lang, "na")
+    market_state = production_market_state_label(snapshot, diagnostics, lang)
+    if market_state == t(lang, "production_state_out_of_market"):
+        return t(lang, "production_chart_current_out_note").format(
+            candidate=candidate_asset,
+            exposure=exposure_text,
+        )
+    return t(lang, "production_chart_current_in_note").format(
+        candidate=candidate_asset,
+        exposure=exposure_text,
+    )
 
 
 def build_homepage_state_story(
@@ -4730,8 +4800,75 @@ def make_production_equity_chart(
     rebased_equity = rebase_series(main_plot["equity"])
     daily_return_pct = pd.to_numeric(main_plot.get("return_net"), errors="coerce").fillna(0.0) * 100.0
     legend_label = t(lang, "production_chart_legend") if str(t(lang, "production_chart_legend")).strip() else main_label
+    exposure_series = pd.to_numeric(main_plot.get("effective_market_exposure"), errors="coerce").fillna(0.0)
+    max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
+    candidate_labels = main_plot.get("candidate_asset", pd.Series([""] * len(main_plot), index=main_plot.index)).fillna("").astype(str).map(
+        lambda value: product_asset_label_nominative(value, lang)
+    )
+    market_state_labels = [
+        production_market_state_label_from_values(
+            exposure=exposure,
+            trend_permission_active=trend_permission_active,
+            lang=lang,
+        )
+        for exposure, trend_permission_active in zip(
+            exposure_series.tolist(),
+            main_plot.get("trend_permission_active", pd.Series([False] * len(main_plot), index=main_plot.index)).tolist(),
+        )
+    ]
+    hover_customdata = list(
+        zip(
+            [f"{value:+.2f}%" for value in daily_return_pct.tolist()],
+            market_state_labels,
+            [f"{value:.2f}x" for value in exposure_series.tolist()],
+            candidate_labels.tolist(),
+        )
+    )
+    market_state_flags = [
+        state_label == t(lang, "production_hover_market_state_in")
+        for state_label in market_state_labels
+    ]
 
-    fig = go.Figure()
+    fig = make_subplots(
+        rows=2,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.04,
+        row_heights=[0.82, 0.18],
+    )
+
+    if not main_plot.empty:
+        segment_start = pd.Timestamp(main_plot["ts"].iloc[0])
+        current_state_flag = market_state_flags[0]
+        timestamps = pd.to_datetime(main_plot["ts"], errors="coerce").tolist()
+        for idx in range(1, len(main_plot)):
+            next_state_flag = market_state_flags[idx]
+            if next_state_flag == current_state_flag:
+                continue
+            segment_end = pd.Timestamp(timestamps[idx])
+            fig.add_vrect(
+                x0=segment_start,
+                x1=segment_end,
+                fillcolor="rgba(6,214,160,0.05)" if current_state_flag else "rgba(255,209,102,0.09)",
+                opacity=1.0,
+                line_width=0,
+                layer="below",
+                row="all",
+                col=1,
+            )
+            segment_start = segment_end
+            current_state_flag = next_state_flag
+        fig.add_vrect(
+            x0=segment_start,
+            x1=pd.Timestamp(timestamps[-1]) + pd.Timedelta(days=1),
+            fillcolor="rgba(6,214,160,0.05)" if current_state_flag else "rgba(255,209,102,0.09)",
+            opacity=1.0,
+            line_width=0,
+            layer="below",
+            row="all",
+            col=1,
+        )
+
     fig.add_trace(
         go.Scatter(
             x=main_plot["ts"],
@@ -4739,22 +4876,52 @@ def make_production_equity_chart(
             mode="lines",
             name=legend_label or main_label,
             line=dict(width=4.8, color="#ff6b6b"),
-            customdata=daily_return_pct,
+            customdata=hover_customdata,
             hovertemplate=(
                 f"{t(lang, 'production_hover_date')}: %{{x|%d.%m.%Y}}<br>"
-                f"{t(lang, 'production_hover_index')}: %{{y:.2f}}x<br>"
-                f"{t(lang, 'production_hover_return_net')}: %{{customdata:+.2f}}%<extra></extra>"
+                f"{t(lang, 'production_hover_index')}: %{{y:.2f}}<br>"
+                f"{t(lang, 'production_hover_return_net')}: %{{customdata[0]}}<br>"
+                f"{t(lang, 'production_hover_market_state')}: %{{customdata[1]}}<br>"
+                f"{t(lang, 'production_hover_authorized_exposure')}: %{{customdata[2]}}<br>"
+                f"{t(lang, 'production_hover_candidate_asset')}: %{{customdata[3]}}<extra></extra>"
             ),
         ),
+        row=1,
+        col=1,
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=main_plot["ts"],
+            y=exposure_series,
+            mode="lines",
+            name=t(lang, "production_chart_exposure_legend"),
+            line=dict(width=2.6, color="#06d6a0"),
+            line_shape="hv",
+            fill="tozeroy",
+            fillcolor="rgba(6,214,160,0.20)",
+            hoverinfo="skip",
+        ),
+        row=2,
+        col=1,
+    )
+
+    current_market_state = market_state_labels[-1]
+    current_exposure_text = f"{float(exposure_series.iloc[-1]):.2f}x"
+    current_candidate_label = candidate_labels.iloc[-1]
+    annotation_text = (
+        f"{t(lang, 'production_chart_current_prefix')}: {current_market_state} | "
+        f"{t(lang, 'production_hover_authorized_exposure')}: {current_exposure_text} | "
+        f"{t(lang, 'production_hover_candidate_asset')}: {current_candidate_label}"
     )
 
     fig.update_layout(
-        height=560,
+        height=640,
         title=title,
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(255,255,255,0.015)",
-        margin=dict(l=20, r=20, t=60, b=20),
+        margin=dict(l=20, r=20, t=70, b=20),
         legend_title="",
         legend=dict(
             orientation="h",
@@ -4773,16 +4940,51 @@ def make_production_equity_chart(
             font=dict(size=12),
         ),
     )
+    fig.add_annotation(
+        xref="paper",
+        yref="paper",
+        x=0.01,
+        y=0.985,
+        showarrow=False,
+        text=annotation_text,
+        align="left",
+        font=dict(size=12, color="#f8fafc"),
+        bgcolor="rgba(10,15,24,0.82)",
+        bordercolor="rgba(255,255,255,0.10)",
+        borderwidth=1,
+        borderpad=6,
+    )
     fig.update_xaxes(
         showgrid=False,
         showspikes=True,
         spikemode="across",
         spikesnap="cursor",
+        row=1,
+        col=1,
+    )
+    fig.update_xaxes(
+        showgrid=False,
+        showspikes=True,
+        spikemode="across",
+        spikesnap="cursor",
+        row=2,
+        col=1,
     )
     fig.update_yaxes(
         title=t(lang, "chart_performance_axis"),
         showgrid=True,
         gridcolor="rgba(255,255,255,0.06)",
+        row=1,
+        col=1,
+    )
+    fig.update_yaxes(
+        title=t(lang, "production_chart_exposure_axis"),
+        showgrid=True,
+        gridcolor="rgba(255,255,255,0.04)",
+        range=[0.0, max_authorized_exposure * 1.1],
+        ticksuffix="x",
+        row=2,
+        col=1,
     )
     return fig
 
@@ -5143,6 +5345,8 @@ with tabs[0]:
     )
     st.caption(t(lang, "production_chart_note"))
     st.caption(t(lang, "production_chart_flat_note"))
+    st.caption(t(lang, "production_chart_participation_note"))
+    st.caption(build_production_chart_current_state_note(production_snapshot, production_diagnostics, lang))
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
     perf1 = st.columns(3)
