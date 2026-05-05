@@ -31,9 +31,8 @@ from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
 )
 from scripts.production.data_health_common import (
-    app_blocking_sources,
     build_report_bundle,
-    research_warning_sources,
+    homepage_data_health_view,
 )
 
 APP_EXECUTE_BRIDGE_IMPORT_ERROR = ""
@@ -1012,60 +1011,110 @@ def build_live_data_health_report() -> dict[str, Any]:
     return dict(bundle["report"])
 
 
+def data_health_messages_for_lang(sources: list[dict[str, Any]], lang: str) -> list[str]:
+    message_key = "user_message_sk" if lang == "sk" else "user_message_en"
+    messages: list[str] = []
+    for source in sources:
+        if not isinstance(source, dict):
+            continue
+        message = str(source.get(message_key) or "").strip()
+        if message:
+            messages.append(message)
+    return messages
+
+
 def render_data_health_banner(report: dict[str, Any], lang: str) -> bool:
-    blocking_sources = app_blocking_sources(report)
-    research_sources = research_warning_sources(report)
-    if not blocking_sources and not research_sources:
-        return False
-
-    title = "Stav dát" if lang == "sk" else "Data Health"
-    st.markdown(f"### {title}")
-
-    if blocking_sources:
-        blocking_messages = [
-            str(source.get("user_message_sk") if lang == "sk" else source.get("user_message_en") or "").strip()
-            for source in blocking_sources
-        ]
-        blocking_messages = [message for message in blocking_messages if message]
+    view = homepage_data_health_view(report)
+    critical_sources = view["critical_sources"]
+    research_sources = view["research_sources"]
+    informational_sources = view["informational_sources"]
+    if view["show_primary_alert"]:
+        title = "Stav d\u00e1t" if lang == "sk" else "Data Health"
+        st.markdown(f"### {title}")
+        blocking_messages = data_health_messages_for_lang(critical_sources, lang)
         prefix = (
-            "Produkčné alebo autoritatívne zdroje zlyhali. Aplikácia zostáva fail-closed."
+            "Kritick\u00e9 produk\u010dn\u00e9, aplika\u010dn\u00e9 alebo execution zdroje zlyhali. "
+            "Aplik\u00e1cia aj vykon\u00e1vanie obchodov ost\u00e1vaj\u00fa fail-closed."
             if lang == "sk"
-            else "Production or authority sources failed. The app remains fail-closed."
+            else "Critical production, app, or execution sources failed. The app and trade execution remain fail-closed."
         )
         details = "\n".join(f"- {message}" for message in blocking_messages[:4])
         suffix = ""
         if len(blocking_messages) > 4:
             remaining = len(blocking_messages) - 4
             suffix = (
-                f"\n- Ďalšie zasiahnuté zdroje: {remaining}"
+                f"\n- \u010eal\u0161ie zasiahnut\u00e9 zdroje: {remaining}"
                 if lang == "sk"
                 else f"\n- Additional affected sources: {remaining}"
             )
         st.error(prefix + ("\n" + details if details else "") + suffix)
-
-    if research_sources:
-        research_messages = [
-            str(source.get("user_message_sk") if lang == "sk" else source.get("user_message_en") or "").strip()
-            for source in research_sources
-        ]
-        research_messages = [message for message in research_messages if message]
-        prefix = (
-            "Research-only zdroje majú problém. Produkcia tým nie je ovplyvnená, ale príslušné research probes sú zablokované."
+        return True
+    if research_sources or informational_sources:
+        st.caption(
+            "Produk\u010dn\u00e9 d\u00e1ta: OK. Ved\u013eaj\u0161ie research-only a env/API upozornenia s\u00fa skryt\u00e9 v detaile Stav d\u00e1t."
             if lang == "sk"
-            else "Research-only sources have issues. Production is unaffected, but the related research probes are blocked."
+            else "Production data: OK. Secondary research-only and env/API notices are tucked into the Data Health details."
         )
-        details = "\n".join(f"- {message}" for message in research_messages[:4])
-        suffix = ""
-        if len(research_messages) > 4:
-            remaining = len(research_messages) - 4
-            suffix = (
-                f"\n- Ďalšie research warnings: {remaining}"
-                if lang == "sk"
-                else f"\n- Additional research warnings: {remaining}"
-            )
-        st.warning(prefix + ("\n" + details if details else "") + suffix)
+        return False
+    st.caption("Produk\u010dn\u00e9 d\u00e1ta: OK" if lang == "sk" else "Production data: OK")
+    return False
 
-    return bool(blocking_sources)
+def render_data_health_details(
+    report: dict[str, Any],
+    lang: str,
+    refresh_rows: list[dict[str, Any]],
+) -> None:
+    view = homepage_data_health_view(report)
+    research_messages = data_health_messages_for_lang(view["research_sources"], lang)
+    informational_messages = data_health_messages_for_lang(view["informational_sources"], lang)
+
+    with st.expander("Stav d\u00e1t" if lang == "sk" else "Data Health", expanded=False):
+        st.markdown(
+            "#### Produk\u010dn\u00fd / app / execution stav"
+            if lang == "sk"
+            else "#### Production / app / execution health"
+        )
+        if view["show_ok_status"]:
+            st.write(
+                "Produk\u010dn\u00e9 d\u00e1ta, aplik\u00e1cia aj execution s\u00fa v poriadku."
+                if lang == "sk"
+                else "Production data, the app, and execution are healthy."
+            )
+            if view["show_secondary_note"]:
+                st.caption(
+                    "Ni\u017e\u0161ie s\u00fa len ved\u013eaj\u0161ie research-only alebo informa\u010dn\u00e9 upozornenia. Produkcia nimi nie je ovplyvnen\u00e1."
+                    if lang == "sk"
+                    else "Only secondary research-only or informational notices remain below. Production is not affected."
+                )
+
+        st.markdown("#### Autoritativny runtime" if lang == "sk" else "#### Authority Runtime")
+        render_app_table(refresh_rows, emphasize_first_column=True)
+
+        if research_messages:
+            st.markdown(
+                "#### Research-only upozornenia"
+                if lang == "sk"
+                else "#### Research-only notices"
+            )
+            st.caption(
+                "Produkcia ani execution nimi nie s\u00fa ovplyvnen\u00e9. Blokovan\u00fd je len pr\u00edslu\u0161n\u00fd research probe."
+                if lang == "sk"
+                else "Production and execution are unaffected. Only the related research probe is blocked."
+            )
+            st.markdown("\n".join(f"- {message}" for message in research_messages))
+
+        if informational_messages:
+            st.markdown(
+                "#### Informacne env/API upozornenia"
+                if lang == "sk"
+                else "#### Informational env/API notices"
+            )
+            st.caption(
+                "Ide o pomocn\u00e9 upozornenia. Produkcia ani execution nimi nie s\u00fa ovplyvnen\u00e9."
+                if lang == "sk"
+                else "These are auxiliary notices. Production and execution are not affected."
+            )
+            st.markdown("\n".join(f"- {message}" for message in informational_messages))
 
 
 def stop_for_production_homepage_block(message: str) -> None:
@@ -5402,8 +5451,7 @@ st.session_state.lang = "sk" if lang_choice == "SK" else "en"
 lang = st.session_state.lang
 
 data_health_report = build_live_data_health_report()
-data_health_blocking_app = bool(app_blocking_sources(data_health_report))
-if render_data_health_banner(data_health_report, lang) or data_health_blocking_app:
+if render_data_health_banner(data_health_report, lang):
     st.stop()
 
 latest_successful_snapshot_payload = load_required_authority_payload(
@@ -5796,9 +5844,7 @@ with tabs[0]:
             ),
         },
     ]
-    with st.expander("Stav dát", expanded=False):
-        st.markdown("#### Autoritativny runtime" if lang == "sk" else "#### Authority Runtime")
-        render_app_table(refresh_rows, emphasize_first_column=True)
+    render_data_health_details(data_health_report, lang, refresh_rows)
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))

@@ -1104,3 +1104,77 @@ def research_warning_sources(report: dict[str, Any]) -> list[dict[str, Any]]:
             or source.get("source_id") in RESEARCH_WARNING_RULE_SOURCE_IDS
         )
     ]
+
+
+def informational_warning_sources(report: dict[str, Any]) -> list[dict[str, Any]]:
+    sources = report.get("sources") if isinstance(report.get("sources"), list) else []
+    return [
+        source
+        for source in sources
+        if isinstance(source, dict)
+        and source.get("status") != STATUS_OK
+        and source.get("criticality") == CRITICALITY_INFO
+    ]
+
+
+def _unique_sources_by_id(sources: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    unique_sources: list[dict[str, Any]] = []
+    seen_source_ids: set[str] = set()
+    for source in sources:
+        if not isinstance(source, dict):
+            continue
+        source_id = str(source.get("source_id") or "").strip()
+        if not source_id or source_id in seen_source_ids:
+            continue
+        seen_source_ids.add(source_id)
+        unique_sources.append(source)
+    return unique_sources
+
+
+def homepage_data_health_view(report: dict[str, Any]) -> dict[str, Any]:
+    summary = report.get("summary") if isinstance(report.get("summary"), dict) else {}
+
+    app_blocking = app_blocking_sources(report)
+    excluded_source_ids = {
+        str(source.get("source_id") or "").strip()
+        for source in app_blocking
+        if isinstance(source, dict)
+    }
+    execution_blocking = execution_blocking_sources(
+        report,
+        exclude_source_ids=excluded_source_ids,
+    )
+    critical_sources = _unique_sources_by_id([*app_blocking, *execution_blocking])
+    research_sources = research_warning_sources(report)
+    informational_sources = informational_warning_sources(report)
+
+    block_app = summary.get("block_app") is True or bool(app_blocking)
+    block_execution = summary.get("block_execution") is True or bool(critical_sources)
+    show_primary_alert = block_app or block_execution or bool(critical_sources)
+
+    return {
+        "block_app": block_app,
+        "block_execution": block_execution,
+        "show_primary_alert": show_primary_alert,
+        "show_ok_status": not show_primary_alert,
+        "show_secondary_note": (not show_primary_alert)
+        and bool(research_sources or informational_sources),
+        "critical_sources": critical_sources,
+        "research_sources": research_sources,
+        "informational_sources": informational_sources,
+        "critical_source_ids": [
+            str(source.get("source_id") or "").strip()
+            for source in critical_sources
+            if isinstance(source, dict)
+        ],
+        "research_source_ids": [
+            str(source.get("source_id") or "").strip()
+            for source in research_sources
+            if isinstance(source, dict)
+        ],
+        "informational_source_ids": [
+            str(source.get("source_id") or "").strip()
+            for source in informational_sources
+            if isinstance(source, dict)
+        ],
+    }
