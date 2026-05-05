@@ -1,0 +1,121 @@
+{
+  "artifact_type": "dev_only_btc_etf_flow_daily_panel_quality",
+  "artifact_id": "btc_etf_flow_daily_panel_quality",
+  "generated_at_utc": "2026-05-05 11:43:47 UTC",
+  "family_id": "btc_etf_flow_daily_panel",
+  "required_columns": [
+    "date",
+    "us_trading_session_date",
+    "aggregate_net_flow_usd",
+    "aggregate_net_flow_btc",
+    "cumulative_net_flow_usd",
+    "aggregate_aum_usd",
+    "total_net_assets_usd",
+    "total_value_traded_usd",
+    "flow_positive_flag",
+    "flow_3d_sum_usd",
+    "flow_2_of_last_3_positive_flag",
+    "btc_spot_close",
+    "btc_short_price_filter_pass",
+    "causal_available_for_btc_utc_day",
+    "source_provider",
+    "source_url",
+    "source_endpoint",
+    "source_retrieved_at_utc",
+    "source_parser_version",
+    "session_calendar_status",
+    "weekend_holiday_policy",
+    "missing_data_flag",
+    "daily_causal_ready",
+    "probe_input_ready_flag",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "leakage_checks": [
+    {
+      "name": "required_columns_present",
+      "ok": true,
+      "detail": "all required columns present"
+    },
+    {
+      "name": "forbidden_future_or_authoritative_columns_absent",
+      "ok": true,
+      "detail": "no forbidden columns found"
+    },
+    {
+      "name": "dev_only_flags_present_on_rows",
+      "ok": true,
+      "detail": "row dev-only flags valid"
+    }
+  ],
+  "status": "passed",
+  "panel_start_session_date": "2024-01-11",
+  "panel_end_session_date": "2026-05-04",
+  "panel_start_causal_btc_utc_day": "2024-01-12",
+  "panel_end_causal_btc_utc_day": "2026-05-05",
+  "row_count": 580,
+  "child_row_count": 6249,
+  "field_coverage": {
+    "aggregate_net_flow_usd": {
+      "non_null_count": 580,
+      "first_non_null_date": "2024-01-11",
+      "last_non_null_date": "2026-05-04"
+    },
+    "aggregate_net_flow_btc": {
+      "non_null_count": 0,
+      "first_non_null_date": null,
+      "last_non_null_date": null
+    },
+    "cumulative_net_flow_usd": {
+      "non_null_count": 0,
+      "first_non_null_date": null,
+      "last_non_null_date": null
+    },
+    "aggregate_aum_usd": {
+      "non_null_count": 0,
+      "first_non_null_date": null,
+      "last_non_null_date": null
+    },
+    "total_net_assets_usd": {
+      "non_null_count": 0,
+      "first_non_null_date": null,
+      "last_non_null_date": null
+    },
+    "total_value_traded_usd": {
+      "non_null_count": 0,
+      "first_non_null_date": null,
+      "last_non_null_date": null
+    }
+  },
+  "calendar_audit": {
+    "expected_us_trading_sessions_in_range": 580,
+    "observed_us_trading_sessions_in_range": 580,
+    "missing_expected_us_trading_sessions": [],
+    "unexpected_non_trading_session_dates": []
+  },
+  "cross_provider_validation": {
+    "overlap_days": 0,
+    "max_abs_diff_usd": null,
+    "median_abs_diff_usd": null
+  },
+  "daily_causal_ready_days": 580,
+  "probe_input_ready_days": 580,
+  "ready_for_dev_only_probe": true,
+  "verdict": "READY_FOR_DEV_ONLY_PROBE",
+  "verdict_reason": "Causal ETF-flow rows are available. btc_short_price_filter_pass remains intentionally null because strategy logic is out of scope, but the raw BTC spot close needed for that downstream leg is present.",
+  "limitations": [
+    "farside is the primary dev-only source; outputs remain non-authoritative.",
+    "aggregate_net_flow_btc stays null unless the provider exposes a machine-readable BTC-denominated flow field.",
+    "btc_short_price_filter_pass stays null by design because strategy logic is explicitly out of scope for this task.",
+    "No synthetic weekend or NYSE-holiday rows are emitted; rolling flow features use consecutive U.S. trading sessions only.",
+    "Farside is a public HTML table rather than a formal API contract; parser logic fails closed on header or row-shape changes.",
+    "SoSoValue enrichment is unavailable, so cumulative_net_flow_usd / total_value_traded_usd may remain null.",
+    "CoinGlass per-ticker history did not yield aggregate AUM coverage, so aggregate_aum_usd may remain null."
+  ],
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

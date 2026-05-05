@@ -1,0 +1,185 @@
+{
+  "artifact_type": "dev_only_btc_etf_flow_daily_panel_manifest",
+  "artifact_id": "btc_etf_flow_daily_panel",
+  "generated_at_utc": "2026-05-05 11:43:47 UTC",
+  "family_id": "btc_etf_flow_daily_panel",
+  "family_type": "dev_only_research_data_layer",
+  "output_files": {
+    "panel_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_etf_flow_daily_panel\\btc_etf_flow_daily_panel.csv",
+    "per_etf_child_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_etf_flow_daily_panel\\btc_etf_flow_per_etf_daily_child.csv",
+    "manifest_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_etf_flow_daily_panel\\btc_etf_flow_daily_panel.manifest.json",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_etf_flow_daily_panel\\btc_etf_flow_daily_panel.quality.json"
+  },
+  "input_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "https://farside.co.uk/bitcoin-etf-flow-all-data/",
+    "https://api.sosovalue.xyz/openapi/v2/etf/historicalInflowChart"
+  ],
+  "env_config": {
+    "required": [],
+    "optional": [
+      "MRV1_SOSOVALUE_API_KEY"
+    ],
+    "resolved_presence": {
+      "primary_provider_env": "MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER",
+      "selected_primary_provider": "farside",
+      "coinglass_api_key_env": "MRV1_COINGLASS_API_KEY",
+      "coinglass_api_key_present": false,
+      "sosovalue_api_key_env": "MRV1_SOSOVALUE_API_KEY",
+      "sosovalue_api_key_present": false
+    }
+  },
+  "column_schema": [
+    "date",
+    "us_trading_session_date",
+    "aggregate_net_flow_usd",
+    "aggregate_net_flow_btc",
+    "cumulative_net_flow_usd",
+    "aggregate_aum_usd",
+    "total_net_assets_usd",
+    "total_value_traded_usd",
+    "flow_positive_flag",
+    "flow_3d_sum_usd",
+    "flow_2_of_last_3_positive_flag",
+    "btc_spot_close",
+    "btc_short_price_filter_pass",
+    "causal_available_for_btc_utc_day",
+    "source_provider",
+    "source_url",
+    "source_endpoint",
+    "source_retrieved_at_utc",
+    "source_parser_version",
+    "session_calendar_status",
+    "weekend_holiday_policy",
+    "missing_data_flag",
+    "daily_causal_ready",
+    "probe_input_ready_flag",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "per_etf_child_schema": [
+    "us_trading_session_date",
+    "causal_available_for_btc_utc_day",
+    "etf_ticker",
+    "net_flow_usd",
+    "net_flow_btc",
+    "source_provider",
+    "source_url",
+    "source_endpoint",
+    "source_retrieved_at_utc",
+    "source_parser_version",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "causal_alignment_rule": {
+    "us_trading_session_date": "The U.S. ETF trading session date supplied by the provider.",
+    "date": "The BTC UTC day on which the prior U.S. trading-session ETF data first becomes causally usable.",
+    "causal_available_for_btc_utc_day": "Equal to date. It is us_trading_session_date + 1 calendar day.",
+    "btc_spot_close": "Joined from BTCUSDT daily spot close on us_trading_session_date, not on the shifted causal day.",
+    "weekend_holiday_policy": "emit_only_us_trading_sessions_and_shift_each_session_to_next_btc_utc_day_for_causal_use",
+    "rolling_window_policy": "flow_3d_sum_usd and flow_2_of_last_3_positive_flag roll across the last three U.S. trading sessions only."
+  },
+  "source_selection": {
+    "primary_provider": "farside",
+    "fallback_activation_env": "MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER",
+    "available_primary_providers": {
+      "coinglass": "Preferred paid provider. CoinGlass flow-history exposes machine-readable historical aggregate BTC ETF flow plus per-ETF breakdown.",
+      "farside": "Free dev-only fallback. Farside exposes a public HTML table with daily per-ETF USD flows and aggregate total flow."
+    },
+    "optional_secondary_provider": "sosovalue",
+    "optional_secondary_role": "Aggregate enrichment and cross-provider validation only."
+  },
+  "status": "generated_dev_only_research_data_layer",
+  "panel_level_meta": {
+    "primary_provider": "farside",
+    "primary_source_url": "https://farside.co.uk/bitcoin-etf-flow-all-data/",
+    "primary_source_parser_version": "farside_html_table_v1",
+    "discovered_etf_tickers": [
+      "IBIT",
+      "FBTC",
+      "BITB",
+      "ARKB",
+      "BTCO",
+      "EZBC",
+      "BRRR",
+      "HODL",
+      "BTCW",
+      "MSBT",
+      "GBTC",
+      "BTC"
+    ],
+    "primary_provider_row_count": 580,
+    "primary_provider_child_row_count": 6249,
+    "primary_provider_meta": {
+      "primary_source_url": "https://farside.co.uk/bitcoin-etf-flow-all-data/",
+      "primary_source_parser_version": "farside_html_table_v1",
+      "table_headers": [
+        "Date",
+        "IBIT",
+        "FBTC",
+        "BITB",
+        "ARKB",
+        "BTCO",
+        "EZBC",
+        "BRRR",
+        "HODL",
+        "BTCW",
+        "MSBT",
+        "GBTC",
+        "BTC",
+        "Total"
+      ],
+      "per_etf_columns": [
+        "IBIT",
+        "FBTC",
+        "BITB",
+        "ARKB",
+        "BTCO",
+        "EZBC",
+        "BRRR",
+        "HODL",
+        "BTCW",
+        "MSBT",
+        "GBTC",
+        "BTC"
+      ],
+      "summary_rows_seen": [
+        "Average",
+        "Maximum",
+        "Minimum"
+      ],
+      "raw_date_row_count": 595
+    },
+    "primary_provider_non_trading_rows_dropped": [
+      "2024-01-15",
+      "2024-02-19",
+      "2024-03-29",
+      "2024-05-27",
+      "2024-06-19",
+      "2024-07-04",
+      "2024-09-02",
+      "2024-11-28",
+      "2024-12-25",
+      "2025-01-01",
+      "2025-01-20",
+      "2025-02-17",
+      "2025-04-18",
+      "2025-05-26",
+      "2025-06-19"
+    ],
+    "coinglass_aum_enabled": false,
+    "coinglass_aum_coverage_rows": 0,
+    "sosovalue_enrichment_enabled": false,
+    "sosovalue_overlap_rows": 0,
+    "price_filter_contract_status": "btc_short_price_filter_pass is intentionally reserved-null in this data layer; raw btc_spot_close is provided for downstream strategy-leg materialization."
+  },
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "row_count": 580
+}
