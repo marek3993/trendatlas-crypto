@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.request
@@ -10,6 +11,7 @@ from dataclasses import dataclass
 from datetime import date as date_cls
 from datetime import datetime, timedelta, timezone
 from functools import lru_cache
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
 
@@ -35,12 +37,34 @@ FAMILY_TYPE = "dev_only_research_data_layer"
 COINGLASS_FLOW_HISTORY_URL = "https://open-api-v4.coinglass.com/api/etf/bitcoin/flow-history"
 COINGLASS_TICKER_HISTORY_URL = "https://open-api-v4.coinglass.com/api/etf/bitcoin/history"
 SOSOVALUE_HISTORICAL_URL = "https://api.sosovalue.xyz/openapi/v2/etf/historicalInflowChart"
+FARSIDE_FLOW_ALL_DATA_URL = "https://farside.co.uk/bitcoin-etf-flow-all-data/"
 
 DEFAULT_START_DATE = "2024-01-11"
 DEFAULT_TIMEOUT_SECONDS = 30
+DEFAULT_PRIMARY_PROVIDER = "coinglass"
+PRIMARY_PROVIDER_ENV = "MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER"
 NO_SYNTHETIC_NON_TRADING_ROWS_POLICY = (
     "emit_only_us_trading_sessions_and_shift_each_session_to_next_btc_utc_day_for_causal_use"
 )
+
+COINGLASS_PARSER_VERSION = "coinglass_api_v1"
+SOSOVALUE_PARSER_VERSION = "sosovalue_api_v1"
+FARSIDE_PARSER_VERSION = "farside_html_table_v1"
+
+SUPPORTED_PRIMARY_PROVIDERS = {"coinglass", "farside"}
+FARSIDE_SUMMARY_LABELS = {"Total", "Average", "Maximum", "Minimum"}
+FARSIDE_MISSING_MARKERS = {"", "-", "–", "—", "n/a", "na"}
+FARSIDE_TICKER_PATTERN = re.compile(r"^[A-Z0-9]{2,10}$")
+GENERIC_BROWSER_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0 Safari/537.36"
+    ),
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
+}
 
 PANEL_COLUMNS = [
     "date",
@@ -58,8 +82,10 @@ PANEL_COLUMNS = [
     "btc_short_price_filter_pass",
     "causal_available_for_btc_utc_day",
     "source_provider",
+    "source_url",
     "source_endpoint",
     "source_retrieved_at_utc",
+    "source_parser_version",
     "session_calendar_status",
     "weekend_holiday_policy",
     "missing_data_flag",
@@ -78,8 +104,10 @@ CHILD_COLUMNS = [
     "net_flow_usd",
     "net_flow_btc",
     "source_provider",
+    "source_url",
     "source_endpoint",
     "source_retrieved_at_utc",
+    "source_parser_version",
     "dev_only",
     "non_authoritative",
     "official_truth",
@@ -102,6 +130,57 @@ class VerdictBundle:
     reason: str
 
 
+class HtmlTableExtractor(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.tables: list[list[list[str]]] = []
+        self._in_table = False
+        self._in_row = False
+        self._in_cell = False
+        self._current_table: list[list[str]] = []
+        self._current_row: list[str] = []
+        self._current_cell_parts: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        del attrs
+        if tag == "table":
+            self._in_table = True
+            self._current_table = []
+            return
+        if not self._in_table:
+            return
+        if tag == "tr":
+            self._in_row = True
+            self._current_row = []
+            return
+        if self._in_row and tag in {"td", "th"}:
+            self._in_cell = True
+            self._current_cell_parts = []
+
+    def handle_data(self, data: str) -> None:
+        if self._in_cell:
+            self._current_cell_parts.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in {"td", "th"} and self._in_cell:
+            value = collapse_whitespace("".join(self._current_cell_parts))
+            self._current_row.append(value)
+            self._in_cell = False
+            self._current_cell_parts = []
+            return
+        if tag == "tr" and self._in_row:
+            if any(cell != "" for cell in self._current_row):
+                self._current_table.append(self._current_row)
+            self._current_row = []
+            self._in_row = False
+            return
+        if tag == "table" and self._in_table:
+            if self._current_table:
+                self.tables.append(self._current_table)
+            self._current_table = []
+            self._in_table = False
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build a dev-only causally aligned BTC ETF-flow daily panel."
@@ -109,6 +188,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output-dir", type=Path, default=OUTPUT_DIR)
     parser.add_argument("--start-date", type=str, default=DEFAULT_START_DATE)
     parser.add_argument("--timeout-seconds", type=int, default=DEFAULT_TIMEOUT_SECONDS)
+    parser.add_argument(
+        "--primary-provider",
+        type=str,
+        default=None,
+        help=(
+            "Primary ETF-flow provider. Defaults to env "
+            f"{PRIMARY_PROVIDER_ENV} or {DEFAULT_PRIMARY_PROVIDER}."
+        ),
+    )
     parser.add_argument("--coinglass-api-key-env", type=str, default="MRV1_COINGLASS_API_KEY")
     parser.add_argument("--sosovalue-api-key-env", type=str, default="MRV1_SOSOVALUE_API_KEY")
     parser.add_argument(
@@ -138,6 +226,10 @@ def ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
 
 
+def collapse_whitespace(value: str) -> str:
+    return " ".join(value.replace("\xa0", " ").split()).strip()
+
+
 def with_dev_flags(payload: dict[str, Any]) -> dict[str, Any]:
     out = dict(payload)
     out.update(MANDATORY_DEV_FLAGS)
@@ -164,6 +256,18 @@ def parse_numeric(value: Any) -> float | None:
     if pd.isna(numeric):
         return None
     return float(numeric)
+
+
+def dedupe_join(items: list[str]) -> str:
+    seen: set[str] = set()
+    ordered: list[str] = []
+    for item in items:
+        clean = str(item).strip()
+        if not clean or clean in seen:
+            continue
+        seen.add(clean)
+        ordered.append(clean)
+    return "|".join(ordered)
 
 
 def normalize_date(value: Any) -> pd.Timestamp | None:
@@ -242,6 +346,19 @@ def fetch_json(
         raise FetchError(f"Non-JSON response from {url}: {exc}") from exc
 
 
+def fetch_text(*, url: str, headers: dict[str, str], timeout_seconds: int) -> str:
+    request = urllib.request.Request(url=url, headers=headers, method="GET")
+    try:
+        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+            charset = response.headers.get_content_charset() or "utf-8"
+            return response.read().decode(charset, errors="replace")
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise FetchError(f"HTTP {exc.code} for {url}: {detail}") from exc
+    except urllib.error.URLError as exc:
+        raise FetchError(f"Network error for {url}: {exc}") from exc
+
+
 def require_env(name: str) -> str:
     value = os.environ.get(name, "").strip()
     if not value:
@@ -254,8 +371,20 @@ def optional_env(name: str) -> str | None:
     return value or None
 
 
-def resolve_config_status(*, coinglass_env: str, soso_env: str) -> dict[str, Any]:
+def resolve_primary_provider(cli_value: str | None) -> str:
+    raw = cli_value if cli_value is not None else os.environ.get(PRIMARY_PROVIDER_ENV, DEFAULT_PRIMARY_PROVIDER)
+    provider = str(raw).strip().lower() or DEFAULT_PRIMARY_PROVIDER
+    if provider not in SUPPORTED_PRIMARY_PROVIDERS:
+        raise ConfigError(
+            f"Unsupported primary provider {provider!r}. Supported values: {sorted(SUPPORTED_PRIMARY_PROVIDERS)}."
+        )
+    return provider
+
+
+def resolve_config_status(*, primary_provider: str, coinglass_env: str, soso_env: str) -> dict[str, Any]:
     return {
+        "primary_provider_env": PRIMARY_PROVIDER_ENV,
+        "selected_primary_provider": primary_provider,
         "coinglass_api_key_env": coinglass_env,
         "coinglass_api_key_present": bool(optional_env(coinglass_env)),
         "sosovalue_api_key_env": soso_env,
@@ -282,6 +411,156 @@ def validate_provider_success(payload: dict[str, Any], *, provider: str, url: st
     raise FetchError(f"{provider} returned code={code} for {url}: {message}")
 
 
+def fetch_farside_flow_html(*, timeout_seconds: int) -> str:
+    return fetch_text(
+        url=FARSIDE_FLOW_ALL_DATA_URL,
+        headers=GENERIC_BROWSER_HEADERS,
+        timeout_seconds=timeout_seconds,
+    )
+
+
+def parse_farside_musd(value: Any) -> float | None:
+    text = collapse_whitespace("" if value is None else str(value))
+    if text.lower() in FARSIDE_MISSING_MARKERS:
+        return None
+    cleaned = text.replace(",", "")
+    if cleaned.startswith("(") and cleaned.endswith(")"):
+        cleaned = f"-{cleaned[1:-1]}"
+    try:
+        return float(cleaned)
+    except ValueError as exc:
+        raise FetchError(f"Unexpected Farside numeric cell value: {text!r}") from exc
+
+
+def to_usd_from_musd(value_musd: float | None) -> float | None:
+    if value_musd is None:
+        return None
+    return float(value_musd) * 1_000_000.0
+
+
+def find_farside_table(html_text: str) -> tuple[list[str], list[list[str]]]:
+    parser = HtmlTableExtractor()
+    parser.feed(html_text)
+
+    for table in parser.tables:
+        for header_index, row in enumerate(table):
+            header = [collapse_whitespace(cell) for cell in row]
+            if len(header) < 3:
+                continue
+            if header[0] != "Date" or header[-1] != "Total":
+                continue
+            tickers = header[1:-1]
+            if not tickers:
+                raise FetchError("Farside table is missing per-ETF columns between Date and Total.")
+            invalid = [ticker for ticker in tickers if not FARSIDE_TICKER_PATTERN.fullmatch(ticker)]
+            if invalid:
+                raise FetchError(f"Farside table contains unexpected ETF column labels: {invalid}")
+            return header, table[header_index + 1 :]
+
+    raise FetchError("Farside HTML layout changed: no table with Date/.../Total headers was found.")
+
+
+def parse_farside_flow_html(
+    html_text: str,
+    *,
+    retrieved_at_utc: str,
+) -> tuple[pd.DataFrame, pd.DataFrame, list[str], dict[str, Any]]:
+    header, body_rows = find_farside_table(html_text)
+    tickers = header[1:-1]
+    panel_rows: list[dict[str, Any]] = []
+    child_rows: list[dict[str, Any]] = []
+    summary_labels_seen: list[str] = []
+    raw_date_row_count = 0
+
+    for row in body_rows:
+        normalized_row = [collapse_whitespace(cell) for cell in row]
+        if not any(normalized_row):
+            continue
+        if len(normalized_row) != len(header):
+            raise FetchError(
+                "Farside HTML layout changed: table row width does not match header width "
+                f"({len(normalized_row)} != {len(header)})."
+            )
+
+        row_label = normalized_row[0]
+        if row_label in FARSIDE_SUMMARY_LABELS:
+            summary_labels_seen.append(row_label)
+            continue
+
+        session_date = pd.to_datetime(row_label, format="%d %b %Y", errors="coerce")
+        if pd.isna(session_date):
+            raise FetchError(
+                f"Farside HTML layout changed: row label {row_label!r} is neither a supported summary label nor a date."
+            )
+
+        raw_date_row_count += 1
+        session_date = pd.Timestamp(session_date).normalize()
+
+        aggregate_net_flow_usd = to_usd_from_musd(parse_farside_musd(normalized_row[-1]))
+        panel_rows.append(
+            {
+                "us_trading_session_date": session_date,
+                "aggregate_net_flow_usd": aggregate_net_flow_usd,
+                "aggregate_net_flow_btc": pd.NA,
+                "provider_close_price": pd.NA,
+                "source_provider": "farside",
+                "source_url": FARSIDE_FLOW_ALL_DATA_URL,
+                "source_endpoint": FARSIDE_FLOW_ALL_DATA_URL,
+                "source_retrieved_at_utc": retrieved_at_utc,
+                "source_parser_version": FARSIDE_PARSER_VERSION,
+            }
+        )
+
+        for ticker, raw_value in zip(tickers, normalized_row[1:-1]):
+            net_flow_usd = to_usd_from_musd(parse_farside_musd(raw_value))
+            if net_flow_usd is None:
+                continue
+            child_rows.append(
+                with_dev_flags(
+                    {
+                        "us_trading_session_date": session_date.strftime("%Y-%m-%d"),
+                        "causal_available_for_btc_utc_day": (session_date + timedelta(days=1)).strftime("%Y-%m-%d"),
+                        "etf_ticker": ticker,
+                        "net_flow_usd": net_flow_usd,
+                        "net_flow_btc": pd.NA,
+                        "source_provider": "farside",
+                        "source_url": FARSIDE_FLOW_ALL_DATA_URL,
+                        "source_endpoint": FARSIDE_FLOW_ALL_DATA_URL,
+                        "source_retrieved_at_utc": retrieved_at_utc,
+                        "source_parser_version": FARSIDE_PARSER_VERSION,
+                    }
+                )
+            )
+
+    panel = pd.DataFrame(panel_rows)
+    if not panel.empty:
+        panel = panel.sort_values("us_trading_session_date").drop_duplicates(
+            subset=["us_trading_session_date"],
+            keep="last",
+        )
+
+    child = pd.DataFrame(child_rows)
+    if not child.empty:
+        child = child.sort_values(["us_trading_session_date", "etf_ticker"]).drop_duplicates(
+            subset=["us_trading_session_date", "etf_ticker"],
+            keep="last",
+        )
+        for column in CHILD_COLUMNS:
+            if column not in child.columns:
+                child[column] = pd.NA
+        child = child[CHILD_COLUMNS].copy()
+
+    meta = {
+        "primary_source_url": FARSIDE_FLOW_ALL_DATA_URL,
+        "primary_source_parser_version": FARSIDE_PARSER_VERSION,
+        "table_headers": header,
+        "per_etf_columns": tickers,
+        "summary_rows_seen": summary_labels_seen,
+        "raw_date_row_count": raw_date_row_count,
+    }
+    return panel, child, tickers, meta
+
+
 def fetch_coinglass_flow_history(*, api_key: str, timeout_seconds: int) -> dict[str, Any]:
     payload = fetch_json(
         url=COINGLASS_FLOW_HISTORY_URL,
@@ -292,7 +571,11 @@ def fetch_coinglass_flow_history(*, api_key: str, timeout_seconds: int) -> dict[
     return payload
 
 
-def parse_coinglass_flow_history(payload: dict[str, Any], *, retrieved_at_utc: str) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
+def parse_coinglass_flow_history(
+    payload: dict[str, Any],
+    *,
+    retrieved_at_utc: str,
+) -> tuple[pd.DataFrame, pd.DataFrame, list[str], dict[str, Any]]:
     rows = extract_payload_rows(payload)
     panel_rows: list[dict[str, Any]] = []
     child_rows: list[dict[str, Any]] = []
@@ -314,7 +597,10 @@ def parse_coinglass_flow_history(payload: dict[str, Any], *, retrieved_at_utc: s
                 "aggregate_net_flow_btc": aggregate_flow_btc,
                 "provider_close_price": close_price,
                 "source_provider": "coinglass",
+                "source_url": COINGLASS_FLOW_HISTORY_URL,
+                "source_endpoint": COINGLASS_FLOW_HISTORY_URL,
                 "source_retrieved_at_utc": retrieved_at_utc,
+                "source_parser_version": COINGLASS_PARSER_VERSION,
             }
         )
 
@@ -338,8 +624,10 @@ def parse_coinglass_flow_history(payload: dict[str, Any], *, retrieved_at_utc: s
                         "net_flow_usd": parse_numeric(first_non_null(child, ["changeUsd", "netFlowUsd"])),
                         "net_flow_btc": parse_numeric(first_non_null(child, ["changeBtc", "netFlowBtc"])),
                         "source_provider": "coinglass",
+                        "source_url": COINGLASS_FLOW_HISTORY_URL,
                         "source_endpoint": COINGLASS_FLOW_HISTORY_URL,
                         "source_retrieved_at_utc": retrieved_at_utc,
+                        "source_parser_version": COINGLASS_PARSER_VERSION,
                     }
                 )
             )
@@ -361,7 +649,12 @@ def parse_coinglass_flow_history(payload: dict[str, Any], *, retrieved_at_utc: s
                 child[column] = pd.NA
         child = child[CHILD_COLUMNS].copy()
 
-    return panel, child, sorted(discovered_tickers)
+    meta = {
+        "primary_source_url": COINGLASS_FLOW_HISTORY_URL,
+        "primary_source_parser_version": COINGLASS_PARSER_VERSION,
+        "raw_date_row_count": int(len(panel)),
+    }
+    return panel, child, sorted(discovered_tickers), meta
 
 
 def fetch_coinglass_ticker_history(
@@ -585,9 +878,10 @@ def derive_verdict(panel: pd.DataFrame) -> VerdictBundle:
 
 def build_panel(
     *,
+    primary_provider: str,
     start_date_text: str,
     timeout_seconds: int,
-    coinglass_api_key: str,
+    coinglass_api_key: str | None,
     sosovalue_api_key: str | None,
     build_soso_enrichment: bool,
     build_coinglass_aum: bool,
@@ -596,25 +890,61 @@ def build_panel(
     spot_close = load_spot_daily()
     start_date = pd.Timestamp(start_date_text).normalize()
 
-    coinglass_payload = fetch_coinglass_flow_history(
-        api_key=coinglass_api_key,
-        timeout_seconds=timeout_seconds,
-    )
-    flow_panel, child_table, discovered_tickers = parse_coinglass_flow_history(
-        coinglass_payload,
-        retrieved_at_utc=retrieved_at_utc,
-    )
-    if flow_panel.empty:
-        raise FetchError("CoinGlass flow-history returned no parseable BTC ETF-flow rows.")
+    primary_meta: dict[str, Any]
+    if primary_provider == "coinglass":
+        if not coinglass_api_key:
+            raise ConfigError("CoinGlass primary provider was selected but no CoinGlass API key was supplied.")
+        coinglass_payload = fetch_coinglass_flow_history(
+            api_key=coinglass_api_key,
+            timeout_seconds=timeout_seconds,
+        )
+        flow_panel, child_table, discovered_tickers, primary_meta = parse_coinglass_flow_history(
+            coinglass_payload,
+            retrieved_at_utc=retrieved_at_utc,
+        )
+        if flow_panel.empty:
+            raise FetchError("CoinGlass flow-history returned no parseable BTC ETF-flow rows.")
+    elif primary_provider == "farside":
+        farside_html = fetch_farside_flow_html(timeout_seconds=timeout_seconds)
+        flow_panel, child_table, discovered_tickers, primary_meta = parse_farside_flow_html(
+            farside_html,
+            retrieved_at_utc=retrieved_at_utc,
+        )
+        if flow_panel.empty:
+            raise FetchError("Farside returned no parseable BTC ETF-flow rows.")
+    else:
+        raise ConfigError(f"Unsupported primary provider {primary_provider!r}.")
 
     flow_panel = flow_panel.loc[flow_panel["us_trading_session_date"] >= start_date].copy()
     if flow_panel.empty:
-        raise FetchError(f"CoinGlass returned rows, but none are on or after start_date={start_date_text}.")
+        raise FetchError(
+            f"{primary_provider} returned rows, but none are on or after start_date={start_date_text}."
+        )
+
+    dropped_non_trading_provider_rows: list[str] = []
+    if primary_provider == "farside":
+        flow_panel["session_calendar_status"] = flow_panel["us_trading_session_date"].apply(classify_session_date)
+        dropped_non_trading_provider_rows = flow_panel.loc[
+            flow_panel["session_calendar_status"] != "us_trading_day",
+            "us_trading_session_date",
+        ].dt.strftime("%Y-%m-%d").tolist()
+        if dropped_non_trading_provider_rows:
+            flow_panel = flow_panel.loc[flow_panel["session_calendar_status"] == "us_trading_day"].copy()
+            if child_table.empty:
+                child_table = child_table.copy()
+            else:
+                valid_session_dates = set(flow_panel["us_trading_session_date"].dt.strftime("%Y-%m-%d").tolist())
+                child_table = child_table.loc[
+                    child_table["us_trading_session_date"].isin(valid_session_dates)
+                ].copy()
+        flow_panel = flow_panel.drop(columns=["session_calendar_status"], errors="ignore")
+        if flow_panel.empty:
+            raise FetchError("Farside rows exist, but none map to U.S. trading sessions after filtering.")
 
     aum_panel = pd.DataFrame()
-    if build_coinglass_aum and discovered_tickers:
+    if primary_provider == "coinglass" and build_coinglass_aum and discovered_tickers:
         aum_panel = parse_coinglass_ticker_histories(
-            api_key=coinglass_api_key,
+            api_key=str(coinglass_api_key),
             tickers=discovered_tickers,
             timeout_seconds=timeout_seconds,
         )
@@ -661,30 +991,43 @@ def build_panel(
     panel["causal_available_for_btc_utc_day"] = panel["us_trading_session_date"] + timedelta(days=1)
     panel["date"] = panel["causal_available_for_btc_utc_day"]
     panel["btc_spot_close"] = panel["us_trading_session_date"].map(spot_close)
-    panel["flow_positive_flag"] = panel["aggregate_net_flow_usd"] > 0
+    panel["flow_positive_flag"] = (panel["aggregate_net_flow_usd"] > 0).astype("boolean")
     panel.loc[panel["aggregate_net_flow_usd"].isna(), "flow_positive_flag"] = pd.NA
     panel["flow_3d_sum_usd"] = panel["aggregate_net_flow_usd"].rolling(3, min_periods=3).sum()
 
-    positive_int = panel["flow_positive_flag"].map({True: 1, False: 0})
+    positive_int = panel["flow_positive_flag"].map({True: 1, False: 0}).astype("Float64")
     positive_sum = positive_int.rolling(3, min_periods=3).sum()
-    panel["flow_2_of_last_3_positive_flag"] = positive_sum >= 2
+    panel["flow_2_of_last_3_positive_flag"] = (positive_sum >= 2).astype("boolean")
     panel.loc[positive_sum.isna(), "flow_2_of_last_3_positive_flag"] = pd.NA
 
-    source_provider = "coinglass"
+    source_provider = primary_provider
     if not soso_panel.empty:
-        source_provider = "coinglass+optional_sosovalue_enrichment"
+        source_provider = f"{primary_provider}+optional_sosovalue_enrichment"
     panel["source_provider"] = source_provider
 
+    primary_source_url = str(primary_meta["primary_source_url"])
+    primary_parser_version = str(primary_meta["primary_source_parser_version"])
+
     def endpoint_string(row: pd.Series) -> str:
-        endpoints = [COINGLASS_FLOW_HISTORY_URL]
+        endpoints = [primary_source_url]
         if pd.notna(row.get("aggregate_aum_usd")):
             endpoints.append(COINGLASS_TICKER_HISTORY_URL)
         if pd.notna(row.get("cumulative_net_flow_usd")) or pd.notna(row.get("total_value_traded_usd")):
             endpoints.append(SOSOVALUE_HISTORICAL_URL)
-        return "|".join(endpoints)
+        return dedupe_join(endpoints)
 
+    def parser_version_string(row: pd.Series) -> str:
+        versions = [primary_parser_version]
+        if pd.notna(row.get("aggregate_aum_usd")):
+            versions.append(COINGLASS_PARSER_VERSION)
+        if pd.notna(row.get("cumulative_net_flow_usd")) or pd.notna(row.get("total_value_traded_usd")):
+            versions.append(SOSOVALUE_PARSER_VERSION)
+        return dedupe_join(versions)
+
+    panel["source_url"] = panel.apply(endpoint_string, axis=1)
     panel["source_endpoint"] = panel.apply(endpoint_string, axis=1)
     panel["source_retrieved_at_utc"] = retrieved_at_utc
+    panel["source_parser_version"] = panel.apply(parser_version_string, axis=1)
     panel["weekend_holiday_policy"] = NO_SYNTHETIC_NON_TRADING_ROWS_POLICY
     panel["btc_short_price_filter_pass"] = pd.NA
 
@@ -735,10 +1078,15 @@ def build_panel(
         overlap["abs_diff_usd"] = (overlap["aggregate_net_flow_usd"] - overlap["soso_total_net_inflow_usd"]).abs()
 
     manifest_meta = {
+        "primary_provider": primary_provider,
+        "primary_source_url": primary_source_url,
+        "primary_source_parser_version": primary_parser_version,
         "discovered_etf_tickers": discovered_tickers,
-        "coinglass_row_count": int(len(flow_panel)),
-        "coinglass_child_row_count": int(len(child_table)),
-        "coinglass_aum_enabled": bool(build_coinglass_aum),
+        "primary_provider_row_count": int(len(flow_panel)),
+        "primary_provider_child_row_count": int(len(child_table)),
+        "primary_provider_meta": primary_meta,
+        "primary_provider_non_trading_rows_dropped": dropped_non_trading_provider_rows,
+        "coinglass_aum_enabled": bool(primary_provider == "coinglass" and build_coinglass_aum),
         "coinglass_aum_coverage_rows": int(0 if aum_panel.empty else len(aum_panel)),
         "sosovalue_enrichment_enabled": bool(build_soso_enrichment and sosovalue_api_key),
         "sosovalue_overlap_rows": int(len(overlap)),
@@ -781,12 +1129,17 @@ def build_panel(
         "verdict": verdict.verdict,
         "verdict_reason": verdict.reason,
         "limitations": [
-            "CoinGlass flow-history is the primary dev-only source; outputs remain non-authoritative.",
+            f"{primary_provider} is the primary dev-only source; outputs remain non-authoritative.",
             "aggregate_net_flow_btc stays null unless the provider exposes a machine-readable BTC-denominated flow field.",
             "btc_short_price_filter_pass stays null by design because strategy logic is explicitly out of scope for this task.",
             "No synthetic weekend or NYSE-holiday rows are emitted; rolling flow features use consecutive U.S. trading sessions only.",
         ],
     }
+
+    if primary_provider == "farside":
+        quality["limitations"].append(
+            "Farside is a public HTML table rather than a formal API contract; parser logic fails closed on header or row-shape changes."
+        )
 
     if not manifest_meta["sosovalue_enrichment_enabled"]:
         quality["limitations"].append(
@@ -810,6 +1163,19 @@ def build_manifest(
     config_status: dict[str, Any],
     manifest_meta: dict[str, Any],
 ) -> dict[str, Any]:
+    primary_provider = str(manifest_meta["primary_provider"])
+    input_refs = [
+        str(SPOT_PATH),
+        str(manifest_meta["primary_source_url"]),
+    ]
+    if manifest_meta.get("coinglass_aum_enabled"):
+        input_refs.append(COINGLASS_TICKER_HISTORY_URL)
+    input_refs.append(SOSOVALUE_HISTORICAL_URL)
+
+    required_env = []
+    if primary_provider == "coinglass":
+        required_env.append(config_status["coinglass_api_key_env"])
+
     return with_dev_flags(
         {
             "artifact_type": "dev_only_btc_etf_flow_daily_panel_manifest",
@@ -823,14 +1189,9 @@ def build_manifest(
                 "manifest_json": str(output_dir / OUTPUT_MANIFEST.name),
                 "quality_json": str(output_dir / OUTPUT_QUALITY.name),
             },
-            "input_refs": [
-                str(SPOT_PATH),
-                COINGLASS_FLOW_HISTORY_URL,
-                COINGLASS_TICKER_HISTORY_URL,
-                SOSOVALUE_HISTORICAL_URL,
-            ],
+            "input_refs": input_refs,
             "env_config": {
-                "required": [config_status["coinglass_api_key_env"]],
+                "required": required_env,
                 "optional": [config_status["sosovalue_api_key_env"]],
                 "resolved_presence": config_status,
             },
@@ -845,11 +1206,18 @@ def build_manifest(
                 "rolling_window_policy": "flow_3d_sum_usd and flow_2_of_last_3_positive_flag roll across the last three U.S. trading sessions only.",
             },
             "source_selection": {
-                "primary_provider": "coinglass",
-                "primary_reason": (
-                    "CoinGlass flow-history exposes historical aggregate BTC ETF net flow plus per-ETF breakdown in one "
-                    "machine-readable endpoint; SoSoValue historical data is aggregate-only."
-                ),
+                "primary_provider": primary_provider,
+                "fallback_activation_env": PRIMARY_PROVIDER_ENV,
+                "available_primary_providers": {
+                    "coinglass": (
+                        "Preferred paid provider. CoinGlass flow-history exposes machine-readable historical aggregate "
+                        "BTC ETF flow plus per-ETF breakdown."
+                    ),
+                    "farside": (
+                        "Free dev-only fallback. Farside exposes a public HTML table with daily per-ETF USD flows "
+                        "and aggregate total flow."
+                    ),
+                },
                 "optional_secondary_provider": "sosovalue",
                 "optional_secondary_role": "Aggregate enrichment and cross-provider validation only.",
             },
@@ -862,24 +1230,29 @@ def build_manifest(
 def main() -> None:
     try:
         args = parse_args()
+        primary_provider = resolve_primary_provider(args.primary_provider)
         config_status = resolve_config_status(
+            primary_provider=primary_provider,
             coinglass_env=args.coinglass_api_key_env,
             soso_env=args.sosovalue_api_key_env,
         )
 
         if args.check_config_only:
             print(json.dumps(config_status, indent=2))
-            if not config_status["coinglass_api_key_present"]:
+            if primary_provider == "coinglass" and not config_status["coinglass_api_key_present"]:
                 raise SystemExit(2)
             raise SystemExit(0)
 
-        coinglass_api_key = require_env(args.coinglass_api_key_env)
+        coinglass_api_key = None
+        if primary_provider == "coinglass":
+            coinglass_api_key = require_env(args.coinglass_api_key_env)
         sosovalue_api_key = None if args.skip_sosovalue_enrichment else optional_env(args.sosovalue_api_key_env)
 
         output_dir = Path(args.output_dir)
         ensure_dir(output_dir)
 
         panel, child_table, manifest_meta, quality = build_panel(
+            primary_provider=primary_provider,
             start_date_text=str(args.start_date).strip() or DEFAULT_START_DATE,
             timeout_seconds=int(args.timeout_seconds),
             coinglass_api_key=coinglass_api_key,

@@ -16,7 +16,13 @@
   "selected_primary_source": {
     "provider": "coinglass",
     "endpoint": "https://open-api-v4.coinglass.com/api/etf/bitcoin/flow-history",
-    "why": "Provides historical aggregate BTC ETF flow plus per-ETF ticker breakdown in one machine-readable endpoint."
+    "why": "Preferred paid provider. Provides historical aggregate BTC ETF flow plus per-ETF ticker breakdown in one machine-readable endpoint."
+  },
+  "dev_only_fallback_primary_source": {
+    "provider": "farside",
+    "endpoint": "https://farside.co.uk/bitcoin-etf-flow-all-data/",
+    "activation_env": "MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER=farside",
+    "why": "Free public HTML-table fallback with daily per-ETF USD flows and aggregate total flow, acceptable only for non-authoritative dev-only research with strict parser validation."
   },
   "optional_secondary_source": {
     "provider": "sosovalue",
@@ -41,9 +47,15 @@
     "official_truth_write",
     "strategy_logic_materialization",
     "synthetic_flow_backfill",
-    "scraped_html_without_machine_readable_contract",
+    "scraped_html_without_strict_layout_validation",
     "fake_data",
     "app_runtime_change"
+  ],
+  "parser_requirements": [
+    "must_fail_closed_on_unexpected_table_headers_or_row_width",
+    "must_record_source_url_retrieved_at_utc_and_parser_version",
+    "must_preserve_dev_only_non_authoritative_flags",
+    "must_shift_causal_available_for_btc_utc_day_by_plus_1_calendar_day"
   ],
   "status": "defined_dev_only_btc_etf_flow_daily_panel"
 }
