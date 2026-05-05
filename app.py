@@ -550,6 +550,59 @@ TEXT["en"]["performance_fee_note"] = (
     "They are not fed by a separate compare/ranking "
     "artifact, and results already include Hyperliquid fees."
 )
+TEXT["sk"].update(
+    {
+        "currently_holding": "Aktualny stav",
+        "trend_desc": "Toto je oficialny pohlad na stav trendu. Aplikacia ho nepocita nanovo, len zobrazuje validovanu hodnotu z Production Core.",
+        "trend_threshold_note": "Biela hranica ukazuje bod, od ktoreho sa trend povazuje za dostatocne silny. Pod nou je strategia opatrnejsia.",
+        "chart_title": "Vyvoj kapitalu strategie",
+        "chart_performance_axis": "Index kapitalu",
+        "trade_count": "Pocet obchodov",
+        "current_drawdown": "Aktualny drawdown",
+        "production_chart_note": "Graf ukazuje len vyvoj kapitalu strategie. Nejde o zaznam fyzicky nakupenej mince ani o vypis otvorenych pozicii.",
+        "production_chart_flat_note": "Rovne useky v tomto grafe neznamenaju novy nakup. Znamenaju len to, ze sa hodnota kapitalu v danom useku menila malo alebo vobec.",
+        "production_chart_legend": "Strategia - kapital",
+        "production_chart_subtitle": "Oficialna equity seria z Production Core",
+        "production_hover_date": "Datum",
+        "production_hover_index": "Index kapitalu",
+        "production_hover_return_net": "Denny netto vynos",
+        "production_reason_title": "Preto je strategia teraz v tomto stave",
+        "production_wait_title": "Na co teraz caka",
+        "production_pain_title": "Co ju teraz brzdi",
+        "production_signal_health": "Stav dat",
+        "production_validation_passed": "validovane",
+        "production_validation_failed": "nevalidne",
+        "production_status_now": "Co robi teraz",
+        "production_status_why": "Preco to robi",
+        "production_status_change": "Co by zmenilo spravanie",
+        "production_status_risks": "Aktualne slabe miesta",
+        "production_waiting_yes": "Ano",
+        "production_waiting_no": "Nie",
+        "production_waiting_label": "Caka na zmenu",
+        "production_data_source_note": "Homepage cita oficialny stav strategie iba z Production Core.",
+        "production_wait_current": "Dnesne hodnoty",
+        "production_wait_target": "Hodnota pre zmenu",
+    }
+)
+TEXT["en"].update(
+    {
+        "trade_count": "Trade count",
+        "current_drawdown": "Current drawdown",
+        "production_chart_note": "This chart shows only the strategy equity curve. It is not a record of a physically bought coin or a list of open positions.",
+        "production_chart_flat_note": "Flat segments do not mean a new buy. They only mean the capital changed little or not at all in that span.",
+        "production_chart_legend": "Strategy capital",
+        "production_chart_subtitle": "Official equity series from Production Core",
+        "production_hover_date": "Date",
+        "production_hover_index": "Capital index",
+        "production_hover_return_net": "Daily net return",
+        "production_status_now": "What it is doing now",
+        "production_status_why": "Why it is doing that",
+        "production_status_change": "What would change the behavior",
+        "production_status_risks": "Current weak spots",
+        "production_waiting_label": "Waiting for change",
+        "production_data_source_note": "The homepage reads official strategy state only from Production Core.",
+    }
+)
 TEXT["sk"]["chart_note_strip_hidden"] = (
     "Horna krivka ukazuje vykon hlavneho modelu proti BTC benchmarku. "
     "Spodny pas je skryty, pretoze canonical paper rows momentalne "
@@ -566,17 +619,17 @@ TEXT["sk"].update(
         "production_exposure": "Expozicia",
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
-        "production_chart_note": "Horna krivka ukazuje equity seriu priamo z Production Core timeseries bez legacy fallbacku.",
-        "production_reason_title": "Preco je strategia v tomto stave",
+        "production_chart_note": "Graf ukazuje len vyvoj kapitalu strategie. Nejde o zaznam fyzicky nakupenej mince ani o vypis otvorenych pozicii.",
+        "production_reason_title": "Preto je strategia teraz v tomto stave",
         "production_wait_title": "Na co strategia caka",
-        "production_pain_title": "Aktualne pain points",
+        "production_pain_title": "Co ju teraz brzdi",
         "production_recent_rebalances": "Nedavne rebalance udalosti",
         "production_recent_regimes": "Nedavne zmeny rezimu",
-        "production_wait_current": "Aktualne hodnoty",
+        "production_wait_current": "Dnesne hodnoty",
         "production_wait_target": "Cielova podmienka",
-        "production_signal_health": "Signal health",
-        "production_validation_passed": "Production Core validacia presla",
-        "production_validation_failed": "Production Core validacia zlyhala",
+        "production_signal_health": "Stav dat",
+        "production_validation_passed": "validovane",
+        "production_validation_failed": "nevalidne",
         "production_waiting_yes": "Ano",
         "production_waiting_no": "Nie",
     }
@@ -587,7 +640,7 @@ TEXT["en"].update(
         "production_exposure": "Exposure",
         "production_closed_day": "Last closed day",
         "production_next_rebalance": "Next rebalance",
-        "production_chart_note": "The top line shows the equity series directly from the Production Core timeseries with no legacy fallback.",
+        "production_chart_note": "This chart shows only the strategy equity curve. It is not a record of a physically bought coin or a list of open positions.",
         "production_reason_title": "Why the strategy is in this state",
         "production_wait_title": "What the strategy is waiting for",
         "production_pain_title": "Current pain points",
@@ -596,8 +649,8 @@ TEXT["en"].update(
         "production_wait_current": "Current values",
         "production_wait_target": "Target condition",
         "production_signal_health": "Signal health",
-        "production_validation_passed": "Production Core validation passed",
-        "production_validation_failed": "Production Core validation failed",
+        "production_validation_passed": "validated",
+        "production_validation_failed": "invalid",
         "production_waiting_yes": "Yes",
         "production_waiting_no": "No",
     }
@@ -620,6 +673,8 @@ METRIC_HELP["sk"].update(
         TEXT["sk"]["total_return"]: "Celkovy vynos je citany z Production Core snapshot metrics.",
         TEXT["sk"]["max_dd"]: "Max drawdown je citany z Production Core snapshot metrics.",
         TEXT["sk"]["switch_count"]: "Pocet prepnuti je citany z Production Core snapshot metrics.",
+        TEXT["sk"]["trade_count"]: "Pocet obchodov je citany priamo z Production Core snapshotu.",
+        TEXT["sk"]["current_drawdown"]: "Aktualny drawdown je citany z rozhodovacieho kontextu v Production Core snapshote.",
         TEXT["sk"]["cash_days"]: "Cash Days su citane z Production Core snapshot metrics.",
         TEXT["sk"]["btc_days"]: "BTC Days su citane z Production Core snapshot metrics.",
         TEXT["sk"]["production_exposure"]: "Expozicia ide priamo z Production Core snapshotu ako aktualne oficialne nastavenie.",
@@ -644,6 +699,8 @@ METRIC_HELP["en"].update(
         TEXT["en"]["total_return"]: "Total return is read from the Production Core snapshot metrics.",
         TEXT["en"]["max_dd"]: "Max drawdown is read from the Production Core snapshot metrics.",
         TEXT["en"]["switch_count"]: "Switch count is read from the Production Core snapshot metrics.",
+        TEXT["en"]["trade_count"]: "Trade count is read directly from the Production Core snapshot.",
+        TEXT["en"]["current_drawdown"]: "Current drawdown is read from the decision context in the Production Core snapshot.",
         TEXT["en"]["cash_days"]: "Cash Days are read from the Production Core snapshot metrics.",
         TEXT["en"]["btc_days"]: "BTC Days are read from the Production Core snapshot metrics.",
         TEXT["en"]["production_exposure"]: "Exposure comes directly from the Production Core snapshot as the official current setting.",
@@ -3099,6 +3156,70 @@ def inject_css() -> None:
             background: linear-gradient(180deg, rgba(90,109,136,0.24), rgba(255,255,255,0.018));
         }
 
+        .story-panel {
+            border-radius: 20px;
+            padding: 1rem 1.05rem;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.016));
+            box-shadow:
+                0 12px 28px rgba(0,0,0,0.22),
+                inset 0 1px 0 rgba(255,255,255,0.03);
+            min-height: 100%;
+        }
+
+        .story-panel.story-warm {
+            background: linear-gradient(180deg, rgba(132,94,34,0.22), rgba(255,255,255,0.016));
+        }
+
+        .story-panel.story-cool {
+            background: linear-gradient(180deg, rgba(52,94,146,0.22), rgba(255,255,255,0.016));
+        }
+
+        .story-panel.story-alert {
+            background: linear-gradient(180deg, rgba(125,67,54,0.22), rgba(255,255,255,0.016));
+        }
+
+        .story-panel.story-proof {
+            background: linear-gradient(180deg, rgba(45,116,93,0.22), rgba(255,255,255,0.016));
+        }
+
+        .story-eyebrow {
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(226,232,240,0.58);
+            margin-bottom: 0.45rem;
+        }
+
+        .story-title {
+            font-size: 1.02rem;
+            font-weight: 680;
+            line-height: 1.2;
+            color: #ffffff;
+            margin-bottom: 0.45rem;
+        }
+
+        .story-body {
+            font-size: 0.93rem;
+            line-height: 1.55;
+            color: rgba(248,250,252,0.90);
+        }
+
+        .story-body + .story-body {
+            margin-top: 0.55rem;
+        }
+
+        .story-list {
+            margin: 0.35rem 0 0 0;
+            padding-left: 1rem;
+            color: rgba(248,250,252,0.90);
+        }
+
+        .story-list li {
+            margin: 0.22rem 0;
+            line-height: 1.45;
+        }
+
         </style>
         """,
         unsafe_allow_html=True,
@@ -3108,18 +3229,21 @@ def inject_css() -> None:
 def render_color_card(label: str, value: str, subtitle: str = "", help_text: str | None = None, accent: str = "neutral") -> None:
     help_html = ""
     if help_text:
-        safe_help = help_text.replace('"', "&quot;")
+        safe_help = escape_html_text(help_text).replace('"', "&quot;")
         help_html = f'<span class="card-info" title="{safe_help}">i</span>'
+    safe_label = escape_html_text(label)
+    safe_value = escape_html_text(value)
+    safe_subtitle = escape_html_text(subtitle)
 
     st.markdown(
         f"""
         <div class="card card-{accent}">
             <div class="card-top">
-                <div class="card-label">{label}</div>
+                <div class="card-label">{safe_label}</div>
                 {help_html}
             </div>
-            <div class="card-value">{value}</div>
-            <div class="card-sub">{subtitle}</div>
+            <div class="card-value">{safe_value}</div>
+            <div class="card-sub">{safe_subtitle}</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -3337,6 +3461,50 @@ def render_ops_detail_panel(title: str, items: list[tuple[str, str]], tone: str 
     )
 
 
+def render_story_panel(
+    title: str,
+    body: str,
+    *,
+    eyebrow: str = "",
+    tone: str = "cool",
+) -> None:
+    eyebrow_html = f'<div class="story-eyebrow">{escape_html_text(eyebrow)}</div>' if eyebrow else ""
+    st.markdown(
+        (
+            f'<div class="story-panel story-{tone}">'
+            f"{eyebrow_html}"
+            f'<div class="story-title">{escape_html_text(title)}</div>'
+            f'<div class="story-body">{escape_html_text(body)}</div>'
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
+
+
+def render_story_list_panel(
+    title: str,
+    items: list[str],
+    *,
+    eyebrow: str = "",
+    tone: str = "warm",
+) -> None:
+    cleaned_items = [escape_html_text(item) for item in items if str(item or "").strip()]
+    if not cleaned_items:
+        return
+    eyebrow_html = f'<div class="story-eyebrow">{escape_html_text(eyebrow)}</div>' if eyebrow else ""
+    list_html = "".join(f"<li>{item}</li>" for item in cleaned_items)
+    st.markdown(
+        (
+            f'<div class="story-panel story-{tone}">'
+            f"{eyebrow_html}"
+            f'<div class="story-title">{escape_html_text(title)}</div>'
+            f'<ul class="story-list">{list_html}</ul>'
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
+
+
 # =========================================================
 # DATA LOADING
 # =========================================================
@@ -3539,6 +3707,131 @@ def build_production_trend_history(timeseries_df: pd.DataFrame) -> pd.DataFrame:
     history = timeseries_df[["ts", "trend_score", "buy_threshold"]].copy()
     history = history.dropna(subset=["ts", "trend_score", "buy_threshold"]).reset_index(drop=True)
     return history
+
+
+def product_asset_label(asset_code: Any, lang: str) -> str:
+    asset = str(asset_code or "").strip().upper()
+    if asset in {"", "NONE"}:
+        return t(lang, "na")
+    if asset == "CASH":
+        return "hotovosti" if lang == "sk" else "cash"
+    if asset == "BASE":
+        return "zakladnej zlozke" if lang == "sk" else "base sleeve"
+    if asset == "BTC":
+        return "BTC"
+    return asset
+
+
+def product_asset_label_nominative(asset_code: Any, lang: str) -> str:
+    asset = str(asset_code or "").strip().upper()
+    if asset == "CASH":
+        return "Hotovost" if lang == "sk" else "Cash"
+    if asset == "BASE":
+        return "Zakladna zlozka" if lang == "sk" else "Base sleeve"
+    if asset == "BTC":
+        return "BTC"
+    return asset or t(lang, "na")
+
+
+def _sk_reason_code_label(reason_code: str) -> str:
+    mapping = {
+        "rebalance_to_cash": "presun do hotovosti",
+        "rebalance_to_btc": "presun do BTC",
+        "rebalance_to_base": "presun do zakladnej zlozky",
+        "trend_gate_hold": "cakanie na silnejsi trend",
+        "entry_buffer_hold": "povinne potvrdenie po zmene",
+        "hold_cash": "zotrvanie v hotovosti",
+    }
+    return mapping.get(reason_code, "zmena signaloveho stavu")
+
+
+def humanize_production_pain_point(pain_point: dict[str, Any], lang: str) -> str:
+    code = str(pain_point.get("code") or "").strip().lower()
+    metric_value = as_float(pain_point.get("metric_value"))
+    if lang == "sk":
+        if code == "cash_drag_elevated" and metric_value is not None:
+            return f"Strategia travi v hotovosti velku cast historie ({metric_value:.2f} %), co tlmi rast v silnych trhoch."
+        if code == "lifetime_cost_drag_elevated" and metric_value is not None:
+            return f"Historicke naklady uz ubrali zhruba {metric_value:.2f} % vykonu, takze kazda zbytocna zmena boli viac."
+        if code == "active_wait_condition":
+            return "Signal je aktivny, ale strategia zatial nema dost silny dovod pridat viac rizika."
+        fallback = str(pain_point.get("text") or "").strip()
+        return fallback or "Aktualne nie je dostupne dalsie zrozumitelne vysvetlenie."
+    return str(pain_point.get("text") or "").strip()
+
+
+def build_homepage_state_story(
+    snapshot: dict[str, Any],
+    diagnostics: dict[str, Any],
+    lang: str,
+) -> dict[str, Any]:
+    asset = str(snapshot.get("current_asset") or "").strip().upper()
+    exposure = as_float(snapshot.get("current_exposure"))
+    exposure_text = f"{exposure:.2f}x" if exposure is not None else t(lang, "na")
+    wait_condition = dict(diagnostics.get("current_wait_condition") or {})
+    current_values = dict(wait_condition.get("current_values") or {})
+    target_condition = dict(wait_condition.get("target_condition") or {})
+    trend_score = as_float(first_present_value(current_values.get("trend_score"), snapshot.get("trend_score")))
+    trend_score_text = f"{trend_score:.4f}" if trend_score is not None else t(lang, "na")
+    threshold = as_float(
+        first_present_value(
+            target_condition.get("trend_score_min"),
+            current_values.get("trend_activation_threshold"),
+        )
+    )
+    threshold_text = f"{threshold:.4f}" if threshold is not None else t(lang, "na")
+    latest_rebalance_date = get_nested_value(snapshot, "decision_context", "latest_rebalance_date")
+    latest_rebalance_reason = str(get_nested_value(snapshot, "decision_context", "latest_rebalance_reason") or "").strip().lower()
+    pain_points = list(diagnostics.get("current_pain_points") or [])
+
+    if lang == "sk":
+        if asset == "CASH":
+            now_text = f"Strategia je momentalne v hotovosti a nema otvorenu trhovu expoziciu."
+        else:
+            now_text = f"Strategia je momentalne v stave {product_asset_label_nominative(asset, lang)} a drzi expoziciu {exposure_text}."
+
+        if trend_score is not None and threshold is not None:
+            why_text = (
+                f"Dnesny trend score je {trend_score_text}, kym hranica pre silnejsi risk-on stav je {threshold_text}. "
+                f"Preto strategia zostava opatrna a drzi len to, co uz oficialny signal potvrdil."
+            )
+        else:
+            why_text = "Aktualny signal zatial nepotvrdil dovod na agresivnejsiu zmenu spravania."
+
+        wait_text = (
+            f"Caka najma na to, aby sa trend zlepsil aspon na {threshold_text}. "
+            f"Kym sa to nestane, nema dovod zvysovat riziko ani menit rezim len preto, ze sa trh hybe."
+            if threshold is not None
+            else "Caka na dalsi validovany signal, ktory zmeni dnesny opatrny postoj."
+        )
+
+        change_text = (
+            f"Ak by trend score vystupil aspon na {threshold_text}, dnesna blokacia by sa uvolnila a strategia by mohla prejst do aktivnejsieho nastavenia. "
+            f"Ak by prisiel novy oficialny rebalance signal, mohla by sa zmenit aj drzana zlozka."
+            if threshold is not None
+            else "Spravanie by sa zmenilo az vtedy, ked Production Core potvrdi novy silnejsi signal alebo novy rebalance."
+        )
+
+        risk_items = [humanize_production_pain_point(item, lang) for item in pain_points]
+        if latest_rebalance_date:
+            risk_items.append(
+                f"Posledna vacsia zmena prisla {format_date_text(latest_rebalance_date, lang)} ako {_sk_reason_code_label(latest_rebalance_reason)}."
+            )
+        return {
+            "now": now_text,
+            "why": why_text,
+            "wait": wait_text,
+            "change": change_text,
+            "risks": risk_items,
+        }
+
+    return {
+        "now": f"The strategy is currently in {product_asset_label_nominative(asset, lang)} with exposure {exposure_text}.",
+        "why": str(diagnostics.get("latest_state_explanation") or ""),
+        "wait": str(wait_condition.get("text") or ""),
+        "change": "Behavior changes only after Production Core confirms a stronger signal or a new rebalance.",
+        "risks": [humanize_production_pain_point(item, lang) for item in pain_points],
+    }
 
 
 def available_years_from_frames(frames: list[pd.DataFrame]) -> list[int]:
@@ -4233,15 +4526,24 @@ def make_production_equity_chart(
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
+    rebased_equity = rebase_series(main_plot["equity"])
+    daily_return_pct = pd.to_numeric(main_plot.get("return_net"), errors="coerce").fillna(0.0) * 100.0
+    legend_label = t(lang, "production_chart_legend") if str(t(lang, "production_chart_legend")).strip() else main_label
 
     fig = go.Figure()
     fig.add_trace(
         go.Scatter(
             x=main_plot["ts"],
-            y=rebase_series(main_plot["equity"]),
+            y=rebased_equity,
             mode="lines",
-            name=main_label,
+            name=legend_label or main_label,
             line=dict(width=4.8, color="#ff6b6b"),
+            customdata=daily_return_pct,
+            hovertemplate=(
+                f"{t(lang, 'production_hover_date')}: %{{x|%d.%m.%Y}}<br>"
+                f"{t(lang, 'production_hover_index')}: %{{y:.2f}}x<br>"
+                f"{t(lang, 'production_hover_return_net')}: %{{customdata:+.2f}}%<extra></extra>"
+            ),
         ),
     )
 
@@ -4549,31 +4851,26 @@ main_equity_df = production_timeseries_df[["ts", "equity"]].dropna().copy()
 tabs = st.tabs(t(lang, "tabs"))
 
 with tabs[0]:
-    trade_count_label = "Pocet obchodov" if lang == "sk" else "Trade count"
-    current_drawdown_label = "Aktualny drawdown" if lang == "sk" else "Current drawdown"
-    reason_text = str(
-        production_diagnostics.get("latest_state_explanation")
-        or get_nested_value(production_snapshot, "decision_context", "current_reason_text")
-        or ""
-    ).strip()
+    trade_count_label = t(lang, "trade_count")
+    current_drawdown_label = t(lang, "current_drawdown")
+    state_story = build_homepage_state_story(production_snapshot, production_diagnostics, lang)
     wait_condition = dict(production_diagnostics.get("current_wait_condition") or {})
     current_trade_state = dict(production_diagnostics.get("current_trade_state") or {})
-    pain_points = list(production_diagnostics.get("current_pain_points") or [])
     recent_rebalance_rows = [
         {
             "Date" if lang == "en" else "Datum": format_date_text(item.get("date"), lang),
-            "Asset": safe_text_value(item.get("held_asset"), lang=lang),
+            "Asset" if lang == "en" else "Stav": product_asset_label_nominative(item.get("held_asset"), lang),
             "Exposure" if lang == "en" else "Expozicia": safe_text_value(item.get("exposure"), lang=lang),
-            "Reason" if lang == "en" else "Dovod": safe_text_value(item.get("reason_code"), lang=lang),
+            "Reason" if lang == "en" else "Dovod": _sk_reason_code_label(str(item.get("reason_code") or "").strip().lower()) if lang == "sk" else safe_text_value(item.get("reason_text"), lang=lang),
         }
         for item in list(production_diagnostics.get("recent_rebalance_events") or [])[:5]
     ]
     recent_regime_rows = [
         {
             "Date" if lang == "en" else "Datum": format_date_text(item.get("date"), lang),
-            "Asset": safe_text_value(item.get("held_asset"), lang=lang),
-            "Regime": safe_text_value(item.get("regime"), lang=lang),
-            "Reason" if lang == "en" else "Dovod": safe_text_value(item.get("reason_code"), lang=lang),
+            "Asset" if lang == "en" else "Stav": product_asset_label_nominative(item.get("held_asset"), lang),
+            "Regime" if lang == "en" else "Rezim": product_asset_label_nominative(item.get("regime"), lang),
+            "Reason" if lang == "en" else "Dovod": _sk_reason_code_label(str(item.get("reason_code") or "").strip().lower()) if lang == "sk" else safe_text_value(item.get("reason_code"), lang=lang),
         }
         for item in list(production_diagnostics.get("recent_regime_changes") or [])[:5]
     ]
@@ -4581,7 +4878,7 @@ with tabs[0]:
     home_cards = [
         {
             "label": t(lang, "currently_holding"),
-            "value": safe_text_value(production_snapshot.get("current_asset"), lang=lang),
+            "value": product_asset_label_nominative(production_snapshot.get("current_asset"), lang),
             "subtitle": safe_text_value(production_snapshot.get("current_regime"), lang=lang),
             "help": METRIC_HELP[lang][t(lang, "currently_holding")],
             "accent": "blue",
@@ -4634,12 +4931,13 @@ with tabs[0]:
             timeseries_df=production_timeseries_df,
             year=selected_year_home,
             lang=lang,
-            main_label=labels.get(main_key, main_key),
+            main_label=t(lang, "production_chart_legend"),
             title=t(lang, "chart_title"),
         ),
         width="stretch",
     )
     st.caption(t(lang, "production_chart_note"))
+    st.caption(t(lang, "production_chart_flat_note"))
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
     perf1 = st.columns(3)
@@ -4656,7 +4954,13 @@ with tabs[0]:
     with perf2[1]:
         render_color_card(t(lang, "total_return"), safe_metric_text(main_metrics.get("total_return_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "total_return")], "neutral")
     with perf2[2]:
-        render_color_card(trade_count_label, safe_int_text(main_metrics.get("trade_count"), lang=lang), "", "", "neutral")
+        render_color_card(
+            trade_count_label,
+            safe_int_text(main_metrics.get("trade_count"), lang=lang),
+            "",
+            METRIC_HELP[lang].get(trade_count_label),
+            "neutral",
+        )
 
     st.markdown(f"### {t(lang, 'trend_title')}")
     st.caption(t(lang, "trend_desc"))
@@ -4707,52 +5011,62 @@ with tabs[0]:
     with ops[2]:
         render_color_card(t(lang, "btc_days"), safe_day_metric_text(main_metrics.get("btc_days_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "btc_days")], "green")
     with ops[3]:
-        render_color_card(current_drawdown_label, safe_metric_text(get_nested_value(production_snapshot, "decision_context", "current_drawdown_pct"), lang=lang), "", "", "violet")
+        render_color_card(
+            current_drawdown_label,
+            safe_metric_text(get_nested_value(production_snapshot, "decision_context", "current_drawdown_pct"), lang=lang),
+            "",
+            METRIC_HELP[lang].get(current_drawdown_label),
+            "violet",
+        )
 
     st.markdown(f"### {t(lang, 'production_reason_title')}")
-    diag_cols = st.columns(3)
-    with diag_cols[0]:
-        st.info(reason_text or t(lang, "na"))
-        validation_label = (
-            t(lang, "production_validation_passed")
-            if str(production_quality.get("status") or "").strip().lower() == "passed"
-            else t(lang, "production_validation_failed")
+    validation_label = (
+        t(lang, "production_validation_passed")
+        if str(production_quality.get("status") or "").strip().lower() == "passed"
+        else t(lang, "production_validation_failed")
+    )
+    render_ops_inline_note(
+        t(lang, "production_signal_health"),
+        f"{validation_label}. {t(lang, 'production_data_source_note')}",
+    )
+    story_top = st.columns(2)
+    with story_top[0]:
+        render_story_panel(
+            t(lang, "production_status_now"),
+            state_story["now"],
+            eyebrow=t(lang, "currently_holding"),
+            tone="cool",
         )
-        st.caption(
-            f"{t(lang, 'production_signal_health')}: {validation_label} | "
-            f"{safe_text_value(production_snapshot.get('strategy_version'), lang=lang)}"
+    with story_top[1]:
+        render_story_panel(
+            t(lang, "production_status_why"),
+            state_story["why"],
+            eyebrow=t(lang, "production_reason_title"),
+            tone="proof",
         )
-    with diag_cols[1]:
-        st.markdown(f"#### {t(lang, 'production_wait_title')}")
-        st.write(
-            str(wait_condition.get("text") or current_trade_state.get("waiting_reason_text") or t(lang, "na"))
+
+    story_bottom = st.columns(2)
+    with story_bottom[0]:
+        render_story_panel(
+            t(lang, "production_wait_title"),
+            state_story["wait"],
+            eyebrow=f"{t(lang, 'production_waiting_label')}: {t(lang, 'production_waiting_yes') if as_bool(current_trade_state.get('is_waiting')) else t(lang, 'production_waiting_no')}",
+            tone="warm",
         )
-        st.caption(
-            f"{'Waiting' if lang == 'en' else 'Cakanie'}: "
-            f"{t(lang, 'production_waiting_yes') if as_bool(current_trade_state.get('is_waiting')) else t(lang, 'production_waiting_no')}"
+    with story_bottom[1]:
+        render_story_panel(
+            t(lang, "production_status_change"),
+            state_story["change"],
+            eyebrow=t(lang, "production_wait_target"),
+            tone="alert",
         )
-        wait_current_rows = [
-            {"Field" if lang == "en" else "Pole": key, "Value" if lang == "en" else "Hodnota": safe_text_value(value, lang=lang)}
-            for key, value in dict(wait_condition.get("current_values") or {}).items()
-        ]
-        wait_target_rows = [
-            {"Field" if lang == "en" else "Pole": key, "Value" if lang == "en" else "Hodnota": safe_text_value(value, lang=lang)}
-            for key, value in dict(wait_condition.get("target_condition") or {}).items()
-        ]
-        if wait_current_rows:
-            st.caption(t(lang, "production_wait_current"))
-            render_app_table(wait_current_rows, emphasize_first_column=True)
-        if wait_target_rows:
-            st.caption(t(lang, "production_wait_target"))
-            render_app_table(wait_target_rows, emphasize_first_column=True)
-    with diag_cols[2]:
-        st.markdown(f"#### {t(lang, 'production_pain_title')}")
-        if pain_points:
-            for pain_point in pain_points:
-                severity = safe_text_value(pain_point.get("severity"), lang=lang).upper()
-                st.markdown(f"- **{severity}** {safe_text_value(pain_point.get('text'), lang=lang)}")
-        else:
-            st.caption(t(lang, "na"))
+
+    render_story_list_panel(
+        t(lang, "production_status_risks"),
+        state_story["risks"],
+        eyebrow=t(lang, "production_pain_title"),
+        tone="warm",
+    )
 
     if recent_rebalance_rows:
         with st.expander(t(lang, "production_recent_rebalances"), expanded=False):
