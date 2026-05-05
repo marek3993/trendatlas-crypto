@@ -85,6 +85,12 @@ REQUIRED_TIMESERIES_COLUMNS = [
     "trend_state",
     "trend_score",
     "buy_threshold",
+    "model_candidate_return_gross",
+    "model_candidate_return_net",
+    "model_candidate_equity",
+    "authorized_return_gross",
+    "authorized_return_net",
+    "authorized_equity",
     "return_gross",
     "return_net",
     "equity",
@@ -199,6 +205,11 @@ def _compare_text(actual: Any, expected: str, *, context: str, errors: list[str]
     actual_text = str(actual or "").strip()
     if actual_text != expected:
         errors.append(f"{context} mismatch: actual={actual_text!r} expected={expected!r}")
+
+
+def _summarize_bad_dates(mask: pd.Series, dates: pd.Series, *, limit: int = 5) -> str:
+    bad_dates = dates.loc[mask.fillna(False)].astype(str).head(limit).tolist()
+    return ", ".join(bad_dates)
 
 
 def validate_production_payloads(
@@ -436,6 +447,130 @@ def validate_production_payloads(
         errors.append("trend_permission_active=true but execution target asset is CASH")
     if model_candidate_exposure < effective_market_exposure - SUMMARY_TOLERANCE:
         errors.append("model_candidate_exposure must be greater than or equal to effective_market_exposure")
+
+    primary_return_gross = pd.to_numeric(timeseries["return_gross"], errors="coerce").fillna(0.0)
+    primary_return_net = pd.to_numeric(timeseries["return_net"], errors="coerce").fillna(0.0)
+    primary_equity = pd.to_numeric(timeseries["equity"], errors="coerce")
+    authorized_return_gross = pd.to_numeric(timeseries["authorized_return_gross"], errors="coerce").fillna(0.0)
+    authorized_return_net = pd.to_numeric(timeseries["authorized_return_net"], errors="coerce").fillna(0.0)
+    authorized_equity = pd.to_numeric(timeseries["authorized_equity"], errors="coerce")
+    model_candidate_return_net = pd.to_numeric(
+        timeseries["model_candidate_return_net"],
+        errors="coerce",
+    ).fillna(0.0)
+    model_candidate_equity = pd.to_numeric(timeseries["model_candidate_equity"], errors="coerce")
+    effective_exposure_series = pd.to_numeric(
+        timeseries["effective_market_exposure"],
+        errors="coerce",
+    ).fillna(0.0)
+    transition_mask = timeseries["asset_transition_day"].fillna(False).astype(bool)
+    daily_costs = (
+        pd.to_numeric(timeseries["fees_daily"], errors="coerce").fillna(0.0)
+        + pd.to_numeric(timeseries["funding_daily"], errors="coerce").fillna(0.0)
+        + pd.to_numeric(timeseries["borrow_cost_daily"], errors="coerce").fillna(0.0)
+        + pd.to_numeric(timeseries["slippage_cost_daily"], errors="coerce").fillna(0.0)
+    )
+    out_of_market_mask = effective_exposure_series.abs() <= SUMMARY_TOLERANCE
+    equity_delta = authorized_equity.diff().fillna(0.0)
+    row_dates = timeseries["date"].astype(str)
+
+    primary_gross_mismatch = (primary_return_gross - authorized_return_gross).abs() > SUMMARY_TOLERANCE
+    primary_net_mismatch = (primary_return_net - authorized_return_net).abs() > SUMMARY_TOLERANCE
+    primary_equity_mismatch = (primary_equity - authorized_equity).abs() > SUMMARY_TOLERANCE
+    if primary_gross_mismatch.any():
+        errors.append(
+            "timeseries.return_gross must equal authorized_return_gross on every row "
+            f"(examples: {_summarize_bad_dates(primary_gross_mismatch, row_dates)})"
+        )
+    if primary_net_mismatch.any():
+        errors.append(
+            "timeseries.return_net must equal authorized_return_net on every row "
+            f"(examples: {_summarize_bad_dates(primary_net_mismatch, row_dates)})"
+        )
+    if primary_equity_mismatch.any():
+        errors.append(
+            "timeseries.equity must equal authorized_equity on every row "
+            f"(examples: {_summarize_bad_dates(primary_equity_mismatch, row_dates)})"
+        )
+
+    candidate_equity_leak = primary_equity_mismatch & (
+        (primary_equity - model_candidate_equity).abs() <= SUMMARY_TOLERANCE
+    )
+    candidate_return_leak = primary_net_mismatch & (
+        (primary_return_net - model_candidate_return_net).abs() <= SUMMARY_TOLERANCE
+    )
+    if candidate_equity_leak.any() or candidate_return_leak.any():
+        errors.append(
+            "model/candidate equity semantics leaked into primary production fields "
+            f"(examples: {_summarize_bad_dates(candidate_equity_leak | candidate_return_leak, row_dates)})"
+        )
+
+    out_of_market_gross_move = out_of_market_mask & (authorized_return_gross.abs() > SUMMARY_TOLERANCE)
+    if out_of_market_gross_move.any():
+        errors.append(
+            "effective_market_exposure=0.0 but authorized gross return is nonzero "
+            f"(examples: {_summarize_bad_dates(out_of_market_gross_move, row_dates)})"
+        )
+
+    out_of_market_non_transition_cost = out_of_market_mask & (~transition_mask) & (
+        daily_costs.abs() > SUMMARY_TOLERANCE
+    )
+    if out_of_market_non_transition_cost.any():
+        errors.append(
+            "effective_market_exposure=0.0 but costs appear on non-transition rows "
+            f"(examples: {_summarize_bad_dates(out_of_market_non_transition_cost, row_dates)})"
+        )
+
+    out_of_market_non_transition_net_move = out_of_market_mask & (~transition_mask) & (
+        authorized_return_net.abs() > SUMMARY_TOLERANCE
+    )
+    if out_of_market_non_transition_net_move.any():
+        errors.append(
+            "effective_market_exposure=0.0 but authorized net return is nonzero on non-transition rows "
+            f"(examples: {_summarize_bad_dates(out_of_market_non_transition_net_move, row_dates)})"
+        )
+
+    out_of_market_non_transition_equity_move = out_of_market_mask & (~transition_mask) & (
+        equity_delta.abs() > SUMMARY_TOLERANCE
+    )
+    if out_of_market_non_transition_equity_move.any():
+        errors.append(
+            "effective_market_exposure=0.0 but authorized equity changes on non-transition rows "
+            f"(examples: {_summarize_bad_dates(out_of_market_non_transition_equity_move, row_dates)})"
+        )
+
+    out_of_market_transition_net_mismatch = out_of_market_mask & transition_mask & (
+        (authorized_return_net + daily_costs).abs() > SUMMARY_TOLERANCE
+    )
+    if out_of_market_transition_net_mismatch.any():
+        errors.append(
+            "out-of-market transition rows must only move by explicit modeled costs "
+            f"(examples: {_summarize_bad_dates(out_of_market_transition_net_mismatch, row_dates)})"
+        )
+
+    reconstructed_authorized_equity = (1.0 + authorized_return_net).cumprod()
+    authorized_equity_curve_mismatch = (
+        reconstructed_authorized_equity - authorized_equity
+    ).abs() > SUMMARY_TOLERANCE
+    if authorized_equity_curve_mismatch.any():
+        errors.append(
+            "authorized_equity must equal the cumulative authorized_return_net curve "
+            f"(examples: {_summarize_bad_dates(authorized_equity_curve_mismatch, row_dates)})"
+        )
+
+    checks["primary_series_use_authorized_equity_semantics"] = not (
+        primary_gross_mismatch.any()
+        or primary_net_mismatch.any()
+        or primary_equity_mismatch.any()
+    )
+    checks["out_of_market_rows_have_zero_authorized_gross_return"] = not out_of_market_gross_move.any()
+    checks["out_of_market_rows_only_move_on_transition_costs"] = not (
+        out_of_market_non_transition_cost.any()
+        or out_of_market_non_transition_net_move.any()
+        or out_of_market_non_transition_equity_move.any()
+        or out_of_market_transition_net_mismatch.any()
+    )
+    checks["authorized_equity_curve_reconstructs_from_returns"] = not authorized_equity_curve_mismatch.any()
 
     expected_source_inputs = adapter.build_source_inputs(inputs)
     source_inputs = snapshot.get("source_inputs")

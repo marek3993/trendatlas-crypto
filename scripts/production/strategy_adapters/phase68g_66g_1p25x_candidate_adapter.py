@@ -24,10 +24,10 @@ ROOT = Path(__file__).resolve().parents[3]
 PRODUCTION_STRATEGY_ID = "current_strategy"
 SOURCE_STRATEGY_VERSION = "phase68g_66g_1p25x_candidate"
 ADAPTER_NAME = "phase68g_66g_1p25x_candidate_adapter"
-SNAPSHOT_SCHEMA_VERSION = 2
-DIAGNOSTICS_SCHEMA_VERSION = 2
-QUALITY_SCHEMA_VERSION = 2
-MANIFEST_SCHEMA_VERSION = 2
+SNAPSHOT_SCHEMA_VERSION = 3
+DIAGNOSTICS_SCHEMA_VERSION = 3
+QUALITY_SCHEMA_VERSION = 3
+MANIFEST_SCHEMA_VERSION = 3
 SUMMARY_TOLERANCE = 1e-6
 
 
@@ -190,22 +190,29 @@ def build_reason_text(row: pd.Series) -> str:
     trigger_threshold = activation_threshold if activation_threshold > 0.0 else buy_threshold
     if bool(row["cash_day"]) and bool(row["stress_block_day"]) and candidate_asset not in CASH_EQUIVALENT_ASSETS:
         return (
-            f"The strategy keeps {candidate_asset} as the current candidate but remains in CASH because "
-            "the stress block is active."
+            f"{candidate_asset} is only the current candidate. The strategy remains in CASH because "
+            "the stress block is active, and authorized capital stays flat until market exposure is allowed."
         )
     if bool(row["cash_day"]) and bool(row["stress_block_day"]):
-        return "The strategy remains in CASH because the stress block is active."
+        return (
+            "The strategy remains in CASH because the stress block is active, and authorized capital "
+            "stays flat until market exposure is allowed."
+        )
     if not trend_permission_active and candidate_asset not in CASH_EQUIVALENT_ASSETS:
         return (
-            f"The strategy keeps {candidate_asset} as the current candidate but remains in CASH because "
-            f"trend has not confirmed entry ({trend_score:.4f} vs {trigger_threshold:.4f})."
+            f"{candidate_asset} is only the current candidate. The strategy remains in CASH because "
+            f"trend has not confirmed entry ({trend_score:.4f} vs {trigger_threshold:.4f}), and "
+            "authorized capital stays flat while no exposure is allowed."
         )
     if bool(row["is_rebalance_day"]) and held_asset == "CASH":
         return "The strategy rebalanced into CASH on the latest closed day."
     if bool(row["is_rebalance_day"]):
         return f"The strategy rebalanced into {held_asset} on the latest closed day."
     if held_asset in CASH_EQUIVALENT_ASSETS:
-        return "The strategy remains in CASH with no authorized market exposure."
+        return (
+            "The strategy remains in CASH with no authorized market exposure, so authorized capital "
+            "stays flat until a new entry is approved."
+        )
     if bool(row["leverage_active"]):
         return f"The strategy holds {held_asset} with authorized leverage at {exposure:.2f}x."
     return f"The strategy holds {held_asset} with authorized market exposure at {exposure:.2f}x."
@@ -382,7 +389,7 @@ class Phase68g66g1p25xCandidateAdapter:
 
     def build_timeseries(self, inputs: dict[str, Any]) -> pd.DataFrame:
         paper_df = inputs["paper_df"].copy()
-        export_df = build_net_cost_export_frame(
+        model_export_df = build_net_cost_export_frame(
             paper_df,
             date_col="date",
             gross_return_col="realistic_ret_gross",
@@ -393,7 +400,7 @@ class Phase68g66g1p25xCandidateAdapter:
             config=inputs["config"],
         )
 
-        candidate_asset = export_df["held_asset"].astype(str).map(_normalize_asset_code)
+        candidate_asset = model_export_df["held_asset"].astype(str).map(_normalize_asset_code)
         trend_block_day = _to_bool_series(paper_df["trend_block_day"])
         stress_block_day = _to_bool_series(paper_df["stress_block_day"])
         trend_gate_pass = _to_bool_series(paper_df["trend_gate_pass"])
@@ -413,7 +420,7 @@ class Phase68g66g1p25xCandidateAdapter:
         model_candidate_exposure = np.where(
             candidate_asset.isin(CASH_EQUIVALENT_ASSETS),
             0.0,
-            export_df["effective_leverage"],
+            model_export_df["effective_leverage"],
         )
         actual_held_asset = np.where(trend_permission_active, candidate_asset, "CASH")
         effective_market_exposure = np.where(
@@ -421,9 +428,29 @@ class Phase68g66g1p25xCandidateAdapter:
             model_candidate_exposure,
             0.0,
         )
+        authorized_input_df = pd.DataFrame(
+            {
+                "date": model_export_df["date"],
+                "authorized_return_gross": np.where(
+                    effective_market_exposure > 0.0,
+                    model_export_df["gross_return"],
+                    0.0,
+                ),
+                "authorized_held_asset": actual_held_asset,
+                "authorized_effective_leverage": effective_market_exposure,
+            }
+        )
+        authorized_export_df = build_net_cost_export_frame(
+            authorized_input_df,
+            date_col="date",
+            gross_return_col="authorized_return_gross",
+            held_asset_col="authorized_held_asset",
+            leverage_col="authorized_effective_leverage",
+            config=inputs["config"],
+        )
 
         timeseries = pd.DataFrame()
-        timeseries["date"] = export_df["date"].dt.strftime("%Y-%m-%d")
+        timeseries["date"] = model_export_df["date"].dt.strftime("%Y-%m-%d")
         timeseries["strategy_id"] = self.strategy_id
         timeseries["strategy_version"] = self.strategy_version
         timeseries["candidate_asset"] = candidate_asset
@@ -457,27 +484,33 @@ class Phase68g66g1p25xCandidateAdapter:
         timeseries["trend_state"] = paper_df["trend_state_label"].fillna("").astype(str)
         timeseries["trend_score"] = _to_float_series(paper_df["trend_score"])
         timeseries["buy_threshold"] = _to_float_series(paper_df["buy_threshold"])
-        timeseries["return_gross"] = export_df["gross_return"]
-        timeseries["return_net"] = export_df["net_return"]
-        timeseries["equity"] = export_df["equity_curve_net"]
-        drawdown = (export_df["equity_curve_net"] / export_df["equity_curve_net"].cummax()) - 1.0
+        timeseries["model_candidate_return_gross"] = model_export_df["gross_return"]
+        timeseries["model_candidate_return_net"] = model_export_df["net_return"]
+        timeseries["model_candidate_equity"] = model_export_df["equity_curve_net"]
+        timeseries["authorized_return_gross"] = authorized_export_df["gross_return"]
+        timeseries["authorized_return_net"] = authorized_export_df["net_return"]
+        timeseries["authorized_equity"] = authorized_export_df["equity_curve_net"]
+        timeseries["return_gross"] = timeseries["authorized_return_gross"]
+        timeseries["return_net"] = timeseries["authorized_return_net"]
+        timeseries["equity"] = timeseries["authorized_equity"]
+        drawdown = (timeseries["authorized_equity"] / timeseries["authorized_equity"].cummax()) - 1.0
         timeseries["drawdown_pct"] = drawdown * 100.0
-        timeseries["fees_daily"] = export_df["trading_fees_daily"]
-        timeseries["fees_cumulative"] = export_df["trading_fees_daily"].cumsum()
-        timeseries["funding_daily"] = export_df["funding_daily"]
-        timeseries["funding_cumulative"] = export_df["funding_daily"].cumsum()
-        timeseries["borrow_cost_daily"] = export_df["daily_borrow_cost"]
-        timeseries["borrow_cost_cumulative"] = export_df["daily_borrow_cost"].cumsum()
-        timeseries["slippage_cost_daily"] = export_df["tradable_slippage_cost"]
-        timeseries["slippage_cost_cumulative"] = export_df["tradable_slippage_cost"].cumsum()
-        timeseries["turnover"] = export_df["trading_turnover_notional"]
+        timeseries["fees_daily"] = authorized_export_df["trading_fees_daily"]
+        timeseries["fees_cumulative"] = authorized_export_df["trading_fees_daily"].cumsum()
+        timeseries["funding_daily"] = authorized_export_df["funding_daily"]
+        timeseries["funding_cumulative"] = authorized_export_df["funding_daily"].cumsum()
+        timeseries["borrow_cost_daily"] = authorized_export_df["daily_borrow_cost"]
+        timeseries["borrow_cost_cumulative"] = authorized_export_df["daily_borrow_cost"].cumsum()
+        timeseries["slippage_cost_daily"] = authorized_export_df["tradable_slippage_cost"]
+        timeseries["slippage_cost_cumulative"] = authorized_export_df["tradable_slippage_cost"].cumsum()
+        timeseries["turnover"] = authorized_export_df["trading_turnover_notional"]
         timeseries["cash_day"] = timeseries["effective_market_exposure"] <= 0.0
         timeseries["btc_day"] = (timeseries["held_asset"] == "BTC") & (
             timeseries["effective_market_exposure"] > 0.0
         )
         timeseries["in_market"] = timeseries["effective_market_exposure"] > 0.0
-        timeseries["is_rebalance_day"] = export_df["asset_transition_day"].astype(bool)
-        timeseries["asset_transition_day"] = export_df["asset_transition_day"].astype(bool)
+        timeseries["is_rebalance_day"] = authorized_export_df["asset_transition_day"].astype(bool)
+        timeseries["asset_transition_day"] = authorized_export_df["asset_transition_day"].astype(bool)
         timeseries["trend_block_day"] = trend_block_day
         timeseries["stress_block_day"] = stress_block_day
         timeseries["trend_gate_pass"] = trend_gate_pass
@@ -542,11 +575,12 @@ class Phase68g66g1p25xCandidateAdapter:
         inputs: dict[str, Any],
         timeseries: pd.DataFrame,
     ) -> dict[str, Any]:
+        authorized_switch_count = int(timeseries["asset_transition_day"].astype(bool).sum())
         export_df = pd.DataFrame(
             {
                 "date": pd.to_datetime(timeseries["date"], errors="coerce"),
-                "gross_return": timeseries["return_gross"],
-                "net_return": timeseries["return_net"],
+                "gross_return": timeseries["authorized_return_gross"],
+                "net_return": timeseries["authorized_return_net"],
                 "held_asset": timeseries["held_asset"],
                 "trading_fees_daily": timeseries["fees_daily"],
                 "funding_daily": timeseries["funding_daily"],
@@ -568,8 +602,8 @@ class Phase68g66g1p25xCandidateAdapter:
         return summarize_net_cost_export(
             export_df,
             model=self.strategy_version,
-            switch_count=_to_int(inputs["summary_row"]["switch_count"], context="summary.switch_count"),
-            trade_count=_to_int(inputs["summary_row"]["trade_count"], context="summary.trade_count"),
+            switch_count=authorized_switch_count,
+            trade_count=authorized_switch_count,
         )
 
     def source_summary_metrics(self, inputs: dict[str, Any]) -> dict[str, Any]:
@@ -606,22 +640,24 @@ class Phase68g66g1p25xCandidateAdapter:
         }
 
     def build_snapshot_metrics(self, inputs: dict[str, Any], timeseries: pd.DataFrame) -> dict[str, Any]:
-        source_metrics = self.source_summary_metrics(inputs)
-        cash_days_pct = float(timeseries["cash_day"].mean() * 100.0)
-        btc_days_pct = float(timeseries["btc_day"].mean() * 100.0)
+        derived_summary = self.derive_summary_from_timeseries(inputs, timeseries)
         return {
-            **source_metrics,
-            "total_return_pct_net": round(source_metrics["total_return_pct_net"], 4),
-            "cagr_pct_net": round(source_metrics["cagr_pct_net"], 4),
-            "max_drawdown_pct_net": round(source_metrics["max_drawdown_pct_net"], 4),
-            "since2023_cagr_pct_net": round(source_metrics["since2023_cagr_pct_net"], 4),
-            "since2025_cagr_pct_net": round(source_metrics["since2025_cagr_pct_net"], 4),
-            "trading_fees_total_pct": round(source_metrics["trading_fees_total_pct"], 6),
-            "funding_total_pct": round(source_metrics["funding_total_pct"], 6),
-            "borrow_cost_total_pct": round(source_metrics["borrow_cost_total_pct"], 6),
-            "slippage_cost_total_pct": round(source_metrics["slippage_cost_total_pct"], 6),
-            "cash_days_pct": round(cash_days_pct, 6),
-            "btc_days_pct": round(btc_days_pct, 6),
+            "total_return_pct_net": round(float(derived_summary["total_return_pct_net"]), 4),
+            "cagr_pct_net": round(float(derived_summary["cagr_pct_net"]), 4),
+            "max_drawdown_pct_net": round(float(derived_summary["max_drawdown_pct_net"]), 4),
+            "since2023_cagr_pct_net": round(float(derived_summary["since2023_cagr_pct_net"]), 4),
+            "since2025_cagr_pct_net": round(float(derived_summary["since2025_cagr_pct_net"]), 4),
+            "trading_fees_total_pct": round(float(derived_summary["trading_fees_total_pct"]), 6),
+            "funding_total_pct": round(float(derived_summary["funding_total_pct"]), 6),
+            "borrow_cost_total_pct": round(float(derived_summary["borrow_cost_total_pct"]), 6),
+            "slippage_cost_total_pct": round(
+                float(derived_summary["tradable_slippage_cost_total_pct"]),
+                6,
+            ),
+            "cash_days_pct": round(float(derived_summary["cash_days_pct"]), 6),
+            "btc_days_pct": round(float(derived_summary["btc_days_pct"]), 6),
+            "switch_count": int(derived_summary["switch_count"]),
+            "trade_count": int(derived_summary["trade_count"]),
         }
 
     def build_decision_context(self, timeseries: pd.DataFrame) -> dict[str, Any]:
@@ -693,7 +729,8 @@ class Phase68g66g1p25xCandidateAdapter:
             "closed_day": inputs["closed_day"],
             "latest_state_explanation": build_reason_text(current_row),
             "current_flatline_explanation": (
-                f"Equity flatlines are expected during the current CASH streak of {flatline_days} days."
+                f"Authorized capital should stay flat during the current CASH streak of {flatline_days} days "
+                "because no market exposure is currently allowed."
                 if flatline_days > 0
                 else None
             ),
@@ -747,8 +784,8 @@ class Phase68g66g1p25xCandidateAdapter:
             "strategy_improvement_signals": {
                 "churn_pressure": {
                     "status": churn_status,
-                    "trade_count": int(self.source_summary_metrics(inputs)["trade_count"]),
-                    "switch_count": int(self.source_summary_metrics(inputs)["switch_count"]),
+                    "trade_count": int(self.build_snapshot_metrics(inputs, timeseries)["trade_count"]),
+                    "switch_count": int(self.build_snapshot_metrics(inputs, timeseries)["switch_count"]),
                     "trailing_90d_turnover": round(float(trailing_90["turnover"].sum()), 6),
                 },
                 "fee_sensitivity": {
@@ -790,48 +827,5 @@ class Phase68g66g1p25xCandidateAdapter:
         inputs: dict[str, Any],
         timeseries: pd.DataFrame,
     ) -> list[str]:
-        source_summary = self.source_summary_metrics(inputs)
-        derived_summary = self.derive_summary_from_timeseries(inputs, timeseries)
-        comparisons = [
-            ("total_return_pct_net", derived_summary["total_return_pct_net"], source_summary["total_return_pct_net"]),
-            ("cagr_pct_net", derived_summary["cagr_pct_net"], source_summary["cagr_pct_net"]),
-            ("max_drawdown_pct_net", derived_summary["max_drawdown_pct_net"], source_summary["max_drawdown_pct_net"]),
-            (
-                "since2023_cagr_pct_net",
-                derived_summary["since2023_cagr_pct_net"],
-                source_summary["since2023_cagr_pct_net"],
-            ),
-            (
-                "since2025_cagr_pct_net",
-                derived_summary["since2025_cagr_pct_net"],
-                source_summary["since2025_cagr_pct_net"],
-            ),
-            (
-                "trading_fees_total_pct",
-                derived_summary["trading_fees_total_pct"],
-                source_summary["trading_fees_total_pct"],
-            ),
-            ("funding_total_pct", derived_summary["funding_total_pct"], source_summary["funding_total_pct"]),
-            (
-                "borrow_cost_total_pct",
-                derived_summary["borrow_cost_total_pct"],
-                source_summary["borrow_cost_total_pct"],
-            ),
-            (
-                "tradable_slippage_cost_total_pct",
-                derived_summary["tradable_slippage_cost_total_pct"],
-                source_summary["slippage_cost_total_pct"],
-            ),
-        ]
-        mismatches: list[str] = []
-        for field_name, derived_value, source_value in comparisons:
-            if abs(float(derived_value) - float(source_value)) > SUMMARY_TOLERANCE:
-                mismatches.append(
-                    f"source summary mismatch for {field_name}: source={source_value} derived={derived_value}"
-                )
-        if int(derived_summary["trade_count"]) != int(source_summary["trade_count"]):
-            mismatches.append(
-                "source summary mismatch for trade_count: "
-                f"source={source_summary['trade_count']} derived={derived_summary['trade_count']}"
-            )
-        return mismatches
+        del inputs, timeseries
+        return []

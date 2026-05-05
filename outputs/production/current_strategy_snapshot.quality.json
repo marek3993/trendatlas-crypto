@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot_quality",
-  "schema_version": 2,
-  "generated_at_utc": "2026-05-05T07:51:22Z",
+  "schema_version": 3,
+  "generated_at_utc": "2026-05-05T08:41:12Z",
   "status": "passed",
   "error_count": 0,
   "warning_count": 0,
@@ -13,7 +13,11 @@
     "summary_parity": true,
     "candidate_asset_separated_from_actual_exposure": true,
     "trend_permission_blocks_market_exposure": true,
-    "trend_permission_blocks_execution_target": true
+    "trend_permission_blocks_execution_target": true,
+    "primary_series_use_authorized_equity_semantics": true,
+    "out_of_market_rows_have_zero_authorized_gross_return": true,
+    "out_of_market_rows_only_move_on_transition_costs": true,
+    "authorized_equity_curve_reconstructs_from_returns": true
   },
   "validated_paths": {
     "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",

@@ -642,8 +642,8 @@ TEXT["sk"].update(
         "production_exposure": "Expozicia",
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
-        "production_chart_note": "Graf ukazuje iba krivku kapitalu strategie. Samotna krivka nehovori, ci je strategia prave v trhu.",
-        "production_chart_flat_note": "Zmena kapitalu ani rovnejsi usek automaticky neznamenaju otvorenu trhovu poziciu.",
+        "production_chart_note": "Graf ukazuje iba autorizovanu krivku kapitalu strategie po povoleni expozicie. Samotna krivka nehovori, aky kandidat aktiva model prave preferuje.",
+        "production_chart_flat_note": "Ked strategia nema povolenu trhovu expoziciu, autorizovany kapital zostava rovny okrem explicitnych nakladov na prechod.",
         "production_chart_participation_note": "Stavovy banner a spodny strip ukazuju, kedy bola strategia realne v trhu a aku autorizovanu expoziciu mala.",
         "production_reason_title": "Preto je strategia teraz v tomto stave",
         "production_wait_title": "Na co strategia caka",
@@ -665,7 +665,7 @@ TEXT["sk"].update(
         "production_hover_market_state_in": "V TRHU",
         "production_hover_market_state_out": "MIMO TRHU",
         "production_chart_current_prefix": "Aktualne",
-        "production_chart_current_out_note": "Aktualne je strategia mimo trhu. Zobrazeny je kapital, nie otvorena pozicia. Kandidat strategie je {candidate} a autorizovana expozicia je {exposure}.",
+        "production_chart_current_out_note": "Aktualne je strategia mimo trhu. Zobrazeny je autorizovany kapital, nie otvorena pozicia. Kandidat strategie je {candidate} a autorizovana expozicia je {exposure}.",
         "production_chart_current_in_note": "Aktualne je strategia v trhu s autorizovanou expoziciou {exposure}. Kandidat strategie je {candidate}.",
     }
 )
@@ -675,8 +675,8 @@ TEXT["en"].update(
         "production_exposure": "Exposure",
         "production_closed_day": "Last closed day",
         "production_next_rebalance": "Next rebalance",
-        "production_chart_note": "This chart shows only the strategy capital curve. The line alone does not mean the strategy is currently in market.",
-        "production_chart_flat_note": "A flatter section or a capital change does not automatically mean an open market position.",
+        "production_chart_note": "This chart shows only the authorized strategy capital curve after exposure permission. The line alone does not tell you which candidate asset the model currently prefers.",
+        "production_chart_flat_note": "When the strategy has no authorized market exposure, authorized capital should stay flat except for explicit transition costs.",
         "production_chart_participation_note": "The state banner and the lower strip show when the strategy was actually in market and what authorized exposure it had.",
         "production_reason_title": "Why the strategy is in this state",
         "production_wait_title": "What the strategy is waiting for",
@@ -698,7 +698,7 @@ TEXT["en"].update(
         "production_hover_market_state_in": "IN MARKET",
         "production_hover_market_state_out": "OUT OF MARKET",
         "production_chart_current_prefix": "Current",
-        "production_chart_current_out_note": "The strategy is currently out of market. The chart shows capital, not an open position. The strategy candidate is {candidate} and authorized exposure is {exposure}.",
+        "production_chart_current_out_note": "The strategy is currently out of market. The chart shows authorized capital, not an open position. The strategy candidate is {candidate} and authorized exposure is {exposure}.",
         "production_chart_current_in_note": "The strategy is currently in market with authorized exposure {exposure}. The strategy candidate is {candidate}.",
     }
 )
@@ -1038,6 +1038,12 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
         "trend_state",
         "trend_score",
         "buy_threshold",
+        "model_candidate_return_gross",
+        "model_candidate_return_net",
+        "model_candidate_equity",
+        "authorized_return_gross",
+        "authorized_return_net",
+        "authorized_equity",
         "equity",
         "reason_code",
         "source_validated",
@@ -1057,6 +1063,12 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
         "trend_score",
         "buy_threshold",
         "trend_activation_threshold",
+        "model_candidate_return_gross",
+        "model_candidate_return_net",
+        "model_candidate_equity",
+        "authorized_return_gross",
+        "authorized_return_net",
+        "authorized_equity",
         "equity",
         "drawdown_pct",
         "rolling_return_7d",
@@ -1069,7 +1081,7 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
             frame[numeric_column] = pd.to_numeric(frame[numeric_column], errors="coerce")
 
     frame = (
-        frame.dropna(subset=["ts", "equity"])
+        frame.dropna(subset=["ts", "authorized_equity"])
         .sort_values("ts")
         .drop_duplicates(subset=["ts"], keep="last")
         .reset_index(drop=True)
@@ -1095,6 +1107,32 @@ def _production_compare_float(
     if not math.isclose(expected_value, actual_value, abs_tol=abs_tol):
         stop_for_production_homepage_block(
             f"{field_name} mismatch between production snapshot and timeseries"
+        )
+
+
+def _production_compare_series(
+    frame: pd.DataFrame,
+    expected_column: str,
+    actual_column: str,
+    *,
+    field_name: str,
+    abs_tol: float = 1e-9,
+) -> None:
+    if expected_column not in frame.columns or actual_column not in frame.columns:
+        stop_for_production_homepage_block(
+            f"{field_name} columns are missing in production timeseries"
+        )
+    expected_series = pd.to_numeric(frame[expected_column], errors="coerce")
+    actual_series = pd.to_numeric(frame[actual_column], errors="coerce")
+    if expected_series.isna().any() or actual_series.isna().any():
+        stop_for_production_homepage_block(
+            f"{field_name} contains non-numeric values in production timeseries"
+        )
+    mismatch_mask = (expected_series - actual_series).abs() > abs_tol
+    if mismatch_mask.any():
+        bad_dates = frame.loc[mismatch_mask, "date"].astype(str).head(5).tolist()
+        stop_for_production_homepage_block(
+            f"{field_name} mismatch in production timeseries on dates: {', '.join(bad_dates)}"
         )
 
 
@@ -1165,6 +1203,24 @@ def validate_production_homepage_bundle(
         snapshot.get("effective_market_exposure"),
         last_row.get("effective_market_exposure"),
         field_name="effective_market_exposure",
+    )
+    _production_compare_series(
+        timeseries_df,
+        "authorized_return_gross",
+        "return_gross",
+        field_name="primary gross return semantics",
+    )
+    _production_compare_series(
+        timeseries_df,
+        "authorized_return_net",
+        "return_net",
+        field_name="primary net return semantics",
+    )
+    _production_compare_series(
+        timeseries_df,
+        "authorized_equity",
+        "equity",
+        field_name="primary equity semantics",
     )
     _production_compare_float(
         snapshot.get("model_candidate_exposure"),
@@ -4797,8 +4853,8 @@ def make_production_equity_chart(
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
-    rebased_equity = rebase_series(main_plot["equity"])
-    daily_return_pct = pd.to_numeric(main_plot.get("return_net"), errors="coerce").fillna(0.0) * 100.0
+    rebased_equity = rebase_series(main_plot["authorized_equity"])
+    daily_return_pct = pd.to_numeric(main_plot.get("authorized_return_net"), errors="coerce").fillna(0.0) * 100.0
     legend_label = t(lang, "production_chart_legend") if str(t(lang, "production_chart_legend")).strip() else main_label
     exposure_series = pd.to_numeric(main_plot.get("effective_market_exposure"), errors="coerce").fillna(0.0)
     max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
@@ -5249,7 +5305,12 @@ if not years:
     st.error(f"{t(lang, 'load_failed')}: no usable dates")
     st.stop()
 
-main_equity_df = production_timeseries_df[["ts", "equity"]].dropna().copy()
+main_equity_df = (
+    production_timeseries_df[["ts", "authorized_equity"]]
+    .rename(columns={"authorized_equity": "equity"})
+    .dropna()
+    .copy()
+)
 
 tabs = st.tabs(t(lang, "tabs"))
 

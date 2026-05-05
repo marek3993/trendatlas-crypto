@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot",
-  "schema_version": 2,
-  "generated_at_utc": "2026-05-05T07:51:21Z",
+  "schema_version": 3,
+  "generated_at_utc": "2026-05-05T08:41:10Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "closed_day": "2026-05-04",
@@ -22,31 +22,31 @@
   "trend_score": -0.166667,
   "next_rebalance_date": "2026-05-10",
   "metrics": {
-    "total_return_pct_net": 117303.8,
-    "cagr_pct_net": 142.01,
-    "max_drawdown_pct_net": -28.74,
-    "since2023_cagr_pct_net": 167.78,
-    "since2025_cagr_pct_net": 155.74,
-    "trading_fees_total_pct": 15.9075,
+    "total_return_pct_net": 311417.91,
+    "cagr_pct_net": 173.42,
+    "max_drawdown_pct_net": -12.93,
+    "since2023_cagr_pct_net": 198.7,
+    "since2025_cagr_pct_net": 224.28,
+    "trading_fees_total_pct": 10.8225,
     "funding_total_pct": 0.0,
     "borrow_cost_total_pct": 3.614,
-    "slippage_cost_total_pct": 0.9,
-    "cash_days_pct": 81.622177,
-    "btc_days_pct": 0.718686,
-    "switch_count": 198,
-    "trade_count": 198
+    "slippage_cost_total_pct": 16.5,
+    "cash_days_pct": 81.6222,
+    "btc_days_pct": 0.7187,
+    "switch_count": 165,
+    "trade_count": 165
   },
   "decision_context": {
     "current_reason_code": "candidate_wait_trend_confirmation",
-    "current_reason_text": "The strategy keeps BTC as the current candidate but remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000).",
+    "current_reason_text": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed.",
     "current_regime_duration_days": 186,
-    "days_since_last_trade": 3,
+    "days_since_last_trade": 185,
     "days_since_last_risk_on": 187,
     "days_since_last_equity_high": 208,
-    "current_drawdown_pct": -16.018077,
+    "current_drawdown_pct": -5.992157,
     "current_cash_streak_days": 186,
-    "latest_rebalance_date": "2026-05-01",
-    "latest_rebalance_reason": "candidate_wait_trend_confirmation"
+    "latest_rebalance_date": "2025-10-31",
+    "latest_rebalance_reason": "rebalance_to_cash"
   },
   "execution_intent": {
     "target_asset": "CASH",
@@ -118,7 +118,7 @@
       "outputs/execution/freshness/app_freshness_report.json"
     ],
     "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
-    "git_commit": "a5d1ad5f4a1b72ef4dd47ac87c3a4d125a4d54b3",
+    "git_commit": "0d006f877b1ac8d52520ee5d856ff11672a076b1",
     "wait_condition": {
       "code": "trend_confirmation_pending_for_candidate_entry",
       "text": "BTC is the current candidate, but the strategy stays in CASH until trend confirmation returns (-0.1667 vs 0.1000).",

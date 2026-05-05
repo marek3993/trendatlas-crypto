@@ -1,6 +1,6 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-05-05T07:51:23Z",
+  "generated_at_utc": "2026-05-05T08:41:12Z",
   "as_of_source": "2026-05-04",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
