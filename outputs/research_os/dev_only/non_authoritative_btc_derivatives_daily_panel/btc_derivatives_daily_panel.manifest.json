@@ -1,0 +1,238 @@
+{
+  "artifact_type": "dev_only_btc_derivatives_daily_panel_manifest",
+  "artifact_id": "btc_derivatives_daily_panel",
+  "generated_at_utc": "2026-05-04 19:50:05 UTC",
+  "family_id": "btc_derivatives_daily_panel",
+  "family_type": "dev_only_research_data_layer",
+  "output_files": {
+    "panel_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_derivatives_daily_panel\\btc_derivatives_daily_panel.csv",
+    "manifest_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_derivatives_daily_panel\\btc_derivatives_daily_panel.manifest.json",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_derivatives_daily_panel\\btc_derivatives_daily_panel.quality.json"
+  },
+  "input_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\funding\\BTCUSDT_funding.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\raw\\binance\\funding_history\\BTCUSDT",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\raw\\binance\\basis_5m\\BTCUSDT",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\raw\\binance\\basis_1h\\BTCUSDT",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\raw\\binance\\premium_klines_5m\\BTCUSDT",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\raw\\binance\\open_interest_hist_1h\\BTCUSDT",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\raw\\binance\\open_interest_hist_5m\\BTCUSDT",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\raw\\binance\\funding_info_snapshots\\ALL"
+  ],
+  "column_schema": [
+    "date",
+    "btc_spot_close",
+    "btc_spot_volume",
+    "funding_rate_daily",
+    "funding_rate_lookback",
+    "funding_mark_price_daily",
+    "basis_daily",
+    "basis_last",
+    "basis_abs_daily",
+    "premium_daily",
+    "premium_last",
+    "open_interest_daily",
+    "open_interest_contracts_daily",
+    "open_interest_change",
+    "leverage_proxy",
+    "funding_source",
+    "basis_source",
+    "premium_source",
+    "open_interest_source",
+    "leverage_proxy_source",
+    "funding_observation_count",
+    "basis_observation_count",
+    "premium_observation_count",
+    "open_interest_observation_count",
+    "funding_expected_observation_count",
+    "basis_expected_observation_count",
+    "premium_expected_observation_count",
+    "open_interest_expected_observation_count",
+    "funding_coverage_ok",
+    "basis_coverage_ok",
+    "premium_coverage_ok",
+    "open_interest_coverage_ok",
+    "open_interest_end_of_day_ok",
+    "funding_missing_flag",
+    "funding_lookback_missing_flag",
+    "basis_missing_flag",
+    "premium_missing_flag",
+    "open_interest_missing_flag",
+    "open_interest_change_missing_flag",
+    "leverage_proxy_missing_flag",
+    "missing_data_flag",
+    "daily_causal_ready",
+    "probe_input_ready_flag",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "utc_closed_day_semantics": {
+    "date_field_meaning": "UTC closed market day D aggregated only from timestamps inside D.",
+    "downstream_usage_rule": "Rows for UTC day D are intended for D+1 daily research use only.",
+    "funding_rate_daily_definition": "Sum of all BTC funding fixes that fall inside UTC day D.",
+    "funding_rate_lookback_definition": "7-calendar-day rolling mean of funding_rate_daily requiring a fully populated window.",
+    "basis_daily_definition": "Arithmetic mean of Binance 5m basis_rate across UTC day D, with 1h fallback only if 5m day is unavailable.",
+    "premium_daily_definition": "Arithmetic mean of Binance 5m premium_close across UTC day D.",
+    "open_interest_daily_definition": "Best-available end-of-day Binance oi_value snapshot for UTC day D, favoring full-day coverage over higher frequency partial days.",
+    "open_interest_change_definition": "One-day percent change in open_interest_daily, only across consecutive UTC days.",
+    "leverage_proxy_definition": "Proxy only: open_interest_daily divided by estimated spot market cap using CMCCirculatingSupply * btc_spot_close."
+  },
+  "source_metadata": {
+    "funding_primary_sources": [
+      "binance_legacy_csv",
+      "binance_raw_parquet"
+    ],
+    "basis_primary_source": "binance_basis_5m",
+    "basis_fallback_source": "binance_basis_1h_fallback",
+    "premium_primary_source": "binance_premium_klines_5m",
+    "open_interest_sources": [
+      "binance_open_interest_1h",
+      "binance_open_interest_5m"
+    ],
+    "exact_estimated_leverage_ratio_available": false,
+    "multi_venue_available": false
+  },
+  "status": "generated_dev_only_research_data_layer",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "row_count": 2414,
+  "panel_level_meta": {
+    "coverage_windows": {
+      "spot": {
+        "first_present_date": "2019-09-10",
+        "last_present_date": "2026-04-19",
+        "internal_gap_days": [],
+        "trailing_missing_days": []
+      },
+      "funding": {
+        "first_present_date": "2019-09-10",
+        "last_present_date": "2026-03-31",
+        "internal_gap_days": [
+          "2026-03-24",
+          "2026-03-25",
+          "2026-03-26",
+          "2026-03-27"
+        ],
+        "trailing_missing_days": [
+          "2026-04-01",
+          "2026-04-02",
+          "2026-04-03",
+          "2026-04-04",
+          "2026-04-05",
+          "2026-04-06",
+          "2026-04-07",
+          "2026-04-08",
+          "2026-04-09",
+          "2026-04-10",
+          "2026-04-11",
+          "2026-04-12",
+          "2026-04-13",
+          "2026-04-14",
+          "2026-04-15",
+          "2026-04-16",
+          "2026-04-17",
+          "2026-04-18",
+          "2026-04-19"
+        ]
+      },
+      "basis": {
+        "first_present_date": "2026-02-22",
+        "last_present_date": "2026-03-31",
+        "internal_gap_days": [
+          "2026-03-24",
+          "2026-03-25",
+          "2026-03-26",
+          "2026-03-27"
+        ],
+        "trailing_missing_days": [
+          "2026-04-01",
+          "2026-04-02",
+          "2026-04-03",
+          "2026-04-04",
+          "2026-04-05",
+          "2026-04-06",
+          "2026-04-07",
+          "2026-04-08",
+          "2026-04-09",
+          "2026-04-10",
+          "2026-04-11",
+          "2026-04-12",
+          "2026-04-13",
+          "2026-04-14",
+          "2026-04-15",
+          "2026-04-16",
+          "2026-04-17",
+          "2026-04-18",
+          "2026-04-19"
+        ]
+      },
+      "premium": {
+        "first_present_date": "2026-02-22",
+        "last_present_date": "2026-03-31",
+        "internal_gap_days": [
+          "2026-03-24",
+          "2026-03-25",
+          "2026-03-26",
+          "2026-03-27"
+        ],
+        "trailing_missing_days": [
+          "2026-04-01",
+          "2026-04-02",
+          "2026-04-03",
+          "2026-04-04",
+          "2026-04-05",
+          "2026-04-06",
+          "2026-04-07",
+          "2026-04-08",
+          "2026-04-09",
+          "2026-04-10",
+          "2026-04-11",
+          "2026-04-12",
+          "2026-04-13",
+          "2026-04-14",
+          "2026-04-15",
+          "2026-04-16",
+          "2026-04-17",
+          "2026-04-18",
+          "2026-04-19"
+        ]
+      },
+      "open_interest": {
+        "first_present_date": "2026-03-28",
+        "last_present_date": "2026-03-31",
+        "internal_gap_days": [],
+        "trailing_missing_days": [
+          "2026-04-01",
+          "2026-04-02",
+          "2026-04-03",
+          "2026-04-04",
+          "2026-04-05",
+          "2026-04-06",
+          "2026-04-07",
+          "2026-04-08",
+          "2026-04-09",
+          "2026-04-10",
+          "2026-04-11",
+          "2026-04-12",
+          "2026-04-13",
+          "2026-04-14",
+          "2026-04-15",
+          "2026-04-16",
+          "2026-04-17",
+          "2026-04-18",
+          "2026-04-19"
+        ]
+      }
+    },
+    "basis_metadata": {
+      "annualized_basis_rate_all_null": true,
+      "contract_type_all_null": true
+    },
+    "funding_snapshot_metadata_available": true
+  }
+}

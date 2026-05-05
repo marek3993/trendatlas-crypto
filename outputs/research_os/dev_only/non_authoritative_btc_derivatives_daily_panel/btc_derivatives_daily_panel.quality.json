@@ -1,0 +1,260 @@
+{
+  "artifact_type": "dev_only_btc_derivatives_daily_panel_quality",
+  "artifact_id": "btc_derivatives_daily_panel_quality",
+  "generated_at_utc": "2026-05-04 19:50:05 UTC",
+  "family_id": "btc_derivatives_daily_panel",
+  "row_count": 2414,
+  "required_columns": [
+    "date",
+    "btc_spot_close",
+    "btc_spot_volume",
+    "funding_rate_daily",
+    "funding_rate_lookback",
+    "funding_mark_price_daily",
+    "basis_daily",
+    "basis_last",
+    "basis_abs_daily",
+    "premium_daily",
+    "premium_last",
+    "open_interest_daily",
+    "open_interest_contracts_daily",
+    "open_interest_change",
+    "leverage_proxy",
+    "funding_source",
+    "basis_source",
+    "premium_source",
+    "open_interest_source",
+    "leverage_proxy_source",
+    "funding_observation_count",
+    "basis_observation_count",
+    "premium_observation_count",
+    "open_interest_observation_count",
+    "funding_expected_observation_count",
+    "basis_expected_observation_count",
+    "premium_expected_observation_count",
+    "open_interest_expected_observation_count",
+    "funding_coverage_ok",
+    "basis_coverage_ok",
+    "premium_coverage_ok",
+    "open_interest_coverage_ok",
+    "open_interest_end_of_day_ok",
+    "funding_missing_flag",
+    "funding_lookback_missing_flag",
+    "basis_missing_flag",
+    "premium_missing_flag",
+    "open_interest_missing_flag",
+    "open_interest_change_missing_flag",
+    "leverage_proxy_missing_flag",
+    "missing_data_flag",
+    "daily_causal_ready",
+    "probe_input_ready_flag",
+    "dev_only",
+    "non_authoritative",
+    "official_truth",
+    "strategy_advancement"
+  ],
+  "leakage_checks": [
+    {
+      "name": "required_columns_present",
+      "ok": true,
+      "detail": "all required columns present"
+    },
+    {
+      "name": "forbidden_future_or_authoritative_columns_absent",
+      "ok": true,
+      "detail": "no forbidden columns found"
+    },
+    {
+      "name": "dev_only_flags_present_on_rows",
+      "ok": true,
+      "detail": "row dev-only flags valid"
+    }
+  ],
+  "status": "passed",
+  "panel_start_date": "2019-09-10",
+  "panel_end_date": "2026-04-19",
+  "spot_last_date": "2026-04-19",
+  "field_coverage": {
+    "funding_rate_daily": {
+      "non_null_count": 2391,
+      "first_non_null_date": "2019-09-10",
+      "last_non_null_date": "2026-03-31"
+    },
+    "basis_daily": {
+      "non_null_count": 34,
+      "first_non_null_date": "2026-02-22",
+      "last_non_null_date": "2026-03-31"
+    },
+    "premium_daily": {
+      "non_null_count": 34,
+      "first_non_null_date": "2026-02-22",
+      "last_non_null_date": "2026-03-31"
+    },
+    "open_interest_daily": {
+      "non_null_count": 4,
+      "first_non_null_date": "2026-03-28",
+      "last_non_null_date": "2026-03-31"
+    },
+    "leverage_proxy": {
+      "non_null_count": 4,
+      "first_non_null_date": "2026-03-28",
+      "last_non_null_date": "2026-03-31"
+    }
+  },
+  "coverage_windows": {
+    "spot": {
+      "first_present_date": "2019-09-10",
+      "last_present_date": "2026-04-19",
+      "internal_gap_days": [],
+      "trailing_missing_days": []
+    },
+    "funding": {
+      "first_present_date": "2019-09-10",
+      "last_present_date": "2026-03-31",
+      "internal_gap_days": [
+        "2026-03-24",
+        "2026-03-25",
+        "2026-03-26",
+        "2026-03-27"
+      ],
+      "trailing_missing_days": [
+        "2026-04-01",
+        "2026-04-02",
+        "2026-04-03",
+        "2026-04-04",
+        "2026-04-05",
+        "2026-04-06",
+        "2026-04-07",
+        "2026-04-08",
+        "2026-04-09",
+        "2026-04-10",
+        "2026-04-11",
+        "2026-04-12",
+        "2026-04-13",
+        "2026-04-14",
+        "2026-04-15",
+        "2026-04-16",
+        "2026-04-17",
+        "2026-04-18",
+        "2026-04-19"
+      ]
+    },
+    "basis": {
+      "first_present_date": "2026-02-22",
+      "last_present_date": "2026-03-31",
+      "internal_gap_days": [
+        "2026-03-24",
+        "2026-03-25",
+        "2026-03-26",
+        "2026-03-27"
+      ],
+      "trailing_missing_days": [
+        "2026-04-01",
+        "2026-04-02",
+        "2026-04-03",
+        "2026-04-04",
+        "2026-04-05",
+        "2026-04-06",
+        "2026-04-07",
+        "2026-04-08",
+        "2026-04-09",
+        "2026-04-10",
+        "2026-04-11",
+        "2026-04-12",
+        "2026-04-13",
+        "2026-04-14",
+        "2026-04-15",
+        "2026-04-16",
+        "2026-04-17",
+        "2026-04-18",
+        "2026-04-19"
+      ]
+    },
+    "premium": {
+      "first_present_date": "2026-02-22",
+      "last_present_date": "2026-03-31",
+      "internal_gap_days": [
+        "2026-03-24",
+        "2026-03-25",
+        "2026-03-26",
+        "2026-03-27"
+      ],
+      "trailing_missing_days": [
+        "2026-04-01",
+        "2026-04-02",
+        "2026-04-03",
+        "2026-04-04",
+        "2026-04-05",
+        "2026-04-06",
+        "2026-04-07",
+        "2026-04-08",
+        "2026-04-09",
+        "2026-04-10",
+        "2026-04-11",
+        "2026-04-12",
+        "2026-04-13",
+        "2026-04-14",
+        "2026-04-15",
+        "2026-04-16",
+        "2026-04-17",
+        "2026-04-18",
+        "2026-04-19"
+      ]
+    },
+    "open_interest": {
+      "first_present_date": "2026-03-28",
+      "last_present_date": "2026-03-31",
+      "internal_gap_days": [],
+      "trailing_missing_days": [
+        "2026-04-01",
+        "2026-04-02",
+        "2026-04-03",
+        "2026-04-04",
+        "2026-04-05",
+        "2026-04-06",
+        "2026-04-07",
+        "2026-04-08",
+        "2026-04-09",
+        "2026-04-10",
+        "2026-04-11",
+        "2026-04-12",
+        "2026-04-13",
+        "2026-04-14",
+        "2026-04-15",
+        "2026-04-16",
+        "2026-04-17",
+        "2026-04-18",
+        "2026-04-19"
+      ]
+    }
+  },
+  "daily_causal_ready_days": 4,
+  "probe_input_ready_days": 0,
+  "max_consecutive_daily_causal_ready_days": 4,
+  "max_consecutive_probe_input_ready_days": 0,
+  "first_daily_causal_ready_date": "2026-03-28",
+  "last_daily_causal_ready_date": "2026-03-31",
+  "first_probe_input_ready_date": null,
+  "last_probe_input_ready_date": null,
+  "limitations": [
+    "Funding daily history has internal missing UTC days inside its coverage window: ['2026-03-24', '2026-03-25', '2026-03-26', '2026-03-27']",
+    "Funding daily history goes stale after 2026-03-31 with trailing missing UTC days through panel end: ['2026-04-01', '2026-04-02', '2026-04-03', '2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10', '2026-04-11', '2026-04-12', '2026-04-13', '2026-04-14', '2026-04-15', '2026-04-16', '2026-04-17', '2026-04-18', '2026-04-19']",
+    "Basis daily history has internal missing UTC days inside its coverage window: ['2026-03-24', '2026-03-25', '2026-03-26', '2026-03-27']",
+    "Basis daily history goes stale after 2026-03-31 with trailing missing UTC days through panel end: ['2026-04-01', '2026-04-02', '2026-04-03', '2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10', '2026-04-11', '2026-04-12', '2026-04-13', '2026-04-14', '2026-04-15', '2026-04-16', '2026-04-17', '2026-04-18', '2026-04-19']",
+    "Premium daily history has internal missing UTC days inside its coverage window: ['2026-03-24', '2026-03-25', '2026-03-26', '2026-03-27']",
+    "Premium daily history goes stale after 2026-03-31 with trailing missing UTC days through panel end: ['2026-04-01', '2026-04-02', '2026-04-03', '2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10', '2026-04-11', '2026-04-12', '2026-04-13', '2026-04-14', '2026-04-15', '2026-04-16', '2026-04-17', '2026-04-18', '2026-04-19']",
+    "Open-interest daily history is extremely short and goes stale after 2026-03-31 with trailing missing UTC days through panel end: ['2026-04-01', '2026-04-02', '2026-04-03', '2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10', '2026-04-11', '2026-04-12', '2026-04-13', '2026-04-14', '2026-04-15', '2026-04-16', '2026-04-17', '2026-04-18', '2026-04-19']",
+    "Basis annualized_basis_rate is fully null in the raw Binance datasets.",
+    "Basis contractType metadata is fully null in the raw Binance datasets.",
+    "Exact estimated leverage ratio is unavailable; leverage_proxy is an explicit proxy only.",
+    "No multi-venue aggregation is available; all derivatives inputs are Binance-only."
+  ],
+  "recency_lag_days_vs_spot_for_core_fields": 19,
+  "ready_for_dev_only_probe": false,
+  "verdict": "NOT_AVAILABLE",
+  "verdict_reason": "No days satisfy the full probe input contract after strict funding lookback and core field checks.",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false
+}

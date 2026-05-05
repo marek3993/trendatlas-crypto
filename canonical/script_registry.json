@@ -806,6 +806,21 @@
       "notes": "Dev-only and non-authoritative. Same family only: fixed pure-breadth source ratio, same causal 5-day EMA smoothing, same >2/3 hold rule, same slow BTC realized-volatility veto using 20-day annualized vol versus 63-day median times 1.20 with 2-day set/clear persistence, and only one confirmatory breadth change: 2 consecutive smoothed breadth days above 2/3 before ignition turns ON."
     },
     {
+      "script_path": "scripts/dev_only_build_btc_derivatives_daily_panel.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds a dev-only non-authoritative causally-safe daily BTC derivatives panel by unifying Binance funding, basis, premium, open-interest, and explicit leverage-proxy fields onto the BTC daily spot chain.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_btc_derivatives_daily_panel/btc_derivatives_daily_panel.csv",
+        "outputs/research_os/dev_only/non_authoritative_btc_derivatives_daily_panel/btc_derivatives_daily_panel.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_btc_derivatives_daily_panel/btc_derivatives_daily_panel.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Dev-only and non-authoritative BTC derivatives research data layer only. Uses UTC closed-day semantics, explicit source metadata, strict missing-data flags, and an explicit leverage proxy because exact ELR is unavailable."
+    },
+    {
       "script_path": "scripts/execution/run_pi_authoritative_producer.py",
       "layer": "execution_data",
       "status": "active",

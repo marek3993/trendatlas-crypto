@@ -587,6 +587,18 @@
       "notes": "Dev-only non-authoritative confirmatory outputs for the same breadth ignition plus volatility-hostility veto family against phase67j_no_neo_main. Keeps the same pure-breadth source ratio, same causal 5-day EMA smoothing, same >2/3 hold rule, and same slow BTC realized-volatility veto while adding only a 2-day smoothed breadth confirmation before ignition turns ON."
     },
     {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_btc_derivatives_daily_panel/",
+      "generated_by": [
+        "scripts/dev_only_build_btc_derivatives_daily_panel.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_research_data_layer",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative daily BTC derivatives panel with UTC closed-day semantics, explicit source/coverage flags, Binance-only funding/basis/premium/open-interest inputs, and an explicit leverage proxy instead of exact ELR."
+    },
+    {
       "output_path": "outputs/execution/authority/",
       "generated_by": [
         "scripts/daily_refresh_app_pipeline.py",
