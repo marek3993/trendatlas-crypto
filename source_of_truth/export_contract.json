@@ -4,8 +4,8 @@
     "artifact_type":  "export",
     "truth_domain":  "product",
     "truth_status":  "official",
-    "generated_at":  "2026-04-05T00:00:00Z",
-    "effective_date":  "2026-04-05",
+    "generated_at":  "2026-05-05T00:00:00Z",
+    "effective_date":  "2026-05-05",
     "producer_script":  "scripts/execution/materialize_execution_app_exports.py",
     "authoritative_contract_path":  "source_of_truth/export_contract.json",
     "source_run_id":  null,
@@ -14,8 +14,32 @@
                            "execution_readable",
                            "audit_only"
                        ],
-    "authoritative_reading_rule":  "App must read source_of_truth/export_contract.json first.\nRuntime authority state must then be read only from:\n- outputs/execution/authority/latest_successful_snapshot.json\n- outputs/execution/authority/latest_attempt_status.json\nLegacy app snapshot/runtime/refresh/full_auto_scheduler/runtime_health/live_status paths must not redefine app authority.",
+    "authoritative_reading_rule":  "App must read source_of_truth/export_contract.json first.\nPrimary strategy truth must then be read from Production Core v1:\n- outputs/production/current_strategy_snapshot.json\n- outputs/production/current_strategy_timeseries.csv\n- outputs/production/current_strategy_diagnostics.json\nRuntime authority state must then be read only from:\n- outputs/execution/authority/latest_successful_snapshot.json\n- outputs/execution/authority/latest_attempt_status.json\nCandidate BTC in Production Core does not by itself authorize live market exposure; authorized asset/exposure fields remain the live execution truth.\nLegacy app snapshot/runtime/refresh/full_auto_scheduler/runtime_health/live_status paths must not redefine app authority.",
     "default_fallback_rule":  "If this file is missing or unreadable, explicit safe app fallbacks may be used, but legacy authority paths must not redefine truth or freshness.",
+    "production_core_truth_contract":  {
+                                           "status":  "active_primary_strategy_truth_interface",
+                                           "strategy_version":  "phase68g_66g_1p25x_candidate",
+                                           "snapshot_path":  "outputs/production/current_strategy_snapshot.json",
+                                           "timeseries_path":  "outputs/production/current_strategy_timeseries.csv",
+                                           "diagnostics_path":  "outputs/production/current_strategy_diagnostics.json",
+                                           "build_script":  "scripts/production/build_current_strategy_snapshot.py",
+                                           "validation_script":  "scripts/production/validate_current_strategy_snapshot.py",
+                                           "adapter_model":  "strategy_adapter_replacement_model",
+                                           "app_read_priority":  "production_core_v1_first",
+                                           "execution_read_priority":  "production_core_v1_first"
+                                       },
+    "production_core_semantics":  {
+                                      "candidate_asset":  "model_candidate_not_automatic_live_exposure",
+                                      "selected_asset":  "selected_model_candidate",
+                                      "actual_held_asset":  "current_authorized_asset",
+                                      "authorized_tradable_asset":  "current_authorized_asset",
+                                      "effective_market_exposure":  "current_authorized_market_exposure",
+                                      "model_candidate_exposure":  "candidate_exposure_if_permission_allows",
+                                      "trend_permission_active":  "gates_market_exposure",
+                                      "execution_target_asset":  "authorized_execution_target_asset",
+                                      "execution_target_exposure":  "authorized_execution_target_exposure",
+                                      "candidate_btc_does_not_automatically_mean_live_market_exposure":  true
+                                  },
     "account_observability_contract":  {
                                            "current":  {
                                                            "enabled":  true,
@@ -94,6 +118,7 @@
                                "current_main_strategy_root_contract":  {
                                                                             "contract_version":  1,
                                                                             "source_family":  "canonical_current_main_strategy_app_exports",
+                                                                            "role":  "production_core_input_lineage_not_primary_app_truth_interface",
                                                                             "main_strategy_model":  "phase68g_66g_1p25x_candidate",
                                                                             "canonical_metrics_source_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                                                                             "canonical_paper_source_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
@@ -131,6 +156,8 @@
                                        "automatic_production_producer":  "raspberry_pi",
                                        "pc_role":  "manual_recovery_debug_only",
                                        "github_actions_role":  "validation_only",
+                                       "runtime_authority_scope":  "runtime_publish_authority_only",
+                                       "separate_from_production_core_strategy_truth":  true,
                                        "latest_successful_snapshot_path":  "outputs/execution/authority/latest_successful_snapshot.json",
                                        "latest_attempt_status_path":  "outputs/execution/authority/latest_attempt_status.json",
                                        "legacy_non_authoritative_paths":  [

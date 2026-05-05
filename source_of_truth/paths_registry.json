@@ -26,6 +26,7 @@
     "execution_intents": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents",
     "execution_dry_run": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run",
     "execution_logs": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\logs",
+    "production_core": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production",
     "research_os_ideation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\ideation",
     "research_os_spec_generation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\spec_generation",
     "research_os_autonomous_loop": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop",
@@ -56,7 +57,11 @@
     "dry_run_decision": "simulated_execution_decision_output",
     "execution_log": "execution_runtime_log_output",
     "authority_snapshot": "producer_written_authoritative_refresh_snapshot_output",
-    "authority_status": "producer_written_authoritative_refresh_attempt_output"
+    "authority_status": "producer_written_authoritative_refresh_attempt_output",
+    "production_snapshot": "primary_production_core_strategy_truth_snapshot",
+    "production_timeseries": "primary_production_core_strategy_truth_timeseries",
+    "production_diagnostics": "primary_production_core_strategy_diagnostics",
+    "production_quality": "production_core_validation_output"
   },
   "artifacts": {
     "phase67j_winner_paper": {
@@ -292,6 +297,57 @@
         "validation"
       ],
       "write_mode": "producer_only_authoritative_write"
+    },
+    "production_current_strategy_snapshot": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "production_snapshot",
+      "truth_domain": "strategy_truth",
+      "read_scope": [
+        "app",
+        "execution",
+        "validation"
+      ],
+      "write_mode": "producer_only_current_strategy_build"
+    },
+    "production_current_strategy_timeseries": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_timeseries.csv",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "production_timeseries",
+      "truth_domain": "strategy_truth",
+      "read_scope": [
+        "app",
+        "execution",
+        "validation"
+      ],
+      "write_mode": "producer_only_current_strategy_build"
+    },
+    "production_current_strategy_diagnostics": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_diagnostics.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "production_diagnostics",
+      "truth_domain": "strategy_truth",
+      "read_scope": [
+        "app",
+        "execution",
+        "validation"
+      ],
+      "write_mode": "producer_only_current_strategy_build"
+    },
+    "production_current_strategy_quality": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.quality.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "production_quality",
+      "truth_domain": "strategy_truth",
+      "read_scope": [
+        "validation",
+        "audit"
+      ],
+      "write_mode": "validator_only_current_strategy_verdict"
     },
     "research_os_zero_selection_diagnostics": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop\\zero_selection_diagnostics.json",

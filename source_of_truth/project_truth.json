@@ -43,6 +43,32 @@
                               "benchmark":  "BTC",
                               "status":  "official_app_main_live_switched"
                           },
+    "production_core_truth":  {
+                                  "status":  "active_primary_strategy_truth_interface",
+                                  "strategy_id":  "current_strategy",
+                                  "strategy_version":  "phase68g_66g_1p25x_candidate",
+                                  "snapshot_path":  "outputs/production/current_strategy_snapshot.json",
+                                  "timeseries_path":  "outputs/production/current_strategy_timeseries.csv",
+                                  "diagnostics_path":  "outputs/production/current_strategy_diagnostics.json",
+                                  "build_script":  "scripts/production/build_current_strategy_snapshot.py",
+                                  "validation_script":  "scripts/production/validate_current_strategy_snapshot.py",
+                                  "adapter_entrypoint":  "scripts/production/strategy_adapters/phase68g_66g_1p25x_candidate_adapter.py",
+                                  "adapter_model":  "strategy_adapter_replacement_model",
+                                  "app_primary_truth_interface":  "production_core_v1",
+                                  "execution_primary_truth_interface":  "production_core_v1"
+                              },
+    "production_core_semantics":  {
+                                      "candidate_asset":  "model_candidate_not_automatic_live_exposure",
+                                      "selected_asset":  "selected_model_candidate",
+                                      "actual_held_asset":  "current_authorized_asset",
+                                      "authorized_tradable_asset":  "current_authorized_asset",
+                                      "effective_market_exposure":  "current_authorized_market_exposure",
+                                      "model_candidate_exposure":  "candidate_exposure_if_permission_allows",
+                                      "trend_permission_active":  "gates_market_exposure",
+                                      "execution_target_asset":  "authorized_execution_target_asset",
+                                      "execution_target_exposure":  "authorized_execution_target_exposure",
+                                      "candidate_btc_does_not_automatically_mean_live_market_exposure":  true
+                                  },
     "leverage_truth":  {
                            "current_live_truth":  "phase68g_66g_1p25x_candidate",
                            "research_raw_winner":  "phase68i_66g_1p50x_static",
@@ -57,11 +83,11 @@
                                "MASTER":  "maintain_truth",
                                "CORE":  "no_active_core_research_leverage_branch_done",
                                "UNIVERSE":  "frozen",
-                               "DATA":  "blocker_closed_execution_contract_and_source_mapping_operational",
+                               "DATA":  "production_core_primary_strategy_truth_interface_operational",
                                "FORENSIC":  "targeted_validation_only",
-                               "APP":  "final_export_contract_preparation_for_dynamic_ladder_complete",
-                               "AI_LAB":  "dev_only_mode_phase69_paused_no_strategy_advancement",
-                               "AUTOMATION":  "pi_only_authoritative_runtime_operational"
+                               "APP":  "production_core_primary_truth_interface_active",
+                               "AI_LAB":  "dev_only_governance_active_phase69_paused",
+                               "AUTOMATION":  "recurring_scheduler_ready_live_runtime_armed"
                            },
     "app_live_mode_contract":  {
                                    "current":  {
@@ -126,18 +152,18 @@
     "accepted_state_catchup_2026_04_06":  {
                                               "summary":  "Official truth catch-up block to reflect already accepted project progress without changing winners, baselines, or live truth.",
                                               "preserved_truth":  {
-                                                                      "current_live_truth":  "phase68i_dynamic_ladder_candidate",
+                                                                      "current_live_truth":  "phase68g_66g_1p25x_candidate",
                                                                       "real_order_gate_status":  "live_order_enabled_and_approved",
                                                                       "source_of_truth_runtime_writes":  false,
                                                                       "strategy_semantics_changed":  false
                                                                   },
                                               "automation":  {
                                                                  "accepted_current_state":  [
-                                                                                                "execution_logic_ready_for_scheduler_integration",
-                                                                                                "scheduler_launch_integration_active_next_step"
+                                                                                                "recurring_scheduler_ready",
+                                                                                                "live_runtime_armed"
                                                                                             ],
+                                                                 "remaining_proof_gap":  "first_non_cash_end_to_end_dynamic_leverage_evidence_run",
                                                                  "widened_scope_approved":  [
-                                                                                                "scheduler_launch_integration",
                                                                                                 "controlled_continuous_runtime_loop_preparation",
                                                                                                 "hyperliquid_api_canary_live_execution_proof",
                                                                                                 "runtime_operability_hardening",
@@ -150,16 +176,16 @@
                                                                  "clarification":  "AUTOMATION truth previously lagged accepted project progress."
                                                              },
                                               "ai_lab":  {
-                                                             "phase69_state":  "paused_pending_future_objective_reframing",
-                                                             "dev_only_execution_mode_approved":  true,
+                                                             "phase69_state":  "paused",
+                                                             "official_strategy_advancement":  "paused",
+                                                             "widened_dev_only_anomaly_operating_mode_approved":  true,
                                                              "dev_only_runner_spec_maintenance_allowed":  true,
-                                                             "widened_dev_only_implementation_mode_approved_for":  [
-                                                                                                                       "anomaly_feature_instrumentation"
+                                                             "approved_dev_only_layers":  [
+                                                                                              "response_shape_bot_v1",
+                                                                                              "bot_vs_bot_compare",
+                                                                                              "supportive_vs_caution_subset_layer_v1"
                                                                                                                    ],
-                                                             "immediate_implementation_freedom_first_two_families_only":  [
-                                                                                                                              "pre_move_structure_quality_stack",
-                                                                                                                              "participation_breadth_confirmation_stack"
-                                                                                                                          ],
+                                                             "post_run_anomaly_step":  "attached_after_successful_daily_refresh",
                                                              "required_output_flags":  {
                                                                                            "dev_only":  true,
                                                                                            "non_authoritative":  true
@@ -174,10 +200,15 @@
                                                       }
                                           },
     "ai_lab_dev_only_governance":  {
-                                       "phase69_status":  "paused_pending_future_objective_reframing",
+                                       "phase69_status":  "paused",
                                        "strategy_advancement_status":  "paused",
                                        "dev_only_execution_mode":  "approved",
                                        "dev_only_runner_spec_maintenance_allowed":  true,
+                                       "widened_dev_only_anomaly_operating_mode":  "approved",
+                                       "response_shape_bot_v1":  "approved",
+                                       "bot_vs_bot_compare":  "approved",
+                                       "supportive_vs_caution_subset_layer_v1":  "approved",
+                                       "dev_only_post_run_anomaly_step_after_successful_daily_refresh":  "attached",
                                        "approved_dev_only_families":  [
                                                                           "cross_asset_decoupling_stack",
                                                                           "liquidity_stress_anomaly_stack",
@@ -195,10 +226,29 @@
                                                                     "app_data_execution_live_order_drift":  "forbidden"
                                                                 }
                                    },
+    "strategy_truth_authority_split":  {
+                                           "production_core_role":  "primary_strategy_truth_interface",
+                                           "production_core_artifacts":  [
+                                                                             "outputs/production/current_strategy_snapshot.json",
+                                                                             "outputs/production/current_strategy_timeseries.csv",
+                                                                             "outputs/production/current_strategy_diagnostics.json"
+                                                                         ],
+                                           "runtime_publish_authority_role":  "pi_only_runtime_publish_authority",
+                                           "runtime_authority_files":  [
+                                                                           "outputs/execution/authority/latest_successful_snapshot.json",
+                                                                           "outputs/execution/authority/latest_attempt_status.json"
+                                                                       ],
+                                           "pc_role":  "manual_recovery_debug_only",
+                                           "github_actions_role":  "validation_only",
+                                           "separation_rule":  "pi_runtime_publish_authority_is_separate_from_production_core_strategy_truth",
+                                           "legacy_phase_chain_role":  "research_archive_input_lineage_not_primary_runtime_truth_interface"
+                                       },
     "production_authority_model":  {
                                        "automatic_production_producer":  "raspberry_pi",
                                        "pc_role":  "manual_recovery_debug_only",
                                        "github_actions_role":  "validation_only",
+                                       "runtime_authority_scope":  "runtime_publish_authority_only",
+                                       "separate_from_production_core_strategy_truth":  true,
                                        "app_authority_files":  [
                                                                    "outputs/execution/authority/latest_successful_snapshot.json",
                                                                    "outputs/execution/authority/latest_attempt_status.json"
@@ -210,5 +260,9 @@
                                                                                    "outputs/execution/runtime_health/*",
                                                                                    "outputs/execution/live_status/*"
                                                                                ]
+                                   },
+    "legacy_phase_chain_status":  {
+                                      "role":  "research_archive_input_lineage",
+                                      "primary_runtime_production_truth_interface":  false
                                    }
 }
