@@ -1,0 +1,166 @@
+{
+  "artifact_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate_quality",
+  "generated_at_utc": "2026-05-05 17:40:25 UTC",
+  "checks": [
+    {
+      "name": "json_parse",
+      "ok": true,
+      "detail": "all required JSON and CSV outputs parse cleanly"
+    },
+    {
+      "name": "csv_non_empty",
+      "ok": true,
+      "detail": "all required CSV outputs are present and non-empty"
+    },
+    {
+      "name": "production_core_baseline_rows_loaded",
+      "ok": true,
+      "detail": "loaded 2922 baseline rows"
+    },
+    {
+      "name": "etf_panel_rows_loaded",
+      "ok": true,
+      "detail": "loaded 580 ETF rows"
+    },
+    {
+      "name": "candidate_timeseries_date_universe_matches_joined_overlap",
+      "ok": true,
+      "detail": "candidate_timeseries.csv uses the same date universe as the joined overlap"
+    },
+    {
+      "name": "confirm_etf_d_plus_1_causal_join",
+      "ok": true,
+      "detail": "ETF session D is used only on BTC UTC day D+1"
+    },
+    {
+      "name": "confirm_early_risk_only_on_baseline_cash",
+      "ok": true,
+      "detail": "EARLY_RISK rows require effective_market_exposure == 0 and current_asset == CASH"
+    },
+    {
+      "name": "confirm_baseline_non_cash_behavior_passes_through_unchanged",
+      "ok": true,
+      "detail": "baseline FULL_RISK rows pass through unchanged"
+    },
+    {
+      "name": "confirm_cooldown_15_implementation",
+      "ok": true,
+      "detail": "15-day cooldown windows are scheduled correctly and block only new EARLY_RISK entries"
+    },
+    {
+      "name": "confirm_dev_only_non_authoritative_markers",
+      "ok": true,
+      "detail": "row-level dev_only / non_authoritative markers remain intact"
+    },
+    {
+      "name": "confirm_no_source_of_truth_changes",
+      "ok": true,
+      "detail": "all writes remain under outputs/research_os/dev_only and avoid source_of_truth"
+    },
+    {
+      "name": "hard_invalidation_source_documented",
+      "ok": true,
+      "detail": "stress_block_day is present and is used directly as the hard invalidation / risk-off equivalent."
+    }
+  ],
+  "parse_validation": {
+    "ok": true,
+    "checks": [
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\summary.json",
+        "kind": "json",
+        "ok": true,
+        "detail": "summary.json parsed"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\manifest.json",
+        "kind": "json",
+        "ok": true,
+        "detail": "manifest.json parsed"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\quality.json",
+        "kind": "json",
+        "ok": true,
+        "detail": "quality.json parsed"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\candidate_timeseries.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "candidate_timeseries.csv rows=579"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\compare.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "compare.csv rows=26"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\activation_windows.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "activation_windows.csv rows=14"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\cost_metrics.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "cost_metrics.csv rows=4"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\blocker_counts.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "blocker_counts.csv rows=2"
+      }
+    ]
+  },
+  "status": "passed",
+  "final_status": "READY_FOR_FORENSIC_RERUN",
+  "cooldown_event_count": 12,
+  "activation_windows_count": 14,
+  "blocker_rows": {
+    "full_etf_overlap": {
+      "variant_id": "cooldown_15_days",
+      "model_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
+      "cooldown_days": 15,
+      "period": "full_etf_overlap",
+      "period_start": "2024-01-12",
+      "period_end": "2026-05-02",
+      "baseline_not_cash": 120,
+      "etf_flow_not_ready": 0,
+      "flow_2_of_3_not_positive": 214,
+      "flow_3d_sum_below_floor": 383,
+      "btc_price_filter_failed": 272,
+      "hard_invalidation_on": 60,
+      "permission_on_but_baseline_already_full_risk": 71,
+      "cooldown_active_days": 106,
+      "cooldown_blocked_entry_days": 21
+    },
+    "since2025": {
+      "variant_id": "cooldown_15_days",
+      "model_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
+      "cooldown_days": 15,
+      "period": "since2025",
+      "period_start": "2025-01-01",
+      "period_end": "2026-05-02",
+      "baseline_not_cash": 56,
+      "etf_flow_not_ready": 0,
+      "flow_2_of_3_not_positive": 142,
+      "flow_3d_sum_below_floor": 232,
+      "btc_price_filter_failed": 170,
+      "hard_invalidation_on": 40,
+      "permission_on_but_baseline_already_full_risk": 31,
+      "cooldown_active_days": 57,
+      "cooldown_blocked_entry_days": 14
+    }
+  },
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "phase68g_etf_flow_impulse_cooldown_15_rebuild_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

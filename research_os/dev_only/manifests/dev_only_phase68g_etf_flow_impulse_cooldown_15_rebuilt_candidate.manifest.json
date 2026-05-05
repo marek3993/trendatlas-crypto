@@ -1,0 +1,25 @@
+{
+  "manifest_version": "1.0",
+  "artifact_type": "dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate_manifest",
+  "artifact_id": "dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate_manifest",
+  "created_at_utc": "2026-05-05 00:00:00 UTC",
+  "owner": "MRV1 CORE STRATEGY",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "phase68g_etf_flow_impulse_cooldown_15_rebuild_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "output_namespace": "outputs/research_os/dev_only/non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate/",
+  "contract_paths": [
+    "research_os/dev_only/contracts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.contract.json"
+  ],
+  "spec_paths": [
+    "research_os/dev_only/specs/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.spec.json"
+  ],
+  "runner_paths": [
+    "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py"
+  ],
+  "status": "implementation_pack_ready"
+}

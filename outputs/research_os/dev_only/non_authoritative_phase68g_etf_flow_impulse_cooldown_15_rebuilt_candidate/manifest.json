@@ -1,0 +1,60 @@
+{
+  "artifact_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate_manifest",
+  "generated_at_utc": "2026-05-05 17:40:25 UTC",
+  "output_namespace": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
+  "output_refs": {
+    "summary_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\summary.json",
+    "candidate_timeseries_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\candidate_timeseries.csv",
+    "compare_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\compare.csv",
+    "activation_windows_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\activation_windows.csv",
+    "cost_metrics_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\cost_metrics.csv",
+    "blocker_counts_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\blocker_counts.csv",
+    "manifest_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\manifest.json",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\quality.json"
+  },
+  "input_refs": {
+    "baseline_snapshot": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
+    "baseline_timeseries": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_timeseries.csv",
+    "baseline_diagnostics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_diagnostics.json",
+    "etf_panel": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_etf_flow_daily_panel\\btc_etf_flow_daily_panel.csv",
+    "btc_ohlcv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\data\\ohlcv\\BTCUSDT_1d.csv",
+    "contract_ref": "research_os/dev_only/contracts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.contract.json",
+    "spec_ref": "research_os/dev_only/specs/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.spec.json",
+    "manifest_seed_ref": "research_os/dev_only/manifests/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.manifest.json",
+    "cost_model_source": "derived from outputs/production/current_strategy_timeseries.csv daily cost columns"
+  },
+  "contract_refs": [
+    "research_os/dev_only/contracts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.contract.json"
+  ],
+  "spec_refs": [
+    "research_os/dev_only/specs/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.spec.json"
+  ],
+  "manifest_seed_refs": [
+    "research_os/dev_only/manifests/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.manifest.json"
+  ],
+  "compiled_helper_refs": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\__pycache__\\dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-312.pyc",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\__pycache__\\dev_only_phase68g_etf_flow_impulse_probe.cpython-312.pyc"
+  ],
+  "cost_model": {
+    "annual_borrow_cost_pct": 12.0,
+    "tradable_transition_slippage_bps": 10.0,
+    "taker_fee_bps": 4.5,
+    "maker_fee_bps": 1.5,
+    "fee_side_mode": "taker",
+    "source": "derived from outputs/production/current_strategy_timeseries.csv daily cost columns"
+  },
+  "hard_invalidation_rule": {
+    "source_column": "stress_block_day",
+    "fallback_used": false,
+    "detail": "stress_block_day is present and is used directly as the hard invalidation / risk-off equivalent."
+  },
+  "status": "READY_FOR_FORENSIC_RERUN",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "phase68g_etf_flow_impulse_cooldown_15_rebuild_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}
