@@ -61,7 +61,10 @@
     "production_snapshot": "primary_production_core_strategy_truth_snapshot",
     "production_timeseries": "primary_production_core_strategy_truth_timeseries",
     "production_diagnostics": "primary_production_core_strategy_diagnostics",
-    "production_quality": "production_core_validation_output"
+    "production_quality": "production_core_validation_output",
+    "data_health_report": "centralized_data_source_health_and_availability_report",
+    "data_health_quality": "data_health_contract_validation_output",
+    "data_health_manifest": "data_health_lineage_and_contract_metadata"
   },
   "artifacts": {
     "phase67j_winner_paper": {
@@ -348,6 +351,47 @@
         "audit"
       ],
       "write_mode": "validator_only_current_strategy_verdict"
+    },
+    "production_data_health_report": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "data_health_report",
+      "truth_domain": "data_availability",
+      "read_scope": [
+        "app",
+        "execution",
+        "research",
+        "validation",
+        "audit"
+      ],
+      "write_mode": "producer_only_data_health_build"
+    },
+    "production_data_health_quality": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.quality.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "data_health_quality",
+      "truth_domain": "data_availability",
+      "read_scope": [
+        "app",
+        "execution",
+        "validation",
+        "audit"
+      ],
+      "write_mode": "validator_only_data_health_verdict"
+    },
+    "production_data_health_manifest": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.manifest.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "data_health_manifest",
+      "truth_domain": "data_availability",
+      "read_scope": [
+        "validation",
+        "audit"
+      ],
+      "write_mode": "producer_only_data_health_build"
     },
     "research_os_zero_selection_diagnostics": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop\\zero_selection_diagnostics.json",

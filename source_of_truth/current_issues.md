@@ -27,6 +27,24 @@
 - Remaining proof gap is the first non-CASH end-to-end dynamic leverage evidence run.
 - Confirm Production Core remains the app homepage and execution primary strategy truth interface.
 
+## Data health guard current state
+- Data Health / Source Availability Guard is active and remains separate from Production Core strategy truth and Pi runtime authority.
+- Guard artifacts:
+  - `outputs/production/data_health_report.json`
+  - `outputs/production/data_health_report.quality.json`
+  - `outputs/production/data_health_report.manifest.json`
+- Current real state is `warning`, while production remains allowed.
+- Current status split: `app_status=ok`, `execution_status=ok`, `research_status=warning`.
+- Current block flags: `block_app=false`, `block_execution=false`.
+- Production-critical failures block app and execution fail-closed.
+- App-critical failures block app fail-closed.
+- Execution-critical failures block execution fail-closed.
+- Research-only failures do not block production, but block the relevant research probe.
+- Missing optional env/API keys are surfaced as `unavailable` / `warn_only`.
+- No silent fallback is allowed around guarded source availability.
+- Stale or missing `BTC` daily OHLCV is production-critical and would block production/execution.
+- Current stale research-only BTC derivatives panel blocks only the relevant research probe.
+
 ## Explicitly non-authoritative legacy paths
 - `outputs/execution/app_snapshot/*`
 - `outputs/app_refresh_pipeline/*`

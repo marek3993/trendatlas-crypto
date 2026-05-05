@@ -47,6 +47,28 @@
 - GitHub Actions role: `validation_only`
 - Pi authority is runtime/publish authority and remains separate from Production Core strategy truth.
 
+## Data Health / Source Availability Guard
+- Guard status: active
+- Authoritative guard artifacts:
+  - `outputs/production/data_health_report.json`
+  - `outputs/production/data_health_report.quality.json`
+  - `outputs/production/data_health_report.manifest.json`
+- Build script: `scripts/production/build_data_health_report.py`
+- Validation script: `scripts/production/validate_data_health_report.py`
+- The guard is separate from Production Core strategy truth and separate from Pi runtime authority.
+- The guard governs data/source availability only.
+- Production-critical failures block app and execution fail-closed.
+- App-critical failures block app fail-closed.
+- Execution-critical failures block execution fail-closed.
+- Research-only failures do not block production, but they block the relevant research probe.
+- Missing optional env/API keys are surfaced as `unavailable` / `warn_only`.
+- No silent fallback is allowed for degraded or missing guarded sources.
+- Stale or missing `BTC` daily OHLCV is production-critical and blocks production/execution.
+- Current real state: `overall_status=warning`, `app_status=ok`, `execution_status=ok`, `research_status=warning`.
+- Current block flags: `block_app=false`, `block_execution=false`.
+- Production remains allowed in the current state.
+- Current stale research-only BTC derivatives panel blocks only the relevant research probe.
+
 ## Runtime/live state
 - Recurring scheduler: ready
 - Live runtime: armed

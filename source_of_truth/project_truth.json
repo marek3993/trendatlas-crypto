@@ -243,6 +243,45 @@
                                            "separation_rule":  "pi_runtime_publish_authority_is_separate_from_production_core_strategy_truth",
                                            "legacy_phase_chain_role":  "research_archive_input_lineage_not_primary_runtime_truth_interface"
                                        },
+    "data_health_guard":  {
+                              "status":  "active",
+                              "role":  "data_source_availability_guard",
+                              "separate_from_production_core_strategy_truth":  true,
+                              "separate_from_pi_runtime_publish_authority":  true,
+                              "report_path":  "outputs/production/data_health_report.json",
+                              "quality_path":  "outputs/production/data_health_report.quality.json",
+                              "manifest_path":  "outputs/production/data_health_report.manifest.json",
+                              "build_script":  "scripts/production/build_data_health_report.py",
+                              "validation_script":  "scripts/production/validate_data_health_report.py",
+                              "no_silent_fallback":  true,
+                              "gating_contract":  {
+                                                       "production_critical":  "block_app_and_execution_fail_closed",
+                                                       "app_critical":  "block_app_fail_closed",
+                                                       "execution_critical":  "block_execution_fail_closed",
+                                                       "research_only":  "block_relevant_research_probe_only",
+                                                       "informational_optional_env_or_api_keys":  "surface_unavailable_warn_only"
+                                                   },
+                              "production_critical_btc_ohlcv_source_id":  "data_ohlcv_btcusdt_1d",
+                              "production_critical_btc_ohlcv_rule":  "stale_or_missing_blocks_production_and_execution",
+                              "current_state":  {
+                                                    "overall_status":  "warning",
+                                                    "app_status":  "ok",
+                                                    "execution_status":  "ok",
+                                                    "research_status":  "warning",
+                                                    "block_app":  false,
+                                                    "block_execution":  false,
+                                                    "production_allowed":  true,
+                                                    "research_blocked_source_ids":  [
+                                                                                        "research_btc_derivatives_daily_panel_csv",
+                                                                                        "research_btc_derivatives_daily_panel_quality"
+                                                                                    ],
+                                                    "warning_source_ids":  [
+                                                                               "env_mrv1_btc_etf_flow_primary_provider",
+                                                                               "env_mrv1_coinglass_api_key",
+                                                                               "env_mrv1_sosovalue_api_key"
+                                                                           ]
+                                                }
+                          },
     "production_authority_model":  {
                                        "automatic_production_producer":  "raspberry_pi",
                                        "pc_role":  "manual_recovery_debug_only",
