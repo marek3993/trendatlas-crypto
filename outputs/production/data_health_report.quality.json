@@ -1,7 +1,7 @@
 {
   "artifact_type": "data_health_report_quality",
   "schema_version": 1,
-  "generated_at_utc": "2026-05-05T15:04:22Z",
+  "generated_at_utc": "2026-05-06T07:57:48Z",
   "status": "passed",
   "error_count": 0,
   "warning_count": 0,
@@ -11,9 +11,9 @@
     "source_id_unique": true,
     "valid_status_enum": true,
     "valid_action_enum": true,
-    "production_and_execution_fail_closed": false
+    "production_and_execution_fail_closed": true
   },
   "validated_paths": {
-    "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.json"
+    "report_path": "/opt/market_regime_v1/outputs/production/data_health_report.json"
   }
 }

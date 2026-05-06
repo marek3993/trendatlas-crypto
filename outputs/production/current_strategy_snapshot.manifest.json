@@ -1,65 +1,65 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-05T09:48:02Z",
+  "generated_at_utc": "2026-05-06T07:57:40Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
-  "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
-  "git_commit": "16795df708c81540203f3f290729d097eb2fccb0",
+  "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
+  "git_commit": "e71152eb56dbdb482d6928cb92b84fff8cc04195",
   "source_inputs": {
     "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
     "strategy_id": "current_strategy",
     "strategy_version": "phase68g_66g_1p25x_candidate",
-    "validated_closed_day": "2026-05-04",
+    "validated_closed_day": "2026-05-05",
     "files": {
       "strategy_summary": {
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-        "sha256": "dad8650d2377259c610f61f874e7804237edf155ff1d58a0e7c7063cec314d6d",
-        "size_bytes": 900,
-        "modified_utc": "2026-05-05T05:26:16Z",
-        "last_date": "2026-05-04",
+        "sha256": "03afb742c9c8187d0626d6d59cd8ecbafc8ae8a1f0fb3017fa8331149972f8e4",
+        "size_bytes": 902,
+        "modified_utc": "2026-05-06T07:57:39Z",
+        "last_date": "2026-05-05",
         "row_count": 1
       },
       "strategy_paper": {
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-        "sha256": "3212a57d377eac61b51a5ac5af639a462dd024bb42397d053c3d7169b35defa7",
-        "size_bytes": 1054133,
-        "modified_utc": "2026-05-05T05:26:16Z",
-        "last_date": "2026-05-04",
-        "row_count": 2922
+        "sha256": "dfbf0aefd2220e21556971609a71f4653c1b5cc2ed56277774fd9c9b8b947a3c",
+        "size_bytes": 1051602,
+        "modified_utc": "2026-05-06T07:57:39Z",
+        "last_date": "2026-05-05",
+        "row_count": 2923
       },
       "trend_status": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
-        "sha256": "ad4bd956ef792c43efd113644413364f13a39cae7af7c1d9dd2ee932c55ddfea",
-        "size_bytes": 619,
-        "modified_utc": "2026-05-05T05:26:16Z",
-        "last_date": "2026-05-04",
+        "sha256": "153a13672d999a78a7fea617ec859efe3b3c039431ab0aef6468a767234d7096",
+        "size_bytes": 617,
+        "modified_utc": "2026-05-06T00:14:01Z",
+        "last_date": "2026-05-05",
         "row_count": 1
       },
       "trend_history": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
-        "sha256": "62667cd4f53dff60e15943a1aee973a92d19f37b3ae5f53b4488fb15b0383664",
-        "size_bytes": 379110,
-        "modified_utc": "2026-05-05T05:26:16Z",
-        "last_date": "2026-05-04",
-        "row_count": 2922
+        "sha256": "f5051c48bbfc72b64f61c53b55740882424b1c95ad336be9387b970958bc0320",
+        "size_bytes": 376319,
+        "modified_utc": "2026-05-06T07:57:37Z",
+        "last_date": "2026-05-05",
+        "row_count": 2923
       },
       "freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
-        "sha256": "208a86f74282b837ee60e265bcde6bdd972427ea2b930e6e0030576cdb466882",
-        "size_bytes": 1214,
-        "modified_utc": "2026-05-05T05:26:16Z",
-        "last_date": "2026-05-04",
+        "sha256": "f2ea07c5075e2bf4885cb483f6b3e0f3372a08357365b1041767009a55508f5a",
+        "size_bytes": 1172,
+        "modified_utc": "2026-05-06T07:57:38Z",
+        "last_date": "2026-05-05",
         "status": "ok"
       },
       "benchmark_ohlcv": {
         "path": "data/ohlcv/BTCUSDT_1d.csv",
-        "sha256": "ef60cbdf790d1c8feca224cde78b3b7295522d62502e96f39b1a84362a18ec57",
-        "size_bytes": 274283,
-        "modified_utc": "2026-05-05T09:29:40Z",
-        "last_date": "2026-05-04",
-        "row_count": 3183
+        "sha256": "3075b6a9c681a07093503a7f429f85ccfb6ea7549b168b505e9c385ada8e22e3",
+        "size_bytes": 274370,
+        "modified_utc": "2026-05-06T00:10:04Z",
+        "last_date": "2026-05-05",
+        "row_count": 3184
       }
     }
   },

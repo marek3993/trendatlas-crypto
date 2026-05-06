@@ -1,12 +1,12 @@
 {
   "artifact_type": "current_strategy_diagnostics",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-05T09:48:02Z",
+  "generated_at_utc": "2026-05-06T07:57:40Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
-  "closed_day": "2026-05-04",
+  "closed_day": "2026-05-05",
   "latest_state_explanation": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed.",
-  "current_flatline_explanation": "Authorized capital should stay flat during the current CASH streak of 186 days because no market exposure is currently allowed.",
+  "current_flatline_explanation": "Authorized capital should stay flat during the current CASH streak of 187 days because no market exposure is currently allowed.",
   "current_cash_or_risk_reason": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed.",
   "recent_regime_changes": [
     {
@@ -94,12 +94,12 @@
   },
   "current_data_health_summary": {
     "status": "passed",
-    "closed_day": "2026-05-04",
-    "summary_latest_available_date": "2026-05-04",
-    "paper_last_day": "2026-05-04",
-    "trend_status_day": "2026-05-04",
-    "trend_history_last_day": "2026-05-04",
-    "freshness_closed_day": "2026-05-04",
+    "closed_day": "2026-05-05",
+    "summary_latest_available_date": "2026-05-05",
+    "paper_last_day": "2026-05-05",
+    "trend_status_day": "2026-05-05",
+    "trend_history_last_day": "2026-05-05",
+    "freshness_closed_day": "2026-05-05",
     "freshness_status": "ok",
     "freshness_errors": [],
     "warnings": []
@@ -118,12 +118,12 @@
     },
     "cash_drag": {
       "status": "elevated",
-      "cash_days_pct": 81.6222,
-      "current_cash_streak_days": 186
+      "cash_days_pct": 81.6285,
+      "current_cash_streak_days": 187
     },
     "flatline_duration": {
       "status": "active",
-      "current_cash_streak_days": 186
+      "current_cash_streak_days": 187
     },
     "current_research_questions": [
       "Can churn be reduced without losing the current net-return profile?",
@@ -171,8 +171,8 @@
       {
         "code": "cash_drag_elevated",
         "severity": "medium",
-        "text": "Cash participation remains elevated at 81.6222% of history.",
-        "metric_value": 81.6222,
+        "text": "Cash participation remains elevated at 81.6285% of history.",
+        "metric_value": 81.6285,
         "metric_unit": "pct"
       },
       {
@@ -202,8 +202,8 @@
     {
       "code": "cash_drag_elevated",
       "severity": "medium",
-      "text": "Cash participation remains elevated at 81.6222% of history.",
-      "metric_value": 81.6222,
+      "text": "Cash participation remains elevated at 81.6285% of history.",
+      "metric_value": 81.6285,
       "metric_unit": "pct"
     },
     {
