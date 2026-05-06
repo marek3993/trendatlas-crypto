@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -39,6 +40,18 @@ LOG_PATH = LOGS_DIR / "build_execution_intent_from_strategy_exports.log"
 
 DEFAULT_REFERENCE_MODEL = "phase67j_no_neo_main"
 CASH_LIKE_ASSETS = {"CASH", "USD", "USDC", "USDT", "NONE", "OUT_OF_MARKET"}
+INTENT_HEALTH_GUARD_SOURCE_IDS = frozenset(
+    {
+        "production_current_strategy_snapshot",
+        "production_current_strategy_timeseries",
+        "production_current_strategy_diagnostics",
+        "production_current_strategy_snapshot_quality",
+        "data_ohlcv_btcusdt_1d",
+    }
+)
+SAME_RUN_AUTHORITY_ALLOW_ENV = "MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN"
+SAME_RUN_AUTHORITY_RUN_ID_ENV = "MRV1_CURRENT_AUTHORITY_RUN_ID"
+SAME_RUN_AUTHORITY_TARGET_DAY_ENV = "MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY"
 
 
 def utc_now_iso() -> str:
@@ -77,6 +90,16 @@ def read_json(path: Path) -> dict[str, Any]:
     raise RuntimeError("unreachable")
 
 
+def read_json_if_exists(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
 def require_mapping(value: Any, context: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         fail(f"{context} must be an object")
@@ -94,6 +117,21 @@ def normalize_iso_day_text(value: Any, *, context: str) -> str:
         fail(f"{context} is not an ISO day: {value}")
     return text
     raise RuntimeError("unreachable")
+
+
+def normalize_optional_iso_day_text(value: Any) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    if "T" in text:
+        text = text.split("T", 1)[0]
+    if len(text) != 10:
+        return None
+    try:
+        date.fromisoformat(text)
+    except ValueError:
+        return None
+    return text
 
 
 def require_text(value: Any, *, context: str) -> str:
@@ -119,6 +157,37 @@ def require_float(value: Any, *, context: str) -> float:
 
 def is_cash_like_asset(value: Any) -> bool:
     return str(value or "").strip().upper() in CASH_LIKE_ASSETS
+
+
+def env_flag(name: str) -> bool:
+    return str(os.environ.get(name) or "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def resolve_same_run_authority_context(*, expected_closed_day: str) -> dict[str, Any]:
+    target_closed_day = normalize_optional_iso_day_text(
+        os.environ.get(SAME_RUN_AUTHORITY_TARGET_DAY_ENV)
+    )
+    run_id = str(os.environ.get(SAME_RUN_AUTHORITY_RUN_ID_ENV) or "").strip() or None
+    allow_in_progress = env_flag(SAME_RUN_AUTHORITY_ALLOW_ENV)
+    return {
+        "allow_in_progress": allow_in_progress,
+        "run_id": run_id,
+        "target_closed_day": target_closed_day,
+        "active": allow_in_progress and target_closed_day == expected_closed_day,
+    }
+
+
+def select_intent_health_blockers(report: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        source
+        for source in execution_blocking_sources(report)
+        if str(source.get("source_id") or "").strip() in INTENT_HEALTH_GUARD_SOURCE_IDS
+    ]
 
 
 def load_reference_model(export_contract_path: Path) -> str:
@@ -268,12 +337,97 @@ def validate_production_snapshot(snapshot: dict[str, Any], *, source_path: Path)
 def validate_authority_alignment(
     *,
     latest_attempt_status: dict[str, Any],
-    latest_successful_snapshot: dict[str, Any],
+    latest_successful_snapshot: dict[str, Any] | None,
     expected_closed_day: str,
+    same_run_authority: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    same_run_authority = same_run_authority or {}
+    same_run_active = bool(same_run_authority.get("active"))
+    same_run_run_id = str(same_run_authority.get("run_id") or "").strip() or None
+    same_run_target_closed_day = str(
+        same_run_authority.get("target_closed_day") or ""
+    ).strip() or None
+
+    attempt_status = str(
+        latest_attempt_status.get("latest_authoritative_attempt_status") or ""
+    ).strip().lower()
     attempt_currentness_status = str(
         latest_attempt_status.get("currentness_status") or ""
     ).strip().lower()
+    attempt_target_closed_day = normalize_optional_iso_day_text(
+        latest_attempt_status.get("target_closed_day_utc")
+    )
+    attempt_latest_available_closed_day = normalize_optional_iso_day_text(
+        latest_attempt_status.get("latest_available_closed_utc_day")
+    )
+    attempt_run_id = str(latest_attempt_status.get("run_id") or "").strip() or None
+
+    if same_run_active and attempt_status == "in_progress":
+        if attempt_currentness_status and attempt_currentness_status != "current":
+            fail(
+                "Execution intent blocked: authority latest_attempt_status is not current "
+                f"during same-run in-progress validation "
+                f"(currentness_status={attempt_currentness_status})"
+            )
+        if (
+            attempt_target_closed_day is not None
+            and attempt_target_closed_day != expected_closed_day
+        ):
+            fail(
+                "Execution intent blocked: authority latest_attempt_status target day diverged "
+                f"during same-run in-progress validation "
+                f"(attempt_target={attempt_target_closed_day} snapshot={expected_closed_day})"
+            )
+        if (
+            attempt_latest_available_closed_day is not None
+            and attempt_latest_available_closed_day != expected_closed_day
+        ):
+            fail(
+                "Execution intent blocked: authority latest_attempt_status latest available day diverged "
+                f"during same-run in-progress validation "
+                f"(attempt_latest_available={attempt_latest_available_closed_day} snapshot={expected_closed_day})"
+            )
+        if same_run_run_id and attempt_run_id and attempt_run_id != same_run_run_id:
+            fail(
+                "Execution intent blocked: authority latest_attempt_status run_id diverged "
+                f"from the current authoritative run "
+                f"(attempt_run_id={attempt_run_id} current_run_id={same_run_run_id})"
+            )
+
+        success_payload = (
+            latest_successful_snapshot if isinstance(latest_successful_snapshot, dict) else {}
+        )
+        success_target_closed_day = normalize_optional_iso_day_text(
+            success_payload.get("target_closed_day_utc")
+        )
+        success_latest_available_closed_day = normalize_optional_iso_day_text(
+            success_payload.get("latest_available_closed_utc_day")
+        )
+        success_attempt_status = str(
+            success_payload.get("latest_authoritative_attempt_status") or ""
+        ).strip().lower()
+        success_currentness_status = str(
+            success_payload.get("currentness_status") or ""
+        ).strip().lower()
+
+        return {
+            "attempt_status": attempt_status,
+            "attempt_currentness_status": attempt_currentness_status or "current",
+            "attempt_target_closed_day": attempt_target_closed_day or expected_closed_day,
+            "attempt_latest_available_closed_day": (
+                attempt_latest_available_closed_day or expected_closed_day
+            ),
+            "success_currentness_status": success_currentness_status or None,
+            "success_target_closed_day": success_target_closed_day,
+            "success_latest_available_closed_day": success_latest_available_closed_day,
+            "success_attempt_status": success_attempt_status or None,
+            "aligned_closed_day": expected_closed_day,
+            "authority_alignment_mode": "same_run_in_progress",
+            "same_run_authority_allowed": True,
+            "same_run_authority_run_id": same_run_run_id,
+            "same_run_authority_target_closed_day": same_run_target_closed_day,
+        }
+
     attempt_target_closed_day = normalize_iso_day_text(
         latest_attempt_status.get("target_closed_day_utc"),
         context="latest_attempt_status.target_closed_day_utc",
@@ -282,7 +436,11 @@ def validate_authority_alignment(
         latest_attempt_status.get("latest_available_closed_utc_day"),
         context="latest_attempt_status.latest_available_closed_utc_day",
     )
-
+    if not isinstance(latest_successful_snapshot, dict):
+        fail(
+            "Execution intent blocked: authority latest_successful_snapshot is missing "
+            "outside same-run in-progress validation"
+        )
     success_target_closed_day = normalize_iso_day_text(
         latest_successful_snapshot.get("target_closed_day_utc"),
         context="latest_successful_snapshot.target_closed_day_utc",
@@ -331,13 +489,19 @@ def validate_authority_alignment(
         )
 
     return {
+        "attempt_status": attempt_status,
         "attempt_currentness_status": attempt_currentness_status,
         "attempt_target_closed_day": attempt_target_closed_day,
         "attempt_latest_available_closed_day": attempt_latest_available_closed_day,
         "success_currentness_status": success_currentness_status,
         "success_target_closed_day": success_target_closed_day,
         "success_latest_available_closed_day": success_latest_available_closed_day,
+        "success_attempt_status": success_attempt_status,
         "aligned_closed_day": expected_closed_day,
+        "authority_alignment_mode": "published_authority_snapshot",
+        "same_run_authority_allowed": False,
+        "same_run_authority_run_id": same_run_run_id,
+        "same_run_authority_target_closed_day": same_run_target_closed_day,
     }
 
 
@@ -536,19 +700,23 @@ def main() -> None:
     authority_day_context: dict[str, Any] | None = None
 
     try:
+        production_snapshot = read_json(args.production_snapshot_path)
+        snapshot_context = validate_production_snapshot(
+            production_snapshot,
+            source_path=args.production_snapshot_path,
+        )
+        strategy_model = snapshot_context["strategy_version"]
+        same_run_authority = resolve_same_run_authority_context(
+            expected_closed_day=snapshot_context["closed_day"]
+        )
+
         data_health_bundle = build_report_bundle(
             root=ROOT,
             output_dir=PRODUCTION_DIR,
             write_outputs=True,
         )
         data_health_report = data_health_bundle["report"]
-        health_blockers = execution_blocking_sources(
-            data_health_report,
-            exclude_source_ids={
-                "execution_latest_execution_intent",
-                "execution_latest_real_order_gate_decision",
-            },
-        )
+        health_blockers = select_intent_health_blockers(data_health_report)
         if health_blockers:
             blocker_summary = " | ".join(
                 f"{item['source_id']}:{item['status']}" for item in health_blockers
@@ -566,21 +734,26 @@ def main() -> None:
                 output_manifest_path=args.manifest_path,
             )
 
-        production_snapshot = read_json(args.production_snapshot_path)
-        snapshot_context = validate_production_snapshot(
-            production_snapshot,
-            source_path=args.production_snapshot_path,
-        )
-        strategy_model = snapshot_context["strategy_version"]
-
         latest_attempt_status = read_json(args.authority_latest_attempt_status_path)
-        latest_successful_snapshot = read_json(
-            args.authority_latest_successful_snapshot_path
+        allow_in_progress_same_run = (
+            bool(same_run_authority.get("active"))
+            and str(
+                latest_attempt_status.get("latest_authoritative_attempt_status") or ""
+            )
+            .strip()
+            .lower()
+            == "in_progress"
+        )
+        latest_successful_snapshot = (
+            read_json_if_exists(args.authority_latest_successful_snapshot_path)
+            if allow_in_progress_same_run
+            else read_json(args.authority_latest_successful_snapshot_path)
         )
         authority_day_context = validate_authority_alignment(
             latest_attempt_status=latest_attempt_status,
             latest_successful_snapshot=latest_successful_snapshot,
             expected_closed_day=snapshot_context["closed_day"],
+            same_run_authority=same_run_authority,
         )
     except SystemExit:
         raise

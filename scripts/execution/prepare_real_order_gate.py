@@ -27,6 +27,16 @@ LIVE_GATE_DIR = OUTPUTS_DIR / "live_gate"
 LOGS_DIR = OUTPUTS_DIR / "logs"
 PRODUCTION_DIR = ROOT / "outputs" / "production"
 CASH_LIKE_ASSETS = {"CASH", "USD", "USDC", "USDT", "NONE", "OUT_OF_MARKET"}
+REAL_ORDER_GATE_HEALTH_GUARD_SOURCE_IDS = frozenset(
+    {
+        "production_current_strategy_snapshot",
+        "production_current_strategy_timeseries",
+        "production_current_strategy_diagnostics",
+        "production_current_strategy_snapshot_quality",
+        "data_ohlcv_btcusdt_1d",
+        "execution_latest_execution_intent",
+    }
+)
 
 MODE_CONFIG_PATH = CONFIG_DIR / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = CONFIG_DIR / "live_order_policy.json"
@@ -85,6 +95,15 @@ def normalize_asset(value: Any) -> str:
 
 def is_cash_like_asset(value: Any) -> bool:
     return normalize_asset(value) in CASH_LIKE_ASSETS
+
+
+def select_real_order_gate_health_blockers(report: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        source
+        for source in execution_blocking_sources(report)
+        if str(source.get("source_id") or "").strip()
+        in REAL_ORDER_GATE_HEALTH_GUARD_SOURCE_IDS
+    ]
 
 
 def extract_open_orders_count(snapshot: dict[str, Any]) -> int:
@@ -296,10 +315,7 @@ def main() -> None:
         write_outputs=True,
     )
     data_health_report = data_health_bundle["report"]
-    health_blockers = execution_blocking_sources(
-        data_health_report,
-        exclude_source_ids={"execution_latest_real_order_gate_decision"},
-    )
+    health_blockers = select_real_order_gate_health_blockers(data_health_report)
     if health_blockers:
         blocker_summary = " | ".join(
             f"{item['source_id']}:{item['status']}" for item in health_blockers
