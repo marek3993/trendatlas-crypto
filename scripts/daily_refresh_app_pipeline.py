@@ -37,6 +37,16 @@ VERIFY_SCRIPT = ROOT / "scripts" / "verify_app_freshness.py"
 MATERIALIZE_SCRIPT = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
 SCHEDULER_ENTRY_SCRIPT = ROOT / "scripts" / "execution" / "run_full_auto_scheduler_entry.py"
 DEV_ONLY_ANOMALY_SCRIPT = ROOT / "scripts" / "dev_only_anomaly_operating_mode_runner.py"
+CURRENT_STRATEGY_BUILD_SCRIPT = (
+    ROOT / "scripts" / "production" / "build_current_strategy_snapshot.py"
+)
+CURRENT_STRATEGY_VALIDATE_SCRIPT = (
+    ROOT / "scripts" / "production" / "validate_current_strategy_snapshot.py"
+)
+DATA_HEALTH_BUILD_SCRIPT = ROOT / "scripts" / "production" / "build_data_health_report.py"
+DATA_HEALTH_VALIDATE_SCRIPT = (
+    ROOT / "scripts" / "production" / "validate_data_health_report.py"
+)
 PHASE60_PINNED_MODEL = "phase60_restore_trx_sol_base"
 PHASE63_PINNED_MODEL = "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3"
 PHASE67J_PINNED_PROFILE = "phase67j_no_neo_main"
@@ -70,6 +80,14 @@ MACRO_FILE = ROOT / "data" / "macro" / "global_liquidity_weekly.csv"
 FRESHNESS_REPORT = ROOT / "outputs" / "app_freshness_verification" / "app_freshness_report.json"
 MACRO_REFRESH_REPORT = ROOT / "outputs" / "app_freshness_verification" / "macro_refresh_report.json"
 MATERIALIZE_REPORT = ROOT / "outputs" / "execution" / "refresh_pipeline" / "materialize_execution_app_exports_report.json"
+PRODUCTION_SNAPSHOT = ROOT / "outputs" / "production" / "current_strategy_snapshot.json"
+PRODUCTION_TIMESERIES = ROOT / "outputs" / "production" / "current_strategy_timeseries.csv"
+PRODUCTION_DIAGNOSTICS = ROOT / "outputs" / "production" / "current_strategy_diagnostics.json"
+PRODUCTION_QUALITY = ROOT / "outputs" / "production" / "current_strategy_snapshot.quality.json"
+PRODUCTION_MANIFEST = ROOT / "outputs" / "production" / "current_strategy_snapshot.manifest.json"
+DATA_HEALTH_REPORT = ROOT / "outputs" / "production" / "data_health_report.json"
+DATA_HEALTH_QUALITY = ROOT / "outputs" / "production" / "data_health_report.quality.json"
+DATA_HEALTH_MANIFEST = ROOT / "outputs" / "production" / "data_health_report.manifest.json"
 
 HEAVY_SAME_DAY_PHASES = frozenset(
     {
@@ -96,6 +114,20 @@ REQUIRED_OUTPUTS = [
     FRESHNESS_REPORT,
     MACRO_REFRESH_REPORT,
     MATERIALIZE_REPORT,
+]
+
+REQUIRED_PRODUCTION_OUTPUTS = [
+    PRODUCTION_SNAPSHOT,
+    PRODUCTION_TIMESERIES,
+    PRODUCTION_DIAGNOSTICS,
+    PRODUCTION_QUALITY,
+    PRODUCTION_MANIFEST,
+]
+
+REQUIRED_DATA_HEALTH_OUTPUTS = [
+    DATA_HEALTH_REPORT,
+    DATA_HEALTH_QUALITY,
+    DATA_HEALTH_MANIFEST,
 ]
 
 
@@ -735,9 +767,9 @@ def run_non_fatal_post_step(
         }
 
 
-def verify_outputs() -> list[str]:
+def verify_required_outputs(paths: list[Path]) -> list[str]:
     missing: list[str] = []
-    for path in REQUIRED_OUTPUTS:
+    for path in paths:
         if not path.exists() or not path.is_file():
             missing.append(str(path))
     return missing
@@ -996,7 +1028,7 @@ def main() -> None:
             logs_dir,
         )
 
-        missing_outputs = verify_outputs()
+        missing_outputs = verify_required_outputs(REQUIRED_OUTPUTS)
         if missing_outputs:
             raise RuntimeError(
                 "App refresh finished but required outputs are missing:\n" + "\n".join(missing_outputs)
@@ -1004,6 +1036,28 @@ def main() -> None:
 
         freshness = load_json(FRESHNESS_REPORT)
         macro_report = load_json(MACRO_REFRESH_REPORT)
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "build_current_strategy_snapshot",
+            CURRENT_STRATEGY_BUILD_SCRIPT,
+            env,
+            logs_dir,
+        )
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "validate_current_strategy_snapshot",
+            CURRENT_STRATEGY_VALIDATE_SCRIPT,
+            env,
+            logs_dir,
+        )
+        missing_production_outputs = verify_required_outputs(REQUIRED_PRODUCTION_OUTPUTS)
+        if missing_production_outputs:
+            raise RuntimeError(
+                "Production Core refresh finished but required outputs are missing:\n"
+                + "\n".join(missing_production_outputs)
+            )
 
         strategy_refresh_finished_at_utc = now_utc()
         manifest["strategy_refresh_chain_finished_at_utc"] = strategy_refresh_finished_at_utc
@@ -1012,6 +1066,13 @@ def main() -> None:
         manifest["macro_refresh_report_path"] = str(MACRO_REFRESH_REPORT)
         manifest["freshness_report"] = freshness
         manifest["macro_refresh_report"] = macro_report
+        manifest["production_core_paths"] = {
+            "snapshot": str(PRODUCTION_SNAPSHOT),
+            "timeseries": str(PRODUCTION_TIMESERIES),
+            "diagnostics": str(PRODUCTION_DIAGNOSTICS),
+            "quality": str(PRODUCTION_QUALITY),
+            "manifest": str(PRODUCTION_MANIFEST),
+        }
         manifest["post_strategy_runtime_refresh"] = run_post_strategy_runtime_refresh(
             env,
             logs_dir,
@@ -1040,6 +1101,37 @@ def main() -> None:
                 "last_publish_result": authority_success_result,
             }
         )
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "build_data_health_report",
+            DATA_HEALTH_BUILD_SCRIPT,
+            env,
+            logs_dir,
+        )
+        run_step_and_persist(
+            manifest,
+            run_dir,
+            "validate_data_health_report",
+            DATA_HEALTH_VALIDATE_SCRIPT,
+            env,
+            logs_dir,
+        )
+        missing_data_health_outputs = verify_required_outputs(REQUIRED_DATA_HEALTH_OUTPUTS)
+        if missing_data_health_outputs:
+            raise RuntimeError(
+                "Data health refresh finished but required outputs are missing:\n"
+                + "\n".join(missing_data_health_outputs)
+            )
+        data_health_report = load_json(DATA_HEALTH_REPORT)
+        data_health_quality = load_json(DATA_HEALTH_QUALITY)
+        manifest["data_health_paths"] = {
+            "report": str(DATA_HEALTH_REPORT),
+            "quality": str(DATA_HEALTH_QUALITY),
+            "manifest": str(DATA_HEALTH_MANIFEST),
+        }
+        manifest["data_health_summary"] = data_health_report.get("summary", {})
+        manifest["data_health_quality_status"] = data_health_quality.get("status")
         manifest["main_refresh_chain_finished_at_utc"] = now_utc()
         manifest["main_refresh_chain_status"] = "OK"
         manifest["status"] = "OK"

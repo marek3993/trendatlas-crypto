@@ -27,6 +27,18 @@ ALLOWED_SUPPORT_ARTIFACT_RELATIVE_PATHS = frozenset(
         Path("outputs/execution/freshness/app_freshness_report.json").as_posix(),
     }
 )
+ALLOWED_PRODUCTION_ARTIFACT_RELATIVE_PATHS = frozenset(
+    {
+        Path("outputs/production/current_strategy_snapshot.json").as_posix(),
+        Path("outputs/production/current_strategy_timeseries.csv").as_posix(),
+        Path("outputs/production/current_strategy_diagnostics.json").as_posix(),
+        Path("outputs/production/current_strategy_snapshot.quality.json").as_posix(),
+        Path("outputs/production/current_strategy_snapshot.manifest.json").as_posix(),
+        Path("outputs/production/data_health_report.json").as_posix(),
+        Path("outputs/production/data_health_report.quality.json").as_posix(),
+        Path("outputs/production/data_health_report.manifest.json").as_posix(),
+    }
+)
 REMOTE_DRIFT_PUSH_MARKERS = (
     "non-fast-forward",
     "fetch first",
@@ -149,6 +161,28 @@ def _resolve_canonical_support_artifact_path(
     return resolved_candidate
 
 
+def _resolve_allowlisted_repo_artifact_path(
+    relative_path: str,
+    *,
+    root: Path,
+    allowed_relative_paths: frozenset[str],
+    artifact_label: str,
+) -> Path:
+    normalized_relative_path = Path(relative_path).as_posix()
+    if normalized_relative_path not in allowed_relative_paths:
+        allowed_display = ", ".join(sorted(allowed_relative_paths))
+        raise ValueError(
+            f"{artifact_label} is not allowlisted for repo publish: "
+            f"{normalized_relative_path} allowed={allowed_display}"
+        )
+    resolved_candidate = (root / normalized_relative_path).resolve()
+    if not resolved_candidate.exists() or not resolved_candidate.is_file():
+        raise FileNotFoundError(
+            f"Missing required {artifact_label}: {resolved_candidate}"
+        )
+    return resolved_candidate
+
+
 def _resolve_required_app_publish_paths(
     latest_successful_snapshot_payload: Mapping[str, Any],
     *,
@@ -221,13 +255,32 @@ def _resolve_required_app_publish_paths(
     ]
 
 
+def _resolve_required_production_publish_paths(*, root: Path) -> list[Path]:
+    return [
+        _resolve_allowlisted_repo_artifact_path(
+            relative_path,
+            root=root,
+            allowed_relative_paths=ALLOWED_PRODUCTION_ARTIFACT_RELATIVE_PATHS,
+            artifact_label="production repo publish artifact",
+        )
+        for relative_path in sorted(ALLOWED_PRODUCTION_ARTIFACT_RELATIVE_PATHS)
+    ]
+
+
 def resolve_authority_publish_paths(root: Path | None = None) -> list[Path]:
     resolved_root = Path(root) if root is not None else ROOT
-    publish_paths = [resolved_root / "outputs" / "execution" / "authority" / "latest_attempt_status.json"]
+    latest_attempt_status_path = (
+        resolved_root / "outputs" / "execution" / "authority" / "latest_attempt_status.json"
+    )
+    publish_paths = [latest_attempt_status_path]
     snapshot_path = (
         resolved_root / "outputs" / "execution" / "authority" / "latest_successful_snapshot.json"
     )
-    if snapshot_path.exists():
+    latest_attempt_payload = load_json_required(latest_attempt_status_path)
+    latest_attempt_status = str(
+        latest_attempt_payload.get("latest_authoritative_attempt_status") or ""
+    ).strip().lower()
+    if latest_attempt_status == "success":
         latest_successful_snapshot_payload = load_json_required(snapshot_path)
         publish_paths.append(snapshot_path)
         publish_paths.extend(
@@ -236,6 +289,7 @@ def resolve_authority_publish_paths(root: Path | None = None) -> list[Path]:
                 root=resolved_root,
             )
         )
+        publish_paths.extend(_resolve_required_production_publish_paths(root=resolved_root))
     deduped_paths: list[Path] = []
     seen_paths: set[Path] = set()
     for path in publish_paths:
