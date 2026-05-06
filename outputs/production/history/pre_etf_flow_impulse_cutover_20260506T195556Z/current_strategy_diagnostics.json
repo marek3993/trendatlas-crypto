@@ -1,0 +1,251 @@
+{
+  "artifact_type": "current_strategy_diagnostics",
+  "schema_version": 4,
+  "generated_at_utc": "2026-05-06T12:28:00Z",
+  "strategy_id": "current_strategy",
+  "strategy_version": "phase68g_66g_1p25x_candidate",
+  "closed_day": "2026-05-05",
+  "latest_state_explanation": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed.",
+  "current_flatline_explanation": "Authorized capital should stay flat during the current CASH streak of 187 days because no market exposure is currently allowed.",
+  "current_cash_or_risk_reason": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed.",
+  "recent_regime_changes": [
+    {
+      "date": "2025-10-22",
+      "held_asset": "CASH",
+      "regime": "CASH",
+      "reason_code": "rebalance_to_cash"
+    },
+    {
+      "date": "2025-10-24",
+      "held_asset": "BASE",
+      "regime": "BASE",
+      "reason_code": "rebalance_to_base"
+    },
+    {
+      "date": "2025-10-26",
+      "held_asset": "CASH",
+      "regime": "CASH",
+      "reason_code": "cash_stress_block"
+    },
+    {
+      "date": "2025-10-29",
+      "held_asset": "BASE",
+      "regime": "BASE",
+      "reason_code": "rebalance_to_base"
+    },
+    {
+      "date": "2025-10-31",
+      "held_asset": "CASH",
+      "regime": "CASH",
+      "reason_code": "rebalance_to_cash"
+    }
+  ],
+  "recent_rebalance_events": [
+    {
+      "date": "2025-10-22",
+      "held_asset": "CASH",
+      "exposure": 0.0,
+      "reason_code": "rebalance_to_cash",
+      "reason_text": "The strategy rebalanced into CASH on the latest closed day."
+    },
+    {
+      "date": "2025-10-24",
+      "held_asset": "BASE",
+      "exposure": 1.0,
+      "reason_code": "rebalance_to_base",
+      "reason_text": "The strategy rebalanced into BASE on the latest closed day."
+    },
+    {
+      "date": "2025-10-26",
+      "held_asset": "CASH",
+      "exposure": 0.0,
+      "reason_code": "cash_stress_block",
+      "reason_text": "BASE is only the current candidate. The strategy remains in CASH because the stress block is active, and authorized capital stays flat until market exposure is allowed."
+    },
+    {
+      "date": "2025-10-29",
+      "held_asset": "BASE",
+      "exposure": 1.25,
+      "reason_code": "rebalance_to_base",
+      "reason_text": "The strategy rebalanced into BASE on the latest closed day."
+    },
+    {
+      "date": "2025-10-31",
+      "held_asset": "CASH",
+      "exposure": 0.0,
+      "reason_code": "rebalance_to_cash",
+      "reason_text": "The strategy rebalanced into CASH on the latest closed day."
+    }
+  ],
+  "current_cost_pressure": {
+    "current_effective_exposure": 0.0,
+    "trailing_30d_fees_pct": 0.0,
+    "trailing_30d_funding_pct": 0.0,
+    "trailing_30d_borrow_pct": 0.0,
+    "trailing_30d_slippage_pct": 0.0
+  },
+  "current_fee_drag_summary": {
+    "lifetime_trading_fees_total_pct": 10.8225,
+    "lifetime_funding_total_pct": 0.0,
+    "lifetime_borrow_cost_total_pct": 3.613963,
+    "lifetime_slippage_cost_total_pct": 16.5,
+    "lifetime_total_cost_pct": 30.936463,
+    "trailing_90d_turnover": 0.0
+  },
+  "current_data_health_summary": {
+    "status": "passed",
+    "closed_day": "2026-05-05",
+    "summary_latest_available_date": "2026-05-05",
+    "paper_last_day": "2026-05-05",
+    "trend_status_day": "2026-05-05",
+    "trend_history_last_day": "2026-05-05",
+    "freshness_closed_day": "2026-05-05",
+    "freshness_status": "ok",
+    "freshness_errors": [],
+    "warnings": []
+  },
+  "strategy_improvement_signals": {
+    "churn_pressure": {
+      "status": "contained",
+      "trade_count": 165,
+      "switch_count": 165,
+      "trailing_90d_turnover": 0.0
+    },
+    "fee_sensitivity": {
+      "status": "elevated",
+      "lifetime_total_cost_pct": 30.936463,
+      "effective_trading_fee_bps": 4.5
+    },
+    "cash_drag": {
+      "status": "elevated",
+      "cash_days_pct": 81.6285,
+      "current_cash_streak_days": 187
+    },
+    "flatline_duration": {
+      "status": "active",
+      "current_cash_streak_days": 187
+    },
+    "current_research_questions": [
+      "Can churn be reduced without losing the current net-return profile?",
+      "Is the current trend confirmation gate too conservative when BTC stays the candidate but market entry remains blocked?",
+      "How much of lifetime cost drag comes from transition frequency versus borrow carry?"
+    ]
+  },
+  "validation": {
+    "status": "passed",
+    "errors": [],
+    "warnings": []
+  },
+  "current_trade_state": {
+    "is_cash": true,
+    "is_waiting": true,
+    "state_code": "OUT_OF_MARKET",
+    "candidate_asset": "BTC",
+    "selected_asset": "BTC",
+    "actual_held_asset": "CASH",
+    "authorized_tradable_asset": "CASH",
+    "effective_market_exposure": 0.0,
+    "model_candidate_exposure": 1.0,
+    "trend_permission_active": false,
+    "waiting_reason_code": "candidate_wait_trend_confirmation",
+    "waiting_reason_text": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed.",
+    "waiting_condition_code": "trend_confirmation_pending_for_candidate_entry",
+    "waiting_condition_text": "BTC is the current candidate, but the strategy stays in CASH until trend confirmation returns (-0.1667 vs 0.1000).",
+    "waiting_condition_values": {
+      "candidate_asset": "BTC",
+      "actual_held_asset": "CASH",
+      "trend_score": -0.1666666666666666,
+      "buy_threshold": 0.0,
+      "trend_activation_threshold": 0.1,
+      "trend_permission_active": false,
+      "effective_market_exposure": 0.0,
+      "model_candidate_exposure": 1.0
+    },
+    "target_condition": {
+      "trend_score_min": 0.1,
+      "trend_permission_active": true,
+      "execution_target_asset": "BTC",
+      "execution_target_exposure": 1.0
+    },
+    "pain_points": [
+      {
+        "code": "cash_drag_elevated",
+        "severity": "medium",
+        "text": "Cash participation remains elevated at 81.6285% of history.",
+        "metric_value": 81.6285,
+        "metric_unit": "pct"
+      },
+      {
+        "code": "lifetime_cost_drag_elevated",
+        "severity": "medium",
+        "text": "Lifetime modeled cost drag totals 30.9365%.",
+        "metric_value": 30.9365,
+        "metric_unit": "pct"
+      },
+      {
+        "code": "trend_entry_not_confirmed",
+        "severity": "medium",
+        "text": "BTC is the preferred candidate, but trend confirmation is still missing for market entry.",
+        "metric_value": -0.1666666666666666,
+        "metric_unit": "trend_score"
+      },
+      {
+        "code": "active_wait_condition",
+        "severity": "low",
+        "text": "BTC is the current candidate, but the strategy stays in CASH until trend confirmation returns (-0.1667 vs 0.1000).",
+        "metric_value": null,
+        "metric_unit": null
+      }
+    ]
+  },
+  "current_pain_points": [
+    {
+      "code": "cash_drag_elevated",
+      "severity": "medium",
+      "text": "Cash participation remains elevated at 81.6285% of history.",
+      "metric_value": 81.6285,
+      "metric_unit": "pct"
+    },
+    {
+      "code": "lifetime_cost_drag_elevated",
+      "severity": "medium",
+      "text": "Lifetime modeled cost drag totals 30.9365%.",
+      "metric_value": 30.9365,
+      "metric_unit": "pct"
+    },
+    {
+      "code": "trend_entry_not_confirmed",
+      "severity": "medium",
+      "text": "BTC is the preferred candidate, but trend confirmation is still missing for market entry.",
+      "metric_value": -0.1666666666666666,
+      "metric_unit": "trend_score"
+    },
+    {
+      "code": "active_wait_condition",
+      "severity": "low",
+      "text": "BTC is the current candidate, but the strategy stays in CASH until trend confirmation returns (-0.1667 vs 0.1000).",
+      "metric_value": null,
+      "metric_unit": null
+    }
+  ],
+  "current_wait_condition": {
+    "code": "trend_confirmation_pending_for_candidate_entry",
+    "text": "BTC is the current candidate, but the strategy stays in CASH until trend confirmation returns (-0.1667 vs 0.1000).",
+    "current_values": {
+      "candidate_asset": "BTC",
+      "actual_held_asset": "CASH",
+      "trend_score": -0.1666666666666666,
+      "buy_threshold": 0.0,
+      "trend_activation_threshold": 0.1,
+      "trend_permission_active": false,
+      "effective_market_exposure": 0.0,
+      "model_candidate_exposure": 1.0
+    },
+    "target_condition": {
+      "trend_score_min": 0.1,
+      "trend_permission_active": true,
+      "execution_target_asset": "BTC",
+      "execution_target_exposure": 1.0
+    }
+  }
+}

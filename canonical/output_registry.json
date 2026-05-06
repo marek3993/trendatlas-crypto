@@ -601,19 +601,21 @@
     {
       "output_path": "outputs/production/current_strategy_snapshot.json",
       "generated_by": [
-        "scripts/production/build_current_strategy_snapshot.py"
+        "scripts/production/build_current_strategy_snapshot.py",
+        "scripts/production/promote_staged_strategy_candidate.py"
       ],
       "layer": "production_core",
       "status": "active",
       "output_kind": "production_truth_snapshot",
       "decision_relevance": "decision_relevant",
       "official_truth": false,
-      "notes": "Single Production Core v1 truth artifact for the current strategy contract. Built from canonical strategy exports through the production adapter."
+      "notes": "Single Production Core v1 truth artifact for the current strategy contract. Built from canonical strategy exports through the production adapter or replaced via a validated staged-candidate promotion cutover."
     },
     {
       "output_path": "outputs/production/current_strategy_timeseries.csv",
       "generated_by": [
-        "scripts/production/build_current_strategy_snapshot.py"
+        "scripts/production/build_current_strategy_snapshot.py",
+        "scripts/production/promote_staged_strategy_candidate.py"
       ],
       "layer": "production_core",
       "status": "active",
@@ -625,7 +627,8 @@
     {
       "output_path": "outputs/production/current_strategy_diagnostics.json",
       "generated_by": [
-        "scripts/production/build_current_strategy_snapshot.py"
+        "scripts/production/build_current_strategy_snapshot.py",
+        "scripts/production/promote_staged_strategy_candidate.py"
       ],
       "layer": "production_core",
       "status": "active",
@@ -638,7 +641,8 @@
       "output_path": "outputs/production/current_strategy_snapshot.quality.json",
       "generated_by": [
         "scripts/production/build_current_strategy_snapshot.py",
-        "scripts/production/validate_current_strategy_snapshot.py"
+        "scripts/production/validate_current_strategy_snapshot.py",
+        "scripts/production/promote_staged_strategy_candidate.py"
       ],
       "layer": "production_core",
       "status": "active",
@@ -650,14 +654,27 @@
     {
       "output_path": "outputs/production/current_strategy_snapshot.manifest.json",
       "generated_by": [
-        "scripts/production/build_current_strategy_snapshot.py"
+        "scripts/production/build_current_strategy_snapshot.py",
+        "scripts/production/promote_staged_strategy_candidate.py"
       ],
       "layer": "production_core",
       "status": "active",
       "output_kind": "production_manifest",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Production Core v1 manifest with source hashes, output paths, build command, and git provenance."
+      "notes": "Production Core v1 manifest with source hashes, output paths, build command, and git provenance, including staged-candidate promotion provenance when a cutover is applied."
+    },
+    {
+      "output_path": "outputs/production/history/",
+      "generated_by": [
+        "scripts/production/promote_staged_strategy_candidate.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_manifest",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Pre-cutover backup copies of the active Production Core bundle written immediately before a staged-candidate promotion replaces the current_strategy outputs."
     },
     {
       "output_path": "outputs/production/data_health_report.json",

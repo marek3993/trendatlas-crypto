@@ -867,17 +867,48 @@
       "notes": "Fail-closed producer. Reads the current official strategy only through the production adapter."
     },
     {
+      "script_path": "scripts/production/build_staged_strategy_candidate.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Builds the staged ETF-flow Production Core candidate bundle, compare artifacts, manifest, and quality output without mutating active Production Core outputs or truth contracts.",
+      "primary_outputs": [
+        "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15/"
+      ],
+      "output_type": "production_snapshot",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Staged-only candidate builder. Preserves active Production Core, source_of_truth, app truth, execution truth, and authority outputs."
+    },
+    {
+      "script_path": "scripts/production/promote_staged_strategy_candidate.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Promotes a validated staged Production Core candidate bundle into the active current_strategy snapshot, timeseries, diagnostics, quality, and manifest outputs with a pre-cutover history backup.",
+      "primary_outputs": [
+        "outputs/production/current_strategy_snapshot.json",
+        "outputs/production/current_strategy_timeseries.csv",
+        "outputs/production/current_strategy_diagnostics.json",
+        "outputs/production/current_strategy_snapshot.quality.json",
+        "outputs/production/current_strategy_snapshot.manifest.json",
+        "outputs/production/history/"
+      ],
+      "output_type": "production_snapshot",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Data-only cutover helper. Promotes staged candidate outputs without mutating source_of_truth, app.py, execution intent, live gate, or authority snapshots."
+    },
+    {
       "script_path": "scripts/production/validate_current_strategy_snapshot.py",
       "layer": "production_core",
       "status": "active",
-      "purpose": "Validates Production Core v1 outputs against the current canonical phase68g source chain and blocks on any model/day/hash mismatch.",
+      "purpose": "Validates active Production Core v1 outputs against either the canonical phase68g source chain or the promoted staged ETF-flow candidate bundle and blocks on any contract mismatch.",
       "primary_outputs": [
         "outputs/production/current_strategy_snapshot.quality.json"
       ],
       "output_type": "validation",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Standalone fail-closed validator for the production snapshot, timeseries, and diagnostics contract."
+      "notes": "Standalone fail-closed validator for the production snapshot, timeseries, and diagnostics contract across both canonical builds and staged-candidate cutovers."
     },
     {
       "script_path": "scripts/production/build_data_health_report.py",

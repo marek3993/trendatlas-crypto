@@ -24,6 +24,11 @@ from scripts.production.strategy_adapters.phase68g_66g_1p25x_candidate_adapter i
     SUMMARY_TOLERANCE,
     build_reason_text,
 )
+from scripts.production.staged_candidate_promotion_support import (
+    PROMOTED_CANDIDATE_ID,
+    load_promoted_candidate_inputs,
+    validate_promoted_candidate_production_payloads,
+)
 
 
 DEFAULT_OUTPUT_DIR = ROOT / "outputs" / "production"
@@ -775,6 +780,43 @@ def build_quality_payload(
     }
 
 
+def validate_active_production_payloads(
+    *,
+    snapshot: dict[str, Any],
+    timeseries: pd.DataFrame,
+    diagnostics: dict[str, Any],
+) -> dict[str, Any]:
+    strategy_version = str(snapshot.get("strategy_version") or "").strip()
+    provenance = snapshot.get("provenance")
+    promoted_from = provenance.get("promoted_from_staged_candidate") if isinstance(provenance, dict) else None
+    promoted_candidate_id = str(promoted_from.get("candidate_id") or "").strip() if isinstance(promoted_from, dict) else ""
+
+    if strategy_version == SOURCE_STRATEGY_VERSION:
+        adapter = Phase68g66g1p25xCandidateAdapter()
+        inputs = adapter.load_inputs(root=ROOT)
+        return validate_production_payloads(
+            snapshot=snapshot,
+            timeseries=timeseries,
+            diagnostics=diagnostics,
+            adapter=adapter,
+            inputs=inputs,
+        )
+
+    if strategy_version == PROMOTED_CANDIDATE_ID or promoted_candidate_id == PROMOTED_CANDIDATE_ID:
+        candidate_inputs = load_promoted_candidate_inputs(root=ROOT, candidate_id=PROMOTED_CANDIDATE_ID)
+        return validate_promoted_candidate_production_payloads(
+            snapshot=snapshot,
+            timeseries=timeseries,
+            diagnostics=diagnostics,
+            candidate_inputs=candidate_inputs,
+        )
+
+    raise ValueError(
+        "No Production Core validator is registered for the active strategy version "
+        f"(strategy_version={strategy_version!r})"
+    )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Fail-closed validator for Production Core v1 current strategy outputs.")
     parser.add_argument("--snapshot-path", type=Path, default=DEFAULT_SNAPSHOT_PATH)
@@ -786,17 +828,13 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    adapter = Phase68g66g1p25xCandidateAdapter()
     snapshot = _read_json_required(args.snapshot_path)
     timeseries = _read_csv_required(args.timeseries_path)
     diagnostics = _read_json_required(args.diagnostics_path)
-    inputs = adapter.load_inputs(root=ROOT)
-    validation = validate_production_payloads(
+    validation = validate_active_production_payloads(
         snapshot=snapshot,
         timeseries=timeseries,
         diagnostics=diagnostics,
-        adapter=adapter,
-        inputs=inputs,
     )
     quality = build_quality_payload(
         validation=validation,
