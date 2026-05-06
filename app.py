@@ -1023,32 +1023,125 @@ def data_health_messages_for_lang(sources: list[dict[str, Any]], lang: str) -> l
     return messages
 
 
-def render_data_health_banner(report: dict[str, Any], lang: str) -> bool:
+def data_health_rows_for_lang(sources: list[dict[str, Any]], lang: str) -> list[dict[str, Any]]:
+    source_label_column = "Zdroj" if lang == "sk" else "Source"
+    status_label_column = "Stav" if lang == "sk" else "Status"
+    detail_label_column = "Detail" if lang == "sk" else "Detail"
+    label_key = "label_sk" if lang == "sk" else "label_en"
+    message_key = "user_message_sk" if lang == "sk" else "user_message_en"
+    rows: list[dict[str, Any]] = []
+    for source in sources:
+        if not isinstance(source, dict):
+            continue
+        rows.append(
+            {
+                source_label_column: safe_text_value(source.get(label_key), lang=lang),
+                status_label_column: safe_text_value(source.get("status"), lang=lang),
+                detail_label_column: safe_text_value(source.get(message_key), lang=lang),
+            }
+        )
+    return rows
+
+
+def authority_success_closed_day_text(latest_successful_snapshot: dict) -> str:
+    success_payload = latest_successful_snapshot if isinstance(latest_successful_snapshot, dict) else {}
+    product_snapshot = (
+        success_payload.get("app_product_snapshot")
+        if isinstance(success_payload.get("app_product_snapshot"), dict)
+        else {}
+    )
+    return str(
+        success_payload.get("strategy_artifact_closed_day_utc")
+        or success_payload.get("target_closed_day_utc")
+        or product_snapshot.get("strategy_last_closed_day")
+        or ""
+    ).strip()
+
+
+def build_public_homepage_refresh_notice(
+    report: dict[str, Any],
+    latest_successful_snapshot: dict,
+    latest_attempt_status: dict,
+    lang: str,
+) -> str | None:
     view = homepage_data_health_view(report)
-    critical_sources = view["critical_sources"]
+    attempt_payload = latest_attempt_status if isinstance(latest_attempt_status, dict) else {}
+    success_closed_day = authority_success_closed_day_text(latest_successful_snapshot)
+    success_suffix = (
+        (
+            f" Zobrazuju sa posledne uspesne data k {success_closed_day}. Detaily su v Stav dat."
+            if success_closed_day
+            else " Zobrazuju sa posledne uspesne data. Detaily su v Stav dat."
+        )
+        if lang == "sk"
+        else (
+            f" Showing the latest successful data for {success_closed_day}. Details are in Data Health."
+            if success_closed_day
+            else " Showing the latest successful data. Details are in Data Health."
+        )
+    )
+    attempt_status = str(
+        attempt_payload.get("latest_authoritative_attempt_status") or ""
+    ).strip().lower()
+    attempt_currentness = str(
+        attempt_payload.get("currentness_status")
+        or attempt_payload.get("currentness_state")
+        or ""
+    ).strip().lower()
+    attempt_target_day = str(attempt_payload.get("target_closed_day_utc") or "").strip()
+    attempt_strategy_day = str(
+        attempt_payload.get("strategy_artifact_closed_day_utc") or ""
+    ).strip()
+    attempt_has_mismatch = bool(
+        attempt_target_day
+        and attempt_strategy_day
+        and attempt_target_day != attempt_strategy_day
+    )
+    critical_source_ids = {
+        str(source.get("source_id") or "").strip()
+        for source in view["critical_sources"]
+        if isinstance(source, dict)
+    }
+
+    if attempt_status == "failed":
+        return (
+            "Dnesny refresh zlyhal." + success_suffix
+            if lang == "sk"
+            else "Today's refresh failed." + success_suffix
+        )
+    if attempt_currentness == "stale" or attempt_has_mismatch:
+        return (
+            "Dnesny refresh nie je aktualny." + success_suffix
+            if lang == "sk"
+            else "Today's refresh is stale." + success_suffix
+        )
+    if critical_source_ids:
+        return (
+            "Dnesna aktualizacia ma problem." + success_suffix
+            if lang == "sk"
+            else "Today's update has an issue." + success_suffix
+        )
+    return None
+
+
+def render_data_health_banner(
+    report: dict[str, Any],
+    lang: str,
+    latest_successful_snapshot: dict,
+    latest_attempt_status: dict,
+) -> bool:
+    view = homepage_data_health_view(report)
     research_sources = view["research_sources"]
     informational_sources = view["informational_sources"]
-    if view["show_primary_alert"]:
-        title = "Stav d\u00e1t" if lang == "sk" else "Data Health"
-        st.markdown(f"### {title}")
-        blocking_messages = data_health_messages_for_lang(critical_sources, lang)
-        prefix = (
-            "Kritick\u00e9 produk\u010dn\u00e9, aplika\u010dn\u00e9 alebo execution zdroje zlyhali. "
-            "Aplik\u00e1cia aj vykon\u00e1vanie obchodov ost\u00e1vaj\u00fa fail-closed."
-            if lang == "sk"
-            else "Critical production, app, or execution sources failed. The app and trade execution remain fail-closed."
-        )
-        details = "\n".join(f"- {message}" for message in blocking_messages[:4])
-        suffix = ""
-        if len(blocking_messages) > 4:
-            remaining = len(blocking_messages) - 4
-            suffix = (
-                f"\n- \u010eal\u0161ie zasiahnut\u00e9 zdroje: {remaining}"
-                if lang == "sk"
-                else f"\n- Additional affected sources: {remaining}"
-            )
-        st.error(prefix + ("\n" + details if details else "") + suffix)
-        return True
+    public_notice = build_public_homepage_refresh_notice(
+        report,
+        latest_successful_snapshot,
+        latest_attempt_status,
+        lang,
+    )
+    if public_notice:
+        st.warning(public_notice)
+        return False
     if research_sources or informational_sources:
         st.caption(
             "Produk\u010dn\u00e9 d\u00e1ta: OK. Ved\u013eaj\u0161ie research-only a env/API upozornenia s\u00fa skryt\u00e9 v detaile Stav d\u00e1t."
@@ -1065,6 +1158,7 @@ def render_data_health_details(
     refresh_rows: list[dict[str, Any]],
 ) -> None:
     view = homepage_data_health_view(report)
+    critical_rows = data_health_rows_for_lang(view["critical_sources"], lang)
     research_messages = data_health_messages_for_lang(view["research_sources"], lang)
     informational_messages = data_health_messages_for_lang(view["informational_sources"], lang)
 
@@ -1074,7 +1168,14 @@ def render_data_health_details(
             if lang == "sk"
             else "#### Production / app / execution health"
         )
-        if view["show_ok_status"]:
+        if critical_rows:
+            st.caption(
+                "Verejna homepage dalej bezi z posledneho uspesneho authority snapshotu. Execution a trading kontroly zostavaju fail-closed, kym sa problem neodstrani."
+                if lang == "sk"
+                else "The public homepage keeps rendering from the latest successful authority snapshot. Execution and trading controls remain fail-closed until the issue is resolved."
+            )
+            render_app_table(critical_rows, emphasize_first_column=True)
+        elif view["show_ok_status"]:
             st.write(
                 "Produk\u010dn\u00e9 d\u00e1ta, aplik\u00e1cia aj execution s\u00fa v poriadku."
                 if lang == "sk"
@@ -1509,11 +1610,8 @@ def load_optional_authority_payload(path: Path, expected_type: str) -> dict:
     if not payload:
         return {}
     if payload.get("artifact_type") != expected_type:
-        st.error(
-            f"{t(st.session_state.get('lang', 'sk'), 'load_failed')}: "
-            f"{path} is not {expected_type}"
-        )
-        st.stop()
+        # Attempt status is a non-blocking overlay for the public homepage.
+        return {}
     return payload
 
 
@@ -5450,10 +5548,6 @@ with hero_right:
 st.session_state.lang = "sk" if lang_choice == "SK" else "en"
 lang = st.session_state.lang
 
-data_health_report = build_live_data_health_report()
-if render_data_health_banner(data_health_report, lang):
-    st.stop()
-
 latest_successful_snapshot_payload = load_required_authority_payload(
     AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
     SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
@@ -5467,22 +5561,21 @@ product_snapshot = require_snapshot_payload(
     "app_product_snapshot",
     AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
 )
-runtime_snapshot_source_path = (
-    AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
-    if latest_attempt_status_payload.get("app_runtime_snapshot")
-    else AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
+data_health_report = build_live_data_health_report()
+render_data_health_banner(
+    data_health_report,
+    lang,
+    latest_successful_snapshot_payload,
+    latest_attempt_status_payload,
 )
+runtime_snapshot_source_path = AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
 runtime_authority_payload = (
     latest_attempt_status_payload
-    if runtime_snapshot_source_path == AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
+    if latest_attempt_status_payload
     else latest_successful_snapshot_payload
 )
 runtime_snapshot = load_runtime_snapshot_for_app(
-    dict(
-        latest_attempt_status_payload.get("app_runtime_snapshot")
-        or latest_successful_snapshot_payload.get("app_runtime_snapshot")
-        or {}
-    ),
+    dict(latest_attempt_status_payload.get("app_runtime_snapshot") or {}),
     runtime_snapshot_source_path,
 )
 selector_cfg = build_selector_config_from_snapshot(product_snapshot, runtime_snapshot)
