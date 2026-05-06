@@ -259,21 +259,104 @@ def build_signature_bundle(targets: list[tuple[str, Path]]) -> dict[str, Any]:
 
 
 def build_phase67_input_targets() -> list[tuple[str, Path]]:
-    ensure_file(SHORTLIST_PATH, "phase67 shortlist")
-    assets = read_shortlist_assets(SHORTLIST_PATH)
-    if not assets:
-        raise ValueError(f"empty_phase67_shortlist::{SHORTLIST_PATH}")
-
-    targets: list[tuple[str, Path]] = [
+    return [
         ("file", PHASE60_PAPER),
         ("file", PHASE63_PAPER),
-        ("file", SHORTLIST_PATH),
+        ("directory", TOP100_DIR),
     ]
-    targets.extend(
-        ("file", TOP100_DIR / f"{asset}USDT_1d.csv")
-        for asset in assets
+
+
+def build_phase67_top100_directory_signature_from_entries(
+    file_entries: list[dict[str, Any]],
+) -> dict[str, Any]:
+    sorted_file_entries = sorted(
+        [dict(entry) for entry in file_entries],
+        key=lambda entry: str(entry.get("path") or ""),
     )
-    return targets
+    if not sorted_file_entries:
+        raise ValueError(f"empty_phase67_top100_signature_entries::{TOP100_DIR}")
+
+    return {
+        "kind": "directory",
+        "path": relative_display_path(TOP100_DIR),
+        "file_count": len(sorted_file_entries),
+        "sha256": sha256_bytes(
+            json.dumps(sorted_file_entries, sort_keys=True).encode("utf-8")
+        ),
+        "files": sorted_file_entries,
+    }
+
+
+def is_phase67_downstream_input_entry(entry: dict[str, Any]) -> bool:
+    entry_path = str(entry.get("path") or "")
+    for downstream_dir in (PHASE67B_OUTPUT_DIR, PHASE66G_OUTPUT_DIR, PHASE67J_OUTPUT_DIR):
+        downstream_path = relative_display_path(downstream_dir)
+        if entry_path == downstream_path or entry_path.startswith(f"{downstream_path}/"):
+            return True
+    return False
+
+
+def is_phase67_top100_input_file_entry(entry: dict[str, Any]) -> bool:
+    entry_path = str(entry.get("path") or "")
+    return (
+        entry.get("kind") == "file"
+        and entry_path.startswith(f"{relative_display_path(TOP100_DIR)}/")
+    )
+
+
+def is_phase67_top100_input_directory_entry(entry: dict[str, Any]) -> bool:
+    return (
+        entry.get("kind") == "directory"
+        and str(entry.get("path") or "") == relative_display_path(TOP100_DIR)
+    )
+
+
+def normalize_phase67_input_signature(signature: dict[str, Any]) -> dict[str, Any]:
+    entries = signature.get("entries")
+    if not isinstance(entries, list):
+        return signature
+
+    normalized_entries: list[dict[str, Any]] = []
+    top100_directory_entry: dict[str, Any] | None = None
+    top100_file_entries: list[dict[str, Any]] = []
+    for raw_entry in entries:
+        if not isinstance(raw_entry, dict):
+            continue
+
+        entry = dict(raw_entry)
+        if is_phase67_downstream_input_entry(entry):
+            continue
+        if is_phase67_top100_input_directory_entry(entry):
+            top100_directory_entry = entry
+            continue
+        if is_phase67_top100_input_file_entry(entry):
+            top100_file_entries.append(entry)
+            continue
+        normalized_entries.append(entry)
+
+    if top100_directory_entry is None and top100_file_entries:
+        top100_directory_entry = build_phase67_top100_directory_signature_from_entries(
+            top100_file_entries
+        )
+    if top100_directory_entry is not None:
+        normalized_entries.append(top100_directory_entry)
+
+    return {
+        "entry_count": len(normalized_entries),
+        "sha256": sha256_bytes(
+            json.dumps(normalized_entries, sort_keys=True).encode("utf-8")
+        ),
+        "entries": normalized_entries,
+    }
+
+
+def normalize_input_signature_for_step(
+    step_name: str,
+    signature: dict[str, Any],
+) -> dict[str, Any]:
+    if step_name == "phase67_top100_build_and_governance":
+        return normalize_phase67_input_signature(signature)
+    return signature
 
 
 def build_phase_fast_path_targets(step_name: str) -> tuple[list[tuple[str, Path]], list[tuple[str, Path]]]:
@@ -593,12 +676,23 @@ def evaluate_phase_fast_path_candidate(
         evaluation["reason"] = "invalid_phase_fast_path_reference_source_status"
         return evaluation
 
-    evaluation["current_input_signature_sha256"] = current_reference["input_signature"]["sha256"]
+    normalized_current_input_signature = normalize_input_signature_for_step(
+        step_name,
+        current_reference["input_signature"],
+    )
+    normalized_reference_input_signature = normalize_input_signature_for_step(
+        step_name,
+        reference_input_signature,
+    )
+
+    evaluation["current_input_signature_sha256"] = normalized_current_input_signature.get("sha256")
     evaluation["current_output_signature_sha256"] = current_reference["output_signature"]["sha256"]
-    evaluation["reference_input_signature_sha256"] = reference_input_signature.get("sha256")
+    evaluation["reference_input_signature_sha256"] = normalized_reference_input_signature.get(
+        "sha256"
+    )
     evaluation["reference_output_signature_sha256"] = reference_output_signature.get("sha256")
 
-    input_matches = current_reference["input_signature"] == reference_input_signature
+    input_matches = normalized_current_input_signature == normalized_reference_input_signature
     output_matches = current_reference["output_signature"] == reference_output_signature
     evaluation["input_signature_match"] = input_matches
     evaluation["output_signature_match"] = output_matches
