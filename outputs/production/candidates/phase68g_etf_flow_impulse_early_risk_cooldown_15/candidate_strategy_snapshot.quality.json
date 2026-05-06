@@ -1,7 +1,7 @@
 {
   "artifact_type": "staged_strategy_candidate_snapshot_quality",
   "schema_version": 1,
-  "generated_at_utc": "2026-05-06T17:13:09Z",
+  "generated_at_utc": "2026-05-06T19:27:58Z",
   "status": "passed",
   "error_count": 0,
   "warning_count": 0,

@@ -1,17 +1,17 @@
 {
   "artifact_type": "staged_strategy_candidate_snapshot_manifest",
   "schema_version": 1,
-  "generated_at_utc": "2026-05-06T17:07:43Z",
+  "generated_at_utc": "2026-05-06T19:27:54Z",
   "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "base_strategy_version": "phase68g_66g_1p25x_candidate",
   "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter",
   "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_staged_strategy_candidate.py --candidate phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "git_commit": "a94199513acd622f1dab8610591dabeb120f2011",
+  "git_commit": "05b3b906748c7859bd01c51b2b32d5bc846b8f1e",
   "source_inputs": {
     "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter",
     "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
     "base_strategy_version": "phase68g_66g_1p25x_candidate",
-    "candidate_compare_closed_day": "2026-05-02",
+    "candidate_compare_closed_day": "2026-05-05",
     "baseline_closed_day": "2026-05-05",
     "compare_windows": [
       {
@@ -36,7 +36,7 @@
         "path": "outputs/production/current_strategy_snapshot.json",
         "sha256": "5d3261c5948021628a63bfe1bc3c0cf77bd4cfdc2a8eaf202a46455bb1e2e48d",
         "size_bytes": 6162,
-        "modified_utc": "2026-05-06T12:48:20Z",
+        "modified_utc": "2026-05-06T18:27:34Z",
         "closed_day": "2026-05-05",
         "strategy_version": "phase68g_66g_1p25x_candidate"
       },
@@ -44,7 +44,7 @@
         "path": "outputs/production/current_strategy_timeseries.csv",
         "sha256": "e39b3fce96b4d07770410287e0ad78059c2e9496c7ec770d9b042a2e9582eac4",
         "size_bytes": 1752937,
-        "modified_utc": "2026-05-06T09:23:48Z",
+        "modified_utc": "2026-05-06T18:27:34Z",
         "last_date": "2026-05-05",
         "row_count": 2923
       },
@@ -52,7 +52,7 @@
         "path": "outputs/production/current_strategy_diagnostics.json",
         "sha256": "4c395be927c844ad699ed6f3c002a3b660e80ff62fe87c42de19887633f413f2",
         "size_bytes": 9033,
-        "modified_utc": "2026-05-06T12:48:20Z",
+        "modified_utc": "2026-05-06T18:27:34Z",
         "closed_day": "2026-05-05"
       },
       "etf_panel": {
@@ -65,11 +65,11 @@
       },
       "btc_ohlcv": {
         "path": "data/ohlcv/BTCUSDT_1d.csv",
-        "sha256": "ef60cbdf790d1c8feca224cde78b3b7295522d62502e96f39b1a84362a18ec57",
-        "size_bytes": 274283,
-        "modified_utc": "2026-05-05T09:29:40Z",
-        "last_date": "2026-05-04",
-        "row_count": 3183
+        "sha256": "3075b6a9c681a07093503a7f429f85ccfb6ea7549b168b505e9c385ada8e22e3",
+        "size_bytes": 274370,
+        "modified_utc": "2026-05-06T19:27:35Z",
+        "last_date": "2026-05-05",
+        "row_count": 3184
       },
       "dev_only_script": {
         "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
@@ -161,28 +161,28 @@
       "path": "outputs/production/current_strategy_snapshot.json",
       "sha256": "5d3261c5948021628a63bfe1bc3c0cf77bd4cfdc2a8eaf202a46455bb1e2e48d",
       "size_bytes": 6162,
-      "modified_utc": "2026-05-06T12:48:20Z",
+      "modified_utc": "2026-05-06T18:27:34Z",
       "exists": true
     },
     "outputs/production/current_strategy_timeseries.csv": {
       "path": "outputs/production/current_strategy_timeseries.csv",
       "sha256": "e39b3fce96b4d07770410287e0ad78059c2e9496c7ec770d9b042a2e9582eac4",
       "size_bytes": 1752937,
-      "modified_utc": "2026-05-06T09:23:48Z",
+      "modified_utc": "2026-05-06T18:27:34Z",
       "exists": true
     },
     "outputs/production/current_strategy_diagnostics.json": {
       "path": "outputs/production/current_strategy_diagnostics.json",
       "sha256": "4c395be927c844ad699ed6f3c002a3b660e80ff62fe87c42de19887633f413f2",
       "size_bytes": 9033,
-      "modified_utc": "2026-05-06T12:48:20Z",
+      "modified_utc": "2026-05-06T18:27:34Z",
       "exists": true
     },
     "outputs/execution/intents/latest_execution_intent.json": {
       "path": "outputs/execution/intents/latest_execution_intent.json",
       "sha256": "5e1c1c5dfd900981805329112afb2c733b12b673782361f4b6e823a76813e87f",
       "size_bytes": 3153,
-      "modified_utc": "2026-05-05T15:04:22Z",
+      "modified_utc": "2026-05-06T18:27:34Z",
       "exists": true
     },
     "outputs/execution/live_gate/latest_real_order_gate_decision.json": {
@@ -240,28 +240,28 @@
       "path": "outputs/production/current_strategy_snapshot.json",
       "sha256": "5d3261c5948021628a63bfe1bc3c0cf77bd4cfdc2a8eaf202a46455bb1e2e48d",
       "size_bytes": 6162,
-      "modified_utc": "2026-05-06T12:48:20Z",
+      "modified_utc": "2026-05-06T18:27:34Z",
       "exists": true
     },
     "outputs/production/current_strategy_timeseries.csv": {
       "path": "outputs/production/current_strategy_timeseries.csv",
       "sha256": "e39b3fce96b4d07770410287e0ad78059c2e9496c7ec770d9b042a2e9582eac4",
       "size_bytes": 1752937,
-      "modified_utc": "2026-05-06T09:23:48Z",
+      "modified_utc": "2026-05-06T18:27:34Z",
       "exists": true
     },
     "outputs/production/current_strategy_diagnostics.json": {
       "path": "outputs/production/current_strategy_diagnostics.json",
       "sha256": "4c395be927c844ad699ed6f3c002a3b660e80ff62fe87c42de19887633f413f2",
       "size_bytes": 9033,
-      "modified_utc": "2026-05-06T12:48:20Z",
+      "modified_utc": "2026-05-06T18:27:34Z",
       "exists": true
     },
     "outputs/execution/intents/latest_execution_intent.json": {
       "path": "outputs/execution/intents/latest_execution_intent.json",
       "sha256": "5e1c1c5dfd900981805329112afb2c733b12b673782361f4b6e823a76813e87f",
       "size_bytes": 3153,
-      "modified_utc": "2026-05-05T15:04:22Z",
+      "modified_utc": "2026-05-06T18:27:34Z",
       "exists": true
     },
     "outputs/execution/live_gate/latest_real_order_gate_decision.json": {
