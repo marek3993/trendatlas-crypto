@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-06T12:00:55Z",
+  "generated_at_utc": "2026-05-06T12:28:00Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "closed_day": "2026-05-05",
@@ -67,7 +67,7 @@
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
         "sha256": "03afb742c9c8187d0626d6d59cd8ecbafc8ae8a1f0fb3017fa8331149972f8e4",
         "size_bytes": 902,
-        "modified_utc": "2026-05-06T12:00:54Z",
+        "modified_utc": "2026-05-06T12:27:59Z",
         "last_date": "2026-05-05",
         "row_count": 1
       },
@@ -75,7 +75,7 @@
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
         "sha256": "dfbf0aefd2220e21556971609a71f4653c1b5cc2ed56277774fd9c9b8b947a3c",
         "size_bytes": 1051602,
-        "modified_utc": "2026-05-06T12:00:54Z",
+        "modified_utc": "2026-05-06T12:27:59Z",
         "last_date": "2026-05-05",
         "row_count": 2923
       },
@@ -97,9 +97,9 @@
       },
       "freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
-        "sha256": "6e653e5cf5121ad7bd894986b88115d296ed3b17e4a5f1a6e38e3a1cab931ea1",
+        "sha256": "acb7059e0e91f24a57f224b90cd3fcb0a380770f4d7101b57099cd2cc9884a0f",
         "size_bytes": 1172,
-        "modified_utc": "2026-05-06T12:00:53Z",
+        "modified_utc": "2026-05-06T12:27:58Z",
         "last_date": "2026-05-05",
         "status": "ok"
       },
