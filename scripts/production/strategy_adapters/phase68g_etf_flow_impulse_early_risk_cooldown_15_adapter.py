@@ -1,0 +1,1130 @@
+from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from dataclasses import dataclass
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[3]
+
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+if str(ROOT / "scripts") not in sys.path:
+    sys.path.insert(0, str(ROOT / "scripts"))
+
+from scripts.approved_strategy_net_export_helper import CASH_EQUIVALENT_ASSETS
+import scripts.dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate as dev_only_rebuild
+
+
+PRODUCTION_STRATEGY_ID = "staged_strategy_candidate"
+CANDIDATE_ID = "phase68g_etf_flow_impulse_early_risk_cooldown_15"
+BASE_STRATEGY_VERSION = "phase68g_66g_1p25x_candidate"
+ADAPTER_NAME = "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter"
+
+SNAPSHOT_SCHEMA_VERSION = 1
+DIAGNOSTICS_SCHEMA_VERSION = 1
+QUALITY_SCHEMA_VERSION = 1
+MANIFEST_SCHEMA_VERSION = 1
+COMPARE_SCHEMA_VERSION = 1
+SUMMARY_TOLERANCE = 1e-9
+
+EARLY_RISK_ASSET = "BTC"
+EARLY_RISK_EXPOSURE = 0.5
+FLOW_3D_FLOOR_USD = 500_000_000.0
+BTC_EMA_DAYS = 10
+COOLDOWN_DAYS = 15
+
+COMPARE_WINDOWS: tuple[tuple[str, str | None], ...] = (
+    ("full_etf_overlap", None),
+    ("since2025", "2025-01-01"),
+)
+
+EXPECTED_LIVE_TRUTH = "phase68g_66g_1p25x_candidate"
+EXPECTED_FALLBACK = "phase68i_dynamic_ladder_candidate"
+
+PROTECTED_RELATIVE_PATHS: tuple[str, ...] = (
+    "app.py",
+    "source_of_truth/master_state.md",
+    "source_of_truth/project_truth.json",
+    "source_of_truth/export_contract.json",
+    "outputs/production/current_strategy_snapshot.json",
+    "outputs/production/current_strategy_timeseries.csv",
+    "outputs/production/current_strategy_diagnostics.json",
+    "outputs/execution/intents/latest_execution_intent.json",
+    "outputs/execution/live_gate/latest_real_order_gate_decision.json",
+    "outputs/execution/authority/latest_successful_snapshot.json",
+    "outputs/execution/authority/latest_attempt_status.json",
+)
+
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def _read_json_required(path: Path) -> dict[str, Any]:
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Missing required JSON file: {path}")
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected JSON object in {path}")
+    return payload
+
+
+def _read_dataframe_required(path: Path) -> pd.DataFrame:
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Missing required CSV file: {path}")
+    frame = pd.read_csv(path, encoding="utf-8-sig")
+    if frame.empty:
+        raise ValueError(f"CSV has no rows in {path}")
+    return frame
+
+
+def _path_for_manifest(path: Path, *, root: Path) -> str:
+    try:
+        return path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return str(path.resolve())
+
+
+def _normalize_iso_day_text(value: Any, *, context: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        raise ValueError(f"{context} is missing")
+    if "T" in text:
+        text = text.split("T", 1)[0]
+    if len(text) != 10:
+        raise ValueError(f"{context} is not an ISO day: {value}")
+    return text
+
+
+def _normalize_asset_code(value: Any) -> str:
+    normalized = str(value or "").strip().upper()
+    if not normalized or normalized in {"NONE", "OUT_OF_MARKET", "NAN", "NULL"}:
+        return "CASH"
+    if normalized in CASH_EQUIVALENT_ASSETS:
+        return "CASH"
+    return normalized
+
+
+def _classify_regime(asset: str) -> str:
+    normalized = _normalize_asset_code(asset)
+    if normalized in CASH_EQUIVALENT_ASSETS:
+        return "CASH"
+    if normalized == "BTC":
+        return "BTC"
+    if normalized == "BASE":
+        return "BASE"
+    return "ALT"
+
+
+def _to_float_series(series: pd.Series) -> pd.Series:
+    return pd.to_numeric(series, errors="coerce").fillna(0.0)
+
+
+def _to_bool_series(series: pd.Series) -> pd.Series:
+    lowered = series.fillna("").astype(str).str.strip().str.lower()
+    return lowered.isin({"1", "true", "yes", "y"})
+
+
+def _rolling_compound_return(series: pd.Series, window: int) -> pd.Series:
+    return (
+        (1.0 + pd.to_numeric(series, errors="coerce").fillna(0.0))
+        .rolling(window=window, min_periods=window)
+        .apply(np.prod, raw=True)
+        - 1.0
+    )
+
+
+def _rolling_sharpe(series: pd.Series, window: int) -> pd.Series:
+    clean = pd.to_numeric(series, errors="coerce").fillna(0.0)
+    mean = clean.rolling(window=window, min_periods=window).mean()
+    std = clean.rolling(window=window, min_periods=window).std(ddof=0)
+    sharpe = (mean / std.replace(0.0, np.nan)) * np.sqrt(365.25)
+    return sharpe.replace([np.inf, -np.inf], np.nan)
+
+
+def _annualized_sharpe_from_daily_returns(series: pd.Series) -> float | None:
+    daily_returns = pd.to_numeric(series, errors="coerce").dropna().tolist()
+    if len(daily_returns) < 2:
+        return None
+    mean_ret = sum(daily_returns) / len(daily_returns)
+    variance = sum((value - mean_ret) ** 2 for value in daily_returns) / (len(daily_returns) - 1)
+    if variance <= 0:
+        return None
+    std = variance**0.5
+    if std == 0:
+        return None
+    return (mean_ret / std) * (365**0.5)
+
+
+def _annualized_sortino_from_daily_returns(series: pd.Series) -> float | None:
+    daily_returns = pd.to_numeric(series, errors="coerce").dropna().tolist()
+    if len(daily_returns) < 2:
+        return None
+    mean_ret = sum(daily_returns) / len(daily_returns)
+    downside = [value for value in daily_returns if value < 0]
+    if len(downside) < 2:
+        return None
+    downside_mean = sum(downside) / len(downside)
+    downside_variance = sum((value - downside_mean) ** 2 for value in downside) / (len(downside) - 1)
+    if downside_variance <= 0:
+        return None
+    downside_std = downside_variance**0.5
+    if downside_std == 0:
+        return None
+    return (mean_ret / downside_std) * (365**0.5)
+
+
+def _build_equity_curve(series: pd.Series) -> pd.Series:
+    return (1.0 + pd.to_numeric(series, errors="coerce").fillna(0.0)).cumprod()
+
+
+def _compute_total_return_pct(series: pd.Series) -> float:
+    equity = _build_equity_curve(series)
+    if equity.empty:
+        return 0.0
+    return float((equity.iloc[-1] - 1.0) * 100.0)
+
+
+def _compute_cagr_pct(series: pd.Series, date_index: pd.Index) -> float:
+    if len(series) < 2:
+        return 0.0
+    equity = _build_equity_curve(series)
+    start_dt = pd.Timestamp(date_index[0])
+    end_dt = pd.Timestamp(date_index[-1])
+    days = max(int((end_dt - start_dt).days), 1)
+    years = days / 365.25
+    if years <= 0 or equity.iloc[-1] <= 0:
+        return 0.0
+    return float(((equity.iloc[-1] ** (1.0 / years)) - 1.0) * 100.0)
+
+
+def _compute_max_drawdown_pct(series: pd.Series) -> float:
+    equity = _build_equity_curve(series)
+    if equity.empty:
+        return 0.0
+    drawdown = (equity / equity.cummax()) - 1.0
+    return float(drawdown.min() * 100.0)
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _source_file_metadata(path: Path, *, last_date: str | None = None, row_count: int | None = None) -> dict[str, Any]:
+    stat = path.stat()
+    payload: dict[str, Any] = {
+        "path": _path_for_manifest(path, root=ROOT),
+        "sha256": _sha256_file(path),
+        "size_bytes": stat.st_size,
+        "modified_utc": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)
+        .replace(microsecond=0)
+        .isoformat()
+        .replace("+00:00", "Z"),
+    }
+    if last_date is not None:
+        payload["last_date"] = last_date
+    if row_count is not None:
+        payload["row_count"] = int(row_count)
+    return payload
+
+
+def capture_protected_state(*, root: Path | None = None) -> dict[str, dict[str, Any]]:
+    repo_root = (root or ROOT).resolve()
+    payload: dict[str, dict[str, Any]] = {}
+    for relative_path in PROTECTED_RELATIVE_PATHS:
+        path = repo_root / relative_path
+        if not path.exists():
+            payload[relative_path] = {
+                "path": relative_path,
+                "exists": False,
+            }
+            continue
+        payload[relative_path] = {
+            **_source_file_metadata(path),
+            "path": relative_path,
+            "exists": True,
+        }
+    return payload
+
+
+def read_truth_contract_state(*, root: Path | None = None) -> dict[str, Any]:
+    repo_root = (root or ROOT).resolve()
+    project_truth = _read_json_required(repo_root / "source_of_truth" / "project_truth.json")
+    export_contract = _read_json_required(repo_root / "source_of_truth" / "export_contract.json")
+    baseline_snapshot = _read_json_required(repo_root / "outputs" / "production" / "current_strategy_snapshot.json")
+    app_product_truth = project_truth.get("app_product_truth", {})
+    leverage_truth = project_truth.get("leverage_truth", {})
+    production_core_truth = project_truth.get("production_core_truth", {})
+    app_live_contract = export_contract.get("app_export_contract", {}).get("app_live_mode_contract", {}).get("current", {})
+    production_core_contract = export_contract.get("production_core_truth_contract", {})
+    return {
+        "project_truth_app_main_strategy_model": str(app_product_truth.get("main_strategy_model") or "").strip(),
+        "project_truth_current_live_truth": str(leverage_truth.get("current_live_truth") or "").strip(),
+        "project_truth_official_fallback": str(leverage_truth.get("official_softer_fallback") or "").strip(),
+        "project_truth_production_core_strategy_version": str(production_core_truth.get("strategy_version") or "").strip(),
+        "export_contract_main_strategy_model": str(export_contract.get("app_export_contract", {}).get("main_strategy_model") or "").strip(),
+        "export_contract_live_truth_mode": str(app_live_contract.get("live_truth_mode") or "").strip(),
+        "export_contract_fallback_profile_label": str(app_live_contract.get("fallback_profile_label") or "").strip(),
+        "export_contract_production_core_strategy_version": str(production_core_contract.get("strategy_version") or "").strip(),
+        "baseline_snapshot_strategy_version": str(baseline_snapshot.get("strategy_version") or "").strip(),
+    }
+
+
+def expected_truth_contract_state() -> dict[str, str]:
+    return {
+        "project_truth_app_main_strategy_model": EXPECTED_LIVE_TRUTH,
+        "project_truth_current_live_truth": EXPECTED_LIVE_TRUTH,
+        "project_truth_official_fallback": EXPECTED_FALLBACK,
+        "project_truth_production_core_strategy_version": EXPECTED_LIVE_TRUTH,
+        "export_contract_main_strategy_model": EXPECTED_LIVE_TRUTH,
+        "export_contract_live_truth_mode": EXPECTED_LIVE_TRUTH,
+        "export_contract_fallback_profile_label": EXPECTED_FALLBACK,
+        "export_contract_production_core_strategy_version": EXPECTED_LIVE_TRUTH,
+        "baseline_snapshot_strategy_version": EXPECTED_LIVE_TRUTH,
+    }
+
+
+def _consecutive_tail_length(series: pd.Series) -> int:
+    if series.empty:
+        return 0
+    last_value = series.iloc[-1]
+    streak = 0
+    for value in reversed(series.tolist()):
+        if value != last_value:
+            break
+        streak += 1
+    return streak
+
+
+def _days_since_last_true(mask: pd.Series, dates: pd.Series) -> int | None:
+    hits = dates.loc[mask.fillna(False)]
+    if hits.empty:
+        return None
+    return int((pd.Timestamp(dates.iloc[-1]) - pd.Timestamp(hits.iloc[-1])).days)
+
+
+def _desired_candidate_asset(raw: pd.DataFrame) -> pd.Series:
+    baseline_candidate = raw["candidate_asset"].map(_normalize_asset_code)
+    etf_signal_mask = (
+        _to_bool_series(raw["permission_on"])
+        | _to_bool_series(raw["cooldown_blocked_entry"])
+        | _to_bool_series(raw["early_risk_active"])
+    )
+    return pd.Series(
+        np.where(etf_signal_mask, EARLY_RISK_ASSET, baseline_candidate),
+        index=raw.index,
+        dtype="object",
+    )
+
+
+def _desired_candidate_exposure(raw: pd.DataFrame, candidate_asset: pd.Series) -> pd.Series:
+    baseline_exposure = _to_float_series(raw["model_candidate_exposure"])
+    desired = baseline_exposure.copy()
+    early_risk_mask = (
+        _to_bool_series(raw["permission_on"])
+        | _to_bool_series(raw["cooldown_blocked_entry"])
+        | _to_bool_series(raw["early_risk_active"])
+    ) & _to_bool_series(raw["baseline_cash"])
+    desired.loc[early_risk_mask] = EARLY_RISK_EXPOSURE
+    desired.loc[candidate_asset.isin(CASH_EQUIVALENT_ASSETS)] = 0.0
+    return desired
+
+
+def _candidate_reason_code(raw_row: pd.Series) -> str:
+    if bool(raw_row["early_risk_active"]):
+        return "early_risk_etf_flow_impulse"
+    if bool(raw_row["cooldown_blocked_entry"]):
+        return "early_risk_cooldown_block"
+    if bool(raw_row["baseline_full_risk"]):
+        return "baseline_full_risk_pass_through"
+    if bool(raw_row["permission_inputs_true"]) and not bool(raw_row["permission_on"]):
+        return "early_risk_permission_vetoed"
+    return str(raw_row["reason_code"])
+
+
+def build_candidate_reason_text(row: pd.Series) -> str:
+    actual_asset = _normalize_asset_code(row["actual_held_asset"])
+    candidate_asset = _normalize_asset_code(row["candidate_asset"])
+    exposure = float(row["effective_market_exposure"])
+    flow_3d_sum = float(row["flow_3d_sum_usd"])
+    if bool(row["early_risk_active"]):
+        return (
+            f"The staged candidate takes {actual_asset} at {exposure:.2f}x because the ETF-flow EARLY_RISK "
+            f"permission is active ({flow_3d_sum:.0f} USD over 3 sessions) and the 15-day cooldown is clear."
+        )
+    if bool(row["cooldown_blocked_entry"]):
+        return (
+            "ETF-flow EARLY_RISK permission is active, but the staged candidate stays in CASH because the "
+            "15-day cooldown still blocks a new entry."
+        )
+    if bool(row["baseline_full_risk"]):
+        return (
+            f"The staged candidate passes through the baseline FULL_RISK row unchanged, so authorized exposure "
+            f"remains {actual_asset} at {exposure:.2f}x."
+        )
+    if bool(row["permission_inputs_true"]) and not bool(row["permission_on"]):
+        return (
+            f"{candidate_asset} is the staged candidate, but the ETF-flow entry veto remains active, so the "
+            "candidate stays in CASH."
+        )
+    if actual_asset in CASH_EQUIVALENT_ASSETS:
+        return (
+            "The staged candidate remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow "
+            "EARLY_RISK entry conditions authorize market exposure."
+        )
+    return f"The staged candidate holds {actual_asset} with authorized exposure at {exposure:.2f}x."
+
+
+def _period_metrics(
+    *,
+    export_df: pd.DataFrame,
+    state_series: pd.Series,
+    early_risk_series: pd.Series | None,
+    cooldown_blocked_entry_series: pd.Series | None,
+) -> dict[str, Any]:
+    if export_df.empty:
+        return {
+            "period_start": None,
+            "period_end": None,
+            "row_count": 0,
+            "gross_total_return_pct": 0.0,
+            "net_total_return_pct": 0.0,
+            "gross_cagr_pct": 0.0,
+            "net_cagr_pct": 0.0,
+            "gross_max_drawdown_pct": 0.0,
+            "net_max_drawdown_pct": 0.0,
+            "switch_count": 0,
+            "trade_count": 0,
+            "turnover_total": 0.0,
+            "exposure_days": 0,
+            "cash_days_pct": 0.0,
+            "trading_fees_total_pct": 0.0,
+            "funding_total_pct": 0.0,
+            "borrow_cost_total_pct": 0.0,
+            "slippage_cost_total_pct": 0.0,
+            "total_cost_pct": 0.0,
+            "early_risk_days": 0,
+            "cooldown_blocked_entry_days": 0,
+            "gross_and_net_status": "gross_and_net_reported",
+            "net_costs_included": True,
+        }
+
+    gross_return = pd.to_numeric(export_df["gross_return"], errors="coerce").fillna(0.0)
+    net_return = pd.to_numeric(export_df["net_return"], errors="coerce").fillna(0.0)
+    fees = pd.to_numeric(export_df["trading_fees_daily"], errors="coerce").fillna(0.0)
+    funding = pd.to_numeric(export_df["funding_daily"], errors="coerce").fillna(0.0)
+    borrow = pd.to_numeric(export_df["daily_borrow_cost"], errors="coerce").fillna(0.0)
+    slippage = pd.to_numeric(export_df["tradable_slippage_cost"], errors="coerce").fillna(0.0)
+    held_asset = export_df["held_asset"].map(_normalize_asset_code)
+
+    return {
+        "period_start": pd.Timestamp(export_df.index.min()).strftime("%Y-%m-%d"),
+        "period_end": pd.Timestamp(export_df.index.max()).strftime("%Y-%m-%d"),
+        "row_count": int(len(export_df)),
+        "gross_total_return_pct": round(_compute_total_return_pct(gross_return), 6),
+        "net_total_return_pct": round(_compute_total_return_pct(net_return), 6),
+        "gross_cagr_pct": round(_compute_cagr_pct(gross_return, export_df.index), 6),
+        "net_cagr_pct": round(_compute_cagr_pct(net_return, export_df.index), 6),
+        "gross_max_drawdown_pct": round(_compute_max_drawdown_pct(gross_return), 6),
+        "net_max_drawdown_pct": round(_compute_max_drawdown_pct(net_return), 6),
+        "switch_count": int(dev_only_rebuild.count_switches(state_series)),
+        "trade_count": int(pd.to_numeric(export_df["asset_transition_day"], errors="coerce").fillna(0.0).astype(bool).sum()),
+        "turnover_total": round(float(pd.to_numeric(export_df["trading_turnover_notional"], errors="coerce").fillna(0.0).sum()), 6),
+        "exposure_days": int((~held_asset.isin(CASH_EQUIVALENT_ASSETS)).sum()),
+        "cash_days_pct": round(float(held_asset.isin(CASH_EQUIVALENT_ASSETS).mean() * 100.0), 6),
+        "trading_fees_total_pct": round(float(fees.sum() * 100.0), 6),
+        "funding_total_pct": round(float(funding.sum() * 100.0), 6),
+        "borrow_cost_total_pct": round(float(borrow.sum() * 100.0), 6),
+        "slippage_cost_total_pct": round(float(slippage.sum() * 100.0), 6),
+        "total_cost_pct": round(float((fees + funding + borrow + slippage).sum() * 100.0), 6),
+        "early_risk_days": int(early_risk_series.fillna(False).astype(bool).sum()) if early_risk_series is not None else 0,
+        "cooldown_blocked_entry_days": int(cooldown_blocked_entry_series.fillna(False).astype(bool).sum())
+        if cooldown_blocked_entry_series is not None
+        else 0,
+        "gross_and_net_status": "gross_and_net_reported",
+        "net_costs_included": True,
+    }
+
+
+def _delta_metrics(candidate_metrics: dict[str, Any], baseline_metrics: dict[str, Any]) -> dict[str, Any]:
+    delta: dict[str, Any] = {}
+    for field in (
+        "gross_total_return_pct",
+        "net_total_return_pct",
+        "gross_cagr_pct",
+        "net_cagr_pct",
+        "gross_max_drawdown_pct",
+        "net_max_drawdown_pct",
+        "switch_count",
+        "trade_count",
+        "turnover_total",
+        "exposure_days",
+        "cash_days_pct",
+        "trading_fees_total_pct",
+        "funding_total_pct",
+        "borrow_cost_total_pct",
+        "slippage_cost_total_pct",
+        "total_cost_pct",
+        "early_risk_days",
+        "cooldown_blocked_entry_days",
+    ):
+        delta[field] = round(float(candidate_metrics[field]) - float(baseline_metrics[field]), 6)
+    return delta
+
+
+def _standardize_export_frame(export_df: pd.DataFrame, *, prefix: str) -> pd.DataFrame:
+    rename_map = {
+        f"{prefix}_gross_return": "gross_return",
+        f"{prefix}_held_asset": "held_asset",
+        f"{prefix}_effective_leverage": "effective_leverage",
+        f"{prefix}_asset_transition_day": "asset_transition_day",
+        f"{prefix}_trading_turnover_notional": "trading_turnover_notional",
+        f"{prefix}_daily_borrow_cost": "daily_borrow_cost",
+        f"{prefix}_tradable_slippage_cost": "tradable_slippage_cost",
+        f"{prefix}_trading_fees_daily": "trading_fees_daily",
+        f"{prefix}_funding_daily": "funding_daily",
+        f"{prefix}_net_return": "net_return",
+        f"{prefix}_equity_curve_gross": "equity_curve_gross",
+        f"{prefix}_equity_curve_net": "equity_curve_net",
+        f"{prefix}_fee_side_mode": "fee_side_mode",
+        f"{prefix}_taker_fee_bps": "taker_fee_bps",
+        f"{prefix}_maker_fee_bps": "maker_fee_bps",
+        f"{prefix}_staking_discount_pct": "staking_discount_pct",
+        f"{prefix}_referral_discount_pct": "referral_discount_pct",
+        f"{prefix}_effective_trading_fee_bps": "effective_trading_fee_bps",
+        f"{prefix}_annual_borrow_cost_pct": "annual_borrow_cost_pct",
+        f"{prefix}_tradable_transition_slippage_bps": "tradable_transition_slippage_bps",
+    }
+    standardized = export_df.rename(columns=rename_map).copy()
+    standardized.index = export_df.index
+    return standardized
+
+
+@dataclass(frozen=True)
+class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
+    candidate_id: str = CANDIDATE_ID
+    base_strategy_version: str = BASE_STRATEGY_VERSION
+    adapter_name: str = ADAPTER_NAME
+
+    def resolve_source_paths(self, *, root: Path | None = None) -> dict[str, Path]:
+        repo_root = (root or ROOT).resolve()
+        return {
+            "baseline_snapshot": repo_root / "outputs" / "production" / "current_strategy_snapshot.json",
+            "baseline_timeseries": repo_root / "outputs" / "production" / "current_strategy_timeseries.csv",
+            "baseline_diagnostics": repo_root / "outputs" / "production" / "current_strategy_diagnostics.json",
+            "etf_panel": repo_root
+            / "outputs"
+            / "research_os"
+            / "dev_only"
+            / "non_authoritative_btc_etf_flow_daily_panel"
+            / "btc_etf_flow_daily_panel.csv",
+            "btc_ohlcv": repo_root / "data" / "ohlcv" / "BTCUSDT_1d.csv",
+            "dev_only_script": repo_root / "scripts" / "dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+            "project_truth": repo_root / "source_of_truth" / "project_truth.json",
+            "export_contract": repo_root / "source_of_truth" / "export_contract.json",
+            "compiled_probe_helper": repo_root
+            / "scripts"
+            / "__pycache__"
+            / "dev_only_phase68g_etf_flow_impulse_probe.cpython-312.pyc",
+            "compiled_cooldown_helper": repo_root
+            / "scripts"
+            / "__pycache__"
+            / "dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-312.pyc",
+        }
+
+    def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
+        repo_root = (root or ROOT).resolve()
+        source_paths = self.resolve_source_paths(root=repo_root)
+
+        baseline_snapshot = _read_json_required(source_paths["baseline_snapshot"])
+        baseline_diagnostics = _read_json_required(source_paths["baseline_diagnostics"])
+        baseline_timeseries = _read_dataframe_required(source_paths["baseline_timeseries"])
+        project_truth = _read_json_required(source_paths["project_truth"])
+        export_contract = _read_json_required(source_paths["export_contract"])
+
+        if str(baseline_snapshot.get("strategy_version") or "").strip() != self.base_strategy_version:
+            raise ValueError(
+                "Baseline snapshot strategy_version mismatch: "
+                f"actual={baseline_snapshot.get('strategy_version')!r} "
+                f"expected={self.base_strategy_version!r}"
+            )
+
+        baseline_probe_frame, hard_invalidation_meta = dev_only_rebuild.normalize_baseline_frame(
+            source_paths["baseline_timeseries"]
+        )
+        cost_config, cost_config_meta = dev_only_rebuild.derive_cost_config(baseline_timeseries)
+        input_refs = dev_only_rebuild.build_input_refs(cost_config_meta)
+
+        probe_mod, cooldown_mod = dev_only_rebuild.load_phase68g_helpers()
+        etf_df = probe_mod.load_etf_panel(source_paths["etf_panel"])
+        btc_df = probe_mod.load_btc_frame(source_paths["btc_ohlcv"])
+        overlap_frame = probe_mod.build_overlap_frame(baseline_probe_frame, etf_df, btc_df)
+        if "date" in overlap_frame.columns:
+            overlap_frame = overlap_frame.drop(columns=["date"])
+        if overlap_frame.empty:
+            raise ValueError("No overlap between the Production Core baseline and ETF-flow inputs.")
+
+        state_frame, cooldown_events = cooldown_mod.build_cooldown_state_machine(overlap_frame, COOLDOWN_DAYS)
+        baseline_export, probe_export, enriched = probe_mod.build_export_metrics(state_frame, cost_config)
+        baseline_export, probe_export, enriched = dev_only_rebuild.enforce_baseline_full_risk_pass_through(
+            baseline_export,
+            probe_export,
+            enriched,
+        )
+        baseline_export_standard = _standardize_export_frame(baseline_export, prefix="baseline")
+        probe_export_standard = _standardize_export_frame(probe_export, prefix="probe")
+        candidate_source_frame = enriched.reset_index().rename(columns={"index": "date"}).copy()
+        candidate_source_frame["date"] = pd.to_datetime(candidate_source_frame["date"], errors="coerce").dt.strftime(
+            "%Y-%m-%d"
+        )
+        candidate_source_frame = candidate_source_frame.loc[
+            :,
+            dev_only_rebuild.front_loaded_columns(candidate_source_frame),
+        ]
+
+        variant_context = {
+            "variant_id": "cooldown_15_days",
+            "model_id": self.candidate_id,
+            "model_label": "ETF-flow impulse EARLY_RISK cooldown_15 staged candidate",
+            "cooldown_days": COOLDOWN_DAYS,
+        }
+        decorated_cooldown_events = cooldown_mod.decorate_cooldown_events(cooldown_events, variant_context)
+        activation_windows = probe_mod.build_activation_windows(enriched)
+        blocker_rows_list = cooldown_mod.build_blocker_rows(enriched, variant_context)
+        blocker_rows = {row["period"]: row for row in blocker_rows_list}
+        window_counts = dev_only_rebuild.build_window_counts(activation_windows)
+
+        candidate_overlap_closed_day = pd.Timestamp(enriched.index.max()).strftime("%Y-%m-%d")
+        baseline_closed_day = _normalize_iso_day_text(
+            baseline_snapshot.get("closed_day"),
+            context="baseline_snapshot.closed_day",
+        )
+
+        return {
+            "repo_root": repo_root,
+            "source_paths": source_paths,
+            "baseline_snapshot": baseline_snapshot,
+            "baseline_diagnostics": baseline_diagnostics,
+            "baseline_timeseries": baseline_timeseries,
+            "project_truth": project_truth,
+            "export_contract": export_contract,
+            "baseline_probe_frame": baseline_probe_frame,
+            "cost_config": cost_config,
+            "cost_config_meta": cost_config_meta,
+            "input_refs": input_refs,
+            "probe_mod": probe_mod,
+            "cooldown_mod": cooldown_mod,
+            "etf_df": etf_df,
+            "btc_df": btc_df,
+            "overlap_frame": overlap_frame,
+            "state_frame": state_frame,
+            "cooldown_events": cooldown_events,
+            "decorated_cooldown_events": decorated_cooldown_events,
+            "activation_windows": activation_windows,
+            "baseline_export": baseline_export,
+            "probe_export": probe_export,
+            "baseline_export_standard": baseline_export_standard,
+            "probe_export_standard": probe_export_standard,
+            "enriched": enriched,
+            "candidate_source_frame": candidate_source_frame,
+            "blocker_rows_list": blocker_rows_list,
+            "blocker_rows": blocker_rows,
+            "window_counts": window_counts,
+            "hard_invalidation_meta": hard_invalidation_meta,
+            "candidate_overlap_closed_day": candidate_overlap_closed_day,
+            "baseline_closed_day": baseline_closed_day,
+        }
+
+    def build_candidate_timeseries(self, inputs: dict[str, Any]) -> pd.DataFrame:
+        raw = inputs["enriched"].reset_index().rename(columns={"index": "date"}).copy()
+        raw["date"] = pd.to_datetime(raw["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+        raw = raw.dropna(subset=["date"]).reset_index(drop=True)
+
+        candidate_asset = _desired_candidate_asset(raw)
+        actual_asset = raw["probe_held_asset"].map(_normalize_asset_code)
+        actual_exposure = _to_float_series(raw["probe_effective_leverage"])
+        model_candidate_exposure = _desired_candidate_exposure(raw, candidate_asset)
+
+        frame = pd.DataFrame()
+        frame["date"] = raw["date"]
+        frame["candidate_id"] = self.candidate_id
+        frame["base_strategy_version"] = self.base_strategy_version
+        frame["strategy_id"] = PRODUCTION_STRATEGY_ID
+        frame["strategy_version"] = self.candidate_id
+        frame["candidate_asset"] = candidate_asset
+        frame["selected_asset"] = candidate_asset
+        frame["model_candidate_exposure"] = model_candidate_exposure.round(6)
+        frame["trend_permission_active"] = actual_exposure > SUMMARY_TOLERANCE
+        frame["actual_held_asset"] = actual_asset
+        frame["authorized_tradable_asset"] = actual_asset
+        frame["held_asset"] = actual_asset
+        frame["current_asset"] = actual_asset
+        frame["effective_market_exposure"] = actual_exposure.round(6)
+        frame["current_exposure"] = actual_exposure.round(6)
+        frame["exposure"] = actual_exposure.round(6)
+        frame["regime"] = actual_asset.map(_classify_regime)
+        frame["market_state"] = np.where(actual_exposure > SUMMARY_TOLERANCE, "IN_MARKET", "OUT_OF_MARKET")
+        frame["execution_state"] = frame["market_state"]
+        frame["execution_target_asset"] = actual_asset
+        frame["execution_target_exposure"] = actual_exposure.round(6)
+        frame["trend_state"] = raw["trend_state"].fillna("").astype(str)
+        frame["trend_score"] = _to_float_series(raw["trend_score"]).round(6)
+        frame["buy_threshold"] = _to_float_series(raw["buy_threshold"]).round(6)
+        frame["reason_code"] = raw.apply(_candidate_reason_code, axis=1)
+
+        frame["us_trading_session_date"] = raw["us_trading_session_date"].fillna("").astype(str)
+        frame["causal_available_for_btc_utc_day"] = raw["causal_available_for_btc_utc_day"].fillna("").astype(str)
+        frame["baseline_cash"] = _to_bool_series(raw["baseline_cash"])
+        frame["baseline_full_risk"] = _to_bool_series(raw["baseline_full_risk"])
+        frame["permission_inputs_true"] = _to_bool_series(raw["permission_inputs_true"])
+        frame["permission_on"] = _to_bool_series(raw["permission_on"])
+        frame["permission_on_while_baseline_full_risk"] = _to_bool_series(raw["permission_on_while_baseline_full_risk"])
+        frame["hard_invalidation_on"] = _to_bool_series(raw["hard_invalidation_on"])
+        frame["probe_input_ready_flag"] = _to_bool_series(raw["probe_input_ready_flag"])
+        frame["flow_2_of_last_3_positive_flag"] = _to_bool_series(raw["flow_2_of_last_3_positive_flag"])
+        frame["flow_3d_sum_usd"] = _to_float_series(raw["flow_3d_sum_usd"]).round(6)
+        frame["flow_3d_sum_pass"] = _to_bool_series(raw["flow_3d_sum_pass"])
+        frame["btc_close"] = _to_float_series(raw["btc_close"]).round(6)
+        frame["btc_ema10"] = _to_float_series(raw["btc_ema10"]).round(6)
+        frame["btc_price_filter_pass"] = _to_bool_series(raw["btc_price_filter_pass"])
+        frame["probe_state"] = raw["probe_state"].fillna("").astype(str)
+        frame["probe_window_id"] = raw["probe_window_id"].fillna("").astype(str)
+        frame["probe_exit_reason"] = raw["probe_exit_reason"].fillna("").astype(str)
+        frame["baseline_handoff_day"] = _to_bool_series(raw["baseline_handoff_day"])
+        frame["early_risk_active"] = _to_bool_series(raw["early_risk_active"])
+        frame["cooldown_active"] = _to_bool_series(raw["cooldown_active"])
+        frame["cooldown_blocked_entry"] = _to_bool_series(raw["cooldown_blocked_entry"])
+        frame["cooldown_event_id"] = raw["cooldown_event_id"].fillna("").astype(str)
+
+        frame["model_candidate_return_gross"] = _to_float_series(raw["probe_strategy_return_gross"]).round(12)
+        frame["model_candidate_return_net"] = _to_float_series(raw["probe_net_return"]).round(12)
+        frame["model_candidate_equity"] = _to_float_series(raw["probe_equity_curve_net"]).round(12)
+        frame["authorized_return_gross"] = _to_float_series(raw["probe_gross_return"]).round(12)
+        frame["authorized_return_net"] = _to_float_series(raw["probe_net_return"]).round(12)
+        frame["authorized_equity"] = _to_float_series(raw["probe_equity_curve_net"]).round(12)
+        frame["btc_return"] = _to_float_series(raw["btc_return"]).round(12)
+        frame["btc_baseline_equity"] = _build_equity_curve(frame["btc_return"]).round(12)
+        frame["btc_baseline_index"] = (frame["btc_baseline_equity"] * 100.0).round(12)
+        frame["return_gross"] = frame["authorized_return_gross"]
+        frame["return_net"] = frame["authorized_return_net"]
+        frame["equity"] = frame["authorized_equity"]
+        frame["drawdown_pct"] = (((frame["equity"] / frame["equity"].cummax()) - 1.0) * 100.0).round(6)
+        frame["fees_daily"] = _to_float_series(raw["probe_trading_fees_daily"]).round(12)
+        frame["fees_cumulative"] = frame["fees_daily"].cumsum().round(12)
+        frame["funding_daily"] = _to_float_series(raw["probe_funding_daily"]).round(12)
+        frame["funding_cumulative"] = frame["funding_daily"].cumsum().round(12)
+        frame["borrow_cost_daily"] = _to_float_series(raw["probe_daily_borrow_cost"]).round(12)
+        frame["borrow_cost_cumulative"] = frame["borrow_cost_daily"].cumsum().round(12)
+        frame["slippage_cost_daily"] = _to_float_series(raw["probe_tradable_slippage_cost"]).round(12)
+        frame["slippage_cumulative"] = frame["slippage_cost_daily"].cumsum().round(12)
+        frame["turnover"] = _to_float_series(raw["probe_trading_turnover_notional"]).round(12)
+        frame["cash_day"] = frame["effective_market_exposure"] <= SUMMARY_TOLERANCE
+        frame["btc_day"] = (frame["actual_held_asset"] == "BTC") & (frame["effective_market_exposure"] > SUMMARY_TOLERANCE)
+        frame["in_market"] = frame["effective_market_exposure"] > SUMMARY_TOLERANCE
+        frame["is_rebalance_day"] = _to_bool_series(raw["probe_asset_transition_day"])
+        frame["asset_transition_day"] = frame["is_rebalance_day"]
+        frame["trend_block_day"] = _to_bool_series(raw["trend_block_day"])
+        frame["stress_block_day"] = _to_bool_series(raw["stress_block_day"])
+        frame["trend_gate_pass"] = _to_bool_series(raw["trend_gate_pass"])
+        frame["leverage_active"] = frame["effective_market_exposure"] > (1.0 + SUMMARY_TOLERANCE)
+        frame["leverage_state_reason"] = np.where(
+            frame["early_risk_active"],
+            "early_risk",
+            np.where(
+                frame["cooldown_blocked_entry"],
+                "cooldown_block",
+                np.where(frame["baseline_full_risk"], "baseline_pass_through", "cash"),
+            ),
+        )
+        frame["trend_activation_threshold"] = _to_float_series(raw["trend_activation_threshold"]).round(6)
+        frame["rolling_return_7d"] = _rolling_compound_return(frame["return_net"], 7).round(12)
+        frame["rolling_return_30d"] = _rolling_compound_return(frame["return_net"], 30).round(12)
+        frame["rolling_return_90d"] = _rolling_compound_return(frame["return_net"], 90).round(12)
+        frame["rolling_vol_30d"] = (
+            frame["return_net"].rolling(window=30, min_periods=30).std(ddof=0) * np.sqrt(365.25)
+        ).round(12)
+        frame["rolling_sharpe_90d"] = _rolling_sharpe(frame["return_net"], 90).round(12)
+        frame["source_validated"] = True
+
+        frame["dev_only_source_lineage"] = True
+        frame["non_authoritative_research_input"] = True
+        frame["official_truth"] = False
+        frame["live_truth"] = False
+        frame["app_truth"] = False
+        frame["execution_truth"] = False
+
+        frame["baseline_strategy_id"] = raw["strategy_id"].fillna("").astype(str)
+        frame["baseline_strategy_version"] = raw["strategy_version"].fillna("").astype(str)
+        frame["baseline_candidate_asset"] = raw["candidate_asset"].map(_normalize_asset_code)
+        frame["baseline_selected_asset"] = raw["selected_asset"].map(_normalize_asset_code)
+        frame["baseline_model_candidate_exposure"] = _to_float_series(raw["model_candidate_exposure"]).round(6)
+        frame["baseline_trend_permission_active"] = _to_bool_series(raw["trend_permission_active"])
+        frame["baseline_actual_held_asset"] = raw["actual_held_asset"].map(_normalize_asset_code)
+        frame["baseline_authorized_tradable_asset"] = raw["authorized_tradable_asset"].map(_normalize_asset_code)
+        frame["baseline_current_asset"] = raw["current_asset"].map(_normalize_asset_code)
+        frame["baseline_effective_market_exposure"] = _to_float_series(raw["effective_market_exposure"]).round(6)
+        frame["baseline_execution_target_asset"] = raw["execution_target_asset"].map(_normalize_asset_code)
+        frame["baseline_execution_target_exposure"] = _to_float_series(raw["execution_target_exposure"]).round(6)
+        frame["baseline_regime"] = raw["regime"].fillna("").astype(str)
+        frame["baseline_market_state"] = raw["market_state"].fillna("").astype(str)
+        frame["baseline_execution_state"] = raw["execution_state"].fillna("").astype(str)
+        frame["baseline_reason_code"] = raw["reason_code"].fillna("").astype(str)
+        frame["baseline_return_gross"] = _to_float_series(raw["baseline_gross_return"]).round(12)
+        frame["baseline_return_net"] = _to_float_series(raw["baseline_net_return"]).round(12)
+        frame["baseline_equity"] = _to_float_series(raw["baseline_equity_curve_net"]).round(12)
+        frame["baseline_turnover"] = _to_float_series(raw["baseline_trading_turnover_notional"]).round(12)
+        frame["baseline_fees_daily"] = _to_float_series(raw["baseline_trading_fees_daily"]).round(12)
+        frame["baseline_funding_daily"] = _to_float_series(raw["baseline_funding_daily"]).round(12)
+        frame["baseline_borrow_cost_daily"] = _to_float_series(raw["baseline_daily_borrow_cost"]).round(12)
+        frame["baseline_slippage_daily"] = _to_float_series(raw["baseline_tradable_slippage_cost"]).round(12)
+        frame["baseline_cash_day"] = frame["baseline_effective_market_exposure"] <= SUMMARY_TOLERANCE
+        frame["baseline_in_market"] = frame["baseline_effective_market_exposure"] > SUMMARY_TOLERANCE
+        frame["baseline_btc_day"] = (
+            (frame["baseline_actual_held_asset"] == "BTC") & frame["baseline_in_market"]
+        )
+        frame["baseline_is_rebalance_day"] = _to_bool_series(raw["baseline_asset_transition_day"])
+        frame["baseline_asset_transition_day"] = frame["baseline_is_rebalance_day"]
+
+        return frame
+
+    def build_compare_payload(self, inputs: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+        enriched = inputs["enriched"]
+        baseline_export = inputs["baseline_export_standard"]
+        probe_export = inputs["probe_export_standard"]
+        windows: dict[str, Any] = {}
+        compare_rows: list[dict[str, Any]] = []
+
+        metric_fields = (
+            "gross_total_return_pct",
+            "net_total_return_pct",
+            "gross_cagr_pct",
+            "net_cagr_pct",
+            "gross_max_drawdown_pct",
+            "net_max_drawdown_pct",
+            "switch_count",
+            "trade_count",
+            "turnover_total",
+            "exposure_days",
+            "cash_days_pct",
+            "trading_fees_total_pct",
+            "funding_total_pct",
+            "borrow_cost_total_pct",
+            "slippage_cost_total_pct",
+            "total_cost_pct",
+            "early_risk_days",
+            "cooldown_blocked_entry_days",
+        )
+
+        for period_name, start_date in COMPARE_WINDOWS:
+            if start_date is None:
+                period_enriched = enriched.copy()
+                period_baseline_export = baseline_export.copy()
+                period_probe_export = probe_export.copy()
+            else:
+                start_stamp = pd.Timestamp(start_date)
+                period_enriched = enriched.loc[enriched.index >= start_stamp].copy()
+                period_baseline_export = baseline_export.loc[baseline_export.index >= start_stamp].copy()
+                period_probe_export = probe_export.loc[probe_export.index >= start_stamp].copy()
+
+            baseline_metrics = _period_metrics(
+                export_df=period_baseline_export,
+                state_series=period_enriched["baseline_state"],
+                early_risk_series=None,
+                cooldown_blocked_entry_series=None,
+            )
+            candidate_metrics = _period_metrics(
+                export_df=period_probe_export,
+                state_series=period_enriched["probe_state"],
+                early_risk_series=_to_bool_series(period_enriched["early_risk_active"]),
+                cooldown_blocked_entry_series=_to_bool_series(period_enriched["cooldown_blocked_entry"]),
+            )
+            deltas = _delta_metrics(candidate_metrics, baseline_metrics)
+
+            windows[period_name] = {
+                "period_start": baseline_metrics["period_start"],
+                "period_end": baseline_metrics["period_end"],
+                "row_count": baseline_metrics["row_count"],
+                "compare_basis": {
+                    "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
+                    "gross_and_net_status": "gross_and_net_reported",
+                    "net_costs_included": True,
+                },
+                "baseline": baseline_metrics,
+                "candidate": candidate_metrics,
+                "delta_candidate_minus_baseline": deltas,
+            }
+
+            for field in metric_fields:
+                compare_rows.append(
+                    {
+                        "period": period_name,
+                        "metric": field,
+                        "baseline_value": baseline_metrics[field],
+                        "candidate_value": candidate_metrics[field],
+                        "delta_candidate_minus_baseline": deltas[field],
+                        "return_basis_status": "gross_and_net_reported",
+                        "net_costs_included": True,
+                    }
+                )
+
+        compare_payload = {
+            "artifact_type": "staged_strategy_candidate_compare",
+            "schema_version": COMPARE_SCHEMA_VERSION,
+            "generated_at_utc": utc_now_iso(),
+            "candidate_id": self.candidate_id,
+            "base_strategy_version": self.base_strategy_version,
+            "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
+            "candidate_universe_rule": (
+                "Candidate compare rows use the ETF overlap universe rebuilt from the current Production Core "
+                "baseline and the causal D+1 ETF-flow panel."
+            ),
+            "comparison_status": {
+                "gross_and_net_status": "gross_and_net_reported",
+                "net_costs_included": True,
+            },
+            "windows": windows,
+            "window_counts": inputs["window_counts"],
+            "blocker_rows": inputs["blocker_rows"],
+        }
+        return compare_payload, compare_rows
+
+    def build_source_inputs(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        source_paths = inputs["source_paths"]
+        baseline_timeseries = inputs["baseline_timeseries"]
+        etf_df = inputs["etf_df"]
+        btc_df = inputs["btc_df"]
+        baseline_snapshot = inputs["baseline_snapshot"]
+        baseline_diagnostics = inputs["baseline_diagnostics"]
+
+        return {
+            "adapter_name": self.adapter_name,
+            "candidate_id": self.candidate_id,
+            "base_strategy_version": self.base_strategy_version,
+            "candidate_compare_closed_day": inputs["candidate_overlap_closed_day"],
+            "baseline_closed_day": inputs["baseline_closed_day"],
+            "compare_windows": [
+                {
+                    "name": period_name,
+                    "start_date": start_date,
+                }
+                for period_name, start_date in COMPARE_WINDOWS
+            ],
+            "lineage": {
+                "dev_only_source_lineage": True,
+                "non_authoritative_research_input": True,
+                "official_truth": False,
+                "live_truth": False,
+                "app_truth": False,
+                "execution_truth": False,
+            },
+            "files": {
+                "baseline_snapshot": {
+                    **_source_file_metadata(source_paths["baseline_snapshot"]),
+                    "closed_day": str(baseline_snapshot.get("closed_day") or "").strip(),
+                    "strategy_version": str(baseline_snapshot.get("strategy_version") or "").strip(),
+                },
+                "baseline_timeseries": _source_file_metadata(
+                    source_paths["baseline_timeseries"],
+                    last_date=_normalize_iso_day_text(
+                        baseline_timeseries["date"].iloc[-1],
+                        context="baseline_timeseries.last_row.date",
+                    ),
+                    row_count=len(baseline_timeseries),
+                ),
+                "baseline_diagnostics": {
+                    **_source_file_metadata(source_paths["baseline_diagnostics"]),
+                    "closed_day": str(baseline_diagnostics.get("closed_day") or "").strip(),
+                },
+                "etf_panel": _source_file_metadata(
+                    source_paths["etf_panel"],
+                    last_date=_normalize_iso_day_text(
+                        pd.Timestamp(etf_df.index[-1]).strftime("%Y-%m-%d"),
+                        context="etf_panel.last_row.date",
+                    ),
+                    row_count=len(etf_df),
+                ),
+                "btc_ohlcv": _source_file_metadata(
+                    source_paths["btc_ohlcv"],
+                    last_date=_normalize_iso_day_text(
+                        pd.Timestamp(btc_df.index[-1]).strftime("%Y-%m-%d"),
+                        context="btc_ohlcv.last_row.date",
+                    ),
+                    row_count=len(btc_df),
+                ),
+                "dev_only_script": _source_file_metadata(source_paths["dev_only_script"]),
+                "compiled_probe_helper": _source_file_metadata(source_paths["compiled_probe_helper"]),
+                "compiled_cooldown_helper": _source_file_metadata(source_paths["compiled_cooldown_helper"]),
+                "project_truth": _source_file_metadata(source_paths["project_truth"]),
+                "export_contract": _source_file_metadata(source_paths["export_contract"]),
+            },
+            "cost_model": {
+                **inputs["cost_config_meta"],
+                "flow_3d_floor_usd": FLOW_3D_FLOOR_USD,
+                "btc_ema_days": BTC_EMA_DAYS,
+                "cooldown_days": COOLDOWN_DAYS,
+            },
+            "hard_invalidation_rule": dict(inputs["hard_invalidation_meta"]),
+        }
+
+    def build_snapshot_metrics(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        candidate_full = _period_metrics(
+            export_df=inputs["probe_export_standard"],
+            state_series=inputs["enriched"]["probe_state"],
+            early_risk_series=_to_bool_series(inputs["enriched"]["early_risk_active"]),
+            cooldown_blocked_entry_series=_to_bool_series(inputs["enriched"]["cooldown_blocked_entry"]),
+        )
+        since2025_enriched = inputs["enriched"].loc[inputs["enriched"].index >= pd.Timestamp("2025-01-01")].copy()
+        since2025_export = inputs["probe_export_standard"].loc[
+            inputs["probe_export_standard"].index >= pd.Timestamp("2025-01-01")
+        ].copy()
+        since2025_metrics = _period_metrics(
+            export_df=since2025_export,
+            state_series=since2025_enriched["probe_state"],
+            early_risk_series=_to_bool_series(since2025_enriched["early_risk_active"]),
+            cooldown_blocked_entry_series=_to_bool_series(since2025_enriched["cooldown_blocked_entry"]),
+        )
+        sharpe = _annualized_sharpe_from_daily_returns(inputs["probe_export_standard"]["net_return"])
+        sortino = _annualized_sortino_from_daily_returns(inputs["probe_export_standard"]["net_return"])
+        if sharpe is None or sortino is None:
+            raise ValueError("Unable to compute staged candidate Sharpe/Sortino from probe export.")
+        return {
+            "gross_total_return_pct": candidate_full["gross_total_return_pct"],
+            "net_total_return_pct": candidate_full["net_total_return_pct"],
+            "gross_cagr_pct": candidate_full["gross_cagr_pct"],
+            "net_cagr_pct": candidate_full["net_cagr_pct"],
+            "gross_max_drawdown_pct": candidate_full["gross_max_drawdown_pct"],
+            "net_max_drawdown_pct": candidate_full["net_max_drawdown_pct"],
+            "since2025_gross_cagr_pct": since2025_metrics["gross_cagr_pct"],
+            "since2025_net_cagr_pct": since2025_metrics["net_cagr_pct"],
+            "trading_fees_total_pct": candidate_full["trading_fees_total_pct"],
+            "funding_total_pct": candidate_full["funding_total_pct"],
+            "borrow_cost_total_pct": candidate_full["borrow_cost_total_pct"],
+            "slippage_cost_total_pct": candidate_full["slippage_cost_total_pct"],
+            "total_cost_pct": candidate_full["total_cost_pct"],
+            "cash_days_pct": candidate_full["cash_days_pct"],
+            "exposure_days": candidate_full["exposure_days"],
+            "switch_count": candidate_full["switch_count"],
+            "trade_count": candidate_full["trade_count"],
+            "turnover_total": candidate_full["turnover_total"],
+            "early_risk_days": candidate_full["early_risk_days"],
+            "cooldown_blocked_entry_days": candidate_full["cooldown_blocked_entry_days"],
+            "sharpe": round(float(sharpe), 6),
+            "sortino": round(float(sortino), 6),
+        }
+
+    def build_decision_context(self, timeseries: pd.DataFrame) -> dict[str, Any]:
+        current_row = timeseries.iloc[-1]
+        dates = pd.to_datetime(timeseries["date"], errors="coerce")
+        current_cash_streak_days = _consecutive_tail_length(timeseries["cash_day"]) if bool(current_row["cash_day"]) else 0
+        latest_rebalance_rows = timeseries.loc[timeseries["is_rebalance_day"]]
+        latest_rebalance_date = None if latest_rebalance_rows.empty else str(latest_rebalance_rows.iloc[-1]["date"])
+        return {
+            "current_reason_code": str(current_row["reason_code"]),
+            "current_reason_text": build_candidate_reason_text(current_row),
+            "current_regime_duration_days": int(_consecutive_tail_length(timeseries["regime"])),
+            "current_cash_streak_days": int(current_cash_streak_days),
+            "days_since_last_trade": _days_since_last_true(timeseries["is_rebalance_day"], dates),
+            "days_since_last_early_risk": _days_since_last_true(timeseries["early_risk_active"], dates),
+            "latest_rebalance_date": latest_rebalance_date,
+            "latest_rebalance_reason": None
+            if latest_rebalance_rows.empty
+            else str(latest_rebalance_rows.iloc[-1]["reason_code"]),
+            "current_drawdown_pct": round(float(current_row["drawdown_pct"]), 6),
+        }
+
+    def build_diagnostics_payload(
+        self,
+        *,
+        generated_at_utc: str,
+        inputs: dict[str, Any],
+        timeseries: pd.DataFrame,
+        compare_payload: dict[str, Any],
+        validation: dict[str, Any],
+    ) -> dict[str, Any]:
+        current_row = timeseries.iloc[-1]
+        recent_activation_windows = inputs["activation_windows"][-5:]
+        recent_rebalance_rows = timeseries.loc[timeseries["is_rebalance_day"]].tail(5)
+        metrics = self.build_snapshot_metrics(inputs)
+        return {
+            "artifact_type": "staged_strategy_candidate_diagnostics",
+            "schema_version": DIAGNOSTICS_SCHEMA_VERSION,
+            "generated_at_utc": generated_at_utc,
+            "candidate_id": self.candidate_id,
+            "base_strategy_version": self.base_strategy_version,
+            "closed_day": inputs["candidate_overlap_closed_day"],
+            "compare_universe": {
+                "start_date": str(timeseries["date"].iloc[0]),
+                "end_date": str(timeseries["date"].iloc[-1]),
+                "row_count": int(len(timeseries)),
+                "baseline_closed_day": inputs["baseline_closed_day"],
+            },
+            "latest_state_explanation": build_candidate_reason_text(current_row),
+            "baseline_separation_explanation": (
+                "The staged candidate is a hypothetical bundle only. Baseline authorized/live truth remains on "
+                f"{EXPECTED_LIVE_TRUTH}, and all baseline series are preserved under explicit baseline_* columns."
+            ),
+            "current_candidate_trade_state": {
+                "candidate_asset": str(current_row["candidate_asset"]),
+                "selected_asset": str(current_row["selected_asset"]),
+                "actual_held_asset": str(current_row["actual_held_asset"]),
+                "effective_market_exposure": round(float(current_row["effective_market_exposure"]), 6),
+                "model_candidate_exposure": round(float(current_row["model_candidate_exposure"]), 6),
+                "trend_permission_active": bool(current_row["trend_permission_active"]),
+                "execution_target_asset": str(current_row["execution_target_asset"]),
+                "execution_target_exposure": round(float(current_row["execution_target_exposure"]), 6),
+                "reason_code": str(current_row["reason_code"]),
+                "reason_text": build_candidate_reason_text(current_row),
+                "early_risk_active": bool(current_row["early_risk_active"]),
+                "cooldown_active": bool(current_row["cooldown_active"]),
+                "cooldown_blocked_entry": bool(current_row["cooldown_blocked_entry"]),
+            },
+            "current_baseline_trade_state": {
+                "candidate_asset": str(current_row["baseline_candidate_asset"]),
+                "actual_held_asset": str(current_row["baseline_actual_held_asset"]),
+                "effective_market_exposure": round(float(current_row["baseline_effective_market_exposure"]), 6),
+                "trend_permission_active": bool(current_row["baseline_trend_permission_active"]),
+                "reason_code": str(current_row["baseline_reason_code"]),
+            },
+            "metrics": metrics,
+            "window_counts": inputs["window_counts"],
+            "blocker_rows": inputs["blocker_rows"],
+            "recent_activation_windows": recent_activation_windows,
+            "handoff_row_audit": dev_only_rebuild.build_handoff_row_audit(inputs["candidate_source_frame"]).to_dict(
+                orient="records"
+            ),
+            "recent_rebalance_events": [
+                {
+                    "date": str(row["date"]),
+                    "actual_held_asset": str(row["actual_held_asset"]),
+                    "effective_market_exposure": round(float(row["effective_market_exposure"]), 6),
+                    "reason_code": str(row["reason_code"]),
+                    "reason_text": build_candidate_reason_text(row),
+                }
+                for _, row in recent_rebalance_rows.iterrows()
+            ],
+            "lineage": {
+                "dev_only_source_lineage": True,
+                "non_authoritative_research_input": True,
+                "official_truth": False,
+                "live_truth": False,
+                "app_truth": False,
+                "execution_truth": False,
+            },
+            "compare_summary": compare_payload["windows"],
+            "validation": {
+                "status": validation["status"],
+                "errors": list(validation["errors"]),
+                "warnings": list(validation["warnings"]),
+            },
+        }

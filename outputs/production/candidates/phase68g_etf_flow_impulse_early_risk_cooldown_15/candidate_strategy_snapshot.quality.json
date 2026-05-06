@@ -1,0 +1,33 @@
+{
+  "artifact_type": "staged_strategy_candidate_snapshot_quality",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-06T17:13:09Z",
+  "status": "passed",
+  "error_count": 0,
+  "warning_count": 0,
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "candidate_truth_flags_staged_only": true,
+    "candidate_date_universe_matches_baseline_compare_universe": true,
+    "candidate_rows_match_rebuilt_adapter": true,
+    "etf_session_d_used_only_on_btc_utc_day_d_plus_1": true,
+    "early_risk_modifies_only_baseline_cash_rows": true,
+    "baseline_full_risk_rows_pass_through_unchanged": true,
+    "fees_and_costs_included_in_candidate_net_returns": true,
+    "fees_and_costs_included_in_baseline_net_returns": true,
+    "dev_only_non_authoritative_lineage_preserved": true,
+    "compare_metrics_match_rebuilt_windows": true,
+    "current_production_outputs_and_truth_files_unchanged": true,
+    "live_app_execution_truth_unchanged": true,
+    "baseline_source_is_production_core_authorized_timeseries": true,
+    "candidate_remains_staged_only": true
+  },
+  "validated_paths": {
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_etf_flow_impulse_early_risk_cooldown_15\\candidate_strategy_snapshot.json",
+    "timeseries_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_etf_flow_impulse_early_risk_cooldown_15\\candidate_strategy_timeseries.csv",
+    "diagnostics_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_etf_flow_impulse_early_risk_cooldown_15\\candidate_strategy_diagnostics.json",
+    "compare_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_etf_flow_impulse_early_risk_cooldown_15\\compare_vs_current_production_core.json",
+    "compare_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_etf_flow_impulse_early_risk_cooldown_15\\compare_vs_current_production_core.csv"
+  }
+}

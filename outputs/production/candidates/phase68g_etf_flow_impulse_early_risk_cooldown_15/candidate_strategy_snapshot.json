@@ -1,0 +1,216 @@
+{
+  "artifact_type": "staged_strategy_candidate_snapshot",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-06T17:07:43Z",
+  "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+  "base_strategy_version": "phase68g_66g_1p25x_candidate",
+  "status": "staged_candidate",
+  "live_truth": false,
+  "app_truth": false,
+  "execution_truth": false,
+  "dev_only_source_lineage": true,
+  "non_authoritative_research_input": true,
+  "official_truth": false,
+  "closed_day": "2026-05-02",
+  "compare_universe": {
+    "start_date": "2024-01-12",
+    "end_date": "2026-05-02",
+    "row_count": 579,
+    "baseline_closed_day": "2026-05-05",
+    "baseline_source_path": "outputs/production/current_strategy_timeseries.csv"
+  },
+  "current_state": {
+    "candidate_asset": "BTC",
+    "selected_asset": "BTC",
+    "actual_held_asset": "CASH",
+    "authorized_tradable_asset": "CASH",
+    "effective_market_exposure": 0.0,
+    "model_candidate_exposure": 0.5,
+    "trend_permission_active": false,
+    "execution_target_asset": "CASH",
+    "execution_target_exposure": 0.0,
+    "reason_code": "early_risk_cooldown_block",
+    "reason_text": "ETF-flow EARLY_RISK permission is active, but the staged candidate stays in CASH because the 15-day cooldown still blocks a new entry.",
+    "early_risk_active": false,
+    "cooldown_active": true,
+    "cooldown_blocked_entry": true
+  },
+  "baseline_current_state": {
+    "candidate_asset": "BTC",
+    "selected_asset": "BTC",
+    "actual_held_asset": "CASH",
+    "effective_market_exposure": 0.0,
+    "trend_permission_active": false,
+    "reason_code": "candidate_wait_trend_confirmation"
+  },
+  "metrics": {
+    "gross_total_return_pct": 1422.1093,
+    "net_total_return_pct": 1347.035817,
+    "gross_cagr_pct": 226.243171,
+    "net_cagr_pct": 219.154709,
+    "gross_max_drawdown_pct": -8.57536,
+    "net_max_drawdown_pct": -9.386068,
+    "since2025_gross_cagr_pct": 221.804178,
+    "since2025_net_cagr_pct": 215.447851,
+    "trading_fees_total_pct": 2.4975,
+    "funding_total_pct": 0.0,
+    "borrow_cost_total_pct": 0.0,
+    "slippage_cost_total_pct": 2.6,
+    "total_cost_pct": 5.0975,
+    "cash_days_pct": 65.97582,
+    "exposure_days": 197,
+    "switch_count": 60,
+    "trade_count": 60,
+    "turnover_total": 55.5,
+    "early_risk_days": 77,
+    "cooldown_blocked_entry_days": 21,
+    "sharpe": 2.228568,
+    "sortino": 7.97119
+  },
+  "decision_context": {
+    "current_reason_code": "early_risk_cooldown_block",
+    "current_reason_text": "ETF-flow EARLY_RISK permission is active, but the staged candidate stays in CASH because the 15-day cooldown still blocks a new entry.",
+    "current_regime_duration_days": 5,
+    "current_cash_streak_days": 5,
+    "days_since_last_trade": 4,
+    "days_since_last_early_risk": 7,
+    "latest_rebalance_date": "2026-04-28",
+    "latest_rebalance_reason": "candidate_wait_trend_confirmation",
+    "current_drawdown_pct": -0.647106
+  },
+  "source_inputs": {
+    "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter",
+    "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "base_strategy_version": "phase68g_66g_1p25x_candidate",
+    "candidate_compare_closed_day": "2026-05-02",
+    "baseline_closed_day": "2026-05-05",
+    "compare_windows": [
+      {
+        "name": "full_etf_overlap",
+        "start_date": null
+      },
+      {
+        "name": "since2025",
+        "start_date": "2025-01-01"
+      }
+    ],
+    "lineage": {
+      "dev_only_source_lineage": true,
+      "non_authoritative_research_input": true,
+      "official_truth": false,
+      "live_truth": false,
+      "app_truth": false,
+      "execution_truth": false
+    },
+    "files": {
+      "baseline_snapshot": {
+        "path": "outputs/production/current_strategy_snapshot.json",
+        "sha256": "5d3261c5948021628a63bfe1bc3c0cf77bd4cfdc2a8eaf202a46455bb1e2e48d",
+        "size_bytes": 6162,
+        "modified_utc": "2026-05-06T12:48:20Z",
+        "closed_day": "2026-05-05",
+        "strategy_version": "phase68g_66g_1p25x_candidate"
+      },
+      "baseline_timeseries": {
+        "path": "outputs/production/current_strategy_timeseries.csv",
+        "sha256": "e39b3fce96b4d07770410287e0ad78059c2e9496c7ec770d9b042a2e9582eac4",
+        "size_bytes": 1752937,
+        "modified_utc": "2026-05-06T09:23:48Z",
+        "last_date": "2026-05-05",
+        "row_count": 2923
+      },
+      "baseline_diagnostics": {
+        "path": "outputs/production/current_strategy_diagnostics.json",
+        "sha256": "4c395be927c844ad699ed6f3c002a3b660e80ff62fe87c42de19887633f413f2",
+        "size_bytes": 9033,
+        "modified_utc": "2026-05-06T12:48:20Z",
+        "closed_day": "2026-05-05"
+      },
+      "etf_panel": {
+        "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+        "sha256": "fddc900aee0a0872c28b93c4d06e56e34fe00c6a6a5c0884a083582059372315",
+        "size_bytes": 219543,
+        "modified_utc": "2026-05-05T11:43:47Z",
+        "last_date": "2026-05-05",
+        "row_count": 580
+      },
+      "btc_ohlcv": {
+        "path": "data/ohlcv/BTCUSDT_1d.csv",
+        "sha256": "ef60cbdf790d1c8feca224cde78b3b7295522d62502e96f39b1a84362a18ec57",
+        "size_bytes": 274283,
+        "modified_utc": "2026-05-05T09:29:40Z",
+        "last_date": "2026-05-04",
+        "row_count": 3183
+      },
+      "dev_only_script": {
+        "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+        "sha256": "1f46871a43b733c12c34f98e20c1065eec72710e6840e523d5d0104674476c2e",
+        "size_bytes": 61330,
+        "modified_utc": "2026-05-06T09:23:48Z"
+      },
+      "compiled_probe_helper": {
+        "path": "scripts/__pycache__/dev_only_phase68g_etf_flow_impulse_probe.cpython-312.pyc",
+        "sha256": "62a6fda788c8d85f222e8dea6b3c90a6a6b74dd2512021e11dd0c624c69e85b3",
+        "size_bytes": 57477,
+        "modified_utc": "2026-05-05T12:05:39Z"
+      },
+      "compiled_cooldown_helper": {
+        "path": "scripts/__pycache__/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-312.pyc",
+        "sha256": "4daf74bbcb4c7a2f765db3028869a60ce249420fcb3ee7e454aff794c15a26e7",
+        "size_bytes": 65500,
+        "modified_utc": "2026-05-05T13:14:53Z"
+      },
+      "project_truth": {
+        "path": "source_of_truth/project_truth.json",
+        "sha256": "84e76ac4a5589b45b5aa1fb962ce4d8c18929a00698cb57b45ec3aec13809a30",
+        "size_bytes": 26366,
+        "modified_utc": "2026-05-05T16:02:49Z"
+      },
+      "export_contract": {
+        "path": "source_of_truth/export_contract.json",
+        "sha256": "da3a43a2da6f3bb874f02ec9f5add17e6e5d38ec4f51f9038cdffaccf8b9c196",
+        "size_bytes": 22351,
+        "modified_utc": "2026-05-05T16:02:49Z"
+      }
+    },
+    "cost_model": {
+      "annual_borrow_cost_pct": 12.0,
+      "tradable_transition_slippage_bps": 10.0,
+      "taker_fee_bps": 4.5,
+      "maker_fee_bps": 1.5,
+      "fee_side_mode": "taker",
+      "source": "derived from outputs/production/current_strategy_timeseries.csv daily cost columns",
+      "flow_3d_floor_usd": 500000000.0,
+      "btc_ema_days": 10,
+      "cooldown_days": 15
+    },
+    "hard_invalidation_rule": {
+      "source_column": "stress_block_day",
+      "fallback_used": false,
+      "detail": "stress_block_day is present and is used directly as the hard invalidation / risk-off equivalent."
+    }
+  },
+  "validation": {
+    "status": "passed",
+    "errors": [],
+    "warnings": []
+  },
+  "provenance": {
+    "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter",
+    "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_staged_strategy_candidate.py --candidate phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "git_commit": "a94199513acd622f1dab8610591dabeb120f2011",
+    "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
+    "source_paths": [
+      "outputs/production/current_strategy_snapshot.json",
+      "outputs/production/current_strategy_timeseries.csv",
+      "outputs/production/current_strategy_diagnostics.json",
+      "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+      "data/ohlcv/BTCUSDT_1d.csv",
+      "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+      "scripts/__pycache__/dev_only_phase68g_etf_flow_impulse_probe.cpython-312.pyc",
+      "scripts/__pycache__/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-312.pyc",
+      "source_of_truth/project_truth.json",
+      "source_of_truth/export_contract.json"
+    ]
+  }
+}
