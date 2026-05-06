@@ -1,7 +1,7 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-05-05T15:04:22Z",
-  "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::target_CASH::candidate_BTC",
+  "generated_at_utc": "2026-05-06T21:28:47Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-05-05::target_CASH::candidate_BTC",
   "target_asset": "CASH",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
@@ -11,6 +11,7 @@
   "status": "blocked",
   "block_reasons": [
     "no_market_entry_authorized",
+    "approval_source_model_mismatch",
     "production_snapshot_target_exposure_zero",
     "production_snapshot_trend_permission_inactive",
     "production_snapshot_allow_live_order_candidate=false"
@@ -34,7 +35,7 @@
     "approval_source_readable": true,
     "approval_gate_status": "approved_and_applied",
     "approval_status_present": true,
-    "approval_source_model_match": true,
+    "approval_source_model_match": false,
     "approval_source_day_match": true,
     "approval_status_allowed": true,
     "leverage_live_truth_allowed": false,
@@ -57,16 +58,16 @@
     "intent_allow_live_order_candidate_matches_snapshot": true
   },
   "production_signal_context": {
-    "strategy_version": "phase68g_66g_1p25x_candidate",
-    "closed_day": "2026-05-04",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "closed_day": "2026-05-05",
     "validation_status": "passed",
     "candidate_asset": "BTC",
     "current_asset": "CASH",
-    "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-04::target_CASH::candidate_BTC",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-05-05::target_CASH::candidate_BTC",
     "target_asset": "CASH",
     "target_exposure": 0.0,
     "effective_market_exposure": 0.0,
-    "model_candidate_exposure": 1.0,
+    "model_candidate_exposure": 0.5,
     "trend_permission_active": false,
     "allow_live_order_candidate": false
   },

@@ -1,6 +1,6 @@
 {
   "intent_ok": true,
-  "strategy_model": "phase68g_66g_1p25x_candidate",
+  "strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "signal_id_present": true,
   "target_asset_present": true,
   "target_regime_present": true,
