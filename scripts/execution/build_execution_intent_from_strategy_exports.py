@@ -363,11 +363,16 @@ def validate_authority_alignment(
     attempt_run_id = str(latest_attempt_status.get("run_id") or "").strip() or None
 
     if same_run_active and attempt_status == "in_progress":
-        if attempt_currentness_status and attempt_currentness_status != "current":
+        if attempt_currentness_status not in {"", "current", "refresh_in_progress"}:
             fail(
-                "Execution intent blocked: authority latest_attempt_status is not current "
-                f"during same-run in-progress validation "
+                "Execution intent blocked: authority latest_attempt_status has unsupported "
+                "currentness_status during same-run in-progress validation "
                 f"(currentness_status={attempt_currentness_status})"
+            )
+        if attempt_currentness_status == "":
+            fail(
+                "Execution intent blocked: authority latest_attempt_status currentness_status is missing "
+                f"during same-run in-progress validation "
             )
         if (
             attempt_target_closed_day is not None
