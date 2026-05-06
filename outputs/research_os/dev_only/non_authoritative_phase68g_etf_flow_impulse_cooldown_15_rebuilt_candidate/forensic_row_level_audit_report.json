@@ -1,0 +1,910 @@
+{
+  "generated_at_utc": "2026-05-05T20:46:51Z",
+  "repo": "marek3993/trendatlas-crypto",
+  "branch": "main",
+  "head_commit": "5422c97be961b271045c0a6f01052a95e3071b2c",
+  "verdict": "failed",
+  "files_read": [
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\README.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\master_state.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\chat_roles.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\current_issues.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\export_contract.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\canonical\\script_registry.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\canonical\\output_registry.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\canonical\\registry_workflow.md",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\dev_only\\contracts\\dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.contract.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\dev_only\\specs\\dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.spec.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\research_os\\dev_only\\manifests\\dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\summary.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\candidate_timeseries.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\compare.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\activation_windows.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\cost_metrics.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\blocker_counts.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\quality.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_timeseries.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_diagnostics.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_etf_flow_daily_panel\\btc_etf_flow_daily_panel.csv",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_etf_flow_daily_panel\\btc_etf_flow_daily_panel.manifest.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_btc_etf_flow_daily_panel\\btc_etf_flow_daily_panel.quality.json",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\__pycache__\\dev_only_phase68g_etf_flow_impulse_probe.cpython-312.pyc",
+    "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\__pycache__\\dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-312.pyc"
+  ],
+  "row_counts": {
+    "candidate_timeseries": 579,
+    "candidate_since2025": 335,
+    "candidate_early_risk_rows": 77,
+    "candidate_baseline_full_risk_rows": 120,
+    "candidate_stress_block_rows": 60,
+    "candidate_cooldown_blocked_entry_rows": 21,
+    "compare_rows": 26,
+    "cost_metrics_rows": 4,
+    "activation_windows_rows": 14,
+    "blocker_counts_rows": 2,
+    "production_current_strategy_timeseries_rows": 2922,
+    "etf_panel_rows": 580,
+    "strict_full_risk_handoff_net_diff_rows": 2,
+    "full_risk_equity_curve_diff_rows": 120,
+    "profitable_false_start_windows_full_overlap": 6,
+    "profitable_false_start_windows_since2025": 4
+  },
+  "date_ranges": {
+    "candidate_timeseries": {
+      "start": "2024-01-12",
+      "end": "2026-05-02"
+    },
+    "candidate_since2025": {
+      "start": "2025-01-01",
+      "end": "2026-05-02"
+    },
+    "production_current_strategy_timeseries": {
+      "start": "2018-05-05",
+      "end": "2026-05-04"
+    },
+    "etf_panel": {
+      "start": "2024-01-12",
+      "end": "2026-05-05"
+    }
+  },
+  "checks_passed": [
+    {
+      "id": 1,
+      "name": "candidate joins ETF panel on causal BTC day, not raw U.S. session date",
+      "status": "passed",
+      "detail": "Helper indexes ETF rows on panel date; panel manifest defines panel date == causal_available_for_btc_utc_day and candidate rows satisfy date == causal_available_for_btc_utc_day == us_trading_session_date + 1."
+    },
+    {
+      "id": 2,
+      "name": "ETF session D is used only on BTC UTC day D+1",
+      "status": "passed",
+      "detail": "All 579 candidate rows satisfy us_trading_session_date + 1 day == date."
+    },
+    {
+      "id": 3,
+      "name": "No candidate decision uses same-day ETF flow",
+      "status": "passed",
+      "detail": "All candidate rows have date != us_trading_session_date; no same-day ETF session use was observed."
+    },
+    {
+      "id": 4,
+      "name": "Production Core baseline reconstruction uses outputs/production/current_strategy_timeseries.csv authorized fields",
+      "status": "passed",
+      "detail": "All 62 shared Production Core fields matched exactly on the 579 overlap dates; no overlap-date field mismatches found: []."
+    },
+    {
+      "id": 5,
+      "name": "Candidate does not use legacy app_exports or phase paper as hidden baseline truth",
+      "status": "passed",
+      "detail": "Wrapper script path constants reference Production Core current_strategy_* plus ETF panel and BTC OHLCV only; no direct app_exports or phase63 path tokens were found in the wrapper."
+    },
+    {
+      "id": 6,
+      "name": "EARLY_RISK rows occur only when baseline effective_market_exposure == 0 and current_asset == CASH",
+      "status": "passed",
+      "detail": "All 77 EARLY_RISK rows satisfied baseline_cash == true, current_asset == CASH, and effective_market_exposure == 0."
+    },
+    {
+      "id": 8,
+      "name": "stress_block_day hard invalidation prevents EARLY_RISK",
+      "status": "passed",
+      "detail": "No overlap row had stress_block_day == true together with EARLY_RISK active; stress rows=60, conflicting rows=0."
+    },
+    {
+      "id": 9,
+      "name": "Recomputed fees/costs from candidate_timeseries match cost_metrics.csv",
+      "status": "passed",
+      "detail": "Trading fees, slippage, total_cost_pct, switch_count, exposure_days, and turnover_pressure matched exactly for all reported baseline/candidate period rows."
+    },
+    {
+      "id": 10,
+      "name": "Recomputed compare.csv metrics for full_etf_overlap and since2025 match reported values",
+      "status": "passed",
+      "detail": "All 26 compare rows matched exactly across both periods."
+    },
+    {
+      "id": 11,
+      "name": "since2025 starts exactly at 2025-01-01 and date universe is aligned",
+      "status": "passed",
+      "detail": "since2025 overlap subset starts on 2025-01-01 with 335 rows; reported since2025 period_start in cost_metrics.csv is 2025-01-01 for both model rows."
+    },
+    {
+      "id": 12,
+      "name": "No duplicate dates",
+      "status": "passed",
+      "detail": "duplicate date counts: candidate=0, production=0, etf_panel=0."
+    },
+    {
+      "id": 13,
+      "name": "No source_of_truth mutation",
+      "status": "passed",
+      "detail": "Pre-audit git status was clean, the candidate artifact namespace is under outputs/research_os/dev_only, and no source_of_truth path is referenced as an output target."
+    },
+    {
+      "id": 14,
+      "name": "No app/live/runtime mutation",
+      "status": "passed",
+      "detail": "Pre-audit git status was clean and no app/live/runtime output path is referenced as a write target by the candidate wrapper; this audit only writes the optional forensic report under outputs/research_os/dev_only."
+    },
+    {
+      "id": 15,
+      "name": "activation_windows false_start semantics are consistent",
+      "status": "passed",
+      "detail": "All false_start windows have no baseline_handoff_date and 0 lead days; 6 profitable false_start windows exist and must remain tactical overlays, not successful handoffs."
+    }
+  ],
+  "checks_failed": [
+    {
+      "id": 7,
+      "name": "Baseline non-cash / risk-on rows pass through unchanged",
+      "status": "failed",
+      "detail": "Behavior-level pass-through (state/asset/leverage/gross return) held on all 120 full-risk rows, but strict row-level pass-through failed: 2 baseline handoff rows had higher probe turnover/fees and different probe net return, and probe equity stayed offset on 120 full-risk rows because pre-handoff EARLY_RISK P&L carried forward."
+    }
+  ],
+  "checks_blocked": [],
+  "recomputed_vs_reported_cost_metrics": [
+    {
+      "period": "full_etf_overlap",
+      "model_id": "phase68g_66g_1p25x_candidate",
+      "metrics": {
+        "trading_fees_total_pct": {
+          "recomputed": 1.9125,
+          "reported": 1.9125,
+          "ok": true
+        },
+        "tradable_slippage_cost_total_pct": {
+          "recomputed": 0.0,
+          "reported": 0.0,
+          "ok": true
+        },
+        "total_cost_pct": {
+          "recomputed": 1.9125,
+          "reported": 1.9125,
+          "ok": true
+        },
+        "switch_count": {
+          "recomputed": 34,
+          "reported": 34,
+          "ok": true
+        },
+        "exposure_days": {
+          "recomputed": 120,
+          "reported": 120,
+          "ok": true
+        },
+        "turnover_pressure": {
+          "recomputed": 42.5,
+          "reported": 42.5,
+          "ok": true
+        }
+      }
+    },
+    {
+      "period": "full_etf_overlap",
+      "model_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
+      "metrics": {
+        "trading_fees_total_pct": {
+          "recomputed": 2.5425,
+          "reported": 2.5425,
+          "ok": true
+        },
+        "tradable_slippage_cost_total_pct": {
+          "recomputed": 2.6,
+          "reported": 2.6,
+          "ok": true
+        },
+        "total_cost_pct": {
+          "recomputed": 5.1425,
+          "reported": 5.1425,
+          "ok": true
+        },
+        "switch_count": {
+          "recomputed": 60,
+          "reported": 60,
+          "ok": true
+        },
+        "exposure_days": {
+          "recomputed": 197,
+          "reported": 197,
+          "ok": true
+        },
+        "turnover_pressure": {
+          "recomputed": 56.5,
+          "reported": 56.5,
+          "ok": true
+        }
+      }
+    },
+    {
+      "period": "since2025",
+      "model_id": "phase68g_66g_1p25x_candidate",
+      "metrics": {
+        "trading_fees_total_pct": {
+          "recomputed": 0.9675,
+          "reported": 0.9675,
+          "ok": true
+        },
+        "tradable_slippage_cost_total_pct": {
+          "recomputed": 0.0,
+          "reported": 0.0,
+          "ok": true
+        },
+        "total_cost_pct": {
+          "recomputed": 0.9675,
+          "reported": 0.9675,
+          "ok": true
+        },
+        "switch_count": {
+          "recomputed": 18,
+          "reported": 18,
+          "ok": true
+        },
+        "exposure_days": {
+          "recomputed": 56,
+          "reported": 56,
+          "ok": true
+        },
+        "turnover_pressure": {
+          "recomputed": 21.5,
+          "reported": 21.5,
+          "ok": true
+        }
+      }
+    },
+    {
+      "period": "since2025",
+      "model_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
+      "metrics": {
+        "trading_fees_total_pct": {
+          "recomputed": 1.2825,
+          "reported": 1.2825,
+          "ok": true
+        },
+        "tradable_slippage_cost_total_pct": {
+          "recomputed": 1.4,
+          "reported": 1.4,
+          "ok": true
+        },
+        "total_cost_pct": {
+          "recomputed": 2.6825,
+          "reported": 2.6825,
+          "ok": true
+        },
+        "switch_count": {
+          "recomputed": 32,
+          "reported": 32,
+          "ok": true
+        },
+        "exposure_days": {
+          "recomputed": 101,
+          "reported": 101,
+          "ok": true
+        },
+        "turnover_pressure": {
+          "recomputed": 28.5,
+          "reported": 28.5,
+          "ok": true
+        }
+      }
+    }
+  ],
+  "recomputed_vs_reported_compare_metrics": [
+    {
+      "period": "full_etf_overlap",
+      "metric": "net_total_return_pct",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "net_total_return_pct",
+        "baseline_value": 1191.577417,
+        "candidate_value": 1346.37741,
+        "delta_candidate_minus_baseline": 154.799993
+      },
+      "reported": {
+        "baseline_value": 1191.577417,
+        "candidate_value": 1346.37741,
+        "delta_candidate_minus_baseline": 154.799993
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "net_cagr_pct",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "net_cagr_pct",
+        "baseline_value": 402.258176,
+        "candidate_value": 439.435245,
+        "delta_candidate_minus_baseline": 37.177069
+      },
+      "reported": {
+        "baseline_value": 402.258176,
+        "candidate_value": 439.435245,
+        "delta_candidate_minus_baseline": 37.177069
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "net_max_drawdown_pct",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "net_max_drawdown_pct",
+        "baseline_value": -11.017632,
+        "candidate_value": -9.407045,
+        "delta_candidate_minus_baseline": 1.610587
+      },
+      "reported": {
+        "baseline_value": -11.017632,
+        "candidate_value": -9.407045,
+        "delta_candidate_minus_baseline": 1.610587
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "switch_count",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "switch_count",
+        "baseline_value": 34,
+        "candidate_value": 60,
+        "delta_candidate_minus_baseline": 26.0
+      },
+      "reported": {
+        "baseline_value": 34.0,
+        "candidate_value": 60.0,
+        "delta_candidate_minus_baseline": 26.0
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "turnover_pressure",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "turnover_pressure",
+        "baseline_value": 42.5,
+        "candidate_value": 56.5,
+        "delta_candidate_minus_baseline": 14.0
+      },
+      "reported": {
+        "baseline_value": 42.5,
+        "candidate_value": 56.5,
+        "delta_candidate_minus_baseline": 14.0
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "exposure_days",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "exposure_days",
+        "baseline_value": 120,
+        "candidate_value": 197,
+        "delta_candidate_minus_baseline": 77.0
+      },
+      "reported": {
+        "baseline_value": 120.0,
+        "candidate_value": 197.0,
+        "delta_candidate_minus_baseline": 77.0
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "total_cost_pct",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "total_cost_pct",
+        "baseline_value": 1.9125,
+        "candidate_value": 5.1425,
+        "delta_candidate_minus_baseline": 3.23
+      },
+      "reported": {
+        "baseline_value": 1.9125,
+        "candidate_value": 5.1425,
+        "delta_candidate_minus_baseline": 3.23
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "trade_days",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "trade_days",
+        "baseline_value": 46,
+        "candidate_value": 72,
+        "delta_candidate_minus_baseline": 26.0
+      },
+      "reported": {
+        "baseline_value": 46.0,
+        "candidate_value": 72.0,
+        "delta_candidate_minus_baseline": 26.0
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "early_risk_days",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "early_risk_days",
+        "baseline_value": 0,
+        "candidate_value": 77,
+        "delta_candidate_minus_baseline": 77.0
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 77.0,
+        "delta_candidate_minus_baseline": 77.0
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "activation_windows_count",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "activation_windows_count",
+        "baseline_value": 0,
+        "candidate_value": 14,
+        "delta_candidate_minus_baseline": 14
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 14.0,
+        "delta_candidate_minus_baseline": 14.0
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "false_start_count",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "false_start_count",
+        "baseline_value": 0,
+        "candidate_value": 12,
+        "delta_candidate_minus_baseline": 12
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 12.0,
+        "delta_candidate_minus_baseline": 12.0
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "successful_handoff_count",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "successful_handoff_count",
+        "baseline_value": 0,
+        "candidate_value": 2,
+        "delta_candidate_minus_baseline": 2
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 2.0,
+        "delta_candidate_minus_baseline": 2.0
+      },
+      "ok": true
+    },
+    {
+      "period": "full_etf_overlap",
+      "metric": "cooldown_blocked_entry_days",
+      "recomputed": {
+        "period": "full_etf_overlap",
+        "metric": "cooldown_blocked_entry_days",
+        "baseline_value": 0,
+        "candidate_value": 21,
+        "delta_candidate_minus_baseline": 21
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 21.0,
+        "delta_candidate_minus_baseline": 21.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "net_total_return_pct",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "net_total_return_pct",
+        "baseline_value": 319.368503,
+        "candidate_value": 361.180329,
+        "delta_candidate_minus_baseline": 41.811826
+      },
+      "reported": {
+        "baseline_value": 319.368503,
+        "candidate_value": 361.180329,
+        "delta_candidate_minus_baseline": 41.811826
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "net_cagr_pct",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "net_cagr_pct",
+        "baseline_value": 377.326209,
+        "candidate_value": 429.440689,
+        "delta_candidate_minus_baseline": 52.11448
+      },
+      "reported": {
+        "baseline_value": 377.326209,
+        "candidate_value": 429.440689,
+        "delta_candidate_minus_baseline": 52.11448
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "net_max_drawdown_pct",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "net_max_drawdown_pct",
+        "baseline_value": -8.626787,
+        "candidate_value": -8.626787,
+        "delta_candidate_minus_baseline": 0.0
+      },
+      "reported": {
+        "baseline_value": -8.626787,
+        "candidate_value": -8.626787,
+        "delta_candidate_minus_baseline": 0.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "switch_count",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "switch_count",
+        "baseline_value": 18,
+        "candidate_value": 32,
+        "delta_candidate_minus_baseline": 14.0
+      },
+      "reported": {
+        "baseline_value": 18.0,
+        "candidate_value": 32.0,
+        "delta_candidate_minus_baseline": 14.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "turnover_pressure",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "turnover_pressure",
+        "baseline_value": 21.5,
+        "candidate_value": 28.5,
+        "delta_candidate_minus_baseline": 7.0
+      },
+      "reported": {
+        "baseline_value": 21.5,
+        "candidate_value": 28.5,
+        "delta_candidate_minus_baseline": 7.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "exposure_days",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "exposure_days",
+        "baseline_value": 56,
+        "candidate_value": 101,
+        "delta_candidate_minus_baseline": 45.0
+      },
+      "reported": {
+        "baseline_value": 56.0,
+        "candidate_value": 101.0,
+        "delta_candidate_minus_baseline": 45.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "total_cost_pct",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "total_cost_pct",
+        "baseline_value": 0.9675,
+        "candidate_value": 2.6825,
+        "delta_candidate_minus_baseline": 1.715
+      },
+      "reported": {
+        "baseline_value": 0.9675,
+        "candidate_value": 2.6825,
+        "delta_candidate_minus_baseline": 1.715
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "trade_days",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "trade_days",
+        "baseline_value": 18,
+        "candidate_value": 32,
+        "delta_candidate_minus_baseline": 14.0
+      },
+      "reported": {
+        "baseline_value": 18.0,
+        "candidate_value": 32.0,
+        "delta_candidate_minus_baseline": 14.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "early_risk_days",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "early_risk_days",
+        "baseline_value": 0,
+        "candidate_value": 45,
+        "delta_candidate_minus_baseline": 45.0
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 45.0,
+        "delta_candidate_minus_baseline": 45.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "activation_windows_count",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "activation_windows_count",
+        "baseline_value": 0,
+        "candidate_value": 7,
+        "delta_candidate_minus_baseline": 7
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 7.0,
+        "delta_candidate_minus_baseline": 7.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "false_start_count",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "false_start_count",
+        "baseline_value": 0,
+        "candidate_value": 7,
+        "delta_candidate_minus_baseline": 7
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 7.0,
+        "delta_candidate_minus_baseline": 7.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "successful_handoff_count",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "successful_handoff_count",
+        "baseline_value": 0,
+        "candidate_value": 0,
+        "delta_candidate_minus_baseline": 0
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 0.0,
+        "delta_candidate_minus_baseline": 0.0
+      },
+      "ok": true
+    },
+    {
+      "period": "since2025",
+      "metric": "cooldown_blocked_entry_days",
+      "recomputed": {
+        "period": "since2025",
+        "metric": "cooldown_blocked_entry_days",
+        "baseline_value": 0,
+        "candidate_value": 14,
+        "delta_candidate_minus_baseline": 14
+      },
+      "reported": {
+        "baseline_value": 0.0,
+        "candidate_value": 14.0,
+        "delta_candidate_minus_baseline": 14.0
+      },
+      "ok": true
+    }
+  ],
+  "failed_check_evidence": {
+    "full_risk_handoff_net_diff_rows": [
+      {
+        "date": "2024-02-02",
+        "baseline_handoff_day": true,
+        "current_asset": "BASE",
+        "effective_market_exposure": 1.25,
+        "probe_trading_turnover_notional": 1.75,
+        "baseline_trading_turnover_notional": 1.25,
+        "probe_trading_fees_daily": 0.0007875,
+        "baseline_trading_fees_daily": 0.0005625,
+        "probe_net_return": 0.0062386155309579,
+        "baseline_net_return": 0.0064636155309579,
+        "reason_code": "rebalance_to_base"
+      },
+      {
+        "date": "2024-10-22",
+        "baseline_handoff_day": true,
+        "current_asset": "DOGE",
+        "effective_market_exposure": 1.0,
+        "probe_trading_turnover_notional": 1.5,
+        "baseline_trading_turnover_notional": 1.0,
+        "probe_trading_fees_daily": 0.000675,
+        "baseline_trading_fees_daily": 0.00045,
+        "probe_net_return": -0.0283077695413099,
+        "baseline_net_return": -0.0280827695413099,
+        "reason_code": "rebalance_to_doge"
+      }
+    ],
+    "full_risk_behavior_pass_through_ok": true,
+    "full_risk_strict_pass_through_ok": false
+  },
+  "false_start_semantics": {
+    "semantics_ok": true,
+    "profitable_false_start_windows": [
+      {
+        "window_id": "window_004",
+        "start_date": "2024-07-13",
+        "end_date": "2024-07-29",
+        "bucket": "since2024",
+        "net_contribution_pct_vs_baseline": 3.205474,
+        "baseline_handoff_date": "",
+        "false_start": true
+      },
+      {
+        "window_id": "window_005",
+        "start_date": "2024-09-27",
+        "end_date": "2024-09-30",
+        "bucket": "since2024",
+        "net_contribution_pct_vs_baseline": 0.401869,
+        "baseline_handoff_date": "",
+        "false_start": true
+      },
+      {
+        "window_id": "window_009",
+        "start_date": "2025-03-19",
+        "end_date": "2025-03-19",
+        "bucket": "since2025",
+        "net_contribution_pct_vs_baseline": 2.374573,
+        "baseline_handoff_date": "",
+        "false_start": true
+      },
+      {
+        "window_id": "window_010",
+        "start_date": "2025-04-23",
+        "end_date": "2025-05-27",
+        "bucket": "since2025",
+        "net_contribution_pct_vs_baseline": 7.572366,
+        "baseline_handoff_date": "",
+        "false_start": true
+      },
+      {
+        "window_id": "window_011",
+        "start_date": "2025-06-24",
+        "end_date": "2025-06-30",
+        "bucket": "since2025",
+        "net_contribution_pct_vs_baseline": 0.806865,
+        "baseline_handoff_date": "",
+        "false_start": true
+      },
+      {
+        "window_id": "window_014",
+        "start_date": "2026-04-11",
+        "end_date": "2026-04-27",
+        "bucket": "since2025",
+        "net_contribution_pct_vs_baseline": 1.985814,
+        "baseline_handoff_date": "",
+        "false_start": true
+      }
+    ],
+    "successful_handoff_rows": [
+      {
+        "window_id": "window_001",
+        "start_date": "2024-01-31",
+        "end_date": "2024-02-01",
+        "baseline_handoff_date": "2024-02-02",
+        "lead_days_vs_baseline_full_risk": 2,
+        "bucket": "since2024"
+      },
+      {
+        "window_id": "window_006",
+        "start_date": "2024-10-17",
+        "end_date": "2024-10-21",
+        "baseline_handoff_date": "2024-10-22",
+        "lead_days_vs_baseline_full_risk": 5,
+        "bucket": "since2024"
+      }
+    ]
+  },
+  "core_promotion_guidance": {
+    "core_may_use_as_promotion_decision_input": false,
+    "why_not": "Required check 7 failed under a strict row-level audit: two baseline full-risk handoff rows are not net/cost pass-throughs, and all 120 full-risk rows carry a shifted equity base after earlier EARLY_RISK P&L.",
+    "core_must_not_claim": [
+      "that baseline non-cash / risk-on rows pass through unchanged without caveat",
+      "that profitable false_start windows are successful baseline FULL_RISK handoffs",
+      "that since2025 contains any successful baseline FULL_RISK handoff; it contains 7 activation windows and 7 false starts with 0 successful handoffs",
+      "that this dev-only rebuilt candidate is authoritative or promotion-ready as-is",
+      "that the candidate changed source_of_truth or app/live/runtime artifacts"
+    ]
+  },
+  "source_artifact_notes": {
+    "production_snapshot_strategy_version": "phase68g_66g_1p25x_candidate",
+    "production_snapshot_closed_day": "2026-05-04",
+    "production_diagnostics_wait_reason": "trend_confirmation_pending_for_candidate_entry",
+    "candidate_summary_status": "READY_FOR_FORENSIC_RERUN",
+    "candidate_manifest_status": "READY_FOR_FORENSIC_RERUN",
+    "candidate_quality_final_status": "READY_FOR_FORENSIC_RERUN",
+    "etf_manifest_causal_alignment_rule": {
+      "us_trading_session_date": "The U.S. ETF trading session date supplied by the provider.",
+      "date": "The BTC UTC day on which the prior U.S. trading-session ETF data first becomes causally usable.",
+      "causal_available_for_btc_utc_day": "Equal to date. It is us_trading_session_date + 1 calendar day.",
+      "btc_spot_close": "Joined from BTCUSDT daily spot close on us_trading_session_date, not on the shifted causal day.",
+      "weekend_holiday_policy": "emit_only_us_trading_sessions_and_shift_each_session_to_next_btc_utc_day_for_causal_use",
+      "rolling_window_policy": "flow_3d_sum_usd and flow_2_of_last_3_positive_flag roll across the last three U.S. trading sessions only."
+    },
+    "etf_quality_verdict": "READY_FOR_DEV_ONLY_PROBE",
+    "contract_baseline_source": "outputs/production/current_strategy_timeseries.csv",
+    "spec_input_refs": [
+      "outputs/production/current_strategy_snapshot.json",
+      "outputs/production/current_strategy_timeseries.csv",
+      "outputs/production/current_strategy_diagnostics.json",
+      "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+      "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_per_etf_daily_child.csv",
+      "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.manifest.json",
+      "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.quality.json"
+    ],
+    "seed_manifest_runner_paths": [
+      "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py"
+    ]
+  }
+}
