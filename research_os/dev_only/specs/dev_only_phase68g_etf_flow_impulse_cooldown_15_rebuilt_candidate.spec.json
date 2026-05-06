@@ -24,6 +24,7 @@
   "expected_outputs": [
     "outputs/research_os/dev_only/non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate/summary.json",
     "outputs/research_os/dev_only/non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate/candidate_timeseries.csv",
+    "outputs/research_os/dev_only/non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate/handoff_row_audit.csv",
     "outputs/research_os/dev_only/non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate/compare.csv",
     "outputs/research_os/dev_only/non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate/activation_windows.csv",
     "outputs/research_os/dev_only/non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate/cost_metrics.csv",

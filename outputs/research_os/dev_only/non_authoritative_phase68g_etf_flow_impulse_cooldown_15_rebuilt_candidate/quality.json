@@ -1,6 +1,6 @@
 {
   "artifact_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate_quality",
-  "generated_at_utc": "2026-05-05 17:40:25 UTC",
+  "generated_at_utc": "2026-05-06 06:38:09 UTC",
   "checks": [
     {
       "name": "json_parse",
@@ -38,9 +38,14 @@
       "detail": "EARLY_RISK rows require effective_market_exposure == 0 and current_asset == CASH"
     },
     {
+      "name": "confirm_required_handoff_rows_strict_pass_through",
+      "ok": true,
+      "detail": "required handoff audit rows match exactly: 2024-02-02, 2024-10-22"
+    },
+    {
       "name": "confirm_baseline_non_cash_behavior_passes_through_unchanged",
       "ok": true,
-      "detail": "baseline FULL_RISK rows pass through unchanged"
+      "detail": "baseline FULL_RISK strict pass-through verified on 120 rows"
     },
     {
       "name": "confirm_cooldown_15_implementation",
@@ -89,6 +94,12 @@
         "kind": "csv",
         "ok": true,
         "detail": "candidate_timeseries.csv rows=579"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\handoff_row_audit.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "handoff_row_audit.csv rows=2"
       },
       {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\compare.csv",
@@ -156,6 +167,56 @@
       "cooldown_blocked_entry_days": 14
     }
   },
+  "handoff_row_audit_rows": [
+    {
+      "date": "2024-02-02",
+      "baseline_state": "FULL_RISK",
+      "candidate_state": "FULL_RISK",
+      "baseline_asset": "BASE",
+      "candidate_asset": "BASE",
+      "baseline_effective_market_exposure": 1.25,
+      "candidate_effective_market_exposure": 1.25,
+      "baseline_net_return": 0.006463615530957901,
+      "candidate_net_return": 0.006463615530957901,
+      "baseline_turnover": 1.25,
+      "candidate_turnover": 1.25,
+      "baseline_trading_fees": 0.0005625,
+      "candidate_trading_fees": 0.0005625,
+      "baseline_borrow_cost": 0.0,
+      "candidate_borrow_cost": 0.0,
+      "baseline_funding": 0.0,
+      "candidate_funding": 0.0,
+      "baseline_slippage": 0.0,
+      "candidate_slippage": 0.0,
+      "baseline_equity": 1.0064636155309579,
+      "candidate_equity": 1.0064636155309579,
+      "all_fields_match_flag": true
+    },
+    {
+      "date": "2024-10-22",
+      "baseline_state": "FULL_RISK",
+      "candidate_state": "FULL_RISK",
+      "baseline_asset": "DOGE",
+      "candidate_asset": "DOGE",
+      "baseline_effective_market_exposure": 1.0,
+      "candidate_effective_market_exposure": 1.0,
+      "baseline_net_return": -0.028082769541309997,
+      "candidate_net_return": -0.028082769541309997,
+      "baseline_turnover": 1.0,
+      "candidate_turnover": 1.0,
+      "baseline_trading_fees": 0.00045,
+      "candidate_trading_fees": 0.00045,
+      "baseline_borrow_cost": 0.0,
+      "candidate_borrow_cost": 0.0,
+      "baseline_funding": 0.0,
+      "candidate_funding": 0.0,
+      "baseline_slippage": 0.0,
+      "candidate_slippage": 0.0,
+      "baseline_equity": 1.212957153117397,
+      "candidate_equity": 1.212957153117397,
+      "all_fields_match_flag": true
+    }
+  ],
   "dev_only": true,
   "non_authoritative": true,
   "official_truth": false,

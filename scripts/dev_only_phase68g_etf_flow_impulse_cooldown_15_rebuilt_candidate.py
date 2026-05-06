@@ -72,6 +72,8 @@ PERIOD_DEFS = [
     ("since2025", "2025-01-01"),
 ]
 
+HANDOFF_AUDIT_DATES = ("2024-02-02", "2024-10-22")
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -117,6 +119,7 @@ def output_paths(output_dir: Path) -> dict[str, Path]:
     return {
         "summary_json": output_dir / "summary.json",
         "candidate_timeseries_csv": output_dir / "candidate_timeseries.csv",
+        "handoff_row_audit_csv": output_dir / "handoff_row_audit.csv",
         "compare_csv": output_dir / "compare.csv",
         "activation_windows_csv": output_dir / "activation_windows.csv",
         "cost_metrics_csv": output_dir / "cost_metrics.csv",
@@ -297,6 +300,64 @@ def build_period_subset(
         baseline_export.loc[baseline_export.index >= start_stamp].copy(),
         probe_export.loc[probe_export.index >= start_stamp].copy(),
     )
+
+
+def enforce_baseline_full_risk_pass_through(
+    baseline_export: pd.DataFrame,
+    probe_export: pd.DataFrame,
+    enriched: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    baseline_full_risk_mask = enriched["baseline_full_risk"].fillna(False).astype(bool)
+    if not baseline_full_risk_mask.any():
+        return baseline_export, probe_export, enriched
+
+    baseline_export = baseline_export.copy()
+    probe_export = probe_export.copy()
+    enriched = enriched.copy()
+
+    export_column_pairs = [
+        ("baseline_gross_return", "probe_gross_return"),
+        ("baseline_held_asset", "probe_held_asset"),
+        ("baseline_effective_leverage", "probe_effective_leverage"),
+        ("baseline_asset_transition_day", "probe_asset_transition_day"),
+        ("baseline_trading_turnover_notional", "probe_trading_turnover_notional"),
+        ("baseline_daily_borrow_cost", "probe_daily_borrow_cost"),
+        ("baseline_tradable_slippage_cost", "probe_tradable_slippage_cost"),
+        ("baseline_trading_fees_daily", "probe_trading_fees_daily"),
+        ("baseline_funding_daily", "probe_funding_daily"),
+        ("baseline_net_return", "probe_net_return"),
+        ("baseline_equity_curve_gross", "probe_equity_curve_gross"),
+        ("baseline_equity_curve_net", "probe_equity_curve_net"),
+        ("baseline_fee_side_mode", "probe_fee_side_mode"),
+        ("baseline_taker_fee_bps", "probe_taker_fee_bps"),
+        ("baseline_maker_fee_bps", "probe_maker_fee_bps"),
+        ("baseline_staking_discount_pct", "probe_staking_discount_pct"),
+        ("baseline_referral_discount_pct", "probe_referral_discount_pct"),
+        ("baseline_effective_trading_fee_bps", "probe_effective_trading_fee_bps"),
+        ("baseline_annual_borrow_cost_pct", "probe_annual_borrow_cost_pct"),
+        ("baseline_tradable_transition_slippage_bps", "probe_tradable_transition_slippage_bps"),
+    ]
+
+    for baseline_col, probe_col in export_column_pairs:
+        if baseline_col in baseline_export.columns and probe_col in probe_export.columns:
+            probe_export.loc[baseline_full_risk_mask, probe_col] = baseline_export.loc[
+                baseline_full_risk_mask, baseline_col
+            ]
+        if baseline_col in enriched.columns and probe_col in enriched.columns:
+            enriched.loc[baseline_full_risk_mask, probe_col] = enriched.loc[
+                baseline_full_risk_mask, baseline_col
+            ]
+
+    if "baseline_state" in enriched.columns and "probe_state" in enriched.columns:
+        enriched.loc[baseline_full_risk_mask, "probe_state"] = enriched.loc[
+            baseline_full_risk_mask, "baseline_state"
+        ]
+    if "baseline_gross_return" in enriched.columns and "probe_strategy_return_gross" in enriched.columns:
+        enriched.loc[baseline_full_risk_mask, "probe_strategy_return_gross"] = enriched.loc[
+            baseline_full_risk_mask, "baseline_gross_return"
+        ]
+
+    return baseline_export, probe_export, enriched
 
 
 def build_model_metrics(
@@ -727,6 +788,7 @@ def validate_output_bundle(paths: dict[str, Path]) -> dict[str, Any]:
     json_paths = [paths["summary_json"], paths["manifest_json"], paths["quality_json"]]
     csv_paths = [
         paths["candidate_timeseries_csv"],
+        paths["handoff_row_audit_csv"],
         paths["compare_csv"],
         paths["activation_windows_csv"],
         paths["cost_metrics_csv"],
@@ -755,10 +817,178 @@ def validate_output_bundle(paths: dict[str, Path]) -> dict[str, Any]:
     return {"ok": all(check["ok"] for check in checks), "checks": checks}
 
 
+def full_risk_pass_through_check(candidate_csv_frame: pd.DataFrame) -> tuple[bool, str]:
+    baseline_full_risk_mask = candidate_csv_frame["baseline_full_risk"].fillna(False).astype(bool)
+    if not baseline_full_risk_mask.any():
+        return True, "no baseline FULL_RISK rows observed"
+
+    def numeric_match(left_col: str, right_col: str, digits: int = 12) -> pd.Series:
+        return (
+            pd.to_numeric(candidate_csv_frame.loc[baseline_full_risk_mask, left_col], errors="coerce")
+            .fillna(0.0)
+            .round(digits)
+            .eq(
+                pd.to_numeric(candidate_csv_frame.loc[baseline_full_risk_mask, right_col], errors="coerce")
+                .fillna(0.0)
+                .round(digits)
+            )
+        )
+
+    combined = (
+        candidate_csv_frame.loc[baseline_full_risk_mask, "probe_state"].eq(
+            candidate_csv_frame.loc[baseline_full_risk_mask, "baseline_state"]
+        )
+        & candidate_csv_frame.loc[baseline_full_risk_mask, "probe_held_asset"].eq(
+            candidate_csv_frame.loc[baseline_full_risk_mask, "baseline_held_asset"]
+        )
+        & numeric_match("probe_effective_leverage", "baseline_effective_leverage")
+        & numeric_match("probe_gross_return", "baseline_gross_return")
+        & numeric_match("probe_net_return", "baseline_net_return")
+        & numeric_match("probe_trading_turnover_notional", "baseline_trading_turnover_notional")
+        & numeric_match("probe_trading_fees_daily", "baseline_trading_fees_daily")
+        & numeric_match("probe_funding_daily", "baseline_funding_daily")
+        & numeric_match("probe_daily_borrow_cost", "baseline_daily_borrow_cost")
+        & numeric_match("probe_tradable_slippage_cost", "baseline_tradable_slippage_cost")
+        & numeric_match("probe_equity_curve_gross", "baseline_equity_curve_gross")
+        & numeric_match("probe_equity_curve_net", "baseline_equity_curve_net")
+    )
+    ok = bool(combined.all())
+    if ok:
+        return True, f"baseline FULL_RISK strict pass-through verified on {int(baseline_full_risk_mask.sum())} rows"
+
+    failing_dates = (
+        candidate_csv_frame.loc[baseline_full_risk_mask, "date"]
+        .loc[~combined]
+        .astype(str)
+        .tolist()
+    )
+    return (
+        False,
+        "baseline FULL_RISK strict pass-through mismatches on "
+        f"{len(failing_dates)} row(s): {', '.join(failing_dates[:10])}",
+    )
+
+
+def build_handoff_row_audit(candidate_csv_frame: pd.DataFrame) -> pd.DataFrame:
+    date_mask = candidate_csv_frame["date"].astype(str).isin(HANDOFF_AUDIT_DATES)
+    audit_frame = candidate_csv_frame.loc[date_mask].copy()
+
+    ordered_columns = [
+        "date",
+        "baseline_state",
+        "candidate_state",
+        "baseline_asset",
+        "candidate_asset",
+        "baseline_effective_market_exposure",
+        "candidate_effective_market_exposure",
+        "baseline_net_return",
+        "candidate_net_return",
+        "baseline_turnover",
+        "candidate_turnover",
+        "baseline_trading_fees",
+        "candidate_trading_fees",
+        "baseline_borrow_cost",
+        "candidate_borrow_cost",
+        "baseline_funding",
+        "candidate_funding",
+        "baseline_slippage",
+        "candidate_slippage",
+        "baseline_equity",
+        "candidate_equity",
+        "all_fields_match_flag",
+    ]
+    if audit_frame.empty:
+        return pd.DataFrame(columns=ordered_columns)
+
+    audit_frame = audit_frame.assign(
+        candidate_state=audit_frame["probe_state"],
+        baseline_asset=audit_frame["baseline_held_asset"],
+        candidate_asset=audit_frame["probe_held_asset"],
+        baseline_effective_market_exposure=pd.to_numeric(
+            audit_frame["baseline_effective_leverage"], errors="coerce"
+        ).fillna(0.0),
+        candidate_effective_market_exposure=pd.to_numeric(
+            audit_frame["probe_effective_leverage"], errors="coerce"
+        ).fillna(0.0),
+        candidate_net_return=pd.to_numeric(audit_frame["probe_net_return"], errors="coerce").fillna(0.0),
+        baseline_turnover=pd.to_numeric(
+            audit_frame["baseline_trading_turnover_notional"], errors="coerce"
+        ).fillna(0.0),
+        candidate_turnover=pd.to_numeric(
+            audit_frame["probe_trading_turnover_notional"], errors="coerce"
+        ).fillna(0.0),
+        baseline_trading_fees=pd.to_numeric(
+            audit_frame["baseline_trading_fees_daily"], errors="coerce"
+        ).fillna(0.0),
+        candidate_trading_fees=pd.to_numeric(
+            audit_frame["probe_trading_fees_daily"], errors="coerce"
+        ).fillna(0.0),
+        baseline_borrow_cost=pd.to_numeric(
+            audit_frame["baseline_daily_borrow_cost"], errors="coerce"
+        ).fillna(0.0),
+        candidate_borrow_cost=pd.to_numeric(
+            audit_frame["probe_daily_borrow_cost"], errors="coerce"
+        ).fillna(0.0),
+        baseline_funding=pd.to_numeric(audit_frame["baseline_funding_daily"], errors="coerce").fillna(0.0),
+        candidate_funding=pd.to_numeric(audit_frame["probe_funding_daily"], errors="coerce").fillna(0.0),
+        baseline_slippage=pd.to_numeric(
+            audit_frame["baseline_tradable_slippage_cost"], errors="coerce"
+        ).fillna(0.0),
+        candidate_slippage=pd.to_numeric(
+            audit_frame["probe_tradable_slippage_cost"], errors="coerce"
+        ).fillna(0.0),
+        baseline_equity=pd.to_numeric(audit_frame["baseline_equity_curve_net"], errors="coerce").fillna(0.0),
+        candidate_equity=pd.to_numeric(audit_frame["probe_equity_curve_net"], errors="coerce").fillna(0.0),
+    )
+    audit_frame["all_fields_match_flag"] = (
+        audit_frame["candidate_state"].fillna("").astype(str).eq(audit_frame["baseline_state"].fillna("").astype(str))
+        & audit_frame["candidate_asset"].fillna("").astype(str).eq(audit_frame["baseline_asset"].fillna("").astype(str))
+        & audit_frame["candidate_effective_market_exposure"].round(12).eq(
+            audit_frame["baseline_effective_market_exposure"].round(12)
+        )
+        & pd.to_numeric(audit_frame["candidate_net_return"], errors="coerce").fillna(0.0).round(12).eq(
+            pd.to_numeric(audit_frame["baseline_net_return"], errors="coerce").fillna(0.0).round(12)
+        )
+        & audit_frame["candidate_turnover"].round(12).eq(audit_frame["baseline_turnover"].round(12))
+        & audit_frame["candidate_trading_fees"].round(12).eq(audit_frame["baseline_trading_fees"].round(12))
+        & audit_frame["candidate_borrow_cost"].round(12).eq(audit_frame["baseline_borrow_cost"].round(12))
+        & audit_frame["candidate_funding"].round(12).eq(audit_frame["baseline_funding"].round(12))
+        & audit_frame["candidate_slippage"].round(12).eq(audit_frame["baseline_slippage"].round(12))
+        & audit_frame["candidate_equity"].round(12).eq(audit_frame["baseline_equity"].round(12))
+    )
+    audit_frame["date"] = pd.Categorical(audit_frame["date"], categories=list(HANDOFF_AUDIT_DATES), ordered=True)
+    audit_frame = audit_frame.sort_values("date").copy()
+    audit_frame["date"] = audit_frame["date"].astype(str)
+    return audit_frame.loc[:, ordered_columns]
+
+
+def handoff_row_audit_check(audit_frame: pd.DataFrame) -> tuple[bool, str]:
+    observed_dates = set(audit_frame.get("date", pd.Series(dtype=str)).astype(str).tolist())
+    missing_dates = [date for date in HANDOFF_AUDIT_DATES if date not in observed_dates]
+    failing_dates = []
+    if "all_fields_match_flag" in audit_frame.columns:
+        failing_dates = (
+            audit_frame.loc[~audit_frame["all_fields_match_flag"].fillna(False).astype(bool), "date"]
+            .astype(str)
+            .tolist()
+        )
+    if missing_dates or failing_dates:
+        details: list[str] = []
+        if missing_dates:
+            details.append(f"missing required handoff rows: {', '.join(missing_dates)}")
+        if failing_dates:
+            details.append(f"strict pass-through mismatches on: {', '.join(failing_dates)}")
+        return False, "; ".join(details)
+    if len(audit_frame) != len(HANDOFF_AUDIT_DATES):
+        return False, f"expected {len(HANDOFF_AUDIT_DATES)} handoff audit rows, found {len(audit_frame)}"
+    return True, f"required handoff audit rows match exactly: {', '.join(HANDOFF_AUDIT_DATES)}"
+
+
 def build_quality_payload(
     *,
     overlap_frame: pd.DataFrame,
     candidate_csv_frame: pd.DataFrame,
+    handoff_row_audit_frame: pd.DataFrame,
     activation_windows: list[dict[str, Any]],
     cooldown_events: list[dict[str, Any]],
     blocker_rows: dict[str, dict[str, Any]],
@@ -793,38 +1023,8 @@ def build_quality_payload(
                 .eq(0.0)
             ).all()
         )
-    baseline_full_risk_mask = candidate_csv_frame["baseline_full_risk"].fillna(False).astype(bool)
-    full_risk_pass_through_ok = True
-    if baseline_full_risk_mask.any():
-        full_risk_pass_through_ok = bool(
-            (
-                candidate_csv_frame.loc[baseline_full_risk_mask, "probe_state"].eq("FULL_RISK")
-                & candidate_csv_frame.loc[baseline_full_risk_mask, "probe_held_asset"].eq(
-                    candidate_csv_frame.loc[baseline_full_risk_mask, "portfolio_held_asset"]
-                )
-                & pd.to_numeric(
-                    candidate_csv_frame.loc[baseline_full_risk_mask, "probe_effective_leverage"], errors="coerce"
-                )
-                .fillna(0.0)
-                .eq(
-                    pd.to_numeric(
-                        candidate_csv_frame.loc[baseline_full_risk_mask, "effective_leverage"], errors="coerce"
-                    ).fillna(0.0)
-                )
-                & pd.to_numeric(
-                    candidate_csv_frame.loc[baseline_full_risk_mask, "probe_gross_return"], errors="coerce"
-                )
-                .fillna(0.0)
-                .round(12)
-                .eq(
-                    pd.to_numeric(
-                        candidate_csv_frame.loc[baseline_full_risk_mask, "baseline_gross_return"], errors="coerce"
-                    )
-                    .fillna(0.0)
-                    .round(12)
-                )
-            ).all()
-        )
+    handoff_row_audit_ok, handoff_row_audit_detail = handoff_row_audit_check(handoff_row_audit_frame)
+    full_risk_pass_through_ok, full_risk_pass_through_detail = full_risk_pass_through_check(candidate_csv_frame)
 
     cooldown_schedule_ok = True
     for event in cooldown_events:
@@ -906,9 +1106,14 @@ def build_quality_payload(
             "detail": "EARLY_RISK rows require effective_market_exposure == 0 and current_asset == CASH",
         },
         {
+            "name": "confirm_required_handoff_rows_strict_pass_through",
+            "ok": handoff_row_audit_ok,
+            "detail": handoff_row_audit_detail,
+        },
+        {
             "name": "confirm_baseline_non_cash_behavior_passes_through_unchanged",
             "ok": full_risk_pass_through_ok,
-            "detail": "baseline FULL_RISK rows pass through unchanged",
+            "detail": full_risk_pass_through_detail,
         },
         {
             "name": "confirm_cooldown_15_implementation",
@@ -931,7 +1136,7 @@ def build_quality_payload(
             "detail": hard_invalidation_meta["detail"],
         },
     ]
-    final_status = "READY_FOR_FORENSIC_RERUN" if all(check["ok"] for check in checks) else "BLOCKED"
+    final_status = "READY_FOR_FORENSIC_RERUN" if all(check["ok"] for check in checks) else "STILL_FAILED"
     payload = with_json_flags(
         {
             "artifact_id": f"{ARTIFACT_ID}_quality",
@@ -943,6 +1148,7 @@ def build_quality_payload(
             "cooldown_event_count": len(cooldown_events),
             "activation_windows_count": len(activation_windows),
             "blocker_rows": blocker_rows,
+            "handoff_row_audit_rows": handoff_row_audit_frame.to_dict(orient="records"),
         }
     )
     return payload, final_status
@@ -1044,6 +1250,11 @@ def main() -> int:
 
     state_frame, cooldown_events = cooldown_mod.build_cooldown_state_machine(overlap_frame, COOLDOWN_DAYS)
     baseline_export, probe_export, enriched = probe_mod.build_export_metrics(state_frame, cost_config)
+    baseline_export, probe_export, enriched = enforce_baseline_full_risk_pass_through(
+        baseline_export,
+        probe_export,
+        enriched,
+    )
 
     candidate_timeseries = enriched.reset_index().rename(columns={"index": "date"})
     candidate_timeseries["date"] = pd.to_datetime(candidate_timeseries["date"], errors="coerce").dt.strftime("%Y-%m-%d")
@@ -1077,8 +1288,10 @@ def main() -> int:
     recent_useful_window = cooldown_mod.select_recent_useful_window(activation_windows)
     april_windows = select_april_2026_windows(activation_windows)
     leave_one_out = build_leave_one_out_summary(activation_windows, period_summaries)
+    handoff_row_audit = build_handoff_row_audit(candidate_timeseries)
 
     write_dataframe(paths["candidate_timeseries_csv"], candidate_timeseries)
+    write_dataframe(paths["handoff_row_audit_csv"], handoff_row_audit)
     write_records(paths["compare_csv"], compare_rows)
     write_records(paths["activation_windows_csv"], activation_windows)
     write_records(paths["cost_metrics_csv"], cost_rows)
@@ -1143,6 +1356,7 @@ def main() -> int:
     quality_payload, final_status = build_quality_payload(
         overlap_frame=overlap_frame,
         candidate_csv_frame=candidate_timeseries,
+        handoff_row_audit_frame=handoff_row_audit,
         activation_windows=activation_windows,
         cooldown_events=decorated_cooldown_events,
         blocker_rows=blocker_rows,
@@ -1181,10 +1395,11 @@ def main() -> int:
     save_json(paths["quality_json"], quality_payload)
 
     final_parse = validate_output_bundle(paths)
-    if not final_parse["ok"] and final_status != "BLOCKED":
+    if not final_parse["ok"] and final_status != "STILL_FAILED":
         quality_payload, final_status = build_quality_payload(
             overlap_frame=overlap_frame,
             candidate_csv_frame=candidate_timeseries,
+            handoff_row_audit_frame=handoff_row_audit,
             activation_windows=activation_windows,
             cooldown_events=decorated_cooldown_events,
             blocker_rows=blocker_rows,
