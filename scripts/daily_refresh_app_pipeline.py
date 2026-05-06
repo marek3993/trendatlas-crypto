@@ -23,6 +23,9 @@ from execution.authority_publish_helpers import (
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "outputs" / "app_refresh_pipeline"
+HEAVY_PHASE_FAST_PATH_STATE_PATH = (
+    ROOT / "outputs" / "execution" / "refresh_pipeline" / "heavy_phase_fast_path_state.json"
+)
 
 LEGACY_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_legacy_ohlcv.py"
 MACRO_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_global_liquidity_weekly.py"
@@ -98,6 +101,7 @@ HEAVY_SAME_DAY_PHASES = frozenset(
     }
 )
 SKIPPED_FRESH = "SKIPPED_FRESH"
+VALID_FAST_PATH_SOURCE_STEP_STATUSES = frozenset({"OK", SKIPPED_FRESH})
 
 REQUIRED_OUTPUTS = [
     PHASE67J_PAPER,
@@ -293,6 +297,224 @@ def target_closed_day_from_manifest(manifest: dict[str, Any]) -> str | None:
     return None
 
 
+def manifest_status_value(manifest: dict[str, Any]) -> str | None:
+    for key in (
+        "status",
+        "main_refresh_chain_status",
+        "refresh_source_status",
+        "strategy_refresh_chain_status",
+    ):
+        value = manifest.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+    return None
+
+
+def find_step_status(manifest: dict[str, Any], step_name: str) -> str | None:
+    steps = manifest.get("steps")
+    if not isinstance(steps, list):
+        return None
+    for step in steps:
+        if not isinstance(step, dict) or step.get("step_name") != step_name:
+            continue
+        status = step.get("status")
+        if isinstance(status, str) and status.strip():
+            return status.strip()
+        if step.get("returncode") == 0:
+            return "OK"
+        return None
+    return None
+
+
+def build_empty_heavy_phase_fast_path_state() -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "state_path": str(HEAVY_PHASE_FAST_PATH_STATE_PATH),
+        "updated_at_utc": None,
+        "steps": {},
+    }
+
+
+def load_heavy_phase_fast_path_state() -> tuple[dict[str, Any], str | None]:
+    if not HEAVY_PHASE_FAST_PATH_STATE_PATH.exists():
+        return build_empty_heavy_phase_fast_path_state(), None
+
+    try:
+        payload = load_json(HEAVY_PHASE_FAST_PATH_STATE_PATH)
+    except Exception as exc:
+        return (
+            build_empty_heavy_phase_fast_path_state(),
+            f"{type(exc).__name__}: {exc}",
+        )
+
+    if not isinstance(payload, dict):
+        return build_empty_heavy_phase_fast_path_state(), "invalid_heavy_phase_fast_path_state_root"
+
+    steps = payload.get("steps")
+    if not isinstance(steps, dict):
+        return build_empty_heavy_phase_fast_path_state(), "invalid_heavy_phase_fast_path_state_steps"
+
+    payload.setdefault("schema_version", 1)
+    payload["state_path"] = str(HEAVY_PHASE_FAST_PATH_STATE_PATH)
+    payload.setdefault("updated_at_utc", None)
+    return payload, None
+
+
+def write_heavy_phase_fast_path_state(state_payload: dict[str, Any]) -> Path:
+    HEAVY_PHASE_FAST_PATH_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    payload = dict(state_payload)
+    payload["schema_version"] = int(payload.get("schema_version", 1))
+    payload["state_path"] = str(HEAVY_PHASE_FAST_PATH_STATE_PATH)
+    payload["updated_at_utc"] = now_utc()
+    steps = payload.get("steps")
+    payload["steps"] = steps if isinstance(steps, dict) else {}
+    HEAVY_PHASE_FAST_PATH_STATE_PATH.write_text(
+        json.dumps(payload, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+    return HEAVY_PHASE_FAST_PATH_STATE_PATH
+
+
+def build_phase_fast_path_candidate(
+    *,
+    candidate_source: str,
+    reference: dict[str, Any],
+    source_run_id: str | None,
+    source_manifest_path: str | None,
+    source_manifest_status: str | None,
+    source_target_closed_day_utc: str | None,
+    source_step_status: str | None,
+    state_path: str | None = None,
+) -> dict[str, Any]:
+    return {
+        "candidate_source": candidate_source,
+        "reference": reference,
+        "source_run_id": source_run_id,
+        "source_manifest_path": source_manifest_path,
+        "source_manifest_status": source_manifest_status,
+        "source_target_closed_day_utc": source_target_closed_day_utc,
+        "source_step_status": source_step_status,
+        "state_path": state_path,
+    }
+
+
+def load_persistent_heavy_phase_fast_path_candidate(
+    step_name: str,
+) -> tuple[dict[str, Any] | None, str | None]:
+    state_payload, load_error = load_heavy_phase_fast_path_state()
+    steps = state_payload.get("steps")
+    if not isinstance(steps, dict):
+        return None, load_error
+
+    reference = steps.get(step_name)
+    if not isinstance(reference, dict):
+        return None, load_error
+
+    return (
+        build_phase_fast_path_candidate(
+            candidate_source="persistent_state",
+            reference=reference,
+            source_run_id=str(reference.get("source_run_id") or "").strip() or None,
+            source_manifest_path=str(reference.get("source_manifest_path") or "").strip() or None,
+            source_manifest_status=str(reference.get("source_manifest_status") or "").strip() or None,
+            source_target_closed_day_utc=str(reference.get("target_closed_day_utc") or "").strip() or None,
+            source_step_status=str(reference.get("source_step_status") or "").strip() or None,
+            state_path=str(HEAVY_PHASE_FAST_PATH_STATE_PATH),
+        ),
+        load_error,
+    )
+
+
+def load_manifest_phase_fast_path_candidates(
+    step_name: str,
+    current_run_id: str,
+    *,
+    require_manifest_ok: bool,
+) -> list[dict[str, Any]]:
+    manifest_paths = sorted(
+        OUTPUT_DIR.glob("*/app_refresh_pipeline_manifest.json"),
+        key=lambda candidate: candidate.parent.name,
+        reverse=True,
+    )
+    candidates: list[dict[str, Any]] = []
+    for manifest_path in manifest_paths:
+        if manifest_path.parent.name == current_run_id:
+            continue
+        try:
+            candidate_manifest = load_json(manifest_path)
+        except Exception:
+            continue
+
+        is_full_ok_manifest = (
+            candidate_manifest.get("status") == "OK"
+            and candidate_manifest.get("main_refresh_chain_status") == "OK"
+        )
+        if require_manifest_ok != is_full_ok_manifest:
+            continue
+
+        reference_map = candidate_manifest.get("phase_fast_path_reference")
+        if not isinstance(reference_map, dict):
+            continue
+
+        reference = reference_map.get(step_name)
+        if not isinstance(reference, dict):
+            continue
+
+        source_step_status = reference.get("source_step_status")
+        if not isinstance(source_step_status, str) or not source_step_status.strip():
+            source_step_status = find_step_status(candidate_manifest, step_name)
+
+        source_run_id = (
+            str(candidate_manifest.get("run_id") or manifest_path.parent.name).strip()
+            or manifest_path.parent.name
+        )
+        candidates.append(
+            build_phase_fast_path_candidate(
+                candidate_source=(
+                    "manifest_full_ok_reference"
+                    if is_full_ok_manifest
+                    else "manifest_step_reference_non_ok"
+                ),
+                reference=reference,
+                source_run_id=source_run_id,
+                source_manifest_path=str(manifest_path),
+                source_manifest_status=manifest_status_value(candidate_manifest),
+                source_target_closed_day_utc=target_closed_day_from_manifest(candidate_manifest),
+                source_step_status=(
+                    str(source_step_status).strip() if source_step_status is not None else None
+                ),
+            )
+        )
+
+    return candidates
+
+
+def load_phase_fast_path_candidates(
+    step_name: str,
+    current_run_id: str,
+) -> tuple[list[dict[str, Any]], str | None]:
+    candidates: list[dict[str, Any]] = []
+    state_candidate, state_load_error = load_persistent_heavy_phase_fast_path_candidate(step_name)
+    if state_candidate is not None:
+        candidates.append(state_candidate)
+
+    candidates.extend(
+        load_manifest_phase_fast_path_candidates(
+            step_name,
+            current_run_id,
+            require_manifest_ok=False,
+        )
+    )
+    candidates.extend(
+        load_manifest_phase_fast_path_candidates(
+            step_name,
+            current_run_id,
+            require_manifest_ok=True,
+        )
+    )
+    return candidates, state_load_error
+
+
 def build_phase_fast_path_reference(
     step_name: str,
     target_closed_day_utc: str,
@@ -307,44 +529,93 @@ def build_phase_fast_path_reference(
     }
 
 
-def load_latest_successful_phase_fast_path_reference(
+def evaluate_phase_fast_path_candidate(
+    candidate: dict[str, Any],
+    current_reference: dict[str, Any],
     step_name: str,
-    current_run_id: str,
-) -> dict[str, Any] | None:
-    manifest_paths = sorted(
-        OUTPUT_DIR.glob("*/app_refresh_pipeline_manifest.json"),
-        key=lambda candidate: candidate.parent.name,
-        reverse=True,
-    )
-    for manifest_path in manifest_paths:
-        if manifest_path.parent.name == current_run_id:
-            continue
-        try:
-            candidate_manifest = load_json(manifest_path)
-        except Exception:
-            continue
+    target_closed_day_utc: str,
+) -> dict[str, Any]:
+    evaluation: dict[str, Any] = {
+        "candidate_source": candidate.get("candidate_source"),
+        "source_run_id": candidate.get("source_run_id"),
+        "source_manifest_path": candidate.get("source_manifest_path"),
+        "source_manifest_status": candidate.get("source_manifest_status"),
+        "source_target_closed_day_utc": candidate.get("source_target_closed_day_utc"),
+        "source_step_status": candidate.get("source_step_status"),
+        "state_path": candidate.get("state_path"),
+        "status": "RUN_REQUIRED",
+        "decision": "RUN",
+    }
 
-        if candidate_manifest.get("status") != "OK":
-            continue
-        if candidate_manifest.get("main_refresh_chain_status") != "OK":
-            continue
+    reference = candidate.get("reference")
+    if not isinstance(reference, dict):
+        evaluation["reason"] = "invalid_phase_fast_path_reference"
+        return evaluation
 
-        reference_map = candidate_manifest.get("phase_fast_path_reference")
-        if not isinstance(reference_map, dict):
-            continue
+    if reference.get("step_name") != step_name:
+        evaluation["reason"] = "reference_step_name_mismatch"
+        return evaluation
 
-        reference = reference_map.get(step_name)
-        if not isinstance(reference, dict):
-            continue
+    source_target_day = candidate.get("source_target_closed_day_utc")
+    if source_target_day != target_closed_day_utc:
+        evaluation["reason"] = (
+            "source_manifest_target_closed_day_mismatch::"
+            f"reference={source_target_day} current={target_closed_day_utc}"
+        )
+        return evaluation
 
-        return {
-            "reference": reference,
-            "source_run_id": str(candidate_manifest.get("run_id", manifest_path.parent.name)),
-            "source_manifest_path": str(manifest_path),
-            "source_target_closed_day_utc": target_closed_day_from_manifest(candidate_manifest),
-        }
+    reference_target_day = reference.get("target_closed_day_utc")
+    if reference_target_day != target_closed_day_utc:
+        evaluation["reason"] = (
+            "reference_target_closed_day_mismatch::"
+            f"reference={reference_target_day} current={target_closed_day_utc}"
+        )
+        return evaluation
 
-    return None
+    reference_input_signature = reference.get("input_signature")
+    reference_output_signature = reference.get("output_signature")
+    if not isinstance(reference_input_signature, dict) or not isinstance(
+        reference_output_signature, dict
+    ):
+        evaluation["reason"] = "incomplete_phase_fast_path_reference"
+        return evaluation
+    if not isinstance(reference_input_signature.get("sha256"), str) or not isinstance(
+        reference_output_signature.get("sha256"), str
+    ):
+        evaluation["reason"] = "malformed_phase_fast_path_reference_signatures"
+        return evaluation
+
+    source_step_status = reference.get("source_step_status")
+    if not isinstance(source_step_status, str) or not source_step_status.strip():
+        source_step_status = str(candidate.get("source_step_status") or "").strip()
+    evaluation["source_step_status"] = source_step_status
+    if source_step_status not in VALID_FAST_PATH_SOURCE_STEP_STATUSES:
+        evaluation["reason"] = "invalid_phase_fast_path_reference_source_status"
+        return evaluation
+
+    evaluation["current_input_signature_sha256"] = current_reference["input_signature"]["sha256"]
+    evaluation["current_output_signature_sha256"] = current_reference["output_signature"]["sha256"]
+    evaluation["reference_input_signature_sha256"] = reference_input_signature.get("sha256")
+    evaluation["reference_output_signature_sha256"] = reference_output_signature.get("sha256")
+
+    input_matches = current_reference["input_signature"] == reference_input_signature
+    output_matches = current_reference["output_signature"] == reference_output_signature
+    evaluation["input_signature_match"] = input_matches
+    evaluation["output_signature_match"] = output_matches
+
+    if not input_matches or not output_matches:
+        mismatch_reasons: list[str] = []
+        if not input_matches:
+            mismatch_reasons.append("input_signature_mismatch")
+        if not output_matches:
+            mismatch_reasons.append("output_signature_mismatch")
+        evaluation["reason"] = ",".join(mismatch_reasons)
+        return evaluation
+
+    evaluation["status"] = SKIPPED_FRESH
+    evaluation["decision"] = "SKIP"
+    evaluation["reason"] = "same_day_reference_signatures_match"
+    return evaluation
 
 
 def build_phase_fast_path_proof(
@@ -358,63 +629,21 @@ def build_phase_fast_path_proof(
         "status": "RUN_REQUIRED",
         "decision": "RUN",
         "reason": "phase_not_eligible",
+        "heavy_phase_fast_path_state_path": str(HEAVY_PHASE_FAST_PATH_STATE_PATH),
     }
 
     if step_name not in HEAVY_SAME_DAY_PHASES:
         return proof
 
-    latest_reference_payload = load_latest_successful_phase_fast_path_reference(
+    candidates, state_load_error = load_phase_fast_path_candidates(
         step_name,
         current_run_id,
     )
-    if latest_reference_payload is None:
-        proof["reason"] = "no_latest_successful_phase_fast_path_reference"
-        return proof
+    if state_load_error:
+        proof["heavy_phase_fast_path_state_load_error"] = state_load_error
 
-    reference = latest_reference_payload.get("reference")
-    proof["latest_successful_reference"] = {
-        "run_id": latest_reference_payload.get("source_run_id"),
-        "manifest_path": latest_reference_payload.get("source_manifest_path"),
-        "target_closed_day_utc": latest_reference_payload.get("source_target_closed_day_utc"),
-    }
-    if not isinstance(reference, dict):
-        proof["reason"] = "invalid_phase_fast_path_reference"
-        return proof
-
-    if reference.get("step_name") != step_name:
-        proof["reason"] = "reference_step_name_mismatch"
-        return proof
-
-    source_target_day = latest_reference_payload.get("source_target_closed_day_utc")
-    if source_target_day != target_closed_day_utc:
-        proof["reason"] = (
-            "source_manifest_target_closed_day_mismatch::"
-            f"reference={source_target_day} current={target_closed_day_utc}"
-        )
-        return proof
-
-    reference_target_day = reference.get("target_closed_day_utc")
-    if reference_target_day != target_closed_day_utc:
-        proof["reason"] = (
-            "reference_target_closed_day_mismatch::"
-            f"reference={reference_target_day} current={target_closed_day_utc}"
-        )
-        return proof
-
-    reference_input_signature = reference.get("input_signature")
-    reference_output_signature = reference.get("output_signature")
-    if not isinstance(reference_input_signature, dict) or not isinstance(reference_output_signature, dict):
-        proof["reason"] = "incomplete_phase_fast_path_reference"
-        return proof
-    if not isinstance(reference_input_signature.get("sha256"), str) or not isinstance(
-        reference_output_signature.get("sha256"), str
-    ):
-        proof["reason"] = "malformed_phase_fast_path_reference_signatures"
-        return proof
-
-    source_step_status = reference.get("source_step_status")
-    if source_step_status not in {"OK", SKIPPED_FRESH}:
-        proof["reason"] = "invalid_phase_fast_path_reference_source_status"
+    if not candidates:
+        proof["reason"] = "no_heavy_phase_fast_path_candidate"
         return proof
 
     try:
@@ -425,27 +654,56 @@ def build_phase_fast_path_proof(
 
     proof["current_input_signature_sha256"] = current_reference["input_signature"]["sha256"]
     proof["current_output_signature_sha256"] = current_reference["output_signature"]["sha256"]
-    proof["reference_input_signature_sha256"] = reference_input_signature.get("sha256")
-    proof["reference_output_signature_sha256"] = reference_output_signature.get("sha256")
+    candidate_attempts: list[dict[str, Any]] = []
+    persistent_state_guard: dict[str, Any] | None = None
+    for index, candidate in enumerate(candidates):
+        evaluation = evaluate_phase_fast_path_candidate(
+            candidate,
+            current_reference,
+            step_name,
+            target_closed_day_utc,
+        )
+        candidate_attempts.append(evaluation)
+        if index == 0 and candidate.get("candidate_source") == "persistent_state":
+            persistent_state_guard = evaluation
+        if evaluation.get("status") != SKIPPED_FRESH:
+            continue
 
-    input_matches = current_reference["input_signature"] == reference_input_signature
-    output_matches = current_reference["output_signature"] == reference_output_signature
-    proof["input_signature_match"] = input_matches
-    proof["output_signature_match"] = output_matches
-
-    if not input_matches or not output_matches:
-        mismatch_reasons: list[str] = []
-        if not input_matches:
-            mismatch_reasons.append("input_signature_mismatch")
-        if not output_matches:
-            mismatch_reasons.append("output_signature_mismatch")
-        proof["reason"] = ",".join(mismatch_reasons)
+        reused_reference = {
+            "candidate_source": evaluation.get("candidate_source"),
+            "run_id": evaluation.get("source_run_id"),
+            "manifest_path": evaluation.get("source_manifest_path"),
+            "manifest_status": evaluation.get("source_manifest_status"),
+            "step_status": evaluation.get("source_step_status"),
+            "target_closed_day_utc": evaluation.get("source_target_closed_day_utc"),
+            "state_path": evaluation.get("state_path"),
+        }
+        proof["status"] = SKIPPED_FRESH
+        proof["decision"] = "SKIP"
+        proof["reason"] = str(evaluation.get("reason"))
+        proof["reference_input_signature_sha256"] = evaluation.get(
+            "reference_input_signature_sha256"
+        )
+        proof["reference_output_signature_sha256"] = evaluation.get(
+            "reference_output_signature_sha256"
+        )
+        proof["input_signature_match"] = evaluation.get("input_signature_match")
+        proof["output_signature_match"] = evaluation.get("output_signature_match")
+        proof["current_reference"] = current_reference
+        proof["reused_reference"] = reused_reference
+        proof["latest_successful_reference"] = reused_reference
+        proof["selected_candidate"] = evaluation
+        proof["candidate_attempts"] = candidate_attempts
+        if persistent_state_guard is not None:
+            proof["persistent_state_guard"] = persistent_state_guard
         return proof
 
-    proof["status"] = SKIPPED_FRESH
-    proof["decision"] = "SKIP"
-    proof["reason"] = "same_day_reference_signatures_match"
-    proof["current_reference"] = current_reference
+    proof["candidate_attempts"] = candidate_attempts
+    if candidate_attempts:
+        proof["reason"] = str(candidate_attempts[0].get("reason") or "no_reusable_phase_fast_path_candidate")
+        proof["selected_candidate"] = candidate_attempts[0]
+    if persistent_state_guard is not None:
+        proof["persistent_state_guard"] = persistent_state_guard
     return proof
 
 
@@ -453,11 +711,16 @@ def capture_phase_fast_path_reference(
     step_name: str,
     target_closed_day_utc: str,
     source_step_status: str,
+    reference: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     try:
-        reference = build_phase_fast_path_reference(step_name, target_closed_day_utc)
-        reference["source_step_status"] = source_step_status
-        return reference
+        captured_reference = (
+            dict(reference)
+            if reference is not None
+            else build_phase_fast_path_reference(step_name, target_closed_day_utc)
+        )
+        captured_reference["source_step_status"] = source_step_status
+        return captured_reference
     except Exception as exc:
         return {
             "step_name": step_name,
@@ -469,6 +732,110 @@ def capture_phase_fast_path_reference(
         }
 
 
+def build_heavy_phase_fast_path_state_entry(
+    step_name: str,
+    target_closed_day_utc: str,
+    source_run_id: str,
+    source_manifest_path: str,
+    source_manifest_status: str,
+    source_step_status: str,
+    reference: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    captured_reference = capture_phase_fast_path_reference(
+        step_name,
+        target_closed_day_utc,
+        source_step_status=source_step_status,
+        reference=reference,
+    )
+    state_entry: dict[str, Any] = {
+        "step_name": step_name,
+        "target_closed_day_utc": target_closed_day_utc,
+        "source_run_id": source_run_id,
+        "source_manifest_path": source_manifest_path,
+        "source_manifest_status": source_manifest_status,
+        "source_step_status": source_step_status,
+        "input_signature": captured_reference.get("input_signature"),
+        "output_signature": captured_reference.get("output_signature"),
+        "captured_at_utc": captured_reference.get("captured_at_utc") or now_utc(),
+    }
+    if "status" in captured_reference:
+        state_entry["reference_status"] = captured_reference["status"]
+    if "reason" in captured_reference:
+        state_entry["reference_reason"] = captured_reference["reason"]
+    return state_entry
+
+
+def persist_heavy_phase_fast_path_state_entry(
+    manifest: dict[str, Any],
+    run_dir: Path,
+    step_name: str,
+    target_closed_day_utc: str,
+    source_step_status: str,
+    *,
+    manifest_path: Path | None = None,
+    reference: dict[str, Any] | None = None,
+) -> Path:
+    state_payload, _ = load_heavy_phase_fast_path_state()
+    steps = state_payload.get("steps")
+    if not isinstance(steps, dict):
+        steps = {}
+        state_payload["steps"] = steps
+    steps[step_name] = build_heavy_phase_fast_path_state_entry(
+        step_name,
+        target_closed_day_utc,
+        source_run_id=str(manifest.get("run_id") or run_dir.name),
+        source_manifest_path=str(manifest_path or (run_dir / "app_refresh_pipeline_manifest.json")),
+        source_manifest_status=manifest_status_value(manifest) or "RUNNING",
+        source_step_status=source_step_status,
+        reference=reference,
+    )
+    return write_heavy_phase_fast_path_state(state_payload)
+
+
+def sync_heavy_phase_fast_path_state_manifest_status(
+    run_id: str,
+    manifest_path: Path,
+    source_manifest_status: str,
+) -> None:
+    state_payload, _ = load_heavy_phase_fast_path_state()
+    steps = state_payload.get("steps")
+    if not isinstance(steps, dict):
+        return
+
+    changed = False
+    for entry in steps.values():
+        if not isinstance(entry, dict):
+            continue
+        if str(entry.get("source_run_id") or "").strip() != run_id:
+            continue
+        if entry.get("source_manifest_path") != str(manifest_path):
+            entry["source_manifest_path"] = str(manifest_path)
+            changed = True
+        if entry.get("source_manifest_status") != source_manifest_status:
+            entry["source_manifest_status"] = source_manifest_status
+            changed = True
+
+    if changed:
+        write_heavy_phase_fast_path_state(state_payload)
+
+
+def append_heavy_phase_performance_regression_flag(
+    manifest: dict[str, Any],
+    step_name: str,
+    expected_skip_reason: str,
+    actual_rerun_reason: str,
+) -> None:
+    manifest["heavy_phase_performance_regression_flags"].append(
+        {
+            "code": "PERFORMANCE_REGRESSION_HEAVY_PHASE_RERUN",
+            "step_name": step_name,
+            "expected_skip_reason": expected_skip_reason,
+            "actual_rerun_reason": actual_rerun_reason,
+            "captured_at_utc": now_utc(),
+        }
+    )
+
+
 def build_skipped_fresh_step_result(
     step_name: str,
     script_path: Path,
@@ -477,11 +844,13 @@ def build_skipped_fresh_step_result(
 ) -> dict[str, Any]:
     stdout_path = step_logs_dir / f"{step_name}.stdout.log"
     stderr_path = step_logs_dir / f"{step_name}.stderr.log"
+    reused_reference = proof.get("reused_reference") or proof.get("latest_successful_reference")
     stdout_payload = {
         "step_name": step_name,
         "status": SKIPPED_FRESH,
         "reason": proof.get("reason"),
         "target_closed_day_utc": proof.get("target_closed_day_utc"),
+        "reused_reference": reused_reference,
         "latest_successful_reference": proof.get("latest_successful_reference"),
         "current_input_signature_sha256": proof.get("current_input_signature_sha256"),
         "current_output_signature_sha256": proof.get("current_output_signature_sha256"),
@@ -504,6 +873,7 @@ def build_skipped_fresh_step_result(
         "stderr_log": str(stderr_path),
         "skip_reason": proof.get("reason"),
         "target_closed_day_utc": proof.get("target_closed_day_utc"),
+        "reused_reference": reused_reference,
         "latest_successful_reference": proof.get("latest_successful_reference"),
         "input_signature_sha256": proof.get("current_input_signature_sha256"),
         "output_signature_sha256": proof.get("current_output_signature_sha256"),
@@ -525,9 +895,11 @@ def run_heavy_phase_with_freshness_fast_path(
         target_closed_day_utc,
         current_run_id=run_dir.name,
     )
-    manifest["phase_fast_path_decisions"][step_name] = {
+    decision_payload = {
         key: value for key, value in proof.items() if key != "current_reference"
     }
+    manifest["phase_fast_path_decisions"][step_name] = decision_payload
+    manifest["heavy_phase_fast_path_state_decisions"][step_name] = decision_payload
 
     if proof.get("status") == SKIPPED_FRESH:
         step_result = build_skipped_fresh_step_result(
@@ -537,14 +909,37 @@ def run_heavy_phase_with_freshness_fast_path(
             proof,
         )
         manifest["steps"].append(step_result)
-        manifest["phase_fast_path_reference"][step_name] = capture_phase_fast_path_reference(
+        captured_reference = capture_phase_fast_path_reference(
             step_name,
             target_closed_day_utc,
             source_step_status=SKIPPED_FRESH,
+            reference=proof.get("current_reference"),
         )
-        write_manifest(run_dir, manifest)
+        manifest["phase_fast_path_reference"][step_name] = captured_reference
+        manifest_path = write_manifest(run_dir, manifest)
+        persist_heavy_phase_fast_path_state_entry(
+            manifest,
+            run_dir,
+            step_name,
+            target_closed_day_utc,
+            SKIPPED_FRESH,
+            manifest_path=manifest_path,
+            reference=captured_reference,
+        )
         print(f"[APP-REFRESH] step_skipped_fresh={step_name}", flush=True)
         return step_result
+
+    persistent_state_guard = proof.get("persistent_state_guard")
+    if (
+        isinstance(persistent_state_guard, dict)
+        and persistent_state_guard.get("status") == SKIPPED_FRESH
+    ):
+        append_heavy_phase_performance_regression_flag(
+            manifest,
+            step_name,
+            expected_skip_reason=str(persistent_state_guard.get("reason")),
+            actual_rerun_reason=str(proof.get("reason")),
+        )
 
     step_result = run_step(
         step_name,
@@ -554,12 +949,22 @@ def run_heavy_phase_with_freshness_fast_path(
         script_args=script_args,
     )
     manifest["steps"].append(step_result)
-    manifest["phase_fast_path_reference"][step_name] = capture_phase_fast_path_reference(
+    captured_reference = capture_phase_fast_path_reference(
         step_name,
         target_closed_day_utc,
         source_step_status="OK",
     )
-    write_manifest(run_dir, manifest)
+    manifest["phase_fast_path_reference"][step_name] = captured_reference
+    manifest_path = write_manifest(run_dir, manifest)
+    persist_heavy_phase_fast_path_state_entry(
+        manifest,
+        run_dir,
+        step_name,
+        target_closed_day_utc,
+        "OK",
+        manifest_path=manifest_path,
+        reference=captured_reference,
+    )
     return step_result
 
 
@@ -872,6 +1277,9 @@ def main() -> None:
         "refresh_source_finished_at_utc": None,
         "phase_fast_path_reference": {},
         "phase_fast_path_decisions": {},
+        "heavy_phase_fast_path_state_path": str(HEAVY_PHASE_FAST_PATH_STATE_PATH),
+        "heavy_phase_fast_path_state_decisions": {},
+        "heavy_phase_performance_regression_flags": [],
         "raw_skip_preflight": {
             "target_last_closed_date": latest_closed_utc_date(),
             "skip_legacy_refresh": bool(args.skip_legacy_refresh),
@@ -1144,6 +1552,11 @@ def main() -> None:
         manifest["finished_at_utc"] = now_utc()
 
         manifest_path = write_manifest(run_dir, manifest)
+        sync_heavy_phase_fast_path_state_manifest_status(
+            run_stamp,
+            manifest_path,
+            str(manifest.get("status") or "OK"),
+        )
 
         print("[APP-REFRESH] status=OK", flush=True)
         print(f"[APP-REFRESH] manifest={manifest_path}", flush=True)
@@ -1186,6 +1599,11 @@ def main() -> None:
             )
 
         manifest_path = write_manifest(run_dir, manifest)
+        sync_heavy_phase_fast_path_state_manifest_status(
+            run_stamp,
+            manifest_path,
+            str(manifest.get("status") or "FAIL"),
+        )
 
         print("[APP-REFRESH] status=FAIL", flush=True)
         print(f"[APP-REFRESH] manifest={manifest_path}", flush=True)
