@@ -31,8 +31,10 @@ from scripts.execution.trading_operation_mode import (
     DEFAULT_TRADING_OPERATION_MODE_PATH,
 )
 from scripts.production.data_health_common import (
+    REPORT_ARTIFACT_TYPE,
     build_report_bundle,
-    homepage_data_health_view,
+    informational_warning_sources,
+    research_warning_sources,
 )
 
 APP_EXECUTE_BRIDGE_IMPORT_ERROR = ""
@@ -67,6 +69,7 @@ PRODUCTION_SNAPSHOT_PATH = PRODUCTION_OUTPUTS / "current_strategy_snapshot.json"
 PRODUCTION_TIMESERIES_PATH = PRODUCTION_OUTPUTS / "current_strategy_timeseries.csv"
 PRODUCTION_DIAGNOSTICS_PATH = PRODUCTION_OUTPUTS / "current_strategy_diagnostics.json"
 PRODUCTION_QUALITY_PATH = PRODUCTION_OUTPUTS / "current_strategy_snapshot.quality.json"
+DATA_HEALTH_REPORT_PATH = PRODUCTION_OUTPUTS / "data_health_report.json"
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 APP_DISPLAY_TIMEZONE = ZoneInfo("Europe/Bratislava")
@@ -1003,12 +1006,205 @@ def load_json_optional(path_value: str | Path | None) -> dict:
 
 
 def build_live_data_health_report() -> dict[str, Any]:
+    report = load_json_optional(DATA_HEALTH_REPORT_PATH)
+    if report.get("artifact_type") == REPORT_ARTIFACT_TYPE:
+        return report
     bundle = build_report_bundle(
         root=ROOT,
         output_dir=PRODUCTION_OUTPUTS,
         write_outputs=False,
     )
     return dict(bundle["report"])
+
+
+def parse_iso_datetime_optional(value: Any) -> datetime | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def unique_source_id_list(values: Any) -> list[str]:
+    source_ids: list[str] = []
+    seen_source_ids: set[str] = set()
+    for value in values if isinstance(values, list) else []:
+        source_id = str(value or "").strip()
+        if not source_id or source_id in seen_source_ids:
+            continue
+        seen_source_ids.add(source_id)
+        source_ids.append(source_id)
+    return source_ids
+
+
+def report_sources_by_id(report: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    sources = report.get("sources") if isinstance(report.get("sources"), list) else []
+    indexed_sources: dict[str, dict[str, Any]] = {}
+    for source in sources:
+        if not isinstance(source, dict):
+            continue
+        source_id = str(source.get("source_id") or "").strip()
+        if not source_id or source_id in indexed_sources:
+            continue
+        indexed_sources[source_id] = source
+    return indexed_sources
+
+
+def authority_payload_target_day(payload: dict[str, Any]) -> str:
+    if not isinstance(payload, dict):
+        return ""
+    product_snapshot = (
+        payload.get("app_product_snapshot")
+        if isinstance(payload.get("app_product_snapshot"), dict)
+        else {}
+    )
+    return str(
+        payload.get("target_closed_day_utc")
+        or payload.get("strategy_artifact_closed_day_utc")
+        or product_snapshot.get("strategy_last_closed_day")
+        or ""
+    ).strip()
+
+
+def authority_payload_sort_key(payload: dict[str, Any]) -> tuple[str, datetime]:
+    if not isinstance(payload, dict):
+        return "", datetime(1970, 1, 1, tzinfo=timezone.utc)
+    payload_timestamp = (
+        parse_iso_datetime_optional(payload.get("generated_at_utc"))
+        or parse_iso_datetime_optional(payload.get("refresh_finished_at_utc"))
+        or parse_iso_datetime_optional(payload.get("refresh_started_at_utc"))
+        or datetime(1970, 1, 1, tzinfo=timezone.utc)
+    )
+    return authority_payload_target_day(payload), payload_timestamp
+
+
+def select_preferred_authority_payload(
+    latest_successful_snapshot: dict[str, Any],
+    latest_attempt_status: dict[str, Any],
+) -> tuple[dict[str, Any], Path, str]:
+    attempt_payload = latest_attempt_status if isinstance(latest_attempt_status, dict) else {}
+    success_payload = latest_successful_snapshot if isinstance(latest_successful_snapshot, dict) else {}
+    if not attempt_payload:
+        return success_payload, AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH, SUCCESS_SNAPSHOT_ARTIFACT_TYPE
+    if not success_payload:
+        return attempt_payload, AUTHORITY_LATEST_ATTEMPT_STATUS_PATH, ATTEMPT_STATUS_ARTIFACT_TYPE
+    if authority_payload_sort_key(success_payload) > authority_payload_sort_key(attempt_payload):
+        return success_payload, AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH, SUCCESS_SNAPSHOT_ARTIFACT_TYPE
+    return attempt_payload, AUTHORITY_LATEST_ATTEMPT_STATUS_PATH, ATTEMPT_STATUS_ARTIFACT_TYPE
+
+
+def build_homepage_data_health_status_model(
+    report: dict[str, Any],
+    latest_successful_snapshot: dict[str, Any],
+    latest_attempt_status: dict[str, Any],
+) -> dict[str, Any]:
+    summary = report.get("summary") if isinstance(report.get("summary"), dict) else {}
+    sources_by_id = report_sources_by_id(report)
+    app_blocking_source_ids = unique_source_id_list(summary.get("app_blocking_source_ids"))
+    execution_blocking_source_ids = unique_source_id_list(summary.get("execution_blocking_source_ids"))
+    critical_source_ids = unique_source_id_list(
+        [*app_blocking_source_ids, *execution_blocking_source_ids]
+    )
+    critical_sources = [
+        sources_by_id[source_id]
+        for source_id in critical_source_ids
+        if source_id in sources_by_id
+    ]
+    research_sources = research_warning_sources(report)
+    informational_sources = informational_warning_sources(report)
+    block_app = summary.get("block_app") is True or bool(app_blocking_source_ids)
+    block_execution = summary.get("block_execution") is True or bool(execution_blocking_source_ids)
+    preferred_authority_payload, preferred_authority_source_path, preferred_authority_source_type = (
+        select_preferred_authority_payload(
+            latest_successful_snapshot,
+            latest_attempt_status,
+        )
+    )
+    authority_attempt_status = str(
+        preferred_authority_payload.get("latest_authoritative_attempt_status") or ""
+    ).strip().lower()
+    authority_currentness_state, authority_currentness_reason, currentness_source_path, currentness_source_type = (
+        _derive_authority_currentness(
+            latest_successful_snapshot,
+            latest_attempt_status,
+        )
+    )
+    authority_target_day = authority_payload_target_day(preferred_authority_payload)
+    report_reference_day = str(report.get("reference_closed_day_utc") or "").strip()
+    report_matches_authority_target = bool(
+        report_reference_day and authority_target_day and report_reference_day == authority_target_day
+    )
+    report_stale_relative_to_authority = bool(
+        report_reference_day and authority_target_day and report_reference_day != authority_target_day
+    )
+
+    public_notice_reason: str | None = None
+    if authority_currentness_state == "refresh_failed":
+        public_notice_reason = "authority_refresh_failed"
+    elif block_app or block_execution:
+        public_notice_reason = "data_health_blocked"
+    elif report_stale_relative_to_authority:
+        public_notice_reason = "data_health_report_stale"
+    elif authority_currentness_state in {"stale", "missing_authority_artifact"}:
+        public_notice_reason = f"authority_{authority_currentness_state}"
+
+    status_model = {
+        "block_app": block_app,
+        "block_execution": block_execution,
+        "critical_sources": critical_sources,
+        "critical_source_ids": critical_source_ids,
+        "research_sources": research_sources,
+        "research_source_ids": [
+            str(source.get("source_id") or "").strip()
+            for source in research_sources
+            if isinstance(source, dict)
+        ],
+        "informational_sources": informational_sources,
+        "informational_source_ids": [
+            str(source.get("source_id") or "").strip()
+            for source in informational_sources
+            if isinstance(source, dict)
+        ],
+        "authority_attempt_status": authority_attempt_status,
+        "authority_currentness_state": authority_currentness_state,
+        "authority_currentness_reason": authority_currentness_reason,
+        "authority_target_day": authority_target_day,
+        "preferred_authority_source_path": preferred_authority_source_path,
+        "preferred_authority_source_type": preferred_authority_source_type,
+        "currentness_source_path": currentness_source_path,
+        "currentness_source_type": currentness_source_type,
+        "report_reference_day": report_reference_day,
+        "report_matches_authority_target": report_matches_authority_target,
+        "report_stale_relative_to_authority": report_stale_relative_to_authority,
+        "show_public_notice": public_notice_reason is not None,
+        "public_notice_reason": public_notice_reason,
+        "show_ok_status": public_notice_reason is None,
+        "show_secondary_note": public_notice_reason is None
+        and bool(research_sources or informational_sources),
+    }
+    assert_homepage_data_health_status_model(status_model)
+    return status_model
+
+
+def assert_homepage_data_health_status_model(status_model: dict[str, Any]) -> None:
+    if (
+        status_model.get("authority_attempt_status") == "success"
+        and status_model.get("authority_currentness_state") == "current"
+        and status_model.get("report_matches_authority_target") is True
+        and status_model.get("block_app") is False
+        and status_model.get("block_execution") is False
+    ):
+        assert not status_model.get("critical_source_ids"), (
+            "Healthy current authority/report state must not render critical production/app/execution rows."
+        )
+        assert status_model.get("show_public_notice") is False, (
+            "Healthy current authority/report state must not render the daily update problem banner."
+        )
 
 
 def data_health_messages_for_lang(sources: list[dict[str, Any]], lang: str) -> list[str]:
@@ -1059,13 +1255,10 @@ def authority_success_closed_day_text(latest_successful_snapshot: dict) -> str:
 
 
 def build_public_homepage_refresh_notice(
-    report: dict[str, Any],
+    status_model: dict[str, Any],
     latest_successful_snapshot: dict,
-    latest_attempt_status: dict,
     lang: str,
 ) -> str | None:
-    view = homepage_data_health_view(report)
-    attempt_payload = latest_attempt_status if isinstance(latest_attempt_status, dict) else {}
     success_closed_day = authority_success_closed_day_text(latest_successful_snapshot)
     success_suffix = (
         (
@@ -1080,69 +1273,75 @@ def build_public_homepage_refresh_notice(
             else " Showing the latest successful data. Details are in Data Health."
         )
     )
-    attempt_status = str(
-        attempt_payload.get("latest_authoritative_attempt_status") or ""
-    ).strip().lower()
-    attempt_currentness = str(
-        attempt_payload.get("currentness_status")
-        or attempt_payload.get("currentness_state")
-        or ""
-    ).strip().lower()
-    attempt_target_day = str(attempt_payload.get("target_closed_day_utc") or "").strip()
-    attempt_strategy_day = str(
-        attempt_payload.get("strategy_artifact_closed_day_utc") or ""
-    ).strip()
-    attempt_has_mismatch = bool(
-        attempt_target_day
-        and attempt_strategy_day
-        and attempt_target_day != attempt_strategy_day
-    )
-    critical_source_ids = {
-        str(source.get("source_id") or "").strip()
-        for source in view["critical_sources"]
-        if isinstance(source, dict)
-    }
-
-    if attempt_status == "failed":
-        return (
-            "Dnesny refresh zlyhal." + success_suffix
+    public_notice_reason = str(status_model.get("public_notice_reason") or "").strip().lower()
+    report_reference_day = str(status_model.get("report_reference_day") or "").strip()
+    authority_target_day = str(status_model.get("authority_target_day") or "").strip()
+    stale_report_suffix = ""
+    if status_model.get("report_stale_relative_to_authority"):
+        stale_report_suffix = (
+            (
+                f" Aktualny data-health report je pre {report_reference_day or 'n/a'}, "
+                f"authority ciel je {authority_target_day or 'n/a'}."
+            )
             if lang == "sk"
-            else "Today's refresh failed." + success_suffix
+            else (
+                f" The current data health report is for {report_reference_day or 'n/a'}, "
+                f"while the authority target is {authority_target_day or 'n/a'}."
+            )
         )
-    if attempt_currentness == "stale" or attempt_has_mismatch:
+
+    if public_notice_reason == "authority_refresh_failed":
+        return (
+            "Dnesny refresh zlyhal." + stale_report_suffix + success_suffix
+            if lang == "sk"
+            else "Today's refresh failed." + stale_report_suffix + success_suffix
+        )
+    if public_notice_reason == "data_health_blocked":
+        return (
+            "Dnesna aktualizacia ma kriticky problem." + stale_report_suffix + success_suffix
+            if lang == "sk"
+            else "Today's update has a critical issue." + stale_report_suffix + success_suffix
+        )
+    if public_notice_reason == "data_health_report_stale":
+        return (
+            "Data-health report nie je zosynchronizovany s poslednym authority cielom."
+            + stale_report_suffix
+            + success_suffix
+            if lang == "sk"
+            else "The data health report is not aligned with the latest authority target."
+            + stale_report_suffix
+            + success_suffix
+        )
+    if public_notice_reason == "authority_stale":
         return (
             "Dnesny refresh nie je aktualny." + success_suffix
             if lang == "sk"
             else "Today's refresh is stale." + success_suffix
         )
-    if critical_source_ids:
+    if public_notice_reason == "authority_missing_authority_artifact":
         return (
-            "Dnesna aktualizacia ma problem." + success_suffix
+            "Authority stav nie je dostupny." + success_suffix
             if lang == "sk"
-            else "Today's update has an issue." + success_suffix
+            else "Authority status is unavailable." + success_suffix
         )
     return None
 
 
 def render_data_health_banner(
     report: dict[str, Any],
+    status_model: dict[str, Any],
     lang: str,
     latest_successful_snapshot: dict,
-    latest_attempt_status: dict,
 ) -> bool:
-    view = homepage_data_health_view(report)
-    research_sources = view["research_sources"]
-    informational_sources = view["informational_sources"]
     public_notice = build_public_homepage_refresh_notice(
-        report,
+        status_model,
         latest_successful_snapshot,
-        latest_attempt_status,
         lang,
     )
     if public_notice:
         st.warning(public_notice)
         return False
-    if research_sources or informational_sources:
+    if status_model["research_sources"] or status_model["informational_sources"]:
         st.caption(
             "Produk\u010dn\u00e9 d\u00e1ta: OK. Ved\u013eaj\u0161ie research-only a env/API upozornenia s\u00fa skryt\u00e9 v detaile Stav d\u00e1t."
             if lang == "sk"
@@ -1154,13 +1353,13 @@ def render_data_health_banner(
 
 def render_data_health_details(
     report: dict[str, Any],
+    status_model: dict[str, Any],
     lang: str,
     refresh_rows: list[dict[str, Any]],
 ) -> None:
-    view = homepage_data_health_view(report)
-    critical_rows = data_health_rows_for_lang(view["critical_sources"], lang)
-    research_messages = data_health_messages_for_lang(view["research_sources"], lang)
-    informational_messages = data_health_messages_for_lang(view["informational_sources"], lang)
+    critical_rows = data_health_rows_for_lang(status_model["critical_sources"], lang)
+    research_messages = data_health_messages_for_lang(status_model["research_sources"], lang)
+    informational_messages = data_health_messages_for_lang(status_model["informational_sources"], lang)
 
     with st.expander("Stav d\u00e1t" if lang == "sk" else "Data Health", expanded=False):
         st.markdown(
@@ -1174,14 +1373,50 @@ def render_data_health_details(
                 if lang == "sk"
                 else "The public homepage keeps rendering from the latest successful authority snapshot. Execution and trading controls remain fail-closed until the issue is resolved."
             )
+            if status_model["report_stale_relative_to_authority"]:
+                st.caption(
+                    (
+                        "Aktualny data-health report zaostava za authority cielom "
+                        f"{status_model.get('authority_target_day') or 'n/a'}."
+                    )
+                    if lang == "sk"
+                    else (
+                        "The current data health report lags the authority target "
+                        f"{status_model.get('authority_target_day') or 'n/a'}."
+                    )
+                )
             render_app_table(critical_rows, emphasize_first_column=True)
-        elif view["show_ok_status"]:
+        elif status_model["report_stale_relative_to_authority"]:
+            st.warning(
+                (
+                    "Kriticke production/app/execution riadky momentalne report nehlasi, "
+                    "ale data-health report este nie je zosynchronizovany s poslednym authority cielom."
+                )
+                if lang == "sk"
+                else (
+                    "The report currently shows no critical production/app/execution rows, "
+                    "but the data health report is not yet aligned with the latest authority target."
+                )
+            )
+        elif status_model["show_public_notice"]:
+            st.warning(
+                (
+                    "Homepage zatial drzi posledny uspesny authority snapshot, "
+                    "ale posledny autoritativny stav este nie je v rezime current."
+                )
+                if lang == "sk"
+                else (
+                    "The homepage is still holding the latest successful authority snapshot, "
+                    "but the latest authority state is not yet current."
+                )
+            )
+        elif status_model["show_ok_status"]:
             st.write(
                 "Produk\u010dn\u00e9 d\u00e1ta, aplik\u00e1cia aj execution s\u00fa v poriadku."
                 if lang == "sk"
                 else "Production data, the app, and execution are healthy."
             )
-            if view["show_secondary_note"]:
+            if status_model["show_secondary_note"]:
                 st.caption(
                     "Ni\u017e\u0161ie s\u00fa len ved\u013eaj\u0161ie research-only alebo informa\u010dn\u00e9 upozornenia. Produkcia nimi nie je ovplyvnen\u00e1."
                     if lang == "sk"
@@ -1648,8 +1883,17 @@ def _derive_authority_currentness(
     latest_successful_snapshot: dict,
     latest_attempt_status: dict,
 ) -> tuple[str, str, Path, str]:
-    attempt_payload = latest_attempt_status if isinstance(latest_attempt_status, dict) else {}
-    success_payload = latest_successful_snapshot if isinstance(latest_successful_snapshot, dict) else {}
+    preferred_payload, preferred_source_path, preferred_source_type = select_preferred_authority_payload(
+        latest_successful_snapshot,
+        latest_attempt_status,
+    )
+    alternate_payload = (
+        latest_attempt_status
+        if preferred_source_path == AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
+        else latest_successful_snapshot
+    )
+    selected_payload = preferred_payload if isinstance(preferred_payload, dict) else {}
+    fallback_payload = alternate_payload if isinstance(alternate_payload, dict) else {}
 
     def first_present(*values: Any) -> str | None:
         for value in values:
@@ -1658,52 +1902,38 @@ def _derive_authority_currentness(
                 return text
         return None
 
-    def source_details(using_attempt_payload: bool) -> tuple[Path, str]:
-        if using_attempt_payload:
-            return AUTHORITY_LATEST_ATTEMPT_STATUS_PATH, ATTEMPT_STATUS_ARTIFACT_TYPE
-        return AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH, SUCCESS_SNAPSHOT_ARTIFACT_TYPE
-
     attempt_status = first_present(
-        attempt_payload.get("latest_authoritative_attempt_status"),
-        success_payload.get("latest_authoritative_attempt_status"),
+        selected_payload.get("latest_authoritative_attempt_status"),
+        fallback_payload.get("latest_authoritative_attempt_status"),
     )
     normalized_attempt_status = str(attempt_status or "").strip().lower()
 
     if normalized_attempt_status == "in_progress":
-        source_path, source_type = source_details(bool(attempt_payload))
-        return "refresh_in_progress", FRESHNESS_SUMMARY_TEXT["refresh_in_progress"], source_path, source_type
+        return (
+            "refresh_in_progress",
+            FRESHNESS_SUMMARY_TEXT["refresh_in_progress"],
+            preferred_source_path,
+            preferred_source_type,
+        )
 
     if normalized_attempt_status == "failed":
-        source_path, source_type = source_details(bool(attempt_payload))
         attempt_error = first_present(
-            attempt_payload.get("latest_authoritative_attempt_error"),
-            success_payload.get("latest_authoritative_attempt_error"),
+            selected_payload.get("latest_authoritative_attempt_error"),
+            fallback_payload.get("latest_authoritative_attempt_error"),
         )
         reason = FRESHNESS_SUMMARY_TEXT["refresh_failed"]
         if attempt_error:
             reason = f"{reason} error={attempt_error}."
-        return "refresh_failed", reason, source_path, source_type
+        return "refresh_failed", reason, preferred_source_path, preferred_source_type
 
-    attempt_target_day = first_present(attempt_payload.get("target_closed_day_utc"))
-    attempt_strategy_day = first_present(attempt_payload.get("strategy_artifact_closed_day_utc"))
-    success_target_day = first_present(success_payload.get("target_closed_day_utc"))
-    success_strategy_day = first_present(success_payload.get("strategy_artifact_closed_day_utc"))
-
-    if attempt_target_day and attempt_strategy_day:
-        target_closed_day_utc = attempt_target_day
-        strategy_artifact_closed_day_utc = attempt_strategy_day
-        source_path, source_type = source_details(True)
-    elif success_target_day and success_strategy_day:
-        target_closed_day_utc = success_target_day
-        strategy_artifact_closed_day_utc = success_strategy_day
-        source_path, source_type = source_details(False)
-    else:
-        target_closed_day_utc = first_present(attempt_target_day, success_target_day)
-        strategy_artifact_closed_day_utc = first_present(
-            attempt_strategy_day,
-            success_strategy_day,
-        )
-        source_path, source_type = source_details(bool(attempt_target_day or attempt_strategy_day or attempt_payload))
+    target_closed_day_utc = first_present(
+        selected_payload.get("target_closed_day_utc"),
+        fallback_payload.get("target_closed_day_utc"),
+    )
+    strategy_artifact_closed_day_utc = first_present(
+        selected_payload.get("strategy_artifact_closed_day_utc"),
+        fallback_payload.get("strategy_artifact_closed_day_utc"),
+    )
 
     if target_closed_day_utc and strategy_artifact_closed_day_utc:
         if target_closed_day_utc == strategy_artifact_closed_day_utc:
@@ -1714,8 +1944,8 @@ def _derive_authority_currentness(
                     f"{target_closed_day_utc} matches authority strategy artifact closed UTC day "
                     f"{strategy_artifact_closed_day_utc}."
                 ),
-                source_path,
-                source_type,
+                preferred_source_path,
+                preferred_source_type,
             )
         return (
             "stale",
@@ -1724,8 +1954,8 @@ def _derive_authority_currentness(
                 f"{target_closed_day_utc} does not match authority strategy artifact closed UTC day "
                 f"{strategy_artifact_closed_day_utc}."
             ),
-            source_path,
-            source_type,
+            preferred_source_path,
+            preferred_source_type,
         )
 
     if target_closed_day_utc:
@@ -1735,20 +1965,24 @@ def _derive_authority_currentness(
                 "Stale: authority target closed UTC day "
                 f"{target_closed_day_utc} is present but authority strategy artifact closed UTC day is missing."
             ),
-            source_path,
-            source_type,
+            preferred_source_path,
+            preferred_source_type,
         )
 
     if normalized_attempt_status == "success":
         return (
             "stale",
             "Stale: authority publish succeeded but target/strategy closed UTC day fields are missing.",
-            source_path,
-            source_type,
+            preferred_source_path,
+            preferred_source_type,
         )
 
-    source_path, source_type = source_details(bool(attempt_payload))
-    return "missing_authority_artifact", FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"], source_path, source_type
+    return (
+        "missing_authority_artifact",
+        FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"],
+        preferred_source_path,
+        preferred_source_type,
+    )
 
 
 def build_missing_runtime_snapshot(path: Path) -> dict:
@@ -1850,29 +2084,28 @@ def build_authority_runtime_table_snapshot(
     latest_successful_snapshot: dict,
     latest_attempt_status: dict,
 ) -> dict:
-    attempt_payload = latest_attempt_status if isinstance(latest_attempt_status, dict) else {}
-    success_payload = latest_successful_snapshot if isinstance(latest_successful_snapshot, dict) else {}
-    source_path = (
-        AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
-        if attempt_payload
-        else AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
+    primary_payload, source_path, source_type = select_preferred_authority_payload(
+        latest_successful_snapshot,
+        latest_attempt_status,
     )
-    source_type = (
-        ATTEMPT_STATUS_ARTIFACT_TYPE
-        if attempt_payload
-        else SUCCESS_SNAPSHOT_ARTIFACT_TYPE
+    secondary_payload = (
+        latest_attempt_status
+        if source_path == AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
+        else latest_successful_snapshot
     )
+    primary_payload = primary_payload if isinstance(primary_payload, dict) else {}
+    secondary_payload = secondary_payload if isinstance(secondary_payload, dict) else {}
     authority_generated_at_utc = (
-        attempt_payload.get("generated_at_utc")
-        or attempt_payload.get("refresh_finished_at_utc")
-        or success_payload.get("generated_at_utc")
-        or success_payload.get("refresh_finished_at_utc")
+        primary_payload.get("generated_at_utc")
+        or primary_payload.get("refresh_finished_at_utc")
+        or secondary_payload.get("generated_at_utc")
+        or secondary_payload.get("refresh_finished_at_utc")
     )
-    authority_run_id = attempt_payload.get("run_id") or success_payload.get("run_id")
+    authority_run_id = primary_payload.get("run_id") or secondary_payload.get("run_id")
     authority_attempt_status = (
         str(
-            attempt_payload.get("latest_authoritative_attempt_status")
-            or success_payload.get("latest_authoritative_attempt_status")
+            primary_payload.get("latest_authoritative_attempt_status")
+            or secondary_payload.get("latest_authoritative_attempt_status")
             or ""
         ).strip().lower()
         or None
@@ -1883,22 +2116,26 @@ def build_authority_runtime_table_snapshot(
         currentness_source_path,
         currentness_source_type,
     ) = _derive_authority_currentness(
-        success_payload,
-        attempt_payload,
+        latest_successful_snapshot,
+        latest_attempt_status,
     )
     wallet_sync_utc = (
-        attempt_payload.get("authority_wallet_sync_utc")
-        or attempt_payload.get("authority_account_snapshot_as_of_utc")
+        primary_payload.get("authority_wallet_sync_utc")
+        or primary_payload.get("authority_account_snapshot_as_of_utc")
     )
-    wallet_source_path = AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
-    wallet_source_type = ATTEMPT_STATUS_ARTIFACT_TYPE
+    wallet_source_path = source_path
+    wallet_source_type = source_type
     if not wallet_sync_utc:
         wallet_sync_utc = (
-            success_payload.get("authority_wallet_sync_utc")
-            or success_payload.get("authority_account_snapshot_as_of_utc")
+            secondary_payload.get("authority_wallet_sync_utc")
+            or secondary_payload.get("authority_account_snapshot_as_of_utc")
         )
-        wallet_source_path = AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
-        wallet_source_type = SUCCESS_SNAPSHOT_ARTIFACT_TYPE
+        if source_path == AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH:
+            wallet_source_path = AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
+            wallet_source_type = ATTEMPT_STATUS_ARTIFACT_TYPE
+        else:
+            wallet_source_path = AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH
+            wallet_source_type = SUCCESS_SNAPSHOT_ARTIFACT_TYPE
     return {
         "last_pi_update_utc": authority_generated_at_utc,
         "last_pc_refresh_utc": None,
@@ -5562,20 +5799,25 @@ product_snapshot = require_snapshot_payload(
     AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
 )
 data_health_report = build_live_data_health_report()
-render_data_health_banner(
+data_health_status_model = build_homepage_data_health_status_model(
     data_health_report,
-    lang,
     latest_successful_snapshot_payload,
     latest_attempt_status_payload,
 )
-runtime_snapshot_source_path = AUTHORITY_LATEST_ATTEMPT_STATUS_PATH
-runtime_authority_payload = (
-    latest_attempt_status_payload
-    if latest_attempt_status_payload
-    else latest_successful_snapshot_payload
+render_data_health_banner(
+    data_health_report,
+    data_health_status_model,
+    lang,
+    latest_successful_snapshot_payload,
+)
+runtime_authority_payload, runtime_snapshot_source_path, _runtime_authority_source_type = (
+    select_preferred_authority_payload(
+        latest_successful_snapshot_payload,
+        latest_attempt_status_payload,
+    )
 )
 runtime_snapshot = load_runtime_snapshot_for_app(
-    dict(latest_attempt_status_payload.get("app_runtime_snapshot") or {}),
+    dict(runtime_authority_payload.get("app_runtime_snapshot") or {}),
     runtime_snapshot_source_path,
 )
 selector_cfg = build_selector_config_from_snapshot(product_snapshot, runtime_snapshot)
@@ -5937,7 +6179,7 @@ with tabs[0]:
             ),
         },
     ]
-    render_data_health_details(data_health_report, lang, refresh_rows)
+    render_data_health_details(data_health_report, data_health_status_model, lang, refresh_rows)
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))
