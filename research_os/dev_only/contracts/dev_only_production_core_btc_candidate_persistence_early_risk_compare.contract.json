@@ -1,0 +1,107 @@
+{
+  "contract_version": "1.0",
+  "artifact_type": "dev_only_production_core_btc_candidate_persistence_early_risk_compare_contract",
+  "artifact_id": "dev_only_production_core_btc_candidate_persistence_early_risk_compare",
+  "created_at_utc": "2026-05-06 00:00:00 UTC",
+  "owner": "MRV1 CORE STRATEGY",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "production_core_btc_candidate_persistence_early_risk_compare_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "baseline_model": "phase68g_66g_1p25x_candidate",
+  "baseline_sources": [
+    "outputs/production/current_strategy_snapshot.json",
+    "outputs/production/current_strategy_timeseries.csv",
+    "outputs/production/current_strategy_diagnostics.json"
+  ],
+  "mechanism_id": "production_core_btc_candidate_persistence_early_risk_dev_only_compare",
+  "mechanism_description": "One narrow dev-only comparison that authorizes BTC EARLY_RISK on baseline effective-CASH rows when BTC has persisted as the Production Core candidate for at least 10 consecutive rows, trend authorization is still OFF, and the pre-authorization trend band stays inside -0.20 < trend_score < 0.10.",
+  "strict_boundaries": [
+    "dev_only_only",
+    "non_authoritative_only",
+    "no_source_of_truth_mutation",
+    "no_app_live_runtime_changes",
+    "no_production_truth_mutation",
+    "no_leverage_truth_change",
+    "no_shortlist_change",
+    "no_broad_sweep",
+    "no_parameter_grid",
+    "only_two_variants_tested",
+    "baseline_full_risk_behavior_unchanged"
+  ],
+  "common_entry_filter": [
+    "baseline current_asset == CASH",
+    "baseline effective_market_exposure == 0",
+    "candidate_asset == BTC",
+    "candidate_asset has been BTC for at least 10 consecutive Production Core rows",
+    "trend_permission_active == false",
+    "trend_score > -0.20",
+    "trend_score < 0.10",
+    "stress_block_day == false if available",
+    "hard_invalidation == false if available"
+  ],
+  "variants": {
+    "btc_candidate_persistence_10d_050": {
+      "asset": "BTC",
+      "early_risk_sleeve": 0.5
+    },
+    "btc_candidate_persistence_10d_075": {
+      "asset": "BTC",
+      "early_risk_sleeve": 0.75
+    }
+  },
+  "maintenance": [
+    "stay EARLY_RISK until baseline FULL_RISK or non-cash turns ON",
+    "or candidate_asset != BTC",
+    "or trend_score <= -0.20",
+    "or stress_block_day == true",
+    "or hard_invalidation == true if available"
+  ],
+  "pass_through": [
+    "if baseline FULL_RISK turns ON, pass through exactly into baseline",
+    "baseline non-cash or FULL_RISK rows must strict pass through state",
+    "baseline non-cash or FULL_RISK rows must strict pass through asset",
+    "baseline non-cash or FULL_RISK rows must strict pass through leverage",
+    "baseline non-cash or FULL_RISK rows must strict pass through gross return",
+    "baseline non-cash or FULL_RISK rows must strict pass through net return",
+    "baseline non-cash or FULL_RISK rows must strict pass through turnover",
+    "baseline non-cash or FULL_RISK rows must strict pass through fees",
+    "baseline non-cash or FULL_RISK rows must strict pass through equity path"
+  ],
+  "required_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/summary.json",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/candidate_timeseries.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/period_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/activation_windows.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/blocker_counts.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/cost_metrics.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/handoff_row_audit.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/variant_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/quality.json"
+  ],
+  "decision_rule": {
+    "continue_if": [
+      "missed 2025 BTC move capture is meaningful",
+      "since2025 net return and CAGR improve",
+      "DD is not materially worse",
+      "churn and exposure increase remain acceptable",
+      "strict FULL_RISK pass-through passes"
+    ],
+    "pause_if": [
+      "it captures the target window but remains too narrow or concentrated"
+    ],
+    "stop_if": [
+      "no meaningful capture of the 2025 missed window",
+      "since2025 worsens",
+      "DD worsens materially",
+      "churn rises too much",
+      "pass-through fails"
+    ]
+  },
+  "status": "defined_dev_only_candidate_persistence_contract"
+}

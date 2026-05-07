@@ -1,0 +1,137 @@
+{
+  "artifact_id": "production_core_btc_candidate_persistence_early_risk_compare_quality",
+  "generated_at_utc": "2026-05-06 17:21:50 UTC",
+  "checks": [
+    {
+      "name": "production_core_baseline_rows_loaded",
+      "ok": true,
+      "detail": "loaded 2923 baseline rows"
+    },
+    {
+      "name": "required_periods_present",
+      "ok": true,
+      "detail": "full_available, since2023, since2025, and missed_window_2025 were all built"
+    },
+    {
+      "name": "btc_candidate_persistence_10d_050_strict_pass_through",
+      "ok": true,
+      "detail": "strict pass-through verified on 537 baseline FULL_RISK rows"
+    },
+    {
+      "name": "btc_candidate_persistence_10d_050_entry_rule_enforced",
+      "ok": true,
+      "detail": "EARLY_RISK rows respect BTC persistence, pre-authorization trend band, and risk filters"
+    },
+    {
+      "name": "btc_candidate_persistence_10d_050_no_full_risk_override",
+      "ok": true,
+      "detail": "the probe never mutates baseline FULL_RISK behavior"
+    },
+    {
+      "name": "btc_candidate_persistence_10d_075_strict_pass_through",
+      "ok": true,
+      "detail": "strict pass-through verified on 537 baseline FULL_RISK rows"
+    },
+    {
+      "name": "btc_candidate_persistence_10d_075_entry_rule_enforced",
+      "ok": true,
+      "detail": "EARLY_RISK rows respect BTC persistence, pre-authorization trend band, and risk filters"
+    },
+    {
+      "name": "btc_candidate_persistence_10d_075_no_full_risk_override",
+      "ok": true,
+      "detail": "the probe never mutates baseline FULL_RISK behavior"
+    },
+    {
+      "name": "hard_invalidation_source_documented",
+      "ok": true,
+      "detail": "No canonical hard invalidation column is present in current_strategy_timeseries.csv."
+    },
+    {
+      "name": "no_source_of_truth_changes",
+      "ok": true,
+      "detail": "all writes remain under outputs/research_os/dev_only and avoid source_of_truth"
+    },
+    {
+      "name": "activation_windows_generated",
+      "ok": true,
+      "detail": "activation_windows.csv rows=22"
+    }
+  ],
+  "parse_validation": {
+    "ok": true,
+    "checks": [
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\summary.json",
+        "kind": "json",
+        "ok": true,
+        "detail": "summary.json parsed"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\manifest.json",
+        "kind": "json",
+        "ok": true,
+        "detail": "manifest.json parsed"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\candidate_timeseries.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "candidate_timeseries.csv rows=5846"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\compare.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "compare.csv rows=144"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\period_compare.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "period_compare.csv rows=8"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\activation_windows.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "activation_windows.csv rows=22"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\blocker_counts.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "blocker_counts.csv rows=40"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\cost_metrics.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "cost_metrics.csv rows=16"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\handoff_row_audit.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "handoff_row_audit.csv rows=1074"
+      },
+      {
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\variant_compare.csv",
+        "kind": "csv",
+        "ok": true,
+        "detail": "variant_compare.csv rows=2"
+      }
+    ]
+  },
+  "status": "passed",
+  "warnings": [
+    "No canonical hard invalidation column is present in current_strategy_timeseries.csv."
+  ],
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "production_core_btc_candidate_persistence_early_risk_compare_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

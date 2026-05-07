@@ -1,0 +1,35 @@
+{
+  "spec_version": "1.0",
+  "artifact_type": "dev_only_production_core_btc_candidate_persistence_early_risk_compare_spec",
+  "artifact_id": "dev_only_production_core_btc_candidate_persistence_early_risk_compare",
+  "created_at_utc": "2026-05-06 00:00:00 UTC",
+  "owner": "MRV1 CORE STRATEGY",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "production_core_btc_candidate_persistence_early_risk_compare_only",
+  "candidate_selection": false,
+  "official_edge_claim": false,
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\dev_only_production_core_btc_candidate_persistence_early_risk_compare.py",
+  "input_refs": [
+    "outputs/production/current_strategy_snapshot.json",
+    "outputs/production/current_strategy_timeseries.csv",
+    "outputs/production/current_strategy_diagnostics.json"
+  ],
+  "expected_outputs": [
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/summary.json",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/candidate_timeseries.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/period_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/activation_windows.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/blocker_counts.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/cost_metrics.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/handoff_row_audit.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/variant_compare.csv",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/manifest.json",
+    "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/quality.json"
+  ],
+  "mechanical_question": "Does BTC candidate persistence for at least 10 consecutive Production Core rows provide a useful dev-only early-risk permission that captures the missed 2025 BTC move without materially worsening drawdown or churn?",
+  "status": "dev_only_production_core_btc_candidate_persistence_early_risk_compare_ready"
+}

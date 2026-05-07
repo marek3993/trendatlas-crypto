@@ -1,0 +1,61 @@
+{
+  "artifact_id": "production_core_btc_candidate_persistence_early_risk_compare_manifest",
+  "generated_at_utc": "2026-05-06 17:21:50 UTC",
+  "output_namespace": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare",
+  "output_refs": {
+    "summary_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\summary.json",
+    "candidate_timeseries_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\candidate_timeseries.csv",
+    "compare_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\compare.csv",
+    "period_compare_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\period_compare.csv",
+    "activation_windows_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\activation_windows.csv",
+    "blocker_counts_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\blocker_counts.csv",
+    "cost_metrics_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\cost_metrics.csv",
+    "handoff_row_audit_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\handoff_row_audit.csv",
+    "variant_compare_csv": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\variant_compare.csv",
+    "manifest_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\manifest.json",
+    "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_production_core_btc_candidate_persistence_early_risk_compare\\quality.json"
+  },
+  "input_refs": {
+    "baseline_snapshot": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
+    "baseline_timeseries": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_timeseries.csv",
+    "baseline_diagnostics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_diagnostics.json",
+    "contract_ref": "research_os/dev_only/contracts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.contract.json",
+    "spec_ref": "research_os/dev_only/specs/dev_only_production_core_btc_candidate_persistence_early_risk_compare.spec.json",
+    "manifest_seed_ref": "research_os/dev_only/manifests/dev_only_production_core_btc_candidate_persistence_early_risk_compare.manifest.json"
+  },
+  "contract_refs": [
+    "research_os/dev_only/contracts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.contract.json"
+  ],
+  "spec_refs": [
+    "research_os/dev_only/specs/dev_only_production_core_btc_candidate_persistence_early_risk_compare.spec.json"
+  ],
+  "manifest_seed_refs": [
+    "research_os/dev_only/manifests/dev_only_production_core_btc_candidate_persistence_early_risk_compare.manifest.json"
+  ],
+  "cost_model": {
+    "fee_rate": 0.00045,
+    "taker_fee_bps": 4.5,
+    "maker_fee_bps": 1.5,
+    "slippage_rate": 0.001,
+    "tradable_transition_slippage_bps": 10.0,
+    "annual_borrow_cost": 0.12,
+    "annual_borrow_cost_pct": 12.0,
+    "fee_side_mode": "taker",
+    "staking_discount_pct": 0.0,
+    "referral_discount_pct": 0.0,
+    "source": "derived from outputs/production/current_strategy_timeseries.csv daily cost columns"
+  },
+  "hard_invalidation_rule": {
+    "available": false,
+    "source_column": null,
+    "detail": "No canonical hard invalidation column is present in current_strategy_timeseries.csv."
+  },
+  "status": "generated_dev_only_compare_pack",
+  "dev_only": true,
+  "non_authoritative": true,
+  "official_truth": false,
+  "strategy_advancement": false,
+  "analysis_mode": "production_core_btc_candidate_persistence_early_risk_compare_only",
+  "candidate_selection": false,
+  "official_edge_claim": false
+}

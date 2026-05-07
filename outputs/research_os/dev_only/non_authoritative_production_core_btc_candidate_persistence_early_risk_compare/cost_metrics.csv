@@ -1,0 +1,17 @@
+variant_id,period,model,trading_fees_total_pct,funding_total_pct,borrow_cost_total_pct,slippage_cost_total_pct,total_cost_pct,turnover_total
+btc_candidate_persistence_10d_050,full_available,baseline,10.8225,0.0,3.613963,16.5,30.936463,240.5
+btc_candidate_persistence_10d_050,full_available,candidate,11.25,0.0,3.613963,18.4,33.263963,250.0
+btc_candidate_persistence_10d_050,since2023,baseline,4.95,0.0,1.552361,7.5,14.002361,110.0
+btc_candidate_persistence_10d_050,since2023,candidate,5.22,0.0,1.552361,8.7,15.472361,116.0
+btc_candidate_persistence_10d_050,since2025,baseline,0.9675,0.0,0.616016,1.8,3.383516,21.5
+btc_candidate_persistence_10d_050,since2025,candidate,1.0125,0.0,0.616016,2.0,3.628516,22.5
+btc_candidate_persistence_10d_050,missed_window_2025,baseline,0.05625,0.0,0.008214,0.1,0.164464,1.25
+btc_candidate_persistence_10d_050,missed_window_2025,candidate,0.10125,0.0,0.008214,0.3,0.409464,2.25
+btc_candidate_persistence_10d_075,full_available,baseline,10.8225,0.0,3.613963,16.5,30.936463,240.5
+btc_candidate_persistence_10d_075,full_available,candidate,11.46375,0.0,3.613963,18.4,33.477713,254.75
+btc_candidate_persistence_10d_075,since2023,baseline,4.95,0.0,1.552361,7.5,14.002361,110.0
+btc_candidate_persistence_10d_075,since2023,candidate,5.355,0.0,1.552361,8.7,15.607361,119.0
+btc_candidate_persistence_10d_075,since2025,baseline,0.9675,0.0,0.616016,1.8,3.383516,21.5
+btc_candidate_persistence_10d_075,since2025,candidate,1.035,0.0,0.616016,2.0,3.651016,23.0
+btc_candidate_persistence_10d_075,missed_window_2025,baseline,0.05625,0.0,0.008214,0.1,0.164464,1.25
+btc_candidate_persistence_10d_075,missed_window_2025,candidate,0.12375,0.0,0.008214,0.3,0.431964,2.75
