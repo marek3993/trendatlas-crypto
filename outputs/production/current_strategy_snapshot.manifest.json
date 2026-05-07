@@ -1,85 +1,65 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-06T19:55:56Z",
+  "generated_at_utc": "2026-05-07T00:14:33Z",
   "strategy_id": "current_strategy",
-  "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "adapter_name": "promoted_staged_strategy_candidate",
-  "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\promote_staged_strategy_candidate.py --candidate phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "git_commit": "2daa19a526b5403f80dcdcf186e8fc0da0e9c6a7",
+  "strategy_version": "phase68g_66g_1p25x_candidate",
+  "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
+  "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
+  "git_commit": "e71152eb56dbdb482d6928cb92b84fff8cc04195",
   "source_inputs": {
-    "promotion_source": "staged_strategy_candidate_bundle",
+    "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
     "strategy_id": "current_strategy",
-    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "validated_closed_day": "2026-05-05",
-    "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "base_strategy_version": "phase68g_66g_1p25x_candidate",
-    "candidate_quality_status": "passed",
-    "candidate_bundle_path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "lineage": {
-      "dev_only_source_lineage": true,
-      "non_authoritative_research_input": true,
-      "official_truth": false,
-      "live_truth": false,
-      "app_truth": false,
-      "execution_truth": false
-    },
-    "baseline_reference": {
-      "baseline_strategy_version": "phase68g_66g_1p25x_candidate",
-      "baseline_closed_day": "2026-05-05",
-      "baseline_source_path": "outputs/production/current_strategy_timeseries.csv"
-    },
+    "strategy_version": "phase68g_66g_1p25x_candidate",
+    "validated_closed_day": "2026-05-06",
     "files": {
-      "candidate_snapshot": {
-        "path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15/candidate_strategy_snapshot.json",
-        "sha256": "576ee5942799bffef5ce6296658b769398caaeeb595d94e7c7caf7ac229a6cf5",
-        "size_bytes": 8941,
-        "modified_utc": "2026-05-06T19:27:55Z",
-        "closed_day": "2026-05-05",
-        "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-        "status": "staged_candidate"
+      "strategy_summary": {
+        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+        "sha256": "aabbd2a73474d713d4fa95b42cfd7e71c1df010719e5126a660dad058d21e4f2",
+        "size_bytes": 900,
+        "modified_utc": "2026-05-07T00:14:32Z",
+        "last_date": "2026-05-06",
+        "row_count": 1
       },
-      "candidate_timeseries": {
-        "path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15/candidate_strategy_timeseries.csv",
-        "sha256": "2973bf389789e1cb260e93438cca87065545737465105dd1852bbb36f8deb81f",
-        "size_bytes": 602572,
-        "modified_utc": "2026-05-06T19:27:55Z",
-        "last_date": "2026-05-05",
-        "row_count": 580
+      "strategy_paper": {
+        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+        "sha256": "2429159e85c9315745c2bdd90fe566d727c03f8dd5b6a1a0909b6667052b6e36",
+        "size_bytes": 1051996,
+        "modified_utc": "2026-05-07T00:14:32Z",
+        "last_date": "2026-05-06",
+        "row_count": 2924
       },
-      "candidate_diagnostics": {
-        "path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15/candidate_strategy_diagnostics.json",
-        "sha256": "e696fe8a1dc4a4e88ff52fa416872c6dc854b2729581731e7f2dddaee964c47d",
-        "size_bytes": 16948,
-        "modified_utc": "2026-05-06T19:27:55Z",
-        "closed_day": "2026-05-05"
+      "trend_status": {
+        "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+        "sha256": "70b15f6608e9e8a935f2c74d6d6931a232f9e41a4b520fb06bb4918bbeb183cc",
+        "size_bytes": 617,
+        "modified_utc": "2026-05-07T00:14:06Z",
+        "last_date": "2026-05-06",
+        "row_count": 1
       },
-      "candidate_quality": {
-        "path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15/candidate_strategy_snapshot.quality.json",
-        "sha256": "3009b03de0b992ae93dd34e0828b2aa3b584c07cfc4ac6403cc72164daba47c9",
-        "size_bytes": 2070,
-        "modified_utc": "2026-05-06T19:51:51Z",
-        "status": "passed"
+      "trend_history": {
+        "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+        "sha256": "dd45dbbf04b44531723b17f2f8e109889212530d2a8e607401d030ed9c7e6b79",
+        "size_bytes": 376451,
+        "modified_utc": "2026-05-07T00:14:06Z",
+        "last_date": "2026-05-06",
+        "row_count": 2924
       },
-      "candidate_manifest": {
-        "path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15/candidate_strategy_snapshot.manifest.json",
-        "sha256": "33896d15dfa60f970ab02ff100c12e826b229a2a4a2fe0a676f2dc672b0ee58c",
-        "size_bytes": 14663,
-        "modified_utc": "2026-05-06T19:27:55Z",
-        "validation_status": "passed"
+      "freshness_report": {
+        "path": "outputs/execution/freshness/app_freshness_report.json",
+        "sha256": "a8e6f028266b47ce66e616ea77096e2d9ca7fc5f05a15c8057f5ec81ced95db7",
+        "size_bytes": 1172,
+        "modified_utc": "2026-05-07T00:14:28Z",
+        "last_date": "2026-05-06",
+        "status": "ok"
       },
-      "candidate_compare_json": {
-        "path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15/compare_vs_current_production_core.json",
-        "sha256": "b9ccd760006d9cdd1758dadea486598b74479a0eb12ae34ac766d50c447f83fb",
-        "size_bytes": 8054,
-        "modified_utc": "2026-05-06T19:27:55Z"
-      },
-      "candidate_compare_csv": {
-        "path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15/compare_vs_current_production_core.csv",
-        "sha256": "5884ee32f7688ed8d9b0c494de190185df8f21326510c338f984b4a6fd59a0e1",
-        "size_bytes": 3060,
-        "modified_utc": "2026-05-06T19:27:55Z",
-        "row_count": 36
+      "benchmark_ohlcv": {
+        "path": "data/ohlcv/BTCUSDT_1d.csv",
+        "sha256": "96d27b6f8412a6d01f67c5058f988f16fe353cbad127352d06abadf1d8e05b0f",
+        "size_bytes": 274457,
+        "modified_utc": "2026-05-07T00:10:14Z",
+        "last_date": "2026-05-06",
+        "row_count": 3185
       }
     }
   },
@@ -90,29 +70,5 @@
     "quality": "outputs/production/current_strategy_snapshot.quality.json",
     "manifest": "outputs/production/current_strategy_snapshot.manifest.json"
   },
-  "promotion": {
-    "mode": "promoted_from_staged_candidate",
-    "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "candidate_closed_day": "2026-05-05",
-    "candidate_bundle_path": "outputs/production/candidates/phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "candidate_quality_status": "passed",
-    "candidate_manifest_validation_status": "passed",
-    "backup_path": "outputs/production/history/pre_etf_flow_impulse_cutover_20260506T195556Z",
-    "backup_files": [
-      "outputs/production/history/pre_etf_flow_impulse_cutover_20260506T195556Z/current_strategy_snapshot.json",
-      "outputs/production/history/pre_etf_flow_impulse_cutover_20260506T195556Z/current_strategy_timeseries.csv",
-      "outputs/production/history/pre_etf_flow_impulse_cutover_20260506T195556Z/current_strategy_diagnostics.json"
-    ],
-    "replaced_output_files": [
-      "outputs/production/current_strategy_snapshot.json",
-      "outputs/production/current_strategy_timeseries.csv",
-      "outputs/production/current_strategy_diagnostics.json",
-      "outputs/production/current_strategy_snapshot.quality.json",
-      "outputs/production/current_strategy_snapshot.manifest.json"
-    ],
-    "execution_refresh_required": true,
-    "transitional_status": "ACTIVE_PRODUCTION_CORE_CUTOVER_READY_FOR_AUTOMATION_REFRESH"
-  },
-  "validation_status": "passed",
-  "updated_at_utc": "2026-05-06T21:26:14+00:00"
+  "validation_status": "passed"
 }

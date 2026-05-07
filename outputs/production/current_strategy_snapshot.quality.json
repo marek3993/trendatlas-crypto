@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot_quality",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-06T21:25:53Z",
+  "generated_at_utc": "2026-05-07T00:14:34Z",
   "status": "passed",
   "error_count": 0,
   "warning_count": 0,
@@ -18,13 +18,11 @@
     "out_of_market_rows_have_zero_authorized_gross_return": true,
     "out_of_market_rows_only_move_on_transition_costs": true,
     "authorized_equity_curve_reconstructs_from_returns": true,
-    "btc_baseline_reconstructs_from_close_series": true,
-    "promoted_from_staged_candidate_provenance_present": true,
-    "validation_status_passed": true
+    "btc_baseline_reconstructs_from_close_series": true
   },
   "validated_paths": {
-    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
-    "timeseries_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_timeseries.csv",
-    "diagnostics_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_diagnostics.json"
+    "snapshot_path": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
+    "timeseries_path": "/opt/market_regime_v1/outputs/production/current_strategy_timeseries.csv",
+    "diagnostics_path": "/opt/market_regime_v1/outputs/production/current_strategy_diagnostics.json"
   }
 }
