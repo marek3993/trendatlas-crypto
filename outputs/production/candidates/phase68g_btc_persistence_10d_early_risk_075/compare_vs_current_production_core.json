@@ -1,0 +1,461 @@
+{
+  "artifact_type": "staged_strategy_candidate_compare",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-07T14:30:31Z",
+  "candidate_id": "phase68g_btc_persistence_10d_early_risk_075",
+  "candidate_label": "BTC candidate persistence 10d / 0.75 EARLY_RISK",
+  "base_strategy_version": "phase68g_66g_1p25x_candidate",
+  "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
+  "candidate_universe_rule": "Candidate compare rows use the current Production Core date universe, while the durable fallback baseline route is rebuilt independently from canonical phase68g source exports.",
+  "comparison_status": {
+    "gross_and_net_status": "gross_and_net_reported",
+    "net_costs_included": true
+  },
+  "window_counts": {
+    "activation_windows_count": 11,
+    "successful_handoff_count": 3,
+    "false_start_count": 8
+  },
+  "selected_variant": {
+    "variant_id": "btc_candidate_persistence_10d_075",
+    "variant_label": "BTC candidate persistence 10d 0.75x",
+    "early_risk_sleeve": 0.75,
+    "missed_window_strategy_delta_pct": 6.479966,
+    "missed_window_capture_pct": 21.162394,
+    "missed_window_early_risk_days": 10,
+    "since2025_net_total_return_delta_pct": 29.713366,
+    "since2025_net_cagr_delta_pct": 14.664697,
+    "since2025_net_max_drawdown_delta_pct": 0.0,
+    "since2025_switch_delta": 2,
+    "since2025_turnover_delta": 1.5,
+    "since2025_exposure_days_delta": 10,
+    "since2025_cost_delta_pct": 0.2675,
+    "full_available_net_total_return_delta_pct": 64757.553241,
+    "full_available_net_cagr_delta_pct": 6.520535,
+    "full_available_net_max_drawdown_delta_pct": -1.495864,
+    "full_available_false_start_count": 8,
+    "full_available_successful_handoff_count": 3,
+    "strict_pass_through_ok": true,
+    "recommendation": "continue",
+    "recommendation_reason": "Continue: the variant captures the missed 2025 BTC move meaningfully, improves since2025, keeps drawdown inside the material-worsening threshold, and passes strict FULL_RISK pass-through.",
+    "recommendation_rank": 0,
+    "sort_score": 0.0318296054
+  },
+  "durable_baseline_route": {
+    "mode": "canonical_phase68g_source_rebuild",
+    "independent_of_active_current_strategy": true,
+    "base_strategy_version": "phase68g_66g_1p25x_candidate"
+  },
+  "windows": {
+    "full_available": {
+      "period_start": "2018-05-05",
+      "period_end": "2026-05-06",
+      "row_count": 2924,
+      "compare_basis": {
+        "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
+        "gross_and_net_status": "gross_and_net_reported",
+        "net_costs_included": true
+      },
+      "baseline": {
+        "net_total_return_pct": 311417.914917,
+        "net_cagr_pct": 173.14087,
+        "net_max_drawdown_pct": -12.93062,
+        "switch_count": 124,
+        "turnover_total": 240.5,
+        "exposure_days": 537,
+        "total_cost_pct": 30.936463,
+        "gross_total_return_pct": 423137.885746,
+        "early_risk_days": 0,
+        "activation_window_count": 0,
+        "successful_handoff_count": 0,
+        "false_start_count": 0,
+        "lead_days_total": 0,
+        "lead_days_max": 0,
+        "strategy_delta_vs_baseline_pct": 0,
+        "missed_btc_move_captured_pct": 0,
+        "strict_pass_through_ok": 0
+      },
+      "candidate": {
+        "net_total_return_pct": 376175.468158,
+        "net_cagr_pct": 179.661405,
+        "net_max_drawdown_pct": -14.426484,
+        "switch_count": 143,
+        "turnover_total": 254.75,
+        "exposure_days": 593,
+        "total_cost_pct": 33.477713,
+        "gross_total_return_pct": 524179.531609,
+        "early_risk_days": 56,
+        "activation_window_count": 11,
+        "successful_handoff_count": 3,
+        "false_start_count": 8,
+        "lead_days_total": 6,
+        "lead_days_max": 4,
+        "strategy_delta_vs_baseline_pct": 64757.553241,
+        "missed_btc_move_captured_pct": null,
+        "strict_pass_through_ok": true
+      },
+      "delta_candidate_minus_baseline": {
+        "net_total_return_pct": 64757.553241,
+        "net_cagr_pct": 6.520535,
+        "net_max_drawdown_pct": -1.495864,
+        "switch_count": 19,
+        "turnover_total": 14.25,
+        "exposure_days": 56,
+        "total_cost_pct": 2.54125,
+        "gross_total_return_pct": 101041.645863,
+        "early_risk_days": 56,
+        "activation_window_count": 11,
+        "successful_handoff_count": 3,
+        "false_start_count": 8,
+        "lead_days_total": 6,
+        "lead_days_max": 4,
+        "strategy_delta_vs_baseline_pct": 64757.553241,
+        "missed_btc_move_captured_pct": null,
+        "strict_pass_through_ok": true
+      }
+    },
+    "since2023": {
+      "period_start": "2023-01-01",
+      "period_end": "2026-05-06",
+      "row_count": 1222,
+      "compare_basis": {
+        "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
+        "gross_and_net_status": "gross_and_net_reported",
+        "net_costs_included": true
+      },
+      "baseline": {
+        "net_total_return_pct": 3755.455153,
+        "net_cagr_pct": 197.899988,
+        "net_max_drawdown_pct": -11.334402,
+        "switch_count": 56,
+        "turnover_total": 110.0,
+        "exposure_days": 232,
+        "total_cost_pct": 14.002361,
+        "gross_total_return_pct": 4329.376533,
+        "early_risk_days": 0,
+        "activation_window_count": 0,
+        "successful_handoff_count": 0,
+        "false_start_count": 0,
+        "lead_days_total": 0,
+        "lead_days_max": 0,
+        "strategy_delta_vs_baseline_pct": 0,
+        "missed_btc_move_captured_pct": 0,
+        "strict_pass_through_ok": 0
+      },
+      "candidate": {
+        "net_total_return_pct": 4086.232204,
+        "net_cagr_pct": 205.320026,
+        "net_max_drawdown_pct": -11.334402,
+        "switch_count": 68,
+        "turnover_total": 119.0,
+        "exposure_days": 258,
+        "total_cost_pct": 15.607361,
+        "gross_total_return_pct": 4786.821931,
+        "early_risk_days": 26,
+        "activation_window_count": 7,
+        "successful_handoff_count": 2,
+        "false_start_count": 5,
+        "lead_days_total": 2,
+        "lead_days_max": 1,
+        "strategy_delta_vs_baseline_pct": 330.777051,
+        "missed_btc_move_captured_pct": null,
+        "strict_pass_through_ok": true
+      },
+      "delta_candidate_minus_baseline": {
+        "net_total_return_pct": 330.777051,
+        "net_cagr_pct": 7.420038,
+        "net_max_drawdown_pct": 0.0,
+        "switch_count": 12,
+        "turnover_total": 9.0,
+        "exposure_days": 26,
+        "total_cost_pct": 1.605,
+        "gross_total_return_pct": 457.445398,
+        "early_risk_days": 26,
+        "activation_window_count": 7,
+        "successful_handoff_count": 2,
+        "false_start_count": 5,
+        "lead_days_total": 2,
+        "lead_days_max": 1,
+        "strategy_delta_vs_baseline_pct": 330.777051,
+        "missed_btc_move_captured_pct": null,
+        "strict_pass_through_ok": true
+      }
+    },
+    "since2025": {
+      "period_start": "2025-01-01",
+      "period_end": "2026-05-06",
+      "row_count": 491,
+      "compare_basis": {
+        "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
+        "gross_and_net_status": "gross_and_net_reported",
+        "net_costs_included": true
+      },
+      "baseline": {
+        "net_total_return_pct": 381.538372,
+        "net_cagr_pct": 221.960293,
+        "net_max_drawdown_pct": -8.598574,
+        "switch_count": 18,
+        "turnover_total": 21.5,
+        "exposure_days": 78,
+        "total_cost_pct": 3.383516,
+        "gross_total_return_pct": 397.643228,
+        "early_risk_days": 0,
+        "activation_window_count": 0,
+        "successful_handoff_count": 0,
+        "false_start_count": 0,
+        "lead_days_total": 0,
+        "lead_days_max": 0,
+        "strategy_delta_vs_baseline_pct": 0,
+        "missed_btc_move_captured_pct": 0,
+        "strict_pass_through_ok": 0
+      },
+      "candidate": {
+        "net_total_return_pct": 411.251738,
+        "net_cagr_pct": 236.62499,
+        "net_max_drawdown_pct": -8.598574,
+        "switch_count": 20,
+        "turnover_total": 23.0,
+        "exposure_days": 88,
+        "total_cost_pct": 3.651016,
+        "gross_total_return_pct": 429.759793,
+        "early_risk_days": 10,
+        "activation_window_count": 1,
+        "successful_handoff_count": 0,
+        "false_start_count": 1,
+        "lead_days_total": 0,
+        "lead_days_max": 0,
+        "strategy_delta_vs_baseline_pct": 29.713366,
+        "missed_btc_move_captured_pct": null,
+        "strict_pass_through_ok": true
+      },
+      "delta_candidate_minus_baseline": {
+        "net_total_return_pct": 29.713366,
+        "net_cagr_pct": 14.664697,
+        "net_max_drawdown_pct": 0.0,
+        "switch_count": 2,
+        "turnover_total": 1.5,
+        "exposure_days": 10,
+        "total_cost_pct": 0.2675,
+        "gross_total_return_pct": 32.116566,
+        "early_risk_days": 10,
+        "activation_window_count": 1,
+        "successful_handoff_count": 0,
+        "false_start_count": 1,
+        "lead_days_total": 0,
+        "lead_days_max": 0,
+        "strategy_delta_vs_baseline_pct": 29.713366,
+        "missed_btc_move_captured_pct": null,
+        "strict_pass_through_ok": true
+      }
+    },
+    "missed_window_2025": {
+      "period_start": "2025-04-01",
+      "period_end": "2025-07-10",
+      "row_count": 101,
+      "compare_basis": {
+        "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
+        "gross_and_net_status": "gross_and_net_reported",
+        "net_costs_included": true
+      },
+      "baseline": {
+        "net_total_return_pct": 5.015112,
+        "net_cagr_pct": 19.358586,
+        "net_max_drawdown_pct": 0.0,
+        "switch_count": 1,
+        "turnover_total": 1.25,
+        "exposure_days": 1,
+        "total_cost_pct": 0.164464,
+        "gross_total_return_pct": 5.179576,
+        "early_risk_days": 0,
+        "activation_window_count": 0,
+        "successful_handoff_count": 0,
+        "false_start_count": 0,
+        "lead_days_total": 0,
+        "lead_days_max": 0,
+        "strategy_delta_vs_baseline_pct": 0,
+        "missed_btc_move_captured_pct": 0,
+        "strict_pass_through_ok": 0
+      },
+      "candidate": {
+        "net_total_return_pct": 11.495079,
+        "net_cagr_pct": 48.215121,
+        "net_max_drawdown_pct": -0.704204,
+        "switch_count": 3,
+        "turnover_total": 2.75,
+        "exposure_days": 11,
+        "total_cost_pct": 0.431964,
+        "gross_total_return_pct": 11.967585,
+        "early_risk_days": 10,
+        "activation_window_count": 1,
+        "successful_handoff_count": 0,
+        "false_start_count": 1,
+        "lead_days_total": 0,
+        "lead_days_max": 0,
+        "strategy_delta_vs_baseline_pct": 6.479966,
+        "missed_btc_move_captured_pct": 21.162394,
+        "strict_pass_through_ok": true
+      },
+      "delta_candidate_minus_baseline": {
+        "net_total_return_pct": 6.479966,
+        "net_cagr_pct": 28.856535,
+        "net_max_drawdown_pct": -0.704204,
+        "switch_count": 2,
+        "turnover_total": 1.5,
+        "exposure_days": 10,
+        "total_cost_pct": 0.2675,
+        "gross_total_return_pct": 6.788009,
+        "early_risk_days": 10,
+        "activation_window_count": 1,
+        "successful_handoff_count": 0,
+        "false_start_count": 1,
+        "lead_days_total": 0,
+        "lead_days_max": 0,
+        "strategy_delta_vs_baseline_pct": 6.479966,
+        "missed_btc_move_captured_pct": 21.162394,
+        "strict_pass_through_ok": true
+      }
+    }
+  },
+  "blocker_rows": [
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "full_available",
+      "blocker_reason": "active_early_risk",
+      "row_count": 56,
+      "share_of_period_rows": 0.019152
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "full_available",
+      "blocker_reason": "baseline_full_risk_pass_through",
+      "row_count": 537,
+      "share_of_period_rows": 0.183653
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "full_available",
+      "blocker_reason": "candidate_asset_not_btc",
+      "row_count": 2187,
+      "share_of_period_rows": 0.747948
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "full_available",
+      "blocker_reason": "candidate_persistence_lt_10_rows",
+      "row_count": 112,
+      "share_of_period_rows": 0.038304
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "full_available",
+      "blocker_reason": "trend_score_le_minus_020",
+      "row_count": 32,
+      "share_of_period_rows": 0.010944
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2023",
+      "blocker_reason": "active_early_risk",
+      "row_count": 26,
+      "share_of_period_rows": 0.021277
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2023",
+      "blocker_reason": "baseline_full_risk_pass_through",
+      "row_count": 232,
+      "share_of_period_rows": 0.189853
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2023",
+      "blocker_reason": "candidate_asset_not_btc",
+      "row_count": 869,
+      "share_of_period_rows": 0.711129
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2023",
+      "blocker_reason": "candidate_persistence_lt_10_rows",
+      "row_count": 64,
+      "share_of_period_rows": 0.052373
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2023",
+      "blocker_reason": "trend_score_le_minus_020",
+      "row_count": 31,
+      "share_of_period_rows": 0.025368
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2025",
+      "blocker_reason": "active_early_risk",
+      "row_count": 10,
+      "share_of_period_rows": 0.020367
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2025",
+      "blocker_reason": "baseline_full_risk_pass_through",
+      "row_count": 78,
+      "share_of_period_rows": 0.158859
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2025",
+      "blocker_reason": "candidate_asset_not_btc",
+      "row_count": 375,
+      "share_of_period_rows": 0.763747
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2025",
+      "blocker_reason": "candidate_persistence_lt_10_rows",
+      "row_count": 19,
+      "share_of_period_rows": 0.038697
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "since2025",
+      "blocker_reason": "trend_score_le_minus_020",
+      "row_count": 9,
+      "share_of_period_rows": 0.01833
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "missed_window_2025",
+      "blocker_reason": "active_early_risk",
+      "row_count": 10,
+      "share_of_period_rows": 0.09901
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "missed_window_2025",
+      "blocker_reason": "baseline_full_risk_pass_through",
+      "row_count": 1,
+      "share_of_period_rows": 0.009901
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "missed_window_2025",
+      "blocker_reason": "candidate_asset_not_btc",
+      "row_count": 72,
+      "share_of_period_rows": 0.712871
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "missed_window_2025",
+      "blocker_reason": "candidate_persistence_lt_10_rows",
+      "row_count": 9,
+      "share_of_period_rows": 0.089109
+    },
+    {
+      "variant_id": "btc_candidate_persistence_10d_075",
+      "period": "missed_window_2025",
+      "blocker_reason": "trend_score_le_minus_020",
+      "row_count": 9,
+      "share_of_period_rows": 0.089109
+    }
+  ]
+}

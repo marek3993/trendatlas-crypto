@@ -22,6 +22,10 @@ from scripts.production.strategy_adapters.phase68g_66g_1p25x_candidate_adapter i
     Phase68g66g1p25xCandidateAdapter,
     build_reason_text,
 )
+from scripts.production.strategy_adapters.phase68g_btc_persistence_10d_early_risk_075_adapter import (
+    CANDIDATE_ID as BTC_PERSISTENCE_CANDIDATE_ID,
+    Phase68gBtcPersistence10dEarlyRisk075Adapter,
+)
 from scripts.production.validate_current_strategy_snapshot import (
     build_quality_payload,
     validate_production_payloads,
@@ -84,6 +88,8 @@ def _resolve_current_strategy_model(root: Path) -> str:
 
 def _resolve_adapter(strategy_model: str) -> Phase68g66g1p25xCandidateAdapter:
     if strategy_model != SOURCE_STRATEGY_VERSION:
+        if strategy_model == BTC_PERSISTENCE_CANDIDATE_ID:
+            return Phase68gBtcPersistence10dEarlyRisk075Adapter()
         raise ValueError(
             "No Production Core v1 adapter is registered for the current official strategy "
             f"(strategy_model={strategy_model})"
@@ -174,6 +180,18 @@ def _build_wait_condition(current_row, metrics: dict[str, Any]) -> dict[str, Any
     }
 
 
+def _build_reason_text_for_adapter(adapter, current_row) -> str:
+    if hasattr(adapter, "build_reason_text"):
+        return str(adapter.build_reason_text(current_row))
+    return build_reason_text(current_row)
+
+
+def _build_wait_condition_for_adapter(adapter, current_row, metrics: dict[str, Any]) -> dict[str, Any]:
+    if hasattr(adapter, "build_wait_condition"):
+        return adapter.build_wait_condition(current_row, metrics)
+    return _build_wait_condition(current_row, metrics)
+
+
 def _build_pain_points(timeseries, metrics: dict[str, Any], current_row, wait_condition: dict[str, Any]) -> list[dict[str, Any]]:
     pain_points: list[dict[str, Any]] = []
     total_cost_pct = (
@@ -260,7 +278,7 @@ def _build_snapshot(
     current_row = timeseries.iloc[-1]
     metrics = adapter.build_snapshot_metrics(inputs, timeseries)
     decision_context = adapter.build_decision_context(timeseries)
-    wait_condition = _build_wait_condition(current_row, metrics)
+    wait_condition = _build_wait_condition_for_adapter(adapter, current_row, metrics)
     candidate_asset = str(current_row["candidate_asset"])
     actual_held_asset = str(current_row["actual_held_asset"])
     effective_market_exposure = round(float(current_row["effective_market_exposure"]), 6)
@@ -273,7 +291,7 @@ def _build_snapshot(
         "schema_version": SNAPSHOT_SCHEMA_VERSION,
         "generated_at_utc": generated_at_utc,
         "strategy_id": PRODUCTION_STRATEGY_ID,
-        "strategy_version": SOURCE_STRATEGY_VERSION,
+        "strategy_version": adapter.strategy_version,
         "closed_day": inputs["closed_day"],
         "strategy_status": "ready",
         "candidate_asset": candidate_asset,
@@ -297,7 +315,7 @@ def _build_snapshot(
             "target_asset": execution_target_asset,
             "target_exposure": execution_target_exposure,
             "signal_id": (
-                f"{PRODUCTION_STRATEGY_ID}::{SOURCE_STRATEGY_VERSION}::{inputs['closed_day']}::"
+                f"{PRODUCTION_STRATEGY_ID}::{adapter.strategy_version}::{inputs['closed_day']}::"
                 f"target_{execution_target_asset}::candidate_{candidate_asset}"
             ),
             "stale_signal": False,
@@ -312,7 +330,7 @@ def _build_snapshot(
             "warnings": [],
         },
         "provenance": {
-            "adapter_name": ADAPTER_NAME,
+            "adapter_name": adapter.adapter_name,
             "source_strategy_export_paths": [
                 meta["path"]
                 for meta in adapter.build_source_inputs(inputs)["files"].values()
@@ -334,7 +352,7 @@ def _build_diagnostics(
 ) -> dict[str, Any]:
     metrics = adapter.build_snapshot_metrics(inputs, timeseries)
     current_row = timeseries.iloc[-1]
-    wait_condition = _build_wait_condition(current_row, metrics)
+    wait_condition = _build_wait_condition_for_adapter(adapter, current_row, metrics)
     pain_points = _build_pain_points(timeseries, metrics, current_row, wait_condition)
     diagnostics = adapter.build_diagnostics_payload(
         generated_at_utc=generated_at_utc,
@@ -354,7 +372,7 @@ def _build_diagnostics(
         "model_candidate_exposure": round(float(current_row["model_candidate_exposure"]), 6),
         "trend_permission_active": bool(current_row["trend_permission_active"]),
         "waiting_reason_code": str(current_row["reason_code"]),
-        "waiting_reason_text": build_reason_text(current_row),
+        "waiting_reason_text": _build_reason_text_for_adapter(adapter, current_row),
         "waiting_condition_code": wait_condition["code"],
         "waiting_condition_text": wait_condition["text"],
         "waiting_condition_values": wait_condition["current_values"],

@@ -24,6 +24,10 @@ from scripts.production.strategy_adapters.phase68g_66g_1p25x_candidate_adapter i
     SUMMARY_TOLERANCE,
     build_reason_text,
 )
+from scripts.production.strategy_adapters.phase68g_btc_persistence_10d_early_risk_075_adapter import (
+    CANDIDATE_ID as BTC_PERSISTENCE_CANDIDATE_ID,
+    Phase68gBtcPersistence10dEarlyRisk075Adapter,
+)
 from scripts.production.staged_candidate_promotion_support import (
     PROMOTED_CANDIDATE_ID,
     load_promoted_candidate_inputs,
@@ -221,6 +225,12 @@ def _summarize_bad_dates(mask: pd.Series, dates: pd.Series, *, limit: int = 5) -
     return ", ".join(bad_dates)
 
 
+def _build_reason_text_for_adapter(adapter, row) -> str:
+    if hasattr(adapter, "build_reason_text"):
+        return str(adapter.build_reason_text(row))
+    return build_reason_text(row)
+
+
 def validate_production_payloads(
     *,
     snapshot: dict[str, Any],
@@ -252,14 +262,14 @@ def validate_production_payloads(
     _compare_text(snapshot.get("strategy_id"), PRODUCTION_STRATEGY_ID, context="snapshot.strategy_id", errors=errors)
     _compare_text(
         snapshot.get("strategy_version"),
-        SOURCE_STRATEGY_VERSION,
+        adapter.strategy_version,
         context="snapshot.strategy_version",
         errors=errors,
     )
     _compare_text(diagnostics.get("strategy_id"), PRODUCTION_STRATEGY_ID, context="diagnostics.strategy_id", errors=errors)
     _compare_text(
         diagnostics.get("strategy_version"),
-        SOURCE_STRATEGY_VERSION,
+        adapter.strategy_version,
         context="diagnostics.strategy_version",
         errors=errors,
     )
@@ -378,7 +388,7 @@ def validate_production_payloads(
         errors.append("snapshot.decision_context must be an object")
     else:
         expected_reason_code = str(last_row["reason_code"])
-        expected_reason_text = build_reason_text(last_row)
+        expected_reason_text = _build_reason_text_for_adapter(adapter, last_row)
         _compare_text(
             decision_context.get("current_reason_code"),
             expected_reason_code,
@@ -715,7 +725,7 @@ def validate_production_payloads(
         )
         _compare_text(
             trade_state.get("waiting_reason_text"),
-            build_reason_text(last_row),
+            _build_reason_text_for_adapter(adapter, last_row),
             context="diagnostics.current_trade_state.waiting_reason_text",
             errors=errors,
         )
@@ -793,6 +803,17 @@ def validate_active_production_payloads(
 
     if strategy_version == SOURCE_STRATEGY_VERSION:
         adapter = Phase68g66g1p25xCandidateAdapter()
+        inputs = adapter.load_inputs(root=ROOT)
+        return validate_production_payloads(
+            snapshot=snapshot,
+            timeseries=timeseries,
+            diagnostics=diagnostics,
+            adapter=adapter,
+            inputs=inputs,
+        )
+
+    if strategy_version == BTC_PERSISTENCE_CANDIDATE_ID:
+        adapter = Phase68gBtcPersistence10dEarlyRisk075Adapter()
         inputs = adapter.load_inputs(root=ROOT)
         return validate_production_payloads(
             snapshot=snapshot,

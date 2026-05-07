@@ -13,7 +13,7 @@ if str(Path(__file__).resolve().parents[2]) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from scripts.production.strategy_adapters.phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter import (
-    CANDIDATE_ID,
+    CANDIDATE_ID as ETF_CANDIDATE_ID,
     COMPARE_SCHEMA_VERSION,
     DIAGNOSTICS_SCHEMA_VERSION,
     MANIFEST_SCHEMA_VERSION,
@@ -27,9 +27,16 @@ from scripts.production.strategy_adapters.phase68g_etf_flow_impulse_early_risk_c
     expected_truth_contract_state,
     read_truth_contract_state,
 )
+from scripts.production.strategy_adapters.phase68g_btc_persistence_10d_early_risk_075_adapter import (
+    CANDIDATE_ID as BTC_PERSISTENCE_CANDIDATE_ID,
+    Phase68gBtcPersistence10dEarlyRisk075StagedAdapter,
+)
+from scripts.production.validate_staged_phase68g_btc_persistence_10d_early_risk_075 import (
+    validate_staged_payloads as validate_btc_persistence_staged_payloads,
+)
 
 
-DEFAULT_OUTPUT_DIR = ROOT / "outputs" / "production" / "candidates" / CANDIDATE_ID
+DEFAULT_OUTPUT_DIR = ROOT / "outputs" / "production" / "candidates" / ETF_CANDIDATE_ID
 DEFAULT_SNAPSHOT_PATH = DEFAULT_OUTPUT_DIR / "candidate_strategy_snapshot.json"
 DEFAULT_TIMESERIES_PATH = DEFAULT_OUTPUT_DIR / "candidate_strategy_timeseries.csv"
 DEFAULT_DIAGNOSTICS_PATH = DEFAULT_OUTPUT_DIR / "candidate_strategy_diagnostics.json"
@@ -37,6 +44,14 @@ DEFAULT_QUALITY_PATH = DEFAULT_OUTPUT_DIR / "candidate_strategy_snapshot.quality
 DEFAULT_MANIFEST_PATH = DEFAULT_OUTPUT_DIR / "candidate_strategy_snapshot.manifest.json"
 DEFAULT_COMPARE_JSON_PATH = DEFAULT_OUTPUT_DIR / "compare_vs_current_production_core.json"
 DEFAULT_COMPARE_CSV_PATH = DEFAULT_OUTPUT_DIR / "compare_vs_current_production_core.csv"
+
+
+def _resolve_candidate_adapter(candidate_id: str):
+    if candidate_id == ETF_CANDIDATE_ID:
+        return Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter()
+    if candidate_id == BTC_PERSISTENCE_CANDIDATE_ID:
+        return Phase68gBtcPersistence10dEarlyRisk075StagedAdapter()
+    raise ValueError(f"Unsupported candidate: {candidate_id!r}")
 
 
 REQUIRED_SNAPSHOT_KEYS = [
@@ -386,6 +401,21 @@ def validate_staged_payloads(
     protected_before: dict[str, Any],
     protected_after: dict[str, Any],
 ) -> dict[str, Any]:
+    candidate_id = str(snapshot.get("candidate_id") or getattr(adapter, "candidate_id", "")).strip()
+    if candidate_id == BTC_PERSISTENCE_CANDIDATE_ID:
+        return validate_btc_persistence_staged_payloads(
+            snapshot=snapshot,
+            timeseries=timeseries,
+            diagnostics=diagnostics,
+            compare_payload=compare_payload,
+            compare_rows=compare_rows,
+            manifest=manifest,
+            adapter=adapter,
+            inputs=inputs,
+            protected_before=protected_before,
+            protected_after=protected_after,
+        )
+
     errors: list[str] = []
     warnings: list[str] = []
     checks: dict[str, Any] = {}
@@ -803,7 +833,7 @@ def build_quality_payload(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Fail-closed validator for the staged Production Core candidate bundle.")
-    parser.add_argument("--candidate", default=CANDIDATE_ID)
+    parser.add_argument("--candidate", default=ETF_CANDIDATE_ID)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--snapshot-path", type=Path, default=DEFAULT_SNAPSHOT_PATH)
     parser.add_argument("--timeseries-path", type=Path, default=DEFAULT_TIMESERIES_PATH)
@@ -817,10 +847,17 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    if args.candidate != CANDIDATE_ID:
-        raise SystemExit(f"Unsupported candidate: {args.candidate!r}")
+    if args.candidate == BTC_PERSISTENCE_CANDIDATE_ID and args.snapshot_path == DEFAULT_SNAPSHOT_PATH:
+        candidate_dir = ROOT / "outputs" / "production" / "candidates" / args.candidate
+        args.snapshot_path = candidate_dir / "candidate_strategy_snapshot.json"
+        args.timeseries_path = candidate_dir / "candidate_strategy_timeseries.csv"
+        args.diagnostics_path = candidate_dir / "candidate_strategy_diagnostics.json"
+        args.quality_path = candidate_dir / "candidate_strategy_snapshot.quality.json"
+        args.manifest_path = candidate_dir / "candidate_strategy_snapshot.manifest.json"
+        args.compare_json_path = candidate_dir / "compare_vs_current_production_core.json"
+        args.compare_csv_path = candidate_dir / "compare_vs_current_production_core.csv"
 
-    adapter = Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter()
+    adapter = _resolve_candidate_adapter(args.candidate)
     snapshot = _read_json_required(args.snapshot_path)
     timeseries = _read_csv_required(args.timeseries_path)
     diagnostics = _read_json_required(args.diagnostics_path)
@@ -858,4 +895,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

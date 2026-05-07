@@ -1,0 +1,31 @@
+{
+  "artifact_type": "staged_strategy_candidate_snapshot_quality",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-07T14:30:32Z",
+  "status": "passed",
+  "error_count": 0,
+  "warning_count": 0,
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "candidate_truth_flags_staged_only": true,
+    "candidate_rows_match_rebuilt_adapter": true,
+    "early_risk_modifies_only_baseline_cash_rows": true,
+    "baseline_full_risk_rows_pass_through_unchanged": true,
+    "fees_and_costs_included_in_candidate_net_returns": true,
+    "fees_and_costs_included_in_baseline_net_returns": true,
+    "dev_only_non_authoritative_lineage_preserved": true,
+    "compare_windows_match_rebuilt_adapter": true,
+    "durable_baseline_route_recorded": true,
+    "current_production_outputs_and_truth_files_unchanged": true,
+    "live_app_execution_truth_unchanged": true,
+    "validation_status_passed": true
+  },
+  "validated_paths": {
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_btc_persistence_10d_early_risk_075\\candidate_strategy_snapshot.json",
+    "timeseries_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_btc_persistence_10d_early_risk_075\\candidate_strategy_timeseries.csv",
+    "diagnostics_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_btc_persistence_10d_early_risk_075\\candidate_strategy_diagnostics.json",
+    "compare_json_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_btc_persistence_10d_early_risk_075\\compare_vs_current_production_core.json",
+    "compare_csv_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\candidates\\phase68g_btc_persistence_10d_early_risk_075\\compare_vs_current_production_core.csv"
+  }
+}
