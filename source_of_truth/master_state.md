@@ -30,11 +30,11 @@
 
 ## Phase68G promotion
 - Current live truth: `phase68g_66g_1p25x_candidate`
-- Best deployment candidate: `phase68g_66g_1p25x_candidate`
+- Best deployment candidate: `phase68g_etf_flow_impulse_early_risk_cooldown_15`
 - Official fallback: `phase68i_dynamic_ladder_candidate`
 - App main strategy model: `phase68g_66g_1p25x_candidate`
-- Live mode contract current: `phase68g/static_1p25x`
-- Fallback contract: `phase68i/dynamic_ladder`
+- Live mode contract current: `phase68g_66g_1p25x_candidate`
+- Fallback contract: `phase68i_dynamic_ladder_candidate`
 - `ordering_remains_unchanged = false`
 
 ## Production Core vs Pi authority

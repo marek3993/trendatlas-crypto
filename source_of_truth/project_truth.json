@@ -72,7 +72,7 @@
     "leverage_truth":  {
                            "current_live_truth":  "phase68g_66g_1p25x_candidate",
                            "research_raw_winner":  "phase68i_66g_1p50x_static",
-                           "best_deployment_candidate":  "phase68g_66g_1p25x_candidate",
+                           "best_deployment_candidate":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
                            "official_softer_fallback":  "phase68i_dynamic_ladder_candidate",
                            "phase68j_simple_tail_risk_guardrails":  "rejected",
                            "ordering_remains_unchanged":  false,
@@ -101,14 +101,14 @@
                                                    "real_order_eligible_status":  "live_order_enabled_and_approved"
                                                },
                                    "future_target":  {
-                                                         "live_truth_mode":  "phase68g_66g_1p25x_candidate",
-                                                         "execution_profile":  "static_1p25x",
-                                                         "leverage_mode":  "static_1p25x"
+                                                         "live_truth_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+                                                         "execution_profile":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+                                                         "leverage_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15"
                                                      },
                                    "future_fallback":  {
                                                            "live_truth_mode":  "phase68i_dynamic_ladder_candidate",
-                                                           "execution_profile":  "dynamic_ladder",
-                                                           "leverage_mode":  "dynamic"
+                                                           "execution_profile":  "phase68i_dynamic_ladder_candidate",
+                                                           "leverage_mode":  "phase68i_dynamic_ladder_candidate"
                                                        }
                                },
     "automation_capabilities":  {

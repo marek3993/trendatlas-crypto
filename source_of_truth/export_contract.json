@@ -116,8 +116,8 @@
                                                        ],
                                 "display_names":  {
                                                       "phase68i_dynamic_ladder_candidate":  {
-                                                                                                "sk":  "HlavnĂˇ stratĂ©gia",
-                                                                                                "en":  "Main strategy"
+                                                                                                "sk":  "Soft fallback",
+                                                                                                "en":  "Softer fallback"
                                                                                             },
                                                       "phase67j_no_neo_main":  {
                                                                                    "sk":  "ReferenÄŤnĂˇ stratĂ©gia",
@@ -128,7 +128,7 @@
                                                                                                "en":  "Trend / core layer"
                                                                                            },
                                                       "phase68g_66g_1p25x_candidate":  {
-                                                                                           "sk":  "Hlavn? strat?gia",
+                                                                                           "sk":  "Hlavna strategia",
                                                                                            "en":  "Main strategy"
                                                                                        }
                                                   },
@@ -148,6 +148,11 @@
                                                                                                "paper_path":  "outputs/execution/app_exports/phase66g_production_soft_filters_paper.csv",
                                                                                                "live_status_path":  "outputs/execution/app_exports/phase66g_live_status.csv"
                                                                                            },
+                                "phase68g_etf_flow_impulse_early_risk_cooldown_15":  {
+                                                                                           "summary_path":  "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv",
+                                                                                           "paper_path":  "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
+                                                                                           "live_status_path":  "outputs/execution/app_exports/phase66g_live_status.csv"
+                                                                                       },
                                 "phase68g_66g_1p25x_candidate":  {
                                                                                            "summary_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
                                                                                            "paper_path":  "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
