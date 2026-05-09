@@ -34,9 +34,29 @@ HOMEPAGE_TOP_PERFORMANCE_SOURCE_CONTRACTS: dict[str, dict[str, Any]] = {
             "since2025_cagr_pct": "since2025_cagr_pct",
         },
     },
+    "phase68g_btc_persistence_10d_early_risk_075": {
+        "source_family": "canonical_phase68g_btc_persistence_authoritative_net_compare_top_cards",
+        "semantic_role": "current_live_main_strategy_top_cards",
+        "metrics_source_path": (
+            "outputs/execution/app_exports/"
+            "phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv"
+        ),
+        "metric_aliases": {
+            "cagr_pct": "cagr_pct",
+            "since2023_cagr_pct": "since2023_cagr_pct",
+            "since2025_cagr_pct": "since2025_cagr_pct",
+        },
+    },
 }
 HOMEPAGE_OPERATIONAL_METRIC_CONTRACTS: dict[str, dict[str, Any]] = {
     "phase68g_66g_1p25x_candidate": {
+        "semantic_role": "current_live_main_strategy_operational_metrics",
+        "source_family": "current_main_strategy_paper_held_state_series",
+        "series_semantics": "homepage_model_state_and_chart_strip",
+        "required_source_metadata_key": "operational_metrics",
+        "rounding_tolerance_pct": 0.0001,
+    },
+    "phase68g_btc_persistence_10d_early_risk_075": {
         "semantic_role": "current_live_main_strategy_operational_metrics",
         "source_family": "current_main_strategy_paper_held_state_series",
         "series_semantics": "homepage_model_state_and_chart_strip",

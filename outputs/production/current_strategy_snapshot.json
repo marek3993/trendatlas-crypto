@@ -1,9 +1,9 @@
 {
   "artifact_type": "current_strategy_snapshot",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-09T00:14:34Z",
+  "generated_at_utc": "2026-05-09T12:10:09Z",
   "strategy_id": "current_strategy",
-  "strategy_version": "phase68g_66g_1p25x_candidate",
+  "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
   "closed_day": "2026-05-08",
   "strategy_status": "ready",
   "candidate_asset": "BTC",
@@ -14,7 +14,7 @@
   "current_asset": "CASH",
   "current_exposure": 0.0,
   "effective_market_exposure": 0.0,
-  "model_candidate_exposure": 1.0,
+  "model_candidate_exposure": 0.75,
   "trend_permission_active": false,
   "current_regime": "CASH",
   "execution_state": "OUT_OF_MARKET",
@@ -22,25 +22,25 @@
   "trend_score": -0.166667,
   "next_rebalance_date": "2026-05-10",
   "metrics": {
-    "total_return_pct_net": 311417.91,
-    "cagr_pct_net": 173.05,
-    "max_drawdown_pct_net": -12.93,
-    "since2023_cagr_pct_net": 197.63,
-    "since2025_cagr_pct_net": 221.2,
-    "sharpe": 2.117,
-    "sortino": 3.1875,
-    "trading_fees_total_pct": 10.8225,
+    "total_return_pct_net": 376175.4681,
+    "cagr_pct_net": 179.5631,
+    "max_drawdown_pct_net": -14.4265,
+    "since2023_cagr_pct_net": 205.0415,
+    "since2025_cagr_pct_net": 235.7955,
+    "sharpe": 2.1573,
+    "sortino": 3.3705,
+    "trading_fees_total_pct": 11.46375,
     "funding_total_pct": 0.0,
-    "borrow_cost_total_pct": 3.614,
-    "slippage_cost_total_pct": 16.5,
-    "cash_days_pct": 81.6473,
-    "btc_days_pct": 0.7177,
-    "switch_count": 165,
-    "trade_count": 165
+    "borrow_cost_total_pct": 3.613963,
+    "slippage_cost_total_pct": 18.4,
+    "cash_days_pct": 79.733424,
+    "btc_days_pct": 2.631579,
+    "switch_count": 184,
+    "trade_count": 184
   },
   "decision_context": {
-    "current_reason_code": "candidate_wait_trend_confirmation",
-    "current_reason_text": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed.",
+    "current_reason_code": "candidate_persistence_lt_10_rows",
+    "current_reason_text": "BTC remains only the candidate. The strategy stays in CASH because the 10-row persistence gate is not ready yet (8/10 rows).",
     "current_regime_duration_days": 190,
     "days_since_last_trade": 189,
     "days_since_last_risk_on": 191,
@@ -48,68 +48,135 @@
     "current_drawdown_pct": -5.992157,
     "current_cash_streak_days": 190,
     "latest_rebalance_date": "2025-10-31",
-    "latest_rebalance_reason": "rebalance_to_cash"
+    "latest_rebalance_reason": "candidate_asset_not_btc"
   },
   "execution_intent": {
     "target_asset": "CASH",
     "target_exposure": 0.0,
-    "signal_id": "current_strategy::phase68g_66g_1p25x_candidate::2026-05-08::target_CASH::candidate_BTC",
+    "signal_id": "current_strategy::phase68g_btc_persistence_10d_early_risk_075::2026-05-08::target_CASH::candidate_BTC",
     "stale_signal": false,
     "allow_live_order_candidate": false
   },
   "source_inputs": {
-    "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
+    "adapter_name": "phase68g_btc_persistence_10d_early_risk_075_adapter",
     "strategy_id": "current_strategy",
-    "strategy_version": "phase68g_66g_1p25x_candidate",
+    "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
     "validated_closed_day": "2026-05-08",
+    "candidate_label": "BTC candidate persistence 10d / 0.75 EARLY_RISK",
+    "base_strategy_version": "phase68g_66g_1p25x_candidate",
+    "durable_baseline_route": {
+      "mode": "canonical_phase68g_source_rebuild",
+      "independent_of_active_current_strategy": true,
+      "base_adapter_name": "phase68g_66g_1p25x_candidate_adapter",
+      "status": "ready",
+      "gap_reason": null
+    },
+    "evidence_status": {
+      "selected_variant_id": "btc_candidate_persistence_10d_075",
+      "evidence_quality_status": "passed",
+      "recommendation": "continue",
+      "recommendation_reason": "Continue: the variant captures the missed 2025 BTC move meaningfully, improves since2025, keeps drawdown inside the material-worsening threshold, and passes strict FULL_RISK pass-through."
+    },
+    "lineage": {
+      "dev_only_source_lineage": true,
+      "non_authoritative_research_input": true,
+      "official_truth": false,
+      "live_truth": false,
+      "app_truth": false,
+      "execution_truth": false
+    },
     "files": {
-      "strategy_summary": {
+      "phase68g_strategy_summary": {
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
         "sha256": "9799ceaeb542bb8f649ee5a9522216e7e628dcd6b9ffdd092851b0245e197ace",
         "size_bytes": 902,
-        "modified_utc": "2026-05-09T00:14:33Z",
+        "modified_utc": "2026-05-09T09:32:38Z",
         "last_date": "2026-05-08",
         "row_count": 1
       },
-      "strategy_paper": {
+      "phase68g_strategy_paper": {
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-        "sha256": "3763051066908cbcc8749b7eb4519ebf8a122a53af7530efa4d0b5c1a74fd0d2",
-        "size_bytes": 1052817,
-        "modified_utc": "2026-05-09T00:14:33Z",
+        "sha256": "bc86c7d80db0a44d34ad9a47b1e930c236511fed5ba144b2870f4675fc60eacf",
+        "size_bytes": 1055744,
+        "modified_utc": "2026-05-09T09:32:38Z",
         "last_date": "2026-05-08",
         "row_count": 2926
       },
-      "trend_status": {
+      "phase68g_trend_status": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
-        "sha256": "e33c774e8b17e04a77d99dfde01477e72a97e0636782458445429f59ba620aa8",
-        "size_bytes": 617,
-        "modified_utc": "2026-05-09T00:14:06Z",
+        "sha256": "6390f5d783afd54c8aea56c873f10845923a44067d7fabd068f77c231c1bae00",
+        "size_bytes": 619,
+        "modified_utc": "2026-05-09T09:32:38Z",
         "last_date": "2026-05-08",
         "row_count": 1
       },
-      "trend_history": {
+      "phase68g_trend_history": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
-        "sha256": "0157d10bb085ec4afab5a44a1765404777b2ae6dff2ec0f85fc5ea7ebe9f8adf",
-        "size_bytes": 376715,
-        "modified_utc": "2026-05-09T00:14:06Z",
+        "sha256": "d3654f7383378abbca0563f9665240bd87002fcf0ebf56e5eeeb16795805c3d6",
+        "size_bytes": 379642,
+        "modified_utc": "2026-05-09T09:32:38Z",
         "last_date": "2026-05-08",
         "row_count": 2926
       },
-      "freshness_report": {
+      "phase68g_freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
-        "sha256": "2a63dc2200468614acc6588e6fe7c9117b562a4bc6c89de45860de5e80ba359b",
-        "size_bytes": 1172,
-        "modified_utc": "2026-05-09T00:14:29Z",
+        "sha256": "79a98f149b5cf125e897d973aed2b165ccc54450fcbcd84ef822dcefc9461531",
+        "size_bytes": 1214,
+        "modified_utc": "2026-05-09T09:32:38Z",
         "last_date": "2026-05-08",
         "status": "ok"
       },
-      "benchmark_ohlcv": {
+      "btc_ohlcv": {
         "path": "data/ohlcv/BTCUSDT_1d.csv",
         "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
         "size_bytes": 274631,
-        "modified_utc": "2026-05-09T00:10:10Z",
+        "modified_utc": "2026-05-09T11:54:58Z",
         "last_date": "2026-05-08",
         "row_count": 3187
+      },
+      "dev_only_contract": {
+        "path": "research_os/dev_only/contracts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.contract.json",
+        "sha256": "ef7aae9600aa0dbd659b7351506e8c90ca6ae51ab7efaacd5c20f5da7056792c",
+        "size_bytes": 5448,
+        "modified_utc": "2026-05-07T08:10:24Z"
+      },
+      "dev_only_spec": {
+        "path": "research_os/dev_only/specs/dev_only_production_core_btc_candidate_persistence_early_risk_compare.spec.json",
+        "sha256": "ec57b64d1322ff078530888710acc80981d502f40533d4e6730774347697ef7c",
+        "size_bytes": 2759,
+        "modified_utc": "2026-05-07T08:10:24Z"
+      },
+      "dev_only_manifest_seed": {
+        "path": "research_os/dev_only/manifests/dev_only_production_core_btc_candidate_persistence_early_risk_compare.manifest.json",
+        "sha256": "db6a4a73322876df14e5b63c9522a5f03b82099e63346c4972bdc22b2b6bf8ae",
+        "size_bytes": 1169,
+        "modified_utc": "2026-05-07T08:10:24Z"
+      },
+      "dev_only_summary": {
+        "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/summary.json",
+        "sha256": "657d69e59889181fb59affcc1398804353a3c420eade1d1fe1acc36e381a3b2f",
+        "size_bytes": 34692,
+        "modified_utc": "2026-05-07T08:10:24Z"
+      },
+      "dev_only_quality": {
+        "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/quality.json",
+        "sha256": "9c0b1a211c517aa15c440ef4f8ec61be773e628c9d4cd5cb91c18398b854fb2b",
+        "size_bytes": 5671,
+        "modified_utc": "2026-05-07T08:10:24Z",
+        "status": "passed"
+      },
+      "dev_only_variant_compare": {
+        "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/variant_compare.csv",
+        "sha256": "62079366dce6dd0f18cfbd1854c81fb9887f6a160bd5c91bafc5b9ca3ec18cbe",
+        "size_bytes": 1367,
+        "modified_utc": "2026-05-07T08:10:24Z",
+        "row_count": 2
+      },
+      "dev_only_script": {
+        "path": "scripts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.py",
+        "sha256": "be317fe0c76354c6e74920c350c402f9ee5f218803ce374c61eada16e340b2bf",
+        "size_bytes": 73339,
+        "modified_utc": "2026-05-07T08:10:24Z"
       }
     }
   },
@@ -119,35 +186,34 @@
     "warnings": []
   },
   "provenance": {
-    "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
+    "adapter_name": "phase68g_btc_persistence_10d_early_risk_075_adapter",
     "source_strategy_export_paths": [
       "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
       "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
       "outputs/execution/app_exports/phase66g_live_status.csv",
       "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
       "outputs/execution/freshness/app_freshness_report.json",
-      "data/ohlcv/BTCUSDT_1d.csv"
+      "data/ohlcv/BTCUSDT_1d.csv",
+      "research_os/dev_only/contracts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.contract.json",
+      "research_os/dev_only/specs/dev_only_production_core_btc_candidate_persistence_early_risk_compare.spec.json",
+      "research_os/dev_only/manifests/dev_only_production_core_btc_candidate_persistence_early_risk_compare.manifest.json",
+      "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/summary.json",
+      "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/quality.json",
+      "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/variant_compare.csv",
+      "scripts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.py"
     ],
-    "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
-    "git_commit": "e71152eb56dbdb482d6928cb92b84fff8cc04195",
+    "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
+    "git_commit": "9640d53186cf296b588cd47e953df38ccb2f5fd3",
     "wait_condition": {
-      "code": "trend_confirmation_pending_for_candidate_entry",
-      "text": "BTC is the current candidate, but the strategy stays in CASH until trend confirmation returns (-0.1667 vs 0.1000).",
+      "code": "candidate_persistence_wait",
+      "text": "BTC is the candidate, but the strategy waits for 10 consecutive candidate rows before EARLY_RISK can activate (8/10 so far).",
       "current_values": {
         "candidate_asset": "BTC",
-        "actual_held_asset": "CASH",
-        "trend_score": -0.1666666666666666,
-        "buy_threshold": 0.0,
-        "trend_activation_threshold": 0.1,
-        "trend_permission_active": false,
-        "effective_market_exposure": 0.0,
-        "model_candidate_exposure": 1.0
+        "persistence_rows": 8,
+        "required_rows": 10
       },
       "target_condition": {
-        "trend_score_min": 0.1,
-        "trend_permission_active": true,
-        "execution_target_asset": "BTC",
-        "execution_target_exposure": 1.0
+        "persistence_rows_min": 10
       }
     }
   }

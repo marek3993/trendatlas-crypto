@@ -47,6 +47,7 @@ FRESHNESS_DIR = OUTPUTS_DIR / "freshness"
 APP_SNAPSHOT_DIR = OUTPUTS_DIR / "app_snapshot"
 LOGS_DIR = OUTPUTS_DIR / "logs"
 APP_REFRESH_PIPELINE_DIR = ROOT / "outputs" / "app_refresh_pipeline"
+PRODUCTION_DIR = ROOT / "outputs" / "production"
 
 PATHS_REGISTRY_PATH = SOURCE_OF_TRUTH_DIR / "paths_registry.json"
 PROJECT_TRUTH_PATH = SOURCE_OF_TRUTH_DIR / "project_truth.json"
@@ -58,6 +59,8 @@ QUALITY_PATH = OUTPUTS_DIR / "refresh_pipeline" / "materialize_execution_app_exp
 LOG_PATH = LOGS_DIR / "materialize_execution_app_exports.log"
 APP_PRODUCT_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_product_snapshot.json"
 APP_RUNTIME_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_runtime_snapshot.json"
+PRODUCTION_SNAPSHOT_PATH = PRODUCTION_DIR / "current_strategy_snapshot.json"
+PRODUCTION_TIMESERIES_PATH = PRODUCTION_DIR / "current_strategy_timeseries.csv"
 
 REQUIRED_ARTIFACT_KEYS = [
     "phase67j_winner_paper",
@@ -1384,6 +1387,195 @@ def build_current_paper_backed_authoritative_export_payload(
     }
 
 
+def _current_main_strategy_cost_model(current_timeseries: pd.DataFrame) -> dict[str, float | str]:
+    turnover = pd.to_numeric(current_timeseries.get("turnover", 0.0), errors="coerce").fillna(0.0)
+    fees = pd.to_numeric(current_timeseries.get("fees_daily", 0.0), errors="coerce").fillna(0.0)
+    fee_mask = fees.gt(0.0) & turnover.gt(0.0)
+    fee_rate = float((fees[fee_mask] / turnover[fee_mask]).median()) if fee_mask.any() else 0.00045
+
+    slippage = pd.to_numeric(current_timeseries.get("slippage_cost_daily", 0.0), errors="coerce").fillna(0.0)
+    slippage_mask = slippage.gt(0.0) & turnover.gt(0.0)
+    slippage_rate = float((slippage[slippage_mask] / turnover[slippage_mask]).median()) if slippage_mask.any() else 0.001
+
+    exposure = pd.to_numeric(
+        current_timeseries.get("effective_market_exposure", current_timeseries.get("exposure", 0.0)),
+        errors="coerce",
+    ).fillna(0.0)
+    borrow = pd.to_numeric(current_timeseries.get("borrow_cost_daily", 0.0), errors="coerce").fillna(0.0)
+    borrow_mask = borrow.gt(0.0) & exposure.gt(1.0)
+    annual_borrow_cost = (
+        float((borrow[borrow_mask] / (exposure[borrow_mask] - 1.0) * 365.25).median())
+        if borrow_mask.any()
+        else 0.12
+    )
+
+    return {
+        "fee_side_mode": "taker",
+        "taker_fee_bps": round(fee_rate * 10000.0, 4),
+        "maker_fee_bps": round((fee_rate * 10000.0) / 3.0, 4),
+        "staking_discount_pct": 0.0,
+        "referral_discount_pct": 0.0,
+        "effective_trading_fee_bps": round(fee_rate * 10000.0, 4),
+        "tradable_transition_slippage_bps": round(slippage_rate * 10000.0, 4),
+        "annual_borrow_cost_pct": round(annual_borrow_cost * 100.0, 4),
+    }
+
+
+def _build_current_main_strategy_canonical_paper_frame(current_timeseries: pd.DataFrame) -> pd.DataFrame:
+    frame = current_timeseries.copy()
+    frame.columns = [str(column).strip() for column in frame.columns]
+    cost_model = _current_main_strategy_cost_model(frame)
+
+    if "held_asset" in frame.columns:
+        portfolio_held_asset = frame["held_asset"]
+    elif "current_asset" in frame.columns:
+        portfolio_held_asset = frame["current_asset"]
+    else:
+        portfolio_held_asset = frame["actual_held_asset"]
+
+    effective_leverage = pd.to_numeric(
+        frame.get("effective_market_exposure", frame.get("exposure", 0.0)),
+        errors="coerce",
+    ).fillna(0.0)
+    trend_score = pd.to_numeric(frame.get("trend_score", 0.0), errors="coerce").fillna(0.0)
+    buy_threshold = pd.to_numeric(frame.get("buy_threshold", 0.0), errors="coerce").fillna(0.0)
+    prev_trend_score = trend_score.shift(1)
+
+    frame["portfolio_held_asset"] = portfolio_held_asset.astype(str)
+    frame["held_asset_public"] = frame["portfolio_held_asset"]
+    frame["baseline_held_asset"] = frame.get("selected_asset", frame["portfolio_held_asset"]).astype(str)
+    frame["baseline_asset_source"] = "production_core_v1"
+    frame["overlay_candidate_raw"] = frame.get("candidate_asset", frame["portfolio_held_asset"]).astype(str)
+    frame["overlay_candidate_clean"] = frame["overlay_candidate_raw"]
+    frame["use_baseline_exposure"] = False
+    frame["is_exposed"] = effective_leverage > 0.0
+    frame["trend_state_label"] = frame.get("trend_state", "").astype(str)
+    frame["prev_trend_score"] = prev_trend_score.fillna(trend_score)
+    frame["crossed_up_today"] = (prev_trend_score < buy_threshold) & (trend_score >= buy_threshold)
+    frame["crossed_down_today"] = (prev_trend_score >= buy_threshold) & (trend_score < buy_threshold)
+    frame["days_in_position"] = 0
+    frame["switch_day_forced_1x"] = False
+    frame["entry_buffer_day_forced_1x"] = False
+    frame["baseline_equity_curve"] = pd.to_numeric(
+        frame.get("model_candidate_equity", frame.get("equity", 1.0)),
+        errors="coerce",
+    ).fillna(1.0)
+    frame["baseline_dd_lookback"] = 0.0
+    frame["stress_block_active"] = frame.get("stress_block_day", False)
+    frame["tradable_transition_day"] = frame.get("asset_transition_day", False)
+    frame["tradable_governed_asset"] = frame.get("authorized_tradable_asset", frame["portfolio_held_asset"]).astype(str)
+    frame["leverage_eligible"] = frame.get("trend_permission_active", False)
+    frame["target_leverage"] = pd.to_numeric(
+        frame.get("model_candidate_exposure", frame.get("effective_market_exposure", 0.0)),
+        errors="coerce",
+    ).fillna(0.0)
+    frame["effective_leverage"] = effective_leverage
+    frame["daily_borrow_cost"] = pd.to_numeric(frame.get("borrow_cost_daily", 0.0), errors="coerce").fillna(0.0)
+    frame["tradable_slippage_cost"] = pd.to_numeric(frame.get("slippage_cost_daily", 0.0), errors="coerce").fillna(0.0)
+    frame["realistic_ret_gross"] = pd.to_numeric(
+        frame.get("return_gross", frame.get("authorized_return_gross", 0.0)),
+        errors="coerce",
+    ).fillna(0.0)
+    frame["realistic_ret"] = pd.to_numeric(
+        frame.get("return_net", frame.get("authorized_return_net", 0.0)),
+        errors="coerce",
+    ).fillna(0.0)
+    frame["equity_curve"] = pd.to_numeric(frame.get("equity", 1.0), errors="coerce").fillna(1.0)
+    frame["trading_fees_daily"] = pd.to_numeric(frame.get("fees_daily", 0.0), errors="coerce").fillna(0.0)
+    frame["fee_side_mode"] = cost_model["fee_side_mode"]
+    frame["taker_fee_bps"] = cost_model["taker_fee_bps"]
+    frame["maker_fee_bps"] = cost_model["maker_fee_bps"]
+    frame["staking_discount_pct"] = cost_model["staking_discount_pct"]
+    frame["referral_discount_pct"] = cost_model["referral_discount_pct"]
+    frame["effective_trading_fee_bps"] = cost_model["effective_trading_fee_bps"]
+    frame["annual_borrow_cost_pct"] = cost_model["annual_borrow_cost_pct"]
+    frame["tradable_transition_slippage_bps"] = cost_model["tradable_transition_slippage_bps"]
+    return frame
+
+
+def materialize_current_main_strategy_app_exports() -> dict[str, Any]:
+    current_strategy_contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
+    production_snapshot = read_json(PRODUCTION_SNAPSHOT_PATH)
+
+    if not PRODUCTION_TIMESERIES_PATH.exists():
+        fail(f"Missing required Production Core timeseries: {PRODUCTION_TIMESERIES_PATH}")
+
+    current_timeseries = pd.read_csv(PRODUCTION_TIMESERIES_PATH)
+    if current_timeseries.empty:
+        fail(f"Production Core timeseries has no rows: {PRODUCTION_TIMESERIES_PATH}")
+
+    expected_model = str(current_strategy_contract["main_strategy_model"]).strip()
+    snapshot_model = str(production_snapshot.get("strategy_version") or "").strip()
+    if snapshot_model != expected_model:
+        fail(
+            "Current main strategy export materialization blocked because Production Core snapshot "
+            "does not match source_of_truth current main strategy "
+            f"(expected={expected_model} actual={snapshot_model or 'missing'})"
+        )
+
+    last_row = current_timeseries.iloc[-1]
+    timeseries_model = str(last_row.get("strategy_version") or "").strip()
+    if timeseries_model != expected_model:
+        fail(
+            "Current main strategy export materialization blocked because Production Core timeseries "
+            "does not match source_of_truth current main strategy "
+            f"(expected={expected_model} actual={timeseries_model or 'missing'})"
+        )
+
+    closed_day = parse_iso_date_required(
+        production_snapshot.get("closed_day"),
+        f"{PRODUCTION_SNAPSHOT_PATH} closed_day",
+    )
+    timeseries_last_day = parse_iso_date_required(
+        last_row.get("date"),
+        f"{PRODUCTION_TIMESERIES_PATH} last_row.date",
+    )
+    if timeseries_last_day != closed_day:
+        fail(
+            "Current main strategy export materialization blocked because Production Core timeseries "
+            f"is stale versus snapshot (snapshot_closed_day={closed_day} timeseries_last_day={timeseries_last_day})"
+        )
+
+    paper_path = Path(current_strategy_contract["paper_path"])
+    metrics_path = Path(current_strategy_contract["metrics_path"])
+    paper_path.parent.mkdir(parents=True, exist_ok=True)
+    metrics_path.parent.mkdir(parents=True, exist_ok=True)
+
+    canonical_paper = _build_current_main_strategy_canonical_paper_frame(current_timeseries)
+    temp_paper_path = paper_path.with_suffix(paper_path.suffix + ".tmp")
+    canonical_paper.to_csv(temp_paper_path, index=False)
+    temp_paper_path.replace(paper_path)
+
+    authoritative_payload = build_current_paper_backed_authoritative_export_payload(
+        source_paper_path=paper_path,
+        output_model=expected_model,
+    )
+    canonical_metrics_row = build_full_canonical_main_strategy_metrics_row(
+        authoritative_payload["authoritative_export"],
+        main_strategy_model=expected_model,
+        main_paper_path=paper_path,
+        metric_fields=HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS,
+    )
+
+    temp_metrics_path = metrics_path.with_suffix(metrics_path.suffix + ".tmp")
+    with temp_metrics_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(canonical_metrics_row.keys()))
+        writer.writeheader()
+        writer.writerow(canonical_metrics_row)
+    temp_metrics_path.replace(metrics_path)
+
+    return {
+        "status": "current_main_strategy_app_exports_materialized_from_production_core",
+        "main_strategy_model": expected_model,
+        "closed_day": closed_day,
+        "paper_source_path": str(PRODUCTION_TIMESERIES_PATH),
+        "paper_output_path": str(paper_path),
+        "paper_output_info": safe_stat(paper_path),
+        "metrics_output_path": str(metrics_path),
+        "metrics_output_info": safe_stat(metrics_path),
+    }
+
+
 def build_phase68h_backed_authoritative_export_payload(
     summary_row: dict[str, Any],
     *,
@@ -2689,6 +2881,16 @@ def main() -> None:
     log(f"              target={PHASE68I_SUMMARY_OUTPUT_PATH}")
     log(f"[MATERIALIZED] phase68i_dynamic_ladder_candidate_authoritative_net_compare_export")
     log(f"              target={PHASE68I_AUTHORITATIVE_EXPORT_PATH}")
+
+    current_main_strategy_export_result = materialize_current_main_strategy_app_exports()
+    report_rows.append({
+        "artifact_key": "current_main_strategy_app_exports",
+        **current_main_strategy_export_result,
+    })
+    transformed_count += 1
+    log("[MATERIALIZED] current_main_strategy_app_exports")
+    log(f"              target={current_main_strategy_export_result['metrics_output_path']}")
+    log(f"              paper={current_main_strategy_export_result['paper_output_path']}")
 
     product_snapshot = build_product_snapshot(app_live_mode_contract)
     runtime_snapshot = build_runtime_snapshot(

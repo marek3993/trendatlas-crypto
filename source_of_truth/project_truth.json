@@ -38,7 +38,7 @@
                                               "status":  "pinned_compare_baseline"
                                           },
     "app_product_truth":  {
-                              "main_strategy_model":  "phase68g_66g_1p25x_candidate",
+                              "main_strategy_model":  "phase68g_btc_persistence_10d_early_risk_075",
                               "reference_strategy_model":  "phase67j_no_neo_main",
                               "benchmark":  "BTC",
                               "status":  "official_app_main_live_switched"
@@ -46,13 +46,13 @@
     "production_core_truth":  {
                                   "status":  "active_primary_strategy_truth_interface",
                                   "strategy_id":  "current_strategy",
-                                  "strategy_version":  "phase68g_66g_1p25x_candidate",
+                                  "strategy_version":  "phase68g_btc_persistence_10d_early_risk_075",
                                   "snapshot_path":  "outputs/production/current_strategy_snapshot.json",
                                   "timeseries_path":  "outputs/production/current_strategy_timeseries.csv",
                                   "diagnostics_path":  "outputs/production/current_strategy_diagnostics.json",
                                   "build_script":  "scripts/production/build_current_strategy_snapshot.py",
                                   "validation_script":  "scripts/production/validate_current_strategy_snapshot.py",
-                                  "adapter_entrypoint":  "scripts/production/strategy_adapters/phase68g_66g_1p25x_candidate_adapter.py",
+                                  "adapter_entrypoint":  "scripts/production/strategy_adapters/phase68g_btc_persistence_10d_early_risk_075_adapter.py",
                                   "adapter_model":  "strategy_adapter_replacement_model",
                                   "app_primary_truth_interface":  "production_core_v1",
                                   "execution_primary_truth_interface":  "production_core_v1"
@@ -70,10 +70,10 @@
                                       "candidate_btc_does_not_automatically_mean_live_market_exposure":  true
                                   },
     "leverage_truth":  {
-                           "current_live_truth":  "phase68g_66g_1p25x_candidate",
+                           "current_live_truth":  "phase68g_btc_persistence_10d_early_risk_075",
                            "research_raw_winner":  "phase68i_66g_1p50x_static",
-                           "best_deployment_candidate":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                           "official_softer_fallback":  "phase68i_dynamic_ladder_candidate",
+                           "best_deployment_candidate":  "phase68g_btc_persistence_10d_early_risk_075",
+                           "official_softer_fallback":  "phase68g_66g_1p25x_candidate",
                            "phase68j_simple_tail_risk_guardrails":  "rejected",
                            "ordering_remains_unchanged":  false,
                            "truth_promotion_ready":  true,
@@ -91,24 +91,24 @@
                            },
     "app_live_mode_contract":  {
                                    "current":  {
-                                                   "live_truth_mode":  "phase68g_66g_1p25x_candidate",
-                                                   "execution_profile":  "static_1p25x",
-                                                   "leverage_mode":  "static_1p25x",
-                                                   "deployment_candidate_label":  "phase68g_66g_1p25x_candidate",
-                                                   "fallback_profile_label":  "phase68i_dynamic_ladder_candidate",
+                                                   "live_truth_mode":  "phase68g_btc_persistence_10d_early_risk_075",
+                                                   "execution_profile":  "phase68g_btc_persistence_10d_early_risk_075",
+                                                   "leverage_mode":  "phase68g_btc_persistence_10d_early_risk_075",
+                                                   "deployment_candidate_label":  "phase68g_btc_persistence_10d_early_risk_075",
+                                                   "fallback_profile_label":  "phase68g_66g_1p25x_candidate",
                                                    "approval_gate_status":  "approved_and_applied",
                                                    "real_order_gate_status":  "live_order_enabled_and_approved",
                                                    "real_order_eligible_status":  "live_order_enabled_and_approved"
                                                },
                                    "future_target":  {
-                                                         "live_truth_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                                         "execution_profile":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                                         "leverage_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15"
+                                                         "live_truth_mode":  "phase68g_btc_persistence_10d_early_risk_075",
+                                                         "execution_profile":  "phase68g_btc_persistence_10d_early_risk_075",
+                                                         "leverage_mode":  "phase68g_btc_persistence_10d_early_risk_075"
                                                      },
                                    "future_fallback":  {
-                                                           "live_truth_mode":  "phase68i_dynamic_ladder_candidate",
-                                                           "execution_profile":  "phase68i_dynamic_ladder_candidate",
-                                                           "leverage_mode":  "phase68i_dynamic_ladder_candidate"
+                                                           "live_truth_mode":  "phase68g_66g_1p25x_candidate",
+                                                           "execution_profile":  "phase68g_66g_1p25x_candidate",
+                                                           "leverage_mode":  "phase68g_66g_1p25x_candidate"
                                                        }
                                },
     "automation_capabilities":  {

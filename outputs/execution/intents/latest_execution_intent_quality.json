@@ -1,6 +1,6 @@
 {
   "intent_ok": true,
-  "strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+  "strategy_model": "phase68g_btc_persistence_10d_early_risk_075",
   "signal_id_present": true,
   "target_asset_present": true,
   "target_regime_present": true,

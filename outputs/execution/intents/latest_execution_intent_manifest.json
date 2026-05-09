@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_execution_intent",
-  "generated_at_utc": "2026-05-06T21:28:47Z",
-  "started_at_utc": "2026-05-06T21:28:46Z",
+  "generated_at_utc": "2026-05-09T12:10:31Z",
+  "started_at_utc": "2026-05-09T12:10:30Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\build_execution_intent_from_strategy_exports.py",
   "input_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\export_contract.json",
@@ -19,13 +19,13 @@
   "authority_day_context": {
     "attempt_status": "success",
     "attempt_currentness_status": "current",
-    "attempt_target_closed_day": "2026-05-05",
-    "attempt_latest_available_closed_day": "2026-05-05",
+    "attempt_target_closed_day": "2026-05-08",
+    "attempt_latest_available_closed_day": "2026-05-08",
     "success_currentness_status": "current",
-    "success_target_closed_day": "2026-05-05",
-    "success_latest_available_closed_day": "2026-05-05",
+    "success_target_closed_day": "2026-05-08",
+    "success_latest_available_closed_day": "2026-05-08",
     "success_attempt_status": "success",
-    "aligned_closed_day": "2026-05-05",
+    "aligned_closed_day": "2026-05-08",
     "authority_alignment_mode": "published_authority_snapshot",
     "same_run_authority_allowed": false,
     "same_run_authority_run_id": null,

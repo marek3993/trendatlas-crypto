@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_real_order_gate_decision",
-  "generated_at_utc": "2026-05-06T21:28:47Z",
-  "started_at_utc": "2026-05-06T21:28:47Z",
+  "generated_at_utc": "2026-05-09T12:10:34Z",
+  "started_at_utc": "2026-05-09T12:10:34Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\prepare_real_order_gate.py",
   "input_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",

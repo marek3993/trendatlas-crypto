@@ -26,9 +26,10 @@
 - Live runtime is armed.
 - Remaining proof gap is the first non-CASH end-to-end dynamic leverage evidence run.
 - Confirm Production Core remains the app homepage and execution primary strategy truth interface.
-- Current live/app truth is `phase68g_66g_1p25x_candidate`.
-- Official softer fallback is `phase68i_dynamic_ladder_candidate`.
-- ETF-flow remains unpromoted while the safe baseline stays on `phase68g_66g_1p25x_candidate`.
+- Current live/app truth is `phase68g_btc_persistence_10d_early_risk_075`.
+- Official softer fallback is `phase68g_66g_1p25x_candidate`.
+- `phase68i_dynamic_ladder_candidate` is legacy / historical fallback only.
+- ETF-flow remains unpromoted and is not the current live truth.
 
 ## Data health guard current state
 - Data Health / Source Availability Guard is active and remains separate from Production Core strategy truth and Pi runtime authority.

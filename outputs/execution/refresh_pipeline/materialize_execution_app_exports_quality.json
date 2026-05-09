@@ -4,7 +4,7 @@
   "missing_legacy_source_count": 0,
   "hard_required_missing_count": 0,
   "copied_count": 0,
-  "transformed_count": 3,
+  "transformed_count": 4,
   "already_present_count": 5,
   "contract_ready_after_materialization": true,
   "app_live_mode_fields_written": true,
