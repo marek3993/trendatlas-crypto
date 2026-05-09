@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -69,6 +69,11 @@ RESEARCH_WARNING_RULE_SOURCE_IDS = {
     "research_btc_etf_flow_daily_panel_quality",
     "research_btc_derivatives_daily_panel_csv",
     "research_btc_derivatives_daily_panel_quality",
+}
+ETF_FLOW_LIVE_STRATEGY_VERSION = "phase68g_etf_flow_impulse_early_risk_cooldown_15"
+ETF_FLOW_DYNAMIC_SOURCE_IDS = {
+    "research_btc_etf_flow_daily_panel_csv",
+    "research_btc_etf_flow_daily_panel_quality",
 }
 
 
@@ -339,6 +344,41 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
 )
 
 SOURCE_INDEX = {spec.source_id: spec for spec in SOURCE_SPECS}
+
+
+def _load_current_main_strategy_model(root: Path) -> str | None:
+    project_truth_path = root / "source_of_truth" / "project_truth.json"
+    export_contract_path = root / "source_of_truth" / "export_contract.json"
+    try:
+        project_truth = json.loads(project_truth_path.read_text(encoding="utf-8"))
+        export_contract = json.loads(export_contract_path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if not isinstance(project_truth, dict) or not isinstance(export_contract, dict):
+        return None
+    app_product_truth = project_truth.get("app_product_truth")
+    app_export_contract = export_contract.get("app_export_contract")
+    if not isinstance(app_product_truth, dict) or not isinstance(app_export_contract, dict):
+        return None
+    project_model = str(app_product_truth.get("main_strategy_model") or "").strip()
+    export_model = str(app_export_contract.get("main_strategy_model") or "").strip()
+    if project_model and export_model and project_model != export_model:
+        return None
+    return project_model or export_model or None
+
+
+def resolve_effective_source_spec(spec: SourceSpec, *, context: dict[str, Any]) -> SourceSpec:
+    main_strategy_model = str(context.get("main_strategy_model") or "").strip()
+    if (
+        main_strategy_model == ETF_FLOW_LIVE_STRATEGY_VERSION
+        and spec.source_id in ETF_FLOW_DYNAMIC_SOURCE_IDS
+    ):
+        return replace(
+            spec,
+            criticality=CRITICALITY_PRODUCTION,
+            action_on_failure=ACTION_BLOCK_EXECUTION,
+        )
+    return spec
 
 
 def utc_now(reference_now: datetime | None = None) -> datetime:
@@ -874,6 +914,7 @@ def build_context(
     return {
         "latest_closed_utc_day": latest_closed_utc_day(reference_now),
         "btc_last_day": btc_last_day,
+        "main_strategy_model": _load_current_main_strategy_model(root),
     }
 
 
@@ -967,7 +1008,7 @@ def build_report_bundle(
     )
     sources = [
         evaluate_source(
-            spec=spec,
+            spec=resolve_effective_source_spec(spec, context=context),
             root=resolved_root,
             reference_now=reference_now,
             context=context,

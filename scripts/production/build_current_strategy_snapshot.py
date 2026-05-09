@@ -26,6 +26,10 @@ from scripts.production.strategy_adapters.phase68g_btc_persistence_10d_early_ris
     CANDIDATE_ID as BTC_PERSISTENCE_CANDIDATE_ID,
     Phase68gBtcPersistence10dEarlyRisk075Adapter,
 )
+from scripts.production.strategy_adapters.phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter import (
+    CANDIDATE_ID as ETF_FLOW_CANDIDATE_ID,
+    Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter,
+)
 from scripts.production.validate_current_strategy_snapshot import (
     build_quality_payload,
     validate_production_payloads,
@@ -86,15 +90,17 @@ def _resolve_current_strategy_model(root: Path) -> str:
     return strategy_model
 
 
-def _resolve_adapter(strategy_model: str) -> Phase68g66g1p25xCandidateAdapter:
-    if strategy_model != SOURCE_STRATEGY_VERSION:
-        if strategy_model == BTC_PERSISTENCE_CANDIDATE_ID:
-            return Phase68gBtcPersistence10dEarlyRisk075Adapter()
-        raise ValueError(
-            "No Production Core v1 adapter is registered for the current official strategy "
-            f"(strategy_model={strategy_model})"
-        )
-    return Phase68g66g1p25xCandidateAdapter()
+def _resolve_adapter(strategy_model: str) -> Any:
+    if strategy_model == SOURCE_STRATEGY_VERSION:
+        return Phase68g66g1p25xCandidateAdapter()
+    if strategy_model == BTC_PERSISTENCE_CANDIDATE_ID:
+        return Phase68gBtcPersistence10dEarlyRisk075Adapter()
+    if strategy_model == ETF_FLOW_CANDIDATE_ID:
+        return Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter()
+    raise ValueError(
+        "No Production Core v1 adapter is registered for the current official strategy "
+        f"(strategy_model={strategy_model})"
+    )
 
 
 def _atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
@@ -269,7 +275,7 @@ def _build_pain_points(timeseries, metrics: dict[str, Any], current_row, wait_co
 def _build_snapshot(
     *,
     generated_at_utc: str,
-    adapter: Phase68g66g1p25xCandidateAdapter,
+    adapter: Any,
     inputs: dict[str, Any],
     timeseries,
     build_command: str,
@@ -345,7 +351,7 @@ def _build_snapshot(
 def _build_diagnostics(
     *,
     generated_at_utc: str,
-    adapter: Phase68g66g1p25xCandidateAdapter,
+    adapter: Any,
     inputs: dict[str, Any],
     timeseries,
     validation: dict[str, Any],
@@ -389,7 +395,7 @@ def _build_manifest(
     generated_at_utc: str,
     build_command: str,
     git_commit: str | None,
-    adapter: Phase68g66g1p25xCandidateAdapter,
+    adapter: Any,
     inputs: dict[str, Any],
     validation: dict[str, Any],
     snapshot_path: Path,

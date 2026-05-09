@@ -28,6 +28,10 @@ from scripts.production.strategy_adapters.phase68g_btc_persistence_10d_early_ris
     CANDIDATE_ID as BTC_PERSISTENCE_CANDIDATE_ID,
     Phase68gBtcPersistence10dEarlyRisk075Adapter,
 )
+from scripts.production.strategy_adapters.phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter import (
+    CANDIDATE_ID as ETF_FLOW_CANDIDATE_ID,
+    Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter,
+)
 from scripts.production.staged_candidate_promotion_support import (
     PROMOTED_CANDIDATE_ID,
     load_promoted_candidate_inputs,
@@ -814,6 +818,17 @@ def validate_active_production_payloads(
 
     if strategy_version == BTC_PERSISTENCE_CANDIDATE_ID:
         adapter = Phase68gBtcPersistence10dEarlyRisk075Adapter()
+        inputs = adapter.load_inputs(root=ROOT)
+        return validate_production_payloads(
+            snapshot=snapshot,
+            timeseries=timeseries,
+            diagnostics=diagnostics,
+            adapter=adapter,
+            inputs=inputs,
+        )
+
+    if strategy_version == ETF_FLOW_CANDIDATE_ID:
+        adapter = Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter()
         inputs = adapter.load_inputs(root=ROOT)
         return validate_production_payloads(
             snapshot=snapshot,

@@ -1,18 +1,80 @@
 {
   "artifact_type": "staged_strategy_candidate_snapshot_manifest",
   "schema_version": 1,
-  "generated_at_utc": "2026-05-06T19:27:54Z",
+  "generated_at_utc": "2026-05-09T19:58:07Z",
   "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "base_strategy_version": "phase68g_66g_1p25x_candidate",
+  "base_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
   "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter",
   "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_staged_strategy_candidate.py --candidate phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "git_commit": "05b3b906748c7859bd01c51b2b32d5bc846b8f1e",
+  "git_commit": "8598f386bc93e8af13f76d8fe4a420653df7afed",
   "source_inputs": {
     "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter",
     "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "base_strategy_version": "phase68g_66g_1p25x_candidate",
+    "base_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
     "candidate_compare_closed_day": "2026-05-05",
-    "baseline_closed_day": "2026-05-05",
+    "baseline_closed_day": "2026-05-08",
+    "authorized_compare_baseline_closed_day": "2026-05-08",
+    "authorized_compare_baseline_path": "outputs/production/current_strategy_timeseries.csv",
+    "durable_baseline_route": {
+      "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+      "closed_day": "2026-05-08",
+      "source": "phase68g_btc_persistence_10d_early_risk_075_adapter",
+      "lineage": "phase68g_etf_flow_impulse_early_risk_cooldown_15 -> phase68g_btc_persistence_10d_early_risk_075 -> phase68g_66g_1p25x_candidate",
+      "source_inputs": {
+        "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+        "validated_closed_day": "2026-05-08",
+        "files": {
+          "durable_baseline_summary": {
+            "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+            "sha256": "cc53a81e0cbcac4e54fd34fcd290c51d8ae0331cac88100410b6631d44e8ad5f",
+            "size_bytes": 915,
+            "modified_utc": "2026-05-09T15:35:58Z",
+            "last_date": "2026-05-08",
+            "row_count": 1
+          },
+          "durable_baseline_paper": {
+            "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+            "sha256": "1411dc65e20e1dc128b805cee2d5f23b0333c675d9731f72f434efecf9a86e84",
+            "size_bytes": 2623372,
+            "modified_utc": "2026-05-09T15:35:58Z",
+            "last_date": "2026-05-08",
+            "row_count": 2926
+          },
+          "durable_baseline_trend_status": {
+            "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+            "sha256": "6390f5d783afd54c8aea56c873f10845923a44067d7fabd068f77c231c1bae00",
+            "size_bytes": 619,
+            "modified_utc": "2026-05-09T09:32:38Z",
+            "last_date": "2026-05-08",
+            "row_count": 1
+          },
+          "durable_baseline_trend_history": {
+            "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+            "sha256": "d3654f7383378abbca0563f9665240bd87002fcf0ebf56e5eeeb16795805c3d6",
+            "size_bytes": 379642,
+            "modified_utc": "2026-05-09T09:32:38Z",
+            "last_date": "2026-05-08",
+            "row_count": 2926
+          },
+          "durable_baseline_freshness_report": {
+            "path": "outputs/execution/freshness/app_freshness_report.json",
+            "sha256": "4d0cd1e1c254033632aab6b03669cc435b74c96aa0f40aff7e89f070cb1e650b",
+            "size_bytes": 1214,
+            "modified_utc": "2026-05-09T15:35:58Z",
+            "closed_day": "2026-05-08",
+            "status": "ok"
+          },
+          "benchmark_ohlcv": {
+            "path": "data/ohlcv/BTCUSDT_1d.csv",
+            "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
+            "size_bytes": 274631,
+            "modified_utc": "2026-05-09T15:35:58Z",
+            "last_date": "2026-05-08",
+            "row_count": 3187
+          }
+        }
+      }
+    },
     "compare_windows": [
       {
         "name": "full_etf_overlap",
@@ -34,26 +96,26 @@
     "files": {
       "baseline_snapshot": {
         "path": "outputs/production/current_strategy_snapshot.json",
-        "sha256": "5d3261c5948021628a63bfe1bc3c0cf77bd4cfdc2a8eaf202a46455bb1e2e48d",
-        "size_bytes": 6162,
-        "modified_utc": "2026-05-06T18:27:34Z",
-        "closed_day": "2026-05-05",
-        "strategy_version": "phase68g_66g_1p25x_candidate"
+        "sha256": "601a2372959a5059bbf9137cf18a37c03458d0e0f8ada7aa3b149c116acb7fa0",
+        "size_bytes": 10199,
+        "modified_utc": "2026-05-09T15:35:58Z",
+        "closed_day": "2026-05-08",
+        "strategy_version": "phase68g_btc_persistence_10d_early_risk_075"
       },
       "baseline_timeseries": {
         "path": "outputs/production/current_strategy_timeseries.csv",
-        "sha256": "e39b3fce96b4d07770410287e0ad78059c2e9496c7ec770d9b042a2e9582eac4",
-        "size_bytes": 1752937,
-        "modified_utc": "2026-05-06T18:27:34Z",
-        "last_date": "2026-05-05",
-        "row_count": 2923
+        "sha256": "d4ee8d22cb4dfe13be46f81ca48bd9eacd6f378fb3bafdfc37f786399d912f5f",
+        "size_bytes": 1933840,
+        "modified_utc": "2026-05-09T15:35:58Z",
+        "last_date": "2026-05-08",
+        "row_count": 2926
       },
       "baseline_diagnostics": {
         "path": "outputs/production/current_strategy_diagnostics.json",
-        "sha256": "4c395be927c844ad699ed6f3c002a3b660e80ff62fe87c42de19887633f413f2",
-        "size_bytes": 9033,
-        "modified_utc": "2026-05-06T18:27:34Z",
-        "closed_day": "2026-05-05"
+        "sha256": "804385cbd31fa4943a654404ec834a4717f9eeeabbd19ac402203cfcb8aeba5f",
+        "size_bytes": 7828,
+        "modified_utc": "2026-05-09T15:35:58Z",
+        "closed_day": "2026-05-08"
       },
       "etf_panel": {
         "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
@@ -65,11 +127,11 @@
       },
       "btc_ohlcv": {
         "path": "data/ohlcv/BTCUSDT_1d.csv",
-        "sha256": "3075b6a9c681a07093503a7f429f85ccfb6ea7549b168b505e9c385ada8e22e3",
-        "size_bytes": 274370,
-        "modified_utc": "2026-05-06T19:27:35Z",
-        "last_date": "2026-05-05",
-        "row_count": 3184
+        "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
+        "size_bytes": 274631,
+        "modified_utc": "2026-05-09T15:35:58Z",
+        "last_date": "2026-05-08",
+        "row_count": 3187
       },
       "dev_only_script": {
         "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
@@ -91,15 +153,15 @@
       },
       "project_truth": {
         "path": "source_of_truth/project_truth.json",
-        "sha256": "84e76ac4a5589b45b5aa1fb962ce4d8c18929a00698cb57b45ec3aec13809a30",
-        "size_bytes": 26366,
-        "modified_utc": "2026-05-05T16:02:49Z"
+        "sha256": "30b0aa0280075393d5b309ca5a39a3e39feb909775eddfd32ae9015c3ae92531",
+        "size_bytes": 26751,
+        "modified_utc": "2026-05-09T12:08:42Z"
       },
       "export_contract": {
         "path": "source_of_truth/export_contract.json",
-        "sha256": "da3a43a2da6f3bb874f02ec9f5add17e6e5d38ec4f51f9038cdffaccf8b9c196",
-        "size_bytes": 22351,
-        "modified_utc": "2026-05-05T16:02:49Z"
+        "sha256": "cc7b6470911397b6594c0f86ef9bbf2b44b9fbe69748bc32dbaf3d54aaf033da",
+        "size_bytes": 24582,
+        "modified_utc": "2026-05-09T12:09:46Z"
       }
     },
     "cost_model": {
@@ -133,77 +195,77 @@
       "path": "app.py",
       "sha256": "e5a585b0951e20ce2cf9daa98564088d842d2e109e1744e07c78fd17e3293fcc",
       "size_bytes": 276081,
-      "modified_utc": "2026-05-06T11:56:10Z",
+      "modified_utc": "2026-05-08T22:26:00Z",
       "exists": true
     },
     "source_of_truth/master_state.md": {
       "path": "source_of_truth/master_state.md",
-      "sha256": "911f6d0bbad1880c87f1ad657565f2668117af88c5e358a7bd783a99768ad5bb",
-      "size_bytes": 4500,
-      "modified_utc": "2026-05-05T16:02:48Z",
+      "sha256": "3e4ef91260228f5672ef30da30ec048314389ce193fe312382252a5fcaeca4e2",
+      "size_bytes": 4834,
+      "modified_utc": "2026-05-09T14:33:12Z",
       "exists": true
     },
     "source_of_truth/project_truth.json": {
       "path": "source_of_truth/project_truth.json",
-      "sha256": "84e76ac4a5589b45b5aa1fb962ce4d8c18929a00698cb57b45ec3aec13809a30",
-      "size_bytes": 26366,
-      "modified_utc": "2026-05-05T16:02:49Z",
+      "sha256": "30b0aa0280075393d5b309ca5a39a3e39feb909775eddfd32ae9015c3ae92531",
+      "size_bytes": 26751,
+      "modified_utc": "2026-05-09T12:08:42Z",
       "exists": true
     },
     "source_of_truth/export_contract.json": {
       "path": "source_of_truth/export_contract.json",
-      "sha256": "da3a43a2da6f3bb874f02ec9f5add17e6e5d38ec4f51f9038cdffaccf8b9c196",
-      "size_bytes": 22351,
-      "modified_utc": "2026-05-05T16:02:49Z",
+      "sha256": "cc7b6470911397b6594c0f86ef9bbf2b44b9fbe69748bc32dbaf3d54aaf033da",
+      "size_bytes": 24582,
+      "modified_utc": "2026-05-09T12:09:46Z",
       "exists": true
     },
     "outputs/production/current_strategy_snapshot.json": {
       "path": "outputs/production/current_strategy_snapshot.json",
-      "sha256": "5d3261c5948021628a63bfe1bc3c0cf77bd4cfdc2a8eaf202a46455bb1e2e48d",
-      "size_bytes": 6162,
-      "modified_utc": "2026-05-06T18:27:34Z",
+      "sha256": "601a2372959a5059bbf9137cf18a37c03458d0e0f8ada7aa3b149c116acb7fa0",
+      "size_bytes": 10199,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     },
     "outputs/production/current_strategy_timeseries.csv": {
       "path": "outputs/production/current_strategy_timeseries.csv",
-      "sha256": "e39b3fce96b4d07770410287e0ad78059c2e9496c7ec770d9b042a2e9582eac4",
-      "size_bytes": 1752937,
-      "modified_utc": "2026-05-06T18:27:34Z",
+      "sha256": "d4ee8d22cb4dfe13be46f81ca48bd9eacd6f378fb3bafdfc37f786399d912f5f",
+      "size_bytes": 1933840,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     },
     "outputs/production/current_strategy_diagnostics.json": {
       "path": "outputs/production/current_strategy_diagnostics.json",
-      "sha256": "4c395be927c844ad699ed6f3c002a3b660e80ff62fe87c42de19887633f413f2",
-      "size_bytes": 9033,
-      "modified_utc": "2026-05-06T18:27:34Z",
+      "sha256": "804385cbd31fa4943a654404ec834a4717f9eeeabbd19ac402203cfcb8aeba5f",
+      "size_bytes": 7828,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     },
     "outputs/execution/intents/latest_execution_intent.json": {
       "path": "outputs/execution/intents/latest_execution_intent.json",
-      "sha256": "5e1c1c5dfd900981805329112afb2c733b12b673782361f4b6e823a76813e87f",
-      "size_bytes": 3153,
-      "modified_utc": "2026-05-06T18:27:34Z",
+      "sha256": "ffa3a467d7355a1b1b0530d9ebff5ce4004c77205fd7f57934095d5bac9caf4c",
+      "size_bytes": 3472,
+      "modified_utc": "2026-05-09T12:10:31Z",
       "exists": true
     },
     "outputs/execution/live_gate/latest_real_order_gate_decision.json": {
       "path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
-      "sha256": "5a8837685edbfbf9e311564195dc6d461f854b879b0b0f368a0155fc0e228135",
-      "size_bytes": 4144,
-      "modified_utc": "2026-05-05T15:04:22Z",
+      "sha256": "d0999c9be94f3fc98727582c0bfd2d6c2ad4c78ad143a7d005dff425ea1c809e",
+      "size_bytes": 4230,
+      "modified_utc": "2026-05-09T12:10:34Z",
       "exists": true
     },
     "outputs/execution/authority/latest_successful_snapshot.json": {
       "path": "outputs/execution/authority/latest_successful_snapshot.json",
-      "sha256": "9cba3323f3d2814ea0b51fff80a3b01d49b096990a49cf25e480298e1135b728",
-      "size_bytes": 41999,
-      "modified_utc": "2026-05-06T12:48:20Z",
+      "sha256": "2e009db740a7be821664e6333def149efc3f7b1437fc29381d23eb35784c8e88",
+      "size_bytes": 42608,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     },
     "outputs/execution/authority/latest_attempt_status.json": {
       "path": "outputs/execution/authority/latest_attempt_status.json",
-      "sha256": "4fcdb19edf3a5d3a2998ccf57a18cab660dd81a1aaa0c35fb579edda657f2b54",
-      "size_bytes": 41994,
-      "modified_utc": "2026-05-06T12:48:20Z",
+      "sha256": "179880c4fb2854e6112149083451ddd25f41f7aa6ea6a8416c912e9a28deca39",
+      "size_bytes": 42603,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     }
   },
@@ -212,101 +274,101 @@
       "path": "app.py",
       "sha256": "e5a585b0951e20ce2cf9daa98564088d842d2e109e1744e07c78fd17e3293fcc",
       "size_bytes": 276081,
-      "modified_utc": "2026-05-06T11:56:10Z",
+      "modified_utc": "2026-05-08T22:26:00Z",
       "exists": true
     },
     "source_of_truth/master_state.md": {
       "path": "source_of_truth/master_state.md",
-      "sha256": "911f6d0bbad1880c87f1ad657565f2668117af88c5e358a7bd783a99768ad5bb",
-      "size_bytes": 4500,
-      "modified_utc": "2026-05-05T16:02:48Z",
+      "sha256": "3e4ef91260228f5672ef30da30ec048314389ce193fe312382252a5fcaeca4e2",
+      "size_bytes": 4834,
+      "modified_utc": "2026-05-09T14:33:12Z",
       "exists": true
     },
     "source_of_truth/project_truth.json": {
       "path": "source_of_truth/project_truth.json",
-      "sha256": "84e76ac4a5589b45b5aa1fb962ce4d8c18929a00698cb57b45ec3aec13809a30",
-      "size_bytes": 26366,
-      "modified_utc": "2026-05-05T16:02:49Z",
+      "sha256": "30b0aa0280075393d5b309ca5a39a3e39feb909775eddfd32ae9015c3ae92531",
+      "size_bytes": 26751,
+      "modified_utc": "2026-05-09T12:08:42Z",
       "exists": true
     },
     "source_of_truth/export_contract.json": {
       "path": "source_of_truth/export_contract.json",
-      "sha256": "da3a43a2da6f3bb874f02ec9f5add17e6e5d38ec4f51f9038cdffaccf8b9c196",
-      "size_bytes": 22351,
-      "modified_utc": "2026-05-05T16:02:49Z",
+      "sha256": "cc7b6470911397b6594c0f86ef9bbf2b44b9fbe69748bc32dbaf3d54aaf033da",
+      "size_bytes": 24582,
+      "modified_utc": "2026-05-09T12:09:46Z",
       "exists": true
     },
     "outputs/production/current_strategy_snapshot.json": {
       "path": "outputs/production/current_strategy_snapshot.json",
-      "sha256": "5d3261c5948021628a63bfe1bc3c0cf77bd4cfdc2a8eaf202a46455bb1e2e48d",
-      "size_bytes": 6162,
-      "modified_utc": "2026-05-06T18:27:34Z",
+      "sha256": "601a2372959a5059bbf9137cf18a37c03458d0e0f8ada7aa3b149c116acb7fa0",
+      "size_bytes": 10199,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     },
     "outputs/production/current_strategy_timeseries.csv": {
       "path": "outputs/production/current_strategy_timeseries.csv",
-      "sha256": "e39b3fce96b4d07770410287e0ad78059c2e9496c7ec770d9b042a2e9582eac4",
-      "size_bytes": 1752937,
-      "modified_utc": "2026-05-06T18:27:34Z",
+      "sha256": "d4ee8d22cb4dfe13be46f81ca48bd9eacd6f378fb3bafdfc37f786399d912f5f",
+      "size_bytes": 1933840,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     },
     "outputs/production/current_strategy_diagnostics.json": {
       "path": "outputs/production/current_strategy_diagnostics.json",
-      "sha256": "4c395be927c844ad699ed6f3c002a3b660e80ff62fe87c42de19887633f413f2",
-      "size_bytes": 9033,
-      "modified_utc": "2026-05-06T18:27:34Z",
+      "sha256": "804385cbd31fa4943a654404ec834a4717f9eeeabbd19ac402203cfcb8aeba5f",
+      "size_bytes": 7828,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     },
     "outputs/execution/intents/latest_execution_intent.json": {
       "path": "outputs/execution/intents/latest_execution_intent.json",
-      "sha256": "5e1c1c5dfd900981805329112afb2c733b12b673782361f4b6e823a76813e87f",
-      "size_bytes": 3153,
-      "modified_utc": "2026-05-06T18:27:34Z",
+      "sha256": "ffa3a467d7355a1b1b0530d9ebff5ce4004c77205fd7f57934095d5bac9caf4c",
+      "size_bytes": 3472,
+      "modified_utc": "2026-05-09T12:10:31Z",
       "exists": true
     },
     "outputs/execution/live_gate/latest_real_order_gate_decision.json": {
       "path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
-      "sha256": "5a8837685edbfbf9e311564195dc6d461f854b879b0b0f368a0155fc0e228135",
-      "size_bytes": 4144,
-      "modified_utc": "2026-05-05T15:04:22Z",
+      "sha256": "d0999c9be94f3fc98727582c0bfd2d6c2ad4c78ad143a7d005dff425ea1c809e",
+      "size_bytes": 4230,
+      "modified_utc": "2026-05-09T12:10:34Z",
       "exists": true
     },
     "outputs/execution/authority/latest_successful_snapshot.json": {
       "path": "outputs/execution/authority/latest_successful_snapshot.json",
-      "sha256": "9cba3323f3d2814ea0b51fff80a3b01d49b096990a49cf25e480298e1135b728",
-      "size_bytes": 41999,
-      "modified_utc": "2026-05-06T12:48:20Z",
+      "sha256": "2e009db740a7be821664e6333def149efc3f7b1437fc29381d23eb35784c8e88",
+      "size_bytes": 42608,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     },
     "outputs/execution/authority/latest_attempt_status.json": {
       "path": "outputs/execution/authority/latest_attempt_status.json",
-      "sha256": "4fcdb19edf3a5d3a2998ccf57a18cab660dd81a1aaa0c35fb579edda657f2b54",
-      "size_bytes": 41994,
-      "modified_utc": "2026-05-06T12:48:20Z",
+      "sha256": "179880c4fb2854e6112149083451ddd25f41f7aa6ea6a8416c912e9a28deca39",
+      "size_bytes": 42603,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "exists": true
     }
   },
   "truth_contract_expectations": {
-    "project_truth_app_main_strategy_model": "phase68g_66g_1p25x_candidate",
-    "project_truth_current_live_truth": "phase68g_66g_1p25x_candidate",
-    "project_truth_official_fallback": "phase68i_dynamic_ladder_candidate",
-    "project_truth_production_core_strategy_version": "phase68g_66g_1p25x_candidate",
-    "export_contract_main_strategy_model": "phase68g_66g_1p25x_candidate",
-    "export_contract_live_truth_mode": "phase68g_66g_1p25x_candidate",
-    "export_contract_fallback_profile_label": "phase68i_dynamic_ladder_candidate",
-    "export_contract_production_core_strategy_version": "phase68g_66g_1p25x_candidate",
-    "baseline_snapshot_strategy_version": "phase68g_66g_1p25x_candidate"
+    "project_truth_app_main_strategy_model": "phase68g_btc_persistence_10d_early_risk_075",
+    "project_truth_current_live_truth": "phase68g_btc_persistence_10d_early_risk_075",
+    "project_truth_official_fallback": "phase68g_66g_1p25x_candidate",
+    "project_truth_production_core_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+    "export_contract_main_strategy_model": "phase68g_btc_persistence_10d_early_risk_075",
+    "export_contract_live_truth_mode": "phase68g_btc_persistence_10d_early_risk_075",
+    "export_contract_fallback_profile_label": "phase68g_66g_1p25x_candidate",
+    "export_contract_production_core_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+    "baseline_snapshot_strategy_version": "phase68g_btc_persistence_10d_early_risk_075"
   },
   "truth_contract_current": {
-    "project_truth_app_main_strategy_model": "phase68g_66g_1p25x_candidate",
-    "project_truth_current_live_truth": "phase68g_66g_1p25x_candidate",
-    "project_truth_official_fallback": "phase68i_dynamic_ladder_candidate",
-    "project_truth_production_core_strategy_version": "phase68g_66g_1p25x_candidate",
-    "export_contract_main_strategy_model": "phase68g_66g_1p25x_candidate",
-    "export_contract_live_truth_mode": "phase68g_66g_1p25x_candidate",
-    "export_contract_fallback_profile_label": "phase68i_dynamic_ladder_candidate",
-    "export_contract_production_core_strategy_version": "phase68g_66g_1p25x_candidate",
-    "baseline_snapshot_strategy_version": "phase68g_66g_1p25x_candidate"
+    "project_truth_app_main_strategy_model": "phase68g_btc_persistence_10d_early_risk_075",
+    "project_truth_current_live_truth": "phase68g_btc_persistence_10d_early_risk_075",
+    "project_truth_official_fallback": "phase68g_66g_1p25x_candidate",
+    "project_truth_production_core_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+    "export_contract_main_strategy_model": "phase68g_btc_persistence_10d_early_risk_075",
+    "export_contract_live_truth_mode": "phase68g_btc_persistence_10d_early_risk_075",
+    "export_contract_fallback_profile_label": "phase68g_66g_1p25x_candidate",
+    "export_contract_production_core_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+    "baseline_snapshot_strategy_version": "phase68g_btc_persistence_10d_early_risk_075"
   },
   "validation_status": "passed"
 }

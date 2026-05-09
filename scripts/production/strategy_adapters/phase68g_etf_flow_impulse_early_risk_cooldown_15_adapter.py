@@ -20,11 +20,14 @@ if str(ROOT / "scripts") not in sys.path:
 
 from scripts.approved_strategy_net_export_helper import CASH_EQUIVALENT_ASSETS
 import scripts.dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate as dev_only_rebuild
+from scripts.production.strategy_adapters.phase68g_btc_persistence_10d_early_risk_075_adapter import (
+    CANDIDATE_ID as BTC_PERSISTENCE_CANDIDATE_ID,
+)
 
 
 PRODUCTION_STRATEGY_ID = "staged_strategy_candidate"
 CANDIDATE_ID = "phase68g_etf_flow_impulse_early_risk_cooldown_15"
-BASE_STRATEGY_VERSION = "phase68g_66g_1p25x_candidate"
+BASE_STRATEGY_VERSION = BTC_PERSISTENCE_CANDIDATE_ID
 ADAPTER_NAME = "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter"
 
 SNAPSHOT_SCHEMA_VERSION = 1
@@ -45,8 +48,11 @@ COMPARE_WINDOWS: tuple[tuple[str, str | None], ...] = (
     ("since2025", "2025-01-01"),
 )
 
-EXPECTED_LIVE_TRUTH = "phase68g_66g_1p25x_candidate"
-EXPECTED_FALLBACK = "phase68i_dynamic_ladder_candidate"
+EXPECTED_LIVE_TRUTH = BTC_PERSISTENCE_CANDIDATE_ID
+EXPECTED_FALLBACK = "phase68g_66g_1p25x_candidate"
+LIVE_PRODUCTION_STRATEGY_ID = "current_strategy"
+LIVE_STRATEGY_VERSION = CANDIDATE_ID
+LIVE_ADAPTER_NAME = "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter"
 
 PROTECTED_RELATIVE_PATHS: tuple[str, ...] = (
     "app.py",
@@ -83,6 +89,11 @@ def _read_dataframe_required(path: Path) -> pd.DataFrame:
     if frame.empty:
         raise ValueError(f"CSV has no rows in {path}")
     return frame
+
+
+def _read_single_csv_row_required(path: Path) -> dict[str, Any]:
+    frame = _read_dataframe_required(path)
+    return {str(key).strip(): value for key, value in frame.iloc[-1].to_dict().items()}
 
 
 def _path_for_manifest(path: Path, *, root: Path) -> str:
@@ -292,6 +303,391 @@ def expected_truth_contract_state() -> dict[str, str]:
         "export_contract_fallback_profile_label": EXPECTED_FALLBACK,
         "export_contract_production_core_strategy_version": EXPECTED_LIVE_TRUTH,
         "baseline_snapshot_strategy_version": EXPECTED_LIVE_TRUTH,
+    }
+
+
+def _load_authorized_compare_reference(*, source_paths: dict[str, Path]) -> dict[str, Any]:
+    snapshot = _read_json_required(source_paths["baseline_snapshot"])
+    diagnostics = _read_json_required(source_paths["baseline_diagnostics"])
+    timeseries = _read_dataframe_required(source_paths["baseline_timeseries"])
+
+    closed_day = _normalize_iso_day_text(
+        snapshot.get("closed_day"),
+        context="baseline_snapshot.closed_day",
+    )
+    diagnostics_closed_day = _normalize_iso_day_text(
+        diagnostics.get("closed_day"),
+        context="baseline_diagnostics.closed_day",
+    )
+    timeseries_last_day = _normalize_iso_day_text(
+        timeseries["date"].iloc[-1],
+        context="baseline_timeseries.last_row.date",
+    )
+    if diagnostics_closed_day != closed_day:
+        raise ValueError(
+            "Baseline diagnostics closed_day mismatch: "
+            f"actual={diagnostics_closed_day!r} expected={closed_day!r}"
+        )
+    if timeseries_last_day != closed_day:
+        raise ValueError(
+            "Baseline timeseries last_row.date mismatch: "
+            f"actual={timeseries_last_day!r} expected={closed_day!r}"
+        )
+    if str(snapshot.get("strategy_version") or "").strip() != BASE_STRATEGY_VERSION:
+        raise ValueError(
+            "Baseline snapshot strategy_version mismatch: "
+            f"actual={snapshot.get('strategy_version')!r} expected={BASE_STRATEGY_VERSION!r}"
+        )
+
+    return {
+        "snapshot": snapshot,
+        "diagnostics": diagnostics,
+        "timeseries": timeseries,
+        "closed_day": closed_day,
+        "snapshot_path": source_paths["baseline_snapshot"],
+        "timeseries_path": source_paths["baseline_timeseries"],
+        "diagnostics_path": source_paths["baseline_diagnostics"],
+    }
+
+
+def _compare_authorized_vs_durable_baseline(
+    durable_timeseries: pd.DataFrame,
+    authorized_timeseries: pd.DataFrame,
+) -> None:
+    required_columns = [
+        "date",
+        "candidate_asset",
+        "selected_asset",
+        "actual_held_asset",
+        "authorized_tradable_asset",
+        "current_asset",
+        "effective_market_exposure",
+        "current_exposure",
+        "return_gross",
+        "return_net",
+        "equity",
+        "turnover",
+        "fees_daily",
+        "funding_daily",
+        "borrow_cost_daily",
+        "slippage_cost_daily",
+        "reason_code",
+        "trend_permission_active",
+    ]
+    for column in required_columns:
+        if column not in durable_timeseries.columns or column not in authorized_timeseries.columns:
+            raise ValueError(f"Missing required baseline comparison column: {column}")
+    if len(durable_timeseries) != len(authorized_timeseries):
+        raise ValueError(
+            "Durable BTC-persistence rebuild does not match authorized baseline row count "
+            f"(durable={len(durable_timeseries)} authorized={len(authorized_timeseries)})"
+        )
+    text_columns = {
+        "date",
+        "candidate_asset",
+        "selected_asset",
+        "actual_held_asset",
+        "authorized_tradable_asset",
+        "current_asset",
+        "reason_code",
+    }
+    for column in required_columns:
+        left = durable_timeseries[column]
+        right = authorized_timeseries[column]
+        if column in text_columns:
+            if left.fillna("").astype(str).tolist() != right.fillna("").astype(str).tolist():
+                raise ValueError(
+                    f"Durable BTC-persistence rebuild diverges from authorized baseline on {column}"
+                )
+            continue
+        if column == "trend_permission_active":
+            if _to_bool_series(left).tolist() != _to_bool_series(right).tolist():
+                raise ValueError(
+                    "Durable BTC-persistence rebuild diverges from authorized baseline on "
+                    f"{column}"
+                )
+            continue
+        if (
+            _to_float_series(left).round(12) - _to_float_series(right).round(12)
+        ).abs().gt(1e-12).any():
+            raise ValueError(
+                f"Durable BTC-persistence rebuild diverges from authorized baseline on {column}"
+            )
+
+
+def _load_shared_inputs(
+    *,
+    root: Path | None = None,
+    source_paths: dict[str, Path],
+    require_authorized_compare_reference: bool,
+) -> dict[str, Any]:
+    repo_root = (root or ROOT).resolve()
+    durable_baseline_summary_row = _read_single_csv_row_required(
+        source_paths["durable_baseline_summary"]
+    )
+    durable_baseline_timeseries = _read_dataframe_required(
+        source_paths["durable_baseline_paper"]
+    )
+    trend_status_row = _read_single_csv_row_required(
+        source_paths["durable_baseline_trend_status"]
+    )
+    trend_history_df = _read_dataframe_required(
+        source_paths["durable_baseline_trend_history"]
+    )
+    freshness_payload = _read_json_required(
+        source_paths["durable_baseline_freshness_report"]
+    )
+    benchmark_df = _read_dataframe_required(source_paths["btc_ohlcv"])
+
+    baseline_closed_day = _normalize_iso_day_text(
+        durable_baseline_summary_row.get("latest_available_date"),
+        context="durable_baseline_summary.latest_available_date",
+    )
+    durable_baseline_paper_last_day = _normalize_iso_day_text(
+        durable_baseline_timeseries["date"].iloc[-1],
+        context="durable_baseline_paper.last_row.date",
+    )
+    trend_status_day = _normalize_iso_day_text(
+        trend_status_row.get("latest_available_date"),
+        context="durable_baseline_trend_status.latest_available_date",
+    )
+    trend_history_last_day = _normalize_iso_day_text(
+        trend_history_df["trend_calc_date"].iloc[-1]
+        if "trend_calc_date" in trend_history_df.columns
+        else trend_history_df["date"].iloc[-1],
+        context="durable_baseline_trend_history.last_row.day",
+    )
+    freshness_closed_day = _normalize_iso_day_text(
+        freshness_payload.get("latest_closed_utc_date"),
+        context="durable_baseline_freshness_report.latest_closed_utc_date",
+    )
+    benchmark_dates = pd.to_datetime(benchmark_df["date"], errors="coerce")
+    benchmark_day_set = {
+        stamp.strftime("%Y-%m-%d") for stamp in benchmark_dates.dropna().tolist()
+    }
+    benchmark_last_day = _normalize_iso_day_text(
+        benchmark_dates.iloc[-1].strftime("%Y-%m-%d"),
+        context="btc_ohlcv.last_row.date",
+    )
+
+    freshness_status = str(freshness_payload.get("status") or "").strip().lower()
+    freshness_errors = freshness_payload.get("errors")
+    if freshness_status not in {"ok", "success", "current"}:
+        raise ValueError(
+            "durable baseline freshness_report.status must be green for production build "
+            f"(actual={freshness_status or 'missing'})"
+        )
+    if isinstance(freshness_errors, list) and freshness_errors:
+        raise ValueError(
+            "durable baseline freshness_report.errors must be empty for production build"
+        )
+    if durable_baseline_paper_last_day != baseline_closed_day:
+        raise ValueError(
+            "durable BTC-persistence paper last_row.date must match summary latest_available_date "
+            f"(paper={durable_baseline_paper_last_day} summary={baseline_closed_day})"
+        )
+    if trend_status_day != baseline_closed_day:
+        raise ValueError(
+            "durable BTC-persistence trend_status latest_available_date must match closed_day "
+            f"(trend_status={trend_status_day} closed_day={baseline_closed_day})"
+        )
+    if trend_history_last_day != baseline_closed_day:
+        raise ValueError(
+            "durable BTC-persistence trend_history last day must match closed_day "
+            f"(trend_history={trend_history_last_day} closed_day={baseline_closed_day})"
+        )
+    if freshness_closed_day != baseline_closed_day:
+        raise ValueError(
+            "durable BTC-persistence freshness closed_day must match summary latest_available_date "
+            f"(freshness={freshness_closed_day} closed_day={baseline_closed_day})"
+        )
+    if baseline_closed_day not in benchmark_day_set:
+        raise ValueError(
+            "btc_ohlcv must contain the durable BTC-persistence closed day "
+            f"(closed_day={baseline_closed_day} btc_last_day={benchmark_last_day})"
+        )
+
+    durable_baseline_source_inputs = {
+        "strategy_version": BASE_STRATEGY_VERSION,
+        "validated_closed_day": baseline_closed_day,
+        "files": {
+            "durable_baseline_summary": _source_file_metadata(
+                source_paths["durable_baseline_summary"],
+                last_date=baseline_closed_day,
+                row_count=1,
+            ),
+            "durable_baseline_paper": _source_file_metadata(
+                source_paths["durable_baseline_paper"],
+                last_date=durable_baseline_paper_last_day,
+                row_count=len(durable_baseline_timeseries),
+            ),
+            "durable_baseline_trend_status": _source_file_metadata(
+                source_paths["durable_baseline_trend_status"],
+                last_date=trend_status_day,
+                row_count=1,
+            ),
+            "durable_baseline_trend_history": _source_file_metadata(
+                source_paths["durable_baseline_trend_history"],
+                last_date=trend_history_last_day,
+                row_count=len(trend_history_df),
+            ),
+            "durable_baseline_freshness_report": {
+                **_source_file_metadata(source_paths["durable_baseline_freshness_report"]),
+                "closed_day": freshness_closed_day,
+                "status": freshness_status,
+            },
+            "benchmark_ohlcv": _source_file_metadata(
+                source_paths["btc_ohlcv"],
+                last_date=baseline_closed_day,
+                row_count=len(benchmark_df),
+            ),
+        },
+    }
+    current_closed_day = baseline_closed_day
+    authorized_compare_reference = None
+
+    if require_authorized_compare_reference:
+        authorized_compare_reference = _load_authorized_compare_reference(
+            source_paths=source_paths
+        )
+        current_closed_day = authorized_compare_reference["closed_day"]
+        if current_closed_day != baseline_closed_day:
+            raise ValueError(
+                "Durable BTC-persistence baseline closed_day does not match the current "
+                "authorized compare baseline "
+                f"(durable={baseline_closed_day} current={current_closed_day})"
+            )
+        _compare_authorized_vs_durable_baseline(
+            durable_baseline_timeseries,
+            authorized_compare_reference["timeseries"],
+        )
+
+    cost_config, cost_config_meta = dev_only_rebuild.derive_cost_config(
+        durable_baseline_timeseries
+    )
+    input_refs = dev_only_rebuild.build_input_refs(cost_config_meta)
+
+    baseline_probe_frame, hard_invalidation_meta = dev_only_rebuild.normalize_baseline_frame(
+        source_paths["durable_baseline_paper"]
+    )
+    probe_mod, cooldown_mod = dev_only_rebuild.load_phase68g_helpers()
+    etf_df = probe_mod.load_etf_panel(source_paths["etf_panel"])
+    btc_df = probe_mod.load_btc_frame(source_paths["btc_ohlcv"])
+    overlap_frame = probe_mod.build_overlap_frame(baseline_probe_frame, etf_df, btc_df)
+    if "date" in overlap_frame.columns:
+        overlap_frame = overlap_frame.drop(columns=["date"])
+    if overlap_frame.empty:
+        raise ValueError("No overlap between the Production Core baseline and ETF-flow inputs.")
+
+    state_frame, cooldown_events = cooldown_mod.build_cooldown_state_machine(
+        overlap_frame,
+        COOLDOWN_DAYS,
+    )
+    baseline_export, probe_export, enriched = probe_mod.build_export_metrics(
+        state_frame,
+        cost_config,
+    )
+    baseline_export, probe_export, enriched = dev_only_rebuild.enforce_baseline_full_risk_pass_through(
+        baseline_export,
+        probe_export,
+        enriched,
+    )
+    baseline_export_standard = _standardize_export_frame(
+        baseline_export,
+        prefix="baseline",
+    )
+    probe_export_standard = _standardize_export_frame(probe_export, prefix="probe")
+    candidate_source_frame = enriched.reset_index().rename(columns={"index": "date"}).copy()
+    candidate_source_frame["date"] = pd.to_datetime(
+        candidate_source_frame["date"],
+        errors="coerce",
+    ).dt.strftime("%Y-%m-%d")
+    candidate_source_frame = candidate_source_frame.loc[
+        :,
+        dev_only_rebuild.front_loaded_columns(candidate_source_frame),
+    ]
+
+    variant_context = {
+        "variant_id": "cooldown_15_days",
+        "model_id": CANDIDATE_ID,
+        "model_label": "ETF-flow impulse EARLY_RISK cooldown_15 staged candidate",
+        "cooldown_days": COOLDOWN_DAYS,
+    }
+    decorated_cooldown_events = cooldown_mod.decorate_cooldown_events(
+        cooldown_events,
+        variant_context,
+    )
+    activation_windows = probe_mod.build_activation_windows(enriched)
+    blocker_rows_list = cooldown_mod.build_blocker_rows(enriched, variant_context)
+    blocker_rows = {row["period"]: row for row in blocker_rows_list}
+    window_counts = dev_only_rebuild.build_window_counts(activation_windows)
+    candidate_overlap_closed_day = pd.Timestamp(enriched.index.max()).strftime("%Y-%m-%d")
+
+    baseline_snapshot = (
+        authorized_compare_reference["snapshot"]
+        if authorized_compare_reference is not None
+        else None
+    )
+    baseline_diagnostics = (
+        authorized_compare_reference["diagnostics"]
+        if authorized_compare_reference is not None
+        else None
+    )
+    baseline_timeseries = (
+        authorized_compare_reference["timeseries"]
+        if authorized_compare_reference is not None
+        else durable_baseline_timeseries
+    )
+
+    return {
+        "repo_root": repo_root,
+        "source_paths": source_paths,
+        "baseline_snapshot": baseline_snapshot,
+        "baseline_diagnostics": baseline_diagnostics,
+        "baseline_timeseries": baseline_timeseries,
+        "project_truth": _read_json_required(source_paths["project_truth"]),
+        "export_contract": _read_json_required(source_paths["export_contract"]),
+        "baseline_probe_frame": baseline_probe_frame,
+        "cost_config": cost_config,
+        "cost_config_meta": cost_config_meta,
+        "input_refs": input_refs,
+        "probe_mod": probe_mod,
+        "cooldown_mod": cooldown_mod,
+        "etf_df": etf_df,
+        "btc_df": btc_df,
+        "overlap_frame": overlap_frame,
+        "state_frame": state_frame,
+        "cooldown_events": cooldown_events,
+        "decorated_cooldown_events": decorated_cooldown_events,
+        "activation_windows": activation_windows,
+        "baseline_export": baseline_export,
+        "probe_export": probe_export,
+        "baseline_export_standard": baseline_export_standard,
+        "probe_export_standard": probe_export_standard,
+        "enriched": enriched,
+        "candidate_source_frame": candidate_source_frame,
+        "blocker_rows_list": blocker_rows_list,
+        "blocker_rows": blocker_rows,
+        "window_counts": window_counts,
+        "hard_invalidation_meta": hard_invalidation_meta,
+        "candidate_overlap_closed_day": candidate_overlap_closed_day,
+        "baseline_closed_day": baseline_closed_day,
+        "current_closed_day": current_closed_day,
+        "paper_last_day": durable_baseline_paper_last_day,
+        "trend_status_row": trend_status_row,
+        "trend_status_day": trend_status_day,
+        "trend_history_last_day": trend_history_last_day,
+        "freshness_closed_day": freshness_closed_day,
+        "benchmark_last_day": baseline_closed_day,
+        "durable_baseline_timeseries": durable_baseline_timeseries,
+        "durable_baseline_source_inputs": durable_baseline_source_inputs,
+        "authorized_compare_reference": authorized_compare_reference,
+        "authorized_compare_closed_day": (
+            None
+            if authorized_compare_reference is None
+            else authorized_compare_reference["closed_day"]
+        ),
+        "authorized_compare_available": authorized_compare_reference is not None,
     }
 
 
@@ -523,6 +919,31 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
             "baseline_snapshot": repo_root / "outputs" / "production" / "current_strategy_snapshot.json",
             "baseline_timeseries": repo_root / "outputs" / "production" / "current_strategy_timeseries.csv",
             "baseline_diagnostics": repo_root / "outputs" / "production" / "current_strategy_diagnostics.json",
+            "durable_baseline_summary": repo_root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+            "durable_baseline_paper": repo_root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+            "durable_baseline_trend_status": repo_root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase66g_live_status.csv",
+            "durable_baseline_trend_history": repo_root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase66g_trend_barometer_history.csv",
+            "durable_baseline_freshness_report": repo_root
+            / "outputs"
+            / "execution"
+            / "freshness"
+            / "app_freshness_report.json",
             "etf_panel": repo_root
             / "outputs"
             / "research_os"
@@ -546,105 +967,11 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
     def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
         repo_root = (root or ROOT).resolve()
         source_paths = self.resolve_source_paths(root=repo_root)
-
-        baseline_snapshot = _read_json_required(source_paths["baseline_snapshot"])
-        baseline_diagnostics = _read_json_required(source_paths["baseline_diagnostics"])
-        baseline_timeseries = _read_dataframe_required(source_paths["baseline_timeseries"])
-        project_truth = _read_json_required(source_paths["project_truth"])
-        export_contract = _read_json_required(source_paths["export_contract"])
-
-        if str(baseline_snapshot.get("strategy_version") or "").strip() != self.base_strategy_version:
-            raise ValueError(
-                "Baseline snapshot strategy_version mismatch: "
-                f"actual={baseline_snapshot.get('strategy_version')!r} "
-                f"expected={self.base_strategy_version!r}"
-            )
-
-        baseline_probe_frame, hard_invalidation_meta = dev_only_rebuild.normalize_baseline_frame(
-            source_paths["baseline_timeseries"]
+        return _load_shared_inputs(
+            root=repo_root,
+            source_paths=source_paths,
+            require_authorized_compare_reference=True,
         )
-        cost_config, cost_config_meta = dev_only_rebuild.derive_cost_config(baseline_timeseries)
-        input_refs = dev_only_rebuild.build_input_refs(cost_config_meta)
-
-        probe_mod, cooldown_mod = dev_only_rebuild.load_phase68g_helpers()
-        etf_df = probe_mod.load_etf_panel(source_paths["etf_panel"])
-        btc_df = probe_mod.load_btc_frame(source_paths["btc_ohlcv"])
-        overlap_frame = probe_mod.build_overlap_frame(baseline_probe_frame, etf_df, btc_df)
-        if "date" in overlap_frame.columns:
-            overlap_frame = overlap_frame.drop(columns=["date"])
-        if overlap_frame.empty:
-            raise ValueError("No overlap between the Production Core baseline and ETF-flow inputs.")
-
-        state_frame, cooldown_events = cooldown_mod.build_cooldown_state_machine(overlap_frame, COOLDOWN_DAYS)
-        baseline_export, probe_export, enriched = probe_mod.build_export_metrics(state_frame, cost_config)
-        baseline_export, probe_export, enriched = dev_only_rebuild.enforce_baseline_full_risk_pass_through(
-            baseline_export,
-            probe_export,
-            enriched,
-        )
-        baseline_export_standard = _standardize_export_frame(baseline_export, prefix="baseline")
-        probe_export_standard = _standardize_export_frame(probe_export, prefix="probe")
-        candidate_source_frame = enriched.reset_index().rename(columns={"index": "date"}).copy()
-        candidate_source_frame["date"] = pd.to_datetime(candidate_source_frame["date"], errors="coerce").dt.strftime(
-            "%Y-%m-%d"
-        )
-        candidate_source_frame = candidate_source_frame.loc[
-            :,
-            dev_only_rebuild.front_loaded_columns(candidate_source_frame),
-        ]
-
-        variant_context = {
-            "variant_id": "cooldown_15_days",
-            "model_id": self.candidate_id,
-            "model_label": "ETF-flow impulse EARLY_RISK cooldown_15 staged candidate",
-            "cooldown_days": COOLDOWN_DAYS,
-        }
-        decorated_cooldown_events = cooldown_mod.decorate_cooldown_events(cooldown_events, variant_context)
-        activation_windows = probe_mod.build_activation_windows(enriched)
-        blocker_rows_list = cooldown_mod.build_blocker_rows(enriched, variant_context)
-        blocker_rows = {row["period"]: row for row in blocker_rows_list}
-        window_counts = dev_only_rebuild.build_window_counts(activation_windows)
-
-        candidate_overlap_closed_day = pd.Timestamp(enriched.index.max()).strftime("%Y-%m-%d")
-        baseline_closed_day = _normalize_iso_day_text(
-            baseline_snapshot.get("closed_day"),
-            context="baseline_snapshot.closed_day",
-        )
-
-        return {
-            "repo_root": repo_root,
-            "source_paths": source_paths,
-            "baseline_snapshot": baseline_snapshot,
-            "baseline_diagnostics": baseline_diagnostics,
-            "baseline_timeseries": baseline_timeseries,
-            "project_truth": project_truth,
-            "export_contract": export_contract,
-            "baseline_probe_frame": baseline_probe_frame,
-            "cost_config": cost_config,
-            "cost_config_meta": cost_config_meta,
-            "input_refs": input_refs,
-            "probe_mod": probe_mod,
-            "cooldown_mod": cooldown_mod,
-            "etf_df": etf_df,
-            "btc_df": btc_df,
-            "overlap_frame": overlap_frame,
-            "state_frame": state_frame,
-            "cooldown_events": cooldown_events,
-            "decorated_cooldown_events": decorated_cooldown_events,
-            "activation_windows": activation_windows,
-            "baseline_export": baseline_export,
-            "probe_export": probe_export,
-            "baseline_export_standard": baseline_export_standard,
-            "probe_export_standard": probe_export_standard,
-            "enriched": enriched,
-            "candidate_source_frame": candidate_source_frame,
-            "blocker_rows_list": blocker_rows_list,
-            "blocker_rows": blocker_rows,
-            "window_counts": window_counts,
-            "hard_invalidation_meta": hard_invalidation_meta,
-            "candidate_overlap_closed_day": candidate_overlap_closed_day,
-            "baseline_closed_day": baseline_closed_day,
-        }
 
     def build_candidate_timeseries(self, inputs: dict[str, Any]) -> pd.DataFrame:
         raw = inputs["enriched"].reset_index().rename(columns={"index": "date"}).copy()
@@ -913,6 +1240,19 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
             "base_strategy_version": self.base_strategy_version,
             "candidate_compare_closed_day": inputs["candidate_overlap_closed_day"],
             "baseline_closed_day": inputs["baseline_closed_day"],
+            "authorized_compare_baseline_closed_day": inputs["current_closed_day"],
+            "authorized_compare_baseline_path": "outputs/production/current_strategy_timeseries.csv",
+            "durable_baseline_route": {
+                "strategy_version": self.base_strategy_version,
+                "closed_day": inputs["baseline_closed_day"],
+                "source": "phase68g_btc_persistence_10d_early_risk_075_adapter",
+                "lineage": (
+                    "phase68g_etf_flow_impulse_early_risk_cooldown_15"
+                    " -> phase68g_btc_persistence_10d_early_risk_075"
+                    " -> phase68g_66g_1p25x_candidate"
+                ),
+                "source_inputs": inputs["durable_baseline_source_inputs"],
+            },
             "compare_windows": [
                 {
                     "name": period_name,
@@ -1128,3 +1468,280 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
                 "warnings": list(validation["warnings"]),
             },
         }
+
+
+@dataclass(frozen=True)
+class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
+    strategy_id: str = LIVE_PRODUCTION_STRATEGY_ID
+    strategy_version: str = LIVE_STRATEGY_VERSION
+    adapter_name: str = LIVE_ADAPTER_NAME
+    base_strategy_version: str = BASE_STRATEGY_VERSION
+
+    def resolve_source_paths(self, *, root: Path | None = None) -> dict[str, Path]:
+        repo_root = (root or ROOT).resolve()
+        return Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter().resolve_source_paths(
+            root=repo_root
+        )
+
+    def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
+        repo_root = (root or ROOT).resolve()
+        shared = _load_shared_inputs(
+            root=repo_root,
+            source_paths=self.resolve_source_paths(root=repo_root),
+            require_authorized_compare_reference=False,
+        )
+        if shared["candidate_overlap_closed_day"] != shared["baseline_closed_day"]:
+            raise ValueError(
+                "ETF-flow overlap day diverged from the durable BTC-persistence closed day "
+                f"(etf_flow={shared['candidate_overlap_closed_day']} "
+                f"baseline={shared['baseline_closed_day']})"
+            )
+        shared["closed_day"] = shared["baseline_closed_day"]
+        return shared
+
+    def build_timeseries(self, inputs: dict[str, Any]) -> pd.DataFrame:
+        from scripts.production.staged_candidate_promotion_support import (
+            transform_candidate_timeseries_to_active,
+        )
+
+        candidate_timeseries = Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter().build_candidate_timeseries(inputs)
+        active_timeseries = transform_candidate_timeseries_to_active(candidate_timeseries)
+        active_timeseries["strategy_id"] = self.strategy_id
+        active_timeseries["strategy_version"] = self.strategy_version
+        return active_timeseries
+
+    def build_reason_text(self, row: pd.Series) -> str:
+        from scripts.production.staged_candidate_promotion_support import (
+            build_promoted_reason_text,
+        )
+
+        return build_promoted_reason_text(row)
+
+    def build_wait_condition(
+        self,
+        current_row: pd.Series,
+        metrics: dict[str, Any],
+    ) -> dict[str, Any]:
+        from scripts.production.staged_candidate_promotion_support import (
+            build_promoted_wait_condition,
+        )
+
+        del metrics
+        return build_promoted_wait_condition(current_row)
+
+    def build_source_inputs(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        durable_baseline_source_inputs = dict(inputs["durable_baseline_source_inputs"])
+        durable_baseline_files = dict(durable_baseline_source_inputs["files"])
+        return {
+            "adapter_name": self.adapter_name,
+            "strategy_id": self.strategy_id,
+            "strategy_version": self.strategy_version,
+            "validated_closed_day": inputs["closed_day"],
+            "base_strategy_version": self.base_strategy_version,
+            "baseline_closed_day": inputs["baseline_closed_day"],
+            "candidate_compare_closed_day": inputs["candidate_overlap_closed_day"],
+            "durable_non_circular_route": {
+                "softer_fallback_strategy_version": self.base_strategy_version,
+                "secondary_baseline_strategy_version": "phase68g_66g_1p25x_candidate",
+                "lineage": (
+                    "phase68g_etf_flow_impulse_early_risk_cooldown_15"
+                    " -> phase68g_btc_persistence_10d_early_risk_075"
+                    " -> phase68g_66g_1p25x_candidate"
+                ),
+                "softer_fallback_source_inputs": durable_baseline_source_inputs,
+            },
+            "compare_windows": [
+                {
+                    "name": period_name,
+                    "start_date": start_date,
+                }
+                for period_name, start_date in COMPARE_WINDOWS
+            ],
+            "lineage": {
+                "dev_only_source_lineage": True,
+                "non_authoritative_research_input": True,
+                "official_truth": True,
+                "live_truth": True,
+                "app_truth": True,
+                "execution_truth": True,
+            },
+            "files": {
+                **durable_baseline_files,
+                "etf_panel": _source_file_metadata(
+                    inputs["source_paths"]["etf_panel"],
+                    last_date=_normalize_iso_day_text(
+                        pd.Timestamp(inputs["etf_df"].index[-1]).strftime("%Y-%m-%d"),
+                        context="etf_panel.last_row.date",
+                    ),
+                    row_count=len(inputs["etf_df"]),
+                ),
+                "btc_ohlcv": _source_file_metadata(
+                    inputs["source_paths"]["btc_ohlcv"],
+                    last_date=_normalize_iso_day_text(
+                        pd.Timestamp(inputs["btc_df"].index[-1]).strftime("%Y-%m-%d"),
+                        context="btc_ohlcv.last_row.date",
+                    ),
+                    row_count=len(inputs["btc_df"]),
+                ),
+                "dev_only_script": _source_file_metadata(inputs["source_paths"]["dev_only_script"]),
+                "compiled_probe_helper": _source_file_metadata(inputs["source_paths"]["compiled_probe_helper"]),
+                "compiled_cooldown_helper": _source_file_metadata(inputs["source_paths"]["compiled_cooldown_helper"]),
+                "project_truth": _source_file_metadata(inputs["source_paths"]["project_truth"]),
+                "export_contract": _source_file_metadata(inputs["source_paths"]["export_contract"]),
+            },
+            "cost_model": {
+                **inputs["cost_config_meta"],
+                "flow_3d_floor_usd": FLOW_3D_FLOOR_USD,
+                "btc_ema_days": BTC_EMA_DAYS,
+                "cooldown_days": COOLDOWN_DAYS,
+            },
+            "hard_invalidation_rule": dict(inputs["hard_invalidation_meta"]),
+            "window_counts": dict(inputs["window_counts"]),
+            "blocker_rows": dict(inputs["blocker_rows"]),
+        }
+
+    def build_snapshot_metrics(
+        self,
+        inputs: dict[str, Any],
+        timeseries: pd.DataFrame,
+    ) -> dict[str, Any]:
+        from scripts.production.staged_candidate_promotion_support import (
+            build_promoted_snapshot_metrics,
+        )
+
+        del inputs
+        return build_promoted_snapshot_metrics(timeseries)
+
+    def build_decision_context(self, timeseries: pd.DataFrame) -> dict[str, Any]:
+        from scripts.production.staged_candidate_promotion_support import (
+            build_promoted_decision_context,
+        )
+
+        return build_promoted_decision_context(timeseries)
+
+    def build_diagnostics_payload(
+        self,
+        *,
+        generated_at_utc: str,
+        inputs: dict[str, Any],
+        timeseries: pd.DataFrame,
+        validation: dict[str, Any],
+    ) -> dict[str, Any]:
+        from scripts.production.staged_candidate_promotion_support import (
+            build_promoted_reason_text,
+        )
+
+        current_row = timeseries.iloc[-1]
+        recent_regime_rows = timeseries.loc[
+            timeseries["regime"]
+            != timeseries["regime"].shift(1, fill_value=timeseries["regime"].iloc[0])
+        ].tail(5)
+        recent_rebalance_rows = timeseries.loc[timeseries["is_rebalance_day"]].tail(5)
+        trailing_30 = timeseries.tail(30)
+        trailing_90 = timeseries.tail(90)
+        metrics = self.build_snapshot_metrics(inputs, timeseries)
+        flatline_days = (
+            _consecutive_tail_length(timeseries["cash_day"])
+            if bool(current_row["cash_day"])
+            else 0
+        )
+        lifetime_cost_pct = (
+            float(timeseries["fees_daily"].sum())
+            + float(timeseries["funding_daily"].sum())
+            + float(timeseries["borrow_cost_daily"].sum())
+            + float(timeseries["slippage_cost_daily"].sum())
+        ) * 100.0
+        return {
+            "artifact_type": "current_strategy_diagnostics",
+            "schema_version": 4,
+            "generated_at_utc": generated_at_utc,
+            "strategy_id": self.strategy_id,
+            "strategy_version": self.strategy_version,
+            "closed_day": inputs["closed_day"],
+            "latest_state_explanation": build_promoted_reason_text(current_row),
+            "current_flatline_explanation": (
+                f"Authorized capital should stay flat during the current CASH streak of "
+                f"{flatline_days} days because no market exposure is currently authorized."
+                if flatline_days > 0
+                else None
+            ),
+            "current_cash_or_risk_reason": build_promoted_reason_text(current_row),
+            "recent_regime_changes": [
+                {
+                    "date": str(row["date"]),
+                    "held_asset": str(row["held_asset"]),
+                    "regime": str(row["regime"]),
+                    "reason_code": str(row["reason_code"]),
+                }
+                for _, row in recent_regime_rows.iterrows()
+            ],
+            "recent_rebalance_events": [
+                {
+                    "date": str(row["date"]),
+                    "held_asset": str(row["held_asset"]),
+                    "exposure": round(float(row["exposure"]), 6),
+                    "reason_code": str(row["reason_code"]),
+                    "reason_text": build_promoted_reason_text(row),
+                }
+                for _, row in recent_rebalance_rows.iterrows()
+            ],
+            "current_cost_pressure": {
+                "current_effective_exposure": round(float(current_row["exposure"]), 6),
+                "trailing_30d_fees_pct": round(float(trailing_30["fees_daily"].sum() * 100.0), 6),
+                "trailing_30d_funding_pct": round(float(trailing_30["funding_daily"].sum() * 100.0), 6),
+                "trailing_30d_borrow_pct": round(float(trailing_30["borrow_cost_daily"].sum() * 100.0), 6),
+                "trailing_30d_slippage_pct": round(float(trailing_30["slippage_cost_daily"].sum() * 100.0), 6),
+            },
+            "current_fee_drag_summary": {
+                "lifetime_trading_fees_total_pct": round(float(timeseries["fees_daily"].sum() * 100.0), 6),
+                "lifetime_funding_total_pct": round(float(timeseries["funding_daily"].sum() * 100.0), 6),
+                "lifetime_borrow_cost_total_pct": round(float(timeseries["borrow_cost_daily"].sum() * 100.0), 6),
+                "lifetime_slippage_cost_total_pct": round(float(timeseries["slippage_cost_daily"].sum() * 100.0), 6),
+                "lifetime_total_cost_pct": round(lifetime_cost_pct, 6),
+                "trailing_90d_turnover": round(float(trailing_90["turnover"].sum()), 6),
+            },
+            "current_data_health_summary": {
+                "status": validation["status"],
+                "closed_day": inputs["closed_day"],
+                "softer_fallback_closed_day": inputs["baseline_closed_day"],
+                "trend_status_day": inputs["trend_status_day"],
+                "trend_history_last_day": inputs["trend_history_last_day"],
+                "freshness_closed_day": inputs["freshness_closed_day"],
+                "benchmark_last_day": inputs["benchmark_last_day"],
+                "warnings": validation["warnings"],
+            },
+            "strategy_improvement_signals": {
+                "etf_flow_activation_windows": {
+                    "window_count": int(len(inputs["activation_windows"])),
+                    "recent_windows": inputs["activation_windows"][-5:],
+                },
+                "cooldown_blockers": {
+                    "status": "active" if inputs["blocker_rows"] else "clear",
+                    "rows": list(inputs["blocker_rows"].values()),
+                },
+                "cash_drag": {
+                    "status": "elevated" if float(metrics["cash_days_pct"]) >= 40.0 else "contained",
+                    "cash_days_pct": float(metrics["cash_days_pct"]),
+                    "current_cash_streak_days": int(flatline_days),
+                },
+                "current_research_questions": [
+                    "Does the ETF-flow cooldown still improve net performance once BTC persistence is the softer fallback?",
+                    "How often does the 15-day cooldown defer otherwise valid early-risk entries?",
+                    "Can the same net profile be preserved with lower transition-driven slippage?",
+                ],
+            },
+            "validation": {
+                "status": validation["status"],
+                "errors": list(validation["errors"]),
+                "warnings": list(validation["warnings"]),
+            },
+        }
+
+    def compare_summary_metrics(
+        self,
+        *,
+        inputs: dict[str, Any],
+        timeseries: pd.DataFrame,
+    ) -> list[str]:
+        del inputs, timeseries
+        return []

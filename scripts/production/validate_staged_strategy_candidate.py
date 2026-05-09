@@ -512,7 +512,7 @@ def validate_staged_payloads(
     _compare_text(diagnostics.get("artifact_type"), "staged_strategy_candidate_diagnostics", context="diagnostics.artifact_type", errors=errors)
     _compare_text(compare_payload.get("artifact_type"), "staged_strategy_candidate_compare", context="compare_payload.artifact_type", errors=errors)
     _compare_text(manifest.get("artifact_type"), "staged_strategy_candidate_snapshot_manifest", context="manifest.artifact_type", errors=errors)
-    _compare_text(snapshot.get("candidate_id"), CANDIDATE_ID, context="snapshot.candidate_id", errors=errors)
+    _compare_text(snapshot.get("candidate_id"), ETF_CANDIDATE_ID, context="snapshot.candidate_id", errors=errors)
     _compare_text(snapshot.get("base_strategy_version"), adapter.base_strategy_version, context="snapshot.base_strategy_version", errors=errors)
     _compare_text(snapshot.get("status"), "staged_candidate", context="snapshot.status", errors=errors)
 
