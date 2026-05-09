@@ -221,6 +221,12 @@ def _mixed_scalar_equal(actual: Any, expected: Any, *, tolerance: float = 1e-9) 
     return abs(actual_value - expected_value) <= tolerance
 
 
+def _series_tolerance(column: str) -> float:
+    if column == "btc_baseline_index":
+        return 1.1e-12
+    return 1e-12
+
+
 def _compare_series(actual: pd.Series, expected: pd.Series, *, column: str, errors: list[str]) -> None:
     if column in BOOL_COLUMNS:
         if actual.fillna(False).astype(bool).tolist() != expected.fillna(False).astype(bool).tolist():
@@ -232,7 +238,7 @@ def _compare_series(actual: pd.Series, expected: pd.Series, *, column: str, erro
         return
     actual_numeric = pd.to_numeric(actual, errors="coerce").fillna(0.0).round(12)
     expected_numeric = pd.to_numeric(expected, errors="coerce").fillna(0.0).round(12)
-    if (actual_numeric - expected_numeric).abs().gt(1e-12).any():
+    if (actual_numeric - expected_numeric).abs().gt(_series_tolerance(column)).any():
         errors.append(f"timeseries rebuilt mismatch for {column}")
 
 

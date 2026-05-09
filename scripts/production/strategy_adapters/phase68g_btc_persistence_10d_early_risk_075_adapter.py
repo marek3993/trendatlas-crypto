@@ -554,6 +554,39 @@ def expected_truth_contract_state() -> dict[str, str]:
     }
 
 
+def _load_authorized_compare_reference(*, root: Path | None = None) -> dict[str, Any]:
+    repo_root = (root or ROOT).resolve()
+    snapshot_path = repo_root / "outputs" / "production" / "current_strategy_snapshot.json"
+    timeseries_path = repo_root / "outputs" / "production" / "current_strategy_timeseries.csv"
+    diagnostics_path = repo_root / "outputs" / "production" / "current_strategy_diagnostics.json"
+
+    snapshot = _read_json_required(snapshot_path)
+    timeseries = _read_dataframe_required(timeseries_path)
+    diagnostics = _read_json_required(diagnostics_path)
+
+    if str(snapshot.get("strategy_version") or "").strip() != BASE_STRATEGY_VERSION:
+        raise ValueError(
+            "Authorized compare baseline is not phase68g_66g_1p25x_candidate; "
+            f"actual={snapshot.get('strategy_version')!r}"
+        )
+
+    closed_day = _normalize_iso_day_text(snapshot.get("closed_day"), context="current_snapshot.closed_day")
+    if _normalize_iso_day_text(timeseries["date"].iloc[-1], context="current_timeseries.last_row.date") != closed_day:
+        raise ValueError("Authorized compare baseline timeseries last date does not match current_strategy_snapshot.closed_day")
+    if _normalize_iso_day_text(diagnostics.get("closed_day"), context="current_diagnostics.closed_day") != closed_day:
+        raise ValueError("Authorized compare baseline diagnostics closed_day does not match current_strategy_snapshot.closed_day")
+
+    return {
+        "snapshot_path": snapshot_path,
+        "timeseries_path": timeseries_path,
+        "diagnostics_path": diagnostics_path,
+        "snapshot": snapshot,
+        "timeseries": timeseries,
+        "diagnostics": diagnostics,
+        "closed_day": closed_day,
+    }
+
+
 def _prepare_baseline_frame_from_timeseries(frame: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, Any], dict[str, Any]]:
     df = frame.copy()
     df.columns = [str(column).strip() for column in df.columns]
@@ -1147,46 +1180,45 @@ def build_wait_condition(row: pd.Series, metrics: dict[str, Any] | None = None) 
     }
 
 
-def _load_shared_inputs(*, root: Path | None = None, require_durable_baseline: bool = True) -> dict[str, Any]:
+def _load_shared_inputs(
+    *,
+    root: Path | None = None,
+    require_durable_baseline: bool = True,
+    load_authorized_compare_reference: bool = False,
+) -> dict[str, Any]:
     repo_root = (root or ROOT).resolve()
     baseline_adapter = Phase68g66g1p25xCandidateAdapter()
     canonical_source_paths = baseline_adapter.resolve_source_paths(root=repo_root)
 
-    current_snapshot_path = repo_root / "outputs" / "production" / "current_strategy_snapshot.json"
-    current_timeseries_path = repo_root / "outputs" / "production" / "current_strategy_timeseries.csv"
-    current_diagnostics_path = repo_root / "outputs" / "production" / "current_strategy_diagnostics.json"
-    current_snapshot = _read_json_required(current_snapshot_path)
-    current_timeseries = _read_dataframe_required(current_timeseries_path)
-    current_diagnostics = _read_json_required(current_diagnostics_path)
-    if str(current_snapshot.get("strategy_version") or "").strip() != BASE_STRATEGY_VERSION:
+    canonical_baseline_inputs = baseline_adapter.load_inputs(root=repo_root)
+    canonical_baseline_timeseries = baseline_adapter.build_timeseries(canonical_baseline_inputs)
+    canonical_closed_day = canonical_baseline_inputs["closed_day"]
+    canonical_last_day = _normalize_iso_day_text(
+        canonical_baseline_timeseries["date"].iloc[-1],
+        context="canonical_baseline_timeseries.last_row.date",
+    )
+    if canonical_last_day != canonical_closed_day:
         raise ValueError(
-            "Authorized Production Core baseline is not phase68g_66g_1p25x_candidate; "
-            f"actual={current_snapshot.get('strategy_version')!r}"
+            "Canonical phase68g rebuild timeseries last date does not match closed_day "
+            f"(timeseries={canonical_last_day} closed_day={canonical_closed_day})"
         )
-    current_closed_day = _normalize_iso_day_text(current_snapshot.get("closed_day"), context="current_snapshot.closed_day")
-    if _normalize_iso_day_text(current_timeseries["date"].iloc[-1], context="current_timeseries.last_row.date") != current_closed_day:
-        raise ValueError("Authorized baseline timeseries last date does not match current_strategy_snapshot.closed_day")
-    if _normalize_iso_day_text(current_diagnostics.get("closed_day"), context="current_diagnostics.closed_day") != current_closed_day:
-        raise ValueError("Authorized baseline diagnostics closed_day does not match current_strategy_snapshot.closed_day")
 
-    canonical_baseline_inputs = None
-    canonical_baseline_timeseries = current_timeseries.copy()
-    durable_baseline_ready = False
+    durable_baseline_ready = True
     durability_gap_reason = None
-    try:
-        canonical_baseline_inputs = baseline_adapter.load_inputs(root=repo_root)
-        canonical_baseline_timeseries = baseline_adapter.build_timeseries(canonical_baseline_inputs)
-        if canonical_baseline_inputs["closed_day"] != current_closed_day:
+    authorized_compare_reference = None
+    current_closed_day = canonical_closed_day
+    if load_authorized_compare_reference:
+        authorized_compare_reference = _load_authorized_compare_reference(root=repo_root)
+        current_closed_day = authorized_compare_reference["closed_day"]
+        if current_closed_day != canonical_closed_day:
             raise ValueError(
-                "Canonical phase68g rebuild closed_day does not match authorized baseline closed_day "
-                f"(canonical={canonical_baseline_inputs['closed_day']} authorized={current_closed_day})"
+                "Canonical phase68g rebuild closed_day does not match authorized compare baseline closed_day "
+                f"(canonical={canonical_closed_day} authorized={current_closed_day})"
             )
-        _compare_baseline_route(canonical_baseline_timeseries, current_timeseries)
-        durable_baseline_ready = True
-    except Exception as exc:
-        durability_gap_reason = str(exc)
-        if require_durable_baseline:
-            raise
+        _compare_baseline_route(
+            canonical_baseline_timeseries,
+            authorized_compare_reference["timeseries"],
+        )
 
     evidence_summary_path = DEV_ONLY_OUTPUT_DIR / "summary.json"
     evidence_quality_path = DEV_ONLY_OUTPUT_DIR / "quality.json"
@@ -1214,9 +1246,6 @@ def _load_shared_inputs(*, root: Path | None = None, require_durable_baseline: b
     )
 
     source_paths = {
-        "authorized_baseline_snapshot": current_snapshot_path,
-        "authorized_baseline_timeseries": current_timeseries_path,
-        "authorized_baseline_diagnostics": current_diagnostics_path,
         "dev_only_contract": DEV_ONLY_CONTRACT_PATH,
         "dev_only_spec": DEV_ONLY_SPEC_PATH,
         "dev_only_manifest_seed": DEV_ONLY_MANIFEST_SEED_PATH,
@@ -1225,18 +1254,29 @@ def _load_shared_inputs(*, root: Path | None = None, require_durable_baseline: b
         "dev_only_variant_compare": evidence_variant_compare_path,
         "dev_only_script": repo_root / "scripts" / "dev_only_production_core_btc_candidate_persistence_early_risk_compare.py",
     }
-    if canonical_baseline_inputs is not None:
-        source_paths.update(canonical_baseline_inputs["source_paths"])
+    source_paths.update(canonical_baseline_inputs["source_paths"])
+    if authorized_compare_reference is not None:
+        source_paths.update(
+            {
+                "authorized_compare_snapshot": authorized_compare_reference["snapshot_path"],
+                "authorized_compare_timeseries": authorized_compare_reference["timeseries_path"],
+                "authorized_compare_diagnostics": authorized_compare_reference["diagnostics_path"],
+            }
+        )
 
     shared = {
         "repo_root": repo_root,
         "baseline_adapter": baseline_adapter,
         "canonical_baseline_inputs": canonical_baseline_inputs,
         "canonical_baseline_timeseries": canonical_baseline_timeseries,
-        "current_snapshot": current_snapshot,
-        "current_timeseries": current_timeseries,
-        "current_diagnostics": current_diagnostics,
+        "closed_day": canonical_closed_day,
         "current_closed_day": current_closed_day,
+        "paper_last_day": canonical_baseline_inputs["paper_last_day"],
+        "trend_status_row": canonical_baseline_inputs["trend_status_row"],
+        "trend_status_day": canonical_baseline_inputs["trend_status_day"],
+        "trend_history_last_day": canonical_baseline_inputs["trend_history_last_day"],
+        "freshness_closed_day": canonical_baseline_inputs["freshness_closed_day"],
+        "benchmark_last_day": canonical_baseline_inputs["benchmark_last_day"],
         "evidence_summary": evidence_summary,
         "evidence_quality": evidence_quality,
         "evidence_variant_compare": evidence_variant_compare,
@@ -1248,6 +1288,11 @@ def _load_shared_inputs(*, root: Path | None = None, require_durable_baseline: b
         "durable_baseline_ready": durable_baseline_ready,
         "durability_gap_reason": durability_gap_reason,
         "canonical_source_paths": canonical_source_paths,
+        "authorized_compare_reference": authorized_compare_reference,
+        "authorized_compare_closed_day": None
+        if authorized_compare_reference is None
+        else authorized_compare_reference["closed_day"],
+        "authorized_compare_available": authorized_compare_reference is not None,
     }
     shared.update(variant_state)
     return shared
@@ -1260,7 +1305,11 @@ class Phase68gBtcPersistence10dEarlyRisk075Adapter:
     adapter_name: str = ADAPTER_NAME
 
     def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
-        return _load_shared_inputs(root=root, require_durable_baseline=True)
+        return _load_shared_inputs(
+            root=root,
+            require_durable_baseline=True,
+            load_authorized_compare_reference=False,
+        )
 
     def build_timeseries(self, inputs: dict[str, Any]) -> pd.DataFrame:
         return inputs["active_candidate_timeseries"].copy()
@@ -1272,26 +1321,45 @@ class Phase68gBtcPersistence10dEarlyRisk075Adapter:
         return build_wait_condition(row, metrics)
 
     def build_source_inputs(self, inputs: dict[str, Any]) -> dict[str, Any]:
-        canonical_inputs = inputs.get("canonical_baseline_inputs")
         source_paths = inputs["source_paths"]
         evidence_variant_row = inputs["evidence_variant_compare"].loc[
             inputs["evidence_variant_compare"]["variant_id"].astype(str) == SELECTED_VARIANT_ID
         ].iloc[0]
         files: dict[str, Any] = {
-            "authorized_baseline_snapshot": {
-                **_source_file_metadata(source_paths["authorized_baseline_snapshot"]),
-                "closed_day": inputs["current_closed_day"],
-                "strategy_version": BASE_STRATEGY_VERSION,
-            },
-            "authorized_baseline_timeseries": _source_file_metadata(
-                source_paths["authorized_baseline_timeseries"],
-                last_date=inputs["current_closed_day"],
-                row_count=len(inputs["current_timeseries"]),
+            "phase68g_strategy_summary": _source_file_metadata(
+                source_paths["strategy_summary"],
+                last_date=inputs["closed_day"],
+                row_count=1,
             ),
-            "authorized_baseline_diagnostics": {
-                **_source_file_metadata(source_paths["authorized_baseline_diagnostics"]),
-                "closed_day": inputs["current_closed_day"],
+            "phase68g_strategy_paper": _source_file_metadata(
+                source_paths["strategy_paper"],
+                last_date=inputs["paper_last_day"],
+                row_count=len(inputs["canonical_baseline_inputs"]["paper_df"]),
+            ),
+            "phase68g_trend_status": _source_file_metadata(
+                source_paths["trend_status"],
+                last_date=inputs["trend_status_day"],
+                row_count=1,
+            ),
+            "phase68g_trend_history": _source_file_metadata(
+                source_paths["trend_history"],
+                last_date=inputs["trend_history_last_day"],
+                row_count=len(inputs["canonical_baseline_inputs"]["trend_history_df"]),
+            ),
+            "phase68g_freshness_report": {
+                **_source_file_metadata(
+                    source_paths["freshness_report"],
+                    last_date=inputs["freshness_closed_day"],
+                ),
+                "status": str(
+                    inputs["canonical_baseline_inputs"]["freshness_payload"].get("status") or ""
+                ).strip().lower(),
             },
+            "btc_ohlcv": _source_file_metadata(
+                source_paths["benchmark_ohlcv"],
+                last_date=inputs["benchmark_last_day"],
+                row_count=len(inputs["canonical_baseline_inputs"]["benchmark_df"]),
+            ),
             "dev_only_contract": _source_file_metadata(source_paths["dev_only_contract"]),
             "dev_only_spec": _source_file_metadata(source_paths["dev_only_spec"]),
             "dev_only_manifest_seed": _source_file_metadata(source_paths["dev_only_manifest_seed"]),
@@ -1306,53 +1374,11 @@ class Phase68gBtcPersistence10dEarlyRisk075Adapter:
             ),
             "dev_only_script": _source_file_metadata(source_paths["dev_only_script"]),
         }
-        if canonical_inputs is not None:
-            files.update(
-                {
-                    "phase68g_strategy_summary": _source_file_metadata(
-                        canonical_inputs["source_paths"]["strategy_summary"],
-                        last_date=inputs["current_closed_day"],
-                        row_count=1,
-                    ),
-                    "phase68g_strategy_paper": _source_file_metadata(
-                        canonical_inputs["source_paths"]["strategy_paper"],
-                        last_date=canonical_inputs["paper_last_day"],
-                        row_count=len(canonical_inputs["paper_df"]),
-                    ),
-                    "phase68g_trend_status": _source_file_metadata(
-                        canonical_inputs["source_paths"]["trend_status"],
-                        last_date=canonical_inputs["trend_status_day"],
-                        row_count=1,
-                    ),
-                    "phase68g_trend_history": _source_file_metadata(
-                        canonical_inputs["source_paths"]["trend_history"],
-                        last_date=canonical_inputs["trend_history_last_day"],
-                        row_count=len(canonical_inputs["trend_history_df"]),
-                    ),
-                    "phase68g_freshness_report": {
-                        **_source_file_metadata(
-                            canonical_inputs["source_paths"]["freshness_report"],
-                            last_date=canonical_inputs["freshness_closed_day"],
-                        ),
-                        "status": str(canonical_inputs["freshness_payload"].get("status") or "").strip().lower(),
-                    },
-                    "btc_ohlcv": _source_file_metadata(
-                        canonical_inputs["source_paths"]["benchmark_ohlcv"],
-                        last_date=canonical_inputs["benchmark_last_day"],
-                        row_count=len(canonical_inputs["benchmark_df"]),
-                    ),
-                }
-            )
-        else:
-            files["phase68g_source_route_error"] = {
-                "path": _path_for_manifest(inputs["canonical_source_paths"]["benchmark_ohlcv"], root=ROOT),
-                "error": str(inputs.get("durability_gap_reason") or "").strip(),
-            }
         return {
             "adapter_name": self.adapter_name,
             "strategy_id": self.strategy_id,
             "strategy_version": self.strategy_version,
-            "validated_closed_day": inputs["current_closed_day"],
+            "validated_closed_day": inputs["closed_day"],
             "candidate_label": CANDIDATE_LABEL,
             "base_strategy_version": BASE_STRATEGY_VERSION,
             "durable_baseline_route": {
@@ -1360,7 +1386,9 @@ class Phase68gBtcPersistence10dEarlyRisk075Adapter:
                 "independent_of_active_current_strategy": True,
                 "base_adapter_name": inputs["baseline_adapter"].adapter_name,
                 "status": "ready" if inputs.get("durable_baseline_ready") else "blocked",
-                "gap_reason": None if inputs.get("durable_baseline_ready") else str(inputs.get("durability_gap_reason") or "").strip(),
+                "gap_reason": None
+                if inputs.get("durable_baseline_ready")
+                else str(inputs.get("durability_gap_reason") or "").strip(),
             },
             "evidence_status": {
                 "selected_variant_id": str(inputs["evidence_summary"].get("selected_variant_id") or "").strip(),
@@ -1436,7 +1464,7 @@ class Phase68gBtcPersistence10dEarlyRisk075Adapter:
             "generated_at_utc": generated_at_utc,
             "strategy_id": self.strategy_id,
             "strategy_version": self.strategy_version,
-            "closed_day": inputs["current_closed_day"],
+            "closed_day": inputs["closed_day"],
             "latest_state_explanation": build_reason_text(current_row),
             "current_flatline_explanation": (
                 f"Authorized capital should stay flat during the current CASH streak of "
@@ -1482,9 +1510,9 @@ class Phase68gBtcPersistence10dEarlyRisk075Adapter:
             },
             "current_data_health_summary": {
                 "status": validation["status"],
-                "closed_day": inputs["current_closed_day"],
-                "authorized_compare_baseline_closed_day": inputs["current_closed_day"],
-                "canonical_baseline_closed_day": inputs["canonical_baseline_inputs"]["closed_day"],
+                "closed_day": inputs["closed_day"],
+                "authorized_compare_baseline_closed_day": inputs.get("authorized_compare_closed_day"),
+                "canonical_baseline_closed_day": inputs["closed_day"],
                 "evidence_quality_status": str(inputs["evidence_quality"].get("status") or "").strip(),
                 "warnings": list(validation["warnings"]),
             },
@@ -1535,7 +1563,11 @@ class Phase68gBtcPersistence10dEarlyRisk075StagedAdapter:
     adapter_name: str = ADAPTER_NAME
 
     def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
-        shared = _load_shared_inputs(root=root, require_durable_baseline=False)
+        shared = _load_shared_inputs(
+            root=root,
+            require_durable_baseline=True,
+            load_authorized_compare_reference=True,
+        )
         shared["active_candidate_timeseries"] = shared["active_candidate_timeseries"].copy()
         return shared
 
@@ -1547,18 +1579,39 @@ class Phase68gBtcPersistence10dEarlyRisk075StagedAdapter:
 
     def build_source_inputs(self, inputs: dict[str, Any]) -> dict[str, Any]:
         active_source_inputs = Phase68gBtcPersistence10dEarlyRisk075Adapter().build_source_inputs(inputs)
+        files = dict(active_source_inputs["files"])
+        authorized_compare_reference = inputs.get("authorized_compare_reference")
+        if authorized_compare_reference is not None:
+            files.update(
+                {
+                    "authorized_compare_snapshot": {
+                        **_source_file_metadata(inputs["source_paths"]["authorized_compare_snapshot"]),
+                        "closed_day": inputs["authorized_compare_closed_day"],
+                        "strategy_version": BASE_STRATEGY_VERSION,
+                    },
+                    "authorized_compare_timeseries": _source_file_metadata(
+                        inputs["source_paths"]["authorized_compare_timeseries"],
+                        last_date=inputs["authorized_compare_closed_day"],
+                        row_count=len(authorized_compare_reference["timeseries"]),
+                    ),
+                    "authorized_compare_diagnostics": {
+                        **_source_file_metadata(inputs["source_paths"]["authorized_compare_diagnostics"]),
+                        "closed_day": inputs["authorized_compare_closed_day"],
+                    },
+                }
+            )
         return {
             "adapter_name": self.adapter_name,
             "candidate_id": self.candidate_id,
             "candidate_label": self.candidate_label,
             "base_strategy_version": self.base_strategy_version,
-            "candidate_compare_closed_day": inputs["current_closed_day"],
-            "authorized_compare_baseline_closed_day": inputs["current_closed_day"],
+            "candidate_compare_closed_day": inputs["closed_day"],
+            "authorized_compare_baseline_closed_day": inputs["authorized_compare_closed_day"],
             "authorized_compare_baseline_path": "outputs/production/current_strategy_timeseries.csv",
             "durable_baseline_route": active_source_inputs["durable_baseline_route"],
             "evidence_status": active_source_inputs["evidence_status"],
             "lineage": active_source_inputs["lineage"],
-            "files": active_source_inputs["files"],
+            "files": files,
         }
 
     def build_snapshot_metrics(self, inputs: dict[str, Any]) -> dict[str, Any]:
