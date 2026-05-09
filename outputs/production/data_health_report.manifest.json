@@ -1,13 +1,13 @@
 {
   "artifact_type": "data_health_report_manifest",
   "schema_version": 1,
-  "generated_at_utc": "2026-05-09T12:11:22Z",
-  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\data_health_common.py",
-  "root_path": "C:\\Users\\benda\\Desktop\\market_regime_v1",
+  "generated_at_utc": "2026-05-09T15:29:22Z",
+  "script_path": "/opt/market_regime_v1/scripts/production/data_health_common.py",
+  "root_path": "/opt/market_regime_v1",
   "output_paths": {
-    "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.json",
-    "quality_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.quality.json",
-    "manifest_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.manifest.json"
+    "report_path": "/opt/market_regime_v1/outputs/production/data_health_report.json",
+    "quality_path": "/opt/market_regime_v1/outputs/production/data_health_report.quality.json",
+    "manifest_path": "/opt/market_regime_v1/outputs/production/data_health_report.manifest.json"
   },
   "source_ids": [
     "production_current_strategy_snapshot",

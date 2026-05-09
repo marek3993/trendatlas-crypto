@@ -1,12 +1,12 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-09T12:10:09Z",
+  "generated_at_utc": "2026-05-09T15:29:07Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
   "adapter_name": "phase68g_btc_persistence_10d_early_risk_075_adapter",
-  "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
-  "git_commit": "9640d53186cf296b588cd47e953df38ccb2f5fd3",
+  "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
+  "git_commit": "a04527b0dbe7f4adc0ffccbbd622727a905908cc",
   "source_inputs": {
     "adapter_name": "phase68g_btc_persistence_10d_early_risk_075_adapter",
     "strategy_id": "current_strategy",
@@ -40,39 +40,39 @@
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
         "sha256": "9799ceaeb542bb8f649ee5a9522216e7e628dcd6b9ffdd092851b0245e197ace",
         "size_bytes": 902,
-        "modified_utc": "2026-05-09T09:32:38Z",
+        "modified_utc": "2026-05-09T15:29:05Z",
         "last_date": "2026-05-08",
         "row_count": 1
       },
       "phase68g_strategy_paper": {
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-        "sha256": "bc86c7d80db0a44d34ad9a47b1e930c236511fed5ba144b2870f4675fc60eacf",
-        "size_bytes": 1055744,
-        "modified_utc": "2026-05-09T09:32:38Z",
+        "sha256": "3763051066908cbcc8749b7eb4519ebf8a122a53af7530efa4d0b5c1a74fd0d2",
+        "size_bytes": 1052817,
+        "modified_utc": "2026-05-09T15:29:05Z",
         "last_date": "2026-05-08",
         "row_count": 2926
       },
       "phase68g_trend_status": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
-        "sha256": "6390f5d783afd54c8aea56c873f10845923a44067d7fabd068f77c231c1bae00",
-        "size_bytes": 619,
-        "modified_utc": "2026-05-09T09:32:38Z",
+        "sha256": "e33c774e8b17e04a77d99dfde01477e72a97e0636782458445429f59ba620aa8",
+        "size_bytes": 617,
+        "modified_utc": "2026-05-09T15:24:35Z",
         "last_date": "2026-05-08",
         "row_count": 1
       },
       "phase68g_trend_history": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
-        "sha256": "d3654f7383378abbca0563f9665240bd87002fcf0ebf56e5eeeb16795805c3d6",
-        "size_bytes": 379642,
-        "modified_utc": "2026-05-09T09:32:38Z",
+        "sha256": "0157d10bb085ec4afab5a44a1765404777b2ae6dff2ec0f85fc5ea7ebe9f8adf",
+        "size_bytes": 376715,
+        "modified_utc": "2026-05-09T15:28:39Z",
         "last_date": "2026-05-08",
         "row_count": 2926
       },
       "phase68g_freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
-        "sha256": "79a98f149b5cf125e897d973aed2b165ccc54450fcbcd84ef822dcefc9461531",
-        "size_bytes": 1214,
-        "modified_utc": "2026-05-09T09:32:38Z",
+        "sha256": "3d8033fe1af753e974a98cae305469783d962b64c24b36633623fde08985faf8",
+        "size_bytes": 1172,
+        "modified_utc": "2026-05-09T15:29:01Z",
         "last_date": "2026-05-08",
         "status": "ok"
       },
@@ -80,53 +80,53 @@
         "path": "data/ohlcv/BTCUSDT_1d.csv",
         "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
         "size_bytes": 274631,
-        "modified_utc": "2026-05-09T11:54:58Z",
+        "modified_utc": "2026-05-09T15:24:37Z",
         "last_date": "2026-05-08",
         "row_count": 3187
       },
       "dev_only_contract": {
         "path": "research_os/dev_only/contracts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.contract.json",
-        "sha256": "ef7aae9600aa0dbd659b7351506e8c90ca6ae51ab7efaacd5c20f5da7056792c",
-        "size_bytes": 5448,
-        "modified_utc": "2026-05-07T08:10:24Z"
+        "sha256": "34d4980a8758665a159d5f2975992e8025261af2f4e8dc44534ce09f9a9cb38e",
+        "size_bytes": 5341,
+        "modified_utc": "2026-05-09T15:24:35Z"
       },
       "dev_only_spec": {
         "path": "research_os/dev_only/specs/dev_only_production_core_btc_candidate_persistence_early_risk_compare.spec.json",
-        "sha256": "ec57b64d1322ff078530888710acc80981d502f40533d4e6730774347697ef7c",
-        "size_bytes": 2759,
-        "modified_utc": "2026-05-07T08:10:24Z"
+        "sha256": "5c5aaca346d52ef0bb8d0df6a29be78b6cd524d77b9a3c0f9e9fb04e04172e3d",
+        "size_bytes": 2724,
+        "modified_utc": "2026-05-09T15:24:35Z"
       },
       "dev_only_manifest_seed": {
         "path": "research_os/dev_only/manifests/dev_only_production_core_btc_candidate_persistence_early_risk_compare.manifest.json",
-        "sha256": "db6a4a73322876df14e5b63c9522a5f03b82099e63346c4972bdc22b2b6bf8ae",
-        "size_bytes": 1169,
-        "modified_utc": "2026-05-07T08:10:24Z"
+        "sha256": "c0b6320410d7be0f2c5244094ec32c9ff051268da153a54fcb44b989b3e69d00",
+        "size_bytes": 1144,
+        "modified_utc": "2026-05-09T15:24:35Z"
       },
       "dev_only_summary": {
         "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/summary.json",
-        "sha256": "657d69e59889181fb59affcc1398804353a3c420eade1d1fe1acc36e381a3b2f",
-        "size_bytes": 34692,
-        "modified_utc": "2026-05-07T08:10:24Z"
+        "sha256": "0280cb466197747efed0e81872d7a1b5c6d67f80312cf11fc8d4a6a8db81f9bb",
+        "size_bytes": 33866,
+        "modified_utc": "2026-05-09T15:24:35Z"
       },
       "dev_only_quality": {
         "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/quality.json",
-        "sha256": "9c0b1a211c517aa15c440ef4f8ec61be773e628c9d4cd5cb91c18398b854fb2b",
-        "size_bytes": 5671,
-        "modified_utc": "2026-05-07T08:10:24Z",
+        "sha256": "e7cc134d135d875ad71a767ca2fe5e494e45ab5ae49b340ac17d077a87d16155",
+        "size_bytes": 5535,
+        "modified_utc": "2026-05-09T15:24:35Z",
         "status": "passed"
       },
       "dev_only_variant_compare": {
         "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/variant_compare.csv",
-        "sha256": "62079366dce6dd0f18cfbd1854c81fb9887f6a160bd5c91bafc5b9ca3ec18cbe",
-        "size_bytes": 1367,
-        "modified_utc": "2026-05-07T08:10:24Z",
+        "sha256": "a43da0c6fedab7e796727480938b4a1cf33d8c6bfe1b0b58307bda60f7a99f7f",
+        "size_bytes": 1364,
+        "modified_utc": "2026-05-09T15:24:35Z",
         "row_count": 2
       },
       "dev_only_script": {
         "path": "scripts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.py",
-        "sha256": "be317fe0c76354c6e74920c350c402f9ee5f218803ce374c61eada16e340b2bf",
-        "size_bytes": 73339,
-        "modified_utc": "2026-05-07T08:10:24Z"
+        "sha256": "edfed267a320a877100b7fe0b26c6a24e5bdab776cfe267b8bf8776d8a0cec21",
+        "size_bytes": 71682,
+        "modified_utc": "2026-05-09T15:24:35Z"
       }
     }
   },

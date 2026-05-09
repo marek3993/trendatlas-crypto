@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_diagnostics",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-09T12:10:09Z",
+  "generated_at_utc": "2026-05-09T15:29:07Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
   "closed_day": "2026-05-08",
