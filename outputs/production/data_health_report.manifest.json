@@ -1,7 +1,7 @@
 {
   "artifact_type": "data_health_report_manifest",
   "schema_version": 1,
-  "generated_at_utc": "2026-05-08T00:14:43Z",
+  "generated_at_utc": "2026-05-09T00:14:43Z",
   "script_path": "/opt/market_regime_v1/scripts/production/data_health_common.py",
   "root_path": "/opt/market_regime_v1",
   "output_paths": {
@@ -27,10 +27,10 @@
     "env_mrv1_coinglass_api_key",
     "env_mrv1_sosovalue_api_key"
   ],
-  "reference_closed_day_utc": "2026-05-07",
+  "reference_closed_day_utc": "2026-05-08",
   "context": {
-    "latest_closed_utc_day": "2026-05-07",
-    "btc_last_day": "2026-05-07"
+    "latest_closed_utc_day": "2026-05-08",
+    "btc_last_day": "2026-05-08"
   },
   "path_overrides": {},
   "env_override_source_ids": []

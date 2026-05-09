@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-08T00:14:34Z",
+  "generated_at_utc": "2026-05-09T00:14:34Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_66g_1p25x_candidate",
   "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
@@ -11,55 +11,55 @@
     "adapter_name": "phase68g_66g_1p25x_candidate_adapter",
     "strategy_id": "current_strategy",
     "strategy_version": "phase68g_66g_1p25x_candidate",
-    "validated_closed_day": "2026-05-07",
+    "validated_closed_day": "2026-05-08",
     "files": {
       "strategy_summary": {
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-        "sha256": "07b0043075a0d29d4504312cf607031a863c2893abd2e1d666c7dfbd39524dbc",
+        "sha256": "9799ceaeb542bb8f649ee5a9522216e7e628dcd6b9ffdd092851b0245e197ace",
         "size_bytes": 902,
-        "modified_utc": "2026-05-08T00:14:33Z",
-        "last_date": "2026-05-07",
+        "modified_utc": "2026-05-09T00:14:33Z",
+        "last_date": "2026-05-08",
         "row_count": 1
       },
       "strategy_paper": {
         "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-        "sha256": "100ac446105f4e8d605e9a3e3456ac9ffb39b58fc8fb721b60b67d39b155c339",
-        "size_bytes": 1052408,
-        "modified_utc": "2026-05-08T00:14:33Z",
-        "last_date": "2026-05-07",
-        "row_count": 2925
+        "sha256": "3763051066908cbcc8749b7eb4519ebf8a122a53af7530efa4d0b5c1a74fd0d2",
+        "size_bytes": 1052817,
+        "modified_utc": "2026-05-09T00:14:33Z",
+        "last_date": "2026-05-08",
+        "row_count": 2926
       },
       "trend_status": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
-        "sha256": "097f7ce3dd27f699781a0ef1f521c51ee75e2c98315a19eaeb279d8327d9c639",
+        "sha256": "e33c774e8b17e04a77d99dfde01477e72a97e0636782458445429f59ba620aa8",
         "size_bytes": 617,
-        "modified_utc": "2026-05-08T00:14:07Z",
-        "last_date": "2026-05-07",
+        "modified_utc": "2026-05-09T00:14:06Z",
+        "last_date": "2026-05-08",
         "row_count": 1
       },
       "trend_history": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
-        "sha256": "392f1dd960052f87fb2b1534e7573e9b82bb495219eff39c4dd321692666954a",
-        "size_bytes": 376583,
-        "modified_utc": "2026-05-08T00:14:07Z",
-        "last_date": "2026-05-07",
-        "row_count": 2925
+        "sha256": "0157d10bb085ec4afab5a44a1765404777b2ae6dff2ec0f85fc5ea7ebe9f8adf",
+        "size_bytes": 376715,
+        "modified_utc": "2026-05-09T00:14:06Z",
+        "last_date": "2026-05-08",
+        "row_count": 2926
       },
       "freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
-        "sha256": "7fded4b0ad4c297439cba4fd58f42bfd374117af5831635f03082301287d0803",
+        "sha256": "2a63dc2200468614acc6588e6fe7c9117b562a4bc6c89de45860de5e80ba359b",
         "size_bytes": 1172,
-        "modified_utc": "2026-05-08T00:14:29Z",
-        "last_date": "2026-05-07",
+        "modified_utc": "2026-05-09T00:14:29Z",
+        "last_date": "2026-05-08",
         "status": "ok"
       },
       "benchmark_ohlcv": {
         "path": "data/ohlcv/BTCUSDT_1d.csv",
-        "sha256": "9121cae73101ca103af01697b0b07fc5c0de6fb543e2697e8dacfa4f27e5274e",
-        "size_bytes": 274544,
-        "modified_utc": "2026-05-08T00:10:10Z",
-        "last_date": "2026-05-07",
-        "row_count": 3186
+        "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
+        "size_bytes": 274631,
+        "modified_utc": "2026-05-09T00:10:10Z",
+        "last_date": "2026-05-08",
+        "row_count": 3187
       }
     }
   },
