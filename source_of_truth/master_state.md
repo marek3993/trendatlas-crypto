@@ -3,8 +3,8 @@
 ## Official state snapshot
 - Official core production baseline: `phase66g_production_soft_filters`
 - Official universe winner: `phase67j_no_neo_main`
-- Current live/app truth: `phase68g_btc_persistence_10d_early_risk_075`
-- Current app main strategy model: `phase68g_btc_persistence_10d_early_risk_075`
+- Current live/app truth: `phase68g_etf_flow_impulse_early_risk_cooldown_15`
+- Current app main strategy model: `phase68g_etf_flow_impulse_early_risk_cooldown_15`
 - Reference strategy model: `phase67j_no_neo_main`
 - Benchmark: `BTC`
 
@@ -29,14 +29,15 @@
 - Candidate `BTC` does not automatically mean live market exposure.
 
 ## Phase68G promotion
-- Current live truth: `phase68g_btc_persistence_10d_early_risk_075`
-- Best deployment candidate: `phase68g_btc_persistence_10d_early_risk_075`
-- Official softer fallback: `phase68g_66g_1p25x_candidate`
-- Current app main strategy model: `phase68g_btc_persistence_10d_early_risk_075`
-- Live mode contract current: `phase68g_btc_persistence_10d_early_risk_075`
-- Fallback contract: `phase68g_66g_1p25x_candidate`
+- Current live truth: `phase68g_etf_flow_impulse_early_risk_cooldown_15`
+- Best deployment candidate: `phase68g_etf_flow_impulse_early_risk_cooldown_15`
+- Official softer fallback: `phase68g_btc_persistence_10d_early_risk_075`
+- Secondary fallback: `phase68g_66g_1p25x_candidate`
+- Current app main strategy model: `phase68g_etf_flow_impulse_early_risk_cooldown_15`
+- Live mode contract current: `phase68g_etf_flow_impulse_early_risk_cooldown_15`
+- Fallback contract: `phase68g_btc_persistence_10d_early_risk_075`
 - `phase68i_dynamic_ladder_candidate` is legacy / historical fallback only.
-- ETF-flow remains unpromoted and is not the current live truth.
+- ETF-flow is promoted and is the current live truth.
 - `ordering_remains_unchanged = false`
 
 ## Production Core vs Pi authority

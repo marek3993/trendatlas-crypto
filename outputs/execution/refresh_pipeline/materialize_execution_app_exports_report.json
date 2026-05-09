@@ -1,7 +1,7 @@
 {
   "report_type": "materialize_execution_app_exports_report",
-  "generated_at_utc": "2026-05-09T12:10:26Z",
-  "started_at_utc": "2026-05-09T12:10:23Z",
+  "generated_at_utc": "2026-05-09T21:56:06Z",
+  "started_at_utc": "2026-05-09T21:56:05Z",
   "paths_registry_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "project_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\project_truth.json",
   "required_artifact_keys": [
@@ -197,7 +197,7 @@
       "canonical_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness\\app_freshness_report.json",
         "size_bytes": 1214,
-        "modified_utc": "2026-05-09T09:32:38Z"
+        "modified_utc": "2026-05-09T15:35:58Z"
       }
     },
     {
@@ -218,13 +218,13 @@
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
         "size_bytes": 897,
-        "modified_utc": "2026-05-09T12:10:24Z"
+        "modified_utc": "2026-05-09T21:56:06Z"
       },
       "authoritative_export_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv",
       "authoritative_export_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv",
         "size_bytes": 756,
-        "modified_utc": "2026-05-09T12:10:24Z"
+        "modified_utc": "2026-05-09T21:56:06Z"
       },
       "phase68g_refresh_info": {
         "phase66g_last_date": "2026-04-30",
@@ -246,13 +246,13 @@
       "main_strategy_paper_alias_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_paper.csv",
         "size_bytes": 1052505,
-        "modified_utc": "2026-05-09T12:10:24Z"
+        "modified_utc": "2026-05-09T21:56:06Z"
       },
       "main_strategy_authoritative_export_alias_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
       "main_strategy_authoritative_export_alias_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
         "size_bytes": 901,
-        "modified_utc": "2026-05-09T12:10:24Z"
+        "modified_utc": "2026-05-09T21:56:06Z"
       },
       "computed_fields": [
         "total_return_pct",
@@ -323,20 +323,20 @@
     {
       "artifact_key": "current_main_strategy_app_exports",
       "status": "current_main_strategy_app_exports_materialized_from_production_core",
-      "main_strategy_model": "phase68g_btc_persistence_10d_early_risk_075",
+      "main_strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
       "closed_day": "2026-05-08",
       "paper_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_timeseries.csv",
-      "paper_output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+      "paper_output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
       "paper_output_info": {
-        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_btc_persistence_10d_early_risk_075_paper.csv",
-        "size_bytes": 2625433,
-        "modified_utc": "2026-05-09T12:10:24Z"
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
+        "size_bytes": 471986,
+        "modified_utc": "2026-05-09T21:56:06Z"
       },
-      "metrics_output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+      "metrics_output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv",
       "metrics_output_info": {
-        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
-        "size_bytes": 915,
-        "modified_utc": "2026-05-09T12:10:25Z"
+        "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv",
+        "size_bytes": 905,
+        "modified_utc": "2026-05-09T21:56:06Z"
       }
     },
     {
@@ -345,8 +345,8 @@
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_product_snapshot.json",
-        "size_bytes": 12419,
-        "modified_utc": "2026-05-09T12:10:26Z"
+        "size_bytes": 12612,
+        "modified_utc": "2026-05-09T21:56:06Z"
       }
     },
     {
@@ -355,8 +355,8 @@
       "output_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
       "output_info": {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\app_runtime_snapshot.json",
-        "size_bytes": 25570,
-        "modified_utc": "2026-05-09T12:10:26Z"
+        "size_bytes": 25585,
+        "modified_utc": "2026-05-09T21:56:06Z"
       }
     }
   ],

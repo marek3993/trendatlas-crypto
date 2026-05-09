@@ -1,17 +1,17 @@
 {
   "artifact_type": "staged_strategy_candidate_snapshot_manifest",
   "schema_version": 1,
-  "generated_at_utc": "2026-05-09T19:58:07Z",
+  "generated_at_utc": "2026-05-09T21:50:28Z",
   "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "base_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
   "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter",
   "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_staged_strategy_candidate.py --candidate phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "git_commit": "8598f386bc93e8af13f76d8fe4a420653df7afed",
+  "git_commit": "836461eaedb459cd6e3f1711e180940e95d7b835",
   "source_inputs": {
     "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter",
     "candidate_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
     "base_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
-    "candidate_compare_closed_day": "2026-05-05",
+    "candidate_compare_closed_day": "2026-05-08",
     "baseline_closed_day": "2026-05-08",
     "authorized_compare_baseline_closed_day": "2026-05-08",
     "authorized_compare_baseline_path": "outputs/production/current_strategy_timeseries.csv",
@@ -68,7 +68,7 @@
             "path": "data/ohlcv/BTCUSDT_1d.csv",
             "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
             "size_bytes": 274631,
-            "modified_utc": "2026-05-09T15:35:58Z",
+            "modified_utc": "2026-05-09T20:22:08Z",
             "last_date": "2026-05-08",
             "row_count": 3187
           }
@@ -119,17 +119,17 @@
       },
       "etf_panel": {
         "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
-        "sha256": "fddc900aee0a0872c28b93c4d06e56e34fe00c6a6a5c0884a083582059372315",
-        "size_bytes": 219543,
-        "modified_utc": "2026-05-05T11:43:47Z",
-        "last_date": "2026-05-05",
-        "row_count": 580
+        "sha256": "f37629c6d5b37ef11c2f7184ea0798cf152db5110647ed3b3a1289f206451f46",
+        "size_bytes": 220468,
+        "modified_utc": "2026-05-09T21:43:27Z",
+        "last_date": "2026-05-09",
+        "row_count": 584
       },
       "btc_ohlcv": {
         "path": "data/ohlcv/BTCUSDT_1d.csv",
         "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
         "size_bytes": 274631,
-        "modified_utc": "2026-05-09T15:35:58Z",
+        "modified_utc": "2026-05-09T20:22:08Z",
         "last_date": "2026-05-08",
         "row_count": 3187
       },

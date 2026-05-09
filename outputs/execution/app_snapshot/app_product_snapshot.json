@@ -1,15 +1,15 @@
 {
   "snapshot_type": "app_product_snapshot",
   "schema_version": 2,
-  "app_export_generated_at_utc": "2026-05-02T14:09:51Z",
+  "app_export_generated_at_utc": "2026-05-09T21:56:06Z",
   "product_name": "TrendAtlas Crypto",
   "page_scope": "homepage",
   "current_main_strategy_root_contract": {
     "contract_version": 1,
     "source_family": "canonical_current_main_strategy_app_exports",
-    "main_strategy_model": "phase68g_66g_1p25x_candidate",
-    "canonical_metrics_source_path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-    "canonical_paper_source_path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+    "main_strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "canonical_metrics_source_path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv",
+    "canonical_paper_source_path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
     "allowed_canonical_root": "outputs/execution/app_exports",
     "forbidden_source_roots": [
       "outputs/execution/app_snapshot",
@@ -22,21 +22,21 @@
       "outputs/validation/bundles"
     ]
   },
-  "main_strategy_model": "phase68g_66g_1p25x_candidate",
+  "main_strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "reference_strategy_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
-  "strategy_last_closed_day": "2026-04-30",
-  "freshness_target_closed_day": "2026-04-30",
+  "strategy_last_closed_day": "2026-05-08",
+  "freshness_target_closed_day": "2026-05-08",
   "freshness": {
     "status": "ok",
-    "generated_at_utc": "2026-05-02T13:38:46+00:00",
+    "generated_at_utc": "2026-05-09T15:29:01+00:00",
     "checks": {
-      "btc_raw_last_date": "2026-04-19",
-      "phase66g_paper_last_date": "2026-04-30",
-      "phase66g_live_latest_available_date": "2026-04-30",
-      "phase66g_trend_last_date": "2026-04-30",
-      "phase67j_paper_last_date": "2026-04-30",
-      "phase67j_live_latest_available_date": "2026-04-30",
+      "btc_raw_last_date": "2026-05-08",
+      "phase66g_paper_last_date": "2026-05-08",
+      "phase66g_live_latest_available_date": "2026-05-08",
+      "phase66g_trend_last_date": "2026-05-08",
+      "phase67j_paper_last_date": "2026-05-08",
+      "phase67j_live_latest_available_date": "2026-05-08",
       "macro_last_date": "2026-03-08",
       "top100_assets_checked": [
         "LUNC",
@@ -51,49 +51,49 @@
         "LINK"
       ],
       "top100_asset_last_dates": {
-        "LUNC": "2026-04-30",
-        "NEO": "2026-04-30",
-        "DOGE": "2026-04-30",
-        "STX": "2026-04-30",
-        "MORPHO": "2026-04-30",
-        "APT": "2026-04-30",
-        "HBAR": "2026-04-30",
-        "SKY": "2026-04-30",
-        "RUNE": "2026-04-30",
-        "LINK": "2026-04-30"
+        "LUNC": "2026-05-09",
+        "NEO": "2026-05-09",
+        "DOGE": "2026-05-09",
+        "STX": "2026-05-09",
+        "MORPHO": "2026-05-09",
+        "APT": "2026-05-09",
+        "HBAR": "2026-05-09",
+        "SKY": "2026-05-09",
+        "RUNE": "2026-05-09",
+        "LINK": "2026-05-09"
       },
-      "top100_min_last_date": "2026-04-30",
-      "top100_max_last_date": "2026-04-30"
+      "top100_min_last_date": "2026-05-09",
+      "top100_max_last_date": "2026-05-09"
     },
     "warnings": [],
     "errors": []
   },
   "main_strategy_metrics": {
-    "model": "phase68g_66g_1p25x_candidate",
-    "total_return_pct": 112186.53,
-    "total_return_pct_gross": 137451.16,
-    "total_return_pct_net": 112186.53,
-    "cagr_pct": 140.96,
-    "cagr_pct_gross": 147.16,
-    "cagr_pct_net": 140.96,
-    "max_drawdown_pct": -28.74,
-    "max_drawdown_pct_gross": -27.57,
-    "max_drawdown_pct_net": -28.74,
-    "since2023_cagr_pct": 165.08,
-    "since2023_cagr_pct_gross": 174.03,
-    "since2023_cagr_pct_net": 165.08,
-    "since2025_cagr_pct": 149.21,
-    "since2025_cagr_pct_gross": 152.44,
-    "since2025_cagr_pct_net": 149.21,
-    "sharpe": 1.7695,
-    "sortino": 2.5114,
-    "switch_count": 9,
-    "cash_days_pct": 41.878,
-    "btc_days_pct": 7.3681,
-    "trading_fees_total_pct": 15.8625,
+    "model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "total_return_pct": 1335.99,
+    "total_return_pct_gross": 1444.9,
+    "total_return_pct_net": 1335.99,
+    "cagr_pct": 215.5,
+    "cagr_pct_gross": 225.6,
+    "cagr_pct_net": 215.5,
+    "max_drawdown_pct": -9.73,
+    "max_drawdown_pct_gross": -8.58,
+    "max_drawdown_pct_net": -9.73,
+    "since2023_cagr_pct": 215.5,
+    "since2023_cagr_pct_gross": 225.6,
+    "since2023_cagr_pct_net": 215.5,
+    "since2025_cagr_pct": 211.44,
+    "since2025_cagr_pct_gross": 220.77,
+    "since2025_cagr_pct_net": 211.44,
+    "sharpe": 2.2159,
+    "sortino": 7.9164,
+    "switch_count": 60,
+    "cash_days_pct": 66.2093,
+    "btc_days_pct": 13.2075,
+    "trading_fees_total_pct": 2.5425,
     "funding_total_pct": 0.0,
-    "borrow_cost_total_pct": 3.614,
-    "tradable_slippage_cost_total_pct": 0.9,
+    "borrow_cost_total_pct": 0.8706,
+    "tradable_slippage_cost_total_pct": 4.0,
     "fee_side_mode": "taker",
     "taker_fee_bps": 4.5,
     "maker_fee_bps": 1.5,
@@ -102,42 +102,42 @@
     "effective_trading_fee_bps": 4.5
   },
   "main_strategy_top_performance_metrics": {
-    "cagr_pct": 140.96,
-    "since2023_cagr_pct": 165.08,
-    "since2025_cagr_pct": 149.21,
-    "model": "phase68g_66g_1p25x_candidate"
+    "cagr_pct": 215.5,
+    "since2023_cagr_pct": 215.5,
+    "since2025_cagr_pct": 211.44,
+    "model": "phase68g_etf_flow_impulse_early_risk_cooldown_15"
   },
   "live_public_state": {
-    "date": "2026-04-30",
+    "date": "2026-05-08",
     "portfolio_held_asset": "CASH",
-    "baseline_held_asset": "CASH",
-    "tradable_governed_asset": null,
+    "baseline_held_asset": "BTC",
+    "tradable_governed_asset": "CASH",
     "trend_state_label": "pod_buy_hranicou",
-    "trend_score": -0.1666666666666666,
+    "trend_score": -0.166667,
     "buy_threshold": 0.0,
     "crossed_up_today": false,
     "crossed_down_today": false,
     "cash_day": true,
     "leverage_state_reason": "cash",
-    "model": "phase68g_66g_1p25x_candidate",
+    "model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
     "held_asset_public": "CASH",
     "held_state_label": "pod_buy_hranicou",
     "execution_state": "CASH",
-    "live_truth_mode": "phase68g_66g_1p25x_candidate",
-    "execution_profile": "static_1p25x",
-    "leverage_mode": "static_1p25x",
-    "deployment_candidate_label": "phase68g_66g_1p25x_candidate",
-    "fallback_profile_label": "phase68i_dynamic_ladder_candidate",
+    "live_truth_mode": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "execution_profile": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "leverage_mode": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "deployment_candidate_label": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "fallback_profile_label": "phase68g_btc_persistence_10d_early_risk_075",
     "approval_gate_status": "approved_and_applied"
   },
   "trend_barometer_summary": {
     "model": "phase66g_production_soft_filters",
-    "latest_available_date": "2026-04-30",
+    "latest_available_date": "2026-05-08",
     "current_asset": "BASELINE",
-    "latest_decision_date": "2026-04-26",
-    "latest_period_start": "2026-04-27",
-    "latest_period_end": "2026-04-30",
-    "next_rebalance_date": "2026-05-03",
+    "latest_decision_date": "2026-05-03",
+    "latest_period_start": "2026-05-04",
+    "latest_period_end": "2026-05-08",
+    "next_rebalance_date": "2026-05-10",
     "latest_keep_reason": "best_passed",
     "candidate_assets_loaded": 9,
     "failed_assets_count": 0,
@@ -152,18 +152,18 @@
     "trend_threshold_raw": 0.02,
     "trend_band": 0.12,
     "trend_score_raw": -0.16666666666666669,
-    "trend_calc_date": "2026-04-30"
+    "trend_calc_date": "2026-05-08"
   },
   "chart_source_paths": {
-    "main_strategy": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+    "main_strategy": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
     "reference_strategy": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv"
   },
   "benchmark_source_path": "data/ohlcv/BTCUSDT_1d.csv",
   "trend_history_source_path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
   "display_names": {
     "phase68i_dynamic_ladder_candidate": {
-      "sk": "HlavnĂˇ stratĂ©gia",
-      "en": "Main strategy"
+      "sk": "Historický fallback",
+      "en": "Historical fallback"
     },
     "phase67j_no_neo_main": {
       "sk": "ReferenÄŤnĂˇ stratĂ©gia",
@@ -173,27 +173,65 @@
       "sk": "Trend / core vrstva",
       "en": "Trend / core layer"
     },
+    "phase68g_btc_persistence_10d_early_risk_075": {
+      "sk": "Maksi fallback",
+      "en": "Softer fallback"
+    },
     "phase68g_66g_1p25x_candidate": {
-      "sk": "Hlavn? strat?gia",
+      "sk": "Sekundarny fallback",
+      "en": "Secondary fallback"
+    },
+    "phase68g_etf_flow_impulse_early_risk_cooldown_15": {
+      "sk": "Hlavna strategia",
       "en": "Main strategy"
     }
   },
   "source_metadata": {
     "main_strategy_metrics": {
-      "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+      "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv",
       "source_type": "canonical_app_summary",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 899,
-      "modified_utc": "2026-05-02T14:09:51Z"
+      "size_bytes": 905,
+      "modified_utc": "2026-05-09T21:56:06Z",
+      "operational_metrics": {
+        "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
+        "source_type": "canonical_app_paper_held_state_series",
+        "owner": "DATA",
+        "exists": true,
+        "size_bytes": 471986,
+        "modified_utc": "2026-05-09T21:56:06Z",
+        "semantic_role": "current_live_main_strategy_operational_metrics",
+        "series_semantics": "homepage_current_main_strategy_held_state_history",
+        "held_state_column": "portfolio_held_asset",
+        "held_state_column_priority": [
+          "portfolio_held_asset",
+          "held_asset_public",
+          "execution_state",
+          "held_asset",
+          "state"
+        ],
+        "held_state_total_rows": 583,
+        "held_state_non_empty_rows": 583,
+        "held_state_denominator_rows": 583,
+        "held_state_last_value": "CASH",
+        "derived_fields": [
+          "switch_count",
+          "cash_days_pct",
+          "btc_days_pct"
+        ],
+        "switch_count_semantics": "count_of_consecutive_held_state_changes",
+        "cash_days_pct_semantics": "percent_of_rows_where_held_state_is_CASH",
+        "btc_days_pct_semantics": "percent_of_rows_where_held_state_is_BTC"
+      }
     },
     "main_strategy_top_performance_metrics": {
-      "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-      "source_type": "canonical_phase68g_authoritative_net_compare_top_cards",
+      "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv",
+      "source_type": "canonical_phase68g_etf_flow_authoritative_net_compare_top_cards",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 899,
-      "modified_utc": "2026-05-02T14:09:51Z",
+      "size_bytes": 905,
+      "modified_utc": "2026-05-09T21:56:06Z",
       "source_fields": [
         "cagr_pct",
         "since2023_cagr_pct",
@@ -201,12 +239,12 @@
       ]
     },
     "strategy_last_closed_day": {
-      "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+      "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
       "source_type": "canonical_app_paper",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 1052505,
-      "modified_utc": "2026-05-02T14:09:51Z",
+      "size_bytes": 471986,
+      "modified_utc": "2026-05-09T21:56:06Z",
       "source_field": "last_row.date"
     },
     "freshness_target_closed_day": {
@@ -214,8 +252,8 @@
       "source_type": "canonical_product_freshness_report",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 1239,
-      "modified_utc": "2026-05-02T13:48:18Z",
+      "size_bytes": 1214,
+      "modified_utc": "2026-05-09T15:35:58Z",
       "source_field": "latest_closed_utc_date"
     },
     "app_export_generated_at_utc": {
@@ -223,17 +261,17 @@
       "source_type": "app_product_snapshot",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 10694,
-      "modified_utc": "2026-05-02T13:48:18Z",
+      "size_bytes": 12419,
+      "modified_utc": "2026-05-09T20:22:08Z",
       "source_field": "generated_by_materializer_clock"
     },
     "live_public_state": {
-      "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+      "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
       "source_type": "canonical_app_paper",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 1052505,
-      "modified_utc": "2026-05-02T14:09:51Z",
+      "size_bytes": 471986,
+      "modified_utc": "2026-05-09T21:56:06Z",
       "source_fields": [
         "date",
         "portfolio_held_asset",
@@ -253,8 +291,8 @@
       "source_type": "canonical_product_freshness_report",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 1239,
-      "modified_utc": "2026-05-02T13:48:18Z"
+      "size_bytes": 1214,
+      "modified_utc": "2026-05-09T15:35:58Z"
     },
     "trend_barometer_summary": {
       "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -262,24 +300,24 @@
       "owner": "DATA",
       "exists": true,
       "size_bytes": 619,
-      "modified_utc": "2026-05-02T13:48:18Z"
+      "modified_utc": "2026-05-09T09:32:38Z"
     },
     "chart_source_paths": {
       "main_strategy": {
-        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+        "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
         "source_type": "canonical_app_paper",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 1052505,
-        "modified_utc": "2026-05-02T14:09:51Z"
+        "size_bytes": 471986,
+        "modified_utc": "2026-05-09T21:56:06Z"
       },
       "reference_strategy": {
         "path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
         "source_type": "canonical_app_paper",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 156910,
-        "modified_utc": "2026-05-02T13:48:18Z"
+        "size_bytes": 157387,
+        "modified_utc": "2026-05-09T09:32:38Z"
       }
     },
     "benchmark_source_path": {
@@ -287,16 +325,16 @@
       "source_type": "benchmark_ohlcv",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 272982,
-      "modified_utc": "2026-05-02T13:48:16Z"
+      "size_bytes": 274631,
+      "modified_utc": "2026-05-09T20:22:08Z"
     },
     "trend_history_source_path": {
       "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
       "source_type": "canonical_trend_history",
       "owner": "DATA",
       "exists": true,
-      "size_bytes": 378578,
-      "modified_utc": "2026-05-02T13:48:18Z"
+      "size_bytes": 379642,
+      "modified_utc": "2026-05-09T09:32:38Z"
     }
   }
 }

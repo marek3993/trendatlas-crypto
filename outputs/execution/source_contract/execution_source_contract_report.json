@@ -1,6 +1,6 @@
 {
   "report_type": "execution_source_contract_report",
-  "generated_at_utc": "2026-05-06T21:28:48Z",
+  "generated_at_utc": "2026-05-09T21:57:28Z",
   "source_of_truth_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\paths_registry.json",
   "required_artifact_keys": [
     "authority_latest_successful_snapshot",
@@ -13,7 +13,10 @@
   ],
   "missing_registry_keys": [],
   "missing_files": [],
-  "hard_required_missing": [],
+  "hard_required_missing": [
+    "authority_latest_successful_snapshot canonical source validation blocked: product_snapshot.current_main_strategy_root_contract diverged from source_of_truth/export_contract.json",
+    "authority_latest_attempt_status canonical source validation blocked: product_snapshot.current_main_strategy_root_contract diverged from source_of_truth/export_contract.json"
+  ],
   "artifact_reports": {
     "authority_latest_successful_snapshot": {
       "artifact_key": "authority_latest_successful_snapshot",
@@ -36,8 +39,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
-        "size_bytes": 41999,
-        "modified_utc": "2026-05-06T12:48:20Z",
+        "size_bytes": 42608,
+        "modified_utc": "2026-05-09T15:35:58Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -97,8 +100,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
-        "size_bytes": 41994,
-        "modified_utc": "2026-05-06T12:48:20Z",
+        "size_bytes": 42603,
+        "modified_utc": "2026-05-09T15:35:58Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -144,8 +147,8 @@
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json",
-        "size_bytes": 41999,
-        "modified_utc": "2026-05-06T12:48:20Z",
+        "size_bytes": 42608,
+        "modified_utc": "2026-05-09T15:35:58Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -183,16 +186,18 @@
           "app_runtime_snapshot"
         ]
       },
-      "errors": [],
-      "valid": true
+      "errors": [
+        "authority_latest_successful_snapshot canonical source validation blocked: product_snapshot.current_main_strategy_root_contract diverged from source_of_truth/export_contract.json"
+      ],
+      "valid": false
     },
     "authority_latest_attempt_status": {
       "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
       "inspection": {
         "exists": true,
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_attempt_status.json",
-        "size_bytes": 41994,
-        "modified_utc": "2026-05-06T12:48:20Z",
+        "size_bytes": 42603,
+        "modified_utc": "2026-05-09T15:35:58Z",
         "file_type": "json",
         "top_level_type": "dict",
         "top_level_keys": [
@@ -230,8 +235,10 @@
           "app_runtime_snapshot"
         ]
       },
-      "errors": [],
-      "valid": true
+      "errors": [
+        "authority_latest_attempt_status canonical source validation blocked: product_snapshot.current_main_strategy_root_contract diverged from source_of_truth/export_contract.json"
+      ],
+      "valid": false
     }
   },
   "production_report": {
@@ -239,8 +246,8 @@
     "inspection": {
       "exists": true,
       "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
-      "size_bytes": 9230,
-      "modified_utc": "2026-05-06T21:25:44Z",
+      "size_bytes": 14753,
+      "modified_utc": "2026-05-09T21:55:54Z",
       "file_type": "json",
       "top_level_type": "dict",
       "top_level_keys": [
@@ -276,10 +283,10 @@
     },
     "errors": [],
     "valid": true,
-    "closed_day": "2026-05-05",
+    "closed_day": "2026-05-08",
     "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
     "validation_status": "passed",
-    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-05-05::target_CASH::candidate_BTC",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-05-08::target_CASH::candidate_BTC",
     "target_asset": "CASH",
     "stale_signal": false
   },
@@ -288,8 +295,8 @@
     "inspection": {
       "exists": true,
       "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\reports\\strategy_chain_freshness_report.json",
-      "size_bytes": 2571,
-      "modified_utc": "2026-05-02T13:48:18Z",
+      "size_bytes": 2746,
+      "modified_utc": "2026-05-09T21:57:22Z",
       "file_type": "json",
       "top_level_type": "dict",
       "top_level_keys": [
@@ -312,7 +319,7 @@
     "errors": [],
     "valid": true
   },
-  "contract_status": "valid",
+  "contract_status": "invalid",
   "notes": [
     "This validator checks existence and basic shape only.",
     "It does not infer trading logic.",

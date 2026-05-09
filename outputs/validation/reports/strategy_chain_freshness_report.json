@@ -1,7 +1,7 @@
 {
-  "current_main_strategy_model_monitored": "phase68g_btc_persistence_10d_early_risk_075",
-  "current_main_strategy_paper_path_monitored": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
-  "current_main_strategy_live_status_path_monitored": "outputs/execution/app_exports/phase67j_live_status.csv",
+  "current_main_strategy_model_monitored": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+  "current_main_strategy_paper_path_monitored": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
+  "current_main_strategy_live_status_path_monitored": "outputs/execution/app_exports/phase66g_live_status.csv",
   "raw_btc_last_date": "2026-05-08",
   "phase60_last_date": "2026-04-17",
   "phase62_last_date": "2026-04-11",
@@ -15,16 +15,16 @@
   "path_resolution_diagnostics": [
     {
       "context": "freshness:current_main_strategy_paper",
-      "original_path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
-      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+      "original_path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
       "reason": "resolved_from_current_main_strategy_root_contract",
       "exists": true,
-      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_btc_persistence_10d_early_risk_075_paper.csv"
+      "selected_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv"
     },
     {
       "context": "freshness:current_main_strategy_live_status",
-      "original_path": "outputs/execution/app_exports/phase67j_live_status.csv",
-      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_live_status.csv",
+      "original_path": "outputs/execution/app_exports/phase66g_live_status.csv",
+      "resolved_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase66g_live_status.csv",
       "reason": "repo_relative_path",
       "exists": true
     },

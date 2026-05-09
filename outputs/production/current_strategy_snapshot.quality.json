@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot_quality",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-09T15:29:13Z",
+  "generated_at_utc": "2026-05-09T21:55:58Z",
   "status": "passed",
   "error_count": 0,
   "warning_count": 0,
@@ -21,8 +21,8 @@
     "btc_baseline_reconstructs_from_close_series": true
   },
   "validated_paths": {
-    "snapshot_path": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
-    "timeseries_path": "/opt/market_regime_v1/outputs/production/current_strategy_timeseries.csv",
-    "diagnostics_path": "/opt/market_regime_v1/outputs/production/current_strategy_diagnostics.json"
+    "snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
+    "timeseries_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_timeseries.csv",
+    "diagnostics_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_diagnostics.json"
   }
 }

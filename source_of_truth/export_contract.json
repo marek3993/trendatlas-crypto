@@ -18,7 +18,7 @@
     "default_fallback_rule":  "If this file is missing or unreadable, only explicit safe app fallbacks may be used; legacy authority paths must not redefine truth or freshness, and guarded data/source availability must never degrade through silent fallback.",
     "production_core_truth_contract":  {
                                            "status":  "active_primary_strategy_truth_interface",
-                                           "strategy_version":  "phase68g_btc_persistence_10d_early_risk_075",
+                                           "strategy_version":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
                                            "snapshot_path":  "outputs/production/current_strategy_snapshot.json",
                                            "timeseries_path":  "outputs/production/current_strategy_timeseries.csv",
                                            "diagnostics_path":  "outputs/production/current_strategy_diagnostics.json",
@@ -104,14 +104,14 @@
                                        },
     "app_export_contract":  {
                                 "product_name":  "TrendAtlas Crypto",
-                                "main_strategy_model":  "phase68g_btc_persistence_10d_early_risk_075",
+                                "main_strategy_model":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
                                 "reference_strategy_model":  "phase67j_no_neo_main",
                                 "benchmark":  "BTC",
-                                "main_model_key":  "phase68g_btc_persistence_10d_early_risk_075",
+                                "main_model_key":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
                                 "reference_model_key":  "phase67j_no_neo_main",
                                 "benchmark_label":  "BTC",
                                 "compare_model_keys":  [
-                                                           "phase68g_btc_persistence_10d_early_risk_075",
+                                                           "phase68g_etf_flow_impulse_early_risk_cooldown_15",
                                                            "phase67j_no_neo_main"
                                                        ],
                                 "display_names":  {
@@ -128,13 +128,17 @@
                                                                                                "en":  "Trend / core layer"
                                                                                            },
                                                       "phase68g_btc_persistence_10d_early_risk_075":  {
-                                                                                                           "sk":  "Hlavna strategia",
-                                                                                                           "en":  "Main strategy"
+                                                                                                           "sk":  "Maksi fallback",
+                                                                                                           "en":  "Softer fallback"
                                                                                                        },
                                                       "phase68g_66g_1p25x_candidate":  {
-                                                                                           "sk":  "Mäkší fallback",
-                                                                                           "en":  "Softer fallback"
-                                                                                       }
+                                                                                           "sk":  "Sekundarny fallback",
+                                                                                           "en":  "Secondary fallback"
+                                                                                       },
+                                                      "phase68g_etf_flow_impulse_early_risk_cooldown_15":  {
+                                                                                                                   "sk":  "Hlavna strategia",
+                                                                                                                   "en":  "Main strategy"
+                                                                                                               }
                                                   },
                                 "model_sources":  {
                                                       "phase68i_dynamic_ladder_candidate":  {
@@ -172,9 +176,9 @@
                                                                             "contract_version":  1,
                                                                             "source_family":  "canonical_current_main_strategy_app_exports",
                                                                             "role":  "production_core_input_lineage_not_primary_app_truth_interface",
-                                                                            "main_strategy_model":  "phase68g_btc_persistence_10d_early_risk_075",
-                                                                            "canonical_metrics_source_path":  "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
-                                                                            "canonical_paper_source_path":  "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+                                                                            "main_strategy_model":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+                                                                            "canonical_metrics_source_path":  "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv",
+                                                                            "canonical_paper_source_path":  "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
                                                                             "allowed_canonical_root":  "outputs/execution/app_exports",
                                                                             "forbidden_source_roots":  [
                                                                                                            "outputs/execution/app_snapshot",
@@ -194,11 +198,11 @@
                                                            },
                                 "app_live_mode_contract":  {
                                                                "current":  {
-                                                                               "live_truth_mode":  "phase68g_btc_persistence_10d_early_risk_075",
-                                                                               "execution_profile":  "phase68g_btc_persistence_10d_early_risk_075",
-                                                                               "leverage_mode":  "phase68g_btc_persistence_10d_early_risk_075",
-                                                                               "deployment_candidate_label":  "phase68g_btc_persistence_10d_early_risk_075",
-                                                                               "fallback_profile_label":  "phase68g_66g_1p25x_candidate",
+                                                                               "live_truth_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+                                                                               "execution_profile":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+                                                                               "leverage_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+                                                                               "deployment_candidate_label":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+                                                                               "fallback_profile_label":  "phase68g_btc_persistence_10d_early_risk_075",
                                                                                "approval_gate_status":  "approved_and_applied",
                                                                                "real_order_gate_status":  "live_order_enabled_and_approved",
                                                                                "real_order_eligible_status":  "live_order_enabled_and_approved"

@@ -1,13 +1,13 @@
 {
   "artifact_type": "data_health_report_manifest",
   "schema_version": 1,
-  "generated_at_utc": "2026-05-09T15:29:22Z",
-  "script_path": "/opt/market_regime_v1/scripts/production/data_health_common.py",
-  "root_path": "/opt/market_regime_v1",
+  "generated_at_utc": "2026-05-09T21:56:20Z",
+  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\data_health_common.py",
+  "root_path": "C:\\Users\\benda\\Desktop\\market_regime_v1",
   "output_paths": {
-    "report_path": "/opt/market_regime_v1/outputs/production/data_health_report.json",
-    "quality_path": "/opt/market_regime_v1/outputs/production/data_health_report.quality.json",
-    "manifest_path": "/opt/market_regime_v1/outputs/production/data_health_report.manifest.json"
+    "report_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.json",
+    "quality_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.quality.json",
+    "manifest_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\data_health_report.manifest.json"
   },
   "source_ids": [
     "production_current_strategy_snapshot",
@@ -30,7 +30,8 @@
   "reference_closed_day_utc": "2026-05-08",
   "context": {
     "latest_closed_utc_day": "2026-05-08",
-    "btc_last_day": "2026-05-08"
+    "btc_last_day": "2026-05-08",
+    "main_strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15"
   },
   "path_overrides": {},
   "env_override_source_ids": []

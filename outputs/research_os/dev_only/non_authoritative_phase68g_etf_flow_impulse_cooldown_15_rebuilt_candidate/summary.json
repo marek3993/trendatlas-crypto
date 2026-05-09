@@ -1,15 +1,15 @@
 {
   "artifact_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
   "artifact_label": "ETF-flow impulse EARLY_RISK cooldown_15 rebuilt candidate",
-  "generated_at_utc": "2026-05-06 06:38:09 UTC",
+  "generated_at_utc": "2026-05-09 20:04:27 UTC",
   "status": "READY_FOR_FORENSIC_RERUN",
   "baseline": {
     "model_id": "phase68g_66g_1p25x_candidate",
     "label": "Production Core authorized phase68g_66g_1p25x_candidate",
-    "strategy_version": "phase68g_66g_1p25x_candidate",
-    "closed_day": "2026-05-04",
-    "current_reason_code": "candidate_wait_trend_confirmation",
-    "current_reason_text": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed."
+    "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+    "closed_day": "2026-05-08",
+    "current_reason_code": "candidate_persistence_lt_10_rows",
+    "current_reason_text": "BTC remains only the candidate. The strategy stays in CASH because the 10-row persistence gate is not ready yet (8/10 rows)."
   },
   "candidate": {
     "model_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
@@ -44,10 +44,10 @@
     "quality_json": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\quality.json"
   },
   "overlap": {
-    "joined_row_count": 579,
+    "joined_row_count": 580,
     "start_date": "2024-01-12",
-    "end_date": "2026-05-02",
-    "baseline_rows_loaded": 2922,
+    "end_date": "2026-05-05",
+    "baseline_rows_loaded": 2926,
     "etf_panel_rows_loaded": 580
   },
   "hard_invalidation_rule": {
@@ -68,20 +68,20 @@
       "baseline": {
         "period": "full_etf_overlap",
         "period_start": "2024-01-12",
-        "period_end": "2026-05-02",
+        "period_end": "2026-05-05",
         "model_id": "phase68g_66g_1p25x_candidate",
         "model_label": "Production Core authorized phase68g_66g_1p25x_candidate",
         "cooldown_days": null,
-        "gross_return_pct": 1216.067841,
-        "net_total_return_pct": 1191.577417,
-        "net_cagr_pct": 402.258176,
+        "gross_return_pct": 1276.43836,
+        "net_total_return_pct": 1249.917184,
+        "net_cagr_pct": 414.992813,
         "net_max_drawdown_pct": -11.017632,
-        "trade_days": 46,
-        "switch_count": 34,
-        "turnover_pressure": 42.5,
-        "exposure_days": 120,
-        "total_cost_pct": 1.9125,
-        "trading_fees_total_pct": 1.9125,
+        "trade_days": 48,
+        "switch_count": 36,
+        "turnover_pressure": 44.0,
+        "exposure_days": 128,
+        "total_cost_pct": 1.98,
+        "trading_fees_total_pct": 1.98,
         "funding_total_pct": 0.0,
         "borrow_cost_total_pct": 0.0,
         "tradable_slippage_cost_total_pct": 0.0,
@@ -90,53 +90,53 @@
       "candidate": {
         "period": "full_etf_overlap",
         "period_start": "2024-01-12",
-        "period_end": "2026-05-02",
+        "period_end": "2026-05-05",
         "model_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
         "model_label": "ETF-flow impulse cooldown_15 rebuilt candidate",
         "cooldown_days": 15,
-        "gross_return_pct": 1422.1093,
-        "net_total_return_pct": 1347.035817,
-        "net_cagr_pct": 439.590137,
+        "gross_return_pct": 1444.903168,
+        "net_total_return_pct": 1368.045983,
+        "net_cagr_pct": 442.930503,
         "net_max_drawdown_pct": -9.386068,
-        "trade_days": 72,
-        "switch_count": 60,
-        "turnover_pressure": 55.5,
+        "trade_days": 74,
+        "switch_count": 62,
+        "turnover_pressure": 56.5,
         "exposure_days": 197,
-        "total_cost_pct": 5.0975,
-        "trading_fees_total_pct": 2.4975,
+        "total_cost_pct": 5.1425,
+        "trading_fees_total_pct": 2.5425,
         "funding_total_pct": 0.0,
         "borrow_cost_total_pct": 0.0,
         "tradable_slippage_cost_total_pct": 2.6,
-        "early_risk_days": 77
+        "early_risk_days": 69
       },
       "deltas": {
-        "net_total_return_pct": 155.4584,
-        "net_cagr_pct": 37.331961,
+        "net_total_return_pct": 118.128799,
+        "net_cagr_pct": 27.93769,
         "net_max_drawdown_pct": 1.631564,
         "switch_count": 26,
-        "turnover_pressure": 13.0,
-        "exposure_days": 77,
-        "total_cost_pct": 3.185
+        "turnover_pressure": 12.5,
+        "exposure_days": 69,
+        "total_cost_pct": 3.1625
       }
     },
     "since2025": {
       "baseline": {
         "period": "since2025",
         "period_start": "2025-01-01",
-        "period_end": "2026-05-02",
+        "period_end": "2026-05-05",
         "model_id": "phase68g_66g_1p25x_candidate",
         "model_label": "Production Core authorized phase68g_66g_1p25x_candidate",
         "cooldown_days": null,
-        "gross_return_pct": 323.336006,
-        "net_total_return_pct": 319.368503,
-        "net_cagr_pct": 377.326209,
+        "gross_return_pct": 342.755228,
+        "net_total_return_pct": 338.311123,
+        "net_cagr_pct": 398.484834,
         "net_max_drawdown_pct": -8.626787,
-        "trade_days": 18,
-        "switch_count": 18,
-        "turnover_pressure": 21.5,
-        "exposure_days": 56,
-        "total_cost_pct": 0.9675,
-        "trading_fees_total_pct": 0.9675,
+        "trade_days": 20,
+        "switch_count": 20,
+        "turnover_pressure": 23.0,
+        "exposure_days": 64,
+        "total_cost_pct": 1.035,
+        "trading_fees_total_pct": 1.035,
         "funding_total_pct": 0.0,
         "borrow_cost_total_pct": 0.0,
         "tradable_slippage_cost_total_pct": 0.0,
@@ -145,46 +145,46 @@
       "candidate": {
         "period": "since2025",
         "period_start": "2025-01-01",
-        "period_end": "2026-05-02",
+        "period_end": "2026-05-05",
         "model_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
         "model_label": "ETF-flow impulse cooldown_15 rebuilt candidate",
         "cooldown_days": 15,
-        "gross_return_pct": 373.58637,
-        "net_total_return_pct": 361.180329,
-        "net_cagr_pct": 429.440689,
+        "gross_return_pct": 380.678413,
+        "net_total_return_pct": 367.876414,
+        "net_cagr_pct": 435.141292,
         "net_max_drawdown_pct": -8.626787,
-        "trade_days": 32,
-        "switch_count": 32,
-        "turnover_pressure": 28.5,
+        "trade_days": 34,
+        "switch_count": 34,
+        "turnover_pressure": 29.5,
         "exposure_days": 101,
-        "total_cost_pct": 2.6825,
-        "trading_fees_total_pct": 1.2825,
+        "total_cost_pct": 2.7275,
+        "trading_fees_total_pct": 1.3275,
         "funding_total_pct": 0.0,
         "borrow_cost_total_pct": 0.0,
         "tradable_slippage_cost_total_pct": 1.4,
-        "early_risk_days": 45
+        "early_risk_days": 37
       },
       "deltas": {
-        "net_total_return_pct": 41.811826,
-        "net_cagr_pct": 52.11448,
+        "net_total_return_pct": 29.565291,
+        "net_cagr_pct": 36.656458,
         "net_max_drawdown_pct": 0.0,
         "switch_count": 14,
-        "turnover_pressure": 7.0,
-        "exposure_days": 45,
-        "total_cost_pct": 1.715
+        "turnover_pressure": 6.5,
+        "exposure_days": 37,
+        "total_cost_pct": 1.6925
       }
     }
   },
   "window_counts": {
     "full_etf_overlap": {
-      "activation_windows_count": 14,
+      "activation_windows_count": 15,
       "false_start_count": 12,
-      "successful_handoff_count": 2
+      "successful_handoff_count": 3
     },
     "since2025": {
-      "activation_windows_count": 7,
+      "activation_windows_count": 8,
       "false_start_count": 7,
-      "successful_handoff_count": 0
+      "successful_handoff_count": 1
     }
   },
   "blocker_rows": {
@@ -194,16 +194,16 @@
       "cooldown_days": 15,
       "period": "full_etf_overlap",
       "period_start": "2024-01-12",
-      "period_end": "2026-05-02",
-      "baseline_not_cash": 120,
+      "period_end": "2026-05-05",
+      "baseline_not_cash": 128,
       "etf_flow_not_ready": 0,
       "flow_2_of_3_not_positive": 214,
       "flow_3d_sum_below_floor": 383,
       "btc_price_filter_failed": 272,
       "hard_invalidation_on": 60,
-      "permission_on_but_baseline_already_full_risk": 71,
-      "cooldown_active_days": 106,
-      "cooldown_blocked_entry_days": 21
+      "permission_on_but_baseline_already_full_risk": 75,
+      "cooldown_active_days": 107,
+      "cooldown_blocked_entry_days": 22
     },
     "since2025": {
       "variant_id": "cooldown_15_days",
@@ -211,30 +211,49 @@
       "cooldown_days": 15,
       "period": "since2025",
       "period_start": "2025-01-01",
-      "period_end": "2026-05-02",
-      "baseline_not_cash": 56,
+      "period_end": "2026-05-05",
+      "baseline_not_cash": 64,
       "etf_flow_not_ready": 0,
       "flow_2_of_3_not_positive": 142,
       "flow_3d_sum_below_floor": 232,
       "btc_price_filter_failed": 170,
       "hard_invalidation_on": 40,
-      "permission_on_but_baseline_already_full_risk": 31,
-      "cooldown_active_days": 57,
-      "cooldown_blocked_entry_days": 14
+      "permission_on_but_baseline_already_full_risk": 35,
+      "cooldown_active_days": 58,
+      "cooldown_blocked_entry_days": 15
     }
   },
   "cooldown_summary": {
     "cooldown_event_count": 12,
-    "cooldown_active_days_total": 106,
-    "cooldown_blocked_entry_days_total": 21
+    "cooldown_active_days_total": 107,
+    "cooldown_blocked_entry_days_total": 22
   },
-  "recent_useful_window": null,
+  "recent_useful_window": {
+    "window_id": "window_010",
+    "start_date": "2025-04-23",
+    "end_date": "2025-05-12",
+    "baseline_handoff_date": "2025-05-13",
+    "lead_days_vs_baseline_full_risk": 20,
+    "net_contribution_pct_vs_baseline": 6.261644,
+    "gross_contribution_pct_vs_baseline": 6.391801,
+    "bucket": "since2025",
+    "false_start": false,
+    "exit_reason": "baseline_full_risk_handoff",
+    "early_risk_days": 14,
+    "entry_flow_3d_sum_usd": 1430800000.0,
+    "entry_flow_2_of_last_3_positive_flag": true,
+    "entry_btc_close": 93691.08,
+    "entry_btc_ema10": 87683.846117,
+    "model_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate",
+    "model_label": "ETF-flow impulse cooldown_15 rebuilt candidate",
+    "cooldown_days": 15
+  },
   "april_2026_window_assessment": {
     "april_2026_window_present": true,
     "useful_april_2026_window_present": false,
     "observed_april_2026_windows": [
       {
-        "window_id": "window_014",
+        "window_id": "window_015",
         "start_date": "2026-04-11",
         "end_date": "2026-04-27",
         "baseline_handoff_date": "",
@@ -258,16 +277,16 @@
   "leave_one_best_window_out": {
     "best_window_id": "window_010",
     "best_window_start_date": "2025-04-23",
-    "best_window_end_date": "2025-05-27",
-    "best_window_exit_reason": "btc_price_filter_failed",
-    "best_window_false_start": true,
+    "best_window_end_date": "2025-05-12",
+    "best_window_exit_reason": "baseline_full_risk_handoff",
+    "best_window_false_start": false,
     "best_window_bucket": "since2025",
-    "best_window_net_contribution_pct_vs_baseline": 7.572366,
-    "full_overlap_net_return_delta_excluding_best_window_pct": 147.886034
+    "best_window_net_contribution_pct_vs_baseline": 6.261644,
+    "full_overlap_net_return_delta_excluding_best_window_pct": 111.867155
   },
   "diagnostic_context": {
-    "latest_state_explanation": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed.",
-    "current_cash_or_risk_reason": "BTC is only the current candidate. The strategy remains in CASH because trend has not confirmed entry (-0.1667 vs 0.1000), and authorized capital stays flat while no exposure is allowed."
+    "latest_state_explanation": "BTC remains only the candidate. The strategy stays in CASH because the 10-row persistence gate is not ready yet (8/10 rows).",
+    "current_cash_or_risk_reason": "BTC remains only the candidate. The strategy stays in CASH because the 10-row persistence gate is not ready yet (8/10 rows)."
   },
   "dev_only": true,
   "non_authoritative": true,

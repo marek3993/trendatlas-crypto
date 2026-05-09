@@ -1,132 +1,255 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-09T15:29:07Z",
+  "generated_at_utc": "2026-05-09T21:55:53Z",
   "strategy_id": "current_strategy",
-  "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
-  "adapter_name": "phase68g_btc_persistence_10d_early_risk_075_adapter",
-  "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
-  "git_commit": "a04527b0dbe7f4adc0ffccbbd622727a905908cc",
+  "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+  "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
+  "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
+  "git_commit": "836461eaedb459cd6e3f1711e180940e95d7b835",
   "source_inputs": {
-    "adapter_name": "phase68g_btc_persistence_10d_early_risk_075_adapter",
+    "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
     "strategy_id": "current_strategy",
-    "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
     "validated_closed_day": "2026-05-08",
-    "candidate_label": "BTC candidate persistence 10d / 0.75 EARLY_RISK",
-    "base_strategy_version": "phase68g_66g_1p25x_candidate",
-    "durable_baseline_route": {
-      "mode": "canonical_phase68g_source_rebuild",
-      "independent_of_active_current_strategy": true,
-      "base_adapter_name": "phase68g_66g_1p25x_candidate_adapter",
-      "status": "ready",
-      "gap_reason": null
+    "base_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+    "baseline_closed_day": "2026-05-08",
+    "candidate_compare_closed_day": "2026-05-08",
+    "durable_non_circular_route": {
+      "softer_fallback_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+      "secondary_baseline_strategy_version": "phase68g_66g_1p25x_candidate",
+      "lineage": "phase68g_etf_flow_impulse_early_risk_cooldown_15 -> phase68g_btc_persistence_10d_early_risk_075 -> phase68g_66g_1p25x_candidate",
+      "softer_fallback_source_inputs": {
+        "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+        "validated_closed_day": "2026-05-08",
+        "files": {
+          "durable_baseline_summary": {
+            "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+            "sha256": "cc53a81e0cbcac4e54fd34fcd290c51d8ae0331cac88100410b6631d44e8ad5f",
+            "size_bytes": 915,
+            "modified_utc": "2026-05-09T15:35:58Z",
+            "last_date": "2026-05-08",
+            "row_count": 1
+          },
+          "durable_baseline_paper": {
+            "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+            "sha256": "1411dc65e20e1dc128b805cee2d5f23b0333c675d9731f72f434efecf9a86e84",
+            "size_bytes": 2623372,
+            "modified_utc": "2026-05-09T15:35:58Z",
+            "last_date": "2026-05-08",
+            "row_count": 2926
+          },
+          "durable_baseline_trend_status": {
+            "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+            "sha256": "6390f5d783afd54c8aea56c873f10845923a44067d7fabd068f77c231c1bae00",
+            "size_bytes": 619,
+            "modified_utc": "2026-05-09T09:32:38Z",
+            "last_date": "2026-05-08",
+            "row_count": 1
+          },
+          "durable_baseline_trend_history": {
+            "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+            "sha256": "d3654f7383378abbca0563f9665240bd87002fcf0ebf56e5eeeb16795805c3d6",
+            "size_bytes": 379642,
+            "modified_utc": "2026-05-09T09:32:38Z",
+            "last_date": "2026-05-08",
+            "row_count": 2926
+          },
+          "durable_baseline_freshness_report": {
+            "path": "outputs/execution/freshness/app_freshness_report.json",
+            "sha256": "4d0cd1e1c254033632aab6b03669cc435b74c96aa0f40aff7e89f070cb1e650b",
+            "size_bytes": 1214,
+            "modified_utc": "2026-05-09T15:35:58Z",
+            "closed_day": "2026-05-08",
+            "status": "ok"
+          },
+          "benchmark_ohlcv": {
+            "path": "data/ohlcv/BTCUSDT_1d.csv",
+            "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
+            "size_bytes": 274631,
+            "modified_utc": "2026-05-09T20:22:08Z",
+            "last_date": "2026-05-08",
+            "row_count": 3187
+          }
+        }
+      }
     },
-    "evidence_status": {
-      "selected_variant_id": "btc_candidate_persistence_10d_075",
-      "evidence_quality_status": "passed",
-      "recommendation": "continue",
-      "recommendation_reason": "Continue: the variant captures the missed 2025 BTC move meaningfully, improves since2025, keeps drawdown inside the material-worsening threshold, and passes strict FULL_RISK pass-through."
-    },
+    "compare_windows": [
+      {
+        "name": "full_etf_overlap",
+        "start_date": null
+      },
+      {
+        "name": "since2025",
+        "start_date": "2025-01-01"
+      }
+    ],
     "lineage": {
       "dev_only_source_lineage": true,
       "non_authoritative_research_input": true,
-      "official_truth": false,
-      "live_truth": false,
-      "app_truth": false,
-      "execution_truth": false
+      "official_truth": true,
+      "live_truth": true,
+      "app_truth": true,
+      "execution_truth": true
     },
     "files": {
-      "phase68g_strategy_summary": {
-        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-        "sha256": "9799ceaeb542bb8f649ee5a9522216e7e628dcd6b9ffdd092851b0245e197ace",
-        "size_bytes": 902,
-        "modified_utc": "2026-05-09T15:29:05Z",
+      "durable_baseline_summary": {
+        "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+        "sha256": "cc53a81e0cbcac4e54fd34fcd290c51d8ae0331cac88100410b6631d44e8ad5f",
+        "size_bytes": 915,
+        "modified_utc": "2026-05-09T15:35:58Z",
         "last_date": "2026-05-08",
         "row_count": 1
       },
-      "phase68g_strategy_paper": {
-        "path": "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-        "sha256": "3763051066908cbcc8749b7eb4519ebf8a122a53af7530efa4d0b5c1a74fd0d2",
-        "size_bytes": 1052817,
-        "modified_utc": "2026-05-09T15:29:05Z",
+      "durable_baseline_paper": {
+        "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+        "sha256": "1411dc65e20e1dc128b805cee2d5f23b0333c675d9731f72f434efecf9a86e84",
+        "size_bytes": 2623372,
+        "modified_utc": "2026-05-09T15:35:58Z",
         "last_date": "2026-05-08",
         "row_count": 2926
       },
-      "phase68g_trend_status": {
+      "durable_baseline_trend_status": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
-        "sha256": "e33c774e8b17e04a77d99dfde01477e72a97e0636782458445429f59ba620aa8",
-        "size_bytes": 617,
-        "modified_utc": "2026-05-09T15:24:35Z",
+        "sha256": "6390f5d783afd54c8aea56c873f10845923a44067d7fabd068f77c231c1bae00",
+        "size_bytes": 619,
+        "modified_utc": "2026-05-09T09:32:38Z",
         "last_date": "2026-05-08",
         "row_count": 1
       },
-      "phase68g_trend_history": {
+      "durable_baseline_trend_history": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
-        "sha256": "0157d10bb085ec4afab5a44a1765404777b2ae6dff2ec0f85fc5ea7ebe9f8adf",
-        "size_bytes": 376715,
-        "modified_utc": "2026-05-09T15:28:39Z",
+        "sha256": "d3654f7383378abbca0563f9665240bd87002fcf0ebf56e5eeeb16795805c3d6",
+        "size_bytes": 379642,
+        "modified_utc": "2026-05-09T09:32:38Z",
         "last_date": "2026-05-08",
         "row_count": 2926
       },
-      "phase68g_freshness_report": {
+      "durable_baseline_freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
-        "sha256": "3d8033fe1af753e974a98cae305469783d962b64c24b36633623fde08985faf8",
-        "size_bytes": 1172,
-        "modified_utc": "2026-05-09T15:29:01Z",
-        "last_date": "2026-05-08",
+        "sha256": "4d0cd1e1c254033632aab6b03669cc435b74c96aa0f40aff7e89f070cb1e650b",
+        "size_bytes": 1214,
+        "modified_utc": "2026-05-09T15:35:58Z",
+        "closed_day": "2026-05-08",
         "status": "ok"
+      },
+      "benchmark_ohlcv": {
+        "path": "data/ohlcv/BTCUSDT_1d.csv",
+        "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
+        "size_bytes": 274631,
+        "modified_utc": "2026-05-09T20:22:08Z",
+        "last_date": "2026-05-08",
+        "row_count": 3187
+      },
+      "etf_panel": {
+        "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+        "sha256": "f37629c6d5b37ef11c2f7184ea0798cf152db5110647ed3b3a1289f206451f46",
+        "size_bytes": 220468,
+        "modified_utc": "2026-05-09T21:43:27Z",
+        "last_date": "2026-05-09",
+        "row_count": 584
       },
       "btc_ohlcv": {
         "path": "data/ohlcv/BTCUSDT_1d.csv",
         "sha256": "fa824a62651c34470701725a12eef6d296ed8ae2917079ace0730b43e5bc544a",
         "size_bytes": 274631,
-        "modified_utc": "2026-05-09T15:24:37Z",
+        "modified_utc": "2026-05-09T20:22:08Z",
         "last_date": "2026-05-08",
         "row_count": 3187
       },
-      "dev_only_contract": {
-        "path": "research_os/dev_only/contracts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.contract.json",
-        "sha256": "34d4980a8758665a159d5f2975992e8025261af2f4e8dc44534ce09f9a9cb38e",
-        "size_bytes": 5341,
-        "modified_utc": "2026-05-09T15:24:35Z"
-      },
-      "dev_only_spec": {
-        "path": "research_os/dev_only/specs/dev_only_production_core_btc_candidate_persistence_early_risk_compare.spec.json",
-        "sha256": "5c5aaca346d52ef0bb8d0df6a29be78b6cd524d77b9a3c0f9e9fb04e04172e3d",
-        "size_bytes": 2724,
-        "modified_utc": "2026-05-09T15:24:35Z"
-      },
-      "dev_only_manifest_seed": {
-        "path": "research_os/dev_only/manifests/dev_only_production_core_btc_candidate_persistence_early_risk_compare.manifest.json",
-        "sha256": "c0b6320410d7be0f2c5244094ec32c9ff051268da153a54fcb44b989b3e69d00",
-        "size_bytes": 1144,
-        "modified_utc": "2026-05-09T15:24:35Z"
-      },
-      "dev_only_summary": {
-        "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/summary.json",
-        "sha256": "0280cb466197747efed0e81872d7a1b5c6d67f80312cf11fc8d4a6a8db81f9bb",
-        "size_bytes": 33866,
-        "modified_utc": "2026-05-09T15:24:35Z"
-      },
-      "dev_only_quality": {
-        "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/quality.json",
-        "sha256": "e7cc134d135d875ad71a767ca2fe5e494e45ab5ae49b340ac17d077a87d16155",
-        "size_bytes": 5535,
-        "modified_utc": "2026-05-09T15:24:35Z",
-        "status": "passed"
-      },
-      "dev_only_variant_compare": {
-        "path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/variant_compare.csv",
-        "sha256": "a43da0c6fedab7e796727480938b4a1cf33d8c6bfe1b0b58307bda60f7a99f7f",
-        "size_bytes": 1364,
-        "modified_utc": "2026-05-09T15:24:35Z",
-        "row_count": 2
-      },
       "dev_only_script": {
-        "path": "scripts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.py",
-        "sha256": "edfed267a320a877100b7fe0b26c6a24e5bdab776cfe267b8bf8776d8a0cec21",
-        "size_bytes": 71682,
-        "modified_utc": "2026-05-09T15:24:35Z"
+        "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+        "sha256": "1f46871a43b733c12c34f98e20c1065eec72710e6840e523d5d0104674476c2e",
+        "size_bytes": 61330,
+        "modified_utc": "2026-05-06T09:23:48Z"
+      },
+      "compiled_probe_helper": {
+        "path": "scripts/__pycache__/dev_only_phase68g_etf_flow_impulse_probe.cpython-312.pyc",
+        "sha256": "62a6fda788c8d85f222e8dea6b3c90a6a6b74dd2512021e11dd0c624c69e85b3",
+        "size_bytes": 57477,
+        "modified_utc": "2026-05-05T12:05:39Z"
+      },
+      "compiled_cooldown_helper": {
+        "path": "scripts/__pycache__/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-312.pyc",
+        "sha256": "4daf74bbcb4c7a2f765db3028869a60ce249420fcb3ee7e454aff794c15a26e7",
+        "size_bytes": 65500,
+        "modified_utc": "2026-05-05T13:14:53Z"
+      },
+      "project_truth": {
+        "path": "source_of_truth/project_truth.json",
+        "sha256": "1c076456a6fa4c95c0849640514eedfc6d80d7ce42297e770c835f3217ca5f40",
+        "size_bytes": 27095,
+        "modified_utc": "2026-05-09T21:55:45Z"
+      },
+      "export_contract": {
+        "path": "source_of_truth/export_contract.json",
+        "sha256": "d5e81a06f0c8471d5f77d2f5aca097b8a19e68975a861627400248b4eab67387",
+        "size_bytes": 25200,
+        "modified_utc": "2026-05-09T21:55:45Z"
+      }
+    },
+    "cost_model": {
+      "annual_borrow_cost_pct": 12.0,
+      "tradable_transition_slippage_bps": 10.0,
+      "taker_fee_bps": 4.5,
+      "maker_fee_bps": 1.5,
+      "fee_side_mode": "taker",
+      "source": "derived from outputs/production/current_strategy_timeseries.csv daily cost columns",
+      "flow_3d_floor_usd": 500000000.0,
+      "btc_ema_days": 10,
+      "cooldown_days": 15
+    },
+    "hard_invalidation_rule": {
+      "source_column": "stress_block_day",
+      "fallback_used": false,
+      "detail": "stress_block_day is present and is used directly as the hard invalidation / risk-off equivalent."
+    },
+    "window_counts": {
+      "full_etf_overlap": {
+        "activation_windows_count": 15,
+        "false_start_count": 12,
+        "successful_handoff_count": 3
+      },
+      "since2025": {
+        "activation_windows_count": 8,
+        "false_start_count": 7,
+        "successful_handoff_count": 1
+      }
+    },
+    "blocker_rows": {
+      "full_etf_overlap": {
+        "variant_id": "cooldown_15_days",
+        "model_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "cooldown_days": 15,
+        "period": "full_etf_overlap",
+        "period_start": "2024-01-12",
+        "period_end": "2026-05-08",
+        "baseline_not_cash": 128,
+        "etf_flow_not_ready": 0,
+        "flow_2_of_3_not_positive": 214,
+        "flow_3d_sum_below_floor": 384,
+        "btc_price_filter_failed": 272,
+        "hard_invalidation_on": 60,
+        "permission_on_but_baseline_already_full_risk": 75,
+        "cooldown_active_days": 110,
+        "cooldown_blocked_entry_days": 24
+      },
+      "since2025": {
+        "variant_id": "cooldown_15_days",
+        "model_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "cooldown_days": 15,
+        "period": "since2025",
+        "period_start": "2025-01-01",
+        "period_end": "2026-05-08",
+        "baseline_not_cash": 64,
+        "etf_flow_not_ready": 0,
+        "flow_2_of_3_not_positive": 142,
+        "flow_3d_sum_below_floor": 233,
+        "btc_price_filter_failed": 170,
+        "hard_invalidation_on": 40,
+        "permission_on_but_baseline_already_full_risk": 35,
+        "cooldown_active_days": 61,
+        "cooldown_blocked_entry_days": 17
       }
     }
   },

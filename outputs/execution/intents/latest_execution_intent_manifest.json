@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_execution_intent",
-  "generated_at_utc": "2026-05-09T12:10:31Z",
-  "started_at_utc": "2026-05-09T12:10:30Z",
+  "generated_at_utc": "2026-05-09T21:56:09Z",
+  "started_at_utc": "2026-05-09T21:56:09Z",
   "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\build_execution_intent_from_strategy_exports.py",
   "input_paths": [
     "C:\\Users\\benda\\Desktop\\market_regime_v1\\source_of_truth\\export_contract.json",

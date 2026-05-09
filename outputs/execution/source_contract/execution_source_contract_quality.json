@@ -3,13 +3,13 @@
   "paths_registry_present": true,
   "missing_registry_key_count": 0,
   "missing_file_count": 0,
-  "hard_required_missing_count": 0,
-  "authority_latest_successful_snapshot_valid": true,
-  "authority_latest_attempt_status_valid": true,
+  "hard_required_missing_count": 2,
+  "authority_latest_successful_snapshot_valid": false,
+  "authority_latest_attempt_status_valid": false,
   "production_current_strategy_snapshot_valid": true,
   "strategy_chain_freshness_monitoring_valid": true,
-  "authority_error_count": 0,
+  "authority_error_count": 2,
   "production_error_count": 0,
-  "contract_status": "valid",
-  "ready_for_intent_builder": true
+  "contract_status": "invalid",
+  "ready_for_intent_builder": false
 }

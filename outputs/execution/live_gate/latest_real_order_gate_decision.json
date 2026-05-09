@@ -1,7 +1,7 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-05-09T12:10:34Z",
-  "signal_id": "current_strategy::phase68g_btc_persistence_10d_early_risk_075::2026-05-08::target_CASH::candidate_BTC",
+  "generated_at_utc": "2026-05-09T21:56:13Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-05-08::target_CASH::candidate_BTC",
   "target_asset": "CASH",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
@@ -58,12 +58,12 @@
     "intent_allow_live_order_candidate_matches_snapshot": true
   },
   "production_signal_context": {
-    "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
     "closed_day": "2026-05-08",
     "validation_status": "passed",
     "candidate_asset": "BTC",
     "current_asset": "CASH",
-    "signal_id": "current_strategy::phase68g_btc_persistence_10d_early_risk_075::2026-05-08::target_CASH::candidate_BTC",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-05-08::target_CASH::candidate_BTC",
     "target_asset": "CASH",
     "target_exposure": 0.0,
     "effective_market_exposure": 0.0,

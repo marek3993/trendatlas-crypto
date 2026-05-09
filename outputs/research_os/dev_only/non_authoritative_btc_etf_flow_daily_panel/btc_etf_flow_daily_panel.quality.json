@@ -1,7 +1,7 @@
 {
   "artifact_type": "dev_only_btc_etf_flow_daily_panel_quality",
   "artifact_id": "btc_etf_flow_daily_panel_quality",
-  "generated_at_utc": "2026-05-05 11:43:47 UTC",
+  "generated_at_utc": "2026-05-09 21:31:57 UTC",
   "family_id": "btc_etf_flow_daily_panel",
   "required_columns": [
     "date",
@@ -52,16 +52,16 @@
   ],
   "status": "passed",
   "panel_start_session_date": "2024-01-11",
-  "panel_end_session_date": "2026-05-04",
+  "panel_end_session_date": "2026-05-08",
   "panel_start_causal_btc_utc_day": "2024-01-12",
-  "panel_end_causal_btc_utc_day": "2026-05-05",
-  "row_count": 580,
-  "child_row_count": 6249,
+  "panel_end_causal_btc_utc_day": "2026-05-09",
+  "row_count": 584,
+  "child_row_count": 6297,
   "field_coverage": {
     "aggregate_net_flow_usd": {
-      "non_null_count": 580,
+      "non_null_count": 584,
       "first_non_null_date": "2024-01-11",
-      "last_non_null_date": "2026-05-04"
+      "last_non_null_date": "2026-05-08"
     },
     "aggregate_net_flow_btc": {
       "non_null_count": 0,
@@ -90,8 +90,8 @@
     }
   },
   "calendar_audit": {
-    "expected_us_trading_sessions_in_range": 580,
-    "observed_us_trading_sessions_in_range": 580,
+    "expected_us_trading_sessions_in_range": 584,
+    "observed_us_trading_sessions_in_range": 584,
     "missing_expected_us_trading_sessions": [],
     "unexpected_non_trading_session_dates": []
   },
@@ -100,8 +100,8 @@
     "max_abs_diff_usd": null,
     "median_abs_diff_usd": null
   },
-  "daily_causal_ready_days": 580,
-  "probe_input_ready_days": 580,
+  "daily_causal_ready_days": 584,
+  "probe_input_ready_days": 584,
   "ready_for_dev_only_probe": true,
   "verdict": "READY_FOR_DEV_ONLY_PROBE",
   "verdict_reason": "Causal ETF-flow rows are available. btc_short_price_filter_pass remains intentionally null because strategy logic is out of scope, but the raw BTC spot close needed for that downstream leg is present.",

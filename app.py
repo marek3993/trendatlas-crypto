@@ -3344,8 +3344,10 @@ def prettify_live_mode(value: str | None, lang: str) -> str:
     raw = str(value).strip().lower()
     mapping = {
         "1.0x_without_leverage": {"sk": "Bez leverage", "en": "Without leverage"},
-        "phase68i_dynamic_ladder_candidate": {"sk": "Dynamická leverage škála", "en": "Dynamic leverage ladder"},
-        "phase68g_66g_1p25x_candidate": {"sk": "Statický 1.25x fallback", "en": "Static 1.25x fallback"},
+        "phase68g_etf_flow_impulse_early_risk_cooldown_15": {"sk": "Hlavna strategia", "en": "Main strategy"},
+        "phase68g_btc_persistence_10d_early_risk_075": {"sk": "Maksi fallback", "en": "Softer fallback"},
+        "phase68g_66g_1p25x_candidate": {"sk": "Sekundarny fallback", "en": "Secondary fallback"},
+        "phase68i_dynamic_ladder_candidate": {"sk": "Historicky fallback", "en": "Historical fallback"},
     }
     return mapping.get(raw, {"sk": str(value), "en": str(value)})[lang]
 
@@ -3357,9 +3359,12 @@ def prettify_execution_profile(value: str | None, lang: str) -> str:
     mapping = {
         "unlevered": {"sk": "Bez leverage", "en": "Without leverage"},
         "none": {"sk": "Bez leverage", "en": "Without leverage"},
-        "dynamic_ladder": {"sk": "Dynamická leverage škála", "en": "Dynamic leverage ladder"},
-        "static_1p25x": {"sk": "Statický 1.25x fallback", "en": "Static 1.25x fallback"},
-        "phase68g_66g_1p25x_candidate": {"sk": "Statický 1.25x fallback", "en": "Static 1.25x fallback"},
+        "dynamic_ladder": {"sk": "Historicky fallback", "en": "Historical fallback"},
+        "static_1p25x": {"sk": "Sekundarny fallback", "en": "Secondary fallback"},
+        "phase68g_etf_flow_impulse_early_risk_cooldown_15": {"sk": "Hlavna strategia", "en": "Main strategy"},
+        "phase68g_btc_persistence_10d_early_risk_075": {"sk": "Maksi fallback", "en": "Softer fallback"},
+        "phase68g_66g_1p25x_candidate": {"sk": "Sekundarny fallback", "en": "Secondary fallback"},
+        "phase68i_dynamic_ladder_candidate": {"sk": "Historicky fallback", "en": "Historical fallback"},
     }
     return mapping.get(raw, {"sk": str(value), "en": str(value)})[lang]
 

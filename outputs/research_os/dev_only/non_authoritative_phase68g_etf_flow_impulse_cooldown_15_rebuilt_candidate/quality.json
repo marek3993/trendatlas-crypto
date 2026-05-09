@@ -1,6 +1,6 @@
 {
   "artifact_id": "phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate_quality",
-  "generated_at_utc": "2026-05-06 06:38:09 UTC",
+  "generated_at_utc": "2026-05-09 20:04:27 UTC",
   "checks": [
     {
       "name": "json_parse",
@@ -15,7 +15,7 @@
     {
       "name": "production_core_baseline_rows_loaded",
       "ok": true,
-      "detail": "loaded 2922 baseline rows"
+      "detail": "loaded 2926 baseline rows"
     },
     {
       "name": "etf_panel_rows_loaded",
@@ -45,7 +45,7 @@
     {
       "name": "confirm_baseline_non_cash_behavior_passes_through_unchanged",
       "ok": true,
-      "detail": "baseline FULL_RISK strict pass-through verified on 120 rows"
+      "detail": "baseline FULL_RISK strict pass-through verified on 128 rows"
     },
     {
       "name": "confirm_cooldown_15_implementation",
@@ -93,7 +93,7 @@
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\candidate_timeseries.csv",
         "kind": "csv",
         "ok": true,
-        "detail": "candidate_timeseries.csv rows=579"
+        "detail": "candidate_timeseries.csv rows=580"
       },
       {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\handoff_row_audit.csv",
@@ -111,7 +111,7 @@
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\activation_windows.csv",
         "kind": "csv",
         "ok": true,
-        "detail": "activation_windows.csv rows=14"
+        "detail": "activation_windows.csv rows=15"
       },
       {
         "path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\dev_only\\non_authoritative_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate\\cost_metrics.csv",
@@ -130,7 +130,7 @@
   "status": "passed",
   "final_status": "READY_FOR_FORENSIC_RERUN",
   "cooldown_event_count": 12,
-  "activation_windows_count": 14,
+  "activation_windows_count": 15,
   "blocker_rows": {
     "full_etf_overlap": {
       "variant_id": "cooldown_15_days",
@@ -138,16 +138,16 @@
       "cooldown_days": 15,
       "period": "full_etf_overlap",
       "period_start": "2024-01-12",
-      "period_end": "2026-05-02",
-      "baseline_not_cash": 120,
+      "period_end": "2026-05-05",
+      "baseline_not_cash": 128,
       "etf_flow_not_ready": 0,
       "flow_2_of_3_not_positive": 214,
       "flow_3d_sum_below_floor": 383,
       "btc_price_filter_failed": 272,
       "hard_invalidation_on": 60,
-      "permission_on_but_baseline_already_full_risk": 71,
-      "cooldown_active_days": 106,
-      "cooldown_blocked_entry_days": 21
+      "permission_on_but_baseline_already_full_risk": 75,
+      "cooldown_active_days": 107,
+      "cooldown_blocked_entry_days": 22
     },
     "since2025": {
       "variant_id": "cooldown_15_days",
@@ -155,16 +155,16 @@
       "cooldown_days": 15,
       "period": "since2025",
       "period_start": "2025-01-01",
-      "period_end": "2026-05-02",
-      "baseline_not_cash": 56,
+      "period_end": "2026-05-05",
+      "baseline_not_cash": 64,
       "etf_flow_not_ready": 0,
       "flow_2_of_3_not_positive": 142,
       "flow_3d_sum_below_floor": 232,
       "btc_price_filter_failed": 170,
       "hard_invalidation_on": 40,
-      "permission_on_but_baseline_already_full_risk": 31,
-      "cooldown_active_days": 57,
-      "cooldown_blocked_entry_days": 14
+      "permission_on_but_baseline_already_full_risk": 35,
+      "cooldown_active_days": 58,
+      "cooldown_blocked_entry_days": 15
     }
   },
   "handoff_row_audit_rows": [
@@ -176,8 +176,8 @@
       "candidate_asset": "BASE",
       "baseline_effective_market_exposure": 1.25,
       "candidate_effective_market_exposure": 1.25,
-      "baseline_net_return": 0.006463615530957901,
-      "candidate_net_return": 0.006463615530957901,
+      "baseline_net_return": 0.006463615531000001,
+      "candidate_net_return": 0.006463615531000001,
       "baseline_turnover": 1.25,
       "candidate_turnover": 1.25,
       "baseline_trading_fees": 0.0005625,
@@ -188,8 +188,8 @@
       "candidate_funding": 0.0,
       "baseline_slippage": 0.0,
       "candidate_slippage": 0.0,
-      "baseline_equity": 1.0064636155309579,
-      "candidate_equity": 1.0064636155309579,
+      "baseline_equity": 1.006463615531,
+      "candidate_equity": 1.006463615531,
       "all_fields_match_flag": true
     },
     {
@@ -200,8 +200,8 @@
       "candidate_asset": "DOGE",
       "baseline_effective_market_exposure": 1.0,
       "candidate_effective_market_exposure": 1.0,
-      "baseline_net_return": -0.028082769541309997,
-      "candidate_net_return": -0.028082769541309997,
+      "baseline_net_return": -0.028082769541,
+      "candidate_net_return": -0.028082769541,
       "baseline_turnover": 1.0,
       "candidate_turnover": 1.0,
       "baseline_trading_fees": 0.00045,
@@ -212,8 +212,8 @@
       "candidate_funding": 0.0,
       "baseline_slippage": 0.0,
       "candidate_slippage": 0.0,
-      "baseline_equity": 1.212957153117397,
-      "candidate_equity": 1.212957153117397,
+      "baseline_equity": 1.212957153118806,
+      "candidate_equity": 1.212957153118806,
       "all_fields_match_flag": true
     }
   ],
