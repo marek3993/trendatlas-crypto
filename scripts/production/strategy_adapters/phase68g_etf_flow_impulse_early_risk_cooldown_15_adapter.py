@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import sys
 from dataclasses import dataclass
+from datetime import date as date_cls
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -46,6 +48,10 @@ COOLDOWN_DAYS = 15
 COMPARE_WINDOWS: tuple[tuple[str, str | None], ...] = (
     ("full_etf_overlap", None),
     ("since2025", "2025-01-01"),
+)
+ISO_DAY_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+ISO_MIDNIGHT_PATTERN = re.compile(
+    r"^(?P<day>\d{4}-\d{2}-\d{2})[ T]00:00:00(?:\.0+)?(?:Z|[+-]00:?00)?$"
 )
 
 EXPECTED_LIVE_TRUTH = BTC_PERSISTENCE_CANDIDATE_ID
@@ -104,14 +110,32 @@ def _path_for_manifest(path: Path, *, root: Path) -> str:
 
 
 def _normalize_iso_day_text(value: Any, *, context: str) -> str:
-    text = str(value or "").strip()
+    if value is None:
+        raise ValueError(f"{context} is missing")
+    if isinstance(value, pd.Timestamp):
+        if pd.isna(value):
+            raise ValueError(f"{context} is missing")
+        stamp = value
+        if stamp.time() != datetime.min.time() or stamp.nanosecond != 0:
+            raise ValueError(f"{context} is not an ISO day: {value}")
+        return stamp.strftime("%Y-%m-%d")
+    if isinstance(value, datetime):
+        stamp = pd.Timestamp(value)
+        if stamp.time() != datetime.min.time() or stamp.nanosecond != 0:
+            raise ValueError(f"{context} is not an ISO day: {value}")
+        return stamp.strftime("%Y-%m-%d")
+    if isinstance(value, date_cls):
+        return value.isoformat()
+
+    text = str(value).strip()
     if not text:
         raise ValueError(f"{context} is missing")
-    if "T" in text:
-        text = text.split("T", 1)[0]
-    if len(text) != 10:
-        raise ValueError(f"{context} is not an ISO day: {value}")
-    return text
+    if ISO_DAY_PATTERN.fullmatch(text):
+        return text
+    match = ISO_MIDNIGHT_PATTERN.fullmatch(text)
+    if match:
+        return match.group("day")
+    raise ValueError(f"{context} is not an ISO day: {value}")
 
 
 def _normalize_asset_code(value: Any) -> str:
@@ -415,6 +439,242 @@ def _compare_authorized_vs_durable_baseline(
             )
 
 
+def _to_float_value(value: Any, *, default: float = 0.0) -> float:
+    numeric = pd.to_numeric(pd.Series([value]), errors="coerce").iloc[0]
+    if pd.isna(numeric):
+        return default
+    return float(numeric)
+
+
+def _normalize_durable_baseline_timeseries(frame: pd.DataFrame) -> pd.DataFrame:
+    normalized = frame.copy()
+    normalized["date"] = pd.to_datetime(normalized["date"], errors="coerce")
+    normalized = normalized.dropna(subset=["date"]).sort_values("date")
+    normalized = normalized.drop_duplicates(subset=["date"], keep="last").reset_index(drop=True)
+    if normalized.empty:
+        raise ValueError("durable BTC-persistence paper has no usable rows after date normalization")
+    return normalized
+
+
+def _normalize_baseline_frame_from_timeseries(frame: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, Any]]:
+    normalized = _normalize_durable_baseline_timeseries(frame)
+    stress_column = "stress_block_day" if "stress_block_day" in normalized.columns else ""
+    if stress_column:
+        hard_invalidation_note = (
+            "stress_block_day is present and is used directly as the hard invalidation / "
+            "risk-off equivalent."
+        )
+        fallback_used = False
+        stress_values = normalized[stress_column].fillna(False)
+    else:
+        hard_invalidation_note = (
+            "stress_block_day is unavailable, so hard invalidation falls back to False on all rows."
+        )
+        fallback_used = True
+        stress_values = False
+
+    adapted = normalized.copy()
+    adapted["portfolio_held_asset"] = adapted["current_asset"].fillna("CASH").astype(str).str.upper()
+    adapted["is_exposed"] = pd.to_numeric(
+        adapted["effective_market_exposure"],
+        errors="coerce",
+    ).fillna(0.0).gt(0.0)
+    adapted["effective_leverage"] = pd.to_numeric(
+        adapted["current_exposure"],
+        errors="coerce",
+    ).fillna(0.0)
+    adapted["realistic_ret_gross"] = pd.to_numeric(
+        adapted["return_gross"],
+        errors="coerce",
+    ).fillna(0.0)
+    adapted["stress_block_active"] = pd.Series(stress_values, index=adapted.index).fillna(False)
+    adapted = adapted.drop(columns=[column for column in ["btc_close", "btc_return"] if column in adapted.columns])
+    adapted = adapted.set_index("date", drop=False)
+
+    return adapted, {
+        "source_column": stress_column or None,
+        "fallback_used": fallback_used,
+        "detail": hard_invalidation_note,
+    }
+
+
+def _build_durable_baseline_carry_forward_row(
+    *,
+    last_row: pd.Series,
+    target_day: pd.Timestamp,
+    benchmark_close: float,
+    annual_borrow_cost_pct: float,
+) -> pd.Series:
+    row = last_row.copy()
+    last_day_text = pd.Timestamp(last_row["date"]).strftime("%Y-%m-%d")
+    target_day_text = target_day.strftime("%Y-%m-%d")
+
+    held_asset = _normalize_asset_code(
+        last_row.get("actual_held_asset", last_row.get("current_asset", last_row.get("held_asset")))
+    )
+    exposure = _to_float_value(
+        last_row.get(
+            "effective_market_exposure",
+            last_row.get("current_exposure", last_row.get("exposure", 0.0)),
+        )
+    )
+    previous_btc_close = _to_float_value(last_row.get("btc_close"))
+    if previous_btc_close <= 0.0:
+        raise ValueError(
+            "Unable to carry forward durable BTC-persistence paper without a prior BTC close "
+            f"(paper_last_day={last_day_text})"
+        )
+    if held_asset not in CASH_EQUIVALENT_ASSETS and held_asset != "BTC":
+        raise ValueError(
+            "durable BTC-persistence paper is stale relative to the validated closed day, and the "
+            "latest held asset requires fresh non-BTC paper rows to extend safely "
+            f"(paper_last_day={last_day_text} target_day={target_day_text} held_asset={held_asset})"
+        )
+
+    btc_return = (benchmark_close / previous_btc_close) - 1.0
+    gross_return = 0.0
+    if held_asset == "BTC" and exposure > SUMMARY_TOLERANCE:
+        gross_return = btc_return * exposure
+    borrow_cost_daily = 0.0
+    leveraged_component = max(exposure - 1.0, 0.0)
+    if held_asset == "BTC" and leveraged_component > SUMMARY_TOLERANCE:
+        borrow_cost_daily = leveraged_component * (annual_borrow_cost_pct / 100.0) / 365.25
+    net_return = gross_return - borrow_cost_daily
+
+    previous_equity = _to_float_value(last_row.get("equity"), default=1.0)
+    next_equity = previous_equity * (1.0 + net_return)
+    previous_drawdown_pct = _to_float_value(last_row.get("drawdown_pct"))
+    previous_peak_equity = previous_equity
+    if previous_drawdown_pct < 0.0:
+        previous_peak_equity = previous_equity / max(1.0 + (previous_drawdown_pct / 100.0), 1e-12)
+    peak_equity = max(previous_peak_equity, next_equity)
+    next_drawdown_pct = ((next_equity / peak_equity) - 1.0) * 100.0 if peak_equity > 0.0 else 0.0
+
+    row["date"] = target_day
+    row["btc_close"] = round(benchmark_close, 12)
+    if "btc_return" in row.index:
+        row["btc_return"] = round(btc_return, 12)
+    if "btc_baseline_equity" in row.index:
+        row["btc_baseline_equity"] = round(
+            _to_float_value(last_row.get("btc_baseline_equity"), default=1.0) * (1.0 + btc_return),
+            12,
+        )
+    if "btc_baseline_index" in row.index:
+        row["btc_baseline_index"] = round(
+            _to_float_value(row.get("btc_baseline_equity"), default=1.0) * 100.0,
+            12,
+        )
+    for column in ("model_candidate_return_gross", "authorized_return_gross", "return_gross"):
+        if column in row.index:
+            row[column] = round(gross_return, 12)
+    for column in ("model_candidate_return_net", "authorized_return_net", "return_net"):
+        if column in row.index:
+            row[column] = round(net_return, 12)
+    for column in ("model_candidate_equity", "authorized_equity", "equity"):
+        if column in row.index:
+            row[column] = round(next_equity, 12)
+    if "drawdown_pct" in row.index:
+        row["drawdown_pct"] = round(next_drawdown_pct, 6)
+    if "fees_daily" in row.index:
+        row["fees_daily"] = 0.0
+    if "funding_daily" in row.index:
+        row["funding_daily"] = 0.0
+    if "borrow_cost_daily" in row.index:
+        row["borrow_cost_daily"] = round(borrow_cost_daily, 12)
+    if "slippage_cost_daily" in row.index:
+        row["slippage_cost_daily"] = 0.0
+    if "turnover" in row.index:
+        row["turnover"] = 0.0
+    if "fees_cumulative" in row.index:
+        row["fees_cumulative"] = round(
+            _to_float_value(last_row.get("fees_cumulative")) + _to_float_value(row.get("fees_daily")),
+            12,
+        )
+    if "funding_cumulative" in row.index:
+        row["funding_cumulative"] = round(
+            _to_float_value(last_row.get("funding_cumulative")) + _to_float_value(row.get("funding_daily")),
+            12,
+        )
+    if "borrow_cost_cumulative" in row.index:
+        row["borrow_cost_cumulative"] = round(
+            _to_float_value(last_row.get("borrow_cost_cumulative"))
+            + _to_float_value(row.get("borrow_cost_daily")),
+            12,
+        )
+    if "slippage_cost_cumulative" in row.index:
+        row["slippage_cost_cumulative"] = round(
+            _to_float_value(last_row.get("slippage_cost_cumulative"))
+            + _to_float_value(row.get("slippage_cost_daily")),
+            12,
+        )
+    if "cash_day" in row.index:
+        row["cash_day"] = held_asset in CASH_EQUIVALENT_ASSETS or exposure <= SUMMARY_TOLERANCE
+    if "btc_day" in row.index:
+        row["btc_day"] = held_asset == "BTC" and exposure > SUMMARY_TOLERANCE
+    if "in_market" in row.index:
+        row["in_market"] = exposure > SUMMARY_TOLERANCE
+    if "is_rebalance_day" in row.index:
+        row["is_rebalance_day"] = False
+    if "asset_transition_day" in row.index:
+        row["asset_transition_day"] = False
+    return row
+
+
+def _materialize_durable_baseline_timeseries_to_closed_day(
+    *,
+    durable_baseline_timeseries: pd.DataFrame,
+    summary_row: dict[str, Any],
+    benchmark_df: pd.DataFrame,
+    target_closed_day: str,
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    materialized = _normalize_durable_baseline_timeseries(durable_baseline_timeseries)
+    source_last_day = pd.Timestamp(materialized["date"].iloc[-1]).strftime("%Y-%m-%d")
+    target_day = pd.Timestamp(target_closed_day)
+    if pd.Timestamp(source_last_day) > target_day:
+        raise ValueError(
+            "durable BTC-persistence paper last_row.date cannot be ahead of the validated closed day "
+            f"(paper={source_last_day} closed_day={target_closed_day})"
+        )
+    if source_last_day == target_closed_day:
+        return materialized, {
+            "paper_source_last_day": source_last_day,
+            "materialized_closed_day": target_closed_day,
+            "carry_forward_rows_added": 0,
+        }
+
+    benchmark = benchmark_df.copy()
+    benchmark["date"] = pd.to_datetime(benchmark["date"], errors="coerce")
+    benchmark["close"] = pd.to_numeric(benchmark["close"], errors="coerce")
+    benchmark = benchmark.dropna(subset=["date", "close"]).sort_values("date")
+    benchmark = benchmark.drop_duplicates(subset=["date"], keep="last").set_index("date")
+    carry_forward_days = benchmark.index[
+        (benchmark.index > pd.Timestamp(source_last_day)) & (benchmark.index <= target_day)
+    ]
+    if carry_forward_days.empty or carry_forward_days[-1] != target_day:
+        raise ValueError(
+            "btc_ohlcv is missing one or more rows needed to materialize the validated durable closed day "
+            f"(paper={source_last_day} closed_day={target_closed_day})"
+        )
+
+    annual_borrow_cost_pct = _to_float_value(summary_row.get("annual_borrow_cost_pct"))
+    added_rows = 0
+    for carry_day in carry_forward_days.tolist():
+        next_row = _build_durable_baseline_carry_forward_row(
+            last_row=materialized.iloc[-1],
+            target_day=pd.Timestamp(carry_day),
+            benchmark_close=float(benchmark.loc[carry_day, "close"]),
+            annual_borrow_cost_pct=annual_borrow_cost_pct,
+        )
+        materialized = pd.concat([materialized, pd.DataFrame([next_row])], ignore_index=True)
+        added_rows += 1
+
+    return materialized, {
+        "paper_source_last_day": source_last_day,
+        "materialized_closed_day": pd.Timestamp(materialized["date"].iloc[-1]).strftime("%Y-%m-%d"),
+        "carry_forward_rows_added": added_rows,
+    }
+
+
 def _load_shared_inputs(
     *,
     root: Path | None = None,
@@ -428,6 +688,7 @@ def _load_shared_inputs(
     durable_baseline_timeseries = _read_dataframe_required(
         source_paths["durable_baseline_paper"]
     )
+    durable_baseline_paper_row_count = int(len(durable_baseline_timeseries))
     trend_status_row = _read_single_csv_row_required(
         source_paths["durable_baseline_trend_status"]
     )
@@ -439,7 +700,7 @@ def _load_shared_inputs(
     )
     benchmark_df = _read_dataframe_required(source_paths["btc_ohlcv"])
 
-    baseline_closed_day = _normalize_iso_day_text(
+    durable_baseline_summary_day = _normalize_iso_day_text(
         durable_baseline_summary_row.get("latest_available_date"),
         context="durable_baseline_summary.latest_available_date",
     )
@@ -469,6 +730,8 @@ def _load_shared_inputs(
         benchmark_dates.iloc[-1].strftime("%Y-%m-%d"),
         context="btc_ohlcv.last_row.date",
     )
+    baseline_source_closed_day = trend_status_day
+    baseline_closed_day = benchmark_last_day
 
     freshness_status = str(freshness_payload.get("status") or "").strip().lower()
     freshness_errors = freshness_payload.get("errors")
@@ -481,45 +744,78 @@ def _load_shared_inputs(
         raise ValueError(
             "durable baseline freshness_report.errors must be empty for production build"
         )
-    if durable_baseline_paper_last_day != baseline_closed_day:
+    if trend_history_last_day != baseline_source_closed_day:
         raise ValueError(
-            "durable BTC-persistence paper last_row.date must match summary latest_available_date "
-            f"(paper={durable_baseline_paper_last_day} summary={baseline_closed_day})"
+            "durable BTC-persistence trend_history last day must match trend_status latest_available_date "
+            f"(trend_history={trend_history_last_day} trend_status={baseline_source_closed_day})"
         )
-    if trend_status_day != baseline_closed_day:
+    if freshness_closed_day != baseline_source_closed_day:
         raise ValueError(
-            "durable BTC-persistence trend_status latest_available_date must match closed_day "
-            f"(trend_status={trend_status_day} closed_day={baseline_closed_day})"
+            "durable BTC-persistence freshness closed_day must match trend_status latest_available_date "
+            f"(freshness={freshness_closed_day} trend_status={baseline_source_closed_day})"
         )
-    if trend_history_last_day != baseline_closed_day:
+    if pd.Timestamp(baseline_closed_day) < pd.Timestamp(baseline_source_closed_day):
         raise ValueError(
-            "durable BTC-persistence trend_history last day must match closed_day "
-            f"(trend_history={trend_history_last_day} closed_day={baseline_closed_day})"
+            "btc_ohlcv cannot be behind the validated durable BTC-persistence source day "
+            f"(btc_last_day={benchmark_last_day} source_day={baseline_source_closed_day})"
         )
-    if freshness_closed_day != baseline_closed_day:
-        raise ValueError(
-            "durable BTC-persistence freshness closed_day must match summary latest_available_date "
-            f"(freshness={freshness_closed_day} closed_day={baseline_closed_day})"
+    if pd.Timestamp(baseline_closed_day) > pd.Timestamp(baseline_source_closed_day):
+        next_rebalance_text = str(trend_status_row.get("next_rebalance_date") or "").strip()
+        if not next_rebalance_text:
+            raise ValueError(
+                "durable BTC-persistence baseline cannot be carried forward without "
+                "next_rebalance_date on the trend status row"
+            )
+        next_rebalance_day = _normalize_iso_day_text(
+            next_rebalance_text,
+            context="durable_baseline_trend_status.next_rebalance_date",
         )
+        if pd.Timestamp(baseline_closed_day) >= pd.Timestamp(next_rebalance_day):
+            raise ValueError(
+                "durable BTC-persistence baseline carry-forward would cross a rebalance boundary "
+                f"(source_day={baseline_source_closed_day} target_day={baseline_closed_day} "
+                f"next_rebalance_date={next_rebalance_day})"
+            )
     if baseline_closed_day not in benchmark_day_set:
         raise ValueError(
-            "btc_ohlcv must contain the durable BTC-persistence closed day "
+            "btc_ohlcv must contain the validated durable BTC-persistence closed day "
             f"(closed_day={baseline_closed_day} btc_last_day={benchmark_last_day})"
+        )
+    durable_baseline_timeseries, paper_materialization_meta = (
+        _materialize_durable_baseline_timeseries_to_closed_day(
+            durable_baseline_timeseries=durable_baseline_timeseries,
+            summary_row=durable_baseline_summary_row,
+            benchmark_df=benchmark_df,
+            target_closed_day=baseline_closed_day,
+        )
+    )
+    materialized_paper_last_day = _normalize_iso_day_text(
+        pd.Timestamp(durable_baseline_timeseries["date"].iloc[-1]).strftime("%Y-%m-%d"),
+        context="materialized_durable_baseline_paper.last_row.date",
+    )
+    if materialized_paper_last_day != baseline_closed_day:
+        raise ValueError(
+            "materialized durable BTC-persistence paper last_row.date must match the validated closed day "
+            f"(paper={materialized_paper_last_day} closed_day={baseline_closed_day})"
         )
 
     durable_baseline_source_inputs = {
         "strategy_version": BASE_STRATEGY_VERSION,
         "validated_closed_day": baseline_closed_day,
+        "paper_materialization": {
+            "summary_latest_available_date": durable_baseline_summary_day,
+            **paper_materialization_meta,
+        },
         "files": {
             "durable_baseline_summary": _source_file_metadata(
                 source_paths["durable_baseline_summary"],
-                last_date=baseline_closed_day,
+                last_date=durable_baseline_summary_day,
                 row_count=1,
             ),
             "durable_baseline_paper": _source_file_metadata(
                 source_paths["durable_baseline_paper"],
                 last_date=durable_baseline_paper_last_day,
-                row_count=len(durable_baseline_timeseries),
+                row_count=durable_baseline_paper_row_count,
             ),
             "durable_baseline_trend_status": _source_file_metadata(
                 source_paths["durable_baseline_trend_status"],
@@ -538,7 +834,7 @@ def _load_shared_inputs(
             },
             "benchmark_ohlcv": _source_file_metadata(
                 source_paths["btc_ohlcv"],
-                last_date=baseline_closed_day,
+                last_date=benchmark_last_day,
                 row_count=len(benchmark_df),
             ),
         },
@@ -567,20 +863,44 @@ def _load_shared_inputs(
     )
     input_refs = dev_only_rebuild.build_input_refs(cost_config_meta)
 
-    baseline_probe_frame, hard_invalidation_meta = dev_only_rebuild.normalize_baseline_frame(
-        source_paths["durable_baseline_paper"]
+    baseline_probe_frame, hard_invalidation_meta = _normalize_baseline_frame_from_timeseries(
+        durable_baseline_timeseries
     )
     probe_mod, cooldown_mod = dev_only_rebuild.load_phase68g_helpers()
     etf_df = probe_mod.load_etf_panel(source_paths["etf_panel"])
     btc_df = probe_mod.load_btc_frame(source_paths["btc_ohlcv"])
+    etf_panel_last_day = _normalize_iso_day_text(
+        pd.Timestamp(etf_df.index[-1]).strftime("%Y-%m-%d"),
+        context="etf_panel.last_row.date",
+    )
+    if pd.Timestamp(etf_panel_last_day) < pd.Timestamp(baseline_closed_day):
+        raise ValueError(
+            "ETF-flow causal panel must cover the validated durable BTC-persistence closed day "
+            f"(etf_panel={etf_panel_last_day} closed_day={baseline_closed_day})"
+        )
     overlap_frame = probe_mod.build_overlap_frame(baseline_probe_frame, etf_df, btc_df)
     if "date" in overlap_frame.columns:
         overlap_frame = overlap_frame.drop(columns=["date"])
     if overlap_frame.empty:
         raise ValueError("No overlap between the Production Core baseline and ETF-flow inputs.")
+    full_history_frame = probe_mod.build_full_history_frame(
+        baseline_probe_frame,
+        etf_df,
+        btc_df,
+    )
+    if "date" in full_history_frame.columns:
+        full_history_frame = full_history_frame.drop(columns=["date"])
+    if full_history_frame.empty:
+        raise ValueError("No full-history baseline date universe is available for ETF-flow inputs.")
+    etf_evidence_feature_mask = _to_bool_series(full_history_frame["etf_flow_feature_available"])
+    if not bool(etf_evidence_feature_mask.any()):
+        raise ValueError("ETF-flow full-history rebuild has no causal feature rows.")
+    etf_evidence_window_start = pd.Timestamp(
+        full_history_frame.index[etf_evidence_feature_mask].min()
+    ).strftime("%Y-%m-%d")
 
     state_frame, cooldown_events = cooldown_mod.build_cooldown_state_machine(
-        overlap_frame,
+        full_history_frame,
         COOLDOWN_DAYS,
     )
     baseline_export, probe_export, enriched = probe_mod.build_export_metrics(
@@ -622,6 +942,14 @@ def _load_shared_inputs(
     blocker_rows = {row["period"]: row for row in blocker_rows_list}
     window_counts = dev_only_rebuild.build_window_counts(activation_windows)
     candidate_overlap_closed_day = pd.Timestamp(enriched.index.max()).strftime("%Y-%m-%d")
+    evidence_start_stamp = pd.Timestamp(etf_evidence_window_start)
+    evidence_enriched = enriched.loc[enriched.index >= evidence_start_stamp].copy()
+    evidence_baseline_export_standard = baseline_export_standard.loc[
+        baseline_export_standard.index >= evidence_start_stamp
+    ].copy()
+    evidence_probe_export_standard = probe_export_standard.loc[
+        probe_export_standard.index >= evidence_start_stamp
+    ].copy()
 
     baseline_snapshot = (
         authorized_compare_reference["snapshot"]
@@ -656,6 +984,7 @@ def _load_shared_inputs(
         "etf_df": etf_df,
         "btc_df": btc_df,
         "overlap_frame": overlap_frame,
+        "full_history_frame": full_history_frame,
         "state_frame": state_frame,
         "cooldown_events": cooldown_events,
         "decorated_cooldown_events": decorated_cooldown_events,
@@ -665,12 +994,16 @@ def _load_shared_inputs(
         "baseline_export_standard": baseline_export_standard,
         "probe_export_standard": probe_export_standard,
         "enriched": enriched,
+        "evidence_enriched": evidence_enriched,
+        "evidence_baseline_export_standard": evidence_baseline_export_standard,
+        "evidence_probe_export_standard": evidence_probe_export_standard,
         "candidate_source_frame": candidate_source_frame,
         "blocker_rows_list": blocker_rows_list,
         "blocker_rows": blocker_rows,
         "window_counts": window_counts,
         "hard_invalidation_meta": hard_invalidation_meta,
         "candidate_overlap_closed_day": candidate_overlap_closed_day,
+        "etf_evidence_window_start": etf_evidence_window_start,
         "baseline_closed_day": baseline_closed_day,
         "current_closed_day": current_closed_day,
         "paper_last_day": durable_baseline_paper_last_day,
@@ -678,7 +1011,7 @@ def _load_shared_inputs(
         "trend_status_day": trend_status_day,
         "trend_history_last_day": trend_history_last_day,
         "freshness_closed_day": freshness_closed_day,
-        "benchmark_last_day": baseline_closed_day,
+        "benchmark_last_day": benchmark_last_day,
         "durable_baseline_timeseries": durable_baseline_timeseries,
         "durable_baseline_source_inputs": durable_baseline_source_inputs,
         "authorized_compare_reference": authorized_compare_reference,
@@ -780,6 +1113,31 @@ def build_candidate_reason_text(row: pd.Series) -> str:
             "EARLY_RISK entry conditions authorize market exposure."
         )
     return f"The staged candidate holds {actual_asset} with authorized exposure at {exposure:.2f}x."
+
+
+def _resolve_compare_window_start_date(
+    period_name: str,
+    start_date: str | None,
+    *,
+    etf_evidence_window_start: str,
+) -> str | None:
+    if period_name == "full_etf_overlap" and start_date is None:
+        return etf_evidence_window_start
+    return start_date
+
+
+def _build_compare_window_payloads(*, etf_evidence_window_start: str) -> list[dict[str, Any]]:
+    return [
+        {
+            "name": period_name,
+            "start_date": _resolve_compare_window_start_date(
+                period_name,
+                start_date,
+                etf_evidence_window_start=etf_evidence_window_start,
+            ),
+        }
+        for period_name, start_date in COMPARE_WINDOWS
+    ]
 
 
 def _period_metrics(
@@ -975,6 +1333,16 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
         raw = inputs["enriched"].reset_index().rename(columns={"index": "date"}).copy()
         raw["date"] = pd.to_datetime(raw["date"], errors="coerce").dt.strftime("%Y-%m-%d")
         raw = raw.dropna(subset=["date"]).reset_index(drop=True)
+        baseline_reference = inputs["baseline_timeseries"].copy()
+        baseline_reference["date"] = pd.to_datetime(
+            baseline_reference["date"],
+            errors="coerce",
+        ).dt.strftime("%Y-%m-%d")
+        baseline_reference = baseline_reference.dropna(subset=["date"]).drop_duplicates(
+            subset=["date"],
+            keep="last",
+        )
+        baseline_reference = baseline_reference.set_index("date").reindex(raw["date"]).reset_index(drop=True)
 
         candidate_asset = _desired_candidate_asset(raw)
         actual_asset = raw["probe_held_asset"].map(_normalize_asset_code)
@@ -1008,8 +1376,17 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
         frame["buy_threshold"] = _to_float_series(raw["buy_threshold"]).round(6)
         frame["reason_code"] = raw.apply(_candidate_reason_code, axis=1)
 
-        frame["us_trading_session_date"] = raw["us_trading_session_date"].fillna("").astype(str)
-        frame["causal_available_for_btc_utc_day"] = raw["causal_available_for_btc_utc_day"].fillna("").astype(str)
+        frame["us_trading_session_date"] = (
+            pd.to_datetime(raw["us_trading_session_date"], errors="coerce").dt.strftime("%Y-%m-%d").fillna("")
+        )
+        frame["causal_available_for_btc_utc_day"] = (
+            pd.to_datetime(raw["causal_available_for_btc_utc_day"], errors="coerce")
+            .dt.strftime("%Y-%m-%d")
+            .fillna("")
+        )
+        frame["etf_flow_feature_available"] = _to_bool_series(raw["etf_flow_feature_available"])
+        frame["etf_flow_evidence_window"] = _to_bool_series(raw["etf_flow_evidence_window"])
+        frame["etf_flow_causal_date_available"] = frame["causal_available_for_btc_utc_day"]
         frame["baseline_cash"] = _to_bool_series(raw["baseline_cash"])
         frame["baseline_full_risk"] = _to_bool_series(raw["baseline_full_risk"])
         frame["permission_inputs_true"] = _to_bool_series(raw["permission_inputs_true"])
@@ -1018,7 +1395,7 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
         frame["hard_invalidation_on"] = _to_bool_series(raw["hard_invalidation_on"])
         frame["probe_input_ready_flag"] = _to_bool_series(raw["probe_input_ready_flag"])
         frame["flow_2_of_last_3_positive_flag"] = _to_bool_series(raw["flow_2_of_last_3_positive_flag"])
-        frame["flow_3d_sum_usd"] = _to_float_series(raw["flow_3d_sum_usd"]).round(6)
+        frame["flow_3d_sum_usd"] = pd.to_numeric(raw["flow_3d_sum_usd"], errors="coerce").round(6)
         frame["flow_3d_sum_pass"] = _to_bool_series(raw["flow_3d_sum_pass"])
         frame["btc_close"] = _to_float_series(raw["btc_close"]).round(6)
         frame["btc_ema10"] = _to_float_series(raw["btc_ema10"]).round(6)
@@ -1030,6 +1407,7 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
         frame["early_risk_active"] = _to_bool_series(raw["early_risk_active"])
         frame["cooldown_active"] = _to_bool_series(raw["cooldown_active"])
         frame["cooldown_blocked_entry"] = _to_bool_series(raw["cooldown_blocked_entry"])
+        frame["etf_flow_rule_active"] = frame["early_risk_active"] | frame["cooldown_blocked_entry"]
         frame["cooldown_event_id"] = raw["cooldown_event_id"].fillna("").astype(str)
 
         frame["model_candidate_return_gross"] = _to_float_series(raw["probe_strategy_return_gross"]).round(12)
@@ -1089,30 +1467,52 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
         frame["app_truth"] = False
         frame["execution_truth"] = False
 
-        frame["baseline_strategy_id"] = raw["strategy_id"].fillna("").astype(str)
-        frame["baseline_strategy_version"] = raw["strategy_version"].fillna("").astype(str)
-        frame["baseline_candidate_asset"] = raw["candidate_asset"].map(_normalize_asset_code)
-        frame["baseline_selected_asset"] = raw["selected_asset"].map(_normalize_asset_code)
-        frame["baseline_model_candidate_exposure"] = _to_float_series(raw["model_candidate_exposure"]).round(6)
-        frame["baseline_trend_permission_active"] = _to_bool_series(raw["trend_permission_active"])
-        frame["baseline_actual_held_asset"] = raw["actual_held_asset"].map(_normalize_asset_code)
-        frame["baseline_authorized_tradable_asset"] = raw["authorized_tradable_asset"].map(_normalize_asset_code)
-        frame["baseline_current_asset"] = raw["current_asset"].map(_normalize_asset_code)
-        frame["baseline_effective_market_exposure"] = _to_float_series(raw["effective_market_exposure"]).round(6)
-        frame["baseline_execution_target_asset"] = raw["execution_target_asset"].map(_normalize_asset_code)
-        frame["baseline_execution_target_exposure"] = _to_float_series(raw["execution_target_exposure"]).round(6)
-        frame["baseline_regime"] = raw["regime"].fillna("").astype(str)
-        frame["baseline_market_state"] = raw["market_state"].fillna("").astype(str)
-        frame["baseline_execution_state"] = raw["execution_state"].fillna("").astype(str)
-        frame["baseline_reason_code"] = raw["reason_code"].fillna("").astype(str)
-        frame["baseline_return_gross"] = _to_float_series(raw["baseline_gross_return"]).round(12)
-        frame["baseline_return_net"] = _to_float_series(raw["baseline_net_return"]).round(12)
-        frame["baseline_equity"] = _to_float_series(raw["baseline_equity_curve_net"]).round(12)
-        frame["baseline_turnover"] = _to_float_series(raw["baseline_trading_turnover_notional"]).round(12)
-        frame["baseline_fees_daily"] = _to_float_series(raw["baseline_trading_fees_daily"]).round(12)
-        frame["baseline_funding_daily"] = _to_float_series(raw["baseline_funding_daily"]).round(12)
-        frame["baseline_borrow_cost_daily"] = _to_float_series(raw["baseline_daily_borrow_cost"]).round(12)
-        frame["baseline_slippage_daily"] = _to_float_series(raw["baseline_tradable_slippage_cost"]).round(12)
+        frame["baseline_strategy_id"] = baseline_reference["strategy_id"].fillna("").astype(str)
+        frame["baseline_strategy_version"] = baseline_reference["strategy_version"].fillna("").astype(str)
+        frame["baseline_candidate_asset"] = baseline_reference["candidate_asset"].map(_normalize_asset_code)
+        frame["baseline_selected_asset"] = baseline_reference["selected_asset"].map(_normalize_asset_code)
+        frame["baseline_model_candidate_exposure"] = _to_float_series(
+            baseline_reference["model_candidate_exposure"]
+        ).round(6)
+        frame["baseline_trend_permission_active"] = _to_bool_series(
+            baseline_reference["trend_permission_active"]
+        )
+        frame["baseline_actual_held_asset"] = baseline_reference["actual_held_asset"].map(
+            _normalize_asset_code
+        )
+        frame["baseline_authorized_tradable_asset"] = baseline_reference[
+            "authorized_tradable_asset"
+        ].map(_normalize_asset_code)
+        frame["baseline_current_asset"] = baseline_reference["current_asset"].map(_normalize_asset_code)
+        frame["baseline_effective_market_exposure"] = _to_float_series(
+            baseline_reference["effective_market_exposure"]
+        ).round(6)
+        frame["baseline_execution_target_asset"] = baseline_reference["execution_target_asset"].map(
+            _normalize_asset_code
+        )
+        frame["baseline_execution_target_exposure"] = _to_float_series(
+            baseline_reference["execution_target_exposure"]
+        ).round(6)
+        frame["baseline_regime"] = baseline_reference["regime"].fillna("").astype(str)
+        frame["baseline_market_state"] = baseline_reference["market_state"].fillna("").astype(str)
+        frame["baseline_execution_state"] = baseline_reference["execution_state"].fillna("").astype(str)
+        frame["baseline_reason_code"] = baseline_reference["reason_code"].fillna("").astype(str)
+        frame["baseline_return_gross"] = _to_float_series(
+            baseline_reference["authorized_return_gross"]
+        ).round(12)
+        frame["baseline_return_net"] = _to_float_series(
+            baseline_reference["authorized_return_net"]
+        ).round(12)
+        frame["baseline_equity"] = _to_float_series(baseline_reference["authorized_equity"]).round(12)
+        frame["baseline_turnover"] = _to_float_series(baseline_reference["turnover"]).round(12)
+        frame["baseline_fees_daily"] = _to_float_series(baseline_reference["fees_daily"]).round(12)
+        frame["baseline_funding_daily"] = _to_float_series(baseline_reference["funding_daily"]).round(12)
+        frame["baseline_borrow_cost_daily"] = _to_float_series(
+            baseline_reference["borrow_cost_daily"]
+        ).round(12)
+        frame["baseline_slippage_daily"] = _to_float_series(
+            baseline_reference["slippage_cost_daily"]
+        ).round(12)
         frame["baseline_cash_day"] = frame["baseline_effective_market_exposure"] <= SUMMARY_TOLERANCE
         frame["baseline_in_market"] = frame["baseline_effective_market_exposure"] > SUMMARY_TOLERANCE
         frame["baseline_btc_day"] = (
@@ -1120,6 +1520,150 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
         )
         frame["baseline_is_rebalance_day"] = _to_bool_series(raw["baseline_asset_transition_day"])
         frame["baseline_asset_transition_day"] = frame["baseline_is_rebalance_day"]
+
+        pre_evidence_mask = ~frame["etf_flow_evidence_window"]
+        if bool(pre_evidence_mask.any()):
+            frame.loc[pre_evidence_mask, "model_candidate_exposure"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_model_candidate_exposure",
+            ]
+            frame.loc[pre_evidence_mask, "trend_permission_active"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_trend_permission_active",
+            ]
+            frame.loc[pre_evidence_mask, "actual_held_asset"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_actual_held_asset",
+            ]
+            frame.loc[pre_evidence_mask, "authorized_tradable_asset"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_authorized_tradable_asset",
+            ]
+            frame.loc[pre_evidence_mask, "held_asset"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_actual_held_asset",
+            ]
+            frame.loc[pre_evidence_mask, "current_asset"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_current_asset",
+            ]
+            frame.loc[pre_evidence_mask, "effective_market_exposure"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_effective_market_exposure",
+            ]
+            frame.loc[pre_evidence_mask, "current_exposure"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_effective_market_exposure",
+            ]
+            frame.loc[pre_evidence_mask, "exposure"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_effective_market_exposure",
+            ]
+            frame.loc[pre_evidence_mask, "regime"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_regime",
+            ]
+            frame.loc[pre_evidence_mask, "market_state"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_market_state",
+            ]
+            frame.loc[pre_evidence_mask, "execution_state"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_execution_state",
+            ]
+            frame.loc[pre_evidence_mask, "execution_target_asset"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_execution_target_asset",
+            ]
+            frame.loc[pre_evidence_mask, "execution_target_exposure"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_execution_target_exposure",
+            ]
+            frame.loc[pre_evidence_mask, "reason_code"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_reason_code",
+            ]
+            frame.loc[pre_evidence_mask, "model_candidate_return_gross"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_return_gross",
+            ]
+            frame.loc[pre_evidence_mask, "model_candidate_return_net"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_return_net",
+            ]
+            frame.loc[pre_evidence_mask, "authorized_return_gross"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_return_gross",
+            ]
+            frame.loc[pre_evidence_mask, "authorized_return_net"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_return_net",
+            ]
+            frame.loc[pre_evidence_mask, "fees_daily"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_fees_daily",
+            ]
+            frame.loc[pre_evidence_mask, "funding_daily"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_funding_daily",
+            ]
+            frame.loc[pre_evidence_mask, "borrow_cost_daily"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_borrow_cost_daily",
+            ]
+            frame.loc[pre_evidence_mask, "slippage_cost_daily"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_slippage_daily",
+            ]
+            frame.loc[pre_evidence_mask, "turnover"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_turnover",
+            ]
+            frame.loc[pre_evidence_mask, "is_rebalance_day"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_is_rebalance_day",
+            ]
+            frame.loc[pre_evidence_mask, "asset_transition_day"] = frame.loc[
+                pre_evidence_mask,
+                "baseline_asset_transition_day",
+            ]
+            frame.loc[pre_evidence_mask, "early_risk_active"] = False
+            frame.loc[pre_evidence_mask, "cooldown_active"] = False
+            frame.loc[pre_evidence_mask, "cooldown_blocked_entry"] = False
+            frame.loc[pre_evidence_mask, "etf_flow_rule_active"] = False
+            frame.loc[pre_evidence_mask, "cooldown_event_id"] = ""
+            frame.loc[pre_evidence_mask, "probe_state"] = np.where(
+                frame.loc[pre_evidence_mask, "baseline_cash_day"],
+                "CASH",
+                "FULL_RISK",
+            )
+            frame.loc[pre_evidence_mask, "probe_window_id"] = ""
+            frame.loc[pre_evidence_mask, "probe_exit_reason"] = ""
+            frame.loc[pre_evidence_mask, "baseline_handoff_day"] = False
+
+        frame["model_candidate_equity"] = _build_equity_curve(frame["model_candidate_return_net"]).round(12)
+        frame["authorized_equity"] = _build_equity_curve(frame["authorized_return_net"]).round(12)
+        frame["return_gross"] = frame["authorized_return_gross"]
+        frame["return_net"] = frame["authorized_return_net"]
+        frame["equity"] = frame["authorized_equity"]
+        frame["drawdown_pct"] = (((frame["equity"] / frame["equity"].cummax()) - 1.0) * 100.0).round(6)
+        frame["fees_cumulative"] = frame["fees_daily"].cumsum().round(12)
+        frame["funding_cumulative"] = frame["funding_daily"].cumsum().round(12)
+        frame["borrow_cost_cumulative"] = frame["borrow_cost_daily"].cumsum().round(12)
+        frame["slippage_cumulative"] = frame["slippage_cost_daily"].cumsum().round(12)
+        frame["cash_day"] = frame["effective_market_exposure"] <= SUMMARY_TOLERANCE
+        frame["btc_day"] = (
+            (frame["actual_held_asset"] == "BTC") & (frame["effective_market_exposure"] > SUMMARY_TOLERANCE)
+        )
+        frame["in_market"] = frame["effective_market_exposure"] > SUMMARY_TOLERANCE
+        frame["leverage_active"] = frame["effective_market_exposure"] > (1.0 + SUMMARY_TOLERANCE)
+        frame["rolling_return_7d"] = _rolling_compound_return(frame["return_net"], 7).round(12)
+        frame["rolling_return_30d"] = _rolling_compound_return(frame["return_net"], 30).round(12)
+        frame["rolling_return_90d"] = _rolling_compound_return(frame["return_net"], 90).round(12)
+        frame["rolling_vol_30d"] = (
+            frame["return_net"].rolling(window=30, min_periods=30).std(ddof=0) * np.sqrt(365.25)
+        ).round(12)
+        frame["rolling_sharpe_90d"] = _rolling_sharpe(frame["return_net"], 90).round(12)
 
         return frame
 
@@ -1152,12 +1696,17 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
         )
 
         for period_name, start_date in COMPARE_WINDOWS:
-            if start_date is None:
+            resolved_start_date = _resolve_compare_window_start_date(
+                period_name,
+                start_date,
+                etf_evidence_window_start=inputs["etf_evidence_window_start"],
+            )
+            if resolved_start_date is None:
                 period_enriched = enriched.copy()
                 period_baseline_export = baseline_export.copy()
                 period_probe_export = probe_export.copy()
             else:
-                start_stamp = pd.Timestamp(start_date)
+                start_stamp = pd.Timestamp(resolved_start_date)
                 period_enriched = enriched.loc[enriched.index >= start_stamp].copy()
                 period_baseline_export = baseline_export.loc[baseline_export.index >= start_stamp].copy()
                 period_probe_export = probe_export.loc[probe_export.index >= start_stamp].copy()
@@ -1211,8 +1760,8 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
             "base_strategy_version": self.base_strategy_version,
             "baseline_source_path": "outputs/production/current_strategy_timeseries.csv",
             "candidate_universe_rule": (
-                "Candidate compare rows use the ETF overlap universe rebuilt from the current Production Core "
-                "baseline and the causal D+1 ETF-flow panel."
+                "Candidate timeseries covers the full baseline date universe, while ETF-flow edge/delta windows "
+                "start only from the first causal ETF-flow evidence day."
             ),
             "comparison_status": {
                 "gross_and_net_status": "gross_and_net_reported",
@@ -1240,6 +1789,19 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
             "baseline_closed_day": inputs["baseline_closed_day"],
             "authorized_compare_baseline_closed_day": inputs["current_closed_day"],
             "authorized_compare_baseline_path": "outputs/production/current_strategy_timeseries.csv",
+            "full_history_window": {
+                "start_date": _normalize_iso_day_text(
+                    baseline_timeseries["date"].iloc[0],
+                    context="baseline_timeseries.first_row.date",
+                ),
+                "end_date": inputs["baseline_closed_day"],
+                "row_count": int(len(baseline_timeseries)),
+            },
+            "etf_flow_evidence_window": {
+                "start_date": inputs["etf_evidence_window_start"],
+                "end_date": inputs["baseline_closed_day"],
+                "feature_row_count": int(_to_bool_series(inputs["enriched"]["etf_flow_feature_available"]).sum()),
+            },
             "durable_baseline_route": {
                 "strategy_version": self.base_strategy_version,
                 "closed_day": inputs["baseline_closed_day"],
@@ -1251,13 +1813,9 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
                 ),
                 "source_inputs": inputs["durable_baseline_source_inputs"],
             },
-            "compare_windows": [
-                {
-                    "name": period_name,
-                    "start_date": start_date,
-                }
-                for period_name, start_date in COMPARE_WINDOWS
-            ],
+            "compare_windows": _build_compare_window_payloads(
+                etf_evidence_window_start=inputs["etf_evidence_window_start"]
+            ),
             "lineage": {
                 "dev_only_source_lineage": True,
                 "non_authoritative_research_input": True,
@@ -1538,6 +2096,19 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
             "base_strategy_version": self.base_strategy_version,
             "baseline_closed_day": inputs["baseline_closed_day"],
             "candidate_compare_closed_day": inputs["candidate_overlap_closed_day"],
+            "full_history_window": {
+                "start_date": _normalize_iso_day_text(
+                    inputs["baseline_timeseries"]["date"].iloc[0],
+                    context="baseline_timeseries.first_row.date",
+                ),
+                "end_date": inputs["baseline_closed_day"],
+                "row_count": int(len(inputs["baseline_timeseries"])),
+            },
+            "etf_flow_evidence_window": {
+                "start_date": inputs["etf_evidence_window_start"],
+                "end_date": inputs["baseline_closed_day"],
+                "feature_row_count": int(_to_bool_series(inputs["enriched"]["etf_flow_feature_available"]).sum()),
+            },
             "durable_non_circular_route": {
                 "softer_fallback_strategy_version": self.base_strategy_version,
                 "secondary_baseline_strategy_version": "phase68g_66g_1p25x_candidate",
@@ -1548,13 +2119,9 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
                 ),
                 "softer_fallback_source_inputs": durable_baseline_source_inputs,
             },
-            "compare_windows": [
-                {
-                    "name": period_name,
-                    "start_date": start_date,
-                }
-                for period_name, start_date in COMPARE_WINDOWS
-            ],
+            "compare_windows": _build_compare_window_payloads(
+                etf_evidence_window_start=inputs["etf_evidence_window_start"]
+            ),
             "lineage": {
                 "dev_only_source_lineage": True,
                 "non_authoritative_research_input": True,
@@ -1702,6 +2269,12 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
                 "status": validation["status"],
                 "closed_day": inputs["closed_day"],
                 "softer_fallback_closed_day": inputs["baseline_closed_day"],
+                "full_history_start_date": _normalize_iso_day_text(
+                    timeseries["date"].iloc[0],
+                    context="timeseries.first_row.date",
+                ),
+                "etf_flow_evidence_window_start": inputs["etf_evidence_window_start"],
+                "etf_flow_evidence_window_end": inputs["baseline_closed_day"],
                 "trend_status_day": inputs["trend_status_day"],
                 "trend_history_last_day": inputs["trend_history_last_day"],
                 "freshness_closed_day": inputs["freshness_closed_day"],
@@ -1741,5 +2314,25 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
         inputs: dict[str, Any],
         timeseries: pd.DataFrame,
     ) -> list[str]:
-        del inputs, timeseries
-        return []
+        del timeseries
+        mismatches: list[str] = []
+        actual_truth_contract_state = read_truth_contract_state(root=inputs["repo_root"])
+        expected_contract_state = {
+            "project_truth_app_main_strategy_model": self.strategy_version,
+            "project_truth_current_live_truth": self.strategy_version,
+            "project_truth_official_fallback": self.base_strategy_version,
+            "project_truth_production_core_strategy_version": self.strategy_version,
+            "export_contract_main_strategy_model": self.strategy_version,
+            "export_contract_live_truth_mode": self.strategy_version,
+            "export_contract_fallback_profile_label": self.base_strategy_version,
+            "export_contract_production_core_strategy_version": self.strategy_version,
+            "baseline_snapshot_strategy_version": self.strategy_version,
+        }
+        for key, expected_value in expected_contract_state.items():
+            actual_value = str(actual_truth_contract_state.get(key) or "").strip()
+            if actual_value != expected_value:
+                mismatches.append(
+                    "truth contract drift detected for "
+                    f"{key}: actual={actual_value!r} expected={expected_value!r}"
+                )
+        return mismatches

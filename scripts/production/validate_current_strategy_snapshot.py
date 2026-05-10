@@ -202,6 +202,11 @@ def _to_float(value: Any, *, context: str) -> float:
     return float(text)
 
 
+def _to_bool_series(series: pd.Series) -> pd.Series:
+    lowered = series.fillna("").astype(str).str.strip().str.lower()
+    return lowered.isin({"1", "true", "yes", "y"})
+
+
 def _check_required_keys(payload: dict[str, Any], keys: list[str], *, context: str, errors: list[str]) -> None:
     for key in keys:
         if key not in payload:
@@ -233,6 +238,234 @@ def _build_reason_text_for_adapter(adapter, row) -> str:
     if hasattr(adapter, "build_reason_text"):
         return str(adapter.build_reason_text(row))
     return build_reason_text(row)
+
+
+def _validate_etf_flow_full_history_contract(
+    *,
+    snapshot: dict[str, Any],
+    timeseries: pd.DataFrame,
+    inputs: dict[str, Any],
+    errors: list[str],
+    checks: dict[str, Any],
+) -> None:
+    required_columns = [
+        "early_risk_active",
+        "cooldown_blocked_entry",
+        "etf_flow_feature_available",
+        "etf_flow_evidence_window",
+        "etf_flow_rule_active",
+        "etf_flow_causal_date_available",
+    ]
+    missing_columns = [column for column in required_columns if column not in timeseries.columns]
+    if missing_columns:
+        errors.append(
+            "ETF-flow active timeseries missing required full-history columns: "
+            f"{', '.join(missing_columns)}"
+        )
+        return
+
+    baseline_timeseries = inputs["baseline_timeseries"].copy()
+    baseline_timeseries["date"] = baseline_timeseries["date"].astype(str)
+    active_dates = timeseries["date"].astype(str)
+    baseline_dates = baseline_timeseries["date"].astype(str)
+    checks["etf_full_history_matches_baseline_date_universe"] = (
+        active_dates.tolist() == baseline_dates.tolist()
+    )
+    if not checks["etf_full_history_matches_baseline_date_universe"]:
+        errors.append(
+            "ETF-flow active timeseries does not match the full Production Core baseline date universe "
+            f"(active_rows={len(timeseries)} baseline_rows={len(baseline_timeseries)})"
+        )
+        return
+
+    feature_mask = _to_bool_series(timeseries["etf_flow_feature_available"])
+    evidence_mask = _to_bool_series(timeseries["etf_flow_evidence_window"])
+    rule_active_mask = _to_bool_series(timeseries["etf_flow_rule_active"])
+    early_risk_mask = _to_bool_series(timeseries["early_risk_active"])
+    cooldown_blocked_mask = _to_bool_series(timeseries["cooldown_blocked_entry"])
+    causal_day_text = timeseries["etf_flow_causal_date_available"].fillna("").astype(str).str.strip()
+
+    if not bool(feature_mask.any()):
+        errors.append("ETF-flow active timeseries has no causal feature rows")
+        return
+    if not bool(evidence_mask.any()):
+        errors.append("ETF-flow active timeseries has no evidence-window rows")
+        return
+
+    first_feature_date = _normalize_iso_day_text(
+        timeseries.loc[feature_mask, "date"].iloc[0],
+        context="etf_flow_feature_available.first_true.date",
+    )
+    first_evidence_date = _normalize_iso_day_text(
+        timeseries.loc[evidence_mask, "date"].iloc[0],
+        context="etf_flow_evidence_window.first_true.date",
+    )
+    checks["etf_evidence_window_starts_on_first_feature_day"] = (
+        first_feature_date == first_evidence_date
+    )
+    if not checks["etf_evidence_window_starts_on_first_feature_day"]:
+        errors.append(
+            "ETF-flow evidence window must start on the first causal feature day "
+            f"(feature_start={first_feature_date} evidence_start={first_evidence_date})"
+        )
+
+    expected_evidence_mask = pd.to_datetime(timeseries["date"], errors="coerce") >= pd.Timestamp(
+        first_feature_date
+    )
+    evidence_mask_mismatch = evidence_mask != expected_evidence_mask
+    checks["etf_evidence_window_is_contiguous_to_closed_day"] = not evidence_mask_mismatch.any()
+    if evidence_mask_mismatch.any():
+        errors.append(
+            "ETF-flow evidence window must stay active on every row from the first causal day onward "
+            f"(examples: {_summarize_bad_dates(evidence_mask_mismatch, active_dates)})"
+        )
+
+    non_feature_has_causal_date = (~feature_mask) & causal_day_text.ne("")
+    if non_feature_has_causal_date.any():
+        errors.append(
+            "Rows without ETF feature availability must not expose a causal ETF date "
+            f"(examples: {_summarize_bad_dates(non_feature_has_causal_date, active_dates)})"
+        )
+    feature_causal_date_mismatch = feature_mask & causal_day_text.ne(active_dates)
+    if feature_causal_date_mismatch.any():
+        errors.append(
+            "ETF feature rows must stamp their own causal UTC day exactly "
+            f"(examples: {_summarize_bad_dates(feature_causal_date_mismatch, active_dates)})"
+        )
+
+    pre_evidence_mask = pd.to_datetime(timeseries["date"], errors="coerce") < pd.Timestamp(
+        first_feature_date
+    )
+    pre_evidence_rule_active = pre_evidence_mask & rule_active_mask
+    pre_evidence_early_risk = pre_evidence_mask & early_risk_mask
+    pre_evidence_cooldown_block = pre_evidence_mask & cooldown_blocked_mask
+    pre_evidence_feature_flag = pre_evidence_mask & feature_mask
+    pre_evidence_evidence_flag = pre_evidence_mask & evidence_mask
+    if pre_evidence_rule_active.any():
+        errors.append(
+            "ETF-flow rule must stay inactive before the first causal ETF day "
+            f"(examples: {_summarize_bad_dates(pre_evidence_rule_active, active_dates)})"
+        )
+    if pre_evidence_early_risk.any():
+        errors.append(
+            "early_risk_active must stay false before the ETF evidence window "
+            f"(examples: {_summarize_bad_dates(pre_evidence_early_risk, active_dates)})"
+        )
+    if pre_evidence_cooldown_block.any():
+        errors.append(
+            "cooldown_blocked_entry must stay false before the ETF evidence window "
+            f"(examples: {_summarize_bad_dates(pre_evidence_cooldown_block, active_dates)})"
+        )
+    if pre_evidence_feature_flag.any():
+        errors.append(
+            "etf_flow_feature_available must stay false before the ETF evidence window "
+            f"(examples: {_summarize_bad_dates(pre_evidence_feature_flag, active_dates)})"
+        )
+    if pre_evidence_evidence_flag.any():
+        errors.append(
+            "etf_flow_evidence_window must stay false before the first causal ETF day "
+            f"(examples: {_summarize_bad_dates(pre_evidence_evidence_flag, active_dates)})"
+        )
+
+    baseline_indexed = baseline_timeseries.set_index("date")
+    active_indexed = timeseries.set_index("date")
+    pre_evidence_dates = active_dates.loc[pre_evidence_mask].tolist()
+    if pre_evidence_dates:
+        compare_pairs = [
+            ("authorized_return_net", "authorized_return_net"),
+            ("authorized_equity", "authorized_equity"),
+            ("return_net", "return_net"),
+            ("equity", "equity"),
+            ("effective_market_exposure", "effective_market_exposure"),
+        ]
+        numeric_mismatch_mask = pd.Series(False, index=active_dates.index)
+        for active_column, baseline_column in compare_pairs:
+            actual_series = pd.to_numeric(
+                active_indexed.loc[pre_evidence_dates, active_column],
+                errors="coerce",
+            ).fillna(0.0)
+            expected_series = pd.to_numeric(
+                baseline_indexed.loc[pre_evidence_dates, baseline_column],
+                errors="coerce",
+            ).fillna(0.0)
+            mismatch = (actual_series - expected_series).abs() > SUMMARY_TOLERANCE
+            if mismatch.any():
+                numeric_mismatch_mask.loc[
+                    active_dates.isin(actual_series.index[mismatch].tolist())
+                ] = True
+        if numeric_mismatch_mask.any():
+            errors.append(
+                "Pre-ETF rows must be an exact baseline pass-through on authorized returns/equity/exposure "
+                f"(examples: {_summarize_bad_dates(numeric_mismatch_mask, active_dates)})"
+            )
+
+        text_pairs = [
+            ("actual_held_asset", "actual_held_asset"),
+            ("authorized_tradable_asset", "authorized_tradable_asset"),
+            ("reason_code", "reason_code"),
+        ]
+        text_mismatch_mask = pd.Series(False, index=active_dates.index)
+        for active_column, baseline_column in text_pairs:
+            actual_series = (
+                active_indexed.loc[pre_evidence_dates, active_column].fillna("").astype(str).str.strip()
+            )
+            expected_series = (
+                baseline_indexed.loc[pre_evidence_dates, baseline_column].fillna("").astype(str).str.strip()
+            )
+            mismatch = actual_series != expected_series
+            if mismatch.any():
+                text_mismatch_mask.loc[
+                    active_dates.isin(actual_series.index[mismatch].tolist())
+                ] = True
+        if text_mismatch_mask.any():
+            errors.append(
+                "Pre-ETF rows must preserve the exact baseline authorized state and reason code "
+                f"(examples: {_summarize_bad_dates(text_mismatch_mask, active_dates)})"
+            )
+
+    etf_panel_feature_dates = {
+        pd.Timestamp(stamp).strftime("%Y-%m-%d")
+        for stamp in inputs["etf_df"].index.tolist()
+        if pd.Timestamp(stamp) <= pd.Timestamp(inputs["closed_day"])
+    }
+    exported_feature_dates = set(active_dates.loc[feature_mask].tolist())
+    checks["etf_feature_rows_match_source_panel"] = exported_feature_dates == etf_panel_feature_dates
+    if not checks["etf_feature_rows_match_source_panel"]:
+        errors.append(
+            "ETF feature rows in current_strategy_timeseries.csv do not match the causal source panel exactly "
+            f"(exported={len(exported_feature_dates)} source={len(etf_panel_feature_dates)})"
+        )
+
+    source_inputs = snapshot.get("source_inputs")
+    if isinstance(source_inputs, dict):
+        evidence_window_meta = source_inputs.get("etf_flow_evidence_window")
+        if isinstance(evidence_window_meta, dict):
+            _compare_text(
+                evidence_window_meta.get("start_date"),
+                first_feature_date,
+                context="snapshot.source_inputs.etf_flow_evidence_window.start_date",
+                errors=errors,
+            )
+            _compare_text(
+                evidence_window_meta.get("end_date"),
+                inputs["closed_day"],
+                context="snapshot.source_inputs.etf_flow_evidence_window.end_date",
+                errors=errors,
+            )
+        full_history_meta = source_inputs.get("full_history_window")
+        if isinstance(full_history_meta, dict):
+            _compare_text(
+                full_history_meta.get("start_date"),
+                baseline_dates.iloc[0],
+                context="snapshot.source_inputs.full_history_window.start_date",
+                errors=errors,
+            )
+            _compare_text(
+                full_history_meta.get("end_date"),
+                inputs["closed_day"],
+                context="snapshot.source_inputs.full_history_window.end_date",
+                errors=errors,
+            )
 
 
 def validate_production_payloads(
@@ -283,7 +516,13 @@ def validate_production_payloads(
     _compare_text(diagnostics.get("closed_day"), closed_day, context="diagnostics.closed_day", errors=errors)
     timeseries_last_day = _normalize_iso_day_text(timeseries["date"].iloc[-1], context="timeseries.last_row.date")
     _compare_text(timeseries_last_day, closed_day, context="timeseries.last_row.date", errors=errors)
-    checks["source_day_alignment"] = (
+    paper_materialization = (
+        inputs.get("durable_baseline_source_inputs", {}).get("paper_materialization", {})
+        if isinstance(inputs.get("durable_baseline_source_inputs"), dict)
+        else {}
+    )
+    carry_forward_rows = int(paper_materialization.get("carry_forward_rows_added") or 0)
+    direct_source_day_alignment = (
         inputs["paper_last_day"] == closed_day
         and inputs["trend_status_day"] == closed_day
         and inputs["trend_history_last_day"] == closed_day
@@ -291,6 +530,27 @@ def validate_production_payloads(
         and inputs["benchmark_last_day"] == closed_day
         and timeseries_last_day == closed_day
     )
+    materialized_source_day_alignment = False
+    if carry_forward_rows > 0:
+        next_rebalance_day = _normalize_iso_day_text(
+            inputs["trend_status_row"].get("next_rebalance_date"),
+            context="inputs.trend_status_row.next_rebalance_date",
+        )
+        source_days_match = (
+            inputs["paper_last_day"] == inputs["trend_status_day"]
+            and inputs["trend_status_day"] == inputs["trend_history_last_day"]
+            and inputs["trend_history_last_day"] == inputs["freshness_closed_day"]
+        )
+        materialized_source_day_alignment = (
+            source_days_match
+            and paper_materialization.get("paper_source_last_day") == inputs["paper_last_day"]
+            and paper_materialization.get("materialized_closed_day") == closed_day
+            and inputs["benchmark_last_day"] == closed_day
+            and timeseries_last_day == closed_day
+            and pd.Timestamp(inputs["paper_last_day"]) < pd.Timestamp(closed_day)
+            and pd.Timestamp(closed_day) < pd.Timestamp(next_rebalance_day)
+        )
+    checks["source_day_alignment"] = direct_source_day_alignment or materialized_source_day_alignment
     if not checks["source_day_alignment"]:
         errors.append("source closed-day alignment failed across canonical inputs and production outputs")
 
@@ -690,6 +950,15 @@ def validate_production_payloads(
                         context=f"snapshot.source_inputs.files.{key}.last_date",
                         errors=errors,
                     )
+
+    if adapter.strategy_version == ETF_FLOW_CANDIDATE_ID:
+        _validate_etf_flow_full_history_contract(
+            snapshot=snapshot,
+            timeseries=timeseries,
+            inputs=inputs,
+            errors=errors,
+            checks=checks,
+        )
 
     trade_state = diagnostics.get("current_trade_state")
     if not isinstance(trade_state, dict):

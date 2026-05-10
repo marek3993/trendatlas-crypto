@@ -266,7 +266,7 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
         label_sk="ETF-flow research panel",
         label_en="ETF flow research panel",
         required_columns=("date", "us_trading_session_date", "aggregate_net_flow_usd", "daily_causal_ready", "probe_input_ready_flag"),
-        expected_mode="btc_last_day_plus_one",
+        expected_mode="active_strategy_closed_day",
         max_allowed_lag_days=0,
     ),
     SourceSpec(
@@ -279,7 +279,7 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
         label_sk="ETF-flow research quality report",
         label_en="ETF flow research quality report",
         required_keys=("artifact_type", "status", "panel_end_causal_btc_utc_day", "ready_for_dev_only_probe", "verdict"),
-        expected_mode="btc_last_day_plus_one",
+        expected_mode="active_strategy_closed_day",
         max_allowed_lag_days=0,
     ),
     SourceSpec(
@@ -365,6 +365,17 @@ def _load_current_main_strategy_model(root: Path) -> str | None:
     if project_model and export_model and project_model != export_model:
         return None
     return project_model or export_model or None
+
+
+def _load_active_strategy_closed_day(root: Path) -> str | None:
+    snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
+    try:
+        payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    return parse_iso_day(payload.get("closed_day"))
 
 
 def resolve_effective_source_spec(spec: SourceSpec, *, context: dict[str, Any]) -> SourceSpec:
@@ -561,6 +572,8 @@ def resolve_expected_last_date(spec: SourceSpec, context: dict[str, Any]) -> str
         if btc_last_day is None:
             return None
         return (btc_last_day + timedelta(days=1)).isoformat()
+    if spec.expected_mode == "active_strategy_closed_day":
+        return context.get("active_strategy_closed_day") or context["latest_closed_utc_day"]
     return None
 
 
@@ -914,6 +927,7 @@ def build_context(
     return {
         "latest_closed_utc_day": latest_closed_utc_day(reference_now),
         "btc_last_day": btc_last_day,
+        "active_strategy_closed_day": _load_active_strategy_closed_day(root),
         "main_strategy_model": _load_current_main_strategy_model(root),
     }
 
