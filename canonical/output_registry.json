@@ -612,6 +612,19 @@
       "notes": "Single Production Core v1 truth artifact for the current strategy contract. Built from canonical strategy exports through the production adapter or replaced via a validated staged-candidate promotion cutover."
     },
     {
+      "output_path": "outputs/api/v1/strategy_catalog.json",
+      "generated_by": [
+        "scripts/production/build_strategy_catalog.py",
+        "scripts/production/apply_live_strategy_cutover.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_catalog",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Backend strategy catalog for safe promotion and switching orchestration."
+    },
+    {
       "output_path": "outputs/production/current_strategy_timeseries.csv",
       "generated_by": [
         "scripts/production/build_current_strategy_snapshot.py",
@@ -712,6 +725,18 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Manifest for the centralized data health report artifact family."
+    },
+    {
+      "output_path": "outputs/production/promotion/",
+      "generated_by": [
+        "scripts/production/apply_live_strategy_cutover.py"
+      ],
+      "layer": "production_core",
+      "status": "active",
+      "output_kind": "production_promotion_report_bundle",
+      "decision_relevance": "decision_relevant",
+      "official_truth": false,
+      "notes": "Dry-run promotion report bundle including the main report, quality sidecar, and proposed git-add list."
     },
     {
       "output_path": "outputs/execution/authority/",

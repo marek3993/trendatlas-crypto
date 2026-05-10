@@ -1,0 +1,208 @@
+{
+  "artifact_type": "strategy_catalog",
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-10T12:22:16Z",
+  "current_official_strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+  "official_softer_fallback_model": "phase68g_btc_persistence_10d_early_risk_075",
+  "secondary_fallback_model": "phase68g_66g_1p25x_candidate",
+  "legacy_fallback_model": "phase68i_dynamic_ladder_candidate",
+  "authority_publish_required_for_live_cutover": true,
+  "strategies": [
+    {
+      "strategy_model": "phase68g_66g_1p25x_candidate",
+      "label": "Secondary fallback",
+      "status": "active_fallback",
+      "current_role": "secondary_fallback",
+      "production_adapter_or_build_route": {
+        "kind": "production_core_live_adapter",
+        "entrypoint": "scripts/production/strategy_adapters/phase68g_66g_1p25x_candidate_adapter.py",
+        "build_script": "scripts/production/build_current_strategy_snapshot.py",
+        "validation_script": "scripts/production/validate_current_strategy_snapshot.py"
+      },
+      "required_source_paths": [
+        "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+        "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+        "outputs/execution/app_exports/phase66g_live_status.csv",
+        "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+        "outputs/execution/freshness/app_freshness_report.json",
+        "data/ohlcv/BTCUSDT_1d.csv"
+      ],
+      "expected_production_outputs": [
+        "outputs/production/current_strategy_snapshot.json",
+        "outputs/production/current_strategy_timeseries.csv",
+        "outputs/production/current_strategy_diagnostics.json",
+        "outputs/production/current_strategy_snapshot.quality.json",
+        "outputs/production/current_strategy_snapshot.manifest.json"
+      ],
+      "required_evidence_window": {
+        "applicable": false,
+        "type": "none",
+        "requirement": "No extra evidence window beyond the canonical phase68g export chain."
+      },
+      "data_requirements": [
+        "Canonical phase68g paper and authoritative export must exist under outputs/execution/app_exports/.",
+        "phase66g live status, phase66g trend history, and app freshness report must align to the same closed day.",
+        "BTC daily OHLCV must exist and match the production closed day."
+      ],
+      "authority_publish_required": true,
+      "notes": "Secondary fallback baseline route. Production Core can rebuild it directly without mutating source_of_truth, but live cutover still requires separate Raspberry Pi authority publish.",
+      "fallback_relationship": {
+        "live_strategy": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "softer_fallback": "phase68g_btc_persistence_10d_early_risk_075",
+        "secondary_fallback": "phase68g_66g_1p25x_candidate",
+        "legacy_fallback": "phase68i_dynamic_ladder_candidate"
+      }
+    },
+    {
+      "strategy_model": "phase68g_btc_persistence_10d_early_risk_075",
+      "label": "Softer fallback",
+      "status": "active_fallback",
+      "current_role": "official_softer_fallback",
+      "production_adapter_or_build_route": {
+        "kind": "production_core_live_adapter",
+        "entrypoint": "scripts/production/strategy_adapters/phase68g_btc_persistence_10d_early_risk_075_adapter.py",
+        "build_script": "scripts/production/build_current_strategy_snapshot.py",
+        "validation_script": "scripts/production/validate_current_strategy_snapshot.py"
+      },
+      "required_source_paths": [
+        "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
+        "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+        "outputs/execution/app_exports/phase66g_live_status.csv",
+        "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+        "outputs/execution/freshness/app_freshness_report.json",
+        "data/ohlcv/BTCUSDT_1d.csv",
+        "research_os/dev_only/contracts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.contract.json",
+        "research_os/dev_only/specs/dev_only_production_core_btc_candidate_persistence_early_risk_compare.spec.json",
+        "research_os/dev_only/manifests/dev_only_production_core_btc_candidate_persistence_early_risk_compare.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/summary.json",
+        "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/quality.json",
+        "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/variant_compare.csv",
+        "scripts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.py"
+      ],
+      "expected_production_outputs": [
+        "outputs/production/current_strategy_snapshot.json",
+        "outputs/production/current_strategy_timeseries.csv",
+        "outputs/production/current_strategy_diagnostics.json",
+        "outputs/production/current_strategy_snapshot.quality.json",
+        "outputs/production/current_strategy_snapshot.manifest.json"
+      ],
+      "required_evidence_window": {
+        "applicable": true,
+        "type": "variant_selection_evidence",
+        "source_path": "outputs/research_os/dev_only/non_authoritative_production_core_btc_candidate_persistence_early_risk_compare/summary.json",
+        "requirement": "selected_variant_id must resolve to btc_candidate_persistence_10d_075."
+      },
+      "data_requirements": [
+        "All canonical phase68g baseline inputs must be present and aligned.",
+        "The dev-only BTC persistence summary, quality, and variant compare artifacts must exist.",
+        "The BTC persistence compare contract/spec/manifest inputs must remain present for evidence lineage."
+      ],
+      "authority_publish_required": true,
+      "notes": "Official softer fallback. It remains eligible for Production Core rebuilds, but live cutover still requires separate Raspberry Pi authority publish.",
+      "fallback_relationship": {
+        "live_strategy": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "softer_fallback": "phase68g_btc_persistence_10d_early_risk_075",
+        "secondary_fallback": "phase68g_66g_1p25x_candidate",
+        "legacy_fallback": "phase68i_dynamic_ladder_candidate"
+      }
+    },
+    {
+      "strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "label": "Main strategy",
+      "status": "active",
+      "current_role": "official_live_main",
+      "production_adapter_or_build_route": {
+        "kind": "production_core_live_adapter",
+        "entrypoint": "scripts/production/strategy_adapters/phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter.py",
+        "build_script": "scripts/production/build_current_strategy_snapshot.py",
+        "validation_script": "scripts/production/validate_current_strategy_snapshot.py",
+        "materialize_execution_exports_script": "scripts/execution/materialize_execution_app_exports.py"
+      },
+      "required_source_paths": [
+        "outputs/production/current_strategy_snapshot.json",
+        "outputs/production/current_strategy_timeseries.csv",
+        "outputs/production/current_strategy_diagnostics.json",
+        "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+        "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+        "outputs/execution/app_exports/phase66g_live_status.csv",
+        "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+        "outputs/execution/freshness/app_freshness_report.json",
+        "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+        "data/ohlcv/BTCUSDT_1d.csv",
+        "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+        "source_of_truth/project_truth.json",
+        "source_of_truth/export_contract.json",
+        "scripts/dev_only_phase68g_etf_flow_impulse_probe.py",
+        "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py"
+      ],
+      "expected_production_outputs": [
+        "outputs/production/current_strategy_snapshot.json",
+        "outputs/production/current_strategy_timeseries.csv",
+        "outputs/production/current_strategy_diagnostics.json",
+        "outputs/production/current_strategy_snapshot.quality.json",
+        "outputs/production/current_strategy_snapshot.manifest.json"
+      ],
+      "required_evidence_window": {
+        "applicable": true,
+        "type": "etf_flow_feature_window",
+        "source_path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+        "requirement": "The ETF-flow evidence window must run contiguously from the first feature day through the current closed day."
+      },
+      "data_requirements": [
+        "The ETF-flow research panel and its quality sidecar must be present and current.",
+        "The softer fallback BTC persistence lineage and the phase68g canonical baseline lineage must both be present.",
+        "project_truth.json and export_contract.json must already point at the ETF-flow Production Core route for current official builds."
+      ],
+      "authority_publish_required": true,
+      "notes": "Current official live strategy. Dry-run can rebuild Production Core locally, but live cutover remains incomplete until the Raspberry Pi authority publish succeeds.",
+      "fallback_relationship": {
+        "live_strategy": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "softer_fallback": "phase68g_btc_persistence_10d_early_risk_075",
+        "secondary_fallback": "phase68g_66g_1p25x_candidate",
+        "legacy_fallback": "phase68i_dynamic_ladder_candidate"
+      }
+    },
+    {
+      "strategy_model": "phase68i_dynamic_ladder_candidate",
+      "label": "Historical fallback",
+      "status": "legacy_only",
+      "current_role": "legacy_fallback_only",
+      "production_adapter_or_build_route": {
+        "kind": "legacy_fallback_app_export_only",
+        "entrypoint": "scripts/execution/materialize_execution_app_exports.py",
+        "source_script": "scripts/phase68h_dynamic_leverage_ladder_candidate.py",
+        "production_core_support": false
+      },
+      "required_source_paths": [
+        "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_summary.csv",
+        "outputs/execution/app_exports/phase68i_dynamic_ladder_candidate_paper.csv",
+        "outputs/execution/app_exports/phase67j_live_status.csv",
+        "scripts/execution/materialize_execution_app_exports.py",
+        "scripts/phase68h_dynamic_leverage_ladder_candidate.py"
+      ],
+      "expected_production_outputs": [],
+      "required_evidence_window": {
+        "applicable": false,
+        "type": "legacy_app_export_only",
+        "requirement": "Legacy fallback only. No Production Core live adapter exists for this model."
+      },
+      "data_requirements": [
+        "Canonical legacy summary and paper app exports must remain available.",
+        "The materializer must preserve the legacy app-export route, but this model has no active Production Core live adapter.",
+        "Use only as a historical or last-resort fallback, never as the default live cutover path in v1."
+      ],
+      "authority_publish_required": true,
+      "notes": "Legacy or historical fallback only. It is cataloged for safety visibility, but v1 does not treat it as an active Production Core promotion target.",
+      "fallback_relationship": {
+        "live_strategy": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "softer_fallback": "phase68g_btc_persistence_10d_early_risk_075",
+        "secondary_fallback": "phase68g_66g_1p25x_candidate",
+        "legacy_fallback": "phase68i_dynamic_ladder_candidate"
+      }
+    }
+  ],
+  "source_paths": {
+    "project_truth": "source_of_truth/project_truth.json",
+    "export_contract": "source_of_truth/export_contract.json"
+  }
+}

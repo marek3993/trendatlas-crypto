@@ -867,6 +867,19 @@
       "notes": "Fail-closed producer. Reads the current official strategy only through the production adapter."
     },
     {
+      "script_path": "scripts/production/build_strategy_catalog.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Builds the backend strategy catalog for safe Production Core promotion and switching orchestration.",
+      "primary_outputs": [
+        "outputs/api/v1/strategy_catalog.json"
+      ],
+      "output_type": "production_catalog",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Catalog only. No truth mutation and no authority writes."
+    },
+    {
       "script_path": "scripts/production/build_staged_strategy_candidate.py",
       "layer": "production_core",
       "status": "active",
@@ -911,6 +924,17 @@
       "notes": "Standalone fail-closed validator for the production snapshot, timeseries, and diagnostics contract across both canonical builds and staged-candidate cutovers."
     },
     {
+      "script_path": "scripts/production/validate_strategy_catalog.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Validates the backend strategy catalog schema, required models, and required source-path presence.",
+      "primary_outputs": [],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only validator for the strategy catalog."
+    },
+    {
       "script_path": "scripts/production/build_data_health_report.py",
       "layer": "production_core",
       "status": "active",
@@ -924,6 +948,19 @@
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
       "notes": "Central fail-closed/warn-only health registry for app, execution, and future automation consumers."
+    },
+    {
+      "script_path": "scripts/production/apply_live_strategy_cutover.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Runs a fail-closed dry-run promotion orchestration for a cataloged strategy, including Production Core rebuild, data-health checks, downstream execution guards, and promotion-report outputs.",
+      "primary_outputs": [
+        "outputs/production/promotion/"
+      ],
+      "output_type": "validation",
+      "decision_relevance": "decision_relevant",
+      "writes_source_of_truth": false,
+      "notes": "Dry-run orchestration only in v1. Does not publish authority snapshots and does not place live orders."
     },
     {
       "script_path": "scripts/production/validate_data_health_report.py",
