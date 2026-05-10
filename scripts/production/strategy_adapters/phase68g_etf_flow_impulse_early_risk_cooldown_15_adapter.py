@@ -954,14 +954,12 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
             "dev_only_script": repo_root / "scripts" / "dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
             "project_truth": repo_root / "source_of_truth" / "project_truth.json",
             "export_contract": repo_root / "source_of_truth" / "export_contract.json",
-            "compiled_probe_helper": repo_root
+            "probe_helper_source": repo_root
             / "scripts"
-            / "__pycache__"
-            / "dev_only_phase68g_etf_flow_impulse_probe.cpython-312.pyc",
-            "compiled_cooldown_helper": repo_root
+            / "dev_only_phase68g_etf_flow_impulse_probe.py",
+            "cooldown_helper_source": repo_root
             / "scripts"
-            / "__pycache__"
-            / "dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-312.pyc",
+            / "dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py",
         }
 
     def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
@@ -1303,8 +1301,8 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15Adapter:
                     row_count=len(btc_df),
                 ),
                 "dev_only_script": _source_file_metadata(source_paths["dev_only_script"]),
-                "compiled_probe_helper": _source_file_metadata(source_paths["compiled_probe_helper"]),
-                "compiled_cooldown_helper": _source_file_metadata(source_paths["compiled_cooldown_helper"]),
+                "probe_helper_source": _source_file_metadata(source_paths["probe_helper_source"]),
+                "cooldown_helper_source": _source_file_metadata(source_paths["cooldown_helper_source"]),
                 "project_truth": _source_file_metadata(source_paths["project_truth"]),
                 "export_contract": _source_file_metadata(source_paths["export_contract"]),
             },
@@ -1584,8 +1582,8 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
                     row_count=len(inputs["btc_df"]),
                 ),
                 "dev_only_script": _source_file_metadata(inputs["source_paths"]["dev_only_script"]),
-                "compiled_probe_helper": _source_file_metadata(inputs["source_paths"]["compiled_probe_helper"]),
-                "compiled_cooldown_helper": _source_file_metadata(inputs["source_paths"]["compiled_cooldown_helper"]),
+                "probe_helper_source": _source_file_metadata(inputs["source_paths"]["probe_helper_source"]),
+                "cooldown_helper_source": _source_file_metadata(inputs["source_paths"]["cooldown_helper_source"]),
                 "project_truth": _source_file_metadata(inputs["source_paths"]["project_truth"]),
                 "export_contract": _source_file_metadata(inputs["source_paths"]["export_contract"]),
             },

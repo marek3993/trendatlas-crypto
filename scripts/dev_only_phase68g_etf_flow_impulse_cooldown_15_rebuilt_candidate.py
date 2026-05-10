@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import importlib.machinery
 import importlib.util
 import json
 import sys
@@ -17,6 +16,10 @@ from research_os_dev_only_bot_compare_common import MANDATORY_DEV_FLAGS, save_js
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = ROOT / "scripts"
 PYCACHE_DIR = SCRIPTS_DIR / "__pycache__"
+HELPER_SOURCE_FILES = {
+    "dev_only_phase68g_etf_flow_impulse_probe": "dev_only_phase68g_etf_flow_impulse_probe.py",
+    "dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity": "dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py",
+}
 
 BASELINE_SNAPSHOT_PATH = ROOT / "outputs" / "production" / "current_strategy_snapshot.json"
 BASELINE_TIMESERIES_PATH = ROOT / "outputs" / "production" / "current_strategy_timeseries.csv"
@@ -133,6 +136,23 @@ def read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def load_source_module(module_name: str, source_filename: str) -> Any:
+    if str(SCRIPTS_DIR) not in sys.path:
+        sys.path.insert(0, str(SCRIPTS_DIR))
+    if module_name in sys.modules:
+        return sys.modules[module_name]
+    source_path = SCRIPTS_DIR / source_filename
+    if not source_path.exists():
+        raise FileNotFoundError(f"Missing source helper for {module_name}: {source_path}")
+    spec = importlib.util.spec_from_file_location(module_name, source_path)
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Unable to load module spec for {module_name} from {source_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 def load_compiled_module(module_name: str, pattern: str) -> Any:
     if str(SCRIPTS_DIR) not in sys.path:
         sys.path.insert(0, str(SCRIPTS_DIR))
@@ -141,6 +161,8 @@ def load_compiled_module(module_name: str, pattern: str) -> Any:
     matches = sorted(PYCACHE_DIR.glob(pattern))
     if not matches:
         raise FileNotFoundError(f"Missing compiled helper for {module_name}: {pattern}")
+    import importlib.machinery
+
     loader = importlib.machinery.SourcelessFileLoader(module_name, str(matches[0]))
     spec = importlib.util.spec_from_loader(loader.name, loader)
     if spec is None:
@@ -151,14 +173,28 @@ def load_compiled_module(module_name: str, pattern: str) -> Any:
     return module
 
 
+def load_source_or_compiled_module(
+    module_name: str,
+    *,
+    source_filename: str,
+    compiled_pattern: str,
+) -> Any:
+    source_path = SCRIPTS_DIR / source_filename
+    if source_path.exists():
+        return load_source_module(module_name, source_filename)
+    return load_compiled_module(module_name, compiled_pattern)
+
+
 def load_phase68g_helpers() -> tuple[Any, Any]:
-    probe_mod = load_compiled_module(
+    probe_mod = load_source_or_compiled_module(
         "dev_only_phase68g_etf_flow_impulse_probe",
-        "dev_only_phase68g_etf_flow_impulse_probe.cpython-*.pyc",
+        source_filename=HELPER_SOURCE_FILES["dev_only_phase68g_etf_flow_impulse_probe"],
+        compiled_pattern="dev_only_phase68g_etf_flow_impulse_probe.cpython-*.pyc",
     )
-    cooldown_mod = load_compiled_module(
+    cooldown_mod = load_source_or_compiled_module(
         "dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity",
-        "dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-*.pyc",
+        source_filename=HELPER_SOURCE_FILES["dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity"],
+        compiled_pattern="dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-*.pyc",
     )
     return probe_mod, cooldown_mod
 
@@ -767,14 +803,8 @@ def build_manifest_payload(
             "contract_refs": [CONTRACT_REF],
             "spec_refs": [SPEC_REF],
             "manifest_seed_refs": [MANIFEST_SEED_REF],
-            "compiled_helper_refs": [
-                str(path)
-                for path in sorted(
-                    [
-                        *PYCACHE_DIR.glob("dev_only_phase68g_etf_flow_impulse_probe.cpython-*.pyc"),
-                        *PYCACHE_DIR.glob("dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.cpython-*.pyc"),
-                    ]
-                )
+            "helper_source_refs": [
+                str(SCRIPTS_DIR / filename) for filename in HELPER_SOURCE_FILES.values()
             ],
             "cost_model": cost_config_meta,
             "hard_invalidation_rule": hard_invalidation_meta,
