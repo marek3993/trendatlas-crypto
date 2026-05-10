@@ -98,6 +98,12 @@ ACTIVE_TIMESERIES_COLUMNS = [
     "leverage_state_reason",
     "trend_activation_threshold",
     "reason_code",
+    "early_risk_active",
+    "cooldown_blocked_entry",
+    "etf_flow_feature_available",
+    "etf_flow_evidence_window",
+    "etf_flow_rule_active",
+    "etf_flow_causal_date_available",
     "rolling_return_7d",
     "rolling_return_30d",
     "rolling_return_90d",
@@ -258,8 +264,8 @@ def _rolling_sharpe(series: pd.Series, window: int) -> pd.Series:
     clean = _to_float_series(series)
     mean = clean.rolling(window=window, min_periods=window).mean()
     std = clean.rolling(window=window, min_periods=window).std(ddof=0)
-    sharpe = (mean / std.replace(0.0, pd.NA)) * (365.25 ** 0.5)
-    return sharpe.fillna(pd.NA)
+    sharpe = (mean / std.replace(0.0, float("nan"))) * (365.25 ** 0.5)
+    return sharpe.replace([float("inf"), float("-inf")], float("nan"))
 
 
 def _compute_total_return_pct(series: pd.Series) -> float:
@@ -507,6 +513,26 @@ def transform_candidate_timeseries_to_active(candidate_timeseries: pd.DataFrame)
     active["leverage_state_reason"] = source["leverage_state_reason"].astype(str)
     active["trend_activation_threshold"] = _to_float_series(source["trend_activation_threshold"]).round(12)
     active["reason_code"] = source["reason_code"].astype(str)
+    active["early_risk_active"] = _to_bool_series(
+        source.get("early_risk_active", pd.Series(False, index=source.index))
+    )
+    active["cooldown_blocked_entry"] = _to_bool_series(
+        source.get("cooldown_blocked_entry", pd.Series(False, index=source.index))
+    )
+    active["etf_flow_feature_available"] = _to_bool_series(
+        source.get("etf_flow_feature_available", pd.Series(False, index=source.index))
+    )
+    active["etf_flow_evidence_window"] = _to_bool_series(
+        source.get("etf_flow_evidence_window", pd.Series(False, index=source.index))
+    )
+    active["etf_flow_rule_active"] = _to_bool_series(
+        source.get("etf_flow_rule_active", pd.Series(False, index=source.index))
+    )
+    active["etf_flow_causal_date_available"] = (
+        source.get("etf_flow_causal_date_available", pd.Series("", index=source.index))
+        .fillna("")
+        .astype(str)
+    )
     active["source_validated"] = _to_bool_series(source["source_validated"])
 
     active["fees_cumulative"] = active["fees_daily"].cumsum().round(12)

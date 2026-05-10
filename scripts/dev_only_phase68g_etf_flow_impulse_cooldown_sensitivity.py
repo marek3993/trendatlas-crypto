@@ -99,7 +99,9 @@ def build_cooldown_state_machine(
         baseline_cash = bool(row["baseline_cash"])
         hard_invalidation_on = bool(row["hard_invalidation_on"])
         price_filter_pass = bool(row["btc_price_filter_pass"])
-        flow_two_of_three_positive = bool(row["flow_2_of_last_3_positive_flag"])
+        flow_two_of_three_positive = bool(
+            row.get("flow_2_of_last_3_positive_eval", row["flow_2_of_last_3_positive_flag"])
+        )
         permission_on = bool(row["permission_on"])
 
         exit_reason = ""

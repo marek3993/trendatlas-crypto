@@ -134,6 +134,69 @@ def build_overlap_frame(
     return frame
 
 
+def build_full_history_frame(
+    baseline_df: pd.DataFrame,
+    etf_df: pd.DataFrame,
+    btc_df: pd.DataFrame,
+) -> pd.DataFrame:
+    frame = baseline_df.join(btc_df, how="inner").sort_index()
+    if frame.empty:
+        raise ValueError("No overlapping dates across the baseline and BTC causal data")
+
+    frame = frame.join(etf_df, how="left")
+    frame["etf_flow_feature_available"] = frame["causal_available_for_btc_utc_day"].notna()
+    if not bool(frame["etf_flow_feature_available"].any()):
+        raise ValueError("No ETF-flow causal rows are available on the baseline date universe")
+
+    first_evidence_date = pd.Timestamp(
+        frame.index[frame["etf_flow_feature_available"]].min()
+    )
+    frame["etf_flow_evidence_window"] = frame.index >= first_evidence_date
+
+    frame["flow_2_of_last_3_positive_flag"] = (
+        frame["flow_2_of_last_3_positive_flag"].where(frame["etf_flow_feature_available"])
+    )
+    frame["probe_input_ready_flag"] = (
+        frame["probe_input_ready_flag"].where(frame["etf_flow_feature_available"])
+    )
+    frame["dev_only"] = frame["dev_only"].where(frame["etf_flow_feature_available"])
+    frame["non_authoritative"] = frame["non_authoritative"].where(
+        frame["etf_flow_feature_available"]
+    )
+    frame["official_truth"] = frame["official_truth"].where(frame["etf_flow_feature_available"])
+    frame["strategy_advancement"] = frame["strategy_advancement"].where(
+        frame["etf_flow_feature_available"]
+    )
+
+    feature_mask = frame["etf_flow_feature_available"].astype(bool)
+    frame["flow_2_of_last_3_positive_eval"] = (
+        frame["flow_2_of_last_3_positive_flag"]
+        .where(feature_mask)
+        .ffill()
+        .fillna(False)
+        .astype(bool)
+    )
+    raw_flow_3d_sum = pd.to_numeric(frame["flow_3d_sum_usd"], errors="coerce")
+    frame["flow_3d_sum_pass"] = raw_flow_3d_sum.fillna(float("-inf")) >= FLOW_3D_FLOOR_USD
+    frame["baseline_cash"] = frame["cash_day"].astype(bool)
+    frame["baseline_full_risk"] = ~frame["baseline_cash"]
+    frame["hard_invalidation_on"] = frame["stress_block_active"].astype(bool)
+    frame["btc_price_filter_pass"] = frame["btc_price_filter_pass"].fillna(False).astype(bool)
+    frame["permission_inputs_true"] = (
+        feature_mask
+        & frame["probe_input_ready_flag"].fillna(False).astype(bool)
+        & frame["flow_2_of_last_3_positive_flag"].fillna(False).astype(bool)
+        & frame["flow_3d_sum_pass"].astype(bool)
+        & frame["btc_price_filter_pass"].astype(bool)
+        & ~frame["hard_invalidation_on"].astype(bool)
+    )
+    frame["permission_on"] = frame["baseline_cash"] & frame["permission_inputs_true"]
+    frame["permission_on_while_baseline_full_risk"] = (
+        frame["baseline_full_risk"] & frame["permission_inputs_true"]
+    )
+    return frame
+
+
 def build_export_metrics(
     frame: pd.DataFrame,
     cost_cfg: NetCostExportConfig,
