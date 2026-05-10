@@ -274,6 +274,28 @@ def _source_file_metadata(path: Path, *, last_date: str | None = None, row_count
     return payload
 
 
+def _annotate_materialized_durable_source_metadata(
+    source_meta: dict[str, Any],
+    *,
+    materialized_closed_day: str,
+    carry_forward_rows_added: int,
+    raw_source_last_day: str | None = None,
+    raw_source_closed_day: str | None = None,
+) -> dict[str, Any]:
+    payload = dict(source_meta)
+    payload["materialized_closed_day"] = materialized_closed_day
+    payload["carry_forward_rows_added"] = int(carry_forward_rows_added)
+    if raw_source_last_day is not None:
+        payload["raw_source_last_day"] = raw_source_last_day
+        if "last_date" in payload:
+            payload["last_date"] = materialized_closed_day
+    if raw_source_closed_day is not None:
+        payload["raw_source_closed_day"] = raw_source_closed_day
+        if "closed_day" in payload:
+            payload["closed_day"] = materialized_closed_day
+    return payload
+
+
 def capture_protected_state(*, root: Path | None = None) -> dict[str, dict[str, Any]]:
     repo_root = (root or ROOT).resolve()
     payload: dict[str, dict[str, Any]] = {}
@@ -638,6 +660,7 @@ def _materialize_durable_baseline_timeseries_to_closed_day(
     if source_last_day == target_closed_day:
         return materialized, {
             "paper_source_last_day": source_last_day,
+            "raw_source_last_day": source_last_day,
             "materialized_closed_day": target_closed_day,
             "carry_forward_rows_added": 0,
         }
@@ -670,6 +693,7 @@ def _materialize_durable_baseline_timeseries_to_closed_day(
 
     return materialized, {
         "paper_source_last_day": source_last_day,
+        "raw_source_last_day": source_last_day,
         "materialized_closed_day": pd.Timestamp(materialized["date"].iloc[-1]).strftime("%Y-%m-%d"),
         "carry_forward_rows_added": added_rows,
     }
@@ -744,6 +768,11 @@ def _load_shared_inputs(
         raise ValueError(
             "durable baseline freshness_report.errors must be empty for production build"
         )
+    if durable_baseline_summary_day != durable_baseline_paper_last_day:
+        raise ValueError(
+            "durable BTC-persistence summary latest_available_date must match the raw paper last day "
+            f"(summary={durable_baseline_summary_day} paper={durable_baseline_paper_last_day})"
+        )
     if trend_history_last_day != baseline_source_closed_day:
         raise ValueError(
             "durable BTC-persistence trend_history last day must match trend_status latest_available_date "
@@ -798,40 +827,78 @@ def _load_shared_inputs(
             "materialized durable BTC-persistence paper last_row.date must match the validated closed day "
             f"(paper={materialized_paper_last_day} closed_day={baseline_closed_day})"
         )
+    materialized_closed_day = str(paper_materialization_meta["materialized_closed_day"])
+    carry_forward_rows_added = int(paper_materialization_meta["carry_forward_rows_added"])
+    raw_source_last_day = str(
+        paper_materialization_meta.get("raw_source_last_day")
+        or paper_materialization_meta["paper_source_last_day"]
+    )
 
     durable_baseline_source_inputs = {
         "strategy_version": BASE_STRATEGY_VERSION,
         "validated_closed_day": baseline_closed_day,
+        "materialized_closed_day": materialized_closed_day,
+        "raw_source_last_day": raw_source_last_day,
+        "carry_forward_rows_added": carry_forward_rows_added,
         "paper_materialization": {
             "summary_latest_available_date": durable_baseline_summary_day,
+            "summary_source_last_day": durable_baseline_summary_day,
+            "trend_source_last_day": trend_status_day,
+            "freshness_source_closed_day": freshness_closed_day,
             **paper_materialization_meta,
         },
         "files": {
-            "durable_baseline_summary": _source_file_metadata(
-                source_paths["durable_baseline_summary"],
-                last_date=durable_baseline_summary_day,
-                row_count=1,
+            "durable_baseline_summary": _annotate_materialized_durable_source_metadata(
+                _source_file_metadata(
+                    source_paths["durable_baseline_summary"],
+                    last_date=durable_baseline_summary_day,
+                    row_count=1,
+                ),
+                materialized_closed_day=materialized_closed_day,
+                carry_forward_rows_added=carry_forward_rows_added,
+                raw_source_last_day=durable_baseline_summary_day,
             ),
-            "durable_baseline_paper": _source_file_metadata(
-                source_paths["durable_baseline_paper"],
-                last_date=durable_baseline_paper_last_day,
-                row_count=durable_baseline_paper_row_count,
+            "durable_baseline_paper": _annotate_materialized_durable_source_metadata(
+                _source_file_metadata(
+                    source_paths["durable_baseline_paper"],
+                    last_date=durable_baseline_paper_last_day,
+                    row_count=durable_baseline_paper_row_count,
+                ),
+                materialized_closed_day=materialized_closed_day,
+                carry_forward_rows_added=carry_forward_rows_added,
+                raw_source_last_day=durable_baseline_paper_last_day,
             ),
-            "durable_baseline_trend_status": _source_file_metadata(
-                source_paths["durable_baseline_trend_status"],
-                last_date=trend_status_day,
-                row_count=1,
+            "durable_baseline_trend_status": _annotate_materialized_durable_source_metadata(
+                _source_file_metadata(
+                    source_paths["durable_baseline_trend_status"],
+                    last_date=trend_status_day,
+                    row_count=1,
+                ),
+                materialized_closed_day=materialized_closed_day,
+                carry_forward_rows_added=carry_forward_rows_added,
+                raw_source_last_day=trend_status_day,
             ),
-            "durable_baseline_trend_history": _source_file_metadata(
-                source_paths["durable_baseline_trend_history"],
-                last_date=trend_history_last_day,
-                row_count=len(trend_history_df),
+            "durable_baseline_trend_history": _annotate_materialized_durable_source_metadata(
+                _source_file_metadata(
+                    source_paths["durable_baseline_trend_history"],
+                    last_date=trend_history_last_day,
+                    row_count=len(trend_history_df),
+                ),
+                materialized_closed_day=materialized_closed_day,
+                carry_forward_rows_added=carry_forward_rows_added,
+                raw_source_last_day=trend_history_last_day,
             ),
-            "durable_baseline_freshness_report": {
-                **_source_file_metadata(source_paths["durable_baseline_freshness_report"]),
-                "closed_day": freshness_closed_day,
-                "status": freshness_status,
-            },
+            "durable_baseline_freshness_report": _annotate_materialized_durable_source_metadata(
+                {
+                    **_source_file_metadata(source_paths["durable_baseline_freshness_report"]),
+                    "closed_day": freshness_closed_day,
+                    "status": freshness_status,
+                },
+                materialized_closed_day=materialized_closed_day,
+                carry_forward_rows_added=carry_forward_rows_added,
+                raw_source_last_day=freshness_closed_day,
+                raw_source_closed_day=freshness_closed_day,
+            ),
             "benchmark_ohlcv": _source_file_metadata(
                 source_paths["btc_ohlcv"],
                 last_date=benchmark_last_day,
@@ -1006,7 +1073,11 @@ def _load_shared_inputs(
         "etf_evidence_window_start": etf_evidence_window_start,
         "baseline_closed_day": baseline_closed_day,
         "current_closed_day": current_closed_day,
+        "summary_last_day": durable_baseline_summary_day,
         "paper_last_day": durable_baseline_paper_last_day,
+        "materialized_closed_day": materialized_closed_day,
+        "raw_source_last_day": raw_source_last_day,
+        "carry_forward_rows_added": carry_forward_rows_added,
         "trend_status_row": trend_status_row,
         "trend_status_day": trend_status_day,
         "trend_history_last_day": trend_history_last_day,

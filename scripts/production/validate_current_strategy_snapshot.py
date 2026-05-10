@@ -522,8 +522,15 @@ def validate_production_payloads(
         else {}
     )
     carry_forward_rows = int(paper_materialization.get("carry_forward_rows_added") or 0)
+    materialized_closed_day = str(paper_materialization.get("materialized_closed_day") or "").strip()
+    raw_source_last_day = str(
+        paper_materialization.get("raw_source_last_day")
+        or paper_materialization.get("paper_source_last_day")
+        or ""
+    ).strip()
     direct_source_day_alignment = (
-        inputs["paper_last_day"] == closed_day
+        inputs["summary_last_day"] == closed_day
+        and inputs["paper_last_day"] == closed_day
         and inputs["trend_status_day"] == closed_day
         and inputs["trend_history_last_day"] == closed_day
         and inputs["freshness_closed_day"] == closed_day
@@ -537,14 +544,17 @@ def validate_production_payloads(
             context="inputs.trend_status_row.next_rebalance_date",
         )
         source_days_match = (
-            inputs["paper_last_day"] == inputs["trend_status_day"]
+            inputs["summary_last_day"] == inputs["paper_last_day"]
+            and inputs["paper_last_day"] == inputs["trend_status_day"]
             and inputs["trend_status_day"] == inputs["trend_history_last_day"]
             and inputs["trend_history_last_day"] == inputs["freshness_closed_day"]
         )
         materialized_source_day_alignment = (
             source_days_match
+            and paper_materialization.get("summary_source_last_day") == inputs["summary_last_day"]
             and paper_materialization.get("paper_source_last_day") == inputs["paper_last_day"]
-            and paper_materialization.get("materialized_closed_day") == closed_day
+            and raw_source_last_day == inputs["paper_last_day"]
+            and materialized_closed_day == closed_day
             and inputs["benchmark_last_day"] == closed_day
             and timeseries_last_day == closed_day
             and pd.Timestamp(inputs["paper_last_day"]) < pd.Timestamp(closed_day)
@@ -943,13 +953,108 @@ def validate_production_payloads(
                     context=f"snapshot.source_inputs.files.{key}.sha256",
                     errors=errors,
                 )
-                if "last_date" in expected_file_meta:
+                for meta_key in (
+                    "last_date",
+                    "closed_day",
+                    "status",
+                    "materialized_closed_day",
+                    "raw_source_last_day",
+                    "raw_source_closed_day",
+                ):
+                    if meta_key not in expected_file_meta:
+                        continue
                     _compare_text(
-                        actual_file_meta.get("last_date"),
-                        expected_file_meta["last_date"],
-                        context=f"snapshot.source_inputs.files.{key}.last_date",
+                        actual_file_meta.get(meta_key),
+                        expected_file_meta[meta_key],
+                        context=f"snapshot.source_inputs.files.{key}.{meta_key}",
                         errors=errors,
                     )
+                for meta_key in ("row_count", "carry_forward_rows_added"):
+                    if meta_key not in expected_file_meta:
+                        continue
+                    _compare_float(
+                        actual_file_meta.get(meta_key),
+                        float(expected_file_meta[meta_key]),
+                        context=f"snapshot.source_inputs.files.{key}.{meta_key}",
+                        errors=errors,
+                        tolerance=0.0,
+                    )
+
+        if adapter.strategy_version == ETF_FLOW_CANDIDATE_ID:
+            actual_durable_route = source_inputs.get("durable_non_circular_route")
+            expected_durable_route = expected_source_inputs.get("durable_non_circular_route")
+            if not isinstance(actual_durable_route, dict) or not isinstance(expected_durable_route, dict):
+                errors.append("snapshot.source_inputs.durable_non_circular_route must be an object")
+            else:
+                actual_softer_inputs = actual_durable_route.get("softer_fallback_source_inputs")
+                expected_softer_inputs = expected_durable_route.get("softer_fallback_source_inputs")
+                if not isinstance(actual_softer_inputs, dict) or not isinstance(expected_softer_inputs, dict):
+                    errors.append(
+                        "snapshot.source_inputs.durable_non_circular_route.softer_fallback_source_inputs "
+                        "must be an object"
+                    )
+                else:
+                    for key in (
+                        "validated_closed_day",
+                        "materialized_closed_day",
+                        "raw_source_last_day",
+                    ):
+                        _compare_text(
+                            actual_softer_inputs.get(key),
+                            expected_softer_inputs.get(key),
+                            context=(
+                                "snapshot.source_inputs.durable_non_circular_route."
+                                f"softer_fallback_source_inputs.{key}"
+                            ),
+                            errors=errors,
+                        )
+                    _compare_float(
+                        actual_softer_inputs.get("carry_forward_rows_added"),
+                        float(expected_softer_inputs.get("carry_forward_rows_added") or 0),
+                        context=(
+                            "snapshot.source_inputs.durable_non_circular_route."
+                            "softer_fallback_source_inputs.carry_forward_rows_added"
+                        ),
+                        errors=errors,
+                        tolerance=0.0,
+                    )
+                    actual_materialization = actual_softer_inputs.get("paper_materialization")
+                    expected_materialization = expected_softer_inputs.get("paper_materialization")
+                    if not isinstance(actual_materialization, dict) or not isinstance(expected_materialization, dict):
+                        errors.append(
+                            "snapshot.source_inputs.durable_non_circular_route."
+                            "softer_fallback_source_inputs.paper_materialization must be an object"
+                        )
+                    else:
+                        for key in (
+                            "summary_latest_available_date",
+                            "summary_source_last_day",
+                            "trend_source_last_day",
+                            "freshness_source_closed_day",
+                            "paper_source_last_day",
+                            "raw_source_last_day",
+                            "materialized_closed_day",
+                        ):
+                            _compare_text(
+                                actual_materialization.get(key),
+                                expected_materialization.get(key),
+                                context=(
+                                    "snapshot.source_inputs.durable_non_circular_route."
+                                    f"softer_fallback_source_inputs.paper_materialization.{key}"
+                                ),
+                                errors=errors,
+                            )
+                        _compare_float(
+                            actual_materialization.get("carry_forward_rows_added"),
+                            float(expected_materialization.get("carry_forward_rows_added") or 0),
+                            context=(
+                                "snapshot.source_inputs.durable_non_circular_route."
+                                "softer_fallback_source_inputs.paper_materialization."
+                                "carry_forward_rows_added"
+                            ),
+                            errors=errors,
+                            tolerance=0.0,
+                        )
 
     if adapter.strategy_version == ETF_FLOW_CANDIDATE_ID:
         _validate_etf_flow_full_history_contract(

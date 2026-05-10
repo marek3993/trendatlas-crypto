@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-10T10:35:27Z",
+  "generated_at_utc": "2026-05-10T20:10:03Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "closed_day": "2026-05-09",
@@ -82,9 +82,16 @@
       "softer_fallback_source_inputs": {
         "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
         "validated_closed_day": "2026-05-09",
+        "materialized_closed_day": "2026-05-09",
+        "raw_source_last_day": "2026-05-08",
+        "carry_forward_rows_added": 1,
         "paper_materialization": {
           "summary_latest_available_date": "2026-05-08",
+          "summary_source_last_day": "2026-05-08",
+          "trend_source_last_day": "2026-05-08",
+          "freshness_source_closed_day": "2026-05-08",
           "paper_source_last_day": "2026-05-08",
+          "raw_source_last_day": "2026-05-08",
           "materialized_closed_day": "2026-05-09",
           "carry_forward_rows_added": 1
         },
@@ -94,46 +101,62 @@
             "sha256": "cc53a81e0cbcac4e54fd34fcd290c51d8ae0331cac88100410b6631d44e8ad5f",
             "size_bytes": 915,
             "modified_utc": "2026-05-09T15:35:58Z",
-            "last_date": "2026-05-08",
-            "row_count": 1
+            "last_date": "2026-05-09",
+            "row_count": 1,
+            "materialized_closed_day": "2026-05-09",
+            "carry_forward_rows_added": 1,
+            "raw_source_last_day": "2026-05-08"
           },
           "durable_baseline_paper": {
             "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
             "sha256": "1411dc65e20e1dc128b805cee2d5f23b0333c675d9731f72f434efecf9a86e84",
             "size_bytes": 2623372,
             "modified_utc": "2026-05-09T15:35:58Z",
-            "last_date": "2026-05-08",
-            "row_count": 2926
+            "last_date": "2026-05-09",
+            "row_count": 2926,
+            "materialized_closed_day": "2026-05-09",
+            "carry_forward_rows_added": 1,
+            "raw_source_last_day": "2026-05-08"
           },
           "durable_baseline_trend_status": {
             "path": "outputs/execution/app_exports/phase66g_live_status.csv",
             "sha256": "6390f5d783afd54c8aea56c873f10845923a44067d7fabd068f77c231c1bae00",
             "size_bytes": 619,
-            "modified_utc": "2026-05-09T09:32:38Z",
-            "last_date": "2026-05-08",
-            "row_count": 1
+            "modified_utc": "2026-05-10T11:47:55Z",
+            "last_date": "2026-05-09",
+            "row_count": 1,
+            "materialized_closed_day": "2026-05-09",
+            "carry_forward_rows_added": 1,
+            "raw_source_last_day": "2026-05-08"
           },
           "durable_baseline_trend_history": {
             "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
             "sha256": "d3654f7383378abbca0563f9665240bd87002fcf0ebf56e5eeeb16795805c3d6",
             "size_bytes": 379642,
-            "modified_utc": "2026-05-09T09:32:38Z",
-            "last_date": "2026-05-08",
-            "row_count": 2926
+            "modified_utc": "2026-05-10T14:29:30Z",
+            "last_date": "2026-05-09",
+            "row_count": 2926,
+            "materialized_closed_day": "2026-05-09",
+            "carry_forward_rows_added": 1,
+            "raw_source_last_day": "2026-05-08"
           },
           "durable_baseline_freshness_report": {
             "path": "outputs/execution/freshness/app_freshness_report.json",
             "sha256": "4d0cd1e1c254033632aab6b03669cc435b74c96aa0f40aff7e89f070cb1e650b",
             "size_bytes": 1214,
-            "modified_utc": "2026-05-09T15:35:58Z",
-            "closed_day": "2026-05-08",
-            "status": "ok"
+            "modified_utc": "2026-05-10T11:47:55Z",
+            "closed_day": "2026-05-09",
+            "status": "ok",
+            "materialized_closed_day": "2026-05-09",
+            "carry_forward_rows_added": 1,
+            "raw_source_last_day": "2026-05-08",
+            "raw_source_closed_day": "2026-05-08"
           },
           "benchmark_ohlcv": {
             "path": "data/ohlcv/BTCUSDT_1d.csv",
             "sha256": "9204d2b3402bd0685ebd697754e27c35c6c789eed7f4b3b9467aaeac65103c43",
             "size_bytes": 274717,
-            "modified_utc": "2026-05-10T10:25:52Z",
+            "modified_utc": "2026-05-10T14:30:42Z",
             "last_date": "2026-05-09",
             "row_count": 3188
           }
@@ -164,54 +187,70 @@
         "sha256": "cc53a81e0cbcac4e54fd34fcd290c51d8ae0331cac88100410b6631d44e8ad5f",
         "size_bytes": 915,
         "modified_utc": "2026-05-09T15:35:58Z",
-        "last_date": "2026-05-08",
-        "row_count": 1
+        "last_date": "2026-05-09",
+        "row_count": 1,
+        "materialized_closed_day": "2026-05-09",
+        "carry_forward_rows_added": 1,
+        "raw_source_last_day": "2026-05-08"
       },
       "durable_baseline_paper": {
         "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
         "sha256": "1411dc65e20e1dc128b805cee2d5f23b0333c675d9731f72f434efecf9a86e84",
         "size_bytes": 2623372,
         "modified_utc": "2026-05-09T15:35:58Z",
-        "last_date": "2026-05-08",
-        "row_count": 2926
+        "last_date": "2026-05-09",
+        "row_count": 2926,
+        "materialized_closed_day": "2026-05-09",
+        "carry_forward_rows_added": 1,
+        "raw_source_last_day": "2026-05-08"
       },
       "durable_baseline_trend_status": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
         "sha256": "6390f5d783afd54c8aea56c873f10845923a44067d7fabd068f77c231c1bae00",
         "size_bytes": 619,
-        "modified_utc": "2026-05-09T09:32:38Z",
-        "last_date": "2026-05-08",
-        "row_count": 1
+        "modified_utc": "2026-05-10T11:47:55Z",
+        "last_date": "2026-05-09",
+        "row_count": 1,
+        "materialized_closed_day": "2026-05-09",
+        "carry_forward_rows_added": 1,
+        "raw_source_last_day": "2026-05-08"
       },
       "durable_baseline_trend_history": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
         "sha256": "d3654f7383378abbca0563f9665240bd87002fcf0ebf56e5eeeb16795805c3d6",
         "size_bytes": 379642,
-        "modified_utc": "2026-05-09T09:32:38Z",
-        "last_date": "2026-05-08",
-        "row_count": 2926
+        "modified_utc": "2026-05-10T14:29:30Z",
+        "last_date": "2026-05-09",
+        "row_count": 2926,
+        "materialized_closed_day": "2026-05-09",
+        "carry_forward_rows_added": 1,
+        "raw_source_last_day": "2026-05-08"
       },
       "durable_baseline_freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
         "sha256": "4d0cd1e1c254033632aab6b03669cc435b74c96aa0f40aff7e89f070cb1e650b",
         "size_bytes": 1214,
-        "modified_utc": "2026-05-09T15:35:58Z",
-        "closed_day": "2026-05-08",
-        "status": "ok"
+        "modified_utc": "2026-05-10T11:47:55Z",
+        "closed_day": "2026-05-09",
+        "status": "ok",
+        "materialized_closed_day": "2026-05-09",
+        "carry_forward_rows_added": 1,
+        "raw_source_last_day": "2026-05-08",
+        "raw_source_closed_day": "2026-05-08"
       },
       "benchmark_ohlcv": {
         "path": "data/ohlcv/BTCUSDT_1d.csv",
         "sha256": "9204d2b3402bd0685ebd697754e27c35c6c789eed7f4b3b9467aaeac65103c43",
         "size_bytes": 274717,
-        "modified_utc": "2026-05-10T10:25:52Z",
+        "modified_utc": "2026-05-10T14:30:42Z",
         "last_date": "2026-05-09",
         "row_count": 3188
       },
       "etf_panel": {
         "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
-        "sha256": "4bdcb8e08c444944d1dc11c5a020aaed4df7222faadb958d1854ea796581f24b",
+        "sha256": "ab5575b37ec75a06af54f25d3548ec31ec874f5b5001f020ecfa92429eef75c2",
         "size_bytes": 221053,
-        "modified_utc": "2026-05-10T10:25:58Z",
+        "modified_utc": "2026-05-10T11:47:56Z",
         "last_date": "2026-05-09",
         "row_count": 584
       },
@@ -219,7 +258,7 @@
         "path": "data/ohlcv/BTCUSDT_1d.csv",
         "sha256": "9204d2b3402bd0685ebd697754e27c35c6c789eed7f4b3b9467aaeac65103c43",
         "size_bytes": 274717,
-        "modified_utc": "2026-05-10T10:25:52Z",
+        "modified_utc": "2026-05-10T14:30:42Z",
         "last_date": "2026-05-09",
         "row_count": 3188
       },
@@ -231,15 +270,15 @@
       },
       "probe_helper_source": {
         "path": "scripts/dev_only_phase68g_etf_flow_impulse_probe.py",
-        "sha256": "74f3450f2898df316e68ffaaa6a5d13969322826c5e82ab4818407c08fc26720",
-        "size_bytes": 15357,
-        "modified_utc": "2026-05-10T08:21:02Z"
+        "sha256": "52658b50d5c1cfecfbdc762a74b7c6b59e52bbccdc5574ef48bb516196c9ec9a",
+        "size_bytes": 15435,
+        "modified_utc": "2026-05-10T14:29:41Z"
       },
       "cooldown_helper_source": {
         "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py",
-        "sha256": "1bb549aa9846390c0115ef73c1d660bf305c7a6a242b13fa82d42abb37e7435c",
-        "size_bytes": 13921,
-        "modified_utc": "2026-05-10T08:21:06Z"
+        "sha256": "1508262bcb5c36814d3e860dd04efe3f96f86eb042a0f086e8a81d08dedbe4b3",
+        "size_bytes": 13928,
+        "modified_utc": "2026-05-10T14:29:41Z"
       },
       "project_truth": {
         "path": "source_of_truth/project_truth.json",
@@ -341,8 +380,8 @@
       "source_of_truth/project_truth.json",
       "source_of_truth/export_contract.json"
     ],
-    "build_command": "C:\\Users\\benda\\Desktop\\market_regime_v1\\.venv\\Scripts\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
-    "git_commit": "e6f0167404eed1c42463b40b7473944f2b21841b",
+    "build_command": "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\production\\build_current_strategy_snapshot.py",
+    "git_commit": "ae0ce8dd26d1a3098b4af48cb40d85396f17aa7c",
     "wait_condition": {
       "code": "candidate_entry_not_authorized",
       "text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
