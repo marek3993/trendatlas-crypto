@@ -3,24 +3,24 @@
   "schema_version": 1,
   "target_closed_day_utc": "2026-05-09",
   "latest_available_closed_utc_day": "2026-05-09",
-  "refresh_started_at_utc": "2026-05-10T18:38:33Z",
-  "refresh_finished_at_utc": "2026-05-10T18:43:04Z",
-  "refresh_started_at_local": "2026-05-10T20:38:33+02:00",
-  "refresh_finished_at_local": "2026-05-10T20:43:04+02:00",
+  "refresh_started_at_utc": "2026-05-10T18:54:14Z",
+  "refresh_finished_at_utc": "2026-05-10T18:54:28Z",
+  "refresh_started_at_local": "2026-05-10T20:54:14+02:00",
+  "refresh_finished_at_local": "2026-05-10T20:54:28+02:00",
   "display_timezone": "Europe/Bratislava",
   "latest_authoritative_attempt_status": "failed",
-  "latest_authoritative_attempt_error": "Step failed: build_current_strategy_snapshot\nscript=/opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py\nreturncode=1\nstdout_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_183833/logs/build_current_strategy_snapshot.stdout.log\nstderr_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_183833/logs/build_current_strategy_snapshot.stderr.log",
+  "latest_authoritative_attempt_error": "Step failed: build_current_strategy_snapshot\nscript=/opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py\nreturncode=1\nstdout_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_185414/logs/build_current_strategy_snapshot.stdout.log\nstderr_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_185414/logs/build_current_strategy_snapshot.stderr.log",
   "strategy_artifact_closed_day_utc": "2026-05-09",
   "currentness_status": "refresh_failed",
-  "currentness_reason": "The latest authoritative refresh attempt failed for target_closed_day_utc=2026-05-09. error=Step failed: build_current_strategy_snapshot\nscript=/opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py\nreturncode=1\nstdout_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_183833/logs/build_current_strategy_snapshot.stdout.log\nstderr_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_183833/logs/build_current_strategy_snapshot.stderr.log.",
-  "generated_at_utc": "2026-05-10T18:43:04Z",
-  "generated_at_local": "2026-05-10T20:43:04+02:00",
-  "run_id": "20260510_183833",
+  "currentness_reason": "The latest authoritative refresh attempt failed for target_closed_day_utc=2026-05-09. error=Step failed: build_current_strategy_snapshot\nscript=/opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py\nreturncode=1\nstdout_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_185414/logs/build_current_strategy_snapshot.stdout.log\nstderr_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_185414/logs/build_current_strategy_snapshot.stderr.log.",
+  "generated_at_utc": "2026-05-10T18:54:28Z",
+  "generated_at_local": "2026-05-10T20:54:28+02:00",
+  "run_id": "20260510_185414",
   "authority_role": "pi_only_authoritative_producer",
   "automatic_producer_id": "raspberry_pi",
   "manual_recovery_only": true,
   "github_actions_role": "validation_only",
-  "source_manifest_path": "/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+  "source_manifest_path": "/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
   "latest_successful_snapshot_path": "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
   "latest_attempt_status_path": "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json",
   "attempt_stage": "daily_refresh_app_pipeline",
@@ -29,7 +29,7 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "running",
-      "started_at_utc": "2026-05-10T18:38:33Z",
+      "started_at_utc": "2026-05-10T18:54:14Z",
       "finished_at_utc": null,
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
@@ -40,19 +40,19 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "failed",
-      "started_at_utc": "2026-05-10T18:38:33Z",
-      "finished_at_utc": "2026-05-10T18:43:04Z",
+      "started_at_utc": "2026-05-10T18:54:14Z",
+      "finished_at_utc": "2026-05-10T18:54:28Z",
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
       "stderr_log": null,
-      "error": "Step failed: build_current_strategy_snapshot\nscript=/opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py\nreturncode=1\nstdout_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_183833/logs/build_current_strategy_snapshot.stdout.log\nstderr_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_183833/logs/build_current_strategy_snapshot.stderr.log",
+      "error": "Step failed: build_current_strategy_snapshot\nscript=/opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py\nreturncode=1\nstdout_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_185414/logs/build_current_strategy_snapshot.stdout.log\nstderr_log=/opt/market_regime_v1/outputs/app_refresh_pipeline/20260510_185414/logs/build_current_strategy_snapshot.stderr.log",
       "non_authoritative_support_only": false
     }
   ],
   "app_product_snapshot": {
     "snapshot_type": "app_product_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-05-10T18:43:01Z",
+    "app_export_generated_at_utc": "2026-05-10T18:54:25Z",
     "product_name": "TrendAtlas Crypto",
     "page_scope": "homepage",
     "current_main_strategy_root_contract": {
@@ -80,7 +80,7 @@
     "freshness_target_closed_day": "2026-05-09",
     "freshness": {
       "status": "ok",
-      "generated_at_utc": "2026-05-10T18:42:57+00:00",
+      "generated_at_utc": "2026-05-10T18:54:23+00:00",
       "checks": {
         "btc_raw_last_date": "2026-05-09",
         "phase66g_paper_last_date": "2026-05-09",
@@ -244,14 +244,14 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 921,
-        "modified_utc": "2026-05-10T18:43:01Z",
+        "modified_utc": "2026-05-10T18:54:25Z",
         "operational_metrics": {
           "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
           "source_type": "canonical_app_paper_held_state_series",
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2384889,
-          "modified_utc": "2026-05-10T18:43:01Z",
+          "modified_utc": "2026-05-10T18:54:25Z",
           "semantic_role": "current_live_main_strategy_operational_metrics",
           "series_semantics": "homepage_current_main_strategy_held_state_history",
           "held_state_column": "portfolio_held_asset",
@@ -282,7 +282,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 921,
-        "modified_utc": "2026-05-10T18:43:01Z",
+        "modified_utc": "2026-05-10T18:54:25Z",
         "source_fields": [
           "cagr_pct",
           "since2023_cagr_pct",
@@ -295,7 +295,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 2384889,
-        "modified_utc": "2026-05-10T18:43:01Z",
+        "modified_utc": "2026-05-10T18:54:25Z",
         "source_field": "last_row.date"
       },
       "freshness_target_closed_day": {
@@ -304,7 +304,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1172,
-        "modified_utc": "2026-05-10T18:42:57Z",
+        "modified_utc": "2026-05-10T18:54:23Z",
         "source_field": "latest_closed_utc_date"
       },
       "app_export_generated_at_utc": {
@@ -312,8 +312,8 @@
         "source_type": "app_product_snapshot",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 12272,
-        "modified_utc": "2026-05-10T08:10:33Z",
+        "size_bytes": 12297,
+        "modified_utc": "2026-05-10T18:43:02Z",
         "source_field": "generated_by_materializer_clock"
       },
       "live_public_state": {
@@ -322,7 +322,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 2384889,
-        "modified_utc": "2026-05-10T18:43:01Z",
+        "modified_utc": "2026-05-10T18:54:25Z",
         "source_fields": [
           "date",
           "portfolio_held_asset",
@@ -343,7 +343,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1172,
-        "modified_utc": "2026-05-10T18:42:57Z"
+        "modified_utc": "2026-05-10T18:54:23Z"
       },
       "trend_barometer_summary": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -360,7 +360,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2384889,
-          "modified_utc": "2026-05-10T18:43:01Z"
+          "modified_utc": "2026-05-10T18:54:25Z"
         },
         "reference_strategy": {
           "path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
@@ -392,21 +392,21 @@
   "app_runtime_snapshot": {
     "snapshot_type": "app_runtime_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-05-10T18:43:01Z",
-    "app_runtime_snapshot_generated_at_utc": "2026-05-10T18:43:02Z",
+    "app_export_generated_at_utc": "2026-05-10T18:54:25Z",
+    "app_runtime_snapshot_generated_at_utc": "2026-05-10T18:54:26Z",
     "page_scope": "account_page",
     "runtime_last_sync_utc": "2026-04-06T09:16:26Z",
     "account_snapshot_as_of_utc": "2026-04-18T10:35:51Z",
     "dry_run_generated_at_utc": "2026-04-18T10:35:48Z",
     "gate_generated_at_utc": "2026-05-09T21:56:13Z",
-    "latest_refresh_run_id": "20260510_183833",
+    "latest_refresh_run_id": "20260510_185414",
     "latest_refresh_run_status": "OK",
-    "refresh_run_id": "20260510_183833",
+    "refresh_run_id": "20260510_185414",
     "refresh_success": true,
     "refresh_status": "OK",
-    "refresh_finished_at_utc": "2026-05-10T18:42:57+00:00",
+    "refresh_finished_at_utc": "2026-05-10T18:54:23+00:00",
     "latest_strategy_artifact_date": "2026-05-09",
-    "latest_successful_refresh_runtime_utc": "2026-05-10T18:42:57+00:00",
+    "latest_successful_refresh_runtime_utc": "2026-05-10T18:54:23+00:00",
     "latest_trend_calculation_date": "2026-05-09",
     "latest_wallet_sync_utc": "2026-04-18T10:35:51Z",
     "latest_available_closed_utc_date": "2026-05-09",
@@ -418,7 +418,7 @@
     "freshness_detail_text": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
     "freshness_summary_text": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
     "strategy_freshness": {
-      "latest_refresh_run_id": "20260510_183833",
+      "latest_refresh_run_id": "20260510_185414",
       "latest_refresh_run_status": "OK",
       "refresh_currentness_state": "current",
       "refresh_currentness_reason_code": "strategy_refresh_current",
@@ -427,24 +427,24 @@
       "freshness_detail_code": "strategy_refresh_current",
       "freshness_summary_text": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
       "freshness_detail_text": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
-      "refresh_run_id": "20260510_183833",
+      "refresh_run_id": "20260510_185414",
       "refresh_success": true,
       "refresh_status": "OK",
-      "refresh_finished_at_utc": "2026-05-10T18:42:57+00:00",
-      "refresh_manifest_path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
-      "latest_successful_refresh_runtime_utc": "2026-05-10T18:42:57+00:00",
-      "latest_successful_refresh_run_id": "20260510_183833",
+      "refresh_finished_at_utc": "2026-05-10T18:54:23+00:00",
+      "refresh_manifest_path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
+      "latest_successful_refresh_runtime_utc": "2026-05-10T18:54:23+00:00",
+      "latest_successful_refresh_run_id": "20260510_185414",
       "latest_strategy_artifact_date": "2026-05-09",
       "latest_trend_calculation_date": "2026-05-09",
       "latest_wallet_sync_utc": "2026-04-18T10:35:51Z",
       "latest_available_closed_utc_date": "2026-05-09",
-      "evaluated_at_utc": "2026-05-10T18:43:02Z"
+      "evaluated_at_utc": "2026-05-10T18:54:26Z"
     },
     "runtime_table_snapshot": {
       "last_pi_update_utc": "2026-04-12T22:10:09Z",
-      "last_pc_refresh_utc": "2026-05-10T18:42:57+00:00",
+      "last_pc_refresh_utc": "2026-05-10T18:54:23+00:00",
       "last_refresh_status": "OK",
-      "last_refresh_run_id": "20260510_183833",
+      "last_refresh_run_id": "20260510_185414",
       "last_wallet_sync_utc": "2026-04-18T10:35:51Z",
       "currentness_state": "current",
       "currentness_reason": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
@@ -460,32 +460,32 @@
           "value_present": true
         },
         "last_pc_refresh_utc": {
-          "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+          "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
           "source_type": "app_refresh_pipeline_manifest",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 76777,
-          "modified_utc": "2026-05-10T18:42:57Z",
+          "size_bytes": 122268,
+          "modified_utc": "2026-05-10T18:54:23Z",
           "source_field": "main_refresh_chain_finished_at_utc|finished_at_utc|generated_at_utc|started_at_utc",
           "value_present": true
         },
         "last_refresh_status": {
-          "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+          "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
           "source_type": "app_refresh_pipeline_manifest",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 76777,
-          "modified_utc": "2026-05-10T18:42:57Z",
+          "size_bytes": 122268,
+          "modified_utc": "2026-05-10T18:54:23Z",
           "source_field": "main_refresh_chain_status|status",
           "value_present": true
         },
         "last_refresh_run_id": {
-          "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+          "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
           "source_type": "app_refresh_pipeline_manifest",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 76777,
-          "modified_utc": "2026-05-10T18:42:57Z",
+          "size_bytes": 122268,
+          "modified_utc": "2026-05-10T18:54:23Z",
           "source_field": "manifest_parent_dir_name",
           "value_present": true
         },
@@ -505,7 +505,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1172,
-          "modified_utc": "2026-05-10T18:42:57Z",
+          "modified_utc": "2026-05-10T18:54:23Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -513,12 +513,12 @@
           ],
           "inputs": {
             "refresh_manifest": {
-              "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+              "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
               "source_type": "app_refresh_pipeline_manifest",
               "owner": "DATA",
               "exists": true,
-              "size_bytes": 76777,
-              "modified_utc": "2026-05-10T18:42:57Z"
+              "size_bytes": 122268,
+              "modified_utc": "2026-05-10T18:54:23Z"
             },
             "strategy_artifact": {
               "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
@@ -526,7 +526,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 2384889,
-              "modified_utc": "2026-05-10T18:43:01Z"
+              "modified_utc": "2026-05-10T18:54:25Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -544,7 +544,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1172,
-          "modified_utc": "2026-05-10T18:42:57Z",
+          "modified_utc": "2026-05-10T18:54:23Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -552,12 +552,12 @@
           ],
           "inputs": {
             "refresh_manifest": {
-              "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+              "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
               "source_type": "app_refresh_pipeline_manifest",
               "owner": "DATA",
               "exists": true,
-              "size_bytes": 76777,
-              "modified_utc": "2026-05-10T18:42:57Z"
+              "size_bytes": 122268,
+              "modified_utc": "2026-05-10T18:54:23Z"
             },
             "strategy_artifact": {
               "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
@@ -565,7 +565,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 2384889,
-              "modified_utc": "2026-05-10T18:43:01Z"
+              "modified_utc": "2026-05-10T18:54:25Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -578,7 +578,7 @@
           }
         }
       },
-      "evaluated_at_utc": "2026-05-10T18:43:02Z"
+      "evaluated_at_utc": "2026-05-10T18:54:26Z"
     },
     "account_observability_contract": {
       "enabled": true,
@@ -770,15 +770,15 @@
     },
     "source_metadata": {
       "strategy_freshness": {
-        "refresh_manifest_path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
-        "latest_successful_refresh_run_id": "20260510_183833",
+        "refresh_manifest_path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
+        "latest_successful_refresh_run_id": "20260510_185414",
         "freshness_report": {
           "path": "outputs/execution/freshness/app_freshness_report.json",
           "source_type": "canonical_product_freshness_report",
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1172,
-          "modified_utc": "2026-05-10T18:42:57Z"
+          "modified_utc": "2026-05-10T18:54:23Z"
         },
         "strategy_artifact": {
           "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
@@ -786,7 +786,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2384889,
-          "modified_utc": "2026-05-10T18:43:01Z"
+          "modified_utc": "2026-05-10T18:54:25Z"
         },
         "trend_calculation": {
           "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -808,7 +808,7 @@
       "runtime_table_snapshot": {
         "source_type": "authoritative_runtime_table_snapshot",
         "owner": "DATA",
-        "evaluated_at_utc": "2026-05-10T18:43:02Z",
+        "evaluated_at_utc": "2026-05-10T18:54:26Z",
         "fields": {
           "last_pi_update_utc": {
             "path": "outputs/execution/full_auto_scheduler/latest_scheduler_entry_manifest.json",
@@ -821,32 +821,32 @@
             "value_present": true
           },
           "last_pc_refresh_utc": {
-            "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+            "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
             "source_type": "app_refresh_pipeline_manifest",
             "owner": "DATA",
             "exists": true,
-            "size_bytes": 76777,
-            "modified_utc": "2026-05-10T18:42:57Z",
+            "size_bytes": 122268,
+            "modified_utc": "2026-05-10T18:54:23Z",
             "source_field": "main_refresh_chain_finished_at_utc|finished_at_utc|generated_at_utc|started_at_utc",
             "value_present": true
           },
           "last_refresh_status": {
-            "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+            "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
             "source_type": "app_refresh_pipeline_manifest",
             "owner": "DATA",
             "exists": true,
-            "size_bytes": 76777,
-            "modified_utc": "2026-05-10T18:42:57Z",
+            "size_bytes": 122268,
+            "modified_utc": "2026-05-10T18:54:23Z",
             "source_field": "main_refresh_chain_status|status",
             "value_present": true
           },
           "last_refresh_run_id": {
-            "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+            "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
             "source_type": "app_refresh_pipeline_manifest",
             "owner": "DATA",
             "exists": true,
-            "size_bytes": 76777,
-            "modified_utc": "2026-05-10T18:42:57Z",
+            "size_bytes": 122268,
+            "modified_utc": "2026-05-10T18:54:23Z",
             "source_field": "manifest_parent_dir_name",
             "value_present": true
           },
@@ -866,7 +866,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1172,
-            "modified_utc": "2026-05-10T18:42:57Z",
+            "modified_utc": "2026-05-10T18:54:23Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -874,12 +874,12 @@
             ],
             "inputs": {
               "refresh_manifest": {
-                "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+                "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
                 "source_type": "app_refresh_pipeline_manifest",
                 "owner": "DATA",
                 "exists": true,
-                "size_bytes": 76777,
-                "modified_utc": "2026-05-10T18:42:57Z"
+                "size_bytes": 122268,
+                "modified_utc": "2026-05-10T18:54:23Z"
               },
               "strategy_artifact": {
                 "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
@@ -887,7 +887,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 2384889,
-                "modified_utc": "2026-05-10T18:43:01Z"
+                "modified_utc": "2026-05-10T18:54:25Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -905,7 +905,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1172,
-            "modified_utc": "2026-05-10T18:42:57Z",
+            "modified_utc": "2026-05-10T18:54:23Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -913,12 +913,12 @@
             ],
             "inputs": {
               "refresh_manifest": {
-                "path": "outputs/app_refresh_pipeline/20260510_183833/app_refresh_pipeline_manifest.json",
+                "path": "outputs/app_refresh_pipeline/20260510_185414/app_refresh_pipeline_manifest.json",
                 "source_type": "app_refresh_pipeline_manifest",
                 "owner": "DATA",
                 "exists": true,
-                "size_bytes": 76777,
-                "modified_utc": "2026-05-10T18:42:57Z"
+                "size_bytes": 122268,
+                "modified_utc": "2026-05-10T18:54:23Z"
               },
               "strategy_artifact": {
                 "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
@@ -926,7 +926,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 2384889,
-                "modified_utc": "2026-05-10T18:43:01Z"
+                "modified_utc": "2026-05-10T18:54:25Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
