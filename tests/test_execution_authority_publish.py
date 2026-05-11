@@ -84,6 +84,13 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
         )
 
+    def seed_source_of_truth_export_contract(self, temp_root: Path) -> None:
+        contract_path = temp_root / "source_of_truth" / "export_contract.json"
+        if contract_path.exists():
+            return
+        contract_path.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(ROOT / "source_of_truth" / "export_contract.json", contract_path)
+
     def seed_fast_publish_runtime_artifacts(self, temp_root: Path) -> None:
         production_dir = temp_root / "outputs" / "production"
         self.write_json_file(
@@ -229,6 +236,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         }
 
     def seed_canonical_app_export_artifacts(self, temp_root: Path) -> None:
+        self.seed_source_of_truth_export_contract(temp_root)
         product_snapshot = self.build_minimal_app_product_snapshot_payload()
         chart_source_paths = product_snapshot["chart_source_paths"]
         metrics_source_path = product_snapshot["source_metadata"]["main_strategy_metrics"]["path"]
