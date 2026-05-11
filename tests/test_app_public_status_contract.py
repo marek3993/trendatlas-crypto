@@ -120,6 +120,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "rebase_series",
             "product_asset_label_nominative",
             "production_market_state_label_from_values",
+            "_public_chart_bad_dates",
+            "find_public_chart_accounting_semantic_violations",
             "make_production_equity_chart",
         )
 
@@ -247,23 +249,68 @@ class TestAppPublicStatusContract(unittest.TestCase):
             2026,
             "sk",
             "Model",
-            "Modelový vývoj vs BTC",
+            "Modelovy vyvoj vs BTC",
             real_account_exposure_state=state,
         )
 
         annotation_text = fig.layout.annotations[0].text
         hover_template = fig.data[0].hovertemplate
-        self.assertEqual(fig.layout.title.text, "Modelový vývoj vs BTC")
+        self.assertEqual(fig.layout.title.text, "Modelovy vyvoj vs BTC")
+        self.assertEqual(len(fig.data), 2)
         self.assertEqual(fig.data[0].name, "Model")
-        self.assertIn("Reálny účet: CASH / Mimo trhu / 0.00x", annotation_text)
-        self.assertIn("Modelový signál: BTC / 0.75x", annotation_text)
-        self.assertIn("Reálny účet: CASH / Mimo trhu / 0.00x", fig.data[0].customdata[-1][4])
-        self.assertIn("Modelový signál: BTC / 0.75x", fig.data[0].customdata[-1][5])
-        self.assertIn("Modelovy stav", hover_template)
-        self.assertIn("%{customdata[5]}", hover_template)
-        self.assertIn("%{customdata[4]}", hover_template)
-        self.assertNotIn("Stav trhu", hover_template)
-        self.assertNotIn("V TRHU", hover_template)
+        self.assertEqual(fig.data[1].name, "BTC baseline")
+        self.assertIn("Graf je modelovy.", annotation_text)
+        self.assertIn("realneho uctu", annotation_text)
+        self.assertEqual(fig.data[0].customdata[-1][1], annotation_text)
+        self.assertNotIn("Modelovy stav", hover_template)
+        self.assertNotIn("%{customdata[5]}", hover_template)
+        self.assertNotIn("%{customdata[4]}", hover_template)
+        self.assertNotIn("Modelovy signal", annotation_text)
+
+    def test_public_chart_accounting_semantics_allow_transition_cost_only(self):
+        find_violations = self.__class__.ns["find_public_chart_accounting_semantic_violations"]
+        frame = pd.DataFrame(
+            {
+                "date": ["2026-05-01", "2026-05-02", "2026-05-03"],
+                "effective_market_exposure": [0.0, 0.0, 0.0],
+                "held_asset": ["CASH", "CASH", "CASH"],
+                "authorized_tradable_asset": ["CASH", "CASH", "CASH"],
+                "asset_transition_day": [False, True, False],
+                "authorized_return_gross": [0.0, 0.0, 0.0],
+                "authorized_return_net": [0.0, -0.0015, 0.0],
+                "authorized_equity": [1.0, 0.9985, 0.9985],
+                "fees_daily": [0.0, 0.0005, 0.0],
+                "funding_daily": [0.0, 0.0, 0.0],
+                "borrow_cost_daily": [0.0, 0.0, 0.0],
+                "slippage_cost_daily": [0.0, 0.0010, 0.0],
+            }
+        )
+
+        self.assertEqual(find_violations(frame), [])
+
+    def test_public_chart_accounting_semantics_reject_market_move_while_cash(self):
+        find_violations = self.__class__.ns["find_public_chart_accounting_semantic_violations"]
+        frame = pd.DataFrame(
+            {
+                "date": ["2026-05-01", "2026-05-02"],
+                "effective_market_exposure": [0.0, 0.0],
+                "held_asset": ["CASH", "CASH"],
+                "authorized_tradable_asset": ["CASH", "CASH"],
+                "asset_transition_day": [False, False],
+                "authorized_return_gross": [0.0, 0.01],
+                "authorized_return_net": [0.0, 0.01],
+                "authorized_equity": [1.0, 1.01],
+                "fees_daily": [0.0, 0.0],
+                "funding_daily": [0.0, 0.0],
+                "borrow_cost_daily": [0.0, 0.0],
+                "slippage_cost_daily": [0.0, 0.0],
+            }
+        )
+
+        violations = find_violations(frame)
+        self.assertTrue(any("gross market return" in item for item in violations))
+        self.assertTrue(any("net return" in item for item in violations))
+        self.assertTrue(any("move equity" in item for item in violations))
 
     def test_runtime_contract_separates_wallet_cash_from_model_btc_signal(self):
         contract = build_runtime_public_status_contract(
