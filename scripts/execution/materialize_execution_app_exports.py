@@ -2208,9 +2208,95 @@ def validate_homepage_snapshot_contract(
         fail(str(exc))
 
 
+def first_present_runtime_value(*values: Any) -> Any:
+    for value in values:
+        if value is None:
+            continue
+        if isinstance(value, str) and not value.strip():
+            continue
+        return value
+    return None
+
+
+def runtime_first_float(payload: dict[str, Any], keys: list[str]) -> float | None:
+    for key in keys:
+        if key not in payload:
+            continue
+        parsed = parse_float_maybe(payload.get(key))
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def normalize_runtime_asset(value: Any) -> str:
+    return str(value or "").strip().upper()
+
+
+def extract_runtime_snapshot_open_position(snapshot_payload: dict[str, Any]) -> dict[str, Any] | None:
+    raw = snapshot_payload.get("raw", {}) if isinstance(snapshot_payload, dict) else {}
+    clearinghouse = raw.get("clearinghouseState", {}) if isinstance(raw, dict) else {}
+    asset_positions = (
+        clearinghouse.get("assetPositions", [])
+        if isinstance(clearinghouse, dict)
+        else []
+    )
+    if not isinstance(asset_positions, list):
+        return None
+
+    active_positions: list[tuple[dict[str, Any], dict[str, Any], float]] = []
+    for item in asset_positions:
+        if not isinstance(item, dict):
+            continue
+        position = item.get("position") or item.get("pos") or item
+        if not isinstance(position, dict):
+            continue
+
+        size = runtime_first_float(position, ["szi", "size", "positionSize"])
+        if size is None or abs(size) <= 0:
+            continue
+        active_positions.append((item, position, size))
+
+    if not active_positions:
+        return None
+
+    primary_item, primary_position, size = active_positions[0]
+    symbol = normalize_runtime_asset(
+        primary_position.get("coin")
+        or primary_position.get("asset")
+        or primary_item.get("coin")
+        or primary_item.get("asset")
+    ) or "UNKNOWN"
+    position_value = runtime_first_float(primary_position, ["positionValue", "position_value"])
+    mark_price = runtime_first_float(primary_position, ["markPx", "mark_price"])
+    if mark_price is None and position_value is not None and abs(size) > 0:
+        mark_price = abs(position_value / size)
+
+    return {
+        "symbol": symbol,
+        "side": "LONG" if size > 0 else "SHORT",
+        "size": abs(size),
+        "entry_price": runtime_first_float(primary_position, ["entryPx", "entry_price"]),
+        "mark_price": mark_price,
+        "unrealized_pnl_usd": runtime_first_float(
+            primary_position,
+            ["unrealizedPnl", "unrealized_pnl", "upl"],
+        ),
+        "unrealized_pnl_pct": runtime_first_float(
+            primary_position,
+            ["returnOnEquity", "unrealizedPnlPct", "roe"],
+        ),
+    }
+
+
 def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_payload: dict[str, Any]) -> dict[str, Any]:
     snapshot_summary = snapshot_payload.get("summary", {}) if isinstance(snapshot_payload, dict) else {}
     snapshot_source = snapshot_payload.get("source", {}) if isinstance(snapshot_payload, dict) else {}
+    snapshot_open_position = extract_runtime_snapshot_open_position(snapshot_payload)
+    snapshot_current_position = (
+        snapshot_open_position.get("symbol")
+        if isinstance(snapshot_open_position, dict)
+        else ("CASH" if snapshot_payload else None)
+    )
     summary: dict[str, Any] = {
         "status": status_payload.get("status") or ("ok" if snapshot_payload else None),
         "provider": status_payload.get("provider") or snapshot_source.get("provider"),
@@ -2218,14 +2304,39 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
         "mode": status_payload.get("mode") or snapshot_payload.get("execution_mode"),
         "trading_enabled": status_payload.get("trading_enabled") if "trading_enabled" in status_payload else snapshot_payload.get("trading_enabled"),
         "kill_switch": status_payload.get("kill_switch") if "kill_switch" in status_payload else snapshot_payload.get("kill_switch"),
-        "account_equity_usd": status_payload.get("account_equity_usd") or snapshot_summary.get("account_equity_usd"),
-        "available_balance_usd": status_payload.get("available_balance_usd") or snapshot_summary.get("available_balance_usd"),
-        "balance_source_of_truth": status_payload.get("balance_source_of_truth") or snapshot_summary.get("balance_source_of_truth"),
-        "positions_count": status_payload.get("positions_count") if "positions_count" in status_payload else snapshot_summary.get("positions_count"),
-        "open_orders_count": status_payload.get("open_orders_count") if "open_orders_count" in status_payload else snapshot_summary.get("open_orders_count"),
-        "recent_fills_count": status_payload.get("recent_fills_count") if "recent_fills_count" in status_payload else snapshot_summary.get("recent_fills_count"),
-        "current_position": status_payload.get("current_position") or "CASH",
-        "open_position": status_payload.get("open_position"),
+        "account_equity_usd": first_present_runtime_value(
+            snapshot_summary.get("account_equity_usd"),
+            status_payload.get("account_equity_usd"),
+        ),
+        "available_balance_usd": first_present_runtime_value(
+            snapshot_summary.get("available_balance_usd"),
+            status_payload.get("available_balance_usd"),
+        ),
+        "balance_source_of_truth": first_present_runtime_value(
+            snapshot_summary.get("balance_source_of_truth"),
+            status_payload.get("balance_source_of_truth"),
+        ),
+        "positions_count": first_present_runtime_value(
+            snapshot_summary.get("positions_count"),
+            status_payload.get("positions_count"),
+        ),
+        "open_orders_count": first_present_runtime_value(
+            snapshot_summary.get("open_orders_count"),
+            status_payload.get("open_orders_count"),
+        ),
+        "recent_fills_count": first_present_runtime_value(
+            snapshot_summary.get("recent_fills_count"),
+            status_payload.get("recent_fills_count"),
+        ),
+        "current_position": first_present_runtime_value(
+            snapshot_current_position,
+            status_payload.get("current_position"),
+            "CASH",
+        ),
+        "open_position": first_present_runtime_value(
+            snapshot_open_position,
+            status_payload.get("open_position"),
+        ),
         "last_action": status_payload.get("last_action"),
         "last_action_result": status_payload.get("last_action_result"),
         "error": status_payload.get("error"),
