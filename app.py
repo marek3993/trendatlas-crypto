@@ -579,17 +579,17 @@ TEXT["sk"].update(
         "buy_threshold": "Hranica vstupu",
         "trend_desc": "Toto je oficialny pohlad na stav trendu. Aplikacia ho nepocita nanovo, len zobrazuje validovanu hodnotu.",
         "trend_threshold_note": "Biela hranica ukazuje bod, od ktoreho sa trend povazuje za dostatocne silny. Pod nou je strategia opatrnejsia.",
-        "chart_title": "Vyvoj kapitalu strategie",
-        "chart_performance_axis": "Index kapitalu",
+        "chart_title": "Modelový vývoj vs BTC",
+        "chart_performance_axis": "Modelovy index",
         "trade_count": "Pocet obchodov",
         "current_drawdown": "Aktualny drawdown",
-        "production_chart_note": "Graf ukazuje len vyvoj kapitalu strategie. Nejde o zaznam fyzicky nakupenej mince ani o vypis otvorenych pozicii.",
-        "production_chart_flat_note": "Rovne useky v tomto grafe neznamenaju novy nakup. Znamenaju len to, ze sa hodnota kapitalu v danom useku menila malo alebo vobec.",
-        "production_chart_legend": "Strategia - kapital",
-        "production_chart_subtitle": "Oficialna kapitalova seria strategie",
+        "production_chart_note": "Graf ukazuje modelovy vyvoj vs BTC. Nejde o vypis realneho uctu ani potvrdenie otvorenej pozicie.",
+        "production_chart_flat_note": "Rovne useky v tomto grafe neznamenaju novy nakup. Znamenaju len to, ze modelova hodnota sa v danom useku menila malo alebo vobec.",
+        "production_chart_legend": "Model",
+        "production_chart_subtitle": "Modelova kapitalova seria",
         "production_hover_date": "Datum",
-        "production_hover_index": "Index kapitalu",
-        "production_hover_return_net": "Denny netto vynos",
+        "production_hover_index": "Modelovy index",
+        "production_hover_return_net": "Denny pohyb modelu",
         "production_reason_title": "Preto je strategia teraz v tomto stave",
         "production_wait_title": "Na co teraz caka",
         "production_pain_title": "Co ju teraz brzdi",
@@ -651,10 +651,10 @@ TEXT["en"]["chart_note_strip_hidden"] = (
 TEXT["sk"].update(
     {
         "production_core_error_prefix": "Stranka je docasne nedostupna",
-        "production_exposure": "Expozicia",
+        "production_exposure": "Modelový signál",
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
-        "production_chart_note": "Graf ukazuje modelovu kapitalovu seriu strategie a BTC baseline. Realny stav uctu je oddeleny v top karte.",
+        "production_chart_note": "Graf ukazuje modelový vývoj vs BTC. Nie je to výpis reálneho účtu ani potvrdenie otvorenej pozície.",
         "production_chart_baseline_note": "Cervena krivka je autorizovana strategia. Zlata krivka je BTC baseline prepocitana zo zaverecnych cien a rebased na rovnaky zaciatok zobrazeneho obdobia.",
         "production_chart_flat_note": "Ked modelovy signal nema povolenu trhovu expoziciu, kapitalova seria zostava rovna okrem explicitnych nakladov na prechod.",
         "production_chart_participation_note": "Spodny strip ukazuje historicky modelovy signal, nie vypis realnej penazenky ani potvrdenie otvorenej pozicie.",
@@ -670,11 +670,11 @@ TEXT["sk"].update(
         "production_validation_failed": "nevalidne",
         "production_waiting_yes": "Ano",
         "production_waiting_no": "Nie",
-        "production_chart_exposure_legend": "Modelovy signal",
+        "production_chart_exposure_legend": "Modelový signál",
         "production_chart_btc_legend": "BTC baseline",
-        "production_chart_exposure_axis": "Modelovy signal",
+        "production_chart_exposure_axis": "Modelový signál",
         "production_hover_market_state": "Modelovy stav",
-        "production_hover_authorized_exposure": "Modelovy signal",
+        "production_hover_authorized_exposure": "Modelový signál",
         "production_hover_candidate_asset": "Preferovane aktivum",
         "production_hover_btc_close": "BTC close",
         "production_hover_btc_return": "Denny pohyb BTC",
@@ -5832,11 +5832,12 @@ def make_production_equity_chart(
     real_account_hover_text = ""
     if isinstance(real_account_exposure_state, dict) and real_account_exposure_state.get("is_out_of_market") is True:
         real_asset = str(real_account_exposure_state.get("asset") or "CASH").strip().upper() or "CASH"
-        real_value = str(real_account_exposure_state.get("value") or "Mimo trhu / 0.00x").strip()
+        real_state_text = str(real_account_exposure_state.get("state_text") or t(lang, "production_state_out_of_market")).strip()
+        real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
         real_account_hover_text = (
-            f"Realny ucet: {real_value} | {real_asset}"
+            f"Reálny účet: {real_asset} / {real_state_text} / {real_exposure_text}"
             if lang == "sk"
-            else f"Real account: {real_value} | {real_asset}"
+            else f"Real account: {real_asset} / {real_state_text} / {real_exposure_text}"
         )
 
     strategy_hover_customdata = list(
@@ -5846,6 +5847,17 @@ def make_production_equity_chart(
             [f"{value:.2f}x" for value in exposure_series.tolist()],
             candidate_labels.tolist(),
             [real_account_hover_text] * len(main_plot),
+            [
+                (
+                    f"Modelový signál: {candidate} / {exposure}"
+                    if lang == "sk"
+                    else f"Model signal: {candidate} / {exposure}"
+                )
+                for candidate, exposure in zip(
+                    candidate_labels.tolist(),
+                    [f"{value:.2f}x" for value in exposure_series.tolist()],
+                )
+            ],
         )
     )
     btc_hover_customdata = list(
@@ -5912,8 +5924,7 @@ def make_production_equity_chart(
                 f"{t(lang, 'production_hover_index')}: %{{y:.2f}}<br>"
                 f"{t(lang, 'production_hover_return_net')}: %{{customdata[0]}}<br>"
                 f"{t(lang, 'production_hover_market_state')}: %{{customdata[1]}}<br>"
-                f"{t(lang, 'production_hover_authorized_exposure')}: %{{customdata[2]}}<br>"
-                f"{t(lang, 'production_hover_candidate_asset')}: %{{customdata[3]}}<br>"
+                "%{customdata[5]}<br>"
                 "%{customdata[4]}<extra></extra>"
             ),
         ),
@@ -5960,14 +5971,13 @@ def make_production_equity_chart(
     if isinstance(real_account_exposure_state, dict) and real_account_exposure_state.get("is_out_of_market") is True:
         real_asset = str(real_account_exposure_state.get("asset") or "CASH").strip().upper() or "CASH"
         real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
+        real_state_text = str(real_account_exposure_state.get("state_text") or t(lang, "production_state_out_of_market")).strip()
         annotation_text = (
-            f"Realny ucet: {t(lang, 'production_state_out_of_market')} | "
-            f"{real_asset} | Realna expozicia: {real_exposure_text} | "
-            f"Model preferuje: {current_candidate_label} | Modelovy signal: {current_exposure_text}"
+            f"Reálny účet: {real_asset} / {real_state_text} / {real_exposure_text} | "
+            f"Modelový signál: {current_candidate_label} / {current_exposure_text}"
             if lang == "sk"
-            else f"Real account: {t(lang, 'production_state_out_of_market')} | "
-            f"{real_asset} | Real exposure: {real_exposure_text} | "
-            f"Model prefers: {current_candidate_label} | Model signal: {current_exposure_text}"
+            else f"Real account: {real_asset} / {real_state_text} / {real_exposure_text} | "
+            f"Model signal: {current_candidate_label} / {current_exposure_text}"
         )
     else:
         annotation_text = (

@@ -46,15 +46,15 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
                 "na": "Nedostupne",
                 "production_state_in_market": "V trhu",
                 "production_state_out_of_market": "Mimo trhu",
-                "production_chart_legend": "Strategia - kapital",
+                "production_chart_legend": "Model",
                 "production_chart_btc_legend": "BTC baseline",
-                "production_chart_exposure_legend": "Modelovy signal",
-                "production_chart_exposure_axis": "Modelovy signal",
+                "production_chart_exposure_legend": "Modelový signál",
+                "production_chart_exposure_axis": "Modelový signál",
                 "production_hover_date": "Datum",
                 "production_hover_index": "Kapitalovy index",
                 "production_hover_return_net": "Denny pohyb strategie",
                 "production_hover_market_state": "Modelovy stav",
-                "production_hover_authorized_exposure": "Modelovy signal",
+                "production_hover_authorized_exposure": "Modelový signál",
                 "production_hover_candidate_asset": "Preferovane aktivum",
                 "production_hover_btc_index": "BTC index",
                 "production_hover_btc_return": "Denny pohyb BTC",
@@ -244,20 +244,22 @@ class TestAppPublicStatusContract(unittest.TestCase):
             frame,
             2026,
             "sk",
-            "Strategia - kapital",
-            "Vyvoj kapitalu strategie",
+            "Model",
+            "Modelový vývoj vs BTC",
             real_account_exposure_state=state,
         )
 
         annotation_text = fig.layout.annotations[0].text
         hover_template = fig.data[0].hovertemplate
-        self.assertIn("Realny ucet: Mimo trhu", annotation_text)
-        self.assertIn("CASH", annotation_text)
-        self.assertIn("Realna expozicia: 0.00x", annotation_text)
-        self.assertIn("Model preferuje: BTC", annotation_text)
-        self.assertIn("Modelovy signal: 0.75x", annotation_text)
-        self.assertIn("Realny ucet: Mimo trhu / 0.00x | CASH", fig.data[0].customdata[-1])
+        self.assertEqual(fig.layout.title.text, "Modelový vývoj vs BTC")
+        self.assertEqual(fig.data[0].name, "Model")
+        self.assertIn("Reálny účet: CASH / Mimo trhu / 0.00x", annotation_text)
+        self.assertIn("Modelový signál: BTC / 0.75x", annotation_text)
+        self.assertIn("Reálny účet: CASH / Mimo trhu / 0.00x", fig.data[0].customdata[-1][4])
+        self.assertIn("Modelový signál: BTC / 0.75x", fig.data[0].customdata[-1][5])
         self.assertIn("Modelovy stav", hover_template)
+        self.assertIn("%{customdata[5]}", hover_template)
+        self.assertIn("%{customdata[4]}", hover_template)
         self.assertNotIn("Stav trhu", hover_template)
         self.assertNotIn("V TRHU", hover_template)
 
