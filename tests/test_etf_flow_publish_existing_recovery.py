@@ -37,7 +37,13 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
             for row in rows:
                 writer.writerow(row)
 
-    def _seed_stale_phase68g_baseline_bundle(self, root: Path) -> None:
+    def _seed_stale_phase68g_baseline_bundle(
+        self,
+        root: Path,
+        *,
+        source_day: str = "2026-04-30",
+        next_rebalance_date: str = "2026-05-12",
+    ) -> None:
         summary_path = (
             root
             / "outputs"
@@ -76,7 +82,7 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
             [
                 {
                     "model": "phase68g_66g_1p25x_candidate",
-                    "latest_available_date": "2026-04-30",
+                    "latest_available_date": source_day,
                     "annual_borrow_cost_pct": 12.0,
                     "tradable_transition_slippage_bps": 10.0,
                     "fee_side_mode": "taker",
@@ -89,7 +95,7 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
         )
 
         paper_rows: list[dict[str, object]] = []
-        for stamp in pd.date_range("2023-01-01", "2026-04-30", freq="D"):
+        for stamp in pd.date_range("2023-01-01", source_day, freq="D"):
             paper_rows.append(
                 {
                     "date": stamp.strftime("%Y-%m-%d"),
@@ -133,7 +139,7 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
         self._write_rows(
             trend_status_path,
             ["latest_available_date", "next_rebalance_date"],
-            [{"latest_available_date": "2026-05-10", "next_rebalance_date": "2026-05-12"}],
+            [{"latest_available_date": "2026-05-10", "next_rebalance_date": next_rebalance_date}],
         )
         self._write_rows(
             trend_history_path,
@@ -150,6 +156,13 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
         for idx, stamp in enumerate(pd.date_range("2023-01-01", "2026-05-10", freq="D")):
             benchmark_rows.append({"date": stamp.strftime("%Y-%m-%d"), "close": base_close + idx * 100.0})
         self._write_rows(benchmark_path, ["date", "close"], benchmark_rows)
+
+    def _seed_current_phase68g_baseline_bundle(self, root: Path) -> None:
+        self._seed_stale_phase68g_baseline_bundle(
+            root,
+            source_day="2026-05-10",
+            next_rebalance_date="2026-05-10",
+        )
 
     def test_weekend_carry_forward_uses_last_valid_etf_source_without_synthetic_rows(self):
         etf_df = pd.DataFrame(
@@ -299,6 +312,10 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
                 build_current_strategy_snapshot,
                 "Phase68gBtcPersistence10dEarlyRisk075Adapter",
                 FakeBtcPersistenceAdapter,
+            ), mock.patch.object(
+                build_current_strategy_snapshot,
+                "_maybe_rebuild_phase68g_baseline_dependency_for_btc",
+                return_value={"status": "current", "target_closed_day": "2026-05-10"},
             ):
                 result = build_current_strategy_snapshot._maybe_materialize_btc_persistence_dependency(
                     strategy_model=build_current_strategy_snapshot.ETF_FLOW_CANDIDATE_ID,
@@ -389,6 +406,101 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
             self.assertEqual(result["target_closed_day"], "2026-05-10")
             self.assertEqual(result["previous_paper_last_day"], "2026-04-30")
             self.assertEqual(result["paper_last_day"], "2026-05-10")
+            with paper_path.open(newline="", encoding="utf-8") as handle:
+                paper_rows = list(csv.DictReader(handle))
+            with summary_path.open(newline="", encoding="utf-8") as handle:
+                summary_rows = list(csv.DictReader(handle))
+            self.assertEqual(paper_rows[-1]["date"], "2026-05-10")
+            self.assertEqual(summary_rows[-1]["latest_available_date"], "2026-05-10")
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_build_path_rebuilds_phase68g_baseline_when_stale_source_reaches_rebalance_boundary(self):
+        root = self._make_case_root()
+        try:
+            self._seed_stale_phase68g_baseline_bundle(root, next_rebalance_date="2026-05-10")
+            paper_path = (
+                root
+                / "outputs"
+                / "execution"
+                / "app_exports"
+                / "phase68g_btc_persistence_10d_early_risk_075_paper.csv"
+            )
+            summary_path = (
+                root
+                / "outputs"
+                / "execution"
+                / "app_exports"
+                / "phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv"
+            )
+            self._write_rows(
+                paper_path,
+                ["date", "strategy_version"],
+                [{"date": "2026-04-30", "strategy_version": "phase68g_btc_persistence_10d_early_risk_075"}],
+            )
+            self._write_rows(
+                summary_path,
+                ["model", "latest_available_date", "total_return_pct"],
+                [
+                    {
+                        "model": "phase68g_btc_persistence_10d_early_risk_075",
+                        "latest_available_date": "2026-04-30",
+                        "total_return_pct": "0.0",
+                    }
+                ],
+            )
+
+            def fake_rebuild(*, root: Path, target_closed_day: str) -> dict[str, object]:
+                self.assertEqual(target_closed_day, "2026-05-10")
+                self._seed_current_phase68g_baseline_bundle(root)
+                return {
+                    "status": "rebuilt",
+                    "target_closed_day": target_closed_day,
+                    "paper_path": str(
+                        root
+                        / "outputs"
+                        / "execution"
+                        / "app_exports"
+                        / "phase68g_66g_1p25x_candidate_paper.csv"
+                    ),
+                    "summary_path": str(
+                        root
+                        / "outputs"
+                        / "execution"
+                        / "app_exports"
+                        / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
+                    ),
+                }
+
+            with mock.patch.object(
+                build_current_strategy_snapshot,
+                "_rebuild_phase68g_baseline_dependency_from_canonical_inputs",
+                fake_rebuild,
+            ), mock.patch.object(
+                Phase68gBtcPersistence10dEarlyRisk075Adapter,
+                "build_snapshot_metrics",
+                return_value={
+                    "total_return_pct_net": 0.0,
+                    "latest_available_date": "2026-05-10",
+                },
+            ):
+                result = build_current_strategy_snapshot._maybe_materialize_btc_persistence_dependency(
+                    strategy_model=build_current_strategy_snapshot.ETF_FLOW_CANDIDATE_ID,
+                    root=root,
+                )
+
+            self.assertEqual(result["status"], "materialized")
+            self.assertEqual(result["target_closed_day"], "2026-05-10")
+            self.assertEqual(result["previous_paper_last_day"], "2026-04-30")
+            self.assertEqual(result["paper_last_day"], "2026-05-10")
+            self.assertEqual(
+                result["phase68g_baseline_dependency"]["status"],
+                "rebuilt",
+            )
+            self.assertEqual(
+                result["phase68g_baseline_dependency"]["trigger"],
+                "stale_baseline_crossed_rebalance_boundary",
+            )
             with paper_path.open(newline="", encoding="utf-8") as handle:
                 paper_rows = list(csv.DictReader(handle))
             with summary_path.open(newline="", encoding="utf-8") as handle:

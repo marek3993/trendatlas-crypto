@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -59,6 +60,53 @@ BTC_PERSISTENCE_PAPER_PATH = (
 )
 APP_FRESHNESS_REPORT_PATH = (
     ROOT / "outputs" / "execution" / "freshness" / "app_freshness_report.json"
+)
+PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH = (
+    ROOT
+    / "outputs"
+    / "execution"
+    / "app_exports"
+    / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
+)
+PHASE68G_MAIN_PAPER_PATH = (
+    ROOT
+    / "outputs"
+    / "execution"
+    / "app_exports"
+    / "phase68g_66g_1p25x_candidate_paper.csv"
+)
+PHASE66G_CANONICAL_PAPER_PATH = (
+    ROOT
+    / "outputs"
+    / "execution"
+    / "app_exports"
+    / "phase66g_production_soft_filters_paper.csv"
+)
+PHASE66G_LIVE_STATUS_PATH = (
+    ROOT / "outputs" / "execution" / "app_exports" / "phase66g_live_status.csv"
+)
+PHASE66G_TREND_HISTORY_PATH = (
+    ROOT / "outputs" / "execution" / "app_exports" / "phase66g_trend_barometer_history.csv"
+)
+PHASE67J_PAPER_PATH = (
+    ROOT / "outputs" / "execution" / "app_exports" / "phase67j_no_neo_main_paper.csv"
+)
+PHASE67J_LIVE_STATUS_PATH = (
+    ROOT / "outputs" / "execution" / "app_exports" / "phase67j_live_status.csv"
+)
+PHASE66G_DECISIONS_PATH = (
+    ROOT
+    / "outputs"
+    / "phase66g_production_candidate_live"
+    / "phase66g_production_candidate_decisions.csv"
+)
+PHASE68G_SCRIPT_PATH = ROOT / "scripts" / "phase68g_portfolio_exposure_leverage_validation.py"
+PHASE68G_SOURCE_DIR = ROOT / "outputs" / "phase68g_portfolio_exposure_leverage_validation"
+PHASE68G_SOURCE_PAPER_PATH = (
+    PHASE68G_SOURCE_DIR / "papers" / "phase68g_66g_1p25x_candidate_paper.csv"
+)
+PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH = (
+    PHASE68G_SOURCE_DIR / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
 )
 
 
@@ -170,6 +218,176 @@ def _write_single_row_csv(path: Path, row: dict[str, Any]) -> None:
     temp_path.replace(path)
 
 
+def _last_csv_day(path: Path, *field_names: str) -> str:
+    value = _read_csv_last_value(path, *field_names)
+    if not value:
+        raise ValueError(f"Missing required date in {path}")
+    return value
+
+
+def _single_csv_value(path: Path, *field_names: str) -> str:
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"Missing required CSV file: {path}")
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
+        rows = list(csv.DictReader(f))
+    if len(rows) != 1:
+        raise ValueError(f"Expected exactly one row in {path}, found {len(rows)}")
+    for field_name in field_names:
+        value = str(rows[0].get(field_name) or "").strip()
+        if value:
+            return value
+    raise ValueError(f"Missing required field {field_names} in {path}")
+
+
+def _phase68g_dependency_relative(root: Path, path: Path) -> Path:
+    return root / path.relative_to(ROOT)
+
+
+def _rebuild_phase68g_baseline_dependency_from_canonical_inputs(
+    *,
+    root: Path,
+    target_closed_day: str,
+) -> dict[str, Any]:
+    script_path = _phase68g_dependency_relative(root, PHASE68G_SCRIPT_PATH)
+    phase66g_paper_path = _phase68g_dependency_relative(root, PHASE66G_CANONICAL_PAPER_PATH)
+    phase66g_live_status_path = _phase68g_dependency_relative(root, PHASE66G_LIVE_STATUS_PATH)
+    phase66g_trend_history_path = _phase68g_dependency_relative(root, PHASE66G_TREND_HISTORY_PATH)
+    phase67j_paper_path = _phase68g_dependency_relative(root, PHASE67J_PAPER_PATH)
+    phase67j_live_status_path = _phase68g_dependency_relative(root, PHASE67J_LIVE_STATUS_PATH)
+    phase66g_decisions_path = _phase68g_dependency_relative(root, PHASE66G_DECISIONS_PATH)
+    source_paper_path = _phase68g_dependency_relative(root, PHASE68G_SOURCE_PAPER_PATH)
+    source_export_path = _phase68g_dependency_relative(root, PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH)
+    output_paper_path = _phase68g_dependency_relative(root, PHASE68G_MAIN_PAPER_PATH)
+    output_export_path = _phase68g_dependency_relative(root, PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH)
+
+    required_paths = [
+        script_path,
+        phase66g_paper_path,
+        phase66g_live_status_path,
+        phase66g_trend_history_path,
+        phase67j_paper_path,
+        phase67j_live_status_path,
+        phase66g_decisions_path,
+    ]
+    missing = [str(path) for path in required_paths if not path.exists()]
+    if missing:
+        raise FileNotFoundError(
+            "Cannot rebuild stale phase68g baseline dependency; required canonical inputs are missing "
+            f"(missing={missing})"
+        )
+
+    phase66g_paper_last_day = _last_csv_day(phase66g_paper_path, "date")
+    phase66g_live_day = _single_csv_value(phase66g_live_status_path, "latest_available_date")
+    phase66g_trend_day = _last_csv_day(phase66g_trend_history_path, "trend_calc_date", "date")
+    phase67j_paper_last_day = _last_csv_day(phase67j_paper_path, "date")
+    phase67j_live_day = _single_csv_value(phase67j_live_status_path, "latest_available_date")
+    input_days = {
+        "phase66g_paper": phase66g_paper_last_day,
+        "phase66g_live_status": phase66g_live_day,
+        "phase66g_trend_history": phase66g_trend_day,
+        "phase67j_paper": phase67j_paper_last_day,
+        "phase67j_live_status": phase67j_live_day,
+    }
+    stale_inputs = {name: day for name, day in input_days.items() if day != target_closed_day}
+    if stale_inputs:
+        raise ValueError(
+            "Cannot rebuild phase68g baseline dependency because canonical inputs are not fresh "
+            f"(target_closed_day={target_closed_day} stale_inputs={stale_inputs})"
+        )
+
+    subprocess.run(
+        [
+            sys.executable,
+            str(script_path),
+            "--baseline-paper",
+            str(phase67j_paper_path),
+            "--governance-paper",
+            str(phase66g_paper_path),
+            "--trend-history",
+            str(phase66g_trend_history_path),
+            "--decisions",
+            str(phase66g_decisions_path),
+        ],
+        cwd=str(root),
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+
+    rebuilt_paper_day = _last_csv_day(source_paper_path, "date")
+    rebuilt_export_day = _single_csv_value(source_export_path, "latest_available_date")
+    if rebuilt_paper_day != target_closed_day or rebuilt_export_day != target_closed_day:
+        raise ValueError(
+            "phase68g baseline rebuild did not reach the canonical closed day "
+            f"(target={target_closed_day} paper={rebuilt_paper_day} export={rebuilt_export_day})"
+        )
+
+    output_paper_path.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(source_paper_path, output_paper_path)
+    shutil.copy2(source_export_path, output_export_path)
+
+    return {
+        "status": "rebuilt",
+        "target_closed_day": target_closed_day,
+        "input_days": input_days,
+        "source_paper_path": str(source_paper_path),
+        "source_export_path": str(source_export_path),
+        "paper_path": str(output_paper_path),
+        "summary_path": str(output_export_path),
+    }
+
+
+def _maybe_rebuild_phase68g_baseline_dependency_for_btc(
+    *,
+    root: Path,
+) -> dict[str, Any]:
+    baseline_adapter = Phase68g66g1p25xCandidateAdapter()
+    try:
+        inputs = baseline_adapter.load_inputs(
+            root=root,
+            materialize_to_canonical_closed_day=True,
+        )
+    except ValueError as exc:
+        if "phase68g baseline dependency materialization would cross a rebalance boundary" not in str(exc):
+            raise
+        freshness_payload = _read_json_required(_phase68g_dependency_relative(root, APP_FRESHNESS_REPORT_PATH))
+        target_closed_day = str(freshness_payload.get("latest_closed_utc_date") or "").strip()
+        if not target_closed_day:
+            raise ValueError("freshness_report.latest_closed_utc_date is required for phase68g rebuild") from exc
+        rebuild = _rebuild_phase68g_baseline_dependency_from_canonical_inputs(
+            root=root,
+            target_closed_day=target_closed_day,
+        )
+        verified_inputs = baseline_adapter.load_inputs(
+            root=root,
+            materialize_to_canonical_closed_day=True,
+        )
+        if str(verified_inputs["closed_day"]) != target_closed_day:
+            raise ValueError(
+                "phase68g baseline dependency rebuild verification did not reach the target closed day "
+                f"(target={target_closed_day} verified={verified_inputs['closed_day']})"
+            ) from exc
+        return {
+            **rebuild,
+            "trigger": "stale_baseline_crossed_rebalance_boundary",
+            "verified_closed_day": str(verified_inputs["closed_day"]),
+        }
+
+    materialization = inputs.get("paper_materialization")
+    if isinstance(materialization, dict) and int(materialization.get("carry_forward_rows_added") or 0) > 0:
+        return {
+            "status": "carry_forward_materializable",
+            "target_closed_day": str(inputs["closed_day"]),
+            "source_closed_day": str(inputs.get("source_closed_day") or inputs["closed_day"]),
+            "carry_forward_rows_added": int(materialization["carry_forward_rows_added"]),
+        }
+    return {
+        "status": "current",
+        "target_closed_day": str(inputs["closed_day"]),
+        "source_closed_day": str(inputs.get("source_closed_day") or inputs["closed_day"]),
+    }
+
+
 def _maybe_materialize_btc_persistence_dependency(
     *,
     strategy_model: str,
@@ -198,6 +416,7 @@ def _maybe_materialize_btc_persistence_dependency(
             "summary_last_day": summary_last_day,
         }
 
+    phase68g_dependency = _maybe_rebuild_phase68g_baseline_dependency_for_btc(root=root)
     btc_adapter = Phase68gBtcPersistence10dEarlyRisk075Adapter()
     btc_inputs = btc_adapter.load_inputs(root=root)
     btc_timeseries = btc_adapter.build_timeseries(btc_inputs)
@@ -223,6 +442,7 @@ def _maybe_materialize_btc_persistence_dependency(
         "summary_last_day": target_closed_day,
         "paper_path": str(paper_path),
         "summary_path": str(summary_path),
+        "phase68g_baseline_dependency": phase68g_dependency,
     }
 
 
