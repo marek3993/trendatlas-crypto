@@ -6,6 +6,8 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,17 +38,53 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
         "Any": Any,
         "date": date,
         "pd": pd,
+        "go": go,
+        "make_subplots": make_subplots,
         "math": math,
         "t": lambda lang, key: {
             "sk": {
                 "na": "Nedostupne",
                 "production_state_in_market": "V trhu",
                 "production_state_out_of_market": "Mimo trhu",
+                "production_chart_legend": "Strategia - kapital",
+                "production_chart_btc_legend": "BTC baseline",
+                "production_chart_exposure_legend": "Modelovy signal",
+                "production_chart_exposure_axis": "Modelovy signal",
+                "production_hover_date": "Datum",
+                "production_hover_index": "Kapitalovy index",
+                "production_hover_return_net": "Denny pohyb strategie",
+                "production_hover_market_state": "Modelovy stav",
+                "production_hover_authorized_exposure": "Modelovy signal",
+                "production_hover_candidate_asset": "Preferovane aktivum",
+                "production_hover_btc_index": "BTC index",
+                "production_hover_btc_return": "Denny pohyb BTC",
+                "production_hover_btc_close": "BTC close",
+                "production_hover_market_state_in": "SIGNAL AKTIVNY",
+                "production_hover_market_state_out": "SIGNAL CASH",
+                "production_chart_current_prefix": "Aktualne",
+                "chart_performance_axis": "Index",
             },
             "en": {
                 "na": "Unavailable",
                 "production_state_in_market": "In market",
                 "production_state_out_of_market": "Out of market",
+                "production_chart_legend": "Strategy capital",
+                "production_chart_btc_legend": "BTC baseline",
+                "production_chart_exposure_legend": "Model signal",
+                "production_chart_exposure_axis": "Model signal",
+                "production_hover_date": "Date",
+                "production_hover_index": "Capital index",
+                "production_hover_return_net": "Strategy daily move",
+                "production_hover_market_state": "Model state",
+                "production_hover_authorized_exposure": "Model signal",
+                "production_hover_candidate_asset": "Preferred asset",
+                "production_hover_btc_index": "BTC index",
+                "production_hover_btc_return": "BTC daily move",
+                "production_hover_btc_close": "BTC close",
+                "production_hover_market_state_in": "SIGNAL IN MARKET",
+                "production_hover_market_state_out": "SIGNAL OUT OF MARKET",
+                "production_chart_current_prefix": "Current",
+                "chart_performance_axis": "Index",
             },
         }[lang][key],
     }
@@ -76,6 +114,11 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "get_nested_value",
             "_first_numeric_value",
             "resolve_real_account_exposure_state",
+            "filter_from_year",
+            "rebase_series",
+            "product_asset_label_nominative",
+            "production_market_state_label_from_values",
+            "make_production_equity_chart",
         )
 
     def test_etf_public_performance_window_starts_at_etf_evidence_start(self):
@@ -159,6 +202,64 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(state["value"], "Mimo trhu / 0.00x")
         self.assertEqual(state["target_asset"], "CASH")
         self.assertFalse(state["would_place_real_order"])
+
+    def test_production_chart_separates_real_cash_account_from_model_signal(self):
+        resolve_state = self.__class__.ns["resolve_real_account_exposure_state"]
+        make_chart = self.__class__.ns["make_production_equity_chart"]
+        state = resolve_state(
+            account_snapshot_view={"positions_count": 0, "open_position": None},
+            dry_run_decision_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            real_order_gate_payload={
+                "target_asset": "CASH",
+                "status": "blocked",
+                "would_place_real_order": False,
+                "production_signal_context": {
+                    "candidate_asset": "BTC",
+                    "model_candidate_exposure": 0.75,
+                    "target_exposure": 0.0,
+                },
+            },
+            production_snapshot={
+                "candidate_asset": "BTC",
+                "model_candidate_exposure": 0.75,
+                "execution_intent": {"target_asset": "CASH", "target_exposure": 0.0},
+            },
+            lang="sk",
+        )
+        frame = pd.DataFrame(
+            {
+                "ts": pd.to_datetime(["2026-05-09", "2026-05-10"]),
+                "authorized_equity": [100.0, 101.0],
+                "btc_baseline_equity": [100.0, 102.0],
+                "authorized_return_net": [0.0, 0.01],
+                "btc_return": [0.0, 0.02],
+                "btc_close": [100000.0, 102000.0],
+                "effective_market_exposure": [0.75, 0.75],
+                "trend_permission_active": [True, True],
+                "candidate_asset": ["BTC", "BTC"],
+            }
+        )
+
+        fig = make_chart(
+            frame,
+            2026,
+            "sk",
+            "Strategia - kapital",
+            "Vyvoj kapitalu strategie",
+            real_account_exposure_state=state,
+        )
+
+        annotation_text = fig.layout.annotations[0].text
+        hover_template = fig.data[0].hovertemplate
+        self.assertIn("Realny ucet: Mimo trhu", annotation_text)
+        self.assertIn("CASH", annotation_text)
+        self.assertIn("Realna expozicia: 0.00x", annotation_text)
+        self.assertIn("Model preferuje: BTC", annotation_text)
+        self.assertIn("Modelovy signal: 0.75x", annotation_text)
+        self.assertIn("Realny ucet: Mimo trhu / 0.00x | CASH", fig.data[0].customdata[-1])
+        self.assertIn("Modelovy stav", hover_template)
+        self.assertNotIn("Stav trhu", hover_template)
+        self.assertNotIn("V TRHU", hover_template)
 
 
 if __name__ == "__main__":

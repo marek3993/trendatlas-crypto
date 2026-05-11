@@ -654,10 +654,10 @@ TEXT["sk"].update(
         "production_exposure": "Expozicia",
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
-        "production_chart_note": "Graf ukazuje iba autorizovanu krivku kapitalu strategie po povoleni expozicie. Samotna krivka nehovori, ake aktivum strategia prave preferuje.",
+        "production_chart_note": "Graf ukazuje modelovu kapitalovu seriu strategie a BTC baseline. Realny stav uctu je oddeleny v top karte.",
         "production_chart_baseline_note": "Cervena krivka je autorizovana strategia. Zlata krivka je BTC baseline prepocitana zo zaverecnych cien a rebased na rovnaky zaciatok zobrazeneho obdobia.",
-        "production_chart_flat_note": "Ked strategia nema povolenu trhovu expoziciu, autorizovany kapital zostava rovny okrem explicitnych nakladov na prechod.",
-        "production_chart_participation_note": "Stavovy banner a spodny strip ukazuju, kedy bola strategia realne v trhu a aku autorizovanu expoziciu mala.",
+        "production_chart_flat_note": "Ked modelovy signal nema povolenu trhovu expoziciu, kapitalova seria zostava rovna okrem explicitnych nakladov na prechod.",
+        "production_chart_participation_note": "Spodny strip ukazuje historicky modelovy signal, nie vypis realnej penazenky ani potvrdenie otvorenej pozicie.",
         "production_reason_title": "Preto je strategia teraz v tomto stave",
         "production_wait_title": "Na co strategia caka",
         "production_pain_title": "Co ju teraz brzdi",
@@ -670,20 +670,20 @@ TEXT["sk"].update(
         "production_validation_failed": "nevalidne",
         "production_waiting_yes": "Ano",
         "production_waiting_no": "Nie",
-        "production_chart_exposure_legend": "Autorizovana expozicia",
+        "production_chart_exposure_legend": "Modelovy signal",
         "production_chart_btc_legend": "BTC baseline",
-        "production_chart_exposure_axis": "Autorizovana expozicia",
-        "production_hover_market_state": "Stav trhu",
-        "production_hover_authorized_exposure": "Autorizovana expozicia",
+        "production_chart_exposure_axis": "Modelovy signal",
+        "production_hover_market_state": "Modelovy stav",
+        "production_hover_authorized_exposure": "Modelovy signal",
         "production_hover_candidate_asset": "Preferovane aktivum",
         "production_hover_btc_close": "BTC close",
         "production_hover_btc_return": "Denny pohyb BTC",
         "production_hover_btc_index": "BTC index",
-        "production_hover_market_state_in": "V TRHU",
-        "production_hover_market_state_out": "MIMO TRHU",
+        "production_hover_market_state_in": "SIGNAL AKTIVNY",
+        "production_hover_market_state_out": "SIGNAL CASH",
         "production_chart_current_prefix": "Aktualne",
-        "production_chart_current_out_note": "Aktualne je strategia mimo trhu. Zobrazeny je autorizovany kapital, nie otvorena pozicia. Preferovane aktivum je {candidate} a autorizovana expozicia je {exposure}.",
-        "production_chart_current_in_note": "Aktualne je strategia v trhu s autorizovanou expoziciou {exposure}. Preferovane aktivum je {candidate}.",
+        "production_chart_current_out_note": "Aktualne je modelovy signal mimo trhu. Graf nie je vypis otvorenej pozicie. Model preferuje {candidate} a modelovy signal je {exposure}.",
+        "production_chart_current_in_note": "Aktualne je modelovy signal aktivny s velkostou {exposure}. Model preferuje {candidate}.",
     }
 )
 TEXT["en"].update(
@@ -692,10 +692,10 @@ TEXT["en"].update(
         "production_exposure": "Exposure",
         "production_closed_day": "Last closed day",
         "production_next_rebalance": "Next rebalance",
-        "production_chart_note": "This chart shows only the authorized strategy capital curve after exposure permission. The line alone does not tell you which asset the strategy currently prefers.",
+        "production_chart_note": "This chart shows only the model capital series and the BTC baseline. The real account state is separated in the top card.",
         "production_chart_baseline_note": "The red line is the authorized strategy. The gold line is a BTC baseline built from closing prices and rebased to the same start of the visible period.",
         "production_chart_flat_note": "When the strategy has no authorized market exposure, authorized capital should stay flat except for explicit transition costs.",
-        "production_chart_participation_note": "The state banner and the lower strip show when the strategy was actually in market and what authorized exposure it had.",
+        "production_chart_participation_note": "The lower strip shows the historical model signal, not a wallet statement or proof of an open position.",
         "production_reason_title": "Why the strategy is in this state",
         "production_wait_title": "What the strategy is waiting for",
         "production_pain_title": "Current pain points",
@@ -708,20 +708,20 @@ TEXT["en"].update(
         "production_validation_failed": "invalid",
         "production_waiting_yes": "Yes",
         "production_waiting_no": "No",
-        "production_chart_exposure_legend": "Authorized exposure",
+        "production_chart_exposure_legend": "Model signal",
         "production_chart_btc_legend": "BTC baseline",
-        "production_chart_exposure_axis": "Authorized exposure",
-        "production_hover_market_state": "Market state",
-        "production_hover_authorized_exposure": "Authorized exposure",
+        "production_chart_exposure_axis": "Model signal",
+        "production_hover_market_state": "Model state",
+        "production_hover_authorized_exposure": "Model signal",
         "production_hover_candidate_asset": "Preferred asset",
         "production_hover_btc_close": "BTC close",
         "production_hover_btc_return": "BTC daily move",
         "production_hover_btc_index": "BTC index",
-        "production_hover_market_state_in": "IN MARKET",
-        "production_hover_market_state_out": "OUT OF MARKET",
+        "production_hover_market_state_in": "SIGNAL IN MARKET",
+        "production_hover_market_state_out": "SIGNAL OUT OF MARKET",
         "production_chart_current_prefix": "Current",
-        "production_chart_current_out_note": "The strategy is currently out of market. The chart shows authorized capital, not an open position. The preferred asset is {candidate} and authorized exposure is {exposure}.",
-        "production_chart_current_in_note": "The strategy is currently in market with authorized exposure {exposure}. The preferred asset is {candidate}.",
+        "production_chart_current_out_note": "The current model signal is out of market. The chart is not an open-position statement. The model prefers {candidate} and the model signal is {exposure}.",
+        "production_chart_current_in_note": "The current model signal is in market with size {exposure}. The model prefers {candidate}.",
     }
 )
 METRIC_HELP["sk"].update(
@@ -751,7 +751,7 @@ METRIC_HELP["sk"].update(
         TEXT["sk"]["current_drawdown"]: "Aktualny drawdown vychadza z posledneho rozhodovacieho stavu.",
         TEXT["sk"]["cash_days"]: "Cash Days vychadzaju z validovanych metrik strategie.",
         TEXT["sk"]["btc_days"]: "BTC Days vychadzaju z validovanych metrik strategie.",
-        TEXT["sk"]["production_exposure"]: "Expozicia ukazuje aktualne oficialne nastavenie strategie.",
+        TEXT["sk"]["production_exposure"]: "Expozicia ukazuje modelovy signal strategie, nie realnu expoziciu uctu.",
         TEXT["sk"]["production_candidate_asset"]: "Model preferuje aktualny vyber strategie. Nie je to potvrdenie otvorenej pozicie na ucte.",
         TEXT["sk"]["production_market_state"]: "Realny ucet ukazuje stav po vykonani a po bezpecnostnych kontrolach.",
         TEXT["sk"]["production_market_exposure"]: "Realny ucet / expozicia ukazuje, ci ma ucet otvorenu trhovu expoziciu.",
@@ -785,7 +785,7 @@ METRIC_HELP["en"].update(
         TEXT["en"]["current_drawdown"]: "Current drawdown comes from the latest decision state.",
         TEXT["en"]["cash_days"]: "Cash Days come from validated strategy metrics.",
         TEXT["en"]["btc_days"]: "BTC Days come from validated strategy metrics.",
-        TEXT["en"]["production_exposure"]: "Exposure shows the official current strategy setting.",
+        TEXT["en"]["production_exposure"]: "Exposure shows the strategy model signal, not the real account exposure.",
         TEXT["en"]["production_candidate_asset"]: "The model preference is the current strategy choice. It is not confirmation of an open account position.",
         TEXT["en"]["production_market_state"]: "Real account shows the state after execution and safety checks.",
         TEXT["en"]["production_market_exposure"]: "Real account / exposure shows whether the account has open market exposure.",
@@ -4856,10 +4856,15 @@ def resolve_real_account_exposure_state(
     if execution_points_to_cash:
         state_text = t(lang, "production_state_out_of_market")
         exposure_text = "0.00x"
+        ordering_blocked = gate_status == "blocked" or would_place_real_order is False
         subtitle = (
-            "Podla uctu a vykonavacich kontrol"
+            "CASH | Odoslanie obchodu blokovane"
+            if lang == "sk" and ordering_blocked
+            else "CASH | Podla uctu a vykonavacich kontrol"
             if lang == "sk"
-            else "Based on account and execution checks"
+            else "CASH | Order placement blocked"
+            if ordering_blocked
+            else "CASH | Based on account and execution checks"
         )
         return {
             "is_out_of_market": True,
@@ -5030,7 +5035,7 @@ def build_homepage_state_story(
             )
         else:
             now_text = (
-                f"Strategia je momentalne aktivne v trhu a ma autorizovanu expoziciu "
+                f"Modelovy signal je momentalne aktivny s velkostou "
                 f"{exposure_text} v aktive {actual_label}."
             )
 
@@ -5046,10 +5051,10 @@ def build_homepage_state_story(
         elif trend_score is not None and threshold is not None:
             why_text = (
                 f"Trend score je {trend_score_text}, teda nad rozhodujucou hranicou {threshold_text}. "
-                f"Preto je aktualna expozicia povolena a strategia moze byt v trhu."
+                f"Preto je modelovy signal povoleny."
             )
         else:
-            why_text = "Aktualny signal zatial nepotvrdil dovod na zmenu autorizovanej trhovej expozicie."
+            why_text = "Aktualny signal zatial nepotvrdil dovod na zmenu modelovej trhovej expozicie."
 
         wait_text = (
             f"Cakame na trend_score >= {threshold_text}. Az potom moze strategia povolit vstup do {candidate_label}."
@@ -5792,6 +5797,7 @@ def make_production_equity_chart(
     lang: str,
     main_label: str,
     title: str,
+    real_account_exposure_state: dict[str, Any] | None = None,
 ) -> go.Figure:
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
@@ -5823,12 +5829,23 @@ def make_production_equity_chart(
             main_plot.get("trend_permission_active", pd.Series([False] * len(main_plot), index=main_plot.index)).tolist(),
         )
     ]
+    real_account_hover_text = ""
+    if isinstance(real_account_exposure_state, dict) and real_account_exposure_state.get("is_out_of_market") is True:
+        real_asset = str(real_account_exposure_state.get("asset") or "CASH").strip().upper() or "CASH"
+        real_value = str(real_account_exposure_state.get("value") or "Mimo trhu / 0.00x").strip()
+        real_account_hover_text = (
+            f"Realny ucet: {real_value} | {real_asset}"
+            if lang == "sk"
+            else f"Real account: {real_value} | {real_asset}"
+        )
+
     strategy_hover_customdata = list(
         zip(
             [f"{value:+.2f}%" for value in daily_return_pct.tolist()],
             market_state_labels,
             [f"{value:.2f}x" for value in exposure_series.tolist()],
             candidate_labels.tolist(),
+            [real_account_hover_text] * len(main_plot),
         )
     )
     btc_hover_customdata = list(
@@ -5896,7 +5913,8 @@ def make_production_equity_chart(
                 f"{t(lang, 'production_hover_return_net')}: %{{customdata[0]}}<br>"
                 f"{t(lang, 'production_hover_market_state')}: %{{customdata[1]}}<br>"
                 f"{t(lang, 'production_hover_authorized_exposure')}: %{{customdata[2]}}<br>"
-                f"{t(lang, 'production_hover_candidate_asset')}: %{{customdata[3]}}<extra></extra>"
+                f"{t(lang, 'production_hover_candidate_asset')}: %{{customdata[3]}}<br>"
+                "%{customdata[4]}<extra></extra>"
             ),
         ),
         row=1,
@@ -5939,11 +5957,24 @@ def make_production_equity_chart(
     current_market_state = market_state_labels[-1]
     current_exposure_text = f"{float(exposure_series.iloc[-1]):.2f}x"
     current_candidate_label = candidate_labels.iloc[-1]
-    annotation_text = (
-        f"{t(lang, 'production_chart_current_prefix')}: {current_market_state} | "
-        f"{t(lang, 'production_hover_authorized_exposure')}: {current_exposure_text} | "
-        f"{t(lang, 'production_hover_candidate_asset')}: {current_candidate_label}"
-    )
+    if isinstance(real_account_exposure_state, dict) and real_account_exposure_state.get("is_out_of_market") is True:
+        real_asset = str(real_account_exposure_state.get("asset") or "CASH").strip().upper() or "CASH"
+        real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
+        annotation_text = (
+            f"Realny ucet: {t(lang, 'production_state_out_of_market')} | "
+            f"{real_asset} | Realna expozicia: {real_exposure_text} | "
+            f"Model preferuje: {current_candidate_label} | Modelovy signal: {current_exposure_text}"
+            if lang == "sk"
+            else f"Real account: {t(lang, 'production_state_out_of_market')} | "
+            f"{real_asset} | Real exposure: {real_exposure_text} | "
+            f"Model prefers: {current_candidate_label} | Model signal: {current_exposure_text}"
+        )
+    else:
+        annotation_text = (
+            f"{t(lang, 'production_chart_current_prefix')}: {current_market_state} | "
+            f"{t(lang, 'production_hover_authorized_exposure')}: {current_exposure_text} | "
+            f"{t(lang, 'production_hover_candidate_asset')}: {current_candidate_label}"
+        )
 
     fig.update_layout(
         height=640,
@@ -6408,6 +6439,7 @@ with tabs[0]:
             lang=lang,
             main_label=t(lang, "production_chart_legend"),
             title=t(lang, "chart_title"),
+            real_account_exposure_state=real_account_exposure_state,
         ),
         width="stretch",
     )
@@ -6806,8 +6838,38 @@ with tabs[1]:
             render_ops_strip(
                 [
                     {
-                        "label": "Stav stratégie" if lang == "sk" else "Strategy state",
+                        "label": "Automaticke obchody" if lang == "sk" else "Automatic trading",
                         "value": operation_mode_label,
+                    },
+                    {
+                        "label": "Realny ucet" if lang == "sk" else "Real account",
+                        "value": str(real_account_exposure_state.get("state_text") or t(lang, "production_state_out_of_market")),
+                    },
+                    {
+                        "label": "Asset uctu" if lang == "sk" else "Account asset",
+                        "value": str(real_account_exposure_state.get("asset") or "CASH"),
+                    },
+                    {
+                        "label": "Realna expozicia" if lang == "sk" else "Real exposure",
+                        "value": str(real_account_exposure_state.get("exposure_text") or "0.00x"),
+                    },
+                    {
+                        "label": "Odoslanie obchodu" if lang == "sk" else "Order placement",
+                        "value": (
+                            "Blokovane"
+                            if lang == "sk" and (
+                                real_account_exposure_state.get("gate_status") == "blocked"
+                                or real_account_exposure_state.get("would_place_real_order") is False
+                            )
+                            else "Blocked"
+                            if (
+                                real_account_exposure_state.get("gate_status") == "blocked"
+                                or real_account_exposure_state.get("would_place_real_order") is False
+                            )
+                            else "Povolene"
+                            if lang == "sk"
+                            else "Allowed"
+                        ),
                     },
                 ],
                 tone="control",
