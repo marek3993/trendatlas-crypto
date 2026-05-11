@@ -378,6 +378,49 @@ def _load_active_strategy_closed_day(root: Path) -> str | None:
     return parse_iso_day(payload.get("closed_day"))
 
 
+def _load_effective_etf_panel_last_day(root: Path) -> str | None:
+    snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
+    try:
+        payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    if str(payload.get("strategy_version") or "").strip() != ETF_FLOW_LIVE_STRATEGY_VERSION:
+        return None
+    materialization = nested_get(payload, "source_inputs", "etf_panel_materialization")
+    if not isinstance(materialization, dict):
+        return None
+
+    materialized_closed_day = parse_iso_day(materialization.get("materialized_closed_day"))
+    actual_latest_causal_day = parse_iso_day(
+        materialization.get("actual_latest_causal_available_day")
+    )
+    actual_latest_source_day = parse_iso_day(
+        materialization.get("actual_latest_source_session_day")
+    )
+    carry_forward_reason = str(materialization.get("carry_forward_reason") or "").strip()
+    synthetic_source_rows_added = materialization.get("synthetic_source_rows_added")
+    d_plus_1_source_contract_ok = materialization.get("d_plus_1_source_contract_ok")
+    if not materialized_closed_day or not actual_latest_causal_day or not actual_latest_source_day:
+        return None
+    if carry_forward_reason != "no_intermediate_us_trading_sessions":
+        return None
+    if synthetic_source_rows_added != 0:
+        return None
+    if d_plus_1_source_contract_ok is not True:
+        return None
+    if iso_day_to_date(actual_latest_source_day) is None or iso_day_to_date(actual_latest_causal_day) is None:
+        return None
+    materialized_date = iso_day_to_date(materialized_closed_day)
+    actual_causal_date = iso_day_to_date(actual_latest_causal_day)
+    if materialized_date is None or actual_causal_date is None:
+        return None
+    if actual_causal_date > materialized_date:
+        return None
+    return materialized_closed_day
+
+
 def _load_effective_btc_benchmark_last_day(root: Path) -> str | None:
     snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
     try:
@@ -577,6 +620,9 @@ def resolve_actual_last_date_for_json(source_id: str, payload: dict[str, Any], *
     if source_id == "execution_latest_real_order_gate_decision":
         return parse_iso_day(nested_get(payload, "production_signal_context", "closed_day"))
     if source_id == "research_btc_etf_flow_daily_panel_quality":
+        effective_etf_panel_last_day = _load_effective_etf_panel_last_day(root)
+        if effective_etf_panel_last_day:
+            return effective_etf_panel_last_day
         return parse_iso_day(payload.get("panel_end_causal_btc_utc_day"))
     if source_id == "research_btc_derivatives_daily_panel_quality":
         return parse_iso_day(payload.get("panel_end_date"))
@@ -589,6 +635,10 @@ def resolve_actual_last_date_for_csv(source_id: str, meta: dict[str, Any], *, ro
         effective_last_day = _load_effective_btc_benchmark_last_day(root)
         if effective_last_day:
             return effective_last_day
+    if source_id == "research_btc_etf_flow_daily_panel_csv":
+        effective_etf_panel_last_day = _load_effective_etf_panel_last_day(root)
+        if effective_etf_panel_last_day:
+            return effective_etf_panel_last_day
     if source_id in {
         "production_current_strategy_timeseries",
         "data_ohlcv_btcusdt_1d",

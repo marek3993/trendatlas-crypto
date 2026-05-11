@@ -8,6 +8,7 @@ from unittest import mock
 
 import pandas as pd
 
+from scripts.production import data_health_common
 from scripts.production import build_current_strategy_snapshot
 from scripts.production.strategy_adapters.phase68g_66g_1p25x_candidate_adapter import (
     Phase68g66g1p25xCandidateAdapter,
@@ -256,6 +257,107 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
         self.assertFalse(bool(materialized.loc[pd.Timestamp("2026-05-10"), "etf_flow_feature_available"]))
         self.assertTrue(bool(materialized.loc[pd.Timestamp("2026-05-10"), "etf_flow_evidence_window"]))
         self.assertTrue(pd.isna(materialized.loc[pd.Timestamp("2026-05-10"), "causal_available_for_btc_utc_day"]))
+
+    def test_data_health_accepts_etf_weekend_carry_forward_without_fake_panel_row(self):
+        root = self._make_case_root()
+        try:
+            snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
+            panel_path = (
+                root
+                / "outputs"
+                / "research_os"
+                / "dev_only"
+                / "non_authoritative_btc_etf_flow_daily_panel"
+                / "btc_etf_flow_daily_panel.csv"
+            )
+            snapshot_path.parent.mkdir(parents=True, exist_ok=True)
+            snapshot_path.write_text(
+                json.dumps(
+                    {
+                        "artifact_type": "current_strategy_snapshot",
+                        "strategy_version": data_health_common.ETF_FLOW_LIVE_STRATEGY_VERSION,
+                        "closed_day": "2026-05-10",
+                        "source_inputs": {
+                            "etf_flow_evidence_window": {
+                                "start_date": "2024-01-12",
+                                "end_date": "2026-05-10",
+                            },
+                            "etf_panel_materialization": {
+                                "actual_latest_source_session_day": "2026-05-08",
+                                "actual_latest_causal_available_day": "2026-05-09",
+                                "active_source_session_day": "2026-05-08",
+                                "active_source_causal_available_day": "2026-05-09",
+                                "materialized_closed_day": "2026-05-10",
+                                "carry_forward_days_applied": 1,
+                                "evaluation_mode": "carry_forward_last_valid_etf_state",
+                                "carry_forward_reason": "no_intermediate_us_trading_sessions",
+                                "synthetic_source_rows_added": 0,
+                                "d_plus_1_source_contract_ok": True,
+                            },
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            self._write_rows(
+                panel_path,
+                [
+                    "date",
+                    "us_trading_session_date",
+                    "aggregate_net_flow_usd",
+                    "daily_causal_ready",
+                    "probe_input_ready_flag",
+                ],
+                [
+                    {
+                        "date": "2026-05-08",
+                        "us_trading_session_date": "2026-05-07",
+                        "aggregate_net_flow_usd": 1.0,
+                        "daily_causal_ready": True,
+                        "probe_input_ready_flag": True,
+                    },
+                    {
+                        "date": "2026-05-09",
+                        "us_trading_session_date": "2026-05-08",
+                        "aggregate_net_flow_usd": 2.0,
+                        "daily_causal_ready": True,
+                        "probe_input_ready_flag": True,
+                    },
+                ],
+            )
+            csv_meta, csv_error = data_health_common.load_csv_meta(panel_path)
+            self.assertIsNone(csv_error)
+            self.assertEqual(
+                data_health_common.resolve_actual_last_date_for_csv(
+                    "research_btc_etf_flow_daily_panel_csv",
+                    csv_meta or {},
+                    root=root,
+                ),
+                "2026-05-10",
+            )
+            self.assertEqual(
+                data_health_common.resolve_actual_last_date_for_json(
+                    "research_btc_etf_flow_daily_panel_quality",
+                    {
+                        "status": "passed",
+                        "panel_end_causal_btc_utc_day": "2026-05-09",
+                    },
+                    root=root,
+                    path_overrides={},
+                ),
+                "2026-05-10",
+            )
+            with panel_path.open(newline="", encoding="utf-8") as handle:
+                physical_rows = list(csv.DictReader(handle))
+            self.assertEqual(physical_rows[-1]["date"], "2026-05-09")
+            self.assertNotIn("2026-05-10", {row["date"] for row in physical_rows})
+            snapshot_payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                snapshot_payload["source_inputs"]["etf_flow_evidence_window"]["start_date"],
+                "2024-01-12",
+            )
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
 
     def test_build_path_materializes_stale_btc_persistence_dependency_before_etf_flow(self):
         class FakeBtcPersistenceAdapter:

@@ -503,6 +503,192 @@ def write_json_payload(path: Path, payload: Mapping[str, Any]) -> None:
     )
 
 
+def _as_mapping(value: Any) -> dict[str, Any]:
+    return dict(value) if isinstance(value, Mapping) else {}
+
+
+def _nested_get(payload: Mapping[str, Any], *keys: str) -> Any:
+    current: Any = payload
+    for key in keys:
+        if not isinstance(current, Mapping):
+            return None
+        current = current.get(key)
+    return current
+
+
+def build_publish_existing_synthetic_execution_intent(
+    *,
+    root: Path,
+    target_closed_day_utc: str,
+    generated_at_utc: str,
+    attempt_payload: Mapping[str, Any],
+) -> dict[str, Any]:
+    snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
+    snapshot = load_json_required(snapshot_path)
+    execution_intent = _as_mapping(snapshot.get("execution_intent"))
+    strategy_model = str(snapshot.get("strategy_version") or "").strip()
+    target_asset = str(
+        execution_intent.get("target_asset") or snapshot.get("current_asset") or "CASH"
+    ).strip().upper()
+    target_exposure = execution_intent.get("target_exposure")
+    signal_id = str(execution_intent.get("signal_id") or "").strip()
+    if not signal_id:
+        signal_id = (
+            f"current_strategy::{strategy_model}::{target_closed_day_utc}"
+            f"::target_{target_asset or 'CASH'}"
+            f"::candidate_{str(snapshot.get('candidate_asset') or 'CASH').strip().upper()}"
+        )
+    return {
+        "intent_type": "normalized_execution_intent",
+        "generated_at_utc": generated_at_utc,
+        "as_of_source": target_closed_day_utc,
+        "execution_mode": "publish_existing_validation_only",
+        "trading_enabled": False,
+        "kill_switch_required": True,
+        "strategy_model": strategy_model,
+        "signal_id": signal_id,
+        "target_asset": target_asset or "CASH",
+        "target_side": "hold_cash_no_market_entry"
+        if target_asset in {"", "CASH"}
+        else "validation_only_no_live_order",
+        "target_regime": str(snapshot.get("current_regime") or target_asset or "CASH").strip().upper(),
+        "size_mode": "production_snapshot_target_exposure",
+        "target_size_pct": target_exposure,
+        "staleness_ok": True,
+        "stale_signal": False,
+        "allow_live_order_candidate": False,
+        "guardrail_flags": {
+            "contract_validated": True,
+            "trading_disabled": True,
+            "kill_switch_required": True,
+            "manual_approval_required_for_live_orders": True,
+            "leverage_live_truth_allowed": False,
+            "production_snapshot_validated": True,
+            "publish_existing_validation_only": True,
+        },
+        "authority_day_context": {
+            "attempt_status": str(
+                attempt_payload.get("latest_authoritative_attempt_status") or ""
+            ).strip().lower(),
+            "attempt_target_closed_day": target_closed_day_utc,
+            "aligned_closed_day": target_closed_day_utc,
+            "authority_alignment_mode": "publish_existing_synthetic_authority",
+        },
+        "source_samples": {
+            "production_snapshot_execution_intent": dict(execution_intent),
+            "production_snapshot_summary": {
+                "strategy_status": snapshot.get("strategy_status"),
+                "candidate_asset": snapshot.get("candidate_asset"),
+                "current_asset": snapshot.get("current_asset"),
+                "effective_market_exposure": snapshot.get("effective_market_exposure"),
+                "trend_permission_active": snapshot.get("trend_permission_active"),
+                "current_regime": snapshot.get("current_regime"),
+                "validation_status": _nested_get(snapshot, "validation", "status"),
+            },
+        },
+        "source_paths": {
+            "production_snapshot": str(snapshot_path),
+        },
+        "notes": [
+            "Synthetic publish-existing validation intent.",
+            "No runtime preview chain is invoked.",
+            "No live order execution is allowed by this artifact.",
+        ],
+    }
+
+
+def build_publish_existing_synthetic_real_order_gate(
+    *,
+    root: Path,
+    target_closed_day_utc: str,
+    generated_at_utc: str,
+    intent_payload: Mapping[str, Any],
+) -> dict[str, Any]:
+    snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
+    snapshot = load_json_required(snapshot_path)
+    execution_intent = _as_mapping(snapshot.get("execution_intent"))
+    signal_id = str(intent_payload.get("signal_id") or "").strip()
+    target_asset = str(intent_payload.get("target_asset") or "CASH").strip().upper()
+    target_exposure = intent_payload.get("target_size_pct")
+    try:
+        target_exposure_value = float(target_exposure)
+    except (TypeError, ValueError):
+        target_exposure_value = 0.0
+    trend_permission_active = snapshot.get("trend_permission_active") is True
+    allow_live_order_candidate = execution_intent.get("allow_live_order_candidate") is True
+    validation_status = str(
+        _nested_get(snapshot, "validation", "status") or ""
+    ).strip().lower()
+    return {
+        "decision_type": "real_order_gate_decision",
+        "generated_at_utc": generated_at_utc,
+        "signal_id": signal_id,
+        "target_asset": target_asset or "CASH",
+        "mode": "publish_existing_validation_only",
+        "approval_gate_status": "blocked_validation_only",
+        "would_place_real_order": False,
+        "real_orders_enabled": False,
+        "status": "blocked",
+        "block_reasons": [
+            "publish_existing_validation_only",
+            "live_order_chain_not_invoked",
+        ],
+        "checks": {
+            "signal_present": bool(signal_id),
+            "target_asset_present": bool(target_asset),
+            "target_asset_allowed": True,
+            "target_asset_is_cash": target_asset in {"", "CASH"},
+            "target_exposure_positive": target_exposure_value > 0.0,
+            "contract_validated": True,
+            "execution_trading_enabled": False,
+            "allow_live_orders": False,
+            "kill_switch": True,
+            "stale_signal": False,
+            "duplicate_order_risk": False,
+            "open_orders_present": False,
+            "manual_approval_required": True,
+            "production_snapshot_validation_passed": validation_status == "passed",
+            "production_snapshot_closed_day_present": True,
+            "production_snapshot_signal_present": bool(signal_id),
+            "production_snapshot_target_asset_present": bool(target_asset),
+            "production_snapshot_target_exposure_positive": target_exposure_value > 0.0,
+            "production_snapshot_trend_permission_active": trend_permission_active,
+            "production_snapshot_allow_live_order_candidate": allow_live_order_candidate,
+            "production_snapshot_stale_signal": False,
+            "intent_day_matches_production_snapshot": True,
+            "intent_signal_matches_production_snapshot": True,
+            "intent_target_asset_matches_production_snapshot": True,
+            "intent_target_exposure_matches_production_snapshot": True,
+            "intent_stale_signal_matches_production_snapshot": True,
+            "intent_strategy_model_matches_production_snapshot": True,
+            "intent_allow_live_order_candidate_matches_snapshot": True,
+        },
+        "production_signal_context": {
+            "strategy_version": snapshot.get("strategy_version"),
+            "closed_day": target_closed_day_utc,
+            "validation_status": validation_status,
+            "candidate_asset": snapshot.get("candidate_asset"),
+            "current_asset": snapshot.get("current_asset"),
+            "signal_id": signal_id,
+            "target_asset": target_asset or "CASH",
+            "target_exposure": target_exposure,
+            "effective_market_exposure": snapshot.get("effective_market_exposure"),
+            "model_candidate_exposure": snapshot.get("model_candidate_exposure"),
+            "trend_permission_active": snapshot.get("trend_permission_active"),
+            "allow_live_order_candidate": execution_intent.get("allow_live_order_candidate"),
+        },
+        "source_paths": {
+            "intent_path": "synthetic_publish_existing_validation_bundle",
+            "production_snapshot_path": str(snapshot_path),
+        },
+        "notes": [
+            "Synthetic publish-existing validation gate.",
+            "No live order placement is performed.",
+            "live_order_chain remains not_invoked.",
+        ],
+    }
+
+
 def build_publish_existing_validation_bundle(
     *,
     root: Path,
@@ -516,6 +702,23 @@ def build_publish_existing_validation_bundle(
     synthetic_success_path = authority_dir / "latest_successful_snapshot.json"
     write_json_payload(synthetic_attempt_path, attempt_payload)
     write_json_payload(synthetic_success_path, success_payload)
+    synthetic_intent_path = run_dir / "execution" / "latest_execution_intent.json"
+    synthetic_gate_path = run_dir / "execution" / "latest_real_order_gate_decision.json"
+    generated_at_utc = str(success_payload.get("generated_at_utc") or utc_now_iso()).strip()
+    synthetic_intent = build_publish_existing_synthetic_execution_intent(
+        root=root,
+        target_closed_day_utc=target_closed_day_utc,
+        generated_at_utc=generated_at_utc,
+        attempt_payload=attempt_payload,
+    )
+    synthetic_gate = build_publish_existing_synthetic_real_order_gate(
+        root=root,
+        target_closed_day_utc=target_closed_day_utc,
+        generated_at_utc=generated_at_utc,
+        intent_payload=synthetic_intent,
+    )
+    write_json_payload(synthetic_intent_path, synthetic_intent)
+    write_json_payload(synthetic_gate_path, synthetic_gate)
     reference_now = build_reference_now_for_closed_day(target_closed_day_utc)
     return build_report_bundle(
         root=root,
@@ -524,9 +727,22 @@ def build_publish_existing_validation_bundle(
         path_overrides={
             "execution_authority_latest_attempt_status": str(synthetic_attempt_path),
             "execution_authority_latest_successful_snapshot": str(synthetic_success_path),
+            "execution_latest_execution_intent": str(synthetic_intent_path),
+            "execution_latest_real_order_gate_decision": str(synthetic_gate_path),
         },
         write_outputs=False,
     )
+
+
+def publish_existing_synthetic_execution_path_overrides(run_dir: Path) -> dict[str, str]:
+    return {
+        "execution_latest_execution_intent": str(
+            run_dir / "execution" / "latest_execution_intent.json"
+        ),
+        "execution_latest_real_order_gate_decision": str(
+            run_dir / "execution" / "latest_real_order_gate_decision.json"
+        ),
+    }
 
 
 def validate_publish_existing_readiness_bundle(
@@ -1423,6 +1639,9 @@ def run_publish_existing_flow(
             root=resolved_root,
             output_dir=resolved_root / "outputs" / "production",
             reference_now=reference_now,
+            path_overrides=publish_existing_synthetic_execution_path_overrides(
+                validation_run_dir
+            ),
             write_outputs=False,
         )
         validate_publish_existing_readiness_bundle(
@@ -1433,6 +1652,9 @@ def run_publish_existing_flow(
             root=resolved_root,
             output_dir=resolved_root / "outputs" / "production",
             reference_now=reference_now,
+            path_overrides=publish_existing_synthetic_execution_path_overrides(
+                validation_run_dir
+            ),
             write_outputs=True,
         )
         publish_result = publish_authority_artifacts_to_repo(
