@@ -1030,6 +1030,27 @@ def _compute_cagr_since(series: pd.Series, dates: pd.Series, start_day: str) -> 
     return _compute_cagr_pct(series.loc[mask], clean_dates.loc[mask])
 
 
+def _compute_average_annual_period_return_pct(series: pd.Series, dates: pd.Series) -> float:
+    clean_returns = pd.to_numeric(series, errors="coerce").fillna(0.0)
+    clean_dates = pd.to_datetime(dates, errors="coerce")
+    frame = pd.DataFrame({"return": clean_returns, "date": clean_dates}).dropna(subset=["date"])
+    if frame.empty:
+        return 0.0
+
+    annual_returns_pct = []
+    for _, year_frame in frame.groupby(frame["date"].dt.year, sort=True):
+        year_equity = float((1.0 + pd.to_numeric(year_frame["return"], errors="coerce").fillna(0.0)).prod())
+        annual_returns_pct.append((year_equity - 1.0) * 100.0)
+    if not annual_returns_pct:
+        return 0.0
+    first_day = pd.Timestamp(frame["date"].min()).date()
+    last_day = pd.Timestamp(frame["date"].max()).date()
+    period_count = (last_day.year - first_day.year) + 1
+    if first_day > date(first_day.year, 1, 1):
+        period_count += 1
+    return float(sum(annual_returns_pct) / max(period_count, 1))
+
+
 def _compute_max_drawdown_pct(series: pd.Series) -> float:
     curve = (1.0 + pd.to_numeric(series, errors="coerce").fillna(0.0)).cumprod()
     if curve.empty:
@@ -1145,7 +1166,7 @@ def build_public_homepage_performance_context(
     public_metrics.update(
         {
             "total_return_pct": round(_compute_total_return_pct(returns), 4),
-            "cagr_pct": round(_compute_cagr_pct(returns, dates), 4),
+            "cagr_pct": round(_compute_average_annual_period_return_pct(returns, dates), 4),
             "max_drawdown_pct": round(_compute_max_drawdown_pct(returns), 4),
             "public_window_cagr_pct": round(_compute_cagr_since(returns, dates, evidence_start_day), 4),
             "since2023_cagr_pct": round(_compute_cagr_since(returns, dates, evidence_start_day), 4),

@@ -65,6 +65,7 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "_compute_total_return_pct",
             "_compute_cagr_pct",
             "_compute_cagr_since",
+            "_compute_average_annual_period_return_pct",
             "_compute_max_drawdown_pct",
             "_annualized_sharpe_from_daily_returns",
             "_annualized_sortino_from_daily_returns",
@@ -81,11 +82,21 @@ class TestAppPublicStatusContract(unittest.TestCase):
         build_context = self.__class__.ns["build_public_homepage_performance_context"]
         frame = pd.DataFrame(
             {
-                "ts": pd.to_datetime(["2023-01-01", "2024-01-11", "2024-01-12", "2024-01-13"]),
-                "authorized_return_net": [0.50, 0.20, 0.10, 0.00],
-                "cash_day": [True, True, False, False],
-                "btc_day": [False, False, True, True],
-                "asset_transition_day": [False, False, True, False],
+                "ts": pd.to_datetime(
+                    [
+                        "2023-01-01",
+                        "2024-01-11",
+                        "2024-01-12",
+                        "2024-12-31",
+                        "2025-01-01",
+                        "2025-12-31",
+                        "2026-01-01",
+                    ]
+                ),
+                "authorized_return_net": [0.50, 0.20, 0.10, 0.20, 0.50, 0.00, 0.00],
+                "cash_day": [True, True, False, False, False, False, False],
+                "btc_day": [False, False, True, True, True, True, True],
+                "asset_transition_day": [False, False, True, False, False, False, False],
             }
         )
         snapshot = {
@@ -106,7 +117,12 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(context["public_window_metric_key"], "public_window_cagr_pct")
         self.assertEqual(
             context["timeseries_df"]["ts"].dt.strftime("%Y-%m-%d").tolist(),
-            ["2024-01-12", "2024-01-13"],
+            ["2024-01-12", "2024-12-31", "2025-01-01", "2025-12-31", "2026-01-01"],
+        )
+        self.assertAlmostEqual(context["top_performance_metrics"]["cagr_pct"], 20.5, places=4)
+        self.assertNotEqual(
+            context["top_performance_metrics"]["cagr_pct"],
+            context["top_performance_metrics"]["public_window_cagr_pct"],
         )
         self.assertEqual(
             context["top_performance_metrics"]["public_window_cagr_pct"],
