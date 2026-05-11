@@ -379,7 +379,7 @@ At any point in time, the portfolio stays simple:
 - and in weaker conditions the system can also spend time in BTC or a more defensive cash-like stance
 """,
         "compare_title": "Strategy comparison",
-        "compare_desc": "Comparison of the main strategy, the reference strategy and BTC Buy & Hold without internal research labels.",
+        "compare_desc": "Comparison of the main strategy, the reference strategy and BTC Buy & Hold using public names.",
         "compare_chart": "Capital curve comparison",
         "compare_table": "Version overview",
         "method_title": "How it works",
@@ -400,7 +400,7 @@ Instead, it keeps answering two main questions:
 The strategy starts with a baseline market regime signal.  
 That signal evaluates whether the overall environment is strong enough for risk-on positioning. If it is not, the system stays defensive and prefers cash.
 
-If conditions are strong enough, the strategy then evaluates a set of candidate assets and scores them using multiple inputs, especially trend, return strength, risk, and volatility.  
+If conditions are strong enough, the strategy then evaluates the shortlisted assets and scores them using multiple inputs, especially trend, return strength, risk, and volatility.
 Only assets that pass the required quality and safety filters are allowed to compete.
 
 ### Holding and switching logic
@@ -430,10 +430,10 @@ In practice, this makes it a **top-1 rotation system with a cash option**.
 ### Why it sometimes stays in cash
 
 Cash does not mean the system is “doing nothing.”  
-It means the market is still below the internal quality threshold, or no candidate is strong enough to justify real exposure.
+It means the market is still below the required quality threshold, or no asset is strong enough to justify real exposure.
 
-That is why the system may have an internal leader while still not taking the trade.  
-A candidate may exist, but the governance and safety layer may still block execution.
+That is why the system may prefer an asset while still not taking the trade.
+An asset may look attractive, but the safety layer may still block execution.
 
 ### What makes this strategy different
 
@@ -441,7 +441,7 @@ This is not just a simple ranking model.
 The strategy has three layers:
 
 - **Market regime filter** – decides whether risk should be on at all
-- **Asset selection layer** – finds the strongest valid candidate
+- **Asset selection layer** – finds the strongest valid asset
 - **Governance layer** – decides whether a switch is actually justified
 
 That third layer is important because it is often the difference between a model that looks good in a backtest and one that behaves in a disciplined way in real operation.
@@ -554,30 +554,28 @@ METRIC_HELP = {
 }
 
 TEXT["sk"]["performance_fee_note"] = (
-    "Top karty zobrazuju aktualne metriky z Production Core snapshotu. "
-    "Nejde o samostatny compare/ranking vystup a vysledky uz "
-    "zahrnaju Hyperliquid poplatky."
+    "Top karty zobrazuju aktualne validovane metriky strategie. "
+    "Vysledky uz zahrnaju Hyperliquid poplatky."
 )
 TEXT["en"]["performance_fee_note"] = (
-    "Top cards show the current metrics from the Production Core snapshot. "
-    "They are not fed by a separate compare/ranking "
-    "artifact, and results already include Hyperliquid fees."
+    "Top cards show the current validated strategy metrics. "
+    "Results already include Hyperliquid fees."
 )
 TEXT["sk"].update(
     {
         "currently_holding": "Aktualny stav",
-        "production_candidate_asset": "Kandidat strategie",
+        "production_candidate_asset": "Preferovane aktivum",
         "production_market_state": "Stav",
         "production_market_exposure": "Aktualna trhova expozicia",
         "production_state_out_of_market": "Mimo trhu",
         "production_state_in_market": "V trhu",
         "production_wait_reason_pending": "Trend zatial nepotvrdil vstup",
         "production_wait_reason_active": "Vstup je potvrdeny",
-        "production_candidate_hint": "Preferovane aktivum po potvrdeni vstupu",
+        "production_candidate_hint": "Aktivum, ktore splna pravidla pre dalsi vstup",
         "production_exposure_hint_out": "Bez autorizovaneho vstupu do trhu",
         "production_exposure_hint_in": "Autorizovana trhova expozicia",
         "buy_threshold": "Hranica vstupu",
-        "trend_desc": "Toto je oficialny pohlad na stav trendu. Aplikacia ho nepocita nanovo, len zobrazuje validovanu hodnotu z Production Core.",
+        "trend_desc": "Toto je oficialny pohlad na stav trendu. Aplikacia ho nepocita nanovo, len zobrazuje validovanu hodnotu.",
         "trend_threshold_note": "Biela hranica ukazuje bod, od ktoreho sa trend povazuje za dostatocne silny. Pod nou je strategia opatrnejsia.",
         "chart_title": "Vyvoj kapitalu strategie",
         "chart_performance_axis": "Index kapitalu",
@@ -586,7 +584,7 @@ TEXT["sk"].update(
         "production_chart_note": "Graf ukazuje len vyvoj kapitalu strategie. Nejde o zaznam fyzicky nakupenej mince ani o vypis otvorenych pozicii.",
         "production_chart_flat_note": "Rovne useky v tomto grafe neznamenaju novy nakup. Znamenaju len to, ze sa hodnota kapitalu v danom useku menila malo alebo vobec.",
         "production_chart_legend": "Strategia - kapital",
-        "production_chart_subtitle": "Oficialna equity seria z Production Core",
+        "production_chart_subtitle": "Oficialna kapitalova seria strategie",
         "production_hover_date": "Datum",
         "production_hover_index": "Index kapitalu",
         "production_hover_return_net": "Denny netto vynos",
@@ -603,21 +601,21 @@ TEXT["sk"].update(
         "production_waiting_yes": "Ano",
         "production_waiting_no": "Nie",
         "production_waiting_label": "Caka na zmenu",
-        "production_data_source_note": "Homepage cita oficialny stav strategie iba z Production Core.",
+        "production_data_source_note": "Stranka zobrazuje iba oficialne validovany stav strategie.",
         "production_wait_current": "Dnesne hodnoty",
         "production_wait_target": "Hodnota pre zmenu",
     }
 )
 TEXT["en"].update(
     {
-        "production_candidate_asset": "Strategy candidate",
+        "production_candidate_asset": "Preferred asset",
         "production_market_state": "State",
         "production_market_exposure": "Current market exposure",
         "production_state_out_of_market": "Out of market",
         "production_state_in_market": "In market",
         "production_wait_reason_pending": "Trend has not confirmed entry yet",
         "production_wait_reason_active": "Entry is confirmed",
-        "production_candidate_hint": "Preferred asset after entry confirmation",
+        "production_candidate_hint": "Asset that currently fits the entry rules best",
         "production_exposure_hint_out": "No authorized market entry",
         "production_exposure_hint_in": "Authorized market exposure",
         "buy_threshold": "Entry threshold",
@@ -626,7 +624,7 @@ TEXT["en"].update(
         "production_chart_note": "This chart shows only the strategy equity curve. It is not a record of a physically bought coin or a list of open positions.",
         "production_chart_flat_note": "Flat segments do not mean a new buy. They only mean the capital changed little or not at all in that span.",
         "production_chart_legend": "Strategy capital",
-        "production_chart_subtitle": "Official equity series from Production Core",
+        "production_chart_subtitle": "Official strategy capital series",
         "production_hover_date": "Date",
         "production_hover_index": "Capital index",
         "production_hover_return_net": "Daily net return",
@@ -635,26 +633,26 @@ TEXT["en"].update(
         "production_status_change": "What would change the behavior",
         "production_status_risks": "Current weak spots",
         "production_waiting_label": "Waiting for change",
-        "production_data_source_note": "The homepage reads official strategy state only from Production Core.",
+        "production_data_source_note": "The page shows only the officially validated strategy state.",
     }
 )
 TEXT["sk"]["chart_note_strip_hidden"] = (
     "Horna krivka ukazuje vykon hlavneho modelu proti BTC benchmarku. "
-    "Spodny pas je skryty, pretoze canonical paper rows momentalne "
-    "nedovoluju pravdive zobrazenie drzaneho stavu."
+    "Spodny pas je skryty, pretoze drzany stav momentalne nie je mozne "
+    "zobrazit dostatocne spolahlivo."
 )
 TEXT["en"]["chart_note_strip_hidden"] = (
     "The top line shows the main model versus the BTC benchmark. "
-    "The lower strip is hidden because the canonical paper rows do not "
-    "currently allow a truthful held-state rendering."
+    "The lower strip is hidden because the held state cannot currently "
+    "be displayed reliably enough."
 )
 TEXT["sk"].update(
     {
-        "production_core_error_prefix": "Production Core v1 homepage blocked",
+        "production_core_error_prefix": "Stranka je docasne nedostupna",
         "production_exposure": "Expozicia",
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
-        "production_chart_note": "Graf ukazuje iba autorizovanu krivku kapitalu strategie po povoleni expozicie. Samotna krivka nehovori, aky kandidat aktiva model prave preferuje.",
+        "production_chart_note": "Graf ukazuje iba autorizovanu krivku kapitalu strategie po povoleni expozicie. Samotna krivka nehovori, ake aktivum strategia prave preferuje.",
         "production_chart_baseline_note": "Cervena krivka je autorizovana strategia. Zlata krivka je BTC baseline prepocitana zo zaverecnych cien a rebased na rovnaky zaciatok zobrazeneho obdobia.",
         "production_chart_flat_note": "Ked strategia nema povolenu trhovu expoziciu, autorizovany kapital zostava rovny okrem explicitnych nakladov na prechod.",
         "production_chart_participation_note": "Stavovy banner a spodny strip ukazuju, kedy bola strategia realne v trhu a aku autorizovanu expoziciu mala.",
@@ -675,24 +673,24 @@ TEXT["sk"].update(
         "production_chart_exposure_axis": "Autorizovana expozicia",
         "production_hover_market_state": "Stav trhu",
         "production_hover_authorized_exposure": "Autorizovana expozicia",
-        "production_hover_candidate_asset": "Kandidat strategie",
+        "production_hover_candidate_asset": "Preferovane aktivum",
         "production_hover_btc_close": "BTC close",
         "production_hover_btc_return": "Denny pohyb BTC",
         "production_hover_btc_index": "BTC index",
         "production_hover_market_state_in": "V TRHU",
         "production_hover_market_state_out": "MIMO TRHU",
         "production_chart_current_prefix": "Aktualne",
-        "production_chart_current_out_note": "Aktualne je strategia mimo trhu. Zobrazeny je autorizovany kapital, nie otvorena pozicia. Kandidat strategie je {candidate} a autorizovana expozicia je {exposure}.",
-        "production_chart_current_in_note": "Aktualne je strategia v trhu s autorizovanou expoziciou {exposure}. Kandidat strategie je {candidate}.",
+        "production_chart_current_out_note": "Aktualne je strategia mimo trhu. Zobrazeny je autorizovany kapital, nie otvorena pozicia. Preferovane aktivum je {candidate} a autorizovana expozicia je {exposure}.",
+        "production_chart_current_in_note": "Aktualne je strategia v trhu s autorizovanou expoziciou {exposure}. Preferovane aktivum je {candidate}.",
     }
 )
 TEXT["en"].update(
     {
-        "production_core_error_prefix": "Production Core v1 homepage blocked",
+        "production_core_error_prefix": "Page temporarily unavailable",
         "production_exposure": "Exposure",
         "production_closed_day": "Last closed day",
         "production_next_rebalance": "Next rebalance",
-        "production_chart_note": "This chart shows only the authorized strategy capital curve after exposure permission. The line alone does not tell you which candidate asset the model currently prefers.",
+        "production_chart_note": "This chart shows only the authorized strategy capital curve after exposure permission. The line alone does not tell you which asset the strategy currently prefers.",
         "production_chart_baseline_note": "The red line is the authorized strategy. The gold line is a BTC baseline built from closing prices and rebased to the same start of the visible period.",
         "production_chart_flat_note": "When the strategy has no authorized market exposure, authorized capital should stay flat except for explicit transition costs.",
         "production_chart_participation_note": "The state banner and the lower strip show when the strategy was actually in market and what authorized exposure it had.",
@@ -713,77 +711,77 @@ TEXT["en"].update(
         "production_chart_exposure_axis": "Authorized exposure",
         "production_hover_market_state": "Market state",
         "production_hover_authorized_exposure": "Authorized exposure",
-        "production_hover_candidate_asset": "Strategy candidate",
+        "production_hover_candidate_asset": "Preferred asset",
         "production_hover_btc_close": "BTC close",
         "production_hover_btc_return": "BTC daily move",
         "production_hover_btc_index": "BTC index",
         "production_hover_market_state_in": "IN MARKET",
         "production_hover_market_state_out": "OUT OF MARKET",
         "production_chart_current_prefix": "Current",
-        "production_chart_current_out_note": "The strategy is currently out of market. The chart shows authorized capital, not an open position. The strategy candidate is {candidate} and authorized exposure is {exposure}.",
-        "production_chart_current_in_note": "The strategy is currently in market with authorized exposure {exposure}. The strategy candidate is {candidate}.",
+        "production_chart_current_out_note": "The strategy is currently out of market. The chart shows authorized capital, not an open position. The preferred asset is {candidate} and authorized exposure is {exposure}.",
+        "production_chart_current_in_note": "The strategy is currently in market with authorized exposure {exposure}. The preferred asset is {candidate}.",
     }
 )
 METRIC_HELP["sk"].update(
     {
         TEXT["sk"]["cagr"]: (
-            "Tato top karta ukazuje aktualny CAGR priamo z Production Core snapshotu."
+            "Tato top karta ukazuje aktualny CAGR z validovanych dat strategie."
         ),
         TEXT["sk"]["since2023"]: (
-            "Tato top karta ukazuje okno CAGR od 2023 priamo z Production Core snapshotu."
+            "Tato top karta ukazuje okno CAGR od 2023 z validovanych dat strategie."
         ),
         TEXT["sk"]["since2025"]: (
-            "Tato top karta ukazuje okno CAGR od 2025 priamo z Production Core snapshotu."
+            "Tato top karta ukazuje okno CAGR od 2025 z validovanych dat strategie."
         ),
-        TEXT["sk"]["currently_holding"]: "Toto pole ide priamo z Production Core snapshotu ako oficialny aktualny asset.",
-        TEXT["sk"]["trend_state"]: "Textovy trend stav ide z Production Core snapshotu, nie z legacy live exportu.",
-        TEXT["sk"]["trend_score"]: "Trend score je z Production Core snapshotu a jeho historia z Production Core timeseries.",
-        TEXT["sk"]["buy_threshold"]: "Hranica vstupu sa cita z posledneho validovaneho riadku Production Core timeseries.",
-        TEXT["sk"]["total_return"]: "Celkovy vynos je citany z Production Core snapshot metrics.",
-        TEXT["sk"]["sharpe"]: "Sharpe ratio sa pocita z autorizovanych dennych netto vynosov a cita z Production Core snapshot metrics.",
-        TEXT["sk"]["sortino"]: "Sortino ratio sa pocita z autorizovanych dennych netto vynosov a cita z Production Core snapshot metrics.",
-        TEXT["sk"]["max_dd"]: "Max drawdown je citany z Production Core snapshot metrics.",
-        TEXT["sk"]["switch_count"]: "Pocet prepnuti je citany z Production Core snapshot metrics.",
-        TEXT["sk"]["trade_count"]: "Pocet obchodov je citany priamo z Production Core snapshotu.",
-        TEXT["sk"]["current_drawdown"]: "Aktualny drawdown je citany z rozhodovacieho kontextu v Production Core snapshote.",
-        TEXT["sk"]["cash_days"]: "Cash Days su citane z Production Core snapshot metrics.",
-        TEXT["sk"]["btc_days"]: "BTC Days su citane z Production Core snapshot metrics.",
-        TEXT["sk"]["production_exposure"]: "Expozicia ide priamo z Production Core snapshotu ako aktualne oficialne nastavenie.",
-        TEXT["sk"]["production_candidate_asset"]: "Kandidat strategie ide z Production Core snapshotu ako aktualne vybrane aktivum modelu, este nie nutne ako povolena expozicia.",
-        TEXT["sk"]["production_market_state"]: "Stav rozlisuje medzi kandidatom modelu a realne povolenou trhovou expoziciou.",
-        TEXT["sk"]["production_market_exposure"]: "Aktualna trhova expozicia ide z Production Core snapshotu ako autorizovana expozicia po trend gate.",
-        TEXT["sk"]["production_closed_day"]: "Posledny uzavrety den ide z Production Core snapshotu a musi sediet s diagnostics aj timeseries.",
+        TEXT["sk"]["currently_holding"]: "Toto pole ukazuje oficialny aktualny stav strategie.",
+        TEXT["sk"]["trend_state"]: "Textovy stav trendu vychadza z poslednych validovanych dat.",
+        TEXT["sk"]["trend_score"]: "Trend score a jeho historia vychadzaju z validovanej casovej serie.",
+        TEXT["sk"]["buy_threshold"]: "Hranica vstupu sa cita z posledneho validovaneho dna.",
+        TEXT["sk"]["total_return"]: "Celkovy vynos vychadza z validovanych metrik strategie.",
+        TEXT["sk"]["sharpe"]: "Sharpe ratio sa pocita z autorizovanych dennych netto vynosov.",
+        TEXT["sk"]["sortino"]: "Sortino ratio sa pocita z autorizovanych dennych netto vynosov.",
+        TEXT["sk"]["max_dd"]: "Max drawdown vychadza z validovanych metrik strategie.",
+        TEXT["sk"]["switch_count"]: "Pocet prepnuti vychadza z validovanej historie strategie.",
+        TEXT["sk"]["trade_count"]: "Pocet obchodov vychadza z validovanej historie strategie.",
+        TEXT["sk"]["current_drawdown"]: "Aktualny drawdown vychadza z posledneho rozhodovacieho stavu.",
+        TEXT["sk"]["cash_days"]: "Cash Days vychadzaju z validovanych metrik strategie.",
+        TEXT["sk"]["btc_days"]: "BTC Days vychadzaju z validovanych metrik strategie.",
+        TEXT["sk"]["production_exposure"]: "Expozicia ukazuje aktualne oficialne nastavenie strategie.",
+        TEXT["sk"]["production_candidate_asset"]: "Preferovane aktivum je aktualny vyber strategie pred finalnym povolenim expozicie.",
+        TEXT["sk"]["production_market_state"]: "Stav rozlisuje medzi vyberom strategie a realne povolenou trhovou expoziciou.",
+        TEXT["sk"]["production_market_exposure"]: "Aktualna trhova expozicia ukazuje autorizovanu expoziciu po kontrolach vstupu.",
+        TEXT["sk"]["production_closed_day"]: "Posledny uzavrety den ukazuje datum poslednych validovanych dat.",
     }
 )
 METRIC_HELP["en"].update(
     {
         TEXT["en"]["cagr"]: (
-            "This top card shows the current CAGR directly from the Production Core snapshot."
+            "This top card shows the current CAGR from validated strategy data."
         ),
         TEXT["en"]["since2023"]: (
-            "This top card shows the since-2023 CAGR directly from the Production Core snapshot."
+            "This top card shows the since-2023 CAGR from validated strategy data."
         ),
         TEXT["en"]["since2025"]: (
-            "This top card shows the since-2025 CAGR directly from the Production Core snapshot."
+            "This top card shows the since-2025 CAGR from validated strategy data."
         ),
-        TEXT["en"]["currently_holding"]: "This field is read directly from the Production Core snapshot as the official current asset.",
-        TEXT["en"]["trend_state"]: "The trend state is read from the Production Core snapshot, not from the legacy live export.",
-        TEXT["en"]["trend_score"]: "The trend score comes from the Production Core snapshot and its history from the Production Core timeseries.",
-        TEXT["en"]["buy_threshold"]: "The entry threshold is read from the latest validated row of the Production Core timeseries.",
-        TEXT["en"]["total_return"]: "Total return is read from the Production Core snapshot metrics.",
-        TEXT["en"]["sharpe"]: "Sharpe ratio is computed from authorized daily net returns and read from the Production Core snapshot metrics.",
-        TEXT["en"]["sortino"]: "Sortino ratio is computed from authorized daily net returns and read from the Production Core snapshot metrics.",
-        TEXT["en"]["max_dd"]: "Max drawdown is read from the Production Core snapshot metrics.",
-        TEXT["en"]["switch_count"]: "Switch count is read from the Production Core snapshot metrics.",
-        TEXT["en"]["trade_count"]: "Trade count is read directly from the Production Core snapshot.",
-        TEXT["en"]["current_drawdown"]: "Current drawdown is read from the decision context in the Production Core snapshot.",
-        TEXT["en"]["cash_days"]: "Cash Days are read from the Production Core snapshot metrics.",
-        TEXT["en"]["btc_days"]: "BTC Days are read from the Production Core snapshot metrics.",
-        TEXT["en"]["production_exposure"]: "Exposure comes directly from the Production Core snapshot as the official current setting.",
-        TEXT["en"]["production_candidate_asset"]: "The strategy candidate comes from the Production Core snapshot as the current model-selected asset, not necessarily as live exposure.",
-        TEXT["en"]["production_market_state"]: "State separates the model candidate from the actually authorized market exposure.",
-        TEXT["en"]["production_market_exposure"]: "Current market exposure comes from the Production Core snapshot after the trend-permission gate.",
-        TEXT["en"]["production_closed_day"]: "The last closed day comes from the Production Core snapshot and must match diagnostics and timeseries.",
+        TEXT["en"]["currently_holding"]: "This field shows the official current strategy state.",
+        TEXT["en"]["trend_state"]: "The trend state comes from the latest validated data.",
+        TEXT["en"]["trend_score"]: "The trend score and its history come from the validated time series.",
+        TEXT["en"]["buy_threshold"]: "The entry threshold is read from the latest validated day.",
+        TEXT["en"]["total_return"]: "Total return comes from validated strategy metrics.",
+        TEXT["en"]["sharpe"]: "Sharpe ratio is computed from authorized daily net returns.",
+        TEXT["en"]["sortino"]: "Sortino ratio is computed from authorized daily net returns.",
+        TEXT["en"]["max_dd"]: "Max drawdown comes from validated strategy metrics.",
+        TEXT["en"]["switch_count"]: "Switch count comes from validated strategy history.",
+        TEXT["en"]["trade_count"]: "Trade count comes from validated strategy history.",
+        TEXT["en"]["current_drawdown"]: "Current drawdown comes from the latest decision state.",
+        TEXT["en"]["cash_days"]: "Cash Days come from validated strategy metrics.",
+        TEXT["en"]["btc_days"]: "BTC Days come from validated strategy metrics.",
+        TEXT["en"]["production_exposure"]: "Exposure shows the official current strategy setting.",
+        TEXT["en"]["production_candidate_asset"]: "The preferred asset is the current strategy choice before final exposure approval.",
+        TEXT["en"]["production_market_state"]: "State separates the strategy choice from actually authorized market exposure.",
+        TEXT["en"]["production_market_exposure"]: "Current market exposure shows authorized exposure after entry checks.",
+        TEXT["en"]["production_closed_day"]: "The last closed day shows the date of the latest validated data.",
     }
 )
 
@@ -1465,13 +1463,13 @@ def build_public_homepage_refresh_notice(
     if status_model.get("report_stale_relative_to_authority"):
         stale_report_suffix = (
             (
-                f" Aktualny data-health report je pre {report_reference_day or 'n/a'}, "
-                f"authority ciel je {authority_target_day or 'n/a'}."
+                f" Aktualny report je pre {report_reference_day or 'n/a'}, "
+                f"cielovy den je {authority_target_day or 'n/a'}."
             )
             if lang == "sk"
             else (
-                f" The current data health report is for {report_reference_day or 'n/a'}, "
-                f"while the authority target is {authority_target_day or 'n/a'}."
+                f" The current report is for {report_reference_day or 'n/a'}, "
+                f"while the target day is {authority_target_day or 'n/a'}."
             )
         )
 
@@ -1489,11 +1487,11 @@ def build_public_homepage_refresh_notice(
         )
     if public_notice_reason == "data_health_report_stale":
         return (
-            "Data-health report nie je zosynchronizovany s poslednym authority cielom."
+            "Report nie je zosynchronizovany s poslednym cielovym dnom."
             + stale_report_suffix
             + success_suffix
             if lang == "sk"
-            else "The data health report is not aligned with the latest authority target."
+            else "The report is not aligned with the latest target day."
             + stale_report_suffix
             + success_suffix
         )
@@ -1505,9 +1503,9 @@ def build_public_homepage_refresh_notice(
         )
     if public_notice_reason == "authority_missing_authority_artifact":
         return (
-            "Authority stav nie je dostupny." + success_suffix
+            "Stav aktualizacie nie je dostupny." + success_suffix
             if lang == "sk"
-            else "Authority status is unavailable." + success_suffix
+            else "Update status is unavailable." + success_suffix
         )
     return None
 
@@ -1528,9 +1526,9 @@ def render_data_health_banner(
         return False
     if status_model["research_sources"] or status_model["informational_sources"]:
         st.caption(
-            "Produk\u010dn\u00e9 d\u00e1ta: OK. Ved\u013eaj\u0161ie research-only a env/API upozornenia s\u00fa skryt\u00e9 v detaile Stav d\u00e1t."
+            "Produk\u010dn\u00e9 d\u00e1ta: OK. Ved\u013eaj\u0161ie technick\u00e9 upozornenia s\u00fa skryt\u00e9 v detaile Stav d\u00e1t."
             if lang == "sk"
-            else "Production data: OK. Secondary research-only and env/API notices are tucked into the Data Health details."
+            else "Production data: OK. Secondary technical notices are tucked into the Data Health details."
         )
         return False
     st.caption("Produk\u010dn\u00e9 d\u00e1ta: OK" if lang == "sk" else "Production data: OK")
@@ -1548,25 +1546,25 @@ def render_data_health_details(
 
     with st.expander("Stav d\u00e1t" if lang == "sk" else "Data Health", expanded=False):
         st.markdown(
-            "#### Produk\u010dn\u00fd / app / execution stav"
+            "#### Stav aktualizacie"
             if lang == "sk"
-            else "#### Production / app / execution health"
+            else "#### Update Health"
         )
         if critical_rows:
             st.caption(
-                "Verejna homepage dalej bezi z posledneho uspesneho authority snapshotu. Execution a trading kontroly zostavaju fail-closed, kym sa problem neodstrani."
+                "Verejna stranka dalej bezi z posledneho uspesneho validovaneho stavu. Ovladajuce kontroly zostavaju uzamknute, kym sa problem neodstrani."
                 if lang == "sk"
-                else "The public homepage keeps rendering from the latest successful authority snapshot. Execution and trading controls remain fail-closed until the issue is resolved."
+                else "The public page keeps rendering from the latest successfully validated state. Control actions remain locked until the issue is resolved."
             )
             if status_model["report_stale_relative_to_authority"]:
                 st.caption(
                     (
-                        "Aktualny data-health report zaostava za authority cielom "
+                        "Aktualny report zaostava za cielovym dnom "
                         f"{status_model.get('authority_target_day') or 'n/a'}."
                     )
                     if lang == "sk"
                     else (
-                        "The current data health report lags the authority target "
+                        "The current report lags the target day "
                         f"{status_model.get('authority_target_day') or 'n/a'}."
                     )
                 )
@@ -1574,75 +1572,73 @@ def render_data_health_details(
         elif status_model["report_stale_relative_to_authority"]:
             st.warning(
                 (
-                    "Kriticke production/app/execution riadky momentalne report nehlasi, "
-                    "ale data-health report este nie je zosynchronizovany s poslednym authority cielom."
+                    "Report momentalne nehlasi kriticky problem, "
+                    "ale este nie je zosynchronizovany s poslednym cielovym dnom."
                 )
                 if lang == "sk"
                 else (
-                    "The report currently shows no critical production/app/execution rows, "
-                    "but the data health report is not yet aligned with the latest authority target."
+                    "The report currently shows no critical issue, "
+                    "but it is not yet aligned with the latest target day."
                 )
             )
         elif status_model["show_public_notice"]:
             st.warning(
                 (
-                    "Homepage zatial drzi posledny uspesny authority snapshot, "
-                    "ale posledny autoritativny stav este nie je v rezime current."
+                    "Stranka zatial drzi posledny uspesny validovany stav, "
+                    "ale najnovsi stav este nie je potvrdeny ako aktualny."
                 )
                 if lang == "sk"
                 else (
-                    "The homepage is still holding the latest successful authority snapshot, "
-                    "but the latest authority state is not yet current."
+                    "The page is still holding the latest successfully validated state, "
+                    "but the newest state is not confirmed as current yet."
                 )
             )
         elif status_model["show_ok_status"]:
             st.write(
-                "Produk\u010dn\u00e9 d\u00e1ta, aplik\u00e1cia aj execution s\u00fa v poriadku."
+                "Produk\u010dn\u00e9 d\u00e1ta a aplik\u00e1cia s\u00fa v poriadku."
                 if lang == "sk"
-                else "Production data, the app, and execution are healthy."
+                else "Production data and the app are healthy."
             )
             if status_model["show_secondary_note"]:
                 st.caption(
-                    "Ni\u017e\u0161ie s\u00fa len ved\u013eaj\u0161ie research-only alebo informa\u010dn\u00e9 upozornenia. Produkcia nimi nie je ovplyvnen\u00e1."
+                    "Nizsie su len vedlajsie technicke upozornenia. Verejny stav nimi nie je ovplyvneny."
                     if lang == "sk"
-                    else "Only secondary research-only or informational notices remain below. Production is not affected."
+                    else "Only secondary technical notices remain below. The public state is not affected."
                 )
 
-        st.markdown("#### Autoritativny runtime" if lang == "sk" else "#### Authority Runtime")
+        st.markdown("#### Posledna aktualizacia" if lang == "sk" else "#### Latest Update")
         render_app_table(refresh_rows, emphasize_first_column=True)
 
         if research_messages:
             st.markdown(
-                "#### Research-only upozornenia"
+                "#### Vedlajsie upozornenia"
                 if lang == "sk"
-                else "#### Research-only notices"
+                else "#### Secondary Notices"
             )
             st.caption(
-                "Produkcia ani execution nimi nie s\u00fa ovplyvnen\u00e9. Blokovan\u00fd je len pr\u00edslu\u0161n\u00fd research probe."
+                "Verejny stav nimi nie je ovplyvneny."
                 if lang == "sk"
-                else "Production and execution are unaffected. Only the related research probe is blocked."
+                else "The public state is not affected."
             )
-            st.markdown("\n".join(f"- {message}" for message in research_messages))
+            st.markdown(f"- {len(research_messages)} upozorneni je skrytych." if lang == "sk" else f"- {len(research_messages)} notices are hidden.")
 
         if informational_messages:
             st.markdown(
-                "#### Informacne env/API upozornenia"
+                "#### Informacne upozornenia"
                 if lang == "sk"
-                else "#### Informational env/API notices"
+                else "#### Informational Notices"
             )
             st.caption(
-                "Ide o pomocn\u00e9 upozornenia. Produkcia ani execution nimi nie s\u00fa ovplyvnen\u00e9."
+                "Ide o pomocne upozornenia. Verejny stav nimi nie je ovplyvneny."
                 if lang == "sk"
-                else "These are auxiliary notices. Production and execution are not affected."
+                else "These are auxiliary notices. The public state is not affected."
             )
-            st.markdown("\n".join(f"- {message}" for message in informational_messages))
+            st.markdown(f"- {len(informational_messages)} upozorneni je skrytych." if lang == "sk" else f"- {len(informational_messages)} notices are hidden.")
 
 
 def stop_for_production_homepage_block(message: str) -> None:
     lang = st.session_state.get("lang", "sk")
-    st.error(
-        f"{t(lang, 'load_failed')}: {t(lang, 'production_core_error_prefix')}: {message}"
-    )
+    st.error(f"{t(lang, 'load_failed')}: {t(lang, 'production_core_error_prefix')}.")
     st.stop()
 
 
@@ -2056,11 +2052,11 @@ def require_snapshot_payload(
 
 
 FRESHNESS_SUMMARY_TEXT = {
-    "current": "Current: the latest authority publish is aligned with the latest closed UTC day.",
-    "stale": "Stale: the latest authority snapshot is behind the latest closed UTC day.",
-    "refresh_in_progress": "Authority refresh in progress: the latest Pi publish attempt is still running.",
-    "refresh_failed": "Authority refresh failed: the latest Pi publish attempt failed.",
-    "missing_authority_artifact": "Missing authority artifact: latest_attempt_status.json is missing or invalid.",
+    "current": "Current: the latest update is aligned with the latest closed UTC day.",
+    "stale": "Stale: the latest validated state is behind the latest closed UTC day.",
+    "refresh_in_progress": "Refresh in progress: the latest update is still running.",
+    "refresh_failed": "Refresh failed: the latest update failed.",
+    "missing_authority_artifact": "Refresh status is unavailable.",
 }
 
 
@@ -2125,8 +2121,8 @@ def _derive_authority_currentness(
             return (
                 "current",
                 (
-                    "Current: authority target closed UTC day "
-                    f"{target_closed_day_utc} matches authority strategy artifact closed UTC day "
+                    "Current: target closed UTC day "
+                    f"{target_closed_day_utc} matches strategy closed UTC day "
                     f"{strategy_artifact_closed_day_utc}."
                 ),
                 preferred_source_path,
@@ -2135,8 +2131,8 @@ def _derive_authority_currentness(
         return (
             "stale",
             (
-                "Stale: authority target closed UTC day "
-                f"{target_closed_day_utc} does not match authority strategy artifact closed UTC day "
+                "Stale: target closed UTC day "
+                f"{target_closed_day_utc} does not match strategy closed UTC day "
                 f"{strategy_artifact_closed_day_utc}."
             ),
             preferred_source_path,
@@ -2147,8 +2143,8 @@ def _derive_authority_currentness(
         return (
             "stale",
             (
-                "Stale: authority target closed UTC day "
-                f"{target_closed_day_utc} is present but authority strategy artifact closed UTC day is missing."
+                "Stale: target closed UTC day "
+                f"{target_closed_day_utc} is present but strategy closed UTC day is missing."
             ),
             preferred_source_path,
             preferred_source_type,
@@ -2157,7 +2153,7 @@ def _derive_authority_currentness(
     if normalized_attempt_status == "success":
         return (
             "stale",
-            "Stale: authority publish succeeded but target/strategy closed UTC day fields are missing.",
+            "Stale: the latest update succeeded but target day fields are missing.",
             preferred_source_path,
             preferred_source_type,
         )
@@ -4693,9 +4689,9 @@ def humanize_production_pain_point(pain_point: dict[str, Any], lang: str) -> str
         if code == "lifetime_cost_drag_elevated" and metric_value is not None:
             return f"Historicke naklady uz ubrali zhruba {metric_value:.2f} % vykonu, takze kazda zbytocna zmena boli viac."
         if code == "trend_entry_not_confirmed":
-            return "Vybrany kandidat este nema potvrdeny vstup do trhu, preto zostava strategia mimo trhu."
+            return "Vybrane aktivum este nema potvrdeny vstup do trhu, preto zostava strategia mimo trhu."
         if code == "active_wait_condition":
-            return "Strategia ma vybrany kandidat, ale zatial nema potvrdeny bezpecny vstup do trhu."
+            return "Strategia ma vybrane aktivum, ale zatial nema potvrdeny bezpecny vstup do trhu."
         return "Strategia zatial nema potvrdeny dost silny signal na novu trhovu expoziciu."
     return str(pain_point.get("text") or "").strip()
 
@@ -4854,7 +4850,7 @@ def build_homepage_state_story(
     if lang == "sk":
         if is_out_of_market:
             now_text = (
-                f"Kandidat strategie je {candidate_label}, ale strategia je momentalne mimo trhu. "
+                f"Preferovane aktivum je {candidate_label}, ale strategia je momentalne mimo trhu. "
                 f"Aktualna trhova expozicia je {exposure_text}."
             )
         else:
@@ -4883,10 +4879,10 @@ def build_homepage_state_story(
         )
 
         change_text = (
-            f"Ak trend score vystupi aspon na {threshold_text}, kandidat {candidate_label} sa moze zmenit na realnu "
+            f"Ak trend score vystupi aspon na {threshold_text}, preferovane aktivum {candidate_label} sa moze zmenit na realnu "
             f"trhovu expoziciu s cielovou velkostou {candidate_exposure_text}."
             if is_out_of_market and threshold is not None
-            else "Spravanie sa zmeni, az ked Production Core potvrdi novy signal, novy rebalance alebo vypnutie aktualnej expozicie."
+            else "Spravanie sa zmeni az po potvrdeni noveho signalu, noveho rebalance alebo vypnutia aktualnej expozicie."
         )
 
         risk_items = [humanize_production_pain_point(item, lang) for item in pain_points]
@@ -4904,21 +4900,21 @@ def build_homepage_state_story(
 
     return {
         "now": (
-            f"The current candidate is {candidate_label}, but the strategy stays out of market with {exposure_text} exposure."
+            f"The preferred asset is {candidate_label}, but the strategy stays out of market with {exposure_text} exposure."
             if is_out_of_market
             else f"The strategy is in market with {exposure_text} exposure to {actual_label}."
         ),
         "why": (
             f"Trend has not confirmed entry yet ({trend_score_text} vs {threshold_text})."
             if is_out_of_market and threshold is not None
-            else "The current exposure is authorized by the latest Production Core signal."
+            else "The current exposure is authorized by the latest validated signal."
         ),
         "wait": (
             f"Waiting for trend_score >= {threshold_text} before entering {candidate_label}."
             if is_out_of_market and threshold is not None
             else "Waiting for the next validated signal or rebalance."
         ),
-        "change": "Behavior changes only after Production Core confirms a stronger signal or a new rebalance.",
+        "change": "Behavior changes only after a stronger signal or a new rebalance is confirmed.",
         "risks": [humanize_production_pain_point(item, lang) for item in pain_points],
     }
 
@@ -5134,8 +5130,8 @@ def build_homepage_chart_truth_warnings(state_df: pd.DataFrame) -> list[str]:
 
     dates = mismatches["ts"].dt.strftime("%Y-%m-%d").head(5).tolist()
     return [
-        "Varovanie: spodny pas homepage chartu bol zablokovany, pretoze canonical paper "
-        "riadky maju nezhodu medzi drzanym stavom a cash / nulovou pohybovou semantikou "
+        "Varovanie: spodny pas grafu bol zablokovany, pretoze drzane stavy "
+        "momentalne nie je mozne zobrazit spolahlivo "
         f"na datumoch: {', '.join(dates)}."
     ]
 
@@ -6361,27 +6357,34 @@ with tabs[0]:
         runtime_table_payload.get("currentness_reason")
         or FRESHNESS_SUMMARY_TEXT.get(refresh_currentness_state, FRESHNESS_SUMMARY_TEXT["missing_authority_artifact"])
     ).strip()
+    refresh_currentness_state_public = {
+        "current": "Aktualne" if lang == "sk" else "Current",
+        "stale": "Zastarane" if lang == "sk" else "Stale",
+        "refresh_in_progress": "Prebieha aktualizacia" if lang == "sk" else "Refresh in progress",
+        "refresh_failed": "Aktualizacia zlyhala" if lang == "sk" else "Refresh failed",
+        "missing_authority_artifact": "Stav nie je dostupny" if lang == "sk" else "Status unavailable",
+    }.get(refresh_currentness_state, "Nedostupne" if lang == "sk" else "Unavailable")
     pi_runtime_update_utc = runtime_table_payload.get("last_pi_update_utc")
     wallet_sync_utc = runtime_table_payload.get("last_wallet_sync_utc")
     refresh_label_column = "Preh\u013ead" if lang == "sk" else "Field"
     refresh_value_column = "Hodnota" if lang == "sk" else "Value"
     refresh_rows = [
         {
-            refresh_label_column: "Posledn\u00e9 autoritativne publikovanie z Pi" if lang == "sk" else "Latest Pi authority publish",
+            refresh_label_column: "Posledna aktualizacia" if lang == "sk" else "Latest update",
             refresh_value_column: format_local_time_text(
                 pi_runtime_update_utc,
                 lang,
             ),
         },
         {
-            refresh_label_column: "Stav posledneho autoritativneho pokusu" if lang == "sk" else "Latest authority attempt status",
+            refresh_label_column: "Stav poslednej aktualizacie" if lang == "sk" else "Latest update status",
             refresh_value_column: safe_text_value(
                 runtime_table_payload.get("last_refresh_status"),
                 lang=lang,
             ),
         },
         {
-            refresh_label_column: "ID posledneho autoritativneho pokusu" if lang == "sk" else "Latest authority attempt ID",
+            refresh_label_column: "Referencne cislo aktualizacie" if lang == "sk" else "Update reference",
             refresh_value_column: safe_text_value(
                 runtime_table_payload.get("last_refresh_run_id"),
                 lang=lang,
@@ -6395,11 +6398,8 @@ with tabs[0]:
             ),
         },
         {
-            refresh_label_column: "Autoritativna aktualnost" if lang == "sk" else "Authority currentness",
-            refresh_value_column: safe_text_value(
-                refresh_currentness_state,
-                lang=lang,
-            ),
+            refresh_label_column: "Aktualnost dat" if lang == "sk" else "Data currentness",
+            refresh_value_column: refresh_currentness_state_public,
         },
         {
             refresh_label_column: "D\u00f4vod stavu" if lang == "sk" else "Reason",
