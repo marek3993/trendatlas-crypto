@@ -65,6 +65,9 @@ AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH = (
 AUTHORITY_LATEST_ATTEMPT_STATUS_PATH = (
     ROOT / "outputs" / "execution" / "authority" / "latest_attempt_status.json"
 )
+LOCAL_APP_RUNTIME_SNAPSHOT_PATH = (
+    ROOT / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json"
+)
 PRODUCTION_SNAPSHOT_PATH = PRODUCTION_OUTPUTS / "current_strategy_snapshot.json"
 PRODUCTION_TIMESERIES_PATH = PRODUCTION_OUTPUTS / "current_strategy_timeseries.csv"
 PRODUCTION_DIAGNOSTICS_PATH = PRODUCTION_OUTPUTS / "current_strategy_diagnostics.json"
@@ -2078,6 +2081,39 @@ def load_runtime_snapshot_for_app(payload: dict, path: Path) -> dict:
     if not payload or payload.get("snapshot_type") != "app_runtime_snapshot":
         return build_missing_runtime_snapshot(path)
     return payload
+
+
+def select_preferred_account_runtime_snapshot(authority_runtime_snapshot: dict) -> dict:
+    local_runtime_snapshot = load_runtime_snapshot_for_app(
+        load_json_optional(LOCAL_APP_RUNTIME_SNAPSHOT_PATH),
+        LOCAL_APP_RUNTIME_SNAPSHOT_PATH,
+    )
+    authority_account_as_of = parse_iso_datetime_optional(
+        authority_runtime_snapshot.get("account_snapshot_as_of_utc")
+    )
+    local_account_as_of = parse_iso_datetime_optional(
+        local_runtime_snapshot.get("account_snapshot_as_of_utc")
+    )
+    if local_account_as_of and (
+        authority_account_as_of is None or local_account_as_of > authority_account_as_of
+    ):
+        return local_runtime_snapshot
+
+    authority_generated_at = parse_iso_datetime_optional(
+        authority_runtime_snapshot.get("app_runtime_snapshot_generated_at_utc")
+    )
+    local_generated_at = parse_iso_datetime_optional(
+        local_runtime_snapshot.get("app_runtime_snapshot_generated_at_utc")
+    )
+    local_account_summary = local_runtime_snapshot.get("account_snapshot_summary")
+    if (
+        local_generated_at
+        and (authority_generated_at is None or local_generated_at > authority_generated_at)
+        and isinstance(local_account_summary, dict)
+        and local_account_summary
+    ):
+        return local_runtime_snapshot
+    return authority_runtime_snapshot
 
 
 def build_authority_runtime_table_snapshot(
@@ -5854,8 +5890,9 @@ trend_barometer_warnings: list[str] = []
 if trend_live.get("trend_state_label"):
     trend_live["trend_state_label"] = prettify_trend_state(trend_live.get("trend_state_label"), lang)
 account_observability_cfg = get_current_account_observability_contract(selector_cfg)
-account_status_payload = dict(runtime_snapshot.get("execution_status") or {})
-account_snapshot_payload = dict(runtime_snapshot.get("account_snapshot_summary") or {})
+account_runtime_snapshot = select_preferred_account_runtime_snapshot(runtime_snapshot)
+account_status_payload = dict(account_runtime_snapshot.get("execution_status") or {})
+account_snapshot_payload = dict(account_runtime_snapshot.get("account_snapshot_summary") or {})
 account_snapshot_view = dict(account_snapshot_payload)
 runtime_health_payload = dict(runtime_snapshot.get("runtime_health_summary") or {})
 dry_run_decision_payload = dict(runtime_snapshot.get("dry_run_summary") or {})
@@ -5864,7 +5901,7 @@ execution_mode_payload = dict(runtime_snapshot.get("execution_mode_posture") or 
 live_order_policy_payload = dict(runtime_snapshot.get("live_order_policy_summary") or {})
 trading_operation_mode_payload = dict(execution_mode_payload.get("trading_operation_mode") or {})
 runtime_last_sync_utc = runtime_snapshot.get("runtime_last_sync_utc")
-account_snapshot_as_of_utc = runtime_snapshot.get("account_snapshot_as_of_utc")
+account_snapshot_as_of_utc = account_runtime_snapshot.get("account_snapshot_as_of_utc")
 dry_run_generated_at_utc = runtime_snapshot.get("dry_run_generated_at_utc")
 gate_generated_at_utc = runtime_snapshot.get("gate_generated_at_utc")
 runtime_table_payload = build_authority_runtime_table_snapshot(
@@ -6355,6 +6392,16 @@ with tabs[1]:
         if runtime_error_text != t(lang, "na"):
             friendly_runtime_error = friendly_hyperliquid_error_message(runtime_error_text, lang)
             st.warning(friendly_runtime_error or f"{account_ui_text(lang, 'runtime_error')}: {runtime_error_text}")
+
+        execution_notice = build_execution_notice(st.session_state.execution_bridge_result, lang)
+        if execution_notice:
+            execution_notice_status = str(
+                (st.session_state.execution_bridge_result or {}).get("status") or ""
+            ).strip().lower()
+            if execution_notice_status in {"failed", "blocked"}:
+                st.error(execution_notice)
+            else:
+                st.info(execution_notice)
 
         st.markdown("#### Stav a ovládanie")
         with st.container(border=True):

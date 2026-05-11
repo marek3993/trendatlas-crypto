@@ -58,6 +58,7 @@ UI_CONFIRMATION_TEXT = "POTVRDZUJEM VYKONAT OBCHOD"
 BACKEND_CONFIRM_TOKEN = "CONTROLLED_REAL_ORDER"
 
 MATERIALIZE_SCRIPT_PATH = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
+READ_ONLY_SNAPSHOT_SCRIPT_PATH = ROOT / "scripts" / "execution" / "hyperliquid_read_only_snapshot.py"
 VALIDATE_CONTRACT_SCRIPT_PATH = ROOT / "scripts" / "execution" / "validate_execution_source_contract.py"
 RENDER_STATUS_SCRIPT_PATH = ROOT / "scripts" / "execution" / "render_execution_app_status.py"
 BUILD_INTENT_SCRIPT_PATH = ROOT / "scripts" / "execution" / "build_execution_intent_from_strategy_exports.py"
@@ -76,6 +77,7 @@ ALLOWLISTED_ACTIONS = {
 }
 ALLOWLISTED_SCRIPTS = {
     MATERIALIZE_SCRIPT_PATH.resolve(),
+    READ_ONLY_SNAPSHOT_SCRIPT_PATH.resolve(),
     VALIDATE_CONTRACT_SCRIPT_PATH.resolve(),
     RENDER_STATUS_SCRIPT_PATH.resolve(),
     BUILD_INTENT_SCRIPT_PATH.resolve(),
@@ -782,7 +784,19 @@ def summarize_live_submit_artifacts(
 
 def run_refresh_action() -> dict[str, Any]:
     steps: list[dict[str, Any]] = []
-    steps.append(build_operational_snapshot_artifacts())
+    steps.append(
+        run_allowlisted_script(
+            script_path=READ_ONLY_SNAPSHOT_SCRIPT_PATH,
+            step_name="refresh_operational_snapshot",
+        )
+    )
+    steps.append(
+        run_allowlisted_script(
+            script_path=MATERIALIZE_SCRIPT_PATH,
+            step_name="materialize_execution_app_runtime_snapshot",
+            arguments=["--runtime-snapshot-only"],
+        )
+    )
     steps.append(
         run_allowlisted_script(
             script_path=RENDER_STATUS_SCRIPT_PATH,

@@ -31,6 +31,8 @@ LOG_PATH = LOGS_DIR / "hyperliquid_read_only_snapshot.log"
 INFO_URL = "https://api.hyperliquid.xyz/info"
 STABLE_BALANCE_SYMBOLS = {"USDC", "USD", "USDT", "CASH"}
 NUMERIC_EPSILON = 1e-9
+HTTP_SESSION = requests.Session()
+HTTP_SESSION.trust_env = False
 
 
 def utc_now_iso() -> str:
@@ -101,7 +103,7 @@ def validate_runtime_posture(mode_cfg: dict[str, Any]) -> dict[str, Any]:
 
 def post_info(payload: dict[str, Any]) -> Any:
     try:
-        resp = requests.post(INFO_URL, json=payload, timeout=30)
+        resp = HTTP_SESSION.post(INFO_URL, json=payload, timeout=30)
     except requests.RequestException as e:
         fail(f"Hyperliquid request failed: {e}")
 
@@ -117,7 +119,7 @@ def post_info(payload: dict[str, Any]) -> Any:
 
 def try_post_info(payload: dict[str, Any]) -> dict[str, Any]:
     try:
-        resp = requests.post(INFO_URL, json=payload, timeout=30)
+        resp = HTTP_SESSION.post(INFO_URL, json=payload, timeout=30)
     except requests.RequestException as e:
         return {
             "ok": False,
