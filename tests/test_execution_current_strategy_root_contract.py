@@ -18,30 +18,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
-    def test_source_of_truth_root_contract_resolves_current_main_strategy(self):
-        contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
-
-        self.assertEqual(contract["main_strategy_model"], "phase68g_66g_1p25x_candidate")
-        self.assertEqual(
-            contract["source_family"],
-            "canonical_current_main_strategy_app_exports",
-        )
-        self.assertEqual(
-            contract["canonical_metrics_source_path"],
-            "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-        )
-        self.assertEqual(
-            contract["canonical_paper_source_path"],
-            "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-        )
-
-    def test_homepage_source_resolution_uses_same_canonical_metric_path(self):
-        contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
-        product_snapshot = {
+    def _minimal_product_snapshot(self, contract: dict) -> dict:
+        return {
             "current_main_strategy_root_contract": serialize_current_main_strategy_root_contract(contract),
             "main_strategy_model": contract["main_strategy_model"],
             "main_strategy_metrics": {
                 "model": contract["main_strategy_model"],
+                "switch_count": 60,
+                "cash_days_pct": 66.2093,
+                "btc_days_pct": 13.2075,
             },
             "chart_source_paths": {
                 "main_strategy": contract["canonical_paper_source_path"],
@@ -49,6 +34,12 @@ class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
             "source_metadata": {
                 "main_strategy_metrics": {
                     "path": contract["canonical_metrics_source_path"],
+                    "operational_metrics": {
+                        "path": contract["canonical_paper_source_path"],
+                        "held_state_column": "portfolio_held_asset",
+                        "series_semantics": "homepage_current_main_strategy_held_state_history",
+                        "held_state_denominator_rows": 583,
+                    },
                 },
                 "strategy_last_closed_day": {
                     "path": contract["canonical_paper_source_path"],
@@ -63,6 +54,27 @@ class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
                 },
             },
         }
+
+    def test_source_of_truth_root_contract_resolves_current_main_strategy(self):
+        contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
+
+        self.assertEqual(contract["main_strategy_model"], "phase68g_etf_flow_impulse_early_risk_cooldown_15")
+        self.assertEqual(
+            contract["source_family"],
+            "canonical_current_main_strategy_app_exports",
+        )
+        self.assertEqual(
+            contract["canonical_metrics_source_path"],
+            "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv",
+        )
+        self.assertEqual(
+            contract["canonical_paper_source_path"],
+            "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
+        )
+
+    def test_homepage_source_resolution_uses_same_canonical_metric_path(self):
+        contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
+        product_snapshot = self._minimal_product_snapshot(contract)
 
         resolved_sources = resolve_homepage_current_strategy_sources(product_snapshot, contract)
 
@@ -77,32 +89,10 @@ class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
 
     def test_homepage_source_resolution_fails_closed_on_metric_path_divergence(self):
         contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
-        product_snapshot = {
-            "current_main_strategy_root_contract": serialize_current_main_strategy_root_contract(contract),
-            "main_strategy_model": contract["main_strategy_model"],
-            "main_strategy_metrics": {
-                "model": contract["main_strategy_model"],
-            },
-            "chart_source_paths": {
-                "main_strategy": contract["canonical_paper_source_path"],
-            },
-            "source_metadata": {
-                "main_strategy_metrics": {
-                    "path": "outputs/phase68h_dynamic_leverage_ladder_candidate/phase68h_dynamic_leverage_ladder_summary.csv",
-                },
-                "strategy_last_closed_day": {
-                    "path": contract["canonical_paper_source_path"],
-                },
-                "live_public_state": {
-                    "path": contract["canonical_paper_source_path"],
-                },
-                "chart_source_paths": {
-                    "main_strategy": {
-                        "path": contract["canonical_paper_source_path"],
-                    }
-                },
-            },
-        }
+        product_snapshot = self._minimal_product_snapshot(contract)
+        product_snapshot["source_metadata"]["main_strategy_metrics"]["path"] = (
+            "outputs/phase68h_dynamic_leverage_ladder_candidate/phase68h_dynamic_ladder_summary.csv"
+        )
 
         with self.assertRaises(CurrentMainStrategyContractError):
             resolve_homepage_current_strategy_sources(product_snapshot, contract)
@@ -181,41 +171,16 @@ class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
 
     def test_product_snapshot_validation_rejects_top_card_source_path_divergence(self):
         contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
-        product_snapshot = {
-            "current_main_strategy_root_contract": serialize_current_main_strategy_root_contract(contract),
-            "main_strategy_model": contract["main_strategy_model"],
-            "main_strategy_metrics": {
-                "model": contract["main_strategy_model"],
-            },
-            "main_strategy_top_performance_metrics": {
-                "model": contract["main_strategy_model"],
-                "cagr_pct": 118.66,
-            },
-            "chart_source_paths": {
-                "main_strategy": contract["canonical_paper_source_path"],
-            },
-            "source_metadata": {
-                "main_strategy_metrics": {
-                    "path": contract["canonical_metrics_source_path"],
-                },
-                "main_strategy_top_performance_metrics": {
-                    "path": (
-                        "outputs/execution/app_exports/"
-                        "phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv"
-                    ),
-                },
-                "strategy_last_closed_day": {
-                    "path": contract["canonical_paper_source_path"],
-                },
-                "live_public_state": {
-                    "path": contract["canonical_paper_source_path"],
-                },
-                "chart_source_paths": {
-                    "main_strategy": {
-                        "path": contract["canonical_paper_source_path"],
-                    }
-                },
-            },
+        product_snapshot = self._minimal_product_snapshot(contract)
+        product_snapshot["main_strategy_top_performance_metrics"] = {
+            "model": contract["main_strategy_model"],
+            "cagr_pct": 118.66,
+        }
+        product_snapshot["source_metadata"]["main_strategy_top_performance_metrics"] = {
+            "path": (
+                "outputs/execution/app_exports/"
+                "phase68i_dynamic_ladder_candidate_authoritative_net_compare_export.csv"
+            ),
         }
 
         with self.assertRaisesRegex(
@@ -230,32 +195,10 @@ class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
 
     def test_product_snapshot_validation_rejects_chart_source_metadata_divergence(self):
         contract = load_current_main_strategy_root_contract(root=ROOT, require_files=False)
-        product_snapshot = {
-            "current_main_strategy_root_contract": serialize_current_main_strategy_root_contract(contract),
-            "main_strategy_model": contract["main_strategy_model"],
-            "main_strategy_metrics": {
-                "model": contract["main_strategy_model"],
-            },
-            "chart_source_paths": {
-                "main_strategy": contract["canonical_paper_source_path"],
-            },
-            "source_metadata": {
-                "main_strategy_metrics": {
-                    "path": contract["canonical_metrics_source_path"],
-                },
-                "strategy_last_closed_day": {
-                    "path": contract["canonical_paper_source_path"],
-                },
-                "live_public_state": {
-                    "path": contract["canonical_paper_source_path"],
-                },
-                "chart_source_paths": {
-                    "main_strategy": {
-                        "path": "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p25x_candidate_paper.csv",
-                    }
-                },
-            },
-        }
+        product_snapshot = self._minimal_product_snapshot(contract)
+        product_snapshot["source_metadata"]["chart_source_paths"]["main_strategy"]["path"] = (
+            "outputs/phase68g_portfolio_exposure_leverage_validation/papers/phase68g_66g_1p25x_candidate_paper.csv"
+        )
 
         with self.assertRaisesRegex(
             CurrentMainStrategyContractError,

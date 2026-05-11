@@ -139,6 +139,7 @@ TEXT = {
         "max_dd": "Najväčší pokles",
         "since2021": "Od 2021",
         "since2023": "Od 2023",
+        "since_etf_start": "Od ETF štartu",
         "since2025": "Od 2025",
         "sharpe": "Sharpe",
         "sortino": "Sortino",
@@ -347,6 +348,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "max_dd": "Largest decline",
         "since2021": "Since 2021",
         "since2023": "Since 2023",
+        "since_etf_start": "Since ETF start",
         "since2025": "Since 2025",
         "sharpe": "Sharpe",
         "sortino": "Sortino",
@@ -564,16 +566,16 @@ TEXT["en"]["performance_fee_note"] = (
 TEXT["sk"].update(
     {
         "currently_holding": "Aktualny stav",
-        "production_candidate_asset": "Preferovane aktivum",
-        "production_market_state": "Stav",
-        "production_market_exposure": "Aktualna trhova expozicia",
+        "production_candidate_asset": "Model preferuje",
+        "production_market_state": "Realny ucet",
+        "production_market_exposure": "Realny ucet / expozicia",
         "production_state_out_of_market": "Mimo trhu",
         "production_state_in_market": "V trhu",
         "production_wait_reason_pending": "Trend zatial nepotvrdil vstup",
         "production_wait_reason_active": "Vstup je potvrdeny",
-        "production_candidate_hint": "Aktivum, ktore splna pravidla pre dalsi vstup",
-        "production_exposure_hint_out": "Bez autorizovaneho vstupu do trhu",
-        "production_exposure_hint_in": "Autorizovana trhova expozicia",
+        "production_candidate_hint": "Signal strategie, nie stav uctu",
+        "production_exposure_hint_out": "Ucet je mimo trhu",
+        "production_exposure_hint_in": "Ucet ma otvorenu trhovu expoziciu",
         "buy_threshold": "Hranica vstupu",
         "trend_desc": "Toto je oficialny pohlad na stav trendu. Aplikacia ho nepocita nanovo, len zobrazuje validovanu hodnotu.",
         "trend_threshold_note": "Biela hranica ukazuje bod, od ktoreho sa trend povazuje za dostatocne silny. Pod nou je strategia opatrnejsia.",
@@ -608,16 +610,16 @@ TEXT["sk"].update(
 )
 TEXT["en"].update(
     {
-        "production_candidate_asset": "Preferred asset",
-        "production_market_state": "State",
-        "production_market_exposure": "Current market exposure",
+        "production_candidate_asset": "Model prefers",
+        "production_market_state": "Real account",
+        "production_market_exposure": "Real account / exposure",
         "production_state_out_of_market": "Out of market",
         "production_state_in_market": "In market",
         "production_wait_reason_pending": "Trend has not confirmed entry yet",
         "production_wait_reason_active": "Entry is confirmed",
-        "production_candidate_hint": "Asset that currently fits the entry rules best",
-        "production_exposure_hint_out": "No authorized market entry",
-        "production_exposure_hint_in": "Authorized market exposure",
+        "production_candidate_hint": "Strategy signal, not account state",
+        "production_exposure_hint_out": "Account is out of market",
+        "production_exposure_hint_in": "Account has open market exposure",
         "buy_threshold": "Entry threshold",
         "trade_count": "Trade count",
         "current_drawdown": "Current drawdown",
@@ -730,6 +732,9 @@ METRIC_HELP["sk"].update(
         TEXT["sk"]["since2023"]: (
             "Tato top karta ukazuje okno CAGR od 2023 z validovanych dat strategie."
         ),
+        TEXT["sk"]["since_etf_start"]: (
+            "Tato top karta ukazuje verejne ETF okno CAGR od 12.1.2024."
+        ),
         TEXT["sk"]["since2025"]: (
             "Tato top karta ukazuje okno CAGR od 2025 z validovanych dat strategie."
         ),
@@ -747,9 +752,9 @@ METRIC_HELP["sk"].update(
         TEXT["sk"]["cash_days"]: "Cash Days vychadzaju z validovanych metrik strategie.",
         TEXT["sk"]["btc_days"]: "BTC Days vychadzaju z validovanych metrik strategie.",
         TEXT["sk"]["production_exposure"]: "Expozicia ukazuje aktualne oficialne nastavenie strategie.",
-        TEXT["sk"]["production_candidate_asset"]: "Preferovane aktivum je aktualny vyber strategie pred finalnym povolenim expozicie.",
-        TEXT["sk"]["production_market_state"]: "Stav rozlisuje medzi vyberom strategie a realne povolenou trhovou expoziciou.",
-        TEXT["sk"]["production_market_exposure"]: "Aktualna trhova expozicia ukazuje autorizovanu expoziciu po kontrolach vstupu.",
+        TEXT["sk"]["production_candidate_asset"]: "Model preferuje aktualny vyber strategie. Nie je to potvrdenie otvorenej pozicie na ucte.",
+        TEXT["sk"]["production_market_state"]: "Realny ucet ukazuje stav po vykonani a po bezpecnostnych kontrolach.",
+        TEXT["sk"]["production_market_exposure"]: "Realny ucet / expozicia ukazuje, ci ma ucet otvorenu trhovu expoziciu.",
         TEXT["sk"]["production_closed_day"]: "Posledny uzavrety den ukazuje datum poslednych validovanych dat.",
     }
 )
@@ -760,6 +765,9 @@ METRIC_HELP["en"].update(
         ),
         TEXT["en"]["since2023"]: (
             "This top card shows the since-2023 CAGR from validated strategy data."
+        ),
+        TEXT["en"]["since_etf_start"]: (
+            "This top card shows the public ETF CAGR window from 2024-01-12."
         ),
         TEXT["en"]["since2025"]: (
             "This top card shows the since-2025 CAGR from validated strategy data."
@@ -778,9 +786,9 @@ METRIC_HELP["en"].update(
         TEXT["en"]["cash_days"]: "Cash Days come from validated strategy metrics.",
         TEXT["en"]["btc_days"]: "BTC Days come from validated strategy metrics.",
         TEXT["en"]["production_exposure"]: "Exposure shows the official current strategy setting.",
-        TEXT["en"]["production_candidate_asset"]: "The preferred asset is the current strategy choice before final exposure approval.",
-        TEXT["en"]["production_market_state"]: "State separates the strategy choice from actually authorized market exposure.",
-        TEXT["en"]["production_market_exposure"]: "Current market exposure shows authorized exposure after entry checks.",
+        TEXT["en"]["production_candidate_asset"]: "The model preference is the current strategy choice. It is not confirmation of an open account position.",
+        TEXT["en"]["production_market_state"]: "Real account shows the state after execution and safety checks.",
+        TEXT["en"]["production_market_exposure"]: "Real account / exposure shows whether the account has open market exposure.",
         TEXT["en"]["production_closed_day"]: "The last closed day shows the date of the latest validated data.",
     }
 )
@@ -1139,7 +1147,8 @@ def build_public_homepage_performance_context(
             "total_return_pct": round(_compute_total_return_pct(returns), 4),
             "cagr_pct": round(_compute_cagr_pct(returns, dates), 4),
             "max_drawdown_pct": round(_compute_max_drawdown_pct(returns), 4),
-            "since2023_cagr_pct": round(_compute_cagr_since(returns, dates, "2023-01-01"), 4),
+            "public_window_cagr_pct": round(_compute_cagr_since(returns, dates, evidence_start_day), 4),
+            "since2023_cagr_pct": round(_compute_cagr_since(returns, dates, evidence_start_day), 4),
             "since2025_cagr_pct": round(_compute_cagr_since(returns, dates, "2025-01-01"), 4),
             "cash_days_pct": round(float(_to_bool_series(filtered_df["cash_day"]).mean() * 100.0), 6),
             "btc_days_pct": round(float(_to_bool_series(filtered_df["btc_day"]).mean() * 100.0), 6),
@@ -1159,6 +1168,8 @@ def build_public_homepage_performance_context(
         "main_metrics": public_metrics,
         "top_performance_metrics": dict(public_metrics),
         "start_day": evidence_start_day,
+        "public_window_label_key": "since_etf_start",
+        "public_window_metric_key": "public_window_cagr_pct",
     }
 
 
@@ -4737,6 +4748,131 @@ def production_market_state_label(
     return t(lang, "production_state_out_of_market")
 
 
+def _first_numeric_value(*values: Any) -> float | None:
+    for value in values:
+        number = as_float(value)
+        if number is not None:
+            return number
+    return None
+
+
+def resolve_real_account_exposure_state(
+    *,
+    account_snapshot_view: dict[str, Any],
+    dry_run_decision_payload: dict[str, Any],
+    real_order_gate_payload: dict[str, Any],
+    production_snapshot: dict[str, Any],
+    lang: str,
+) -> dict[str, Any]:
+    open_position = (
+        account_snapshot_view.get("open_position")
+        if isinstance(account_snapshot_view.get("open_position"), dict)
+        else None
+    )
+    open_position_asset = ""
+    open_position_size = 0.0
+    if open_position:
+        open_position_asset = str(
+            open_position.get("symbol") or open_position.get("asset") or open_position.get("coin") or ""
+        ).strip().upper()
+        open_position_size = abs(as_float(open_position.get("size")) or 0.0)
+
+    production_signal_context = dict(real_order_gate_payload.get("production_signal_context") or {})
+    production_intent = dict(production_snapshot.get("execution_intent") or {})
+    target_asset = str(
+        first_present_value(
+            real_order_gate_payload.get("target_asset"),
+            dry_run_decision_payload.get("target_asset"),
+            production_signal_context.get("target_asset"),
+            production_intent.get("target_asset"),
+        )
+        or ""
+    ).strip().upper()
+    target_exposure = _first_numeric_value(
+        dry_run_decision_payload.get("target_size_pct"),
+        dry_run_decision_payload.get("target_exposure"),
+        production_signal_context.get("target_exposure"),
+        production_intent.get("target_exposure"),
+        real_order_gate_payload.get("target_exposure"),
+    )
+    gate_status = str(real_order_gate_payload.get("status") or "").strip().lower()
+    would_place_real_order = as_bool(real_order_gate_payload.get("would_place_real_order"))
+    account_has_open_position = bool(open_position_asset and open_position_size > 1e-12)
+
+    if account_has_open_position:
+        exposure_value = _first_numeric_value(
+            account_snapshot_view.get("current_exposure"),
+            target_exposure,
+            production_signal_context.get("effective_market_exposure"),
+            production_snapshot.get("effective_market_exposure"),
+        )
+        exposure_text = f"{exposure_value:.2f}x" if exposure_value is not None else t(lang, "na")
+        state_text = t(lang, "production_state_in_market")
+        subtitle = (
+            f"Otvorena pozicia: {open_position_asset}"
+            if lang == "sk"
+            else f"Open position: {open_position_asset}"
+        )
+        return {
+            "is_out_of_market": False,
+            "asset": open_position_asset,
+            "exposure": exposure_value,
+            "exposure_text": exposure_text,
+            "state_text": state_text,
+            "value": f"{state_text} / {exposure_text}",
+            "subtitle": subtitle,
+            "target_asset": target_asset,
+            "gate_status": gate_status,
+            "would_place_real_order": would_place_real_order,
+        }
+
+    execution_points_to_cash = (
+        target_asset in {"", "CASH", "USD", "USDC", "USDT", "NONE", "NULL"}
+        or (target_exposure is not None and math.isclose(target_exposure, 0.0, abs_tol=1e-12))
+        or gate_status == "blocked"
+        or would_place_real_order is False
+    )
+    if execution_points_to_cash:
+        state_text = t(lang, "production_state_out_of_market")
+        exposure_text = "0.00x"
+        subtitle = (
+            "Podla uctu a vykonavacich kontrol"
+            if lang == "sk"
+            else "Based on account and execution checks"
+        )
+        return {
+            "is_out_of_market": True,
+            "asset": "CASH",
+            "exposure": 0.0,
+            "exposure_text": exposure_text,
+            "state_text": state_text,
+            "value": f"{state_text} / {exposure_text}",
+            "subtitle": subtitle,
+            "target_asset": target_asset or "CASH",
+            "gate_status": gate_status,
+            "would_place_real_order": would_place_real_order,
+        }
+
+    state_text = t(lang, "production_state_out_of_market")
+    exposure_text = "0.00x"
+    return {
+        "is_out_of_market": True,
+        "asset": "CASH",
+        "exposure": 0.0,
+        "exposure_text": exposure_text,
+        "state_text": state_text,
+        "value": f"{state_text} / {exposure_text}",
+        "subtitle": (
+            "Signal este nie je otvorena pozicia na ucte"
+            if lang == "sk"
+            else "Signal is not yet an open account position"
+        ),
+        "target_asset": target_asset,
+        "gate_status": gate_status,
+        "would_place_real_order": would_place_real_order,
+    }
+
+
 def production_wait_reason_short(
     snapshot: dict[str, Any],
     diagnostics: dict[str, Any],
@@ -4758,11 +4894,20 @@ def build_production_chart_current_state_note(
     snapshot: dict[str, Any],
     diagnostics: dict[str, Any],
     lang: str,
+    real_account_exposure_state: dict[str, Any] | None = None,
 ) -> str:
     candidate_asset = product_asset_label_nominative(
         first_present_value(snapshot.get("candidate_asset"), snapshot.get("selected_asset")),
         lang,
     )
+    real_state = real_account_exposure_state or {}
+    if real_state.get("is_out_of_market") is True:
+        exposure_text = str(real_state.get("exposure_text") or "0.00x")
+        return (
+            f"Aktualne je realny ucet mimo trhu s expoziciou {exposure_text}. Model preferuje {candidate_asset}, ale graf nie je vypis otvorenej pozicie."
+            if lang == "sk"
+            else f"The real account is currently out of market with {exposure_text} exposure. The model prefers {candidate_asset}, but the chart is not an open-position statement."
+        )
     exposure = as_float(
         first_present_value(
             snapshot.get("effective_market_exposure"),
@@ -4786,6 +4931,7 @@ def build_homepage_state_story(
     snapshot: dict[str, Any],
     diagnostics: dict[str, Any],
     lang: str,
+    real_account_exposure_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     trade_state = dict(diagnostics.get("current_trade_state") or {})
     candidate_asset = str(
@@ -4846,9 +4992,17 @@ def build_homepage_state_story(
     candidate_label = product_asset_label_nominative(candidate_asset, lang)
     actual_label = product_asset_label_nominative(actual_asset, lang)
     is_out_of_market = trend_permission_active is not True or exposure is None or math.isclose(exposure, 0.0, abs_tol=1e-12)
+    real_state = real_account_exposure_state or {}
+    real_account_is_out = real_state.get("is_out_of_market") is True
+    real_exposure_text = str(real_state.get("exposure_text") or "0.00x")
 
     if lang == "sk":
-        if is_out_of_market:
+        if real_account_is_out:
+            now_text = (
+                f"Realny ucet je mimo trhu s expoziciou {real_exposure_text}. "
+                f"Model momentalne preferuje {candidate_label}, ale tento signal nie je otvorena pozicia na ucte."
+            )
+        elif is_out_of_market:
             now_text = (
                 f"Preferovane aktivum je {candidate_label}, ale strategia je momentalne mimo trhu. "
                 f"Aktualna trhova expozicia je {exposure_text}."
@@ -4859,7 +5013,11 @@ def build_homepage_state_story(
                 f"{exposure_text} v aktive {actual_label}."
             )
 
-        if is_out_of_market and trend_score is not None and threshold is not None:
+        if real_account_is_out:
+            why_text = (
+                "Vstup nie je povoleny vykonavacimi kontrolami, preto realny ucet zostava mimo trhu."
+            )
+        elif is_out_of_market and trend_score is not None and threshold is not None:
             why_text = (
                 f"Dovod je jednoduchy: trend zatial nepotvrdil vstup. Dnesny trend score je "
                 f"{trend_score_text}, kym potrebna hranica je {threshold_text}."
@@ -4900,11 +5058,17 @@ def build_homepage_state_story(
 
     return {
         "now": (
+            f"The real account is out of market with {real_exposure_text} exposure. The model currently prefers {candidate_label}, but that signal is not an open account position."
+            if real_account_is_out
+            else
             f"The preferred asset is {candidate_label}, but the strategy stays out of market with {exposure_text} exposure."
             if is_out_of_market
             else f"The strategy is in market with {exposure_text} exposure to {actual_label}."
         ),
         "why": (
+            "Execution checks do not allow market entry, so the real account remains out of market."
+            if real_account_is_out
+            else
             f"Trend has not confirmed entry yet ({trend_score_text} vs {threshold_text})."
             if is_out_of_market and threshold is not None
             else "The current exposure is authorized by the latest validated signal."
@@ -6117,7 +6281,29 @@ tabs = st.tabs(t(lang, "tabs"))
 with tabs[0]:
     trade_count_label = t(lang, "trade_count")
     current_drawdown_label = t(lang, "current_drawdown")
-    state_story = build_homepage_state_story(production_snapshot, production_diagnostics, lang)
+    real_account_exposure_state = resolve_real_account_exposure_state(
+        account_snapshot_view=account_snapshot_view,
+        dry_run_decision_payload=dry_run_decision_payload,
+        real_order_gate_payload=real_order_gate_payload,
+        production_snapshot=production_snapshot,
+        lang=lang,
+    )
+    strategy_signal_exposure = _first_numeric_value(
+        get_nested_value(real_order_gate_payload, "production_signal_context", "model_candidate_exposure"),
+        production_snapshot.get("model_candidate_exposure"),
+        production_snapshot.get("effective_market_exposure"),
+    )
+    strategy_signal_exposure_text = (
+        f"{strategy_signal_exposure:.2f}x"
+        if strategy_signal_exposure is not None
+        else t(lang, "na")
+    )
+    state_story = build_homepage_state_story(
+        production_snapshot,
+        production_diagnostics,
+        lang,
+        real_account_exposure_state,
+    )
     wait_condition = dict(production_diagnostics.get("current_wait_condition") or {})
     current_trade_state = dict(production_diagnostics.get("current_trade_state") or {})
     recent_rebalance_rows = [
@@ -6141,10 +6327,10 @@ with tabs[0]:
 
     home_cards = [
         {
-            "label": t(lang, "production_market_state"),
-            "value": production_market_state_label(production_snapshot, production_diagnostics, lang),
-            "subtitle": production_wait_reason_short(production_snapshot, production_diagnostics, lang),
-            "help": METRIC_HELP[lang][t(lang, "production_market_state")],
+            "label": t(lang, "production_market_exposure"),
+            "value": real_account_exposure_state["value"],
+            "subtitle": real_account_exposure_state["subtitle"],
+            "help": METRIC_HELP[lang][t(lang, "production_market_exposure")],
             "accent": "blue",
         },
         {
@@ -6155,14 +6341,14 @@ with tabs[0]:
             "accent": "green",
         },
         {
-            "label": t(lang, "production_market_exposure"),
-            "value": f"{as_float(production_snapshot.get('effective_market_exposure')):.2f}x" if as_float(production_snapshot.get("effective_market_exposure")) is not None else t(lang, "na"),
+            "label": t(lang, "production_exposure"),
+            "value": strategy_signal_exposure_text,
             "subtitle": (
-                t(lang, "production_exposure_hint_out")
-                if production_market_state_label(production_snapshot, production_diagnostics, lang) == t(lang, "production_state_out_of_market")
-                else t(lang, "production_exposure_hint_in")
+                "Signal modelu, nie expozicia uctu"
+                if lang == "sk"
+                else "Model signal, not account exposure"
             ),
-            "help": METRIC_HELP[lang][t(lang, "production_market_exposure")],
+            "help": METRIC_HELP[lang][t(lang, "production_exposure")],
             "accent": "orange",
         },
         {
@@ -6208,14 +6394,17 @@ with tabs[0]:
     st.caption(t(lang, "production_chart_baseline_note"))
     st.caption(t(lang, "production_chart_flat_note"))
     st.caption(t(lang, "production_chart_participation_note"))
-    st.caption(build_production_chart_current_state_note(production_snapshot, production_diagnostics, lang))
+    st.caption(build_production_chart_current_state_note(production_snapshot, production_diagnostics, lang, real_account_exposure_state))
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
+    public_window_label_key = str(public_performance_context.get("public_window_label_key") or "since2023")
+    public_window_metric_key = str(public_performance_context.get("public_window_metric_key") or "since2023_cagr_pct")
+    public_window_label = t(lang, public_window_label_key)
     perf1 = st.columns(4)
     with perf1[0]:
         render_color_card(t(lang, "cagr"), safe_metric_text(top_performance_metrics.get("cagr_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cagr")], "blue")
     with perf1[1]:
-        render_color_card(t(lang, "since2023"), safe_metric_text(top_performance_metrics.get("since2023_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2023")], "green")
+        render_color_card(public_window_label, safe_metric_text(top_performance_metrics.get(public_window_metric_key), lang=lang), "CAGR", METRIC_HELP[lang][public_window_label], "green")
     with perf1[2]:
         render_color_card(t(lang, "since2025"), safe_metric_text(top_performance_metrics.get("since2025_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2025")], "violet")
     with perf1[3]:

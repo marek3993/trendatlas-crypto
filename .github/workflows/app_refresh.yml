@@ -36,37 +36,10 @@ jobs:
             python -m pip install --user -r requirements.txt
           }
 
-      - name: Run app refresh pipeline
+      - name: Run safe authority producer default
         run: |
-          python ./scripts/daily_refresh_app_pipeline.py
+          python ./scripts/execution/run_pi_authoritative_producer.py
 
-      - name: Commit refreshed outputs
-        shell: python
+      - name: Verify workflow did not stage generated outputs
         run: |
-          import subprocess
-
-          subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=True)
-          subprocess.run(
-              ["git", "config", "user.email", "41898282+github-actions[bot]@users.noreply.github.com"],
-              check=True,
-          )
-          for path in [
-              "data/ohlcv",
-              "data/macro/global_liquidity_weekly.csv",
-              "outputs/phase67j_final_narrow_validation_pack",
-              "outputs/phase66g_production_candidate_live",
-              "outputs/phase67b_top100_forensic_prune_and_rerun",
-              "outputs/app_freshness_verification",
-              "outputs/app_refresh_pipeline",
-          ]:
-              subprocess.run(["git", "add", path], check=True)
-
-          diff_result = subprocess.run(["git", "diff", "--cached", "--quiet"], check=False)
-          if diff_result.returncode == 1:
-              subprocess.run(["git", "commit", "-m", "Auto refresh app data"], check=True)
-          elif diff_result.returncode != 0:
-              raise SystemExit(diff_result.returncode)
-
-      - name: Push changes
-        run: |
-          git push origin main
+          git status --short

@@ -92,16 +92,18 @@ class TestRuntimeTableSnapshotContract(unittest.TestCase):
 
     def test_app_refresh_rows_read_runtime_table_snapshot_only(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")
-        start_marker = "refresh_rows = ["
-        end_marker = 'render_app_table(refresh_rows, emphasize_first_column=True)'
+        start_marker = 'pi_runtime_update_utc = runtime_table_payload.get("last_pi_update_utc")'
+        end_marker = 'render_data_health_details(data_health_report, data_health_status_model, lang, refresh_rows)'
         start = source.index(start_marker)
         end = source.index(end_marker, start)
         refresh_block = source[start:end]
 
         self.assertIn(
-            'runtime_table_payload = load_runtime_table_snapshot_for_app(runtime_snapshot)',
+            "runtime_table_payload = build_authority_runtime_table_snapshot(",
             source,
         )
+        self.assertIn('runtime_table_payload.get("last_pi_update_utc")', refresh_block)
+        self.assertIn('runtime_table_payload.get("last_wallet_sync_utc")', refresh_block)
         self.assertIn('runtime_table_payload.get("last_refresh_status")', refresh_block)
         self.assertIn('runtime_table_payload.get("last_refresh_run_id")', refresh_block)
         self.assertNotIn("strategy_freshness_payload.get(", refresh_block)

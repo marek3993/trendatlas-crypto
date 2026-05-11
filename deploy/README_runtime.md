@@ -1,22 +1,18 @@
 # MRV1 Nightly Runtime Deployment
 
-This deployment is intentionally limited to the existing safe execution chain:
+This deployment is intentionally limited to the safe public status publishing chain:
 
-- `read_only` only
-- `dry_run` only
+- default producer mode is `publish-existing`
+- long refresh requires explicit `--mode full-refresh`
 - no real orders
+- no execution submit path
 - no `source_of_truth` writes from the runtime loop
 - no strategy semantics changes
 - execution outputs remain operational artifacts, not official truth
 
 The nightly service performs exactly one controlled pass in this order:
 
-1. `scripts/daily_refresh_app_pipeline.py`
-2. `scripts/execution/materialize_execution_app_exports.py`
-3. `scripts/execution/hyperliquid_read_only_snapshot.py`
-4. `scripts/execution/build_execution_intent_from_strategy_exports.py`
-5. `scripts/execution/run_dry_execution_bridge.py`
-6. `scripts/execution/render_execution_app_status.py`
+1. `scripts/execution/run_pi_authoritative_producer.py`
 
 `journald` captures the pass through `mrv1-nightly-runtime.service`.
 
@@ -171,7 +167,7 @@ export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
 export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
 export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
 export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
-.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --skip-legacy-refresh --skip-macro-refresh --skip-top100-refresh
+.venv/bin/python scripts/execution/run_pi_authoritative_producer.py
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" status --short
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show --pretty= --name-only HEAD
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show HEAD:outputs/execution/authority/latest_attempt_status.json

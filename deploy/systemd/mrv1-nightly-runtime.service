@@ -1,16 +1,9 @@
 [Unit]
-Description=MRV1 nightly candle-close runtime (read-only + dry-run, one pass)
+Description=MRV1 nightly public status publisher (safe default, one pass)
 Wants=network-online.target
 After=network-online.target
 ConditionPathExists=/opt/market_regime_v1/.venv/bin/python
-ConditionPathExists=/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py
-ConditionPathExists=/opt/market_regime_v1/scripts/execution/materialize_execution_app_exports.py
-ConditionPathExists=/opt/market_regime_v1/scripts/execution/hyperliquid_read_only_snapshot.py
-ConditionPathExists=/opt/market_regime_v1/scripts/execution/build_execution_intent_from_strategy_exports.py
-ConditionPathExists=/opt/market_regime_v1/scripts/execution/run_dry_execution_bridge.py
-ConditionPathExists=/opt/market_regime_v1/scripts/execution/render_execution_app_status.py
-ConditionPathExists=/opt/market_regime_v1/execution/config/execution_mode.json
-ConditionPathExists=/opt/market_regime_v1/execution/config/hyperliquid_account.json
+ConditionPathExists=/opt/market_regime_v1/scripts/execution/run_pi_authoritative_producer.py
 
 [Service]
 Type=oneshot
@@ -20,23 +13,14 @@ WorkingDirectory=/opt/market_regime_v1
 Environment=PYTHONUNBUFFERED=1
 Environment=PYTHONDONTWRITEBYTECODE=1
 Environment=PYTHONPATH=/opt/market_regime_v1/src:/opt/market_regime_v1/scripts
-ExecStartPre=/opt/market_regime_v1/.venv/bin/python -c "import json, pathlib, sys; cfg=json.loads(pathlib.Path('/opt/market_regime_v1/execution/config/execution_mode.json').read_text(encoding='utf-8')); assert cfg.get('mode') == 'read_only', cfg; assert cfg.get('trading_enabled') is False, cfg; assert cfg.get('kill_switch') is True, cfg"
-ExecStartPre=/opt/market_regime_v1/.venv/bin/python -c "import json, pathlib; cfg=json.loads(pathlib.Path('/opt/market_regime_v1/execution/config/hyperliquid_account.json').read_text(encoding='utf-8')); account=str(cfg.get('account_address', '')).strip(); assert account and 'PASTE_' not in account, cfg"
-ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py
-ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/materialize_execution_app_exports.py
-ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/hyperliquid_read_only_snapshot.py
-ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/build_execution_intent_from_strategy_exports.py
-ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_dry_execution_bridge.py
-ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/render_execution_app_status.py
-ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/refresh_pipeline/materialize_execution_app_exports_report.json
-ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot.json
-ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/intents/latest_execution_intent.json
-ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/dry_run/latest_dry_run_decision.json
-ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/live_status/execution_status.json
+ExecStartPre=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_pi_authoritative_producer.py --help
+ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_pi_authoritative_producer.py
+ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
+ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=mrv1-nightly-runtime
-TimeoutStartSec=6h
+TimeoutStartSec=45min
 Restart=no
 NoNewPrivileges=true
 PrivateTmp=true

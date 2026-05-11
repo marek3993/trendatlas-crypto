@@ -87,6 +87,9 @@ outputs/**/logs/
 outputs/**/debug/
 outputs/**/plots_tmp/
 outputs/**/charts_tmp/
+outputs/_tmp_test_execution_authority_publish/
+outputs/_tmp_test_etf_flow_publish_existing_recovery/
+tmp_test_artifacts/
 outputs/research_os/dev_only/imlayer_exports/
 outputs/research_os/dev_only/imlayer_ingestion/
 

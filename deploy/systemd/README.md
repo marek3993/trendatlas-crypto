@@ -211,7 +211,8 @@ export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
 
 What it does:
 
-- runs `scripts/daily_refresh_app_pipeline.py` with `MRV1_AUTHORITY_MODE=authoritative`
+- validates and publishes existing app/status artifacts through the safe default `scripts/execution/run_pi_authoritative_producer.py`
+- runs the long refresh chain only when `--mode full-refresh` is explicitly passed
 - writes `outputs/execution/authority/latest_attempt_status.json`
 - writes `outputs/execution/authority/latest_successful_snapshot.json` on success
 - resolves the runtime checkout remote URL but does not push from the runtime checkout
@@ -231,7 +232,7 @@ export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
 export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
 export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
 export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
-.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --skip-legacy-refresh --skip-macro-refresh --skip-top100-refresh
+.venv/bin/python scripts/execution/run_pi_authoritative_producer.py
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" status --short
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" log -1 --stat -- outputs/execution/authority/latest_attempt_status.json outputs/execution/authority/latest_successful_snapshot.json
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show --pretty= --name-only HEAD
