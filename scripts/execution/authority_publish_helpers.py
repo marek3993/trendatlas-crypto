@@ -9,7 +9,7 @@ from typing import Any, Mapping
 if str(Path(__file__).resolve().parents[2]) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from execution.authority_contract import (
+from scripts.execution.authority_contract import (
     authority_paths,
     authority_publish_context_from_env,
     build_authority_extra_fields,
