@@ -122,17 +122,14 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
     def seed_fast_publish_script_placeholders(self, temp_root: Path) -> dict[str, Path]:
         script_paths = {
             "pipeline": temp_root / "scripts" / "daily_refresh_app_pipeline.py",
+            "current_strategy_build": (
+                temp_root / "scripts" / "production" / "build_current_strategy_snapshot.py"
+            ),
             "current_strategy_validate": (
                 temp_root / "scripts" / "production" / "validate_current_strategy_snapshot.py"
             ),
-            "data_health_validate": (
-                temp_root / "scripts" / "production" / "validate_data_health_report.py"
-            ),
-            "scheduler_entry": (
-                temp_root / "scripts" / "execution" / "run_full_auto_scheduler_entry.py"
-            ),
-            "execution_source_contract": (
-                temp_root / "scripts" / "execution" / "validate_execution_source_contract.py"
+            "materialize_app_exports": (
+                temp_root / "scripts" / "execution" / "materialize_execution_app_exports.py"
             ),
         }
         for path in script_paths.values():
@@ -1113,205 +1110,308 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         )
         self.assertEqual(publish_tree_status, "")
 
-    def test_pi_producer_publish_existing_mode_skips_pipeline_and_passes_dry_run(self):
+    def test_run_publish_existing_flow_dry_run_skips_heavy_runtime_preview_and_authority_writes(self):
         temp_root = self.make_temp_root()
-        script_paths = self.seed_fast_publish_script_placeholders(temp_root)
-        self.seed_fast_publish_runtime_artifacts(temp_root)
-        publish_mock = mock.Mock(
-            return_value={"published": False, "reason": "dry_run", "pathspecs": []}
-        )
-        subprocess_calls: list[list[str]] = []
+        attempt_payload, success_payload = self.build_payload_pair()
+        authority_state = {
+            "run_dir": str(
+                temp_root
+                / "outputs"
+                / "execution"
+                / "tmp"
+                / "publish_existing_validation"
+                / "20260423_104500"
+            ),
+            "refresh_started_at_utc": "2026-04-23T10:00:00Z",
+            "target_closed_day_utc": "2026-04-22",
+            "latest_available_closed_utc_day": "2026-04-22",
+            "authority_mode": "pi_only_authoritative_producer",
+            "pipeline_script_path": "scripts/daily_refresh_app_pipeline.py",
+        }
+        readiness_bundle = {
+            "report": {
+                "reference_closed_day_utc": "2026-04-22",
+                "summary": {"block_app": False, "block_execution": False},
+            },
+            "quality": {"status": "passed"},
+        }
+        publish_preview = {
+            "published": False,
+            "reason": "dry_run",
+            "pathspecs": ["outputs/execution/authority/latest_attempt_status.json"],
+        }
+        command_labels: list[str] = []
 
-        def fake_run(args, cwd=None, env=None, check=None):
-            subprocess_calls.append(list(args))
-            return subprocess.CompletedProcess(args, 0)
+        def fake_run_checked_python_command(script_path, *, env, root, args=None, label):
+            command_labels.append(label)
+            return subprocess.CompletedProcess([sys.executable, str(script_path)], 0)
 
         with ExitStack() as stack:
-            stack.enter_context(mock.patch.object(pi_producer, "ROOT", temp_root))
-            stack.enter_context(
-                mock.patch.object(pi_producer, "PIPELINE_SCRIPT", script_paths["pipeline"])
-            )
             stack.enter_context(
                 mock.patch.object(
                     pi_producer,
-                    "CURRENT_STRATEGY_VALIDATE_SCRIPT",
-                    script_paths["current_strategy_validate"],
+                    "run_checked_python_command",
+                    side_effect=fake_run_checked_python_command,
                 )
             )
             stack.enter_context(
                 mock.patch.object(
                     pi_producer,
-                    "DATA_HEALTH_VALIDATE_SCRIPT",
-                    script_paths["data_health_validate"],
+                    "ensure_required_artifacts_exist",
+                    return_value=None,
                 )
             )
             stack.enter_context(
                 mock.patch.object(
                     pi_producer,
-                    "SCHEDULER_ENTRY_SCRIPT",
-                    script_paths["scheduler_entry"],
+                    "determine_publish_existing_target_closed_day",
+                    return_value="2026-04-22",
                 )
             )
             stack.enter_context(
                 mock.patch.object(
                     pi_producer,
-                    "EXECUTION_SOURCE_CONTRACT_SCRIPT",
-                    script_paths["execution_source_contract"],
+                    "build_publish_existing_authority_state",
+                    return_value=dict(authority_state),
                 )
             )
             stack.enter_context(
                 mock.patch.object(
                     pi_producer,
-                    "FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS",
-                    (
-                        temp_root / "outputs" / "production" / "current_strategy_snapshot.json",
-                        temp_root / "outputs" / "production" / "current_strategy_timeseries.csv",
-                        temp_root / "outputs" / "production" / "current_strategy_diagnostics.json",
-                        temp_root / "outputs" / "production" / "current_strategy_snapshot.quality.json",
-                        temp_root / "outputs" / "production" / "current_strategy_snapshot.manifest.json",
+                    "load_publish_existing_app_snapshots",
+                    return_value=(
+                        self.build_minimal_app_product_snapshot_payload(),
+                        self.build_minimal_app_runtime_snapshot_payload(),
                     ),
                 )
             )
             stack.enter_context(
                 mock.patch.object(
                     pi_producer,
-                    "FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS",
-                    (
-                        temp_root / "outputs" / "production" / "data_health_report.json",
-                        temp_root / "outputs" / "production" / "data_health_report.quality.json",
-                        temp_root / "outputs" / "production" / "data_health_report.manifest.json",
-                    ),
+                    "build_publish_existing_success_payloads",
+                    return_value=(attempt_payload, success_payload, dict(authority_state)),
                 )
             )
             stack.enter_context(
-                mock.patch.object(pi_producer.subprocess, "run", side_effect=fake_run)
+                mock.patch.object(
+                    pi_producer,
+                    "build_publish_existing_validation_bundle",
+                    return_value=readiness_bundle,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "validate_publish_existing_readiness_bundle",
+                    return_value=readiness_bundle["report"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "build_publish_existing_dry_run_publish_result",
+                    return_value=publish_preview,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "publish_existing_authority_success_payloads",
+                    side_effect=AssertionError("dry-run must not write authority snapshots"),
+                )
             )
             stack.enter_context(
                 mock.patch.object(
                     pi_producer,
                     "publish_authority_artifacts_to_repo",
-                    publish_mock,
+                    side_effect=AssertionError("dry-run must not invoke repo publish"),
                 )
             )
+            result = pi_producer.run_publish_existing_flow(
+                root=temp_root,
+                env=PI_ENV,
+                dry_run=True,
+            )
+
+        self.assertEqual(
+            command_labels,
+            [
+                "build_current_strategy_snapshot",
+                "validate_current_strategy_snapshot",
+                "materialize_execution_app_exports",
+            ],
+        )
+        self.assertEqual(result["authority_artifact_write"], "skipped_dry_run")
+        self.assertEqual(result["runtime_preview_chain"], "not_invoked")
+        self.assertEqual(result["live_order_chain"], "not_invoked")
+        self.assertEqual(result["authority_repo_publish"], publish_preview)
+
+    def test_run_publish_existing_flow_live_publish_writes_authority_and_calls_repo_publish(self):
+        temp_root = self.make_temp_root()
+        attempt_payload, success_payload = self.build_payload_pair()
+        authority_state = {
+            "run_dir": str(
+                temp_root
+                / "outputs"
+                / "execution"
+                / "tmp"
+                / "publish_existing_validation"
+                / "20260423_111500"
+            ),
+            "refresh_started_at_utc": "2026-04-23T11:00:00Z",
+            "target_closed_day_utc": "2026-04-22",
+            "latest_available_closed_utc_day": "2026-04-22",
+            "authority_mode": "pi_only_authoritative_producer",
+            "pipeline_script_path": "scripts/daily_refresh_app_pipeline.py",
+        }
+        readiness_bundle = {
+            "report": {
+                "reference_closed_day_utc": "2026-04-22",
+                "summary": {"block_app": False, "block_execution": False},
+            },
+            "quality": {"status": "passed"},
+        }
+        repo_publish_result = {
+            "published": False,
+            "reason": "no_authority_repo_changes",
+        }
+        command_labels: list[str] = []
+
+        def fake_run_checked_python_command(script_path, *, env, root, args=None, label):
+            command_labels.append(label)
+            return subprocess.CompletedProcess([sys.executable, str(script_path)], 0)
+
+        publish_authority_success = mock.Mock(return_value={"published": True})
+
+        with ExitStack() as stack:
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "run_checked_python_command",
+                    side_effect=fake_run_checked_python_command,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "ensure_required_artifacts_exist",
+                    return_value=None,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "determine_publish_existing_target_closed_day",
+                    return_value="2026-04-22",
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "build_publish_existing_authority_state",
+                    return_value=dict(authority_state),
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "load_publish_existing_app_snapshots",
+                    return_value=(
+                        self.build_minimal_app_product_snapshot_payload(),
+                        self.build_minimal_app_runtime_snapshot_payload(),
+                    ),
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "build_publish_existing_success_payloads",
+                    return_value=(attempt_payload, success_payload, dict(authority_state)),
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "build_publish_existing_validation_bundle",
+                    return_value=readiness_bundle,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "validate_publish_existing_readiness_bundle",
+                    return_value=readiness_bundle["report"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "build_report_bundle",
+                    return_value=readiness_bundle,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "publish_existing_authority_success_payloads",
+                    publish_authority_success,
+                )
+            )
+            publish_repo_mock = stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "publish_authority_artifacts_to_repo",
+                    return_value=repo_publish_result,
+                )
+            )
+            result = pi_producer.run_publish_existing_flow(
+                root=temp_root,
+                env=PI_ENV,
+                dry_run=False,
+            )
+
+        self.assertEqual(
+            command_labels,
+            [
+                "build_current_strategy_snapshot",
+                "validate_current_strategy_snapshot",
+                "materialize_execution_app_exports",
+            ],
+        )
+        publish_authority_success.assert_called_once()
+        publish_repo_mock.assert_called_once_with(
+            root=temp_root,
+            env=mock.ANY,
+            dry_run=False,
+        )
+        self.assertEqual(result["authority_artifact_write"], "success_payload_written")
+        self.assertEqual(result["authority_repo_publish"], repo_publish_result)
+
+    def test_pi_producer_no_arg_default_uses_publish_existing_dispatch(self):
+        flow_result = {
+            "mode": "publish-existing",
+            "dry_run": False,
+            "heavy_refresh_steps": "skipped",
+            "authority_repo_publish": {"published": False, "reason": "stub"},
+        }
+        with mock.patch.object(
+            pi_producer,
+            "run_publish_existing_flow",
+            return_value=flow_result,
+        ) as flow_mock, mock.patch.object(
+            pi_producer,
+            "run_full_refresh_flow",
+            side_effect=AssertionError("full-refresh dispatch must stay explicit"),
+        ):
             stdout = io.StringIO()
             with mock.patch("sys.stdout", stdout):
                 with self.assertRaises(SystemExit) as exc:
-                    pi_producer.main(["--mode", "publish-existing", "--dry-run"])
+                    pi_producer.main([])
 
         self.assertEqual(exc.exception.code, 0)
-        self.assertEqual(
-            subprocess_calls,
-            [
-                [sys.executable, str(script_paths["current_strategy_validate"])],
-                [sys.executable, str(script_paths["data_health_validate"])],
-                [sys.executable, str(script_paths["execution_source_contract"])],
-                [sys.executable, str(script_paths["scheduler_entry"])],
-            ],
-        )
-        self.assertNotIn(
-            [sys.executable, str(script_paths["pipeline"])],
-            subprocess_calls,
-        )
-        publish_mock.assert_called_once()
-        publish_kwargs = publish_mock.call_args.kwargs
-        self.assertEqual(publish_kwargs["root"], temp_root)
-        self.assertTrue(publish_kwargs["dry_run"])
-        output = stdout.getvalue()
-        self.assertIn("[AUTHORITY] mode=publish-existing", output)
-        self.assertIn("[AUTHORITY] heavy_refresh_steps=skipped", output)
-
-    def test_pi_producer_no_arg_default_uses_publish_existing_and_skips_pipeline(self):
-        temp_root = self.make_temp_root()
-        script_paths = self.seed_fast_publish_script_placeholders(temp_root)
-        self.seed_fast_publish_runtime_artifacts(temp_root)
-        publish_mock = mock.Mock(
-            return_value={"published": False, "reason": "no_authority_repo_changes"}
-        )
-        subprocess_calls: list[list[str]] = []
-
-        def fake_run(args, cwd=None, env=None, check=None):
-            subprocess_calls.append(list(args))
-            return subprocess.CompletedProcess(args, 0)
-
-        with ExitStack() as stack:
-            stack.enter_context(mock.patch.object(pi_producer, "ROOT", temp_root))
-            stack.enter_context(
-                mock.patch.object(pi_producer, "PIPELINE_SCRIPT", script_paths["pipeline"])
-            )
-            stack.enter_context(
-                mock.patch.object(
-                    pi_producer,
-                    "CURRENT_STRATEGY_VALIDATE_SCRIPT",
-                    script_paths["current_strategy_validate"],
-                )
-            )
-            stack.enter_context(
-                mock.patch.object(
-                    pi_producer,
-                    "DATA_HEALTH_VALIDATE_SCRIPT",
-                    script_paths["data_health_validate"],
-                )
-            )
-            stack.enter_context(
-                mock.patch.object(
-                    pi_producer,
-                    "SCHEDULER_ENTRY_SCRIPT",
-                    script_paths["scheduler_entry"],
-                )
-            )
-            stack.enter_context(
-                mock.patch.object(
-                    pi_producer,
-                    "EXECUTION_SOURCE_CONTRACT_SCRIPT",
-                    script_paths["execution_source_contract"],
-                )
-            )
-            stack.enter_context(
-                mock.patch.object(
-                    pi_producer,
-                    "FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS",
-                    (
-                        temp_root / "outputs" / "production" / "current_strategy_snapshot.json",
-                        temp_root / "outputs" / "production" / "current_strategy_timeseries.csv",
-                        temp_root / "outputs" / "production" / "current_strategy_diagnostics.json",
-                        temp_root / "outputs" / "production" / "current_strategy_snapshot.quality.json",
-                        temp_root / "outputs" / "production" / "current_strategy_snapshot.manifest.json",
-                    ),
-                )
-            )
-            stack.enter_context(
-                mock.patch.object(
-                    pi_producer,
-                    "FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS",
-                    (
-                        temp_root / "outputs" / "production" / "data_health_report.json",
-                        temp_root / "outputs" / "production" / "data_health_report.quality.json",
-                        temp_root / "outputs" / "production" / "data_health_report.manifest.json",
-                    ),
-                )
-            )
-            stack.enter_context(
-                mock.patch.object(pi_producer.subprocess, "run", side_effect=fake_run)
-            )
-            stack.enter_context(
-                mock.patch.object(
-                    pi_producer,
-                    "publish_authority_artifacts_to_repo",
-                    publish_mock,
-                )
-            )
-            with self.assertRaises(SystemExit) as exc:
-                pi_producer.main([])
-
-        self.assertEqual(exc.exception.code, 0)
-        self.assertNotIn(
-            [sys.executable, str(script_paths["pipeline"])],
-            subprocess_calls,
-        )
-        publish_mock.assert_called_once()
-        publish_kwargs = publish_mock.call_args.kwargs
-        self.assertEqual(publish_kwargs["root"], temp_root)
-        self.assertFalse(publish_kwargs["dry_run"])
+        flow_mock.assert_called_once()
+        self.assertIn("[AUTHORITY] mode=publish-existing", stdout.getvalue())
+        self.assertIn("[AUTHORITY] heavy_refresh_steps=skipped", stdout.getvalue())
 
     def test_pi_producer_full_refresh_requires_explicit_mode_for_pipeline(self):
         temp_root = self.make_temp_root()

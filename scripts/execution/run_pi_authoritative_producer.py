@@ -1,22 +1,34 @@
 from __future__ import annotations
 
 import argparse
+from datetime import date, datetime, time, timedelta, timezone
 import json
 import os
 import shutil
 import socket
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-if str(Path(__file__).resolve().parents[2]) not in sys.path:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+ROOT_BOOTSTRAP = Path(__file__).resolve().parents[2]
+SCRIPTS_BOOTSTRAP = ROOT_BOOTSTRAP / "scripts"
+if str(ROOT_BOOTSTRAP) not in sys.path:
+    sys.path.insert(0, str(ROOT_BOOTSTRAP))
+if str(SCRIPTS_BOOTSTRAP) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_BOOTSTRAP))
 
+from scripts.execution import authority_contract
+from scripts.execution import authority_publish_helpers as authority_helpers
 from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
     validate_authoritative_dependency_closure,
+)
+from scripts.production.data_health_common import build_report_bundle
+from src.market_regime_v1.phase1_time_semantics import (
+    ATTEMPT_STATUS_ARTIFACT_TYPE,
+    SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
+    build_authority_payload,
 )
 
 
@@ -32,9 +44,8 @@ DATA_HEALTH_BUILD_SCRIPT = ROOT / "scripts" / "production" / "build_data_health_
 DATA_HEALTH_VALIDATE_SCRIPT = (
     ROOT / "scripts" / "production" / "validate_data_health_report.py"
 )
-SCHEDULER_ENTRY_SCRIPT = ROOT / "scripts" / "execution" / "run_full_auto_scheduler_entry.py"
-EXECUTION_SOURCE_CONTRACT_SCRIPT = (
-    ROOT / "scripts" / "execution" / "validate_execution_source_contract.py"
+MATERIALIZE_APP_EXPORTS_SCRIPT = (
+    ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
 )
 TERMINAL_ATTEMPT_STATUSES = frozenset({"success", "failed"})
 CANONICAL_APP_EXPORT_PREFIX = ("outputs", "execution", "app_exports")
@@ -69,6 +80,24 @@ FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS = (
     ROOT / "outputs" / "production" / "current_strategy_diagnostics.json",
     ROOT / "outputs" / "production" / "current_strategy_snapshot.quality.json",
     ROOT / "outputs" / "production" / "current_strategy_snapshot.manifest.json",
+)
+FAST_MODE_REQUIRED_APP_SNAPSHOT_ARTIFACTS = (
+    ROOT / "outputs" / "execution" / "app_snapshot" / "app_product_snapshot.json",
+    ROOT / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json",
+)
+HEAVY_REFRESH_STEPS = (
+    "refresh_legacy_ohlcv",
+    "refresh_global_liquidity_weekly",
+    "phase60_selective_restore_robustness",
+    "phase63_btc_participation_overlay",
+    "refresh_phase67_top100_shortlist_ohlcv",
+    "phase67_top100_build_and_governance",
+    "phase67b_top100_forensic_prune_and_rerun",
+    "phase66g_production_candidate_live",
+    "phase67j_final_narrow_validation_pack",
+)
+PUBLISH_EXISTING_TMP_ROOT = (
+    ROOT / "outputs" / "execution" / "tmp" / "publish_existing_validation"
 )
 
 
@@ -134,6 +163,442 @@ def ensure_required_artifacts_exist(paths: Sequence[Path], *, label: str) -> Non
     raise FileNotFoundError(
         f"Missing required {label} artifacts:\n" + "\n".join(missing_paths)
     )
+
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def normalize_iso_day_text(value: Any, *, field_name: str) -> str:
+    text = str(value or "").strip()
+    if not text:
+        raise ValueError(f"{field_name} is missing")
+    if "T" in text:
+        text = text.split("T", 1)[0]
+    if len(text) != 10:
+        raise ValueError(f"{field_name} is not an ISO day: {value}")
+    date.fromisoformat(text)
+    return text
+
+
+def build_publish_existing_run_id() -> str:
+    return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
+
+def build_publish_existing_run_dir(root: Path, *, run_id: str) -> Path:
+    relative_tmp_root = PUBLISH_EXISTING_TMP_ROOT.relative_to(ROOT)
+    run_dir = root / relative_tmp_root / run_id
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
+
+
+def determine_publish_existing_target_closed_day(root: Path) -> str:
+    snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
+    snapshot_payload = load_json_required(snapshot_path)
+    return normalize_iso_day_text(
+        snapshot_payload.get("closed_day"),
+        field_name=f"{snapshot_path}.closed_day",
+    )
+
+
+def build_reference_now_for_closed_day(target_closed_day_utc: str) -> datetime:
+    normalized_target_day = normalize_iso_day_text(
+        target_closed_day_utc,
+        field_name="target_closed_day_utc",
+    )
+    target_day = date.fromisoformat(normalized_target_day)
+    return datetime.combine(
+        target_day + timedelta(days=1),
+        time(hour=12, minute=0, second=0),
+        tzinfo=timezone.utc,
+    )
+
+
+def load_publish_existing_app_snapshots(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+    product_path = root / "outputs" / "execution" / "app_snapshot" / "app_product_snapshot.json"
+    runtime_path = root / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json"
+    product_snapshot = load_json_required(product_path)
+    runtime_snapshot = load_json_required(runtime_path)
+    if product_snapshot.get("snapshot_type") != "app_product_snapshot":
+        raise ValueError(f"{product_path} is not app_product_snapshot")
+    if runtime_snapshot.get("snapshot_type") != "app_runtime_snapshot":
+        raise ValueError(f"{runtime_path} is not app_runtime_snapshot")
+    return product_snapshot, runtime_snapshot
+
+
+def build_publish_existing_authority_state(
+    *,
+    root: Path,
+    env: Mapping[str, str],
+    run_id: str,
+    refresh_started_at_utc: str,
+    target_closed_day_utc: str,
+) -> dict[str, Any]:
+    run_dir = build_publish_existing_run_dir(root, run_id=run_id)
+    return authority_helpers.build_authority_publish_state(
+        run_id=run_id,
+        run_dir=run_dir,
+        refresh_started_at_utc=refresh_started_at_utc,
+        target_closed_day_utc=target_closed_day_utc,
+        latest_available_closed_utc_day=target_closed_day_utc,
+        env=env,
+    )
+
+
+def validate_publish_existing_strategy_source_of_truth(
+    *,
+    state: Mapping[str, Any],
+    app_product_snapshot: dict[str, Any],
+    app_runtime_snapshot: Mapping[str, Any],
+    current_strategy_contract: Mapping[str, Any],
+) -> dict[str, str]:
+    target_closed_day_utc = authority_contract.normalize_utc_day(
+        state.get("target_closed_day_utc"),
+        field_name="target_closed_day_utc",
+    )
+    latest_available_closed_utc_day = authority_contract.normalize_utc_day(
+        app_runtime_snapshot.get("latest_available_closed_utc_date")
+        or app_product_snapshot.get("freshness_target_closed_day")
+        or state.get("latest_available_closed_utc_day"),
+        field_name="latest_available_closed_utc_day",
+    )
+    strategy_artifact_closed_day_utc = authority_contract.normalize_utc_day(
+        app_product_snapshot.get("strategy_last_closed_day"),
+        field_name="app_product_snapshot.strategy_last_closed_day",
+    )
+    live_public_state = authority_helpers._payload_mapping(
+        app_product_snapshot.get("live_public_state"),
+        field_name="app_product_snapshot.live_public_state",
+    )
+    live_public_state_date = authority_contract.normalize_utc_day(
+        live_public_state.get("date"),
+        field_name="app_product_snapshot.live_public_state.date",
+    )
+    runtime_strategy_artifact_closed_day_utc = authority_contract.normalize_utc_day(
+        app_runtime_snapshot.get("latest_strategy_artifact_date"),
+        field_name="app_runtime_snapshot.latest_strategy_artifact_date",
+    )
+
+    if latest_available_closed_utc_day != target_closed_day_utc:
+        raise ValueError(
+            "publish-existing blocked: target day is not the same as the latest available closed day "
+            f"(target_closed_day_utc={target_closed_day_utc} "
+            f"latest_available_closed_utc_day={latest_available_closed_utc_day})"
+        )
+
+    expected_day_fields = {
+        "app_product_snapshot.strategy_last_closed_day": strategy_artifact_closed_day_utc,
+        "app_product_snapshot.live_public_state.date": live_public_state_date,
+        "app_runtime_snapshot.latest_strategy_artifact_date": runtime_strategy_artifact_closed_day_utc,
+    }
+    for field_name, value in expected_day_fields.items():
+        if value != target_closed_day_utc:
+            raise ValueError(
+                "publish-existing blocked: strategy truth is not aligned with the target closed day "
+                f"({field_name}={value} target_closed_day_utc={target_closed_day_utc})"
+            )
+
+    main_strategy_model = str(app_product_snapshot.get("main_strategy_model") or "").strip()
+    if not main_strategy_model:
+        raise ValueError("publish-existing blocked: app_product_snapshot.main_strategy_model is missing")
+    main_strategy_metrics = authority_helpers._payload_mapping(
+        app_product_snapshot.get("main_strategy_metrics"),
+        field_name="app_product_snapshot.main_strategy_metrics",
+    )
+    metrics_model = str(main_strategy_metrics.get("model") or "").strip()
+    if metrics_model != main_strategy_model:
+        raise ValueError(
+            "publish-existing blocked: app_product_snapshot.main_strategy_metrics.model diverged from "
+            f"main_strategy_model (expected={main_strategy_model} actual={metrics_model or 'missing'})"
+        )
+
+    expected_main_strategy_metrics_path = str(
+        current_strategy_contract["canonical_metrics_source_path"]
+    ).strip()
+    expected_main_strategy_paper_path = str(
+        current_strategy_contract["canonical_paper_source_path"]
+    ).strip()
+
+    chart_source_paths = authority_helpers._payload_mapping(
+        app_product_snapshot.get("chart_source_paths"),
+        field_name="app_product_snapshot.chart_source_paths",
+    )
+    main_strategy_chart_path = str(chart_source_paths.get("main_strategy") or "").strip()
+    if not main_strategy_chart_path:
+        raise ValueError(
+            "publish-existing blocked: app_product_snapshot.chart_source_paths.main_strategy is missing"
+        )
+    if main_strategy_chart_path != expected_main_strategy_paper_path:
+        raise ValueError(
+            "publish-existing blocked: app_product_snapshot.chart_source_paths.main_strategy diverged "
+            "from the current main strategy root contract "
+            f"(expected={expected_main_strategy_paper_path} actual={main_strategy_chart_path})"
+        )
+
+    source_metadata = authority_helpers._payload_mapping(
+        app_product_snapshot.get("source_metadata"),
+        field_name="app_product_snapshot.source_metadata",
+    )
+    main_strategy_metrics_source = authority_helpers._payload_mapping(
+        source_metadata.get("main_strategy_metrics"),
+        field_name="app_product_snapshot.source_metadata.main_strategy_metrics",
+    )
+    strategy_last_closed_day_source = authority_helpers._payload_mapping(
+        source_metadata.get("strategy_last_closed_day"),
+        field_name="app_product_snapshot.source_metadata.strategy_last_closed_day",
+    )
+    live_public_state_source = authority_helpers._payload_mapping(
+        source_metadata.get("live_public_state"),
+        field_name="app_product_snapshot.source_metadata.live_public_state",
+    )
+
+    strategy_last_closed_day_source_path = str(
+        strategy_last_closed_day_source.get("path") or ""
+    ).strip()
+    live_public_state_source_path = str(live_public_state_source.get("path") or "").strip()
+    main_strategy_metrics_source_path = str(main_strategy_metrics_source.get("path") or "").strip()
+    if main_strategy_metrics_source_path != expected_main_strategy_metrics_path:
+        raise ValueError(
+            "publish-existing blocked: app_product_snapshot.source_metadata.main_strategy_metrics.path "
+            "diverged from the current main strategy root contract "
+            f"(expected={expected_main_strategy_metrics_path} actual={main_strategy_metrics_source_path or 'missing'})"
+        )
+    if strategy_last_closed_day_source_path != main_strategy_chart_path:
+        raise ValueError(
+            "publish-existing blocked: strategy_last_closed_day path diverged from chart_source_paths.main_strategy "
+            f"(expected={main_strategy_chart_path} actual={strategy_last_closed_day_source_path or 'missing'})"
+        )
+    if live_public_state_source_path != main_strategy_chart_path:
+        raise ValueError(
+            "publish-existing blocked: live_public_state path diverged from chart_source_paths.main_strategy "
+            f"(expected={main_strategy_chart_path} actual={live_public_state_source_path or 'missing'})"
+        )
+
+    return {
+        "latest_available_closed_utc_day": latest_available_closed_utc_day,
+        "strategy_artifact_closed_day_utc": strategy_artifact_closed_day_utc,
+    }
+
+
+def resolve_publish_existing_runtime_sync_fields(
+    app_runtime_snapshot: Mapping[str, Any],
+) -> dict[str, str]:
+    return authority_helpers._resolve_runtime_sync_fields(app_runtime_snapshot)
+
+
+def build_publish_existing_success_payloads(
+    *,
+    state: Mapping[str, Any],
+    app_product_snapshot: dict[str, Any],
+    app_runtime_snapshot: Mapping[str, Any],
+    refresh_finished_at_utc: str,
+) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
+    working_state = dict(state)
+    current_strategy_contract = authority_helpers._validate_authority_app_product_snapshot(
+        app_product_snapshot
+    )
+    strategy_source_truth = validate_publish_existing_strategy_source_of_truth(
+        state=working_state,
+        app_product_snapshot=app_product_snapshot,
+        app_runtime_snapshot=app_runtime_snapshot,
+        current_strategy_contract=current_strategy_contract,
+    )
+    runtime_sync_fields = resolve_publish_existing_runtime_sync_fields(
+        app_runtime_snapshot
+    )
+    normalized_finished_at_utc = authority_contract.normalize_utc_timestamp(
+        refresh_finished_at_utc,
+        field_name="refresh_finished_at_utc",
+    )
+    latest_available_closed_utc_day = strategy_source_truth["latest_available_closed_utc_day"]
+    strategy_artifact_closed_day_utc = strategy_source_truth["strategy_artifact_closed_day_utc"]
+    working_state["latest_available_closed_utc_day"] = latest_available_closed_utc_day
+    stage_history = [
+        authority_contract.build_stage_history_entry(
+            authority_helpers.AUTHORITY_STAGE_NAME,
+            "running",
+            started_at_utc=working_state["refresh_started_at_utc"],
+            finished_at_utc=None,
+            script_path=working_state["pipeline_script_path"],
+            non_authoritative_support_only=working_state["authority_mode"]
+            != "pi_only_authoritative_producer",
+        ),
+        authority_contract.build_stage_history_entry(
+            authority_helpers.AUTHORITY_STAGE_NAME,
+            "success",
+            started_at_utc=working_state["refresh_started_at_utc"],
+            finished_at_utc=normalized_finished_at_utc,
+            script_path=working_state["pipeline_script_path"],
+            non_authoritative_support_only=working_state["authority_mode"]
+            != "pi_only_authoritative_producer",
+        ),
+    ]
+    working_state["stage_history"] = stage_history
+    extra_fields = authority_helpers._build_extra_fields(
+        working_state,
+        generated_at_utc=normalized_finished_at_utc,
+        attempt_stage_status="success",
+        stage_history=stage_history,
+        authority_wallet_sync_utc=runtime_sync_fields["authority_wallet_sync_utc"],
+        authority_account_snapshot_as_of_utc=runtime_sync_fields[
+            "authority_account_snapshot_as_of_utc"
+        ],
+        authority_runtime_snapshot_generated_at_utc=runtime_sync_fields[
+            "authority_runtime_snapshot_generated_at_utc"
+        ],
+        app_product_snapshot=app_product_snapshot,
+        app_runtime_snapshot=dict(app_runtime_snapshot),
+    )
+    attempt_payload = build_authority_payload(
+        artifact_type=ATTEMPT_STATUS_ARTIFACT_TYPE,
+        target_closed_day_utc=working_state["target_closed_day_utc"],
+        latest_available_closed_utc_day=latest_available_closed_utc_day,
+        refresh_started_at_utc=working_state["refresh_started_at_utc"],
+        refresh_finished_at_utc=normalized_finished_at_utc,
+        latest_authoritative_attempt_status="success",
+        latest_authoritative_attempt_error=None,
+        strategy_artifact_closed_day_utc=strategy_artifact_closed_day_utc,
+        extra_fields=extra_fields,
+    )
+    success_payload = build_authority_payload(
+        artifact_type=SUCCESS_SNAPSHOT_ARTIFACT_TYPE,
+        target_closed_day_utc=working_state["target_closed_day_utc"],
+        latest_available_closed_utc_day=latest_available_closed_utc_day,
+        refresh_started_at_utc=working_state["refresh_started_at_utc"],
+        refresh_finished_at_utc=normalized_finished_at_utc,
+        latest_authoritative_attempt_status="success",
+        latest_authoritative_attempt_error=None,
+        strategy_artifact_closed_day_utc=strategy_artifact_closed_day_utc,
+        extra_fields=extra_fields,
+    )
+    return attempt_payload, success_payload, working_state
+
+
+def publish_existing_authority_success_payloads(
+    *,
+    root: Path,
+    env: Mapping[str, str],
+    attempt_payload: Mapping[str, Any],
+    success_payload: Mapping[str, Any],
+) -> dict[str, Any]:
+    publish_result = authority_helpers.publish_authority_artifacts(
+        dict(attempt_payload),
+        dict(success_payload),
+        root=root,
+        env=env,
+    )
+    if not bool(publish_result.get("published")):
+        raise RuntimeError(
+            "publish-existing authority write failed: "
+            f"{publish_result.get('reason') or 'unknown reason'}"
+        )
+    return publish_result
+
+
+def write_json_payload(path: Path, payload: Mapping[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(dict(payload), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+
+def build_publish_existing_validation_bundle(
+    *,
+    root: Path,
+    run_dir: Path,
+    target_closed_day_utc: str,
+    attempt_payload: Mapping[str, Any],
+    success_payload: Mapping[str, Any],
+) -> dict[str, Any]:
+    authority_dir = run_dir / "authority"
+    synthetic_attempt_path = authority_dir / "latest_attempt_status.json"
+    synthetic_success_path = authority_dir / "latest_successful_snapshot.json"
+    write_json_payload(synthetic_attempt_path, attempt_payload)
+    write_json_payload(synthetic_success_path, success_payload)
+    reference_now = build_reference_now_for_closed_day(target_closed_day_utc)
+    return build_report_bundle(
+        root=root,
+        output_dir=run_dir / "production",
+        reference_now=reference_now,
+        path_overrides={
+            "execution_authority_latest_attempt_status": str(synthetic_attempt_path),
+            "execution_authority_latest_successful_snapshot": str(synthetic_success_path),
+        },
+        write_outputs=False,
+    )
+
+
+def validate_publish_existing_readiness_bundle(
+    bundle: Mapping[str, Any],
+    *,
+    target_closed_day_utc: str,
+) -> dict[str, Any]:
+    quality = bundle.get("quality") if isinstance(bundle.get("quality"), dict) else {}
+    report = bundle.get("report") if isinstance(bundle.get("report"), dict) else {}
+    quality_status = str(quality.get("status") or "").strip().lower()
+    if quality_status != "passed":
+        raise RuntimeError(
+            "publish-existing validation failed: data health quality did not pass "
+            f"(status={quality_status or 'missing'})"
+        )
+    report_reference_day = normalize_iso_day_text(
+        report.get("reference_closed_day_utc"),
+        field_name="report.reference_closed_day_utc",
+    )
+    if report_reference_day != target_closed_day_utc:
+        raise RuntimeError(
+            "publish-existing validation failed: data health report reference day diverged "
+            f"(expected={target_closed_day_utc} actual={report_reference_day})"
+        )
+    summary = report.get("summary") if isinstance(report.get("summary"), dict) else {}
+    if bool(summary.get("block_app")) or bool(summary.get("block_execution")):
+        raise RuntimeError(
+            "publish-existing validation failed: production/app/execution blockers remain "
+            f"(block_app={bool(summary.get('block_app'))} "
+            f"block_execution={bool(summary.get('block_execution'))})"
+        )
+    return dict(report)
+
+
+def build_publish_existing_dry_run_publish_result(
+    *,
+    root: Path,
+    env: Mapping[str, str],
+    attempt_payload: Mapping[str, Any],
+    success_payload: Mapping[str, Any],
+) -> dict[str, Any]:
+    context = authority_repo_publish_context_from_env(env, root=root)
+    publish_paths = [
+        root / "outputs" / "execution" / "authority" / "latest_attempt_status.json",
+        root / "outputs" / "execution" / "authority" / "latest_successful_snapshot.json",
+        *_resolve_required_app_publish_paths(success_payload, root=root),
+        *_resolve_required_production_publish_paths(root=root),
+    ]
+    deduped_pathspecs: list[str] = []
+    seen_pathspecs: set[str] = set()
+    for path in publish_paths:
+        pathspec = str(path.resolve().relative_to(root.resolve())).replace("\\", "/")
+        if pathspec in seen_pathspecs:
+            continue
+        seen_pathspecs.add(pathspec)
+        deduped_pathspecs.append(pathspec)
+    return {
+        "published": False,
+        "reason": "dry_run",
+        "attempt_status": str(
+            attempt_payload.get("latest_authoritative_attempt_status") or ""
+        ).strip().lower(),
+        "remote": context["remote"],
+        "branch": context["branch"],
+        "remote_url": None,
+        "publish_tree": context["publish_tree"],
+        "push_attempts": 0,
+        "pathspecs": deduped_pathspecs,
+        "commit_message": build_authority_publish_commit_message(attempt_payload),
+        "commit_sha": None,
+        "dry_run": True,
+    }
 
 
 def _resolve_canonical_app_export_path(
@@ -866,7 +1331,6 @@ def run_publish_existing_flow(
     resolved_root = Path(root) if root is not None else ROOT
     pi_env = build_pi_authoritative_env(env=env, root=resolved_root)
     executed_steps: list[str] = []
-
     run_checked_python_command(
         CURRENT_STRATEGY_BUILD_SCRIPT,
         env=pi_env,
@@ -877,6 +1341,15 @@ def run_publish_existing_flow(
     ensure_required_artifacts_exist(
         FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS,
         label="publish-existing Production Core",
+    )
+    target_closed_day_utc = determine_publish_existing_target_closed_day(resolved_root)
+    refresh_started_at_utc = utc_now_iso()
+    authority_state = build_publish_existing_authority_state(
+        root=resolved_root,
+        env=pi_env,
+        run_id=build_publish_existing_run_id(),
+        refresh_started_at_utc=refresh_started_at_utc,
+        target_closed_day_utc=target_closed_day_utc,
     )
     run_checked_python_command(
         CURRENT_STRATEGY_VALIDATE_SCRIPT,
@@ -889,74 +1362,94 @@ def run_publish_existing_flow(
         FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS,
         label="publish-existing Production Core",
     )
+    run_checked_python_command(
+        MATERIALIZE_APP_EXPORTS_SCRIPT,
+        env=pi_env,
+        root=resolved_root,
+        label="materialize_execution_app_exports",
+    )
+    executed_steps.append("materialize_execution_app_exports")
+    ensure_required_artifacts_exist(
+        FAST_MODE_REQUIRED_APP_SNAPSHOT_ARTIFACTS,
+        label="publish-existing app snapshots",
+    )
 
-    temp_output_path = Path(tempfile.gettempdir()) / "mrv1_publish_existing_data_health"
-    temp_output_path.mkdir(parents=True, exist_ok=True)
-    try:
-        temp_data_health_artifacts = data_health_artifact_paths(temp_output_path)
-        run_checked_python_command(
-            DATA_HEALTH_BUILD_SCRIPT,
-            env=pi_env,
-            root=resolved_root,
-            args=["--output-dir", str(temp_output_path)],
-            label="build_data_health_report",
-        )
-        executed_steps.append("build_data_health_report")
-        ensure_required_artifacts_exist(
-            temp_data_health_artifacts,
-            label="publish-existing data health",
-        )
-        run_checked_python_command(
-            DATA_HEALTH_VALIDATE_SCRIPT,
-            env=pi_env,
-            root=resolved_root,
-            args=[
-                "--report-path",
-                str(temp_data_health_artifacts[0]),
-                "--quality-path",
-                str(temp_data_health_artifacts[1]),
-            ],
-            label="validate_data_health_report",
-        )
-        executed_steps.append("validate_data_health_report")
-        ensure_required_artifacts_exist(
-            temp_data_health_artifacts,
-            label="publish-existing data health",
-        )
-    finally:
-        shutil.rmtree(temp_output_path, ignore_errors=True)
+    app_product_snapshot, app_runtime_snapshot = load_publish_existing_app_snapshots(resolved_root)
+    refresh_finished_at_utc = utc_now_iso()
+    attempt_payload, success_payload, authority_state = build_publish_existing_success_payloads(
+        state=authority_state,
+        app_product_snapshot=app_product_snapshot,
+        app_runtime_snapshot=app_runtime_snapshot,
+        refresh_finished_at_utc=refresh_finished_at_utc,
+    )
+    validation_run_dir = Path(str(authority_state["run_dir"]))
+    validation_bundle = build_publish_existing_validation_bundle(
+        root=resolved_root,
+        run_dir=validation_run_dir,
+        target_closed_day_utc=target_closed_day_utc,
+        attempt_payload=attempt_payload,
+        success_payload=success_payload,
+    )
+    executed_steps.append("build_publish_existing_validation_bundle")
+    readiness_report = validate_publish_existing_readiness_bundle(
+        validation_bundle,
+        target_closed_day_utc=target_closed_day_utc,
+    )
+    executed_steps.append("validate_publish_existing_readiness")
+
+    runtime_preview_chain = "not_invoked"
+    live_order_chain = "not_invoked"
+    print("[AUTHORITY] runtime_preview_chain=not_invoked", flush=True)
+    print("[AUTHORITY] live_order_chain=not_invoked", flush=True)
 
     if dry_run:
-        runtime_preview_chain = "skipped_dry_run"
-        print("[AUTHORITY] runtime_preview_chain=skipped_dry_run", flush=True)
+        authority_artifact_write = "skipped_dry_run"
+        publish_result = build_publish_existing_dry_run_publish_result(
+            root=resolved_root,
+            env=pi_env,
+            attempt_payload=attempt_payload,
+            success_payload=success_payload,
+        )
     else:
-        runtime_preview_chain = "executed_preview_only"
-        print("[AUTHORITY] runtime_preview_chain=executed_preview_only", flush=True)
-        run_checked_python_command(
-            EXECUTION_SOURCE_CONTRACT_SCRIPT,
-            env=pi_env,
+        publish_existing_authority_success_payloads(
             root=resolved_root,
-            label="validate_execution_source_contract",
-        )
-        executed_steps.append("validate_execution_source_contract")
-        run_checked_python_command(
-            SCHEDULER_ENTRY_SCRIPT,
             env=pi_env,
-            root=resolved_root,
-            label="run_full_auto_scheduler_entry",
+            attempt_payload=attempt_payload,
+            success_payload=success_payload,
         )
-        executed_steps.append("run_full_auto_scheduler_entry_preview")
-
-    publish_result = publish_authority_artifacts_to_repo(
-        root=resolved_root,
-        env=pi_env,
-        dry_run=dry_run,
-    )
+        authority_artifact_write = "success_payload_written"
+        reference_now = build_reference_now_for_closed_day(target_closed_day_utc)
+        canonical_bundle = build_report_bundle(
+            root=resolved_root,
+            output_dir=resolved_root / "outputs" / "production",
+            reference_now=reference_now,
+            write_outputs=False,
+        )
+        validate_publish_existing_readiness_bundle(
+            canonical_bundle,
+            target_closed_day_utc=target_closed_day_utc,
+        )
+        build_report_bundle(
+            root=resolved_root,
+            output_dir=resolved_root / "outputs" / "production",
+            reference_now=reference_now,
+            write_outputs=True,
+        )
+        publish_result = publish_authority_artifacts_to_repo(
+            root=resolved_root,
+            env=pi_env,
+            dry_run=False,
+        )
     return {
         "mode": "publish-existing",
         "dry_run": dry_run,
         "heavy_refresh_steps": "skipped",
+        "skipped_heavy_steps": list(HEAVY_REFRESH_STEPS),
         "runtime_preview_chain": runtime_preview_chain,
+        "live_order_chain": live_order_chain,
+        "authority_artifact_write": authority_artifact_write,
+        "target_closed_day_utc": target_closed_day_utc,
+        "data_health_reference_closed_day_utc": readiness_report["reference_closed_day_utc"],
         "executed_steps": executed_steps,
         "authority_repo_publish": publish_result,
     }

@@ -378,6 +378,39 @@ def _load_active_strategy_closed_day(root: Path) -> str | None:
     return parse_iso_day(payload.get("closed_day"))
 
 
+def _load_effective_btc_benchmark_last_day(root: Path) -> str | None:
+    snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
+    try:
+        payload = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    source_inputs = payload.get("source_inputs")
+    if not isinstance(source_inputs, dict):
+        return None
+    benchmark_source_mode = str(
+        source_inputs.get("benchmark_source_mode")
+        or nested_get(source_inputs, "files", "benchmark_ohlcv", "source_mode")
+        or ""
+    ).strip()
+    if benchmark_source_mode != "durable_baseline_embedded_btc_close":
+        return None
+    candidate_values = (
+        nested_get(source_inputs, "files", "benchmark_ohlcv", "last_date"),
+        nested_get(source_inputs, "files", "benchmark_ohlcv", "materialized_closed_day"),
+        nested_get(source_inputs, "files", "benchmark_ohlcv", "raw_source_closed_day"),
+        nested_get(source_inputs, "durable_benchmark_close", "last_date"),
+        nested_get(source_inputs, "durable_benchmark_close", "materialized_closed_day"),
+        nested_get(source_inputs, "benchmark_materialization", "materialized_closed_day"),
+    )
+    for value in candidate_values:
+        normalized = parse_iso_day(value)
+        if normalized:
+            return normalized
+    return None
+
+
 def resolve_effective_source_spec(spec: SourceSpec, *, context: dict[str, Any]) -> SourceSpec:
     main_strategy_model = str(context.get("main_strategy_model") or "").strip()
     if (
@@ -550,8 +583,12 @@ def resolve_actual_last_date_for_json(source_id: str, payload: dict[str, Any], *
     return None
 
 
-def resolve_actual_last_date_for_csv(source_id: str, meta: dict[str, Any]) -> str | None:
+def resolve_actual_last_date_for_csv(source_id: str, meta: dict[str, Any], *, root: Path) -> str | None:
     last_row = meta.get("last_row") or {}
+    if source_id == "data_ohlcv_btcusdt_1d":
+        effective_last_day = _load_effective_btc_benchmark_last_day(root)
+        if effective_last_day:
+            return effective_last_day
     if source_id in {
         "production_current_strategy_timeseries",
         "data_ohlcv_btcusdt_1d",
@@ -851,7 +888,11 @@ def evaluate_source(
                     source["status"] = STATUS_INVALID_SCHEMA
                     source["failure_reason"] = "Missing required CSV columns: " + ", ".join(missing_columns)
                 else:
-                    source["actual_last_date"] = resolve_actual_last_date_for_csv(spec.source_id, csv_meta)
+                    source["actual_last_date"] = resolve_actual_last_date_for_csv(
+                        spec.source_id,
+                        csv_meta,
+                        root=root,
+                    )
 
         if source["status"] == STATUS_OK and source["expected_last_date"] and source["actual_last_date"] and spec.max_allowed_lag_days is not None:
             expected_day = iso_day_to_date(source["expected_last_date"])
@@ -923,7 +964,11 @@ def build_context(
     if btc_path.exists():
         btc_meta, _btc_error = load_csv_meta(btc_path)
         if btc_meta:
-            btc_last_day = resolve_actual_last_date_for_csv(btc_spec.source_id, btc_meta)
+            btc_last_day = resolve_actual_last_date_for_csv(
+                btc_spec.source_id,
+                btc_meta,
+                root=root,
+            )
     return {
         "latest_closed_utc_day": latest_closed_utc_day(reference_now),
         "btc_last_day": btc_last_day,
