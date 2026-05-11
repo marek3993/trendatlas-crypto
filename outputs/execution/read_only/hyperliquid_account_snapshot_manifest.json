@@ -1,17 +1,17 @@
 {
   "artifact_name": "hyperliquid_read_only_account_snapshot",
-  "generated_at_utc": "2026-04-18T10:35:51Z",
-  "script_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\scripts\\execution\\hyperliquid_read_only_snapshot.py",
+  "generated_at_utc": "2026-05-11T11:21:42Z",
+  "script_path": "/opt/market_regime_v1/scripts/execution/hyperliquid_read_only_snapshot.py",
   "config_paths": [
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\hyperliquid_account.json"
+    "/opt/market_regime_v1/execution/config/execution_mode.json",
+    "/opt/market_regime_v1/execution/config/hyperliquid_account.json"
   ],
   "output_paths": [
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_quality.json",
-    "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot_manifest.json"
+    "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot.json",
+    "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot_quality.json",
+    "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot_manifest.json"
   ],
   "status": "success",
-  "started_at_utc": "2026-04-18T10:35:49Z",
+  "started_at_utc": "2026-05-11T11:21:41Z",
   "runtime_posture": "live_runtime_read_only_observability"
 }
