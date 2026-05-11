@@ -224,10 +224,10 @@ V praxi teda ide o **top-1 rotačný systém s možnosťou zostať v hotovosti**
 ### Prečo stratégia niekedy zostáva v hotovosti
 
 Hotovosť neznamená, že systém „nič nerobí“.  
-Znamená to, že podľa interných pravidiel ešte trh neprekročil kvalitatívnu hranicu pre nákup, alebo žiadny kandidát nie je dosť presvedčivý na reálnu expozíciu.
+Znamená to, že trh ešte neprekročil kvalitatívnu hranicu pre nákup, alebo modelová voľba nie je dosť presvedčivá na reálnu expozíciu.
 
-Aj preto môže systém interne vidieť lídra, ale obchod ešte nespustiť.  
-Kandidát môže existovať, no bezpečnostná a riadiaca vrstva stále nemusí dovoliť vstup.
+Aj preto môže model preferovať lídra, ale obchod ešte nespustiť.
+Modelová voľba môže existovať, no bezpečnostná a riadiaca vrstva stále nemusí dovoliť vstup.
 
 ### Čím je táto stratégia iná
 
@@ -655,8 +655,8 @@ TEXT["sk"].update(
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
         "production_chart_note": "Graf ukazuje modelový vývoj vs BTC. Nie je to výpis reálneho účtu ani potvrdenie otvorenej pozície.",
-        "production_chart_baseline_note": "Cervena krivka je autorizovana strategia. Zlata krivka je BTC baseline prepocitana zo zaverecnych cien a rebased na rovnaky zaciatok zobrazeneho obdobia.",
-        "production_chart_flat_note": "Ked modelovy signal nema povolenu trhovu expoziciu, kapitalova seria zostava rovna okrem explicitnych nakladov na prechod.",
+        "production_chart_baseline_note": "Krivka Model je modelovy vyvoj. Zlata krivka je BTC baseline prepocitana zo zaverecnych cien a rebased na rovnaky zaciatok zobrazeneho obdobia.",
+        "production_chart_flat_note": "Ked modelovy signal nema povolenu modelovu expoziciu, modelova kapitalova seria zostava rovna okrem explicitnych nakladov na prechod.",
         "production_chart_participation_note": "Spodny strip ukazuje historicky modelovy signal, nie vypis realnej penazenky ani potvrdenie otvorenej pozicie.",
         "production_reason_title": "Preto je strategia teraz v tomto stave",
         "production_wait_title": "Na co strategia caka",
@@ -4784,7 +4784,42 @@ def resolve_real_account_exposure_state(
     real_order_gate_payload: dict[str, Any],
     production_snapshot: dict[str, Any],
     lang: str,
+    runtime_real_account_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    if isinstance(runtime_real_account_state, dict) and runtime_real_account_state:
+        asset = str(runtime_real_account_state.get("asset") or "CASH").strip().upper() or "CASH"
+        exposure_value = as_float(runtime_real_account_state.get("exposure_x"))
+        if exposure_value is None:
+            exposure_value = 0.0
+        in_market = as_bool(runtime_real_account_state.get("in_market")) is True
+        state_text = (
+            t(lang, "production_state_in_market")
+            if in_market
+            else t(lang, "production_state_out_of_market")
+        )
+        exposure_text = f"{exposure_value:.2f}x"
+        gate_status = str(runtime_real_account_state.get("gate_status") or "").strip().lower()
+        would_place_real_order = as_bool(runtime_real_account_state.get("would_place_real_order"))
+        subtitle = (
+            "CASH | Odoslanie obchodu blokovane"
+            if lang == "sk" and (gate_status == "blocked" or would_place_real_order is False)
+            else "CASH | Order placement blocked"
+            if gate_status == "blocked" or would_place_real_order is False
+            else str(runtime_real_account_state.get("source") or "wallet/intent/gate")
+        )
+        return {
+            "is_out_of_market": not in_market,
+            "asset": asset,
+            "exposure": exposure_value,
+            "exposure_text": exposure_text,
+            "state_text": state_text,
+            "value": f"{state_text} / {exposure_text}",
+            "subtitle": subtitle,
+            "target_asset": str(runtime_real_account_state.get("intent_target_asset") or asset).strip().upper(),
+            "gate_status": gate_status,
+            "would_place_real_order": would_place_real_order,
+        }
+
     open_position = (
         account_snapshot_view.get("open_position")
         if isinstance(account_snapshot_view.get("open_position"), dict)
@@ -5798,6 +5833,7 @@ def make_production_equity_chart(
     main_label: str,
     title: str,
     real_account_exposure_state: dict[str, Any] | None = None,
+    model_signal_state: dict[str, Any] | None = None,
 ) -> go.Figure:
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
@@ -5966,8 +6002,13 @@ def make_production_equity_chart(
     )
 
     current_market_state = market_state_labels[-1]
-    current_exposure_text = f"{float(exposure_series.iloc[-1]):.2f}x"
-    current_candidate_label = candidate_labels.iloc[-1]
+    runtime_model_signal = model_signal_state if isinstance(model_signal_state, dict) else {}
+    current_exposure_value = _first_numeric_value(runtime_model_signal.get("exposure_x"), exposure_series.iloc[-1])
+    current_exposure_text = f"{float(current_exposure_value or 0.0):.2f}x"
+    current_candidate_label = product_asset_label_nominative(
+        first_present_value(runtime_model_signal.get("preferred_asset"), candidate_labels.iloc[-1]),
+        lang,
+    )
     if isinstance(real_account_exposure_state, dict) and real_account_exposure_state.get("is_out_of_market") is True:
         real_asset = str(real_account_exposure_state.get("asset") or "CASH").strip().upper() or "CASH"
         real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
@@ -6298,6 +6339,9 @@ account_runtime_snapshot = select_preferred_account_runtime_snapshot(runtime_sna
 account_status_payload = dict(account_runtime_snapshot.get("execution_status") or {})
 account_snapshot_payload = dict(account_runtime_snapshot.get("account_snapshot_summary") or {})
 account_snapshot_view = dict(account_snapshot_payload)
+runtime_real_account_state = dict(runtime_snapshot.get("real_account_state") or {})
+runtime_model_signal_state = dict(runtime_snapshot.get("model_signal_state") or {})
+runtime_model_performance_state = dict(runtime_snapshot.get("model_performance_state") or {})
 runtime_health_payload = dict(runtime_snapshot.get("runtime_health_summary") or {})
 dry_run_decision_payload = dict(runtime_snapshot.get("dry_run_summary") or {})
 real_order_gate_payload = dict(runtime_snapshot.get("gate_summary") or {})
@@ -6349,8 +6393,10 @@ with tabs[0]:
         real_order_gate_payload=real_order_gate_payload,
         production_snapshot=production_snapshot,
         lang=lang,
+        runtime_real_account_state=runtime_real_account_state,
     )
     strategy_signal_exposure = _first_numeric_value(
+        runtime_model_signal_state.get("exposure_x"),
         get_nested_value(real_order_gate_payload, "production_signal_context", "model_candidate_exposure"),
         production_snapshot.get("model_candidate_exposure"),
         production_snapshot.get("effective_market_exposure"),
@@ -6397,7 +6443,13 @@ with tabs[0]:
         },
         {
             "label": t(lang, "production_candidate_asset"),
-            "value": product_asset_label_nominative(production_snapshot.get("candidate_asset"), lang),
+            "value": product_asset_label_nominative(
+                first_present_value(
+                    runtime_model_signal_state.get("preferred_asset"),
+                    production_snapshot.get("candidate_asset"),
+                ),
+                lang,
+            ),
             "subtitle": t(lang, "production_candidate_hint"),
             "help": METRIC_HELP[lang][t(lang, "production_candidate_asset")],
             "accent": "green",
@@ -6435,7 +6487,12 @@ with tabs[0]:
                 item["accent"],
             )
 
-    st.markdown(f"### {t(lang, 'chart_title')}")
+    model_chart_title = (
+        str(runtime_model_performance_state.get("label_sk") or "").strip()
+        if lang == "sk"
+        else t(lang, "chart_title")
+    ) or t(lang, "chart_title")
+    st.markdown(f"### {model_chart_title}")
     selected_year_home = st.selectbox(
         t(lang, "chart_year"),
         options=years,
@@ -6448,8 +6505,9 @@ with tabs[0]:
             year=selected_year_home,
             lang=lang,
             main_label=t(lang, "production_chart_legend"),
-            title=t(lang, "chart_title"),
+            title=model_chart_title,
             real_account_exposure_state=real_account_exposure_state,
+            model_signal_state=runtime_model_signal_state,
         ),
         width="stretch",
     )

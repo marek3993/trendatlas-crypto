@@ -9,6 +9,8 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from scripts.execution.materialize_execution_app_exports import build_runtime_public_status_contract
+
 
 ROOT = Path(__file__).resolve().parents[1]
 APP_PY_PATH = ROOT / "app.py"
@@ -262,6 +264,53 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertIn("%{customdata[4]}", hover_template)
         self.assertNotIn("Stav trhu", hover_template)
         self.assertNotIn("V TRHU", hover_template)
+
+    def test_runtime_contract_separates_wallet_cash_from_model_btc_signal(self):
+        contract = build_runtime_public_status_contract(
+            account_summary={
+                "current_position": "CASH",
+                "positions_count": 0,
+                "open_position": None,
+            },
+            intent_payload={
+                "target_asset": "CASH",
+                "target_size_pct": 0.0,
+            },
+            dry_run_payload={
+                "target_asset": "BTC",
+                "target_size_pct": 0.75,
+            },
+            gate_payload={
+                "target_asset": "CASH",
+                "status": "blocked",
+                "would_place_real_order": False,
+            },
+            production_snapshot_payload={
+                "candidate_asset": "BTC",
+                "model_candidate_exposure": 0.75,
+                "effective_market_exposure": 0.75,
+                "actual_held_asset": "BTC",
+                "current_asset": "BTC",
+            },
+        )
+
+        real_state = contract["real_account_state"]
+        model_state = contract["model_signal_state"]
+        performance_state = contract["model_performance_state"]
+        self.assertFalse(real_state["in_market"])
+        self.assertEqual(real_state["asset"], "CASH")
+        self.assertEqual(real_state["exposure_x"], 0.0)
+        self.assertEqual(real_state["position_label_sk"], "Mimo trhu")
+        self.assertEqual(real_state["gate_status"], "blocked")
+        self.assertFalse(real_state["would_place_real_order"])
+        self.assertEqual(real_state["source"], "wallet/intent/gate")
+        self.assertEqual(real_state["intent_target_asset"], "CASH")
+        self.assertEqual(real_state["intent_target_size_pct"], 0.0)
+        self.assertEqual(model_state["preferred_asset"], "BTC")
+        self.assertEqual(model_state["exposure_x"], 0.75)
+        self.assertTrue(model_state["not_real_wallet_exposure"])
+        self.assertEqual(model_state["label_sk"], "Modelový signál")
+        self.assertEqual(performance_state["equity_curve_semantics"], "model/paper, never real account PnL")
 
 
 if __name__ == "__main__":

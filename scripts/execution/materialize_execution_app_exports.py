@@ -104,6 +104,7 @@ ACCOUNT_SNAPSHOT_PATH = OUTPUTS_DIR / "read_only" / "hyperliquid_account_snapsho
 RUNTIME_HEALTH_PATH = OUTPUTS_DIR / "runtime_health" / "latest_runtime_health.json"
 FULL_AUTO_SCHEDULER_MANIFEST_PATH = OUTPUTS_DIR / "full_auto_scheduler" / "latest_scheduler_entry_manifest.json"
 DRY_RUN_DECISION_PATH = OUTPUTS_DIR / "dry_run" / "latest_dry_run_decision.json"
+EXECUTION_INTENT_PATH = OUTPUTS_DIR / "intents" / "latest_execution_intent.json"
 REAL_ORDER_GATE_PATH = OUTPUTS_DIR / "live_gate" / "latest_real_order_gate_decision.json"
 EXECUTION_MODE_CONFIG_PATH = ROOT / "execution" / "config" / "execution_mode.json"
 LIVE_ORDER_POLICY_PATH = ROOT / "execution" / "config" / "live_order_policy.json"
@@ -2228,8 +2229,135 @@ def runtime_first_float(payload: dict[str, Any], keys: list[str]) -> float | Non
     return None
 
 
+def runtime_bool(value: Any) -> bool | None:
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        if value == 1:
+            return True
+        if value == 0:
+            return False
+    text = str(value).strip().lower()
+    if text in {"true", "1", "yes", "y", "on"}:
+        return True
+    if text in {"false", "0", "no", "n", "off"}:
+        return False
+    return None
+
+
 def normalize_runtime_asset(value: Any) -> str:
     return str(value or "").strip().upper()
+
+
+def is_runtime_cash_asset(value: Any) -> bool:
+    return normalize_runtime_asset(value) in {"", "CASH", "USD", "USDC", "USDT", "NONE", "NULL"}
+
+
+def build_runtime_public_status_contract(
+    *,
+    account_summary: dict[str, Any],
+    intent_payload: dict[str, Any],
+    dry_run_payload: dict[str, Any],
+    gate_payload: dict[str, Any],
+    production_snapshot_payload: dict[str, Any],
+) -> dict[str, Any]:
+    open_position = account_summary.get("open_position")
+    open_position_asset = ""
+    open_position_size = 0.0
+    if isinstance(open_position, dict):
+        open_position_asset = normalize_runtime_asset(
+            open_position.get("symbol") or open_position.get("asset") or open_position.get("coin")
+        )
+        open_position_size = abs(parse_float_maybe(open_position.get("size")) or 0.0)
+
+    execution_intent = (
+        production_snapshot_payload.get("execution_intent")
+        if isinstance(production_snapshot_payload.get("execution_intent"), dict)
+        else {}
+    )
+    target_asset = normalize_runtime_asset(
+        first_present_runtime_value(
+            intent_payload.get("target_asset"),
+            execution_intent.get("target_asset"),
+            gate_payload.get("target_asset"),
+            dry_run_payload.get("target_asset"),
+        )
+    )
+    target_size_pct = parse_float_maybe(
+        first_present_runtime_value(
+            intent_payload.get("target_size_pct"),
+            intent_payload.get("target_exposure"),
+            execution_intent.get("target_size_pct"),
+            execution_intent.get("target_exposure"),
+            gate_payload.get("target_size_pct"),
+            gate_payload.get("target_exposure"),
+            dry_run_payload.get("target_size_pct"),
+            dry_run_payload.get("target_exposure"),
+        )
+    )
+    gate_status = str(gate_payload.get("status") or "").strip().lower()
+    would_place_real_order = runtime_bool(gate_payload.get("would_place_real_order"))
+
+    if open_position_asset and open_position_size > 1e-12:
+        real_asset = open_position_asset
+        exposure_x = parse_float_maybe(first_present_runtime_value(account_summary.get("current_exposure"), target_size_pct))
+        in_market = True
+        position_label_sk = "V trhu"
+    else:
+        execution_points_to_cash = (
+            is_runtime_cash_asset(target_asset)
+            or (target_size_pct is not None and math.isclose(target_size_pct, 0.0, abs_tol=1e-12))
+            or gate_status == "blocked"
+            or would_place_real_order is False
+        )
+        real_asset = "CASH" if execution_points_to_cash else (target_asset or "CASH")
+        exposure_x = 0.0 if execution_points_to_cash else (target_size_pct or 0.0)
+        in_market = bool(not execution_points_to_cash and not is_runtime_cash_asset(real_asset) and exposure_x > 1e-12)
+        position_label_sk = "V trhu" if in_market else "Mimo trhu"
+
+    preferred_asset = normalize_runtime_asset(
+        first_present_runtime_value(
+            production_snapshot_payload.get("candidate_asset"),
+            production_snapshot_payload.get("selected_asset"),
+            gate_payload.get("candidate_asset"),
+        )
+    )
+    model_exposure = parse_float_maybe(
+        first_present_runtime_value(
+            production_snapshot_payload.get("model_candidate_exposure"),
+            gate_payload.get("model_candidate_exposure"),
+            production_snapshot_payload.get("effective_market_exposure"),
+        )
+    )
+
+    return {
+        "real_account_state": {
+            "asset": real_asset,
+            "exposure_x": round(float(exposure_x or 0.0), 6),
+            "in_market": in_market,
+            "position_label_sk": position_label_sk,
+            "source": "wallet/intent/gate",
+            "gate_status": gate_status or None,
+            "would_place_real_order": would_place_real_order,
+            "intent_target_asset": target_asset or None,
+            "intent_target_size_pct": target_size_pct,
+        },
+        "model_signal_state": {
+            "preferred_asset": preferred_asset or None,
+            "exposure_x": round(float(model_exposure), 6) if model_exposure is not None else None,
+            "label_sk": "Modelový signál",
+            "not_real_wallet_exposure": True,
+            "source": "model_signal",
+        },
+        "model_performance_state": {
+            "kind": "model_performance",
+            "label_sk": "Modelový vývoj vs BTC",
+            "equity_curve_semantics": "model/paper, never real account PnL",
+            "source": "model_performance",
+        },
+    }
 
 
 def extract_runtime_snapshot_open_position(snapshot_payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -2601,13 +2729,22 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
     account_snapshot_payload = read_json_optional(ACCOUNT_SNAPSHOT_PATH)
     runtime_health_payload = read_json_optional(RUNTIME_HEALTH_PATH)
     dry_run_payload = read_json_optional(DRY_RUN_DECISION_PATH)
+    intent_payload = read_json_optional(EXECUTION_INTENT_PATH)
     gate_payload = read_json_optional(REAL_ORDER_GATE_PATH)
     execution_mode_payload = read_json_optional(EXECUTION_MODE_CONFIG_PATH)
     live_order_policy_payload = read_json_optional(LIVE_ORDER_POLICY_PATH)
     trading_operation_mode_payload = read_json_optional(TRADING_OPERATION_MODE_PATH)
     product_snapshot_payload = read_json_optional(APP_PRODUCT_SNAPSHOT_PATH)
+    production_snapshot_payload = read_json_optional(PRODUCTION_SNAPSHOT_PATH)
 
     account_summary = build_runtime_account_summary(status_payload, account_snapshot_payload)
+    public_status_contract = build_runtime_public_status_contract(
+        account_summary=account_summary,
+        intent_payload=intent_payload,
+        dry_run_payload=dry_run_payload,
+        gate_payload=gate_payload,
+        production_snapshot_payload=production_snapshot_payload,
+    )
     runtime_last_sync_utc = runtime_health_payload.get("last_success_utc")
     last_pi_update_utc, last_pi_update_metadata = resolve_last_pi_update_signal()
     account_snapshot_as_of_utc = account_snapshot_payload.get("as_of_utc")
@@ -2709,12 +2846,16 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
             "target_asset": status_payload.get("target_asset"),
             "error": status_payload.get("error"),
         },
+        "real_account_state": public_status_contract["real_account_state"],
+        "model_signal_state": public_status_contract["model_signal_state"],
+        "model_performance_state": public_status_contract["model_performance_state"],
         "account_snapshot_summary": account_summary,
         "dry_run_summary": {
             "signal_id": dry_run_payload.get("signal_id"),
             "strategy_model": dry_run_payload.get("strategy_model"),
             "as_of_source": dry_run_payload.get("as_of_source"),
             "target_asset": dry_run_payload.get("target_asset"),
+            "target_size_pct": dry_run_payload.get("target_size_pct"),
             "target_regime": dry_run_payload.get("target_regime"),
             "current_state": dry_run_payload.get("current_state"),
             "open_orders_count": dry_run_payload.get("open_orders_count"),
@@ -2724,6 +2865,14 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
             "decision_reason": dry_run_payload.get("decision_reason"),
             "simulated_order": dry_run_payload.get("simulated_order", {}),
             "guardrails": dry_run_payload.get("guardrails", {}),
+        },
+        "execution_intent_summary": {
+            "signal_id": intent_payload.get("signal_id"),
+            "target_asset": intent_payload.get("target_asset"),
+            "target_size_pct": intent_payload.get("target_size_pct"),
+            "target_exposure": intent_payload.get("target_exposure"),
+            "stale_signal": intent_payload.get("stale_signal"),
+            "source_path": path_for_app(EXECUTION_INTENT_PATH),
         },
         "gate_summary": {
             "signal_id": gate_payload.get("signal_id"),
@@ -2735,6 +2884,7 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
             "status": gate_payload.get("status"),
             "block_reasons": gate_payload.get("block_reasons", []),
             "checks": gate_payload.get("checks", {}),
+            "production_signal_context": gate_payload.get("production_signal_context", {}),
         },
         "runtime_health_summary": {
             "runtime_type": runtime_health_payload.get("runtime_type"),
@@ -2782,6 +2932,7 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
             "execution_status": source_metadata(EXECUTION_STATUS_PATH, "execution_status"),
             "account_snapshot_summary": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
             "dry_run_summary": source_metadata(DRY_RUN_DECISION_PATH, "dry_run_decision"),
+            "execution_intent_summary": source_metadata(EXECUTION_INTENT_PATH, "execution_intent"),
             "gate_summary": source_metadata(REAL_ORDER_GATE_PATH, "real_order_gate_decision"),
             "runtime_health_summary": source_metadata(RUNTIME_HEALTH_PATH, "runtime_health"),
             "execution_mode_posture": source_metadata(EXECUTION_MODE_CONFIG_PATH, "execution_mode_config"),

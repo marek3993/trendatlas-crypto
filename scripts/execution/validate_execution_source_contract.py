@@ -369,6 +369,9 @@ def validate_runtime_snapshot_payload(
             "runtime_table_snapshot",
             "account_observability_contract",
             "execution_status",
+            "real_account_state",
+            "model_signal_state",
+            "model_performance_state",
             "account_snapshot_summary",
             "dry_run_summary",
             "gate_summary",
@@ -404,6 +407,36 @@ def validate_runtime_snapshot_payload(
         execution_status,
         ["as_of_utc"],
         f"{context}.execution_status",
+        errors,
+    )
+
+    real_account_state = require_dict(payload, "real_account_state", context, errors)
+    require_keys(
+        real_account_state,
+        [
+            "asset",
+            "exposure_x",
+            "in_market",
+            "position_label_sk",
+            "source",
+            "gate_status",
+            "would_place_real_order",
+        ],
+        f"{context}.real_account_state",
+        errors,
+    )
+    model_signal_state = require_dict(payload, "model_signal_state", context, errors)
+    require_keys(
+        model_signal_state,
+        ["preferred_asset", "exposure_x", "label_sk", "not_real_wallet_exposure", "source"],
+        f"{context}.model_signal_state",
+        errors,
+    )
+    model_performance_state = require_dict(payload, "model_performance_state", context, errors)
+    require_keys(
+        model_performance_state,
+        ["kind", "label_sk", "equity_curve_semantics", "source"],
+        f"{context}.model_performance_state",
         errors,
     )
 
