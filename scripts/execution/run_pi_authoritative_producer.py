@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import shutil
@@ -7,7 +8,7 @@ import socket
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 if str(Path(__file__).resolve().parents[2]) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
@@ -20,6 +21,16 @@ from scripts.execution.current_strategy_root_contract import (
 
 ROOT = Path(__file__).resolve().parents[2]
 PIPELINE_SCRIPT = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
+CURRENT_STRATEGY_VALIDATE_SCRIPT = (
+    ROOT / "scripts" / "production" / "validate_current_strategy_snapshot.py"
+)
+DATA_HEALTH_VALIDATE_SCRIPT = (
+    ROOT / "scripts" / "production" / "validate_data_health_report.py"
+)
+SCHEDULER_ENTRY_SCRIPT = ROOT / "scripts" / "execution" / "run_full_auto_scheduler_entry.py"
+EXECUTION_SOURCE_CONTRACT_SCRIPT = (
+    ROOT / "scripts" / "execution" / "validate_execution_source_contract.py"
+)
 TERMINAL_ATTEMPT_STATUSES = frozenset({"success", "failed"})
 CANONICAL_APP_EXPORT_PREFIX = ("outputs", "execution", "app_exports")
 ALLOWED_SUPPORT_ARTIFACT_RELATIVE_PATHS = frozenset(
@@ -47,6 +58,18 @@ REMOTE_DRIFT_PUSH_MARKERS = (
 )
 AUTHORITY_GIT_USER_NAME_ENV = "MRV1_AUTHORITY_GIT_USER_NAME"
 AUTHORITY_GIT_USER_EMAIL_ENV = "MRV1_AUTHORITY_GIT_USER_EMAIL"
+FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS = (
+    ROOT / "outputs" / "production" / "current_strategy_snapshot.json",
+    ROOT / "outputs" / "production" / "current_strategy_timeseries.csv",
+    ROOT / "outputs" / "production" / "current_strategy_diagnostics.json",
+    ROOT / "outputs" / "production" / "current_strategy_snapshot.quality.json",
+    ROOT / "outputs" / "production" / "current_strategy_snapshot.manifest.json",
+)
+FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS = (
+    ROOT / "outputs" / "production" / "data_health_report.json",
+    ROOT / "outputs" / "production" / "data_health_report.quality.json",
+    ROOT / "outputs" / "production" / "data_health_report.manifest.json",
+)
 
 
 def authority_repo_publish_context_from_env(
@@ -94,6 +117,15 @@ def load_json_required(path: Path) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError(f"Authority artifact must be a JSON object: {path}")
     return payload
+
+
+def ensure_required_artifacts_exist(paths: Sequence[Path], *, label: str) -> None:
+    missing_paths = [str(path) for path in paths if not path.exists() or not path.is_file()]
+    if not missing_paths:
+        return
+    raise FileNotFoundError(
+        f"Missing required {label} artifacts:\n" + "\n".join(missing_paths)
+    )
 
 
 def _resolve_canonical_app_export_path(
@@ -569,6 +601,7 @@ def publish_authority_artifacts_to_repo(
     *,
     root: Path | None = None,
     env: Mapping[str, str] | None = None,
+    dry_run: bool = False,
 ) -> dict[str, Any]:
     resolved_root = Path(root) if root is not None else ROOT
     latest_attempt_status_path = (
@@ -610,6 +643,27 @@ def publish_authority_artifacts_to_repo(
     branch = context["branch"]
     publish_tree = Path(context["publish_tree"])
     max_push_attempts = int(context["max_push_attempts"])
+    _ensure_publish_tree_is_external(resolved_root, publish_tree)
+    pathspecs = [
+        str(path.resolve().relative_to(resolved_root.resolve())).replace("\\", "/")
+        for path in publish_paths
+    ]
+    commit_message = build_authority_publish_commit_message(attempt_payload)
+    if dry_run:
+        return {
+            "published": False,
+            "reason": "dry_run",
+            "attempt_status": attempt_status,
+            "remote": remote,
+            "branch": branch,
+            "remote_url": None,
+            "publish_tree": str(publish_tree),
+            "push_attempts": 0,
+            "pathspecs": pathspecs,
+            "commit_message": commit_message,
+            "commit_sha": None,
+            "dry_run": True,
+        }
     git_user_name, git_user_email = _resolve_authority_git_identity(
         runtime_root=resolved_root,
         env=env,
@@ -624,8 +678,6 @@ def publish_authority_artifacts_to_repo(
         remote=remote,
         env=git_env,
     )
-    commit_message = build_authority_publish_commit_message(attempt_payload)
-    pathspecs: list[str] = []
     for push_attempt in range(1, max_push_attempts + 1):
         _ensure_clean_publish_tree(
             runtime_root=resolved_root,
@@ -705,51 +757,225 @@ def publish_authority_artifacts_to_repo(
     }
 
 
-def build_pi_authoritative_env() -> dict[str, str]:
-    env = os.environ.copy()
-    env["MRV1_ENABLE_AUTHORITY_PUBLISH"] = "1"
-    env["MRV1_AUTHORITY_MODE"] = "authoritative"
-    env["MRV1_AUTOMATIC_PRODUCER_ID"] = "raspberry_pi"
-    env["MRV1_REQUIRE_PI_RUNTIME"] = "1"
-    env.setdefault("MRV1_PUBLISH_HOSTNAME", socket.gethostname())
-    env.setdefault("MRV1_AUTHORITY_REPO_REMOTE", "origin")
-    env.setdefault("MRV1_AUTHORITY_REPO_BRANCH", "main")
-    env.setdefault(
+def build_pi_authoritative_env(
+    *,
+    env: Mapping[str, str] | None = None,
+    root: Path | None = None,
+) -> dict[str, str]:
+    resolved_root = Path(root) if root is not None else ROOT
+    merged_env = dict(os.environ if env is None else env)
+    merged_env["MRV1_ENABLE_AUTHORITY_PUBLISH"] = "1"
+    merged_env["MRV1_AUTHORITY_MODE"] = "authoritative"
+    merged_env["MRV1_AUTOMATIC_PRODUCER_ID"] = "raspberry_pi"
+    merged_env["MRV1_REQUIRE_PI_RUNTIME"] = "1"
+    merged_env.setdefault("MRV1_PUBLISH_HOSTNAME", socket.gethostname())
+    merged_env.setdefault("MRV1_AUTHORITY_REPO_REMOTE", "origin")
+    merged_env.setdefault("MRV1_AUTHORITY_REPO_BRANCH", "main")
+    merged_env.setdefault(
         "MRV1_AUTHORITY_PUBLISH_TREE",
-        str(ROOT.parent / f"{ROOT.name}__authority_publish"),
+        str(resolved_root.parent / f"{resolved_root.name}__authority_publish"),
     )
-    env.setdefault("MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS", "3")
-    env["MRV1_AUTHORITY_ENTRYPOINT"] = str(Path(__file__).resolve())
-    return env
+    merged_env.setdefault("MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS", "3")
+    merged_env["MRV1_AUTHORITY_ENTRYPOINT"] = str(Path(__file__).resolve())
+    return merged_env
 
 
-def main() -> None:
+def run_checked_python_command(
+    script_path: Path,
+    *,
+    env: Mapping[str, str],
+    root: Path,
+    args: Sequence[str] | None = None,
+    label: str,
+) -> subprocess.CompletedProcess[Any]:
+    if not script_path.exists() or not script_path.is_file():
+        raise FileNotFoundError(f"Missing required script for {label}: {script_path}")
+    command = [sys.executable, str(script_path), *(list(args or []))]
+    completed = subprocess.run(
+        command,
+        cwd=str(root),
+        env=dict(env),
+        check=False,
+    )
+    if completed.returncode != 0:
+        raise RuntimeError(f"{label} failed with exit code {completed.returncode}")
+    return completed
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Pi-only authority wrapper. The safe default publishes existing authoritative "
+            "artifacts after validation; the full refresh path is explicit only."
+        )
+    )
+    parser.add_argument(
+        "--mode",
+        choices=("publish-existing", "full-refresh"),
+        default="publish-existing",
+        help=(
+            "publish-existing validates and publishes the current authoritative artifacts "
+            "without running the heavy refresh chain. full-refresh runs the daily refresh pipeline."
+        ),
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help=(
+            "Validate the publish-existing path and show the authority repo publish plan "
+            "without cloning, committing, or pushing."
+        ),
+    )
+    return parser
+
+
+def parse_cli_args(
+    argv: Sequence[str] | None = None,
+) -> tuple[argparse.Namespace, list[str]]:
+    parser = build_arg_parser()
+    args, passthrough_args = parser.parse_known_args(argv)
+    if args.mode != "full-refresh" and passthrough_args:
+        parser.error("extra arguments are only supported with --mode full-refresh")
+    if args.mode == "full-refresh" and args.dry_run:
+        parser.error("--dry-run is supported only with --mode publish-existing")
+    return args, passthrough_args
+
+
+def print_mode_banner(mode: str) -> None:
+    print(f"[AUTHORITY] mode={mode}", flush=True)
+    if mode == "publish-existing":
+        print("[AUTHORITY] heavy_refresh_steps=skipped", flush=True)
+        return
+    print("[AUTHORITY] heavy_refresh_steps=enabled", flush=True)
+
+
+def run_publish_existing_flow(
+    *,
+    root: Path | None = None,
+    env: Mapping[str, str] | None = None,
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    resolved_root = Path(root) if root is not None else ROOT
+    pi_env = build_pi_authoritative_env(env=env, root=resolved_root)
+    executed_steps: list[str] = []
+
+    ensure_required_artifacts_exist(
+        FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS,
+        label="publish-existing Production Core",
+    )
+    executed_steps.append("verify_production_core_artifacts")
+    run_checked_python_command(
+        CURRENT_STRATEGY_VALIDATE_SCRIPT,
+        env=pi_env,
+        root=resolved_root,
+        label="validate_current_strategy_snapshot",
+    )
+    executed_steps.append("validate_current_strategy_snapshot")
+    ensure_required_artifacts_exist(
+        FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS,
+        label="publish-existing Production Core",
+    )
+
+    ensure_required_artifacts_exist(
+        FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS,
+        label="publish-existing data health",
+    )
+    executed_steps.append("verify_data_health_artifacts")
+    run_checked_python_command(
+        DATA_HEALTH_VALIDATE_SCRIPT,
+        env=pi_env,
+        root=resolved_root,
+        label="validate_data_health_report",
+    )
+    executed_steps.append("validate_data_health_report")
+    ensure_required_artifacts_exist(
+        FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS,
+        label="publish-existing data health",
+    )
+
+    run_checked_python_command(
+        EXECUTION_SOURCE_CONTRACT_SCRIPT,
+        env=pi_env,
+        root=resolved_root,
+        label="validate_execution_source_contract",
+    )
+    executed_steps.append("validate_execution_source_contract")
+    run_checked_python_command(
+        SCHEDULER_ENTRY_SCRIPT,
+        env=pi_env,
+        root=resolved_root,
+        label="run_full_auto_scheduler_entry",
+    )
+    executed_steps.append("run_full_auto_scheduler_entry_preview")
+
+    publish_result = publish_authority_artifacts_to_repo(
+        root=resolved_root,
+        env=pi_env,
+        dry_run=dry_run,
+    )
+    return {
+        "mode": "publish-existing",
+        "dry_run": dry_run,
+        "heavy_refresh_steps": "skipped",
+        "executed_steps": executed_steps,
+        "authority_repo_publish": publish_result,
+    }
+
+
+def run_full_refresh_flow(
+    *,
+    pipeline_args: Sequence[str],
+    root: Path | None = None,
+    env: Mapping[str, str] | None = None,
+) -> tuple[int, dict[str, Any]]:
+    resolved_root = Path(root) if root is not None else ROOT
     if not PIPELINE_SCRIPT.exists():
         raise FileNotFoundError(f"Missing pipeline script: {PIPELINE_SCRIPT}")
 
-    command = [sys.executable, str(PIPELINE_SCRIPT), *sys.argv[1:]]
-    pi_env = build_pi_authoritative_env()
+    command = [sys.executable, str(PIPELINE_SCRIPT), *list(pipeline_args)]
+    pi_env = build_pi_authoritative_env(env=env, root=resolved_root)
     completed = subprocess.run(
         command,
-        cwd=str(ROOT),
+        cwd=str(resolved_root),
         env=pi_env,
         check=False,
     )
     publish_result = publish_authority_artifacts_to_repo(
-        root=ROOT,
+        root=resolved_root,
         env=pi_env,
     )
+    return completed.returncode, {
+        "mode": "full-refresh",
+        "pipeline_command": command,
+        "pipeline_returncode": completed.returncode,
+        "heavy_refresh_steps": "enabled",
+        "authority_repo_publish": publish_result,
+    }
+
+
+def main(argv: Sequence[str] | None = None) -> None:
+    args, passthrough_args = parse_cli_args(argv)
+    print_mode_banner(args.mode)
+    if args.mode == "publish-existing":
+        result = run_publish_existing_flow(
+            root=ROOT,
+            dry_run=bool(args.dry_run),
+        )
+        exit_code = 0
+    else:
+        exit_code, result = run_full_refresh_flow(
+            pipeline_args=passthrough_args,
+            root=ROOT,
+        )
     print(
         json.dumps(
-            {
-                "authority_repo_publish": publish_result,
-            },
+            result,
             indent=2,
             ensure_ascii=False,
         ),
         flush=True,
     )
-    raise SystemExit(completed.returncode)
+    raise SystemExit(exit_code)
 
 
 if __name__ == "__main__":

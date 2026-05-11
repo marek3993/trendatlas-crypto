@@ -1,4 +1,5 @@
 import argparse
+import io
 import json
 import os
 import shutil
@@ -69,14 +70,86 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         base_dir.mkdir(parents=True, exist_ok=True)
         temp_root = base_dir / f"case_{uuid.uuid4().hex}"
         temp_root.mkdir(parents=True, exist_ok=False)
+        shutil.copytree(ROOT / "source_of_truth", temp_root / "source_of_truth")
         self.addCleanup(shutil.rmtree, temp_root, True)
         return temp_root
+
+    def write_text_file(self, path: Path, content: str) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content, encoding="utf-8")
+
+    def write_json_file(self, path: Path, payload: dict) -> None:
+        self.write_text_file(
+            path,
+            json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        )
+
+    def seed_fast_publish_runtime_artifacts(self, temp_root: Path) -> None:
+        production_dir = temp_root / "outputs" / "production"
+        self.write_json_file(
+            production_dir / "current_strategy_snapshot.json",
+            {"artifact_type": "current_strategy_snapshot"},
+        )
+        self.write_text_file(
+            production_dir / "current_strategy_timeseries.csv",
+            "date,equity\n2026-04-22,1.0\n",
+        )
+        self.write_json_file(
+            production_dir / "current_strategy_diagnostics.json",
+            {"artifact_type": "current_strategy_diagnostics"},
+        )
+        self.write_json_file(
+            production_dir / "current_strategy_snapshot.quality.json",
+            {"status": "passed"},
+        )
+        self.write_json_file(
+            production_dir / "current_strategy_snapshot.manifest.json",
+            {"artifact_type": "current_strategy_snapshot_manifest"},
+        )
+        self.write_json_file(
+            production_dir / "data_health_report.json",
+            {"artifact_type": "data_health_report"},
+        )
+        self.write_json_file(
+            production_dir / "data_health_report.quality.json",
+            {"status": "passed"},
+        )
+        self.write_json_file(
+            production_dir / "data_health_report.manifest.json",
+            {"artifact_type": "data_health_report_manifest"},
+        )
+
+    def seed_fast_publish_script_placeholders(self, temp_root: Path) -> dict[str, Path]:
+        script_paths = {
+            "pipeline": temp_root / "scripts" / "daily_refresh_app_pipeline.py",
+            "current_strategy_validate": (
+                temp_root / "scripts" / "production" / "validate_current_strategy_snapshot.py"
+            ),
+            "data_health_validate": (
+                temp_root / "scripts" / "production" / "validate_data_health_report.py"
+            ),
+            "scheduler_entry": (
+                temp_root / "scripts" / "execution" / "run_full_auto_scheduler_entry.py"
+            ),
+            "execution_source_contract": (
+                temp_root / "scripts" / "execution" / "validate_execution_source_contract.py"
+            ),
+        }
+        for path in script_paths.values():
+            self.write_text_file(path, "# placeholder\n")
+        return script_paths
 
     def build_minimal_app_product_snapshot_payload(self) -> dict:
         root_contract = current_strategy_contract.load_current_main_strategy_root_contract(
             root=ROOT,
             require_files=False,
         )
+        export_contract = load_json(ROOT / "source_of_truth" / "export_contract.json")[
+            "app_export_contract"
+        ]
+        reference_strategy_model = export_contract["reference_strategy_model"]
+        reference_source = export_contract["model_sources"][reference_strategy_model]
+        trend_barometer_source = export_contract["trend_barometer_source"]
         serialized_root_contract = (
             current_strategy_contract.serialize_current_main_strategy_root_contract(root_contract)
         )
@@ -84,16 +157,27 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         return {
             "current_main_strategy_root_contract": serialized_root_contract,
             "main_strategy_model": root_contract["main_strategy_model"],
+            "reference_strategy_model": reference_strategy_model,
             "main_strategy_metrics": {
                 "model": root_contract["main_strategy_model"],
+                "switch_count": 0,
+                "cash_days_pct": 0.0,
+                "btc_days_pct": 100.0,
             },
             "chart_source_paths": {
                 "main_strategy": root_contract["canonical_paper_source_path"],
+                "reference_strategy": reference_source["paper_path"],
             },
             "source_metadata": {
                 "main_strategy_metrics": {
                     "path": root_contract["canonical_metrics_source_path"],
                     "modified_utc": modified_utc,
+                    "operational_metrics": {
+                        "path": root_contract["canonical_paper_source_path"],
+                        "held_state_column": "held_asset",
+                        "series_semantics": "homepage_current_main_strategy_held_state_history",
+                        "held_state_denominator_rows": 1,
+                    },
                 },
                 "strategy_last_closed_day": {
                     "path": root_contract["canonical_paper_source_path"],
@@ -107,7 +191,27 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                     "main_strategy": {
                         "path": root_contract["canonical_paper_source_path"],
                         "modified_utc": modified_utc,
-                    }
+                    },
+                    "reference_strategy": {
+                        "path": reference_source["paper_path"],
+                        "modified_utc": modified_utc,
+                    },
+                },
+                "trend_barometer_summary": {
+                    "path": trend_barometer_source["live_status_path"],
+                    "modified_utc": modified_utc,
+                },
+                "trend_history_source_path": {
+                    "path": trend_barometer_source["history_path"],
+                    "modified_utc": modified_utc,
+                },
+                "freshness": {
+                    "path": "outputs/execution/freshness/app_freshness_report.json",
+                    "modified_utc": modified_utc,
+                },
+                "freshness_target_closed_day": {
+                    "path": "outputs/execution/freshness/app_freshness_report.json",
+                    "modified_utc": modified_utc,
                 },
             },
             "freshness_target_closed_day": "2026-04-22",
@@ -115,6 +219,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             "live_public_state": {
                 "date": "2026-04-22",
             },
+            "trend_history_source_path": trend_barometer_source["history_path"],
         }
 
     def build_minimal_app_runtime_snapshot_payload(self) -> dict:
@@ -132,21 +237,70 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         metrics_source_path = product_snapshot["source_metadata"]["main_strategy_metrics"]["path"]
         main_paper_path = temp_root / Path(chart_source_paths["main_strategy"])
         main_summary_path = temp_root / Path(metrics_source_path)
+        reference_paper_path = temp_root / Path(chart_source_paths["reference_strategy"])
+        reference_strategy_model = product_snapshot["reference_strategy_model"]
+        export_contract = load_json(temp_root / "source_of_truth" / "export_contract.json")[
+            "app_export_contract"
+        ]
+        reference_live_status_path = temp_root / Path(
+            export_contract["model_sources"][reference_strategy_model]["live_status_path"]
+        )
+        trend_barometer_source = export_contract["trend_barometer_source"]
+        phase66g_live_status_path = temp_root / Path(trend_barometer_source["live_status_path"])
+        trend_history_path = temp_root / Path(trend_barometer_source["history_path"])
+        freshness_report_path = (
+            temp_root / "outputs" / "execution" / "freshness" / "app_freshness_report.json"
+        )
 
         main_paper_path.parent.mkdir(parents=True, exist_ok=True)
         main_summary_path.parent.mkdir(parents=True, exist_ok=True)
+        reference_paper_path.parent.mkdir(parents=True, exist_ok=True)
+        reference_live_status_path.parent.mkdir(parents=True, exist_ok=True)
+        phase66g_live_status_path.parent.mkdir(parents=True, exist_ok=True)
+        trend_history_path.parent.mkdir(parents=True, exist_ok=True)
+        freshness_report_path.parent.mkdir(parents=True, exist_ok=True)
 
         main_paper_path.write_text(
-            "date,equity\n2026-04-22,1.0\n",
+            "date,held_asset,equity\n2026-04-22,BTC,1.0\n",
             encoding="utf-8",
         )
         main_summary_path.write_text(
-            "model,total_return_pct,cagr_pct,max_drawdown_pct,since2023_cagr_pct,since2025_cagr_pct,sharpe,sortino,switch_count,cash_days_pct,btc_days_pct\n"
-            "phase68g_66g_1p25x_candidate,0,0,0,0,0,0,0,0,0,0\n",
+            "model,latest_available_date,total_return_pct,cagr_pct,max_drawdown_pct,since2023_cagr_pct,since2025_cagr_pct,sharpe,sortino,switch_count,cash_days_pct,btc_days_pct\n"
+            f"{product_snapshot['main_strategy_model']},2026-04-22,0,0,0,0,0,0,0,0,0,100\n",
+            encoding="utf-8",
+        )
+        reference_paper_path.write_text(
+            "date,equity\n2026-04-22,1.0\n",
+            encoding="utf-8",
+        )
+        reference_live_status_path.write_text(
+            f"model,latest_available_date\n{reference_strategy_model},2026-04-22\n",
+            encoding="utf-8",
+        )
+        phase66g_live_status_path.write_text(
+            "latest_available_date,trend_calc_date\n2026-04-22,2026-04-22\n",
+            encoding="utf-8",
+        )
+        trend_history_path.write_text(
+            "trend_calc_date\n2026-04-22\n",
+            encoding="utf-8",
+        )
+        freshness_report_path.write_text(
+            json.dumps(
+                {
+                    "latest_closed_utc_date": "2026-04-22",
+                    "status": "ok",
+                    "errors": [],
+                },
+                indent=2,
+                ensure_ascii=False,
+            )
+            + "\n",
             encoding="utf-8",
         )
 
     def seed_app_snapshots(self, temp_root: Path) -> None:
+        self.seed_canonical_app_export_artifacts(temp_root)
         app_snapshot_dir = temp_root / "outputs" / "execution" / "app_snapshot"
         app_snapshot_dir.mkdir(parents=True, exist_ok=True)
         (app_snapshot_dir / "app_product_snapshot.json").write_text(
@@ -162,6 +316,10 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         pipeline_script = temp_root / "scripts" / "daily_refresh_app_pipeline.py"
         pipeline_script.parent.mkdir(parents=True, exist_ok=True)
         pipeline_script.write_text("# helper test placeholder\n", encoding="utf-8")
+        temp_root_contract = current_strategy_contract.load_current_main_strategy_root_contract(
+            root=temp_root,
+            require_files=False,
+        )
         stack.enter_context(mock.patch.object(helpers, "ROOT", temp_root))
         stack.enter_context(
             mock.patch.object(
@@ -178,6 +336,13 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             )
         )
         stack.enter_context(mock.patch.object(helpers, "PIPELINE_SCRIPT_PATH", pipeline_script))
+        stack.enter_context(
+            mock.patch.object(
+                helpers,
+                "load_current_main_strategy_root_contract",
+                return_value=temp_root_contract,
+            )
+        )
 
     def build_state(self, temp_root: Path, run_id: str, started_at_utc: str) -> dict:
         run_dir = temp_root / "outputs" / "app_refresh_pipeline" / run_id
@@ -248,6 +413,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         authority_dir = temp_root / "outputs" / "execution" / "authority"
         authority_dir.mkdir(parents=True, exist_ok=True)
         self.seed_canonical_app_export_artifacts(temp_root)
+        self.seed_fast_publish_runtime_artifacts(temp_root)
         extra_fields = contract.build_authority_extra_fields(
             run_id=run_id,
             source_manifest_path=(
@@ -500,6 +666,25 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             manifest["steps"].append(result)
             return result
 
+        def fake_run_heavy_phase_with_freshness_fast_path(
+            manifest: dict,
+            run_dir: Path,
+            step_name: str,
+            script_path: Path,
+            env: dict[str, str],
+            step_logs_dir: Path,
+            script_args: list[str] | None = None,
+        ) -> dict:
+            return fake_run_step_and_persist(
+                manifest,
+                run_dir,
+                step_name,
+                script_path,
+                env,
+                step_logs_dir,
+                script_args=script_args,
+            )
+
         authority_state = {
             "run_id": "20260423_100000",
             "refresh_started_at_utc": "2026-04-23T10:00:00Z",
@@ -569,7 +754,11 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             side_effect=fake_run_step_and_persist,
         ), mock.patch.object(
             pipeline,
-            "verify_outputs",
+            "run_heavy_phase_with_freshness_fast_path",
+            side_effect=fake_run_heavy_phase_with_freshness_fast_path,
+        ), mock.patch.object(
+            pipeline,
+            "verify_required_outputs",
             return_value=[],
         ), mock.patch.object(
             pipeline,
@@ -610,6 +799,10 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         publish_tree = Path(env["MRV1_AUTHORITY_PUBLISH_TREE"])
         remote_url = "git@github.com:example/market_regime_v1.git"
         git_calls: list[list[str]] = []
+        expected_pathspecs = [
+            str(path.resolve().relative_to(temp_root.resolve())).replace("\\", "/")
+            for path in pi_producer.resolve_authority_publish_paths(temp_root)
+        ]
 
         def fake_run(args, cwd=None, env=None, text=None, capture_output=None, check=None):
             git_calls.append(args)
@@ -639,15 +832,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         self.assertEqual(result["remote_url"], remote_url)
         self.assertEqual(result["publish_tree"], str(publish_tree))
         self.assertEqual(result["push_attempts"], 1)
-        self.assertEqual(
-            result["pathspecs"],
-            [
-                "outputs/execution/authority/latest_attempt_status.json",
-                "outputs/execution/authority/latest_successful_snapshot.json",
-                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-            ],
-        )
+        self.assertEqual(result["pathspecs"], expected_pathspecs)
         self.assertEqual(result["commit_sha"], "abc123")
         self.assertEqual(
             git_calls,
@@ -669,26 +854,8 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                 ["git", "checkout", "-B", "main", "origin/main"],
                 ["git", "reset", "--hard", "origin/main"],
                 ["git", "clean", "-fd"],
-                [
-                    "git",
-                    "add",
-                    "--",
-                    "outputs/execution/authority/latest_attempt_status.json",
-                    "outputs/execution/authority/latest_successful_snapshot.json",
-                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-                ],
-                [
-                    "git",
-                    "diff",
-                    "--cached",
-                    "--quiet",
-                    "--",
-                    "outputs/execution/authority/latest_attempt_status.json",
-                    "outputs/execution/authority/latest_successful_snapshot.json",
-                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-                ],
+                ["git", "add", "--", *expected_pathspecs],
+                ["git", "diff", "--cached", "--quiet", "--", *expected_pathspecs],
                 [
                     "git",
                     "commit",
@@ -696,10 +863,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                     "-m",
                     "Publish Pi authority artifacts: success 2026-04-22 20260423_104500",
                     "--",
-                    "outputs/execution/authority/latest_attempt_status.json",
-                    "outputs/execution/authority/latest_successful_snapshot.json",
-                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-                    "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
+                    *expected_pathspecs,
                 ],
                 ["git", "push", "origin", "HEAD:main"],
                 ["git", "rev-parse", "HEAD"],
@@ -890,6 +1054,10 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         env = self.build_pi_repo_env(runtime_root)
         env["MRV1_AUTHORITY_PUBLISH_TREE"] = str(publish_tree)
         push_calls: list[list[str]] = []
+        expected_pathspecs = [
+            str(path.resolve().relative_to(runtime_root.resolve())).replace("\\", "/")
+            for path in pi_producer.resolve_authority_publish_paths(runtime_root)
+        ]
 
         real_run_git_command = pi_producer._run_git_command
 
@@ -916,15 +1084,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
 
         self.assertTrue(result["published"])
         self.assertEqual(result["publish_tree"], str(publish_tree))
-        self.assertEqual(
-            result["pathspecs"],
-            [
-                "outputs/execution/authority/latest_attempt_status.json",
-                "outputs/execution/authority/latest_successful_snapshot.json",
-                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-            ],
-        )
+        self.assertEqual(result["pathspecs"], expected_pathspecs)
         self.assertEqual(push_calls, [["push", "origin", "HEAD:main"]])
 
         latest_attempt = self.run_git(
@@ -949,14 +1109,311 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         self.assertIn('"artifact_type": "authority_success_snapshot_v1"', latest_snapshot)
         self.assertEqual(
             changed_paths,
-            {
-                "outputs/execution/authority/latest_attempt_status.json",
-                "outputs/execution/authority/latest_successful_snapshot.json",
-                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv",
-                "outputs/execution/app_exports/phase68g_66g_1p25x_candidate_paper.csv",
-            },
+            set(expected_pathspecs),
         )
         self.assertEqual(publish_tree_status, "")
+
+    def test_pi_producer_publish_existing_mode_skips_pipeline_and_passes_dry_run(self):
+        temp_root = self.make_temp_root()
+        script_paths = self.seed_fast_publish_script_placeholders(temp_root)
+        self.seed_fast_publish_runtime_artifacts(temp_root)
+        publish_mock = mock.Mock(
+            return_value={"published": False, "reason": "dry_run", "pathspecs": []}
+        )
+        subprocess_calls: list[list[str]] = []
+
+        def fake_run(args, cwd=None, env=None, check=None):
+            subprocess_calls.append(list(args))
+            return subprocess.CompletedProcess(args, 0)
+
+        with ExitStack() as stack:
+            stack.enter_context(mock.patch.object(pi_producer, "ROOT", temp_root))
+            stack.enter_context(
+                mock.patch.object(pi_producer, "PIPELINE_SCRIPT", script_paths["pipeline"])
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "CURRENT_STRATEGY_VALIDATE_SCRIPT",
+                    script_paths["current_strategy_validate"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "DATA_HEALTH_VALIDATE_SCRIPT",
+                    script_paths["data_health_validate"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "SCHEDULER_ENTRY_SCRIPT",
+                    script_paths["scheduler_entry"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "EXECUTION_SOURCE_CONTRACT_SCRIPT",
+                    script_paths["execution_source_contract"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS",
+                    (
+                        temp_root / "outputs" / "production" / "current_strategy_snapshot.json",
+                        temp_root / "outputs" / "production" / "current_strategy_timeseries.csv",
+                        temp_root / "outputs" / "production" / "current_strategy_diagnostics.json",
+                        temp_root / "outputs" / "production" / "current_strategy_snapshot.quality.json",
+                        temp_root / "outputs" / "production" / "current_strategy_snapshot.manifest.json",
+                    ),
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS",
+                    (
+                        temp_root / "outputs" / "production" / "data_health_report.json",
+                        temp_root / "outputs" / "production" / "data_health_report.quality.json",
+                        temp_root / "outputs" / "production" / "data_health_report.manifest.json",
+                    ),
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(pi_producer.subprocess, "run", side_effect=fake_run)
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "publish_authority_artifacts_to_repo",
+                    publish_mock,
+                )
+            )
+            stdout = io.StringIO()
+            with mock.patch("sys.stdout", stdout):
+                with self.assertRaises(SystemExit) as exc:
+                    pi_producer.main(["--mode", "publish-existing", "--dry-run"])
+
+        self.assertEqual(exc.exception.code, 0)
+        self.assertEqual(
+            subprocess_calls,
+            [
+                [sys.executable, str(script_paths["current_strategy_validate"])],
+                [sys.executable, str(script_paths["data_health_validate"])],
+                [sys.executable, str(script_paths["execution_source_contract"])],
+                [sys.executable, str(script_paths["scheduler_entry"])],
+            ],
+        )
+        self.assertNotIn(
+            [sys.executable, str(script_paths["pipeline"])],
+            subprocess_calls,
+        )
+        publish_mock.assert_called_once()
+        publish_kwargs = publish_mock.call_args.kwargs
+        self.assertEqual(publish_kwargs["root"], temp_root)
+        self.assertTrue(publish_kwargs["dry_run"])
+        output = stdout.getvalue()
+        self.assertIn("[AUTHORITY] mode=publish-existing", output)
+        self.assertIn("[AUTHORITY] heavy_refresh_steps=skipped", output)
+
+    def test_pi_producer_no_arg_default_uses_publish_existing_and_skips_pipeline(self):
+        temp_root = self.make_temp_root()
+        script_paths = self.seed_fast_publish_script_placeholders(temp_root)
+        self.seed_fast_publish_runtime_artifacts(temp_root)
+        publish_mock = mock.Mock(
+            return_value={"published": False, "reason": "no_authority_repo_changes"}
+        )
+        subprocess_calls: list[list[str]] = []
+
+        def fake_run(args, cwd=None, env=None, check=None):
+            subprocess_calls.append(list(args))
+            return subprocess.CompletedProcess(args, 0)
+
+        with ExitStack() as stack:
+            stack.enter_context(mock.patch.object(pi_producer, "ROOT", temp_root))
+            stack.enter_context(
+                mock.patch.object(pi_producer, "PIPELINE_SCRIPT", script_paths["pipeline"])
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "CURRENT_STRATEGY_VALIDATE_SCRIPT",
+                    script_paths["current_strategy_validate"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "DATA_HEALTH_VALIDATE_SCRIPT",
+                    script_paths["data_health_validate"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "SCHEDULER_ENTRY_SCRIPT",
+                    script_paths["scheduler_entry"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "EXECUTION_SOURCE_CONTRACT_SCRIPT",
+                    script_paths["execution_source_contract"],
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS",
+                    (
+                        temp_root / "outputs" / "production" / "current_strategy_snapshot.json",
+                        temp_root / "outputs" / "production" / "current_strategy_timeseries.csv",
+                        temp_root / "outputs" / "production" / "current_strategy_diagnostics.json",
+                        temp_root / "outputs" / "production" / "current_strategy_snapshot.quality.json",
+                        temp_root / "outputs" / "production" / "current_strategy_snapshot.manifest.json",
+                    ),
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS",
+                    (
+                        temp_root / "outputs" / "production" / "data_health_report.json",
+                        temp_root / "outputs" / "production" / "data_health_report.quality.json",
+                        temp_root / "outputs" / "production" / "data_health_report.manifest.json",
+                    ),
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(pi_producer.subprocess, "run", side_effect=fake_run)
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "publish_authority_artifacts_to_repo",
+                    publish_mock,
+                )
+            )
+            with self.assertRaises(SystemExit) as exc:
+                pi_producer.main([])
+
+        self.assertEqual(exc.exception.code, 0)
+        self.assertNotIn(
+            [sys.executable, str(script_paths["pipeline"])],
+            subprocess_calls,
+        )
+        publish_mock.assert_called_once()
+        publish_kwargs = publish_mock.call_args.kwargs
+        self.assertEqual(publish_kwargs["root"], temp_root)
+        self.assertFalse(publish_kwargs["dry_run"])
+
+    def test_pi_producer_full_refresh_requires_explicit_mode_for_pipeline(self):
+        temp_root = self.make_temp_root()
+        script_paths = self.seed_fast_publish_script_placeholders(temp_root)
+        publish_mock = mock.Mock(return_value={"published": False, "reason": "stub"})
+        subprocess_calls: list[list[str]] = []
+
+        def fake_run(args, cwd=None, env=None, check=None):
+            subprocess_calls.append(list(args))
+            return subprocess.CompletedProcess(args, 0)
+
+        with ExitStack() as stack:
+            stack.enter_context(mock.patch.object(pi_producer, "ROOT", temp_root))
+            stack.enter_context(
+                mock.patch.object(pi_producer, "PIPELINE_SCRIPT", script_paths["pipeline"])
+            )
+            stack.enter_context(
+                mock.patch.object(pi_producer.subprocess, "run", side_effect=fake_run)
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
+                    "publish_authority_artifacts_to_repo",
+                    publish_mock,
+                )
+            )
+            stdout = io.StringIO()
+            with mock.patch("sys.stdout", stdout):
+                with self.assertRaises(SystemExit) as exc:
+                    pi_producer.main(
+                        [
+                            "--mode",
+                            "full-refresh",
+                            "--skip-legacy-refresh",
+                            "--skip-top100-refresh",
+                        ]
+                    )
+
+        self.assertEqual(exc.exception.code, 0)
+        self.assertEqual(
+            subprocess_calls,
+            [
+                [
+                    sys.executable,
+                    str(script_paths["pipeline"]),
+                    "--skip-legacy-refresh",
+                    "--skip-top100-refresh",
+                ]
+            ],
+        )
+        publish_mock.assert_called_once()
+        self.assertIn("[AUTHORITY] mode=full-refresh", stdout.getvalue())
+        self.assertIn("[AUTHORITY] heavy_refresh_steps=enabled", stdout.getvalue())
+
+    def test_pi_repo_publish_dry_run_skips_git_commands(self):
+        temp_root = self.make_temp_root()
+        authority_dir = temp_root / "outputs" / "execution" / "authority"
+        authority_dir.mkdir(parents=True, exist_ok=True)
+        attempt_path = authority_dir / "latest_attempt_status.json"
+        snapshot_path = authority_dir / "latest_successful_snapshot.json"
+        self.write_json_file(
+            attempt_path,
+            {
+                "latest_authoritative_attempt_status": "success",
+                "automatic_producer_id": "raspberry_pi",
+                "authority_role": "pi_only_authoritative_producer",
+                "target_closed_day_utc": "2026-04-22",
+                "run_id": "20260423_104500",
+            },
+        )
+        self.write_json_file(
+            snapshot_path,
+            {
+                "latest_authoritative_attempt_status": "success",
+            },
+        )
+        env = self.build_pi_repo_env(temp_root)
+        with mock.patch.object(
+            pi_producer,
+            "resolve_authority_publish_paths",
+            return_value=[attempt_path.resolve(), snapshot_path.resolve()],
+        ), mock.patch.object(
+            pi_producer.subprocess,
+            "run",
+            side_effect=AssertionError("dry-run must not execute git subprocesses"),
+        ):
+            result = pi_producer.publish_authority_artifacts_to_repo(
+                root=temp_root,
+                env=env,
+                dry_run=True,
+            )
+
+        self.assertFalse(result["published"])
+        self.assertEqual(result["reason"], "dry_run")
+        self.assertEqual(result["remote_url"], None)
+        self.assertEqual(
+            result["pathspecs"],
+            [
+                "outputs/execution/authority/latest_attempt_status.json",
+                "outputs/execution/authority/latest_successful_snapshot.json",
+            ],
+        )
 
 
 if __name__ == "__main__":
