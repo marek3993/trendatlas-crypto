@@ -1,5 +1,6 @@
 import csv
 import json
+import shutil
 import unittest
 import uuid
 from pathlib import Path
@@ -8,6 +9,12 @@ from unittest import mock
 import pandas as pd
 
 from scripts.production import build_current_strategy_snapshot
+from scripts.production.strategy_adapters.phase68g_66g_1p25x_candidate_adapter import (
+    Phase68g66g1p25xCandidateAdapter,
+)
+from scripts.production.strategy_adapters.phase68g_btc_persistence_10d_early_risk_075_adapter import (
+    Phase68gBtcPersistence10dEarlyRisk075Adapter,
+)
 from scripts.production.strategy_adapters.phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter import (
     _materialize_full_history_frame_to_closed_day,
     _validate_etf_panel_materialization,
@@ -15,6 +22,135 @@ from scripts.production.strategy_adapters.phase68g_etf_flow_impulse_early_risk_c
 
 
 class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
+    def _make_case_root(self) -> Path:
+        tmp_base = Path.cwd() / "tmp_test_artifacts"
+        tmp_base.mkdir(parents=True, exist_ok=True)
+        root = tmp_base / f"etf_flow_recovery_{uuid.uuid4().hex}"
+        root.mkdir(parents=True, exist_ok=False)
+        return root
+
+    def _write_rows(self, path: Path, fieldnames: list[str], rows: list[dict[str, object]]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fieldnames)
+            writer.writeheader()
+            for row in rows:
+                writer.writerow(row)
+
+    def _seed_stale_phase68g_baseline_bundle(self, root: Path) -> None:
+        summary_path = (
+            root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
+        )
+        paper_path = (
+            root
+            / "outputs"
+            / "execution"
+            / "app_exports"
+            / "phase68g_66g_1p25x_candidate_paper.csv"
+        )
+        trend_status_path = root / "outputs" / "execution" / "app_exports" / "phase66g_live_status.csv"
+        trend_history_path = (
+            root / "outputs" / "execution" / "app_exports" / "phase66g_trend_barometer_history.csv"
+        )
+        freshness_path = root / "outputs" / "execution" / "freshness" / "app_freshness_report.json"
+        benchmark_path = root / "data" / "ohlcv" / "BTCUSDT_1d.csv"
+
+        summary_fields = [
+            "model",
+            "latest_available_date",
+            "annual_borrow_cost_pct",
+            "tradable_transition_slippage_bps",
+            "fee_side_mode",
+            "taker_fee_bps",
+            "maker_fee_bps",
+            "staking_discount_pct",
+            "referral_discount_pct",
+        ]
+        self._write_rows(
+            summary_path,
+            summary_fields,
+            [
+                {
+                    "model": "phase68g_66g_1p25x_candidate",
+                    "latest_available_date": "2026-04-30",
+                    "annual_borrow_cost_pct": 12.0,
+                    "tradable_transition_slippage_bps": 10.0,
+                    "fee_side_mode": "taker",
+                    "taker_fee_bps": 4.5,
+                    "maker_fee_bps": 1.5,
+                    "staking_discount_pct": 0.0,
+                    "referral_discount_pct": 0.0,
+                }
+            ],
+        )
+
+        paper_rows: list[dict[str, object]] = []
+        for stamp in pd.date_range("2023-01-01", "2026-04-30", freq="D"):
+            paper_rows.append(
+                {
+                    "date": stamp.strftime("%Y-%m-%d"),
+                    "realistic_ret_gross": 0.0,
+                    "portfolio_held_asset": "CASH",
+                    "effective_leverage": 0.0,
+                    "daily_borrow_cost": 0.0,
+                    "tradable_slippage_cost": 0.0,
+                    "trend_block_day": False,
+                    "stress_block_day": False,
+                    "trend_gate_pass": False,
+                    "trend_state_label": "neutral",
+                    "trend_score": -0.05,
+                    "buy_threshold": 0.1,
+                    "leverage_active": False,
+                    "leverage_state_reason": "flat",
+                    "trend_activation_threshold": 0.1,
+                }
+            )
+        self._write_rows(
+            paper_path,
+            [
+                "date",
+                "realistic_ret_gross",
+                "portfolio_held_asset",
+                "effective_leverage",
+                "daily_borrow_cost",
+                "tradable_slippage_cost",
+                "trend_block_day",
+                "stress_block_day",
+                "trend_gate_pass",
+                "trend_state_label",
+                "trend_score",
+                "buy_threshold",
+                "leverage_active",
+                "leverage_state_reason",
+                "trend_activation_threshold",
+            ],
+            paper_rows,
+        )
+        self._write_rows(
+            trend_status_path,
+            ["latest_available_date", "next_rebalance_date"],
+            [{"latest_available_date": "2026-05-10", "next_rebalance_date": "2026-05-12"}],
+        )
+        self._write_rows(
+            trend_history_path,
+            ["trend_calc_date", "trend_score"],
+            [{"trend_calc_date": "2026-05-10", "trend_score": -0.05}],
+        )
+        freshness_path.parent.mkdir(parents=True, exist_ok=True)
+        freshness_path.write_text(
+            json.dumps({"latest_closed_utc_date": "2026-05-10", "status": "ok", "errors": []}),
+            encoding="utf-8",
+        )
+        benchmark_rows = []
+        base_close = 90000.0
+        for idx, stamp in enumerate(pd.date_range("2023-01-01", "2026-05-10", freq="D")):
+            benchmark_rows.append({"date": stamp.strftime("%Y-%m-%d"), "close": base_close + idx * 100.0})
+        self._write_rows(benchmark_path, ["date", "close"], benchmark_rows)
+
     def test_weekend_carry_forward_uses_last_valid_etf_source_without_synthetic_rows(self):
         etf_df = pd.DataFrame(
             [
@@ -129,10 +265,7 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
                     "total_return_pct": "1.0",
                 }
 
-        tmp_base = Path.cwd() / "outputs" / "_tmp_test_etf_flow_publish_existing_recovery"
-        tmp_base.mkdir(parents=True, exist_ok=True)
-        root = tmp_base / f"case_{uuid.uuid4().hex}"
-        root.mkdir(parents=True, exist_ok=False)
+        root = self._make_case_root()
         try:
             freshness_path = root / "outputs" / "execution" / "freshness" / "app_freshness_report.json"
             paper_path = (
@@ -182,13 +315,88 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
             self.assertEqual(paper_rows[-1]["date"], "2026-05-10")
             self.assertEqual(summary_rows[-1]["latest_available_date"], "2026-05-10")
         finally:
-            # Best-effort cleanup; sandboxed Windows temp ACLs can make this non-critical.
-            try:
-                import shutil
+            shutil.rmtree(root, ignore_errors=True)
 
-                shutil.rmtree(root, ignore_errors=True)
-            except Exception:
-                pass
+    def test_phase68g_baseline_dependency_materialization_reaches_fresh_closed_day(self):
+        root = self._make_case_root()
+        try:
+            self._seed_stale_phase68g_baseline_bundle(root)
+
+            adapter = Phase68g66g1p25xCandidateAdapter()
+            inputs = adapter.load_inputs(root=root, materialize_to_canonical_closed_day=True)
+            timeseries = adapter.build_timeseries(inputs)
+
+            self.assertEqual(inputs["source_closed_day"], "2026-04-30")
+            self.assertEqual(inputs["closed_day"], "2026-05-10")
+            self.assertEqual(inputs["paper_last_day"], "2026-04-30")
+            self.assertEqual(inputs["paper_materialization"]["materialized_closed_day"], "2026-05-10")
+            self.assertEqual(inputs["paper_materialization"]["carry_forward_rows_added"], 10)
+            self.assertEqual(str(timeseries["date"].iloc[-1]), "2026-05-10")
+            self.assertTrue(timeseries.tail(10)["cash_day"].astype(bool).all())
+            self.assertTrue(timeseries.tail(10)["turnover"].eq(0.0).all())
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
+
+    def test_build_path_materializes_real_btc_persistence_dependency_from_stale_phase68g_bundle(self):
+        root = self._make_case_root()
+        try:
+            self._seed_stale_phase68g_baseline_bundle(root)
+            paper_path = (
+                root
+                / "outputs"
+                / "execution"
+                / "app_exports"
+                / "phase68g_btc_persistence_10d_early_risk_075_paper.csv"
+            )
+            summary_path = (
+                root
+                / "outputs"
+                / "execution"
+                / "app_exports"
+                / "phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv"
+            )
+            self._write_rows(
+                paper_path,
+                ["date", "strategy_version"],
+                [{"date": "2026-04-30", "strategy_version": "phase68g_btc_persistence_10d_early_risk_075"}],
+            )
+            self._write_rows(
+                summary_path,
+                ["model", "latest_available_date", "total_return_pct"],
+                [
+                    {
+                        "model": "phase68g_btc_persistence_10d_early_risk_075",
+                        "latest_available_date": "2026-04-30",
+                        "total_return_pct": "0.0",
+                    }
+                ],
+            )
+
+            with mock.patch.object(
+                Phase68gBtcPersistence10dEarlyRisk075Adapter,
+                "build_snapshot_metrics",
+                return_value={
+                    "total_return_pct_net": 0.0,
+                    "latest_available_date": "2026-05-10",
+                },
+            ):
+                result = build_current_strategy_snapshot._maybe_materialize_btc_persistence_dependency(
+                    strategy_model=build_current_strategy_snapshot.ETF_FLOW_CANDIDATE_ID,
+                    root=root,
+                )
+
+            self.assertEqual(result["status"], "materialized")
+            self.assertEqual(result["target_closed_day"], "2026-05-10")
+            self.assertEqual(result["previous_paper_last_day"], "2026-04-30")
+            self.assertEqual(result["paper_last_day"], "2026-05-10")
+            with paper_path.open(newline="", encoding="utf-8") as handle:
+                paper_rows = list(csv.DictReader(handle))
+            with summary_path.open(newline="", encoding="utf-8") as handle:
+                summary_rows = list(csv.DictReader(handle))
+            self.assertEqual(paper_rows[-1]["date"], "2026-05-10")
+            self.assertEqual(summary_rows[-1]["latest_available_date"], "2026-05-10")
+        finally:
+            shutil.rmtree(root, ignore_errors=True)
 
 
 if __name__ == "__main__":

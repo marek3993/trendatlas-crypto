@@ -234,6 +234,204 @@ def _rolling_sharpe(series: pd.Series, window: int) -> pd.Series:
     return sharpe.replace([np.inf, -np.inf], np.nan)
 
 
+def _to_float_value(value: Any, *, default: float = 0.0) -> float:
+    numeric = pd.to_numeric(pd.Series([value]), errors="coerce").iloc[0]
+    if pd.isna(numeric):
+        return default
+    return float(numeric)
+
+
+def _normalize_materialized_timeseries(frame: pd.DataFrame) -> pd.DataFrame:
+    normalized = frame.copy()
+    normalized["date"] = pd.to_datetime(normalized["date"], errors="coerce")
+    normalized = normalized.dropna(subset=["date"]).sort_values("date")
+    normalized = normalized.drop_duplicates(subset=["date"], keep="last").reset_index(drop=True)
+    if normalized.empty:
+        raise ValueError("phase68g baseline timeseries has no usable rows after date normalization")
+    return normalized
+
+
+def _build_dependency_materialization_carry_forward_row(
+    *,
+    last_row: pd.Series,
+    target_day: pd.Timestamp,
+    benchmark_close: float,
+    annual_borrow_cost_pct: float,
+) -> pd.Series:
+    row = last_row.copy()
+    last_day_text = pd.Timestamp(last_row["date"]).strftime("%Y-%m-%d")
+    target_day_text = target_day.strftime("%Y-%m-%d")
+
+    held_asset = _normalize_asset_code(
+        last_row.get("actual_held_asset", last_row.get("current_asset", last_row.get("held_asset")))
+    )
+    exposure = _to_float_value(
+        last_row.get(
+            "effective_market_exposure",
+            last_row.get("current_exposure", last_row.get("exposure", 0.0)),
+        )
+    )
+    previous_btc_close = _to_float_value(last_row.get("btc_close"))
+    if previous_btc_close <= 0.0:
+        raise ValueError(
+            "Unable to materialize stale phase68g baseline rows without a prior BTC close "
+            f"(paper_last_day={last_day_text})"
+        )
+    if held_asset not in CASH_EQUIVALENT_ASSETS and held_asset != "BTC":
+        raise ValueError(
+            "phase68g baseline paper is stale relative to the canonical closed day, and the "
+            "latest held asset requires fresh non-BTC paper rows to extend safely "
+            f"(paper_last_day={last_day_text} target_day={target_day_text} held_asset={held_asset})"
+        )
+
+    btc_return = (benchmark_close / previous_btc_close) - 1.0
+    gross_return = 0.0
+    if held_asset == "BTC" and exposure > SUMMARY_TOLERANCE:
+        gross_return = btc_return * exposure
+    borrow_cost_daily = 0.0
+    leveraged_component = max(exposure - 1.0, 0.0)
+    if held_asset == "BTC" and leveraged_component > SUMMARY_TOLERANCE:
+        borrow_cost_daily = leveraged_component * (annual_borrow_cost_pct / 100.0) / 365.25
+    net_return = gross_return - borrow_cost_daily
+
+    previous_equity = _to_float_value(last_row.get("equity"), default=1.0)
+    next_equity = previous_equity * (1.0 + net_return)
+    previous_drawdown_pct = _to_float_value(last_row.get("drawdown_pct"))
+    previous_peak_equity = previous_equity
+    if previous_drawdown_pct < 0.0:
+        previous_peak_equity = previous_equity / max(1.0 + (previous_drawdown_pct / 100.0), 1e-12)
+    peak_equity = max(previous_peak_equity, next_equity)
+    next_drawdown_pct = ((next_equity / peak_equity) - 1.0) * 100.0 if peak_equity > 0.0 else 0.0
+
+    row["date"] = target_day
+    row["btc_close"] = round(benchmark_close, 12)
+    if "btc_return" in row.index:
+        row["btc_return"] = round(btc_return, 12)
+    if "btc_baseline_equity" in row.index:
+        row["btc_baseline_equity"] = round(
+            _to_float_value(last_row.get("btc_baseline_equity"), default=1.0) * (1.0 + btc_return),
+            12,
+        )
+    if "btc_baseline_index" in row.index:
+        row["btc_baseline_index"] = round(
+            _to_float_value(row.get("btc_baseline_equity"), default=1.0) * 100.0,
+            12,
+        )
+    for column in ("model_candidate_return_gross", "authorized_return_gross", "return_gross"):
+        if column in row.index:
+            row[column] = round(gross_return, 12)
+    for column in ("model_candidate_return_net", "authorized_return_net", "return_net"):
+        if column in row.index:
+            row[column] = round(net_return, 12)
+    for column in ("model_candidate_equity", "authorized_equity", "equity"):
+        if column in row.index:
+            row[column] = round(next_equity, 12)
+    if "drawdown_pct" in row.index:
+        row["drawdown_pct"] = round(next_drawdown_pct, 6)
+    if "fees_daily" in row.index:
+        row["fees_daily"] = 0.0
+    if "funding_daily" in row.index:
+        row["funding_daily"] = 0.0
+    if "borrow_cost_daily" in row.index:
+        row["borrow_cost_daily"] = round(borrow_cost_daily, 12)
+    if "slippage_cost_daily" in row.index:
+        row["slippage_cost_daily"] = 0.0
+    if "turnover" in row.index:
+        row["turnover"] = 0.0
+    if "fees_cumulative" in row.index:
+        row["fees_cumulative"] = round(
+            _to_float_value(last_row.get("fees_cumulative")) + _to_float_value(row.get("fees_daily")),
+            12,
+        )
+    if "funding_cumulative" in row.index:
+        row["funding_cumulative"] = round(
+            _to_float_value(last_row.get("funding_cumulative")) + _to_float_value(row.get("funding_daily")),
+            12,
+        )
+    if "borrow_cost_cumulative" in row.index:
+        row["borrow_cost_cumulative"] = round(
+            _to_float_value(last_row.get("borrow_cost_cumulative"))
+            + _to_float_value(row.get("borrow_cost_daily")),
+            12,
+        )
+    if "slippage_cost_cumulative" in row.index:
+        row["slippage_cost_cumulative"] = round(
+            _to_float_value(last_row.get("slippage_cost_cumulative"))
+            + _to_float_value(row.get("slippage_cost_daily")),
+            12,
+        )
+    if "cash_day" in row.index:
+        row["cash_day"] = held_asset in CASH_EQUIVALENT_ASSETS or exposure <= SUMMARY_TOLERANCE
+    if "btc_day" in row.index:
+        row["btc_day"] = held_asset == "BTC" and exposure > SUMMARY_TOLERANCE
+    if "in_market" in row.index:
+        row["in_market"] = exposure > SUMMARY_TOLERANCE
+    if "is_rebalance_day" in row.index:
+        row["is_rebalance_day"] = False
+    if "asset_transition_day" in row.index:
+        row["asset_transition_day"] = False
+    return row
+
+
+def _materialize_strategy_timeseries_to_closed_day(
+    *,
+    timeseries: pd.DataFrame,
+    summary_row: dict[str, Any],
+    benchmark_df: pd.DataFrame,
+    target_closed_day: str,
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    materialized = _normalize_materialized_timeseries(timeseries)
+    source_last_day = pd.Timestamp(materialized["date"].iloc[-1]).strftime("%Y-%m-%d")
+    target_day = pd.Timestamp(target_closed_day)
+    if pd.Timestamp(source_last_day) > target_day:
+        raise ValueError(
+            "phase68g baseline timeseries last_row.date cannot be ahead of the canonical closed day "
+            f"(timeseries={source_last_day} closed_day={target_closed_day})"
+        )
+    if source_last_day == target_closed_day:
+        materialized["date"] = materialized["date"].dt.strftime("%Y-%m-%d")
+        return materialized, {
+            "paper_source_last_day": source_last_day,
+            "raw_source_last_day": source_last_day,
+            "materialized_closed_day": target_closed_day,
+            "carry_forward_rows_added": 0,
+        }
+
+    benchmark = benchmark_df.copy()
+    benchmark["date"] = pd.to_datetime(benchmark["date"], errors="coerce")
+    benchmark["btc_close"] = pd.to_numeric(benchmark["btc_close"], errors="coerce")
+    benchmark = benchmark.dropna(subset=["date", "btc_close"]).sort_values("date")
+    benchmark = benchmark.drop_duplicates(subset=["date"], keep="last").set_index("date")
+    carry_forward_days = benchmark.index[
+        (benchmark.index > pd.Timestamp(source_last_day)) & (benchmark.index <= target_day)
+    ]
+    if carry_forward_days.empty or carry_forward_days[-1] != target_day:
+        raise ValueError(
+            "benchmark_ohlcv is missing one or more rows needed to materialize the canonical closed day "
+            f"(timeseries={source_last_day} closed_day={target_closed_day})"
+        )
+
+    annual_borrow_cost_pct = _to_float_value(summary_row.get("annual_borrow_cost_pct"))
+    added_rows = 0
+    for carry_day in carry_forward_days.tolist():
+        next_row = _build_dependency_materialization_carry_forward_row(
+            last_row=materialized.iloc[-1],
+            target_day=pd.Timestamp(carry_day),
+            benchmark_close=float(benchmark.loc[carry_day, "btc_close"]),
+            annual_borrow_cost_pct=annual_borrow_cost_pct,
+        )
+        materialized = pd.concat([materialized, pd.DataFrame([next_row])], ignore_index=True)
+        added_rows += 1
+
+    materialized["date"] = pd.to_datetime(materialized["date"], errors="coerce").dt.strftime("%Y-%m-%d")
+    return materialized, {
+        "paper_source_last_day": source_last_day,
+        "raw_source_last_day": source_last_day,
+        "materialized_closed_day": pd.Timestamp(materialized["date"].iloc[-1]).strftime("%Y-%m-%d"),
+        "carry_forward_rows_added": added_rows,
+    }
+
+
 def _annualized_sharpe_from_daily_returns(series: pd.Series) -> float | None:
     daily_returns = pd.to_numeric(series, errors="coerce").dropna().tolist()
     if len(daily_returns) < 2:
@@ -363,7 +561,12 @@ class Phase68g66g1p25xCandidateAdapter:
             "benchmark_ohlcv": repo_root / "data" / "ohlcv" / "BTCUSDT_1d.csv",
         }
 
-    def load_inputs(self, *, root: Path | None = None) -> dict[str, Any]:
+    def load_inputs(
+        self,
+        *,
+        root: Path | None = None,
+        materialize_to_canonical_closed_day: bool = False,
+    ) -> dict[str, Any]:
         repo_root = (root or ROOT).resolve()
         source_paths = self.resolve_source_paths(root=repo_root)
 
@@ -410,11 +613,6 @@ class Phase68g66g1p25xCandidateAdapter:
             )
         if isinstance(freshness_errors, list) and freshness_errors:
             raise ValueError("freshness_report.errors must be empty for production build")
-        if benchmark_last_day != closed_day:
-            raise ValueError(
-                "benchmark_ohlcv last date must match the production closed day "
-                f"(actual={benchmark_last_day} expected={closed_day})"
-            )
 
         config = NetCostExportConfig(
             annual_borrow_cost=_to_float(
@@ -439,7 +637,7 @@ class Phase68g66g1p25xCandidateAdapter:
             ),
         )
 
-        return {
+        inputs = {
             "repo_root": repo_root,
             "source_paths": source_paths,
             "summary_row": summary_row,
@@ -457,7 +655,86 @@ class Phase68g66g1p25xCandidateAdapter:
             "config": config,
         }
 
+        if not materialize_to_canonical_closed_day:
+            if benchmark_last_day != closed_day:
+                raise ValueError(
+                    "benchmark_ohlcv last date must match the production closed day "
+                    f"(actual={benchmark_last_day} expected={closed_day})"
+                )
+            return inputs
+
+        if paper_last_day != closed_day:
+            raise ValueError(
+                "strategy_paper last_row.date must match strategy_summary.latest_available_date "
+                f"(paper={paper_last_day} summary={closed_day})"
+            )
+        if trend_history_last_day != trend_status_day:
+            raise ValueError(
+                "trend_history last day must match trend_status latest_available_date "
+                f"(trend_history={trend_history_last_day} trend_status={trend_status_day})"
+            )
+        if freshness_closed_day != trend_status_day:
+            raise ValueError(
+                "freshness_report latest_closed_utc_date must match trend_status latest_available_date "
+                f"(freshness={freshness_closed_day} trend_status={trend_status_day})"
+            )
+
+        canonical_closed_day = freshness_closed_day
+        if pd.Timestamp(canonical_closed_day) < pd.Timestamp(closed_day):
+            raise ValueError(
+                "Canonical closed day cannot be behind the validated phase68g source day "
+                f"(canonical={canonical_closed_day} source={closed_day})"
+            )
+        if pd.Timestamp(canonical_closed_day) > pd.Timestamp(benchmark_last_day):
+            raise ValueError(
+                "benchmark_ohlcv must cover the canonical closed day for dependency materialization "
+                f"(btc_last_day={benchmark_last_day} canonical_closed_day={canonical_closed_day})"
+            )
+        if pd.Timestamp(canonical_closed_day) > pd.Timestamp(closed_day):
+            next_rebalance_text = str(trend_status_row.get("next_rebalance_date") or "").strip()
+            if not next_rebalance_text:
+                raise ValueError(
+                    "Cannot materialize stale phase68g baseline without next_rebalance_date on the trend status row"
+                )
+            next_rebalance_day = _normalize_iso_day_text(
+                next_rebalance_text,
+                context="trend_status.next_rebalance_date",
+            )
+            if pd.Timestamp(canonical_closed_day) >= pd.Timestamp(next_rebalance_day):
+                raise ValueError(
+                    "phase68g baseline dependency materialization would cross a rebalance boundary "
+                    f"(source_day={closed_day} target_day={canonical_closed_day} "
+                    f"next_rebalance_date={next_rebalance_day})"
+                )
+            source_timeseries = self.build_timeseries(inputs)
+            materialized_timeseries, paper_materialization = _materialize_strategy_timeseries_to_closed_day(
+                timeseries=source_timeseries,
+                summary_row=summary_row,
+                benchmark_df=benchmark_df,
+                target_closed_day=canonical_closed_day,
+            )
+            inputs = dict(inputs)
+            inputs["source_closed_day"] = closed_day
+            inputs["closed_day"] = canonical_closed_day
+            inputs["materialized_timeseries"] = materialized_timeseries
+            inputs["paper_materialization"] = {
+                "summary_latest_available_date": closed_day,
+                "summary_source_last_day": closed_day,
+                "trend_source_last_day": trend_status_day,
+                "freshness_source_closed_day": freshness_closed_day,
+                "next_rebalance_date": next_rebalance_day,
+                **paper_materialization,
+            }
+        else:
+            inputs = dict(inputs)
+            inputs["source_closed_day"] = closed_day
+
+        return inputs
+
     def build_timeseries(self, inputs: dict[str, Any]) -> pd.DataFrame:
+        materialized_timeseries = inputs.get("materialized_timeseries")
+        if isinstance(materialized_timeseries, pd.DataFrame):
+            return materialized_timeseries.copy()
         paper_df = inputs["paper_df"].copy()
         benchmark_df = inputs["benchmark_df"].copy()
         model_export_df = build_net_cost_export_frame(

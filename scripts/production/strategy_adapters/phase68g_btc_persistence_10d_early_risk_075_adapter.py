@@ -1190,7 +1190,10 @@ def _load_shared_inputs(
     baseline_adapter = Phase68g66g1p25xCandidateAdapter()
     canonical_source_paths = baseline_adapter.resolve_source_paths(root=repo_root)
 
-    canonical_baseline_inputs = baseline_adapter.load_inputs(root=repo_root)
+    canonical_baseline_inputs = baseline_adapter.load_inputs(
+        root=repo_root,
+        materialize_to_canonical_closed_day=True,
+    )
     canonical_baseline_timeseries = baseline_adapter.build_timeseries(canonical_baseline_inputs)
     canonical_closed_day = canonical_baseline_inputs["closed_day"]
     canonical_last_day = _normalize_iso_day_text(
