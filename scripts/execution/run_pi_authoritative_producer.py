@@ -7,6 +7,7 @@ import shutil
 import socket
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -21,9 +22,13 @@ from scripts.execution.current_strategy_root_contract import (
 
 ROOT = Path(__file__).resolve().parents[2]
 PIPELINE_SCRIPT = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
+CURRENT_STRATEGY_BUILD_SCRIPT = (
+    ROOT / "scripts" / "production" / "build_current_strategy_snapshot.py"
+)
 CURRENT_STRATEGY_VALIDATE_SCRIPT = (
     ROOT / "scripts" / "production" / "validate_current_strategy_snapshot.py"
 )
+DATA_HEALTH_BUILD_SCRIPT = ROOT / "scripts" / "production" / "build_data_health_report.py"
 DATA_HEALTH_VALIDATE_SCRIPT = (
     ROOT / "scripts" / "production" / "validate_data_health_report.py"
 )
@@ -65,11 +70,14 @@ FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS = (
     ROOT / "outputs" / "production" / "current_strategy_snapshot.quality.json",
     ROOT / "outputs" / "production" / "current_strategy_snapshot.manifest.json",
 )
-FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS = (
-    ROOT / "outputs" / "production" / "data_health_report.json",
-    ROOT / "outputs" / "production" / "data_health_report.quality.json",
-    ROOT / "outputs" / "production" / "data_health_report.manifest.json",
-)
+
+
+def data_health_artifact_paths(output_dir: Path) -> tuple[Path, Path, Path]:
+    return (
+        output_dir / "data_health_report.json",
+        output_dir / "data_health_report.quality.json",
+        output_dir / "data_health_report.manifest.json",
+    )
 
 
 def authority_repo_publish_context_from_env(
@@ -859,11 +867,17 @@ def run_publish_existing_flow(
     pi_env = build_pi_authoritative_env(env=env, root=resolved_root)
     executed_steps: list[str] = []
 
+    run_checked_python_command(
+        CURRENT_STRATEGY_BUILD_SCRIPT,
+        env=pi_env,
+        root=resolved_root,
+        label="build_current_strategy_snapshot",
+    )
+    executed_steps.append("build_current_strategy_snapshot")
     ensure_required_artifacts_exist(
         FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS,
         label="publish-existing Production Core",
     )
-    executed_steps.append("verify_production_core_artifacts")
     run_checked_python_command(
         CURRENT_STRATEGY_VALIDATE_SCRIPT,
         env=pi_env,
@@ -876,37 +890,62 @@ def run_publish_existing_flow(
         label="publish-existing Production Core",
     )
 
-    ensure_required_artifacts_exist(
-        FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS,
-        label="publish-existing data health",
-    )
-    executed_steps.append("verify_data_health_artifacts")
-    run_checked_python_command(
-        DATA_HEALTH_VALIDATE_SCRIPT,
-        env=pi_env,
-        root=resolved_root,
-        label="validate_data_health_report",
-    )
-    executed_steps.append("validate_data_health_report")
-    ensure_required_artifacts_exist(
-        FAST_MODE_REQUIRED_DATA_HEALTH_ARTIFACTS,
-        label="publish-existing data health",
-    )
+    temp_output_path = Path(tempfile.gettempdir()) / "mrv1_publish_existing_data_health"
+    temp_output_path.mkdir(parents=True, exist_ok=True)
+    try:
+        temp_data_health_artifacts = data_health_artifact_paths(temp_output_path)
+        run_checked_python_command(
+            DATA_HEALTH_BUILD_SCRIPT,
+            env=pi_env,
+            root=resolved_root,
+            args=["--output-dir", str(temp_output_path)],
+            label="build_data_health_report",
+        )
+        executed_steps.append("build_data_health_report")
+        ensure_required_artifacts_exist(
+            temp_data_health_artifacts,
+            label="publish-existing data health",
+        )
+        run_checked_python_command(
+            DATA_HEALTH_VALIDATE_SCRIPT,
+            env=pi_env,
+            root=resolved_root,
+            args=[
+                "--report-path",
+                str(temp_data_health_artifacts[0]),
+                "--quality-path",
+                str(temp_data_health_artifacts[1]),
+            ],
+            label="validate_data_health_report",
+        )
+        executed_steps.append("validate_data_health_report")
+        ensure_required_artifacts_exist(
+            temp_data_health_artifacts,
+            label="publish-existing data health",
+        )
+    finally:
+        shutil.rmtree(temp_output_path, ignore_errors=True)
 
-    run_checked_python_command(
-        EXECUTION_SOURCE_CONTRACT_SCRIPT,
-        env=pi_env,
-        root=resolved_root,
-        label="validate_execution_source_contract",
-    )
-    executed_steps.append("validate_execution_source_contract")
-    run_checked_python_command(
-        SCHEDULER_ENTRY_SCRIPT,
-        env=pi_env,
-        root=resolved_root,
-        label="run_full_auto_scheduler_entry",
-    )
-    executed_steps.append("run_full_auto_scheduler_entry_preview")
+    if dry_run:
+        runtime_preview_chain = "skipped_dry_run"
+        print("[AUTHORITY] runtime_preview_chain=skipped_dry_run", flush=True)
+    else:
+        runtime_preview_chain = "executed_preview_only"
+        print("[AUTHORITY] runtime_preview_chain=executed_preview_only", flush=True)
+        run_checked_python_command(
+            EXECUTION_SOURCE_CONTRACT_SCRIPT,
+            env=pi_env,
+            root=resolved_root,
+            label="validate_execution_source_contract",
+        )
+        executed_steps.append("validate_execution_source_contract")
+        run_checked_python_command(
+            SCHEDULER_ENTRY_SCRIPT,
+            env=pi_env,
+            root=resolved_root,
+            label="run_full_auto_scheduler_entry",
+        )
+        executed_steps.append("run_full_auto_scheduler_entry_preview")
 
     publish_result = publish_authority_artifacts_to_repo(
         root=resolved_root,
@@ -917,6 +956,7 @@ def run_publish_existing_flow(
         "mode": "publish-existing",
         "dry_run": dry_run,
         "heavy_refresh_steps": "skipped",
+        "runtime_preview_chain": runtime_preview_chain,
         "executed_steps": executed_steps,
         "authority_repo_publish": publish_result,
     }
