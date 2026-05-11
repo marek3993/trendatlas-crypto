@@ -229,6 +229,20 @@ def _compare_text(actual: Any, expected: str, *, context: str, errors: list[str]
         errors.append(f"{context} mismatch: actual={actual_text!r} expected={expected!r}")
 
 
+def _compare_json_payload(actual: Any, expected: Any, *, context: str, errors: list[str]) -> None:
+    if actual == expected:
+        return
+    try:
+        actual_text = json.dumps(actual, sort_keys=True, ensure_ascii=False)
+    except Exception:
+        actual_text = repr(actual)
+    try:
+        expected_text = json.dumps(expected, sort_keys=True, ensure_ascii=False)
+    except Exception:
+        expected_text = repr(expected)
+    errors.append(f"{context} mismatch: actual={actual_text} expected={expected_text}")
+
+
 def _summarize_bad_dates(mask: pd.Series, dates: pd.Series, *, limit: int = 5) -> str:
     bad_dates = dates.loc[mask.fillna(False)].astype(str).head(limit).tolist()
     return ", ".join(bad_dates)
@@ -1055,6 +1069,19 @@ def validate_production_payloads(
                             errors=errors,
                             tolerance=0.0,
                         )
+                actual_etf_panel_materialization = source_inputs.get("etf_panel_materialization")
+                expected_etf_panel_materialization = expected_source_inputs.get("etf_panel_materialization")
+                if not isinstance(actual_etf_panel_materialization, dict) or not isinstance(
+                    expected_etf_panel_materialization, dict
+                ):
+                    errors.append("snapshot.source_inputs.etf_panel_materialization must be an object")
+                else:
+                    _compare_json_payload(
+                        actual_etf_panel_materialization,
+                        expected_etf_panel_materialization,
+                        context="snapshot.source_inputs.etf_panel_materialization",
+                        errors=errors,
+                    )
 
     if adapter.strategy_version == ETF_FLOW_CANDIDATE_ID:
         _validate_etf_flow_full_history_contract(

@@ -6,7 +6,7 @@ import re
 import sys
 from dataclasses import dataclass
 from datetime import date as date_cls
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -294,6 +294,199 @@ def _annotate_materialized_durable_source_metadata(
         if "closed_day" in payload:
             payload["closed_day"] = materialized_closed_day
     return payload
+
+
+def _nth_weekday_of_month(year: int, month: int, weekday: int, occurrence: int) -> date_cls:
+    first_day = date_cls(year, month, 1)
+    day_offset = (weekday - first_day.weekday()) % 7
+    return first_day + timedelta(days=day_offset + ((occurrence - 1) * 7))
+
+
+def _last_weekday_of_month(year: int, month: int, weekday: int) -> date_cls:
+    if month == 12:
+        next_month = date_cls(year + 1, 1, 1)
+    else:
+        next_month = date_cls(year, month + 1, 1)
+    cursor = next_month - timedelta(days=1)
+    while cursor.weekday() != weekday:
+        cursor -= timedelta(days=1)
+    return cursor
+
+
+def _observed_fixed_holiday(year: int, month: int, day: int) -> date_cls:
+    holiday = date_cls(year, month, day)
+    if holiday.weekday() == 5:
+        return holiday - timedelta(days=1)
+    if holiday.weekday() == 6:
+        return holiday + timedelta(days=1)
+    return holiday
+
+
+def _easter_sunday(year: int) -> date_cls:
+    a = year % 19
+    b = year // 100
+    c = year % 100
+    d = b // 4
+    e = b % 4
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i = c // 4
+    k = c % 4
+    l = (32 + (2 * e) + (2 * i) - h - k) % 7
+    m = (a + (11 * h) + (22 * l)) // 451
+    month = (h + l - (7 * m) + 114) // 31
+    day = ((h + l - (7 * m) + 114) % 31) + 1
+    return date_cls(year, month, day)
+
+
+def _us_equity_market_holidays(year: int) -> set[date_cls]:
+    holidays: set[date_cls] = {
+        _observed_fixed_holiday(year, 1, 1),
+        _nth_weekday_of_month(year, 1, 0, 3),   # Martin Luther King Jr. Day
+        _nth_weekday_of_month(year, 2, 0, 3),   # Presidents Day
+        _easter_sunday(year) - timedelta(days=2),  # Good Friday
+        _last_weekday_of_month(year, 5, 0),     # Memorial Day
+        _observed_fixed_holiday(year, 7, 4),
+        _nth_weekday_of_month(year, 9, 0, 1),   # Labor Day
+        _nth_weekday_of_month(year, 11, 3, 4),  # Thanksgiving
+        _observed_fixed_holiday(year, 12, 25),
+    }
+    if year >= 2022:
+        holidays.add(_observed_fixed_holiday(year, 6, 19))
+    return holidays
+
+
+def _is_us_equity_trading_session_day(value: pd.Timestamp) -> bool:
+    day = pd.Timestamp(value).normalize().date()
+    if day.weekday() >= 5:
+        return False
+    return day not in _us_equity_market_holidays(day.year)
+
+
+def _non_session_day_reason(value: pd.Timestamp) -> str:
+    day = pd.Timestamp(value).normalize().date()
+    if day.weekday() >= 5:
+        return "weekend"
+    if day in _us_equity_market_holidays(day.year):
+        return "market_holiday"
+    return "expected_session_missing"
+
+
+def _validate_etf_panel_materialization(
+    *,
+    etf_df: pd.DataFrame,
+    target_closed_day: str,
+) -> dict[str, Any]:
+    if etf_df.empty:
+        raise ValueError("ETF-flow panel has no rows")
+
+    actual_latest_row = etf_df.iloc[-1]
+    actual_latest_session_day = _normalize_iso_day_text(
+        actual_latest_row.get("us_trading_session_date"),
+        context="etf_panel.last_row.us_trading_session_date",
+    )
+    actual_latest_causal_day = _normalize_iso_day_text(
+        actual_latest_row.get("causal_available_for_btc_utc_day"),
+        context="etf_panel.last_row.causal_available_for_btc_utc_day",
+    )
+    actual_latest_index_day = _normalize_iso_day_text(
+        pd.Timestamp(etf_df.index[-1]).strftime("%Y-%m-%d"),
+        context="etf_panel.last_row.index",
+    )
+    if actual_latest_index_day != actual_latest_causal_day:
+        raise ValueError(
+            "ETF-flow panel date index must match causal_available_for_btc_utc_day "
+            f"(index={actual_latest_index_day} causal={actual_latest_causal_day})"
+        )
+
+    usable_rows = etf_df.loc[etf_df.index <= pd.Timestamp(target_closed_day)].copy()
+    if usable_rows.empty:
+        raise ValueError(
+            "ETF-flow panel has no causal rows on or before the validated closed day "
+            f"(closed_day={target_closed_day})"
+        )
+
+    active_latest_row = usable_rows.iloc[-1]
+    active_source_session_day = _normalize_iso_day_text(
+        active_latest_row.get("us_trading_session_date"),
+        context="etf_panel.active_last_row.us_trading_session_date",
+    )
+    active_source_causal_day = _normalize_iso_day_text(
+        active_latest_row.get("causal_available_for_btc_utc_day"),
+        context="etf_panel.active_last_row.causal_available_for_btc_utc_day",
+    )
+    active_source_index_day = _normalize_iso_day_text(
+        pd.Timestamp(usable_rows.index[-1]).strftime("%Y-%m-%d"),
+        context="etf_panel.active_last_row.index",
+    )
+    if active_source_index_day != active_source_causal_day:
+        raise ValueError(
+            "ETF-flow active source row index must match causal_available_for_btc_utc_day "
+            f"(index={active_source_index_day} causal={active_source_causal_day})"
+        )
+
+    expected_active_causal_day = (
+        pd.Timestamp(active_source_session_day) + pd.Timedelta(days=1)
+    ).strftime("%Y-%m-%d")
+    if expected_active_causal_day != active_source_causal_day:
+        raise ValueError(
+            "ETF-flow panel violated the D+1 causal contract on the active source row "
+            f"(session_day={active_source_session_day} expected_causal_day={expected_active_causal_day} "
+            f"actual_causal_day={active_source_causal_day})"
+        )
+
+    carry_forward_non_session_days: list[dict[str, str]] = []
+    unexpected_missing_session_days: list[str] = []
+    active_source_causal_stamp = pd.Timestamp(active_source_causal_day)
+    target_closed_stamp = pd.Timestamp(target_closed_day)
+    if active_source_causal_stamp < target_closed_stamp:
+        for day in pd.date_range(
+            pd.Timestamp(active_source_session_day) + pd.Timedelta(days=1),
+            target_closed_stamp - pd.Timedelta(days=1),
+            freq="D",
+        ):
+            if _is_us_equity_trading_session_day(day):
+                unexpected_missing_session_days.append(day.strftime("%Y-%m-%d"))
+            else:
+                carry_forward_non_session_days.append(
+                    {
+                        "date": day.strftime("%Y-%m-%d"),
+                        "reason": _non_session_day_reason(day),
+                    }
+                )
+    if unexpected_missing_session_days:
+        raise ValueError(
+            "ETF-flow panel is stale relative to the validated closed day because one or more "
+            "intermediate U.S. trading sessions are missing "
+            f"(closed_day={target_closed_day} missing_session_days={unexpected_missing_session_days})"
+        )
+
+    carry_forward_days_applied = max((target_closed_stamp - active_source_causal_stamp).days, 0)
+    evaluation_mode = (
+        "carry_forward_last_valid_etf_state"
+        if carry_forward_days_applied > 0
+        else "same_day_causal_evaluation"
+    )
+    carry_forward_reason = (
+        "no_intermediate_us_trading_sessions"
+        if carry_forward_days_applied > 0
+        else "no_carry_forward_needed"
+    )
+
+    return {
+        "actual_latest_source_session_day": actual_latest_session_day,
+        "actual_latest_causal_available_day": actual_latest_causal_day,
+        "active_source_session_day": active_source_session_day,
+        "active_source_causal_available_day": active_source_causal_day,
+        "materialized_closed_day": target_closed_day,
+        "carry_forward_days_applied": int(carry_forward_days_applied),
+        "synthetic_source_rows_added": 0,
+        "evaluation_mode": evaluation_mode,
+        "carry_forward_reason": carry_forward_reason,
+        "carry_forward_non_session_days": carry_forward_non_session_days,
+        "d_plus_1_source_contract_ok": True,
+    }
 
 
 def capture_protected_state(*, root: Path | None = None) -> dict[str, dict[str, Any]]:
@@ -642,6 +835,60 @@ def _build_durable_baseline_carry_forward_row(
     return row
 
 
+def _normalize_benchmark_close_frame(
+    benchmark_df: pd.DataFrame,
+    *,
+    context: str,
+) -> pd.DataFrame:
+    if "date" not in benchmark_df.columns or "close" not in benchmark_df.columns:
+        raise ValueError(f"{context} missing required date/close columns")
+    benchmark = benchmark_df.copy()
+    benchmark["date"] = pd.to_datetime(benchmark["date"], errors="coerce")
+    benchmark["close"] = pd.to_numeric(benchmark["close"], errors="coerce")
+    benchmark = benchmark.dropna(subset=["date", "close"]).sort_values("date")
+    benchmark = benchmark.drop_duplicates(subset=["date"], keep="last")
+    if benchmark.empty:
+        raise ValueError(f"{context} has no usable date/close rows")
+    return benchmark.loc[:, ["date", "close"]].reset_index(drop=True)
+
+
+def _build_benchmark_fallback_frame_from_durable_baseline(
+    durable_baseline_timeseries: pd.DataFrame,
+) -> pd.DataFrame:
+    if "date" not in durable_baseline_timeseries.columns or "btc_close" not in durable_baseline_timeseries.columns:
+        raise ValueError(
+            "durable_baseline_paper missing date/btc_close columns required for canonical BTC fallback"
+        )
+    return _normalize_benchmark_close_frame(
+        durable_baseline_timeseries.loc[:, ["date", "btc_close"]].rename(
+            columns={"btc_close": "close"}
+        ),
+        context="durable_baseline_paper.btc_close",
+    )
+
+
+def _build_btc_probe_frame_from_close_series(benchmark_df: pd.DataFrame) -> pd.DataFrame:
+    benchmark = _normalize_benchmark_close_frame(
+        benchmark_df,
+        context="canonical_benchmark_close_frame",
+    )
+    benchmark["btc_return"] = (
+        benchmark["close"]
+        .pct_change()
+        .replace([float("inf"), float("-inf")], pd.NA)
+        .fillna(0.0)
+    )
+    benchmark["btc_ema10"] = benchmark["close"].ewm(
+        span=BTC_EMA_DAYS,
+        adjust=False,
+        min_periods=BTC_EMA_DAYS,
+    ).mean()
+    benchmark["btc_price_filter_pass"] = benchmark["close"] > benchmark["btc_ema10"]
+    return benchmark.set_index("date")[
+        ["close", "btc_return", "btc_ema10", "btc_price_filter_pass"]
+    ].rename(columns={"close": "btc_close"})
+
+
 def _materialize_durable_baseline_timeseries_to_closed_day(
     *,
     durable_baseline_timeseries: pd.DataFrame,
@@ -665,11 +912,10 @@ def _materialize_durable_baseline_timeseries_to_closed_day(
             "carry_forward_rows_added": 0,
         }
 
-    benchmark = benchmark_df.copy()
-    benchmark["date"] = pd.to_datetime(benchmark["date"], errors="coerce")
-    benchmark["close"] = pd.to_numeric(benchmark["close"], errors="coerce")
-    benchmark = benchmark.dropna(subset=["date", "close"]).sort_values("date")
-    benchmark = benchmark.drop_duplicates(subset=["date"], keep="last").set_index("date")
+    benchmark = _normalize_benchmark_close_frame(
+        benchmark_df,
+        context="benchmark_materialization",
+    ).set_index("date")
     carry_forward_days = benchmark.index[
         (benchmark.index > pd.Timestamp(source_last_day)) & (benchmark.index <= target_day)
     ]
@@ -722,7 +968,7 @@ def _load_shared_inputs(
     freshness_payload = _read_json_required(
         source_paths["durable_baseline_freshness_report"]
     )
-    benchmark_df = _read_dataframe_required(source_paths["btc_ohlcv"])
+    benchmark_raw_df = _read_dataframe_required(source_paths["btc_ohlcv"])
 
     durable_baseline_summary_day = _normalize_iso_day_text(
         durable_baseline_summary_row.get("latest_available_date"),
@@ -746,14 +992,21 @@ def _load_shared_inputs(
         freshness_payload.get("latest_closed_utc_date"),
         context="durable_baseline_freshness_report.latest_closed_utc_date",
     )
-    benchmark_dates = pd.to_datetime(benchmark_df["date"], errors="coerce")
+    benchmark_raw_canonical_df = _normalize_benchmark_close_frame(
+        benchmark_raw_df,
+        context="btc_ohlcv",
+    )
     benchmark_day_set = {
-        stamp.strftime("%Y-%m-%d") for stamp in benchmark_dates.dropna().tolist()
+        pd.Timestamp(stamp).strftime("%Y-%m-%d")
+        for stamp in benchmark_raw_canonical_df["date"].tolist()
     }
-    benchmark_last_day = _normalize_iso_day_text(
-        benchmark_dates.iloc[-1].strftime("%Y-%m-%d"),
+    benchmark_raw_last_day = _normalize_iso_day_text(
+        pd.Timestamp(benchmark_raw_canonical_df["date"].iloc[-1]).strftime("%Y-%m-%d"),
         context="btc_ohlcv.last_row.date",
     )
+    benchmark_canonical_df = benchmark_raw_canonical_df
+    benchmark_last_day = benchmark_raw_last_day
+    benchmark_source_mode = "raw_btc_ohlcv"
     baseline_source_closed_day = trend_status_day
     baseline_closed_day = benchmark_last_day
 
@@ -784,10 +1037,28 @@ def _load_shared_inputs(
             f"(freshness={freshness_closed_day} trend_status={baseline_source_closed_day})"
         )
     if pd.Timestamp(baseline_closed_day) < pd.Timestamp(baseline_source_closed_day):
-        raise ValueError(
-            "btc_ohlcv cannot be behind the validated durable BTC-persistence source day "
-            f"(btc_last_day={benchmark_last_day} source_day={baseline_source_closed_day})"
+        fallback_benchmark_df = _build_benchmark_fallback_frame_from_durable_baseline(
+            durable_baseline_timeseries
         )
+        fallback_last_day = _normalize_iso_day_text(
+            pd.Timestamp(fallback_benchmark_df["date"].iloc[-1]).strftime("%Y-%m-%d"),
+            context="durable_baseline_paper.btc_close.last_row.date",
+        )
+        if pd.Timestamp(fallback_last_day) < pd.Timestamp(baseline_source_closed_day):
+            raise ValueError(
+                "btc_ohlcv cannot be behind the validated durable BTC-persistence source day, "
+                "and no canonical fallback benchmark is available from the durable baseline paper "
+                f"(btc_last_day={benchmark_raw_last_day} fallback_last_day={fallback_last_day} "
+                f"source_day={baseline_source_closed_day})"
+            )
+        benchmark_canonical_df = fallback_benchmark_df
+        benchmark_day_set = {
+            pd.Timestamp(stamp).strftime("%Y-%m-%d")
+            for stamp in benchmark_canonical_df["date"].tolist()
+        }
+        benchmark_last_day = fallback_last_day
+        benchmark_source_mode = "durable_baseline_embedded_btc_close"
+        baseline_closed_day = benchmark_last_day
     if pd.Timestamp(baseline_closed_day) > pd.Timestamp(baseline_source_closed_day):
         next_rebalance_text = str(trend_status_row.get("next_rebalance_date") or "").strip()
         if not next_rebalance_text:
@@ -814,7 +1085,7 @@ def _load_shared_inputs(
         _materialize_durable_baseline_timeseries_to_closed_day(
             durable_baseline_timeseries=durable_baseline_timeseries,
             summary_row=durable_baseline_summary_row,
-            benchmark_df=benchmark_df,
+            benchmark_df=benchmark_canonical_df,
             target_closed_day=baseline_closed_day,
         )
     )
@@ -899,11 +1170,20 @@ def _load_shared_inputs(
                 raw_source_last_day=freshness_closed_day,
                 raw_source_closed_day=freshness_closed_day,
             ),
-            "benchmark_ohlcv": _source_file_metadata(
-                source_paths["btc_ohlcv"],
-                last_date=benchmark_last_day,
-                row_count=len(benchmark_df),
-            ),
+            "benchmark_ohlcv": {
+                **_annotate_materialized_durable_source_metadata(
+                    _source_file_metadata(
+                        source_paths["btc_ohlcv"],
+                        last_date=benchmark_raw_last_day,
+                        row_count=len(benchmark_raw_canonical_df),
+                    ),
+                    materialized_closed_day=benchmark_last_day,
+                    carry_forward_rows_added=0,
+                    raw_source_last_day=benchmark_raw_last_day,
+                ),
+                "source_mode": benchmark_source_mode,
+                "effective_row_count": int(len(benchmark_canonical_df)),
+            },
         },
     }
     current_closed_day = baseline_closed_day
@@ -935,16 +1215,11 @@ def _load_shared_inputs(
     )
     probe_mod, cooldown_mod = dev_only_rebuild.load_phase68g_helpers()
     etf_df = probe_mod.load_etf_panel(source_paths["etf_panel"])
-    btc_df = probe_mod.load_btc_frame(source_paths["btc_ohlcv"])
-    etf_panel_last_day = _normalize_iso_day_text(
-        pd.Timestamp(etf_df.index[-1]).strftime("%Y-%m-%d"),
-        context="etf_panel.last_row.date",
+    btc_df = _build_btc_probe_frame_from_close_series(benchmark_canonical_df)
+    etf_panel_materialization = _validate_etf_panel_materialization(
+        etf_df=etf_df,
+        target_closed_day=baseline_closed_day,
     )
-    if pd.Timestamp(etf_panel_last_day) < pd.Timestamp(baseline_closed_day):
-        raise ValueError(
-            "ETF-flow causal panel must cover the validated durable BTC-persistence closed day "
-            f"(etf_panel={etf_panel_last_day} closed_day={baseline_closed_day})"
-        )
     overlap_frame = probe_mod.build_overlap_frame(baseline_probe_frame, etf_df, btc_df)
     if "date" in overlap_frame.columns:
         overlap_frame = overlap_frame.drop(columns=["date"])
@@ -1078,11 +1353,14 @@ def _load_shared_inputs(
         "materialized_closed_day": materialized_closed_day,
         "raw_source_last_day": raw_source_last_day,
         "carry_forward_rows_added": carry_forward_rows_added,
+        "etf_panel_materialization": etf_panel_materialization,
         "trend_status_row": trend_status_row,
         "trend_status_day": trend_status_day,
         "trend_history_last_day": trend_history_last_day,
         "freshness_closed_day": freshness_closed_day,
         "benchmark_last_day": benchmark_last_day,
+        "benchmark_raw_last_day": benchmark_raw_last_day,
+        "benchmark_source_mode": benchmark_source_mode,
         "durable_baseline_timeseries": durable_baseline_timeseries,
         "durable_baseline_source_inputs": durable_baseline_source_inputs,
         "authorized_compare_reference": authorized_compare_reference,
@@ -2167,6 +2445,7 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
             "base_strategy_version": self.base_strategy_version,
             "baseline_closed_day": inputs["baseline_closed_day"],
             "candidate_compare_closed_day": inputs["candidate_overlap_closed_day"],
+            "benchmark_source_mode": inputs["benchmark_source_mode"],
             "full_history_window": {
                 "start_date": _normalize_iso_day_text(
                     inputs["baseline_timeseries"]["date"].iloc[0],
@@ -2203,22 +2482,53 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
             },
             "files": {
                 **durable_baseline_files,
-                "etf_panel": _source_file_metadata(
-                    inputs["source_paths"]["etf_panel"],
-                    last_date=_normalize_iso_day_text(
-                        pd.Timestamp(inputs["etf_df"].index[-1]).strftime("%Y-%m-%d"),
-                        context="etf_panel.last_row.date",
+                "etf_panel": {
+                    **_source_file_metadata(
+                        inputs["source_paths"]["etf_panel"],
+                        last_date=str(
+                            inputs["etf_panel_materialization"]["actual_latest_causal_available_day"]
+                        ),
+                        row_count=len(inputs["etf_df"]),
                     ),
-                    row_count=len(inputs["etf_df"]),
-                ),
-                "btc_ohlcv": _source_file_metadata(
-                    inputs["source_paths"]["btc_ohlcv"],
-                    last_date=_normalize_iso_day_text(
-                        pd.Timestamp(inputs["btc_df"].index[-1]).strftime("%Y-%m-%d"),
-                        context="btc_ohlcv.last_row.date",
+                    "latest_source_session_day": str(
+                        inputs["etf_panel_materialization"]["actual_latest_source_session_day"]
                     ),
-                    row_count=len(inputs["btc_df"]),
-                ),
+                    "active_source_session_day": str(
+                        inputs["etf_panel_materialization"]["active_source_session_day"]
+                    ),
+                    "active_source_causal_available_day": str(
+                        inputs["etf_panel_materialization"]["active_source_causal_available_day"]
+                    ),
+                    "materialized_closed_day": str(
+                        inputs["etf_panel_materialization"]["materialized_closed_day"]
+                    ),
+                    "evaluation_mode": str(inputs["etf_panel_materialization"]["evaluation_mode"]),
+                    "carry_forward_reason": str(
+                        inputs["etf_panel_materialization"]["carry_forward_reason"]
+                    ),
+                    "carry_forward_days_applied": int(
+                        inputs["etf_panel_materialization"]["carry_forward_days_applied"]
+                    ),
+                    "synthetic_source_rows_added": int(
+                        inputs["etf_panel_materialization"]["synthetic_source_rows_added"]
+                    ),
+                },
+                "btc_ohlcv": {
+                    **_annotate_materialized_durable_source_metadata(
+                        _source_file_metadata(
+                            inputs["source_paths"]["btc_ohlcv"],
+                            last_date=str(inputs["benchmark_raw_last_day"]),
+                            row_count=len(inputs["btc_df"]),
+                        ),
+                        materialized_closed_day=_normalize_iso_day_text(
+                            pd.Timestamp(inputs["btc_df"].index[-1]).strftime("%Y-%m-%d"),
+                            context="btc_ohlcv.last_row.date",
+                        ),
+                        carry_forward_rows_added=0,
+                        raw_source_last_day=str(inputs["benchmark_raw_last_day"]),
+                    ),
+                    "source_mode": str(inputs["benchmark_source_mode"]),
+                },
                 "dev_only_script": _source_file_metadata(inputs["source_paths"]["dev_only_script"]),
                 "probe_helper_source": _source_file_metadata(inputs["source_paths"]["probe_helper_source"]),
                 "cooldown_helper_source": _source_file_metadata(inputs["source_paths"]["cooldown_helper_source"]),
@@ -2234,6 +2544,7 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
             "hard_invalidation_rule": dict(inputs["hard_invalidation_meta"]),
             "window_counts": dict(inputs["window_counts"]),
             "blocker_rows": dict(inputs["blocker_rows"]),
+            "etf_panel_materialization": dict(inputs["etf_panel_materialization"]),
         }
 
     def build_snapshot_metrics(
@@ -2350,6 +2661,32 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
                 "trend_history_last_day": inputs["trend_history_last_day"],
                 "freshness_closed_day": inputs["freshness_closed_day"],
                 "benchmark_last_day": inputs["benchmark_last_day"],
+                "benchmark_raw_last_day": inputs["benchmark_raw_last_day"],
+                "benchmark_source_mode": inputs["benchmark_source_mode"],
+                "etf_panel_latest_source_session_day": str(
+                    inputs["etf_panel_materialization"]["actual_latest_source_session_day"]
+                ),
+                "etf_panel_latest_causal_available_day": str(
+                    inputs["etf_panel_materialization"]["actual_latest_causal_available_day"]
+                ),
+                "etf_panel_active_source_session_day": str(
+                    inputs["etf_panel_materialization"]["active_source_session_day"]
+                ),
+                "etf_panel_active_source_causal_available_day": str(
+                    inputs["etf_panel_materialization"]["active_source_causal_available_day"]
+                ),
+                "etf_panel_evaluation_mode": str(
+                    inputs["etf_panel_materialization"]["evaluation_mode"]
+                ),
+                "etf_panel_carry_forward_reason": str(
+                    inputs["etf_panel_materialization"]["carry_forward_reason"]
+                ),
+                "etf_panel_carry_forward_days_applied": int(
+                    inputs["etf_panel_materialization"]["carry_forward_days_applied"]
+                ),
+                "etf_panel_synthetic_source_rows_added": int(
+                    inputs["etf_panel_materialization"]["synthetic_source_rows_added"]
+                ),
                 "warnings": validation["warnings"],
             },
             "strategy_improvement_signals": {
