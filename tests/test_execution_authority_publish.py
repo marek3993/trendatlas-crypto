@@ -1113,7 +1113,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         publish_tree_status = self.run_git(["status", "--short"], cwd=publish_tree).stdout.strip()
 
         self.assertIn('"latest_authoritative_attempt_status": "success"', latest_attempt)
-        self.assertIn('"artifact_type": "authority_success_snapshot_v1"', latest_snapshot)
+        self.assertIn(f'"artifact_type": "{SUCCESS_SNAPSHOT_ARTIFACT_TYPE}"', latest_snapshot)
         self.assertEqual(
             changed_paths,
             set(expected_pathspecs),
