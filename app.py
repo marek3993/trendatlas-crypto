@@ -76,6 +76,8 @@ DATA_HEALTH_REPORT_PATH = PRODUCTION_OUTPUTS / "data_health_report.json"
 TRADING_OPERATION_MODE_CONFIG_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
 LIVE_ORDER_CONFIRMATION_TEXT = "POTVRDZUJEM"
 APP_DISPLAY_TIMEZONE = ZoneInfo("Europe/Bratislava")
+ETF_FLOW_PUBLIC_STRATEGY_VERSION = "phase68g_etf_flow_impulse_early_risk_cooldown_15"
+ETF_FLOW_PUBLIC_EVIDENCE_START_DATE = "2024-01-12"
 BTC_REALTIME_TICKER_URL = (
     "https://api.coingecko.com/api/v3/simple/price"
     "?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
@@ -980,6 +982,186 @@ def resolve_main_metrics_for_display(
     if expected_model and not actual_model:
         metrics["model"] = expected_model
     return metrics
+
+
+def _to_bool_series(values: pd.Series) -> pd.Series:
+    lowered = values.fillna("").astype(str).str.strip().str.lower()
+    return lowered.isin({"1", "true", "yes", "y"})
+
+
+def _compute_total_return_pct(series: pd.Series) -> float:
+    curve = (1.0 + pd.to_numeric(series, errors="coerce").fillna(0.0)).cumprod()
+    if curve.empty:
+        return 0.0
+    return float((curve.iloc[-1] - 1.0) * 100.0)
+
+
+def _compute_cagr_pct(series: pd.Series, dates: pd.Series) -> float:
+    clean_returns = pd.to_numeric(series, errors="coerce").fillna(0.0)
+    clean_dates = pd.to_datetime(dates, errors="coerce")
+    valid_mask = clean_dates.notna()
+    clean_returns = clean_returns.loc[valid_mask]
+    clean_dates = clean_dates.loc[valid_mask]
+    if len(clean_returns) < 2:
+        return 0.0
+    start_dt = pd.Timestamp(clean_dates.iloc[0])
+    end_dt = pd.Timestamp(clean_dates.iloc[-1])
+    day_count = max(int((end_dt - start_dt).days), 1)
+    years = day_count / 365.25
+    if years <= 0:
+        return 0.0
+    ending_equity = float((1.0 + clean_returns).cumprod().iloc[-1])
+    if ending_equity <= 0:
+        return 0.0
+    return float(((ending_equity ** (1.0 / years)) - 1.0) * 100.0)
+
+
+def _compute_cagr_since(series: pd.Series, dates: pd.Series, start_day: str) -> float:
+    clean_dates = pd.to_datetime(dates, errors="coerce")
+    mask = clean_dates >= pd.Timestamp(start_day)
+    if not mask.any():
+        return _compute_cagr_pct(series, dates)
+    return _compute_cagr_pct(series.loc[mask], clean_dates.loc[mask])
+
+
+def _compute_max_drawdown_pct(series: pd.Series) -> float:
+    curve = (1.0 + pd.to_numeric(series, errors="coerce").fillna(0.0)).cumprod()
+    if curve.empty:
+        return 0.0
+    drawdown = (curve / curve.cummax()) - 1.0
+    return float(drawdown.min() * 100.0)
+
+
+def _annualized_sharpe_from_daily_returns(series: pd.Series) -> float | None:
+    daily_returns = pd.to_numeric(series, errors="coerce").dropna().tolist()
+    if len(daily_returns) < 2:
+        return None
+    mean_ret = sum(daily_returns) / len(daily_returns)
+    variance = sum((value - mean_ret) ** 2 for value in daily_returns) / (len(daily_returns) - 1)
+    if variance <= 0:
+        return None
+    std = variance ** 0.5
+    if std == 0:
+        return None
+    return (mean_ret / std) * (365.0 ** 0.5)
+
+
+def _annualized_sortino_from_daily_returns(series: pd.Series) -> float | None:
+    daily_returns = pd.to_numeric(series, errors="coerce").dropna().tolist()
+    if len(daily_returns) < 2:
+        return None
+    mean_ret = sum(daily_returns) / len(daily_returns)
+    downside = [value for value in daily_returns if value < 0]
+    if len(downside) < 2:
+        return None
+    downside_mean = sum(downside) / len(downside)
+    downside_variance = sum((value - downside_mean) ** 2 for value in downside) / (len(downside) - 1)
+    if downside_variance <= 0:
+        return None
+    downside_std = downside_variance ** 0.5
+    if downside_std == 0:
+        return None
+    return (mean_ret / downside_std) * (365.0 ** 0.5)
+
+
+def normalize_iso_day_optional(value: Any) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    if "T" in text:
+        text = text.split("T", 1)[0]
+    if len(text) != 10:
+        return None
+    try:
+        date.fromisoformat(text)
+    except ValueError:
+        return None
+    return text
+
+
+def resolve_etf_public_evidence_start_day(production_snapshot: dict[str, Any]) -> str | None:
+    strategy_version = str(production_snapshot.get("strategy_version") or "").strip()
+    if strategy_version != ETF_FLOW_PUBLIC_STRATEGY_VERSION:
+        return None
+    source_inputs = (
+        production_snapshot.get("source_inputs")
+        if isinstance(production_snapshot.get("source_inputs"), dict)
+        else {}
+    )
+    evidence_window = (
+        source_inputs.get("etf_flow_evidence_window")
+        if isinstance(source_inputs.get("etf_flow_evidence_window"), dict)
+        else {}
+    )
+    return (
+        normalize_iso_day_optional(evidence_window.get("start_date"))
+        or ETF_FLOW_PUBLIC_EVIDENCE_START_DATE
+    )
+
+
+def build_public_homepage_performance_context(
+    production_snapshot: dict[str, Any],
+    production_timeseries_df: pd.DataFrame,
+) -> dict[str, Any]:
+    main_strategy_model = str(production_snapshot.get("strategy_version") or "").strip()
+    base_metrics = resolve_main_metrics_for_display(
+        dict(production_snapshot.get("metrics") or {}),
+        main_strategy_model,
+    )
+    evidence_start_day = resolve_etf_public_evidence_start_day(production_snapshot)
+    if not evidence_start_day:
+        return {
+            "timeseries_df": production_timeseries_df,
+            "main_metrics": base_metrics,
+            "top_performance_metrics": dict(base_metrics),
+            "start_day": None,
+        }
+
+    filtered_df = production_timeseries_df[
+        production_timeseries_df["ts"] >= pd.Timestamp(evidence_start_day)
+    ].copy()
+    if filtered_df.empty:
+        return {
+            "timeseries_df": production_timeseries_df,
+            "main_metrics": base_metrics,
+            "top_performance_metrics": dict(base_metrics),
+            "start_day": evidence_start_day,
+        }
+
+    returns = pd.to_numeric(filtered_df["authorized_return_net"], errors="coerce").fillna(0.0)
+    dates = pd.to_datetime(filtered_df["ts"], errors="coerce")
+    transition_series = (
+        filtered_df["asset_transition_day"]
+        if "asset_transition_day" in filtered_df.columns
+        else pd.Series(False, index=filtered_df.index)
+    )
+    public_metrics = dict(base_metrics)
+    public_metrics.update(
+        {
+            "total_return_pct": round(_compute_total_return_pct(returns), 4),
+            "cagr_pct": round(_compute_cagr_pct(returns, dates), 4),
+            "max_drawdown_pct": round(_compute_max_drawdown_pct(returns), 4),
+            "since2023_cagr_pct": round(_compute_cagr_since(returns, dates, "2023-01-01"), 4),
+            "since2025_cagr_pct": round(_compute_cagr_since(returns, dates, "2025-01-01"), 4),
+            "cash_days_pct": round(float(_to_bool_series(filtered_df["cash_day"]).mean() * 100.0), 6),
+            "btc_days_pct": round(float(_to_bool_series(filtered_df["btc_day"]).mean() * 100.0), 6),
+            "switch_count": int(_to_bool_series(transition_series).sum()),
+            "trade_count": int(_to_bool_series(transition_series).sum()),
+            "public_performance_start_date": evidence_start_day,
+        }
+    )
+    sharpe = _annualized_sharpe_from_daily_returns(returns)
+    if sharpe is not None:
+        public_metrics["sharpe"] = round(float(sharpe), 4)
+    sortino = _annualized_sortino_from_daily_returns(returns)
+    if sortino is not None:
+        public_metrics["sortino"] = round(float(sortino), 4)
+    return {
+        "timeseries_df": filtered_df,
+        "main_metrics": public_metrics,
+        "top_performance_metrics": dict(public_metrics),
+        "start_day": evidence_start_day,
+    }
 
 
 def safe_plain_number_text(value, decimals: int = 4, lang: str = "sk") -> str:
@@ -5914,15 +6096,21 @@ main_metrics = resolve_main_metrics_for_display(
     dict(production_snapshot.get("metrics") or {}),
     main_key,
 )
-top_performance_metrics = dict(main_metrics)
+public_performance_context = build_public_homepage_performance_context(
+    production_snapshot,
+    production_timeseries_df,
+)
+public_performance_timeseries_df = public_performance_context["timeseries_df"]
+main_metrics = dict(public_performance_context["main_metrics"])
+top_performance_metrics = dict(public_performance_context["top_performance_metrics"])
 
-years = available_years_from_frames([production_timeseries_df])
+years = available_years_from_frames([public_performance_timeseries_df])
 if not years:
     st.error(f"{t(lang, 'load_failed')}: no usable dates")
     st.stop()
 
 main_equity_df = (
-    production_timeseries_df[["ts", "authorized_equity"]]
+    public_performance_timeseries_df[["ts", "authorized_equity"]]
     .rename(columns={"authorized_equity": "equity"})
     .dropna()
     .copy()
@@ -6012,7 +6200,7 @@ with tabs[0]:
     )
     st.plotly_chart(
         make_production_equity_chart(
-            timeseries_df=production_timeseries_df,
+            timeseries_df=public_performance_timeseries_df,
             year=selected_year_home,
             lang=lang,
             main_label=t(lang, "production_chart_legend"),
