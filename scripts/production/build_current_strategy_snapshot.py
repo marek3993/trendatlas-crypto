@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import subprocess
 import sys
@@ -42,6 +43,23 @@ TIMESERIES_PATH = DEFAULT_OUTPUT_DIR / "current_strategy_timeseries.csv"
 DIAGNOSTICS_PATH = DEFAULT_OUTPUT_DIR / "current_strategy_diagnostics.json"
 QUALITY_PATH = DEFAULT_OUTPUT_DIR / "current_strategy_snapshot.quality.json"
 MANIFEST_PATH = DEFAULT_OUTPUT_DIR / "current_strategy_snapshot.manifest.json"
+BTC_PERSISTENCE_SUMMARY_PATH = (
+    ROOT
+    / "outputs"
+    / "execution"
+    / "app_exports"
+    / "phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv"
+)
+BTC_PERSISTENCE_PAPER_PATH = (
+    ROOT
+    / "outputs"
+    / "execution"
+    / "app_exports"
+    / "phase68g_btc_persistence_10d_early_risk_075_paper.csv"
+)
+APP_FRESHNESS_REPORT_PATH = (
+    ROOT / "outputs" / "execution" / "freshness" / "app_freshness_report.json"
+)
 
 
 def utc_now_iso() -> str:
@@ -115,6 +133,97 @@ def _atomic_write_csv(path: Path, frame) -> None:
     temp_path = path.with_suffix(path.suffix + ".tmp")
     frame.to_csv(temp_path, index=False)
     temp_path.replace(path)
+
+
+def _read_csv_last_value(path: Path, *field_names: str) -> str | None:
+    if not path.exists() or not path.is_file():
+        return None
+    with path.open("r", encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+    if not rows:
+        return None
+    last_row = rows[-1]
+    for field_name in field_names:
+        value = str(last_row.get(field_name) or "").strip()
+        if value:
+            return value
+    return None
+
+
+def _write_single_row_csv(path: Path, row: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fieldnames: list[str]
+    if path.exists() and path.is_file():
+        with path.open("r", encoding="utf-8", newline="") as f:
+            existing_fieldnames = csv.DictReader(f).fieldnames
+        fieldnames = list(existing_fieldnames or row.keys())
+        for key in row:
+            if key not in fieldnames:
+                fieldnames.append(key)
+    else:
+        fieldnames = list(row.keys())
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+    with temp_path.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
+        writer.writeheader()
+        writer.writerow(row)
+    temp_path.replace(path)
+
+
+def _maybe_materialize_btc_persistence_dependency(
+    *,
+    strategy_model: str,
+    root: Path,
+) -> dict[str, Any]:
+    if strategy_model != ETF_FLOW_CANDIDATE_ID:
+        return {"status": "skipped", "reason": "not_etf_flow_live_strategy"}
+
+    freshness_path = root / APP_FRESHNESS_REPORT_PATH.relative_to(ROOT)
+    if not freshness_path.exists():
+        return {"status": "skipped", "reason": "freshness_report_missing"}
+    freshness_payload = _read_json_required(freshness_path)
+    target_closed_day = str(freshness_payload.get("latest_closed_utc_date") or "").strip()
+    if not target_closed_day:
+        return {"status": "skipped", "reason": "freshness_closed_day_missing"}
+
+    paper_path = root / BTC_PERSISTENCE_PAPER_PATH.relative_to(ROOT)
+    summary_path = root / BTC_PERSISTENCE_SUMMARY_PATH.relative_to(ROOT)
+    paper_last_day = _read_csv_last_value(paper_path, "date")
+    summary_last_day = _read_csv_last_value(summary_path, "latest_available_date", "date")
+    if paper_last_day == target_closed_day and summary_last_day == target_closed_day:
+        return {
+            "status": "current",
+            "target_closed_day": target_closed_day,
+            "paper_last_day": paper_last_day,
+            "summary_last_day": summary_last_day,
+        }
+
+    btc_adapter = Phase68gBtcPersistence10dEarlyRisk075Adapter()
+    btc_inputs = btc_adapter.load_inputs(root=root)
+    btc_timeseries = btc_adapter.build_timeseries(btc_inputs)
+    materialized_closed_day = str(btc_inputs["closed_day"])
+    materialized_last_day = str(btc_timeseries["date"].iloc[-1])
+    if materialized_closed_day != target_closed_day or materialized_last_day != target_closed_day:
+        raise ValueError(
+            "BTC-persistence dependency materialization did not reach the freshness closed day "
+            f"(target={target_closed_day} inputs={materialized_closed_day} timeseries={materialized_last_day})"
+        )
+
+    metrics_row = dict(btc_adapter.build_snapshot_metrics(btc_inputs, btc_timeseries))
+    metrics_row["model"] = BTC_PERSISTENCE_CANDIDATE_ID
+    metrics_row["latest_available_date"] = target_closed_day
+    _atomic_write_csv(paper_path, btc_timeseries)
+    _write_single_row_csv(summary_path, metrics_row)
+    return {
+        "status": "materialized",
+        "target_closed_day": target_closed_day,
+        "previous_paper_last_day": paper_last_day,
+        "previous_summary_last_day": summary_last_day,
+        "paper_last_day": target_closed_day,
+        "summary_last_day": target_closed_day,
+        "paper_path": str(paper_path),
+        "summary_path": str(summary_path),
+    }
 
 
 def _build_wait_condition(current_row, metrics: dict[str, Any]) -> dict[str, Any]:
@@ -439,6 +548,10 @@ def main() -> None:
     quality_path = args.output_dir / QUALITY_PATH.name
     manifest_path = args.output_dir / MANIFEST_PATH.name
     strategy_model = _resolve_current_strategy_model(ROOT)
+    dependency_materialization = _maybe_materialize_btc_persistence_dependency(
+        strategy_model=strategy_model,
+        root=ROOT,
+    )
     adapter = _resolve_adapter(strategy_model)
     generated_at_utc = utc_now_iso()
     build_command = " ".join([sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]])
@@ -527,6 +640,7 @@ def main() -> None:
                 "strategy_version": adapter.strategy_version,
                 "closed_day": inputs["closed_day"],
                 "validation_status": validation["status"],
+                "dependency_materialization": dependency_materialization,
             },
             indent=2,
             ensure_ascii=False,

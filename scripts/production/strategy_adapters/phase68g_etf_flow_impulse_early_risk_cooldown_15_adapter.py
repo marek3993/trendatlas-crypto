@@ -889,6 +889,101 @@ def _build_btc_probe_frame_from_close_series(benchmark_df: pd.DataFrame) -> pd.D
     ].rename(columns={"close": "btc_close"})
 
 
+def _materialize_full_history_frame_to_closed_day(
+    *,
+    full_history_frame: pd.DataFrame,
+    baseline_probe_frame: pd.DataFrame,
+    btc_df: pd.DataFrame,
+    target_closed_day: str,
+) -> pd.DataFrame:
+    """Keep the active rebuild on the full durable baseline/BTC date universe.
+
+    The ETF panel is allowed to stop on the latest causal source day during
+    weekends/holidays. Missing ETF rows after that point are carry-forward
+    evaluation days, not synthetic ETF source rows.
+    """
+    target_day = pd.Timestamp(target_closed_day)
+    baseline_btc_universe = baseline_probe_frame.join(btc_df, how="inner").sort_index()
+    baseline_btc_universe = baseline_btc_universe.loc[baseline_btc_universe.index <= target_day].copy()
+    if baseline_btc_universe.empty:
+        raise ValueError(
+            "No baseline/BTC date universe is available for ETF-flow full-history materialization "
+            f"(closed_day={target_closed_day})"
+        )
+
+    materialized = full_history_frame.sort_index().copy()
+    missing_index = baseline_btc_universe.index.difference(materialized.index)
+    if missing_index.empty:
+        return materialized
+
+    appended = baseline_btc_universe.loc[missing_index].copy()
+    for column in materialized.columns:
+        if column not in appended.columns:
+            appended[column] = pd.NA
+    materialized = pd.concat([materialized, appended.loc[:, materialized.columns]], axis=0)
+    materialized = materialized.sort_index()
+
+    baseline_btc_columns = [column for column in baseline_btc_universe.columns if column in materialized.columns]
+    materialized.loc[:, baseline_btc_columns] = baseline_btc_universe.reindex(materialized.index).loc[
+        :, baseline_btc_columns
+    ]
+
+    materialized["etf_flow_feature_available"] = materialized["causal_available_for_btc_utc_day"].notna()
+    if not bool(materialized["etf_flow_feature_available"].any()):
+        raise ValueError("ETF-flow materialized full-history frame has no causal feature rows")
+
+    first_evidence_date = pd.Timestamp(
+        materialized.index[materialized["etf_flow_feature_available"].astype(bool)].min()
+    )
+    materialized["etf_flow_evidence_window"] = materialized.index >= first_evidence_date
+
+    feature_mask = materialized["etf_flow_feature_available"].astype(bool)
+    for column in (
+        "flow_2_of_last_3_positive_flag",
+        "probe_input_ready_flag",
+        "dev_only",
+        "non_authoritative",
+        "official_truth",
+        "strategy_advancement",
+    ):
+        if column in materialized.columns:
+            materialized[column] = materialized[column].where(feature_mask)
+
+    materialized["flow_2_of_last_3_positive_eval"] = (
+        materialized["flow_2_of_last_3_positive_flag"]
+        .where(feature_mask)
+        .ffill()
+        .fillna(False)
+        .astype(bool)
+    )
+    raw_flow_3d_sum = pd.to_numeric(materialized["flow_3d_sum_usd"], errors="coerce")
+    materialized["flow_3d_sum_pass"] = raw_flow_3d_sum.fillna(float("-inf")) >= FLOW_3D_FLOOR_USD
+    materialized["baseline_cash"] = materialized["cash_day"].astype(bool)
+    materialized["baseline_full_risk"] = ~materialized["baseline_cash"]
+    materialized["hard_invalidation_on"] = materialized["stress_block_active"].astype(bool)
+    materialized["btc_price_filter_pass"] = materialized["btc_price_filter_pass"].fillna(False).astype(bool)
+    materialized["permission_inputs_true"] = (
+        feature_mask
+        & materialized["probe_input_ready_flag"].fillna(False).astype(bool)
+        & materialized["flow_2_of_last_3_positive_flag"].fillna(False).astype(bool)
+        & materialized["flow_3d_sum_pass"].astype(bool)
+        & materialized["btc_price_filter_pass"].astype(bool)
+        & ~materialized["hard_invalidation_on"].astype(bool)
+    )
+    materialized["permission_on"] = materialized["baseline_cash"] & materialized["permission_inputs_true"]
+    materialized["permission_on_while_baseline_full_risk"] = (
+        materialized["baseline_full_risk"] & materialized["permission_inputs_true"]
+    )
+
+    materialized_last_day = pd.Timestamp(materialized.index.max()).strftime("%Y-%m-%d")
+    if materialized_last_day != target_closed_day:
+        raise ValueError(
+            "ETF-flow materialized full-history frame did not reach the validated closed day "
+            f"(materialized={materialized_last_day} closed_day={target_closed_day})"
+        )
+    return materialized
+
+
 def _materialize_durable_baseline_timeseries_to_closed_day(
     *,
     durable_baseline_timeseries: pd.DataFrame,
@@ -1229,6 +1324,12 @@ def _load_shared_inputs(
         baseline_probe_frame,
         etf_df,
         btc_df,
+    )
+    full_history_frame = _materialize_full_history_frame_to_closed_day(
+        full_history_frame=full_history_frame,
+        baseline_probe_frame=baseline_probe_frame,
+        btc_df=btc_df,
+        target_closed_day=baseline_closed_day,
     )
     if "date" in full_history_frame.columns:
         full_history_frame = full_history_frame.drop(columns=["date"])
