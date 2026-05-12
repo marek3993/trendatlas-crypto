@@ -629,6 +629,29 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             runtime_snapshot["dashboard_public_status"],
         )
 
+    def test_fast_publish_requires_all_dashboard_public_app_snapshot_artifacts(self):
+        required_paths = {
+            path.resolve().relative_to(ROOT.resolve()).as_posix()
+            for path in pi_producer.FAST_MODE_REQUIRED_APP_SNAPSHOT_ARTIFACTS
+        }
+
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.json",
+            required_paths,
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv",
+            required_paths,
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.quality.json",
+            required_paths,
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.manifest.json",
+            required_paths,
+        )
+
     def test_build_publish_existing_dry_run_publish_result_includes_dashboard_public_status_pathspec(
         self,
     ):
@@ -1318,6 +1341,22 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         self.assertEqual(
             changed_paths,
             set(expected_pathspecs),
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.json",
+            changed_paths,
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv",
+            changed_paths,
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.quality.json",
+            changed_paths,
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.manifest.json",
+            changed_paths,
         )
         self.assertEqual(publish_tree_status, "")
 
