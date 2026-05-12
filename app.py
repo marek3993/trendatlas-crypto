@@ -1901,6 +1901,24 @@ def production_chart_authorized_exposure_series(df: pd.DataFrame) -> pd.Series:
     ).fillna(0.0)
 
 
+def production_chart_real_account_equity_series(df: pd.DataFrame) -> pd.Series:
+    if "real_account_index" in df.columns:
+        return pd.to_numeric(df["real_account_index"], errors="coerce")
+    return production_chart_authorized_equity_series(df)
+
+
+def production_chart_real_account_return_series(df: pd.DataFrame) -> pd.Series:
+    if "real_account_return_net" in df.columns:
+        return pd.to_numeric(df["real_account_return_net"], errors="coerce").fillna(0.0)
+    return production_chart_authorized_return_series(df)
+
+
+def production_chart_real_account_exposure_series(df: pd.DataFrame) -> pd.Series:
+    if "real_account_exposure_x" in df.columns:
+        return pd.to_numeric(df["real_account_exposure_x"], errors="coerce").fillna(0.0)
+    return production_chart_authorized_exposure_series(df)
+
+
 def production_chart_transition_cost_series(df: pd.DataFrame) -> pd.Series:
     if "model_transition_cost" in df.columns:
         return pd.to_numeric(
@@ -6245,19 +6263,29 @@ def make_production_equity_chart(
     title: str,
     real_account_exposure_state: dict[str, Any] | None = None,
     model_signal_state: dict[str, Any] | None = None,
+    chart_view: str = "real_account",
 ) -> go.Figure:
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
-    rebased_equity = rebase_series(production_chart_authorized_equity_series(main_plot))
+    use_real_account_view = str(chart_view or "").strip().lower() != "model"
+    rebased_equity = rebase_series(
+        production_chart_real_account_equity_series(main_plot)
+        if use_real_account_view
+        else production_chart_authorized_equity_series(main_plot)
+    )
     rebased_btc_baseline = rebase_series(production_chart_btc_index_series(main_plot))
-    daily_return_pct = production_chart_authorized_return_series(main_plot) * 100.0
+    daily_return_pct = (
+        production_chart_real_account_return_series(main_plot)
+        if use_real_account_view
+        else production_chart_authorized_return_series(main_plot)
+    ) * 100.0
     btc_return_pct = production_chart_btc_return_series(main_plot) * 100.0
     btc_close_series = pd.to_numeric(
         main_plot.get("btc_close", pd.Series(index=main_plot.index, dtype="float64")),
         errors="coerce",
     )
-    legend_label = t(lang, "production_chart_legend") if str(t(lang, "production_chart_legend")).strip() else main_label
+    legend_label = main_label
     runtime_model_signal = model_signal_state if isinstance(model_signal_state, dict) else {}
     real_account_label = (
         str(real_account_exposure_state.get("label_sk") or "Reálny účet").strip()
@@ -6269,14 +6297,44 @@ def make_production_equity_chart(
         if lang == "sk"
         else "Model signal"
     )
-    exposure_series = production_chart_authorized_exposure_series(main_plot)
+    legend_label = (
+        real_account_label
+        if use_real_account_view
+        else t(lang, "production_chart_legend")
+        if str(t(lang, "production_chart_legend")).strip()
+        else main_label
+    )
+    exposure_series = (
+        production_chart_real_account_exposure_series(main_plot)
+        if use_real_account_view
+        else production_chart_authorized_exposure_series(main_plot)
+    )
     max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
-    fallback_candidate = str(runtime_model_signal.get("preferred_asset") or "").strip().upper()
-    candidate_labels = main_plot.get(
-        "candidate_asset",
-        pd.Series([fallback_candidate] * len(main_plot), index=main_plot.index),
-    ).fillna("").astype(str).map(
+    fallback_candidate = str(
+        first_present_value(
+            (real_account_exposure_state or {}).get("asset") if use_real_account_view else None,
+            runtime_model_signal.get("preferred_asset"),
+            "CASH",
+        )
+    ).strip().upper()
+    candidate_source = (
+        pd.Series([fallback_candidate] * len(main_plot), index=main_plot.index)
+        if use_real_account_view
+        else main_plot.get(
+            "candidate_asset",
+            pd.Series([fallback_candidate] * len(main_plot), index=main_plot.index),
+        )
+    )
+    candidate_labels = candidate_source.fillna("").astype(str).map(
         lambda value: product_asset_label_nominative(value, lang)
+    )
+    trend_permission_values = (
+        [abs(float(exposure or 0.0)) > 1e-12 for exposure in exposure_series.tolist()]
+        if use_real_account_view
+        else main_plot.get(
+            "trend_permission_active",
+            pd.Series([abs(float(exposure or 0.0)) > 1e-12 for exposure in exposure_series.tolist()], index=main_plot.index),
+        ).tolist()
     )
     market_state_labels = [
         production_market_state_label_from_values(
@@ -6286,10 +6344,7 @@ def make_production_equity_chart(
         )
         for exposure, trend_permission_active in zip(
             exposure_series.tolist(),
-            main_plot.get(
-                "trend_permission_active",
-                pd.Series([abs(float(exposure or 0.0)) > 1e-12 for exposure in exposure_series.tolist()], index=main_plot.index),
-            ).tolist(),
+            trend_permission_values,
         )
     ]
     real_account_hover_text = ""
@@ -6303,6 +6358,7 @@ def make_production_equity_chart(
             else f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text}"
         )
 
+    line_signal_label = real_account_label if use_real_account_view else model_signal_label
     strategy_hover_customdata = list(
         zip(
             [f"{value:+.2f}%" for value in daily_return_pct.tolist()],
@@ -6312,9 +6368,9 @@ def make_production_equity_chart(
             [real_account_hover_text] * len(main_plot),
             [
                 (
-                    f"{model_signal_label}: {candidate} / {exposure}"
+                    f"{line_signal_label}: {candidate} / {exposure}"
                     if lang == "sk"
-                    else f"{model_signal_label}: {candidate} / {exposure}"
+                    else f"{line_signal_label}: {candidate} / {exposure}"
                 )
                 for candidate, exposure in zip(
                     candidate_labels.tolist(),
@@ -6420,7 +6476,7 @@ def make_production_equity_chart(
             x=main_plot["ts"],
             y=exposure_series,
             mode="lines",
-            name=t(lang, "production_chart_exposure_legend"),
+            name=line_signal_label,
             line=dict(width=2.6, color="#06d6a0"),
             line_shape="hv",
             fill="tozeroy",
@@ -6432,27 +6488,39 @@ def make_production_equity_chart(
     )
 
     current_market_state = market_state_labels[-1]
-    current_exposure_value = _first_numeric_value(runtime_model_signal.get("exposure_x"), exposure_series.iloc[-1])
+    current_exposure_value = (
+        _first_numeric_value(exposure_series.iloc[-1])
+        if use_real_account_view
+        else _first_numeric_value(runtime_model_signal.get("exposure_x"), exposure_series.iloc[-1])
+    )
     current_exposure_text = f"{float(current_exposure_value or 0.0):.2f}x"
     current_candidate_label = product_asset_label_nominative(
-        first_present_value(runtime_model_signal.get("preferred_asset"), candidate_labels.iloc[-1]),
+        first_present_value(
+            (real_account_exposure_state or {}).get("asset") if use_real_account_view else None,
+            runtime_model_signal.get("preferred_asset"),
+            candidate_labels.iloc[-1],
+        ),
         lang,
     )
     if isinstance(real_account_exposure_state, dict) and real_account_exposure_state.get("is_out_of_market") is True:
         real_asset = str(real_account_exposure_state.get("asset") or "CASH").strip().upper() or "CASH"
         real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
         real_state_text = str(real_account_exposure_state.get("state_text") or t(lang, "production_state_out_of_market")).strip()
-        annotation_text = (
-            f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text} | "
-            f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
-            if lang == "sk"
-            else f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text} | "
-            f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
-        )
+        if use_real_account_view:
+            annotation_text = f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text}"
+        else:
+            annotation_text = (
+                f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text} | "
+                f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
+                if lang == "sk"
+                else f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text} | "
+                f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
+            )
     else:
+        annotation_signal_label = line_signal_label if use_real_account_view else model_signal_label
         annotation_text = (
             f"{t(lang, 'production_chart_current_prefix')}: {current_market_state} | "
-            f"{model_signal_label}: {current_exposure_text} | "
+            f"{annotation_signal_label}: {current_exposure_text} | "
             f"{t(lang, 'production_hover_candidate_asset')}: {current_candidate_label}"
         )
 
@@ -6519,7 +6587,7 @@ def make_production_equity_chart(
         col=1,
     )
     fig.update_yaxes(
-        title=t(lang, "production_chart_exposure_axis"),
+        title=line_signal_label,
         showgrid=True,
         gridcolor="rgba(255,255,255,0.04)",
         range=[0.0, max_authorized_exposure * 1.1],
@@ -6960,7 +7028,12 @@ with tabs[0]:
         if lang == "sk"
         else t(lang, "chart_title")
     ) or t(lang, "chart_title")
-    st.markdown(f"### {model_chart_title}")
+    account_chart_title = (
+        f"{real_account_card_label} vs BTC"
+        if lang == "sk"
+        else "Real account vs BTC"
+    )
+    st.markdown(f"### {account_chart_title}")
     selected_year_home = st.selectbox(
         t(lang, "chart_year"),
         options=years,
@@ -6972,26 +7045,41 @@ with tabs[0]:
             timeseries_df=dashboard_public_chart_timeseries_df,
             year=selected_year_home,
             lang=lang,
-            main_label=t(lang, "production_chart_legend"),
-            title=model_chart_title,
+            main_label=real_account_card_label,
+            title=account_chart_title,
             real_account_exposure_state=real_account_exposure_state,
             model_signal_state=runtime_model_signal_state,
+            chart_view="real_account",
         ),
         width="stretch",
     )
-    st.caption(t(lang, "production_chart_note"))
-    st.caption(t(lang, "production_chart_baseline_note"))
-    st.caption(t(lang, "production_chart_flat_note"))
-    st.caption(t(lang, "production_chart_participation_note"))
-    st.caption(
-        build_production_chart_current_state_note(
-            production_snapshot,
-            production_diagnostics,
-            lang,
-            real_account_exposure_state,
-            runtime_model_signal_state,
+    with st.expander(model_chart_title, expanded=False):
+        st.plotly_chart(
+            make_production_equity_chart(
+                timeseries_df=dashboard_public_chart_timeseries_df,
+                year=selected_year_home,
+                lang=lang,
+                main_label=t(lang, "production_chart_legend"),
+                title=model_chart_title,
+                real_account_exposure_state=real_account_exposure_state,
+                model_signal_state=runtime_model_signal_state,
+                chart_view="model",
+            ),
+            width="stretch",
         )
-    )
+        st.caption(
+            build_production_chart_current_state_note(
+                production_snapshot,
+                production_diagnostics,
+                lang,
+                real_account_exposure_state,
+                runtime_model_signal_state,
+            )
+        )
+        st.caption(t(lang, "production_chart_note"))
+        st.caption(t(lang, "production_chart_baseline_note"))
+        st.caption(t(lang, "production_chart_flat_note"))
+        st.caption(t(lang, "production_chart_participation_note"))
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
     public_window_label_key = str(public_performance_context.get("public_window_label_key") or "since2023")
