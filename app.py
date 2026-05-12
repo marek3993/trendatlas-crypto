@@ -68,6 +68,9 @@ AUTHORITY_LATEST_ATTEMPT_STATUS_PATH = (
 LOCAL_APP_RUNTIME_SNAPSHOT_PATH = (
     ROOT / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json"
 )
+LOCAL_DASHBOARD_PUBLIC_STATUS_PATH = (
+    ROOT / "outputs" / "execution" / "app_snapshot" / "dashboard_public_status.json"
+)
 PRODUCTION_SNAPSHOT_PATH = PRODUCTION_OUTPUTS / "current_strategy_snapshot.json"
 PRODUCTION_TIMESERIES_PATH = PRODUCTION_OUTPUTS / "current_strategy_timeseries.csv"
 PRODUCTION_DIAGNOSTICS_PATH = PRODUCTION_OUTPUTS / "current_strategy_diagnostics.json"
@@ -2274,6 +2277,7 @@ def build_missing_runtime_snapshot(path: Path) -> dict:
         "schema_version": 2,
         "app_export_generated_at_utc": None,
         "account_observability_contract": {"enabled": False},
+        "dashboard_public_status": {},
         "strategy_freshness": missing_freshness,
         "runtime_table_snapshot": missing_runtime_table_snapshot,
         **missing_freshness,
@@ -2324,6 +2328,165 @@ def select_preferred_account_runtime_snapshot(authority_runtime_snapshot: dict) 
     ):
         return local_runtime_snapshot
     return authority_runtime_snapshot
+
+
+def load_dashboard_public_status_for_app(
+    runtime_snapshot: dict[str, Any],
+    production_snapshot: dict[str, Any],
+) -> dict[str, Any]:
+    target_closed_day = str(production_snapshot.get("closed_day") or "").strip()
+    candidates: list[tuple[datetime, int, dict[str, Any]]] = []
+    payload_candidates = [
+        (
+            dict(runtime_snapshot.get("dashboard_public_status") or {}),
+            0,
+        ),
+        (
+            load_json_optional(LOCAL_DASHBOARD_PUBLIC_STATUS_PATH),
+            1,
+        ),
+    ]
+    required_sections = {
+        "real_account",
+        "execution",
+        "model_signal",
+        "model_performance",
+        "public_labels_sk",
+    }
+
+    for payload, source_priority in payload_candidates:
+        if not isinstance(payload, dict):
+            continue
+        if int(payload.get("schema_version") or 0) != 1:
+            continue
+        if not required_sections.issubset(payload.keys()):
+            continue
+        closed_day = str(payload.get("closed_day") or "").strip()
+        if target_closed_day and closed_day and closed_day != target_closed_day:
+            continue
+        generated_at = parse_iso_datetime_optional(payload.get("generated_at_utc")) or datetime(
+            1970,
+            1,
+            1,
+            tzinfo=timezone.utc,
+        )
+        candidates.append((generated_at, source_priority, payload))
+
+    if not candidates:
+        return {}
+    candidates.sort(key=lambda item: (item[0], item[1]))
+    return candidates[-1][2]
+
+
+def resolve_dashboard_public_status_state(
+    dashboard_public_status: dict[str, Any],
+    lang: str,
+) -> dict[str, Any]:
+    if not isinstance(dashboard_public_status, dict) or int(dashboard_public_status.get("schema_version") or 0) != 1:
+        return {}
+
+    real_account = (
+        dashboard_public_status.get("real_account")
+        if isinstance(dashboard_public_status.get("real_account"), dict)
+        else {}
+    )
+    execution = (
+        dashboard_public_status.get("execution")
+        if isinstance(dashboard_public_status.get("execution"), dict)
+        else {}
+    )
+    model_signal = (
+        dashboard_public_status.get("model_signal")
+        if isinstance(dashboard_public_status.get("model_signal"), dict)
+        else {}
+    )
+    model_performance = (
+        dashboard_public_status.get("model_performance")
+        if isinstance(dashboard_public_status.get("model_performance"), dict)
+        else {}
+    )
+    public_labels_sk = (
+        dashboard_public_status.get("public_labels_sk")
+        if isinstance(dashboard_public_status.get("public_labels_sk"), dict)
+        else {}
+    )
+
+    real_asset = str(real_account.get("asset") or "CASH").strip().upper() or "CASH"
+    real_exposure_value = as_float(real_account.get("exposure_x"))
+    if real_exposure_value is None:
+        real_exposure_value = 0.0
+    in_market = as_bool(real_account.get("in_market")) is True
+    state_text = (
+        str(real_account.get("position_label_sk") or "").strip()
+        if lang == "sk"
+        else t(lang, "production_state_in_market")
+        if in_market
+        else t(lang, "production_state_out_of_market")
+    )
+    if not state_text:
+        state_text = (
+            t(lang, "production_state_in_market")
+            if in_market
+            else t(lang, "production_state_out_of_market")
+        )
+    exposure_text = f"{real_exposure_value:.2f}x"
+    gate_status = str(execution.get("gate_status") or "").strip().lower()
+    would_place_real_order = as_bool(execution.get("would_place_real_order"))
+    ordering_blocked = gate_status == "blocked" or would_place_real_order is False
+    subtitle = (
+        "CASH | Odoslanie obchodu blokovane"
+        if lang == "sk" and ordering_blocked
+        else "CASH | Podla uctu a vykonavacich kontrol"
+        if lang == "sk"
+        else "CASH | Order placement blocked"
+        if ordering_blocked
+        else "CASH | Based on account and execution checks"
+    )
+    if in_market:
+        subtitle = (
+            f"Otvorena pozicia: {real_asset}"
+            if lang == "sk"
+            else f"Open position: {real_asset}"
+        )
+
+    model_exposure_value = as_float(model_signal.get("exposure_x"))
+    model_exposure_text = (
+        f"{model_exposure_value:.2f}x"
+        if model_exposure_value is not None
+        else t(lang, "na")
+    )
+
+    return {
+        "public_labels_sk": public_labels_sk,
+        "real_account_exposure_state": {
+            "is_out_of_market": not in_market,
+            "asset": real_asset,
+            "exposure": real_exposure_value,
+            "exposure_text": exposure_text,
+            "state_text": state_text,
+            "value": f"{state_text} / {exposure_text}",
+            "subtitle": subtitle,
+            "target_asset": str(execution.get("target_asset") or real_asset).strip().upper() or real_asset,
+            "gate_status": gate_status,
+            "would_place_real_order": would_place_real_order,
+            "label_sk": str(public_labels_sk.get("real_account") or "Reálny účet").strip(),
+        },
+        "model_signal_state": {
+            "preferred_asset": str(model_signal.get("preferred_asset") or "").strip().upper(),
+            "exposure_x": model_exposure_value,
+            "exposure_text": model_exposure_text,
+            "label_sk": str(model_signal.get("label_sk") or public_labels_sk.get("model_signal") or "Modelový signál").strip(),
+            "not_real_wallet_exposure": as_bool(model_signal.get("not_real_wallet_exposure")) is not False,
+        },
+        "model_performance_state": {
+            "account_24h_pct": as_float(model_performance.get("account_24h_pct")),
+            "btc_24h_pct": as_float(model_performance.get("btc_24h_pct")),
+            "account_vs_btc_24h_pct": as_float(model_performance.get("account_vs_btc_24h_pct")),
+            "public_average_annual_growth_pct": as_float(model_performance.get("public_average_annual_growth_pct")),
+            "since_etf_start_cagr_pct": as_float(model_performance.get("since_etf_start_cagr_pct")),
+            "since2025_cagr_pct": as_float(model_performance.get("since2025_cagr_pct")),
+        },
+    }
 
 
 def build_authority_runtime_table_snapshot(
@@ -5849,6 +6012,17 @@ def make_production_equity_chart(
     )
     btc_close_series = pd.to_numeric(main_plot.get("btc_close"), errors="coerce")
     legend_label = t(lang, "production_chart_legend") if str(t(lang, "production_chart_legend")).strip() else main_label
+    runtime_model_signal = model_signal_state if isinstance(model_signal_state, dict) else {}
+    real_account_label = (
+        str(real_account_exposure_state.get("label_sk") or "Reálny účet").strip()
+        if isinstance(real_account_exposure_state, dict) and lang == "sk"
+        else "Real account"
+    )
+    model_signal_label = (
+        str(runtime_model_signal.get("label_sk") or t(lang, "production_chart_exposure_legend")).strip()
+        if lang == "sk"
+        else "Model signal"
+    )
     exposure_series = pd.to_numeric(main_plot.get("effective_market_exposure"), errors="coerce").fillna(0.0)
     max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
     candidate_labels = main_plot.get("candidate_asset", pd.Series([""] * len(main_plot), index=main_plot.index)).fillna("").astype(str).map(
@@ -5871,9 +6045,9 @@ def make_production_equity_chart(
         real_state_text = str(real_account_exposure_state.get("state_text") or t(lang, "production_state_out_of_market")).strip()
         real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
         real_account_hover_text = (
-            f"Reálny účet: {real_asset} / {real_state_text} / {real_exposure_text}"
+            f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text}"
             if lang == "sk"
-            else f"Real account: {real_asset} / {real_state_text} / {real_exposure_text}"
+            else f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text}"
         )
 
     strategy_hover_customdata = list(
@@ -5885,9 +6059,9 @@ def make_production_equity_chart(
             [real_account_hover_text] * len(main_plot),
             [
                 (
-                    f"Modelový signál: {candidate} / {exposure}"
+                    f"{model_signal_label}: {candidate} / {exposure}"
                     if lang == "sk"
-                    else f"Model signal: {candidate} / {exposure}"
+                    else f"{model_signal_label}: {candidate} / {exposure}"
                 )
                 for candidate, exposure in zip(
                     candidate_labels.tolist(),
@@ -6002,7 +6176,6 @@ def make_production_equity_chart(
     )
 
     current_market_state = market_state_labels[-1]
-    runtime_model_signal = model_signal_state if isinstance(model_signal_state, dict) else {}
     current_exposure_value = _first_numeric_value(runtime_model_signal.get("exposure_x"), exposure_series.iloc[-1])
     current_exposure_text = f"{float(current_exposure_value or 0.0):.2f}x"
     current_candidate_label = product_asset_label_nominative(
@@ -6014,16 +6187,16 @@ def make_production_equity_chart(
         real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
         real_state_text = str(real_account_exposure_state.get("state_text") or t(lang, "production_state_out_of_market")).strip()
         annotation_text = (
-            f"Reálny účet: {real_asset} / {real_state_text} / {real_exposure_text} | "
-            f"Modelový signál: {current_candidate_label} / {current_exposure_text}"
+            f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text} | "
+            f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
             if lang == "sk"
-            else f"Real account: {real_asset} / {real_state_text} / {real_exposure_text} | "
-            f"Model signal: {current_candidate_label} / {current_exposure_text}"
+            else f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text} | "
+            f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
         )
     else:
         annotation_text = (
             f"{t(lang, 'production_chart_current_prefix')}: {current_market_state} | "
-            f"{t(lang, 'production_hover_authorized_exposure')}: {current_exposure_text} | "
+            f"{model_signal_label}: {current_exposure_text} | "
             f"{t(lang, 'production_hover_candidate_asset')}: {current_candidate_label}"
         )
 
@@ -6339,9 +6512,26 @@ account_runtime_snapshot = select_preferred_account_runtime_snapshot(runtime_sna
 account_status_payload = dict(account_runtime_snapshot.get("execution_status") or {})
 account_snapshot_payload = dict(account_runtime_snapshot.get("account_snapshot_summary") or {})
 account_snapshot_view = dict(account_snapshot_payload)
+dashboard_public_status = load_dashboard_public_status_for_app(
+    account_runtime_snapshot,
+    production_snapshot,
+)
+dashboard_public_state = resolve_dashboard_public_status_state(
+    dashboard_public_status,
+    lang,
+)
 runtime_real_account_state = dict(runtime_snapshot.get("real_account_state") or {})
-runtime_model_signal_state = dict(runtime_snapshot.get("model_signal_state") or {})
-runtime_model_performance_state = dict(runtime_snapshot.get("model_performance_state") or {})
+runtime_model_signal_state = dict(
+    dashboard_public_state.get("model_signal_state")
+    or runtime_snapshot.get("model_signal_state")
+    or {}
+)
+runtime_model_performance_state = dict(
+    dashboard_public_state.get("model_performance_state")
+    or runtime_snapshot.get("model_performance_state")
+    or {}
+)
+dashboard_public_labels_sk = dict(dashboard_public_state.get("public_labels_sk") or {})
 runtime_health_payload = dict(runtime_snapshot.get("runtime_health_summary") or {})
 dry_run_decision_payload = dict(runtime_snapshot.get("dry_run_summary") or {})
 real_order_gate_payload = dict(runtime_snapshot.get("gate_summary") or {})
@@ -6387,14 +6577,18 @@ tabs = st.tabs(t(lang, "tabs"))
 with tabs[0]:
     trade_count_label = t(lang, "trade_count")
     current_drawdown_label = t(lang, "current_drawdown")
-    real_account_exposure_state = resolve_real_account_exposure_state(
-        account_snapshot_view=account_snapshot_view,
-        dry_run_decision_payload=dry_run_decision_payload,
-        real_order_gate_payload=real_order_gate_payload,
-        production_snapshot=production_snapshot,
-        lang=lang,
-        runtime_real_account_state=runtime_real_account_state,
+    real_account_exposure_state = dict(
+        dashboard_public_state.get("real_account_exposure_state") or {}
     )
+    if not real_account_exposure_state:
+        real_account_exposure_state = resolve_real_account_exposure_state(
+            account_snapshot_view=account_snapshot_view,
+            dry_run_decision_payload=dry_run_decision_payload,
+            real_order_gate_payload=real_order_gate_payload,
+            production_snapshot=production_snapshot,
+            lang=lang,
+            runtime_real_account_state=runtime_real_account_state,
+        )
     strategy_signal_exposure = _first_numeric_value(
         runtime_model_signal_state.get("exposure_x"),
         get_nested_value(real_order_gate_payload, "production_signal_context", "model_candidate_exposure"),
@@ -6432,10 +6626,28 @@ with tabs[0]:
         }
         for item in list(production_diagnostics.get("recent_regime_changes") or [])[:5]
     ]
+    real_account_card_label = (
+        str(
+            real_account_exposure_state.get("label_sk")
+            or dashboard_public_labels_sk.get("real_account")
+            or "Reálny účet"
+        ).strip()
+        if lang == "sk"
+        else t(lang, "production_market_exposure")
+    )
+    model_signal_card_label = (
+        str(
+            runtime_model_signal_state.get("label_sk")
+            or dashboard_public_labels_sk.get("model_signal")
+            or "Modelový signál"
+        ).strip()
+        if lang == "sk"
+        else t(lang, "production_exposure")
+    )
 
     home_cards = [
         {
-            "label": t(lang, "production_market_exposure"),
+            "label": real_account_card_label,
             "value": real_account_exposure_state["value"],
             "subtitle": real_account_exposure_state["subtitle"],
             "help": METRIC_HELP[lang][t(lang, "production_market_exposure")],
@@ -6455,12 +6667,14 @@ with tabs[0]:
             "accent": "green",
         },
         {
-            "label": t(lang, "production_exposure"),
+            "label": model_signal_card_label,
             "value": strategy_signal_exposure_text,
             "subtitle": (
                 "Signal modelu, nie expozicia uctu"
-                if lang == "sk"
+                if lang == "sk" and runtime_model_signal_state.get("not_real_wallet_exposure") is not False
                 else "Model signal, not account exposure"
+                if runtime_model_signal_state.get("not_real_wallet_exposure") is not False
+                else ""
             ),
             "help": METRIC_HELP[lang][t(lang, "production_exposure")],
             "accent": "orange",
@@ -6521,13 +6735,25 @@ with tabs[0]:
     public_window_label_key = str(public_performance_context.get("public_window_label_key") or "since2023")
     public_window_metric_key = str(public_performance_context.get("public_window_metric_key") or "since2023_cagr_pct")
     public_window_label = t(lang, public_window_label_key)
+    public_average_annual_growth_pct = first_present_value(
+        runtime_model_performance_state.get("public_average_annual_growth_pct"),
+        top_performance_metrics.get("cagr_pct"),
+    )
+    since_etf_start_cagr_pct = first_present_value(
+        runtime_model_performance_state.get("since_etf_start_cagr_pct"),
+        top_performance_metrics.get(public_window_metric_key),
+    )
+    since2025_cagr_pct = first_present_value(
+        runtime_model_performance_state.get("since2025_cagr_pct"),
+        top_performance_metrics.get("since2025_cagr_pct"),
+    )
     perf1 = st.columns(4)
     with perf1[0]:
-        render_color_card(t(lang, "cagr"), safe_metric_text(top_performance_metrics.get("cagr_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "cagr")], "blue")
+        render_color_card(t(lang, "cagr"), safe_metric_text(public_average_annual_growth_pct, lang=lang), "", METRIC_HELP[lang][t(lang, "cagr")], "blue")
     with perf1[1]:
-        render_color_card(public_window_label, safe_metric_text(top_performance_metrics.get(public_window_metric_key), lang=lang), "CAGR", METRIC_HELP[lang][public_window_label], "green")
+        render_color_card(public_window_label, safe_metric_text(since_etf_start_cagr_pct, lang=lang), "CAGR", METRIC_HELP[lang][public_window_label], "green")
     with perf1[2]:
-        render_color_card(t(lang, "since2025"), safe_metric_text(top_performance_metrics.get("since2025_cagr_pct"), lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2025")], "violet")
+        render_color_card(t(lang, "since2025"), safe_metric_text(since2025_cagr_pct, lang=lang), "CAGR", METRIC_HELP[lang][t(lang, "since2025")], "violet")
     with perf1[3]:
         render_color_card(t(lang, "total_return"), safe_metric_text(main_metrics.get("total_return_pct"), lang=lang), "", METRIC_HELP[lang][t(lang, "total_return")], "neutral")
 

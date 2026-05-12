@@ -59,6 +59,7 @@ QUALITY_PATH = OUTPUTS_DIR / "refresh_pipeline" / "materialize_execution_app_exp
 LOG_PATH = LOGS_DIR / "materialize_execution_app_exports.log"
 APP_PRODUCT_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_product_snapshot.json"
 APP_RUNTIME_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_runtime_snapshot.json"
+DASHBOARD_PUBLIC_STATUS_PATH = APP_SNAPSHOT_DIR / "dashboard_public_status.json"
 PRODUCTION_SNAPSHOT_PATH = PRODUCTION_DIR / "current_strategy_snapshot.json"
 PRODUCTION_TIMESERIES_PATH = PRODUCTION_DIR / "current_strategy_timeseries.csv"
 
@@ -2255,14 +2256,25 @@ def is_runtime_cash_asset(value: Any) -> bool:
     return normalize_runtime_asset(value) in {"", "CASH", "USD", "USDC", "USDT", "NONE", "NULL"}
 
 
-def build_runtime_public_status_contract(
+def build_dashboard_public_status_contract(
     *,
     account_summary: dict[str, Any],
     intent_payload: dict[str, Any],
     dry_run_payload: dict[str, Any],
     gate_payload: dict[str, Any],
     production_snapshot_payload: dict[str, Any],
+    product_snapshot_payload: dict[str, Any] | None = None,
+    production_timeseries_last_row: dict[str, Any] | None = None,
+    generated_at_utc: str | None = None,
 ) -> dict[str, Any]:
+    product_snapshot_payload = (
+        product_snapshot_payload if isinstance(product_snapshot_payload, dict) else {}
+    )
+    production_timeseries_last_row = (
+        production_timeseries_last_row
+        if isinstance(production_timeseries_last_row, dict)
+        else {}
+    )
     open_position = account_summary.get("open_position")
     open_position_asset = ""
     open_position_size = 0.0
@@ -2275,6 +2287,11 @@ def build_runtime_public_status_contract(
     execution_intent = (
         production_snapshot_payload.get("execution_intent")
         if isinstance(production_snapshot_payload.get("execution_intent"), dict)
+        else {}
+    )
+    production_signal_context = (
+        gate_payload.get("production_signal_context")
+        if isinstance(gate_payload.get("production_signal_context"), dict)
         else {}
     )
     target_asset = normalize_runtime_asset(
@@ -2299,10 +2316,20 @@ def build_runtime_public_status_contract(
     )
     gate_status = str(gate_payload.get("status") or "").strip().lower()
     would_place_real_order = runtime_bool(gate_payload.get("would_place_real_order"))
+    live_order_sent = runtime_bool(gate_payload.get("live_order_sent")) is True
 
     if open_position_asset and open_position_size > 1e-12:
         real_asset = open_position_asset
-        exposure_x = parse_float_maybe(first_present_runtime_value(account_summary.get("current_exposure"), target_size_pct))
+        exposure_candidate = parse_float_maybe(
+            first_present_runtime_value(
+                account_summary.get("current_exposure"),
+                open_position.get("current_exposure") if isinstance(open_position, dict) else None,
+                target_size_pct,
+            )
+        )
+        exposure_x = float(exposure_candidate or target_size_pct or 0.0)
+        if exposure_x <= 1e-12:
+            exposure_x = 1.0
         in_market = True
         position_label_sk = "V trhu"
     else:
@@ -2313,42 +2340,196 @@ def build_runtime_public_status_contract(
             or would_place_real_order is False
         )
         real_asset = "CASH" if execution_points_to_cash else (target_asset or "CASH")
-        exposure_x = 0.0 if execution_points_to_cash else (target_size_pct or 0.0)
-        in_market = bool(not execution_points_to_cash and not is_runtime_cash_asset(real_asset) and exposure_x > 1e-12)
+        exposure_x = 0.0 if execution_points_to_cash else float(target_size_pct or 0.0)
+        in_market = bool(
+            not execution_points_to_cash
+            and not is_runtime_cash_asset(real_asset)
+            and exposure_x > 1e-12
+        )
         position_label_sk = "V trhu" if in_market else "Mimo trhu"
 
     preferred_asset = normalize_runtime_asset(
         first_present_runtime_value(
             production_snapshot_payload.get("candidate_asset"),
             production_snapshot_payload.get("selected_asset"),
-            gate_payload.get("candidate_asset"),
+            production_signal_context.get("candidate_asset"),
         )
     )
     model_exposure = parse_float_maybe(
         first_present_runtime_value(
             production_snapshot_payload.get("model_candidate_exposure"),
-            gate_payload.get("model_candidate_exposure"),
+            production_signal_context.get("model_candidate_exposure"),
             production_snapshot_payload.get("effective_market_exposure"),
         )
     )
 
+    btc_return_ratio = parse_float_maybe(
+        first_present_runtime_value(
+            production_timeseries_last_row.get("btc_return"),
+            production_snapshot_payload.get("btc_return"),
+        )
+    )
+    btc_24h_pct = round(float(btc_return_ratio or 0.0) * 100.0, 4)
+    if (not in_market) or is_runtime_cash_asset(real_asset) or math.isclose(exposure_x, 0.0, abs_tol=1e-12):
+        account_24h_pct = 0.0
+    elif normalize_runtime_asset(real_asset) == "BTC" and btc_return_ratio is not None:
+        account_24h_pct = round(float(btc_return_ratio) * float(exposure_x) * 100.0, 4)
+    else:
+        authorized_return_ratio = parse_float_maybe(
+            first_present_runtime_value(
+                production_timeseries_last_row.get("authorized_return_net"),
+                production_timeseries_last_row.get("return_net"),
+            )
+        )
+        account_24h_pct = round(float(authorized_return_ratio or 0.0) * 100.0, 4)
+    account_vs_btc_24h_pct = round(account_24h_pct - btc_24h_pct, 4)
+
+    top_performance_metrics = (
+        product_snapshot_payload.get("main_strategy_top_performance_metrics")
+        if isinstance(product_snapshot_payload.get("main_strategy_top_performance_metrics"), dict)
+        else {}
+    )
+    main_strategy_metrics = (
+        product_snapshot_payload.get("main_strategy_metrics")
+        if isinstance(product_snapshot_payload.get("main_strategy_metrics"), dict)
+        else {}
+    )
+    public_average_annual_growth_pct = runtime_first_float(
+        top_performance_metrics,
+        ["cagr_pct", "cagr_pct_net"],
+    )
+    if public_average_annual_growth_pct is None:
+        public_average_annual_growth_pct = runtime_first_float(
+            main_strategy_metrics,
+            ["cagr_pct", "cagr_pct_net"],
+        )
+    since_etf_start_cagr_pct = runtime_first_float(
+        top_performance_metrics,
+        [
+            "since_etf_start_cagr_pct",
+            "public_window_cagr_pct",
+            "since2023_cagr_pct",
+            "since2023_cagr_pct_net",
+        ],
+    )
+    if since_etf_start_cagr_pct is None:
+        since_etf_start_cagr_pct = runtime_first_float(
+            main_strategy_metrics,
+            [
+                "since_etf_start_cagr_pct",
+                "public_window_cagr_pct",
+                "since2023_cagr_pct",
+                "since2023_cagr_pct_net",
+            ],
+        )
+    since2025_cagr_pct = runtime_first_float(
+        top_performance_metrics,
+        ["since2025_cagr_pct", "since2025_cagr_pct_net"],
+    )
+    if since2025_cagr_pct is None:
+        since2025_cagr_pct = runtime_first_float(
+            main_strategy_metrics,
+            ["since2025_cagr_pct", "since2025_cagr_pct_net"],
+        )
+
+    closed_day = first_present_runtime_value(
+        production_snapshot_payload.get("closed_day"),
+        product_snapshot_payload.get("strategy_last_closed_day"),
+        production_timeseries_last_row.get("date"),
+    )
+
     return {
-        "real_account_state": {
+        "schema_version": 1,
+        "generated_at_utc": generated_at_utc or utc_now_iso(),
+        "closed_day": closed_day,
+        "real_account": {
             "asset": real_asset,
+            "position_label_sk": position_label_sk,
             "exposure_x": round(float(exposure_x or 0.0), 6),
             "in_market": in_market,
-            "position_label_sk": position_label_sk,
-            "source": "wallet/intent/gate",
+            "account_equity_usd": round(float(parse_float_maybe(account_summary.get("account_equity_usd")) or 0.0), 6),
+            "available_balance_usd": round(float(parse_float_maybe(account_summary.get("available_balance_usd")) or 0.0), 6),
+        },
+        "execution": {
+            "target_asset": target_asset or "CASH",
+            "target_size_pct": round(float(target_size_pct or 0.0), 6),
             "gate_status": gate_status or None,
             "would_place_real_order": would_place_real_order,
-            "intent_target_asset": target_asset or None,
-            "intent_target_size_pct": target_size_pct,
+            "live_order_sent": live_order_sent,
         },
-        "model_signal_state": {
+        "model_signal": {
             "preferred_asset": preferred_asset or None,
             "exposure_x": round(float(model_exposure), 6) if model_exposure is not None else None,
             "label_sk": "Modelový signál",
             "not_real_wallet_exposure": True,
+        },
+        "model_performance": {
+            "account_24h_pct": account_24h_pct,
+            "btc_24h_pct": btc_24h_pct,
+            "account_vs_btc_24h_pct": account_vs_btc_24h_pct,
+            "public_average_annual_growth_pct": round(float(public_average_annual_growth_pct or 0.0), 2),
+            "since_etf_start_cagr_pct": round(float(since_etf_start_cagr_pct or 0.0), 2),
+            "since2025_cagr_pct": round(float(since2025_cagr_pct or 0.0), 2),
+        },
+        "public_labels_sk": {
+            "account_24h": "Účet 24h",
+            "account_vs_btc": "Účet vs BTC",
+            "real_account": "Reálny účet",
+            "model_signal": "Modelový signál",
+        },
+    }
+
+
+def build_runtime_public_status_views_from_dashboard_public_status(
+    dashboard_public_status: dict[str, Any],
+) -> dict[str, Any]:
+    real_account = (
+        dashboard_public_status.get("real_account")
+        if isinstance(dashboard_public_status.get("real_account"), dict)
+        else {}
+    )
+    execution = (
+        dashboard_public_status.get("execution")
+        if isinstance(dashboard_public_status.get("execution"), dict)
+        else {}
+    )
+    model_signal = (
+        dashboard_public_status.get("model_signal")
+        if isinstance(dashboard_public_status.get("model_signal"), dict)
+        else {}
+    )
+    model_performance = (
+        dashboard_public_status.get("model_performance")
+        if isinstance(dashboard_public_status.get("model_performance"), dict)
+        else {}
+    )
+    public_labels_sk = (
+        dashboard_public_status.get("public_labels_sk")
+        if isinstance(dashboard_public_status.get("public_labels_sk"), dict)
+        else {}
+    )
+    return {
+        "real_account_state": {
+            "asset": normalize_runtime_asset(real_account.get("asset")) or "CASH",
+            "exposure_x": round(float(parse_float_maybe(real_account.get("exposure_x")) or 0.0), 6),
+            "in_market": runtime_bool(real_account.get("in_market")) is True,
+            "position_label_sk": str(real_account.get("position_label_sk") or "Mimo trhu").strip(),
+            "source": "wallet/intent/gate",
+            "gate_status": str(execution.get("gate_status") or "").strip().lower() or None,
+            "would_place_real_order": runtime_bool(execution.get("would_place_real_order")),
+            "intent_target_asset": normalize_runtime_asset(execution.get("target_asset")) or None,
+            "intent_target_size_pct": parse_float_maybe(execution.get("target_size_pct")),
+            "account_equity_usd": parse_float_maybe(real_account.get("account_equity_usd")),
+            "available_balance_usd": parse_float_maybe(real_account.get("available_balance_usd")),
+            "label_sk": str(public_labels_sk.get("real_account") or "Reálny účet").strip(),
+        },
+        "model_signal_state": {
+            "preferred_asset": normalize_runtime_asset(model_signal.get("preferred_asset")) or None,
+            "exposure_x": round(float(parse_float_maybe(model_signal.get("exposure_x")) or 0.0), 6)
+            if parse_float_maybe(model_signal.get("exposure_x")) is not None
+            else None,
+            "label_sk": str(model_signal.get("label_sk") or public_labels_sk.get("model_signal") or "Modelový signál").strip(),
+            "not_real_wallet_exposure": runtime_bool(model_signal.get("not_real_wallet_exposure")) is not False,
             "source": "model_signal",
         },
         "model_performance_state": {
@@ -2356,8 +2537,36 @@ def build_runtime_public_status_contract(
             "label_sk": "Modelový vývoj vs BTC",
             "equity_curve_semantics": "model/paper, never real account PnL",
             "source": "model_performance",
+            "account_24h_pct": parse_float_maybe(model_performance.get("account_24h_pct")),
+            "btc_24h_pct": parse_float_maybe(model_performance.get("btc_24h_pct")),
+            "account_vs_btc_24h_pct": parse_float_maybe(model_performance.get("account_vs_btc_24h_pct")),
+            "public_average_annual_growth_pct": parse_float_maybe(model_performance.get("public_average_annual_growth_pct")),
+            "since_etf_start_cagr_pct": parse_float_maybe(model_performance.get("since_etf_start_cagr_pct")),
+            "since2025_cagr_pct": parse_float_maybe(model_performance.get("since2025_cagr_pct")),
         },
     }
+
+
+def build_runtime_public_status_contract(
+    *,
+    account_summary: dict[str, Any],
+    intent_payload: dict[str, Any],
+    dry_run_payload: dict[str, Any],
+    gate_payload: dict[str, Any],
+    production_snapshot_payload: dict[str, Any],
+    product_snapshot_payload: dict[str, Any] | None = None,
+    production_timeseries_last_row: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    dashboard_public_status = build_dashboard_public_status_contract(
+        account_summary=account_summary,
+        intent_payload=intent_payload,
+        dry_run_payload=dry_run_payload,
+        gate_payload=gate_payload,
+        production_snapshot_payload=production_snapshot_payload,
+        product_snapshot_payload=product_snapshot_payload,
+        production_timeseries_last_row=production_timeseries_last_row,
+    )
+    return build_runtime_public_status_views_from_dashboard_public_status(dashboard_public_status)
 
 
 def extract_runtime_snapshot_open_position(snapshot_payload: dict[str, Any]) -> dict[str, Any] | None:
@@ -2736,21 +2945,32 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
     trading_operation_mode_payload = read_json_optional(TRADING_OPERATION_MODE_PATH)
     product_snapshot_payload = read_json_optional(APP_PRODUCT_SNAPSHOT_PATH)
     production_snapshot_payload = read_json_optional(PRODUCTION_SNAPSHOT_PATH)
+    production_timeseries_last_row = (
+        read_last_csv_row(PRODUCTION_TIMESERIES_PATH)
+        if PRODUCTION_TIMESERIES_PATH.exists()
+        else {}
+    )
+    app_runtime_generated_at_utc = utc_now_iso()
 
     account_summary = build_runtime_account_summary(status_payload, account_snapshot_payload)
-    public_status_contract = build_runtime_public_status_contract(
+    dashboard_public_status = build_dashboard_public_status_contract(
         account_summary=account_summary,
         intent_payload=intent_payload,
         dry_run_payload=dry_run_payload,
         gate_payload=gate_payload,
         production_snapshot_payload=production_snapshot_payload,
+        product_snapshot_payload=product_snapshot_payload,
+        production_timeseries_last_row=production_timeseries_last_row,
+        generated_at_utc=app_runtime_generated_at_utc,
+    )
+    public_status_contract = build_runtime_public_status_views_from_dashboard_public_status(
+        dashboard_public_status
     )
     runtime_last_sync_utc = runtime_health_payload.get("last_success_utc")
     last_pi_update_utc, last_pi_update_metadata = resolve_last_pi_update_signal()
     account_snapshot_as_of_utc = account_snapshot_payload.get("as_of_utc")
     dry_run_generated_at_utc = dry_run_payload.get("generated_at_utc")
     gate_generated_at_utc = gate_payload.get("generated_at_utc")
-    app_runtime_generated_at_utc = utc_now_iso()
     resolved_app_export_generated_at_utc = (
         app_export_generated_at_utc
         or product_snapshot_payload.get("app_export_generated_at_utc")
@@ -2846,6 +3066,7 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
             "target_asset": status_payload.get("target_asset"),
             "error": status_payload.get("error"),
         },
+        "dashboard_public_status": dashboard_public_status,
         "real_account_state": public_status_contract["real_account_state"],
         "model_signal_state": public_status_contract["model_signal_state"],
         "model_performance_state": public_status_contract["model_performance_state"],
@@ -2966,7 +3187,9 @@ def main() -> None:
 
     if args.runtime_snapshot_only:
         runtime_snapshot = build_runtime_snapshot()
+        write_json(DASHBOARD_PUBLIC_STATUS_PATH, dict(runtime_snapshot.get("dashboard_public_status") or {}))
         write_json(APP_RUNTIME_SNAPSHOT_PATH, runtime_snapshot)
+        log(f"[MATERIALIZED] dashboard_public_status -> {DASHBOARD_PUBLIC_STATUS_PATH}")
         log(f"[MATERIALIZED] app_runtime_snapshot -> {APP_RUNTIME_SNAPSHOT_PATH}")
         log("[END] materialize_execution_app_exports runtime_snapshot_only")
         return
@@ -3159,14 +3382,21 @@ def main() -> None:
         app_export_generated_at_utc=product_snapshot.get("app_export_generated_at_utc")
     )
     write_json(APP_PRODUCT_SNAPSHOT_PATH, product_snapshot)
+    write_json(DASHBOARD_PUBLIC_STATUS_PATH, dict(runtime_snapshot.get("dashboard_public_status") or {}))
     write_json(APP_RUNTIME_SNAPSHOT_PATH, runtime_snapshot)
-    transformed_count += 2
+    transformed_count += 3
     report_rows.extend([
         {
             "artifact_key": "app_product_snapshot",
             "status": "snapshot_written",
             "output_path": str(APP_PRODUCT_SNAPSHOT_PATH),
             "output_info": safe_stat(APP_PRODUCT_SNAPSHOT_PATH),
+        },
+        {
+            "artifact_key": "dashboard_public_status",
+            "status": "snapshot_written",
+            "output_path": str(DASHBOARD_PUBLIC_STATUS_PATH),
+            "output_info": safe_stat(DASHBOARD_PUBLIC_STATUS_PATH),
         },
         {
             "artifact_key": "app_runtime_snapshot",
@@ -3176,6 +3406,7 @@ def main() -> None:
         },
     ])
     log(f"[MATERIALIZED] app_product_snapshot -> {APP_PRODUCT_SNAPSHOT_PATH}")
+    log(f"[MATERIALIZED] dashboard_public_status -> {DASHBOARD_PUBLIC_STATUS_PATH}")
     log(f"[MATERIALIZED] app_runtime_snapshot -> {APP_RUNTIME_SNAPSHOT_PATH}")
 
     hard_required = [
@@ -3212,7 +3443,7 @@ def main() -> None:
             "phase68g canonical main strategy paper/export aliases are refreshed from the native phase68g validation family with the official phase67j baseline paper, never from any phase68h static-reference row.",
             "phase68g current main strategy contract paths remain canonical aliases under outputs/execution/app_exports/ while sourcing their contents from refreshed native phase68g producer outputs.",
             "Other artifacts are copied from existing legacy aliases only.",
-            "app_product_snapshot and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
+            "app_product_snapshot, dashboard_public_status, and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
         ],
     }
 
@@ -3231,6 +3462,7 @@ def main() -> None:
         "phase68g_main_strategy_paper_alias_written": PHASE68G_MAIN_PAPER_OUTPUT_PATH.exists(),
         "phase68g_main_strategy_authoritative_export_alias_written": PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.exists(),
         "app_product_snapshot_written": APP_PRODUCT_SNAPSHOT_PATH.exists(),
+        "dashboard_public_status_written": DASHBOARD_PUBLIC_STATUS_PATH.exists(),
         "app_runtime_snapshot_written": APP_RUNTIME_SNAPSHOT_PATH.exists(),
     }
 
@@ -3253,6 +3485,7 @@ def main() -> None:
             str(PHASE68G_MAIN_PAPER_OUTPUT_PATH.resolve()),
             str(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.resolve()),
             str(APP_PRODUCT_SNAPSHOT_PATH.resolve()),
+            str(DASHBOARD_PUBLIC_STATUS_PATH.resolve()),
             str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
         ],
         "status": report["status"],

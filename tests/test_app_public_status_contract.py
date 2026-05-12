@@ -9,7 +9,10 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-from scripts.execution.materialize_execution_app_exports import build_runtime_public_status_contract
+from scripts.execution.materialize_execution_app_exports import (
+    build_dashboard_public_status_contract,
+    build_runtime_public_status_contract,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -116,6 +119,7 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "get_nested_value",
             "_first_numeric_value",
             "resolve_real_account_exposure_state",
+            "resolve_dashboard_public_status_state",
             "filter_from_year",
             "rebase_series",
             "product_asset_label_nominative",
@@ -264,6 +268,190 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertIn("%{customdata[4]}", hover_template)
         self.assertNotIn("Stav trhu", hover_template)
         self.assertNotIn("V TRHU", hover_template)
+        self.assertEqual(len(fig.data), 3)
+        self.assertEqual(fig.data[2].name, "Modelový signál")
+        self.assertEqual(list(fig.data[2].y), [0.75, 0.75])
+
+    def test_dashboard_public_status_contract_exact_schema_for_cash_blocked_account(self):
+        contract = build_dashboard_public_status_contract(
+            account_summary={
+                "current_position": "CASH",
+                "positions_count": 0,
+                "open_position": None,
+                "account_equity_usd": 39.475466,
+                "available_balance_usd": 39.475466,
+            },
+            intent_payload={
+                "target_asset": "CASH",
+                "target_size_pct": 0.0,
+            },
+            dry_run_payload={
+                "target_asset": "BTC",
+                "target_size_pct": 0.75,
+            },
+            gate_payload={
+                "target_asset": "CASH",
+                "status": "blocked",
+                "would_place_real_order": False,
+            },
+            production_snapshot_payload={
+                "closed_day": "2026-05-10",
+                "candidate_asset": "BTC",
+                "model_candidate_exposure": 0.75,
+                "effective_market_exposure": 0.75,
+                "actual_held_asset": "BTC",
+                "current_asset": "BTC",
+            },
+            product_snapshot_payload={
+                "main_strategy_top_performance_metrics": {
+                    "cagr_pct": 216.86,
+                    "since2023_cagr_pct": 322.34,
+                    "since2025_cagr_pct": 251.64,
+                }
+            },
+            production_timeseries_last_row={
+                "date": "2026-05-10",
+                "btc_return": -0.005,
+                "authorized_return_net": 0.013901162393,
+            },
+            generated_at_utc="2026-05-11T08:15:00Z",
+        )
+
+        self.assertEqual(
+            set(contract.keys()),
+            {
+                "schema_version",
+                "generated_at_utc",
+                "closed_day",
+                "real_account",
+                "execution",
+                "model_signal",
+                "model_performance",
+                "public_labels_sk",
+            },
+        )
+        self.assertEqual(contract["schema_version"], 1)
+        self.assertEqual(contract["generated_at_utc"], "2026-05-11T08:15:00Z")
+        self.assertEqual(contract["closed_day"], "2026-05-10")
+        self.assertEqual(
+            contract["real_account"],
+            {
+                "asset": "CASH",
+                "position_label_sk": "Mimo trhu",
+                "exposure_x": 0.0,
+                "in_market": False,
+                "account_equity_usd": 39.475466,
+                "available_balance_usd": 39.475466,
+            },
+        )
+        self.assertEqual(
+            contract["execution"],
+            {
+                "target_asset": "CASH",
+                "target_size_pct": 0.0,
+                "gate_status": "blocked",
+                "would_place_real_order": False,
+                "live_order_sent": False,
+            },
+        )
+        self.assertEqual(
+            contract["model_signal"],
+            {
+                "preferred_asset": "BTC",
+                "exposure_x": 0.75,
+                "label_sk": "Modelový signál",
+                "not_real_wallet_exposure": True,
+            },
+        )
+        self.assertEqual(contract["model_performance"]["account_24h_pct"], 0.0)
+        self.assertEqual(contract["model_performance"]["btc_24h_pct"], -0.5)
+        self.assertEqual(contract["model_performance"]["account_vs_btc_24h_pct"], 0.5)
+        self.assertEqual(contract["model_performance"]["public_average_annual_growth_pct"], 216.86)
+        self.assertEqual(contract["model_performance"]["since_etf_start_cagr_pct"], 322.34)
+        self.assertEqual(contract["model_performance"]["since2025_cagr_pct"], 251.64)
+        self.assertEqual(
+            contract["public_labels_sk"],
+            {
+                "account_24h": "Účet 24h",
+                "account_vs_btc": "Účet vs BTC",
+                "real_account": "Reálny účet",
+                "model_signal": "Modelový signál",
+            },
+        )
+
+    def test_dashboard_public_status_state_resolver_uses_contract_only(self):
+        resolve_public_state = self.__class__.ns["resolve_dashboard_public_status_state"]
+        state = resolve_public_state(
+            {
+                "schema_version": 1,
+                "generated_at_utc": "2026-05-11T08:15:00Z",
+                "closed_day": "2026-05-10",
+                "real_account": {
+                    "asset": "CASH",
+                    "position_label_sk": "Mimo trhu",
+                    "exposure_x": 0.0,
+                    "in_market": False,
+                    "account_equity_usd": 39.475466,
+                    "available_balance_usd": 39.475466,
+                },
+                "execution": {
+                    "target_asset": "CASH",
+                    "target_size_pct": 0.0,
+                    "gate_status": "blocked",
+                    "would_place_real_order": False,
+                    "live_order_sent": False,
+                },
+                "model_signal": {
+                    "preferred_asset": "BTC",
+                    "exposure_x": 0.75,
+                    "label_sk": "Modelový signál",
+                    "not_real_wallet_exposure": True,
+                },
+                "model_performance": {
+                    "account_24h_pct": 0.0,
+                    "btc_24h_pct": -0.5,
+                    "account_vs_btc_24h_pct": 0.5,
+                    "public_average_annual_growth_pct": 216.86,
+                    "since_etf_start_cagr_pct": 322.34,
+                    "since2025_cagr_pct": 251.64,
+                },
+                "public_labels_sk": {
+                    "account_24h": "Účet 24h",
+                    "account_vs_btc": "Účet vs BTC",
+                    "real_account": "Reálny účet",
+                    "model_signal": "Modelový signál",
+                },
+            },
+            "sk",
+        )
+
+        real_state = state["real_account_exposure_state"]
+        model_state = state["model_signal_state"]
+        performance_state = state["model_performance_state"]
+        self.assertEqual(real_state["asset"], "CASH")
+        self.assertEqual(real_state["value"], "Mimo trhu / 0.00x")
+        self.assertEqual(real_state["label_sk"], "Reálny účet")
+        self.assertEqual(model_state["preferred_asset"], "BTC")
+        self.assertEqual(model_state["exposure_x"], 0.75)
+        self.assertEqual(model_state["label_sk"], "Modelový signál")
+        self.assertEqual(performance_state["account_24h_pct"], 0.0)
+        self.assertEqual(performance_state["btc_24h_pct"], -0.5)
+        self.assertEqual(performance_state["account_vs_btc_24h_pct"], 0.5)
+
+    def test_homepage_prefers_dashboard_public_status_before_real_account_fallback(self):
+        source = APP_PY_PATH.read_text(encoding="utf-8")
+        start_marker = 'dashboard_public_status = load_dashboard_public_status_for_app('
+        end_marker = 'strategy_signal_exposure = _first_numeric_value('
+        start = source.index(start_marker)
+        end = source.index(end_marker, start)
+        block = source[start:end]
+
+        self.assertIn('resolve_dashboard_public_status_state(', block)
+        self.assertIn('dashboard_public_state.get("real_account_exposure_state")', block)
+        self.assertIn('if not real_account_exposure_state:', block)
+        self.assertNotIn('production_snapshot.get("actual_held_asset")', block)
+        self.assertNotIn('production_snapshot.get("current_asset")', block)
+        self.assertNotIn('production_snapshot.get("effective_market_exposure")', block)
 
     def test_runtime_contract_separates_wallet_cash_from_model_btc_signal(self):
         contract = build_runtime_public_status_contract(
