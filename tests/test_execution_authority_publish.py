@@ -21,6 +21,7 @@ from scripts import daily_refresh_app_pipeline as pipeline
 from scripts.execution import authority_contract as contract
 from scripts.execution import authority_publish_helpers as helpers
 from scripts.execution import current_strategy_root_contract as current_strategy_contract
+from scripts.execution import materialize_execution_app_exports as materializer
 from scripts.execution import run_pi_authoritative_producer as pi_producer
 from src.market_regime_v1.phase1_time_semantics import (
     ATTEMPT_STATUS_ARTIFACT_TYPE,
@@ -234,6 +235,32 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             "latest_wallet_sync_utc": "2026-04-23T10:45:00Z",
             "account_snapshot_as_of_utc": "2026-04-23T10:45:00Z",
             "app_runtime_snapshot_generated_at_utc": "2026-04-23T10:45:00Z",
+            "dashboard_public_status": self.build_minimal_dashboard_public_status_payload(),
+        }
+
+    def build_minimal_dashboard_public_status_payload(self) -> dict:
+        return {
+            "generated_at_utc": "2026-04-23T10:45:00Z",
+            "real_account": {
+                "asset": "CASH",
+                "exposure": 0.0,
+                "is_out_of_market": True,
+            },
+            "execution": {
+                "target_asset": "CASH",
+                "target_exposure": 0.0,
+            },
+            "model_signal": {
+                "candidate_asset": "BTC",
+                "target_exposure": 0.75,
+            },
+            "model_performance": {
+                "strategy_last_closed_day": "2026-04-22",
+            },
+            "public_labels_sk": {
+                "real_account_state": "Mimo trhu",
+                "model_signal_state": "Model cash-blocked",
+            },
         }
 
     def seed_canonical_app_export_artifacts(self, temp_root: Path) -> None:
@@ -315,6 +342,10 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         )
         (app_snapshot_dir / "app_runtime_snapshot.json").write_text(
             json.dumps(self.build_minimal_app_runtime_snapshot_payload()),
+            encoding="utf-8",
+        )
+        (app_snapshot_dir / "dashboard_public_status.json").write_text(
+            json.dumps(self.build_minimal_dashboard_public_status_payload()),
             encoding="utf-8",
         )
 
@@ -418,8 +449,8 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
     ) -> tuple[Path, Path]:
         authority_dir = temp_root / "outputs" / "execution" / "authority"
         authority_dir.mkdir(parents=True, exist_ok=True)
-        self.seed_canonical_app_export_artifacts(temp_root)
         self.seed_fast_publish_runtime_artifacts(temp_root)
+        self.seed_app_snapshots(temp_root)
         extra_fields = contract.build_authority_extra_fields(
             run_id=run_id,
             source_manifest_path=(
@@ -473,6 +504,87 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             )
 
         return attempt_path, snapshot_path
+
+    def test_materialize_runtime_snapshot_only_writes_dashboard_public_status_file(self):
+        temp_root = self.make_temp_root()
+        app_snapshot_dir = temp_root / "outputs" / "execution" / "app_snapshot"
+        dashboard_path = app_snapshot_dir / "dashboard_public_status.json"
+        runtime_path = app_snapshot_dir / "app_runtime_snapshot.json"
+        runtime_snapshot = self.build_minimal_app_runtime_snapshot_payload()
+
+        with ExitStack() as stack:
+            stack.enter_context(
+                mock.patch.object(
+                    materializer,
+                    "parse_args",
+                    return_value=argparse.Namespace(runtime_snapshot_only=True),
+                )
+            )
+            stack.enter_context(mock.patch.object(materializer, "ensure_dirs", return_value=None))
+            stack.enter_context(mock.patch.object(materializer, "log", return_value=None))
+            stack.enter_context(
+                mock.patch.object(
+                    materializer,
+                    "DASHBOARD_PUBLIC_STATUS_PATH",
+                    dashboard_path,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    materializer,
+                    "APP_RUNTIME_SNAPSHOT_PATH",
+                    runtime_path,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    materializer,
+                    "build_runtime_snapshot",
+                    return_value=runtime_snapshot,
+                )
+            )
+            materializer.main()
+
+        self.assertTrue(dashboard_path.exists())
+        self.assertTrue(runtime_path.exists())
+        self.assertEqual(
+            load_json(dashboard_path),
+            runtime_snapshot["dashboard_public_status"],
+        )
+
+    def test_build_publish_existing_dry_run_publish_result_includes_dashboard_public_status_pathspec(
+        self,
+    ):
+        temp_root = self.make_temp_root()
+        self.seed_authority_payloads(
+            temp_root,
+            run_id="20260423_104500",
+            attempt_status="success",
+            include_snapshot=True,
+        )
+        env = self.build_pi_repo_env(temp_root)
+        attempt_payload = load_json(
+            temp_root / "outputs" / "execution" / "authority" / "latest_attempt_status.json"
+        )
+        success_payload = load_json(
+            temp_root
+            / "outputs"
+            / "execution"
+            / "authority"
+            / "latest_successful_snapshot.json"
+        )
+
+        result = pi_producer.build_publish_existing_dry_run_publish_result(
+            root=temp_root,
+            env=env,
+            attempt_payload=attempt_payload,
+            success_payload=success_payload,
+        )
+
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.json",
+            result["pathspecs"],
+        )
 
     def test_successful_publish_writes_both_authority_files_with_utc_and_local_fields(self):
         temp_root = self.make_temp_root()

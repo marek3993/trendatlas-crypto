@@ -72,6 +72,9 @@ REMOTE_DRIFT_PUSH_MARKERS = (
     "[rejected]",
     "failed to push some refs",
 )
+DASHBOARD_PUBLIC_STATUS_SNAPSHOT_RELATIVE_PATH = Path(
+    "outputs/execution/app_snapshot/dashboard_public_status.json"
+).as_posix()
 AUTHORITY_GIT_USER_NAME_ENV = "MRV1_AUTHORITY_GIT_USER_NAME"
 AUTHORITY_GIT_USER_EMAIL_ENV = "MRV1_AUTHORITY_GIT_USER_EMAIL"
 FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS = (
@@ -84,6 +87,7 @@ FAST_MODE_REQUIRED_PRODUCTION_ARTIFACTS = (
 FAST_MODE_REQUIRED_APP_SNAPSHOT_ARTIFACTS = (
     ROOT / "outputs" / "execution" / "app_snapshot" / "app_product_snapshot.json",
     ROOT / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json",
+    ROOT / DASHBOARD_PUBLIC_STATUS_SNAPSHOT_RELATIVE_PATH,
 )
 HEAVY_REFRESH_STEPS = (
     "refresh_legacy_ohlcv",
@@ -904,6 +908,16 @@ def _resolve_allowlisted_repo_artifact_path(
     return resolved_candidate
 
 
+def _resolve_required_dashboard_public_status_snapshot_path(*, root: Path) -> Path:
+    resolved_candidate = (root / DASHBOARD_PUBLIC_STATUS_SNAPSHOT_RELATIVE_PATH).resolve()
+    if not resolved_candidate.exists() or not resolved_candidate.is_file():
+        raise FileNotFoundError(
+            "Missing required app snapshot repo publish artifact: "
+            f"{resolved_candidate}"
+        )
+    return resolved_candidate
+
+
 def _resolve_required_app_publish_paths(
     latest_successful_snapshot_payload: Mapping[str, Any],
     *,
@@ -973,6 +987,7 @@ def _resolve_required_app_publish_paths(
             root=root,
             field_name="app_product_snapshot.source_metadata.freshness.path",
         ),
+        _resolve_required_dashboard_public_status_snapshot_path(root=root),
     ]
 
 
