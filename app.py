@@ -660,10 +660,10 @@ TEXT["sk"].update(
         "production_exposure": "Modelový signál",
         "production_closed_day": "Posledny uzavrety den",
         "production_next_rebalance": "Najblizsi rebalance",
-        "production_chart_note": "Graf ukazuje modelový vývoj vs BTC. Nie je to výpis reálneho účtu ani potvrdenie otvorenej pozície.",
+        "production_chart_note": "Červená krivka je modelový vývoj stratégie, nie výpis reálneho účtu.",
         "production_chart_baseline_note": "Krivka Model je modelovy vyvoj. Zlata krivka je BTC baseline prepocitana zo zaverecnych cien a rebased na rovnaky zaciatok zobrazeneho obdobia.",
         "production_chart_flat_note": "Ked modelovy signal nema povolenu modelovu expoziciu, modelova kapitalova seria zostava rovna okrem explicitnych nakladov na prechod.",
-        "production_chart_participation_note": "Spodny strip ukazuje historicky modelovy signal, nie vypis realnej penazenky ani potvrdenie otvorenej pozicie.",
+        "production_chart_participation_note": "Spodný pruh je historický signál modelu, nie otvorená pozícia účtu.",
         "production_reason_title": "Preto je strategia teraz v tomto stave",
         "production_wait_title": "Na co strategia caka",
         "production_pain_title": "Co ju teraz brzdi",
@@ -685,10 +685,10 @@ TEXT["sk"].update(
         "production_hover_btc_close": "BTC close",
         "production_hover_btc_return": "Denny pohyb BTC",
         "production_hover_btc_index": "BTC index",
-        "production_hover_market_state_in": "SIGNAL AKTIVNY",
-        "production_hover_market_state_out": "SIGNAL CASH",
+        "production_hover_market_state_in": "SIGNÁL MODELU AKTÍVNY",
+        "production_hover_market_state_out": "SIGNÁL MODELU CASH",
         "production_chart_current_prefix": "Aktualne",
-        "production_chart_current_out_note": "Aktualne je modelovy signal mimo trhu. Graf nie je vypis otvorenej pozicie. Model preferuje {candidate} a modelovy signal je {exposure}.",
+        "production_chart_current_out_note": "Reálny účet je teraz mimo trhu s expozíciou 0.00x. Model preferuje {candidate}; signál modelu je {exposure}, nie pozícia účtu.",
         "production_chart_current_in_note": "Aktualne je modelovy signal aktivny s velkostou {exposure}. Model preferuje {candidate}.",
     }
 )
@@ -698,10 +698,10 @@ TEXT["en"].update(
         "production_exposure": "Exposure",
         "production_closed_day": "Last closed day",
         "production_next_rebalance": "Next rebalance",
-        "production_chart_note": "This chart shows only the model capital series and the BTC baseline. The real account state is separated in the top card.",
+        "production_chart_note": "The red line is the strategy model performance, not a real account statement.",
         "production_chart_baseline_note": "The red line is the authorized strategy. The gold line is a BTC baseline built from closing prices and rebased to the same start of the visible period.",
         "production_chart_flat_note": "When the strategy has no authorized market exposure, authorized capital should stay flat except for explicit transition costs.",
-        "production_chart_participation_note": "The lower strip shows the historical model signal, not a wallet statement or proof of an open position.",
+        "production_chart_participation_note": "The lower strip is historical model signal, not an open account position.",
         "production_reason_title": "Why the strategy is in this state",
         "production_wait_title": "What the strategy is waiting for",
         "production_pain_title": "Current pain points",
@@ -723,10 +723,10 @@ TEXT["en"].update(
         "production_hover_btc_close": "BTC close",
         "production_hover_btc_return": "BTC daily move",
         "production_hover_btc_index": "BTC index",
-        "production_hover_market_state_in": "SIGNAL IN MARKET",
-        "production_hover_market_state_out": "SIGNAL OUT OF MARKET",
+        "production_hover_market_state_in": "MODEL SIGNAL ACTIVE",
+        "production_hover_market_state_out": "MODEL SIGNAL CASH",
         "production_chart_current_prefix": "Current",
-        "production_chart_current_out_note": "The current model signal is out of market. The chart is not an open-position statement. The model prefers {candidate} and the model signal is {exposure}.",
+        "production_chart_current_out_note": "The real account is currently out of market with 0.00x exposure. The model prefers {candidate}; the model signal is {exposure}, not an account position.",
         "production_chart_current_in_note": "The current model signal is in market with size {exposure}. The model prefers {candidate}.",
     }
 )
@@ -6297,6 +6297,11 @@ def make_production_equity_chart(
         if lang == "sk"
         else "Model signal"
     )
+    real_account_is_out_of_market = (
+        isinstance(real_account_exposure_state, dict)
+        and real_account_exposure_state.get("is_out_of_market") is True
+    )
+    model_signal_is_not_wallet = runtime_model_signal.get("not_real_wallet_exposure") is not False
     legend_label = (
         real_account_label
         if use_real_account_view
@@ -6310,6 +6315,43 @@ def make_production_equity_chart(
         else production_chart_authorized_exposure_series(main_plot)
     )
     max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
+    latest_exposure_value = _first_numeric_value(exposure_series.iloc[-1]) if not exposure_series.empty else 0.0
+    unexecuted_current_model_signal = (
+        not use_real_account_view
+        and real_account_is_out_of_market
+        and model_signal_is_not_wallet
+        and abs(float(latest_exposure_value or 0.0)) > 1e-12
+    )
+    not_account_position_note = (
+        "Signál modelu - nie pozícia účtu"
+        if lang == "sk"
+        else "Model signal - not an account position"
+    )
+    lower_strip_label = (
+        real_account_label
+        if use_real_account_view
+        else (
+            "História signálu modelu (nie účet)"
+            if lang == "sk" and unexecuted_current_model_signal
+            else "Model signal history (not account)"
+            if unexecuted_current_model_signal
+            else model_signal_label
+        )
+    )
+    lower_strip_line_color = "#94a3b8" if unexecuted_current_model_signal else "#06d6a0"
+    lower_strip_fillcolor = (
+        "rgba(148,163,184,0.10)"
+        if unexecuted_current_model_signal
+        else "rgba(6,214,160,0.20)"
+    )
+    lower_strip_line = dict(width=2.6, color=lower_strip_line_color)
+    if unexecuted_current_model_signal:
+        lower_strip_line["dash"] = "dash"
+    active_signal_band_color = (
+        "rgba(148,163,184,0.06)"
+        if unexecuted_current_model_signal
+        else "rgba(6,214,160,0.05)"
+    )
     fallback_candidate = str(
         first_present_value(
             (real_account_exposure_state or {}).get("asset") if use_real_account_view else None,
@@ -6348,7 +6390,7 @@ def make_production_equity_chart(
         )
     ]
     real_account_hover_text = ""
-    if isinstance(real_account_exposure_state, dict) and real_account_exposure_state.get("is_out_of_market") is True:
+    if real_account_is_out_of_market:
         real_asset = str(real_account_exposure_state.get("asset") or "CASH").strip().upper() or "CASH"
         real_state_text = str(real_account_exposure_state.get("state_text") or t(lang, "production_state_out_of_market")).strip()
         real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
@@ -6358,7 +6400,8 @@ def make_production_equity_chart(
             else f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text}"
         )
 
-    line_signal_label = real_account_label if use_real_account_view else model_signal_label
+    line_signal_label = lower_strip_label
+    hover_signal_label = real_account_label if use_real_account_view else model_signal_label
     strategy_hover_customdata = list(
         zip(
             [f"{value:+.2f}%" for value in daily_return_pct.tolist()],
@@ -6368,9 +6411,11 @@ def make_production_equity_chart(
             [real_account_hover_text] * len(main_plot),
             [
                 (
-                    f"{line_signal_label}: {candidate} / {exposure}"
+                    f"{hover_signal_label}: {candidate} / {exposure}"
+                    + (f" | {not_account_position_note}" if unexecuted_current_model_signal else "")
                     if lang == "sk"
-                    else f"{line_signal_label}: {candidate} / {exposure}"
+                    else f"{hover_signal_label}: {candidate} / {exposure}"
+                    + (f" | {not_account_position_note}" if unexecuted_current_model_signal else "")
                 )
                 for candidate, exposure in zip(
                     candidate_labels.tolist(),
@@ -6378,6 +6423,32 @@ def make_production_equity_chart(
                 )
             ],
         )
+    )
+    lower_strip_customdata = list(
+        zip(
+            [
+                (
+                    f"{hover_signal_label}: {candidate} / {exposure}"
+                    + (f" | {not_account_position_note}" if unexecuted_current_model_signal else "")
+                )
+                for candidate, exposure in zip(
+                    candidate_labels.tolist(),
+                    [f"{value:.2f}x" for value in exposure_series.tolist()],
+                )
+            ],
+            [real_account_hover_text] * len(main_plot),
+            [not_account_position_note if unexecuted_current_model_signal else ""] * len(main_plot),
+        )
+    )
+    lower_strip_hovertemplate = (
+        f"{line_signal_label}: %{{y:.2f}}x<br>"
+        "%{customdata[0]}<br>"
+        "%{customdata[1]}<br>"
+        f"{not_account_position_note}<extra></extra>"
+        if unexecuted_current_model_signal
+        else f"{line_signal_label}: %{{y:.2f}}x<br>"
+        "%{customdata[0]}<br>"
+        "%{customdata[1]}<extra></extra>"
     )
     btc_hover_customdata = list(
         zip(
@@ -6413,7 +6484,7 @@ def make_production_equity_chart(
             fig.add_vrect(
                 x0=segment_start,
                 x1=segment_end,
-                fillcolor="rgba(6,214,160,0.05)" if current_state_flag else "rgba(255,209,102,0.09)",
+                fillcolor=active_signal_band_color if current_state_flag else "rgba(255,209,102,0.09)",
                 opacity=1.0,
                 line_width=0,
                 layer="below",
@@ -6425,7 +6496,7 @@ def make_production_equity_chart(
         fig.add_vrect(
             x0=segment_start,
             x1=pd.Timestamp(timestamps[-1]) + pd.Timedelta(days=1),
-            fillcolor="rgba(6,214,160,0.05)" if current_state_flag else "rgba(255,209,102,0.09)",
+            fillcolor=active_signal_band_color if current_state_flag else "rgba(255,209,102,0.09)",
             opacity=1.0,
             line_width=0,
             layer="below",
@@ -6477,11 +6548,12 @@ def make_production_equity_chart(
             y=exposure_series,
             mode="lines",
             name=line_signal_label,
-            line=dict(width=2.6, color="#06d6a0"),
+            line=lower_strip_line,
             line_shape="hv",
             fill="tozeroy",
-            fillcolor="rgba(6,214,160,0.20)",
-            hoverinfo="skip",
+            fillcolor=lower_strip_fillcolor,
+            customdata=lower_strip_customdata,
+            hovertemplate=lower_strip_hovertemplate,
         ),
         row=2,
         col=1,
@@ -6489,7 +6561,7 @@ def make_production_equity_chart(
 
     current_market_state = market_state_labels[-1]
     current_exposure_value = (
-        _first_numeric_value(exposure_series.iloc[-1])
+        latest_exposure_value
         if use_real_account_view
         else _first_numeric_value(runtime_model_signal.get("exposure_x"), exposure_series.iloc[-1])
     )
@@ -6502,19 +6574,21 @@ def make_production_equity_chart(
         ),
         lang,
     )
-    if isinstance(real_account_exposure_state, dict) and real_account_exposure_state.get("is_out_of_market") is True:
+    if real_account_is_out_of_market:
         real_asset = str(real_account_exposure_state.get("asset") or "CASH").strip().upper() or "CASH"
         real_exposure_text = str(real_account_exposure_state.get("exposure_text") or "0.00x").strip()
         real_state_text = str(real_account_exposure_state.get("state_text") or t(lang, "production_state_out_of_market")).strip()
         if use_real_account_view:
             annotation_text = f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text}"
         else:
+            signal_annotation_text = (
+                f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
+            )
+            if unexecuted_current_model_signal:
+                signal_annotation_text = f"{signal_annotation_text} | {not_account_position_note}"
             annotation_text = (
                 f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text} | "
-                f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
-                if lang == "sk"
-                else f"{real_account_label}: {real_asset} / {real_state_text} / {real_exposure_text} | "
-                f"{model_signal_label}: {current_candidate_label} / {current_exposure_text}"
+                f"{signal_annotation_text}"
             )
     else:
         annotation_signal_label = line_signal_label if use_real_account_view else model_signal_label
@@ -6563,6 +6637,25 @@ def make_production_equity_chart(
         borderwidth=1,
         borderpad=6,
     )
+    if unexecuted_current_model_signal:
+        fig.add_annotation(
+            x=main_plot["ts"].iloc[-1],
+            y=float(current_exposure_value or 0.0),
+            text=not_account_position_note,
+            showarrow=True,
+            arrowhead=2,
+            ax=-30,
+            ay=-24,
+            xanchor="right",
+            yanchor="bottom",
+            font=dict(size=11, color="#e2e8f0"),
+            bgcolor="rgba(15,23,42,0.88)",
+            bordercolor="rgba(226,232,240,0.35)",
+            borderwidth=1,
+            borderpad=5,
+            row=2,
+            col=1,
+        )
     fig.update_xaxes(
         showgrid=False,
         showspikes=True,

@@ -66,8 +66,8 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
                 "production_hover_btc_index": "BTC index",
                 "production_hover_btc_return": "Denny pohyb BTC",
                 "production_hover_btc_close": "BTC close",
-                "production_hover_market_state_in": "SIGNAL AKTIVNY",
-                "production_hover_market_state_out": "SIGNAL CASH",
+                "production_hover_market_state_in": "SIGNÁL MODELU AKTÍVNY",
+                "production_hover_market_state_out": "SIGNÁL MODELU CASH",
                 "production_chart_current_prefix": "Aktualne",
                 "chart_performance_axis": "Index",
             },
@@ -88,8 +88,8 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
                 "production_hover_btc_index": "BTC index",
                 "production_hover_btc_return": "BTC daily move",
                 "production_hover_btc_close": "BTC close",
-                "production_hover_market_state_in": "SIGNAL IN MARKET",
-                "production_hover_market_state_out": "SIGNAL OUT OF MARKET",
+                "production_hover_market_state_in": "MODEL SIGNAL ACTIVE",
+                "production_hover_market_state_out": "MODEL SIGNAL CASH",
                 "production_chart_current_prefix": "Current",
                 "chart_performance_axis": "Index",
             },
@@ -275,15 +275,19 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(fig.data[0].name, "Model")
         self.assertIn("Reálny účet: CASH / Mimo trhu / 0.00x", annotation_text)
         self.assertIn("Modelový signál: BTC / 0.75x", annotation_text)
+        self.assertIn("Signál modelu - nie pozícia účtu", annotation_text)
         self.assertIn("Reálny účet: CASH / Mimo trhu / 0.00x", fig.data[0].customdata[-1][4])
         self.assertIn("Modelový signál: BTC / 0.75x", fig.data[0].customdata[-1][5])
+        self.assertIn("Signál modelu - nie pozícia účtu", fig.data[0].customdata[-1][5])
         self.assertIn("Modelovy stav", hover_template)
         self.assertIn("%{customdata[5]}", hover_template)
         self.assertIn("%{customdata[4]}", hover_template)
         self.assertNotIn("Stav trhu", hover_template)
         self.assertNotIn("V TRHU", hover_template)
         self.assertEqual(len(fig.data), 3)
-        self.assertEqual(fig.data[2].name, "Modelový signál")
+        self.assertIn("nie účet", fig.data[2].name)
+        self.assertEqual(fig.data[2].line.color, "#94a3b8")
+        self.assertEqual(fig.data[2].line.dash, "dash")
         self.assertEqual(list(fig.data[2].y), [0.75, 0.75])
 
     def test_production_chart_strip_uses_authorized_exposure_not_candidate_signal(self):
@@ -767,6 +771,9 @@ class TestAppPublicStatusContract(unittest.TestCase):
         ]
         self.assertIn('runtime_model_performance_state.get("public_average_annual_growth_pct")', performance_block)
         self.assertIn('runtime_model_performance_state.get("since2025_cagr_pct")', performance_block)
+        self.assertIn("Červená krivka je modelový vývoj stratégie, nie výpis reálneho účtu.", source)
+        self.assertIn("Spodný pruh je historický signál modelu, nie otvorená pozícia účtu.", source)
+        self.assertIn("Reálny účet je teraz mimo trhu s expozíciou 0.00x.", source)
 
     def test_homepage_account_card_does_not_show_model_equity_as_real_pnl(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")
@@ -832,10 +839,25 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertNotEqual(list(fig.data[0].y), [1.0, 1.0])
         self.assertEqual(list(fig.data[1].y), [1.0, 1.05])
         self.assertEqual(len(fig.data), 3)
-        self.assertEqual(fig.data[2].name, "Model signal")
+        self.assertEqual(fig.data[2].name, "Model signal history (not account)")
         self.assertEqual(list(fig.data[2].y), [0.75, 0.75])
+        self.assertEqual(fig.data[2].line.color, "#94a3b8")
+        self.assertEqual(fig.data[2].line.dash, "dash")
+        self.assertEqual(fig.data[2].fill, "tozeroy")
+        self.assertIn("not account", fig.data[2].name)
+        self.assertIn("not an account position", fig.data[2].hovertemplate)
         self.assertIn("Real account: CASH / Out of market / 0.00x", fig.layout.annotations[0].text)
         self.assertIn("Model signal: BTC / 0.75x", fig.layout.annotations[0].text)
+        self.assertIn("Model signal - not an account position", fig.layout.annotations[0].text)
+        self.assertTrue(
+            any(
+                "Model signal - not an account position" in annotation.text
+                for annotation in fig.layout.annotations
+            )
+        )
+        self.assertIn("Model signal - not an account position", fig.data[0].customdata[-1][5])
+        self.assertIn("Real account: CASH / Out of market / 0.00x", fig.data[2].customdata[-1][1])
+        self.assertIn("Model signal - not an account position", fig.data[2].customdata[-1][2])
 
         account_fig = make_chart(
             frame,
