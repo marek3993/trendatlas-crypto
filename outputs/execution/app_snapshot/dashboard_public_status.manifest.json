@@ -1,0 +1,58 @@
+{
+  "generated_at_utc": "2026-05-12T08:50:43Z",
+  "source_files": [
+    "outputs/execution/live_status/execution_status.json",
+    "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+    "outputs/execution/dry_run/latest_dry_run_decision.json",
+    "outputs/execution/intents/latest_execution_intent.json",
+    "outputs/execution/live_gate/latest_real_order_gate_decision.json",
+    "outputs/execution/app_snapshot/app_product_snapshot.json",
+    "outputs/production/current_strategy_snapshot.json",
+    "outputs/production/current_strategy_timeseries.csv",
+    "outputs/production/data_health_report.json",
+    "outputs/production/data_health_report.quality.json",
+    "outputs/production/data_health_report.manifest.json",
+    "outputs/execution/live_status/live_market_state.json"
+  ],
+  "output_files": [
+    "outputs/execution/app_snapshot/dashboard_public_status.json",
+    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv",
+    "outputs/execution/app_snapshot/dashboard_public_status.quality.json",
+    "outputs/execution/app_snapshot/dashboard_public_status.manifest.json"
+  ],
+  "sha256s": {
+    "outputs/execution/live_status/execution_status.json": "0f7512561e80bafeb8ee8519f2b81abc4058f27eb68af714fbc3ffea685f3a35",
+    "outputs/execution/read_only/hyperliquid_account_snapshot.json": "2c8fe1dc0ffa6ae87444b04b4f1ffa4582c8a131e45776ce8ebd73ad8a118f82",
+    "outputs/execution/dry_run/latest_dry_run_decision.json": "dd46788c49706594b169555cb8cf633df46d05d7c01605ccf498c3aae33e1ea6",
+    "outputs/execution/intents/latest_execution_intent.json": "82385fe99f3d169b5833ab10f28f66b3854d4d1dc8c3b738df4d06efa103e56e",
+    "outputs/execution/live_gate/latest_real_order_gate_decision.json": "c778d0d8e7ccac340191debc44390594a70bb358147cc1fac8bee3523f5030dd",
+    "outputs/execution/app_snapshot/app_product_snapshot.json": "df42823f3be8ba6f46ea61d19a8e7f39683296796f6c0f811e9fed431e802938",
+    "outputs/production/current_strategy_snapshot.json": "7b1664345329bf47f477cb84bdc3ef83c10caa84a2d4654c833fe7591c649be2",
+    "outputs/production/current_strategy_timeseries.csv": "a7bb1f0d0f5403899a7a8d30191b0a0ae0afbebcffdbea131a36fd11e750471d",
+    "outputs/production/data_health_report.json": "94993839854787bbcb00a9a32a77bf415557d73816919bbdc9ef2c72e73c844c",
+    "outputs/production/data_health_report.quality.json": "e7cb27555288af85fe45b62b9b7709954f1f0d6fbb34ce288db42293e01b289f",
+    "outputs/production/data_health_report.manifest.json": "c3c87e3c0ed3f61600829d6f5c115a12ca54a32160ce24fa309e7c4f788e9aa4",
+    "outputs/execution/app_snapshot/dashboard_public_status.json": "bc00b798eace8559a67c200aa1d032af74e3b0268123189ba7730337f9a7ef66",
+    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": "c74fd8c39177dabfced71200cee2b2d7a720c1b5045d1679354afc8d328ba3e8",
+    "outputs/execution/app_snapshot/dashboard_public_status.quality.json": "c5b62f78e2f9f9fa4d6ca8157df6def2d6df39a6a5a5166e2aaf1359e194815f"
+  },
+  "row_counts": {
+    "outputs/execution/live_status/execution_status.json": 1,
+    "outputs/execution/read_only/hyperliquid_account_snapshot.json": 1,
+    "outputs/execution/dry_run/latest_dry_run_decision.json": 1,
+    "outputs/execution/intents/latest_execution_intent.json": 1,
+    "outputs/execution/live_gate/latest_real_order_gate_decision.json": 1,
+    "outputs/execution/app_snapshot/app_product_snapshot.json": 1,
+    "outputs/production/current_strategy_snapshot.json": 1,
+    "outputs/production/current_strategy_timeseries.csv": 2928,
+    "outputs/production/data_health_report.json": 1,
+    "outputs/production/data_health_report.quality.json": 1,
+    "outputs/production/data_health_report.manifest.json": 1,
+    "outputs/execution/live_status/live_market_state.json": null,
+    "outputs/execution/app_snapshot/dashboard_public_status.json": 1,
+    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": 2928,
+    "outputs/execution/app_snapshot/dashboard_public_status.quality.json": 1,
+    "outputs/execution/app_snapshot/dashboard_public_status.manifest.json": 1
+  },
+  "closed_day": "2026-05-10"
+}
