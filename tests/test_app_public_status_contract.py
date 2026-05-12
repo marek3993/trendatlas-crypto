@@ -55,7 +55,6 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
                 "production_chart_btc_legend": "BTC baseline",
                 "production_chart_exposure_legend": "Modelový signál",
                 "production_chart_exposure_axis": "Modelový signál",
-                "production_market_exposure": "Realny ucet / expozicia",
                 "production_hover_date": "Datum",
                 "production_hover_index": "Kapitalovy index",
                 "production_hover_return_net": "Denny pohyb strategie",
@@ -78,7 +77,6 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
                 "production_chart_btc_legend": "BTC baseline",
                 "production_chart_exposure_legend": "Model signal",
                 "production_chart_exposure_axis": "Model signal",
-                "production_market_exposure": "Real account / exposure",
                 "production_hover_date": "Date",
                 "production_hover_index": "Capital index",
                 "production_hover_return_net": "Strategy daily move",
@@ -247,12 +245,6 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "candidate_asset": ["BTC", "BTC"],
             }
         )
-        model_signal_state = {
-            "preferred_asset": "BTC",
-            "exposure_x": 0.75,
-            "label_sk": "Modelový signál",
-            "not_real_wallet_exposure": True,
-        }
 
         fig = make_chart(
             frame,
@@ -261,7 +253,6 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "Model",
             "Modelový vývoj vs BTC",
             real_account_exposure_state=state,
-            model_signal_state=model_signal_state,
         )
 
         annotation_text = fig.layout.annotations[0].text
@@ -278,81 +269,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertNotIn("Stav trhu", hover_template)
         self.assertNotIn("V TRHU", hover_template)
         self.assertEqual(len(fig.data), 3)
-        self.assertEqual(fig.data[2].name, "Reálny účet")
-        self.assertEqual(list(fig.data[2].y), [0.0, 0.0])
-        self.assertNotEqual(list(fig.data[2].y), [0.75, 0.75])
-
-    def test_production_chart_separates_real_cash_account_from_model_signal(self):
-        resolve_state = self.__class__.ns["resolve_real_account_exposure_state"]
-        make_chart = self.__class__.ns["make_production_equity_chart"]
-        state = resolve_state(
-            account_snapshot_view={"positions_count": 0, "open_position": None},
-            dry_run_decision_payload={"target_asset": "CASH", "target_size_pct": 0.0},
-            real_order_gate_payload={
-                "target_asset": "CASH",
-                "status": "blocked",
-                "would_place_real_order": False,
-                "production_signal_context": {
-                    "candidate_asset": "BTC",
-                    "model_candidate_exposure": 0.75,
-                    "target_exposure": 0.0,
-                },
-            },
-            production_snapshot={
-                "candidate_asset": "BTC",
-                "model_candidate_exposure": 0.75,
-                "execution_intent": {"target_asset": "CASH", "target_exposure": 0.0},
-            },
-            lang="sk",
-        )
-        frame = pd.DataFrame(
-            {
-                "ts": pd.to_datetime(["2026-05-09", "2026-05-10"]),
-                "authorized_equity": [100.0, 101.0],
-                "btc_baseline_equity": [100.0, 102.0],
-                "authorized_return_net": [0.0, 0.01],
-                "btc_return": [0.0, 0.02],
-                "btc_close": [100000.0, 102000.0],
-                "effective_market_exposure": [0.75, 0.75],
-                "trend_permission_active": [True, True],
-                "candidate_asset": ["BTC", "BTC"],
-            }
-        )
-        model_signal_state = {
-            "preferred_asset": "BTC",
-            "exposure_x": 0.75,
-            "label_sk": "Modelovy signal",
-            "not_real_wallet_exposure": True,
-        }
-
-        fig = make_chart(
-            frame,
-            2026,
-            "sk",
-            "Realny ucet",
-            "Realny ucet vs BTC",
-            real_account_exposure_state=state,
-            model_signal_state=model_signal_state,
-        )
-
-        annotation_text = fig.layout.annotations[0].text
-        hover_template = fig.data[0].hovertemplate
-        self.assertEqual(fig.layout.title.text, "Realny ucet vs BTC")
-        self.assertEqual(fig.data[0].name, "Realny ucet")
-        self.assertEqual(list(fig.data[0].y), [1.0, 1.0])
-        self.assertNotEqual(list(fig.data[0].y), [1.0, 1.01])
-        self.assertEqual(list(fig.data[1].y), [1.0, 1.02])
-        self.assertIn("CASH / Mimo trhu / 0.00x", annotation_text)
-        self.assertIn("BTC / 0.75x", annotation_text)
-        self.assertIn("Mimo trhu / 0.00x", fig.data[0].customdata[-1][1])
-        self.assertIn("BTC / 0.75x", fig.data[0].customdata[-1][2])
-        self.assertIn("Index", hover_template)
-        self.assertIn("Denny pohyb uctu", hover_template)
-        self.assertNotIn("Modelovy stav", hover_template)
-        self.assertEqual(len(fig.data), 3)
-        self.assertEqual(fig.data[2].name, "Realny ucet / expozicia")
-        self.assertEqual(list(fig.data[2].y), [0.0, 0.0])
-        self.assertNotEqual(list(fig.data[2].y), [0.75, 0.75])
+        self.assertEqual(fig.data[2].name, "Modelový signál")
+        self.assertEqual(list(fig.data[2].y), [0.75, 0.75])
 
     def test_dashboard_public_status_contract_exact_schema_for_cash_blocked_account(self):
         contract = build_dashboard_public_status_contract(
