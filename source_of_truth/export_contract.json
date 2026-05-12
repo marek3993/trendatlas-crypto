@@ -199,8 +199,64 @@
                                                                                           "paper_equity"
                                                                                       ],
                                "model_exposure_must_not_be_shown_as_real_account_exposure":  true,
-                               "dashboards_must_not_infer_account_state_from_model_fields":  true
+                               "dashboards_must_not_infer_account_state_from_model_fields":  true,
+                               "dashboard_public_status_model_performance_btc_24h_pct_is_published_snapshot":  true,
+                               "live_dashboard_btc_24h_must_not_freeze_from_published_snapshot":  true,
+                               "live_dashboard_btc_24h_must_read_live_market_state_or_ticker":  true,
+                               "forbidden_hybrid_chart_semantics":  true
                            },
+    "dashboard_public_cis_contract":  {
+                                           "status":  "active",
+                                           "role":  "dashboard_consumer_read_model",
+                                           "status_path":  "outputs/execution/app_snapshot/dashboard_public_status.json",
+                                           "chart_timeseries_path":  "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv",
+                                           "quality_path":  "outputs/execution/app_snapshot/dashboard_public_status.quality.json",
+                                           "manifest_path":  "outputs/execution/app_snapshot/dashboard_public_status.manifest.json",
+                                           "status_contract_fields":  [
+                                                                          "schema_version",
+                                                                          "generated_at_utc",
+                                                                          "closed_day",
+                                                                          "real_account",
+                                                                          "execution",
+                                                                          "model_signal",
+                                                                          "model_performance",
+                                                                          "data_health",
+                                                                          "live_market_state",
+                                                                          "public_labels_sk"
+                                                                      ],
+                                           "chart_contract_fields":  [
+                                                                         "date",
+                                                                         "model_index",
+                                                                         "btc_index",
+                                                                         "model_authorized_exposure_x",
+                                                                         "model_authorized_return_net",
+                                                                         "model_authorized_return_gross",
+                                                                         "model_transition_cost",
+                                                                         "model_asset_transition_day",
+                                                                         "real_account_index",
+                                                                         "real_account_exposure_x",
+                                                                         "real_account_return_net",
+                                                                         "real_account_vs_btc_return",
+                                                                         "chart_scope"
+                                                                     ],
+                                           "dashboard_read_rule":  "Dashboards and live consumers must read the dashboard public artifacts under outputs/execution/app_snapshot/ and must not infer account or model semantics from raw strategy fields.",
+                                           "published_snapshot_semantics":  {
+                                                                                "model_performance_btc_24h_pct":  "published_snapshot_closed_day_value",
+                                                                                "model_performance_account_24h_pct":  "published_snapshot_real_account_exposure_x_times_snapshot_btc_24h_pct",
+                                                                                "model_performance_account_vs_btc_24h_pct":  "published_snapshot_account_24h_pct_minus_snapshot_btc_24h_pct"
+                                                                            },
+                                           "live_market_semantics":  {
+                                                                          "btc_24h_pct_expected_source":  "live_ticker",
+                                                                          "btc_24h_pct_snapshot_is_not_live_flag_path":  "dashboard_public_status.live_market_state.btc_24h_pct_snapshot_is_not_live",
+                                                                          "live_dashboard_account_24h_formula":  "real_account.exposure_x * live_market_state.btc_24h_pct",
+                                                                          "live_dashboard_account_vs_btc_formula":  "live_market_state.account_24h_pct - live_market_state.btc_24h_pct"
+                                                                      },
+                                           "forbidden_chart_hybrids":  [
+                                                                            "model_red_line_plus_real_account_lower_strip",
+                                                                            "real_account_red_line_plus_model_lower_strip"
+                                                                        ],
+                                           "non_authoritative_boundary":  "This is a derived dashboard read model and must not redefine execution authority."
+                                       },
     "app_export_contract":  {
                                 "product_name":  "TrendAtlas Crypto",
                                 "main_strategy_model":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",

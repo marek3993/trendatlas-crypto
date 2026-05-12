@@ -10,7 +10,9 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from scripts.execution.materialize_execution_app_exports import (
+    build_dashboard_public_chart_timeseries_contract,
     build_dashboard_public_status_contract,
+    build_dashboard_public_status_quality,
     build_runtime_public_status_contract,
 )
 
@@ -436,6 +438,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "execution",
                 "model_signal",
                 "model_performance",
+                "data_health",
+                "live_market_state",
                 "public_labels_sk",
             },
         )
@@ -479,6 +483,27 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(contract["model_performance"]["since_etf_start_cagr_pct"], 322.34)
         self.assertEqual(contract["model_performance"]["since2025_cagr_pct"], 251.64)
         self.assertEqual(
+            contract["data_health"],
+            {
+                "reference_closed_day": None,
+                "overall_status": "unknown",
+                "block_app": False,
+                "block_execution": False,
+            },
+        )
+        self.assertEqual(
+            contract["live_market_state"],
+            {
+                "btc_24h_pct": -0.5,
+                "btc_24h_pct_source": "published_snapshot",
+                "btc_24h_pct_expected_live_source": "live_ticker",
+                "btc_24h_pct_snapshot_is_not_live": True,
+                "published_snapshot_btc_24h_pct": -0.5,
+                "account_24h_pct": 0.0,
+                "account_vs_btc_24h_pct": 0.5,
+            },
+        )
+        self.assertEqual(
             contract["public_labels_sk"],
             {
                 "account_24h": "Účet 24h",
@@ -487,6 +512,46 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "model_signal": "Modelový signál",
             },
         )
+
+    def test_live_market_state_prefers_live_btc_input_without_overwriting_snapshot_performance(self):
+        contract = build_dashboard_public_status_contract(
+            account_summary={
+                "current_position": "CASH",
+                "positions_count": 0,
+                "open_position": None,
+            },
+            intent_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            dry_run_payload={"target_asset": "BTC", "target_size_pct": 0.75},
+            gate_payload={
+                "target_asset": "CASH",
+                "status": "blocked",
+                "would_place_real_order": False,
+            },
+            production_snapshot_payload={
+                "closed_day": "2026-05-10",
+                "candidate_asset": "BTC",
+                "model_candidate_exposure": 0.75,
+                "effective_market_exposure": 0.75,
+            },
+            production_timeseries_last_row={
+                "date": "2026-05-10",
+                "btc_return": -0.005,
+            },
+            live_market_payload={
+                "btc_24h_pct": 1.9,
+                "btc_24h_pct_source": "live_ticker",
+            },
+        )
+
+        self.assertEqual(contract["model_performance"]["btc_24h_pct"], -0.5)
+        self.assertEqual(contract["model_performance"]["account_24h_pct"], 0.0)
+        self.assertEqual(contract["model_performance"]["account_vs_btc_24h_pct"], 0.5)
+        self.assertEqual(contract["live_market_state"]["btc_24h_pct"], 1.9)
+        self.assertEqual(contract["live_market_state"]["btc_24h_pct_source"], "live_ticker")
+        self.assertFalse(contract["live_market_state"]["btc_24h_pct_snapshot_is_not_live"])
+        self.assertEqual(contract["live_market_state"]["published_snapshot_btc_24h_pct"], -0.5)
+        self.assertEqual(contract["live_market_state"]["account_24h_pct"], 0.0)
+        self.assertEqual(contract["live_market_state"]["account_vs_btc_24h_pct"], -1.9)
 
     def test_dashboard_public_status_state_resolver_uses_contract_only(self):
         resolve_public_state = self.__class__.ns["resolve_dashboard_public_status_state"]
@@ -547,6 +612,82 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(performance_state["btc_24h_pct"], -0.5)
         self.assertEqual(performance_state["account_vs_btc_24h_pct"], 0.5)
 
+    def test_dashboard_public_chart_keeps_cash_account_flat_without_real_history(self):
+        contract = build_dashboard_public_status_contract(
+            account_summary={
+                "current_position": "CASH",
+                "positions_count": 0,
+                "open_position": None,
+            },
+            intent_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            dry_run_payload={"target_asset": "BTC", "target_size_pct": 0.75},
+            gate_payload={
+                "target_asset": "CASH",
+                "status": "blocked",
+                "would_place_real_order": False,
+            },
+            production_snapshot_payload={
+                "closed_day": "2026-05-10",
+                "candidate_asset": "BTC",
+                "model_candidate_exposure": 0.75,
+            },
+            production_timeseries_last_row={
+                "date": "2026-05-10",
+                "btc_return": 0.02,
+                "authorized_return_net": 0.0,
+            },
+            data_health_payload={
+                "reference_closed_day_utc": "2026-05-10",
+                "summary": {
+                    "overall_status": "ok",
+                    "block_app": False,
+                    "block_execution": False,
+                },
+            },
+        )
+        production_rows = [
+            {
+                "date": "2026-05-09",
+                "authorized_equity": "1.0",
+                "btc_baseline_equity": "1.0",
+                "authorized_return_net": "0.0",
+                "authorized_return_gross": "0.0",
+                "btc_return": "0.0",
+                "effective_market_exposure": "0.75",
+            },
+            {
+                "date": "2026-05-10",
+                "authorized_equity": "1.01",
+                "btc_baseline_equity": "1.02",
+                "authorized_return_net": "0.01",
+                "authorized_return_gross": "0.01",
+                "btc_return": "0.02",
+                "effective_market_exposure": "0.75",
+            },
+        ]
+
+        chart_contract = build_dashboard_public_chart_timeseries_contract(
+            production_timeseries_rows=production_rows,
+            dashboard_public_status=contract,
+        )
+        quality = build_dashboard_public_status_quality(
+            dashboard_public_status=contract,
+            chart_rows=chart_contract["rows"],
+            production_timeseries_rows=production_rows,
+            account_summary={
+                "current_position": "CASH",
+                "positions_count": 0,
+                "open_position": None,
+            },
+        )
+
+        self.assertEqual(chart_contract["chart_scope"], "real_account_flat_no_history")
+        self.assertEqual([row["real_account_index"] for row in chart_contract["rows"]], [1.0, 1.0])
+        self.assertEqual([row["real_account_exposure_x"] for row in chart_contract["rows"]], [0.0, 0.0])
+        self.assertEqual([row["real_account_return_net"] for row in chart_contract["rows"]], [0.0, 0.0])
+        self.assertEqual([row["model_authorized_exposure_x"] for row in chart_contract["rows"]], [0.75, 0.75])
+        self.assertEqual(quality["status"], "ok")
+
     def test_homepage_prefers_dashboard_public_status_before_real_account_fallback(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")
         start_marker = 'dashboard_public_status = load_dashboard_public_status_for_app('
@@ -594,6 +735,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
         real_state = contract["real_account_state"]
         model_state = contract["model_signal_state"]
         performance_state = contract["model_performance_state"]
+        data_health_state = contract["data_health_state"]
+        live_market_state = contract["live_market_state"]
         self.assertFalse(real_state["in_market"])
         self.assertEqual(real_state["asset"], "CASH")
         self.assertEqual(real_state["exposure_x"], 0.0)
@@ -608,6 +751,10 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertTrue(model_state["not_real_wallet_exposure"])
         self.assertEqual(model_state["label_sk"], "Modelový signál")
         self.assertEqual(performance_state["equity_curve_semantics"], "model/paper, never real account PnL")
+        self.assertEqual(data_health_state["overall_status"], "unknown")
+        self.assertFalse(data_health_state["block_app"])
+        self.assertEqual(live_market_state["btc_24h_pct_source"], "published_snapshot")
+        self.assertTrue(live_market_state["btc_24h_pct_snapshot_is_not_live"])
 
 
 if __name__ == "__main__":

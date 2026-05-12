@@ -17,6 +17,7 @@
     "forensic_governance": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\forensic\\governance",
     "forensic_leverage": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\forensic\\leverage",
     "execution_app_exports": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports",
+    "execution_app_snapshot": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot",
     "execution_freshness": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\freshness",
     "execution_refresh_pipeline": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\refresh_pipeline",
     "execution_authority": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority",
@@ -427,6 +428,80 @@
         "audit"
       ],
       "write_mode": "producer_only_data_health_build"
+    },
+    "dashboard_public_status": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\dashboard_public_status.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "export",
+      "truth_domain": "dashboard_read_model",
+      "read_scope": [
+        "app",
+        "tablet",
+        "web",
+        "validation",
+        "audit"
+      ],
+      "write_mode": "materializer_only_non_authoritative_staging",
+      "field_contract": {
+        "required_sections": [
+          "real_account",
+          "execution",
+          "model_signal",
+          "model_performance",
+          "data_health",
+          "live_market_state"
+        ],
+        "forbidden_real_wallet_inference_fields": [
+          "actual_held_asset",
+          "current_asset",
+          "effective_market_exposure"
+        ],
+        "published_snapshot_btc_24h_is_not_live_for_tablet": true
+      }
+    },
+    "dashboard_public_chart_timeseries": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\dashboard_public_chart_timeseries.csv",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "export",
+      "truth_domain": "dashboard_read_model",
+      "read_scope": [
+        "app",
+        "tablet",
+        "web",
+        "validation",
+        "audit"
+      ],
+      "write_mode": "materializer_only_non_authoritative_staging",
+      "field_contract": {
+        "separate_model_and_real_account_columns_required": true,
+        "forbidden_hybrid_chart_semantics": true
+      }
+    },
+    "dashboard_public_status_quality": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\dashboard_public_status.quality.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "validation_report",
+      "truth_domain": "dashboard_read_model",
+      "read_scope": [
+        "validation",
+        "audit"
+      ],
+      "write_mode": "materializer_only_non_authoritative_staging"
+    },
+    "dashboard_public_status_manifest": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\dashboard_public_status.manifest.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "manifest",
+      "truth_domain": "dashboard_read_model",
+      "read_scope": [
+        "validation",
+        "audit"
+      ],
+      "write_mode": "materializer_only_non_authoritative_staging"
     },
     "research_os_zero_selection_diagnostics": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\autonomous_loop\\zero_selection_diagnostics.json",

@@ -19,6 +19,13 @@ REQUIRED_NORMALIZED_CONTRACTS = {
     "data_health_state",
 }
 
+REQUIRED_DASHBOARD_PUBLIC_ARTIFACTS = {
+    "dashboard_public_status",
+    "dashboard_public_chart_timeseries",
+    "dashboard_public_status_quality",
+    "dashboard_public_status_manifest",
+}
+
 REQUIRED_CODEX_OUTPUT_SECTIONS = {
     "FILES READ",
     "SOURCE OF TRUTH",
@@ -182,6 +189,86 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         self.assertTrue(
             consumer_guardrails.get("dashboards_must_not_infer_account_state_from_model_fields")
         )
+        self.assertTrue(
+            consumer_guardrails.get("dashboard_public_status_model_performance_btc_24h_pct_is_published_snapshot")
+        )
+        self.assertTrue(
+            consumer_guardrails.get("live_dashboard_btc_24h_must_not_freeze_from_published_snapshot")
+        )
+        self.assertTrue(
+            consumer_guardrails.get("live_dashboard_btc_24h_must_read_live_market_state_or_ticker")
+        )
+        self.assertTrue(consumer_guardrails.get("forbidden_hybrid_chart_semantics"))
+
+        dashboard_public_contract = payload.get("dashboard_public_cis_contract")
+        self.assertIsInstance(dashboard_public_contract, dict)
+        self.assertEqual(
+            dashboard_public_contract.get("status_path"),
+            "outputs/execution/app_snapshot/dashboard_public_status.json",
+        )
+        self.assertEqual(
+            dashboard_public_contract.get("chart_timeseries_path"),
+            "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv",
+        )
+        self.assertEqual(
+            dashboard_public_contract.get("quality_path"),
+            "outputs/execution/app_snapshot/dashboard_public_status.quality.json",
+        )
+        self.assertEqual(
+            dashboard_public_contract.get("manifest_path"),
+            "outputs/execution/app_snapshot/dashboard_public_status.manifest.json",
+        )
+        status_fields = set(dashboard_public_contract.get("status_contract_fields", []))
+        self.assertTrue(
+            {"real_account", "execution", "model_signal", "model_performance", "data_health", "live_market_state"}.issubset(status_fields)
+        )
+        live_market_semantics = dashboard_public_contract.get("live_market_semantics")
+        self.assertIsInstance(live_market_semantics, dict)
+        self.assertEqual(live_market_semantics.get("btc_24h_pct_expected_source"), "live_ticker")
+        self.assertIn(
+            "real_account.exposure_x * live_market_state.btc_24h_pct",
+            live_market_semantics.get("live_dashboard_account_24h_formula", ""),
+        )
+        self.assertIn(
+            "live_market_state.account_24h_pct - live_market_state.btc_24h_pct",
+            live_market_semantics.get("live_dashboard_account_vs_btc_formula", ""),
+        )
+
+    def test_paths_registry_contains_dashboard_public_artifacts(self):
+        payload = load_json(ROOT / "source_of_truth" / "paths_registry.json")
+        canonical_roots = payload.get("canonical_roots")
+        self.assertIsInstance(canonical_roots, dict)
+        self.assertIn("execution_app_snapshot", canonical_roots)
+
+        artifacts = payload.get("artifacts")
+        self.assertIsInstance(artifacts, dict)
+        self.assertTrue(REQUIRED_DASHBOARD_PUBLIC_ARTIFACTS.issubset(set(artifacts)))
+
+        dashboard_public_status = artifacts["dashboard_public_status"]
+        self.assertTrue(
+            str(dashboard_public_status.get("canonical", "")).endswith(
+                "outputs\\execution\\app_snapshot\\dashboard_public_status.json"
+            )
+        )
+        self.assertEqual(dashboard_public_status.get("truth_domain"), "dashboard_read_model")
+        field_contract = dashboard_public_status.get("field_contract")
+        self.assertIsInstance(field_contract, dict)
+        self.assertEqual(
+            field_contract.get("forbidden_real_wallet_inference_fields"),
+            ["actual_held_asset", "current_asset", "effective_market_exposure"],
+        )
+        self.assertTrue(field_contract.get("published_snapshot_btc_24h_is_not_live_for_tablet"))
+
+        chart_artifact = artifacts["dashboard_public_chart_timeseries"]
+        self.assertTrue(
+            str(chart_artifact.get("canonical", "")).endswith(
+                "outputs\\execution\\app_snapshot\\dashboard_public_chart_timeseries.csv"
+            )
+        )
+        chart_field_contract = chart_artifact.get("field_contract")
+        self.assertIsInstance(chart_field_contract, dict)
+        self.assertTrue(chart_field_contract.get("separate_model_and_real_account_columns_required"))
+        self.assertTrue(chart_field_contract.get("forbidden_hybrid_chart_semantics"))
 
 
 if __name__ == "__main__":

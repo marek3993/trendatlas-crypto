@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
 import math
 import shutil
@@ -60,8 +61,15 @@ LOG_PATH = LOGS_DIR / "materialize_execution_app_exports.log"
 APP_PRODUCT_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_product_snapshot.json"
 APP_RUNTIME_SNAPSHOT_PATH = APP_SNAPSHOT_DIR / "app_runtime_snapshot.json"
 DASHBOARD_PUBLIC_STATUS_PATH = APP_SNAPSHOT_DIR / "dashboard_public_status.json"
+DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH = APP_SNAPSHOT_DIR / "dashboard_public_chart_timeseries.csv"
+DASHBOARD_PUBLIC_STATUS_QUALITY_PATH = APP_SNAPSHOT_DIR / "dashboard_public_status.quality.json"
+DASHBOARD_PUBLIC_STATUS_MANIFEST_PATH = APP_SNAPSHOT_DIR / "dashboard_public_status.manifest.json"
 PRODUCTION_SNAPSHOT_PATH = PRODUCTION_DIR / "current_strategy_snapshot.json"
 PRODUCTION_TIMESERIES_PATH = PRODUCTION_DIR / "current_strategy_timeseries.csv"
+DATA_HEALTH_REPORT_PATH = PRODUCTION_DIR / "data_health_report.json"
+DATA_HEALTH_QUALITY_PATH = PRODUCTION_DIR / "data_health_report.quality.json"
+DATA_HEALTH_MANIFEST_PATH = PRODUCTION_DIR / "data_health_report.manifest.json"
+LIVE_MARKET_STATE_PATH = OUTPUTS_DIR / "live_status" / "live_market_state.json"
 
 REQUIRED_ARTIFACT_KEYS = [
     "phase67j_winner_paper",
@@ -2256,6 +2264,630 @@ def is_runtime_cash_asset(value: Any) -> bool:
     return normalize_runtime_asset(value) in {"", "CASH", "USD", "USDC", "USDT", "NONE", "NULL"}
 
 
+DASHBOARD_PUBLIC_CHART_FIELDNAMES = [
+    "date",
+    "model_index",
+    "btc_index",
+    "model_authorized_exposure_x",
+    "model_authorized_return_net",
+    "model_authorized_return_gross",
+    "model_transition_cost",
+    "model_asset_transition_day",
+    "real_account_index",
+    "real_account_exposure_x",
+    "real_account_return_net",
+    "real_account_vs_btc_return",
+    "chart_scope",
+]
+
+
+def build_dashboard_public_data_health_contract(
+    data_health_payload: dict[str, Any] | None,
+) -> dict[str, Any]:
+    payload = data_health_payload if isinstance(data_health_payload, dict) else {}
+    summary = payload.get("summary") if isinstance(payload.get("summary"), dict) else {}
+    reference_closed_day = first_present_runtime_value(
+        payload.get("reference_closed_day_utc"),
+        payload.get("reference_closed_day"),
+        summary.get("reference_closed_day_utc"),
+    )
+    overall_status = first_present_runtime_value(
+        payload.get("overall_status"),
+        summary.get("overall_status"),
+        "unknown",
+    )
+    return {
+        "reference_closed_day": reference_closed_day,
+        "overall_status": str(overall_status or "unknown").strip().lower() or "unknown",
+        "block_app": runtime_bool(
+            first_present_runtime_value(
+                payload.get("block_app"),
+                summary.get("block_app"),
+            )
+        )
+        is True,
+        "block_execution": runtime_bool(
+            first_present_runtime_value(
+                payload.get("block_execution"),
+                summary.get("block_execution"),
+            )
+        )
+        is True,
+    }
+
+
+def build_dashboard_public_live_market_state_contract(
+    *,
+    real_account: dict[str, Any],
+    production_timeseries_last_row: dict[str, Any] | None,
+    live_market_payload: dict[str, Any] | None,
+) -> dict[str, Any]:
+    production_timeseries_last_row = (
+        production_timeseries_last_row
+        if isinstance(production_timeseries_last_row, dict)
+        else {}
+    )
+    live_market_payload = live_market_payload if isinstance(live_market_payload, dict) else {}
+
+    snapshot_btc_return_ratio = parse_float_maybe(
+        first_present_runtime_value(
+            production_timeseries_last_row.get("btc_return"),
+            production_timeseries_last_row.get("btc_return_24h"),
+        )
+    )
+    published_snapshot_btc_24h_pct = round(float(snapshot_btc_return_ratio or 0.0) * 100.0, 4)
+
+    live_btc_24h_pct = parse_float_maybe(
+        first_present_runtime_value(
+            live_market_payload.get("btc_24h_pct"),
+            live_market_payload.get("btc_change_24h_pct"),
+            live_market_payload.get("btc_24h_change_pct"),
+            live_market_payload.get("btc_24h"),
+        )
+    )
+    btc_24h_pct_source = (
+        str(
+            first_present_runtime_value(
+                live_market_payload.get("btc_24h_pct_source"),
+                live_market_payload.get("source"),
+                "live_ticker",
+            )
+        ).strip()
+        or "live_ticker"
+    )
+    if live_btc_24h_pct is None:
+        effective_btc_24h_pct = published_snapshot_btc_24h_pct
+        btc_24h_pct_source = "published_snapshot"
+        btc_24h_pct_snapshot_is_not_live = True
+    else:
+        effective_btc_24h_pct = round(float(live_btc_24h_pct), 4)
+        btc_24h_pct_snapshot_is_not_live = False
+
+    real_asset = normalize_runtime_asset(real_account.get("asset")) or "CASH"
+    real_exposure_x = float(parse_float_maybe(real_account.get("exposure_x")) or 0.0)
+    real_in_market = runtime_bool(real_account.get("in_market")) is True
+    if (not real_in_market) or is_runtime_cash_asset(real_asset) or math.isclose(
+        real_exposure_x,
+        0.0,
+        abs_tol=1e-12,
+    ):
+        account_24h_pct = 0.0
+    else:
+        account_24h_pct = round(real_exposure_x * effective_btc_24h_pct, 4)
+    account_vs_btc_24h_pct = round(account_24h_pct - effective_btc_24h_pct, 4)
+
+    return {
+        "btc_24h_pct": effective_btc_24h_pct,
+        "btc_24h_pct_source": btc_24h_pct_source,
+        "btc_24h_pct_expected_live_source": "live_ticker",
+        "btc_24h_pct_snapshot_is_not_live": btc_24h_pct_snapshot_is_not_live,
+        "published_snapshot_btc_24h_pct": published_snapshot_btc_24h_pct,
+        "account_24h_pct": account_24h_pct,
+        "account_vs_btc_24h_pct": account_vs_btc_24h_pct,
+    }
+
+
+def build_dashboard_public_chart_scope(
+    *,
+    has_real_account_history: bool,
+    current_real_account_asset: str,
+    current_real_account_exposure_x: float,
+) -> str:
+    if has_real_account_history:
+        return "real_account_history_available"
+    if is_runtime_cash_asset(current_real_account_asset) and math.isclose(
+        current_real_account_exposure_x,
+        0.0,
+        abs_tol=1e-12,
+    ):
+        return "real_account_flat_no_history"
+    return "real_account_history_unavailable"
+
+
+def build_dashboard_public_chart_timeseries_contract(
+    *,
+    production_timeseries_rows: list[dict[str, Any]],
+    dashboard_public_status: dict[str, Any],
+    real_account_history_rows: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    real_account = (
+        dashboard_public_status.get("real_account")
+        if isinstance(dashboard_public_status.get("real_account"), dict)
+        else {}
+    )
+    current_real_asset = normalize_runtime_asset(real_account.get("asset")) or "CASH"
+    current_real_exposure_x = float(parse_float_maybe(real_account.get("exposure_x")) or 0.0)
+    history_rows = real_account_history_rows if isinstance(real_account_history_rows, list) else []
+    history_by_date = {
+        str(row.get("date") or "").strip(): row
+        for row in history_rows
+        if isinstance(row, dict) and str(row.get("date") or "").strip()
+    }
+    has_real_account_history = bool(history_by_date)
+    chart_scope = build_dashboard_public_chart_scope(
+        has_real_account_history=has_real_account_history,
+        current_real_account_asset=current_real_asset,
+        current_real_account_exposure_x=current_real_exposure_x,
+    )
+
+    rows: list[dict[str, Any]] = []
+    previous_real_index: float | None = None
+    for source_row in production_timeseries_rows:
+        if not isinstance(source_row, dict):
+            continue
+        date_text = str(source_row.get("date") or source_row.get("ts") or "").strip()
+        if not date_text:
+            continue
+
+        model_index = parse_float_maybe(
+            first_present_runtime_value(
+                source_row.get("authorized_equity"),
+                source_row.get("equity"),
+                source_row.get("model_candidate_equity"),
+            )
+        )
+        btc_index = parse_float_maybe(
+            first_present_runtime_value(
+                source_row.get("btc_baseline_equity"),
+                source_row.get("btc_baseline_index"),
+            )
+        )
+        model_authorized_exposure_x = parse_float_maybe(
+            first_present_runtime_value(
+                source_row.get("effective_market_exposure"),
+                source_row.get("current_exposure"),
+                source_row.get("exposure"),
+            )
+        )
+        model_authorized_return_net = parse_float_maybe(
+            first_present_runtime_value(
+                source_row.get("authorized_return_net"),
+                source_row.get("return_net"),
+            )
+        )
+        model_authorized_return_gross = parse_float_maybe(
+            first_present_runtime_value(
+                source_row.get("authorized_return_gross"),
+                source_row.get("return_gross"),
+            )
+        )
+        btc_return = parse_float_maybe(source_row.get("btc_return")) or 0.0
+
+        transition_cost_components = [
+            parse_float_maybe(source_row.get("fees_daily")),
+            parse_float_maybe(source_row.get("funding_daily")),
+            parse_float_maybe(source_row.get("borrow_cost_daily")),
+            parse_float_maybe(source_row.get("slippage_cost_daily")),
+        ]
+        if any(component is not None for component in transition_cost_components):
+            model_transition_cost = sum(float(component or 0.0) for component in transition_cost_components)
+        else:
+            model_transition_cost = max(
+                float(model_authorized_return_gross or 0.0) - float(model_authorized_return_net or 0.0),
+                0.0,
+            )
+
+        real_history_row = history_by_date.get(date_text, {})
+        real_account_index = parse_float_maybe(
+            first_present_runtime_value(
+                real_history_row.get("real_account_index"),
+                real_history_row.get("index"),
+                real_history_row.get("equity_index"),
+            )
+        )
+        real_account_exposure_x = parse_float_maybe(
+            first_present_runtime_value(
+                real_history_row.get("real_account_exposure_x"),
+                real_history_row.get("exposure_x"),
+                real_history_row.get("exposure"),
+            )
+        )
+        real_account_return_net = parse_float_maybe(
+            first_present_runtime_value(
+                real_history_row.get("real_account_return_net"),
+                real_history_row.get("return_net"),
+            )
+        )
+
+        if not has_real_account_history:
+            real_account_index = 1.0
+            real_account_exposure_x = 0.0
+            real_account_return_net = 0.0
+        else:
+            if real_account_index is None:
+                base_index = 1.0 if previous_real_index is None else previous_real_index
+                real_account_index = base_index * (1.0 + float(real_account_return_net or 0.0))
+            if real_account_return_net is None:
+                if previous_real_index in {None, 0.0}:
+                    real_account_return_net = 0.0
+                else:
+                    real_account_return_net = (float(real_account_index) / float(previous_real_index)) - 1.0
+            if real_account_exposure_x is None:
+                real_account_exposure_x = 0.0
+
+        if math.isclose(float(real_account_exposure_x or 0.0), 0.0, abs_tol=1e-12):
+            real_account_return_net = 0.0
+
+        real_account_vs_btc_return = float(real_account_return_net or 0.0) - float(btc_return or 0.0)
+        previous_real_index = float(real_account_index or 1.0)
+
+        rows.append(
+            {
+                "date": date_text,
+                "model_index": round(float(model_index or 1.0), 10),
+                "btc_index": round(float(btc_index or 1.0), 10),
+                "model_authorized_exposure_x": round(float(model_authorized_exposure_x or 0.0), 6),
+                "model_authorized_return_net": round(float(model_authorized_return_net or 0.0), 10),
+                "model_authorized_return_gross": round(float(model_authorized_return_gross or 0.0), 10),
+                "model_transition_cost": round(float(model_transition_cost or 0.0), 10),
+                "model_asset_transition_day": runtime_bool(source_row.get("asset_transition_day")) is True,
+                "real_account_index": round(float(real_account_index or 1.0), 10),
+                "real_account_exposure_x": round(float(real_account_exposure_x or 0.0), 6),
+                "real_account_return_net": round(float(real_account_return_net or 0.0), 10),
+                "real_account_vs_btc_return": round(float(real_account_vs_btc_return), 10),
+                "chart_scope": chart_scope,
+            }
+        )
+
+    return {
+        "fieldnames": list(DASHBOARD_PUBLIC_CHART_FIELDNAMES),
+        "rows": rows,
+        "chart_scope": chart_scope,
+        "has_real_account_history": has_real_account_history,
+    }
+
+
+def build_dashboard_public_status_quality(
+    *,
+    dashboard_public_status: dict[str, Any],
+    chart_rows: list[dict[str, Any]],
+    production_timeseries_rows: list[dict[str, Any]],
+    account_summary: dict[str, Any],
+) -> dict[str, Any]:
+    real_account = (
+        dashboard_public_status.get("real_account")
+        if isinstance(dashboard_public_status.get("real_account"), dict)
+        else {}
+    )
+    execution = (
+        dashboard_public_status.get("execution")
+        if isinstance(dashboard_public_status.get("execution"), dict)
+        else {}
+    )
+    model_signal = (
+        dashboard_public_status.get("model_signal")
+        if isinstance(dashboard_public_status.get("model_signal"), dict)
+        else {}
+    )
+    model_performance = (
+        dashboard_public_status.get("model_performance")
+        if isinstance(dashboard_public_status.get("model_performance"), dict)
+        else {}
+    )
+    data_health = (
+        dashboard_public_status.get("data_health")
+        if isinstance(dashboard_public_status.get("data_health"), dict)
+        else {}
+    )
+
+    current_position = normalize_runtime_asset(account_summary.get("current_position")) or "CASH"
+    open_position = account_summary.get("open_position")
+    positions_count = int(parse_float_maybe(account_summary.get("positions_count")) or 0)
+    has_open_position = isinstance(open_position, dict) and bool(
+        normalize_runtime_asset(
+            open_position.get("symbol") or open_position.get("asset") or open_position.get("coin")
+        )
+    )
+    expected_cash_account = (
+        not has_open_position
+        and positions_count == 0
+        and is_runtime_cash_asset(current_position)
+        and (
+            is_runtime_cash_asset(execution.get("target_asset"))
+            or math.isclose(float(parse_float_maybe(execution.get("target_size_pct")) or 0.0), 0.0, abs_tol=1e-12)
+            or str(execution.get("gate_status") or "").strip().lower() == "blocked"
+        )
+    )
+
+    chart_scope = str(chart_rows[0].get("chart_scope") or "").strip() if chart_rows else ""
+    no_real_history = chart_scope == "real_account_flat_no_history"
+
+    real_account_cash_flat_when_no_history = True
+    if no_real_history and expected_cash_account:
+        real_account_cash_flat_when_no_history = all(
+            math.isclose(float(row.get("real_account_index") or 0.0), 1.0, abs_tol=1e-12)
+            and math.isclose(float(row.get("real_account_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
+            and math.isclose(float(row.get("real_account_return_net") or 0.0), 0.0, abs_tol=1e-12)
+            for row in chart_rows
+        )
+
+    model_exposure_aligned_to_model_equity = True
+    if len(chart_rows) != len(production_timeseries_rows):
+        model_exposure_aligned_to_model_equity = False
+    else:
+        for chart_row, source_row in zip(chart_rows, production_timeseries_rows):
+            expected_model_index = parse_float_maybe(
+                first_present_runtime_value(
+                    source_row.get("authorized_equity"),
+                    source_row.get("equity"),
+                    source_row.get("model_candidate_equity"),
+                )
+            )
+            expected_model_exposure = parse_float_maybe(
+                first_present_runtime_value(
+                    source_row.get("effective_market_exposure"),
+                    source_row.get("current_exposure"),
+                    source_row.get("exposure"),
+                )
+            )
+            expected_model_return_net = parse_float_maybe(
+                first_present_runtime_value(
+                    source_row.get("authorized_return_net"),
+                    source_row.get("return_net"),
+                )
+            )
+            expected_model_return_gross = parse_float_maybe(
+                first_present_runtime_value(
+                    source_row.get("authorized_return_gross"),
+                    source_row.get("return_gross"),
+                )
+            )
+            if not (
+                math.isclose(float(chart_row.get("model_index") or 0.0), round(float(expected_model_index or 1.0), 10), rel_tol=0.0, abs_tol=1e-10)
+                and math.isclose(float(chart_row.get("model_authorized_exposure_x") or 0.0), round(float(expected_model_exposure or 0.0), 6), rel_tol=0.0, abs_tol=1e-6)
+                and math.isclose(float(chart_row.get("model_authorized_return_net") or 0.0), round(float(expected_model_return_net or 0.0), 10), rel_tol=0.0, abs_tol=1e-10)
+                and math.isclose(float(chart_row.get("model_authorized_return_gross") or 0.0), round(float(expected_model_return_gross or 0.0), 10), rel_tol=0.0, abs_tol=1e-10)
+            ):
+                model_exposure_aligned_to_model_equity = False
+                break
+
+    account_vs_btc_identity = math.isclose(
+        float(parse_float_maybe(model_performance.get("account_24h_pct")) or 0.0)
+        - float(parse_float_maybe(model_performance.get("btc_24h_pct")) or 0.0),
+        float(parse_float_maybe(model_performance.get("account_vs_btc_24h_pct")) or 0.0),
+        rel_tol=0.0,
+        abs_tol=1e-9,
+    ) and all(
+        math.isclose(
+            float(row.get("real_account_return_net") or 0.0) - float(parse_float_maybe(source_row.get("btc_return")) or 0.0),
+            float(row.get("real_account_vs_btc_return") or 0.0),
+            rel_tol=0.0,
+            abs_tol=1e-9,
+        )
+        for row, source_row in zip(chart_rows, production_timeseries_rows)
+    )
+
+    real_account_not_model_fields = True
+    if expected_cash_account:
+        real_account_not_model_fields = (
+            normalize_runtime_asset(real_account.get("asset")) == "CASH"
+            and math.isclose(float(parse_float_maybe(real_account.get("exposure_x")) or 0.0), 0.0, abs_tol=1e-12)
+            and runtime_bool(real_account.get("in_market")) is not True
+        )
+
+    no_model_exposure_as_real_account = True
+    model_signal_exposure_x = float(parse_float_maybe(model_signal.get("exposure_x")) or 0.0)
+    if expected_cash_account and model_signal_exposure_x > 0.0:
+        no_model_exposure_as_real_account = (
+            math.isclose(float(parse_float_maybe(real_account.get("exposure_x")) or 0.0), 0.0, abs_tol=1e-12)
+            and all(
+                math.isclose(float(row.get("real_account_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
+                for row in chart_rows
+            )
+        )
+
+    data_health_not_blocking_app = runtime_bool(data_health.get("block_app")) is not True
+
+    checks = {
+        "real_account_not_model_fields": real_account_not_model_fields,
+        "real_account_cash_flat_when_no_history": real_account_cash_flat_when_no_history,
+        "model_exposure_aligned_to_model_equity": model_exposure_aligned_to_model_equity,
+        "account_vs_btc_identity": account_vs_btc_identity,
+        "no_model_exposure_as_real_account": no_model_exposure_as_real_account,
+        "data_health_not_blocking_app": data_health_not_blocking_app,
+    }
+
+    errors = [
+        message
+        for check_name, message in (
+            ("real_account_not_model_fields", "real_account values diverged from wallet/intent/gate semantics"),
+            ("real_account_cash_flat_when_no_history", "real_account chart must stay flat when no authoritative history exists and the account is CASH"),
+            ("model_exposure_aligned_to_model_equity", "model chart rows diverged from Production Core authorized equity/exposure fields"),
+            ("account_vs_btc_identity", "account_vs_btc identity failed for status or chart rows"),
+            ("no_model_exposure_as_real_account", "model exposure leaked into real_account exposure"),
+            ("data_health_not_blocking_app", "data_health.block_app is true"),
+        )
+        if not checks[check_name]
+    ]
+
+    return {
+        "status": "ok" if not errors else "error",
+        "error_count": len(errors),
+        "errors": errors,
+        "checks": checks,
+    }
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def artifact_row_count(path: Path) -> int | None:
+    if not path.exists() or not path.is_file():
+        return None
+    suffix = path.suffix.lower()
+    if suffix == ".csv":
+        _, rows = read_csv_rows(path)
+        return len(rows)
+    if suffix == ".json":
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            return None
+        if isinstance(payload, list):
+            return len(payload)
+        return 1
+    return None
+
+
+def write_dashboard_public_contract_artifacts(
+    *,
+    dashboard_public_status: dict[str, Any],
+    chart_rows: list[dict[str, Any]],
+    quality_payload: dict[str, Any],
+    source_paths: list[Path],
+    status_path: Path | None = None,
+    chart_path: Path | None = None,
+    quality_path: Path | None = None,
+    manifest_path: Path | None = None,
+) -> dict[str, Any]:
+    status_path = status_path or DASHBOARD_PUBLIC_STATUS_PATH
+    chart_path = chart_path or DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH
+    quality_path = quality_path or DASHBOARD_PUBLIC_STATUS_QUALITY_PATH
+    manifest_path = manifest_path or DASHBOARD_PUBLIC_STATUS_MANIFEST_PATH
+    write_json(status_path, dashboard_public_status)
+    chart_path.parent.mkdir(parents=True, exist_ok=True)
+    with chart_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=list(DASHBOARD_PUBLIC_CHART_FIELDNAMES))
+        writer.writeheader()
+        for row in chart_rows:
+            writer.writerow(row)
+    write_json(quality_path, quality_payload)
+
+    manifest_source_paths = [path for path in source_paths if isinstance(path, Path)]
+    manifest = {
+        "generated_at_utc": dashboard_public_status.get("generated_at_utc") or utc_now_iso(),
+        "source_files": [path_for_app(path) for path in manifest_source_paths],
+        "output_files": [
+            path_for_app(status_path),
+            path_for_app(chart_path),
+            path_for_app(quality_path),
+            path_for_app(manifest_path),
+        ],
+        "sha256s": {
+            **{path_for_app(path): file_sha256(path) for path in manifest_source_paths if path.exists()},
+            path_for_app(status_path): file_sha256(status_path),
+            path_for_app(chart_path): file_sha256(chart_path),
+            path_for_app(quality_path): file_sha256(quality_path),
+        },
+        "row_counts": {
+            **{
+                path_for_app(path): artifact_row_count(path)
+                for path in manifest_source_paths
+            },
+            path_for_app(status_path): 1,
+            path_for_app(chart_path): len(chart_rows),
+            path_for_app(quality_path): 1,
+            path_for_app(manifest_path): 1,
+        },
+        "closed_day": dashboard_public_status.get("closed_day"),
+    }
+    write_json(manifest_path, manifest)
+    return {
+        "status_path": status_path,
+        "chart_path": chart_path,
+        "quality_path": quality_path,
+        "manifest_path": manifest_path,
+    }
+
+
+def materialize_dashboard_public_contract_bundle(
+    *,
+    runtime_snapshot: dict[str, Any],
+    production_timeseries_rows: list[dict[str, Any]] | None = None,
+    real_account_history_rows: list[dict[str, Any]] | None = None,
+    source_paths: list[Path] | None = None,
+) -> dict[str, Any]:
+    dashboard_public_status = (
+        runtime_snapshot.get("dashboard_public_status")
+        if isinstance(runtime_snapshot.get("dashboard_public_status"), dict)
+        else {}
+    )
+    account_summary = (
+        runtime_snapshot.get("account_snapshot_summary")
+        if isinstance(runtime_snapshot.get("account_snapshot_summary"), dict)
+        else {}
+    )
+    if production_timeseries_rows is None:
+        if PRODUCTION_TIMESERIES_PATH.exists():
+            _, production_timeseries_rows = read_csv_rows(PRODUCTION_TIMESERIES_PATH)
+        else:
+            production_timeseries_rows = []
+
+    chart_contract = build_dashboard_public_chart_timeseries_contract(
+        production_timeseries_rows=production_timeseries_rows,
+        dashboard_public_status=dashboard_public_status,
+        real_account_history_rows=real_account_history_rows,
+    )
+    quality_payload = build_dashboard_public_status_quality(
+        dashboard_public_status=dashboard_public_status,
+        chart_rows=chart_contract["rows"],
+        production_timeseries_rows=production_timeseries_rows,
+        account_summary=account_summary,
+    )
+
+    resolved_source_paths = (
+        source_paths
+        if isinstance(source_paths, list)
+        else [
+            path
+            for path in [
+                APP_PRODUCT_SNAPSHOT_PATH,
+                PRODUCTION_SNAPSHOT_PATH,
+                PRODUCTION_TIMESERIES_PATH,
+                DATA_HEALTH_REPORT_PATH,
+                DATA_HEALTH_QUALITY_PATH,
+                DATA_HEALTH_MANIFEST_PATH,
+                EXECUTION_STATUS_PATH,
+                ACCOUNT_SNAPSHOT_PATH,
+                EXECUTION_INTENT_PATH,
+                REAL_ORDER_GATE_PATH,
+                DRY_RUN_DECISION_PATH,
+                LIVE_MARKET_STATE_PATH,
+            ]
+            if path.exists()
+        ]
+    )
+    artifact_paths = write_dashboard_public_contract_artifacts(
+        dashboard_public_status=dashboard_public_status,
+        chart_rows=chart_contract["rows"],
+        quality_payload=quality_payload,
+        source_paths=resolved_source_paths,
+    )
+    return {
+        **artifact_paths,
+        "chart_rows": chart_contract["rows"],
+        "chart_row_count": len(chart_contract["rows"]),
+        "chart_scope": chart_contract["chart_scope"],
+        "quality": quality_payload,
+        "quality_payload": quality_payload,
+    }
+
+
 def build_dashboard_public_status_contract(
     *,
     account_summary: dict[str, Any],
@@ -2265,6 +2897,8 @@ def build_dashboard_public_status_contract(
     production_snapshot_payload: dict[str, Any],
     product_snapshot_payload: dict[str, Any] | None = None,
     production_timeseries_last_row: dict[str, Any] | None = None,
+    data_health_payload: dict[str, Any] | None = None,
+    live_market_payload: dict[str, Any] | None = None,
     generated_at_utc: str | None = None,
 ) -> dict[str, Any]:
     product_snapshot_payload = (
@@ -2372,16 +3006,8 @@ def build_dashboard_public_status_contract(
     btc_24h_pct = round(float(btc_return_ratio or 0.0) * 100.0, 4)
     if (not in_market) or is_runtime_cash_asset(real_asset) or math.isclose(exposure_x, 0.0, abs_tol=1e-12):
         account_24h_pct = 0.0
-    elif normalize_runtime_asset(real_asset) == "BTC" and btc_return_ratio is not None:
-        account_24h_pct = round(float(btc_return_ratio) * float(exposure_x) * 100.0, 4)
     else:
-        authorized_return_ratio = parse_float_maybe(
-            first_present_runtime_value(
-                production_timeseries_last_row.get("authorized_return_net"),
-                production_timeseries_last_row.get("return_net"),
-            )
-        )
-        account_24h_pct = round(float(authorized_return_ratio or 0.0) * 100.0, 4)
+        account_24h_pct = round(float(exposure_x) * btc_24h_pct, 4)
     account_vs_btc_24h_pct = round(account_24h_pct - btc_24h_pct, 4)
 
     top_performance_metrics = (
@@ -2437,19 +3063,26 @@ def build_dashboard_public_status_contract(
         product_snapshot_payload.get("strategy_last_closed_day"),
         production_timeseries_last_row.get("date"),
     )
+    real_account = {
+        "asset": real_asset,
+        "position_label_sk": position_label_sk,
+        "exposure_x": round(float(exposure_x or 0.0), 6),
+        "in_market": in_market,
+        "account_equity_usd": round(float(parse_float_maybe(account_summary.get("account_equity_usd")) or 0.0), 6),
+        "available_balance_usd": round(float(parse_float_maybe(account_summary.get("available_balance_usd")) or 0.0), 6),
+    }
+    data_health = build_dashboard_public_data_health_contract(data_health_payload)
+    live_market_state = build_dashboard_public_live_market_state_contract(
+        real_account=real_account,
+        production_timeseries_last_row=production_timeseries_last_row,
+        live_market_payload=live_market_payload,
+    )
 
     return {
         "schema_version": 1,
         "generated_at_utc": generated_at_utc or utc_now_iso(),
         "closed_day": closed_day,
-        "real_account": {
-            "asset": real_asset,
-            "position_label_sk": position_label_sk,
-            "exposure_x": round(float(exposure_x or 0.0), 6),
-            "in_market": in_market,
-            "account_equity_usd": round(float(parse_float_maybe(account_summary.get("account_equity_usd")) or 0.0), 6),
-            "available_balance_usd": round(float(parse_float_maybe(account_summary.get("available_balance_usd")) or 0.0), 6),
-        },
+        "real_account": real_account,
         "execution": {
             "target_asset": target_asset or "CASH",
             "target_size_pct": round(float(target_size_pct or 0.0), 6),
@@ -2471,6 +3104,8 @@ def build_dashboard_public_status_contract(
             "since_etf_start_cagr_pct": round(float(since_etf_start_cagr_pct or 0.0), 2),
             "since2025_cagr_pct": round(float(since2025_cagr_pct or 0.0), 2),
         },
+        "data_health": data_health,
+        "live_market_state": live_market_state,
         "public_labels_sk": {
             "account_24h": "Účet 24h",
             "account_vs_btc": "Účet vs BTC",
@@ -2501,6 +3136,16 @@ def build_runtime_public_status_views_from_dashboard_public_status(
     model_performance = (
         dashboard_public_status.get("model_performance")
         if isinstance(dashboard_public_status.get("model_performance"), dict)
+        else {}
+    )
+    data_health = (
+        dashboard_public_status.get("data_health")
+        if isinstance(dashboard_public_status.get("data_health"), dict)
+        else {}
+    )
+    live_market_state = (
+        dashboard_public_status.get("live_market_state")
+        if isinstance(dashboard_public_status.get("live_market_state"), dict)
         else {}
     )
     public_labels_sk = (
@@ -2544,6 +3189,31 @@ def build_runtime_public_status_views_from_dashboard_public_status(
             "since_etf_start_cagr_pct": parse_float_maybe(model_performance.get("since_etf_start_cagr_pct")),
             "since2025_cagr_pct": parse_float_maybe(model_performance.get("since2025_cagr_pct")),
         },
+        "data_health_state": {
+            "reference_closed_day": str(data_health.get("reference_closed_day") or "").strip() or None,
+            "overall_status": str(data_health.get("overall_status") or "unknown").strip().lower() or "unknown",
+            "block_app": runtime_bool(data_health.get("block_app")) is True,
+            "block_execution": runtime_bool(data_health.get("block_execution")) is True,
+            "source": "data_health",
+        },
+        "live_market_state": {
+            "btc_24h_pct": parse_float_maybe(live_market_state.get("btc_24h_pct")),
+            "btc_24h_pct_source": str(live_market_state.get("btc_24h_pct_source") or "").strip() or None,
+            "btc_24h_pct_expected_live_source": (
+                str(live_market_state.get("btc_24h_pct_expected_live_source") or "").strip() or None
+            ),
+            "btc_24h_pct_snapshot_is_not_live": (
+                runtime_bool(live_market_state.get("btc_24h_pct_snapshot_is_not_live")) is True
+            ),
+            "published_snapshot_btc_24h_pct": parse_float_maybe(
+                live_market_state.get("published_snapshot_btc_24h_pct")
+            ),
+            "account_24h_pct": parse_float_maybe(live_market_state.get("account_24h_pct")),
+            "account_vs_btc_24h_pct": parse_float_maybe(
+                live_market_state.get("account_vs_btc_24h_pct")
+            ),
+            "source": "live_market_state",
+        },
     }
 
 
@@ -2556,6 +3226,8 @@ def build_runtime_public_status_contract(
     production_snapshot_payload: dict[str, Any],
     product_snapshot_payload: dict[str, Any] | None = None,
     production_timeseries_last_row: dict[str, Any] | None = None,
+    data_health_payload: dict[str, Any] | None = None,
+    live_market_payload: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     dashboard_public_status = build_dashboard_public_status_contract(
         account_summary=account_summary,
@@ -2565,6 +3237,8 @@ def build_runtime_public_status_contract(
         production_snapshot_payload=production_snapshot_payload,
         product_snapshot_payload=product_snapshot_payload,
         production_timeseries_last_row=production_timeseries_last_row,
+        data_health_payload=data_health_payload,
+        live_market_payload=live_market_payload,
     )
     return build_runtime_public_status_views_from_dashboard_public_status(dashboard_public_status)
 
@@ -2933,7 +3607,10 @@ def build_product_snapshot(app_live_mode_contract: dict[str, str]) -> dict[str, 
     return snapshot
 
 
-def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> dict[str, Any]:
+def build_runtime_snapshot(
+    app_export_generated_at_utc: str | None = None,
+    product_snapshot_payload_override: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     status_payload = read_json_optional(EXECUTION_STATUS_PATH)
     account_snapshot_payload = read_json_optional(ACCOUNT_SNAPSHOT_PATH)
     runtime_health_payload = read_json_optional(RUNTIME_HEALTH_PATH)
@@ -2943,8 +3620,14 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
     execution_mode_payload = read_json_optional(EXECUTION_MODE_CONFIG_PATH)
     live_order_policy_payload = read_json_optional(LIVE_ORDER_POLICY_PATH)
     trading_operation_mode_payload = read_json_optional(TRADING_OPERATION_MODE_PATH)
-    product_snapshot_payload = read_json_optional(APP_PRODUCT_SNAPSHOT_PATH)
+    product_snapshot_payload = (
+        product_snapshot_payload_override
+        if isinstance(product_snapshot_payload_override, dict)
+        else read_json_optional(APP_PRODUCT_SNAPSHOT_PATH)
+    )
     production_snapshot_payload = read_json_optional(PRODUCTION_SNAPSHOT_PATH)
+    data_health_payload = read_json_optional(DATA_HEALTH_REPORT_PATH)
+    live_market_payload = read_json_optional(LIVE_MARKET_STATE_PATH)
     production_timeseries_last_row = (
         read_last_csv_row(PRODUCTION_TIMESERIES_PATH)
         if PRODUCTION_TIMESERIES_PATH.exists()
@@ -2961,6 +3644,8 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
         production_snapshot_payload=production_snapshot_payload,
         product_snapshot_payload=product_snapshot_payload,
         production_timeseries_last_row=production_timeseries_last_row,
+        data_health_payload=data_health_payload,
+        live_market_payload=live_market_payload,
         generated_at_utc=app_runtime_generated_at_utc,
     )
     public_status_contract = build_runtime_public_status_views_from_dashboard_public_status(
@@ -3070,6 +3755,8 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
         "real_account_state": public_status_contract["real_account_state"],
         "model_signal_state": public_status_contract["model_signal_state"],
         "model_performance_state": public_status_contract["model_performance_state"],
+        "data_health_state": public_status_contract["data_health_state"],
+        "live_market_state": public_status_contract["live_market_state"],
         "account_snapshot_summary": account_summary,
         "dry_run_summary": {
             "signal_id": dry_run_payload.get("signal_id"),
@@ -3167,6 +3854,28 @@ def build_runtime_snapshot(app_export_generated_at_utc: str | None = None) -> di
     }
 
 
+def materialize_dashboard_public_contract_artifacts(
+    runtime_snapshot: dict[str, Any],
+) -> dict[str, Any]:
+    return materialize_dashboard_public_contract_bundle(
+        runtime_snapshot=runtime_snapshot,
+        source_paths=[
+            EXECUTION_STATUS_PATH,
+            ACCOUNT_SNAPSHOT_PATH,
+            DRY_RUN_DECISION_PATH,
+            EXECUTION_INTENT_PATH,
+            REAL_ORDER_GATE_PATH,
+            APP_PRODUCT_SNAPSHOT_PATH,
+            PRODUCTION_SNAPSHOT_PATH,
+            PRODUCTION_TIMESERIES_PATH,
+            DATA_HEALTH_REPORT_PATH,
+            DATA_HEALTH_QUALITY_PATH,
+            DATA_HEALTH_MANIFEST_PATH,
+            LIVE_MARKET_STATE_PATH,
+        ],
+    )
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Materialize canonical execution app exports and non-authoritative app staging snapshots."
@@ -3174,7 +3883,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--runtime-snapshot-only",
         action="store_true",
-        help="Only refresh the non-authoritative staging file outputs/execution/app_snapshot/app_runtime_snapshot.json.",
+        help="Only refresh the non-authoritative app snapshot staging outputs under outputs/execution/app_snapshot/.",
     )
     return parser.parse_args()
 
@@ -3187,9 +3896,23 @@ def main() -> None:
 
     if args.runtime_snapshot_only:
         runtime_snapshot = build_runtime_snapshot()
-        write_json(DASHBOARD_PUBLIC_STATUS_PATH, dict(runtime_snapshot.get("dashboard_public_status") or {}))
         write_json(APP_RUNTIME_SNAPSHOT_PATH, runtime_snapshot)
+        dashboard_public_outputs = materialize_dashboard_public_contract_artifacts(
+            runtime_snapshot=runtime_snapshot
+        )
         log(f"[MATERIALIZED] dashboard_public_status -> {DASHBOARD_PUBLIC_STATUS_PATH}")
+        log(
+            "[MATERIALIZED] dashboard_public_chart_timeseries -> "
+            f"{dashboard_public_outputs['chart_path']}"
+        )
+        log(
+            "[MATERIALIZED] dashboard_public_status.quality -> "
+            f"{dashboard_public_outputs['quality_path']}"
+        )
+        log(
+            "[MATERIALIZED] dashboard_public_status.manifest -> "
+            f"{dashboard_public_outputs['manifest_path']}"
+        )
         log(f"[MATERIALIZED] app_runtime_snapshot -> {APP_RUNTIME_SNAPSHOT_PATH}")
         log("[END] materialize_execution_app_exports runtime_snapshot_only")
         return
@@ -3378,13 +4101,16 @@ def main() -> None:
     log(f"              paper={current_main_strategy_export_result['paper_output_path']}")
 
     product_snapshot = build_product_snapshot(app_live_mode_contract)
-    runtime_snapshot = build_runtime_snapshot(
-        app_export_generated_at_utc=product_snapshot.get("app_export_generated_at_utc")
-    )
     write_json(APP_PRODUCT_SNAPSHOT_PATH, product_snapshot)
-    write_json(DASHBOARD_PUBLIC_STATUS_PATH, dict(runtime_snapshot.get("dashboard_public_status") or {}))
+    runtime_snapshot = build_runtime_snapshot(
+        app_export_generated_at_utc=product_snapshot.get("app_export_generated_at_utc"),
+        product_snapshot_payload_override=product_snapshot,
+    )
     write_json(APP_RUNTIME_SNAPSHOT_PATH, runtime_snapshot)
-    transformed_count += 3
+    dashboard_public_outputs = materialize_dashboard_public_contract_artifacts(
+        runtime_snapshot=runtime_snapshot
+    )
+    transformed_count += 6
     report_rows.extend([
         {
             "artifact_key": "app_product_snapshot",
@@ -3399,6 +4125,26 @@ def main() -> None:
             "output_info": safe_stat(DASHBOARD_PUBLIC_STATUS_PATH),
         },
         {
+            "artifact_key": "dashboard_public_chart_timeseries",
+            "status": "snapshot_written",
+            "output_path": str(dashboard_public_outputs["chart_path"]),
+            "output_info": safe_stat(dashboard_public_outputs["chart_path"]),
+            "row_count": dashboard_public_outputs["chart_row_count"],
+        },
+        {
+            "artifact_key": "dashboard_public_status_quality",
+            "status": dashboard_public_outputs["quality"]["status"],
+            "output_path": str(dashboard_public_outputs["quality_path"]),
+            "output_info": safe_stat(dashboard_public_outputs["quality_path"]),
+            "error_count": dashboard_public_outputs["quality"]["error_count"],
+        },
+        {
+            "artifact_key": "dashboard_public_status_manifest",
+            "status": "snapshot_written",
+            "output_path": str(dashboard_public_outputs["manifest_path"]),
+            "output_info": safe_stat(dashboard_public_outputs["manifest_path"]),
+        },
+        {
             "artifact_key": "app_runtime_snapshot",
             "status": "snapshot_written",
             "output_path": str(APP_RUNTIME_SNAPSHOT_PATH),
@@ -3407,6 +4153,9 @@ def main() -> None:
     ])
     log(f"[MATERIALIZED] app_product_snapshot -> {APP_PRODUCT_SNAPSHOT_PATH}")
     log(f"[MATERIALIZED] dashboard_public_status -> {DASHBOARD_PUBLIC_STATUS_PATH}")
+    log(f"[MATERIALIZED] dashboard_public_chart_timeseries -> {dashboard_public_outputs['chart_path']}")
+    log(f"[MATERIALIZED] dashboard_public_status.quality -> {dashboard_public_outputs['quality_path']}")
+    log(f"[MATERIALIZED] dashboard_public_status.manifest -> {dashboard_public_outputs['manifest_path']}")
     log(f"[MATERIALIZED] app_runtime_snapshot -> {APP_RUNTIME_SNAPSHOT_PATH}")
 
     hard_required = [
@@ -3443,7 +4192,9 @@ def main() -> None:
             "phase68g canonical main strategy paper/export aliases are refreshed from the native phase68g validation family with the official phase67j baseline paper, never from any phase68h static-reference row.",
             "phase68g current main strategy contract paths remain canonical aliases under outputs/execution/app_exports/ while sourcing their contents from refreshed native phase68g producer outputs.",
             "Other artifacts are copied from existing legacy aliases only.",
-            "app_product_snapshot, dashboard_public_status, and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
+            "dashboard_public_status, dashboard_public_chart_timeseries, dashboard_public_status.quality, and dashboard_public_status.manifest form the non-authoritative dashboard read model under outputs/execution/app_snapshot/.",
+            "dashboard_public_status.model_performance carries the current public 24h fields derived by the public status contract.",
+            "app_product_snapshot and app_runtime_snapshot remain non-authoritative internal staging after authority cutover."
         ],
     }
 
@@ -3463,6 +4214,10 @@ def main() -> None:
         "phase68g_main_strategy_authoritative_export_alias_written": PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.exists(),
         "app_product_snapshot_written": APP_PRODUCT_SNAPSHOT_PATH.exists(),
         "dashboard_public_status_written": DASHBOARD_PUBLIC_STATUS_PATH.exists(),
+        "dashboard_public_chart_timeseries_written": DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH.exists(),
+        "dashboard_public_status_quality_written": DASHBOARD_PUBLIC_STATUS_QUALITY_PATH.exists(),
+        "dashboard_public_status_manifest_written": DASHBOARD_PUBLIC_STATUS_MANIFEST_PATH.exists(),
+        "dashboard_public_status_quality_status": dashboard_public_outputs["quality"]["status"],
         "app_runtime_snapshot_written": APP_RUNTIME_SNAPSHOT_PATH.exists(),
     }
 
@@ -3486,6 +4241,9 @@ def main() -> None:
             str(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.resolve()),
             str(APP_PRODUCT_SNAPSHOT_PATH.resolve()),
             str(DASHBOARD_PUBLIC_STATUS_PATH.resolve()),
+            str(DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH.resolve()),
+            str(DASHBOARD_PUBLIC_STATUS_QUALITY_PATH.resolve()),
+            str(DASHBOARD_PUBLIC_STATUS_MANIFEST_PATH.resolve()),
             str(APP_RUNTIME_SNAPSHOT_PATH.resolve()),
         ],
         "status": report["status"],

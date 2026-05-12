@@ -236,30 +236,67 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             "account_snapshot_as_of_utc": "2026-04-23T10:45:00Z",
             "app_runtime_snapshot_generated_at_utc": "2026-04-23T10:45:00Z",
             "dashboard_public_status": self.build_minimal_dashboard_public_status_payload(),
+            "account_snapshot_summary": {
+                "current_position": "CASH",
+                "positions_count": 0,
+                "open_position": None,
+            },
         }
 
     def build_minimal_dashboard_public_status_payload(self) -> dict:
         return {
+            "schema_version": 1,
+            "closed_day": "2026-04-22",
             "generated_at_utc": "2026-04-23T10:45:00Z",
             "real_account": {
                 "asset": "CASH",
-                "exposure": 0.0,
-                "is_out_of_market": True,
+                "position_label_sk": "Mimo trhu",
+                "exposure_x": 0.0,
+                "in_market": False,
+                "account_equity_usd": 39.475466,
+                "available_balance_usd": 39.475466,
             },
             "execution": {
                 "target_asset": "CASH",
-                "target_exposure": 0.0,
+                "target_size_pct": 0.0,
+                "gate_status": "blocked",
+                "would_place_real_order": False,
+                "live_order_sent": False,
             },
             "model_signal": {
-                "candidate_asset": "BTC",
-                "target_exposure": 0.75,
+                "preferred_asset": "BTC",
+                "exposure_x": 0.75,
+                "label_sk": "ModelovĂ˝ signĂˇl",
+                "not_real_wallet_exposure": True,
             },
             "model_performance": {
-                "strategy_last_closed_day": "2026-04-22",
+                "account_24h_pct": 0.0,
+                "btc_24h_pct": -0.5,
+                "account_vs_btc_24h_pct": 0.5,
+                "public_average_annual_growth_pct": 216.86,
+                "since_etf_start_cagr_pct": 322.34,
+                "since2025_cagr_pct": 251.64,
+            },
+            "data_health": {
+                "reference_closed_day": "2026-04-22",
+                "overall_status": "ok",
+                "block_app": False,
+                "block_execution": False,
+            },
+            "live_market_state": {
+                "btc_24h_pct": -0.5,
+                "btc_24h_pct_source": "published_snapshot",
+                "btc_24h_pct_expected_live_source": "live_ticker",
+                "btc_24h_pct_snapshot_is_not_live": True,
+                "published_snapshot_btc_24h_pct": -0.5,
+                "account_24h_pct": 0.0,
+                "account_vs_btc_24h_pct": 0.5,
             },
             "public_labels_sk": {
-                "real_account_state": "Mimo trhu",
-                "model_signal_state": "Model cash-blocked",
+                "account_24h": "ĂšÄŤet 24h",
+                "account_vs_btc": "ĂšÄŤet vs BTC",
+                "real_account": "ReĂˇlny ĂşÄŤet",
+                "model_signal": "ModelovĂ˝ signĂˇl",
             },
         }
 
@@ -346,6 +383,19 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         )
         (app_snapshot_dir / "dashboard_public_status.json").write_text(
             json.dumps(self.build_minimal_dashboard_public_status_payload()),
+            encoding="utf-8",
+        )
+        (app_snapshot_dir / "dashboard_public_chart_timeseries.csv").write_text(
+            "date,model_index,btc_index,model_authorized_exposure_x,model_authorized_return_net,model_authorized_return_gross,model_transition_cost,model_asset_transition_day,real_account_index,real_account_exposure_x,real_account_return_net,real_account_vs_btc_return,chart_scope\n"
+            "2026-04-22,1.0,1.0,0.0,0.0,0.0,0.0,False,1.0,0.0,0.0,0.0,real_account_flat_no_history\n",
+            encoding="utf-8",
+        )
+        (app_snapshot_dir / "dashboard_public_status.quality.json").write_text(
+            json.dumps({"status": "ok", "error_count": 0, "errors": [], "checks": {}}),
+            encoding="utf-8",
+        )
+        (app_snapshot_dir / "dashboard_public_status.manifest.json").write_text(
+            json.dumps({"status": "ok", "output_files": []}),
             encoding="utf-8",
         )
 
@@ -509,6 +559,9 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         temp_root = self.make_temp_root()
         app_snapshot_dir = temp_root / "outputs" / "execution" / "app_snapshot"
         dashboard_path = app_snapshot_dir / "dashboard_public_status.json"
+        chart_path = app_snapshot_dir / "dashboard_public_chart_timeseries.csv"
+        quality_path = app_snapshot_dir / "dashboard_public_status.quality.json"
+        manifest_path = app_snapshot_dir / "dashboard_public_status.manifest.json"
         runtime_path = app_snapshot_dir / "app_runtime_snapshot.json"
         runtime_snapshot = self.build_minimal_app_runtime_snapshot_payload()
 
@@ -532,6 +585,27 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             stack.enter_context(
                 mock.patch.object(
                     materializer,
+                    "DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH",
+                    chart_path,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    materializer,
+                    "DASHBOARD_PUBLIC_STATUS_QUALITY_PATH",
+                    quality_path,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    materializer,
+                    "DASHBOARD_PUBLIC_STATUS_MANIFEST_PATH",
+                    manifest_path,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    materializer,
                     "APP_RUNTIME_SNAPSHOT_PATH",
                     runtime_path,
                 )
@@ -546,6 +620,9 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             materializer.main()
 
         self.assertTrue(dashboard_path.exists())
+        self.assertTrue(chart_path.exists())
+        self.assertTrue(quality_path.exists())
+        self.assertTrue(manifest_path.exists())
         self.assertTrue(runtime_path.exists())
         self.assertEqual(
             load_json(dashboard_path),
@@ -583,6 +660,18 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
 
         self.assertIn(
             "outputs/execution/app_snapshot/dashboard_public_status.json",
+            result["pathspecs"],
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv",
+            result["pathspecs"],
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.quality.json",
+            result["pathspecs"],
+        )
+        self.assertIn(
+            "outputs/execution/app_snapshot/dashboard_public_status.manifest.json",
             result["pathspecs"],
         )
 
