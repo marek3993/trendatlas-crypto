@@ -63,6 +63,11 @@ PHASE67J_OUTPUT_DIR = ROOT / "outputs" / "phase67j_final_narrow_validation_pack"
 
 PHASE60_PAPER = PHASE60_OUTPUT_DIR / f"{PHASE60_PINNED_MODEL}_paper.csv"
 PHASE63_PAPER = PHASE63_OUTPUT_DIR / f"{PHASE63_PINNED_MODEL}_paper.csv"
+PHASE63_FAST_DEPENDENCY_ARGS = [
+    "--winner-only",
+    "--variant-key",
+    PHASE63_PINNED_MODEL,
+]
 
 PHASE67J_PAPER = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_no_neo_main_paper.csv"
 PHASE67J_SUMMARY = ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_final_narrow_validation_summary.csv"
@@ -1466,7 +1471,7 @@ def main() -> None:
             PHASE63_SCRIPT,
             env,
             logs_dir,
-            script_args=["--only-model", PHASE63_PINNED_MODEL],
+            script_args=PHASE63_FAST_DEPENDENCY_ARGS,
         )
         if not args.skip_top100_refresh:
             run_step_and_persist(

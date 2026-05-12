@@ -391,6 +391,22 @@
       "notes": "Preview by default. Live mode is allowed only via --execute-live --manual-confirm FULL_AUTO_EXECUTION."
     },
     {
+      "script_path": "scripts/phase63_btc_participation_overlay.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Phase63 BTC participation overlay research grid plus targeted fast dependency refresh for the pinned Phase63 paper consumed by Phase66G.",
+      "primary_outputs": [
+        "outputs/phase63_btc_participation_overlay/phase63_overlay_summary.csv",
+        "outputs/phase63_btc_participation_overlay/phase63_overlay_top_compare.csv",
+        "outputs/phase63_btc_participation_overlay/phase63_manifest.json",
+        "outputs/phase63_btc_participation_overlay/phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "--winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3 is the targeted fast dependency refresh path; omitting it keeps the full research grid available."
+    },
+    {
       "script_path": "scripts/daily_refresh_app_pipeline.py",
       "layer": "execution_data",
       "status": "active",

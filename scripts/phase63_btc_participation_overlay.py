@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,6 +19,9 @@ PHASE63_DIR = OUTPUTS / "phase63_btc_participation_overlay"
 CURRENT_INTERNAL_WINNER_KEY = "phase61_restore_trx_sol_base"
 CURRENT_INTERNAL_WINNER_LABEL = "Restore BNB vs TRX/SOL"
 LATEST_BEST_BASELINE_KEY = "phase42 core"
+PINNED_PHASE63_DEPENDENCY_VARIANT_KEY = (
+    "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3"
+)
 
 EXPLICIT_BASE_PAPER_PATH = (
     OUTPUTS / "phase60_selective_restore_robustness" / "phase60_restore_trx_sol_base_paper.csv"
@@ -38,6 +42,21 @@ class VariantConfig:
     weak_base_lb: int
     weak_base_threshold: float
     cooldown_days: int = 0
+
+
+VARIANT_KEY_PATTERN = re.compile(
+    r"^phase63_btcpref_"
+    r"f(?P<fast>\d+)_"
+    r"s(?P<slow>\d+)_"
+    r"r(?P<ret_lb>\d+)_"
+    r"m(?P<ret_min>\d+)_"
+    r"rm(?P<risk_ma>\d+)_"
+    r"rb(?P<risk_buffer>[+-]\d+)_"
+    r"v(?P<vol_lb>\d+)_(?P<vol_cap>\d+)_"
+    r"wb(?P<weak_lb>\d+)_"
+    r"wt(?P<weak_threshold>[+-]\d+)_"
+    r"cd(?P<cooldown>\d+)$"
+)
 
 
 def log(msg: str) -> None:
@@ -532,6 +551,94 @@ def build_variant_grid() -> list[VariantConfig]:
     return variants
 
 
+def parse_variant_key(variant_key: str) -> VariantConfig:
+    key = str(variant_key or "").strip()
+    match = VARIANT_KEY_PATTERN.match(key)
+    if match is None:
+        raise ValueError(f"Unsupported Phase63 variant key: {variant_key}")
+
+    parts = match.groupdict()
+    return VariantConfig(
+        name=key,
+        btc_fast_ma=int(parts["fast"]),
+        btc_slow_ma=int(parts["slow"]),
+        btc_ret_lb=int(parts["ret_lb"]),
+        btc_ret_min=int(parts["ret_min"]) / 100.0,
+        btc_risk_ma=int(parts["risk_ma"]),
+        btc_risk_buffer=int(parts["risk_buffer"]) / 100.0,
+        btc_vol_lb=int(parts["vol_lb"]),
+        btc_vol_cap=int(parts["vol_cap"]) / 1000.0,
+        weak_base_lb=int(parts["weak_lb"]),
+        weak_base_threshold=int(parts["weak_threshold"]) / 100.0,
+        cooldown_days=int(parts["cooldown"]),
+    )
+
+
+def resolve_requested_variants(args: argparse.Namespace) -> tuple[list[VariantConfig], str, bool]:
+    if bool(getattr(args, "winner_only", False)):
+        variant_key = str(args.variant_key or PINNED_PHASE63_DEPENDENCY_VARIANT_KEY).strip()
+        return [parse_variant_key(variant_key)], "winner_only_fast_dependency_refresh", True
+
+    if str(getattr(args, "variant_key", "") or "").strip():
+        variant_key = str(args.variant_key).strip()
+        return [parse_variant_key(variant_key)], "targeted_fast_dependency_refresh", True
+
+    only_model = str(getattr(args, "only_model", "") or "").strip()
+    if only_model:
+        try:
+            return [parse_variant_key(only_model)], "targeted_fast_dependency_refresh", True
+        except ValueError:
+            variants = [v for v in build_variant_grid() if v.name == only_model]
+            if not variants:
+                raise ValueError(f"Requested only-model not found in phase63 grid: {only_model}")
+            return variants, "legacy_only_model_grid_lookup", False
+
+    return build_variant_grid(), "full_research_grid", False
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=(
+            "PHASE63 BTC participation overlay. Use --winner-only for the targeted fast "
+            "dependency refresh that materializes the pinned Phase63 paper for Phase66G; "
+            "omitting it runs the full research grid."
+        ),
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    parser.add_argument("--top-n-save", type=int, default=10)
+    parser.add_argument("--winner-key", type=str, default=CURRENT_INTERNAL_WINNER_KEY)
+    parser.add_argument("--winner-label", type=str, default=CURRENT_INTERNAL_WINNER_LABEL)
+    parser.add_argument("--baseline-key", type=str, default=LATEST_BEST_BASELINE_KEY)
+    parser.add_argument("--base-paper-path", type=str, default=str(EXPLICIT_BASE_PAPER_PATH))
+    parser.add_argument(
+        "--only-model",
+        type=str,
+        default="",
+        help=(
+            "Legacy targeted model selector. Parseable phase63_btcpref_* keys use the fast "
+            "single-variant path; non-parseable handpicked names fall back to grid lookup."
+        ),
+    )
+    parser.add_argument(
+        "--winner-only",
+        action="store_true",
+        help=(
+            "Targeted fast dependency refresh for Phase66G. Materializes only the pinned "
+            "Phase63 paper plus support summary/manifest, not the full research grid."
+        ),
+    )
+    parser.add_argument(
+        "--variant-key",
+        type=str,
+        default="",
+        help=(
+            "Explicit phase63_btcpref_* variant key for targeted fast dependency refresh. "
+            f"Default with --winner-only: {PINNED_PHASE63_DEPENDENCY_VARIANT_KEY}"
+        ),
+    )
+    return parser
+
+
 def compute_regime_columns(df: pd.DataFrame, cfg: VariantConfig) -> pd.DataFrame:
     out = df.copy()
 
@@ -668,13 +775,7 @@ def add_delta(df: pd.DataFrame, baseline_model: str) -> pd.DataFrame:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="PHASE63 BTC participation overlay")
-    parser.add_argument("--top-n-save", type=int, default=10)
-    parser.add_argument("--winner-key", type=str, default=CURRENT_INTERNAL_WINNER_KEY)
-    parser.add_argument("--winner-label", type=str, default=CURRENT_INTERNAL_WINNER_LABEL)
-    parser.add_argument("--baseline-key", type=str, default=LATEST_BEST_BASELINE_KEY)
-    parser.add_argument("--base-paper-path", type=str, default=str(EXPLICIT_BASE_PAPER_PATH))
-    parser.add_argument("--only-model", type=str, default="")
+    parser = build_arg_parser()
     args = parser.parse_args()
 
     ensure_dir(PHASE63_DIR)
@@ -691,12 +792,10 @@ def main() -> None:
     btc_df = load_btc_prices(btc_file)
     merged = merge_inputs(base_df, btc_df)
 
-    variants = build_variant_grid()
-    if args.only_model:
-        variants = [v for v in variants if v.name == args.only_model]
-        if not variants:
-            raise ValueError(f"Requested only-model not found in phase63 grid: {args.only_model}")
+    variants, run_mode, targeted_fast_path = resolve_requested_variants(args)
+    requested_variant_key = variants[0].name if targeted_fast_path and variants else ""
     log(f"[PHASE63] Variants: {len(variants)}")
+    log(f"[PHASE63] Run mode: {run_mode}")
 
     base_paper, base_row = build_baseline_rows(merged, args.winner_key)
 
@@ -755,8 +854,11 @@ def main() -> None:
     summary.to_csv(summary_path, index=False)
     combined_compare.to_csv(compare_path, index=False)
 
-    top_models = summary["model"].head(max(args.top_n_save, 1)).astype(str).tolist()
-    if args.winner_key not in top_models:
+    if targeted_fast_path:
+        top_models = [requested_variant_key]
+    else:
+        top_models = summary["model"].head(max(args.top_n_save, 1)).astype(str).tolist()
+    if not targeted_fast_path and args.winner_key not in top_models:
         top_models.append(args.winner_key)
 
     for model in top_models:
@@ -781,6 +883,10 @@ def main() -> None:
         "compare_file": to_portable_path(compare_path, ROOT),
         "top_saved_models": top_models,
         "variant_count_total": int(len(variants)),
+        "run_mode": run_mode,
+        "targeted_fast_dependency_refresh": bool(targeted_fast_path),
+        "requested_variant_key": requested_variant_key,
+        "full_research_grid_evaluated": not bool(targeted_fast_path),
         "execution_model": "signal_t -> execute_t_plus_1",
         "freshness_lineage": build_producer_lineage(
             producer_script=__file__,
