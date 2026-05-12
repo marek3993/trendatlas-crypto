@@ -129,6 +129,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "production_chart_authorized_return_series",
             "production_chart_authorized_exposure_series",
             "production_chart_transition_cost_series",
+            "production_chart_btc_index_series",
+            "production_chart_btc_return_series",
             "production_chart_source_alignment_issues",
             "product_asset_label_nominative",
             "production_market_state_label_from_values",
@@ -589,6 +591,21 @@ class TestAppPublicStatusContract(unittest.TestCase):
                     "since_etf_start_cagr_pct": 322.34,
                     "since2025_cagr_pct": 251.64,
                 },
+                "data_health": {
+                    "reference_closed_day": "2026-05-10",
+                    "overall_status": "ok",
+                    "block_app": False,
+                    "block_execution": False,
+                },
+                "live_market_state": {
+                    "btc_24h_pct": -0.5,
+                    "btc_24h_pct_source": "published_snapshot",
+                    "btc_24h_pct_expected_live_source": "live_ticker",
+                    "btc_24h_pct_snapshot_is_not_live": True,
+                    "published_snapshot_btc_24h_pct": -0.5,
+                    "account_24h_pct": 0.0,
+                    "account_vs_btc_24h_pct": 0.5,
+                },
                 "public_labels_sk": {
                     "account_24h": "Účet 24h",
                     "account_vs_btc": "Účet vs BTC",
@@ -611,6 +628,7 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(performance_state["account_24h_pct"], 0.0)
         self.assertEqual(performance_state["btc_24h_pct"], -0.5)
         self.assertEqual(performance_state["account_vs_btc_24h_pct"], 0.5)
+        self.assertEqual(performance_state["btc_24h_pct_source_label"], "closed_day_snapshot")
 
     def test_dashboard_public_chart_keeps_cash_account_flat_without_real_history(self):
         contract = build_dashboard_public_status_contract(
@@ -702,6 +720,87 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertNotIn('production_snapshot.get("actual_held_asset")', block)
         self.assertNotIn('production_snapshot.get("current_asset")', block)
         self.assertNotIn('production_snapshot.get("effective_market_exposure")', block)
+
+    def test_homepage_model_signal_uses_cis_without_raw_exposure_fallbacks(self):
+        source = APP_PY_PATH.read_text(encoding="utf-8")
+        start_marker = 'strategy_signal_exposure = _first_numeric_value('
+        end_marker = 'state_story = build_homepage_state_story('
+        start = source.index(start_marker)
+        end = source.index(end_marker, start)
+        block = source[start:end]
+
+        self.assertIn('runtime_model_signal_state.get("exposure_x")', block)
+        self.assertNotIn('production_snapshot.get("model_candidate_exposure")', block)
+        self.assertNotIn('production_snapshot.get("effective_market_exposure")', block)
+        self.assertNotIn('production_signal_context", "model_candidate_exposure"', block)
+
+    def test_homepage_model_chart_reads_cis_chart_timeseries(self):
+        source = APP_PY_PATH.read_text(encoding="utf-8")
+        start_marker = 'dashboard_public_chart_timeseries_df = load_dashboard_public_chart_timeseries_frame('
+        end_marker = 'st.caption(t(lang, "production_chart_note"))'
+        start = source.index(start_marker)
+        end = source.index(end_marker, start)
+        block = source[start:end]
+
+        self.assertIn("LOCAL_DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH", block)
+        self.assertIn("years = available_years_from_frames([dashboard_public_chart_timeseries_df])", block)
+        self.assertIn("timeseries_df=dashboard_public_chart_timeseries_df", block)
+
+    def test_homepage_account_card_does_not_show_model_equity_as_real_pnl(self):
+        source = APP_PY_PATH.read_text(encoding="utf-8")
+        start_marker = "home_cards = ["
+        end_marker = "home_cols = st.columns(len(home_cards))"
+        start = source.index(start_marker)
+        end = source.index(end_marker, start)
+        block = source[start:end]
+
+        self.assertIn('real_account_exposure_state["value"]', block)
+        self.assertNotIn("model_equity", block)
+        self.assertNotIn("paper_equity", block)
+        self.assertNotIn("account_equity_usd", block)
+
+    def test_dashboard_public_chart_uses_cis_model_columns_and_keeps_lower_strip(self):
+        make_chart = self.__class__.ns["make_production_equity_chart"]
+        frame = pd.DataFrame(
+            {
+                "ts": pd.to_datetime(["2026-05-09", "2026-05-10"]),
+                "model_index": [10.0, 11.0],
+                "btc_index": [20.0, 21.0],
+                "model_authorized_exposure_x": [0.75, 0.75],
+                "model_authorized_return_net": [0.0, 0.10],
+                "model_authorized_return_gross": [0.0, 0.10],
+                "model_transition_cost": [0.0, 0.0],
+                "real_account_index": [1.0, 1.0],
+                "real_account_exposure_x": [0.0, 0.0],
+                "real_account_return_net": [0.0, 0.0],
+                "real_account_vs_btc_return": [0.0, -0.05],
+                "chart_scope": ["real_account_flat_no_history", "real_account_flat_no_history"],
+                "authorized_equity": [999.0, 999.0],
+                "btc_baseline_equity": [888.0, 888.0],
+                "effective_market_exposure": [9.0, 9.0],
+                "actual_held_asset": ["BTC", "BTC"],
+                "current_asset": ["BTC", "BTC"],
+            }
+        )
+
+        fig = make_chart(
+            frame,
+            2026,
+            "en",
+            "Model",
+            "Model vs BTC",
+            model_signal_state={
+                "preferred_asset": "BTC",
+                "exposure_x": 0.75,
+                "label_sk": "Modelovy signal",
+            },
+        )
+
+        self.assertEqual(list(fig.data[0].y), [1.0, 1.1])
+        self.assertEqual(list(fig.data[1].y), [1.0, 1.05])
+        self.assertEqual(len(fig.data), 3)
+        self.assertEqual(fig.data[2].name, "Model signal")
+        self.assertEqual(list(fig.data[2].y), [0.75, 0.75])
 
     def test_runtime_contract_separates_wallet_cash_from_model_btc_signal(self):
         contract = build_runtime_public_status_contract(

@@ -71,6 +71,9 @@ LOCAL_APP_RUNTIME_SNAPSHOT_PATH = (
 LOCAL_DASHBOARD_PUBLIC_STATUS_PATH = (
     ROOT / "outputs" / "execution" / "app_snapshot" / "dashboard_public_status.json"
 )
+LOCAL_DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH = (
+    ROOT / "outputs" / "execution" / "app_snapshot" / "dashboard_public_chart_timeseries.csv"
+)
 PRODUCTION_SNAPSHOT_PATH = PRODUCTION_OUTPUTS / "current_strategy_snapshot.json"
 PRODUCTION_TIMESERIES_PATH = PRODUCTION_OUTPUTS / "current_strategy_timeseries.csv"
 PRODUCTION_DIAGNOSTICS_PATH = PRODUCTION_OUTPUTS / "current_strategy_diagnostics.json"
@@ -1792,11 +1795,82 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
     return frame
 
 
+def load_dashboard_public_chart_timeseries_frame(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        stop_for_production_homepage_block(f"dashboard public chart missing {path}")
+    try:
+        frame = pd.read_csv(path)
+    except Exception as exc:
+        stop_for_production_homepage_block(f"dashboard public chart unreadable {path}: {exc}")
+        return pd.DataFrame()
+
+    required_columns = {
+        "date",
+        "model_index",
+        "btc_index",
+        "model_authorized_exposure_x",
+        "model_authorized_return_net",
+        "model_authorized_return_gross",
+        "model_transition_cost",
+        "model_asset_transition_day",
+        "real_account_index",
+        "real_account_exposure_x",
+        "real_account_return_net",
+        "real_account_vs_btc_return",
+        "chart_scope",
+    }
+    missing_columns = sorted(required_columns - set(frame.columns))
+    if missing_columns:
+        stop_for_production_homepage_block(
+            "dashboard public chart missing columns: " + ", ".join(missing_columns)
+        )
+
+    frame["ts"] = pd.to_datetime(frame["date"], errors="coerce").dt.normalize()
+    for numeric_column in [
+        "model_index",
+        "btc_index",
+        "model_authorized_exposure_x",
+        "model_authorized_return_net",
+        "model_authorized_return_gross",
+        "model_transition_cost",
+        "real_account_index",
+        "real_account_exposure_x",
+        "real_account_return_net",
+        "real_account_vs_btc_return",
+    ]:
+        frame[numeric_column] = pd.to_numeric(frame[numeric_column], errors="coerce")
+
+    frame = (
+        frame.dropna(
+            subset=[
+                "ts",
+                "model_index",
+                "btc_index",
+                "model_authorized_exposure_x",
+                "model_authorized_return_net",
+            ]
+        )
+        .sort_values("ts")
+        .drop_duplicates(subset=["ts"], keep="last")
+        .reset_index(drop=True)
+    )
+    if frame.empty:
+        stop_for_production_homepage_block("dashboard public chart has no usable rows")
+    return frame
+
+
 def production_chart_authorized_equity_series(df: pd.DataFrame) -> pd.Series:
+    if "model_index" in df.columns:
+        return pd.to_numeric(df["model_index"], errors="coerce")
     return pd.to_numeric(df.get("authorized_equity", pd.Series(index=df.index, dtype="float64")), errors="coerce")
 
 
 def production_chart_authorized_gross_return_series(df: pd.DataFrame) -> pd.Series:
+    if "model_authorized_return_gross" in df.columns:
+        return pd.to_numeric(
+            df["model_authorized_return_gross"],
+            errors="coerce",
+        ).fillna(0.0)
     return pd.to_numeric(
         df.get("authorized_return_gross", pd.Series(index=df.index, dtype="float64")),
         errors="coerce",
@@ -1804,6 +1878,11 @@ def production_chart_authorized_gross_return_series(df: pd.DataFrame) -> pd.Seri
 
 
 def production_chart_authorized_return_series(df: pd.DataFrame) -> pd.Series:
+    if "model_authorized_return_net" in df.columns:
+        return pd.to_numeric(
+            df["model_authorized_return_net"],
+            errors="coerce",
+        ).fillna(0.0)
     return pd.to_numeric(
         df.get("authorized_return_net", pd.Series(index=df.index, dtype="float64")),
         errors="coerce",
@@ -1811,6 +1890,11 @@ def production_chart_authorized_return_series(df: pd.DataFrame) -> pd.Series:
 
 
 def production_chart_authorized_exposure_series(df: pd.DataFrame) -> pd.Series:
+    if "model_authorized_exposure_x" in df.columns:
+        return pd.to_numeric(
+            df["model_authorized_exposure_x"],
+            errors="coerce",
+        ).fillna(0.0)
     return pd.to_numeric(
         df.get("effective_market_exposure", pd.Series(index=df.index, dtype="float64")),
         errors="coerce",
@@ -1818,6 +1902,11 @@ def production_chart_authorized_exposure_series(df: pd.DataFrame) -> pd.Series:
 
 
 def production_chart_transition_cost_series(df: pd.DataFrame) -> pd.Series:
+    if "model_transition_cost" in df.columns:
+        return pd.to_numeric(
+            df["model_transition_cost"],
+            errors="coerce",
+        ).fillna(0.0)
     transition_cost = pd.Series(0.0, index=df.index, dtype="float64")
     for column in ["fees_daily", "funding_daily", "borrow_cost_daily", "slippage_cost_daily"]:
         cost = pd.to_numeric(
@@ -1826,6 +1915,20 @@ def production_chart_transition_cost_series(df: pd.DataFrame) -> pd.Series:
         ).fillna(0.0)
         transition_cost = transition_cost - cost
     return transition_cost
+
+
+def production_chart_btc_index_series(df: pd.DataFrame) -> pd.Series:
+    if "btc_index" in df.columns:
+        return pd.to_numeric(df["btc_index"], errors="coerce")
+    return pd.to_numeric(df.get("btc_baseline_equity", pd.Series(index=df.index, dtype="float64")), errors="coerce")
+
+
+def production_chart_btc_return_series(df: pd.DataFrame) -> pd.Series:
+    if {"real_account_return_net", "real_account_vs_btc_return"}.issubset(df.columns):
+        real_return = pd.to_numeric(df["real_account_return_net"], errors="coerce").fillna(0.0)
+        account_vs_btc = pd.to_numeric(df["real_account_vs_btc_return"], errors="coerce").fillna(0.0)
+        return real_return - account_vs_btc
+    return pd.to_numeric(df.get("btc_return", pd.Series(index=df.index, dtype="float64")), errors="coerce").fillna(0.0)
 
 
 def production_chart_source_alignment_issues(timeseries_df: pd.DataFrame) -> list[str]:
@@ -2482,6 +2585,8 @@ def load_dashboard_public_status_for_app(
         "execution",
         "model_signal",
         "model_performance",
+        "data_health",
+        "live_market_state",
         "public_labels_sk",
     }
 
@@ -2534,6 +2639,11 @@ def resolve_dashboard_public_status_state(
     model_performance = (
         dashboard_public_status.get("model_performance")
         if isinstance(dashboard_public_status.get("model_performance"), dict)
+        else {}
+    )
+    live_market_state = (
+        dashboard_public_status.get("live_market_state")
+        if isinstance(dashboard_public_status.get("live_market_state"), dict)
         else {}
     )
     public_labels_sk = (
@@ -2616,6 +2726,11 @@ def resolve_dashboard_public_status_state(
             "public_average_annual_growth_pct": as_float(model_performance.get("public_average_annual_growth_pct")),
             "since_etf_start_cagr_pct": as_float(model_performance.get("since_etf_start_cagr_pct")),
             "since2025_cagr_pct": as_float(model_performance.get("since2025_cagr_pct")),
+            "btc_24h_pct_source_label": (
+                "closed_day_snapshot"
+                if as_bool(live_market_state.get("btc_24h_pct_snapshot_is_not_live")) is True
+                else str(live_market_state.get("btc_24h_pct_source") or "").strip()
+            ),
         },
     }
 
@@ -5250,9 +5365,11 @@ def build_production_chart_current_state_note(
     diagnostics: dict[str, Any],
     lang: str,
     real_account_exposure_state: dict[str, Any] | None = None,
+    model_signal_state: dict[str, Any] | None = None,
 ) -> str:
+    model_state = model_signal_state or {}
     candidate_asset = product_asset_label_nominative(
-        first_present_value(snapshot.get("candidate_asset"), snapshot.get("selected_asset")),
+        first_present_value(model_state.get("preferred_asset"), snapshot.get("candidate_asset"), snapshot.get("selected_asset")),
         lang,
     )
     real_state = real_account_exposure_state or {}
@@ -5265,8 +5382,7 @@ def build_production_chart_current_state_note(
         )
     exposure = as_float(
         first_present_value(
-            snapshot.get("effective_market_exposure"),
-            snapshot.get("current_exposure"),
+            model_state.get("exposure_x"),
         )
     )
     exposure_text = f"{exposure:.2f}x" if exposure is not None else t(lang, "na")
@@ -5287,14 +5403,16 @@ def build_homepage_state_story(
     diagnostics: dict[str, Any],
     lang: str,
     real_account_exposure_state: dict[str, Any] | None = None,
+    model_signal_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    model_state = model_signal_state or {}
     trade_state = dict(diagnostics.get("current_trade_state") or {})
     candidate_asset = str(
         first_present_value(
+            model_state.get("preferred_asset"),
             trade_state.get("candidate_asset"),
             snapshot.get("candidate_asset"),
             snapshot.get("selected_asset"),
-            snapshot.get("current_asset"),
         )
         or ""
     ).strip().upper()
@@ -5308,13 +5426,12 @@ def build_homepage_state_story(
     ).strip().upper()
     exposure = as_float(
         first_present_value(
-            trade_state.get("effective_market_exposure"),
-            snapshot.get("effective_market_exposure"),
-            snapshot.get("current_exposure"),
+            model_state.get("exposure_x"),
         )
     )
     candidate_exposure = as_float(
         first_present_value(
+            model_state.get("exposure_x"),
             trade_state.get("model_candidate_exposure"),
             snapshot.get("model_candidate_exposure"),
         )
@@ -6133,12 +6250,13 @@ def make_production_equity_chart(
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
     rebased_equity = rebase_series(production_chart_authorized_equity_series(main_plot))
-    rebased_btc_baseline = rebase_series(main_plot["btc_baseline_equity"])
+    rebased_btc_baseline = rebase_series(production_chart_btc_index_series(main_plot))
     daily_return_pct = production_chart_authorized_return_series(main_plot) * 100.0
-    btc_return_pct = (
-        pd.to_numeric(main_plot.get("btc_return"), errors="coerce").fillna(0.0) * 100.0
+    btc_return_pct = production_chart_btc_return_series(main_plot) * 100.0
+    btc_close_series = pd.to_numeric(
+        main_plot.get("btc_close", pd.Series(index=main_plot.index, dtype="float64")),
+        errors="coerce",
     )
-    btc_close_series = pd.to_numeric(main_plot.get("btc_close"), errors="coerce")
     legend_label = t(lang, "production_chart_legend") if str(t(lang, "production_chart_legend")).strip() else main_label
     runtime_model_signal = model_signal_state if isinstance(model_signal_state, dict) else {}
     real_account_label = (
@@ -6153,7 +6271,11 @@ def make_production_equity_chart(
     )
     exposure_series = production_chart_authorized_exposure_series(main_plot)
     max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
-    candidate_labels = main_plot.get("candidate_asset", pd.Series([""] * len(main_plot), index=main_plot.index)).fillna("").astype(str).map(
+    fallback_candidate = str(runtime_model_signal.get("preferred_asset") or "").strip().upper()
+    candidate_labels = main_plot.get(
+        "candidate_asset",
+        pd.Series([fallback_candidate] * len(main_plot), index=main_plot.index),
+    ).fillna("").astype(str).map(
         lambda value: product_asset_label_nominative(value, lang)
     )
     market_state_labels = [
@@ -6164,7 +6286,10 @@ def make_production_equity_chart(
         )
         for exposure, trend_permission_active in zip(
             exposure_series.tolist(),
-            main_plot.get("trend_permission_active", pd.Series([False] * len(main_plot), index=main_plot.index)).tolist(),
+            main_plot.get(
+                "trend_permission_active",
+                pd.Series([abs(float(exposure or 0.0)) > 1e-12 for exposure in exposure_series.tolist()], index=main_plot.index),
+            ).tolist(),
         )
     ]
     real_account_hover_text = ""
@@ -6201,7 +6326,10 @@ def make_production_equity_chart(
     btc_hover_customdata = list(
         zip(
             [f"{value:+.2f}%" for value in btc_return_pct.tolist()],
-            [f"${value:,.2f}" for value in btc_close_series.tolist()],
+            [
+                f"${value:,.2f}" if pd.notna(value) else t(lang, "na")
+                for value in btc_close_series.tolist()
+            ],
         )
     )
     market_state_flags = [
@@ -6648,6 +6776,9 @@ dashboard_public_state = resolve_dashboard_public_status_state(
     dashboard_public_status,
     lang,
 )
+dashboard_public_chart_timeseries_df = load_dashboard_public_chart_timeseries_frame(
+    LOCAL_DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH
+)
 runtime_real_account_state = dict(runtime_snapshot.get("real_account_state") or {})
 runtime_model_signal_state = dict(
     dashboard_public_state.get("model_signal_state")
@@ -6688,14 +6819,14 @@ public_performance_timeseries_df = public_performance_context["timeseries_df"]
 main_metrics = dict(public_performance_context["main_metrics"])
 top_performance_metrics = dict(public_performance_context["top_performance_metrics"])
 
-years = available_years_from_frames([public_performance_timeseries_df])
+years = available_years_from_frames([dashboard_public_chart_timeseries_df])
 if not years:
     st.error(f"{t(lang, 'load_failed')}: no usable dates")
     st.stop()
 
 main_equity_df = (
-    public_performance_timeseries_df[["ts", "authorized_equity"]]
-    .rename(columns={"authorized_equity": "equity"})
+    dashboard_public_chart_timeseries_df[["ts", "model_index"]]
+    .rename(columns={"model_index": "equity"})
     .dropna()
     .copy()
 )
@@ -6719,9 +6850,6 @@ with tabs[0]:
         )
     strategy_signal_exposure = _first_numeric_value(
         runtime_model_signal_state.get("exposure_x"),
-        get_nested_value(real_order_gate_payload, "production_signal_context", "model_candidate_exposure"),
-        production_snapshot.get("model_candidate_exposure"),
-        production_snapshot.get("effective_market_exposure"),
     )
     strategy_signal_exposure_text = (
         f"{strategy_signal_exposure:.2f}x"
@@ -6733,6 +6861,7 @@ with tabs[0]:
         production_diagnostics,
         lang,
         real_account_exposure_state,
+        runtime_model_signal_state,
     )
     wait_condition = dict(production_diagnostics.get("current_wait_condition") or {})
     current_trade_state = dict(production_diagnostics.get("current_trade_state") or {})
@@ -6784,10 +6913,7 @@ with tabs[0]:
         {
             "label": t(lang, "production_candidate_asset"),
             "value": product_asset_label_nominative(
-                first_present_value(
-                    runtime_model_signal_state.get("preferred_asset"),
-                    production_snapshot.get("candidate_asset"),
-                ),
+                runtime_model_signal_state.get("preferred_asset"),
                 lang,
             ),
             "subtitle": t(lang, "production_candidate_hint"),
@@ -6843,7 +6969,7 @@ with tabs[0]:
     )
     st.plotly_chart(
         make_production_equity_chart(
-            timeseries_df=public_performance_timeseries_df,
+            timeseries_df=dashboard_public_chart_timeseries_df,
             year=selected_year_home,
             lang=lang,
             main_label=t(lang, "production_chart_legend"),
@@ -6857,7 +6983,15 @@ with tabs[0]:
     st.caption(t(lang, "production_chart_baseline_note"))
     st.caption(t(lang, "production_chart_flat_note"))
     st.caption(t(lang, "production_chart_participation_note"))
-    st.caption(build_production_chart_current_state_note(production_snapshot, production_diagnostics, lang, real_account_exposure_state))
+    st.caption(
+        build_production_chart_current_state_note(
+            production_snapshot,
+            production_diagnostics,
+            lang,
+            real_account_exposure_state,
+            runtime_model_signal_state,
+        )
+    )
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
     public_window_label_key = str(public_performance_context.get("public_window_label_key") or "since2023")
