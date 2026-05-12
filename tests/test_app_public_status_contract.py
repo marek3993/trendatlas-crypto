@@ -122,6 +122,12 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "resolve_dashboard_public_status_state",
             "filter_from_year",
             "rebase_series",
+            "production_chart_authorized_equity_series",
+            "production_chart_authorized_gross_return_series",
+            "production_chart_authorized_return_series",
+            "production_chart_authorized_exposure_series",
+            "production_chart_transition_cost_series",
+            "production_chart_source_alignment_issues",
             "product_asset_label_nominative",
             "production_market_state_label_from_values",
             "make_production_equity_chart",
@@ -271,6 +277,109 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(len(fig.data), 3)
         self.assertEqual(fig.data[2].name, "Modelový signál")
         self.assertEqual(list(fig.data[2].y), [0.75, 0.75])
+
+    def test_production_chart_strip_uses_authorized_exposure_not_candidate_signal(self):
+        make_chart = self.__class__.ns["make_production_equity_chart"]
+        frame = pd.DataFrame(
+            {
+                "ts": pd.to_datetime(["2026-05-09", "2026-05-10"]),
+                "authorized_equity": [100.0, 99.85],
+                "btc_baseline_equity": [100.0, 101.0],
+                "authorized_return_net": [0.0, -0.0015],
+                "authorized_return_gross": [0.0, 0.0],
+                "btc_return": [0.0, 0.01],
+                "btc_close": [100000.0, 101000.0],
+                "effective_market_exposure": [0.0, 0.0],
+                "model_candidate_exposure": [1.0, 0.75],
+                "trend_permission_active": [False, False],
+                "candidate_asset": ["BASE", "BTC"],
+                "fees_daily": [0.0, 0.00045],
+                "funding_daily": [0.0, 0.00025],
+                "borrow_cost_daily": [0.0, 0.00030],
+                "slippage_cost_daily": [0.0, 0.00050],
+                "asset_transition_day": [False, True],
+            }
+        )
+
+        fig = make_chart(
+            frame,
+            2026,
+            "en",
+            "Model",
+            "Model vs BTC",
+        )
+
+        self.assertEqual(fig.data[2].name, "Model signal")
+        self.assertEqual(list(fig.data[2].y), [0.0, 0.0])
+
+    def test_production_chart_source_alignment_accepts_zero_exposure_cost_only_move(self):
+        issues_fn = self.__class__.ns["production_chart_source_alignment_issues"]
+        frame = pd.DataFrame(
+            {
+                "date": ["2026-05-09", "2026-05-10"],
+                "authorized_equity": [1.0, 0.9985],
+                "authorized_return_gross": [0.0, 0.0],
+                "authorized_return_net": [0.0, -0.0015],
+                "effective_market_exposure": [0.0, 0.0],
+                "asset_transition_day": [False, True],
+                "fees_daily": [0.0, 0.00045],
+                "funding_daily": [0.0, 0.00025],
+                "borrow_cost_daily": [0.0, 0.00030],
+                "slippage_cost_daily": [0.0, 0.00050],
+            }
+        )
+
+        self.assertEqual(issues_fn(frame), [])
+
+    def test_production_chart_source_alignment_rejects_positive_market_return_while_zero_exposure(self):
+        issues_fn = self.__class__.ns["production_chart_source_alignment_issues"]
+        frame = pd.DataFrame(
+            {
+                "date": ["2026-05-10"],
+                "authorized_equity": [1.01],
+                "authorized_return_gross": [0.01],
+                "authorized_return_net": [0.01],
+                "effective_market_exposure": [0.0],
+                "asset_transition_day": [False],
+                "fees_daily": [0.0],
+                "funding_daily": [0.0],
+                "borrow_cost_daily": [0.0],
+                "slippage_cost_daily": [0.0],
+            }
+        )
+
+        issues = issues_fn(frame)
+        self.assertTrue(
+            any("non-zero authorized_return_gross" in issue for issue in issues),
+            issues,
+        )
+        self.assertTrue(
+            any("positive authorized_return_net" in issue for issue in issues),
+            issues,
+        )
+
+    def test_production_chart_source_alignment_rejects_unexplained_zero_exposure_net_move(self):
+        issues_fn = self.__class__.ns["production_chart_source_alignment_issues"]
+        frame = pd.DataFrame(
+            {
+                "date": ["2026-05-10"],
+                "authorized_equity": [0.998],
+                "authorized_return_gross": [0.0],
+                "authorized_return_net": [-0.002],
+                "effective_market_exposure": [0.0],
+                "asset_transition_day": [True],
+                "fees_daily": [0.0],
+                "funding_daily": [0.0],
+                "borrow_cost_daily": [0.0],
+                "slippage_cost_daily": [0.001],
+            }
+        )
+
+        issues = issues_fn(frame)
+        self.assertTrue(
+            any("move without matching explicit transition cost" in issue for issue in issues),
+            issues,
+        )
 
     def test_dashboard_public_status_contract_exact_schema_for_cash_blocked_account(self):
         contract = build_dashboard_public_status_contract(

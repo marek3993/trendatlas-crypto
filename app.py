@@ -1792,6 +1792,134 @@ def load_production_timeseries_frame(path: Path) -> pd.DataFrame:
     return frame
 
 
+def production_chart_authorized_equity_series(df: pd.DataFrame) -> pd.Series:
+    return pd.to_numeric(df.get("authorized_equity", pd.Series(index=df.index, dtype="float64")), errors="coerce")
+
+
+def production_chart_authorized_gross_return_series(df: pd.DataFrame) -> pd.Series:
+    return pd.to_numeric(
+        df.get("authorized_return_gross", pd.Series(index=df.index, dtype="float64")),
+        errors="coerce",
+    ).fillna(0.0)
+
+
+def production_chart_authorized_return_series(df: pd.DataFrame) -> pd.Series:
+    return pd.to_numeric(
+        df.get("authorized_return_net", pd.Series(index=df.index, dtype="float64")),
+        errors="coerce",
+    ).fillna(0.0)
+
+
+def production_chart_authorized_exposure_series(df: pd.DataFrame) -> pd.Series:
+    return pd.to_numeric(
+        df.get("effective_market_exposure", pd.Series(index=df.index, dtype="float64")),
+        errors="coerce",
+    ).fillna(0.0)
+
+
+def production_chart_transition_cost_series(df: pd.DataFrame) -> pd.Series:
+    transition_cost = pd.Series(0.0, index=df.index, dtype="float64")
+    for column in ["fees_daily", "funding_daily", "borrow_cost_daily", "slippage_cost_daily"]:
+        cost = pd.to_numeric(
+            df.get(column, pd.Series(index=df.index, dtype="float64")),
+            errors="coerce",
+        ).fillna(0.0)
+        transition_cost = transition_cost - cost
+    return transition_cost
+
+
+def production_chart_source_alignment_issues(timeseries_df: pd.DataFrame) -> list[str]:
+    required_columns = [
+        "date",
+        "effective_market_exposure",
+        "authorized_return_gross",
+        "authorized_return_net",
+        "authorized_equity",
+        "asset_transition_day",
+        "fees_daily",
+        "funding_daily",
+        "borrow_cost_daily",
+        "slippage_cost_daily",
+    ]
+    missing_columns = sorted(column for column in required_columns if column not in timeseries_df.columns)
+    if missing_columns:
+        return [
+            "production chart source alignment missing columns: "
+            + ", ".join(missing_columns)
+        ]
+
+    exposure = production_chart_authorized_exposure_series(timeseries_df)
+    gross = production_chart_authorized_gross_return_series(timeseries_df)
+    net = production_chart_authorized_return_series(timeseries_df)
+    equity = production_chart_authorized_equity_series(timeseries_df)
+    transition_cost = production_chart_transition_cost_series(timeseries_df)
+    issues: list[str] = []
+
+    if equity.isna().any():
+        bad_dates = timeseries_df.loc[equity.isna(), "date"].astype(str).head(5).tolist()
+        issues.append(
+            "production chart authorized_equity contains non-numeric rows on dates: "
+            + ", ".join(bad_dates)
+        )
+        return issues
+
+    reconstructed_equity = (1.0 + net).cumprod()
+    equity_mismatch_mask = (equity - reconstructed_equity).abs() > 1e-9
+    if equity_mismatch_mask.any():
+        bad_dates = timeseries_df.loc[equity_mismatch_mask, "date"].astype(str).head(5).tolist()
+        issues.append(
+            "production chart red-line equity is not reconstructed from authorized_return_net on dates: "
+            + ", ".join(bad_dates)
+        )
+
+    net_formula_mismatch_mask = ((gross + transition_cost) - net).abs() > 1e-9
+    if net_formula_mismatch_mask.any():
+        bad_dates = timeseries_df.loc[net_formula_mismatch_mask, "date"].astype(str).head(5).tolist()
+        issues.append(
+            "production chart authorized_return_net is not explained by authorized_return_gross and explicit costs on dates: "
+            + ", ".join(bad_dates)
+        )
+
+    zero_exposure_mask = exposure.abs().le(1e-12)
+    zero_exposure_market_move_mask = zero_exposure_mask & gross.abs().gt(1e-12)
+    if zero_exposure_market_move_mask.any():
+        bad_dates = timeseries_df.loc[zero_exposure_market_move_mask, "date"].astype(str).head(5).tolist()
+        issues.append(
+            "production chart zero-exposure rows have non-zero authorized_return_gross on dates: "
+            + ", ".join(bad_dates)
+        )
+
+    zero_exposure_positive_net_mask = zero_exposure_mask & net.gt(1e-12)
+    if zero_exposure_positive_net_mask.any():
+        bad_dates = timeseries_df.loc[zero_exposure_positive_net_mask, "date"].astype(str).head(5).tolist()
+        issues.append(
+            "production chart zero-exposure rows have positive authorized_return_net on dates: "
+            + ", ".join(bad_dates)
+        )
+
+    zero_exposure_positive_transition_cost_mask = zero_exposure_mask & transition_cost.gt(1e-12)
+    if zero_exposure_positive_transition_cost_mask.any():
+        bad_dates = timeseries_df.loc[zero_exposure_positive_transition_cost_mask, "date"].astype(str).head(5).tolist()
+        issues.append(
+            "production chart zero-exposure rows have positive explicit transition cost on dates: "
+            + ", ".join(bad_dates)
+        )
+
+    zero_exposure_cost_mismatch_mask = (
+        zero_exposure_mask
+        & net.abs().gt(1e-12)
+        & ((net - transition_cost).abs() > 1e-9)
+    )
+    if zero_exposure_cost_mismatch_mask.any():
+        bad_dates = timeseries_df.loc[zero_exposure_cost_mismatch_mask, "date"].astype(str).head(5).tolist()
+        issues.append(
+            "production chart zero-exposure rows move without matching explicit transition cost on dates: "
+            + ", ".join(bad_dates)
+        )
+
+    return issues
+
+
 def _production_compare_float(
     expected: Any,
     actual: Any,
@@ -1931,6 +2059,9 @@ def validate_production_homepage_bundle(
         "equity",
         field_name="primary equity semantics",
     )
+    chart_source_alignment_issues = production_chart_source_alignment_issues(timeseries_df)
+    if chart_source_alignment_issues:
+        stop_for_production_homepage_block(chart_source_alignment_issues[0])
     btc_close_series = pd.to_numeric(timeseries_df["btc_close"], errors="coerce")
     btc_return_series = pd.to_numeric(timeseries_df["btc_return"], errors="coerce")
     btc_baseline_equity_series = pd.to_numeric(
@@ -6001,12 +6132,9 @@ def make_production_equity_chart(
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
-    rebased_equity = rebase_series(main_plot["authorized_equity"])
+    rebased_equity = rebase_series(production_chart_authorized_equity_series(main_plot))
     rebased_btc_baseline = rebase_series(main_plot["btc_baseline_equity"])
-    daily_return_pct = (
-        pd.to_numeric(main_plot.get("authorized_return_net"), errors="coerce").fillna(0.0)
-        * 100.0
-    )
+    daily_return_pct = production_chart_authorized_return_series(main_plot) * 100.0
     btc_return_pct = (
         pd.to_numeric(main_plot.get("btc_return"), errors="coerce").fillna(0.0) * 100.0
     )
@@ -6023,7 +6151,7 @@ def make_production_equity_chart(
         if lang == "sk"
         else "Model signal"
     )
-    exposure_series = pd.to_numeric(main_plot.get("effective_market_exposure"), errors="coerce").fillna(0.0)
+    exposure_series = production_chart_authorized_exposure_series(main_plot)
     max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
     candidate_labels = main_plot.get("candidate_asset", pd.Series([""] * len(main_plot), index=main_plot.index)).fillna("").astype(str).map(
         lambda value: product_asset_label_nominative(value, lang)
