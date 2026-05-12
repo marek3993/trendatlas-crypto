@@ -134,6 +134,7 @@ Neresi:
 
 ## Truth-sensitive workflow
 - For truth-sensitive work, the acting chat must explicitly list which SSOT / README / export-contract files were actually read before the conclusion.
+- For Pi authority/runtime/scheduler/publish-existing/tablet-dashboard work, the acting chat must also read `source_of_truth/pi_codex_runtime_workflow.md` before planning commands.
 - Required response headers are:
   - `FILES READ`
   - `SOURCE OF TRUTH`
@@ -160,6 +161,16 @@ Neresi:
   - do not let dashboards infer account state from model fields
 - Every recurring bug must get a regression test.
 - A wording-only fix is allowed only when the issue is truly class `A`.
+
+## Pi runtime coordination
+- Pi runtime work must follow `source_of_truth/pi_codex_runtime_workflow.md`.
+- Default Pi runtime posture is `publish-existing`, dry-run first, no full refresh by default, and no live order.
+- Parallel Pi/runtime work must keep an explicit open-task list with:
+  - `task name`
+  - `owner`
+  - `status`
+  - `next action`
+  - `blocker`
 
 ## Required Codex output for non-trivial tasks
 - `FILES READ`

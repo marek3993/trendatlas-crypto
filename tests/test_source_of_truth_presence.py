@@ -12,6 +12,7 @@ REQUIRED_SOURCE_OF_TRUTH_FILES = [
     ROOT / "source_of_truth" / "export_contract.json",
     ROOT / "source_of_truth" / "paths_registry.json",
     ROOT / "source_of_truth" / "current_issues.md",
+    ROOT / "source_of_truth" / "pi_codex_runtime_workflow.md",
 ]
 
 

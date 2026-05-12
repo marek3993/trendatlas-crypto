@@ -21,6 +21,8 @@ Every chat should use this order for execution / analysis / validation work:
 9. `canonical/output_registry.json`
 10. only then the concrete `scripts/`, `outputs/`, `tests/`, and other repo files
 
+For Pi authority/runtime/scheduler/publish-existing/recovery/tablet-dashboard work, read `source_of_truth/pi_codex_runtime_workflow.md` immediately after the base truth order and before opening concrete scripts, outputs, or runtime commands.
+
 ## Layer interpretation
 
 ### Repo
@@ -56,6 +58,12 @@ Every chat should use this order for execution / analysis / validation work:
   2. validate the source contract
   3. patch downstream consumers
   4. patch wording/UI only after the contract path is correct
+
+## Pi authority runtime add-on
+- Pi runtime work must follow `source_of_truth/pi_codex_runtime_workflow.md`.
+- Default Pi authority path is `publish-existing`, with dry-run before real publish.
+- `--mode full-refresh` requires explicit approval.
+- Verification must include `heavy_refresh_steps=skipped` and `live_order_chain=not_invoked`.
 
 ## Required normalized public/runtime contracts
 - `real_account_state`

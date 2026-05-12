@@ -65,12 +65,16 @@
 ## Production Core vs Pi authority
 - Production Core v1 is the primary strategy truth interface.
 - Raspberry Pi is the only automatic production producer.
+- Pi/Codex runtime runbook: `source_of_truth/pi_codex_runtime_workflow.md`
 - Runtime authority source:
   - `outputs/execution/authority/latest_successful_snapshot.json`
   - `outputs/execution/authority/latest_attempt_status.json`
 - PC role: `manual_recovery_debug_only`
 - GitHub Actions role: `validation_only`
 - Pi authority is runtime/publish authority and remains separate from Production Core strategy truth.
+- Default Pi authority path is `publish-existing`, dry-run first.
+- `--mode full-refresh` requires explicit approval.
+- Fast Pi authority verification must show `heavy_refresh_steps=skipped` and `live_order_chain=not_invoked`.
 
 ## Data Health / Source Availability Guard
 - Guard status: active

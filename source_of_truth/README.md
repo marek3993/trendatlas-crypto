@@ -6,6 +6,7 @@ This folder is the central single source of truth layer for Market Regime v1.
 - `master_state.md` = short official state snapshot
 - `chat_roles.md` = role boundaries and workflow rules for segmented chats
 - `current_issues.md` = open blockers and accepted current-state notes
+- `pi_codex_runtime_workflow.md` = approved Pi/Codex runtime authority runbook for publish-existing, dry-run-first, and tablet/dashboard root boundaries
 
 ## Machine-readable files
 - `project_truth.json` = main official project truth
@@ -23,6 +24,9 @@ This folder is the central single source of truth layer for Market Regime v1.
 5. `source_of_truth/export_contract.json`
 6. `source_of_truth/paths_registry.json`
 7. `source_of_truth/current_issues.md`
+
+## Required add-on read for Pi/runtime authority work
+- After the base truth read order above, read `source_of_truth/pi_codex_runtime_workflow.md` before any Pi authority, scheduler, publish-existing, recovery, or tablet/dashboard task.
 
 ## Repo-wide contract-first discipline
 - Every non-trivial bug must be classified before patching:
@@ -63,5 +67,6 @@ This folder is the central single source of truth layer for Market Regime v1.
 - If the app/execution/dashboard export contract changes, update `export_contract.json` first.
 - If official paths change, update `paths_registry.json`.
 - Truth-sensitive app/execution/dashboard work must read `export_contract.json` before patching consumers.
+- Pi authority/runtime work must follow `source_of_truth/pi_codex_runtime_workflow.md`.
 - `master_state.md` should remain a short state snapshot, not a full history log.
 - Chats must read this layer first and only then patch or interpret repo state.
