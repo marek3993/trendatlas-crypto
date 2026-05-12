@@ -6263,12 +6263,12 @@ def make_production_equity_chart(
     title: str,
     real_account_exposure_state: dict[str, Any] | None = None,
     model_signal_state: dict[str, Any] | None = None,
-    chart_view: str = "real_account",
+    chart_view: str = "model",
 ) -> go.Figure:
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
-    use_real_account_view = str(chart_view or "").strip().lower() != "model"
+    use_real_account_view = str(chart_view or "").strip().lower() == "real_account"
     rebased_equity = rebase_series(
         production_chart_real_account_equity_series(main_plot)
         if use_real_account_view
@@ -7028,12 +7028,7 @@ with tabs[0]:
         if lang == "sk"
         else t(lang, "chart_title")
     ) or t(lang, "chart_title")
-    account_chart_title = (
-        f"{real_account_card_label} vs BTC"
-        if lang == "sk"
-        else "Real account vs BTC"
-    )
-    st.markdown(f"### {account_chart_title}")
+    st.markdown(f"### {model_chart_title}")
     selected_year_home = st.selectbox(
         t(lang, "chart_year"),
         options=years,
@@ -7045,41 +7040,41 @@ with tabs[0]:
             timeseries_df=dashboard_public_chart_timeseries_df,
             year=selected_year_home,
             lang=lang,
-            main_label=real_account_card_label,
-            title=account_chart_title,
+            main_label=t(lang, "production_chart_legend"),
+            title=model_chart_title,
             real_account_exposure_state=real_account_exposure_state,
             model_signal_state=runtime_model_signal_state,
-            chart_view="real_account",
+            chart_view="model",
         ),
         width="stretch",
     )
-    with st.expander(model_chart_title, expanded=False):
+    st.caption(
+        build_production_chart_current_state_note(
+            production_snapshot,
+            production_diagnostics,
+            lang,
+            real_account_exposure_state,
+            runtime_model_signal_state,
+        )
+    )
+    st.caption(t(lang, "production_chart_note"))
+    st.caption(t(lang, "production_chart_baseline_note"))
+    st.caption(t(lang, "production_chart_flat_note"))
+    st.caption(t(lang, "production_chart_participation_note"))
+    with st.expander(real_account_card_label, expanded=False):
         st.plotly_chart(
             make_production_equity_chart(
                 timeseries_df=dashboard_public_chart_timeseries_df,
                 year=selected_year_home,
                 lang=lang,
-                main_label=t(lang, "production_chart_legend"),
-                title=model_chart_title,
+                main_label=real_account_card_label,
+                title=real_account_card_label,
                 real_account_exposure_state=real_account_exposure_state,
                 model_signal_state=runtime_model_signal_state,
-                chart_view="model",
+                chart_view="real_account",
             ),
             width="stretch",
         )
-        st.caption(
-            build_production_chart_current_state_note(
-                production_snapshot,
-                production_diagnostics,
-                lang,
-                real_account_exposure_state,
-                runtime_model_signal_state,
-            )
-        )
-        st.caption(t(lang, "production_chart_note"))
-        st.caption(t(lang, "production_chart_baseline_note"))
-        st.caption(t(lang, "production_chart_flat_note"))
-        st.caption(t(lang, "production_chart_participation_note"))
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
     public_window_label_key = str(public_performance_context.get("public_window_label_key") or "since2023")

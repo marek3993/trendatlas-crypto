@@ -739,7 +739,7 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertNotIn('production_snapshot.get("effective_market_exposure")', block)
         self.assertNotIn('production_signal_context", "model_candidate_exposure"', block)
 
-    def test_homepage_default_chart_reads_cis_real_account_timeseries_and_keeps_model_view(self):
+    def test_homepage_default_chart_reads_cis_model_timeseries_and_keeps_account_view_secondary(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")
         start_marker = 'dashboard_public_chart_timeseries_df = load_dashboard_public_chart_timeseries_frame('
         end_marker = 'st.markdown(f"### {t(lang, \'performance_title\')}")'
@@ -750,12 +750,23 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertIn("LOCAL_DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH", block)
         self.assertIn("years = available_years_from_frames([dashboard_public_chart_timeseries_df])", block)
         self.assertIn("timeseries_df=dashboard_public_chart_timeseries_df", block)
+        self.assertIn('st.markdown(f"### {model_chart_title}")', block)
+        self.assertIn("main_label=t(lang, \"production_chart_legend\")", block)
+        self.assertIn('chart_view="model"', block)
+        self.assertIn("build_production_chart_current_state_note", block)
+        self.assertIn("with st.expander(real_account_card_label", block)
         self.assertIn("main_label=real_account_card_label", block)
         self.assertIn('chart_view="real_account"', block)
-        self.assertIn("with st.expander(model_chart_title", block)
-        self.assertIn('chart_view="model"', block)
-        default_block = block[: block.index("with st.expander(model_chart_title")]
-        self.assertNotIn("build_production_chart_current_state_note", default_block)
+        default_block = block[: block.index("with st.expander(real_account_card_label")]
+        self.assertIn('chart_view="model"', default_block)
+        self.assertNotIn('chart_view="real_account"', default_block)
+        self.assertNotIn("main_label=real_account_card_label", default_block)
+        performance_block = source[
+            source.index("public_average_annual_growth_pct = first_present_value(", end) :
+            source.index("with tabs[1]:", end)
+        ]
+        self.assertIn('runtime_model_performance_state.get("public_average_annual_growth_pct")', performance_block)
+        self.assertIn('runtime_model_performance_state.get("since2025_cagr_pct")', performance_block)
 
     def test_homepage_account_card_does_not_show_model_equity_as_real_pnl(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")
@@ -766,11 +777,14 @@ class TestAppPublicStatusContract(unittest.TestCase):
         block = source[start:end]
 
         self.assertIn('real_account_exposure_state["value"]', block)
+        self.assertIn('runtime_model_signal_state.get("preferred_asset")', block)
+        self.assertIn("strategy_signal_exposure_text", block)
+        self.assertIn("not_real_wallet_exposure", block)
         self.assertNotIn("model_equity", block)
         self.assertNotIn("paper_equity", block)
         self.assertNotIn("account_equity_usd", block)
 
-    def test_dashboard_public_chart_defaults_to_cis_real_account_columns_and_keeps_lower_strip(self):
+    def test_dashboard_public_chart_defaults_to_cis_model_columns_and_keeps_account_view_secondary(self):
         make_chart = self.__class__.ns["make_production_equity_chart"]
         frame = pd.DataFrame(
             {
@@ -798,8 +812,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
             frame,
             2026,
             "en",
-            "Real account",
-            "Real account vs BTC",
+            "Model",
+            "Model vs BTC",
             real_account_exposure_state={
                 "asset": "CASH",
                 "is_out_of_market": True,
@@ -813,34 +827,44 @@ class TestAppPublicStatusContract(unittest.TestCase):
             },
         )
 
-        self.assertEqual(fig.data[0].name, "Real account")
-        self.assertEqual(list(fig.data[0].y), [1.0, 1.0])
+        self.assertEqual(fig.data[0].name, "Strategy capital")
+        self.assertEqual(list(fig.data[0].y), [1.0, 1.1])
+        self.assertNotEqual(list(fig.data[0].y), [1.0, 1.0])
         self.assertEqual(list(fig.data[1].y), [1.0, 1.05])
         self.assertEqual(len(fig.data), 3)
-        self.assertEqual(fig.data[2].name, "Real account")
-        self.assertEqual(list(fig.data[2].y), [0.0, 0.0])
+        self.assertEqual(fig.data[2].name, "Model signal")
+        self.assertEqual(list(fig.data[2].y), [0.75, 0.75])
         self.assertIn("Real account: CASH / Out of market / 0.00x", fig.layout.annotations[0].text)
-        self.assertNotIn("Model signal", fig.layout.annotations[0].text)
+        self.assertIn("Model signal: BTC / 0.75x", fig.layout.annotations[0].text)
 
-        model_fig = make_chart(
+        account_fig = make_chart(
             frame,
             2026,
             "en",
-            "Model",
-            "Model vs BTC",
+            "Real account",
+            "Real account",
+            real_account_exposure_state={
+                "asset": "CASH",
+                "is_out_of_market": True,
+                "state_text": "Out of market",
+                "exposure_text": "0.00x",
+            },
             model_signal_state={
                 "preferred_asset": "BTC",
                 "exposure_x": 0.75,
                 "label_sk": "Modelovy signal",
             },
-            chart_view="model",
+            chart_view="real_account",
         )
 
-        self.assertEqual(list(model_fig.data[0].y), [1.0, 1.1])
-        self.assertEqual(list(model_fig.data[1].y), [1.0, 1.05])
-        self.assertEqual(len(model_fig.data), 3)
-        self.assertEqual(model_fig.data[2].name, "Model signal")
-        self.assertEqual(list(model_fig.data[2].y), [0.75, 0.75])
+        self.assertEqual(account_fig.data[0].name, "Real account")
+        self.assertEqual(list(account_fig.data[0].y), [1.0, 1.0])
+        self.assertEqual(list(account_fig.data[1].y), [1.0, 1.05])
+        self.assertEqual(len(account_fig.data), 3)
+        self.assertEqual(account_fig.data[2].name, "Real account")
+        self.assertEqual(list(account_fig.data[2].y), [0.0, 0.0])
+        self.assertIn("Real account: CASH / Out of market / 0.00x", account_fig.layout.annotations[0].text)
+        self.assertNotIn("Model signal", account_fig.layout.annotations[0].text)
 
     def test_runtime_contract_separates_wallet_cash_from_model_btc_signal(self):
         contract = build_runtime_public_status_contract(
