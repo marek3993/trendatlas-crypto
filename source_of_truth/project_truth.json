@@ -144,13 +144,116 @@
                            "repo_heavy_or_multi_step_tasks":  {
                                                                   "codex_should_be_used_for_patching":  true,
                                                                   "local_user_runs_heavy_validations":  true,
-                                                                  "segment_chat_interprets_results_and_gives_next_step":  true
+                                                                  "segment_chat_interprets_results_and_gives_next_step":  true,
+                                                                  "codex_non_trivial_output_contract_required":  true
                                                               },
                            "truth_sensitive_tasks":  {
                                                          "files_read_header_required":  true,
-                                                         "must_list_actual_ssot_files_read_before_repo_based_conclusions":  true
+                                                         "source_of_truth_header_required":  true,
+                                                         "must_list_actual_ssot_files_read_before_repo_based_conclusions":  true,
+                                                         "must_read_export_contract_before_app_execution_dashboard_patch":  true
+                                                     },
+                           "contract_first_repo_policy":  {
+                                                              "status":  "official_repo_wide_discipline",
+                                                              "bug_classification_required_before_patching":  true,
+                                                              "bug_classes":  {
+                                                                                  "A":  "wording_ui_only",
+                                                                                  "B":  "runtime_data_contract",
+                                                                                  "C":  "execution_authority_scheduler",
+                                                                                  "D":  "strategy_math"
+                                                                              },
+                                                              "patch_order":  {
+                                                                                  "do_not_start_with_ui_patch_for_bug_classes_b_c_d":  true,
+                                                                                  "patch_source_contract_first_for_bug_classes_b_c_d":  true,
+                                                                                  "validate_source_contract_before_consumer_patch":  true,
+                                                                                  "patch_consumers_only_after_source_contract_validation":  true
+                                                                              },
+                                                              "required_normalized_public_runtime_contracts":  [
+                                                                                                                 "real_account_state",
+                                                                                                                 "model_signal_state",
+                                                                                                                 "model_performance_state",
+                                                                                                                 "authority_state",
+                                                                                                                 "data_health_state"
+                                                                                                             ],
+                                                              "regression_rule":  {
+                                                                                      "every_recurring_bug_requires_regression_test":  true,
+                                                                                      "wording_only_fix_allowed_only_for_bug_class_a":  true
+                                                                                  },
+                                                              "codex_non_trivial_output_sections":  [
+                                                                                                        "FILES READ",
+                                                                                                        "SOURCE OF TRUTH",
+                                                                                                        "exact root cause",
+                                                                                                        "exact contract impact",
+                                                                                                        "exact files changed",
+                                                                                                        "regression test added/updated",
+                                                                                                        "forbidden old path checked",
+                                                                                                        "validation commands/results",
+                                                                                                        "exact git add list",
+                                                                                                        "commit message"
+                                                                                                    ]
                                                      }
                        },
+    "normalized_public_runtime_contracts":  {
+                                                "real_account_state":  {
+                                                                           "status":  "required_public_runtime_contract",
+                                                                           "authoritative_source_priority":  [
+                                                                                                                 "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.real_account_state",
+                                                                                                                 "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.real_account_state"
+                                                                                                             ],
+                                                                           "semantic_boundary":  "real_wallet_and_execution_state_only",
+                                                                           "consumer_rule":  "use_as_the_only_public_runtime_account_exposure_contract"
+                                                                       },
+                                                "model_signal_state":  {
+                                                                            "status":  "required_public_runtime_contract",
+                                                                            "authoritative_source_priority":  [
+                                                                                                                  "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.model_signal_state",
+                                                                                                                  "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.model_signal_state"
+                                                                                                              ],
+                                                                            "semantic_boundary":  "normalized_model_signal_only_not_real_wallet_exposure",
+                                                                            "consumer_rule":  "use_for_model_preference_display_only"
+                                                                        },
+                                                "model_performance_state":  {
+                                                                                 "status":  "required_public_runtime_contract",
+                                                                                 "authoritative_source_priority":  [
+                                                                                                                       "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.model_performance_state",
+                                                                                                                       "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.model_performance_state"
+                                                                                                                   ],
+                                                                                 "semantic_boundary":  "strategy_curve_only_not_account_statement",
+                                                                                 "consumer_rule":  "use_for_model_performance_display_only"
+                                                                             },
+                                                "authority_state":  {
+                                                                        "status":  "required_public_runtime_contract",
+                                                                        "authoritative_source_priority":  [
+                                                                                                              "outputs/execution/authority/latest_successful_snapshot.json",
+                                                                                                              "outputs/execution/authority/latest_attempt_status.json"
+                                                                                                          ],
+                                                                        "semantic_boundary":  "execution_authority_scheduler_and_currentness_only",
+                                                                        "consumer_rule":  "use_for_authority_mode_currentness_and_publish_status_only"
+                                                                    },
+                                                "data_health_state":  {
+                                                                          "status":  "required_public_runtime_contract",
+                                                                          "authoritative_source_priority":  [
+                                                                                                                "outputs/production/data_health_report.json",
+                                                                                                                "outputs/production/data_health_report.quality.json",
+                                                                                                                "outputs/production/data_health_report.manifest.json"
+                                                                                                            ],
+                                                                          "semantic_boundary":  "data_source_availability_and_fail_closed_gating_only",
+                                                                          "consumer_rule":  "use_for_data_health_and_blocking_status_only"
+                                                                      }
+                                            },
+    "forbidden_semantic_shortcuts":  {
+                                         "real_wallet_exposure_must_not_be_inferred_from_fields":  [
+                                                                                                        "actual_held_asset",
+                                                                                                        "current_asset",
+                                                                                                        "effective_market_exposure"
+                                                                                                    ],
+                                         "real_account_pnl_must_not_be_inferred_from_fields":  [
+                                                                                                    "model_equity",
+                                                                                                    "paper_equity"
+                                                                                                ],
+                                         "model_exposure_must_not_be_shown_as_real_account_exposure":  true,
+                                         "dashboards_must_not_infer_account_state_from_model_fields":  true
+                                     },
     "accepted_state_catchup_2026_04_06":  {
                                               "summary":  "Official truth catch-up block to reflect already accepted project progress without changing winners, baselines, or live truth.",
                                               "preserved_truth":  {

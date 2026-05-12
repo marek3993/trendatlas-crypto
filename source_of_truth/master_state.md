@@ -7,6 +7,7 @@
 - Current app main strategy model: `phase68g_etf_flow_impulse_early_risk_cooldown_15`
 - Reference strategy model: `phase67j_no_neo_main`
 - Benchmark: `BTC`
+- Official repo workflow discipline: `contract_first_regression_locked`
 
 ## Production Core v1 strategy truth interface
 - Primary production strategy truth interface:
@@ -21,12 +22,33 @@
 ## Production Core semantics
 - `candidate_asset` = model candidate, not automatic live exposure.
 - `selected_asset` = selected model candidate.
-- `actual_held_asset` / `authorized_tradable_asset` = current authorized asset.
-- `effective_market_exposure` = current authorized market exposure.
+- `actual_held_asset` / `authorized_tradable_asset` = current authorized asset, not real wallet/account balance truth.
+- `current_asset` = legacy/model-side asset label, not real wallet exposure truth.
+- `effective_market_exposure` = current authorized market exposure, not wallet-confirmed exposure.
 - `model_candidate_exposure` = candidate exposure if permission allows.
 - `trend_permission_active` gates market exposure.
 - `execution_target` = authorized execution target.
 - Candidate `BTC` does not automatically mean live market exposure.
+- Real wallet/account exposure must come from `real_account_state`, not from Production Core fields.
+- Model strategy performance must stay in `model_performance_state`, not in real account PnL.
+
+## Repo-wide contract-first workflow
+- Bug classes: `A=wording/UI-only`, `B=runtime/data contract`, `C=execution/authority/scheduler`, `D=strategy math`.
+- Classes `B`, `C`, and `D` must not start with a UI patch.
+- For classes `B`, `C`, and `D`, patch and validate the source contract first, then patch consumers.
+- Required normalized public/runtime contracts:
+  - `real_account_state`
+  - `model_signal_state`
+  - `model_performance_state`
+  - `authority_state`
+  - `data_health_state`
+- Forbidden shortcuts: do not use `actual_held_asset`, `current_asset`, or `effective_market_exposure` as real wallet exposure.
+- Forbidden shortcuts: do not use model equity or paper equity as real account PnL.
+- Forbidden shortcuts: do not show model exposure as real account exposure.
+- Forbidden shortcuts: dashboards must not infer account state from model fields.
+- Recurring bugs require a regression test.
+- A wording-only fix is allowed only for class `A`.
+- Non-trivial Codex output must include `FILES READ`, `SOURCE OF TRUTH`, exact root cause, exact contract impact, exact files changed, regression test added/updated, forbidden old path checked, validation commands/results, exact git add list, and commit message.
 
 ## Phase68G promotion
 - Current live truth: `phase68g_etf_flow_impulse_early_risk_cooldown_15`

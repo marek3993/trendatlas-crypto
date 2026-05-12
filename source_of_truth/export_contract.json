@@ -14,8 +14,8 @@
                            "execution_readable",
                            "audit_only"
                        ],
-    "authoritative_reading_rule":  "App must read source_of_truth/export_contract.json first.\nPrimary strategy truth must then be read from Production Core v1:\n- outputs/production/current_strategy_snapshot.json\n- outputs/production/current_strategy_timeseries.csv\n- outputs/production/current_strategy_diagnostics.json\nData/source availability must then be read from the Data Health / Source Availability Guard:\n- outputs/production/data_health_report.json\n- outputs/production/data_health_report.quality.json\nProduction-critical failures block app and execution fail-closed; app-critical failures block app; execution-critical failures block execution; research-only failures block only the relevant research probe; missing optional env/API keys surface as unavailable/warn_only; no silent fallback is allowed.\nRuntime authority state must then be read only from:\n- outputs/execution/authority/latest_successful_snapshot.json\n- outputs/execution/authority/latest_attempt_status.json\nCandidate BTC in Production Core does not by itself authorize live market exposure; authorized asset/exposure fields remain the live execution truth.\nLegacy app snapshot/runtime/refresh/full_auto_scheduler/runtime_health/live_status paths must not redefine app authority.",
-    "default_fallback_rule":  "If this file is missing or unreadable, only explicit safe app fallbacks may be used; legacy authority paths must not redefine truth or freshness, and guarded data/source availability must never degrade through silent fallback.",
+    "authoritative_reading_rule":  "App must read source_of_truth/export_contract.json first.\nPrimary strategy truth must then be read from Production Core v1:\n- outputs/production/current_strategy_snapshot.json\n- outputs/production/current_strategy_timeseries.csv\n- outputs/production/current_strategy_diagnostics.json\nData/source availability must then be read from the Data Health / Source Availability Guard:\n- outputs/production/data_health_report.json\n- outputs/production/data_health_report.quality.json\n- outputs/production/data_health_report.manifest.json\nRuntime authority state must then be read only from:\n- outputs/execution/authority/latest_successful_snapshot.json\n- outputs/execution/authority/latest_attempt_status.json\nPublic/runtime consumers must then use the normalized contracts defined in normalized_public_runtime_contracts and must not infer account state from raw model fields.\nProduction-critical failures block app and execution fail-closed; app-critical failures block app; execution-critical failures block execution; research-only failures block only the relevant research probe; missing optional env/API keys surface as unavailable/warn_only; no silent fallback is allowed.\nCandidate BTC in Production Core does not by itself authorize live market exposure; actual_held_asset/current_asset/effective_market_exposure are not real wallet exposure; model equity/paper equity are not real account PnL; model exposure must not be shown as real account exposure.\nLegacy app snapshot/runtime/refresh/full_auto_scheduler/runtime_health/live_status paths must not redefine app authority.",
+    "default_fallback_rule":  "If this file is missing or unreadable, only explicit safe app fallbacks may be used; legacy authority paths must not redefine truth or freshness, guarded data/source availability must never degrade through silent fallback, and dashboards must not backfill account state from model fields.",
     "production_core_truth_contract":  {
                                            "status":  "active_primary_strategy_truth_interface",
                                            "strategy_version":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
@@ -102,6 +102,105 @@
                                                                            ]
                                                        }
                                        },
+    "normalized_public_runtime_contracts":  {
+                                                "real_account_state":  {
+                                                                           "status":  "required",
+                                                                           "authoritative_source_path":  "outputs/execution/authority/latest_attempt_status.json",
+                                                                           "json_path":  "app_runtime_snapshot.real_account_state",
+                                                                           "fallback_source_path":  "outputs/execution/authority/latest_successful_snapshot.json",
+                                                                           "fallback_json_path":  "app_runtime_snapshot.real_account_state",
+                                                                           "minimum_fields":  [
+                                                                                                  "asset",
+                                                                                                  "exposure_x",
+                                                                                                  "in_market",
+                                                                                                  "position_label_sk",
+                                                                                                  "source",
+                                                                                                  "gate_status",
+                                                                                                  "would_place_real_order"
+                                                                                              ],
+                                                                           "semantic_boundary":  "real_wallet_and_execution_state_only"
+                                                                       },
+                                                "model_signal_state":  {
+                                                                            "status":  "required",
+                                                                            "authoritative_source_path":  "outputs/execution/authority/latest_attempt_status.json",
+                                                                            "json_path":  "app_runtime_snapshot.model_signal_state",
+                                                                            "fallback_source_path":  "outputs/execution/authority/latest_successful_snapshot.json",
+                                                                            "fallback_json_path":  "app_runtime_snapshot.model_signal_state",
+                                                                            "minimum_fields":  [
+                                                                                                   "preferred_asset",
+                                                                                                   "exposure_x",
+                                                                                                   "label_sk",
+                                                                                                   "not_real_wallet_exposure",
+                                                                                                   "source"
+                                                                                               ],
+                                                                            "semantic_boundary":  "normalized_model_signal_only_not_real_wallet_exposure"
+                                                                        },
+                                                "model_performance_state":  {
+                                                                                 "status":  "required",
+                                                                                 "authoritative_source_path":  "outputs/execution/authority/latest_attempt_status.json",
+                                                                                 "json_path":  "app_runtime_snapshot.model_performance_state",
+                                                                                 "fallback_source_path":  "outputs/execution/authority/latest_successful_snapshot.json",
+                                                                                 "fallback_json_path":  "app_runtime_snapshot.model_performance_state",
+                                                                                 "minimum_fields":  [
+                                                                                                        "kind",
+                                                                                                        "label_sk",
+                                                                                                        "equity_curve_semantics",
+                                                                                                        "source"
+                                                                                                    ],
+                                                                                 "semantic_boundary":  "strategy_curve_only_not_account_statement"
+                                                                             },
+                                                "authority_state":  {
+                                                                        "status":  "required",
+                                                                        "authoritative_source_paths":  [
+                                                                                                              "outputs/execution/authority/latest_successful_snapshot.json",
+                                                                                                              "outputs/execution/authority/latest_attempt_status.json"
+                                                                                                          ],
+                                                                        "minimum_fields":  [
+                                                                                               "latest_authoritative_attempt_status",
+                                                                                               "currentness_status",
+                                                                                               "target_closed_day_utc",
+                                                                                               "latest_available_closed_utc_day",
+                                                                                               "authority_role",
+                                                                                               "automatic_producer_id",
+                                                                                               "manual_recovery_only",
+                                                                                               "github_actions_role"
+                                                                                           ],
+                                                                        "semantic_boundary":  "execution_authority_scheduler_and_currentness_only"
+                                                                    },
+                                                "data_health_state":  {
+                                                                          "status":  "required",
+                                                                          "authoritative_source_paths":  [
+                                                                                                                "outputs/production/data_health_report.json",
+                                                                                                                "outputs/production/data_health_report.quality.json",
+                                                                                                                "outputs/production/data_health_report.manifest.json"
+                                                                                                            ],
+                                                                          "minimum_fields":  [
+                                                                                                 "overall_status",
+                                                                                                 "app_status",
+                                                                                                 "execution_status",
+                                                                                                 "research_status",
+                                                                                                 "block_app",
+                                                                                                 "block_execution",
+                                                                                                 "research_blocked_source_ids",
+                                                                                                 "warning_source_ids"
+                                                                                             ],
+                                                                          "semantic_boundary":  "data_source_availability_and_fail_closed_gating_only"
+                                                                      }
+                                            },
+    "consumer_guardrails":  {
+                               "dashboards_must_read_normalized_public_runtime_contracts":  true,
+                               "real_wallet_exposure_must_not_be_inferred_from_fields":  [
+                                                                                              "actual_held_asset",
+                                                                                              "current_asset",
+                                                                                              "effective_market_exposure"
+                                                                                          ],
+                               "real_account_pnl_must_not_be_inferred_from_fields":  [
+                                                                                          "model_equity",
+                                                                                          "paper_equity"
+                                                                                      ],
+                               "model_exposure_must_not_be_shown_as_real_account_exposure":  true,
+                               "dashboards_must_not_infer_account_state_from_model_fields":  true
+                           },
     "app_export_contract":  {
                                 "product_name":  "TrendAtlas Crypto",
                                 "main_strategy_model":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",

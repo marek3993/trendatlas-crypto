@@ -1,322 +1,126 @@
-\# Registry Workflow
-
-
-
-Tento súbor definuje, ako majú segmentované chaty čítať repo, outputs a source-of-truth vrstvu.
-
-
-
-\## Cieľ
-
-Chaty nemajú fungovať len z pamäte.
-
-Majú sa orientovať podľa repa a centrálnej evidencie.
-
-
-
-\## Povinné poradie čítania
-
-Každý chat má pri execution / analysis / validation workflowe ísť v tomto poradí:
-
-
-
-1\. `source\_of\_truth/README.md`
-
-2\. `source\_of\_truth/master\_state.md`
-
-3\. `source\_of\_truth/chat\_roles.md`
-
-4\. `source\_of\_truth/project\_truth.json`
-
-5\. `source\_of\_truth/paths\_registry.json`
-
-6\. `source\_of\_truth/current\_issues.md`
-
-7\. `canonical/script\_registry.json`
-
-8\. `canonical/output\_registry.json`
-
-9\. až potom konkrétne `scripts/`, `outputs/`, `tests/` a ďalšie repo súbory
-
-
-
-\## Interpretácia vrstiev
-
-
-
-\### 1. Repo
-
-Repo obsahuje:
-
-\- kódy
-
-\- outputs
-
-\- testy
-
-\- manifests
-
-\- pomocné súbory
-
-
-
-Repo samo o sebe nie je automaticky official truth.
-
-
-
-\### 2. `source\_of\_truth/`
-
-`source\_of\_truth/` je jediný official SSOT.
-
-
-
-Platí:
-
-\- keď je konflikt medzi raw outputom a `source\_of\_truth`, official truth je `source\_of\_truth`
-
-\- zmena v `source\_of\_truth` sa nemá robiť ticho ani implicitne
-
-\- nie každý report, output alebo forensic verdict je automaticky official truth
-
-
-
-\### 3. `canonical/`
-
-`canonical/` je navigačná vrstva medzi repo kódmi a truth vrstvou.
-
-
-
-Používa sa na:
-
-\- rýchle zistenie, ktorý script čo robí
-
-\- aké outputs generuje
-
-\- čo je decision-relevant
-
-\- čo je support artifact
-
-\- čo je active / legacy / deprecated
-
-
-
-`canonical/` nie je náhrada za `source\_of\_truth`.
-
-
-
-\### 4. `automation/`
-
-`automation/` je execution a patch orchestration vrstva.
-
-
-
-Smie:
-
-\- vytvoriť run
-
-\- uložiť run log
-
-\- uložiť report
-
-\- uložiť screenshot manifest
-
-\- vytvoriť pending truth patch
-
-\- uložiť approval record
-
-
-
-Nesmie:
-
-\- držať paralelnú truth vrstvu
-
-\- robiť tichý zápis do `source\_of\_truth`
-
-
-
-\## Ako má chat čítať kódy
-
-Keď chat potrebuje pochopiť konkrétny script alebo output, má ísť takto:
-
-
-
-1\. zistiť v `canonical/script\_registry.json`, či je script active a čo generuje
-
-2\. zistiť v `canonical/output\_registry.json`, či output je decision-relevant alebo support-only
-
-3\. až potom otvoriť konkrétny script a konkrétne outputs
-
-4\. pri odpovedi jasne rozlišovať:
-
-&#x20;  - raw output
-
-&#x20;  - report
-
-&#x20;  - pending truth
-
-&#x20;  - official truth
-
-
-
-\## Ako má chat zapisovať poznatky
-
-Keď chat zistí dôležitý poznatok:
-
-
-
-\### ak je to len pracovný výsledok
-
-má vzniknúť:
-
-\- report
-
-\- manifest
-
-\- execution note
-
-\- forensic verdict
-
-\- registry update
-
-
-
-\### ak to má byť kandidát na official truth
-
-má vzniknúť:
-
-\- pending truth patch
-
-
-
-\### ak to má byť official truth
-
-musí prejsť:
-
-\- approval loop
-
-\- samostatný apply krok
-
-
-
-\## Čo nesmie byť zamieňané
-
-
-
-\### Nie je to isté:
-
-\- raw CSV output
-
-\- report
-
-\- forensic verdict
-
-\- approved patch
-
-\- applied truth
-
-\- official SSOT
-
-
-
-\### Presné rozlíšenie:
-
-\- `raw output` = technický výsledok scriptu
-
-\- `report` = zhrnutie alebo auditný výstup
-
-\- `pending truth patch` = návrh na zmenu truth vrstvy
-
-\- `approved patch` = povolený kandidát na apply
-
-\- `applied truth` = až vykonaný zápis do `source\_of\_truth`
-
-\- `official truth` = aktuálny stav v `source\_of\_truth`
-
-
-
-\## Zásady pre všetky chaty
-
-
-
-\### Chat má:
-
-\- čítať kódy z repo
-
-\- čítať outputs z repo
-
-\- čítať `source\_of\_truth`
-
-\- používať `canonical` registry ako navigáciu
-
-\- rešpektovať svoju rolu podľa `chat\_roles.md`
-
-
-
-\### Chat nemá:
-
-\- ignorovať `source\_of\_truth`
-
-\- vymýšľať si current state bez opory v súboroch
-
-\- robiť tichý rewrite `source\_of\_truth`
-
-\- miešať support artifacts s official truth
-
-
-
-\## Kedy aktualizovať registry
-
-
-
-\### `canonical/script\_registry.json`
-
-aktualizovať keď:
-
-\- pribudne nový script
-
-\- script sa premenuje
-
-\- script sa stane deprecated
-
-\- script začne generovať iné dôležité outputs
-
-
-
-\### `canonical/output\_registry.json`
-
-aktualizovať keď:
-
-\- pribudne nový dôležitý output folder alebo file
-
-\- zmení sa decision relevance outputu
-
-\- output prejde do legacy/deprecated režimu
-
-
-
-\## Default rozhodovacie pravidlo
-
-Ak si chat nie je istý, či niečo je official truth:
-
-\- má predpokladať, že nie
-
-\- a má to brať len ako artifact / report / candidate input
-
-\- kým to nie je explicitne premietnuté do `source\_of\_truth`
-
-
-
-\## Praktický cieľ
-
-Každý nový alebo segmentovaný chat má byť schopný:
-
-\- rýchlo nájsť relevantné kódy
-
-\- pochopiť, ktoré outputs sú dôležité
-
-\- oddeliť reporty od official truth
-
-\- pripraviť podklady pre ďalší rozhodovací krok
-
-\- pokračovať bez chaosu a bez slepej závislosti na pamäti iných chatov
-
+# Registry Workflow
+
+This file defines how segmented chats should read the repo, outputs, and source-of-truth layer.
+
+## Goal
+- Chats must not work from memory only.
+- Chats must orient from the repo and the central truth registry.
+- Repo-wide workflow is now contract-first and regression-locked.
+
+## Required read order
+Every chat should use this order for execution / analysis / validation work:
+
+1. `source_of_truth/README.md`
+2. `source_of_truth/master_state.md`
+3. `source_of_truth/chat_roles.md`
+4. `source_of_truth/project_truth.json`
+5. `source_of_truth/export_contract.json`
+6. `source_of_truth/paths_registry.json`
+7. `source_of_truth/current_issues.md`
+8. `canonical/script_registry.json`
+9. `canonical/output_registry.json`
+10. only then the concrete `scripts/`, `outputs/`, `tests/`, and other repo files
+
+## Layer interpretation
+
+### Repo
+- The repo contains code, outputs, tests, manifests, and support files.
+- The repo by itself is not automatically official truth.
+
+### `source_of_truth/`
+- `source_of_truth/` is the only official SSOT.
+- If raw output conflicts with `source_of_truth/`, official truth is `source_of_truth/`.
+- A change in `source_of_truth/` must never happen silently or implicitly.
+- Not every report, output, or forensic verdict is official truth.
+
+### `canonical/`
+- `canonical/` is the navigation layer between repo code and truth.
+- It is used to discover which script does what, which outputs matter, and which artifacts are active, legacy, or deprecated.
+- `canonical/` is not a replacement for `source_of_truth/`.
+
+### `automation/`
+- `automation/` is the execution and patch orchestration layer.
+- It may create runs, logs, reports, screenshot manifests, pending truth patches, and approval records.
+- It must not keep a parallel truth layer.
+- It must not write silently into `source_of_truth/`.
+
+## Contract-first patch workflow
+- Every non-trivial bug must be classified before patching:
+  - `A` = wording/UI-only
+  - `B` = runtime/data contract
+  - `C` = execution/authority/scheduler
+  - `D` = strategy math
+- If the bug is `B`, `C`, or `D`, do not start with a UI patch.
+- For `B`, `C`, and `D`, the required order is:
+  1. patch the source contract
+  2. validate the source contract
+  3. patch downstream consumers
+  4. patch wording/UI only after the contract path is correct
+
+## Required normalized public/runtime contracts
+- `real_account_state`
+- `model_signal_state`
+- `model_performance_state`
+- `authority_state`
+- `data_health_state`
+
+## Forbidden semantic shortcuts
+- Do not use `actual_held_asset`, `current_asset`, or `effective_market_exposure` as real wallet exposure.
+- Do not use model equity or paper equity as real account PnL.
+- Do not show model exposure as real account exposure.
+- Do not let dashboards infer account state from model fields.
+
+## How to read code and outputs
+When a chat needs to understand a concrete script or output, it should:
+
+1. check `canonical/script_registry.json` to see whether the script is active and what it generates
+2. check `canonical/output_registry.json` to see whether the output is decision-relevant or support-only
+3. only then open the concrete script and concrete outputs
+4. clearly distinguish in the answer:
+   - raw output
+   - report
+   - pending truth
+   - official truth
+
+## How to record findings
+
+### If the result is only a working artifact
+- create a report, manifest, execution note, forensic verdict, or registry update
+
+### If the result is a candidate for official truth
+- create a pending truth patch
+
+### If the result should become official truth
+- it must pass an approval loop
+- it must then pass a separate apply step
+
+## What must not be confused
+- `raw output` = technical script result
+- `report` = summary or audit artifact
+- `pending truth patch` = proposed truth-layer change
+- `approved patch` = allowed candidate for apply
+- `applied truth` = executed write into `source_of_truth/`
+- `official truth` = current state in `source_of_truth/`
+
+## Regression-locked rule
+- Every recurring bug must receive a regression test.
+- A wording-only fix is allowed only when the issue is truly class `A`.
+
+## Required Codex output for non-trivial tasks
+- `FILES READ`
+- `SOURCE OF TRUTH`
+- exact root cause
+- exact contract impact
+- exact files changed
+- regression test added/updated
+- forbidden old path checked
+- validation commands/results
+- exact git add list
+- commit message
+
+## Default decision rule
+- If a chat is unsure whether something is official truth, assume it is not.
+- Treat it only as an artifact / report / candidate input until it is explicitly reflected in `source_of_truth/`.
+
+## Practical goal
+- Any new or segmented chat should be able to quickly find relevant code, understand which outputs matter, separate reports from official truth, prepare the next decision step, and continue without relying on undocumented memory.

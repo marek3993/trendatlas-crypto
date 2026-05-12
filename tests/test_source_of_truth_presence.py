@@ -9,6 +9,7 @@ REQUIRED_SOURCE_OF_TRUTH_FILES = [
     ROOT / "source_of_truth" / "master_state.md",
     ROOT / "source_of_truth" / "chat_roles.md",
     ROOT / "source_of_truth" / "project_truth.json",
+    ROOT / "source_of_truth" / "export_contract.json",
     ROOT / "source_of_truth" / "paths_registry.json",
     ROOT / "source_of_truth" / "current_issues.md",
 ]
