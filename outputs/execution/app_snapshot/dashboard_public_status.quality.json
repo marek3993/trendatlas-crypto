@@ -1,13 +1,15 @@
 {
-  "status": "ok",
-  "error_count": 0,
-  "errors": [],
+  "status": "error",
+  "error_count": 1,
+  "errors": [
+    "data_health.block_app is true"
+  ],
   "checks": {
     "real_account_not_model_fields": true,
     "real_account_cash_flat_when_no_history": true,
     "model_exposure_aligned_to_model_equity": true,
     "account_vs_btc_identity": true,
     "no_model_exposure_as_real_account": true,
-    "data_health_not_blocking_app": true
+    "data_health_not_blocking_app": false
   }
 }
