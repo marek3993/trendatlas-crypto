@@ -22,6 +22,9 @@ LATEST_BEST_BASELINE_KEY = "phase42 core"
 PINNED_PHASE63_DEPENDENCY_VARIANT_KEY = (
     "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3"
 )
+PINNED_PHASE63_DEPENDENCY_PAPER_PATH = (
+    PHASE63_DIR / f"{PINNED_PHASE63_DEPENDENCY_VARIANT_KEY}_paper.csv"
+)
 
 EXPLICIT_BASE_PAPER_PATH = (
     OUTPUTS / "phase60_selective_restore_robustness" / "phase60_restore_trx_sol_base_paper.csv"
@@ -596,6 +599,34 @@ def resolve_requested_variants(args: argparse.Namespace) -> tuple[list[VariantCo
     return build_variant_grid(), "full_research_grid", False
 
 
+def phase63_paper_output_path(model_name: str) -> Path:
+    return PHASE63_DIR / f"{model_name}_paper.csv"
+
+
+def export_paper_frame(paper: pd.DataFrame) -> pd.DataFrame:
+    return paper.copy().reset_index().rename(columns={paper.index.name or "index": "date"})
+
+
+def write_paper_output(paper: pd.DataFrame, model_name: str) -> Path:
+    out_path = phase63_paper_output_path(model_name)
+    export_paper_frame(paper).to_csv(out_path, index=False)
+    return out_path
+
+
+def ensure_targeted_variant_paper_output(
+    *,
+    requested_variant_key: str,
+    papers_for_top: dict[str, pd.DataFrame],
+) -> Path:
+    paper = papers_for_top.get(requested_variant_key)
+    if paper is None:
+        raise RuntimeError(
+            "Targeted Phase63 fast dependency refresh did not materialize the required "
+            f"paper DataFrame for {requested_variant_key}."
+        )
+    return write_paper_output(paper, requested_variant_key)
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
@@ -861,16 +892,25 @@ def main() -> None:
     if not targeted_fast_path and args.winner_key not in top_models:
         top_models.append(args.winner_key)
 
+    written_paper_paths: dict[str, Path] = {}
     for model in top_models:
         paper = papers_for_top.get(model)
         if paper is None:
             continue
-        out_path = PHASE63_DIR / f"{model}_paper.csv"
-        tmp = paper.copy().reset_index().rename(columns={paper.index.name or "index": "date"})
-        tmp.to_csv(out_path, index=False)
+        written_paper_paths[model] = write_paper_output(paper, model)
 
     primary_output_model = next((model for model in top_models if model.lower().startswith("phase63")), top_models[0])
-    primary_output_path = PHASE63_DIR / f"{primary_output_model}_paper.csv"
+    primary_output_path = written_paper_paths.get(primary_output_model) or phase63_paper_output_path(primary_output_model)
+    targeted_output_error = ""
+    if targeted_fast_path:
+        try:
+            primary_output_path = ensure_targeted_variant_paper_output(
+                requested_variant_key=requested_variant_key,
+                papers_for_top=papers_for_top,
+            )
+        except RuntimeError as exc:
+            primary_output_path = phase63_paper_output_path(requested_variant_key)
+            targeted_output_error = str(exc)
 
     manifest = {
         "phase": "phase63_btc_participation_overlay",
@@ -886,6 +926,15 @@ def main() -> None:
         "run_mode": run_mode,
         "targeted_fast_dependency_refresh": bool(targeted_fast_path),
         "requested_variant_key": requested_variant_key,
+        "requested_variant_output_file": (
+            to_portable_path(primary_output_path, ROOT) if targeted_fast_path else ""
+        ),
+        "requested_variant_output_status": (
+            "missing_required_paper"
+            if targeted_output_error
+            else ("written" if targeted_fast_path else "")
+        ),
+        "requested_variant_output_error": targeted_output_error,
         "full_research_grid_evaluated": not bool(targeted_fast_path),
         "execution_model": "signal_t -> execute_t_plus_1",
         "freshness_lineage": build_producer_lineage(
@@ -904,6 +953,9 @@ def main() -> None:
         ],
     }
     manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+    if targeted_output_error:
+        raise RuntimeError(targeted_output_error)
 
     best = summary.iloc[0].to_dict()
     log("")
