@@ -207,6 +207,24 @@ class TestEtfFlowPublishExistingRecovery(unittest.TestCase):
             [{"date": "2026-05-09", "reason": "weekend"}],
         )
 
+    def test_missing_intermediate_us_trading_session_still_blocks_etf_materialization(self):
+        etf_df = pd.DataFrame(
+            [
+                {
+                    "us_trading_session_date": "2026-05-08",
+                    "causal_available_for_btc_utc_day": "2026-05-09",
+                    "aggregate_net_flow_usd": 2.0,
+                },
+            ],
+            index=pd.to_datetime(["2026-05-09"]),
+        )
+
+        with self.assertRaisesRegex(ValueError, "missing_session_days=\\['2026-05-11'\\]"):
+            _validate_etf_panel_materialization(
+                etf_df=etf_df,
+                target_closed_day="2026-05-12",
+            )
+
     def test_full_history_materialization_extends_to_closed_day_without_synthetic_etf_source_rows(self):
         index = pd.to_datetime(["2026-05-08", "2026-05-09"])
         full_history_frame = pd.DataFrame(

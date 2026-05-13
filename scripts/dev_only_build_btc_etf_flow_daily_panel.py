@@ -41,7 +41,7 @@ FARSIDE_FLOW_ALL_DATA_URL = "https://farside.co.uk/bitcoin-etf-flow-all-data/"
 
 DEFAULT_START_DATE = "2024-01-11"
 DEFAULT_TIMEOUT_SECONDS = 30
-DEFAULT_PRIMARY_PROVIDER = "coinglass"
+DEFAULT_PRIMARY_PROVIDER = "farside"
 PRIMARY_PROVIDER_ENV = "MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER"
 NO_SYNTHETIC_NON_TRADING_ROWS_POLICY = (
     "emit_only_us_trading_sessions_and_shift_each_session_to_next_btc_utc_day_for_causal_use"
@@ -194,7 +194,8 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help=(
             "Primary ETF-flow provider. Defaults to env "
-            f"{PRIMARY_PROVIDER_ENV} or {DEFAULT_PRIMARY_PROVIDER}."
+            f"{PRIMARY_PROVIDER_ENV} or {DEFAULT_PRIMARY_PROVIDER}. "
+            "Select coinglass explicitly when using MRV1_COINGLASS_API_KEY."
         ),
     )
     parser.add_argument("--coinglass-api-key-env", type=str, default="MRV1_COINGLASS_API_KEY")
@@ -1210,12 +1211,12 @@ def build_manifest(
                 "fallback_activation_env": PRIMARY_PROVIDER_ENV,
                 "available_primary_providers": {
                     "coinglass": (
-                        "Preferred paid provider. CoinGlass flow-history exposes machine-readable historical aggregate "
-                        "BTC ETF flow plus per-ETF breakdown."
+                        "Paid provider. CoinGlass flow-history exposes machine-readable historical aggregate "
+                        "BTC ETF flow plus per-ETF breakdown and requires an explicit API key."
                     ),
                     "farside": (
-                        "Free dev-only fallback. Farside exposes a public HTML table with daily per-ETF USD flows "
-                        "and aggregate total flow."
+                        "Default no-key dev-only provider. Farside exposes a public HTML table with daily "
+                        "per-ETF USD flows and aggregate total flow."
                     ),
                 },
                 "optional_secondary_provider": "sosovalue",

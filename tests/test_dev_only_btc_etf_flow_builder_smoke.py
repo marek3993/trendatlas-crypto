@@ -1,8 +1,11 @@
 import importlib.util
+import json
 import os
+import shutil
 import subprocess
 import sys
 import unittest
+import uuid
 from pathlib import Path
 from unittest import mock
 
@@ -98,6 +101,22 @@ class TestDevOnlyBtcEtfFlowBuilderSmoke(unittest.TestCase):
         self.assertEqual(result.returncode, 0, msg=result.stderr or result.stdout)
         self.assertIn('"selected_primary_provider": "farside"', result.stdout)
 
+    def test_default_check_config_only_uses_farside_without_coinglass_key(self):
+        env = os.environ.copy()
+        env.pop("MRV1_COINGLASS_API_KEY", None)
+        env.pop("MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER", None)
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT_PATH), "--check-config-only"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+            env=env,
+        )
+        self.assertEqual(result.returncode, 0, msg=result.stderr or result.stdout)
+        self.assertIn('"selected_primary_provider": "farside"', result.stdout)
+        self.assertIn('"coinglass_api_key_present": false', result.stdout)
+
     def test_farside_parser_extracts_aggregate_and_per_etf_flows(self):
         panel, child, discovered_tickers, meta = BUILDER.parse_farside_flow_html(
             FARSIDE_SAMPLE_HTML,
@@ -155,6 +174,55 @@ class TestDevOnlyBtcEtfFlowBuilderSmoke(unittest.TestCase):
         self.assertEqual(manifest_meta["primary_provider_non_trading_rows_dropped"], ["2024-01-15"])
         self.assertEqual(quality["verdict"], "READY_FOR_DEV_ONLY_PROBE")
         self.assertEqual(child["source_provider"].dropna().unique().tolist(), ["farside"])
+
+    def test_default_main_build_uses_farside_without_coinglass_key(self):
+        output_dir = ROOT / "tmp_test_artifacts" / f"btc_etf_flow_farside_{uuid.uuid4().hex}"
+        spot_close = pd.Series(
+            [46000.0, 47000.0, 43000.0],
+            index=pd.to_datetime(["2024-01-11", "2024-01-12", "2024-01-15"]),
+        )
+        argv = [
+            str(SCRIPT_PATH),
+            "--output-dir",
+            str(output_dir),
+            "--start-date",
+            "2024-01-11",
+            "--skip-sosovalue-enrichment",
+            "--skip-coinglass-aum-build",
+        ]
+        try:
+            with (
+                mock.patch.dict(
+                    os.environ,
+                    {
+                        "MRV1_COINGLASS_API_KEY": "",
+                        "MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER": "",
+                    },
+                ),
+                mock.patch.object(BUILDER, "fetch_farside_flow_html", return_value=FARSIDE_SAMPLE_HTML),
+                mock.patch.object(BUILDER, "load_spot_daily", return_value=spot_close),
+                mock.patch.object(sys, "argv", argv),
+            ):
+                BUILDER.main()
+
+            panel_path = output_dir / "btc_etf_flow_daily_panel.csv"
+            manifest_path = output_dir / "btc_etf_flow_daily_panel.manifest.json"
+            quality_path = output_dir / "btc_etf_flow_daily_panel.quality.json"
+            self.assertTrue(panel_path.exists())
+            self.assertTrue(manifest_path.exists())
+            self.assertTrue(quality_path.exists())
+
+            panel = pd.read_csv(panel_path)
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            quality = json.loads(quality_path.read_text(encoding="utf-8"))
+
+            self.assertEqual(panel["source_provider"].dropna().unique().tolist(), ["farside"])
+            self.assertEqual(manifest["env_config"]["required"], [])
+            self.assertEqual(manifest["source_selection"]["primary_provider"], "farside")
+            self.assertFalse(manifest["env_config"]["resolved_presence"]["coinglass_api_key_present"])
+            self.assertEqual(quality["verdict"], "READY_FOR_DEV_ONLY_PROBE")
+        finally:
+            shutil.rmtree(output_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":

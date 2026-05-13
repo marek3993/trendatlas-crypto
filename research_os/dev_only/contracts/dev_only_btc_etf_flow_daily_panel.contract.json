@@ -14,15 +14,16 @@
   "mechanism_id": "btc_etf_flow_daily_panel",
   "mechanism_description": "Dev-only BTC ETF-flow data plumbing layer with strict U.S. trading-session semantics and causal alignment to BTC UTC daily usage.",
   "selected_primary_source": {
-    "provider": "coinglass",
-    "endpoint": "https://open-api-v4.coinglass.com/api/etf/bitcoin/flow-history",
-    "why": "Preferred paid provider. Provides historical aggregate BTC ETF flow plus per-ETF ticker breakdown in one machine-readable endpoint."
-  },
-  "dev_only_fallback_primary_source": {
     "provider": "farside",
     "endpoint": "https://farside.co.uk/bitcoin-etf-flow-all-data/",
-    "activation_env": "MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER=farside",
-    "why": "Free public HTML-table fallback with daily per-ETF USD flows and aggregate total flow, acceptable only for non-authoritative dev-only research with strict parser validation."
+    "activation_env": "default or MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER=farside",
+    "why": "Default no-key dev-only refresh path. Farside exposes a public HTML table with daily per-ETF USD flows and aggregate total flow, acceptable only for non-authoritative dev-only research with strict parser validation."
+  },
+  "optional_paid_primary_source": {
+    "provider": "coinglass",
+    "endpoint": "https://open-api-v4.coinglass.com/api/etf/bitcoin/flow-history",
+    "activation_env": "MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER=coinglass plus MRV1_COINGLASS_API_KEY",
+    "why": "Paid provider. Provides historical aggregate BTC ETF flow plus per-ETF ticker breakdown in one machine-readable endpoint when a real API key is configured."
   },
   "optional_secondary_source": {
     "provider": "sosovalue",

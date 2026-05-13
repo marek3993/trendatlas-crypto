@@ -599,6 +599,18 @@
       "notes": "Dev-only non-authoritative confirmatory outputs for the same breadth ignition plus volatility-hostility veto family against phase67j_no_neo_main. Keeps the same pure-breadth source ratio, same causal 5-day EMA smoothing, same >2/3 hold rule, and same slow BTC realized-volatility veto while adding only a 2-day smoothed breadth confirmation before ignition turns ON."
     },
     {
+      "output_path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/",
+      "generated_by": [
+        "scripts/dev_only_build_btc_etf_flow_daily_panel.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "dev_only_research_data_layer",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Dev-only non-authoritative daily BTC ETF-flow panel with U.S. trading-session semantics and D+1 causal alignment. The targeted refresh command defaults to Farside and does not require MRV1_COINGLASS_API_KEY; CoinGlass remains an explicit paid-provider option."
+    },
+    {
       "output_path": "outputs/research_os/dev_only/non_authoritative_btc_derivatives_daily_panel/",
       "generated_by": [
         "scripts/dev_only_build_btc_derivatives_daily_panel.py"

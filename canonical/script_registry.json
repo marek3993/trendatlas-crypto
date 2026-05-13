@@ -838,6 +838,22 @@
       "notes": "Dev-only and non-authoritative. Same family only: fixed pure-breadth source ratio, same causal 5-day EMA smoothing, same >2/3 hold rule, same slow BTC realized-volatility veto using 20-day annualized vol versus 63-day median times 1.20 with 2-day set/clear persistence, and only one confirmatory breadth change: 2 consecutive smoothed breadth days above 2/3 before ignition turns ON."
     },
     {
+      "script_path": "scripts/dev_only_build_btc_etf_flow_daily_panel.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Builds the dev-only non-authoritative daily BTC ETF-flow panel from a strict U.S. trading-session source and D+1 causal alignment for the active ETF-flow strategy input.",
+      "primary_outputs": [
+        "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+        "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_per_etf_daily_child.csv",
+        "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.manifest.json",
+        "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.quality.json"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Targeted ETF-flow dependency refresh only: python scripts/dev_only_build_btc_etf_flow_daily_panel.py. The default primary provider is Farside and does not require MRV1_COINGLASS_API_KEY. CoinGlass is explicit via --primary-provider coinglass plus a real API key."
+    },
+    {
       "script_path": "scripts/dev_only_build_btc_derivatives_daily_panel.py",
       "layer": "research_os_dev_only",
       "status": "active",
