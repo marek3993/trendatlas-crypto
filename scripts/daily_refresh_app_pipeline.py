@@ -63,6 +63,11 @@ PHASE67J_OUTPUT_DIR = ROOT / "outputs" / "phase67j_final_narrow_validation_pack"
 
 PHASE60_PAPER = PHASE60_OUTPUT_DIR / f"{PHASE60_PINNED_MODEL}_paper.csv"
 PHASE63_PAPER = PHASE63_OUTPUT_DIR / f"{PHASE63_PINNED_MODEL}_paper.csv"
+PHASE60_FAST_DEPENDENCY_ARGS = [
+    "--dependency-only",
+    "--model-key",
+    PHASE60_PINNED_MODEL,
+]
 PHASE63_FAST_DEPENDENCY_ARGS = [
     "--winner-only",
     "--variant-key",
@@ -1462,7 +1467,7 @@ def main() -> None:
             PHASE60_SCRIPT,
             env,
             logs_dir,
-            script_args=["--only-model", PHASE60_PINNED_MODEL],
+            script_args=PHASE60_FAST_DEPENDENCY_ARGS,
         )
         run_step_and_persist(
             manifest,

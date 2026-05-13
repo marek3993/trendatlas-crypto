@@ -391,6 +391,21 @@
       "notes": "Preview by default. Live mode is allowed only via --execute-live --manual-confirm FULL_AUTO_EXECUTION."
     },
     {
+      "script_path": "phase60_selective_restore_robustness.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Phase60 selective restore robustness research grid plus targeted fast dependency refresh for the pinned Phase60 paper consumed by Phase63 and then Phase66G.",
+      "primary_outputs": [
+        "outputs/phase60_selective_restore_robustness/phase60_selective_restore_robustness_summary.csv",
+        "outputs/phase60_selective_restore_robustness/phase60_selective_restore_robustness_equity_curves.csv",
+        "outputs/phase60_selective_restore_robustness/phase60_restore_trx_sol_base_paper.csv"
+      ],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "--dependency-only --model-key phase60_restore_trx_sol_base is the targeted fast dependency refresh path; omitting it keeps the full research grid available."
+    },
+    {
       "script_path": "scripts/phase63_btc_participation_overlay.py",
       "layer": "forensic_validation",
       "status": "active",

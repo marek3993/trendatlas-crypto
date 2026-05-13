@@ -128,6 +128,18 @@
       "notes": "Dynamic leverage ladder candidate outputs."
     },
     {
+      "output_path": "outputs/phase60_selective_restore_robustness/",
+      "generated_by": [
+        "phase60_selective_restore_robustness.py"
+      ],
+      "layer": "forensic_validation",
+      "status": "active",
+      "output_kind": "research_outputs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Contains the pinned Phase60 dependency paper plus support summary and equity-curve outputs. --dependency-only --model-key phase60_restore_trx_sol_base is the targeted fast dependency refresh path."
+    },
+    {
       "output_path": "source_of_truth/master_state.md",
       "generated_by": [],
       "layer": "source_of_truth",

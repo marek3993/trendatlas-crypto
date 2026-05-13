@@ -151,7 +151,7 @@ def detect_equity_column(df: pd.DataFrame) -> str | None:
 
 
 def detect_return_column(df: pd.DataFrame) -> str | None:
-    for col in ["daily_return", "ret", "return", "strategy_return", "portfolio_return", "pnl_pct"]:
+    for col in ["daily_return", "ret", "return", "strategy_return", "strategy_ret", "portfolio_return", "pnl_pct"]:
         if col in df.columns:
             return col
     for col in df.columns:
@@ -163,6 +163,7 @@ def detect_return_column(df: pd.DataFrame) -> str | None:
 
 def detect_selected_asset_column(df: pd.DataFrame) -> str | None:
     for col in [
+        "selected",
         "selected_symbol",
         "selected_asset",
         "symbol",

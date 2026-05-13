@@ -20,7 +20,6 @@ OUTPUTS = ROOT / "outputs"
 OUT_DIR = OUTPUTS / "phase60_selective_restore_robustness"
 DATA_DIR = ROOT / "data" / "ohlcv"
 MACRO_PATH = ROOT / "data" / "macro" / "global_liquidity_weekly.csv"
-OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 ALL_SYMBOLS = [
     "BTCUSDT",
@@ -63,6 +62,8 @@ LT_BULL_THRESHOLD = 35.0
 SINCE_2021 = pd.Timestamp("2021-01-01")
 SINCE_2023 = pd.Timestamp("2023-01-01")
 SINCE_2025 = pd.Timestamp("2025-01-01")
+PINNED_PHASE60_DEPENDENCY_MODEL_KEY = "phase60_restore_trx_sol_base"
+PINNED_PHASE60_DEPENDENCY_PAPER_PATH = OUT_DIR / f"{PINNED_PHASE60_DEPENDENCY_MODEL_KEY}_paper.csv"
 
 MODEL_CONFIGS = {
     "phase60_phase42_core": None,
@@ -108,10 +109,70 @@ MODEL_LABELS = {
 }
 
 
+def build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=(
+            "PHASE60 selective restore robustness. Use --dependency-only for the targeted fast "
+            "dependency refresh that materializes the pinned Phase60 paper consumed by Phase63; "
+            "omitting it runs the full research grid."
+        ),
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
+    parser.add_argument(
+        "--dependency-only",
+        action="store_true",
+        help=(
+            "Targeted fast dependency refresh for the Phase63/Phase66G chain. "
+            "Materializes only the pinned Phase60 paper plus support summary/equity outputs, "
+            "not the full research grid."
+        ),
+    )
+    parser.add_argument(
+        "--model-key",
+        type=str,
+        default="",
+        help=(
+            "Explicit phase60_* model key for targeted fast dependency refresh. "
+            f"Default with --dependency-only: {PINNED_PHASE60_DEPENDENCY_MODEL_KEY}"
+        ),
+    )
+    parser.add_argument(
+        "--only-model",
+        type=str,
+        default="",
+        help=(
+            "Legacy targeted model selector. Kept for pipeline compatibility; "
+            "use --dependency-only/--model-key for the explicit fast dependency path."
+        ),
+    )
+    return parser
+
+
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="PHASE60 selective restore robustness")
-    parser.add_argument("--only-model", type=str, default="")
-    return parser.parse_args()
+    return build_arg_parser().parse_args()
+
+
+def validate_model_key(model_key: str) -> str:
+    key = str(model_key or "").strip()
+    if key not in MODEL_CONFIGS:
+        raise ValueError(f"Requested model not found in phase60 configs: {model_key}")
+    return key
+
+
+def resolve_requested_models(args: argparse.Namespace) -> tuple[list[str], str, bool]:
+    if bool(getattr(args, "dependency_only", False)):
+        model_key = str(args.model_key or PINNED_PHASE60_DEPENDENCY_MODEL_KEY).strip()
+        return [validate_model_key(model_key)], "dependency_only_fast_refresh", True
+
+    explicit_model_key = str(getattr(args, "model_key", "") or "").strip()
+    if explicit_model_key:
+        return [validate_model_key(explicit_model_key)], "targeted_fast_refresh", True
+
+    only_model = str(getattr(args, "only_model", "") or "").strip()
+    if only_model:
+        return [validate_model_key(only_model)], "legacy_only_model_fast_refresh", True
+
+    return list(MODEL_CONFIGS.keys()), "full_research_grid", False
 
 
 def normalize_ohlcv_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -507,6 +568,13 @@ def compute_window_summary(model_df: pd.DataFrame, start_dt: pd.Timestamp, prefi
 
 def main() -> None:
     args = parse_args()
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    model_keys, run_mode, targeted_fast_path = resolve_requested_models(args)
+
+    print("[PHASE60] Start", flush=True)
+    print(f"[PHASE60] Models: {len(model_keys)}", flush=True)
+    print(f"[PHASE60] Run mode: {run_mode}", flush=True)
 
     print("Loading OHLCV...", flush=True)
     all_assets = {s: load_ohlcv_csv(DATA_DIR / f"{s}_1d.csv") for s in ALL_SYMBOLS}
@@ -518,13 +586,7 @@ def main() -> None:
     daily_full = build_daily_tables(all_assets, macro, ALL_SYMBOLS)
 
     model_runs: Dict[str, pd.DataFrame] = {}
-    variants = list(MODEL_CONFIGS.keys())
-    if args.only_model:
-        variants = [model_key for model_key in variants if model_key == args.only_model]
-        if not variants:
-            raise ValueError(f"Requested only-model not found in phase60 configs: {args.only_model}")
-
-    for model_key in variants:
+    for model_key in model_keys:
         print(f"Running {model_key}...", flush=True)
         selection = select_daily_top1_variant(daily_full, model_key)
         paper = run_daily_model(selection, daily_full, model_key=model_key)
@@ -566,6 +628,14 @@ def main() -> None:
         eq[model_key] = df["equity"].reindex(eq.index).ffill()
     eq = eq.reset_index()
     eq.to_csv(OUT_DIR / "phase60_selective_restore_robustness_equity_curves.csv", index=False)
+
+    if targeted_fast_path and PINNED_PHASE60_DEPENDENCY_MODEL_KEY in model_runs:
+        pinned_paper_path = OUT_DIR / f"{PINNED_PHASE60_DEPENDENCY_MODEL_KEY}_paper.csv"
+        if not pinned_paper_path.exists():
+            raise RuntimeError(
+                "Targeted Phase60 fast dependency refresh did not materialize the required "
+                f"paper CSV for {PINNED_PHASE60_DEPENDENCY_MODEL_KEY}."
+            )
 
     print("\n=== PHASE60 SELECTIVE RESTORE ROBUSTNESS ===\n")
     print(summary_df.to_string(index=False))
