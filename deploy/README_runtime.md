@@ -3,6 +3,7 @@
 This deployment is intentionally limited to the safe public status publishing chain:
 
 - default producer mode is `publish-existing`
+- nightly service refreshes fast dependencies before `publish-existing`
 - long refresh requires explicit `--mode full-refresh`
 - no real orders
 - no execution submit path
@@ -12,9 +13,13 @@ This deployment is intentionally limited to the safe public status publishing ch
 
 The nightly service performs exactly one controlled pass in this order:
 
-1. `scripts/execution/run_pi_authoritative_producer.py`
+1. `scripts/execution/run_pi_fast_daily_authority_refresh.py`
+2. fast Phase60 dependency: `--dependency-only --model-key phase60_restore_trx_sol_base`
+3. fast Phase63 dependency: `--winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3`
+4. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
+5. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only after dry-run success and only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
 
-`journald` captures the pass through `mrv1-nightly-runtime.service`.
+`journald` captures the pass through `mrv1-nightly-runtime.service`. Pi installs that use `mrv1-daily-live.service` must use the same wrapper.
 
 ## Preconditions
 
@@ -48,6 +53,7 @@ sudo tee /opt/market_regime_v1/execution/config/execution_mode.json >/dev/null <
 }
 EOF
 sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-nightly-runtime.service /etc/systemd/system/mrv1-nightly-runtime.service
+sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-daily-live.service /etc/systemd/system/mrv1-daily-live.service
 sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-nightly-runtime.timer /etc/systemd/system/mrv1-nightly-runtime.timer
 sudo systemctl daemon-reload
 sudo systemctl enable --now mrv1-nightly-runtime.timer
@@ -65,7 +71,7 @@ sudo chown mrv1:mrv1 /opt/market_regime_v1/execution/config/hyperliquid_account.
 Verify the unit files:
 
 ```bash
-sudo systemd-analyze verify /etc/systemd/system/mrv1-nightly-runtime.service /etc/systemd/system/mrv1-nightly-runtime.timer
+sudo systemd-analyze verify /etc/systemd/system/mrv1-nightly-runtime.service /etc/systemd/system/mrv1-daily-live.service /etc/systemd/system/mrv1-nightly-runtime.timer
 ```
 
 Run one pass immediately:
@@ -93,11 +99,11 @@ Check the expected operational artifacts:
 
 ```bash
 sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/refresh_pipeline/materialize_execution_app_exports_report.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/intents/latest_execution_intent.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/dry_run/latest_dry_run_decision.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/live_status/execution_status.json
-sudo -u mrv1 cat /opt/market_regime_v1/outputs/execution/dry_run/latest_dry_run_decision.json
+sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/app_snapshot/app_product_snapshot.json
+sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/app_snapshot/app_runtime_snapshot.json
+sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
+sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json
+sudo -u mrv1 cat /opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
 ```
 
 Check that `source_of_truth` stayed untouched:
@@ -111,11 +117,10 @@ sudo -u mrv1 git -C /opt/market_regime_v1 status --short -- source_of_truth
 - The timer runs daily at `00:10:00 UTC`, which keeps a simple post-close buffer for 1D candles.
 - `Persistent=true` means a missed nightly run is triggered once after the machine comes back up.
 - `Restart=no` keeps each timer activation to one controlled pass only; if a pass fails, inspect the journal, fix the cause, and rerun manually.
-- `ProtectSystem=strict` plus `ReadWritePaths=/opt/market_regime_v1/data /opt/market_regime_v1/outputs` means runtime writes are confined to operational artifacts and refreshed market data.
+- `ProtectSystem=strict` plus `ReadWritePaths=/opt/market_regime_v1/data /opt/market_regime_v1/outputs /opt/market_regime_v1__authority_publish` means runtime writes are confined to operational artifacts, refreshed market data, and the dedicated authority publish clone.
 - `ReadOnlyPaths=/opt/market_regime_v1/source_of_truth` adds an explicit runtime guardrail against truth writes from the service.
 - `ExecStartPost=/usr/bin/test -f ...` checks make the unit fail if the expected execution artifacts were not produced.
-- Because `render_execution_app_status.py` runs last in this deployment, the final `outputs/execution/live_status/execution_status.json` reflects the snapshot renderer output; the dry-run decision remains in `outputs/execution/dry_run/latest_dry_run_decision.json`.
-- The service never calls a live-order script. It only refreshes data, rematerializes exports, fetches a read-only snapshot, builds intent, produces a dry-run decision, and refreshes app status.
+- The service never calls a live-order script. It refreshes fast dependency inputs, verifies app freshness, runs publish-existing dry-run first, and runs the real publish only through the env-gated authority producer path.
 
 ## Manual Pi authority publish
 
@@ -138,7 +143,7 @@ export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
 export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
 export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
 export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
-.venv/bin/python scripts/execution/run_pi_authoritative_producer.py
+.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py
 ```
 
 Files that must exist after a successful run:
@@ -167,7 +172,7 @@ export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
 export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
 export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
 export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
-.venv/bin/python scripts/execution/run_pi_authoritative_producer.py
+.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" status --short
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show --pretty= --name-only HEAD
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show HEAD:outputs/execution/authority/latest_attempt_status.json

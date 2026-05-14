@@ -1,5 +1,5 @@
 [Unit]
-Description=MRV1 nightly fast authority refresh and publisher (safe default, one pass)
+Description=MRV1 daily live fast authority refresh and publisher
 Wants=network-online.target
 After=network-online.target
 ConditionPathExists=/opt/market_regime_v1/.venv/bin/python
@@ -21,7 +21,7 @@ ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/authority
 ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=mrv1-nightly-runtime
+SyslogIdentifier=mrv1-daily-live
 TimeoutStartSec=45min
 Restart=no
 NoNewPrivileges=true

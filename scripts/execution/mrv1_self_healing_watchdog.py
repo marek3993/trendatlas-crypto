@@ -47,6 +47,9 @@ LATEST_MANIFEST_GLOB = "*/app_refresh_pipeline_manifest.json"
 DAILY_REFRESH_SCRIPT = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
 MATERIALIZE_SCRIPT = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
 PI_AUTHORITY_PRODUCER_SCRIPT = ROOT / "scripts" / "execution" / "run_pi_authoritative_producer.py"
+PI_FAST_DAILY_AUTHORITY_REFRESH_SCRIPT = (
+    ROOT / "scripts" / "execution" / "run_pi_fast_daily_authority_refresh.py"
+)
 DAILY_LIVE_SERVICE_NAME = "mrv1-daily-live.service"
 AUTHORITY_PUBLISH_TREE_ENV = "MRV1_AUTHORITY_PUBLISH_TREE"
 
@@ -989,10 +992,10 @@ def choose_safe_action(incident_class: str, truths: dict[str, Any]) -> dict[str,
     if incident_class == "SCHEDULER_NOT_RUN":
         return {
             "eligible": True,
-            "action": "run_pi_authoritative_producer",
+            "action": "run_pi_fast_daily_authority_refresh",
             "kind": "subprocess",
-            "command": [sys.executable, str(PI_AUTHORITY_PRODUCER_SCRIPT)],
-            "reason": "Scheduler has not produced the required current-day authority run.",
+            "command": [sys.executable, str(PI_FAST_DAILY_AUTHORITY_REFRESH_SCRIPT)],
+            "reason": "Scheduler has not produced the required current-day authority run; fast dependencies must refresh before publish-existing.",
         }
     if incident_class == "APP_EXPORT_STALE" and truths["upstream_phase_outputs_current"]:
         return {
@@ -1005,10 +1008,10 @@ def choose_safe_action(incident_class: str, truths: dict[str, Any]) -> dict[str,
     if incident_class == "AUTHORITY_SUPPORT_FILES_MISMATCH" and truths["authority_current"]:
         return {
             "eligible": True,
-            "action": "run_pi_authoritative_producer",
+            "action": "run_pi_fast_daily_authority_refresh",
             "kind": "subprocess",
-            "command": [sys.executable, str(PI_AUTHORITY_PRODUCER_SCRIPT)],
-            "reason": "Authority is current, but support files are stale or mixed and should be rebuilt from the producer.",
+            "command": [sys.executable, str(PI_FAST_DAILY_AUTHORITY_REFRESH_SCRIPT)],
+            "reason": "Authority is current, but support files are stale or mixed and should be rebuilt through the fast daily wrapper.",
         }
     if incident_class == "AUTHORITY_PUBLISH_STALE":
         return {

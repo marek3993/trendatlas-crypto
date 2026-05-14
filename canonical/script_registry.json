@@ -869,6 +869,22 @@
       "notes": "Dev-only and non-authoritative BTC derivatives research data layer only. Uses UTC closed-day semantics, explicit source metadata, strict missing-data flags, and an explicit leverage proxy because exact ELR is unavailable."
     },
     {
+      "script_path": "scripts/execution/run_pi_fast_daily_authority_refresh.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Pi nightly authority wrapper that refreshes the safe fast dependency chain before publish-existing dry-run and env-gated real publish.",
+      "primary_outputs": [
+        "outputs/execution/app_exports/",
+        "outputs/execution/app_snapshot/",
+        "outputs/execution/authority/",
+        "outputs/production/"
+      ],
+      "output_type": "runtime_control",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Safe nightly path only. Runs Phase60 with --dependency-only --model-key phase60_restore_trx_sol_base, Phase63 with --winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3, then publish-existing --dry-run before real publish. It must not invoke --mode full-refresh or live-order paths."
+    },
+    {
       "script_path": "scripts/execution/run_pi_authoritative_producer.py",
       "layer": "execution_data",
       "status": "active",

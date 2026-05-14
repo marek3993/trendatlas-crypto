@@ -14,7 +14,9 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 ## Default Safety Posture
 - do NOT run long/full refresh by default
 - do NOT run `--mode full-refresh` unless explicitly approved
-- allowed fast authority path:
+- allowed fast nightly authority path:
+  - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py`
+- allowed publish-existing primitive:
   - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --mode publish-existing`
 - always dry-run before real publish
 - no live order
@@ -24,6 +26,26 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 - verify:
   - `heavy_refresh_steps=skipped`
   - `live_order_chain=not_invoked`
+
+## Required Pi Nightly Service Workflow
+The installed Pi daily service (`mrv1-daily-live.service`, or the repo-provided nightly service alias) must call:
+
+`/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py`
+
+That wrapper must run exactly the fast dependency chain before publish-existing:
+
+1. `scripts/refresh_legacy_ohlcv.py`
+2. `scripts/refresh_phase67_top100_shortlist_ohlcv.py`
+3. `phase60_selective_restore_robustness.py --dependency-only --model-key phase60_restore_trx_sol_base`
+4. `scripts/phase63_btc_participation_overlay.py --winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3`
+5. `scripts/phase66g_production_candidate_live.py`
+6. `scripts/phase67j_final_narrow_validation_pack.py`
+7. `scripts/dev_only_build_btc_etf_flow_daily_panel.py`
+8. `scripts/verify_app_freshness.py`
+9. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
+10. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
+
+The nightly wrapper must not invoke `--mode full-refresh`, the old full Phase63 grid, a live-order submitter, or any manual authority snapshot edit.
 
 ## Required Pi Workflow
 1. `git status`

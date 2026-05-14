@@ -206,13 +206,17 @@ export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
 export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
 export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
 export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
-.venv/bin/python scripts/execution/run_pi_authoritative_producer.py
+.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py
 ```
 
 What it does:
 
-- validates and publishes existing app/status artifacts through the safe default `scripts/execution/run_pi_authoritative_producer.py`
-- runs the long refresh chain only when `--mode full-refresh` is explicitly passed
+- refreshes the fast nightly dependency chain before publish-existing
+- uses `phase60_selective_restore_robustness.py --dependency-only --model-key phase60_restore_trx_sol_base`
+- uses `scripts/phase63_btc_participation_overlay.py --winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3`
+- runs `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run` before real publish
+- runs the real publish only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
+- never invokes `--mode full-refresh` or the old full Phase63 grid
 - writes `outputs/execution/authority/latest_attempt_status.json`
 - writes `outputs/execution/authority/latest_successful_snapshot.json` on success
 - resolves the runtime checkout remote URL but does not push from the runtime checkout
@@ -232,7 +236,7 @@ export MRV1_AUTHORITY_PUBLISH_TREE=/opt/market_regime_v1__authority_publish
 export MRV1_AUTHORITY_PUBLISH_MAX_PUSH_ATTEMPTS=3
 export MRV1_AUTHORITY_GIT_USER_NAME="MRV1 Pi Authority Publisher"
 export MRV1_AUTHORITY_GIT_USER_EMAIL="mrv1-pi-authority@example.com"
-.venv/bin/python scripts/execution/run_pi_authoritative_producer.py
+.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" status --short
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" log -1 --stat -- outputs/execution/authority/latest_attempt_status.json outputs/execution/authority/latest_successful_snapshot.json
 git -C "$MRV1_AUTHORITY_PUBLISH_TREE" show --pretty= --name-only HEAD
