@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-14T17:06:38Z",
+  "generated_at_utc": "2026-05-14T18:25:55Z",
   "source_files": [
     "outputs/execution/live_status/execution_status.json",
     "outputs/execution/read_only/hyperliquid_account_snapshot.json",
@@ -26,13 +26,13 @@
     "outputs/execution/dry_run/latest_dry_run_decision.json": "dd46788c49706594b169555cb8cf633df46d05d7c01605ccf498c3aae33e1ea6",
     "outputs/execution/intents/latest_execution_intent.json": "82385fe99f3d169b5833ab10f28f66b3854d4d1dc8c3b738df4d06efa103e56e",
     "outputs/execution/live_gate/latest_real_order_gate_decision.json": "c778d0d8e7ccac340191debc44390594a70bb358147cc1fac8bee3523f5030dd",
-    "outputs/execution/app_snapshot/app_product_snapshot.json": "86640387c87b83386ee36c604dd5c34c23936b96968e61fabc43baf4aad98a5f",
-    "outputs/production/current_strategy_snapshot.json": "b49b1c445161ddbf2a76fcba5e4ad455a8dad0f3456b8dbbff2eaf1cb48c7309",
+    "outputs/execution/app_snapshot/app_product_snapshot.json": "f164e0da440660cef5996345a9241a60fdbc5289f03e80ac1f7e37496112545e",
+    "outputs/production/current_strategy_snapshot.json": "e8f070b9a86ec638d99132c06c5a2d96465fcaa41c5296f5a80c390a86fab4a1",
     "outputs/production/current_strategy_timeseries.csv": "b11880ad80da79e393b5b8e679dc8367863c94a9109b0a3087d4a472907d2cee",
-    "outputs/production/data_health_report.json": "549fbcd9d40b80890b7ff9f7ee2fb347af98153f530409d13ca08497eedbf2e1",
+    "outputs/production/data_health_report.json": "7e1cbc134f66761c613ce994c047c45f3d49256ce9d81f794bc0114357baedd1",
     "outputs/production/data_health_report.quality.json": "6589fd58981e866be0a63d15ccf6b362dd80847128c839026905a445f71fc5e5",
-    "outputs/production/data_health_report.manifest.json": "4e6c3f3419e41536bf22e8262e78e0f49bf0ccc72f58a017432616d8b0e0199c",
-    "outputs/execution/app_snapshot/dashboard_public_status.json": "fe3769549a2781a400f06cec2c2517dff9ac7135f2c433db12ed84ef01a6c259",
+    "outputs/production/data_health_report.manifest.json": "739a1e0666187850a3115842a1af5e7a6f7d5e34c8617b136af6bdcbb069a357",
+    "outputs/execution/app_snapshot/dashboard_public_status.json": "70bacc8b7e27afe680d9368d19e73cdf089373bf2e3442d33d28b0db3339d8c0",
     "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": "9b0feb11e80ef6ab85e59bd7e0c5318f9c72711b97d86b2e62e6b923b9ac8ac4",
     "outputs/execution/app_snapshot/dashboard_public_status.quality.json": "c5b62f78e2f9f9fa4d6ca8157df6def2d6df39a6a5a5166e2aaf1359e194815f"
   },
