@@ -8,6 +8,7 @@
     "model_exposure_aligned_to_model_equity": true,
     "account_vs_btc_identity": true,
     "no_model_exposure_as_real_account": true,
+    "strategy_execution_pair_aligned": true,
     "data_health_not_blocking_app": true
   }
 }

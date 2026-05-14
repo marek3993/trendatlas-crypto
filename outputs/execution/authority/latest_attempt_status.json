@@ -3,24 +3,24 @@
   "schema_version": 1,
   "target_closed_day_utc": "2026-05-13",
   "latest_available_closed_utc_day": "2026-05-13",
-  "refresh_started_at_utc": "2026-05-14T17:06:34Z",
-  "refresh_finished_at_utc": "2026-05-14T17:06:39Z",
-  "refresh_started_at_local": "2026-05-14T19:06:34+02:00",
-  "refresh_finished_at_local": "2026-05-14T19:06:39+02:00",
+  "refresh_started_at_utc": "2026-05-14T20:15:19Z",
+  "refresh_finished_at_utc": "2026-05-14T20:15:24Z",
+  "refresh_started_at_local": "2026-05-14T22:15:19+02:00",
+  "refresh_finished_at_local": "2026-05-14T22:15:24+02:00",
   "display_timezone": "Europe/Bratislava",
   "latest_authoritative_attempt_status": "success",
   "latest_authoritative_attempt_error": null,
   "strategy_artifact_closed_day_utc": "2026-05-13",
   "currentness_status": "current",
   "currentness_reason": "The authoritative strategy artifact is aligned with the latest closed UTC market day 2026-05-13.",
-  "generated_at_utc": "2026-05-14T17:06:39Z",
-  "generated_at_local": "2026-05-14T19:06:39+02:00",
-  "run_id": "20260514_170634",
+  "generated_at_utc": "2026-05-14T20:15:24Z",
+  "generated_at_local": "2026-05-14T22:15:24+02:00",
+  "run_id": "20260514_201519",
   "authority_role": "pi_only_authoritative_producer",
   "automatic_producer_id": "raspberry_pi",
   "manual_recovery_only": true,
   "github_actions_role": "validation_only",
-  "source_manifest_path": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260514_170634/app_refresh_pipeline_manifest.json",
+  "source_manifest_path": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260514_201519/app_refresh_pipeline_manifest.json",
   "latest_successful_snapshot_path": "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
   "latest_attempt_status_path": "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json",
   "attempt_stage": "daily_refresh_app_pipeline",
@@ -29,7 +29,7 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "running",
-      "started_at_utc": "2026-05-14T17:06:34Z",
+      "started_at_utc": "2026-05-14T20:15:19Z",
       "finished_at_utc": null,
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
@@ -40,8 +40,8 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "success",
-      "started_at_utc": "2026-05-14T17:06:34Z",
-      "finished_at_utc": "2026-05-14T17:06:39Z",
+      "started_at_utc": "2026-05-14T20:15:19Z",
+      "finished_at_utc": "2026-05-14T20:15:24Z",
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
       "stderr_log": null,
@@ -51,11 +51,11 @@
   ],
   "authority_wallet_sync_utc": "2026-05-11T11:21:42Z",
   "authority_account_snapshot_as_of_utc": "2026-05-11T11:21:42Z",
-  "authority_runtime_snapshot_generated_at_utc": "2026-05-14T17:06:38Z",
+  "authority_runtime_snapshot_generated_at_utc": "2026-05-14T20:15:23Z",
   "app_product_snapshot": {
     "snapshot_type": "app_product_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-05-14T17:06:38Z",
+    "app_export_generated_at_utc": "2026-05-14T20:15:23Z",
     "product_name": "TrendAtlas Crypto",
     "page_scope": "homepage",
     "current_main_strategy_root_contract": {
@@ -83,7 +83,7 @@
     "freshness_target_closed_day": "2026-05-13",
     "freshness": {
       "status": "ok",
-      "generated_at_utc": "2026-05-14T17:06:24+00:00",
+      "generated_at_utc": "2026-05-14T20:15:04+00:00",
       "checks": {
         "btc_raw_last_date": "2026-05-13",
         "phase66g_paper_last_date": "2026-05-13",
@@ -239,14 +239,14 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 922,
-        "modified_utc": "2026-05-14T17:06:37Z",
+        "modified_utc": "2026-05-14T20:15:23Z",
         "operational_metrics": {
           "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
           "source_type": "canonical_app_paper_held_state_series",
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2383018,
-          "modified_utc": "2026-05-14T17:06:37Z",
+          "modified_utc": "2026-05-14T20:15:22Z",
           "semantic_role": "current_live_main_strategy_operational_metrics",
           "series_semantics": "homepage_current_main_strategy_held_state_history",
           "held_state_column": "portfolio_held_asset",
@@ -277,7 +277,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 922,
-        "modified_utc": "2026-05-14T17:06:37Z",
+        "modified_utc": "2026-05-14T20:15:23Z",
         "source_fields": [
           "cagr_pct",
           "since2023_cagr_pct",
@@ -290,7 +290,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 2383018,
-        "modified_utc": "2026-05-14T17:06:37Z",
+        "modified_utc": "2026-05-14T20:15:22Z",
         "source_field": "last_row.date"
       },
       "freshness_target_closed_day": {
@@ -299,7 +299,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1002,
-        "modified_utc": "2026-05-14T17:06:25Z",
+        "modified_utc": "2026-05-14T20:15:04Z",
         "source_field": "latest_closed_utc_date"
       },
       "app_export_generated_at_utc": {
@@ -308,7 +308,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 12132,
-        "modified_utc": "2026-05-14T17:06:31Z",
+        "modified_utc": "2026-05-14T20:15:16Z",
         "source_field": "generated_by_materializer_clock"
       },
       "live_public_state": {
@@ -317,7 +317,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 2383018,
-        "modified_utc": "2026-05-14T17:06:37Z",
+        "modified_utc": "2026-05-14T20:15:22Z",
         "source_fields": [
           "date",
           "portfolio_held_asset",
@@ -338,7 +338,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1002,
-        "modified_utc": "2026-05-14T17:06:25Z"
+        "modified_utc": "2026-05-14T20:15:04Z"
       },
       "trend_barometer_summary": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -355,7 +355,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2383018,
-          "modified_utc": "2026-05-14T17:06:37Z"
+          "modified_utc": "2026-05-14T20:15:22Z"
         },
         "reference_strategy": {
           "path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
@@ -363,7 +363,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 146290,
-          "modified_utc": "2026-05-14T17:06:22Z"
+          "modified_utc": "2026-05-14T20:15:02Z"
         }
       },
       "benchmark_source_path": {
@@ -372,7 +372,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 275065,
-        "modified_utc": "2026-05-14T16:25:06Z"
+        "modified_utc": "2026-05-14T20:14:25Z"
       },
       "trend_history_source_path": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
@@ -380,15 +380,15 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 377489,
-        "modified_utc": "2026-05-14T17:06:17Z"
+        "modified_utc": "2026-05-14T20:14:57Z"
       }
     }
   },
   "app_runtime_snapshot": {
     "snapshot_type": "app_runtime_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-05-14T17:06:38Z",
-    "app_runtime_snapshot_generated_at_utc": "2026-05-14T17:06:38Z",
+    "app_export_generated_at_utc": "2026-05-14T20:15:23Z",
+    "app_runtime_snapshot_generated_at_utc": "2026-05-14T20:15:23Z",
     "page_scope": "account_page",
     "runtime_last_sync_utc": "2026-04-06T09:16:26Z",
     "account_snapshot_as_of_utc": "2026-05-11T11:21:42Z",
@@ -433,7 +433,7 @@
       "latest_trend_calculation_date": "2026-05-13",
       "latest_wallet_sync_utc": "2026-05-11T11:21:42Z",
       "latest_available_closed_utc_date": "2026-05-13",
-      "evaluated_at_utc": "2026-05-14T17:06:38Z"
+      "evaluated_at_utc": "2026-05-14T20:15:23Z"
     },
     "runtime_table_snapshot": {
       "last_pi_update_utc": "2026-04-12T22:10:09Z",
@@ -500,7 +500,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-05-14T17:06:25Z",
+          "modified_utc": "2026-05-14T20:15:04Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -521,7 +521,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 2383018,
-              "modified_utc": "2026-05-14T17:06:37Z"
+              "modified_utc": "2026-05-14T20:15:22Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -539,7 +539,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-05-14T17:06:25Z",
+          "modified_utc": "2026-05-14T20:15:04Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -560,7 +560,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 2383018,
-              "modified_utc": "2026-05-14T17:06:37Z"
+              "modified_utc": "2026-05-14T20:15:22Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -573,7 +573,7 @@
           }
         }
       },
-      "evaluated_at_utc": "2026-05-14T17:06:38Z"
+      "evaluated_at_utc": "2026-05-14T20:15:23Z"
     },
     "account_observability_contract": {
       "enabled": true,
@@ -599,7 +599,7 @@
     },
     "dashboard_public_status": {
       "schema_version": 1,
-      "generated_at_utc": "2026-05-14T17:06:38Z",
+      "generated_at_utc": "2026-05-14T20:15:23Z",
       "closed_day": "2026-05-13",
       "real_account": {
         "asset": "CASH",
@@ -901,7 +901,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-05-14T17:06:25Z"
+          "modified_utc": "2026-05-14T20:15:04Z"
         },
         "strategy_artifact": {
           "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
@@ -909,7 +909,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2383018,
-          "modified_utc": "2026-05-14T17:06:37Z"
+          "modified_utc": "2026-05-14T20:15:22Z"
         },
         "trend_calculation": {
           "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -931,7 +931,7 @@
       "runtime_table_snapshot": {
         "source_type": "authoritative_runtime_table_snapshot",
         "owner": "DATA",
-        "evaluated_at_utc": "2026-05-14T17:06:38Z",
+        "evaluated_at_utc": "2026-05-14T20:15:23Z",
         "fields": {
           "last_pi_update_utc": {
             "path": "outputs/execution/full_auto_scheduler/latest_scheduler_entry_manifest.json",
@@ -989,7 +989,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1002,
-            "modified_utc": "2026-05-14T17:06:25Z",
+            "modified_utc": "2026-05-14T20:15:04Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -1010,7 +1010,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 2383018,
-                "modified_utc": "2026-05-14T17:06:37Z"
+                "modified_utc": "2026-05-14T20:15:22Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -1028,7 +1028,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1002,
-            "modified_utc": "2026-05-14T17:06:25Z",
+            "modified_utc": "2026-05-14T20:15:04Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -1049,7 +1049,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 2383018,
-                "modified_utc": "2026-05-14T17:06:37Z"
+                "modified_utc": "2026-05-14T20:15:22Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
