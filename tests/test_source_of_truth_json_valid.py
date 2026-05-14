@@ -222,6 +222,30 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         self.assertTrue(
             {"real_account", "execution", "model_signal", "model_performance", "data_health", "live_market_state"}.issubset(status_fields)
         )
+        chart_fields = set(dashboard_public_contract.get("chart_contract_fields", []))
+        self.assertTrue(
+            {
+                "strategy_execution_index",
+                "strategy_execution_exposure_x",
+                "strategy_execution_return_net",
+                "strategy_execution_vs_btc_return",
+                "strategy_execution_source",
+            }.issubset(chart_fields)
+        )
+        self.assertTrue(
+            {
+                "model_index",
+                "model_authorized_exposure_x",
+                "real_account_index",
+                "real_account_exposure_x",
+            }.issubset(chart_fields)
+        )
+        public_strategy_chart_semantics = dashboard_public_contract.get("public_strategy_chart_semantics")
+        self.assertIsInstance(public_strategy_chart_semantics, dict)
+        self.assertEqual(public_strategy_chart_semantics.get("upper_line"), "strategy_execution_index")
+        self.assertEqual(public_strategy_chart_semantics.get("btc_line"), "btc_index")
+        self.assertEqual(public_strategy_chart_semantics.get("lower_strip"), "strategy_execution_exposure_x")
+        self.assertEqual(public_strategy_chart_semantics.get("source_field"), "strategy_execution_source")
         live_market_semantics = dashboard_public_contract.get("live_market_semantics")
         self.assertIsInstance(live_market_semantics, dict)
         self.assertEqual(live_market_semantics.get("btc_24h_pct_expected_source"), "live_ticker")
@@ -268,7 +292,14 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         chart_field_contract = chart_artifact.get("field_contract")
         self.assertIsInstance(chart_field_contract, dict)
         self.assertTrue(chart_field_contract.get("separate_model_and_real_account_columns_required"))
+        self.assertTrue(chart_field_contract.get("strategy_execution_columns_required"))
         self.assertTrue(chart_field_contract.get("forbidden_hybrid_chart_semantics"))
+        public_strategy_chart_pair = chart_field_contract.get("public_strategy_chart_pair")
+        self.assertIsInstance(public_strategy_chart_pair, dict)
+        self.assertEqual(public_strategy_chart_pair.get("upper_line"), "strategy_execution_index")
+        self.assertEqual(public_strategy_chart_pair.get("btc_line"), "btc_index")
+        self.assertEqual(public_strategy_chart_pair.get("lower_strip"), "strategy_execution_exposure_x")
+        self.assertEqual(public_strategy_chart_pair.get("source_field"), "strategy_execution_source")
 
 
 if __name__ == "__main__":

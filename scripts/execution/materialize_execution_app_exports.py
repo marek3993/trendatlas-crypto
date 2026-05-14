@@ -2266,8 +2266,13 @@ def is_runtime_cash_asset(value: Any) -> bool:
 
 DASHBOARD_PUBLIC_CHART_FIELDNAMES = [
     "date",
+    "strategy_execution_index",
     "model_index",
     "btc_index",
+    "strategy_execution_exposure_x",
+    "strategy_execution_return_net",
+    "strategy_execution_vs_btc_return",
+    "strategy_execution_source",
     "model_authorized_exposure_x",
     "model_authorized_return_net",
     "model_authorized_return_gross",
@@ -2529,13 +2534,23 @@ def build_dashboard_public_chart_timeseries_contract(
             real_account_return_net = 0.0
 
         real_account_vs_btc_return = float(real_account_return_net or 0.0) - float(btc_return or 0.0)
+        strategy_execution_index = real_account_index
+        strategy_execution_exposure_x = real_account_exposure_x
+        strategy_execution_return_net = real_account_return_net
+        strategy_execution_vs_btc_return = real_account_vs_btc_return
+        strategy_execution_source = "real_account_history" if has_real_account_history else chart_scope
         previous_real_index = float(real_account_index or 1.0)
 
         rows.append(
             {
                 "date": date_text,
+                "strategy_execution_index": round(float(strategy_execution_index or 1.0), 10),
                 "model_index": round(float(model_index or 1.0), 10),
                 "btc_index": round(float(btc_index or 1.0), 10),
+                "strategy_execution_exposure_x": round(float(strategy_execution_exposure_x or 0.0), 6),
+                "strategy_execution_return_net": round(float(strategy_execution_return_net or 0.0), 10),
+                "strategy_execution_vs_btc_return": round(float(strategy_execution_vs_btc_return), 10),
+                "strategy_execution_source": strategy_execution_source,
                 "model_authorized_exposure_x": round(float(model_authorized_exposure_x or 0.0), 6),
                 "model_authorized_return_net": round(float(model_authorized_return_net or 0.0), 10),
                 "model_authorized_return_gross": round(float(model_authorized_return_gross or 0.0), 10),
@@ -2618,6 +2633,10 @@ def build_dashboard_public_status_quality(
             math.isclose(float(row.get("real_account_index") or 0.0), 1.0, abs_tol=1e-12)
             and math.isclose(float(row.get("real_account_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
             and math.isclose(float(row.get("real_account_return_net") or 0.0), 0.0, abs_tol=1e-12)
+            and math.isclose(float(row.get("strategy_execution_index") or 0.0), 1.0, abs_tol=1e-12)
+            and math.isclose(float(row.get("strategy_execution_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
+            and math.isclose(float(row.get("strategy_execution_return_net") or 0.0), 0.0, abs_tol=1e-12)
+            and str(row.get("strategy_execution_source") or "").strip() == "real_account_flat_no_history"
             for row in chart_rows
         )
 
@@ -2692,9 +2711,39 @@ def build_dashboard_public_status_quality(
             math.isclose(float(parse_float_maybe(real_account.get("exposure_x")) or 0.0), 0.0, abs_tol=1e-12)
             and all(
                 math.isclose(float(row.get("real_account_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
+                and math.isclose(float(row.get("strategy_execution_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
                 for row in chart_rows
             )
         )
+
+    strategy_execution_pair_aligned = all(
+        math.isclose(
+            float(row.get("strategy_execution_index") or 0.0),
+            float(row.get("real_account_index") or 0.0),
+            rel_tol=0.0,
+            abs_tol=1e-10,
+        )
+        and math.isclose(
+            float(row.get("strategy_execution_exposure_x") or 0.0),
+            float(row.get("real_account_exposure_x") or 0.0),
+            rel_tol=0.0,
+            abs_tol=1e-6,
+        )
+        and math.isclose(
+            float(row.get("strategy_execution_return_net") or 0.0),
+            float(row.get("real_account_return_net") or 0.0),
+            rel_tol=0.0,
+            abs_tol=1e-10,
+        )
+        and math.isclose(
+            float(row.get("strategy_execution_vs_btc_return") or 0.0),
+            float(row.get("real_account_vs_btc_return") or 0.0),
+            rel_tol=0.0,
+            abs_tol=1e-10,
+        )
+        and bool(str(row.get("strategy_execution_source") or "").strip())
+        for row in chart_rows
+    )
 
     data_health_not_blocking_app = runtime_bool(data_health.get("block_app")) is not True
 
@@ -2704,6 +2753,7 @@ def build_dashboard_public_status_quality(
         "model_exposure_aligned_to_model_equity": model_exposure_aligned_to_model_equity,
         "account_vs_btc_identity": account_vs_btc_identity,
         "no_model_exposure_as_real_account": no_model_exposure_as_real_account,
+        "strategy_execution_pair_aligned": strategy_execution_pair_aligned,
         "data_health_not_blocking_app": data_health_not_blocking_app,
     }
 
@@ -2715,6 +2765,7 @@ def build_dashboard_public_status_quality(
             ("model_exposure_aligned_to_model_equity", "model chart rows diverged from Production Core authorized equity/exposure fields"),
             ("account_vs_btc_identity", "account_vs_btc identity failed for status or chart rows"),
             ("no_model_exposure_as_real_account", "model exposure leaked into real_account exposure"),
+            ("strategy_execution_pair_aligned", "strategy_execution chart fields must stay paired to one actually-trading source"),
             ("data_health_not_blocking_app", "data_health.block_app is true"),
         )
         if not checks[check_name]

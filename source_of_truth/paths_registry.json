@@ -476,7 +476,14 @@
       "write_mode": "materializer_only_non_authoritative_staging",
       "field_contract": {
         "separate_model_and_real_account_columns_required": true,
-        "forbidden_hybrid_chart_semantics": true
+        "strategy_execution_columns_required": true,
+        "forbidden_hybrid_chart_semantics": true,
+        "public_strategy_chart_pair": {
+          "upper_line": "strategy_execution_index",
+          "btc_line": "btc_index",
+          "lower_strip": "strategy_execution_exposure_x",
+          "source_field": "strategy_execution_source"
+        }
       }
     },
     "dashboard_public_status_quality": {

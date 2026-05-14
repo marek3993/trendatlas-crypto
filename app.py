@@ -1806,8 +1806,13 @@ def load_dashboard_public_chart_timeseries_frame(path: Path) -> pd.DataFrame:
 
     required_columns = {
         "date",
+        "strategy_execution_index",
         "model_index",
         "btc_index",
+        "strategy_execution_exposure_x",
+        "strategy_execution_return_net",
+        "strategy_execution_vs_btc_return",
+        "strategy_execution_source",
         "model_authorized_exposure_x",
         "model_authorized_return_net",
         "model_authorized_return_gross",
@@ -1827,8 +1832,12 @@ def load_dashboard_public_chart_timeseries_frame(path: Path) -> pd.DataFrame:
 
     frame["ts"] = pd.to_datetime(frame["date"], errors="coerce").dt.normalize()
     for numeric_column in [
+        "strategy_execution_index",
         "model_index",
         "btc_index",
+        "strategy_execution_exposure_x",
+        "strategy_execution_return_net",
+        "strategy_execution_vs_btc_return",
         "model_authorized_exposure_x",
         "model_authorized_return_net",
         "model_authorized_return_gross",
@@ -1844,8 +1853,11 @@ def load_dashboard_public_chart_timeseries_frame(path: Path) -> pd.DataFrame:
         frame.dropna(
             subset=[
                 "ts",
+                "strategy_execution_index",
                 "model_index",
                 "btc_index",
+                "strategy_execution_exposure_x",
+                "strategy_execution_return_net",
                 "model_authorized_exposure_x",
                 "model_authorized_return_net",
             ]
@@ -1917,6 +1929,24 @@ def production_chart_real_account_exposure_series(df: pd.DataFrame) -> pd.Series
     if "real_account_exposure_x" in df.columns:
         return pd.to_numeric(df["real_account_exposure_x"], errors="coerce").fillna(0.0)
     return production_chart_authorized_exposure_series(df)
+
+
+def production_chart_strategy_execution_equity_series(df: pd.DataFrame) -> pd.Series:
+    if "strategy_execution_index" in df.columns:
+        return pd.to_numeric(df["strategy_execution_index"], errors="coerce")
+    return production_chart_real_account_equity_series(df)
+
+
+def production_chart_strategy_execution_return_series(df: pd.DataFrame) -> pd.Series:
+    if "strategy_execution_return_net" in df.columns:
+        return pd.to_numeric(df["strategy_execution_return_net"], errors="coerce").fillna(0.0)
+    return production_chart_real_account_return_series(df)
+
+
+def production_chart_strategy_execution_exposure_series(df: pd.DataFrame) -> pd.Series:
+    if "strategy_execution_exposure_x" in df.columns:
+        return pd.to_numeric(df["strategy_execution_exposure_x"], errors="coerce").fillna(0.0)
+    return production_chart_real_account_exposure_series(df)
 
 
 def production_chart_transition_cost_series(df: pd.DataFrame) -> pd.Series:
@@ -6263,23 +6293,30 @@ def make_production_equity_chart(
     title: str,
     real_account_exposure_state: dict[str, Any] | None = None,
     model_signal_state: dict[str, Any] | None = None,
-    chart_view: str = "model",
+    chart_view: str = "strategy_execution",
 ) -> go.Figure:
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
-    use_real_account_view = str(chart_view or "").strip().lower() == "real_account"
-    rebased_equity = rebase_series(
-        production_chart_real_account_equity_series(main_plot)
-        if use_real_account_view
-        else production_chart_authorized_equity_series(main_plot)
-    )
+    normalized_chart_view = str(chart_view or "strategy_execution").strip().lower()
+    use_real_account_view = normalized_chart_view == "real_account"
+    use_strategy_execution_view = normalized_chart_view == "strategy_execution"
+    use_execution_chart_view = use_real_account_view or use_strategy_execution_view
+    if use_real_account_view:
+        equity_series = production_chart_real_account_equity_series(main_plot)
+        return_series = production_chart_real_account_return_series(main_plot)
+        exposure_series = production_chart_real_account_exposure_series(main_plot)
+    elif use_strategy_execution_view:
+        equity_series = production_chart_strategy_execution_equity_series(main_plot)
+        return_series = production_chart_strategy_execution_return_series(main_plot)
+        exposure_series = production_chart_strategy_execution_exposure_series(main_plot)
+    else:
+        equity_series = production_chart_authorized_equity_series(main_plot)
+        return_series = production_chart_authorized_return_series(main_plot)
+        exposure_series = production_chart_authorized_exposure_series(main_plot)
+    rebased_equity = rebase_series(equity_series)
     rebased_btc_baseline = rebase_series(production_chart_btc_index_series(main_plot))
-    daily_return_pct = (
-        production_chart_real_account_return_series(main_plot)
-        if use_real_account_view
-        else production_chart_authorized_return_series(main_plot)
-    ) * 100.0
+    daily_return_pct = return_series * 100.0
     btc_return_pct = production_chart_btc_return_series(main_plot) * 100.0
     btc_close_series = pd.to_numeric(
         main_plot.get("btc_close", pd.Series(index=main_plot.index, dtype="float64")),
@@ -6304,22 +6341,17 @@ def make_production_equity_chart(
         if str(t(lang, "production_chart_legend")).strip()
         else main_label
     )
-    exposure_series = (
-        production_chart_real_account_exposure_series(main_plot)
-        if use_real_account_view
-        else production_chart_authorized_exposure_series(main_plot)
-    )
     max_authorized_exposure = max(float(exposure_series.max()) if not exposure_series.empty else 0.0, 1.0)
     fallback_candidate = str(
         first_present_value(
-            (real_account_exposure_state or {}).get("asset") if use_real_account_view else None,
+            (real_account_exposure_state or {}).get("asset") if use_execution_chart_view else None,
             runtime_model_signal.get("preferred_asset"),
             "CASH",
         )
     ).strip().upper()
     candidate_source = (
         pd.Series([fallback_candidate] * len(main_plot), index=main_plot.index)
-        if use_real_account_view
+        if use_execution_chart_view
         else main_plot.get(
             "candidate_asset",
             pd.Series([fallback_candidate] * len(main_plot), index=main_plot.index),
@@ -6330,7 +6362,7 @@ def make_production_equity_chart(
     )
     trend_permission_values = (
         [abs(float(exposure or 0.0)) > 1e-12 for exposure in exposure_series.tolist()]
-        if use_real_account_view
+        if use_execution_chart_view
         else main_plot.get(
             "trend_permission_active",
             pd.Series([abs(float(exposure or 0.0)) > 1e-12 for exposure in exposure_series.tolist()], index=main_plot.index),
@@ -6490,13 +6522,13 @@ def make_production_equity_chart(
     current_market_state = market_state_labels[-1]
     current_exposure_value = (
         _first_numeric_value(exposure_series.iloc[-1])
-        if use_real_account_view
+        if use_execution_chart_view
         else _first_numeric_value(runtime_model_signal.get("exposure_x"), exposure_series.iloc[-1])
     )
     current_exposure_text = f"{float(current_exposure_value or 0.0):.2f}x"
     current_candidate_label = product_asset_label_nominative(
         first_present_value(
-            (real_account_exposure_state or {}).get("asset") if use_real_account_view else None,
+            (real_account_exposure_state or {}).get("asset") if use_execution_chart_view else None,
             runtime_model_signal.get("preferred_asset"),
             candidate_labels.iloc[-1],
         ),
@@ -7044,7 +7076,7 @@ with tabs[0]:
             title=model_chart_title,
             real_account_exposure_state=real_account_exposure_state,
             model_signal_state=runtime_model_signal_state,
-            chart_view="model",
+            chart_view="strategy_execution",
         ),
         width="stretch",
     )

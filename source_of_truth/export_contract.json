@@ -226,8 +226,13 @@
                                                                       ],
                                            "chart_contract_fields":  [
                                                                          "date",
+                                                                         "strategy_execution_index",
                                                                          "model_index",
                                                                          "btc_index",
+                                                                         "strategy_execution_exposure_x",
+                                                                         "strategy_execution_return_net",
+                                                                         "strategy_execution_vs_btc_return",
+                                                                         "strategy_execution_source",
                                                                          "model_authorized_exposure_x",
                                                                          "model_authorized_return_net",
                                                                          "model_authorized_return_gross",
@@ -253,8 +258,17 @@
                                                                       },
                                            "forbidden_chart_hybrids":  [
                                                                             "model_red_line_plus_real_account_lower_strip",
-                                                                            "real_account_red_line_plus_model_lower_strip"
+                                                                            "real_account_red_line_plus_model_lower_strip",
+                                                                            "strategy_execution_red_line_plus_model_lower_strip",
+                                                                            "model_red_line_plus_strategy_execution_lower_strip"
                                                                         ],
+                                           "public_strategy_chart_semantics":  {
+                                                                                  "upper_line":  "strategy_execution_index",
+                                                                                  "btc_line":  "btc_index",
+                                                                                  "lower_strip":  "strategy_execution_exposure_x",
+                                                                                  "source_field":  "strategy_execution_source",
+                                                                                  "semantic_boundary":  "strategy_actually_trading_state_not_model_signal"
+                                                                              },
                                            "non_authoritative_boundary":  "This is a derived dashboard read model and must not redefine execution authority."
                                        },
     "app_export_contract":  {

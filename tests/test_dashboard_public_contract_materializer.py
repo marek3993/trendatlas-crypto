@@ -97,8 +97,13 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
             chart_contract["fieldnames"],
             [
                 "date",
+                "strategy_execution_index",
                 "model_index",
                 "btc_index",
+                "strategy_execution_exposure_x",
+                "strategy_execution_return_net",
+                "strategy_execution_vs_btc_return",
+                "strategy_execution_source",
                 "model_authorized_exposure_x",
                 "model_authorized_return_net",
                 "model_authorized_return_gross",
@@ -112,6 +117,14 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
             ],
         )
         self.assertEqual(chart_contract["chart_scope"], "real_account_flat_no_history")
+        self.assertEqual(chart_contract["rows"][0]["strategy_execution_index"], 1.0)
+        self.assertEqual(chart_contract["rows"][0]["strategy_execution_exposure_x"], 0.0)
+        self.assertEqual(chart_contract["rows"][0]["strategy_execution_return_net"], 0.0)
+        self.assertEqual(chart_contract["rows"][0]["strategy_execution_vs_btc_return"], 0.005)
+        self.assertEqual(
+            chart_contract["rows"][0]["strategy_execution_source"],
+            "real_account_flat_no_history",
+        )
         self.assertEqual(chart_contract["rows"][0]["model_index"], 1.25)
         self.assertEqual(chart_contract["rows"][0]["model_authorized_exposure_x"], 0.75)
         self.assertEqual(chart_contract["rows"][0]["real_account_index"], 1.0)
