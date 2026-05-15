@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot_quality",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-14T21:25:46Z",
+  "generated_at_utc": "2026-05-15T00:11:02Z",
   "status": "passed",
   "error_count": 0,
   "warning_count": 0,
@@ -11,7 +11,7 @@
     "source_day_alignment": true,
     "strategy_status_ready": true,
     "summary_parity": true,
-    "candidate_asset_separated_from_actual_exposure": false,
+    "candidate_asset_separated_from_actual_exposure": true,
     "trend_permission_blocks_market_exposure": true,
     "trend_permission_blocks_execution_target": true,
     "primary_series_use_authorized_equity_semantics": true,
