@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-15T00:11:05Z",
+  "generated_at_utc": "2026-05-15T08:44:25Z",
   "source_files": [
     "outputs/execution/live_status/execution_status.json",
     "outputs/execution/read_only/hyperliquid_account_snapshot.json",
@@ -26,15 +26,15 @@
     "outputs/execution/dry_run/latest_dry_run_decision.json": "dd46788c49706594b169555cb8cf633df46d05d7c01605ccf498c3aae33e1ea6",
     "outputs/execution/intents/latest_execution_intent.json": "82385fe99f3d169b5833ab10f28f66b3854d4d1dc8c3b738df4d06efa103e56e",
     "outputs/execution/live_gate/latest_real_order_gate_decision.json": "c778d0d8e7ccac340191debc44390594a70bb358147cc1fac8bee3523f5030dd",
-    "outputs/execution/app_snapshot/app_product_snapshot.json": "fd7dc6b330b310c62b827cf095e53cedb1a6ce16d856864596bbd27431cdf6ae",
-    "outputs/production/current_strategy_snapshot.json": "04fd8beda73d86d145e33aaa62a87ab133b0dd9290224f99cb477b6d2b1c95b4",
-    "outputs/production/current_strategy_timeseries.csv": "90a6bebe60b83423f3795f9b2604f21656b3f864fd7aa59561d451879d8c4db4",
-    "outputs/production/data_health_report.json": "877138837f103a57dbfe663eef7c42bdc23ac92971026c8d555e0af2ef1aea8a",
-    "outputs/production/data_health_report.quality.json": "6589fd58981e866be0a63d15ccf6b362dd80847128c839026905a445f71fc5e5",
-    "outputs/production/data_health_report.manifest.json": "97300b072d721ab9ad03ca4064a7401eaf7cbadaf2b7ee76cf5c8a575aa9d362",
-    "outputs/execution/app_snapshot/dashboard_public_status.json": "de3b9b598c99d838ee57d556004e8945311c7b4d7efa57b85ea61608212eba46",
-    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": "7d7a3eb1e7b86ba3aadc26d2b97f93cdbf30e9fc15de39d4bf49cf9b13e2bc94",
-    "outputs/execution/app_snapshot/dashboard_public_status.quality.json": "746405b4a1a40af71ac624db0543841c95bb1aeff7cba369776b1f4c6d073849"
+    "outputs/execution/app_snapshot/app_product_snapshot.json": "a3af318b435010be9e994e309b507a6d1315f1b1dba54a956a46344e8a2bad0b",
+    "outputs/production/current_strategy_snapshot.json": "172b4120332373b225a161339ccee8a642702c5fef97899312aed3fe36255394",
+    "outputs/production/current_strategy_timeseries.csv": "2cf68aaa41e6308515821a850861c067656a716fa8786eb78b37621cf3cc44d7",
+    "outputs/production/data_health_report.json": "bc8245c74c9b815c11bea20bd1a4173a67ac0811b8ff0b9c36371e2bffdd7137",
+    "outputs/production/data_health_report.quality.json": "2a83a01a4c380966a931588beb3fba5abd2c01b073264dbaa94dea2b81b21a07",
+    "outputs/production/data_health_report.manifest.json": "3d5555ee98264a2530a6561e33b3296d329bc52b208fcaf4d8ff007a042a6024",
+    "outputs/execution/app_snapshot/dashboard_public_status.json": "a98994799c80641b052b5b93dea95c1b9dbe66a27ee2e59a5182cf7a680e371a",
+    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": "164ed399fcfaa93996a0ce200e36e8102f6648fb9d5c3b564bce84a97935426d",
+    "outputs/execution/app_snapshot/dashboard_public_status.quality.json": "58b6936d6afa2952f7ba8e0beef649fdd45cad82d6570ac17f11f7301c1e1d5d"
   },
   "row_counts": {
     "outputs/execution/live_status/execution_status.json": 1,
