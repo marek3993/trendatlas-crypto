@@ -91,6 +91,10 @@ def build_fast_dependency_steps(root: Path = ROOT) -> tuple[PythonStep, ...]:
             "verify_app_freshness",
             root / "scripts" / "verify_app_freshness.py",
         ),
+        PythonStep(
+            "hyperliquid_read_only_snapshot",
+            root / "scripts" / "execution" / "hyperliquid_read_only_snapshot.py",
+        ),
     )
 
 
@@ -229,6 +233,7 @@ def run_fast_daily_authority_refresh(
         "full_refresh_mode": "not_invoked",
         "phase60_fast_dependency": "dependency_only",
         "phase63_fast_dependency": "winner_only",
+        "hyperliquid_read_only_snapshot": "completed",
         "publish_existing_dry_run": "completed",
         "publish_existing_real": real_publish_status,
         "live_order_chain": "not_invoked",

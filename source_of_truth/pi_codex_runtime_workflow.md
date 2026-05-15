@@ -16,6 +16,7 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 - do NOT run `--mode full-refresh` unless explicitly approved
 - allowed fast nightly authority path:
   - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py`
+- the fast nightly authority wrapper must refresh the read-only Hyperliquid wallet snapshot before publish-existing dry-run
 - allowed publish-existing primitive:
   - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --mode publish-existing`
 - always dry-run before real publish
@@ -42,8 +43,9 @@ That wrapper must run exactly the fast dependency chain before publish-existing:
 6. `scripts/phase67j_final_narrow_validation_pack.py`
 7. `scripts/dev_only_build_btc_etf_flow_daily_panel.py`
 8. `scripts/verify_app_freshness.py`
-9. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
-10. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
+9. `scripts/execution/hyperliquid_read_only_snapshot.py`
+10. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
+11. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
 
 The nightly wrapper must not invoke `--mode full-refresh`, the old full Phase63 grid, a live-order submitter, or any manual authority snapshot edit.
 

@@ -66,6 +66,7 @@ class TestPiCodexRuntimeWorkflowDocs(unittest.TestCase):
             "if `git pull` makes runtime stale, restore approved fresh runtime stash before dry-run",
             "`heavy_refresh_steps=skipped`",
             "`live_order_chain=not_invoked`",
+            "scripts/execution/hyperliquid_read_only_snapshot.py",
             "1. `git status`",
             "2. `git fetch origin main`",
             "3. `git pull --rebase origin main`",

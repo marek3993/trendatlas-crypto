@@ -41,6 +41,7 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
                 "phase67j_final_narrow_validation_pack",
                 "dev_only_build_btc_etf_flow_daily_panel",
                 "verify_app_freshness",
+                "hyperliquid_read_only_snapshot",
             ],
         )
 
@@ -72,6 +73,31 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
         self.assertNotIn("full-refresh", command_text)
         for fragment in fast_refresh.FORBIDDEN_LIVE_ORDER_PATH_FRAGMENTS:
             self.assertNotIn(fragment, command_text)
+
+        snapshot_step = next(step for step in steps if step.name == "hyperliquid_read_only_snapshot")
+        self.assertEqual(Path(snapshot_step.script_path).name, "hyperliquid_read_only_snapshot.py")
+        self.assertIn("scripts/execution/hyperliquid_read_only_snapshot.py", command_text.replace("\\", "/"))
+
+    def test_read_only_wallet_snapshot_precedes_publish_existing_dry_run(self):
+        result, calls = self._run_with_fake_subprocess(
+            {
+                "MRV1_ENABLE_AUTHORITY_PUBLISH": "1",
+                "MRV1_AUTHORITY_MODE": "authoritative",
+            }
+        )
+
+        command_names = [Path(command[1]).name for command in calls]
+        snapshot_index = command_names.index("hyperliquid_read_only_snapshot.py")
+        producer_indices = [
+            index
+            for index, command in enumerate(calls)
+            if Path(command[1]).name == "run_pi_authoritative_producer.py"
+        ]
+
+        self.assertEqual(len(producer_indices), 2)
+        self.assertLess(snapshot_index, producer_indices[0])
+        self.assertIn("--dry-run", calls[producer_indices[0]])
+        self.assertEqual(result["hyperliquid_read_only_snapshot"], "completed")
 
     def test_publish_existing_dry_run_precedes_real_publish_when_env_gated(self):
         result, calls = self._run_with_fake_subprocess(
@@ -167,6 +193,7 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
             "scripts/execution/run_pi_fast_daily_authority_refresh.py",
             "phase60_selective_restore_robustness.py --dependency-only --model-key phase60_restore_trx_sol_base",
             "scripts/phase63_btc_participation_overlay.py --winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+            "scripts/execution/hyperliquid_read_only_snapshot.py",
             "scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run",
             "MRV1_ENABLE_AUTHORITY_PUBLISH=1",
             "MRV1_AUTHORITY_MODE=authoritative",
