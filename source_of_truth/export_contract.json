@@ -307,11 +307,18 @@
                                                                             "live_strategy_red_line_plus_model_lower_strip"
                                                                         ],
                                            "public_strategy_chart_semantics":  {
-                                                                                  "upper_line":  "live_strategy_index",
+                                                                                  "upper_line":  "model_index",
                                                                                   "btc_line":  "btc_index",
-                                                                                  "lower_strip":  "live_strategy_exposure_x",
-                                                                                  "source_field":  "live_strategy_source",
-                                                                                  "semantic_boundary":  "production_authority_strategy_since_live_launch_not_real_account_and_not_full_backtest",
+                                                                                  "lower_strip":  "model_authorized_exposure_x",
+                                                                                  "source_label":  "model_strategy_full_history",
+                                                                                  "semantic_boundary":  "full_model_strategy_curve_not_real_account_and_not_live_strategy_since_launch",
+                                                                                  "live_strategy_chart_semantics":  {
+                                                                                                                        "upper_line":  "live_strategy_index",
+                                                                                                                        "btc_line":  "btc_index",
+                                                                                                                        "lower_strip":  "live_strategy_exposure_x",
+                                                                                                                        "source_field":  "live_strategy_source",
+                                                                                                                        "semantic_boundary":  "production_authority_strategy_since_live_launch_not_real_account_and_not_full_backtest"
+                                                                                                                    },
                                                                                   "legacy_strategy_execution_alias":  "strategy_execution_* columns are retained as a compatibility alias of live_strategy_* and must not be used as real account truth."
                                                                               },
                                            "non_authoritative_boundary":  "This is a derived dashboard read model and must not redefine execution authority."

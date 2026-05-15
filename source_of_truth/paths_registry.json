@@ -494,6 +494,12 @@
           "post_launch_rule": "Rows from live_strategy_start_date onward use Production Core authorized strategy returns and exposure, rebased to the launch date, and must not use real_account fields."
         },
         "public_strategy_chart_pair": {
+          "upper_line": "model_index",
+          "btc_line": "btc_index",
+          "lower_strip": "model_authorized_exposure_x",
+          "source_label": "model_strategy_full_history"
+        },
+        "live_strategy_chart_pair": {
           "upper_line": "live_strategy_index",
           "btc_line": "btc_index",
           "lower_strip": "live_strategy_exposure_x",

@@ -6330,12 +6330,12 @@ def make_production_equity_chart(
     title: str,
     real_account_exposure_state: dict[str, Any] | None = None,
     model_signal_state: dict[str, Any] | None = None,
-    chart_view: str = "live_strategy",
+    chart_view: str = "model",
 ) -> go.Figure:
     main_plot = filter_from_year(timeseries_df, year).copy()
     if main_plot.empty:
         raise ValueError("homepage production chart has no rows for the selected year")
-    normalized_chart_view = str(chart_view or "live_strategy").strip().lower()
+    normalized_chart_view = str(chart_view or "model").strip().lower()
     use_real_account_view = normalized_chart_view == "real_account"
     use_live_strategy_view = normalized_chart_view in {"live_strategy", "strategy_execution"}
     if use_real_account_view:
@@ -6373,6 +6373,8 @@ def make_production_equity_chart(
     legend_label = (
         real_account_label
         if use_real_account_view
+        else main_label
+        if use_live_strategy_view and str(main_label or "").strip()
         else t(lang, "production_chart_legend")
         if str(t(lang, "production_chart_legend")).strip()
         else main_label
@@ -7112,7 +7114,7 @@ with tabs[0]:
             title=model_chart_title,
             real_account_exposure_state=real_account_exposure_state,
             model_signal_state=runtime_model_signal_state,
-            chart_view="live_strategy",
+            chart_view="model",
         ),
         width="stretch",
     )
