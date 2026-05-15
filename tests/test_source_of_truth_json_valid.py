@@ -225,6 +225,11 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         chart_fields = set(dashboard_public_contract.get("chart_contract_fields", []))
         self.assertTrue(
             {
+                "live_strategy_index",
+                "live_strategy_exposure_x",
+                "live_strategy_return_net",
+                "live_strategy_vs_btc_return",
+                "live_strategy_source",
                 "strategy_execution_index",
                 "strategy_execution_exposure_x",
                 "strategy_execution_return_net",
@@ -238,14 +243,20 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
                 "model_authorized_exposure_x",
                 "real_account_index",
                 "real_account_exposure_x",
+                "real_account_source",
             }.issubset(chart_fields)
         )
         public_strategy_chart_semantics = dashboard_public_contract.get("public_strategy_chart_semantics")
         self.assertIsInstance(public_strategy_chart_semantics, dict)
-        self.assertEqual(public_strategy_chart_semantics.get("upper_line"), "strategy_execution_index")
+        self.assertEqual(public_strategy_chart_semantics.get("upper_line"), "live_strategy_index")
         self.assertEqual(public_strategy_chart_semantics.get("btc_line"), "btc_index")
-        self.assertEqual(public_strategy_chart_semantics.get("lower_strip"), "strategy_execution_exposure_x")
-        self.assertEqual(public_strategy_chart_semantics.get("source_field"), "strategy_execution_source")
+        self.assertEqual(public_strategy_chart_semantics.get("lower_strip"), "live_strategy_exposure_x")
+        self.assertEqual(public_strategy_chart_semantics.get("source_field"), "live_strategy_source")
+        live_strategy_contract = dashboard_public_contract.get("live_strategy_contract")
+        self.assertIsInstance(live_strategy_contract, dict)
+        self.assertEqual(live_strategy_contract.get("live_strategy_start_date"), "2026-05-08")
+        self.assertEqual(live_strategy_contract.get("pre_live_source"), "pre_live")
+        self.assertEqual(live_strategy_contract.get("live_source"), "production_authority_live_strategy")
         live_market_semantics = dashboard_public_contract.get("live_market_semantics")
         self.assertIsInstance(live_market_semantics, dict)
         self.assertEqual(live_market_semantics.get("btc_24h_pct_expected_source"), "live_ticker")
@@ -292,14 +303,22 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         chart_field_contract = chart_artifact.get("field_contract")
         self.assertIsInstance(chart_field_contract, dict)
         self.assertTrue(chart_field_contract.get("separate_model_and_real_account_columns_required"))
+        self.assertTrue(chart_field_contract.get("live_strategy_columns_required"))
         self.assertTrue(chart_field_contract.get("strategy_execution_columns_required"))
         self.assertTrue(chart_field_contract.get("forbidden_hybrid_chart_semantics"))
         public_strategy_chart_pair = chart_field_contract.get("public_strategy_chart_pair")
         self.assertIsInstance(public_strategy_chart_pair, dict)
-        self.assertEqual(public_strategy_chart_pair.get("upper_line"), "strategy_execution_index")
+        self.assertEqual(public_strategy_chart_pair.get("upper_line"), "live_strategy_index")
         self.assertEqual(public_strategy_chart_pair.get("btc_line"), "btc_index")
-        self.assertEqual(public_strategy_chart_pair.get("lower_strip"), "strategy_execution_exposure_x")
-        self.assertEqual(public_strategy_chart_pair.get("source_field"), "strategy_execution_source")
+        self.assertEqual(public_strategy_chart_pair.get("lower_strip"), "live_strategy_exposure_x")
+        self.assertEqual(public_strategy_chart_pair.get("source_field"), "live_strategy_source")
+        live_strategy_contract = chart_field_contract.get("live_strategy_contract")
+        self.assertIsInstance(live_strategy_contract, dict)
+        self.assertEqual(live_strategy_contract.get("live_strategy_start_date"), "2026-05-08")
+        real_account_chart_pair = chart_field_contract.get("real_account_chart_pair")
+        self.assertIsInstance(real_account_chart_pair, dict)
+        self.assertEqual(real_account_chart_pair.get("upper_line"), "real_account_index")
+        self.assertEqual(real_account_chart_pair.get("source_field"), "real_account_source")
 
 
 if __name__ == "__main__":

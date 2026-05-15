@@ -386,8 +386,8 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             encoding="utf-8",
         )
         (app_snapshot_dir / "dashboard_public_chart_timeseries.csv").write_text(
-            "date,strategy_execution_index,model_index,btc_index,strategy_execution_exposure_x,strategy_execution_return_net,strategy_execution_vs_btc_return,strategy_execution_source,model_authorized_exposure_x,model_authorized_return_net,model_authorized_return_gross,model_transition_cost,model_asset_transition_day,real_account_index,real_account_exposure_x,real_account_return_net,real_account_vs_btc_return,chart_scope\n"
-            "2026-04-22,1.0,1.0,1.0,0.0,0.0,0.0,real_account_flat_no_history,0.0,0.0,0.0,0.0,False,1.0,0.0,0.0,0.0,real_account_flat_no_history\n",
+            "date,live_strategy_index,live_strategy_exposure_x,live_strategy_return_net,live_strategy_vs_btc_return,live_strategy_source,strategy_execution_index,model_index,btc_index,strategy_execution_exposure_x,strategy_execution_return_net,strategy_execution_vs_btc_return,strategy_execution_source,model_authorized_exposure_x,model_authorized_return_net,model_authorized_return_gross,model_transition_cost,model_asset_transition_day,real_account_index,real_account_exposure_x,real_account_return_net,real_account_vs_btc_return,real_account_source,chart_scope\n"
+            "2026-04-22,1.0,0.0,0.0,0.0,pre_live,1.0,1.0,1.0,0.0,0.0,0.0,pre_live,0.0,0.0,0.0,0.0,False,1.0,0.0,0.0,0.0,real_account_flat_no_history,real_account_flat_no_history\n",
             encoding="utf-8",
         )
         (app_snapshot_dir / "dashboard_public_status.quality.json").write_text(

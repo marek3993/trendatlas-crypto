@@ -2266,6 +2266,11 @@ def is_runtime_cash_asset(value: Any) -> bool:
 
 DASHBOARD_PUBLIC_CHART_FIELDNAMES = [
     "date",
+    "live_strategy_index",
+    "live_strategy_exposure_x",
+    "live_strategy_return_net",
+    "live_strategy_vs_btc_return",
+    "live_strategy_source",
     "strategy_execution_index",
     "model_index",
     "btc_index",
@@ -2282,8 +2287,13 @@ DASHBOARD_PUBLIC_CHART_FIELDNAMES = [
     "real_account_exposure_x",
     "real_account_return_net",
     "real_account_vs_btc_return",
+    "real_account_source",
     "chart_scope",
 ]
+
+LIVE_STRATEGY_PRE_LIVE_SOURCE = "pre_live"
+LIVE_STRATEGY_LIVE_SOURCE = "production_authority_live_strategy"
+LIVE_STRATEGY_START_DATE_MISSING_SOURCE = "live_strategy_start_date_missing"
 
 
 def build_dashboard_public_data_health_contract(
@@ -2409,11 +2419,84 @@ def build_dashboard_public_chart_scope(
     return "real_account_history_unavailable"
 
 
+def normalize_iso_date_text(value: Any) -> str | None:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        if "T" in text:
+            return datetime.fromisoformat(text.replace("Z", "+00:00")).date().isoformat()
+        return datetime.strptime(text[:10], "%Y-%m-%d").date().isoformat()
+    except Exception:
+        return None
+
+
+def load_dashboard_live_strategy_contract() -> dict[str, Any]:
+    export_contract = read_json_optional(EXPORT_CONTRACT_PATH)
+    dashboard_contract = (
+        export_contract.get("dashboard_public_cis_contract")
+        if isinstance(export_contract.get("dashboard_public_cis_contract"), dict)
+        else {}
+    )
+    live_strategy_contract = (
+        dashboard_contract.get("live_strategy_contract")
+        if isinstance(dashboard_contract.get("live_strategy_contract"), dict)
+        else {}
+    )
+    return dict(live_strategy_contract)
+
+
+def resolve_dashboard_live_strategy_start_date(
+    live_strategy_contract: dict[str, Any] | None = None,
+) -> str | None:
+    contract = live_strategy_contract if isinstance(live_strategy_contract, dict) else load_dashboard_live_strategy_contract()
+    return normalize_iso_date_text(contract.get("live_strategy_start_date"))
+
+
+def dashboard_model_index_from_source_row(source_row: dict[str, Any]) -> float | None:
+    return parse_float_maybe(
+        first_present_runtime_value(
+            source_row.get("authorized_equity"),
+            source_row.get("equity"),
+            source_row.get("model_candidate_equity"),
+        )
+    )
+
+
+def dashboard_model_exposure_from_source_row(source_row: dict[str, Any]) -> float | None:
+    return parse_float_maybe(
+        first_present_runtime_value(
+            source_row.get("effective_market_exposure"),
+            source_row.get("current_exposure"),
+            source_row.get("exposure"),
+        )
+    )
+
+
+def dashboard_model_return_net_from_source_row(source_row: dict[str, Any]) -> float | None:
+    return parse_float_maybe(
+        first_present_runtime_value(
+            source_row.get("authorized_return_net"),
+            source_row.get("return_net"),
+        )
+    )
+
+
+def dashboard_model_return_gross_from_source_row(source_row: dict[str, Any]) -> float | None:
+    return parse_float_maybe(
+        first_present_runtime_value(
+            source_row.get("authorized_return_gross"),
+            source_row.get("return_gross"),
+        )
+    )
+
+
 def build_dashboard_public_chart_timeseries_contract(
     *,
     production_timeseries_rows: list[dict[str, Any]],
     dashboard_public_status: dict[str, Any],
     real_account_history_rows: list[dict[str, Any]] | None = None,
+    live_strategy_start_date: str | None = None,
 ) -> dict[str, Any]:
     real_account = (
         dashboard_public_status.get("real_account")
@@ -2434,48 +2517,44 @@ def build_dashboard_public_chart_timeseries_contract(
         current_real_account_asset=current_real_asset,
         current_real_account_exposure_x=current_real_exposure_x,
     )
+    real_account_source = "real_account_history" if has_real_account_history else chart_scope
+    resolved_live_strategy_start_date = normalize_iso_date_text(
+        live_strategy_start_date
+    ) or resolve_dashboard_live_strategy_start_date()
+    live_strategy_anchor_model_index: float | None = None
+    if resolved_live_strategy_start_date:
+        for anchor_row in production_timeseries_rows:
+            if not isinstance(anchor_row, dict):
+                continue
+            anchor_date = normalize_iso_date_text(anchor_row.get("date") or anchor_row.get("ts"))
+            if not anchor_date or anchor_date < resolved_live_strategy_start_date:
+                continue
+            anchor_index = dashboard_model_index_from_source_row(anchor_row)
+            if anchor_index is not None and not math.isclose(float(anchor_index), 0.0, abs_tol=1e-12):
+                live_strategy_anchor_model_index = float(anchor_index)
+                break
 
     rows: list[dict[str, Any]] = []
     previous_real_index: float | None = None
+    previous_live_strategy_index: float | None = None
     for source_row in production_timeseries_rows:
         if not isinstance(source_row, dict):
             continue
         date_text = str(source_row.get("date") or source_row.get("ts") or "").strip()
         if not date_text:
             continue
+        normalized_date_text = normalize_iso_date_text(date_text) or date_text
 
-        model_index = parse_float_maybe(
-            first_present_runtime_value(
-                source_row.get("authorized_equity"),
-                source_row.get("equity"),
-                source_row.get("model_candidate_equity"),
-            )
-        )
+        model_index = dashboard_model_index_from_source_row(source_row)
         btc_index = parse_float_maybe(
             first_present_runtime_value(
                 source_row.get("btc_baseline_equity"),
                 source_row.get("btc_baseline_index"),
             )
         )
-        model_authorized_exposure_x = parse_float_maybe(
-            first_present_runtime_value(
-                source_row.get("effective_market_exposure"),
-                source_row.get("current_exposure"),
-                source_row.get("exposure"),
-            )
-        )
-        model_authorized_return_net = parse_float_maybe(
-            first_present_runtime_value(
-                source_row.get("authorized_return_net"),
-                source_row.get("return_net"),
-            )
-        )
-        model_authorized_return_gross = parse_float_maybe(
-            first_present_runtime_value(
-                source_row.get("authorized_return_gross"),
-                source_row.get("return_gross"),
-            )
-        )
+        model_authorized_exposure_x = dashboard_model_exposure_from_source_row(source_row)
+        model_authorized_return_net = dashboard_model_return_net_from_source_row(source_row)
+        model_authorized_return_gross = dashboard_model_return_gross_from_source_row(source_row)
         btc_return = parse_float_maybe(source_row.get("btc_return")) or 0.0
 
         transition_cost_components = [
@@ -2534,16 +2613,48 @@ def build_dashboard_public_chart_timeseries_contract(
             real_account_return_net = 0.0
 
         real_account_vs_btc_return = float(real_account_return_net or 0.0) - float(btc_return or 0.0)
-        strategy_execution_index = real_account_index
-        strategy_execution_exposure_x = real_account_exposure_x
-        strategy_execution_return_net = real_account_return_net
-        strategy_execution_vs_btc_return = real_account_vs_btc_return
-        strategy_execution_source = "real_account_history" if has_real_account_history else chart_scope
         previous_real_index = float(real_account_index or 1.0)
+
+        if not resolved_live_strategy_start_date:
+            live_strategy_index = 1.0
+            live_strategy_exposure_x = 0.0
+            live_strategy_return_net = 0.0
+            live_strategy_source = LIVE_STRATEGY_START_DATE_MISSING_SOURCE
+        elif normalized_date_text < resolved_live_strategy_start_date:
+            live_strategy_index = 1.0
+            live_strategy_exposure_x = 0.0
+            live_strategy_return_net = 0.0
+            live_strategy_source = LIVE_STRATEGY_PRE_LIVE_SOURCE
+        else:
+            live_strategy_exposure_x = float(model_authorized_exposure_x or 0.0)
+            live_strategy_return_net = float(model_authorized_return_net or 0.0)
+            if (
+                live_strategy_anchor_model_index is not None
+                and model_index is not None
+                and not math.isclose(live_strategy_anchor_model_index, 0.0, abs_tol=1e-12)
+            ):
+                live_strategy_index = float(model_index) / live_strategy_anchor_model_index
+            else:
+                base_live_index = 1.0 if previous_live_strategy_index is None else previous_live_strategy_index
+                live_strategy_index = base_live_index * (1.0 + live_strategy_return_net)
+            live_strategy_source = LIVE_STRATEGY_LIVE_SOURCE
+            previous_live_strategy_index = float(live_strategy_index or 1.0)
+
+        live_strategy_vs_btc_return = float(live_strategy_return_net or 0.0) - float(btc_return or 0.0)
+        strategy_execution_index = live_strategy_index
+        strategy_execution_exposure_x = live_strategy_exposure_x
+        strategy_execution_return_net = live_strategy_return_net
+        strategy_execution_vs_btc_return = live_strategy_vs_btc_return
+        strategy_execution_source = live_strategy_source
 
         rows.append(
             {
                 "date": date_text,
+                "live_strategy_index": round(float(live_strategy_index or 1.0), 10),
+                "live_strategy_exposure_x": round(float(live_strategy_exposure_x or 0.0), 6),
+                "live_strategy_return_net": round(float(live_strategy_return_net or 0.0), 10),
+                "live_strategy_vs_btc_return": round(float(live_strategy_vs_btc_return), 10),
+                "live_strategy_source": live_strategy_source,
                 "strategy_execution_index": round(float(strategy_execution_index or 1.0), 10),
                 "model_index": round(float(model_index or 1.0), 10),
                 "btc_index": round(float(btc_index or 1.0), 10),
@@ -2560,6 +2671,7 @@ def build_dashboard_public_chart_timeseries_contract(
                 "real_account_exposure_x": round(float(real_account_exposure_x or 0.0), 6),
                 "real_account_return_net": round(float(real_account_return_net or 0.0), 10),
                 "real_account_vs_btc_return": round(float(real_account_vs_btc_return), 10),
+                "real_account_source": real_account_source,
                 "chart_scope": chart_scope,
             }
         )
@@ -2569,6 +2681,7 @@ def build_dashboard_public_chart_timeseries_contract(
         "rows": rows,
         "chart_scope": chart_scope,
         "has_real_account_history": has_real_account_history,
+        "live_strategy_start_date": resolved_live_strategy_start_date,
     }
 
 
@@ -2633,10 +2746,7 @@ def build_dashboard_public_status_quality(
             math.isclose(float(row.get("real_account_index") or 0.0), 1.0, abs_tol=1e-12)
             and math.isclose(float(row.get("real_account_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
             and math.isclose(float(row.get("real_account_return_net") or 0.0), 0.0, abs_tol=1e-12)
-            and math.isclose(float(row.get("strategy_execution_index") or 0.0), 1.0, abs_tol=1e-12)
-            and math.isclose(float(row.get("strategy_execution_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
-            and math.isclose(float(row.get("strategy_execution_return_net") or 0.0), 0.0, abs_tol=1e-12)
-            and str(row.get("strategy_execution_source") or "").strip() == "real_account_flat_no_history"
+            and str(row.get("real_account_source") or "").strip() == "real_account_flat_no_history"
             for row in chart_rows
         )
 
@@ -2711,37 +2821,61 @@ def build_dashboard_public_status_quality(
             math.isclose(float(parse_float_maybe(real_account.get("exposure_x")) or 0.0), 0.0, abs_tol=1e-12)
             and all(
                 math.isclose(float(row.get("real_account_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
-                and math.isclose(float(row.get("strategy_execution_exposure_x") or 0.0), 0.0, abs_tol=1e-12)
                 for row in chart_rows
             )
         )
 
+    live_strategy_contract_valid = True
+    if len(chart_rows) != len(production_timeseries_rows):
+        live_strategy_contract_valid = False
+    else:
+        for chart_row, source_row in zip(chart_rows, production_timeseries_rows):
+            live_source = str(chart_row.get("live_strategy_source") or "").strip()
+            if live_source == LIVE_STRATEGY_PRE_LIVE_SOURCE:
+                row_ok = (
+                    math.isclose(float(chart_row.get("live_strategy_index") or 0.0), 1.0, rel_tol=0.0, abs_tol=1e-10)
+                    and math.isclose(float(chart_row.get("live_strategy_exposure_x") or 0.0), 0.0, rel_tol=0.0, abs_tol=1e-6)
+                    and math.isclose(float(chart_row.get("live_strategy_return_net") or 0.0), 0.0, rel_tol=0.0, abs_tol=1e-10)
+                )
+            elif live_source == LIVE_STRATEGY_LIVE_SOURCE:
+                expected_model_exposure = dashboard_model_exposure_from_source_row(source_row)
+                expected_model_return_net = dashboard_model_return_net_from_source_row(source_row)
+                row_ok = (
+                    math.isclose(float(chart_row.get("live_strategy_exposure_x") or 0.0), round(float(expected_model_exposure or 0.0), 6), rel_tol=0.0, abs_tol=1e-6)
+                    and math.isclose(float(chart_row.get("live_strategy_return_net") or 0.0), round(float(expected_model_return_net or 0.0), 10), rel_tol=0.0, abs_tol=1e-10)
+                )
+            else:
+                row_ok = live_source == LIVE_STRATEGY_START_DATE_MISSING_SOURCE
+            if not row_ok:
+                live_strategy_contract_valid = False
+                break
+
     strategy_execution_pair_aligned = all(
         math.isclose(
             float(row.get("strategy_execution_index") or 0.0),
-            float(row.get("real_account_index") or 0.0),
+            float(row.get("live_strategy_index") or 0.0),
             rel_tol=0.0,
             abs_tol=1e-10,
         )
         and math.isclose(
             float(row.get("strategy_execution_exposure_x") or 0.0),
-            float(row.get("real_account_exposure_x") or 0.0),
+            float(row.get("live_strategy_exposure_x") or 0.0),
             rel_tol=0.0,
             abs_tol=1e-6,
         )
         and math.isclose(
             float(row.get("strategy_execution_return_net") or 0.0),
-            float(row.get("real_account_return_net") or 0.0),
+            float(row.get("live_strategy_return_net") or 0.0),
             rel_tol=0.0,
             abs_tol=1e-10,
         )
         and math.isclose(
             float(row.get("strategy_execution_vs_btc_return") or 0.0),
-            float(row.get("real_account_vs_btc_return") or 0.0),
+            float(row.get("live_strategy_vs_btc_return") or 0.0),
             rel_tol=0.0,
             abs_tol=1e-10,
         )
-        and bool(str(row.get("strategy_execution_source") or "").strip())
+        and str(row.get("strategy_execution_source") or "").strip() == str(row.get("live_strategy_source") or "").strip()
         for row in chart_rows
     )
 
@@ -2753,6 +2887,7 @@ def build_dashboard_public_status_quality(
         "model_exposure_aligned_to_model_equity": model_exposure_aligned_to_model_equity,
         "account_vs_btc_identity": account_vs_btc_identity,
         "no_model_exposure_as_real_account": no_model_exposure_as_real_account,
+        "live_strategy_contract_valid": live_strategy_contract_valid,
         "strategy_execution_pair_aligned": strategy_execution_pair_aligned,
         "data_health_not_blocking_app": data_health_not_blocking_app,
     }
@@ -2765,7 +2900,8 @@ def build_dashboard_public_status_quality(
             ("model_exposure_aligned_to_model_equity", "model chart rows diverged from Production Core authorized equity/exposure fields"),
             ("account_vs_btc_identity", "account_vs_btc identity failed for status or chart rows"),
             ("no_model_exposure_as_real_account", "model exposure leaked into real_account exposure"),
-            ("strategy_execution_pair_aligned", "strategy_execution chart fields must stay paired to one actually-trading source"),
+            ("live_strategy_contract_valid", "live_strategy chart fields diverged from pre-live or Production Core launch-window semantics"),
+            ("strategy_execution_pair_aligned", "strategy_execution compatibility alias diverged from live_strategy fields"),
             ("data_health_not_blocking_app", "data_health.block_app is true"),
         )
         if not checks[check_name]

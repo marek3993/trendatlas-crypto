@@ -97,6 +97,11 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
             chart_contract["fieldnames"],
             [
                 "date",
+                "live_strategy_index",
+                "live_strategy_exposure_x",
+                "live_strategy_return_net",
+                "live_strategy_vs_btc_return",
+                "live_strategy_source",
                 "strategy_execution_index",
                 "model_index",
                 "btc_index",
@@ -113,17 +118,27 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
                 "real_account_exposure_x",
                 "real_account_return_net",
                 "real_account_vs_btc_return",
+                "real_account_source",
                 "chart_scope",
             ],
         )
         self.assertEqual(chart_contract["chart_scope"], "real_account_flat_no_history")
+        self.assertEqual(chart_contract["live_strategy_start_date"], "2026-05-08")
+        self.assertEqual(chart_contract["rows"][0]["live_strategy_index"], 1.0)
+        self.assertEqual(chart_contract["rows"][0]["live_strategy_exposure_x"], 0.75)
+        self.assertEqual(chart_contract["rows"][0]["live_strategy_return_net"], 0.015)
+        self.assertEqual(chart_contract["rows"][0]["live_strategy_vs_btc_return"], 0.02)
+        self.assertEqual(
+            chart_contract["rows"][0]["live_strategy_source"],
+            "production_authority_live_strategy",
+        )
         self.assertEqual(chart_contract["rows"][0]["strategy_execution_index"], 1.0)
-        self.assertEqual(chart_contract["rows"][0]["strategy_execution_exposure_x"], 0.0)
-        self.assertEqual(chart_contract["rows"][0]["strategy_execution_return_net"], 0.0)
-        self.assertEqual(chart_contract["rows"][0]["strategy_execution_vs_btc_return"], 0.005)
+        self.assertEqual(chart_contract["rows"][0]["strategy_execution_exposure_x"], 0.75)
+        self.assertEqual(chart_contract["rows"][0]["strategy_execution_return_net"], 0.015)
+        self.assertEqual(chart_contract["rows"][0]["strategy_execution_vs_btc_return"], 0.02)
         self.assertEqual(
             chart_contract["rows"][0]["strategy_execution_source"],
-            "real_account_flat_no_history",
+            "production_authority_live_strategy",
         )
         self.assertEqual(chart_contract["rows"][0]["model_index"], 1.25)
         self.assertEqual(chart_contract["rows"][0]["model_authorized_exposure_x"], 0.75)
@@ -131,6 +146,7 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
         self.assertEqual(chart_contract["rows"][0]["real_account_exposure_x"], 0.0)
         self.assertEqual(chart_contract["rows"][0]["real_account_return_net"], 0.0)
         self.assertEqual(chart_contract["rows"][0]["real_account_vs_btc_return"], 0.005)
+        self.assertEqual(chart_contract["rows"][0]["real_account_source"], "real_account_flat_no_history")
 
     def test_live_account_vs_btc_uses_live_market_input_not_snapshot(self):
         status = self.build_cash_blocked_status(
@@ -214,6 +230,8 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
             quality_payload = json.load(handle)
         self.assertEqual(quality_payload["status"], "ok")
         self.assertTrue(quality_payload["checks"]["account_vs_btc_identity"])
+        self.assertTrue(quality_payload["checks"]["live_strategy_contract_valid"])
+        self.assertTrue(quality_payload["checks"]["strategy_execution_pair_aligned"])
 
         with manifest_path.open("r", encoding="utf-8") as handle:
             manifest_payload = json.load(handle)
@@ -228,6 +246,10 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
             reader = csv.DictReader(handle)
             written_rows = list(reader)
         self.assertEqual(len(written_rows), 2)
+        self.assertEqual(written_rows[1]["live_strategy_index"], "1.01")
+        self.assertEqual(written_rows[1]["live_strategy_exposure_x"], "0.75")
+        self.assertEqual(written_rows[1]["real_account_index"], "1.0")
+        self.assertEqual(written_rows[1]["real_account_exposure_x"], "0.0")
 
 
 if __name__ == "__main__":

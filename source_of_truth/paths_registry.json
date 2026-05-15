@@ -476,13 +476,34 @@
       "write_mode": "materializer_only_non_authoritative_staging",
       "field_contract": {
         "separate_model_and_real_account_columns_required": true,
+        "live_strategy_columns_required": true,
         "strategy_execution_columns_required": true,
         "forbidden_hybrid_chart_semantics": true,
-        "public_strategy_chart_pair": {
-          "upper_line": "strategy_execution_index",
+        "real_account_chart_pair": {
+          "upper_line": "real_account_index",
           "btc_line": "btc_index",
+          "lower_strip": "real_account_exposure_x",
+          "source_field": "real_account_source"
+        },
+        "live_strategy_contract": {
+          "live_strategy_start_date": "2026-05-08",
+          "start_date_source": "final_etf_flow_production_core_live_switch_closed_day",
+          "pre_live_source": "pre_live",
+          "live_source": "production_authority_live_strategy",
+          "pre_launch_rule": "Rows before live_strategy_start_date are anchored flat at 1.0 with live_strategy_source=pre_live.",
+          "post_launch_rule": "Rows from live_strategy_start_date onward use Production Core authorized strategy returns and exposure, rebased to the launch date, and must not use real_account fields."
+        },
+        "public_strategy_chart_pair": {
+          "upper_line": "live_strategy_index",
+          "btc_line": "btc_index",
+          "lower_strip": "live_strategy_exposure_x",
+          "source_field": "live_strategy_source"
+        },
+        "legacy_strategy_execution_alias": {
+          "upper_line": "strategy_execution_index",
           "lower_strip": "strategy_execution_exposure_x",
-          "source_field": "strategy_execution_source"
+          "source_field": "strategy_execution_source",
+          "alias_of": "live_strategy"
         }
       }
     },
