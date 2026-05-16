@@ -11,6 +11,26 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 - Home dashboard root for tablet/dashboard tasks only = `/opt/home_automation`
 - Do not treat `/opt/home_automation` as the Market Regime repo root.
 
+## Current Stable Runtime State Recorded 2026-05-16
+- Raspberry Pi authority automation is installed and working.
+- `mrv1-daily-live.timer` is enabled and active.
+- Nightly authority run is scheduled for 02:10 local time, after the UTC candle close.
+- `mrv1-watchdog.timer` is enabled and active.
+- `home-blinds-dashboard.service` is enabled and active.
+- `home-dashboard-kiosk-watchdog.timer` is enabled and active.
+- Dashboard backend starts automatically after boot.
+- Kiosk watchdog opens/reopens Chromium dashboard automatically.
+- PC Windows scheduled MRV1 tasks are disabled; PC remains `manual_recovery_debug_only`.
+- Pi fast daily wrapper refreshes `scripts/execution/hyperliquid_read_only_snapshot.py` before `publish-existing`.
+- Latest confirmed execution dry-run passed in safe CASH/no-action state:
+  - `AUTH target=2026-05-15`
+  - `INTENT=2026-05-15 CASH 0.0 stale=False`
+  - `GATE=2026-05-15 CASH blocked False`
+  - `REAL_ACCOUNT=CASH / 0.00x`
+  - `MODEL_SIGNAL=CASH / 0.0x`
+- Live order/leverage test is intentionally not done while the current strategy says `CASH`.
+- Current dashboard graph display is accepted; do not add graph legends or semantic rewrites unless explicitly requested later.
+
 ## Default Safety Posture
 - do NOT run long/full refresh by default
 - do NOT run `--mode full-refresh` unless explicitly approved

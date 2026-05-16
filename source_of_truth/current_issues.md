@@ -12,6 +12,26 @@
   - `outputs/execution/authority/latest_attempt_status.json`
 - Legacy snapshot/runtime/refresh paths are non-authoritative for app reasoning.
 
+## Stable Pi/runtime/dashboard state recorded 2026-05-16
+- Raspberry Pi authority automation is installed and working.
+- `mrv1-daily-live.timer` is enabled and active.
+- Nightly authority run is scheduled for 02:10 local time, after the UTC candle close.
+- `mrv1-watchdog.timer` is enabled and active.
+- `home-blinds-dashboard.service` is enabled and active.
+- `home-dashboard-kiosk-watchdog.timer` is enabled and active.
+- Dashboard backend starts automatically after boot.
+- Kiosk watchdog opens/reopens Chromium dashboard automatically.
+- PC Windows scheduled MRV1 tasks are disabled; PC remains manual recovery/debug only.
+- Pi fast daily wrapper refreshes the read-only Hyperliquid wallet snapshot before `publish-existing`.
+- Latest confirmed execution dry-run passed in safe CASH/no-action state:
+  - `AUTH target=2026-05-15`
+  - `INTENT=2026-05-15 CASH 0.0 stale=False`
+  - `GATE=2026-05-15 CASH blocked False`
+  - `REAL_ACCOUNT=CASH / 0.00x`
+  - `MODEL_SIGNAL=CASH / 0.0x`
+- Live order/leverage test is intentionally not done while the current strategy says `CASH`.
+- Current dashboard graph display is accepted; do not add graph legends or semantic rewrites unless explicitly requested later.
+
 ## Production Core semantic guardrails
 - `candidate_asset` is a model candidate only.
 - `selected_asset` is the selected model candidate.
