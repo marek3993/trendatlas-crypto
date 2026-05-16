@@ -22,8 +22,7 @@ from scripts.execution.runtime_path_resolution import (
 )
 from scripts.execution.current_strategy_root_contract import (
     load_current_main_strategy_root_contract,
-    validate_authoritative_dependency_closure,
-    validate_current_main_strategy_source_files_against_snapshot,
+    validate_authoritative_embedded_dependency_closure,
 )
 
 
@@ -716,16 +715,11 @@ def validate_authority_latest_successful_snapshot() -> dict[str, Any]:
         errors.extend(nested_report["errors"])
         try:
             current_strategy_contract = load_current_main_strategy_root_contract()
-            validate_current_main_strategy_source_files_against_snapshot(
-                app_product_snapshot,
-                current_strategy_contract,
-                context="authority_latest_successful_snapshot canonical source validation blocked:",
-            )
-            validate_authoritative_dependency_closure(
+            validate_authoritative_embedded_dependency_closure(
                 app_product_snapshot,
                 current_strategy_contract,
                 root=ROOT,
-                context="authority_latest_successful_snapshot closure validation blocked:",
+                context="authority_latest_successful_snapshot embedded closure validation blocked:",
             )
         except Exception as exc:
             errors.append(str(exc))
@@ -865,16 +859,11 @@ def validate_authority_latest_attempt_status() -> dict[str, Any]:
         errors.extend(nested_product_report["errors"])
         try:
             current_strategy_contract = load_current_main_strategy_root_contract()
-            validate_current_main_strategy_source_files_against_snapshot(
-                app_product_snapshot,
-                current_strategy_contract,
-                context="authority_latest_attempt_status canonical source validation blocked:",
-            )
-            validate_authoritative_dependency_closure(
+            validate_authoritative_embedded_dependency_closure(
                 app_product_snapshot,
                 current_strategy_contract,
                 root=ROOT,
-                context="authority_latest_attempt_status closure validation blocked:",
+                context="authority_latest_attempt_status embedded closure validation blocked:",
             )
         except Exception as exc:
             errors.append(str(exc))
@@ -1204,6 +1193,15 @@ def main() -> None:
     log(f"[SAVED] {REPORT_PATH}")
     log(f"[SAVED] {QUALITY_PATH}")
     log(f"[SAVED] {MANIFEST_PATH}")
+    if hard_required_missing:
+        fail(
+            "Execution source contract invalid; dry-run/intent build blocked before "
+            "mutating execution intent or gate. First actionable fix: run the Pi fast "
+            "daily authority wrapper and publish current authority/app exports. "
+            f"errors={hard_required_missing}",
+            code=1,
+        )
+
     log(f"[END] validate_execution_source_contract success contract_status={report['contract_status']}")
 
 

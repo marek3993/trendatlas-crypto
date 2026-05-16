@@ -1017,6 +1017,198 @@ def validate_authoritative_dependency_closure(
     }
 
 
+def validate_authoritative_embedded_dependency_closure(
+    product_snapshot: Mapping[str, Any],
+    contract: Mapping[str, Any],
+    *,
+    root: Path | None = None,
+    context: str,
+) -> dict[str, Any]:
+    repo_root = (root or ROOT).resolve()
+    expected_contract_payload = serialize_current_main_strategy_root_contract(contract)
+    actual_contract_payload = product_snapshot.get("current_main_strategy_root_contract")
+    if actual_contract_payload is not None:
+        actual_contract_payload = _require_mapping(
+            actual_contract_payload,
+            f"{context} product_snapshot.current_main_strategy_root_contract",
+        )
+        if actual_contract_payload != expected_contract_payload:
+            raise CurrentMainStrategyContractError(
+                f"{context} product_snapshot.current_main_strategy_root_contract diverged from source_of_truth/export_contract.json"
+            )
+
+    expected_model = _require_text(
+        contract.get("main_strategy_model"),
+        f"{context} current main strategy root contract.main_strategy_model",
+    )
+    actual_model = _require_text(
+        product_snapshot.get("main_strategy_model"),
+        f"{context} product_snapshot.main_strategy_model",
+    )
+    if actual_model != expected_model:
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.main_strategy_model diverged "
+            f"(expected={expected_model} actual={actual_model})"
+        )
+
+    expected_closed_day = _normalize_iso_day_text(
+        product_snapshot.get("strategy_last_closed_day"),
+        context=f"{context} product_snapshot.strategy_last_closed_day",
+    )
+    freshness_target_closed_day = _normalize_iso_day_text(
+        product_snapshot.get("freshness_target_closed_day"),
+        context=f"{context} product_snapshot.freshness_target_closed_day",
+    )
+    if freshness_target_closed_day != expected_closed_day:
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.freshness_target_closed_day diverged "
+            f"(expected={expected_closed_day} actual={freshness_target_closed_day})"
+        )
+
+    main_strategy_metrics = _require_mapping(
+        product_snapshot.get("main_strategy_metrics"),
+        f"{context} product_snapshot.main_strategy_metrics",
+    )
+    metrics_model = _require_text(
+        main_strategy_metrics.get("model"),
+        f"{context} product_snapshot.main_strategy_metrics.model",
+    )
+    if metrics_model != expected_model:
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.main_strategy_metrics.model diverged "
+            f"(expected={expected_model} actual={metrics_model})"
+        )
+
+    chart_source_paths = _require_mapping(
+        product_snapshot.get("chart_source_paths"),
+        f"{context} product_snapshot.chart_source_paths",
+    )
+    expected_paper_path = _normalize_app_path_text(str(contract["canonical_paper_source_path"]))
+    actual_paper_path = _normalize_app_path_text(
+        _require_text(
+            chart_source_paths.get("main_strategy"),
+            f"{context} product_snapshot.chart_source_paths.main_strategy",
+        )
+    )
+    if actual_paper_path != expected_paper_path:
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.chart_source_paths.main_strategy diverged "
+            f"(expected={expected_paper_path} actual={actual_paper_path})"
+        )
+
+    source_metadata = _require_mapping(
+        product_snapshot.get("source_metadata"),
+        f"{context} product_snapshot.source_metadata",
+    )
+    metrics_metadata = _require_mapping(
+        source_metadata.get("main_strategy_metrics"),
+        f"{context} product_snapshot.source_metadata.main_strategy_metrics",
+    )
+    expected_metrics_path = _normalize_app_path_text(str(contract["canonical_metrics_source_path"]))
+    actual_metrics_path = _normalize_app_path_text(
+        _require_text(
+            metrics_metadata.get("path"),
+            f"{context} product_snapshot.source_metadata.main_strategy_metrics.path",
+        )
+    )
+    if actual_metrics_path != expected_metrics_path:
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.source_metadata.main_strategy_metrics.path diverged "
+            f"(expected={expected_metrics_path} actual={actual_metrics_path})"
+        )
+
+    operational_metrics_metadata = _require_mapping(
+        metrics_metadata.get("operational_metrics"),
+        f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics",
+    )
+    actual_operational_path = _normalize_app_path_text(
+        _require_text(
+            operational_metrics_metadata.get("path"),
+            f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics.path",
+        )
+    )
+    if actual_operational_path != expected_paper_path:
+        raise CurrentMainStrategyContractError(
+            f"{context} product_snapshot.source_metadata.main_strategy_metrics.operational_metrics.path diverged "
+            f"(expected={expected_paper_path} actual={actual_operational_path})"
+        )
+
+    for metadata_key in ("freshness", "freshness_target_closed_day"):
+        metadata = _require_mapping(
+            source_metadata.get(metadata_key),
+            f"{context} product_snapshot.source_metadata.{metadata_key}",
+        )
+        _require_text(
+            metadata.get("path"),
+            f"{context} product_snapshot.source_metadata.{metadata_key}.path",
+        )
+
+    freshness = _require_mapping(
+        product_snapshot.get("freshness"),
+        f"{context} product_snapshot.freshness",
+    )
+    freshness_checks = _require_mapping(
+        freshness.get("checks"),
+        f"{context} product_snapshot.freshness.checks",
+    )
+    required_day_checks = (
+        "phase66g_paper_last_date",
+        "phase66g_live_latest_available_date",
+        "phase66g_trend_last_date",
+        "phase67j_paper_last_date",
+        "phase67j_live_latest_available_date",
+    )
+    dependency_days: dict[str, str] = {}
+    for check_name in required_day_checks:
+        check_day = _normalize_iso_day_text(
+            freshness_checks.get(check_name),
+            context=f"{context} product_snapshot.freshness.checks.{check_name}",
+        )
+        dependency_days[check_name] = check_day
+        if check_day != expected_closed_day:
+            raise CurrentMainStrategyContractError(
+                f"{context} embedded authority dependency closure day mismatch "
+                f"(check={check_name} expected={expected_closed_day} actual={check_day}). "
+                "Run the Pi fast daily authority wrapper to refresh and publish current app exports."
+            )
+
+    freshness_status = str(freshness.get("status") or "").strip().lower()
+    if freshness_status not in {"ok", "success", "current"}:
+        raise CurrentMainStrategyContractError(
+            f"{context} embedded authority freshness status is not green "
+            f"(status={freshness_status or 'missing'})"
+        )
+    freshness_errors = freshness.get("errors")
+    if isinstance(freshness_errors, list) and freshness_errors:
+        raise CurrentMainStrategyContractError(
+            f"{context} embedded authority freshness contains errors"
+        )
+
+    for path_text, path_context in (
+        (expected_metrics_path, "current main strategy metrics source path"),
+        (expected_paper_path, "current main strategy paper source path"),
+    ):
+        path = _resolve_path(path_text, context=f"{context} {path_context}", root=repo_root)
+        allowed_root = _resolve_path(
+            contract["allowed_canonical_root"],
+            context=f"{context} current main strategy allowed canonical root",
+            root=repo_root,
+        )
+        _ensure_within_root(
+            path,
+            allowed_root=allowed_root,
+            context=f"{context} {path_context}",
+        )
+
+    return {
+        "main_strategy_model": expected_model,
+        "expected_closed_day": expected_closed_day,
+        "freshness_target_closed_day": freshness_target_closed_day,
+        "dependency_days": dependency_days,
+        "validation_mode": "authority_embedded_snapshot",
+    }
+
+
 def resolve_homepage_current_strategy_sources(
     product_snapshot: Mapping[str, Any],
     contract: Mapping[str, Any],

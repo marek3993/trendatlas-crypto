@@ -37,6 +37,7 @@ RECON_DIR = OUTPUTS_DIR / "reconciliation"
 LIVE_GATE_DIR = OUTPUTS_DIR / "live_gate"
 SUBMIT_DIR = OUTPUTS_DIR / "submit_preview"
 LOGS_DIR = OUTPUTS_DIR / "logs"
+SOURCE_CONTRACT_DIR = OUTPUTS_DIR / "source_contract"
 
 LIVE_ORDER_POLICY_PATH = CONFIG_DIR / "live_order_policy.json"
 TRADING_OPERATION_MODE_PATH = DEFAULT_TRADING_OPERATION_MODE_PATH
@@ -53,6 +54,8 @@ SUBMIT_EXCHANGE_RESPONSE_PATH = SUBMIT_DIR / "latest_submit_exchange_response.js
 SUBMIT_POST_SNAPSHOT_PATH = SUBMIT_DIR / "latest_submit_post_snapshot.json"
 POST_SUBMIT_RECON_PATH = SUBMIT_DIR / "latest_post_submit_reconciliation.json"
 LOG_PATH = LOGS_DIR / "app_execute_bridge.log"
+SOURCE_CONTRACT_REPORT_PATH = SOURCE_CONTRACT_DIR / "execution_source_contract_report.json"
+SOURCE_CONTRACT_QUALITY_PATH = SOURCE_CONTRACT_DIR / "execution_source_contract_quality.json"
 
 UI_CONFIRMATION_TEXT = "POTVRDZUJEM VYKONAT OBCHOD"
 BACKEND_CONFIRM_TOKEN = "CONTROLLED_REAL_ORDER"
@@ -806,21 +809,105 @@ def run_refresh_action() -> dict[str, Any]:
     return summarize_refresh_artifacts(steps)
 
 
+def run_dry_run_operational_refresh_steps() -> list[dict[str, Any]]:
+    steps: list[dict[str, Any]] = []
+    steps.append(
+        run_allowlisted_script(
+            script_path=READ_ONLY_SNAPSHOT_SCRIPT_PATH,
+            step_name="refresh_operational_snapshot",
+        )
+    )
+    steps.append(
+        run_allowlisted_script(
+            script_path=RENDER_STATUS_SCRIPT_PATH,
+            step_name="render_execution_app_status",
+        )
+    )
+    return steps
+
+
+def source_contract_block_details(
+    *,
+    reason: str,
+    failed_step: dict[str, Any] | None = None,
+    quality: dict[str, Any] | None = None,
+    report: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    block_reasons = ["source_contract_invalid_before_intent_gate"]
+    hard_required_missing = []
+    if isinstance(report, dict):
+        hard_required_missing = [
+            str(item)
+            for item in report.get("hard_required_missing", []) or []
+            if str(item).strip()
+        ]
+        block_reasons.extend(hard_required_missing)
+    details: dict[str, Any] = {
+        "block_reasons": dedupe_texts(block_reasons),
+        "intent_gate_mutation_status": "not_started",
+        "stale_execution_artifacts_usable": False,
+        "source_contract_report_path": str(SOURCE_CONTRACT_REPORT_PATH.resolve()),
+        "source_contract_quality_path": str(SOURCE_CONTRACT_QUALITY_PATH.resolve()),
+        "user_summary": (
+            "Dry-run zablokovany pred vytvorenim intent/gate: source contract nie je platny. "
+            "Spusti Pi fast daily authority wrapper a publishni aktualne authority/app exporty."
+        ),
+        "source_contract_failure_reason": reason,
+    }
+    if failed_step is not None:
+        details["failed_step"] = failed_step
+    if quality is not None:
+        details["source_contract_quality"] = quality
+    if report is not None:
+        details["source_contract_status"] = report.get("contract_status")
+        details["source_contract_hard_required_missing"] = hard_required_missing
+    return details
+
+
+def run_source_contract_preflight(steps: list[dict[str, Any]]) -> None:
+    try:
+        steps.append(
+            run_allowlisted_script(
+                script_path=VALIDATE_CONTRACT_SCRIPT_PATH,
+                step_name="validate_execution_source_contract",
+            )
+        )
+    except AppBridgeError as exc:
+        raise AppBridgeError(
+            str(exc),
+            status="blocked",
+            details=source_contract_block_details(
+                reason=str(exc),
+                failed_step=exc.details.get("failed_step"),
+            ),
+        ) from exc
+
+    quality = read_json(SOURCE_CONTRACT_QUALITY_PATH)
+    report = read_json(SOURCE_CONTRACT_REPORT_PATH)
+    ready = as_bool(quality.get("ready_for_intent_builder"))
+    contract_status = str(
+        quality.get("contract_status") or report.get("contract_status") or ""
+    ).strip().lower()
+    if ready is not True or contract_status != "valid":
+        reason = (
+            "Execution source contract invalid after validation "
+            f"(contract_status={contract_status or 'missing'} "
+            f"ready_for_intent_builder={quality.get('ready_for_intent_builder')!r})"
+        )
+        raise AppBridgeError(
+            reason,
+            status="blocked",
+            details=source_contract_block_details(
+                reason=reason,
+                quality=quality,
+                report=report,
+            ),
+        )
+
+
 def run_dry_run_action() -> dict[str, Any]:
-    refresh_result = run_refresh_action()
-    steps = list(refresh_result["steps"])
-    steps.append(
-        run_allowlisted_script(
-            script_path=MATERIALIZE_SCRIPT_PATH,
-            step_name="materialize_execution_app_exports",
-        )
-    )
-    steps.append(
-        run_allowlisted_script(
-            script_path=VALIDATE_CONTRACT_SCRIPT_PATH,
-            step_name="validate_execution_source_contract",
-        )
-    )
+    steps = run_dry_run_operational_refresh_steps()
+    run_source_contract_preflight(steps)
     steps.append(
         run_allowlisted_script(
             script_path=BUILD_INTENT_SCRIPT_PATH,
@@ -843,6 +930,13 @@ def run_dry_run_action() -> dict[str, Any]:
         run_allowlisted_script(
             script_path=PREPARE_GATE_SCRIPT_PATH,
             step_name="prepare_real_order_gate",
+        )
+    )
+    steps.append(
+        run_allowlisted_script(
+            script_path=MATERIALIZE_SCRIPT_PATH,
+            step_name="materialize_execution_app_runtime_snapshot",
+            arguments=["--runtime-snapshot-only"],
         )
     )
     return summarize_dry_run_artifacts(steps)
