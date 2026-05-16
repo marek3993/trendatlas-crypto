@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-05-16T17:28:16Z",
+  "generated_at_utc": "2026-05-16T18:26:02Z",
   "source_files": [
     "outputs/execution/live_status/execution_status.json",
     "outputs/execution/read_only/hyperliquid_account_snapshot.json",
@@ -22,17 +22,17 @@
   ],
   "sha256s": {
     "outputs/execution/live_status/execution_status.json": "0f7512561e80bafeb8ee8519f2b81abc4058f27eb68af714fbc3ffea685f3a35",
-    "outputs/execution/read_only/hyperliquid_account_snapshot.json": "6f117e2db333a379b74bd17deb13a537733c7f11c18922548d79366860c050e5",
+    "outputs/execution/read_only/hyperliquid_account_snapshot.json": "29f95ed3d3b1df41484402608eb3dcd6b96d88214c2475327a6487852af9116b",
     "outputs/execution/dry_run/latest_dry_run_decision.json": "dd46788c49706594b169555cb8cf633df46d05d7c01605ccf498c3aae33e1ea6",
     "outputs/execution/intents/latest_execution_intent.json": "82385fe99f3d169b5833ab10f28f66b3854d4d1dc8c3b738df4d06efa103e56e",
     "outputs/execution/live_gate/latest_real_order_gate_decision.json": "c778d0d8e7ccac340191debc44390594a70bb358147cc1fac8bee3523f5030dd",
-    "outputs/execution/app_snapshot/app_product_snapshot.json": "e8a085f49b146a3208bcbe9b736725b17afa5f6de5e72a4eaca9665b1962adcf",
-    "outputs/production/current_strategy_snapshot.json": "5cc1c338a8d23b93d65b1e273e8e8930aaabcfc4c74d174204c404c03f3bb986",
+    "outputs/execution/app_snapshot/app_product_snapshot.json": "9ee3aed92494096d9f06834be55636629f68b6fd2fac4b64fb0289abba9b956b",
+    "outputs/production/current_strategy_snapshot.json": "60a41473b96fcdf04e0a67a0adf98f03d755a518c0752f4825ca7bc4a545127d",
     "outputs/production/current_strategy_timeseries.csv": "c7f99513851e0c78b1ecbe1402ae17729f739ac3a4f8ce6bb621520a3e5f66de",
-    "outputs/production/data_health_report.json": "ec3306121330ce9b774bf27595f7ef1e1a2442cb75ef477f3c60feb87e04aee0",
+    "outputs/production/data_health_report.json": "817120fbd3366e17bd747603502094653bd13c6a95777e2898ced2981e28f273",
     "outputs/production/data_health_report.quality.json": "06cbac6b03ca4aef42341e101a931905235262e4c160052c443a72c22de97dc7",
-    "outputs/production/data_health_report.manifest.json": "9a6b85509e80e71f494bf2fb1dbd3fb8ff3b0a00012656855647320c607d6bd3",
-    "outputs/execution/app_snapshot/dashboard_public_status.json": "cbe64bb1ec38c3ba9557c3647d968eed80ae93180a2455ffa1e32845298d1ab3",
+    "outputs/production/data_health_report.manifest.json": "2db6712216a67ddbe8409f72894ed7bde40ec7284ce2714a967e9c97448f4434",
+    "outputs/execution/app_snapshot/dashboard_public_status.json": "be12e0b7e07a208b16a903012b0482f57f2325cccf3b796a4202b89a724ee0d6",
     "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": "946e8aedc3c058f30a7e547dc46572139e70df1cb841fb53d5de87db189f1f99",
     "outputs/execution/app_snapshot/dashboard_public_status.quality.json": "58b6936d6afa2952f7ba8e0beef649fdd45cad82d6570ac17f11f7301c1e1d5d"
   },
