@@ -252,6 +252,18 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         self.assertEqual(public_strategy_chart_semantics.get("btc_line"), "btc_index")
         self.assertEqual(public_strategy_chart_semantics.get("lower_strip"), "model_authorized_exposure_x")
         self.assertEqual(public_strategy_chart_semantics.get("source_label"), "model_strategy_full_history")
+        self.assertEqual(
+            public_strategy_chart_semantics.get("semantic_boundary"),
+            "full_authorized_model_strategy_after_trend_permission_not_raw_candidate_not_real_account",
+        )
+        self.assertIn(
+            "candidate/preferred asset is model preference only",
+            public_strategy_chart_semantics.get("candidate_boundary", ""),
+        )
+        self.assertIn(
+            "extra expandable realny ucet graph",
+            public_strategy_chart_semantics.get("public_homepage_graph_policy", "").lower(),
+        )
         live_strategy_chart_semantics = public_strategy_chart_semantics.get("live_strategy_chart_semantics")
         self.assertIsInstance(live_strategy_chart_semantics, dict)
         self.assertEqual(live_strategy_chart_semantics.get("upper_line"), "live_strategy_index")

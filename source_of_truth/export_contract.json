@@ -282,8 +282,8 @@
                                                                                                          }
                                                                                                      ],
                                                                           "pre_launch_rule":  "Rows before live_strategy_start_date are anchored flat at 1.0 with live_strategy_source=pre_live.",
-                                                                          "post_launch_rule":  "Rows from live_strategy_start_date onward use Production Core authorized strategy returns and exposure, rebased to the launch date, and must not use real_account fields.",
-                                                                          "model_backtest_boundary":  "model_index and model_authorized_exposure_x remain the full historical model/backtest series."
+                                                                          "post_launch_rule":  "Rows from live_strategy_start_date onward use Production Core authorized strategy returns and exposure after trend permission, rebased to the launch date, and must not use real_account fields or raw candidate fields.",
+                                                                          "model_backtest_boundary":  "model_index and model_authorized_exposure_x remain the full historical authorized model strategy after trend permission; candidate/preferred asset is not authorized exposure."
                                                                       },
                                            "published_snapshot_semantics":  {
                                                                                 "model_performance_btc_24h_pct":  "published_snapshot_closed_day_value",
@@ -311,7 +311,11 @@
                                                                                   "btc_line":  "btc_index",
                                                                                   "lower_strip":  "model_authorized_exposure_x",
                                                                                   "source_label":  "model_strategy_full_history",
-                                                                                  "semantic_boundary":  "full_model_strategy_curve_not_real_account_and_not_live_strategy_since_launch",
+                                                                                  "semantic_boundary":  "full_authorized_model_strategy_after_trend_permission_not_raw_candidate_not_real_account",
+                                                                                  "blocked_entry_rule":  "When candidate/preferred asset is crypto but trend permission does not authorize market entry, model_index must stay flat for that blocked-entry period and model_authorized_exposure_x must be 0.",
+                                                                                  "candidate_boundary":  "candidate/preferred asset is model preference only and must not be treated as authorized exposure or real wallet exposure.",
+                                                                                  "label_normalization_rule":  "Public UI must map internal/base/profile labels such as BASE, BASELINE, CORE, BASELINE_RISK, EARLY_RISK, and FULL_RISK to CASH/Hotovosť while preserving real crypto symbols such as BTC, ETH, and SOL.",
+                                                                                  "public_homepage_graph_policy":  "The public homepage has exactly one public graph section: Modelovy vyvoj vs BTC. Do not add graph legends unless explicitly requested. Do not show an extra expandable Realny ucet graph.",
                                                                                   "live_strategy_chart_semantics":  {
                                                                                                                         "upper_line":  "live_strategy_index",
                                                                                                                         "btc_line":  "btc_index",

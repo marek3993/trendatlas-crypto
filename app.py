@@ -133,7 +133,7 @@ TEXT = {
         "chart_performance_axis": "Indexovaný rast",
         "chart_state_axis": "Držaný stav",
         "chart_state_cash": "CASH",
-        "chart_state_base": "BASE",
+        "chart_state_base": "CASH",
         "chart_state_btc": "BTC",
         "chart_state_alt": "ALT",
         "chart_state_period": "Držané",
@@ -342,7 +342,7 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "chart_performance_axis": "Indexed growth",
         "chart_state_axis": "Held state",
         "chart_state_cash": "CASH",
-        "chart_state_base": "BASE",
+        "chart_state_base": "CASH",
         "chart_state_btc": "BTC",
         "chart_state_alt": "ALT",
         "chart_state_period": "Held",
@@ -2798,7 +2798,7 @@ def resolve_dashboard_public_status_state(
             "label_sk": str(public_labels_sk.get("real_account") or "Reálny účet").strip(),
         },
         "model_signal_state": {
-            "preferred_asset": str(model_signal.get("preferred_asset") or "").strip().upper(),
+            "preferred_asset": normalize_public_asset_code(model_signal.get("preferred_asset")),
             "exposure_x": model_exposure_value,
             "exposure_text": model_exposure_text,
             "label_sk": str(model_signal.get("label_sk") or public_labels_sk.get("model_signal") or "Modelový signál").strip(),
@@ -4036,7 +4036,21 @@ def prettify_asset_public(value: Any, lang: str) -> str:
     raw = str(value).strip().upper()
     if raw in {"", "NONE"}:
         return t(lang, "na")
-    if raw in {"CASH", "0", "0.0", "0.00", "ZERO", "ZERO EXPOSURE", "ZERO_EXPOSURE"}:
+    if raw in {
+        "CASH",
+        "0",
+        "0.0",
+        "0.00",
+        "ZERO",
+        "ZERO EXPOSURE",
+        "ZERO_EXPOSURE",
+        "BASE",
+        "BASELINE",
+        "CORE",
+        "BASELINE_RISK",
+        "EARLY_RISK",
+        "FULL_RISK",
+    }:
         return t(lang, "cash")
     return raw
 
@@ -4049,7 +4063,21 @@ def resolve_homepage_held_state(live_public_state: dict[str, Any], lang: str) ->
     tradable_governed_asset = str(live_public_state.get("tradable_governed_asset") or "").strip().upper()
     cash_day = as_bool(live_public_state.get("cash_day"))
 
-    cash_like_tokens = {"", "0", "0.0", "0.00", "CASH", "BASELINE_RISK", "EARLY_RISK", "FULL_RISK", "NONE", "NULL"}
+    cash_like_tokens = {
+        "",
+        "0",
+        "0.0",
+        "0.00",
+        "CASH",
+        "BASE",
+        "BASELINE",
+        "CORE",
+        "BASELINE_RISK",
+        "EARLY_RISK",
+        "FULL_RISK",
+        "NONE",
+        "NULL",
+    }
 
     for candidate in [held_asset_public, execution_state, portfolio_held_asset, tradable_governed_asset, baseline_held_asset]:
         if candidate is None:
@@ -5165,29 +5193,46 @@ def build_production_trend_history(timeseries_df: pd.DataFrame) -> pd.DataFrame:
     return history
 
 
-def product_asset_label(asset_code: Any, lang: str) -> str:
+PUBLIC_INTERNAL_CASH_ASSET_LABELS = {
+    "BASE",
+    "BASELINE",
+    "CORE",
+    "BASELINE_RISK",
+    "EARLY_RISK",
+    "FULL_RISK",
+    "ZAKLADNA ZLOZKA",
+    "ZAKLADNA_ZLOZKA",
+    "ZAKLADNA-ZLOZKA",
+    "ZÁKLADNÁ ZLOŽKA",
+}
+
+
+def normalize_public_asset_code(asset_code: Any) -> str:
     asset = str(asset_code or "").strip().upper()
+    if asset in PUBLIC_INTERNAL_CASH_ASSET_LABELS:
+        return "CASH"
+    return asset
+
+
+def product_asset_label(asset_code: Any, lang: str) -> str:
+    asset = normalize_public_asset_code(asset_code)
     if asset in {"", "NONE"}:
         return t(lang, "na")
     if asset == "OUT_OF_MARKET":
         return "mimo trhu" if lang == "sk" else "out of market"
     if asset == "CASH":
         return "hotovosti" if lang == "sk" else "cash"
-    if asset == "BASE":
-        return "zakladnej zlozke" if lang == "sk" else "base sleeve"
     if asset == "BTC":
         return "BTC"
     return asset
 
 
 def product_asset_label_nominative(asset_code: Any, lang: str) -> str:
-    asset = str(asset_code or "").strip().upper()
+    asset = normalize_public_asset_code(asset_code)
     if asset == "OUT_OF_MARKET":
         return "Mimo trhu" if lang == "sk" else "Out of market"
     if asset == "CASH":
-        return "Hotovost" if lang == "sk" else "Cash"
-    if asset == "BASE":
-        return "Zakladna zlozka" if lang == "sk" else "Base sleeve"
+        return "Hotovosť" if lang == "sk" else "Cash"
     if asset == "BTC":
         return "BTC"
     return asset or t(lang, "na")
@@ -5816,8 +5861,8 @@ def homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
             bucket = "CASH"
             label = t(lang, "chart_state_cash")
         elif asset_token in {"BASE", "BASELINE", "BASELINE_RISK", "EARLY_RISK", "FULL_RISK"}:
-            bucket = "BASE"
-            label = t(lang, "chart_state_base")
+            bucket = "CASH"
+            label = t(lang, "chart_state_cash")
         elif asset_token == "BTC":
             bucket = "BTC"
             label = t(lang, "chart_state_btc")
@@ -5896,7 +5941,22 @@ def homepage_chart_truthful_strip_source_column(df: pd.DataFrame) -> str | None:
 
 
 def homepage_chart_is_cash_token(token: str) -> bool:
-    return token in {"", "CASH", "USD", "USDT", "NONE", "NULL", "ZERO", "ZERO_EXPOSURE"}
+    return token in {
+        "",
+        "CASH",
+        "USD",
+        "USDT",
+        "NONE",
+        "NULL",
+        "ZERO",
+        "ZERO_EXPOSURE",
+        "BASE",
+        "BASELINE",
+        "CORE",
+        "BASELINE_RISK",
+        "EARLY_RISK",
+        "FULL_RISK",
+    }
 
 
 def build_truthful_homepage_chart_state_details(df: pd.DataFrame, lang: str) -> pd.DataFrame:
@@ -7131,20 +7191,6 @@ with tabs[0]:
     st.caption(t(lang, "production_chart_baseline_note"))
     st.caption(t(lang, "production_chart_flat_note"))
     st.caption(t(lang, "production_chart_participation_note"))
-    with st.expander(real_account_card_label, expanded=False):
-        st.plotly_chart(
-            make_production_equity_chart(
-                timeseries_df=dashboard_public_chart_timeseries_df,
-                year=selected_year_home,
-                lang=lang,
-                main_label=real_account_card_label,
-                title=real_account_card_label,
-                real_account_exposure_state=real_account_exposure_state,
-                model_signal_state=runtime_model_signal_state,
-                chart_view="real_account",
-            ),
-            width="stretch",
-        )
     st.markdown(f"### {t(lang, 'performance_title')}")
     st.caption(t(lang, "performance_fee_note"))
     public_window_label_key = str(public_performance_context.get("public_window_label_key") or "since2023")

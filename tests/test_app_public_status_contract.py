@@ -28,6 +28,7 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
     wanted_assignments = {
         "ETF_FLOW_PUBLIC_STRATEGY_VERSION",
         "ETF_FLOW_PUBLIC_EVIDENCE_START_DATE",
+        "PUBLIC_INTERNAL_CASH_ASSET_LABELS",
     }
     for node in module.body:
         if isinstance(node, ast.Assign):
@@ -141,6 +142,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "production_chart_btc_index_series",
             "production_chart_btc_return_series",
             "production_chart_source_alignment_issues",
+            "normalize_public_asset_code",
+            "product_asset_label",
             "product_asset_label_nominative",
             "production_market_state_label_from_values",
             "make_production_equity_chart",
@@ -641,6 +644,28 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(performance_state["account_vs_btc_24h_pct"], 0.5)
         self.assertEqual(performance_state["btc_24h_pct_source_label"], "closed_day_snapshot")
 
+    def test_internal_public_asset_labels_are_normalized_to_cash(self):
+        label = self.__class__.ns["product_asset_label_nominative"]
+        normalize = self.__class__.ns["normalize_public_asset_code"]
+
+        forbidden_inputs = [
+            "BASE",
+            "BASELINE",
+            "CORE",
+            "BASELINE_RISK",
+            "EARLY_RISK",
+            "FULL_RISK",
+            "Zakladna zlozka",
+            "Základná zložka",
+        ]
+        for raw_value in forbidden_inputs:
+            with self.subTest(raw_value=raw_value):
+                self.assertEqual(normalize(raw_value), "CASH")
+                self.assertEqual(label(raw_value, "sk"), "Hotovosť")
+                self.assertEqual(label(raw_value, "en"), "Cash")
+        self.assertEqual(normalize("BTC"), "BTC")
+        self.assertEqual(label("SOL", "en"), "SOL")
+
     def test_dashboard_public_chart_keeps_cash_account_flat_without_real_history(self):
         contract = build_dashboard_public_status_contract(
             account_summary={
@@ -765,7 +790,7 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertNotIn('production_snapshot.get("effective_market_exposure")', block)
         self.assertNotIn('production_signal_context", "model_candidate_exposure"', block)
 
-    def test_homepage_default_chart_reads_model_timeseries_and_keeps_account_view_secondary(self):
+    def test_homepage_default_chart_reads_model_timeseries_without_extra_account_graph(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")
         start_marker = 'dashboard_public_chart_timeseries_df = load_dashboard_public_chart_timeseries_frame('
         end_marker = 'st.markdown(f"### {t(lang, \'performance_title\')}")'
@@ -780,14 +805,11 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertIn("main_label=t(lang, \"production_chart_legend\")", block)
         self.assertIn('chart_view="model"', block)
         self.assertIn("build_production_chart_current_state_note", block)
-        self.assertIn("with st.expander(real_account_card_label", block)
-        self.assertIn("main_label=real_account_card_label", block)
-        self.assertIn('chart_view="real_account"', block)
-        default_block = block[: block.index("with st.expander(real_account_card_label")]
-        self.assertIn('chart_view="model"', default_block)
-        self.assertNotIn('chart_view="live_strategy"', default_block)
-        self.assertNotIn('chart_view="real_account"', default_block)
-        self.assertNotIn("main_label=real_account_card_label", default_block)
+        self.assertEqual(block.count("st.plotly_chart("), 1)
+        self.assertNotIn("with st.expander(real_account_card_label", block)
+        self.assertNotIn("main_label=real_account_card_label", block)
+        self.assertNotIn('chart_view="real_account"', block)
+        self.assertNotIn('chart_view="live_strategy"', block)
         performance_block = source[
             source.index("public_average_annual_growth_pct = first_present_value(", end) :
             source.index("with tabs[1]:", end)

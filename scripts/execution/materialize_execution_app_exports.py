@@ -2260,6 +2260,27 @@ def normalize_runtime_asset(value: Any) -> str:
     return str(value or "").strip().upper()
 
 
+PUBLIC_INTERNAL_CASH_ASSET_LABELS = {
+    "BASE",
+    "BASELINE",
+    "CORE",
+    "BASELINE_RISK",
+    "EARLY_RISK",
+    "FULL_RISK",
+    "ZAKLADNA ZLOZKA",
+    "ZAKLADNA_ZLOZKA",
+    "ZAKLADNA-ZLOZKA",
+    "ZÁKLADNÁ ZLOŽKA",
+}
+
+
+def normalize_public_model_asset(value: Any) -> str:
+    asset = normalize_runtime_asset(value)
+    if asset in PUBLIC_INTERNAL_CASH_ASSET_LABELS:
+        return "CASH"
+    return asset
+
+
 def is_runtime_cash_asset(value: Any) -> bool:
     return normalize_runtime_asset(value) in {"", "CASH", "USD", "USDC", "USDT", "NONE", "NULL"}
 
@@ -2458,19 +2479,38 @@ def dashboard_model_index_from_source_row(source_row: dict[str, Any]) -> float |
         first_present_runtime_value(
             source_row.get("authorized_equity"),
             source_row.get("equity"),
-            source_row.get("model_candidate_equity"),
         )
     )
 
 
 def dashboard_model_exposure_from_source_row(source_row: dict[str, Any]) -> float | None:
-    return parse_float_maybe(
+    exposure = parse_float_maybe(
         first_present_runtime_value(
             source_row.get("effective_market_exposure"),
             source_row.get("current_exposure"),
             source_row.get("exposure"),
+            source_row.get("execution_target_exposure"),
         )
     )
+    trend_permission_active = runtime_bool(source_row.get("trend_permission_active"))
+    authorized_asset_raw = first_present_runtime_value(
+        source_row.get("authorized_tradable_asset"),
+        source_row.get("actual_held_asset"),
+        source_row.get("current_asset"),
+        source_row.get("held_asset"),
+        source_row.get("execution_target_asset"),
+    )
+    authorized_asset = normalize_public_model_asset(authorized_asset_raw)
+    execution_target_asset = normalize_public_model_asset(source_row.get("execution_target_asset"))
+    if trend_permission_active is False:
+        return 0.0
+    if authorized_asset and is_runtime_cash_asset(authorized_asset):
+        return 0.0
+    if execution_target_asset and is_runtime_cash_asset(execution_target_asset):
+        return 0.0
+    if exposure is None:
+        return None
+    return max(float(exposure), 0.0)
 
 
 def dashboard_model_return_net_from_source_row(source_row: dict[str, Any]) -> float | None:
@@ -2535,6 +2575,7 @@ def build_dashboard_public_chart_timeseries_contract(
                 break
 
     rows: list[dict[str, Any]] = []
+    previous_model_index: float | None = None
     previous_real_index: float | None = None
     previous_live_strategy_index: float | None = None
     for source_row in production_timeseries_rows:
@@ -2556,6 +2597,10 @@ def build_dashboard_public_chart_timeseries_contract(
         model_authorized_return_net = dashboard_model_return_net_from_source_row(source_row)
         model_authorized_return_gross = dashboard_model_return_gross_from_source_row(source_row)
         btc_return = parse_float_maybe(source_row.get("btc_return")) or 0.0
+        if model_index is None:
+            base_model_index = 1.0 if previous_model_index is None else previous_model_index
+            model_index = base_model_index * (1.0 + float(model_authorized_return_net or 0.0))
+        previous_model_index = float(model_index or 1.0)
 
         transition_cost_components = [
             parse_float_maybe(source_row.get("fees_daily")),
@@ -2754,33 +2799,22 @@ def build_dashboard_public_status_quality(
     if len(chart_rows) != len(production_timeseries_rows):
         model_exposure_aligned_to_model_equity = False
     else:
+        previous_expected_model_index: float | None = None
         for chart_row, source_row in zip(chart_rows, production_timeseries_rows):
-            expected_model_index = parse_float_maybe(
-                first_present_runtime_value(
-                    source_row.get("authorized_equity"),
-                    source_row.get("equity"),
-                    source_row.get("model_candidate_equity"),
+            expected_model_index = dashboard_model_index_from_source_row(source_row)
+            expected_model_exposure = dashboard_model_exposure_from_source_row(source_row)
+            expected_model_return_net = dashboard_model_return_net_from_source_row(source_row)
+            expected_model_return_gross = dashboard_model_return_gross_from_source_row(source_row)
+            if expected_model_index is None:
+                base_expected_model_index = (
+                    1.0
+                    if previous_expected_model_index is None
+                    else previous_expected_model_index
                 )
-            )
-            expected_model_exposure = parse_float_maybe(
-                first_present_runtime_value(
-                    source_row.get("effective_market_exposure"),
-                    source_row.get("current_exposure"),
-                    source_row.get("exposure"),
+                expected_model_index = base_expected_model_index * (
+                    1.0 + float(expected_model_return_net or 0.0)
                 )
-            )
-            expected_model_return_net = parse_float_maybe(
-                first_present_runtime_value(
-                    source_row.get("authorized_return_net"),
-                    source_row.get("return_net"),
-                )
-            )
-            expected_model_return_gross = parse_float_maybe(
-                first_present_runtime_value(
-                    source_row.get("authorized_return_gross"),
-                    source_row.get("return_gross"),
-                )
-            )
+            previous_expected_model_index = float(expected_model_index or 1.0)
             if not (
                 math.isclose(float(chart_row.get("model_index") or 0.0), round(float(expected_model_index or 1.0), 10), rel_tol=0.0, abs_tol=1e-10)
                 and math.isclose(float(chart_row.get("model_authorized_exposure_x") or 0.0), round(float(expected_model_exposure or 0.0), 6), rel_tol=0.0, abs_tol=1e-6)
@@ -3169,7 +3203,7 @@ def build_dashboard_public_status_contract(
         )
         position_label_sk = "V trhu" if in_market else "Mimo trhu"
 
-    preferred_asset = normalize_runtime_asset(
+    preferred_asset = normalize_public_model_asset(
         first_present_runtime_value(
             production_snapshot_payload.get("candidate_asset"),
             production_snapshot_payload.get("selected_asset"),
@@ -3356,7 +3390,7 @@ def build_runtime_public_status_views_from_dashboard_public_status(
             "label_sk": str(public_labels_sk.get("real_account") or "Reálny účet").strip(),
         },
         "model_signal_state": {
-            "preferred_asset": normalize_runtime_asset(model_signal.get("preferred_asset")) or None,
+            "preferred_asset": normalize_public_model_asset(model_signal.get("preferred_asset")) or None,
             "exposure_x": round(float(parse_float_maybe(model_signal.get("exposure_x")) or 0.0), 6)
             if parse_float_maybe(model_signal.get("exposure_x")) is not None
             else None,

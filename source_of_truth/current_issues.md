@@ -30,7 +30,11 @@
   - `REAL_ACCOUNT=CASH / 0.00x`
   - `MODEL_SIGNAL=CASH / 0.0x`
 - Live order/leverage test is intentionally not done while the current strategy says `CASH`.
-- Current dashboard graph display is accepted; do not add graph legends or semantic rewrites unless explicitly requested later.
+- Current public homepage graph policy is locked: the main `Modelový vývoj vs BTC` graph is the only public graph section, no extra expandable `Reálny účet` graph is allowed, and graph legends must not be added unless explicitly requested.
+- Public main graph semantics are authorized-model only: the red model line uses the model strategy after trend permission, and the lower strip uses authorized model exposure after trend permission.
+- Candidate/preferred asset is model preference only. It is not authorized exposure and not real wallet exposure.
+- If the model prefers a crypto candidate but trend permission does not authorize entry, the public model line must stay flat for that blocked-entry period and the lower strip must show `0x`.
+- Public UI must not leak internal labels such as `Základná zložka`, `Zakladna zlozka`, `BASE`, `BASELINE`, `CORE`, `BASELINE_RISK`, `EARLY_RISK`, `FULL_RISK`, or internal strategy/profile names.
 
 ## Production Core semantic guardrails
 - `candidate_asset` is a model candidate only.

@@ -161,6 +161,104 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
         self.assertEqual(status["live_market_state"]["account_24h_pct"], 0.0)
         self.assertEqual(status["live_market_state"]["account_vs_btc_24h_pct"], -1.9)
 
+    def test_model_signal_preserves_desired_exposure_but_normalizes_internal_asset_label(self):
+        status = materializer.build_dashboard_public_status_contract(
+            account_summary={"current_position": "CASH", "positions_count": 0, "open_position": None},
+            intent_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            dry_run_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            gate_payload={"target_asset": "CASH", "status": "blocked", "would_place_real_order": False},
+            production_snapshot_payload={
+                "closed_day": "2026-05-10",
+                "candidate_asset": "BASE",
+                "selected_asset": "BASE",
+                "model_candidate_exposure": 1.0,
+                "effective_market_exposure": 0.0,
+                "actual_held_asset": "CASH",
+                "current_asset": "CASH",
+                "trend_permission_active": False,
+            },
+            production_timeseries_last_row={"date": "2026-05-10", "btc_return": 0.02},
+            generated_at_utc="2026-05-11T08:15:00Z",
+        )
+
+        self.assertEqual(status["model_signal"]["preferred_asset"], "CASH")
+        self.assertEqual(status["model_signal"]["exposure_x"], 1.0)
+        self.assertTrue(status["model_signal"]["not_real_wallet_exposure"])
+
+    def test_public_model_chart_stays_flat_when_candidate_crypto_is_not_authorized(self):
+        status = materializer.build_dashboard_public_status_contract(
+            account_summary={"current_position": "CASH", "positions_count": 0, "open_position": None},
+            intent_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            dry_run_payload={"target_asset": "BTC", "target_size_pct": 1.0},
+            gate_payload={"target_asset": "CASH", "status": "blocked", "would_place_real_order": False},
+            production_snapshot_payload={
+                "closed_day": "2026-05-10",
+                "candidate_asset": "BTC",
+                "selected_asset": "BTC",
+                "model_candidate_exposure": 1.0,
+                "effective_market_exposure": 0.0,
+                "actual_held_asset": "CASH",
+                "current_asset": "CASH",
+                "trend_permission_active": False,
+            },
+            production_timeseries_last_row={"date": "2026-05-10", "btc_return": 0.05},
+            generated_at_utc="2026-05-11T08:15:00Z",
+        )
+        rows = [
+            {
+                "date": "2026-05-09",
+                "candidate_asset": "BTC",
+                "selected_asset": "BTC",
+                "model_candidate_exposure": "1.0",
+                "model_candidate_equity": "1.0",
+                "model_candidate_return_net": "0.0",
+                "btc_baseline_equity": "1.0",
+                "btc_return": "0.0",
+                "authorized_return_net": "0.0",
+                "authorized_return_gross": "0.0",
+                "effective_market_exposure": "0.0",
+                "actual_held_asset": "CASH",
+                "current_asset": "CASH",
+                "execution_target_asset": "CASH",
+                "execution_target_exposure": "0.0",
+                "trend_permission_active": False,
+                "asset_transition_day": False,
+            },
+            {
+                "date": "2026-05-10",
+                "candidate_asset": "BTC",
+                "selected_asset": "BTC",
+                "model_candidate_exposure": "1.0",
+                "model_candidate_equity": "1.25",
+                "model_candidate_return_net": "0.25",
+                "btc_baseline_equity": "1.05",
+                "btc_return": "0.05",
+                "authorized_return_net": "0.0",
+                "authorized_return_gross": "0.0",
+                "effective_market_exposure": "0.0",
+                "actual_held_asset": "CASH",
+                "current_asset": "CASH",
+                "execution_target_asset": "CASH",
+                "execution_target_exposure": "0.0",
+                "trend_permission_active": False,
+                "asset_transition_day": False,
+            },
+        ]
+
+        chart_contract = materializer.build_dashboard_public_chart_timeseries_contract(
+            production_timeseries_rows=rows,
+            dashboard_public_status=status,
+            live_strategy_start_date="2026-05-08",
+        )
+
+        self.assertEqual([row["model_index"] for row in chart_contract["rows"]], [1.0, 1.0])
+        self.assertEqual([row["model_authorized_exposure_x"] for row in chart_contract["rows"]], [0.0, 0.0])
+        self.assertEqual([row["model_authorized_return_net"] for row in chart_contract["rows"]], [0.0, 0.0])
+        self.assertEqual([row["live_strategy_index"] for row in chart_contract["rows"]], [1.0, 1.0])
+        self.assertEqual([row["live_strategy_exposure_x"] for row in chart_contract["rows"]], [0.0, 0.0])
+        self.assertEqual(status["model_signal"]["preferred_asset"], "BTC")
+        self.assertEqual(status["model_signal"]["exposure_x"], 1.0)
+
     def test_materializer_helper_writes_status_chart_quality_and_manifest(self):
         status = self.build_cash_blocked_status()
         runtime_snapshot = {
