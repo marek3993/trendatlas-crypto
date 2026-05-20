@@ -79,6 +79,7 @@ REQUIRED_ARTIFACT_KEYS = [
     "phase66g_trend_barometer_history",
     "app_freshness_report",
 ]
+PRODUCTION_CORE_DEPENDENCY_ARTIFACT_KEYS = tuple(REQUIRED_ARTIFACT_KEYS)
 
 REQUIRED_APP_LIVE_MODE_FIELDS = [
     "live_truth_mode",
@@ -4097,6 +4098,252 @@ def materialize_dashboard_public_contract_artifacts(
     )
 
 
+def freshness_report_closed_day(path: Path) -> str:
+    payload = read_json(path)
+    return parse_iso_date_required(
+        payload.get("latest_closed_utc_date"),
+        f"{path} latest_closed_utc_date",
+    )
+
+
+def dependency_source_is_newer(
+    artifact_key: str,
+    source_path: Path,
+    canonical_path: Path,
+) -> bool:
+    if not canonical_path.exists() or not canonical_path.is_file():
+        return True
+    if artifact_key == "app_freshness_report":
+        return freshness_report_closed_day(source_path) > freshness_report_closed_day(
+            canonical_path
+        )
+    if artifact_key in {
+        "phase67j_winner_paper",
+        "phase66g_core_paper",
+        "phase66g_trend_barometer_history",
+    }:
+        return read_last_csv_date(source_path) > read_last_csv_date(canonical_path)
+    return source_path.stat().st_mtime > canonical_path.stat().st_mtime
+
+
+def materialize_production_core_dependency_artifacts() -> dict[str, Any]:
+    registry = read_json(PATHS_REGISTRY_PATH)
+    artifacts = registry.get("artifacts")
+    if not isinstance(artifacts, dict):
+        fail("paths_registry.json missing top-level 'artifacts' object")
+
+    app_live_mode_contract = load_app_live_mode_contract()
+    report_rows: list[dict[str, Any]] = []
+    missing_registry_keys: list[str] = []
+    missing_legacy_sources: list[str] = []
+    copied_count = 0
+    transformed_count = 0
+    already_present_count = 0
+
+    for artifact_key in PRODUCTION_CORE_DEPENDENCY_ARTIFACT_KEYS:
+        entry = artifacts.get(artifact_key)
+        if not isinstance(entry, dict):
+            missing_registry_keys.append(artifact_key)
+            continue
+
+        canonical_raw = entry.get("canonical")
+        if not isinstance(canonical_raw, str) or not canonical_raw.strip():
+            missing_registry_keys.append(artifact_key)
+            continue
+
+        canonical_path, canonical_diagnostic = resolve_runtime_path(
+            canonical_raw,
+            root=ROOT,
+            context=f"dependency_materialize:{artifact_key}:canonical",
+        )
+        canonical_path.parent.mkdir(parents=True, exist_ok=True)
+        log(format_path_resolution_message(canonical_diagnostic))
+
+        row: dict[str, Any] = {
+            "artifact_key": artifact_key,
+            "canonical_path": str(canonical_path),
+            "artifact_type": entry.get("artifact_type"),
+            "owner": entry.get("owner"),
+            "truth_domain": entry.get("truth_domain"),
+            "path_resolution": canonical_diagnostic,
+        }
+
+        source_path, source_diagnostic = find_existing_source(artifact_key, entry)
+        if source_diagnostic is not None:
+            row["legacy_source_path_resolution"] = source_diagnostic
+            log(format_path_resolution_message(source_diagnostic))
+        if source_path is None and not canonical_path.exists():
+            missing_legacy_sources.append(artifact_key)
+            row["status"] = "missing_legacy_source"
+            row["legacy_aliases"] = entry.get("legacy_aliases", [])
+            report_rows.append(row)
+            log(f"[MISS] no existing dependency source for: {artifact_key}")
+            continue
+
+        if artifact_key == "phase67j_live_status":
+            if source_path is None:
+                fail("phase67j_live_status requires legacy source for dependency materialization")
+            if should_refresh_phase67j_live_status(source_path, canonical_path):
+                transform_result = materialize_phase67j_live_status_with_contract(
+                    source_path=source_path,
+                    canonical_path=canonical_path,
+                    app_live_mode_contract=app_live_mode_contract,
+                )
+                transformed_count += 1
+                row.update(transform_result)
+            else:
+                already_present_count += 1
+                row["status"] = "canonical_phase67j_live_status_is_not_older_than_upstream"
+                row["canonical_info"] = safe_stat(canonical_path)
+                row["source_path"] = str(source_path)
+                row["source_info"] = safe_stat(source_path)
+            report_rows.append(row)
+            log(f"[DEPENDENCY] {artifact_key}")
+            continue
+
+        if artifact_key == "phase66g_live_status":
+            if source_path is None:
+                fail("phase66g_live_status requires legacy source for dependency materialization")
+            if should_refresh_phase66g_live_status(source_path, canonical_path):
+                copy_result = copy_plain_artifact(source_path, canonical_path)
+                copied_count += 1
+                row.update(copy_result)
+                row["status"] = "refreshed_from_newer_upstream"
+                row["refresh_reason"] = "upstream_phase66g_live_status_is_newer_than_canonical"
+            else:
+                already_present_count += 1
+                row["status"] = "canonical_phase66g_live_status_is_not_older_than_upstream"
+                row["canonical_info"] = safe_stat(canonical_path)
+                row["source_path"] = str(source_path)
+                row["source_info"] = safe_stat(source_path)
+            report_rows.append(row)
+            log(f"[DEPENDENCY] {artifact_key}")
+            continue
+
+        if source_path is not None and dependency_source_is_newer(
+            artifact_key,
+            source_path,
+            canonical_path,
+        ):
+            copy_result = copy_plain_artifact(source_path, canonical_path)
+            copied_count += 1
+            row.update(copy_result)
+            row["status"] = "refreshed_dependency_from_legacy_alias"
+            report_rows.append(row)
+            log(f"[DEPENDENCY-REFRESHED] {artifact_key}")
+            continue
+
+        if canonical_path.exists() and canonical_path.is_file():
+            already_present_count += 1
+            row["status"] = "dependency_already_present"
+            row["canonical_info"] = safe_stat(canonical_path)
+            if source_path is not None:
+                row["source_path"] = str(source_path)
+                row["source_info"] = safe_stat(source_path)
+            report_rows.append(row)
+            log(f"[DEPENDENCY-OK] {artifact_key}")
+            continue
+
+        if source_path is None:
+            fail(f"Missing source path for required dependency artifact: {artifact_key}")
+
+        copy_result = copy_plain_artifact(source_path, canonical_path)
+        copied_count += 1
+        row.update(copy_result)
+        report_rows.append(row)
+        log(f"[DEPENDENCY-COPIED] {artifact_key}")
+
+    hard_required_missing = sorted(set(missing_registry_keys + missing_legacy_sources))
+    if hard_required_missing:
+        fail(
+            "Production Core dependency materialization is missing required sources "
+            f"(missing={hard_required_missing})"
+        )
+
+    phase68g_refresh_info = refresh_phase68g_native_outputs_if_needed()
+    phase68g_source_export_row = read_single_csv_row(PHASE68G_SOURCE_AUTHORITATIVE_EXPORT_PATH)
+    phase68g_canonical_metrics_row = build_full_canonical_main_strategy_metrics_row(
+        phase68g_source_export_row,
+        main_strategy_model="phase68g_66g_1p25x_candidate",
+        main_paper_path=PHASE68G_SOURCE_PAPER_PATH,
+        metric_fields=HOMEPAGE_MAIN_STRATEGY_METRIC_FIELDS,
+    )
+    write_canonical_phase68g_paper_alias(PHASE68G_SOURCE_PAPER_PATH, PHASE68G_MAIN_PAPER_OUTPUT_PATH)
+    with PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=list(phase68g_canonical_metrics_row.keys()),
+        )
+        writer.writeheader()
+        writer.writerow(phase68g_canonical_metrics_row)
+    transformed_count += 2
+    report_rows.append(
+        {
+            "artifact_key": "phase68g_66g_1p25x_candidate_dependency_exports",
+            "status": "phase68g_dependency_aliases_materialized",
+            "phase68g_refresh_info": phase68g_refresh_info,
+            "paper_output_path": str(PHASE68G_MAIN_PAPER_OUTPUT_PATH),
+            "metrics_output_path": str(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH),
+            "phase68g_source_latest_available_date": phase68g_refresh_info[
+                "phase68g_last_date_after_refresh"
+            ],
+        }
+    )
+
+    report = {
+        "report_type": "materialize_production_core_dependency_artifacts",
+        "generated_at_utc": utc_now_iso(),
+        "paths_registry_path": str(PATHS_REGISTRY_PATH.resolve()),
+        "required_artifact_keys": list(PRODUCTION_CORE_DEPENDENCY_ARTIFACT_KEYS),
+        "missing_registry_keys": missing_registry_keys,
+        "missing_legacy_sources": missing_legacy_sources,
+        "copied_count": copied_count,
+        "transformed_count": transformed_count,
+        "already_present_count": already_present_count,
+        "rows": report_rows,
+        "status": "success",
+        "notes": [
+            "Dependency-only mode refreshes canonical app-export inputs needed by Production Core.",
+            "It does not write authority snapshots and does not invoke live-order paths.",
+            "It intentionally skips app snapshot rendering and current-main strategy rematerialization.",
+        ],
+    }
+    quality = {
+        "materializer_ok": True,
+        "dependency_only": True,
+        "missing_registry_key_count": len(missing_registry_keys),
+        "missing_legacy_source_count": len(missing_legacy_sources),
+        "copied_count": copied_count,
+        "transformed_count": transformed_count,
+        "already_present_count": already_present_count,
+        "phase68g_main_strategy_paper_alias_written": PHASE68G_MAIN_PAPER_OUTPUT_PATH.exists(),
+        "phase68g_main_strategy_authoritative_export_alias_written": PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.exists(),
+    }
+    manifest = {
+        "artifact_name": "materialize_production_core_dependency_artifacts",
+        "generated_at_utc": utc_now_iso(),
+        "script_path": str(Path(__file__).resolve()),
+        "input_paths": [
+            str(PATHS_REGISTRY_PATH.resolve()),
+            str(PROJECT_TRUTH_PATH.resolve()),
+        ],
+        "output_paths": [
+            str(REPORT_PATH.resolve()),
+            str(QUALITY_PATH.resolve()),
+            str(MANIFEST_PATH.resolve()),
+            str(PHASE68G_MAIN_PAPER_OUTPUT_PATH.resolve()),
+            str(PHASE68G_MAIN_AUTHORITATIVE_EXPORT_PATH.resolve()),
+        ],
+        "status": report["status"],
+        "dependency_only": True,
+    }
+
+    write_json(REPORT_PATH, report)
+    write_json(QUALITY_PATH, quality)
+    write_json(MANIFEST_PATH, manifest)
+    return report
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Materialize canonical execution app exports and non-authoritative app staging snapshots."
@@ -4106,14 +4353,33 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Only refresh the non-authoritative app snapshot staging outputs under outputs/execution/app_snapshot/.",
     )
+    parser.add_argument(
+        "--production-core-dependencies-only",
+        action="store_true",
+        help=(
+            "Refresh only canonical dependency inputs needed before a Production Core rebuild; "
+            "does not render app snapshots or authority artifacts."
+        ),
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    production_core_dependencies_only = bool(
+        getattr(args, "production_core_dependencies_only", False)
+    )
+    if args.runtime_snapshot_only and production_core_dependencies_only:
+        fail("--runtime-snapshot-only cannot be combined with --production-core-dependencies-only")
     ensure_dirs()
     started_at = utc_now_iso()
     log("[START] materialize_execution_app_exports")
+
+    if production_core_dependencies_only:
+        report = materialize_production_core_dependency_artifacts()
+        log("[END] materialize_execution_app_exports production_core_dependencies_only")
+        print(json.dumps(report, indent=2, ensure_ascii=False), flush=True)
+        return
 
     if args.runtime_snapshot_only:
         runtime_snapshot = build_runtime_snapshot()

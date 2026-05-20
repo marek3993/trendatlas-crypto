@@ -208,7 +208,7 @@
       "output_type": "execution_export_materialization",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Bridge only. No official truth writes. app_snapshot outputs remain non-authoritative internal staging after authority cutover."
+      "notes": "Bridge only. No official truth writes. app_snapshot outputs remain non-authoritative internal staging after authority cutover. --production-core-dependencies-only refreshes only canonical dependency inputs needed before a Production Core rebuild."
     },
     {
       "script_path": "scripts/execution/validate_execution_source_contract.py",
@@ -883,7 +883,7 @@
       "output_type": "runtime_control",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Safe nightly path only. Runs Phase60 with --dependency-only --model-key phase60_restore_trx_sol_base, Phase63 with --winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3, refreshes scripts/execution/hyperliquid_read_only_snapshot.py after verify_app_freshness, then publish-existing --dry-run before real publish. It must not invoke --mode full-refresh or live-order paths."
+      "notes": "Safe nightly path only. Runs Phase60 with --dependency-only --model-key phase60_restore_trx_sol_base, Phase63 with --winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3, refreshes scripts/execution/hyperliquid_read_only_snapshot.py after verify_app_freshness, conditionally runs dependency-only Production Core materialization plus current_strategy rebuild if a durable BTC-persistence carry-forward would cross next_rebalance_date, then publish-existing --dry-run before real publish. It must not invoke --mode full-refresh or live-order paths."
     },
     {
       "script_path": "scripts/execution/run_pi_authoritative_producer.py",

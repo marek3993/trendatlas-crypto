@@ -1,6 +1,8 @@
 import subprocess
+import shutil
 import sys
 import unittest
+import uuid
 from pathlib import Path
 from unittest import mock
 
@@ -16,6 +18,16 @@ from scripts.execution import mrv1_self_healing_watchdog as watchdog
 
 
 class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
+    def _no_boundary_check(self) -> fast_refresh.RebalanceBoundaryDependencyCheck:
+        return fast_refresh.RebalanceBoundaryDependencyCheck(
+            status="not_crossed",
+            needs_refresh=False,
+            source_day="2026-05-16",
+            target_day="2026-05-16",
+            next_rebalance_date="2026-05-17",
+            reason="unit_test_default_no_boundary",
+        )
+
     def _run_with_fake_subprocess(self, env: dict[str, str]) -> tuple[dict, list[list[str]]]:
         calls: list[list[str]] = []
 
@@ -23,10 +35,43 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
             calls.append(list(command))
             return subprocess.CompletedProcess(command, 0)
 
-        with mock.patch.object(fast_refresh.subprocess, "run", side_effect=fake_run):
+        with mock.patch.object(
+            fast_refresh,
+            "detect_rebalance_boundary_dependency_refresh",
+            return_value=self._no_boundary_check(),
+        ), mock.patch.object(fast_refresh.subprocess, "run", side_effect=fake_run):
             result = fast_refresh.run_fast_daily_authority_refresh(env=env, root=ROOT)
 
         return result, calls
+
+    def _make_temp_fast_root(
+        self,
+        *,
+        source_day: str,
+        target_day: str,
+        next_rebalance_date: str,
+    ) -> Path:
+        tmp_base = ROOT / "tmp_test_artifacts"
+        tmp_base.mkdir(parents=True, exist_ok=True)
+        root = tmp_base / f"fast_daily_{uuid.uuid4().hex}"
+        root.mkdir(parents=True, exist_ok=False)
+        self.addCleanup(shutil.rmtree, root, True)
+
+        live_status_path = root / "outputs" / "execution" / "app_exports" / "phase66g_live_status.csv"
+        live_status_path.parent.mkdir(parents=True, exist_ok=True)
+        live_status_path.write_text(
+            "latest_available_date,next_rebalance_date\n"
+            f"{source_day},{next_rebalance_date}\n",
+            encoding="utf-8",
+        )
+        btc_path = root / "data" / "ohlcv" / "BTCUSDT_1d.csv"
+        btc_path.parent.mkdir(parents=True, exist_ok=True)
+        btc_path.write_text(
+            "date,close\n"
+            f"{target_day},100000.0\n",
+            encoding="utf-8",
+        )
+        return root
 
     def test_fast_dependency_plan_matches_required_order_and_flags(self):
         steps = fast_refresh.build_fast_dependency_steps(ROOT)
@@ -66,6 +111,8 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
             " ".join(fast_refresh.build_command(step))
             for step in (
                 *steps,
+                fast_refresh.build_production_core_dependency_materialize_step(ROOT),
+                fast_refresh.build_current_strategy_snapshot_step(ROOT),
                 fast_refresh.build_publish_existing_dry_run_step(ROOT),
                 fast_refresh.build_publish_existing_real_step(ROOT),
             )
@@ -77,6 +124,122 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
         snapshot_step = next(step for step in steps if step.name == "hyperliquid_read_only_snapshot")
         self.assertEqual(Path(snapshot_step.script_path).name, "hyperliquid_read_only_snapshot.py")
         self.assertIn("scripts/execution/hyperliquid_read_only_snapshot.py", command_text.replace("\\", "/"))
+        dependency_step = fast_refresh.build_production_core_dependency_materialize_step(ROOT)
+        self.assertEqual(
+            dependency_step.args,
+            ("--production-core-dependencies-only",),
+        )
+
+    def test_rebalance_boundary_check_detects_crossed_boundary(self):
+        root = self._make_temp_fast_root(
+            source_day="2026-05-16",
+            target_day="2026-05-18",
+            next_rebalance_date="2026-05-17",
+        )
+
+        check = fast_refresh.detect_rebalance_boundary_dependency_refresh(root=root)
+
+        self.assertTrue(check.needs_refresh)
+        self.assertEqual(check.status, "rebalance_boundary_crossed")
+        self.assertEqual(check.source_day, "2026-05-16")
+        self.assertEqual(check.target_day, "2026-05-18")
+        self.assertEqual(check.next_rebalance_date, "2026-05-17")
+
+    def test_boundary_day_inserts_dependency_refresh_before_publish_existing(self):
+        root = self._make_temp_fast_root(
+            source_day="2026-05-16",
+            target_day="2026-05-18",
+            next_rebalance_date="2026-05-17",
+        )
+        calls: list[list[str]] = []
+
+        def fake_step(step, *, env, root):
+            command = fast_refresh.build_command(step)
+            calls.append(command)
+            return {
+                "step_name": step.name,
+                "script_path": fast_refresh.relative_display_path(step.script_path, root=root),
+                "args": list(step.args),
+                "returncode": 0,
+            }
+
+        with mock.patch.object(fast_refresh, "run_python_step", side_effect=fake_step):
+            result = fast_refresh.run_fast_daily_authority_refresh(env={}, root=root)
+
+        command_names = [Path(command[1]).name for command in calls]
+        materialize_index = command_names.index("materialize_execution_app_exports.py")
+        build_index = command_names.index("build_current_strategy_snapshot.py")
+        producer_index = command_names.index("run_pi_authoritative_producer.py")
+
+        self.assertLess(materialize_index, build_index)
+        self.assertLess(build_index, producer_index)
+        self.assertIn("--production-core-dependencies-only", calls[materialize_index])
+        self.assertIn("--dry-run", calls[producer_index])
+        self.assertEqual(result["rebalance_boundary_dependency_refresh"], "completed")
+        self.assertEqual(
+            result["rebalance_boundary_check"]["status"],
+            "rebalance_boundary_crossed",
+        )
+
+    def test_non_boundary_day_keeps_existing_fast_path_before_publish(self):
+        root = self._make_temp_fast_root(
+            source_day="2026-05-16",
+            target_day="2026-05-18",
+            next_rebalance_date="2026-05-19",
+        )
+        calls: list[list[str]] = []
+
+        def fake_step(step, *, env, root):
+            command = fast_refresh.build_command(step)
+            calls.append(command)
+            return {
+                "step_name": step.name,
+                "script_path": fast_refresh.relative_display_path(step.script_path, root=root),
+                "args": list(step.args),
+                "returncode": 0,
+            }
+
+        with mock.patch.object(fast_refresh, "run_python_step", side_effect=fake_step):
+            result = fast_refresh.run_fast_daily_authority_refresh(env={}, root=root)
+
+        command_names = [Path(command[1]).name for command in calls]
+        self.assertNotIn("materialize_execution_app_exports.py", command_names)
+        self.assertNotIn("build_current_strategy_snapshot.py", command_names)
+        self.assertEqual(command_names[-1], "run_pi_authoritative_producer.py")
+        self.assertEqual(result["rebalance_boundary_dependency_refresh"], "skipped_no_boundary")
+
+    def test_missing_safe_dependency_refresh_blocks_before_publish_existing(self):
+        check = fast_refresh.RebalanceBoundaryDependencyCheck(
+            status="not_evaluated",
+            needs_refresh=True,
+            reason="missing canonical dependency state",
+        )
+        calls: list[str] = []
+
+        def fake_step(step, *, env, root):
+            calls.append(step.name)
+            if step.name == "materialize_production_core_dependencies":
+                raise RuntimeError("dependency materialization unavailable")
+            return {
+                "step_name": step.name,
+                "script_path": fast_refresh.relative_display_path(step.script_path, root=root),
+                "args": list(step.args),
+                "returncode": 0,
+            }
+
+        with mock.patch.object(
+            fast_refresh,
+            "detect_rebalance_boundary_dependency_refresh",
+            return_value=check,
+        ), mock.patch.object(fast_refresh, "run_python_step", side_effect=fake_step):
+            with self.assertRaisesRegex(
+                RuntimeError,
+                fast_refresh.REBALANCE_BOUNDARY_BLOCKED_CODE,
+            ):
+                fast_refresh.run_fast_daily_authority_refresh(env={}, root=ROOT)
+
+        self.assertIn("materialize_production_core_dependencies", calls)
+        self.assertNotIn("publish_existing_dry_run", calls)
 
     def test_read_only_wallet_snapshot_precedes_publish_existing_dry_run(self):
         result, calls = self._run_with_fake_subprocess(
@@ -142,7 +305,11 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
             returncode = 1 if "--dry-run" in command else 0
             return subprocess.CompletedProcess(command, returncode)
 
-        with mock.patch.object(fast_refresh.subprocess, "run", side_effect=fake_run):
+        with mock.patch.object(
+            fast_refresh,
+            "detect_rebalance_boundary_dependency_refresh",
+            return_value=self._no_boundary_check(),
+        ), mock.patch.object(fast_refresh.subprocess, "run", side_effect=fake_run):
             with self.assertRaisesRegex(RuntimeError, "publish_existing_dry_run failed"):
                 fast_refresh.run_fast_daily_authority_refresh(
                     env={
@@ -194,9 +361,12 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
             "phase60_selective_restore_robustness.py --dependency-only --model-key phase60_restore_trx_sol_base",
             "scripts/phase63_btc_participation_overlay.py --winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
             "scripts/execution/hyperliquid_read_only_snapshot.py",
+            "scripts/execution/materialize_execution_app_exports.py --production-core-dependencies-only",
+            "scripts/production/build_current_strategy_snapshot.py",
             "scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run",
             "MRV1_ENABLE_AUTHORITY_PUBLISH=1",
             "MRV1_AUTHORITY_MODE=authoritative",
+            "BLOCKED_REBALANCE_BOUNDARY_NEEDS_BASELINE_REFRESH",
             "must not invoke `--mode full-refresh`",
         ]
         missing = [snippet for snippet in required_snippets if snippet not in text]

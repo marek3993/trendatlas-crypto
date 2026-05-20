@@ -37,6 +37,7 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 - allowed fast nightly authority path:
   - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py`
 - the fast nightly authority wrapper must refresh the read-only Hyperliquid wallet snapshot before publish-existing dry-run
+- if the fast nightly wrapper detects that the canonical durable BTC-persistence dependency source day is behind the refreshed BTC closed day and the gap reaches or crosses `next_rebalance_date`, it must first refresh only the minimal Production Core dependency inputs and rebuild `current_strategy` before `publish-existing --dry-run`
 - allowed publish-existing primitive:
   - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --mode publish-existing`
 - always dry-run before real publish
@@ -64,10 +65,15 @@ That wrapper must run exactly the fast dependency chain before publish-existing:
 7. `scripts/dev_only_build_btc_etf_flow_daily_panel.py`
 8. `scripts/verify_app_freshness.py`
 9. `scripts/execution/hyperliquid_read_only_snapshot.py`
-10. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
-11. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
+10. conditional rebalance-boundary dependency refresh only when the canonical durable BTC-persistence dependency source day would otherwise carry forward across `next_rebalance_date`:
+    - `scripts/execution/materialize_execution_app_exports.py --production-core-dependencies-only`
+    - `scripts/production/build_current_strategy_snapshot.py`
+11. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
+12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
 
 The nightly wrapper must not invoke `--mode full-refresh`, the old full Phase63 grid, a live-order submitter, or any manual authority snapshot edit.
+
+If the conditional refresh is required but the dependency-only materialization or Production Core rebuild cannot complete safely, the wrapper must fail before publish with `BLOCKED_REBALANCE_BOUNDARY_NEEDS_BASELINE_REFRESH`. The adapter guard that blocks unsafe carry-forward across rebalance boundaries remains the final fail-closed protection.
 
 ## Required Pi Workflow
 1. `git status`
