@@ -1,12 +1,12 @@
 {
   "artifact_type": "current_strategy_diagnostics",
   "schema_version": 4,
-  "generated_at_utc": "2026-05-23T00:10:58Z",
+  "generated_at_utc": "2026-06-05T10:46:59Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "closed_day": "2026-05-22",
+  "closed_day": "2026-06-04",
   "latest_state_explanation": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
-  "current_flatline_explanation": "Authorized capital should stay flat during the current CASH streak of 7 days because no market exposure is currently authorized.",
+  "current_flatline_explanation": "Authorized capital should stay flat during the current CASH streak of 20 days because no market exposure is currently authorized.",
   "current_cash_or_risk_reason": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
   "recent_regime_changes": [
     {
@@ -79,10 +79,10 @@
   ],
   "current_cost_pressure": {
     "current_effective_exposure": 0.0,
-    "trailing_30d_fees_pct": 0.1125,
+    "trailing_30d_fees_pct": 0.09,
     "trailing_30d_funding_pct": 0.0,
     "trailing_30d_borrow_pct": 0.0,
-    "trailing_30d_slippage_pct": 0.2
+    "trailing_30d_slippage_pct": 0.1
   },
   "current_fee_drag_summary": {
     "lifetime_trading_fees_total_pct": 11.35125,
@@ -90,25 +90,25 @@
     "lifetime_borrow_cost_total_pct": 2.447639,
     "lifetime_slippage_cost_total_pct": 15.2,
     "lifetime_total_cost_pct": 28.998889,
-    "trailing_90d_turnover": 4.5
+    "trailing_90d_turnover": 3.5
   },
   "current_data_health_summary": {
     "status": "passed",
-    "closed_day": "2026-05-22",
-    "softer_fallback_closed_day": "2026-05-22",
+    "closed_day": "2026-06-04",
+    "softer_fallback_closed_day": "2026-06-04",
     "full_history_start_date": "2018-05-05",
     "etf_flow_evidence_window_start": "2024-01-12",
-    "etf_flow_evidence_window_end": "2026-05-22",
-    "trend_status_day": "2026-05-22",
-    "trend_history_last_day": "2026-05-22",
-    "freshness_closed_day": "2026-05-22",
-    "benchmark_last_day": "2026-05-22",
-    "benchmark_raw_last_day": "2026-05-22",
+    "etf_flow_evidence_window_end": "2026-06-04",
+    "trend_status_day": "2026-06-04",
+    "trend_history_last_day": "2026-06-04",
+    "freshness_closed_day": "2026-06-04",
+    "benchmark_last_day": "2026-06-04",
+    "benchmark_raw_last_day": "2026-06-04",
     "benchmark_source_mode": "raw_btc_ohlcv",
-    "etf_panel_latest_source_session_day": "2026-05-22",
-    "etf_panel_latest_causal_available_day": "2026-05-23",
-    "etf_panel_active_source_session_day": "2026-05-21",
-    "etf_panel_active_source_causal_available_day": "2026-05-22",
+    "etf_panel_latest_source_session_day": "2026-06-04",
+    "etf_panel_latest_causal_available_day": "2026-06-05",
+    "etf_panel_active_source_session_day": "2026-06-03",
+    "etf_panel_active_source_causal_available_day": "2026-06-04",
     "etf_panel_evaluation_mode": "same_day_causal_evaluation",
     "etf_panel_carry_forward_reason": "no_carry_forward_needed",
     "etf_panel_carry_forward_days_applied": 0,
@@ -215,12 +215,12 @@
           "cooldown_days": 15,
           "period": "full_etf_overlap",
           "period_start": "2018-05-05",
-          "period_end": "2026-05-22",
+          "period_end": "2026-06-04",
           "baseline_not_cash": 589,
-          "etf_flow_not_ready": 2347,
-          "flow_2_of_3_not_positive": 2571,
-          "flow_3d_sum_below_floor": 2741,
-          "btc_price_filter_failed": 1399,
+          "etf_flow_not_ready": 2352,
+          "flow_2_of_3_not_positive": 2584,
+          "flow_3d_sum_below_floor": 2754,
+          "btc_price_filter_failed": 1412,
           "hard_invalidation_on": 204,
           "permission_on_but_baseline_already_full_risk": 75,
           "cooldown_active_days": 165,
@@ -232,12 +232,12 @@
           "cooldown_days": 15,
           "period": "since2025",
           "period_start": "2025-01-01",
-          "period_end": "2026-05-22",
+          "period_end": "2026-06-04",
           "baseline_not_cash": 94,
-          "etf_flow_not_ready": 158,
-          "flow_2_of_3_not_positive": 310,
-          "flow_3d_sum_below_floor": 401,
-          "btc_price_filter_failed": 255,
+          "etf_flow_not_ready": 163,
+          "flow_2_of_3_not_positive": 323,
+          "flow_3d_sum_below_floor": 414,
+          "btc_price_filter_failed": 268,
           "hard_invalidation_on": 58,
           "permission_on_but_baseline_already_full_risk": 35,
           "cooldown_active_days": 98,
@@ -247,8 +247,8 @@
     },
     "cash_drag": {
       "status": "elevated",
-      "cash_days_pct": 76.938776,
-      "current_cash_streak_days": 7
+      "cash_days_pct": 77.040298,
+      "current_cash_streak_days": 20
     },
     "current_research_questions": [
       "Does the ETF-flow cooldown still improve net performance once BTC persistence is the softer fallback?",
@@ -263,35 +263,33 @@
   },
   "current_trade_state": {
     "is_cash": true,
-    "is_waiting": true,
+    "is_waiting": false,
     "state_code": "OUT_OF_MARKET",
-    "candidate_asset": "BASE",
-    "selected_asset": "BASE",
+    "candidate_asset": "CASH",
+    "selected_asset": "CASH",
     "actual_held_asset": "CASH",
     "authorized_tradable_asset": "CASH",
     "effective_market_exposure": 0.0,
-    "model_candidate_exposure": 1.0,
+    "model_candidate_exposure": 0.0,
     "trend_permission_active": false,
     "waiting_reason_code": "candidate_asset_not_btc",
     "waiting_reason_text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
-    "waiting_condition_code": "candidate_entry_not_authorized",
-    "waiting_condition_text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
+    "waiting_condition_code": "already_in_target_state",
+    "waiting_condition_text": "The active Production Core is already in its current authorized state for CASH.",
     "waiting_condition_values": {
-      "candidate_asset": "BASE",
+      "candidate_asset": "CASH",
       "actual_held_asset": "CASH",
-      "effective_market_exposure": 0.0,
-      "model_candidate_exposure": 1.0
+      "effective_market_exposure": 0.0
     },
     "target_condition": {
-      "execution_target_asset": "BASE",
-      "execution_target_exposure": 1.0
+      "next_rebalance_date": null
     },
     "pain_points": [
       {
         "code": "cash_drag_elevated",
         "severity": "medium",
-        "text": "Cash participation remains elevated at 76.9388% of history.",
-        "metric_value": 76.938776,
+        "text": "Cash participation remains elevated at 77.0403% of history.",
+        "metric_value": 77.040298,
         "metric_unit": "pct"
       },
       {
@@ -300,13 +298,6 @@
         "text": "Lifetime modeled cost drag totals 28.9989%.",
         "metric_value": 28.998889,
         "metric_unit": "pct"
-      },
-      {
-        "code": "active_wait_condition",
-        "severity": "low",
-        "text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
-        "metric_value": null,
-        "metric_unit": null
       }
     ]
   },
@@ -314,8 +305,8 @@
     {
       "code": "cash_drag_elevated",
       "severity": "medium",
-      "text": "Cash participation remains elevated at 76.9388% of history.",
-      "metric_value": 76.938776,
+      "text": "Cash participation remains elevated at 77.0403% of history.",
+      "metric_value": 77.040298,
       "metric_unit": "pct"
     },
     {
@@ -324,27 +315,18 @@
       "text": "Lifetime modeled cost drag totals 28.9989%.",
       "metric_value": 28.998889,
       "metric_unit": "pct"
-    },
-    {
-      "code": "active_wait_condition",
-      "severity": "low",
-      "text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
-      "metric_value": null,
-      "metric_unit": null
     }
   ],
   "current_wait_condition": {
-    "code": "candidate_entry_not_authorized",
-    "text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
+    "code": "already_in_target_state",
+    "text": "The active Production Core is already in its current authorized state for CASH.",
     "current_values": {
-      "candidate_asset": "BASE",
+      "candidate_asset": "CASH",
       "actual_held_asset": "CASH",
-      "effective_market_exposure": 0.0,
-      "model_candidate_exposure": 1.0
+      "effective_market_exposure": 0.0
     },
     "target_condition": {
-      "execution_target_asset": "BASE",
-      "execution_target_exposure": 1.0
+      "next_rebalance_date": null
     }
   }
 }
