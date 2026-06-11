@@ -123,6 +123,14 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "_first_numeric_value",
             "resolve_real_account_exposure_state",
             "resolve_dashboard_public_status_state",
+            "safe_text_value",
+            "authority_success_closed_day_text",
+            "build_public_homepage_refresh_notice",
+            "query_param_enabled",
+            "is_admin_debug_mode",
+            "data_health_messages_for_lang",
+            "data_health_rows_for_lang",
+            "render_data_health_details",
             "filter_from_year",
             "rebase_series",
             "production_chart_authorized_equity_series",
@@ -148,6 +156,96 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "production_market_state_label_from_values",
             "make_production_equity_chart",
         )
+
+    def render_data_health_details_text(
+        self,
+        *,
+        admin_debug_mode: bool,
+        status_model: dict[str, Any] | None = None,
+    ) -> str:
+        render_details = self.__class__.ns["render_data_health_details"]
+        captured: list[str] = []
+
+        class FakeStreamlit:
+            def expander(self, label, expanded=False):
+                captured.append(str(label))
+                return self
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+            def markdown(self, value):
+                captured.append(str(value))
+
+            def caption(self, value):
+                captured.append(str(value))
+
+            def write(self, value):
+                captured.append(str(value))
+
+            def warning(self, value):
+                captured.append(str(value))
+
+        def fake_render_table(rows, emphasize_first_column=False):
+            for row in rows:
+                for value in row.values():
+                    captured.append(str(value))
+
+        self.__class__.ns["st"] = FakeStreamlit()
+        self.__class__.ns["render_app_table"] = fake_render_table
+        render_details(
+            {},
+            status_model or self.sample_warning_status_model(),
+            "sk",
+            [
+                {"Prehlad": "Posledna aktualizacia", "Hodnota": "11. jun 2026 02:10"},
+                {"Prehlad": "Aktualnost dat", "Hodnota": "Aktualne"},
+            ],
+            admin_refresh_rows=[
+                {"Prehlad": "Posledna aktualizacia", "Hodnota": "11. jun 2026 02:10"},
+                {"Prehlad": "Aktualnost dat", "Hodnota": "Aktualne"},
+                {"Prehlad": "Referencne cislo aktualizacie", "Hodnota": "run_123"},
+            ],
+            admin_debug_mode=admin_debug_mode,
+        )
+        return "\n".join(captured)
+
+    @staticmethod
+    def sample_warning_status_model() -> dict[str, Any]:
+        return {
+            "block_app": False,
+            "block_execution": False,
+            "critical_sources": [],
+            "research_sources": [
+                {
+                    "source_id": "research_btc_derivatives_daily_panel_csv",
+                    "label_sk": "BTC derivatives research panel",
+                    "status": "stale",
+                    "user_message_sk": "Research-only detail must stay private.",
+                },
+                {
+                    "source_id": "research_btc_derivatives_daily_panel_quality",
+                    "label_sk": "BTC derivatives research quality",
+                    "status": "stale",
+                    "user_message_sk": "Second research-only detail must stay private.",
+                },
+            ],
+            "informational_sources": [
+                {
+                    "source_id": "env_mrv1_coinglass_api_key",
+                    "label_sk": "env MRV1_COINGLASS_API_KEY",
+                    "status": "unavailable",
+                    "user_message_sk": "Optional env detail must stay private.",
+                }
+            ],
+            "report_stale_relative_to_authority": False,
+            "show_public_notice": False,
+            "show_ok_status": True,
+            "show_secondary_note": True,
+        }
 
     def test_etf_public_performance_window_starts_at_etf_evidence_start(self):
         build_context = self.__class__.ns["build_public_homepage_performance_context"]
@@ -816,6 +914,63 @@ class TestAppPublicStatusContract(unittest.TestCase):
         ]
         self.assertIn('runtime_model_performance_state.get("public_average_annual_growth_pct")', performance_block)
         self.assertIn('runtime_model_performance_state.get("since2025_cagr_pct")', performance_block)
+
+    def test_public_data_health_hides_non_public_warning_summaries(self):
+        rendered = self.render_data_health_details_text(admin_debug_mode=False)
+
+        self.assertIn("Produkčné dáta a aplikácia sú v poriadku.", rendered)
+        self.assertIn("Posledna aktualizacia", rendered)
+        self.assertIn("Aktualnost dat", rendered)
+        forbidden_public_text = [
+            "Vedlajsie upozornenia",
+            "Vedľajšie upozornenia",
+            "Informacne upozornenia",
+            "Informačné upozornenia",
+            "upozorneni je skrytych",
+            "upozornení je skrytých",
+            "Secondary Notices",
+            "Informational Notices",
+            "notices are hidden",
+            "research_btc_derivatives_daily_panel_csv",
+            "env_mrv1_coinglass_api_key",
+            "Research-only detail must stay private.",
+            "Optional env detail must stay private.",
+        ]
+        for text in forbidden_public_text:
+            with self.subTest(text=text):
+                self.assertNotIn(text, rendered)
+
+    def test_admin_debug_data_health_shows_internal_warning_summaries(self):
+        self.assertTrue(self.__class__.ns["is_admin_debug_mode"]({"admin": "1"}))
+        rendered = self.render_data_health_details_text(admin_debug_mode=True)
+
+        self.assertIn("Vedlajsie upozornenia", rendered)
+        self.assertIn("Informacne upozornenia", rendered)
+        self.assertIn("2 upozorneni je skrytych.", rendered)
+        self.assertIn("1 upozorneni je skrytych.", rendered)
+        self.assertIn("Research-only detail must stay private.", rendered)
+        self.assertIn("Optional env detail must stay private.", rendered)
+        self.assertIn("Referencne cislo aktualizacie", rendered)
+
+    def test_public_impacting_data_health_failure_gets_simple_public_notice(self):
+        build_notice = self.__class__.ns["build_public_homepage_refresh_notice"]
+        notice = build_notice(
+            {
+                "public_notice_reason": "data_health_blocked",
+                "report_stale_relative_to_authority": True,
+                "report_reference_day": "2026-06-09",
+                "authority_target_day": "2026-06-10",
+            },
+            {"target_closed_day_utc": "2026-06-10"},
+            "sk",
+        )
+
+        self.assertEqual(
+            notice,
+            "Aktualizácia má problém. Zobrazujeme posledné úspešne overené dáta k 2026-06-10.",
+        )
+        self.assertNotIn("report", notice.lower())
+        self.assertNotIn("cielovy", notice.lower())
 
     def test_homepage_account_card_does_not_show_model_equity_as_real_pnl(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")

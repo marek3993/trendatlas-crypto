@@ -1482,70 +1482,44 @@ def build_public_homepage_refresh_notice(
 ) -> str | None:
     success_closed_day = authority_success_closed_day_text(latest_successful_snapshot)
     success_suffix = (
-        (
-            f" Zobrazuju sa posledne uspesne data k {success_closed_day}. Detaily su v Stav dat."
-            if success_closed_day
-            else " Zobrazuju sa posledne uspesne data. Detaily su v Stav dat."
-        )
+        f" Zobrazujeme posledn\u00e9 \u00faspe\u0161ne overen\u00e9 d\u00e1ta k {success_closed_day}."
+        if lang == "sk" and success_closed_day
+        else " Zobrazujeme posledn\u00e9 \u00faspe\u0161ne overen\u00e9 d\u00e1ta."
         if lang == "sk"
-        else (
-            f" Showing the latest successful data for {success_closed_day}. Details are in Data Health."
-            if success_closed_day
-            else " Showing the latest successful data. Details are in Data Health."
-        )
+        else f" Showing the latest successfully verified data for {success_closed_day}."
+        if success_closed_day
+        else " Showing the latest successfully verified data."
     )
     public_notice_reason = str(status_model.get("public_notice_reason") or "").strip().lower()
-    report_reference_day = str(status_model.get("report_reference_day") or "").strip()
-    authority_target_day = str(status_model.get("authority_target_day") or "").strip()
-    stale_report_suffix = ""
-    if status_model.get("report_stale_relative_to_authority"):
-        stale_report_suffix = (
-            (
-                f" Aktualny report je pre {report_reference_day or 'n/a'}, "
-                f"cielovy den je {authority_target_day or 'n/a'}."
-            )
-            if lang == "sk"
-            else (
-                f" The current report is for {report_reference_day or 'n/a'}, "
-                f"while the target day is {authority_target_day or 'n/a'}."
-            )
-        )
 
-    if public_notice_reason == "authority_refresh_failed":
+    if public_notice_reason in {
+        "authority_refresh_failed",
+        "data_health_blocked",
+        "data_health_report_stale",
+        "authority_stale",
+        "authority_missing_authority_artifact",
+    }:
         return (
-            "Dnesny refresh zlyhal." + stale_report_suffix + success_suffix
+            "Aktualiz\u00e1cia m\u00e1 probl\u00e9m." + success_suffix
             if lang == "sk"
-            else "Today's refresh failed." + stale_report_suffix + success_suffix
-        )
-    if public_notice_reason == "data_health_blocked":
-        return (
-            "Dnesna aktualizacia ma kriticky problem." + stale_report_suffix + success_suffix
-            if lang == "sk"
-            else "Today's update has a critical issue." + stale_report_suffix + success_suffix
-        )
-    if public_notice_reason == "data_health_report_stale":
-        return (
-            "Report nie je zosynchronizovany s poslednym cielovym dnom."
-            + stale_report_suffix
-            + success_suffix
-            if lang == "sk"
-            else "The report is not aligned with the latest target day."
-            + stale_report_suffix
-            + success_suffix
-        )
-    if public_notice_reason == "authority_stale":
-        return (
-            "Dnesny refresh nie je aktualny." + success_suffix
-            if lang == "sk"
-            else "Today's refresh is stale." + success_suffix
-        )
-    if public_notice_reason == "authority_missing_authority_artifact":
-        return (
-            "Stav aktualizacie nie je dostupny." + success_suffix
-            if lang == "sk"
-            else "Update status is unavailable." + success_suffix
+            else "The update has a problem." + success_suffix
         )
     return None
+
+
+def query_param_enabled(query_params: Any, key: str) -> bool:
+    try:
+        raw_value = query_params.get(key)
+    except AttributeError:
+        raw_value = None
+    values = raw_value if isinstance(raw_value, list) else [raw_value]
+    return any(str(value or "").strip().lower() in {"1", "true", "yes", "on"} for value in values)
+
+
+def is_admin_debug_mode(query_params: Any | None = None) -> bool:
+    if query_params is None:
+        query_params = getattr(st, "query_params", {})
+    return query_param_enabled(query_params, "admin")
 
 
 def render_data_health_banner(
@@ -1562,13 +1536,6 @@ def render_data_health_banner(
     if public_notice:
         st.warning(public_notice)
         return False
-    if status_model["research_sources"] or status_model["informational_sources"]:
-        st.caption(
-            "Produk\u010dn\u00e9 d\u00e1ta: OK. Ved\u013eaj\u0161ie technick\u00e9 upozornenia s\u00fa skryt\u00e9 v detaile Stav d\u00e1t."
-            if lang == "sk"
-            else "Production data: OK. Secondary technical notices are tucked into the Data Health details."
-        )
-        return False
     st.caption("Produk\u010dn\u00e9 d\u00e1ta: OK" if lang == "sk" else "Production data: OK")
     return False
 
@@ -1577,6 +1544,8 @@ def render_data_health_details(
     status_model: dict[str, Any],
     lang: str,
     refresh_rows: list[dict[str, Any]],
+    admin_refresh_rows: list[dict[str, Any]] | None = None,
+    admin_debug_mode: bool = False,
 ) -> None:
     critical_rows = data_health_rows_for_lang(status_model["critical_sources"], lang)
     research_messages = data_health_messages_for_lang(status_model["research_sources"], lang)
@@ -1590,45 +1559,20 @@ def render_data_health_details(
         )
         if critical_rows:
             st.caption(
-                "Verejna stranka dalej bezi z posledneho uspesneho validovaneho stavu. Ovladajuce kontroly zostavaju uzamknute, kym sa problem neodstrani."
+                "Zobrazujeme posledne uspesne overene data, kym sa problem neodstrani."
                 if lang == "sk"
-                else "The public page keeps rendering from the latest successfully validated state. Control actions remain locked until the issue is resolved."
+                else "Showing the latest successfully verified data until the issue is resolved."
             )
-            if status_model["report_stale_relative_to_authority"]:
-                st.caption(
-                    (
-                        "Aktualny report zaostava za cielovym dnom "
-                        f"{status_model.get('authority_target_day') or 'n/a'}."
-                    )
-                    if lang == "sk"
-                    else (
-                        "The current report lags the target day "
-                        f"{status_model.get('authority_target_day') or 'n/a'}."
-                    )
-                )
-            render_app_table(critical_rows, emphasize_first_column=True)
-        elif status_model["report_stale_relative_to_authority"]:
-            st.warning(
-                (
-                    "Report momentalne nehlasi kriticky problem, "
-                    "ale este nie je zosynchronizovany s poslednym cielovym dnom."
-                )
-                if lang == "sk"
-                else (
-                    "The report currently shows no critical issue, "
-                    "but it is not yet aligned with the latest target day."
-                )
-            )
+            if admin_debug_mode:
+                render_app_table(critical_rows, emphasize_first_column=True)
         elif status_model["show_public_notice"]:
             st.warning(
                 (
-                    "Stranka zatial drzi posledny uspesny validovany stav, "
-                    "ale najnovsi stav este nie je potvrdeny ako aktualny."
+                    "Aktualizacia ma problem. Zobrazujeme posledne uspesne overene data."
                 )
                 if lang == "sk"
                 else (
-                    "The page is still holding the latest successfully validated state, "
-                    "but the newest state is not confirmed as current yet."
+                    "The update has a problem. Showing the latest successfully verified data."
                 )
             )
         elif status_model["show_ok_status"]:
@@ -1637,15 +1581,15 @@ def render_data_health_details(
                 if lang == "sk"
                 else "Production data and the app are healthy."
             )
-            if status_model["show_secondary_note"]:
-                st.caption(
-                    "Nizsie su len vedlajsie technicke upozornenia. Verejny stav nimi nie je ovplyvneny."
-                    if lang == "sk"
-                    else "Only secondary technical notices remain below. The public state is not affected."
-                )
 
         st.markdown("#### Posledna aktualizacia" if lang == "sk" else "#### Latest Update")
         render_app_table(refresh_rows, emphasize_first_column=True)
+
+        if not admin_debug_mode:
+            return
+
+        st.markdown("#### Admin diagnostika" if lang == "sk" else "#### Admin Diagnostics")
+        render_app_table(admin_refresh_rows or refresh_rows, emphasize_first_column=True)
 
         if research_messages:
             st.markdown(
@@ -1659,6 +1603,10 @@ def render_data_health_details(
                 else "The public state is not affected."
             )
             st.markdown(f"- {len(research_messages)} upozorneni je skrytych." if lang == "sk" else f"- {len(research_messages)} notices are hidden.")
+            render_app_table(
+                data_health_rows_for_lang(status_model["research_sources"], lang),
+                emphasize_first_column=True,
+            )
 
         if informational_messages:
             st.markdown(
@@ -1672,6 +1620,10 @@ def render_data_health_details(
                 else "These are auxiliary notices. The public state is not affected."
             )
             st.markdown(f"- {len(informational_messages)} upozorneni je skrytych." if lang == "sk" else f"- {len(informational_messages)} notices are hidden.")
+            render_app_table(
+                data_health_rows_for_lang(status_model["informational_sources"], lang),
+                emphasize_first_column=True,
+            )
 
 
 def stop_for_production_homepage_block(message: str) -> None:
@@ -7365,7 +7317,7 @@ with tabs[0]:
     wallet_sync_utc = runtime_table_payload.get("last_wallet_sync_utc")
     refresh_label_column = "Preh\u013ead" if lang == "sk" else "Field"
     refresh_value_column = "Hodnota" if lang == "sk" else "Value"
-    refresh_rows = [
+    public_refresh_rows = [
         {
             refresh_label_column: "Posledna aktualizacia" if lang == "sk" else "Latest update",
             refresh_value_column: format_local_time_text(
@@ -7373,6 +7325,13 @@ with tabs[0]:
                 lang,
             ),
         },
+        {
+            refresh_label_column: "Aktualnost dat" if lang == "sk" else "Data currentness",
+            refresh_value_column: refresh_currentness_state_public,
+        },
+    ]
+    admin_refresh_rows = [
+        *public_refresh_rows,
         {
             refresh_label_column: "Stav poslednej aktualizacie" if lang == "sk" else "Latest update status",
             refresh_value_column: safe_text_value(
@@ -7395,10 +7354,6 @@ with tabs[0]:
             ),
         },
         {
-            refresh_label_column: "Aktualnost dat" if lang == "sk" else "Data currentness",
-            refresh_value_column: refresh_currentness_state_public,
-        },
-        {
             refresh_label_column: "D\u00f4vod stavu" if lang == "sk" else "Reason",
             refresh_value_column: safe_text_value(
                 refresh_currentness_reason,
@@ -7406,7 +7361,14 @@ with tabs[0]:
             ),
         },
     ]
-    render_data_health_details(data_health_report, data_health_status_model, lang, refresh_rows)
+    render_data_health_details(
+        data_health_report,
+        data_health_status_model,
+        lang,
+        public_refresh_rows,
+        admin_refresh_rows=admin_refresh_rows,
+        admin_debug_mode=is_admin_debug_mode(),
+    )
 
     st.markdown(f"### {t(lang, 'overview_title')}")
     st.markdown(t(lang, "overview_md"))
