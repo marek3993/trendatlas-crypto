@@ -2494,6 +2494,11 @@ def dashboard_model_exposure_from_source_row(source_row: dict[str, Any]) -> floa
         )
     )
     trend_permission_active = runtime_bool(source_row.get("trend_permission_active"))
+    if trend_permission_active is False:
+        return 0.0
+    if exposure is not None:
+        return max(float(exposure), 0.0)
+
     authorized_asset_raw = first_present_runtime_value(
         source_row.get("authorized_tradable_asset"),
         source_row.get("actual_held_asset"),
@@ -2501,17 +2506,16 @@ def dashboard_model_exposure_from_source_row(source_row: dict[str, Any]) -> floa
         source_row.get("held_asset"),
         source_row.get("execution_target_asset"),
     )
-    authorized_asset = normalize_public_model_asset(authorized_asset_raw)
-    execution_target_asset = normalize_public_model_asset(source_row.get("execution_target_asset"))
-    if trend_permission_active is False:
+    explicit_out_of_market_assets = {"OUT_OF_MARKET", "NO_MARKET", "FLAT"}
+    authorized_asset = normalize_runtime_asset(authorized_asset_raw)
+    execution_target_asset = normalize_runtime_asset(source_row.get("execution_target_asset"))
+    if authorized_asset and (is_runtime_cash_asset(authorized_asset) or authorized_asset in explicit_out_of_market_assets):
         return 0.0
-    if authorized_asset and is_runtime_cash_asset(authorized_asset):
+    if execution_target_asset and (
+        is_runtime_cash_asset(execution_target_asset) or execution_target_asset in explicit_out_of_market_assets
+    ):
         return 0.0
-    if execution_target_asset and is_runtime_cash_asset(execution_target_asset):
-        return 0.0
-    if exposure is None:
-        return None
-    return max(float(exposure), 0.0)
+    return None
 
 
 def dashboard_model_return_net_from_source_row(source_row: dict[str, Any]) -> float | None:

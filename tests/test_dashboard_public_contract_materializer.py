@@ -148,6 +148,42 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
         self.assertEqual(chart_contract["rows"][0]["real_account_vs_btc_return"], 0.005)
         self.assertEqual(chart_contract["rows"][0]["real_account_source"], "real_account_flat_no_history")
 
+    def test_base_label_does_not_zero_authorized_model_exposure(self):
+        status = self.build_cash_blocked_status()
+        rows = [
+            {
+                "date": "2025-07-10",
+                "candidate_asset": "BASE",
+                "selected_asset": "BASE",
+                "authorized_equity": "1571.917135020791",
+                "btc_baseline_equity": "11.7609489051",
+                "authorized_return_net": "0.051233257473",
+                "authorized_return_gross": "0.0517957575",
+                "btc_return": "0.001",
+                "effective_market_exposure": "1.25",
+                "current_exposure": "1.25",
+                "exposure": "1.25",
+                "execution_target_exposure": "1.25",
+                "actual_held_asset": "BASE",
+                "authorized_tradable_asset": "BASE",
+                "current_asset": "BASE",
+                "held_asset": "BASE",
+                "execution_target_asset": "BASE",
+                "trend_permission_active": True,
+                "asset_transition_day": False,
+            }
+        ]
+
+        chart_contract = materializer.build_dashboard_public_chart_timeseries_contract(
+            production_timeseries_rows=rows,
+            dashboard_public_status=status,
+            live_strategy_start_date="2025-07-10",
+        )
+
+        self.assertEqual(chart_contract["rows"][0]["model_index"], 1571.9171350208)
+        self.assertEqual(chart_contract["rows"][0]["model_authorized_exposure_x"], 1.25)
+        self.assertEqual(chart_contract["rows"][0]["live_strategy_exposure_x"], 1.25)
+
     def test_live_account_vs_btc_uses_live_market_input_not_snapshot(self):
         status = self.build_cash_blocked_status(
             live_market_payload={
@@ -258,6 +294,48 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
         self.assertEqual([row["live_strategy_exposure_x"] for row in chart_contract["rows"]], [0.0, 0.0])
         self.assertEqual(status["model_signal"]["preferred_asset"], "BTC")
         self.assertEqual(status["model_signal"]["exposure_x"], 1.0)
+
+    def test_model_strip_ignores_real_account_exposure_history(self):
+        status = self.build_cash_blocked_status()
+        rows = [
+            {
+                "date": "2026-05-10",
+                "candidate_asset": "BTC",
+                "selected_asset": "BTC",
+                "authorized_equity": "1.0",
+                "btc_baseline_equity": "1.0",
+                "authorized_return_net": "0.0",
+                "authorized_return_gross": "0.0",
+                "btc_return": "0.0",
+                "effective_market_exposure": "0.0",
+                "model_candidate_exposure": "1.0",
+                "actual_held_asset": "CASH",
+                "authorized_tradable_asset": "CASH",
+                "current_asset": "CASH",
+                "execution_target_asset": "CASH",
+                "execution_target_exposure": "0.0",
+                "trend_permission_active": False,
+                "asset_transition_day": False,
+            }
+        ]
+
+        chart_contract = materializer.build_dashboard_public_chart_timeseries_contract(
+            production_timeseries_rows=rows,
+            dashboard_public_status=status,
+            real_account_history_rows=[
+                {
+                    "date": "2026-05-10",
+                    "real_account_index": "1.10",
+                    "real_account_exposure_x": "0.80",
+                    "real_account_return_net": "0.10",
+                }
+            ],
+            live_strategy_start_date="2026-05-08",
+        )
+
+        self.assertEqual(chart_contract["rows"][0]["model_authorized_exposure_x"], 0.0)
+        self.assertEqual(chart_contract["rows"][0]["real_account_exposure_x"], 0.8)
+        self.assertEqual(chart_contract["rows"][0]["real_account_index"], 1.1)
 
     def test_materializer_helper_writes_status_chart_quality_and_manifest(self):
         status = self.build_cash_blocked_status()
