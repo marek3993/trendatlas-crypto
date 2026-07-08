@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-07-07T16:19:45Z",
-  "closed_day": "2026-07-06",
+  "generated_at_utc": "2026-07-08T00:11:01Z",
+  "closed_day": "2026-07-07",
   "real_account": {
     "asset": "CASH",
     "position_label_sk": "Mimo trhu",
@@ -25,26 +25,26 @@
   },
   "model_performance": {
     "account_24h_pct": 0.0,
-    "btc_24h_pct": 0.6159,
-    "account_vs_btc_24h_pct": -0.6159,
-    "public_average_annual_growth_pct": 182.36,
-    "since_etf_start_cagr_pct": 207.03,
-    "since2025_cagr_pct": 202.87
+    "btc_24h_pct": -1.0587,
+    "account_vs_btc_24h_pct": 1.0587,
+    "public_average_annual_growth_pct": 182.27,
+    "since_etf_start_cagr_pct": 206.77,
+    "since2025_cagr_pct": 202.27
   },
   "data_health": {
-    "reference_closed_day": "2026-07-05",
+    "reference_closed_day": "2026-07-06",
     "overall_status": "warning",
     "block_app": false,
     "block_execution": false
   },
   "live_market_state": {
-    "btc_24h_pct": 0.6159,
+    "btc_24h_pct": -1.0587,
     "btc_24h_pct_source": "published_snapshot",
     "btc_24h_pct_expected_live_source": "live_ticker",
     "btc_24h_pct_snapshot_is_not_live": true,
-    "published_snapshot_btc_24h_pct": 0.6159,
+    "published_snapshot_btc_24h_pct": -1.0587,
     "account_24h_pct": 0.0,
-    "account_vs_btc_24h_pct": -0.6159
+    "account_vs_btc_24h_pct": 1.0587
   },
   "public_labels_sk": {
     "account_24h": "Účet 24h",
