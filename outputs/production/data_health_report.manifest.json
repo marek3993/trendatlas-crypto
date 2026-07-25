@@ -1,7 +1,7 @@
 {
   "artifact_type": "data_health_report_manifest",
   "schema_version": 1,
-  "generated_at_utc": "2026-07-24T12:00:00Z",
+  "generated_at_utc": "2026-07-25T12:00:00Z",
   "script_path": "/opt/market_regime_v1/scripts/production/data_health_common.py",
   "root_path": "/opt/market_regime_v1",
   "output_paths": {
@@ -27,16 +27,16 @@
     "env_mrv1_coinglass_api_key",
     "env_mrv1_sosovalue_api_key"
   ],
-  "reference_closed_day_utc": "2026-07-23",
+  "reference_closed_day_utc": "2026-07-24",
   "context": {
-    "latest_closed_utc_day": "2026-07-23",
-    "btc_last_day": "2026-07-23",
-    "active_strategy_closed_day": "2026-07-23",
+    "latest_closed_utc_day": "2026-07-24",
+    "btc_last_day": "2026-07-24",
+    "active_strategy_closed_day": "2026-07-24",
     "main_strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15"
   },
   "path_overrides": {
-    "execution_latest_execution_intent": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260724_001100/execution/latest_execution_intent.json",
-    "execution_latest_real_order_gate_decision": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260724_001100/execution/latest_real_order_gate_decision.json"
+    "execution_latest_execution_intent": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260725_001100/execution/latest_execution_intent.json",
+    "execution_latest_real_order_gate_decision": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260725_001100/execution/latest_real_order_gate_decision.json"
   },
   "env_override_source_ids": []
 }
