@@ -333,6 +333,73 @@ class TestExecutionChainSync(unittest.TestCase):
             data_health_common.summarize_sources([mismatch])["block_execution"]
         )
 
+    def test_same_run_builder_writes_validated_authority_binding_into_canonical_intent(self):
+        root, paths = self.make_root()
+        export_contract_path = root / "source_of_truth/export_contract.json"
+        write_json(
+            export_contract_path,
+            {"app_export_contract": {"reference_strategy_model": MODEL}},
+        )
+        attempt_path = root / "outputs/execution/authority/latest_attempt_status.json"
+        write_json(
+            attempt_path,
+            {
+                "artifact_type": "execution_authority_latest_attempt_status",
+                "run_id": "run-current",
+                "target_closed_day_utc": DAY,
+                "latest_available_closed_utc_day": DAY,
+                "latest_authoritative_attempt_status": "in_progress",
+                "currentness_status": "refresh_in_progress",
+                "generated_at_utc": "2026-09-01T00:15:00Z",
+            },
+        )
+        success_path = root / "outputs/execution/authority/latest_successful_snapshot.json"
+        output_intent = root / "built/intent.json"
+        output_quality = root / "built/quality.json"
+        output_manifest = root / "built/manifest.json"
+        args = argparse.Namespace(
+            export_contract_path=export_contract_path,
+            production_snapshot_path=paths["production"],
+            authority_latest_successful_snapshot_path=success_path,
+            authority_latest_attempt_status_path=attempt_path,
+            intent_path=output_intent,
+            quality_path=output_quality,
+            manifest_path=output_manifest,
+        )
+        with ExitStack() as stack:
+            stack.enter_context(mock.patch.object(intent_builder, "parse_args", return_value=args))
+            stack.enter_context(mock.patch.object(intent_builder, "INTENTS_DIR", root / "built"))
+            stack.enter_context(mock.patch.object(intent_builder, "LOGS_DIR", root / "logs"))
+            stack.enter_context(mock.patch.object(intent_builder, "log"))
+            stack.enter_context(
+                mock.patch.object(
+                    intent_builder,
+                    "build_report_bundle",
+                    return_value={"report": {"sources": [], "summary": {"block_execution": False}}},
+                )
+            )
+            stack.enter_context(
+                mock.patch.dict(
+                    intent_builder.os.environ,
+                    {
+                        "MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN": "1",
+                        "MRV1_CURRENT_AUTHORITY_RUN_ID": "run-current",
+                        "MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY": DAY,
+                    },
+                    clear=False,
+                )
+            )
+            intent_builder.main()
+
+        built = json.loads(output_intent.read_text(encoding="utf-8"))
+        guardrails = built["guardrail_flags"]
+        self.assertIs(guardrails["same_run_authority_allowed"], True)
+        self.assertEqual(guardrails["same_run_authority_run_id"], "run-current")
+        self.assertEqual(
+            guardrails["same_run_authority_target_closed_day"],
+            DAY,
+        )
+
     def run_gate_case(
         self,
         *,
@@ -344,6 +411,8 @@ class TestExecutionChainSync(unittest.TestCase):
         allow_live_orders: bool = True,
         kill_switch: bool = False,
         production_validation: str = "passed",
+        same_run: bool = False,
+        intent_same_run_id: str = "run-current",
     ) -> tuple[dict | None, Path]:
         root, paths = self.make_root(
             target_asset=target_asset,
@@ -355,12 +424,23 @@ class TestExecutionChainSync(unittest.TestCase):
         intent = json.loads(paths["intent"].read_text(encoding="utf-8"))
         intent["duplicate_order_risk"] = duplicate_order_risk
         intent["stale_signal"] = stale_signal
+        if same_run:
+            intent["guardrail_flags"].update(
+                {
+                    "same_run_authority_allowed": True,
+                    "same_run_authority_run_id": intent_same_run_id,
+                    "same_run_authority_target_closed_day": DAY,
+                }
+            )
         write_json(paths["intent"], intent)
 
         mode_path = root / "execution/config/execution_mode.json"
         policy_path = root / "execution/config/live_order_policy.json"
         authority_path = (
             root / "outputs/execution/authority/latest_successful_snapshot.json"
+        )
+        authority_attempt_path = (
+            root / "outputs/execution/authority/latest_attempt_status.json"
         )
         decision_path = root / "gate/decision.json"
         quality_path = root / "gate/quality.json"
@@ -399,6 +479,16 @@ class TestExecutionChainSync(unittest.TestCase):
                 },
             },
         )
+        write_json(
+            authority_attempt_path,
+            {
+                "run_id": "run-current" if same_run else "published-run",
+                "target_closed_day_utc": DAY,
+                "latest_authoritative_attempt_status": (
+                    "in_progress" if same_run else "success"
+                ),
+            },
+        )
         args = argparse.Namespace(
             mode_config_path=mode_path,
             live_order_policy_path=policy_path,
@@ -406,6 +496,7 @@ class TestExecutionChainSync(unittest.TestCase):
             snapshot_path=paths["account"],
             production_snapshot_path=paths["production"],
             authority_latest_successful_snapshot_path=authority_path,
+            authority_latest_attempt_status_path=authority_attempt_path,
             decision_path=decision_path,
             quality_path=quality_path,
             manifest_path=manifest_path,
@@ -421,6 +512,17 @@ class TestExecutionChainSync(unittest.TestCase):
             )
             stack.enter_context(mock.patch.object(gate_builder, "LOGS_DIR", root / "logs"))
             stack.enter_context(mock.patch.object(gate_builder, "LOG_PATH", root / "logs/gate.log"))
+            if same_run:
+                stack.enter_context(
+                    mock.patch.dict(
+                        gate_builder.os.environ,
+                        {
+                            "MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN": "1",
+                            "MRV1_CURRENT_AUTHORITY_RUN_ID": "run-current",
+                        },
+                        clear=False,
+                    )
+                )
             try:
                 gate_builder.main()
             except SystemExit:
@@ -447,6 +549,24 @@ class TestExecutionChainSync(unittest.TestCase):
         self.assertTrue(btc_gate["would_place_real_order"])
         self.assertTrue(btc_gate["real_orders_enabled"])
         mocked_submitter.assert_not_called()
+
+    def test_gate_requires_exact_same_run_binding_declared_by_canonical_intent(self):
+        aligned, _ = self.run_gate_case(
+            target_asset="BTC",
+            target_exposure=0.5,
+            same_run=True,
+        )
+        self.assertEqual(aligned["status"], "ready_if_enabled")
+        self.assertIs(aligned["checks"]["same_run_authority_binding_matches_intent"], True)
+
+        mismatched, _ = self.run_gate_case(
+            target_asset="BTC",
+            target_exposure=0.5,
+            same_run=True,
+            intent_same_run_id="different-run",
+        )
+        self.assertEqual(mismatched["status"], "blocked")
+        self.assertIn("same_run_authority_binding_mismatch", mismatched["block_reasons"])
 
     def test_gate_and_intent_fail_closed_guardrails_remain_intact(self):
         duplicate_gate, _ = self.run_gate_case(

@@ -443,6 +443,15 @@ def main() -> None:
     leverage_live_truth_allowed = bool(
         guardrail_flags.get("leverage_live_truth_allowed", False)
     )
+    same_run_binding_required = bool(
+        guardrail_flags.get("same_run_authority_allowed", False)
+    )
+    intent_same_run_id = str(
+        guardrail_flags.get("same_run_authority_run_id") or ""
+    ).strip()
+    intent_same_run_day = str(
+        guardrail_flags.get("same_run_authority_target_closed_day") or ""
+    ).strip()
 
     signal_as_of_source = str(intent.get("as_of_source") or "").strip()
     signal_strategy_model = str(intent.get("strategy_model") or "").strip()
@@ -465,6 +474,14 @@ def main() -> None:
         )
     except Exception:
         same_run_authority_context = None
+
+    same_run_binding_matches_intent = bool(
+        same_run_authority_context
+        and str(same_run_authority_context.get("run_id") or "").strip()
+        == intent_same_run_id
+        and str(same_run_authority_context.get("target_closed_day") or "").strip()
+        == intent_same_run_day
+    )
 
     approval_gate_status = str(
         (authority_approval_context or {}).get("approval_gate_status") or ""
@@ -522,6 +539,8 @@ def main() -> None:
             and target_size_pct <= max_strategy_target_exposure + 1e-9
         ),
         "same_run_authority": same_run_authority_context is not None,
+        "same_run_authority_binding_required": same_run_binding_required,
+        "same_run_authority_binding_matches_intent": same_run_binding_matches_intent,
         "positions_count": positions_count,
         "exit_required": exit_required,
         "account_address_present": bool(account_address),
@@ -597,6 +616,8 @@ def main() -> None:
         block_reasons.append("approval_source_model_mismatch")
     if not checks["approval_source_day_match"]:
         block_reasons.append("approval_source_day_mismatch")
+    if same_run_binding_required and not checks["same_run_authority_binding_matches_intent"]:
+        block_reasons.append("same_run_authority_binding_mismatch")
     if checks["manual_approval_required"]:
         block_reasons.append("manual_approval_required")
     if not checks["approval_status_allowed"]:

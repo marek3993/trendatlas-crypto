@@ -817,6 +817,15 @@ def main() -> None:
             "manual_approval_required_for_live_orders": True,
             "leverage_live_truth_allowed": False,
             "production_snapshot_validated": True,
+            "same_run_authority_allowed": bool(
+                authority_day_context.get("same_run_authority_allowed")
+            ),
+            "same_run_authority_run_id": authority_day_context.get(
+                "same_run_authority_run_id"
+            ),
+            "same_run_authority_target_closed_day": authority_day_context.get(
+                "same_run_authority_target_closed_day"
+            ),
         },
         "source_fingerprints": {
             "production_snapshot_sha256": sha256_file(args.production_snapshot_path),
