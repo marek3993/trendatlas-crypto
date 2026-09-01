@@ -46,9 +46,9 @@
 - Candidate `BTC` does not automatically mean live market exposure.
 
 ## Active operational focus
-- Recurring scheduler is ready.
-- Live runtime is armed.
-- Remaining proof gap is the first non-CASH end-to-end dynamic leverage evidence run.
+- Migrate recurring production scheduling to the single canonical orchestrator `scripts/execution/run_trendatlas_production.py` and disable only competing production execution timers after deployment verification.
+- Live runtime activation settings remain armed, but execution must fail closed unless deterministic CLOID recovery, canonical provenance, fresh account/margin state, and post-trade verification all pass.
+- Remaining proof gap is the first non-CASH end-to-end dynamic equity-sized evidence run through the new orchestrator.
 - Confirm Production Core remains the app homepage and execution primary strategy truth interface.
 - Current live/app truth is `phase68g_etf_flow_impulse_early_risk_cooldown_15`.
 - Official softer fallback is `phase68g_btc_persistence_10d_early_risk_075`.
@@ -72,6 +72,7 @@
 - Missing optional env/API keys are surfaced as `unavailable` / `warn_only`.
 - No silent fallback is allowed around guarded source availability.
 - Canonical execution health is locked to `outputs/execution/intents/latest_execution_intent.json` and `outputs/execution/live_gate/latest_real_order_gate_decision.json`; temporary publish-existing execution artifacts may not override those sources in data health.
+- Production execution state is recorded in `outputs/execution/production_runs/latest_production_run.json` and durable transition journals under `outputs/execution/execution_journal/`; these never replace Production Core, canonical intent/gate, or real account truth.
 - Stale or missing `BTC` daily OHLCV is production-critical and would block production/execution.
 - Current stale research-only BTC derivatives panel blocks only the relevant research probe.
 

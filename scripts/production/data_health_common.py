@@ -887,6 +887,29 @@ def apply_special_rules(
         currentness_status = str(payload.get("currentness_status") or "").strip().lower()
         if attempt_status == "failed":
             return STATUS_FAILED, f"latest_authoritative_attempt_status={attempt_status}."
+        if source_id == "execution_authority_latest_attempt_status" and attempt_status == "in_progress":
+            intent_payload, _ = load_effective_json_source(
+                "execution_latest_execution_intent",
+                root=root,
+                path_overrides=path_overrides,
+            )
+            guardrails = (
+                intent_payload.get("guardrail_flags", {})
+                if isinstance(intent_payload, dict)
+                and isinstance(intent_payload.get("guardrail_flags"), dict)
+                else {}
+            )
+            attempt_run_id = str(payload.get("run_id") or "").strip()
+            intent_run_id = str(guardrails.get("same_run_authority_run_id") or "").strip()
+            attempt_day = str(payload.get("target_closed_day_utc") or "").strip()
+            intent_day = str(guardrails.get("same_run_authority_target_closed_day") or "").strip()
+            if not bool(guardrails.get("same_run_authority_allowed")):
+                return STATUS_FAILED, "In-progress authority is not bound to canonical intent same-run guardrails."
+            if not attempt_run_id or attempt_run_id != intent_run_id:
+                return STATUS_FAILED, "In-progress authority run_id diverges from canonical intent."
+            if not attempt_day or attempt_day != intent_day:
+                return STATUS_FAILED, "In-progress authority target day diverges from canonical intent."
+            return STATUS_OK, None
         if currentness_status and currentness_status != "current":
             return STATUS_WARNING, f"currentness_status={currentness_status}."
 
@@ -1094,6 +1117,12 @@ def evaluate_source(
                 else:
                     payload = loaded
                     missing_keys = [key for key in spec.required_keys if key not in payload]
+                    if (
+                        spec.source_id == "execution_authority_latest_attempt_status"
+                        and str(payload.get("latest_authoritative_attempt_status") or "").strip().lower()
+                        == "in_progress"
+                    ):
+                        missing_keys = [key for key in missing_keys if key != "app_runtime_snapshot"]
                     if missing_keys:
                         source["status"] = STATUS_INVALID_SCHEMA
                         source["failure_reason"] = "Missing required JSON keys: " + ", ".join(missing_keys)

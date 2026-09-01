@@ -396,6 +396,34 @@
                                                                            ]
                                                 }
                           },
+    "production_execution_orchestrator":  {
+                                               "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
+                                               "single_automatic_production_entrypoint":  true,
+                                               "state_machine":  [
+                                                                     "lock",
+                                                                     "refresh",
+                                                                     "precheck_health",
+                                                                     "production_core",
+                                                                     "fresh_account",
+                                                                     "canonical_intent",
+                                                                     "canonical_gate",
+                                                                     "reconciliation",
+                                                                     "controlled_execution",
+                                                                     "account_readback",
+                                                                     "post_trade_verification",
+                                                                     "dashboard_runtime",
+                                                                     "authority_publish"
+                                                                 ],
+                                               "sizing_contract":  "fresh_account_equity_times_validated_target_exposure",
+                                               "fixed_usd_sizing_or_clipping_forbidden":  true,
+                                               "relative_safety_violation_action":  "block_fail_closed",
+                                               "idempotency_contract":  "durable_pre_submit_journal_plus_deterministic_hyperliquid_cloid",
+                                               "power_loss_recovery":  "query_exchange_by_cloid_then_refresh_account_before_any_residual_order",
+                                               "run_manifest_path":  "outputs/execution/production_runs/latest_production_run.json",
+                                               "execution_journal_path":  "outputs/execution/execution_journal/",
+                                               "authority_success_after_required_execution_verification":  true,
+                                               "safe_preflight_flag":  "--no-submit"
+                                           },
     "production_authority_model":  {
                                        "automatic_production_producer":  "raspberry_pi",
                                        "pc_role":  "manual_recovery_debug_only",

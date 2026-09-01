@@ -194,6 +194,33 @@
       "notes": "Tracked separately from automation scope."
     },
     {
+      "script_path": "scripts/execution/run_trendatlas_production.py",
+      "layer": "production_execution",
+      "status": "active",
+      "purpose": "Runs the only canonical locked daily production state machine from refresh through optional controlled live execution, verification, dashboard materialization, and authority publish.",
+      "primary_outputs": [
+        "outputs/execution/production_runs/",
+        "outputs/execution/execution_journal/"
+      ],
+      "output_type": "production_orchestration",
+      "decision_relevance": "execution_authoritative",
+      "writes_source_of_truth": false,
+      "notes": "Default mode may submit a live order only after all current-run gates pass. --no-submit never instantiates the live exchange adapter."
+    },
+    {
+      "script_path": "scripts/execution/production_execution.py",
+      "layer": "production_execution",
+      "status": "active",
+      "purpose": "Builds equity-sized deterministic reconciliation plans and provides durable CLOID journal/recovery primitives.",
+      "primary_outputs": [
+        "outputs/execution/execution_journal/"
+      ],
+      "output_type": "execution_planning_and_recovery",
+      "decision_relevance": "execution_authoritative",
+      "writes_source_of_truth": false,
+      "notes": "Fixed-dollar clipping is forbidden; relative safety violations block."
+    },
+    {
       "script_path": "scripts/execution/materialize_execution_app_exports.py",
       "layer": "execution_data",
       "status": "active",
@@ -352,19 +379,19 @@
       "script_path": "scripts/execution/submit_controlled_real_order.py",
       "layer": "execution_data",
       "status": "active",
-      "purpose": "Runs a preview-by-default controlled submit path with explicit live unlock, leverage resolution, and one-shot post-submit reconciliation artifacts.",
+      "purpose": "Provides the audited Hyperliquid signed-action adapter used by the single production orchestrator; retains the legacy preview/manual CLI for recovery only.",
       "primary_outputs": [
         "outputs/execution/submit_preview/"
       ],
       "output_type": "dry_run_execution",
       "decision_relevance": "decision_relevant",
       "writes_source_of_truth": false,
-      "notes": "Preview by default. Live submit requires explicit manual confirmation."
+      "notes": "Automatic use is allowed only through run_trendatlas_production.py after durable PREPARED journaling and deterministic CLOID assignment. Legacy CLI remains manual recovery only."
     },
     {
       "script_path": "scripts/execution/run_full_auto_execution_cycle.py",
       "layer": "execution_data",
-      "status": "active",
+      "status": "deprecated",
       "purpose": "Runs one full auto execution cycle by refreshing official intent inputs, rebuilding reconciliation and gate context, and invoking the controlled submitter.",
       "primary_outputs": [
         "outputs/execution/full_auto/",
@@ -375,12 +402,12 @@
       "output_type": "runtime_control",
       "decision_relevance": "decision_relevant",
       "writes_source_of_truth": false,
-      "notes": "One-shot only. No scheduler creation and no source_of_truth writes."
+      "notes": "Replaced as a production entrypoint by run_trendatlas_production.py. Must not be scheduled or used for automatic live execution."
     },
     {
       "script_path": "scripts/execution/run_full_auto_scheduler_entry.py",
       "layer": "execution_data",
-      "status": "active",
+      "status": "deprecated",
       "purpose": "Scheduler-facing one-shot wrapper that refreshes HYPERLIQUID_TIME_OFFSET_MS, launches the full-auto cycle, and verifies required downstream artifacts.",
       "primary_outputs": [
         "outputs/execution/full_auto_scheduler/"
@@ -388,7 +415,7 @@
       "output_type": "runtime_control",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Preview by default. Live mode is allowed only via --execute-live --manual-confirm FULL_AUTO_EXECUTION."
+      "notes": "Replaced by the single production orchestrator and forbidden as a competing scheduler."
     },
     {
       "script_path": "phase60_selective_restore_robustness.py",

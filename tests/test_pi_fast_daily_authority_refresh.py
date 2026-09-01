@@ -409,12 +409,13 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
             "run_pi_fast_daily_authority_refresh.py",
         )
 
-    def test_source_contract_documents_fast_nightly_wrapper(self):
+    def test_source_contract_documents_single_production_orchestrator_and_internal_fast_path(self):
         text = (ROOT / "source_of_truth" / "pi_codex_runtime_workflow.md").read_text(
             encoding="utf-8"
         )
         required_snippets = [
-            "scripts/execution/run_pi_fast_daily_authority_refresh.py",
+            "scripts/execution/run_trendatlas_production.py",
+            "run_pi_fast_daily_authority_refresh.py",
             "phase60_selective_restore_robustness.py --dependency-only --model-key phase60_restore_trx_sol_base",
             "scripts/phase63_btc_participation_overlay.py --winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
             "scripts/execution/hyperliquid_read_only_snapshot.py",

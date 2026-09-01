@@ -308,7 +308,7 @@ def order_type_to_wire(order_type: dict[str, Any]) -> dict[str, Any]:
 
 
 def order_request_to_wire(order: dict[str, Any], asset: int) -> dict[str, Any]:
-    return {
+    wire = {
         "a": asset,
         "b": bool(order["is_buy"]),
         "p": float_to_wire(float(order["limit_px"])),
@@ -316,6 +316,13 @@ def order_request_to_wire(order: dict[str, Any], asset: int) -> dict[str, Any]:
         "r": bool(order["reduce_only"]),
         "t": order_type_to_wire(order["order_type"]),
     }
+    cloid = str(order.get("cloid") or "").strip()
+    if cloid:
+        if not cloid.startswith("0x") or len(cloid) != 34:
+            raise ValueError("Hyperliquid CLOID must be a 128-bit 0x-prefixed hex string")
+        int(cloid[2:], 16)
+        wire["c"] = cloid
+    return wire
 
 
 def make_action(order_wire: dict[str, Any]) -> dict[str, Any]:
@@ -432,8 +439,12 @@ def fetch_user_fills_by_time(account_address: str, start_time_ms: int, end_time_
     return fills if isinstance(fills, list) else []
 
 
-def fetch_order_status(account_address: str, oid: int) -> Any:
+def fetch_order_status(account_address: str, oid: int | str) -> Any:
     return info_request({"type": "orderStatus", "user": account_address, "oid": oid})
+
+
+def fetch_user_abstraction(account_address: str) -> Any:
+    return info_request({"type": "userAbstraction", "user": account_address})
 
 
 def fetch_user_role(account_address: str) -> Any:
@@ -1128,6 +1139,7 @@ def build_order_request(
     order_size: float,
     limit_price: float,
     reduce_only: bool,
+    cloid: str | None = None,
 ) -> dict[str, Any]:
     market_entry = market_map[coin]
     order = {
@@ -1137,6 +1149,7 @@ def build_order_request(
         "limit_px": limit_price,
         "order_type": {"limit": {"tif": "Ioc"}},
         "reduce_only": reduce_only,
+        "cloid": cloid,
     }
     return {
         "order": order,

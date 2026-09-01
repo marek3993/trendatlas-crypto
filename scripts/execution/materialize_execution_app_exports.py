@@ -67,6 +67,7 @@ DASHBOARD_PUBLIC_STATUS_MANIFEST_PATH = APP_SNAPSHOT_DIR / "dashboard_public_sta
 PRODUCTION_SNAPSHOT_PATH = PRODUCTION_DIR / "current_strategy_snapshot.json"
 PRODUCTION_TIMESERIES_PATH = PRODUCTION_DIR / "current_strategy_timeseries.csv"
 DATA_HEALTH_REPORT_PATH = PRODUCTION_DIR / "data_health_report.json"
+PRODUCTION_RUN_MANIFEST_PATH = OUTPUTS_DIR / "production_runs" / "latest_production_run.json"
 DATA_HEALTH_QUALITY_PATH = PRODUCTION_DIR / "data_health_report.quality.json"
 DATA_HEALTH_MANIFEST_PATH = PRODUCTION_DIR / "data_health_report.manifest.json"
 LIVE_MARKET_STATE_PATH = OUTPUTS_DIR / "live_status" / "live_market_state.json"
@@ -3854,6 +3855,7 @@ def build_runtime_snapshot(
     production_snapshot_payload = read_json_optional(PRODUCTION_SNAPSHOT_PATH)
     data_health_payload = read_json_optional(DATA_HEALTH_REPORT_PATH)
     live_market_payload = read_json_optional(LIVE_MARKET_STATE_PATH)
+    production_run_payload = read_json_optional(PRODUCTION_RUN_MANIFEST_PATH)
     production_timeseries_last_row = (
         read_last_csv_row(PRODUCTION_TIMESERIES_PATH)
         if PRODUCTION_TIMESERIES_PATH.exists()
@@ -3874,6 +3876,39 @@ def build_runtime_snapshot(
         live_market_payload=live_market_payload,
         generated_at_utc=app_runtime_generated_at_utc,
     )
+    production_execution_state = {
+        "run_id": production_run_payload.get("run_id"),
+        "final_status": production_run_payload.get("final_status"),
+        "model_target": {
+            "asset": production_run_payload.get("model_target_asset"),
+            "exposure": production_run_payload.get("model_target_exposure"),
+            "signal_id": production_run_payload.get("signal_id"),
+        },
+        "real_account": {
+            "before": production_run_payload.get("real_position_before"),
+            "after": production_run_payload.get("real_position_after"),
+            "equity_before": production_run_payload.get("account_equity_before"),
+            "equity_after": production_run_payload.get("account_equity_after"),
+            "exposure_after": production_run_payload.get("real_exposure_after"),
+        },
+        "execution_plan": {
+            "action": production_run_payload.get("execution_action"),
+            "target_notional": production_run_payload.get("target_notional"),
+            "planned_delta": production_run_payload.get("planned_delta"),
+        },
+        "last_order": {
+            "requested": production_run_payload.get("order_requested"),
+            "order_id": production_run_payload.get("order_id"),
+            "cloid": production_run_payload.get("cloid"),
+            "result": production_run_payload.get("order_result"),
+        },
+        "post_trade_verified_state": {
+            "status": production_run_payload.get("post_trade_verification_status"),
+            "residual_delta": production_run_payload.get("residual_delta"),
+        },
+        "source_path": path_for_app(PRODUCTION_RUN_MANIFEST_PATH),
+    }
+    dashboard_public_status["production_execution"] = production_execution_state
     public_status_contract = build_runtime_public_status_views_from_dashboard_public_status(
         dashboard_public_status
     )
@@ -3978,6 +4013,7 @@ def build_runtime_snapshot(
             "error": status_payload.get("error"),
         },
         "dashboard_public_status": dashboard_public_status,
+        "production_execution_state": production_execution_state,
         "real_account_state": public_status_contract["real_account_state"],
         "model_signal_state": public_status_contract["model_signal_state"],
         "model_performance_state": public_status_contract["model_performance_state"],
@@ -4041,7 +4077,9 @@ def build_runtime_snapshot(
             "allow_live_orders": live_order_policy_payload.get("allow_live_orders"),
             "manual_approval_required": live_order_policy_payload.get("manual_approval_required"),
             "require_kill_switch_off": live_order_policy_payload.get("require_kill_switch_off"),
-            "max_order_notional_usd": live_order_policy_payload.get("max_order_notional_usd"),
+            "sizing_mode": live_order_policy_payload.get("sizing_mode"),
+            "max_strategy_target_exposure": live_order_policy_payload.get("max_strategy_target_exposure"),
+            "max_delta_fraction_of_equity": live_order_policy_payload.get("max_delta_fraction_of_equity"),
             "allowed_assets": live_order_policy_payload.get("allowed_assets", []),
             "allowed_approval_gate_statuses": live_order_policy_payload.get("allowed_approval_gate_statuses", []),
         },
@@ -4752,4 +4790,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

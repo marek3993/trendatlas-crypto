@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the single TrendAtlas production orchestrator after UTC close
+
+[Timer]
+Unit=mrv1-production.service
+OnCalendar=*-*-* 00:10:00 UTC
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

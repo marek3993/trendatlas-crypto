@@ -61,9 +61,12 @@ For Pi authority/runtime/scheduler/publish-existing/recovery/tablet-dashboard wo
 
 ## Pi authority runtime add-on
 - Pi runtime work must follow `source_of_truth/pi_codex_runtime_workflow.md`.
-- Default Pi authority path is `publish-existing`, with dry-run before real publish.
+- The only automatic production entrypoint is `scripts/execution/run_trendatlas_production.py`.
+- `publish-existing` remains an internal authority primitive, with dry-run before real publish.
 - `--mode full-refresh` requires explicit approval.
-- Verification must include `heavy_refresh_steps=skipped` and `live_order_chain=not_invoked`.
+- `--no-submit` verification must include `live_order_chain=NOT_INVOKED` and `real_order_sent=false`.
+- Focused refresh, publish, planner, gate, and submit scripts must not be enabled as competing automatic schedulers.
+- Durable journals under `outputs/execution/execution_journal/` are recovery evidence and never replace Production Core, canonical intent/gate, account snapshot, or authority truth.
 
 ## Required normalized public/runtime contracts
 - `real_account_state`

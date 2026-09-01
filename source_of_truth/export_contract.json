@@ -89,6 +89,31 @@
                                                                                     ]
                                                          }
                                    },
+    "production_execution_contract":  {
+                                            "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
+                                            "run_manifest_path":  "outputs/execution/production_runs/latest_production_run.json",
+                                            "journal_directory":  "outputs/execution/execution_journal/",
+                                            "sizing_mode":  "equity_target_exposure",
+                                            "target_notional_formula":  "fresh_account_equity_usd * validated_strategy_target_exposure",
+                                            "fixed_usd_clipping_forbidden":  true,
+                                            "transition_actions":  [
+                                                                       "NO_ACTION",
+                                                                       "INCREASE",
+                                                                       "REDUCE",
+                                                                       "EXIT",
+                                                                       "ROTATE"
+                                                                   ],
+                                            "submission_idempotency":  "journal_PREPARED_before_request_and_deterministic_128_bit_cloid",
+                                            "uncertain_execution_rule":  "exchange_cloid_lookup_and_account_readback_before_residual_decision",
+                                            "authority_success_rule":  "required_execution_and_post_trade_verification_must_finish_first",
+                                            "dashboard_sections":  [
+                                                                        "model_target",
+                                                                        "real_account",
+                                                                        "execution_plan",
+                                                                        "last_order",
+                                                                        "post_trade_verified_state"
+                                                                    ]
+                                        },
     "account_observability_contract":  {
                                            "current":  {
                                                            "enabled":  true,

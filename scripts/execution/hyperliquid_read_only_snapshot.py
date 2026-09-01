@@ -238,7 +238,11 @@ def sum_spot_balances(rows: list[dict[str, Any]]) -> tuple[float | None, float |
     return total, available
 
 
-def summarize_balance_sources(clearinghouse_state: Any, spot_state: Any) -> dict[str, Any]:
+def summarize_balance_sources(
+    clearinghouse_state: Any,
+    spot_state: Any,
+    account_abstraction: Any = None,
+) -> dict[str, Any]:
     perp_margin_summary = {}
     perp_cross_summary = {}
     perp_withdrawable = None
@@ -267,7 +271,11 @@ def summarize_balance_sources(clearinghouse_state: Any, spot_state: Any) -> dict
     account_equity_usd = perp_account_value
     available_balance_usd = perp_withdrawable
 
+    abstraction = str(account_abstraction or "").strip()
+    unified_balance = abstraction.lower() in {"unifiedaccount", "portfoliomargin"}
     if (
+        unified_balance
+        and
         spot_source_available
         and spot_stable_total is not None
         and abs(spot_stable_total) > NUMERIC_EPSILON
@@ -292,6 +300,8 @@ def summarize_balance_sources(clearinghouse_state: Any, spot_state: Any) -> dict
         "spot_stable_total_usd": spot_stable_total,
         "spot_stable_available_usd": spot_stable_available,
         "spot_source_available": spot_source_available,
+        "account_abstraction": abstraction or None,
+        "spot_balance_usable_for_perps": unified_balance,
     }
 
 
@@ -327,7 +337,8 @@ def main() -> None:
         "clearinghouseState": {"type": "clearinghouseState", "user": account_address},
         "spotClearinghouseState": {"type": "spotClearinghouseState", "user": account_address},
         "openOrders": {"type": "openOrders", "user": account_address},
-        "userFills": {"type": "userFills", "user": account_address}
+        "userFills": {"type": "userFills", "user": account_address},
+        "userAbstraction": {"type": "userAbstraction", "user": account_address},
     }
 
     log("[FETCH] clearinghouseState")
@@ -350,6 +361,16 @@ def main() -> None:
     log("[FETCH] userFills")
     user_fills = post_info(payloads["userFills"])
 
+    log("[FETCH] userAbstraction")
+    user_abstraction_result = try_post_info(payloads["userAbstraction"])
+    user_abstraction = (
+        user_abstraction_result.get("response")
+        if user_abstraction_result.get("ok")
+        else None
+    )
+    if not user_abstraction_result.get("ok"):
+        log(f"[WARN] userAbstraction unavailable: {user_abstraction_result.get('error')}")
+
     positions = []
     margin_summary = {}
     balances = {}
@@ -363,7 +384,11 @@ def main() -> None:
         balances = clearinghouse_state.get("crossMarginSummary", {})
         withdrawable = clearinghouse_state.get("withdrawable")
 
-    balance_summary = summarize_balance_sources(clearinghouse_state, spot_clearinghouse_state)
+    balance_summary = summarize_balance_sources(
+        clearinghouse_state,
+        spot_clearinghouse_state,
+        user_abstraction,
+    )
 
     snapshot = {
         "snapshot_type": "hyperliquid_read_only_account_snapshot",
@@ -384,7 +409,12 @@ def main() -> None:
                 else {"fetch_error": spot_clearinghouse_result}
             ),
             "openOrders": open_orders,
-            "userFills": user_fills
+            "userFills": user_fills,
+            "userAbstraction": (
+                user_abstraction
+                if user_abstraction_result.get("ok")
+                else {"fetch_error": user_abstraction_result}
+            ),
         },
         "summary": {
             "positions_count": len(positions) if isinstance(positions, list) else 0,
@@ -403,7 +433,9 @@ def main() -> None:
             "spot_balance_symbols": balance_summary["spot_balance_symbols"],
             "spot_stable_total_usd": balance_summary["spot_stable_total_usd"],
             "spot_stable_available_usd": balance_summary["spot_stable_available_usd"],
-            "spot_source_available": balance_summary["spot_source_available"]
+            "spot_source_available": balance_summary["spot_source_available"],
+            "account_abstraction": balance_summary["account_abstraction"],
+            "spot_balance_usable_for_perps": balance_summary["spot_balance_usable_for_perps"],
         }
     }
 
@@ -429,7 +461,9 @@ def main() -> None:
         "balance_source_of_truth": snapshot["summary"]["balance_source_of_truth"],
         "account_equity_usd": snapshot["summary"]["account_equity_usd"],
         "available_balance_usd": snapshot["summary"]["available_balance_usd"],
-        "spot_source_available": snapshot["summary"]["spot_source_available"]
+        "spot_source_available": snapshot["summary"]["spot_source_available"],
+        "account_abstraction": snapshot["summary"]["account_abstraction"],
+        "spot_balance_usable_for_perps": snapshot["summary"]["spot_balance_usable_for_perps"],
     }
 
     manifest = {

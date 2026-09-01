@@ -1,32 +1,32 @@
-# MRV1 Nightly Runtime Deployment
+# TrendAtlas Single Production Orchestrator Deployment
 
-This deployment is intentionally limited to the safe public status publishing chain:
+The only automatic production entrypoint is:
 
-- default producer mode is `publish-existing`
-- nightly service refreshes fast dependencies before `publish-existing`
+- `scripts/execution/run_trendatlas_production.py`
+
+It owns the complete locked daily state machine:
+
+- refresh and health validation
+- Production Core, canonical intent, and canonical gate
+- fresh real account reconciliation with equity-based target sizing
+- optional controlled live execution with durable pre-submit journal and deterministic CLOID
+- post-trade account verification, dashboard materialization, and final authority publish
+
+Operational constraints:
+
 - long refresh requires explicit `--mode full-refresh`
-- no real orders
-- no execution submit path
+- `--no-submit` performs a safe preflight and never loads the live adapter
+- default execution submits only when every current-run invariant passes
 - no `source_of_truth` writes from the runtime loop
-- no strategy semantics changes
-- execution outputs remain operational artifacts, not official truth
-
-The nightly service performs exactly one controlled pass in this order:
-
-1. `scripts/execution/run_pi_fast_daily_authority_refresh.py`
-2. fast Phase60 dependency: `--dependency-only --model-key phase60_restore_trx_sol_base`
-3. fast Phase63 dependency: `--winner-only --variant-key phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3`
-4. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
-5. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only after dry-run success and only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
-
-`journald` captures the pass through `mrv1-nightly-runtime.service`. Pi installs that use `mrv1-daily-live.service` must use the same wrapper.
+- authority success is not published until required execution and verification finish
+- execution artifacts remain operational evidence, not Production Core or account truth
 
 ## Preconditions
 
 - Linux machine with `systemd`
 - repo deployed at `/opt/market_regime_v1`
 - writable repo ownership for user `mrv1`
-- `execution/config/execution_mode.json` forced to a safe runtime profile before enabling the timer
+- live activation configuration reviewed explicitly before enabling the timer
 - `execution/config/hyperliquid_account.json` present with the real Hyperliquid account address
 
 ## Exact install commands
@@ -41,22 +41,11 @@ sudo chown -R mrv1:mrv1 /opt/market_regime_v1
 sudo -u mrv1 python3 -m venv /opt/market_regime_v1/.venv
 sudo -u mrv1 /opt/market_regime_v1/.venv/bin/pip install --upgrade pip
 sudo -u mrv1 /opt/market_regime_v1/.venv/bin/pip install -r /opt/market_regime_v1/requirements.txt requests
-sudo tee /opt/market_regime_v1/execution/config/execution_mode.json >/dev/null <<'EOF'
-{
-  "mode": "read_only",
-  "trading_enabled": false,
-  "dry_run_enabled": true,
-  "kill_switch": true,
-  "write_app_status": true,
-  "write_raw_snapshot": true,
-  "fail_fast": true
-}
-EOF
-sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-nightly-runtime.service /etc/systemd/system/mrv1-nightly-runtime.service
-sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-daily-live.service /etc/systemd/system/mrv1-daily-live.service
-sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-nightly-runtime.timer /etc/systemd/system/mrv1-nightly-runtime.timer
+sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-production.service /etc/systemd/system/mrv1-production.service
+sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-production.timer /etc/systemd/system/mrv1-production.timer
 sudo systemctl daemon-reload
-sudo systemctl enable --now mrv1-nightly-runtime.timer
+sudo systemctl disable --now mrv1-daily-live.timer mrv1-nightly-runtime.timer mrv1-runtime.timer
+sudo systemctl enable --now mrv1-production.timer
 ```
 
 If `/opt/market_regime_v1/execution/config/hyperliquid_account.json` does not exist yet:
@@ -71,28 +60,28 @@ sudo chown mrv1:mrv1 /opt/market_regime_v1/execution/config/hyperliquid_account.
 Verify the unit files:
 
 ```bash
-sudo systemd-analyze verify /etc/systemd/system/mrv1-nightly-runtime.service /etc/systemd/system/mrv1-daily-live.service /etc/systemd/system/mrv1-nightly-runtime.timer
+sudo systemd-analyze verify /etc/systemd/system/mrv1-production.service /etc/systemd/system/mrv1-production.timer
 ```
 
-Run one pass immediately:
+Run a safe no-submit preflight before enabling live execution:
 
 ```bash
-sudo systemctl start mrv1-nightly-runtime.service
+sudo -u mrv1 /opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_trendatlas_production.py --no-submit
 ```
 
 Check service and timer state:
 
 ```bash
-sudo systemctl status mrv1-nightly-runtime.service --no-pager
-sudo systemctl status mrv1-nightly-runtime.timer --no-pager
-sudo systemctl list-timers mrv1-nightly-runtime.timer --all
+sudo systemctl status mrv1-production.service --no-pager
+sudo systemctl status mrv1-production.timer --no-pager
+sudo systemctl list-timers mrv1-production.timer --all
 ```
 
 Check journald logs:
 
 ```bash
-sudo journalctl -u mrv1-nightly-runtime.service -n 200 --no-pager
-sudo journalctl -u mrv1-nightly-runtime.service --since "today 00:00" --no-pager
+sudo journalctl -u mrv1-production.service -n 200 --no-pager
+sudo journalctl -u mrv1-production.service --since "today 00:00" --no-pager
 ```
 
 Check the expected operational artifacts:
@@ -103,6 +92,7 @@ sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/app_snapshot/app_pr
 sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/app_snapshot/app_runtime_snapshot.json
 sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
 sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json
+sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/production_runs/latest_production_run.json
 sudo -u mrv1 cat /opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
 ```
 
@@ -120,7 +110,7 @@ sudo -u mrv1 git -C /opt/market_regime_v1 status --short -- source_of_truth
 - `ProtectSystem=strict` plus `ReadWritePaths=/opt/market_regime_v1/data /opt/market_regime_v1/outputs /opt/market_regime_v1__authority_publish` means runtime writes are confined to operational artifacts, refreshed market data, and the dedicated authority publish clone.
 - `ReadOnlyPaths=/opt/market_regime_v1/source_of_truth` adds an explicit runtime guardrail against truth writes from the service.
 - `ExecStartPost=/usr/bin/test -f ...` checks make the unit fail if the expected execution artifacts were not produced.
-- The service never calls a live-order script. It refreshes fast dependency inputs, verifies app freshness, runs publish-existing dry-run first, and runs the real publish only through the env-gated authority producer path.
+- The service has one entrypoint. Focused refresh, publish, gate, and submit scripts remain internal and must not have enabled competing timers.
 
 ## Manual Pi authority publish
 

@@ -72,9 +72,14 @@
 - PC role: `manual_recovery_debug_only`
 - GitHub Actions role: `validation_only`
 - Pi authority is runtime/publish authority and remains separate from Production Core strategy truth.
-- Default Pi authority path is `publish-existing`, dry-run first.
+- Canonical daily Pi production entrypoint is `scripts/execution/run_trendatlas_production.py`; it owns refresh through final authority publish under one single-run lock and one run manifest.
+- `publish-existing` remains an internal authority-publish primitive and is not a production scheduler entrypoint.
 - `--mode full-refresh` requires explicit approval.
-- Fast Pi authority verification must show `heavy_refresh_steps=skipped` and `live_order_chain=not_invoked`.
+- The orchestrator reuses the validated fast dependency refresh and must not escalate to `--mode full-refresh` without explicit approval.
+- Live submission is permitted only after the current run has validated Production Core, canonical intent/gate provenance, current data health, fresh account state, deterministic reconciliation, and durable pre-submit idempotency recovery.
+- Execution sizing is `fresh_account_equity_usd * validated_target_exposure`; fixed-dollar policy limits must not clip a valid strategy target. Relative safety ceilings block instead of resizing.
+- Every submitted transition uses a deterministic Hyperliquid CLOID and a durable journal record written before the exchange request. Restart recovery queries exchange state by CLOID and refreshes the account before deciding whether any residual order is safe.
+- Authority success for a run requiring execution is published only after exchange outcome and post-trade account verification are known.
 
 ## Data Health / Source Availability Guard
 - Guard status: active
@@ -103,6 +108,7 @@
 - Recurring scheduler: ready
 - Live runtime: armed
 - Remaining proof gap: first non-CASH end-to-end dynamic leverage evidence run
+- Canonical scheduler target: `scripts/execution/run_trendatlas_production.py`; legacy fast/authority/full-auto scripts are internal tools and must not be enabled as competing automatic production schedulers.
 
 ## AI LAB dev-only governance
 - `phase69` remains paused.

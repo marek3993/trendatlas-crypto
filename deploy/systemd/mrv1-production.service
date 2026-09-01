@@ -1,0 +1,37 @@
+[Unit]
+Description=TrendAtlas single production orchestrator
+Wants=network-online.target
+After=network-online.target
+ConditionPathExists=/opt/market_regime_v1/.venv/bin/python
+ConditionPathExists=/opt/market_regime_v1/scripts/execution/run_trendatlas_production.py
+
+[Service]
+Type=oneshot
+User=mrv1
+Group=mrv1
+WorkingDirectory=/opt/market_regime_v1
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONPATH=/opt/market_regime_v1/src:/opt/market_regime_v1/scripts
+Environment=MRV1_ENABLE_AUTHORITY_PUBLISH=1
+Environment=MRV1_AUTHORITY_MODE=authoritative
+Environment=MRV1_AUTOMATIC_PRODUCER_ID=raspberry_pi
+Environment=MRV1_REQUIRE_PI_RUNTIME=1
+ExecStartPre=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_trendatlas_production.py --help
+ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_trendatlas_production.py
+ExecStartPost=/usr/bin/test -f /opt/market_regime_v1/outputs/execution/production_runs/latest_production_run.json
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mrv1-production
+TimeoutStartSec=90min
+Restart=no
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/market_regime_v1/data /opt/market_regime_v1/outputs /opt/market_regime_v1__authority_publish
+ReadOnlyPaths=/opt/market_regime_v1/source_of_truth
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

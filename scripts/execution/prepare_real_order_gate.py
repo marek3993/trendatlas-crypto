@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -46,6 +47,9 @@ ACCOUNT_SNAPSHOT_PATH = READ_ONLY_DIR / "hyperliquid_account_snapshot.json"
 PRODUCTION_SNAPSHOT_PATH = PRODUCTION_DIR / "current_strategy_snapshot.json"
 AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH = (
     OUTPUTS_DIR / "authority" / "latest_successful_snapshot.json"
+)
+AUTHORITY_LATEST_ATTEMPT_STATUS_PATH = (
+    OUTPUTS_DIR / "authority" / "latest_attempt_status.json"
 )
 
 DECISION_PATH = LIVE_GATE_DIR / "latest_real_order_gate_decision.json"
@@ -121,6 +125,26 @@ def extract_open_orders_count(snapshot: dict[str, Any]) -> int:
     if isinstance(open_orders, list):
         return len(open_orders)
     return 0
+
+
+def extract_positions_count(snapshot: dict[str, Any]) -> int:
+    raw = snapshot.get("raw", {})
+    clearinghouse = raw.get("clearinghouseState", {}) if isinstance(raw, dict) else {}
+    positions = clearinghouse.get("assetPositions", []) if isinstance(clearinghouse, dict) else []
+    if not isinstance(positions, list):
+        return 0
+    active = 0
+    for item in positions:
+        if not isinstance(item, dict):
+            continue
+        position = item.get("position") if isinstance(item.get("position"), dict) else item
+        try:
+            size = float(str(position.get("szi", position.get("size", 0))))
+        except Exception:
+            size = 0.0
+        if abs(size) > 1e-12:
+            active += 1
+    return active
 
 
 def normalize_iso_day_text(value: Any, *, context: str) -> str:
@@ -292,6 +316,30 @@ def extract_authority_approval_gate_context(
     }
 
 
+def validate_same_run_authority_attempt(
+    *,
+    expected_closed_day: str,
+    authority_attempt_path: Path,
+) -> dict[str, Any]:
+    payload = read_json(authority_attempt_path)
+    status = str(payload.get("latest_authoritative_attempt_status") or "").strip().lower()
+    target_day = normalize_iso_day_text(
+        payload.get("target_closed_day_utc"),
+        context="authority latest_attempt_status target_closed_day_utc",
+    )
+    expected_run_id = str(os.environ.get("MRV1_CURRENT_AUTHORITY_RUN_ID") or "").strip()
+    actual_run_id = str(payload.get("run_id") or "").strip()
+    if os.environ.get("MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN") != "1":
+        raise ValueError("same-run in-progress authority is not enabled")
+    if status != "in_progress":
+        raise ValueError(f"same-run authority attempt must be in_progress (actual={status})")
+    if not expected_run_id or actual_run_id != expected_run_id:
+        raise ValueError("same-run authority attempt run_id mismatch")
+    if target_day != expected_closed_day:
+        raise ValueError("same-run authority attempt target day mismatch")
+    return {"run_id": actual_run_id, "target_closed_day": target_day, "status": status}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Prepare latest real-order gate decision from production snapshot, intent, account, mode, and policy inputs."
@@ -310,6 +358,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
     )
+    parser.add_argument(
+        "--authority-latest-attempt-status-path",
+        type=Path,
+        default=AUTHORITY_LATEST_ATTEMPT_STATUS_PATH,
+    )
     parser.add_argument("--decision-path", type=Path, default=DECISION_PATH)
     parser.add_argument("--quality-path", type=Path, default=QUALITY_PATH)
     parser.add_argument("--manifest-path", type=Path, default=MANIFEST_PATH)
@@ -318,6 +371,11 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    authority_attempt_path = getattr(
+        args,
+        "authority_latest_attempt_status_path",
+        AUTHORITY_LATEST_ATTEMPT_STATUS_PATH,
+    )
     LIVE_GATE_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -355,7 +413,10 @@ def main() -> None:
     allow_live_orders = bool(policy_cfg.get("allow_live_orders", False))
     manual_approval_required = bool(policy_cfg.get("manual_approval_required", True))
     require_kill_switch_off = bool(policy_cfg.get("require_kill_switch_off", True))
-    max_order_notional_usd = float(policy_cfg.get("max_order_notional_usd", 0.0))
+    sizing_mode = str(policy_cfg.get("sizing_mode") or "").strip()
+    max_strategy_target_exposure = float(
+        policy_cfg.get("max_strategy_target_exposure", 0.0)
+    )
     allowed_assets = {
         normalize_asset(x)
         for x in policy_cfg.get("allowed_assets", [])
@@ -387,6 +448,7 @@ def main() -> None:
     signal_strategy_model = str(intent.get("strategy_model") or "").strip()
     approval_source_error: str | None = None
     authority_approval_context: dict[str, Any] | None = None
+    same_run_authority_context: dict[str, Any] | None = None
     try:
         authority_approval_context = extract_authority_approval_gate_context(
             expected_strategy_model=production_context["strategy_version"],
@@ -396,11 +458,23 @@ def main() -> None:
     except Exception as exc:
         approval_source_error = str(exc)
 
+    try:
+        same_run_authority_context = validate_same_run_authority_attempt(
+            expected_closed_day=production_context["closed_day"],
+            authority_attempt_path=authority_attempt_path,
+        )
+    except Exception:
+        same_run_authority_context = None
+
     approval_gate_status = str(
         (authority_approval_context or {}).get("approval_gate_status") or ""
     ).strip()
     open_orders_count = extract_open_orders_count(account_snapshot)
+    positions_count = extract_positions_count(account_snapshot)
     account_address = str(account_snapshot.get("account_address", "")).strip()
+    target_is_cash = is_cash_like_asset(target_asset)
+    exit_required = target_is_cash and positions_count > 0
+    no_action_cash = target_is_cash and positions_count == 0
 
     checks = {
         "signal_present": bool(signal_id),
@@ -408,7 +482,7 @@ def main() -> None:
         "target_asset_allowed": (
             True if is_cash_like_asset(target_asset) else (target_asset in allowed_assets if target_asset else False)
         ),
-        "target_asset_is_cash": is_cash_like_asset(target_asset),
+        "target_asset_is_cash": target_is_cash,
         "target_exposure_positive": target_size_pct > 1e-9,
         "contract_validated": contract_validated,
         "mode_known": bool(mode),
@@ -428,16 +502,28 @@ def main() -> None:
             and str(authority_approval_context.get("strategy_model") or "").strip()
             == production_context["strategy_version"]
         ),
-        "approval_source_day_match": (
-            authority_approval_context is not None
-            and str(authority_approval_context.get("product_closed_day") or "").strip()
-            == production_context["closed_day"]
-            and str(authority_approval_context.get("target_closed_day") or "").strip()
-            == production_context["closed_day"]
+        "approval_source_day_match": bool(
+            same_run_authority_context
+            or (
+                authority_approval_context is not None
+                and str(authority_approval_context.get("product_closed_day") or "").strip()
+                == production_context["closed_day"]
+                and str(authority_approval_context.get("target_closed_day") or "").strip()
+                == production_context["closed_day"]
+            )
         ),
         "approval_status_allowed": approval_gate_status in allowed_approval_gate_statuses,
         "leverage_live_truth_allowed": leverage_live_truth_allowed,
-        "max_order_notional_usd": max_order_notional_usd,
+        "sizing_mode": sizing_mode,
+        "max_strategy_target_exposure": max_strategy_target_exposure,
+        "target_exposure_within_safety_ceiling": (
+            target_size_pct >= 0
+            and max_strategy_target_exposure > 0
+            and target_size_pct <= max_strategy_target_exposure + 1e-9
+        ),
+        "same_run_authority": same_run_authority_context is not None,
+        "positions_count": positions_count,
+        "exit_required": exit_required,
         "account_address_present": bool(account_address),
         "production_snapshot_validation_passed": (
             production_context["validation_status"] == "passed"
@@ -487,7 +573,7 @@ def main() -> None:
         block_reasons.append("missing_signal_id")
     if not checks["target_asset_present"]:
         block_reasons.append("missing_target_asset")
-    if checks["target_asset_is_cash"] or not checks["target_exposure_positive"]:
+    if no_action_cash:
         block_reasons.append("no_market_entry_authorized")
     if not checks["target_asset_allowed"]:
         block_reasons.append("target_asset_not_allowlisted")
@@ -515,8 +601,12 @@ def main() -> None:
         block_reasons.append("manual_approval_required")
     if not checks["approval_status_allowed"]:
         block_reasons.append(f"approval_gate_status={approval_gate_status}")
-    if checks["max_order_notional_usd"] <= 0:
-        block_reasons.append("max_order_notional_not_enabled")
+    if checks["sizing_mode"] != "equity_target_exposure":
+        block_reasons.append("equity_target_exposure_sizing_not_enabled")
+    if checks["max_strategy_target_exposure"] <= 0:
+        block_reasons.append("relative_exposure_safety_ceiling_not_enabled")
+    if not checks["target_exposure_within_safety_ceiling"]:
+        block_reasons.append("target_exposure_exceeds_relative_safety_ceiling")
     if not checks["allow_live_orders"]:
         block_reasons.append("allow_live_orders=false")
     if not checks["execution_trading_enabled"]:
@@ -529,11 +619,11 @@ def main() -> None:
         block_reasons.append("production_snapshot_signal_missing")
     if not checks["production_snapshot_target_asset_present"]:
         block_reasons.append("production_snapshot_target_asset_missing")
-    if not checks["production_snapshot_target_exposure_positive"]:
+    if not target_is_cash and not checks["production_snapshot_target_exposure_positive"]:
         block_reasons.append("production_snapshot_target_exposure_zero")
-    if not checks["production_snapshot_trend_permission_active"]:
+    if not target_is_cash and not checks["production_snapshot_trend_permission_active"]:
         block_reasons.append("production_snapshot_trend_permission_inactive")
-    if not checks["production_snapshot_allow_live_order_candidate"]:
+    if not target_is_cash and not checks["production_snapshot_allow_live_order_candidate"]:
         block_reasons.append("production_snapshot_allow_live_order_candidate=false")
     if checks["production_snapshot_stale_signal"]:
         block_reasons.append("production_snapshot_stale_signal")
@@ -554,8 +644,17 @@ def main() -> None:
             "intent_allow_live_order_candidate_mismatch_vs_production_snapshot"
         )
 
-    would_place_real_order = len(block_reasons) == 0
-    status = "ready_if_enabled" if would_place_real_order else "blocked"
+    would_place_real_order = len(block_reasons) == 0 and not no_action_cash
+    status = (
+        "ready_if_enabled"
+        if would_place_real_order
+        else ("no_action" if no_action_cash and block_reasons == ["no_market_entry_authorized"] else "blocked")
+    )
+    real_orders_enabled = bool(
+        allow_live_orders
+        and execution_trading_enabled
+        and (not require_kill_switch_off or not kill_switch)
+    )
 
     decision = {
         "decision_type": "real_order_gate_decision",
@@ -566,7 +665,7 @@ def main() -> None:
         "account_address": account_address,
         "approval_gate_status": approval_gate_status,
         "would_place_real_order": would_place_real_order,
-        "real_orders_enabled": False,
+        "real_orders_enabled": real_orders_enabled,
         "status": status,
         "block_reasons": block_reasons,
         "checks": checks,
@@ -606,6 +705,9 @@ def main() -> None:
             "authority_latest_successful_snapshot_path": str(
                 args.authority_latest_successful_snapshot_path.resolve()
             ),
+            "authority_latest_attempt_status_path": str(
+                authority_attempt_path.resolve()
+            ),
         },
     }
 
@@ -642,6 +744,7 @@ def main() -> None:
             str(args.snapshot_path.resolve()),
             str(args.production_snapshot_path.resolve()),
             str(args.authority_latest_successful_snapshot_path.resolve()),
+            str(authority_attempt_path.resolve()),
         ],
         "output_paths": [
             str(args.decision_path.resolve()),

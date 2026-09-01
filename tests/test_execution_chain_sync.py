@@ -278,6 +278,61 @@ class TestExecutionChainSync(unittest.TestCase):
                 write_outputs=False,
             )
 
+    def test_in_progress_authority_is_healthy_only_when_bound_to_same_canonical_intent(self):
+        root, paths = self.make_root()
+        intent = json.loads(paths["intent"].read_text(encoding="utf-8"))
+        intent["guardrail_flags"].update(
+            {
+                "same_run_authority_allowed": True,
+                "same_run_authority_run_id": "run-current",
+                "same_run_authority_target_closed_day": DAY,
+            }
+        )
+        write_json(paths["intent"], intent)
+        attempt_path = root / "outputs/execution/authority/latest_attempt_status.json"
+        write_json(
+            attempt_path,
+            {
+                "artifact_type": "execution_authority_latest_attempt_status",
+                "target_closed_day_utc": DAY,
+                "latest_authoritative_attempt_status": "in_progress",
+                "currentness_status": "current",
+                "generated_at_utc": "2026-09-01T00:15:00Z",
+                "run_id": "run-current",
+            },
+        )
+        context = {
+            "latest_closed_utc_day": DAY,
+            "btc_last_day": DAY,
+            "active_strategy_closed_day": DAY,
+            "main_strategy_model": MODEL,
+        }
+        current = data_health_common.evaluate_source(
+            spec=data_health_common.SOURCE_INDEX["execution_authority_latest_attempt_status"],
+            root=root,
+            reference_now=None,
+            context=context,
+            path_overrides={},
+            env_overrides={},
+        )
+        self.assertEqual(current["status"], "ok")
+
+        attempt = json.loads(attempt_path.read_text(encoding="utf-8"))
+        attempt["run_id"] = "different-run"
+        write_json(attempt_path, attempt)
+        mismatch = data_health_common.evaluate_source(
+            spec=data_health_common.SOURCE_INDEX["execution_authority_latest_attempt_status"],
+            root=root,
+            reference_now=None,
+            context=context,
+            path_overrides={},
+            env_overrides={},
+        )
+        self.assertEqual(mismatch["status"], "failed")
+        self.assertTrue(
+            data_health_common.summarize_sources([mismatch])["block_execution"]
+        )
+
     def run_gate_case(
         self,
         *,
@@ -325,7 +380,8 @@ class TestExecutionChainSync(unittest.TestCase):
                 "allow_live_orders": allow_live_orders,
                 "manual_approval_required": False,
                 "require_kill_switch_off": True,
-                "max_order_notional_usd": 250.0,
+                "sizing_mode": "equity_target_exposure",
+                "max_strategy_target_exposure": 2.0,
                 "allowed_assets": ["BTC", "CASH"],
                 "allowed_approval_gate_statuses": ["approved_and_applied"],
             },
@@ -378,7 +434,7 @@ class TestExecutionChainSync(unittest.TestCase):
             target_exposure=0.0,
         )
         self.assertIsNotNone(cash_gate)
-        self.assertEqual(cash_gate["status"], "blocked")
+        self.assertEqual(cash_gate["status"], "no_action")
         self.assertFalse(cash_gate["would_place_real_order"])
         self.assertIn("no_market_entry_authorized", cash_gate["block_reasons"])
 
@@ -389,7 +445,7 @@ class TestExecutionChainSync(unittest.TestCase):
         self.assertIsNotNone(btc_gate)
         self.assertEqual(btc_gate["status"], "ready_if_enabled")
         self.assertTrue(btc_gate["would_place_real_order"])
-        self.assertFalse(btc_gate["real_orders_enabled"])
+        self.assertTrue(btc_gate["real_orders_enabled"])
         mocked_submitter.assert_not_called()
 
     def test_gate_and_intent_fail_closed_guardrails_remain_intact(self):

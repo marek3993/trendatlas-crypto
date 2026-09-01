@@ -26,12 +26,14 @@ from scripts.execution.hyperliquid_live_canary import (  # noqa: E402
     fetch_all_mids,
     fetch_meta,
     fetch_open_orders,
+    fetch_order_status,
     fetch_spot_user_state,
     fetch_user_fills_by_time,
     fetch_user_state,
     filter_fills_for_oid,
     get_account_setup,
     normalize_submit_response,
+    normalize_order_status,
     recover_agent_or_user_from_l1_action,
     require_crypto_deps,
     sign_l1_action,
@@ -73,6 +75,133 @@ LOG_PATH = LOGS_DIR / "submit_controlled_real_order.log"
 
 MANUAL_CONFIRM_TOKEN = "CONTROLLED_REAL_ORDER"
 DEFAULT_EXCHANGE_MARGIN_MODE = "cross"
+
+
+def load_live_market_context() -> tuple[dict[str, float], dict[str, int]]:
+    """Read current mids and precision without loading signer credentials."""
+    meta = fetch_meta()
+    market_map = build_market_map(meta)
+    raw_mids = fetch_all_mids()
+    mids: dict[str, float] = {}
+    precision: dict[str, int] = {}
+    for asset, entry in market_map.items():
+        if asset in raw_mids:
+            mids[asset] = float(str(raw_mids[asset]))
+        precision[asset] = int(entry["sz_decimals"])
+    return mids, precision
+
+
+class HyperliquidProductionExchangeAdapter:
+    """Canonical signed-order primitive used only by the production orchestrator.
+
+    Signer credentials are loaded only when this adapter is instantiated. Each order
+    is IOC, carries the pre-journaled deterministic CLOID, and is submitted once.
+    """
+
+    def __init__(
+        self,
+        *,
+        account_config_path: Path = ACCOUNT_CONFIG_PATH,
+        expires_after_ms: int = DEFAULT_EXPIRES_AFTER_MS,
+    ) -> None:
+        self.account_cfg = read_json(account_config_path)
+        self.account_address = str(self.account_cfg.get("account_address") or "").strip()
+        if not self.account_address:
+            raise ValueError("Hyperliquid account_address is required")
+        self.crypto = None
+        self.account_setup = None
+        self.market_map = build_market_map(fetch_meta())
+        self.expires_after_ms = int(expires_after_ms)
+
+    def _ensure_signer(self) -> None:
+        if self.account_setup is not None:
+            return
+        self.crypto = require_crypto_deps()
+        self.account_setup = get_account_setup(self.account_cfg, self.crypto)
+        if self.account_setup["account_address"].lower() != self.account_address.lower():
+            raise ValueError("Configured Hyperliquid account changed during signer initialization")
+
+    def query_order_by_cloid(self, cloid: str) -> dict[str, Any]:
+        try:
+            raw = fetch_order_status(self.account_address, cloid)
+        except BaseException as exc:
+            return {
+                "found": False,
+                "status": "unknown",
+                "error": f"{type(exc).__name__}:{exc}",
+            }
+        normalized = normalize_order_status(raw, None)
+        status = str(normalized.get("status") or "unknown").lower()
+        found = bool(normalized.get("order_present")) or status not in {
+            "",
+            "unknown",
+            "unknownoid",
+            "missing",
+            "not_found",
+        }
+        return {"found": found, "status": status, "normalized": normalized, "raw": raw}
+
+    def submit_ioc_order(self, step: Any) -> dict[str, Any]:
+        self._ensure_signer()
+        assert self.crypto is not None and self.account_setup is not None
+        asset = str(step["asset"]).upper()
+        market_entry = self.market_map[asset]
+        requested_leverage = int(step.get("exchange_leverage") or 1)
+        market_max_leverage = int(market_entry.get("raw", {}).get("maxLeverage") or 0)
+        if requested_leverage < 1 or market_max_leverage < requested_leverage:
+            return {
+                "acknowledged": False,
+                "submit_state": "error",
+                "error": (
+                    "execution_leverage_exceeds_market_limit:"
+                    f"requested={requested_leverage}:market_max={market_max_leverage}"
+                ),
+                "cloid": step["cloid"],
+            }
+        if not bool(step["reduce_only"]):
+            leverage_result = submit_signed_action(
+                crypto=self.crypto,
+                account_setup=self.account_setup,
+                action={
+                    "type": "updateLeverage",
+                    "asset": int(market_entry["asset"]),
+                    "isCross": True,
+                    "leverage": requested_leverage,
+                },
+                expires_after_ms=self.expires_after_ms,
+            )
+            leverage_normalized = normalize_submit_response(leverage_result["response"])
+            if not bool(leverage_normalized.get("acknowledged")):
+                return {
+                    **leverage_normalized,
+                    "submit_state": "error",
+                    "error": leverage_normalized.get("error") or "leverage_update_not_acknowledged",
+                    "cloid": step["cloid"],
+                    "leverage_response": leverage_result["response"],
+                }
+        request = build_order_request(
+            self.market_map,
+            asset,
+            "buy" if str(step["side"]).upper() == "BUY" else "sell",
+            float(step["quantity"]),
+            float(step["limit_price"]),
+            bool(step["reduce_only"]),
+            cloid=str(step["cloid"]),
+        )
+        signed = submit_signed_action(
+            crypto=self.crypto,
+            account_setup=self.account_setup,
+            action={"type": "order", "orders": [request["wire"]], "grouping": "na"},
+            expires_after_ms=self.expires_after_ms,
+        )
+        normalized = normalize_submit_response(signed["response"])
+        return {
+            **normalized,
+            "nonce": signed["nonce"],
+            "expires_after": signed["expires_after"],
+            "cloid": step["cloid"],
+            "exchange_leverage": requested_leverage,
+        }
 
 
 def utc_now_iso() -> str:

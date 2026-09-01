@@ -180,6 +180,31 @@
       "notes": "Official active issues list."
     },
     {
+      "output_path": "outputs/execution/production_runs/",
+      "generated_by": [
+        "scripts/execution/run_trendatlas_production.py"
+      ],
+      "layer": "production_execution",
+      "status": "active",
+      "output_kind": "production_run_manifests",
+      "decision_relevance": "execution_authoritative",
+      "official_truth": false,
+      "notes": "Canonical per-run state machine evidence and latest run manifest; does not replace Production Core, account, intent, gate, or authority truth."
+    },
+    {
+      "output_path": "outputs/execution/execution_journal/",
+      "generated_by": [
+        "scripts/execution/run_trendatlas_production.py",
+        "scripts/execution/production_execution.py"
+      ],
+      "layer": "production_execution",
+      "status": "active",
+      "output_kind": "durable_execution_journal",
+      "decision_relevance": "execution_authoritative",
+      "official_truth": false,
+      "notes": "Atomic pre-submit journal with deterministic Hyperliquid CLOID and recovery evidence."
+    },
+    {
       "output_path": "outputs/execution/read_only/",
       "generated_by": [
         "scripts/execution/hyperliquid_read_only_snapshot.py"
@@ -314,11 +339,11 @@
         "scripts/execution/run_full_auto_execution_cycle.py"
       ],
       "layer": "execution_data",
-      "status": "active",
+      "status": "deprecated",
       "output_kind": "full_auto_runner_outputs",
       "decision_relevance": "decision_relevant",
       "official_truth": false,
-      "notes": "One-shot full-auto runner artifacts including decision, manifest, snapshot, skip reason, and optional idempotency record."
+      "notes": "Legacy artifacts only; replaced by outputs/execution/production_runs and never authoritative for new production execution."
     },
     {
       "output_path": "outputs/execution/full_auto_scheduler/",
@@ -326,11 +351,11 @@
         "scripts/execution/run_full_auto_scheduler_entry.py"
       ],
       "layer": "execution_data",
-      "status": "active",
+      "status": "deprecated",
       "output_kind": "scheduler_entry_outputs",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Scheduler-facing wrapper artifacts including decision, manifest, restore profile, per-run logs, and downstream verification evidence."
+      "notes": "Legacy scheduler artifacts only; the scheduler entrypoint is replaced by mrv1-production.service."
     },
     {
       "output_path": "outputs/app_refresh_pipeline/",

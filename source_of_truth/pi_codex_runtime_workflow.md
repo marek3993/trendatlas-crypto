@@ -31,17 +31,21 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 - Live order/leverage test is intentionally not done while the current strategy says `CASH`.
 - Current dashboard graph display is accepted; do not add graph legends or semantic rewrites unless explicitly requested later.
 
-## Default Safety Posture
+## Canonical Production Posture
 - do NOT run long/full refresh by default
 - do NOT run `--mode full-refresh` unless explicitly approved
-- allowed fast nightly authority path:
-  - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py`
+- the only automatic daily production entrypoint is:
+  - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_trendatlas_production.py`
+- `run_pi_fast_daily_authority_refresh.py`, `run_pi_authoritative_producer.py`, and controlled submit helpers remain internal modules/tools; no competing automatic scheduler may invoke them independently
 - the fast nightly authority wrapper must refresh the read-only Hyperliquid wallet snapshot before publish-existing dry-run
 - if the fast nightly wrapper detects that the canonical durable BTC-persistence dependency source day is behind the refreshed BTC closed day and the gap reaches or crosses `next_rebalance_date`, it must first refresh only the minimal Production Core dependency inputs and rebuild `current_strategy` before `publish-existing --dry-run`
 - allowed publish-existing primitive:
   - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --mode publish-existing`
 - always dry-run before real publish
-- no live order
+- live order submission is allowed only from the canonical orchestrator after every current-run gate passes; safe validation uses `--no-submit`
+- every live transition must have a durable pre-submission journal record and deterministic Hyperliquid CLOID before the request is sent
+- restart recovery must query the exchange by CLOID and refresh account/open-order state before any residual submission
+- fixed-dollar sizing is forbidden; target notional is fresh account equity multiplied by validated Production Core target exposure, with safety violations blocking rather than clipping
 - no manual authority snapshot edits
 - no manual generated outputs/data commits outside official authority producer
 - if `git pull` makes runtime stale, restore approved fresh runtime stash before dry-run
@@ -50,9 +54,11 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
   - `live_order_chain=not_invoked`
 
 ## Required Pi Nightly Service Workflow
-The installed Pi daily service (`mrv1-daily-live.service`, or the repo-provided nightly service alias) must call:
+The installed Pi production service must call only:
 
-`/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_fast_daily_authority_refresh.py`
+`/opt/market_regime_v1/.venv/bin/python scripts/execution/run_trendatlas_production.py`
+
+The orchestrator owns the following ordered state machine under one lock: refresh, precheck health, Production Core build/validation, fresh account snapshot, canonical intent, canonical gate, data-health validation, reconciliation plan, optional controlled live execution, exchange/account read-back, post-trade verification, dashboard materialization, and final authority publish. Authority success is forbidden before required execution and verification are complete.
 
 That wrapper must run exactly the fast dependency chain before publish-existing:
 
@@ -77,7 +83,7 @@ That wrapper must run exactly the fast dependency chain before publish-existing:
     - do not invoke reconciliation or any live-order submitter
 12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`; it must repeat/verify the canonical execution chain against the written authority files before publishing
 
-The nightly wrapper must not invoke `--mode full-refresh`, the old full Phase63 grid, a live-order submitter, or any manual authority snapshot edit.
+The orchestrator must not invoke `--mode full-refresh`, the old full Phase63 grid, or any manual authority snapshot edit. It may invoke the controlled live execution primitive only after its pre-submit checks and only when not running `--no-submit`.
 
 If the conditional refresh is required but the dependency-only materialization or Production Core rebuild cannot complete safely, the wrapper must fail before publish with `BLOCKED_REBALANCE_BOUNDARY_NEEDS_BASELINE_REFRESH`. The adapter guard that blocks unsafe carry-forward across rebalance boundaries remains the final fail-closed protection.
 
@@ -115,7 +121,9 @@ If step 3 invalidates the approved fresh runtime bundle, restore the approved st
 - Keep an explicit open-task list with `task name / owner / status / next action / blocker`.
 
 ## Hard Runtime Boundaries
-- No live order.
+- No live order outside the canonical production orchestrator.
+- `--no-submit` must never invoke an exchange mutation.
+- Safe publish-existing validation performs no live order and never invokes the submitter.
 - No manual authority snapshot edits.
 - No manual generated `outputs/*` or `data/*` commits outside the official authority producer path.
 - No default escalation from `publish-existing` to `full-refresh`.

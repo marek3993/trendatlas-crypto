@@ -27,6 +27,8 @@
     "execution_intents": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents",
     "execution_dry_run": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\dry_run",
     "execution_logs": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\logs",
+    "execution_production_runs": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\production_runs",
+    "execution_journal": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\execution_journal",
     "production_core": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production",
     "research_os_ideation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\ideation",
     "research_os_spec_generation": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\spec_generation",
@@ -65,7 +67,9 @@
     "production_quality": "production_core_validation_output",
     "data_health_report": "centralized_data_source_health_and_availability_report",
     "data_health_quality": "data_health_contract_validation_output",
-    "data_health_manifest": "data_health_lineage_and_contract_metadata"
+    "data_health_manifest": "data_health_lineage_and_contract_metadata",
+    "production_run_manifest": "single_production_state_machine_run_manifest",
+    "execution_journal": "durable_pre_submit_idempotency_and_exchange_recovery_record"
   },
   "artifacts": {
     "phase67j_winner_paper": {
@@ -619,6 +623,24 @@
         "validation"
       ],
       "write_mode": "future_write_through_candidate"
+    },
+    "production_run_manifest": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\production_runs\\latest_production_run.json",
+      "legacy_aliases": [],
+      "owner": "AUTOMATION",
+      "artifact_type": "production_run_manifest",
+      "truth_domain": "execution_runtime",
+      "read_scope": ["execution", "dashboard", "authority", "audit"],
+      "write_mode": "single_production_orchestrator_only"
+    },
+    "production_execution_journal": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\execution_journal\\latest_execution_journal.json",
+      "legacy_aliases": [],
+      "owner": "AUTOMATION",
+      "artifact_type": "execution_journal",
+      "truth_domain": "execution_runtime",
+      "read_scope": ["execution", "recovery", "audit"],
+      "write_mode": "durable_pre_submit_journal_only"
     },
     "phase68i_dynamic_ladder_candidate_summary": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase68i_dynamic_ladder_candidate_summary.csv",
