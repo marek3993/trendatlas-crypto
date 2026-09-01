@@ -83,7 +83,7 @@ class TestPiCodexRuntimeWorkflowDocs(unittest.TestCase):
             "`real_account asset/exposure/in_market`",
             "`model_signal preferred_asset/exposure`",
             "`health block_app/block_execution`",
-            "`gate would_place_real_order=false`",
+            "`gate would_place_real_order` recorded from current policy/account/signal state",
             "`task name / owner / status / next action / blocker`",
         ]
 

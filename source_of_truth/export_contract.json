@@ -60,6 +60,16 @@
                                                                 },
                                        "production_critical_btc_ohlcv_source_id":  "data_ohlcv_btcusdt_1d",
                                        "production_critical_btc_ohlcv_rule":  "stale_or_missing_blocks_production_and_execution",
+                                       "canonical_execution_health_rule":  {
+                                                                                  "intent_path":  "outputs/execution/intents/latest_execution_intent.json",
+                                                                                  "gate_path":  "outputs/execution/live_gate/latest_real_order_gate_decision.json",
+                                                                                  "account_snapshot_path":  "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+                                                                                  "must_match_production_core":  true,
+                                                                                  "gate_must_consume_canonical_intent":  true,
+                                                                                  "gate_must_consume_current_account_snapshot":  true,
+                                                                                  "temporary_execution_path_overrides_forbidden":  true,
+                                                                                  "mismatch_action":  "block_execution_fail_closed"
+                                                                              },
                                        "current_state":  {
                                                              "overall_status":  "warning",
                                                              "app_status":  "ok",
@@ -442,6 +452,15 @@
                                        "separate_from_production_core_strategy_truth":  true,
                                        "latest_successful_snapshot_path":  "outputs/execution/authority/latest_successful_snapshot.json",
                                        "latest_attempt_status_path":  "outputs/execution/authority/latest_attempt_status.json",
+                                       "successful_publish_existing_execution_chain":  [
+                                                                                           "validate_current_production_core",
+                                                                                           "build_canonical_execution_intent",
+                                                                                           "build_canonical_real_order_gate_from_current_account_snapshot",
+                                                                                           "validate_canonical_execution_data_health",
+                                                                                           "materialize_runtime_and_dashboard_from_canonical_execution_state",
+                                                                                           "publish_authority_and_canonical_execution_artifacts"
+                                                                                       ],
+                                       "live_order_submission_in_publish_existing":  "forbidden",
                                        "legacy_non_authoritative_paths":  [
                                                                               "outputs/execution/app_snapshot/*",
                                                                               "outputs/app_refresh_pipeline/*",

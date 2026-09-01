@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -60,6 +61,14 @@ def utc_now_iso() -> str:
         .isoformat()
         .replace("+00:00", "Z")
     )
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def log(msg: str) -> None:
@@ -249,8 +258,9 @@ def extract_authority_approval_gate_context(
     *,
     expected_strategy_model: str,
     expected_closed_day: str,
+    authority_snapshot_path: Path = AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
 ) -> dict[str, Any]:
-    payload = read_json(AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH)
+    payload = read_json(authority_snapshot_path)
     product_snapshot = payload.get("app_product_snapshot")
     if not isinstance(product_snapshot, dict):
         raise ValueError(
@@ -278,7 +288,7 @@ def extract_authority_approval_gate_context(
         "target_closed_day": target_closed_day,
         "expected_strategy_model": expected_strategy_model,
         "expected_closed_day": expected_closed_day,
-        "source_path": str(AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH.resolve()),
+        "source_path": str(authority_snapshot_path.resolve()),
     }
 
 
@@ -294,6 +304,11 @@ def parse_args() -> argparse.Namespace:
         "--production-snapshot-path",
         type=Path,
         default=PRODUCTION_SNAPSHOT_PATH,
+    )
+    parser.add_argument(
+        "--authority-latest-successful-snapshot-path",
+        type=Path,
+        default=AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
     )
     parser.add_argument("--decision-path", type=Path, default=DECISION_PATH)
     parser.add_argument("--quality-path", type=Path, default=QUALITY_PATH)
@@ -376,6 +391,7 @@ def main() -> None:
         authority_approval_context = extract_authority_approval_gate_context(
             expected_strategy_model=production_context["strategy_version"],
             expected_closed_day=production_context["closed_day"],
+            authority_snapshot_path=args.authority_latest_successful_snapshot_path,
         )
     except Exception as exc:
         approval_source_error = str(exc)
@@ -570,6 +586,11 @@ def main() -> None:
                 "allow_live_order_candidate"
             ],
         },
+        "source_fingerprints": {
+            "intent_sha256": sha256_file(args.intent_path),
+            "account_snapshot_sha256": sha256_file(args.snapshot_path),
+            "production_snapshot_sha256": sha256_file(args.production_snapshot_path),
+        },
         "notes": [
             "This is a gate-preparation artifact only.",
             "Strategy signal truth is read from outputs/production/current_strategy_snapshot.json.",
@@ -583,7 +604,7 @@ def main() -> None:
             "account_snapshot_path": str(args.snapshot_path.resolve()),
             "production_snapshot_path": str(args.production_snapshot_path.resolve()),
             "authority_latest_successful_snapshot_path": str(
-                AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH.resolve()
+                args.authority_latest_successful_snapshot_path.resolve()
             ),
         },
     }
@@ -620,6 +641,7 @@ def main() -> None:
             str(args.intent_path.resolve()),
             str(args.snapshot_path.resolve()),
             str(args.production_snapshot_path.resolve()),
+            str(args.authority_latest_successful_snapshot_path.resolve()),
         ],
         "output_paths": [
             str(args.decision_path.resolve()),

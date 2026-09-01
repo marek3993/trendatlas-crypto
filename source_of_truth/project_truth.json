@@ -359,6 +359,15 @@
                               "build_script":  "scripts/production/build_data_health_report.py",
                               "validation_script":  "scripts/production/validate_data_health_report.py",
                               "no_silent_fallback":  true,
+                              "canonical_execution_health_contract":  {
+                                                                            "intent_path":  "outputs/execution/intents/latest_execution_intent.json",
+                                                                            "gate_path":  "outputs/execution/live_gate/latest_real_order_gate_decision.json",
+                                                                            "account_snapshot_path":  "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+                                                                            "must_match_production_core":  true,
+                                                                            "gate_must_consume_canonical_intent_and_account_snapshot":  true,
+                                                                            "temporary_execution_path_overrides_forbidden":  true,
+                                                                            "mismatch_action":  "block_execution_fail_closed"
+                                                                        },
                               "gating_contract":  {
                                                        "production_critical":  "block_app_and_execution_fail_closed",
                                                        "app_critical":  "block_app_fail_closed",

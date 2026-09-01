@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import os
 from dataclasses import dataclass, replace
@@ -75,6 +76,15 @@ ETF_FLOW_DYNAMIC_SOURCE_IDS = {
     "research_btc_etf_flow_daily_panel_csv",
     "research_btc_etf_flow_daily_panel_quality",
 }
+CANONICAL_EXECUTION_SOURCE_IDS = frozenset(
+    {
+        "execution_latest_execution_intent",
+        "execution_latest_real_order_gate_decision",
+    }
+)
+CANONICAL_ACCOUNT_SNAPSHOT_PATH = (
+    "outputs/execution/read_only/hyperliquid_account_snapshot.json"
+)
 
 
 @dataclass(frozen=True)
@@ -232,6 +242,7 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
             "target_asset",
             "stale_signal",
             "guardrail_flags",
+            "source_fingerprints",
         ),
         expected_mode="latest_closed_utc_day",
         max_allowed_lag_days=0,
@@ -252,6 +263,7 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
             "status",
             "checks",
             "production_signal_context",
+            "source_fingerprints",
         ),
         expected_mode="latest_closed_utc_day",
         max_allowed_lag_days=0,
@@ -675,6 +687,164 @@ def derive_action(spec: SourceSpec, status: str) -> str:
     return spec.action_on_failure
 
 
+def sha256_file(path: Path) -> str | None:
+    if not path.exists() or not path.is_file():
+        return None
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_effective_json_source(
+    source_id: str,
+    *,
+    root: Path,
+    path_overrides: dict[str, str],
+) -> tuple[dict[str, Any] | None, Path]:
+    spec = SOURCE_INDEX[source_id]
+    path = normalize_path(path_overrides.get(source_id, spec.path), root=root)
+    if not path.exists() or not path.is_file():
+        return None, path
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None, path
+    return (payload if isinstance(payload, dict) else None), path
+
+
+def values_match(expected: Any, actual: Any) -> bool:
+    if isinstance(expected, bool) or isinstance(actual, bool):
+        return expected is actual
+    try:
+        return abs(float(expected) - float(actual)) <= 1e-9
+    except (TypeError, ValueError):
+        return str(expected or "").strip() == str(actual or "").strip()
+
+
+def canonical_execution_alignment_errors(
+    source_id: str,
+    payload: dict[str, Any],
+    *,
+    root: Path,
+    path_overrides: dict[str, str],
+) -> list[str]:
+    production_payload, production_path = load_effective_json_source(
+        "production_current_strategy_snapshot",
+        root=root,
+        path_overrides=path_overrides,
+    )
+    if production_payload is None:
+        return ["Production Core snapshot is unavailable for execution alignment."]
+    production_intent = production_payload.get("execution_intent")
+    if not isinstance(production_intent, dict):
+        return ["Production Core execution_intent is unavailable for execution alignment."]
+
+    expected_intent_fields = {
+        "as_of_source": production_payload.get("closed_day"),
+        "strategy_model": production_payload.get("strategy_version"),
+        "signal_id": production_intent.get("signal_id"),
+        "target_asset": production_intent.get("target_asset"),
+        "target_size_pct": production_intent.get("target_exposure"),
+        "stale_signal": production_intent.get("stale_signal"),
+        "allow_live_order_candidate": production_intent.get(
+            "allow_live_order_candidate"
+        ),
+    }
+    errors: list[str] = []
+
+    if source_id == "execution_latest_execution_intent":
+        for field_name, expected_value in expected_intent_fields.items():
+            if not values_match(expected_value, payload.get(field_name)):
+                errors.append(
+                    f"intent.{field_name} diverges from Production Core "
+                    f"(expected={expected_value!r} actual={payload.get(field_name)!r})"
+                )
+        fingerprints = payload.get("source_fingerprints")
+        fingerprints = fingerprints if isinstance(fingerprints, dict) else {}
+        expected_hash = sha256_file(production_path)
+        if fingerprints.get("production_snapshot_sha256") != expected_hash:
+            errors.append("intent Production Core fingerprint does not match the canonical snapshot")
+        return errors
+
+    intent_payload, intent_path = load_effective_json_source(
+        "execution_latest_execution_intent",
+        root=root,
+        path_overrides=path_overrides,
+    )
+    if intent_payload is None:
+        return ["Canonical execution intent is unavailable for gate alignment."]
+
+    direct_gate_fields = {
+        "signal_id": expected_intent_fields["signal_id"],
+        "target_asset": expected_intent_fields["target_asset"],
+    }
+    for field_name, expected_value in direct_gate_fields.items():
+        if not values_match(expected_value, payload.get(field_name)):
+            errors.append(
+                f"gate.{field_name} diverges from Production Core "
+                f"(expected={expected_value!r} actual={payload.get(field_name)!r})"
+            )
+
+    production_context = payload.get("production_signal_context")
+    production_context = production_context if isinstance(production_context, dict) else {}
+    expected_context_fields = {
+        "strategy_version": production_payload.get("strategy_version"),
+        "closed_day": production_payload.get("closed_day"),
+        "signal_id": production_intent.get("signal_id"),
+        "target_asset": production_intent.get("target_asset"),
+        "target_exposure": production_intent.get("target_exposure"),
+        "allow_live_order_candidate": production_intent.get(
+            "allow_live_order_candidate"
+        ),
+    }
+    for field_name, expected_value in expected_context_fields.items():
+        if not values_match(expected_value, production_context.get(field_name)):
+            errors.append(
+                f"gate.production_signal_context.{field_name} diverges from Production Core"
+            )
+
+    checks = payload.get("checks")
+    checks = checks if isinstance(checks, dict) else {}
+    required_alignment_checks = (
+        "intent_day_matches_production_snapshot",
+        "intent_signal_matches_production_snapshot",
+        "intent_target_asset_matches_production_snapshot",
+        "intent_target_exposure_matches_production_snapshot",
+        "intent_stale_signal_matches_production_snapshot",
+        "intent_strategy_model_matches_production_snapshot",
+        "intent_allow_live_order_candidate_matches_snapshot",
+    )
+    for check_name in required_alignment_checks:
+        if checks.get(check_name) is not True:
+            errors.append(f"gate alignment check {check_name}=false_or_missing")
+
+    source_paths = payload.get("source_paths")
+    source_paths = source_paths if isinstance(source_paths, dict) else {}
+    gate_intent_path = normalize_path(str(source_paths.get("intent_path") or ""), root=root)
+    account_snapshot_path = normalize_path(CANONICAL_ACCOUNT_SNAPSHOT_PATH, root=root)
+    gate_account_path = normalize_path(
+        str(source_paths.get("account_snapshot_path") or ""), root=root
+    )
+    if gate_intent_path != intent_path.resolve():
+        errors.append("gate intent source path is not the canonical execution intent")
+    if gate_account_path != account_snapshot_path.resolve():
+        errors.append("gate account source path is not the canonical read-only snapshot")
+
+    fingerprints = payload.get("source_fingerprints")
+    fingerprints = fingerprints if isinstance(fingerprints, dict) else {}
+    expected_fingerprints = {
+        "intent_sha256": sha256_file(intent_path),
+        "production_snapshot_sha256": sha256_file(production_path),
+        "account_snapshot_sha256": sha256_file(account_snapshot_path),
+    }
+    for field_name, expected_value in expected_fingerprints.items():
+        if not expected_value or fingerprints.get(field_name) != expected_value:
+            errors.append(f"gate {field_name} does not match its canonical source")
+    return errors
+
+
 def build_failure_reason_for_lag(expected_last_date: str, actual_last_date: str, max_allowed_lag_days: int, lag_days: int) -> str:
     return (
         "Stale source: expected_last_date="
@@ -729,6 +899,14 @@ def apply_special_rules(
             return STATUS_STALE, "Intent artifact reports stale_signal=true."
         if not bool(nested_get(payload, "guardrail_flags", "production_snapshot_validated")):
             return STATUS_FAILED, "Intent guardrail production_snapshot_validated=false."
+        alignment_errors = canonical_execution_alignment_errors(
+            source_id,
+            payload,
+            root=root,
+            path_overrides=path_overrides,
+        )
+        if alignment_errors:
+            return STATUS_FAILED, " | ".join(alignment_errors)
 
     if source_id == "execution_latest_real_order_gate_decision":
         checks = payload.get("checks") if isinstance(payload.get("checks"), dict) else {}
@@ -740,6 +918,14 @@ def apply_special_rules(
             return STATUS_FAILED, "Gate check intent_signal_matches_production_snapshot=false."
         if bool(checks.get("production_snapshot_stale_signal", False)):
             return STATUS_FAILED, "Gate check production_snapshot_stale_signal=true."
+        alignment_errors = canonical_execution_alignment_errors(
+            source_id,
+            payload,
+            root=root,
+            path_overrides=path_overrides,
+        )
+        if alignment_errors:
+            return STATUS_FAILED, " | ".join(alignment_errors)
 
     if source_id in {
         "research_btc_etf_flow_daily_panel_quality",
@@ -1109,6 +1295,14 @@ def build_report_bundle(
     resolved_output_dir = output_dir.resolve()
     path_override_map = dict(path_overrides or {})
     env_override_map = dict(env_overrides or {})
+    forbidden_execution_overrides = sorted(
+        CANONICAL_EXECUTION_SOURCE_IDS.intersection(path_override_map)
+    )
+    if forbidden_execution_overrides:
+        raise ValueError(
+            "Data health execution sources must use canonical paths; forbidden path overrides: "
+            + ", ".join(forbidden_execution_overrides)
+        )
 
     context = build_context(
         root=resolved_root,

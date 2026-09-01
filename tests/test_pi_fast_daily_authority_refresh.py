@@ -18,6 +18,15 @@ from scripts.execution import mrv1_self_healing_watchdog as watchdog
 
 
 class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
+    def _aligned_sync_summary(self) -> dict[str, object]:
+        return {
+            "production_closed_day": "2026-05-16",
+            "intent_closed_day": "2026-05-16",
+            "intent_target_asset": "CASH",
+            "gate_target_asset": "CASH",
+            "data_health_block_execution": False,
+        }
+
     def _no_boundary_check(self) -> fast_refresh.RebalanceBoundaryDependencyCheck:
         return fast_refresh.RebalanceBoundaryDependencyCheck(
             status="not_crossed",
@@ -39,6 +48,10 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
             fast_refresh,
             "detect_rebalance_boundary_dependency_refresh",
             return_value=self._no_boundary_check(),
+        ), mock.patch.object(
+            fast_refresh,
+            "validate_canonical_execution_chain_sync",
+            return_value=self._aligned_sync_summary(),
         ), mock.patch.object(fast_refresh.subprocess, "run", side_effect=fake_run):
             result = fast_refresh.run_fast_daily_authority_refresh(env=env, root=ROOT)
 
@@ -163,7 +176,13 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
                 "returncode": 0,
             }
 
-        with mock.patch.object(fast_refresh, "run_python_step", side_effect=fake_step):
+        with mock.patch.object(
+            fast_refresh, "run_python_step", side_effect=fake_step
+        ), mock.patch.object(
+            fast_refresh,
+            "validate_canonical_execution_chain_sync",
+            return_value=self._aligned_sync_summary(),
+        ):
             result = fast_refresh.run_fast_daily_authority_refresh(env={}, root=root)
 
         command_names = [Path(command[1]).name for command in calls]
@@ -199,7 +218,13 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
                 "returncode": 0,
             }
 
-        with mock.patch.object(fast_refresh, "run_python_step", side_effect=fake_step):
+        with mock.patch.object(
+            fast_refresh, "run_python_step", side_effect=fake_step
+        ), mock.patch.object(
+            fast_refresh,
+            "validate_canonical_execution_chain_sync",
+            return_value=self._aligned_sync_summary(),
+        ):
             result = fast_refresh.run_fast_daily_authority_refresh(env={}, root=root)
 
         command_names = [Path(command[1]).name for command in calls]
@@ -285,6 +310,38 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
         self.assertEqual(result["live_order_chain"], "not_invoked")
         self.assertEqual(result["full_refresh_mode"], "not_invoked")
 
+    def test_fast_cycle_validates_canonical_chain_after_dry_run_and_real_publish(self):
+        sync_summary = self._aligned_sync_summary()
+        with mock.patch.object(
+            fast_refresh,
+            "detect_rebalance_boundary_dependency_refresh",
+            return_value=self._no_boundary_check(),
+        ), mock.patch.object(
+            fast_refresh,
+            "run_python_step",
+            return_value={"returncode": 0},
+        ), mock.patch.object(
+            fast_refresh,
+            "validate_canonical_execution_chain_sync",
+            return_value=sync_summary,
+        ) as validate_sync:
+            result = fast_refresh.run_fast_daily_authority_refresh(
+                env={
+                    "MRV1_ENABLE_AUTHORITY_PUBLISH": "1",
+                    "MRV1_AUTHORITY_MODE": "authoritative",
+                },
+                root=ROOT,
+            )
+
+        self.assertEqual(
+            validate_sync.call_args_list,
+            [
+                mock.call(root=ROOT, require_execution_health=False),
+                mock.call(root=ROOT, require_execution_health=True),
+            ],
+        )
+        self.assertEqual(result["canonical_execution_sync"], sync_summary)
+
     def test_real_publish_skipped_without_authority_env_gate(self):
         result, calls = self._run_with_fake_subprocess({})
 
@@ -364,6 +421,9 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
             "scripts/execution/materialize_execution_app_exports.py --production-core-dependencies-only",
             "scripts/production/build_current_strategy_snapshot.py",
             "scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run",
+            "scripts/execution/build_execution_intent_from_strategy_exports.py",
+            "scripts/execution/prepare_real_order_gate.py",
+            "temporary execution-source path overrides are forbidden",
             "MRV1_ENABLE_AUTHORITY_PUBLISH=1",
             "MRV1_AUTHORITY_MODE=authoritative",
             "BLOCKED_REBALANCE_BOUNDARY_NEEDS_BASELINE_REFRESH",

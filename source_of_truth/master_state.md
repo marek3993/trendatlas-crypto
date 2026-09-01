@@ -92,6 +92,7 @@
 - Research-only failures do not block production, but they block the relevant research probe.
 - Missing optional env/API keys are surfaced as `unavailable` / `warn_only`.
 - No silent fallback is allowed for degraded or missing guarded sources.
+- Execution health must validate the canonical intent and gate paths directly against Production Core and the canonical read-only account snapshot; temporary execution-source path overrides are forbidden.
 - Stale or missing `BTC` daily OHLCV is production-critical and blocks production/execution.
 - Current real state: `overall_status=warning`, `app_status=ok`, `execution_status=ok`, `research_status=warning`.
 - Current block flags: `block_app=false`, `block_execution=false`.

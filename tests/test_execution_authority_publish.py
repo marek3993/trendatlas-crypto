@@ -127,6 +127,19 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             production_dir / "data_health_report.manifest.json",
             {"artifact_type": "data_health_report_manifest"},
         )
+        execution_artifacts = {
+            "outputs/execution/intents/latest_execution_intent.json": {},
+            "outputs/execution/intents/latest_execution_intent_quality.json": {},
+            "outputs/execution/intents/latest_execution_intent_manifest.json": {},
+            "outputs/execution/live_gate/latest_real_order_gate_decision.json": {},
+            "outputs/execution/live_gate/latest_real_order_gate_quality.json": {},
+            "outputs/execution/live_gate/latest_real_order_gate_manifest.json": {},
+            "outputs/execution/read_only/hyperliquid_account_snapshot.json": {},
+            "outputs/execution/read_only/hyperliquid_account_snapshot_quality.json": {},
+            "outputs/execution/read_only/hyperliquid_account_snapshot_manifest.json": {},
+        }
+        for relative_path, payload in execution_artifacts.items():
+            self.write_json_file(temp_root / relative_path, payload)
 
     def seed_fast_publish_script_placeholders(self, temp_root: Path) -> dict[str, Path]:
         script_paths = {
@@ -1452,6 +1465,13 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             stack.enter_context(
                 mock.patch.object(
                     pi_producer,
+                    "build_report_bundle",
+                    return_value=readiness_bundle,
+                )
+            )
+            stack.enter_context(
+                mock.patch.object(
+                    pi_producer,
                     "validate_publish_existing_readiness_bundle",
                     return_value=readiness_bundle["report"],
                 )
@@ -1489,6 +1509,10 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                 "build_current_strategy_snapshot",
                 "validate_current_strategy_snapshot",
                 "materialize_execution_app_exports",
+                "build_execution_intent_from_strategy_exports",
+                "prepare_real_order_gate",
+                "materialize_execution_app_exports_from_canonical_execution_chain",
+                "materialize_execution_app_exports_after_dry_run",
             ],
         )
         self.assertEqual(result["authority_artifact_write"], "skipped_dry_run")
@@ -1496,7 +1520,7 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
         self.assertEqual(result["live_order_chain"], "not_invoked")
         self.assertEqual(result["authority_repo_publish"], publish_preview)
 
-    def test_publish_existing_validation_bundle_uses_synthetic_intent_and_gate(self):
+    def test_publish_existing_validation_bundle_cannot_override_canonical_intent_or_gate(self):
         temp_root = self.make_temp_root()
         attempt_payload = {
             "artifact_type": ATTEMPT_STATUS_ARTIFACT_TYPE,
@@ -1510,49 +1534,11 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             "latest_authoritative_attempt_status": "success",
             "generated_at_utc": "2026-05-11T12:00:00Z",
         }
-        production_dir = temp_root / "outputs" / "production"
-        self.write_json_file(
-            production_dir / "current_strategy_snapshot.json",
-            {
-                "artifact_type": "current_strategy_snapshot",
-                "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                "closed_day": "2026-05-10",
-                "strategy_status": "ready",
-                "candidate_asset": "BTC",
-                "current_asset": "CASH",
-                "current_regime": "CASH",
-                "effective_market_exposure": 0.0,
-                "model_candidate_exposure": 0.75,
-                "trend_permission_active": False,
-                "validation": {"status": "passed"},
-                "execution_intent": {
-                    "target_asset": "CASH",
-                    "target_exposure": 0.0,
-                    "signal_id": (
-                        "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15"
-                        "::2026-05-10::target_CASH::candidate_BTC"
-                    ),
-                    "stale_signal": False,
-                    "allow_live_order_candidate": False,
-                },
-            },
-        )
         run_dir = temp_root / "outputs" / "execution" / "tmp" / "publish_existing_validation" / "case"
         captured_overrides: dict[str, str] = {}
 
         def fake_build_report_bundle(*, path_overrides, **kwargs):
             captured_overrides.update(path_overrides)
-            intent = load_json(Path(path_overrides["execution_latest_execution_intent"]))
-            gate = load_json(Path(path_overrides["execution_latest_real_order_gate_decision"]))
-            self.assertEqual(intent["as_of_source"], "2026-05-10")
-            self.assertFalse(intent["allow_live_order_candidate"])
-            self.assertTrue(intent["guardrail_flags"]["production_snapshot_validated"])
-            self.assertEqual(gate["production_signal_context"]["closed_day"], "2026-05-10")
-            self.assertFalse(gate["would_place_real_order"])
-            self.assertFalse(gate["real_orders_enabled"])
-            self.assertEqual(gate["status"], "blocked")
-            self.assertTrue(gate["checks"]["intent_day_matches_production_snapshot"])
-            self.assertFalse(gate["checks"]["production_snapshot_stale_signal"])
             return {
                 "report": {
                     "reference_closed_day_utc": "2026-05-10",
@@ -1575,8 +1561,10 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
             )
 
         self.assertEqual(bundle["quality"]["status"], "passed")
-        self.assertIn("execution_latest_execution_intent", captured_overrides)
-        self.assertIn("execution_latest_real_order_gate_decision", captured_overrides)
+        self.assertIn("execution_authority_latest_attempt_status", captured_overrides)
+        self.assertIn("execution_authority_latest_successful_snapshot", captured_overrides)
+        self.assertNotIn("execution_latest_execution_intent", captured_overrides)
+        self.assertNotIn("execution_latest_real_order_gate_decision", captured_overrides)
         self.assertFalse(
             (temp_root / "outputs" / "execution" / "intents" / "latest_execution_intent.json").exists()
         )
@@ -1714,9 +1702,15 @@ class TestExecutionAuthorityPublish(unittest.TestCase):
                 "build_current_strategy_snapshot",
                 "validate_current_strategy_snapshot",
                 "materialize_execution_app_exports",
+                "build_execution_intent_from_strategy_exports",
+                "prepare_real_order_gate",
+                "materialize_execution_app_exports_from_canonical_execution_chain",
+                "build_execution_intent_from_strategy_exports",
+                "prepare_real_order_gate",
+                "materialize_execution_app_exports_after_authority_sync",
             ],
         )
-        publish_authority_success.assert_called_once()
+        self.assertEqual(publish_authority_success.call_count, 2)
         publish_repo_mock.assert_called_once_with(
             root=temp_root,
             env=mock.ANY,

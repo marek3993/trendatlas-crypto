@@ -429,6 +429,48 @@
       ],
       "write_mode": "producer_only_data_health_build"
     },
+    "execution_latest_intent": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "execution_intent",
+      "truth_domain": "execution",
+      "read_scope": [
+        "execution",
+        "app",
+        "validation",
+        "audit"
+      ],
+      "write_mode": "canonical_builder_only"
+    },
+    "execution_latest_real_order_gate": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\live_gate\\latest_real_order_gate_decision.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "validation_report",
+      "truth_domain": "execution",
+      "read_scope": [
+        "execution",
+        "app",
+        "validation",
+        "audit"
+      ],
+      "write_mode": "canonical_gate_builder_only"
+    },
+    "execution_hyperliquid_read_only_snapshot": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "account_snapshot",
+      "truth_domain": "execution",
+      "read_scope": [
+        "execution",
+        "app",
+        "validation",
+        "audit"
+      ],
+      "write_mode": "read_only_snapshot_builder_only"
+    },
     "dashboard_public_status": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_snapshot\\dashboard_public_status.json",
       "legacy_aliases": [],

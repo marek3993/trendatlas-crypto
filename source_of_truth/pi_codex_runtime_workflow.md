@@ -68,8 +68,14 @@ That wrapper must run exactly the fast dependency chain before publish-existing:
 10. conditional rebalance-boundary dependency refresh only when the canonical durable BTC-persistence dependency source day would otherwise carry forward across `next_rebalance_date`:
     - `scripts/execution/materialize_execution_app_exports.py --production-core-dependencies-only`
     - `scripts/production/build_current_strategy_snapshot.py`
-11. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
-12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
+11. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`; its required safe internal chain is:
+    - validate the current Production Core snapshot
+    - run `scripts/execution/build_execution_intent_from_strategy_exports.py` into the canonical intent paths
+    - run `scripts/execution/prepare_real_order_gate.py` from that canonical intent and the current read-only Hyperliquid snapshot into the canonical gate paths
+    - validate data health against the real canonical intent and gate; temporary execution-source path overrides are forbidden
+    - rematerialize app/runtime/dashboard artifacts from the refreshed canonical execution state
+    - do not invoke reconciliation or any live-order submitter
+12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`; it must repeat/verify the canonical execution chain against the written authority files before publishing
 
 The nightly wrapper must not invoke `--mode full-refresh`, the old full Phase63 grid, a live-order submitter, or any manual authority snapshot edit.
 
@@ -98,7 +104,10 @@ If step 3 invalidates the approved fresh runtime bundle, restore the approved st
 - `real_account asset/exposure/in_market`
 - `model_signal preferred_asset/exposure`
 - `health block_app/block_execution`
-- `gate would_place_real_order=false`
+- `canonical intent day/model/signal/target/exposure exactly match Production Core`
+- `canonical gate signal/target and intent fingerprint match the canonical intent`
+- `canonical gate account-snapshot fingerprint matches the current read-only account snapshot`
+- `gate would_place_real_order` recorded from current policy/account/signal state; regardless of value, the fast authority workflow must stop before submission and report `live_order_chain=not_invoked`
 - `heavy_refresh_steps=skipped`
 - `live_order_chain=not_invoked`
 

@@ -219,7 +219,8 @@
     {
       "output_path": "outputs/execution/intents/",
       "generated_by": [
-        "scripts/execution/build_execution_intent_from_strategy_exports.py"
+        "scripts/execution/build_execution_intent_from_strategy_exports.py",
+        "scripts/execution/run_pi_authoritative_producer.py"
       ],
       "layer": "execution_data",
       "status": "active",
@@ -284,7 +285,8 @@
       "output_path": "outputs/execution/live_gate/",
       "generated_by": [
         "scripts/execution/prepare_real_order_gate.py",
-        "scripts/execution/run_full_auto_execution_cycle.py"
+        "scripts/execution/run_full_auto_execution_cycle.py",
+        "scripts/execution/run_pi_authoritative_producer.py"
       ],
       "layer": "execution_data",
       "status": "active",

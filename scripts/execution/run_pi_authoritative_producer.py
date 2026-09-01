@@ -47,6 +47,12 @@ DATA_HEALTH_VALIDATE_SCRIPT = (
 MATERIALIZE_APP_EXPORTS_SCRIPT = (
     ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
 )
+BUILD_EXECUTION_INTENT_SCRIPT = (
+    ROOT / "scripts" / "execution" / "build_execution_intent_from_strategy_exports.py"
+)
+PREPARE_REAL_ORDER_GATE_SCRIPT = (
+    ROOT / "scripts" / "execution" / "prepare_real_order_gate.py"
+)
 TERMINAL_ATTEMPT_STATUSES = frozenset({"success", "failed"})
 CANONICAL_APP_EXPORT_PREFIX = ("outputs", "execution", "app_exports")
 ALLOWED_SUPPORT_ARTIFACT_RELATIVE_PATHS = frozenset(
@@ -64,6 +70,19 @@ ALLOWED_PRODUCTION_ARTIFACT_RELATIVE_PATHS = frozenset(
         Path("outputs/production/data_health_report.json").as_posix(),
         Path("outputs/production/data_health_report.quality.json").as_posix(),
         Path("outputs/production/data_health_report.manifest.json").as_posix(),
+    }
+)
+ALLOWED_CANONICAL_EXECUTION_ARTIFACT_RELATIVE_PATHS = frozenset(
+    {
+        Path("outputs/execution/intents/latest_execution_intent.json").as_posix(),
+        Path("outputs/execution/intents/latest_execution_intent_quality.json").as_posix(),
+        Path("outputs/execution/intents/latest_execution_intent_manifest.json").as_posix(),
+        Path("outputs/execution/live_gate/latest_real_order_gate_decision.json").as_posix(),
+        Path("outputs/execution/live_gate/latest_real_order_gate_quality.json").as_posix(),
+        Path("outputs/execution/live_gate/latest_real_order_gate_manifest.json").as_posix(),
+        Path("outputs/execution/read_only/hyperliquid_account_snapshot.json").as_posix(),
+        Path("outputs/execution/read_only/hyperliquid_account_snapshot_quality.json").as_posix(),
+        Path("outputs/execution/read_only/hyperliquid_account_snapshot_manifest.json").as_posix(),
     }
 )
 REMOTE_DRIFT_PUSH_MARKERS = (
@@ -128,6 +147,13 @@ def data_health_artifact_paths(output_dir: Path) -> tuple[Path, Path, Path]:
         output_dir / "data_health_report.json",
         output_dir / "data_health_report.quality.json",
         output_dir / "data_health_report.manifest.json",
+    )
+
+
+def canonical_execution_artifact_paths(root: Path) -> tuple[Path, ...]:
+    return tuple(
+        root / relative_path
+        for relative_path in sorted(ALLOWED_CANONICAL_EXECUTION_ARTIFACT_RELATIVE_PATHS)
     )
 
 
@@ -525,189 +551,20 @@ def write_json_payload(path: Path, payload: Mapping[str, Any]) -> None:
     )
 
 
-def _as_mapping(value: Any) -> dict[str, Any]:
-    return dict(value) if isinstance(value, Mapping) else {}
-
-
-def _nested_get(payload: Mapping[str, Any], *keys: str) -> Any:
-    current: Any = payload
-    for key in keys:
-        if not isinstance(current, Mapping):
-            return None
-        current = current.get(key)
-    return current
-
-
-def build_publish_existing_synthetic_execution_intent(
+def write_publish_existing_validation_authority_payloads(
     *,
-    root: Path,
-    target_closed_day_utc: str,
-    generated_at_utc: str,
+    run_dir: Path,
     attempt_payload: Mapping[str, Any],
-) -> dict[str, Any]:
-    snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
-    snapshot = load_json_required(snapshot_path)
-    execution_intent = _as_mapping(snapshot.get("execution_intent"))
-    strategy_model = str(snapshot.get("strategy_version") or "").strip()
-    target_asset = str(
-        execution_intent.get("target_asset") or snapshot.get("current_asset") or "CASH"
-    ).strip().upper()
-    target_exposure = execution_intent.get("target_exposure")
-    signal_id = str(execution_intent.get("signal_id") or "").strip()
-    if not signal_id:
-        signal_id = (
-            f"current_strategy::{strategy_model}::{target_closed_day_utc}"
-            f"::target_{target_asset or 'CASH'}"
-            f"::candidate_{str(snapshot.get('candidate_asset') or 'CASH').strip().upper()}"
-        )
+    success_payload: Mapping[str, Any],
+) -> dict[str, Path]:
+    authority_dir = run_dir / "authority"
+    attempt_path = authority_dir / "latest_attempt_status.json"
+    success_path = authority_dir / "latest_successful_snapshot.json"
+    write_json_payload(attempt_path, attempt_payload)
+    write_json_payload(success_path, success_payload)
     return {
-        "intent_type": "normalized_execution_intent",
-        "generated_at_utc": generated_at_utc,
-        "as_of_source": target_closed_day_utc,
-        "execution_mode": "publish_existing_validation_only",
-        "trading_enabled": False,
-        "kill_switch_required": True,
-        "strategy_model": strategy_model,
-        "signal_id": signal_id,
-        "target_asset": target_asset or "CASH",
-        "target_side": "hold_cash_no_market_entry"
-        if target_asset in {"", "CASH"}
-        else "validation_only_no_live_order",
-        "target_regime": str(snapshot.get("current_regime") or target_asset or "CASH").strip().upper(),
-        "size_mode": "production_snapshot_target_exposure",
-        "target_size_pct": target_exposure,
-        "staleness_ok": True,
-        "stale_signal": False,
-        "allow_live_order_candidate": False,
-        "guardrail_flags": {
-            "contract_validated": True,
-            "trading_disabled": True,
-            "kill_switch_required": True,
-            "manual_approval_required_for_live_orders": True,
-            "leverage_live_truth_allowed": False,
-            "production_snapshot_validated": True,
-            "publish_existing_validation_only": True,
-        },
-        "authority_day_context": {
-            "attempt_status": str(
-                attempt_payload.get("latest_authoritative_attempt_status") or ""
-            ).strip().lower(),
-            "attempt_target_closed_day": target_closed_day_utc,
-            "aligned_closed_day": target_closed_day_utc,
-            "authority_alignment_mode": "publish_existing_synthetic_authority",
-        },
-        "source_samples": {
-            "production_snapshot_execution_intent": dict(execution_intent),
-            "production_snapshot_summary": {
-                "strategy_status": snapshot.get("strategy_status"),
-                "candidate_asset": snapshot.get("candidate_asset"),
-                "current_asset": snapshot.get("current_asset"),
-                "effective_market_exposure": snapshot.get("effective_market_exposure"),
-                "trend_permission_active": snapshot.get("trend_permission_active"),
-                "current_regime": snapshot.get("current_regime"),
-                "validation_status": _nested_get(snapshot, "validation", "status"),
-            },
-        },
-        "source_paths": {
-            "production_snapshot": str(snapshot_path),
-        },
-        "notes": [
-            "Synthetic publish-existing validation intent.",
-            "No runtime preview chain is invoked.",
-            "No live order execution is allowed by this artifact.",
-        ],
-    }
-
-
-def build_publish_existing_synthetic_real_order_gate(
-    *,
-    root: Path,
-    target_closed_day_utc: str,
-    generated_at_utc: str,
-    intent_payload: Mapping[str, Any],
-) -> dict[str, Any]:
-    snapshot_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
-    snapshot = load_json_required(snapshot_path)
-    execution_intent = _as_mapping(snapshot.get("execution_intent"))
-    signal_id = str(intent_payload.get("signal_id") or "").strip()
-    target_asset = str(intent_payload.get("target_asset") or "CASH").strip().upper()
-    target_exposure = intent_payload.get("target_size_pct")
-    try:
-        target_exposure_value = float(target_exposure)
-    except (TypeError, ValueError):
-        target_exposure_value = 0.0
-    trend_permission_active = snapshot.get("trend_permission_active") is True
-    allow_live_order_candidate = execution_intent.get("allow_live_order_candidate") is True
-    validation_status = str(
-        _nested_get(snapshot, "validation", "status") or ""
-    ).strip().lower()
-    return {
-        "decision_type": "real_order_gate_decision",
-        "generated_at_utc": generated_at_utc,
-        "signal_id": signal_id,
-        "target_asset": target_asset or "CASH",
-        "mode": "publish_existing_validation_only",
-        "approval_gate_status": "blocked_validation_only",
-        "would_place_real_order": False,
-        "real_orders_enabled": False,
-        "status": "blocked",
-        "block_reasons": [
-            "publish_existing_validation_only",
-            "live_order_chain_not_invoked",
-        ],
-        "checks": {
-            "signal_present": bool(signal_id),
-            "target_asset_present": bool(target_asset),
-            "target_asset_allowed": True,
-            "target_asset_is_cash": target_asset in {"", "CASH"},
-            "target_exposure_positive": target_exposure_value > 0.0,
-            "contract_validated": True,
-            "execution_trading_enabled": False,
-            "allow_live_orders": False,
-            "kill_switch": True,
-            "stale_signal": False,
-            "duplicate_order_risk": False,
-            "open_orders_present": False,
-            "manual_approval_required": True,
-            "production_snapshot_validation_passed": validation_status == "passed",
-            "production_snapshot_closed_day_present": True,
-            "production_snapshot_signal_present": bool(signal_id),
-            "production_snapshot_target_asset_present": bool(target_asset),
-            "production_snapshot_target_exposure_positive": target_exposure_value > 0.0,
-            "production_snapshot_trend_permission_active": trend_permission_active,
-            "production_snapshot_allow_live_order_candidate": allow_live_order_candidate,
-            "production_snapshot_stale_signal": False,
-            "intent_day_matches_production_snapshot": True,
-            "intent_signal_matches_production_snapshot": True,
-            "intent_target_asset_matches_production_snapshot": True,
-            "intent_target_exposure_matches_production_snapshot": True,
-            "intent_stale_signal_matches_production_snapshot": True,
-            "intent_strategy_model_matches_production_snapshot": True,
-            "intent_allow_live_order_candidate_matches_snapshot": True,
-        },
-        "production_signal_context": {
-            "strategy_version": snapshot.get("strategy_version"),
-            "closed_day": target_closed_day_utc,
-            "validation_status": validation_status,
-            "candidate_asset": snapshot.get("candidate_asset"),
-            "current_asset": snapshot.get("current_asset"),
-            "signal_id": signal_id,
-            "target_asset": target_asset or "CASH",
-            "target_exposure": target_exposure,
-            "effective_market_exposure": snapshot.get("effective_market_exposure"),
-            "model_candidate_exposure": snapshot.get("model_candidate_exposure"),
-            "trend_permission_active": snapshot.get("trend_permission_active"),
-            "allow_live_order_candidate": execution_intent.get("allow_live_order_candidate"),
-        },
-        "source_paths": {
-            "intent_path": "synthetic_publish_existing_validation_bundle",
-            "production_snapshot_path": str(snapshot_path),
-        },
-        "notes": [
-            "Synthetic publish-existing validation gate.",
-            "No live order placement is performed.",
-            "live_order_chain remains not_invoked.",
-        ],
+        "attempt_path": attempt_path,
+        "success_path": success_path,
     }
 
 
@@ -718,53 +575,71 @@ def build_publish_existing_validation_bundle(
     target_closed_day_utc: str,
     attempt_payload: Mapping[str, Any],
     success_payload: Mapping[str, Any],
+    write_outputs: bool = False,
+    output_dir: Path | None = None,
 ) -> dict[str, Any]:
-    authority_dir = run_dir / "authority"
-    synthetic_attempt_path = authority_dir / "latest_attempt_status.json"
-    synthetic_success_path = authority_dir / "latest_successful_snapshot.json"
-    write_json_payload(synthetic_attempt_path, attempt_payload)
-    write_json_payload(synthetic_success_path, success_payload)
-    synthetic_intent_path = run_dir / "execution" / "latest_execution_intent.json"
-    synthetic_gate_path = run_dir / "execution" / "latest_real_order_gate_decision.json"
-    generated_at_utc = str(success_payload.get("generated_at_utc") or utc_now_iso()).strip()
-    synthetic_intent = build_publish_existing_synthetic_execution_intent(
-        root=root,
-        target_closed_day_utc=target_closed_day_utc,
-        generated_at_utc=generated_at_utc,
+    authority_paths = write_publish_existing_validation_authority_payloads(
+        run_dir=run_dir,
         attempt_payload=attempt_payload,
+        success_payload=success_payload,
     )
-    synthetic_gate = build_publish_existing_synthetic_real_order_gate(
-        root=root,
-        target_closed_day_utc=target_closed_day_utc,
-        generated_at_utc=generated_at_utc,
-        intent_payload=synthetic_intent,
-    )
-    write_json_payload(synthetic_intent_path, synthetic_intent)
-    write_json_payload(synthetic_gate_path, synthetic_gate)
     reference_now = build_reference_now_for_closed_day(target_closed_day_utc)
     return build_report_bundle(
         root=root,
-        output_dir=run_dir / "production",
+        output_dir=output_dir or (run_dir / "production"),
         reference_now=reference_now,
         path_overrides={
-            "execution_authority_latest_attempt_status": str(synthetic_attempt_path),
-            "execution_authority_latest_successful_snapshot": str(synthetic_success_path),
-            "execution_latest_execution_intent": str(synthetic_intent_path),
-            "execution_latest_real_order_gate_decision": str(synthetic_gate_path),
+            "execution_authority_latest_attempt_status": str(
+                authority_paths["attempt_path"]
+            ),
+            "execution_authority_latest_successful_snapshot": str(
+                authority_paths["success_path"]
+            ),
         },
-        write_outputs=False,
+        write_outputs=write_outputs,
     )
 
 
-def publish_existing_synthetic_execution_path_overrides(run_dir: Path) -> dict[str, str]:
-    return {
-        "execution_latest_execution_intent": str(
-            run_dir / "execution" / "latest_execution_intent.json"
+def run_canonical_execution_chain(
+    *,
+    root: Path,
+    env: Mapping[str, str],
+    authority_attempt_path: Path,
+    authority_success_path: Path,
+) -> list[str]:
+    executed_steps: list[str] = []
+    run_checked_python_command(
+        root
+        / "scripts"
+        / "execution"
+        / "build_execution_intent_from_strategy_exports.py",
+        env=env,
+        root=root,
+        args=(
+            "--authority-latest-attempt-status-path",
+            str(authority_attempt_path),
+            "--authority-latest-successful-snapshot-path",
+            str(authority_success_path),
         ),
-        "execution_latest_real_order_gate_decision": str(
-            run_dir / "execution" / "latest_real_order_gate_decision.json"
+        label="build_execution_intent_from_strategy_exports",
+    )
+    executed_steps.append("build_execution_intent_from_strategy_exports")
+    run_checked_python_command(
+        root / "scripts" / "execution" / "prepare_real_order_gate.py",
+        env=env,
+        root=root,
+        args=(
+            "--authority-latest-successful-snapshot-path",
+            str(authority_success_path),
         ),
-    }
+        label="prepare_real_order_gate",
+    )
+    executed_steps.append("prepare_real_order_gate")
+    ensure_required_artifacts_exist(
+        canonical_execution_artifact_paths(root),
+        label="publish-existing canonical execution chain",
+    )
+    return executed_steps
 
 
 def validate_publish_existing_readiness_bundle(
@@ -812,6 +687,7 @@ def build_publish_existing_dry_run_publish_result(
         root / "outputs" / "execution" / "authority" / "latest_successful_snapshot.json",
         *_resolve_required_app_publish_paths(success_payload, root=root),
         *_resolve_required_production_publish_paths(root=root),
+        *_resolve_required_canonical_execution_publish_paths(root=root),
     ]
     deduped_pathspecs: list[str] = []
     seen_pathspecs: set[str] = set()
@@ -1024,6 +900,18 @@ def _resolve_required_production_publish_paths(*, root: Path) -> list[Path]:
     ]
 
 
+def _resolve_required_canonical_execution_publish_paths(*, root: Path) -> list[Path]:
+    return [
+        _resolve_allowlisted_repo_artifact_path(
+            relative_path,
+            root=root,
+            allowed_relative_paths=ALLOWED_CANONICAL_EXECUTION_ARTIFACT_RELATIVE_PATHS,
+            artifact_label="canonical execution repo publish artifact",
+        )
+        for relative_path in sorted(ALLOWED_CANONICAL_EXECUTION_ARTIFACT_RELATIVE_PATHS)
+    ]
+
+
 def resolve_authority_publish_paths(root: Path | None = None) -> list[Path]:
     resolved_root = Path(root) if root is not None else ROOT
     latest_attempt_status_path = (
@@ -1047,6 +935,9 @@ def resolve_authority_publish_paths(root: Path | None = None) -> list[Path]:
             )
         )
         publish_paths.extend(_resolve_required_production_publish_paths(root=resolved_root))
+        publish_paths.extend(
+            _resolve_required_canonical_execution_publish_paths(root=resolved_root)
+        )
     deduped_paths: list[Path] = []
     seen_paths: set[Path] = set()
     for path in publish_paths:
@@ -1627,20 +1518,36 @@ def run_publish_existing_flow(
     )
 
     app_product_snapshot, app_runtime_snapshot = load_publish_existing_app_snapshots(resolved_root)
-    refresh_finished_at_utc = utc_now_iso()
-    attempt_payload, success_payload, authority_state = build_publish_existing_success_payloads(
+    prospective_finished_at_utc = utc_now_iso()
+    attempt_payload, success_payload, prospective_authority_state = build_publish_existing_success_payloads(
         state=authority_state,
         app_product_snapshot=app_product_snapshot,
         app_runtime_snapshot=app_runtime_snapshot,
-        refresh_finished_at_utc=refresh_finished_at_utc,
+        refresh_finished_at_utc=prospective_finished_at_utc,
     )
-    validation_run_dir = Path(str(authority_state["run_dir"]))
+    validation_run_dir = Path(str(prospective_authority_state["run_dir"]))
+    validation_authority_paths = write_publish_existing_validation_authority_payloads(
+        run_dir=validation_run_dir,
+        attempt_payload=attempt_payload,
+        success_payload=success_payload,
+    )
+    executed_steps.extend(
+        run_canonical_execution_chain(
+            root=resolved_root,
+            env=pi_env,
+            authority_attempt_path=validation_authority_paths["attempt_path"],
+            authority_success_path=validation_authority_paths["success_path"],
+        )
+    )
+
     validation_bundle = build_publish_existing_validation_bundle(
         root=resolved_root,
         run_dir=validation_run_dir,
         target_closed_day_utc=target_closed_day_utc,
         attempt_payload=attempt_payload,
         success_payload=success_payload,
+        write_outputs=True,
+        output_dir=resolved_root / "outputs" / "production",
     )
     executed_steps.append("build_publish_existing_validation_bundle")
     readiness_report = validate_publish_existing_readiness_bundle(
@@ -1649,6 +1556,37 @@ def run_publish_existing_flow(
     )
     executed_steps.append("validate_publish_existing_readiness")
 
+    run_checked_python_command(
+        MATERIALIZE_APP_EXPORTS_SCRIPT,
+        env=pi_env,
+        root=resolved_root,
+        label="materialize_execution_app_exports_from_canonical_execution_chain",
+    )
+    executed_steps.append("materialize_execution_app_exports_from_canonical_execution_chain")
+    app_product_snapshot, app_runtime_snapshot = load_publish_existing_app_snapshots(
+        resolved_root
+    )
+    attempt_payload, success_payload, prospective_authority_state = (
+        build_publish_existing_success_payloads(
+            state=authority_state,
+            app_product_snapshot=app_product_snapshot,
+            app_runtime_snapshot=app_runtime_snapshot,
+            refresh_finished_at_utc=utc_now_iso(),
+        )
+    )
+    validation_bundle = build_publish_existing_validation_bundle(
+        root=resolved_root,
+        run_dir=validation_run_dir,
+        target_closed_day_utc=target_closed_day_utc,
+        attempt_payload=attempt_payload,
+        success_payload=success_payload,
+    )
+    readiness_report = validate_publish_existing_readiness_bundle(
+        validation_bundle,
+        target_closed_day_utc=target_closed_day_utc,
+    )
+    executed_steps.append("validate_refreshed_canonical_execution_readiness")
+
     runtime_preview_chain = "not_invoked"
     live_order_chain = "not_invoked"
     print("[AUTHORITY] runtime_preview_chain=not_invoked", flush=True)
@@ -1656,6 +1594,21 @@ def run_publish_existing_flow(
 
     if dry_run:
         authority_artifact_write = "skipped_dry_run"
+        reference_now = build_reference_now_for_closed_day(target_closed_day_utc)
+        build_report_bundle(
+            root=resolved_root,
+            output_dir=resolved_root / "outputs" / "production",
+            reference_now=reference_now,
+            write_outputs=True,
+        )
+        executed_steps.append("restore_canonical_data_health_after_dry_run")
+        run_checked_python_command(
+            MATERIALIZE_APP_EXPORTS_SCRIPT,
+            env=pi_env,
+            root=resolved_root,
+            label="materialize_execution_app_exports_after_dry_run",
+        )
+        executed_steps.append("materialize_execution_app_exports_after_dry_run")
         publish_result = build_publish_existing_dry_run_publish_result(
             root=resolved_root,
             env=pi_env,
@@ -1669,30 +1622,78 @@ def run_publish_existing_flow(
             attempt_payload=attempt_payload,
             success_payload=success_payload,
         )
-        authority_artifact_write = "success_payload_written"
+        executed_steps.append("write_prospective_authority_success")
+        canonical_authority_attempt_path = (
+            resolved_root
+            / "outputs"
+            / "execution"
+            / "authority"
+            / "latest_attempt_status.json"
+        )
+        canonical_authority_success_path = (
+            resolved_root
+            / "outputs"
+            / "execution"
+            / "authority"
+            / "latest_successful_snapshot.json"
+        )
+        executed_steps.extend(
+            run_canonical_execution_chain(
+                root=resolved_root,
+                env=pi_env,
+                authority_attempt_path=canonical_authority_attempt_path,
+                authority_success_path=canonical_authority_success_path,
+            )
+        )
         reference_now = build_reference_now_for_closed_day(target_closed_day_utc)
         canonical_bundle = build_report_bundle(
             root=resolved_root,
             output_dir=resolved_root / "outputs" / "production",
             reference_now=reference_now,
-            path_overrides=publish_existing_synthetic_execution_path_overrides(
-                validation_run_dir
-            ),
-            write_outputs=False,
+            write_outputs=True,
         )
         validate_publish_existing_readiness_bundle(
             canonical_bundle,
             target_closed_day_utc=target_closed_day_utc,
         )
-        build_report_bundle(
+        executed_steps.append("validate_canonical_data_health")
+        run_checked_python_command(
+            MATERIALIZE_APP_EXPORTS_SCRIPT,
+            env=pi_env,
+            root=resolved_root,
+            label="materialize_execution_app_exports_after_authority_sync",
+        )
+        executed_steps.append("materialize_execution_app_exports_after_authority_sync")
+        app_product_snapshot, app_runtime_snapshot = load_publish_existing_app_snapshots(
+            resolved_root
+        )
+        attempt_payload, success_payload, _final_authority_state = (
+            build_publish_existing_success_payloads(
+                state=authority_state,
+                app_product_snapshot=app_product_snapshot,
+                app_runtime_snapshot=app_runtime_snapshot,
+                refresh_finished_at_utc=utc_now_iso(),
+            )
+        )
+        publish_existing_authority_success_payloads(
+            root=resolved_root,
+            env=pi_env,
+            attempt_payload=attempt_payload,
+            success_payload=success_payload,
+        )
+        authority_artifact_write = "success_payload_written"
+        executed_steps.append("write_final_authority_success")
+        final_canonical_bundle = build_report_bundle(
             root=resolved_root,
             output_dir=resolved_root / "outputs" / "production",
             reference_now=reference_now,
-            path_overrides=publish_existing_synthetic_execution_path_overrides(
-                validation_run_dir
-            ),
             write_outputs=True,
         )
+        readiness_report = validate_publish_existing_readiness_bundle(
+            final_canonical_bundle,
+            target_closed_day_utc=target_closed_day_utc,
+        )
+        executed_steps.append("validate_final_canonical_data_health")
         publish_result = publish_authority_artifacts_to_repo(
             root=resolved_root,
             env=pi_env,
@@ -1708,6 +1709,7 @@ def run_publish_existing_flow(
         "authority_artifact_write": authority_artifact_write,
         "target_closed_day_utc": target_closed_day_utc,
         "data_health_reference_closed_day_utc": readiness_report["reference_closed_day_utc"],
+        "canonical_execution_chain": "refreshed_and_validated",
         "executed_steps": executed_steps,
         "authority_repo_publish": publish_result,
     }

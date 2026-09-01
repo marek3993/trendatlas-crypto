@@ -71,6 +71,7 @@
 - Research-only failures do not block production, but block the relevant research probe.
 - Missing optional env/API keys are surfaced as `unavailable` / `warn_only`.
 - No silent fallback is allowed around guarded source availability.
+- Canonical execution health is locked to `outputs/execution/intents/latest_execution_intent.json` and `outputs/execution/live_gate/latest_real_order_gate_decision.json`; temporary publish-existing execution artifacts may not override those sources in data health.
 - Stale or missing `BTC` daily OHLCV is production-critical and would block production/execution.
 - Current stale research-only BTC derivatives panel blocks only the relevant research probe.
 

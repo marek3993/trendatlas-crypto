@@ -4,6 +4,7 @@ import argparse
 import csv
 from dataclasses import dataclass
 from datetime import date
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -206,6 +207,147 @@ def authority_real_publish_enabled(env: Mapping[str, str] | None = None) -> bool
         and str(source.get("MRV1_AUTHORITY_MODE") or "").strip().lower()
         == "authoritative"
     )
+
+
+def _load_required_json(path: Path) -> dict[str, Any]:
+    if not path.exists() or not path.is_file():
+        raise RuntimeError(f"Canonical execution sync validation missing {path}")
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise RuntimeError(
+            f"Canonical execution sync validation could not read {path}: {exc}"
+        ) from exc
+    if not isinstance(payload, dict):
+        raise RuntimeError(f"Canonical execution sync validation expected object: {path}")
+    return payload
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _sync_values_match(expected: Any, actual: Any) -> bool:
+    if isinstance(expected, bool) or isinstance(actual, bool):
+        return expected is actual
+    try:
+        return abs(float(expected) - float(actual)) <= 1e-9
+    except (TypeError, ValueError):
+        return str(expected or "").strip() == str(actual or "").strip()
+
+
+def validate_canonical_execution_chain_sync(
+    *,
+    root: Path = ROOT,
+    require_execution_health: bool,
+) -> dict[str, Any]:
+    production_path = root / "outputs" / "production" / "current_strategy_snapshot.json"
+    intent_path = (
+        root / "outputs" / "execution" / "intents" / "latest_execution_intent.json"
+    )
+    gate_path = (
+        root
+        / "outputs"
+        / "execution"
+        / "live_gate"
+        / "latest_real_order_gate_decision.json"
+    )
+    account_path = (
+        root
+        / "outputs"
+        / "execution"
+        / "read_only"
+        / "hyperliquid_account_snapshot.json"
+    )
+    data_health_path = root / "outputs" / "production" / "data_health_report.json"
+    production = _load_required_json(production_path)
+    intent = _load_required_json(intent_path)
+    gate = _load_required_json(gate_path)
+    account = _load_required_json(account_path)
+    data_health = _load_required_json(data_health_path)
+    production_intent = production.get("execution_intent")
+    if not isinstance(production_intent, dict):
+        raise RuntimeError("Production Core execution_intent is missing")
+
+    expected_intent_fields = {
+        "as_of_source": production.get("closed_day"),
+        "strategy_model": production.get("strategy_version"),
+        "signal_id": production_intent.get("signal_id"),
+        "target_asset": production_intent.get("target_asset"),
+        "target_size_pct": production_intent.get("target_exposure"),
+        "stale_signal": production_intent.get("stale_signal"),
+        "allow_live_order_candidate": production_intent.get(
+            "allow_live_order_candidate"
+        ),
+    }
+    mismatches = [
+        field_name
+        for field_name, expected_value in expected_intent_fields.items()
+        if not _sync_values_match(expected_value, intent.get(field_name))
+    ]
+    if mismatches:
+        raise RuntimeError(
+            "Canonical execution intent diverges from Production Core: "
+            + ", ".join(mismatches)
+        )
+
+    gate_context = gate.get("production_signal_context")
+    gate_context = gate_context if isinstance(gate_context, dict) else {}
+    if not _sync_values_match(intent.get("signal_id"), gate.get("signal_id")):
+        mismatches.append("gate.signal_id")
+    if not _sync_values_match(intent.get("target_asset"), gate.get("target_asset")):
+        mismatches.append("gate.target_asset")
+    if not _sync_values_match(production.get("closed_day"), gate_context.get("closed_day")):
+        mismatches.append("gate.production_signal_context.closed_day")
+    source_paths = gate.get("source_paths")
+    source_paths = source_paths if isinstance(source_paths, dict) else {}
+    gate_intent_path = Path(str(source_paths.get("intent_path") or ""))
+    gate_account_path = Path(str(source_paths.get("account_snapshot_path") or ""))
+    if gate_intent_path.resolve() != intent_path.resolve():
+        mismatches.append("gate.source_paths.intent_path")
+    if gate_account_path.resolve() != account_path.resolve():
+        mismatches.append("gate.source_paths.account_snapshot_path")
+    fingerprints = gate.get("source_fingerprints")
+    fingerprints = fingerprints if isinstance(fingerprints, dict) else {}
+    expected_fingerprints = {
+        "intent_sha256": _sha256_file(intent_path),
+        "production_snapshot_sha256": _sha256_file(production_path),
+        "account_snapshot_sha256": _sha256_file(account_path),
+    }
+    for field_name, expected_value in expected_fingerprints.items():
+        if fingerprints.get(field_name) != expected_value:
+            mismatches.append(f"gate.source_fingerprints.{field_name}")
+    if mismatches:
+        raise RuntimeError(
+            "Canonical real-order gate diverges from the canonical execution chain: "
+            + ", ".join(mismatches)
+        )
+
+    health_summary = data_health.get("summary")
+    health_summary = health_summary if isinstance(health_summary, dict) else {}
+    block_execution = bool(health_summary.get("block_execution"))
+    if require_execution_health and block_execution:
+        raise RuntimeError(
+            "Canonical execution chain is aligned but data health still blocks execution"
+        )
+    return {
+        "production_closed_day": production.get("closed_day"),
+        "strategy_model": production.get("strategy_version"),
+        "intent_closed_day": intent.get("as_of_source"),
+        "intent_signal_id": intent.get("signal_id"),
+        "intent_target_asset": intent.get("target_asset"),
+        "intent_target_size_pct": intent.get("target_size_pct"),
+        "gate_signal_id": gate.get("signal_id"),
+        "gate_target_asset": gate.get("target_asset"),
+        "gate_status": gate.get("status"),
+        "gate_would_place_real_order": gate.get("would_place_real_order"),
+        "account_as_of_utc": account.get("as_of_utc"),
+        "data_health_block_execution": block_execution,
+    }
 
 
 def _normalize_iso_day(value: Any, *, field_name: str) -> str:
@@ -414,12 +556,20 @@ def run_fast_daily_authority_refresh(
 
     dry_run_step = build_publish_existing_dry_run_step(root)
     results.append(run_python_step(dry_run_step, env=runtime_env, root=root))
+    canonical_execution_sync = validate_canonical_execution_chain_sync(
+        root=root,
+        require_execution_health=False,
+    )
 
     real_publish_status = "skipped_env_gate"
     if authority_real_publish_enabled(env):
         real_step = build_publish_existing_real_step(root)
         results.append(run_python_step(real_step, env=runtime_env, root=root))
         real_publish_status = "completed"
+        canonical_execution_sync = validate_canonical_execution_chain_sync(
+            root=root,
+            require_execution_health=True,
+        )
     else:
         print(
             "[PI-FAST-DAILY] publish_existing_real=skipped_env_gate "
@@ -439,6 +589,7 @@ def run_fast_daily_authority_refresh(
         "publish_existing_dry_run": "completed",
         "publish_existing_real": real_publish_status,
         "live_order_chain": "not_invoked",
+        "canonical_execution_sync": canonical_execution_sync,
         "steps": results,
     }
 
