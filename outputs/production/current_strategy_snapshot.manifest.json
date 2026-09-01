@@ -1,12 +1,12 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
   "schema_version": 4,
-  "generated_at_utc": "2026-09-01T00:11:00Z",
+  "generated_at_utc": "2026-09-01T18:40:09Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
   "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
-  "git_commit": "99ab7c31d20e5816d03a232eff6cee832e38835f",
+  "git_commit": "0a074cf985644a347b8c8e0bcc8c4dc957191f03",
   "source_inputs": {
     "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
     "strategy_id": "current_strategy",
@@ -73,7 +73,7 @@
             "path": "outputs/execution/app_exports/phase66g_live_status.csv",
             "sha256": "9b43db6d8097320c2afb4e8719e1f6eed9461a9f43d3310867a9126fe58e8b4d",
             "size_bytes": 625,
-            "modified_utc": "2026-09-01T00:10:34Z",
+            "modified_utc": "2026-09-01T18:35:33Z",
             "last_date": "2026-08-31",
             "row_count": 1,
             "materialized_closed_day": "2026-08-31",
@@ -84,7 +84,7 @@
             "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
             "sha256": "d3518b726f75b6bc485f7ca5938e33d62d694a9662515073a942c540fc1e4428",
             "size_bytes": 392648,
-            "modified_utc": "2026-09-01T00:10:34Z",
+            "modified_utc": "2026-09-01T18:35:33Z",
             "last_date": "2026-08-31",
             "row_count": 3041,
             "materialized_closed_day": "2026-08-31",
@@ -95,7 +95,7 @@
             "path": "outputs/execution/freshness/app_freshness_report.json",
             "sha256": "83a952127baad084b818b5eededbab61589dcd268d4b0b267471c82523daac11",
             "size_bytes": 1002,
-            "modified_utc": "2026-09-01T00:10:42Z",
+            "modified_utc": "2026-09-01T18:35:33Z",
             "closed_day": "2026-08-31",
             "status": "ok",
             "materialized_closed_day": "2026-08-31",
@@ -164,7 +164,7 @@
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
         "sha256": "9b43db6d8097320c2afb4e8719e1f6eed9461a9f43d3310867a9126fe58e8b4d",
         "size_bytes": 625,
-        "modified_utc": "2026-09-01T00:10:34Z",
+        "modified_utc": "2026-09-01T18:35:33Z",
         "last_date": "2026-08-31",
         "row_count": 1,
         "materialized_closed_day": "2026-08-31",
@@ -175,7 +175,7 @@
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
         "sha256": "d3518b726f75b6bc485f7ca5938e33d62d694a9662515073a942c540fc1e4428",
         "size_bytes": 392648,
-        "modified_utc": "2026-09-01T00:10:34Z",
+        "modified_utc": "2026-09-01T18:35:33Z",
         "last_date": "2026-08-31",
         "row_count": 3041,
         "materialized_closed_day": "2026-08-31",
@@ -186,7 +186,7 @@
         "path": "outputs/execution/freshness/app_freshness_report.json",
         "sha256": "83a952127baad084b818b5eededbab61589dcd268d4b0b267471c82523daac11",
         "size_bytes": 1002,
-        "modified_utc": "2026-09-01T00:10:42Z",
+        "modified_utc": "2026-09-01T18:35:33Z",
         "closed_day": "2026-08-31",
         "status": "ok",
         "materialized_closed_day": "2026-08-31",
@@ -255,15 +255,15 @@
       },
       "project_truth": {
         "path": "source_of_truth/project_truth.json",
-        "sha256": "4028402a4e6c53bccbdd9ab55fe09876ca919354b3185625db1be784bee7e62b",
-        "size_bytes": 39128,
-        "modified_utc": "2026-05-12T05:31:05Z"
+        "sha256": "7513e16c8945ad927a7fb15813dda3dbf79fcb5f3422d67032d6d952747144d8",
+        "size_bytes": 40262,
+        "modified_utc": "2026-09-01T18:35:33Z"
       },
       "export_contract": {
         "path": "source_of_truth/export_contract.json",
-        "sha256": "a3268653acc962d080f2ba677b4fb957e0524e85e8bc29b1b41f9ab1e25cb9d7",
-        "size_bytes": 52619,
-        "modified_utc": "2026-05-17T08:42:39Z"
+        "sha256": "a6c7b5cae0af9161868d1f7030fbf7c4ddc78449d4b299219930c1fcb02adcd1",
+        "size_bytes": 55046,
+        "modified_utc": "2026-09-01T18:35:33Z"
       }
     },
     "cost_model": {

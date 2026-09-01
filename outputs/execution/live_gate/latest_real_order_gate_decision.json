@@ -1,27 +1,21 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-05-09T21:56:13Z",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-05-08::target_CASH::candidate_BTC",
-  "target_asset": "CASH",
+  "generated_at_utc": "2026-09-01T18:40:16Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-08-31::target_BTC::candidate_BTC",
+  "target_asset": "BTC",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
   "approval_gate_status": "approved_and_applied",
-  "would_place_real_order": false,
+  "would_place_real_order": true,
   "real_orders_enabled": false,
-  "status": "blocked",
-  "block_reasons": [
-    "no_market_entry_authorized",
-    "approval_source_model_mismatch",
-    "production_snapshot_target_exposure_zero",
-    "production_snapshot_trend_permission_inactive",
-    "production_snapshot_allow_live_order_candidate=false"
-  ],
+  "status": "ready_if_enabled",
+  "block_reasons": [],
   "checks": {
     "signal_present": true,
     "target_asset_present": true,
     "target_asset_allowed": true,
-    "target_asset_is_cash": true,
-    "target_exposure_positive": false,
+    "target_asset_is_cash": false,
+    "target_exposure_positive": true,
     "contract_validated": true,
     "mode_known": true,
     "execution_trading_enabled": true,
@@ -35,7 +29,7 @@
     "approval_source_readable": true,
     "approval_gate_status": "approved_and_applied",
     "approval_status_present": true,
-    "approval_source_model_match": false,
+    "approval_source_model_match": true,
     "approval_source_day_match": true,
     "approval_status_allowed": true,
     "leverage_live_truth_allowed": false,
@@ -45,9 +39,9 @@
     "production_snapshot_closed_day_present": true,
     "production_snapshot_signal_present": true,
     "production_snapshot_target_asset_present": true,
-    "production_snapshot_target_exposure_positive": false,
-    "production_snapshot_trend_permission_active": false,
-    "production_snapshot_allow_live_order_candidate": false,
+    "production_snapshot_target_exposure_positive": true,
+    "production_snapshot_trend_permission_active": true,
+    "production_snapshot_allow_live_order_candidate": true,
     "production_snapshot_stale_signal": false,
     "intent_day_matches_production_snapshot": true,
     "intent_signal_matches_production_snapshot": true,
@@ -59,17 +53,22 @@
   },
   "production_signal_context": {
     "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "closed_day": "2026-05-08",
+    "closed_day": "2026-08-31",
     "validation_status": "passed",
     "candidate_asset": "BTC",
-    "current_asset": "CASH",
-    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-05-08::target_CASH::candidate_BTC",
-    "target_asset": "CASH",
-    "target_exposure": 0.0,
-    "effective_market_exposure": 0.0,
-    "model_candidate_exposure": 0.75,
-    "trend_permission_active": false,
-    "allow_live_order_candidate": false
+    "current_asset": "BTC",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-08-31::target_BTC::candidate_BTC",
+    "target_asset": "BTC",
+    "target_exposure": 0.5,
+    "effective_market_exposure": 0.5,
+    "model_candidate_exposure": 0.5,
+    "trend_permission_active": true,
+    "allow_live_order_candidate": true
+  },
+  "source_fingerprints": {
+    "intent_sha256": "4ebc920a2d079994a4b48b81c29d86f2da605ac81bbaa08515b3218ec8b562c6",
+    "account_snapshot_sha256": "63a635c4705d02a6ca80e6475422c99f7052a363e0cf00cb33deee98cda63d6c",
+    "production_snapshot_sha256": "1ef922b20aa3fdf9db24357b0fc80ccc2ca0fd09b7b06f0fbd62153da28ec6c2"
   },
   "notes": [
     "This is a gate-preparation artifact only.",
@@ -78,11 +77,11 @@
     "Real-order readiness still requires current policy, approval, account, and safety checks."
   ],
   "source_paths": {
-    "mode_config_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\execution_mode.json",
-    "live_order_policy_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\execution\\config\\live_order_policy.json",
-    "intent_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\intents\\latest_execution_intent.json",
-    "account_snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\read_only\\hyperliquid_account_snapshot.json",
-    "production_snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json",
-    "authority_latest_successful_snapshot_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\authority\\latest_successful_snapshot.json"
+    "mode_config_path": "/opt/market_regime_v1/execution/config/execution_mode.json",
+    "live_order_policy_path": "/opt/market_regime_v1/execution/config/live_order_policy.json",
+    "intent_path": "/opt/market_regime_v1/outputs/execution/intents/latest_execution_intent.json",
+    "account_snapshot_path": "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot.json",
+    "production_snapshot_path": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
+    "authority_latest_successful_snapshot_path": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260901_184011/authority/latest_successful_snapshot.json"
   }
 }

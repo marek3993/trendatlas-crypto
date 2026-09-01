@@ -11,5 +11,6 @@
   "leverage_live_truth_allowed": false,
   "production_snapshot_validation_status": "passed",
   "authority_currentness_status": "current",
-  "strategy_signal_source_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\production\\current_strategy_snapshot.json"
+  "strategy_signal_source_path": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
+  "production_snapshot_sha256_matches_intent": true
 }

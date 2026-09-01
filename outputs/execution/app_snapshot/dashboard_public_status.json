@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-09-01T00:11:06Z",
+  "generated_at_utc": "2026-09-01T18:40:23Z",
   "closed_day": "2026-08-31",
   "real_account": {
-    "asset": "CASH",
-    "position_label_sk": "Mimo trhu",
-    "exposure_x": 0.0,
-    "in_market": false,
+    "asset": "BTC",
+    "position_label_sk": "V trhu",
+    "exposure_x": 0.5,
+    "in_market": true,
     "account_equity_usd": 39.475466,
     "available_balance_usd": 39.475466
   },
   "execution": {
-    "target_asset": "CASH",
-    "target_size_pct": 0.0,
-    "gate_status": "blocked",
-    "would_place_real_order": false,
+    "target_asset": "BTC",
+    "target_size_pct": 0.5,
+    "gate_status": "ready_if_enabled",
+    "would_place_real_order": true,
     "live_order_sent": false
   },
   "model_signal": {
@@ -24,15 +24,15 @@
     "not_real_wallet_exposure": true
   },
   "model_performance": {
-    "account_24h_pct": 0.0,
+    "account_24h_pct": 0.5788,
     "btc_24h_pct": 1.1577,
-    "account_vs_btc_24h_pct": -1.1577,
+    "account_vs_btc_24h_pct": -0.5789,
     "public_average_annual_growth_pct": 178.66,
     "since_etf_start_cagr_pct": 196.91,
     "since2025_cagr_pct": 181.64
   },
   "data_health": {
-    "reference_closed_day": "2026-08-30",
+    "reference_closed_day": "2026-08-31",
     "overall_status": "warning",
     "block_app": false,
     "block_execution": false
@@ -43,8 +43,8 @@
     "btc_24h_pct_expected_live_source": "live_ticker",
     "btc_24h_pct_snapshot_is_not_live": true,
     "published_snapshot_btc_24h_pct": 1.1577,
-    "account_24h_pct": 0.0,
-    "account_vs_btc_24h_pct": -1.1577
+    "account_24h_pct": 0.5788,
+    "account_vs_btc_24h_pct": -0.5789
   },
   "public_labels_sk": {
     "account_24h": "Účet 24h",
