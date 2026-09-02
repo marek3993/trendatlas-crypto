@@ -1,8 +1,7 @@
 {
-  "secret_key_env": "HYPERLIQUID_SECRET_KEY",
-  "secret_key": "",
-  "keystore_path": "",
-  "account_address": "PASTE_HYPERLIQUID_MAIN_ACCOUNT_ADDRESS_HERE",
+  "credential_name": "hyperliquid-agent-private-key",
+  "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "agent_name": "TrendAtlasProd",
   "vault_address": "",
-  "comment": "Copy this file to execution/config/hyperliquid_account.json. account_address must be the real Hyperliquid trading account. secret_key_env or secret_key must point to the signer wallet used for API auth. If signer != account_address, the signer must already be approved as an API/agent wallet on the account. Do not commit real secrets."
+  "comment": "Copy this file to execution/config/hyperliquid_account.json. account_address must remain the real master trading account. The distinct TrendAtlasProd API wallet is loaded only from the encrypted systemd service credential. Never place a private key here."
 }

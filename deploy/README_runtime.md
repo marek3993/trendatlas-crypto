@@ -15,7 +15,7 @@ It owns the complete locked daily state machine:
 Operational constraints:
 
 - long refresh requires explicit `--mode full-refresh`
-- `--no-submit` performs a safe preflight and never loads the live adapter
+- `--no-submit` validates the encrypted signer credential and exchange-side named-agent authorization but never loads the order-submission adapter
 - default execution submits only when every current-run invariant passes
 - no `source_of_truth` writes from the runtime loop
 - authority success is not published until required execution and verification finish
@@ -25,35 +25,46 @@ Operational constraints:
 
 - Linux machine with `systemd`
 - repo deployed at `/opt/market_regime_v1`
-- writable repo ownership for user `mrv1`
+- runtime user `trendatlas`
 - live activation configuration reviewed explicitly before enabling the timer
 - `execution/config/hyperliquid_account.json` present with the real Hyperliquid account address
+- systemd 257+ with `systemd-creds`; this Pi uses `LoadCredentialEncrypted` with the host key because no usable TPM2 device is present
 
 ## Exact install commands
 
 Run from the repo root on the deployment machine:
 
 ```bash
-sudo useradd --system --create-home --home-dir /home/mrv1 --shell /usr/sbin/nologin mrv1 || true
-sudo mkdir -p /opt/market_regime_v1
-sudo rsync -a --delete ./ /opt/market_regime_v1/
-sudo chown -R mrv1:mrv1 /opt/market_regime_v1
-sudo -u mrv1 python3 -m venv /opt/market_regime_v1/.venv
-sudo -u mrv1 /opt/market_regime_v1/.venv/bin/pip install --upgrade pip
-sudo -u mrv1 /opt/market_regime_v1/.venv/bin/pip install -r /opt/market_regime_v1/requirements.txt requests
 sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-production.service /etc/systemd/system/mrv1-production.service
 sudo install -D -m 0644 /opt/market_regime_v1/deploy/systemd/mrv1-production.timer /etc/systemd/system/mrv1-production.timer
 sudo systemctl daemon-reload
-sudo systemctl disable --now mrv1-daily-live.timer mrv1-nightly-runtime.timer mrv1-runtime.timer
-sudo systemctl enable --now mrv1-production.timer
+sudo systemctl disable mrv1-production.timer
 ```
+
+This stages the target units without creating a competing scheduler. Keep the existing
+`mrv1-daily-live.timer` active until the credential is provisioned and the full
+`--no-submit` preflight passes.
 
 If `/opt/market_regime_v1/execution/config/hyperliquid_account.json` does not exist yet:
 
 ```bash
 sudo cp /opt/market_regime_v1/execution/config/hyperliquid_account.json.template /opt/market_regime_v1/execution/config/hyperliquid_account.json
-sudo chown mrv1:mrv1 /opt/market_regime_v1/execution/config/hyperliquid_account.json
+sudo chown trendatlas:trendatlas /opt/market_regime_v1/execution/config/hyperliquid_account.json
 ```
+
+## One-time encrypted credential provisioning
+
+Do not pass the private key as an argument, environment variable, redirected file, or
+chat message. Run the provisioner from a local interactive Pi terminal; it prompts once
+with hidden input and sends the value only over stdin to `systemd-creds`:
+
+```bash
+sudo /opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/provision_hyperliquid_systemd_credential.py
+```
+
+The encrypted blob is written as root-owned mode `0400` at
+`/etc/credstore.encrypted/mrv1-production.hyperliquid-agent-private-key`. The unit maps
+it to the private per-service credential named `hyperliquid-agent-private-key`.
 
 ## Exact validation commands
 
@@ -63,10 +74,19 @@ Verify the unit files:
 sudo systemd-analyze verify /etc/systemd/system/mrv1-production.service /etc/systemd/system/mrv1-production.timer
 ```
 
-Run a safe no-submit preflight before enabling live execution:
+Run a safe no-submit preflight inside a transient systemd unit so the decrypted value is
+available only through a private service credential mount:
 
 ```bash
-sudo -u mrv1 /opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_trendatlas_production.py --no-submit
+sudo systemd-run --unit=mrv1-production-preflight --wait --collect --pipe --property=Type=oneshot --property=User=trendatlas --property=Group=trendatlas --property=WorkingDirectory=/opt/market_regime_v1 --property=Environment=MRV1_HYPERLIQUID_CREDENTIAL_NAME=hyperliquid-agent-private-key --property=Environment=MRV1_HYPERLIQUID_ACCOUNT_ADDRESS=0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856 --property=Environment=MRV1_HYPERLIQUID_AGENT_NAME=TrendAtlasProd --property=LoadCredentialEncrypted=hyperliquid-agent-private-key:/etc/credstore.encrypted/mrv1-production.hyperliquid-agent-private-key /opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_trendatlas_production.py --no-submit
+```
+
+Only after that preflight reports `PREFLIGHT_READY`, `live_order_chain=NOT_INVOKED`,
+`real_order_sent=false`, and signer validation `PASS`, migrate the recurring scheduler:
+
+```bash
+sudo systemctl disable --now mrv1-daily-live.timer mrv1-nightly-runtime.timer mrv1-runtime.timer mrv1-daily-preview.timer
+sudo systemctl enable --now mrv1-production.timer
 ```
 
 Check service and timer state:
@@ -87,19 +107,18 @@ sudo journalctl -u mrv1-production.service --since "today 00:00" --no-pager
 Check the expected operational artifacts:
 
 ```bash
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/refresh_pipeline/materialize_execution_app_exports_report.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/app_snapshot/app_product_snapshot.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/app_snapshot/app_runtime_snapshot.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json
-sudo -u mrv1 test -f /opt/market_regime_v1/outputs/execution/production_runs/latest_production_run.json
-sudo -u mrv1 cat /opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
+sudo -u trendatlas test -f /opt/market_regime_v1/outputs/execution/refresh_pipeline/materialize_execution_app_exports_report.json
+sudo -u trendatlas test -f /opt/market_regime_v1/outputs/execution/app_snapshot/app_product_snapshot.json
+sudo -u trendatlas test -f /opt/market_regime_v1/outputs/execution/app_snapshot/app_runtime_snapshot.json
+sudo -u trendatlas test -f /opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json
+sudo -u trendatlas test -f /opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json
+sudo -u trendatlas test -f /opt/market_regime_v1/outputs/execution/production_runs/latest_production_run.json
 ```
 
 Check that `source_of_truth` stayed untouched:
 
 ```bash
-sudo -u mrv1 git -C /opt/market_regime_v1 status --short -- source_of_truth
+sudo -u trendatlas git -C /opt/market_regime_v1 status --short -- source_of_truth
 ```
 
 ## Operational notes

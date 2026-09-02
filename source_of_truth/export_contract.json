@@ -106,6 +106,15 @@
                                             "submission_idempotency":  "journal_PREPARED_before_request_and_deterministic_128_bit_cloid",
                                             "uncertain_execution_rule":  "exchange_cloid_lookup_and_account_readback_before_residual_decision",
                                             "authority_success_rule":  "required_execution_and_post_trade_verification_must_finish_first",
+                                            "production_signer":  {
+                                                                        "account_address":  "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+                                                                        "agent_name":  "TrendAtlasProd",
+                                                                        "credential_name":  "hyperliquid-agent-private-key",
+                                                                        "credential_mechanism":  "systemd_LoadCredentialEncrypted_host_key",
+                                                                        "account_query_address_rule":  "always_use_configured_master_account_not_agent_address",
+                                                                        "safe_preflight_rule":  "derive_and_validate_named_agent_authorization_without_exchange_mutation",
+                                                                        "secret_output_rule":  "never_emit_signer_secret_to_logs_artifacts_dashboards_or_manifests"
+                                                                    },
                                             "dashboard_sections":  [
                                                                         "model_target",
                                                                         "real_account",

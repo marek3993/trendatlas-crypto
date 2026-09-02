@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import getpass
 import json
 import os
 import sys
@@ -20,6 +19,14 @@ except ImportError:
 
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.execution.hyperliquid_credentials import (  # noqa: E402
+    get_account_setup as get_secure_account_setup,
+    load_secret_key as load_systemd_secret_key,
+)
+
 EXECUTION_DIR = ROOT / "execution"
 CONFIG_DIR = EXECUTION_DIR / "config"
 OUTPUTS_DIR = ROOT / "outputs" / "execution"
@@ -334,60 +341,11 @@ def make_action(order_wire: dict[str, Any]) -> dict[str, Any]:
 
 
 def load_secret_key(account_cfg: dict[str, Any]) -> str:
-    env_name = str(account_cfg.get("secret_key_env", "")).strip()
-    inline_secret = str(account_cfg.get("secret_key", "")).strip()
-    keystore_path_raw = str(account_cfg.get("keystore_path", "")).strip()
-
-    if env_name:
-        from_env = os.environ.get(env_name, "").strip()
-        if from_env:
-            return from_env
-
-    if inline_secret:
-        return inline_secret
-
-    if keystore_path_raw:
-        crypto = require_crypto_deps()
-        keystore_path = Path(keystore_path_raw).expanduser()
-        if not keystore_path.is_absolute():
-            keystore_path = (ROOT / keystore_path).resolve()
-        if not keystore_path.exists():
-            fail(f"Keystore file not found: {keystore_path}")
-        password = os.environ.get("HYPERLIQUID_KEYSTORE_PASSWORD", "")
-        if not password:
-            password = getpass.getpass("Enter Hyperliquid keystore password: ")
-        try:
-            keystore_payload = json.loads(keystore_path.read_text(encoding="utf-8"))
-        except Exception as exc:
-            fail(f"Failed reading keystore file {keystore_path}: {exc}")
-        try:
-            secret = crypto.Account.decrypt(keystore_payload, password)
-        except Exception as exc:
-            fail(f"Failed decrypting keystore {keystore_path}: {exc}")
-        if isinstance(secret, bytes):
-            return "0x" + secret.hex()
-        return str(secret)
-
-    fail(
-        "Missing signer credentials in execution/config/hyperliquid_account.json. "
-        "Set secret_key_env, secret_key, or keystore_path."
-    )
-    raise RuntimeError("unreachable")
+    return load_systemd_secret_key(account_cfg)
 
 
 def get_account_setup(account_cfg: dict[str, Any], crypto: CryptoDeps) -> dict[str, Any]:
-    secret_key = load_secret_key(account_cfg)
-    wallet = crypto.Account.from_key(secret_key)
-    signer_address = wallet.address
-    account_address = str(account_cfg.get("account_address", "")).strip() or signer_address
-    vault_address = str(account_cfg.get("vault_address", "")).strip() or None
-    return {
-        "wallet": wallet,
-        "signer_address": signer_address,
-        "account_address": account_address,
-        "vault_address": vault_address,
-        "uses_agent_wallet": signer_address.lower() != account_address.lower(),
-    }
+    return get_secure_account_setup(account_cfg, crypto)
 
 
 def fetch_meta() -> dict[str, Any]:

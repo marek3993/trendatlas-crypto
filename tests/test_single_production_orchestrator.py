@@ -101,12 +101,22 @@ class FakeAdapter:
 
 
 class FixtureOrchestrator(TrendAtlasProductionOrchestrator):
-    def __init__(self, root: Path, *, no_submit: bool, adapter: FakeAdapter):
+    def __init__(self, root: Path, *, no_submit: bool, adapter: FakeAdapter, signer_validator=None):
+        default_signer_validator = lambda: {
+            "status": "PASS",
+            "credential_present": True,
+            "credential_value_exposed": False,
+            "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+            "signer_address": "0x1111111111111111111111111111111111111111",
+            "agent_name": "TrendAtlasProd",
+            "signer_authorized": True,
+        }
         super().__init__(
             root=root,
             no_submit=no_submit,
             market_loader=lambda: ({"BTC": 100_000.0}, {"BTC": 5}),
             adapter_factory=lambda: adapter,
+            signer_validator=signer_validator or default_signer_validator,
             now=lambda: "2026-09-01T12:00:00Z",
         )
         self.target_day = "2026-08-31"
@@ -202,6 +212,7 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         self.assertEqual(adapter.submits, [])
         self.assertEqual(result["live_order_chain"], "NOT_INVOKED")
         self.assertFalse(result["real_order_sent"])
+        self.assertEqual(result["signer_validation"]["status"], "PASS")
 
     def test_live_cycle_submits_once_then_publishes_authority(self):
         adapter = FakeAdapter()
@@ -254,6 +265,32 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         self.assertNotIn("submit_controlled_real_order.py", service)
         self.assertEqual(service.count("ExecStart="), 1)
         self.assertIn("Unit=mrv1-production.service", timer)
+
+    def test_signer_failure_is_redacted_from_run_manifest(self):
+        private_key = "0x" + ("cd" * 32)
+
+        def fail_signer_validation():
+            raise RuntimeError(f"invalid credential {private_key}")
+
+        orchestrator = FixtureOrchestrator(
+            self.root,
+            no_submit=True,
+            adapter=FakeAdapter(),
+            signer_validator=fail_signer_validation,
+        )
+        with patch(
+            "scripts.execution.run_trendatlas_production.build_report_bundle",
+            return_value=health_bundle(),
+        ), patch(
+            "scripts.execution.run_trendatlas_production.authority_publish_helpers.publish_authority_refresh_failure",
+            return_value={"published": True},
+        ):
+            result = orchestrator.run()
+        rendered = json.dumps(result)
+        self.assertEqual(result["failure_stage"], "VALIDATE_SIGNER")
+        self.assertNotIn(private_key, rendered)
+        self.assertNotIn(private_key[2:], rendered)
+        self.assertIn("[REDACTED_PRIVATE_KEY]", rendered)
 
 
 if __name__ == "__main__":

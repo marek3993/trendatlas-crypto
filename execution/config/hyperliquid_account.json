@@ -1,8 +1,7 @@
 {
-  "secret_key_env": "HYPERLIQUID_SECRET_KEY",
-  "secret_key": "",
-  "keystore_path": "",
+  "credential_name": "hyperliquid-agent-private-key",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "agent_name": "TrendAtlasProd",
   "vault_address": "",
-  "comment": "Use env-based signer only. Do not store real secrets in this file."
+  "comment": "The signer is loaded only from the mrv1-production.service encrypted systemd credential. Never store a private key in this file."
 }

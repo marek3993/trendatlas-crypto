@@ -47,6 +47,9 @@
 
 ## Active operational focus
 - Migrate recurring production scheduling to the single canonical orchestrator `scripts/execution/run_trendatlas_production.py` and disable only competing production execution timers after deployment verification.
+- Stage `mrv1-production.service` with `LoadCredentialEncrypted=hyperliquid-agent-private-key`, validate the named `TrendAtlasProd` signer against master account `0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856`, and keep the legacy timer as the only active production timer until the encrypted credential and full `--no-submit` proof pass.
+- The former process-environment signer is intentionally unrecoverable and must not be searched for. Browser-wallet extraction, credential dumping, filesystem-forensic secret recovery, and any master-private-key request are forbidden.
+- Exchange authorization expiry is an operational lifecycle condition: daily signer validation must surface the public expiry and fail closed once authorization is expired.
 - Live runtime activation settings remain armed, but execution must fail closed unless deterministic CLOID recovery, canonical provenance, fresh account/margin state, and post-trade verification all pass.
 - Remaining proof gap is the first non-CASH end-to-end dynamic equity-sized evidence run through the new orchestrator.
 - Confirm Production Core remains the app homepage and execution primary strategy truth interface.

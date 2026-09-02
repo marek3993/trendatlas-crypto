@@ -194,6 +194,28 @@
       "notes": "Tracked separately from automation scope."
     },
     {
+      "script_path": "scripts/execution/provision_hyperliquid_systemd_credential.py",
+      "layer": "production_execution",
+      "status": "active",
+      "purpose": "Reads a Hyperliquid API-wallet private key once from a hidden local Pi prompt and writes only a host-key-encrypted systemd credential outside the repo.",
+      "primary_outputs": [],
+      "output_type": "runtime_control",
+      "decision_relevance": "execution_authoritative",
+      "writes_source_of_truth": false,
+      "notes": "Manual root-only provisioning/rotation tool. No private key is accepted through arguments or environment, and no plaintext credential file is created."
+    },
+    {
+      "script_path": "scripts/execution/validate_hyperliquid_production_signer.py",
+      "layer": "production_execution",
+      "status": "active",
+      "purpose": "Loads the encrypted systemd service credential, derives the public signer locally, and validates the fixed master account, user role, named agent authorization, and expiry without exchange mutation.",
+      "primary_outputs": [],
+      "output_type": "validation",
+      "decision_relevance": "execution_authoritative",
+      "writes_source_of_truth": false,
+      "notes": "Safe signer preflight used by mrv1-production.service and the canonical orchestrator. Emits only public validation metadata and redacted errors."
+    },
+    {
       "script_path": "scripts/execution/run_trendatlas_production.py",
       "layer": "production_execution",
       "status": "active",

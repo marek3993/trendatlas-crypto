@@ -422,7 +422,36 @@
                                                "run_manifest_path":  "outputs/execution/production_runs/latest_production_run.json",
                                                "execution_journal_path":  "outputs/execution/execution_journal/",
                                                "authority_success_after_required_execution_verification":  true,
-                                               "safe_preflight_flag":  "--no-submit"
+                                               "safe_preflight_flag":  "--no-submit",
+                                               "production_signer_contract":  {
+                                                                                  "account_address":  "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+                                                                                  "agent_name":  "TrendAtlasProd",
+                                                                                  "credential_name":  "hyperliquid-agent-private-key",
+                                                                                  "credential_mechanism":  "systemd_LoadCredentialEncrypted_host_key",
+                                                                                  "secret_sources_allowed":  [
+                                                                                                                  "systemd_service_credential"
+                                                                                                              ],
+                                                                                  "secret_sources_forbidden":  [
+                                                                                                                    "git",
+                                                                                                                    "inline_config",
+                                                                                                                    "process_environment",
+                                                                                                                    "command_line",
+                                                                                                                    "journal",
+                                                                                                                    "execution_artifacts",
+                                                                                                                    "dashboard",
+                                                                                                                    "run_manifest"
+                                                                                                                ],
+                                                                                  "preflight_requirements":  [
+                                                                                                                  "credential_present_without_value_output",
+                                                                                                                  "derive_signer_address_locally",
+                                                                                                                  "configured_master_account_exact_match",
+                                                                                                                  "master_account_role_is_user",
+                                                                                                                  "signer_is_distinct_agent_wallet",
+                                                                                                                  "named_agent_address_match",
+                                                                                                                  "agent_authorization_not_expired"
+                                                                                                              ],
+                                                                                  "no_submit_rule":  "validate_signer_without_instantiating_order_submission_adapter_or_mutating_exchange"
+                                                                              }
                                            },
     "production_authority_model":  {
                                        "automatic_production_producer":  "raspberry_pi",

@@ -43,6 +43,10 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
   - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --mode publish-existing`
 - always dry-run before real publish
 - live order submission is allowed only from the canonical orchestrator after every current-run gate passes; safe validation uses `--no-submit`
+- the production signer is the distinct named Hyperliquid API/agent wallet `TrendAtlasProd` for master account `0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856`
+- signer material is loaded only as the systemd encrypted credential `hyperliquid-agent-private-key` through `LoadCredentialEncrypted`; inline config, process-environment, command-line, journal, artifact, dashboard, and run-manifest secret transport are forbidden
+- because this Pi has no usable TPM2 device, systemd host-key encryption is the approved strongest practical encrypted-credential backend
+- `--no-submit` must validate credential presence, derive the public signer address locally, and validate master role plus named-agent authorization without instantiating the order-submission adapter or mutating exchange state
 - every live transition must have a durable pre-submission journal record and deterministic Hyperliquid CLOID before the request is sent
 - restart recovery must query the exchange by CLOID and refresh account/open-order state before any residual submission
 - fixed-dollar sizing is forbidden; target notional is fresh account equity multiplied by validated Production Core target exposure, with safety violations blocking rather than clipping
@@ -123,6 +127,8 @@ If step 3 invalidates the approved fresh runtime bundle, restore the approved st
 ## Hard Runtime Boundaries
 - No live order outside the canonical production orchestrator.
 - `--no-submit` must never invoke an exchange mutation.
+- Missing, malformed, expired, wrong-account, wrong-name, or unauthorized signer credentials must block before any exchange mutation.
+- The old `HYPERLIQUID_SECRET_KEY` process-environment provisioning path is forbidden for production and must not be recovered or reinstated.
 - Safe publish-existing validation performs no live order and never invokes the submitter.
 - No manual authority snapshot edits.
 - No manual generated `outputs/*` or `data/*` commits outside the official authority producer path.

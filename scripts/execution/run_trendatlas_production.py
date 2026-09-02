@@ -27,6 +27,7 @@ from scripts.execution.production_execution import (  # noqa: E402
     validate_canonical_provenance,
     validate_live_preflight,
 )
+from scripts.execution.hyperliquid_credentials import redact_sensitive_text  # noqa: E402
 from scripts.execution.run_pi_authoritative_producer import build_pi_authoritative_env  # noqa: E402
 from scripts.execution.run_pi_fast_daily_authority_refresh import (  # noqa: E402
     build_fast_dependency_steps,
@@ -35,6 +36,9 @@ from scripts.execution.run_pi_fast_daily_authority_refresh import (  # noqa: E40
 from scripts.execution.submit_controlled_real_order import (  # noqa: E402
     HyperliquidProductionExchangeAdapter,
     load_live_market_context,
+)
+from scripts.execution.validate_hyperliquid_production_signer import (  # noqa: E402
+    validate_production_signer,
 )
 from scripts.production.data_health_common import (  # noqa: E402
     build_report_bundle,
@@ -64,6 +68,7 @@ STAGE_NAMES = (
     "BUILD_PRODUCTION_CORE",
     "VALIDATE_PRODUCTION_CORE",
     "READ_ACCOUNT_BEFORE",
+    "VALIDATE_SIGNER",
     "BUILD_CANONICAL_INTENT",
     "BUILD_REAL_ORDER_GATE",
     "VALIDATE_DATA_HEALTH",
@@ -176,6 +181,7 @@ def new_manifest(run_id: str, target_day: str, *, no_submit: bool) -> dict[str, 
         "planned_delta": None,
         "execution_action": None,
         "gate_status": None,
+        "signer_validation": None,
         "order_requested": False,
         "order_id": None,
         "cloid": None,
@@ -204,6 +210,7 @@ class TrendAtlasProductionOrchestrator:
         command_runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
         market_loader: Callable[[], tuple[dict[str, float], dict[str, int]]] = load_live_market_context,
         adapter_factory: Callable[[], Any] = HyperliquidProductionExchangeAdapter,
+        signer_validator: Callable[[], dict[str, Any]] | None = None,
         now: Callable[[], str] = utc_now_iso,
     ) -> None:
         self.root = root.resolve()
@@ -211,6 +218,11 @@ class TrendAtlasProductionOrchestrator:
         self.command_runner = command_runner
         self.market_loader = market_loader
         self.adapter_factory = adapter_factory
+        self.signer_validator = signer_validator or (
+            lambda: validate_production_signer(
+                account_config_path=self.root / "execution/config/hyperliquid_account.json"
+            )
+        )
         self.now = now
         self.run_id = run_id_now()
         self.target_day = latest_closed_utc_date()
@@ -279,7 +291,9 @@ class TrendAtlasProductionOrchestrator:
                     label="recover_account_after_failure",
                 )
         except Exception as exc:
-            recovery_errors.append(f"account_readback:{type(exc).__name__}:{exc}")
+            recovery_errors.append(
+                redact_sensitive_text(f"account_readback:{type(exc).__name__}:{exc}")
+            )
         try:
             required = (
                 self.root / "outputs/production/current_strategy_snapshot.json",
@@ -297,7 +311,9 @@ class TrendAtlasProductionOrchestrator:
                     write_outputs=True,
                 )
         except Exception as exc:
-            recovery_errors.append(f"canonical_health:{type(exc).__name__}:{exc}")
+            recovery_errors.append(
+                redact_sensitive_text(f"canonical_health:{type(exc).__name__}:{exc}")
+            )
         try:
             self.persist()
             self.run_script(
@@ -306,7 +322,9 @@ class TrendAtlasProductionOrchestrator:
                 label="recover_dashboard_after_failure",
             )
         except Exception as exc:
-            recovery_errors.append(f"dashboard:{type(exc).__name__}:{exc}")
+            recovery_errors.append(
+                redact_sensitive_text(f"dashboard:{type(exc).__name__}:{exc}")
+            )
         if recovery_errors:
             self.manifest["fail_closed_recovery_errors"] = recovery_errors
         self.persist()
@@ -442,6 +460,15 @@ class TrendAtlasProductionOrchestrator:
             )
             self.publish_attempt_started()
             self.stage_finish("READ_ACCOUNT_BEFORE")
+
+            self.stage_start("VALIDATE_SIGNER")
+            signer_validation = self.signer_validator()
+            if str(signer_validation.get("status") or "").upper() != "PASS":
+                raise ExecutionSafetyError("production_signer_validation_not_passed")
+            if bool(signer_validation.get("credential_value_exposed")):
+                raise ExecutionSafetyError("production_signer_secret_exposure_detected")
+            self.manifest["signer_validation"] = signer_validation
+            self.stage_finish("VALIDATE_SIGNER")
 
             self.stage_start("BUILD_CANONICAL_INTENT")
             self.run_script(
@@ -671,26 +698,29 @@ class TrendAtlasProductionOrchestrator:
                     authority_publish_helpers.publish_authority_refresh_failure(
                         self.authority_state,
                         refresh_finished_at_utc=self.now(),
-                        error=str(exc),
+                        error=redact_sensitive_text(exc),
                         env=self.env,
                     )
                 except Exception as authority_exc:
                     self.manifest["authority_failure_publish_error"] = (
-                        f"{type(authority_exc).__name__}:{authority_exc}"
+                        redact_sensitive_text(
+                            f"{type(authority_exc).__name__}:{authority_exc}"
+                        )
                     )
+            safe_error = redact_sensitive_text(exc)
             if self.current_stage is not None:
                 stage = self.manifest["stages"][self.current_stage]
                 stage.update({
                     "status": "BLOCKED" if isinstance(exc, ExecutionSafetyError) else "FAILED",
                     "finished_at": self.now(),
-                    "error": str(exc),
+                    "error": safe_error,
                 })
             self.manifest.update({
                 "finished_at": self.now(),
                 "final_status": "BLOCKED" if isinstance(exc, ExecutionSafetyError) else "FAILED",
                 "failure_stage": self.current_stage,
-                "failure_reason": str(exc),
-                "traceback": traceback.format_exc(limit=12),
+                "failure_reason": safe_error,
+                "traceback": redact_sensitive_text(traceback.format_exc(limit=12)),
             })
             self.persist()
             if self.authority_state is not None:

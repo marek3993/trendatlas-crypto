@@ -77,6 +77,9 @@
 - `--mode full-refresh` requires explicit approval.
 - The orchestrator reuses the validated fast dependency refresh and must not escalate to `--mode full-refresh` without explicit approval.
 - Live submission is permitted only after the current run has validated Production Core, canonical intent/gate provenance, current data health, fresh account state, deterministic reconciliation, and durable pre-submit idempotency recovery.
+- The production Hyperliquid signer must be the named API/agent wallet `TrendAtlasProd` authorized by master account `0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856`; account queries must continue to use the master-account address, never the agent address.
+- Signer material must be supplied only through the `mrv1-production.service` systemd encrypted credential `hyperliquid-agent-private-key`; inline config, environment-secret, command-line, journal, artifact, dashboard, and run-manifest secret transport are forbidden.
+- Every production run, including `--no-submit`, must derive the signer address locally and validate the configured master account plus current exchange-side named-agent authorization without submitting an order.
 - Execution sizing is `fresh_account_equity_usd * validated_target_exposure`; fixed-dollar policy limits must not clip a valid strategy target. Relative safety ceilings block instead of resizing.
 - Every submitted transition uses a deterministic Hyperliquid CLOID and a durable journal record written before the exchange request. Restart recovery queries exchange state by CLOID and refreshes the account before deciding whether any residual order is safe.
 - Authority success for a run requiring execution is published only after exchange outcome and post-trade account verification are known.
