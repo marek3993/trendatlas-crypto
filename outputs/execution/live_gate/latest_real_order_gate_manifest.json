@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_real_order_gate_decision",
-  "generated_at_utc": "2026-09-01T18:40:16Z",
-  "started_at_utc": "2026-09-01T18:40:16Z",
+  "generated_at_utc": "2026-09-02T00:11:17Z",
+  "started_at_utc": "2026-09-02T00:11:17Z",
   "script_path": "/opt/market_regime_v1/scripts/execution/prepare_real_order_gate.py",
   "input_paths": [
     "/opt/market_regime_v1/execution/config/execution_mode.json",
@@ -9,7 +9,8 @@
     "/opt/market_regime_v1/outputs/execution/intents/latest_execution_intent.json",
     "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot.json",
     "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
-    "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260901_184011/authority/latest_successful_snapshot.json"
+    "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
+    "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json"
   ],
   "output_paths": [
     "/opt/market_regime_v1/outputs/execution/live_gate/latest_real_order_gate_decision.json",

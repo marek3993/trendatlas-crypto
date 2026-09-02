@@ -1,14 +1,14 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-09-01T18:40:16Z",
-  "as_of_source": "2026-08-31",
+  "generated_at_utc": "2026-09-02T00:11:17Z",
+  "as_of_source": "2026-09-01",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
   "kill_switch_required": true,
   "strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "reference_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-08-31::target_BTC::candidate_BTC",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
   "target_asset": "BTC",
   "target_side": "long_only_hold_selected_asset_or_cash",
   "target_regime": "BTC",
@@ -25,27 +25,30 @@
     "kill_switch_required": true,
     "manual_approval_required_for_live_orders": true,
     "leverage_live_truth_allowed": false,
-    "production_snapshot_validated": true
+    "production_snapshot_validated": true,
+    "same_run_authority_allowed": false,
+    "same_run_authority_run_id": null,
+    "same_run_authority_target_closed_day": null
   },
   "source_fingerprints": {
-    "production_snapshot_sha256": "1ef922b20aa3fdf9db24357b0fc80ccc2ca0fd09b7b06f0fbd62153da28ec6c2"
+    "production_snapshot_sha256": "5c12a53af99060f5657566a18ba08fb4919b5931ab2678559742e47605967a07"
   },
   "source_paths": {
     "production_snapshot": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
-    "authority_latest_successful_snapshot": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260901_184011/authority/latest_successful_snapshot.json",
-    "authority_latest_attempt_status": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260901_184011/authority/latest_attempt_status.json",
+    "authority_latest_successful_snapshot": "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
+    "authority_latest_attempt_status": "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json",
     "data_health_report": "/opt/market_regime_v1/outputs/production/data_health_report.json"
   },
   "authority_day_context": {
     "attempt_status": "success",
     "attempt_currentness_status": "current",
-    "attempt_target_closed_day": "2026-08-31",
-    "attempt_latest_available_closed_day": "2026-08-31",
+    "attempt_target_closed_day": "2026-09-01",
+    "attempt_latest_available_closed_day": "2026-09-01",
     "success_currentness_status": "current",
-    "success_target_closed_day": "2026-08-31",
-    "success_latest_available_closed_day": "2026-08-31",
+    "success_target_closed_day": "2026-09-01",
+    "success_latest_available_closed_day": "2026-09-01",
     "success_attempt_status": "success",
-    "aligned_closed_day": "2026-08-31",
+    "aligned_closed_day": "2026-09-01",
     "authority_alignment_mode": "published_authority_snapshot",
     "same_run_authority_allowed": false,
     "same_run_authority_run_id": null,
@@ -55,7 +58,7 @@
     "production_snapshot_execution_intent": {
       "target_asset": "BTC",
       "target_exposure": 0.5,
-      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-08-31::target_BTC::candidate_BTC",
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
       "stale_signal": false,
       "allow_live_order_candidate": true
     },

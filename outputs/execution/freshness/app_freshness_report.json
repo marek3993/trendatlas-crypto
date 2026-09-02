@@ -1,14 +1,14 @@
 {
-  "generated_at_utc": "2026-09-01T00:10:42+00:00",
-  "latest_closed_utc_date": "2026-08-31",
+  "generated_at_utc": "2026-09-02T00:10:43+00:00",
+  "latest_closed_utc_date": "2026-09-01",
   "status": "ok",
   "checks": {
-    "btc_raw_last_date": "2026-08-31",
-    "phase66g_paper_last_date": "2026-08-31",
-    "phase66g_live_latest_available_date": "2026-08-31",
-    "phase66g_trend_last_date": "2026-08-31",
-    "phase67j_paper_last_date": "2026-08-31",
-    "phase67j_live_latest_available_date": "2026-08-31",
+    "btc_raw_last_date": "2026-09-01",
+    "phase66g_paper_last_date": "2026-09-01",
+    "phase66g_live_latest_available_date": "2026-09-01",
+    "phase66g_trend_last_date": "2026-09-01",
+    "phase67j_paper_last_date": "2026-09-01",
+    "phase67j_live_latest_available_date": "2026-09-01",
     "macro_last_date": "2026-03-08",
     "top100_assets_checked": [
       "NEO",
@@ -19,15 +19,15 @@
       "LINK"
     ],
     "top100_asset_last_dates": {
-      "NEO": "2026-08-31",
-      "DOGE": "2026-08-31",
-      "STX": "2026-08-31",
-      "APT": "2026-08-31",
-      "HBAR": "2026-08-31",
-      "LINK": "2026-08-31"
+      "NEO": "2026-09-01",
+      "DOGE": "2026-09-01",
+      "STX": "2026-09-01",
+      "APT": "2026-09-01",
+      "HBAR": "2026-09-01",
+      "LINK": "2026-09-01"
     },
-    "top100_min_last_date": "2026-08-31",
-    "top100_max_last_date": "2026-08-31"
+    "top100_min_last_date": "2026-09-01",
+    "top100_max_last_date": "2026-09-01"
   },
   "warnings": [],
   "errors": [],

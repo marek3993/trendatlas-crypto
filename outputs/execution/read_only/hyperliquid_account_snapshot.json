@@ -1,6 +1,6 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-09-01T00:10:43Z",
+  "as_of_utc": "2026-09-02T00:10:45Z",
   "execution_mode": "live",
   "trading_enabled": true,
   "kill_switch": false,
@@ -26,7 +26,7 @@
       "crossMaintenanceMarginUsed": "0.0",
       "withdrawable": "0.0",
       "assetPositions": [],
-      "time": 1788221442307
+      "time": 1788307843668
     },
     "spotClearinghouseState": {
       "balances": [
@@ -272,7 +272,8 @@
         "feeToken": "USDC",
         "twapId": null
       }
-    ]
+    ],
+    "userAbstraction": "unifiedAccount"
   },
   "summary": {
     "positions_count": 0,
@@ -306,6 +307,8 @@
     ],
     "spot_stable_total_usd": 39.475466,
     "spot_stable_available_usd": 39.475466,
-    "spot_source_available": true
+    "spot_source_available": true,
+    "account_abstraction": "unifiedAccount",
+    "spot_balance_usable_for_perps": true
   }
 }

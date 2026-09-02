@@ -1,13 +1,13 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-09-01T18:40:16Z",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-08-31::target_BTC::candidate_BTC",
+  "generated_at_utc": "2026-09-02T00:11:17Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
   "target_asset": "BTC",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
   "approval_gate_status": "approved_and_applied",
   "would_place_real_order": true,
-  "real_orders_enabled": false,
+  "real_orders_enabled": true,
   "status": "ready_if_enabled",
   "block_reasons": [],
   "checks": {
@@ -33,7 +33,14 @@
     "approval_source_day_match": true,
     "approval_status_allowed": true,
     "leverage_live_truth_allowed": false,
-    "max_order_notional_usd": 250.0,
+    "sizing_mode": "equity_target_exposure",
+    "max_strategy_target_exposure": 2.0,
+    "target_exposure_within_safety_ceiling": true,
+    "same_run_authority": false,
+    "same_run_authority_binding_required": false,
+    "same_run_authority_binding_matches_intent": false,
+    "positions_count": 0,
+    "exit_required": false,
     "account_address_present": true,
     "production_snapshot_validation_passed": true,
     "production_snapshot_closed_day_present": true,
@@ -53,11 +60,11 @@
   },
   "production_signal_context": {
     "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "closed_day": "2026-08-31",
+    "closed_day": "2026-09-01",
     "validation_status": "passed",
     "candidate_asset": "BTC",
     "current_asset": "BTC",
-    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-08-31::target_BTC::candidate_BTC",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
     "target_asset": "BTC",
     "target_exposure": 0.5,
     "effective_market_exposure": 0.5,
@@ -66,9 +73,9 @@
     "allow_live_order_candidate": true
   },
   "source_fingerprints": {
-    "intent_sha256": "4ebc920a2d079994a4b48b81c29d86f2da605ac81bbaa08515b3218ec8b562c6",
-    "account_snapshot_sha256": "63a635c4705d02a6ca80e6475422c99f7052a363e0cf00cb33deee98cda63d6c",
-    "production_snapshot_sha256": "1ef922b20aa3fdf9db24357b0fc80ccc2ca0fd09b7b06f0fbd62153da28ec6c2"
+    "intent_sha256": "2ddefebd0767477ca708960f91008617ef793565c4b408277265b1740f0d4ec8",
+    "account_snapshot_sha256": "5465735ee09140134c259acb62b83c79c14b7db94063269dbb88669825f80d38",
+    "production_snapshot_sha256": "5c12a53af99060f5657566a18ba08fb4919b5931ab2678559742e47605967a07"
   },
   "notes": [
     "This is a gate-preparation artifact only.",
@@ -82,6 +89,7 @@
     "intent_path": "/opt/market_regime_v1/outputs/execution/intents/latest_execution_intent.json",
     "account_snapshot_path": "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot.json",
     "production_snapshot_path": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
-    "authority_latest_successful_snapshot_path": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260901_184011/authority/latest_successful_snapshot.json"
+    "authority_latest_successful_snapshot_path": "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
+    "authority_latest_attempt_status_path": "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json"
   }
 }

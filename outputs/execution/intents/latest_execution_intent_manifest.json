@@ -1,13 +1,13 @@
 {
   "artifact_name": "latest_execution_intent",
-  "generated_at_utc": "2026-09-01T18:40:16Z",
-  "started_at_utc": "2026-09-01T18:40:15Z",
+  "generated_at_utc": "2026-09-02T00:11:17Z",
+  "started_at_utc": "2026-09-02T00:11:17Z",
   "script_path": "/opt/market_regime_v1/scripts/execution/build_execution_intent_from_strategy_exports.py",
   "input_paths": [
     "/opt/market_regime_v1/source_of_truth/export_contract.json",
     "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
-    "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260901_184011/authority/latest_successful_snapshot.json",
-    "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260901_184011/authority/latest_attempt_status.json",
+    "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
+    "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json",
     "/opt/market_regime_v1/outputs/production/data_health_report.json"
   ],
   "output_paths": [
@@ -19,13 +19,13 @@
   "authority_day_context": {
     "attempt_status": "success",
     "attempt_currentness_status": "current",
-    "attempt_target_closed_day": "2026-08-31",
-    "attempt_latest_available_closed_day": "2026-08-31",
+    "attempt_target_closed_day": "2026-09-01",
+    "attempt_latest_available_closed_day": "2026-09-01",
     "success_currentness_status": "current",
-    "success_target_closed_day": "2026-08-31",
-    "success_latest_available_closed_day": "2026-08-31",
+    "success_target_closed_day": "2026-09-01",
+    "success_latest_available_closed_day": "2026-09-01",
     "success_attempt_status": "success",
-    "aligned_closed_day": "2026-08-31",
+    "aligned_closed_day": "2026-09-01",
     "authority_alignment_mode": "published_authority_snapshot",
     "same_run_authority_allowed": false,
     "same_run_authority_run_id": null,

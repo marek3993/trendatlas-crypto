@@ -12,5 +12,7 @@
   "balance_source_of_truth": "spot_stable_balance",
   "account_equity_usd": 39.475466,
   "available_balance_usd": 39.475466,
-  "spot_source_available": true
+  "spot_source_available": true,
+  "account_abstraction": "unifiedAccount",
+  "spot_balance_usable_for_perps": true
 }
