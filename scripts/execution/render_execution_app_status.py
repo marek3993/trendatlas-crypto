@@ -163,6 +163,7 @@ def extract_open_position(snapshot: dict[str, Any]) -> dict[str, Any] | None:
         "size": abs(size),
         "entry_price": first_float(primary_position, ["entryPx", "entry_price"]),
         "mark_price": mark_price,
+        "position_notional_usd": abs(position_value) if position_value is not None else None,
         "unrealized_pnl_usd": first_float(primary_position, ["unrealizedPnl", "unrealized_pnl", "upl"]),
         "unrealized_pnl_pct": maybe_pct_from_fraction(
             first_float(primary_position, ["returnOnEquity", "unrealizedPnlPct", "roe"])
@@ -246,7 +247,15 @@ def main() -> None:
     status["status"] = "ok"
     status["provider"] = snapshot_source.get("provider") or "Hyperliquid"
     status["account_equity_usd"] = to_float(summary.get("account_equity_usd"))
+    status["free_collateral_usd"] = to_float(summary.get("free_collateral_usd"))
     status["available_balance_usd"] = to_float(summary.get("available_balance_usd"))
+    status["free_collateral_status"] = summary.get("free_collateral_status")
+    status["free_collateral_source"] = summary.get("free_collateral_source")
+    status["withdrawable_usd"] = to_float(summary.get("withdrawable_usd"))
+    status["withdrawable_status"] = summary.get("withdrawable_status")
+    status["withdrawable_source"] = summary.get("withdrawable_source")
+    status["margin_used_usd"] = to_float(summary.get("margin_used_usd"))
+    status["position_notional_usd"] = to_float(summary.get("position_notional_usd"))
     status["balance_source_of_truth"] = summary.get("balance_source_of_truth")
     status["open_position"] = open_position
 

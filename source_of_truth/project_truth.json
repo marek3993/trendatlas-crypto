@@ -201,7 +201,18 @@
                                                                                                                  "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.real_account_state"
                                                                                                              ],
                                                                            "semantic_boundary":  "real_wallet_and_execution_state_only",
-                                                                           "consumer_rule":  "use_as_the_only_public_runtime_account_exposure_contract"
+                                                                           "consumer_rule":  "use_as_the_only_public_runtime_account_exposure_and_balance_contract",
+                                                                           "balance_semantics":  {
+                                                                                                      "account_equity_usd":  "total_real_account_equity",
+                                                                                                      "free_collateral_usd":  "exchange_held_funds_excluded_and_nullable_if_native_inputs_are_missing_or_incoherent",
+                                                                                                      "available_balance_usd":  "deprecated_nullable_alias_of_free_collateral_usd_never_total_equity",
+                                                                                                      "withdrawable_usd":  "exchange_native_only_when_valid_for_current_account_abstraction_otherwise_null",
+                                                                                                      "margin_used_usd":  "clearinghouse_marginSummary_totalMarginUsed",
+                                                                                                      "position_notional_usd":  "clearinghouse_marginSummary_totalNtlPos",
+                                                                                                      "unified_account_equity_source":  "spotClearinghouseState_stable_total",
+                                                                                                      "unified_account_free_collateral_source":  "spotClearinghouseState_stable_total_minus_native_hold",
+                                                                                                      "model_fields_forbidden":  true
+                                                                                                  }
                                                                        },
                                                 "model_signal_state":  {
                                                                             "status":  "required_public_runtime_contract",

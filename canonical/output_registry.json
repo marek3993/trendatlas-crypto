@@ -214,7 +214,7 @@
       "output_kind": "read_only_snapshot_outputs",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Hyperliquid read-only account snapshots and validation sidecars."
+      "notes": "Hyperliquid read-only account snapshots and validation sidecars. Total equity, free collateral, withdrawable, margin used, position notional, and real exposure are distinct fields; missing native free/withdrawable semantics remain null."
     },
     {
       "output_path": "outputs/execution/live_status/",

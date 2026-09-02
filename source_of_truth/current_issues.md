@@ -52,6 +52,7 @@
 - Exchange authorization expiry is an operational lifecycle condition: daily signer validation must surface the public expiry and fail closed once authorization is expired.
 - Live runtime activation settings remain armed, but execution must fail closed unless deterministic CLOID recovery, canonical provenance, fresh account/margin state, and post-trade verification all pass.
 - Public compatibility hardening must keep verified real exposure separate from the 0.5 model target, preserve `live_order_sent=true` for the first filled run, and publish only a finalized terminal production status.
+- Account observability must keep Hyperliquid total account equity separate from free collateral, withdrawable amount, margin used, and position notional. Unified-account spot collateral visibility must not make the full spot stable total appear free while native holds back a position; missing native free/withdrawable semantics must surface as unavailable.
 - Manual app `live_execute` is intentionally disabled because the Streamlit process does not own the systemd signer credential; the canonical service is the only live execution entrypoint.
 - Confirm Production Core remains the app homepage and execution primary strategy truth interface.
 - Current live/app truth is `phase68g_etf_flow_impulse_early_risk_cooldown_15`.

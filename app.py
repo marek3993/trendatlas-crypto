@@ -274,7 +274,11 @@ Podľa testov je tento prístup stabilnejší a výnosnejší.
         "account_connection": "Stav pripojenia",
         "account_last_sync": "Posledná synchronizácia",
         "account_total_value": "Celková hodnota účtu",
-        "account_available_balance": "Dostupný zostatok",
+        "account_available_balance": "Voľné prostriedky",
+        "account_withdrawable_balance": "Výber z burzy",
+        "account_margin_used": "Použitý margin",
+        "account_position_notional": "Hodnota otvorenej pozície",
+        "account_real_exposure": "Reálna expozícia",
         "account_open_position": "Otvorená pozícia",
         "account_open_orders": "Otvorené príkazy",
         "account_recent_fills": "Nedávne obchody",
@@ -482,7 +486,11 @@ Based on our tests, this approach is more stable and more profitable.
         "account_connection": "Connection status",
         "account_last_sync": "Last sync",
         "account_total_value": "Total account value",
-        "account_available_balance": "Available balance",
+        "account_available_balance": "Free collateral",
+        "account_withdrawable_balance": "Exchange withdrawable",
+        "account_margin_used": "Margin used",
+        "account_position_notional": "Open position value",
+        "account_real_exposure": "Real exposure",
         "account_open_position": "Open position",
         "account_open_orders": "Open orders",
         "account_recent_fills": "Recent fills",
@@ -3411,6 +3419,7 @@ def extract_open_position_from_snapshot(snapshot_payload: dict) -> dict | None:
             "size": abs(size),
             "entry_price": first_float_from_dict(position, ["entryPx", "entry_price"]),
             "mark_price": mark_price,
+            "position_notional_usd": abs(position_value) if position_value is not None else None,
             "unrealized_pnl_usd": first_float_from_dict(position, ["unrealizedPnl", "unrealized_pnl", "upl"]),
             "unrealized_pnl_pct": maybe_pct_from_fraction(
                 first_float_from_dict(position, ["returnOnEquity", "unrealizedPnlPct", "roe"])
@@ -3436,7 +3445,13 @@ def build_account_snapshot_view(status_payload: dict, snapshot_payload: dict) ->
     set_default_value(account, "status", "ok" if snapshot_payload else None)
     set_default_value(account, "mode", snapshot_payload.get("execution_mode"))
     set_default_value(account, "account_equity_usd", snapshot_summary.get("account_equity_usd"))
+    set_default_value(account, "free_collateral_usd", snapshot_summary.get("free_collateral_usd"))
     set_default_value(account, "available_balance_usd", snapshot_summary.get("available_balance_usd"))
+    set_default_value(account, "withdrawable_usd", snapshot_summary.get("withdrawable_usd"))
+    set_default_value(account, "margin_used_usd", snapshot_summary.get("margin_used_usd"))
+    set_default_value(account, "position_notional_usd", snapshot_summary.get("position_notional_usd"))
+    set_default_value(account, "free_collateral_source", snapshot_summary.get("free_collateral_source"))
+    set_default_value(account, "withdrawable_source", snapshot_summary.get("withdrawable_source"))
     set_default_value(account, "balance_source_of_truth", snapshot_summary.get("balance_source_of_truth"))
     set_default_value(account, "positions_count", snapshot_summary.get("positions_count"))
     set_default_value(account, "open_orders_count", snapshot_summary.get("open_orders_count"))
@@ -7662,16 +7677,50 @@ with tabs[1]:
                 },
                 {
                     "label": t(lang, "account_available_balance"),
-                    "value": safe_usd_text(account_snapshot_view.get("available_balance_usd"), lang=lang),
-                    "subtitle": "Likvidna cast uctu",
+                    "value": safe_usd_text(
+                        account_snapshot_view.get("free_collateral_usd"),
+                        lang=lang,
+                    ),
+                    "subtitle": "Po odpočítaní burzových holdov" if lang == "sk" else "After exchange-native holds",
                 },
                 {
-                    "label": "Zdroj zostatku" if lang == "sk" else "Balance source",
-                    "value": balance_source_text,
-                    "subtitle": "Operativny zdroj hodnoty",
+                    "label": t(lang, "account_withdrawable_balance"),
+                    "value": safe_usd_text(account_snapshot_view.get("withdrawable_usd"), lang=lang),
+                    "subtitle": "Len natívna hodnota burzy" if lang == "sk" else "Exchange-native value only",
                 },
             ],
             tone="balance",
+        )
+        real_exposure_value = as_float(account_snapshot_view.get("current_exposure"))
+        render_ops_kpi_row(
+            [
+                {
+                    "label": t(lang, "account_margin_used"),
+                    "value": safe_usd_text(account_snapshot_view.get("margin_used_usd"), lang=lang),
+                    "subtitle": "Hyperliquid totalMarginUsed",
+                },
+                {
+                    "label": t(lang, "account_position_notional"),
+                    "value": safe_usd_text(
+                        first_present_value(
+                            account_snapshot_view.get("position_notional_usd"),
+                            open_position.get("position_notional_usd") if open_position else None,
+                        ),
+                        lang=lang,
+                    ),
+                    "subtitle": "Hyperliquid totalNtlPos",
+                },
+                {
+                    "label": t(lang, "account_real_exposure"),
+                    "value": f"{real_exposure_value:.2f}x" if real_exposure_value is not None else t(lang, "na"),
+                    "subtitle": "Pozícia / celková hodnota" if lang == "sk" else "Position / total equity",
+                },
+            ],
+            tone="balance",
+        )
+        render_ops_inline_note(
+            "Zdroj zostatku" if lang == "sk" else "Balance source",
+            balance_source_text,
         )
 
         dense_cols = st.columns(2, gap="large")
@@ -7749,6 +7798,5 @@ with tabs[3]:
                 st.error(f"{t(lang, 'contact_failed')}: {e}")
 
     st.caption(t(lang, "contact_files"))
-
 
 
