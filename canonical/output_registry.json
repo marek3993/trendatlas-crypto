@@ -189,7 +189,7 @@
       "output_kind": "production_run_manifests",
       "decision_relevance": "execution_authoritative",
       "official_truth": false,
-      "notes": "Canonical per-run state machine evidence and latest run manifest; does not replace Production Core, account, intent, gate, or authority truth."
+      "notes": "Canonical per-run state machine evidence and latest run manifest; completed execution is finalized before dashboard/runtime materialization and authority publish; it does not replace Production Core, account, intent, gate, or authority truth."
     },
     {
       "output_path": "outputs/execution/execution_journal/",

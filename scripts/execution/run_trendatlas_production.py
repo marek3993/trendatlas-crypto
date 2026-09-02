@@ -651,8 +651,16 @@ class TrendAtlasProductionOrchestrator:
                 raise ExecutionSafetyError("final_data_health_blocks_execution")
             self.stage_finish("POST_TRADE_VERIFY")
 
-            self.stage_start("DASHBOARD_RUNTIME")
+            # Public runtime and authority publication must consume a terminal
+            # execution result, never the in-progress manifest. Authority status
+            # is filled later, but execution is final after verified read-back.
+            self.manifest["final_status"] = (
+                "PREFLIGHT_READY" if self.no_submit else "SUCCESS"
+            )
+            self.manifest["finished_at"] = self.now()
             self.persist()
+
+            self.stage_start("DASHBOARD_RUNTIME")
             self.run_script(
                 self.root / "scripts/execution/materialize_execution_app_exports.py",
                 "--runtime-snapshot-only",
@@ -672,7 +680,6 @@ class TrendAtlasProductionOrchestrator:
                         env=self.env,
                     )
                 self.stage_finish("AUTHORITY_PUBLISH", "SKIPPED", reason="no_submit")
-                self.manifest["final_status"] = "PREFLIGHT_READY"
             else:
                 self.run_script(
                     self.root / "scripts/execution/run_pi_authoritative_producer.py",
@@ -686,7 +693,6 @@ class TrendAtlasProductionOrchestrator:
                 )
                 self.manifest["authority_status"] = "PASSED"
                 self.stage_finish("AUTHORITY_PUBLISH")
-                self.manifest["final_status"] = "SUCCESS"
             self.manifest["finished_at"] = self.now()
             self.persist()
             if self.no_submit:

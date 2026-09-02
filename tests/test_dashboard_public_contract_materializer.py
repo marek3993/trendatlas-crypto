@@ -148,6 +148,56 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
         self.assertEqual(chart_contract["rows"][0]["real_account_vs_btc_return"], 0.005)
         self.assertEqual(chart_contract["rows"][0]["real_account_source"], "real_account_flat_no_history")
 
+    def test_verified_wallet_exposure_and_finalized_order_evidence_stay_separate_from_target(self):
+        account_summary = materializer.build_runtime_account_summary(
+            {},
+            {
+                "summary": {
+                    "account_equity_usd": 39.465861,
+                    "available_balance_usd": 39.465861,
+                    "positions_count": 1,
+                },
+                "raw": {
+                    "clearinghouseState": {
+                        "assetPositions": [
+                            {
+                                "position": {
+                                    "coin": "BTC",
+                                    "szi": "0.00025",
+                                    "positionValue": "19.12275",
+                                }
+                            }
+                        ]
+                    }
+                },
+            },
+        )
+        status = materializer.build_dashboard_public_status_contract(
+            account_summary=account_summary,
+            intent_payload={"target_asset": "BTC", "target_size_pct": 0.5},
+            dry_run_payload={},
+            gate_payload={
+                "status": "ready_if_enabled",
+                "would_place_real_order": False,
+            },
+            production_snapshot_payload={
+                "closed_day": "2026-09-01",
+                "candidate_asset": "BTC",
+                "model_candidate_exposure": 0.5,
+            },
+            production_run_payload={
+                "final_status": "SUCCESS",
+                "real_order_sent": True,
+                "post_trade_verification_status": "FILLED_AND_ALIGNED",
+            },
+        )
+
+        self.assertEqual(status["real_account"]["asset"], "BTC")
+        self.assertEqual(status["real_account"]["exposure_x"], 0.484539)
+        self.assertEqual(status["execution"]["target_size_pct"], 0.5)
+        self.assertEqual(status["model_signal"]["exposure_x"], 0.5)
+        self.assertTrue(status["execution"]["live_order_sent"])
+
     def test_base_label_does_not_zero_authorized_model_exposure(self):
         status = self.build_cash_blocked_status()
         rows = [

@@ -411,6 +411,7 @@
                                                                      "controlled_execution",
                                                                      "account_readback",
                                                                      "post_trade_verification",
+                                                                     "finalize_run_manifest",
                                                                      "dashboard_runtime",
                                                                      "authority_publish"
                                                                  ],
@@ -423,6 +424,10 @@
                                                "run_manifest_path":  "outputs/execution/production_runs/latest_production_run.json",
                                                "execution_journal_path":  "outputs/execution/execution_journal/",
                                                "authority_success_after_required_execution_verification":  true,
+                                               "completed_run_publication_requires_terminal_manifest":  true,
+                                               "real_account_exposure_source":  "wallet_position_notional_divided_by_real_account_equity_never_model_target",
+                                               "public_live_order_sent_source":  "finalized_production_run_real_order_sent",
+                                               "manual_app_live_execution":  "intentionally_disabled_use_canonical_systemd_production_orchestrator",
                                                "safe_preflight_flag":  "--no-submit",
                                                "production_signer_contract":  {
                                                                                   "account_address":  "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
@@ -460,6 +465,7 @@
                                        "github_actions_role":  "validation_only",
                                        "runtime_authority_scope":  "runtime_publish_authority_only",
                                        "separate_from_production_core_strategy_truth":  true,
+                                       "local_runtime_override_rule":  "only_when_account_snapshot_is_objectively_newer_or_equal_with_newer_materialization_never_when_older_than_authority",
                                        "app_authority_files":  [
                                                                    "outputs/execution/authority/latest_successful_snapshot.json",
                                                                    "outputs/execution/authority/latest_attempt_status.json"

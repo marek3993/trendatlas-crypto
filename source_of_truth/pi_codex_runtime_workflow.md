@@ -62,7 +62,7 @@ The installed Pi production service must call only:
 
 `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_trendatlas_production.py`
 
-The orchestrator owns the following ordered state machine under one lock: refresh, precheck health, Production Core build/validation, fresh account snapshot, canonical intent, canonical gate, data-health validation, reconciliation plan, optional controlled live execution, exchange/account read-back, post-trade verification, dashboard materialization, and final authority publish. Authority success is forbidden before required execution and verification are complete.
+The orchestrator owns the following ordered state machine under one lock: refresh, precheck health, Production Core build/validation, fresh account snapshot, canonical intent, canonical gate, data-health validation, reconciliation plan, optional controlled live execution, exchange/account read-back, post-trade verification, finalized production run manifest, dashboard materialization, and final authority publish. Authority success is forbidden before required execution and verification are complete. A completed run must never be materialized or published with `final_status=RUNNING`.
 
 That wrapper must run exactly the fast dependency chain before publish-existing:
 
@@ -87,7 +87,7 @@ That wrapper must run exactly the fast dependency chain before publish-existing:
     - do not invoke reconciliation or any live-order submitter
 12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`; it must repeat/verify the canonical execution chain against the written authority files before publishing
 
-The orchestrator must not invoke `--mode full-refresh`, the old full Phase63 grid, or any manual authority snapshot edit. It may invoke the controlled live execution primitive only after its pre-submit checks and only when not running `--no-submit`.
+The orchestrator must not invoke `--mode full-refresh`, the old full Phase63 grid, or any manual authority snapshot edit. It may invoke the controlled live execution primitive only after its pre-submit checks and only when not running `--no-submit`. Manual Streamlit `live_execute` is intentionally disabled; only the credential-mounted canonical systemd production service may reach live submission.
 
 If the conditional refresh is required but the dependency-only materialization or Production Core rebuild cannot complete safely, the wrapper must fail before publish with `BLOCKED_REBALANCE_BOUNDARY_NEEDS_BASELINE_REFRESH`. The adapter guard that blocks unsafe carry-forward across rebalance boundaries remains the final fail-closed protection.
 

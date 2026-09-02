@@ -246,6 +246,8 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
             result = orchestrator.run()
         self.assertEqual(result["final_status"], "SUCCESS")
+        self.assertEqual(orchestrator.dashboard_seen["final_status"], "SUCCESS")
+        self.assertIsNotNone(orchestrator.dashboard_seen["finished_at"])
         self.assertEqual(orchestrator.dashboard_seen["post_trade_verification_status"], "FILLED_AND_ALIGNED")
         self.assertEqual(orchestrator.dashboard_seen["real_position_after"][0]["asset"], "BTC")
 

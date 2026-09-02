@@ -135,6 +135,37 @@ class TestAppExecuteBridgeDryRun(unittest.TestCase):
         self.assertNotIn("run_dry_execution_bridge", calls)
         self.assertNotIn("prepare_real_order_gate", calls)
 
+    def test_legacy_live_execute_is_intentionally_disabled_before_any_child_path(self):
+        with mock.patch.object(
+            bridge,
+            "run_dry_run_action",
+        ) as dry_run, mock.patch.object(
+            bridge,
+            "run_allowlisted_script",
+        ) as child_script, mock.patch.object(bridge, "log", return_value=None):
+            result = bridge.run_app_execute_action(
+                action="live_execute",
+                ui_confirmation_text=bridge.UI_CONFIRMATION_TEXT,
+                backend_confirm_token=bridge.BACKEND_CONFIRM_TOKEN,
+            )
+
+        self.assertFalse(result["ok"])
+        self.assertEqual(result["status"], "blocked")
+        self.assertEqual(
+            result["block_reasons"],
+            ["manual_app_live_execution_disabled_use_mrv1_production_service"],
+        )
+        dry_run.assert_not_called()
+        child_script.assert_not_called()
+        self.assertNotIn(bridge.SUBMIT_SCRIPT_PATH.resolve(), bridge.ALLOWLISTED_SCRIPTS)
+
+    def test_streamlit_source_exposes_no_manual_live_execute_button(self):
+        source = (ROOT / "app.py").read_text(encoding="utf-8")
+
+        self.assertNotIn('run_app_execute_action(action="live_execute"', source)
+        self.assertNotIn("APP_BACKEND_CONFIRM_TOKEN", source)
+        self.assertNotIn("APP_UI_CONFIRMATION_TEXT", source)
+
 
 if __name__ == "__main__":
     unittest.main()

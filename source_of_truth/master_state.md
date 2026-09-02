@@ -73,6 +73,9 @@
 - GitHub Actions role: `validation_only`
 - Pi authority is runtime/publish authority and remains separate from Production Core strategy truth.
 - Canonical daily Pi production entrypoint is `scripts/execution/run_trendatlas_production.py`; it owns refresh through final authority publish under one single-run lock and one run manifest.
+- Completed production execution must be finalized in the run manifest after post-trade verification and before dashboard/runtime materialization; authority publication consumes that finalized state and must never publish `RUNNING` as a completed run status.
+- Public real exposure is fresh wallet position notional divided by real account equity, never the model target. `dashboard_public_status.execution.live_order_sent` remains a boolean compatibility field and must reflect finalized run submission evidence.
+- Manual Streamlit `live_execute` is intentionally disabled. Live reconciliation is owned only by the credential-mounted canonical systemd production service.
 - `publish-existing` remains an internal authority-publish primitive and is not a production scheduler entrypoint.
 - `--mode full-refresh` requires explicit approval.
 - The orchestrator reuses the validated fast dependency refresh and must not escalate to `--mode full-refresh` without explicit approval.
@@ -109,7 +112,7 @@
 - Current stale research-only BTC derivatives panel blocks only the relevant research probe.
 
 ## Runtime/live state
-- Recurring scheduler: ready
+- Recurring scheduler: active through the single canonical production timer
 - Live runtime: armed
 - Remaining proof gap: first non-CASH end-to-end dynamic leverage evidence run
 - Canonical scheduler target: `scripts/execution/run_trendatlas_production.py`; legacy fast/authority/full-auto scripts are internal tools and must not be enabled as competing automatic production schedulers.
