@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_execution_intent",
-  "generated_at_utc": "2026-09-02T00:11:17Z",
-  "started_at_utc": "2026-09-02T00:11:17Z",
+  "generated_at_utc": "2026-09-02T11:31:04Z",
+  "started_at_utc": "2026-09-02T11:31:04Z",
   "script_path": "/opt/market_regime_v1/scripts/execution/build_execution_intent_from_strategy_exports.py",
   "input_paths": [
     "/opt/market_regime_v1/source_of_truth/export_contract.json",
@@ -28,7 +28,7 @@
     "aligned_closed_day": "2026-09-01",
     "authority_alignment_mode": "published_authority_snapshot",
     "same_run_authority_allowed": false,
-    "same_run_authority_run_id": null,
-    "same_run_authority_target_closed_day": null
+    "same_run_authority_run_id": "prod_20260902T112943Z_710313",
+    "same_run_authority_target_closed_day": "2026-09-01"
   }
 }

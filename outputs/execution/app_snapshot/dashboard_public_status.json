@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-09-02T00:11:20Z",
+  "generated_at_utc": "2026-09-02T11:31:07Z",
   "closed_day": "2026-09-01",
   "real_account": {
     "asset": "BTC",
     "position_label_sk": "V trhu",
     "exposure_x": 0.5,
     "in_market": true,
-    "account_equity_usd": 39.475466,
-    "available_balance_usd": 39.475466
+    "account_equity_usd": 39.465861,
+    "available_balance_usd": 39.465861
   },
   "execution": {
     "target_asset": "BTC",
@@ -53,22 +53,52 @@
     "model_signal": "Modelový signál"
   },
   "production_execution": {
-    "run_id": "prod_20260901T211159Z_966123",
-    "final_status": "PREFLIGHT_READY",
+    "run_id": "prod_20260902T112943Z_710313",
+    "final_status": "RUNNING",
     "model_target": {
       "asset": "BTC",
       "exposure": 0.5,
-      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-08-31::target_BTC::candidate_BTC"
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC"
     },
     "real_account": {
       "before": {
         "asset": "CASH",
         "notional_usd": 0.0
       },
-      "after": [],
+      "after": [
+        {
+          "asset": "BTC",
+          "notional_usd": 19.12275,
+          "raw": {
+            "position": {
+              "coin": "BTC",
+              "cumFunding": {
+                "allTime": "0.0",
+                "sinceChange": "0.0",
+                "sinceOpen": "0.0"
+              },
+              "entryPx": "76495.0",
+              "leverage": {
+                "type": "cross",
+                "value": 2
+              },
+              "liquidationPx": null,
+              "marginUsed": "9.561375",
+              "maxLeverage": 40,
+              "positionValue": "19.12275",
+              "returnOnEquity": "-0.000104582",
+              "szi": "0.00025",
+              "unrealizedPnl": "-0.001"
+            },
+            "type": "oneWay"
+          },
+          "reference_price": 76494.5,
+          "size": 0.00025
+        }
+      ],
       "equity_before": 39.475466,
-      "equity_after": 39.475466,
-      "exposure_after": 0.0
+      "equity_after": 39.465861,
+      "exposure_after": 0.48453902982124225
     },
     "execution_plan": {
       "action": "INCREASE",
@@ -76,16 +106,18 @@
       "planned_delta": 19.737733
     },
     "last_order": {
-      "requested": false,
-      "order_id": null,
-      "cloid": [
-        "0x093ce4fde80677aee56841cae69b7e80"
+      "requested": true,
+      "order_id": [
+        533921077867
       ],
-      "result": "PREFLIGHT_ONLY"
+      "cloid": [
+        "0x33589f27c95af6fdb47eb1a2704ae7a1"
+      ],
+      "result": "FILLED_AND_ALIGNED"
     },
     "post_trade_verified_state": {
-      "status": "PREFLIGHT_ONLY",
-      "residual_delta": 19.737733
+      "status": "FILLED_AND_ALIGNED",
+      "residual_delta": 0.6101805
     },
     "source_path": "outputs/execution/production_runs/latest_production_run.json"
   }

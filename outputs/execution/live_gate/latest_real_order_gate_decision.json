@@ -1,6 +1,6 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-09-02T00:11:17Z",
+  "generated_at_utc": "2026-09-02T11:31:04Z",
   "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
   "target_asset": "BTC",
   "mode": "live",
@@ -39,7 +39,7 @@
     "same_run_authority": false,
     "same_run_authority_binding_required": false,
     "same_run_authority_binding_matches_intent": false,
-    "positions_count": 0,
+    "positions_count": 1,
     "exit_required": false,
     "account_address_present": true,
     "production_snapshot_validation_passed": true,
@@ -73,9 +73,9 @@
     "allow_live_order_candidate": true
   },
   "source_fingerprints": {
-    "intent_sha256": "2ddefebd0767477ca708960f91008617ef793565c4b408277265b1740f0d4ec8",
-    "account_snapshot_sha256": "5465735ee09140134c259acb62b83c79c14b7db94063269dbb88669825f80d38",
-    "production_snapshot_sha256": "5c12a53af99060f5657566a18ba08fb4919b5931ab2678559742e47605967a07"
+    "intent_sha256": "d4a59f8f67bba4a8de8793ec50c1d5243dde382e9a27d7f4e9a83f26a4dd929b",
+    "account_snapshot_sha256": "2e923f4c8b90a1548b98e77bed01e1ab7dde69be84605998e01e93710f6c7656",
+    "production_snapshot_sha256": "ab1e49deca7d0cdcd90c94353c462b6626ed4015fd6bdaa795175ec634611210"
   },
   "notes": [
     "This is a gate-preparation artifact only.",
