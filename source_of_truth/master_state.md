@@ -81,6 +81,7 @@
 - Signer material must be supplied only through the `mrv1-production.service` systemd encrypted credential `hyperliquid-agent-private-key`; inline config, environment-secret, command-line, journal, artifact, dashboard, and run-manifest secret transport are forbidden.
 - Every production run, including `--no-submit`, must derive the signer address locally and validate the configured master account plus current exchange-side named-agent authorization without submitting an order.
 - Execution sizing is `fresh_account_equity_usd * validated_target_exposure`; fixed-dollar policy limits must not clip a valid strategy target. Relative safety ceilings block instead of resizing.
+- A same-asset residual that is within the explicit post-trade tolerance and below the exchange minimum order notional is precision-limited alignment: the recurring planner must emit `NO_ACTION`, retain the residual for observability, and must not create or submit a dust order.
 - Every submitted transition uses a deterministic Hyperliquid CLOID and a durable journal record written before the exchange request. Restart recovery queries exchange state by CLOID and refreshes the account before deciding whether any residual order is safe.
 - Authority success for a run requiring execution is published only after exchange outcome and post-trade account verification are known.
 

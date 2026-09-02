@@ -320,6 +320,26 @@ def test_post_trade_tolerance_accepts_precision_limited_residual() -> None:
     assert blockers == []
 
 
+def test_precision_limited_same_asset_residual_is_recurring_no_action() -> None:
+    plan = make_plan(snapshot=account(39.465861, asset="BTC", notional=19.12275))
+    assert 0 < plan["delta_notional_usd"] < policy()["minimum_order_notional_usd"]
+    assert plan["delta_notional_usd"] <= (
+        39.465861 * policy()["post_trade_tolerance_fraction_of_equity"]
+    )
+    assert plan["action"] == "NO_ACTION"
+    assert plan["status"] == "NO_ACTION"
+    assert plan["steps"] == []
+    assert plan["block_reasons"] == []
+    assert plan["reason"] == "precision_limited_residual_within_post_trade_tolerance"
+
+
+def test_below_minimum_residual_outside_post_trade_tolerance_still_blocks() -> None:
+    plan = make_plan(snapshot=account(100.0, asset="BTC", notional=41.0))
+    assert plan["action"] == "INCREASE"
+    assert plan["status"] == "BLOCKED"
+    assert "order_below_exchange_minimum:BTC" in plan["block_reasons"]
+
+
 def test_order_wire_contains_exact_deterministic_cloid() -> None:
     cloid = deterministic_cloid("exec_wire", 0)
     wire = order_request_to_wire(

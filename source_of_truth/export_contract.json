@@ -96,6 +96,7 @@
                                             "sizing_mode":  "equity_target_exposure",
                                             "target_notional_formula":  "fresh_account_equity_usd * validated_strategy_target_exposure",
                                             "fixed_usd_clipping_forbidden":  true,
+                                            "precision_limited_residual_rule":  "same_asset_residual_within_post_trade_tolerance_and_below_exchange_minimum_is_no_action",
                                             "transition_actions":  [
                                                                        "NO_ACTION",
                                                                        "INCREASE",

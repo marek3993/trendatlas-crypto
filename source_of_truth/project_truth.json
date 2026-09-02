@@ -416,6 +416,7 @@
                                                                  ],
                                                "sizing_contract":  "fresh_account_equity_times_validated_target_exposure",
                                                "fixed_usd_sizing_or_clipping_forbidden":  true,
+                                               "precision_limited_residual_rule":  "same_asset_residual_within_post_trade_tolerance_and_below_exchange_minimum_is_no_action",
                                                "relative_safety_violation_action":  "block_fail_closed",
                                                "idempotency_contract":  "durable_pre_submit_journal_plus_deterministic_hyperliquid_cloid",
                                                "power_loss_recovery":  "query_exchange_by_cloid_then_refresh_account_before_any_residual_order",

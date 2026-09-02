@@ -327,6 +327,14 @@ def build_execution_plan(
         policy.get("reconciliation_tolerance_fraction_of_equity"),
         field="policy.reconciliation_tolerance_fraction_of_equity",
     ), 0.01)
+    post_trade_tolerance = max(equity * as_float(
+        policy.get("post_trade_tolerance_fraction_of_equity"),
+        field="policy.post_trade_tolerance_fraction_of_equity",
+    ), 0.01)
+    min_notional = as_float(
+        policy.get("minimum_order_notional_usd"),
+        field="policy.minimum_order_notional_usd",
+    )
     current = positions[0] if len(positions) == 1 else None
     current_asset = current["asset"] if current else "CASH"
     current_notional = float(current["notional_usd"]) if current else 0.0
@@ -348,6 +356,16 @@ def build_execution_plan(
             action = "INCREASE"
         else:
             action = "REDUCE"
+
+    precision_limited_residual = (
+        action in {"INCREASE", "REDUCE"}
+        and current is not None
+        and current_asset == target_asset
+        and abs(planned_delta) < min_notional
+        and abs(planned_delta) <= post_trade_tolerance
+    )
+    if precision_limited_residual:
+        action = "NO_ACTION"
 
     transition_identity = {
         "current_asset": current_asset,
@@ -400,7 +418,6 @@ def build_execution_plan(
             reduce_only=False,
         ))
 
-    min_notional = as_float(policy.get("minimum_order_notional_usd"), field="policy.minimum_order_notional_usd")
     for step in steps:
         step["exchange_leverage"] = int(execution_leverage)
         if step["size_decimals"] < 0:
@@ -443,7 +460,11 @@ def build_execution_plan(
         "reference_price": None if is_cash(target_asset) else as_float(mids.get(target_asset), field=f"mids.{target_asset}"),
         "planned_quantity": sum(float(step["quantity"]) for step in steps if step["asset"] == target_asset),
         "action": action,
-        "reason": f"reconcile_{current_asset}_to_{target_asset}_{target_exposure:g}x",
+        "reason": (
+            "precision_limited_residual_within_post_trade_tolerance"
+            if precision_limited_residual
+            else f"reconcile_{current_asset}_to_{target_asset}_{target_exposure:g}x"
+        ),
         "tolerance_notional_usd": tolerance,
         "steps": steps,
         "block_reasons": sorted(set(reasons)),
