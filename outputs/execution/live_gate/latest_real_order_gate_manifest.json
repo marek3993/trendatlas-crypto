@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_real_order_gate_decision",
-  "generated_at_utc": "2026-09-02T13:57:16Z",
-  "started_at_utc": "2026-09-02T13:57:16Z",
+  "generated_at_utc": "2026-09-02T15:05:46Z",
+  "started_at_utc": "2026-09-02T15:05:46Z",
   "script_path": "/opt/market_regime_v1/scripts/execution/prepare_real_order_gate.py",
   "input_paths": [
     "/opt/market_regime_v1/execution/config/execution_mode.json",

@@ -1,6 +1,6 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-09-02T13:57:16Z",
+  "generated_at_utc": "2026-09-02T15:05:46Z",
   "as_of_source": "2026-09-01",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
@@ -31,7 +31,7 @@
     "same_run_authority_target_closed_day": null
   },
   "source_fingerprints": {
-    "production_snapshot_sha256": "d6462421e923bc29a8272d55b4c2a7fac7c2572c8803777072edad07cc1f58dd"
+    "production_snapshot_sha256": "c9865300e9588957958a90a9222478cce4901f7b75ad42861570339d5f687aef"
   },
   "source_paths": {
     "production_snapshot": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",

@@ -1,6 +1,6 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-09-02T13:45:48Z",
+  "as_of_utc": "2026-09-02T14:48:49Z",
   "execution_mode": "live",
   "trading_enabled": true,
   "kill_switch": false,
@@ -12,19 +12,19 @@
   "raw": {
     "clearinghouseState": {
       "marginSummary": {
-        "accountValue": "9.794396",
-        "totalNtlPos": "19.35625",
-        "totalRawUsd": "-9.561854",
-        "totalMarginUsed": "9.678125"
+        "accountValue": "9.746655",
+        "totalNtlPos": "19.30875",
+        "totalRawUsd": "-9.562095",
+        "totalMarginUsed": "9.654375"
       },
       "crossMarginSummary": {
-        "accountValue": "9.794396",
-        "totalNtlPos": "19.35625",
-        "totalRawUsd": "-9.561854",
-        "totalMarginUsed": "9.678125"
+        "accountValue": "9.746655",
+        "totalNtlPos": "19.30875",
+        "totalRawUsd": "-9.562095",
+        "totalMarginUsed": "9.654375"
       },
-      "crossMaintenanceMarginUsed": "0.241953",
-      "withdrawable": "0.116271",
+      "crossMaintenanceMarginUsed": "0.241359",
+      "withdrawable": "0.09228",
       "assetPositions": [
         {
           "type": "oneWay",
@@ -36,29 +36,29 @@
               "value": 2
             },
             "entryPx": "76495.0",
-            "positionValue": "19.35625",
-            "unrealizedPnl": "0.2325",
-            "returnOnEquity": "0.0243153147",
+            "positionValue": "19.30875",
+            "unrealizedPnl": "0.185",
+            "returnOnEquity": "0.0193476698",
             "liquidationPx": null,
-            "marginUsed": "9.678125",
+            "marginUsed": "9.654375",
             "maxLeverage": 40,
             "cumFunding": {
-              "allTime": "0.000479",
-              "sinceOpen": "0.000479",
-              "sinceChange": "0.000479"
+              "allTime": "0.00072",
+              "sinceOpen": "0.00072",
+              "sinceChange": "0.00072"
             }
           }
         }
       ],
-      "time": 1788356747132
+      "time": 1788360527900
     },
     "spotClearinghouseState": {
       "balances": [
         {
           "coin": "USDC",
           "token": 0,
-          "total": "39.698882",
-          "hold": "9.678125",
+          "total": "39.651141",
+          "hold": "9.654375",
           "entryNtl": "0.0"
         },
         {
@@ -86,7 +86,7 @@
       "tokenToAvailableAfterMaintenance": [
         [
           0,
-          "39.456929"
+          "39.409782"
         ]
       ]
     },
@@ -322,24 +322,34 @@
     "open_orders_count": 0,
     "recent_fills_count": 13,
     "runtime_posture": "live_runtime_read_only_observability",
-    "withdrawable": "0.116271",
+    "withdrawable": "0.09228",
     "margin_summary": {
-      "accountValue": "9.794396",
-      "totalNtlPos": "19.35625",
-      "totalRawUsd": "-9.561854",
-      "totalMarginUsed": "9.678125"
+      "accountValue": "9.746655",
+      "totalNtlPos": "19.30875",
+      "totalRawUsd": "-9.562095",
+      "totalMarginUsed": "9.654375"
     },
     "cross_margin_summary": {
-      "accountValue": "9.794396",
-      "totalNtlPos": "19.35625",
-      "totalRawUsd": "-9.561854",
-      "totalMarginUsed": "9.678125"
+      "accountValue": "9.746655",
+      "totalNtlPos": "19.30875",
+      "totalRawUsd": "-9.562095",
+      "totalMarginUsed": "9.654375"
     },
     "balance_source_of_truth": "spot_stable_balance",
-    "account_equity_usd": 39.698882,
-    "available_balance_usd": 39.698882,
-    "perp_account_value": 9.794396,
-    "perp_withdrawable": 0.116271,
+    "account_equity_usd": 39.651141,
+    "free_collateral_usd": 29.996766,
+    "available_balance_usd": 29.996766,
+    "free_collateral_status": "available",
+    "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
+    "withdrawable_usd": null,
+    "withdrawable_status": "unavailable",
+    "withdrawable_source": "unavailable_individual_perp_state_not_meaningful",
+    "margin_used_usd": 9.654375,
+    "position_notional_usd": 19.30875,
+    "maintenance_margin_used_usd": 0.241359,
+    "available_after_maintenance_usd": 39.409782,
+    "perp_account_value": 9.746655,
+    "perp_withdrawable": 0.09228,
     "spot_balance_count": 4,
     "spot_balance_symbols": [
       "USDC",
@@ -347,8 +357,9 @@
       "USDH",
       "USDT0"
     ],
-    "spot_stable_total_usd": 39.698882,
-    "spot_stable_available_usd": 39.698882,
+    "spot_stable_total_usd": 39.651141,
+    "spot_stable_hold_usd": 9.654375,
+    "spot_stable_available_usd": 29.996766,
     "spot_source_available": true,
     "account_abstraction": "unifiedAccount",
     "spot_balance_usable_for_perps": true

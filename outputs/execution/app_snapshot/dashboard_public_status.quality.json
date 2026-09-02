@@ -10,6 +10,8 @@
     "no_model_exposure_as_real_account": true,
     "live_strategy_contract_valid": true,
     "strategy_execution_pair_aligned": true,
-    "data_health_not_blocking_app": true
+    "data_health_not_blocking_app": true,
+    "free_collateral_alias_valid": true,
+    "open_position_free_collateral_not_total_equity": true
   }
 }
