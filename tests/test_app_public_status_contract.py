@@ -874,6 +874,10 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertNotIn('production_snapshot.get("actual_held_asset")', block)
         self.assertNotIn('production_snapshot.get("current_asset")', block)
         self.assertNotIn('production_snapshot.get("effective_market_exposure")', block)
+        self.assertIn(
+            'runtime_real_account_state = dict(account_runtime_snapshot.get("real_account_state") or {})',
+            source,
+        )
 
     def test_homepage_model_signal_uses_cis_without_raw_exposure_fallbacks(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")

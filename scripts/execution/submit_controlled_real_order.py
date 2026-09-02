@@ -24,12 +24,14 @@ from scripts.execution.hyperliquid_live_canary import (  # noqa: E402
     compute_limit_price,
     compute_order_size,
     fetch_all_mids,
+    fetch_extra_agents,
     fetch_meta,
     fetch_open_orders,
     fetch_order_status,
     fetch_spot_user_state,
     fetch_user_fills_by_time,
     fetch_user_state,
+    fetch_user_role,
     filter_fills_for_oid,
     get_account_setup,
     normalize_submit_response,
@@ -41,6 +43,9 @@ from scripts.execution.hyperliquid_live_canary import (  # noqa: E402
     summarize_fills,
     summarize_snapshot,
     verify_agent_authorization,
+)
+from scripts.execution.hyperliquid_credentials import (  # noqa: E402
+    validate_account_setup_authorization,
 )
 
 
@@ -110,6 +115,7 @@ class HyperliquidProductionExchangeAdapter:
             raise ValueError("Hyperliquid account_address is required")
         self.crypto = None
         self.account_setup = None
+        self.signer_validation = None
         self.market_map = build_market_map(fetch_meta())
         self.expires_after_ms = int(expires_after_ms)
 
@@ -120,6 +126,12 @@ class HyperliquidProductionExchangeAdapter:
         self.account_setup = get_account_setup(self.account_cfg, self.crypto)
         if self.account_setup["account_address"].lower() != self.account_address.lower():
             raise ValueError("Configured Hyperliquid account changed during signer initialization")
+        self.signer_validation = validate_account_setup_authorization(
+            account_cfg=self.account_cfg,
+            account_setup=self.account_setup,
+            fetch_user_role=fetch_user_role,
+            fetch_extra_agents=fetch_extra_agents,
+        )
 
     def query_order_by_cloid(self, cloid: str) -> dict[str, Any]:
         try:

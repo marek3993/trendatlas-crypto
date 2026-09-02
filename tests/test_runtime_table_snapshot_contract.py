@@ -93,7 +93,7 @@ class TestRuntimeTableSnapshotContract(unittest.TestCase):
     def test_app_refresh_rows_read_runtime_table_snapshot_only(self):
         source = APP_PY_PATH.read_text(encoding="utf-8")
         start_marker = 'pi_runtime_update_utc = runtime_table_payload.get("last_pi_update_utc")'
-        end_marker = 'render_data_health_details(data_health_report, data_health_status_model, lang, refresh_rows)'
+        end_marker = 'render_data_health_details('
         start = source.index(start_marker)
         end = source.index(end_marker, start)
         refresh_block = source[start:end]

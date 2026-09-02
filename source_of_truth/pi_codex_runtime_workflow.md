@@ -43,6 +43,10 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
   - `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_pi_authoritative_producer.py --mode publish-existing`
 - always dry-run before real publish
 - live order submission is allowed only from the canonical orchestrator after every current-run gate passes; safe validation uses `--no-submit`
+- the production signer is the distinct named Hyperliquid API/agent wallet `TrendAtlasProd` for master account `0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856`
+- signer material is loaded only as the systemd encrypted credential `hyperliquid-agent-private-key` through `LoadCredentialEncrypted`; inline config, process-environment, command-line, journal, artifact, dashboard, and run-manifest secret transport are forbidden
+- because this Pi has no usable TPM2 device, systemd host-key encryption is the approved strongest practical encrypted-credential backend
+- `--no-submit` must validate credential presence, derive the public signer address locally, and validate master role plus named-agent authorization without instantiating the order-submission adapter or mutating exchange state
 - every live transition must have a durable pre-submission journal record and deterministic Hyperliquid CLOID before the request is sent
 - restart recovery must query the exchange by CLOID and refresh account/open-order state before any residual submission
 - fixed-dollar sizing is forbidden; target notional is fresh account equity multiplied by validated Production Core target exposure, with safety violations blocking rather than clipping
@@ -58,7 +62,7 @@ The installed Pi production service must call only:
 
 `/opt/market_regime_v1/.venv/bin/python scripts/execution/run_trendatlas_production.py`
 
-The orchestrator owns the following ordered state machine under one lock: refresh, precheck health, Production Core build/validation, fresh account snapshot, canonical intent, canonical gate, data-health validation, reconciliation plan, optional controlled live execution, exchange/account read-back, post-trade verification, dashboard materialization, and final authority publish. Authority success is forbidden before required execution and verification are complete.
+The orchestrator owns the following ordered state machine under one lock: refresh, precheck health, Production Core build/validation, fresh account snapshot, canonical intent, canonical gate, data-health validation, reconciliation plan, optional controlled live execution, exchange/account read-back, post-trade verification, finalized production run manifest, dashboard materialization, and final authority publish. Authority success is forbidden before required execution and verification are complete. A completed run must never be materialized or published with `final_status=RUNNING`.
 
 That wrapper must run exactly the fast dependency chain before publish-existing:
 
@@ -83,7 +87,7 @@ That wrapper must run exactly the fast dependency chain before publish-existing:
     - do not invoke reconciliation or any live-order submitter
 12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`; it must repeat/verify the canonical execution chain against the written authority files before publishing
 
-The orchestrator must not invoke `--mode full-refresh`, the old full Phase63 grid, or any manual authority snapshot edit. It may invoke the controlled live execution primitive only after its pre-submit checks and only when not running `--no-submit`.
+The orchestrator must not invoke `--mode full-refresh`, the old full Phase63 grid, or any manual authority snapshot edit. It may invoke the controlled live execution primitive only after its pre-submit checks and only when not running `--no-submit`. Manual Streamlit `live_execute` is intentionally disabled; only the credential-mounted canonical systemd production service may reach live submission.
 
 If the conditional refresh is required but the dependency-only materialization or Production Core rebuild cannot complete safely, the wrapper must fail before publish with `BLOCKED_REBALANCE_BOUNDARY_NEEDS_BASELINE_REFRESH`. The adapter guard that blocks unsafe carry-forward across rebalance boundaries remains the final fail-closed protection.
 
@@ -123,6 +127,8 @@ If step 3 invalidates the approved fresh runtime bundle, restore the approved st
 ## Hard Runtime Boundaries
 - No live order outside the canonical production orchestrator.
 - `--no-submit` must never invoke an exchange mutation.
+- Missing, malformed, expired, wrong-account, wrong-name, or unauthorized signer credentials must block before any exchange mutation.
+- The old `HYPERLIQUID_SECRET_KEY` process-environment provisioning path is forbidden for production and must not be recovered or reinstated.
 - Safe publish-existing validation performs no live order and never invokes the submitter.
 - No manual authority snapshot edits.
 - No manual generated `outputs/*` or `data/*` commits outside the official authority producer path.

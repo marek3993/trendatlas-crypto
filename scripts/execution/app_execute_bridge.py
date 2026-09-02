@@ -87,7 +87,6 @@ ALLOWLISTED_SCRIPTS = {
     DRY_RUN_SCRIPT_PATH.resolve(),
     RECONCILE_SCRIPT_PATH.resolve(),
     PREPARE_GATE_SCRIPT_PATH.resolve(),
-    SUBMIT_SCRIPT_PATH.resolve(),
 }
 LIVE_ORDER_ACTIONS = {
     "simulate_enter_target_asset",
@@ -947,44 +946,20 @@ def run_live_execute_action(
     ui_confirmation_text: str,
     backend_confirm_token: str,
 ) -> dict[str, Any]:
-    if ui_confirmation_text.strip() != UI_CONFIRMATION_TEXT:
-        raise AppBridgeError(
-            "Live execute zablokovane: potvrdenie v UI sa nezhoduje s presnym textom.",
-            status="blocked",
-            details={
-                "block_reasons": ["ui_confirmation_text_mismatch"],
-                "user_summary": (
-                    "Live execute zablokovane. Potvrdzovaci text sa nezhoduje s pozadovanym textom."
-                ),
-            },
-        )
-    if backend_confirm_token != BACKEND_CONFIRM_TOKEN:
-        raise AppBridgeError(
-            "Live execute zablokovane: backend confirm token mismatch.",
-            status="blocked",
-            details={
-                "block_reasons": ["backend_confirm_token_mismatch"],
-                "user_summary": (
-                    "Live execute zablokovane. Backend token sa nezhoduje s allowlistnutym tokenom."
-                ),
-            },
-        )
-
-    dry_run_result = run_dry_run_action()
-    steps = list(dry_run_result["steps"])
-    validation = validate_live_submit_readiness()
-    steps.append(
-        run_allowlisted_script(
-            script_path=SUBMIT_SCRIPT_PATH,
-            step_name="submit_controlled_real_order_live",
-            arguments=[
-                "--execute-live",
-                "--manual-confirm",
-                BACKEND_CONFIRM_TOKEN,
+    del ui_confirmation_text, backend_confirm_token
+    raise AppBridgeError(
+        "Manual app live execution is intentionally disabled; use the canonical production service.",
+        status="blocked",
+        details={
+            "block_reasons": [
+                "manual_app_live_execution_disabled_use_mrv1_production_service"
             ],
-        )
+            "user_summary": (
+                "Ručné odoslanie obchodu z aplikácie je vypnuté. "
+                "Live vykonávanie vlastní iba kanonická produkčná služba."
+            ),
+        },
     )
-    return summarize_live_submit_artifacts(steps, validation)
 
 
 def run_app_execute_action(
@@ -1082,7 +1057,7 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "App-facing execution bridge for operational refresh, dry-run recompute, "
-            "and one-shot live submit via the controlled backend path."
+            "and fail-closed redirection of legacy live execution requests."
         )
     )
     parser.add_argument(

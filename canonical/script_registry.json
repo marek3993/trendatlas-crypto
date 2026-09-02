@@ -194,10 +194,32 @@
       "notes": "Tracked separately from automation scope."
     },
     {
+      "script_path": "scripts/execution/provision_hyperliquid_systemd_credential.py",
+      "layer": "production_execution",
+      "status": "active",
+      "purpose": "Reads a Hyperliquid API-wallet private key once from a hidden local Pi prompt and writes only a host-key-encrypted systemd credential outside the repo.",
+      "primary_outputs": [],
+      "output_type": "runtime_control",
+      "decision_relevance": "execution_authoritative",
+      "writes_source_of_truth": false,
+      "notes": "Manual root-only provisioning/rotation tool. No private key is accepted through arguments or environment, and no plaintext credential file is created."
+    },
+    {
+      "script_path": "scripts/execution/validate_hyperliquid_production_signer.py",
+      "layer": "production_execution",
+      "status": "active",
+      "purpose": "Loads the encrypted systemd service credential, derives the public signer locally, and validates the fixed master account, user role, named agent authorization, and expiry without exchange mutation.",
+      "primary_outputs": [],
+      "output_type": "validation",
+      "decision_relevance": "execution_authoritative",
+      "writes_source_of_truth": false,
+      "notes": "Safe signer preflight used by mrv1-production.service and the canonical orchestrator. Emits only public validation metadata and redacted errors."
+    },
+    {
       "script_path": "scripts/execution/run_trendatlas_production.py",
       "layer": "production_execution",
       "status": "active",
-      "purpose": "Runs the only canonical locked daily production state machine from refresh through optional controlled live execution, verification, dashboard materialization, and authority publish.",
+      "purpose": "Runs the only canonical locked daily production state machine from refresh through optional controlled live execution, verification, finalized run materialization, and authority publish.",
       "primary_outputs": [
         "outputs/execution/production_runs/",
         "outputs/execution/execution_journal/"
@@ -317,7 +339,7 @@
       "script_path": "scripts/execution/app_execute_bridge.py",
       "layer": "execution_data",
       "status": "active",
-      "purpose": "App-facing allowlisted execution bridge that refreshes real operational artifacts, recomputes dry-run/gate context, and can invoke the one-shot controlled submitter.",
+      "purpose": "App-facing allowlisted operational bridge for read-only refresh, dry-run/gate recomputation, and automatic-mode control; manual live submission is intentionally disabled.",
       "primary_outputs": [
         "outputs/execution/read_only/",
         "outputs/execution/live_status/",
@@ -330,7 +352,7 @@
       "output_type": "runtime_control",
       "decision_relevance": "decision_relevant",
       "writes_source_of_truth": false,
-      "notes": "Manual APP bridge only. Live execute still requires exact UI confirmation plus backend token and never submits directly from the UI process."
+      "notes": "Manual APP bridge only. live_execute returns a fail-closed redirect to the credential-mounted canonical systemd production orchestrator and cannot invoke a submitter."
     },
     {
       "script_path": "scripts/execution/hyperliquid_live_canary.py",

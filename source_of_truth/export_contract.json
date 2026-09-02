@@ -96,6 +96,7 @@
                                             "sizing_mode":  "equity_target_exposure",
                                             "target_notional_formula":  "fresh_account_equity_usd * validated_strategy_target_exposure",
                                             "fixed_usd_clipping_forbidden":  true,
+                                            "precision_limited_residual_rule":  "same_asset_residual_within_post_trade_tolerance_and_below_exchange_minimum_is_no_action",
                                             "transition_actions":  [
                                                                        "NO_ACTION",
                                                                        "INCREASE",
@@ -106,6 +107,19 @@
                                             "submission_idempotency":  "journal_PREPARED_before_request_and_deterministic_128_bit_cloid",
                                             "uncertain_execution_rule":  "exchange_cloid_lookup_and_account_readback_before_residual_decision",
                                             "authority_success_rule":  "required_execution_and_post_trade_verification_must_finish_first",
+                                            "finalization_publish_order":  "execution_and_post_trade_verification_then_finalize_run_manifest_then_materialize_dashboard_runtime_then_authority_publish",
+                                            "public_terminal_state_rule":  "a_completed_production_run_must_never_be_materialized_or_published_with_final_status_RUNNING",
+                                            "public_live_order_sent_rule":  "dashboard_public_status.execution.live_order_sent_must_reflect_finalized_production_run_real_order_sent_and_must_never_be_false_when_verified_run_evidence_records_a_submission",
+                                            "manual_app_live_execution":  "intentionally_disabled_use_canonical_systemd_production_orchestrator",
+                                            "production_signer":  {
+                                                                        "account_address":  "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+                                                                        "agent_name":  "TrendAtlasProd",
+                                                                        "credential_name":  "hyperliquid-agent-private-key",
+                                                                        "credential_mechanism":  "systemd_LoadCredentialEncrypted_host_key",
+                                                                        "account_query_address_rule":  "always_use_configured_master_account_not_agent_address",
+                                                                        "safe_preflight_rule":  "derive_and_validate_named_agent_authorization_without_exchange_mutation",
+                                                                        "secret_output_rule":  "never_emit_signer_secret_to_logs_artifacts_dashboards_or_manifests"
+                                                                    },
                                             "dashboard_sections":  [
                                                                         "model_target",
                                                                         "real_account",
@@ -153,7 +167,8 @@
                                                                                                   "gate_status",
                                                                                                   "would_place_real_order"
                                                                                               ],
-                                                                           "semantic_boundary":  "real_wallet_and_execution_state_only"
+                                                                           "semantic_boundary":  "real_wallet_and_execution_state_only",
+                                                                           "exposure_rule":  "derive_from_fresh_wallet_position_notional_divided_by_real_account_equity_or_use_matching_finalized_post_trade_verified_run_exposure_never_model_target_exposure"
                                                                        },
                                                 "model_signal_state":  {
                                                                             "status":  "required",
@@ -286,6 +301,10 @@
                                                                          "chart_scope"
                                                                      ],
                                            "dashboard_read_rule":  "Dashboards and live consumers must read the dashboard public artifacts under outputs/execution/app_snapshot/ and must not infer account or model semantics from raw strategy fields.",
+                                           "schema_compatibility_rule":  "schema_version_1_and_existing_required_keys_and_types_are_preserved",
+                                           "snapshot_precedence_rule":  "authority_runtime_is_default; local_Pi_runtime_may_override_only_when_its_account_snapshot_as_of_utc_is_newer_or_equal_with_a_newer_materialization; an older_local_account_snapshot_must_never_override_newer_authority",
+                                           "real_account_exposure_rule":  "real_account.exposure_x_is_verified_wallet_position_notional_divided_by_real_account_equity_and_is_separate_from_execution.target_size_pct_and_model_signal.exposure_x",
+                                           "live_order_sent_rule":  "execution.live_order_sent_is_boolean_and_uses_finalized_production_run_submission_evidence_when_available",
                                            "real_account_chart_semantics":  {
                                                                                "upper_line":  "real_account_index",
                                                                                "lower_strip":  "real_account_exposure_x",
@@ -482,7 +501,8 @@
                                                                                            "build_canonical_execution_intent",
                                                                                            "build_canonical_real_order_gate_from_current_account_snapshot",
                                                                                            "validate_canonical_execution_data_health",
-                                                                                           "materialize_runtime_and_dashboard_from_canonical_execution_state",
+                                                                                           "finalize_production_run_manifest_after_post_trade_verification",
+                                                                                           "materialize_runtime_and_dashboard_from_finalized_canonical_execution_state",
                                                                                            "publish_authority_and_canonical_execution_artifacts"
                                                                                        ],
                                        "live_order_submission_in_publish_existing":  "forbidden",

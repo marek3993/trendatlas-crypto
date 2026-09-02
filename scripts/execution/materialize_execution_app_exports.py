@@ -3126,6 +3126,7 @@ def build_dashboard_public_status_contract(
     production_timeseries_last_row: dict[str, Any] | None = None,
     data_health_payload: dict[str, Any] | None = None,
     live_market_payload: dict[str, Any] | None = None,
+    production_run_payload: dict[str, Any] | None = None,
     generated_at_utc: str | None = None,
 ) -> dict[str, Any]:
     product_snapshot_payload = (
@@ -3135,6 +3136,9 @@ def build_dashboard_public_status_contract(
         production_timeseries_last_row
         if isinstance(production_timeseries_last_row, dict)
         else {}
+    )
+    production_run_payload = (
+        production_run_payload if isinstance(production_run_payload, dict) else {}
     )
     open_position = account_summary.get("open_position")
     open_position_asset = ""
@@ -3178,6 +3182,15 @@ def build_dashboard_public_status_contract(
     gate_status = str(gate_payload.get("status") or "").strip().lower()
     would_place_real_order = runtime_bool(gate_payload.get("would_place_real_order"))
     live_order_sent = runtime_bool(gate_payload.get("live_order_sent")) is True
+    production_run_final_status = str(
+        production_run_payload.get("final_status") or ""
+    ).strip().upper()
+    finalized_run_order_sent = runtime_bool(
+        production_run_payload.get("real_order_sent")
+    )
+    if production_run_final_status and production_run_final_status != "RUNNING":
+        if finalized_run_order_sent is not None:
+            live_order_sent = finalized_run_order_sent
 
     if open_position_asset and open_position_size > 1e-12:
         real_asset = open_position_asset
@@ -3515,6 +3528,7 @@ def extract_runtime_snapshot_open_position(snapshot_payload: dict[str, Any]) -> 
         "size": abs(size),
         "entry_price": runtime_first_float(primary_position, ["entryPx", "entry_price"]),
         "mark_price": mark_price,
+        "position_notional_usd": abs(position_value) if position_value is not None else None,
         "unrealized_pnl_usd": runtime_first_float(
             primary_position,
             ["unrealizedPnl", "unrealized_pnl", "upl"],
@@ -3535,6 +3549,24 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
         if isinstance(snapshot_open_position, dict)
         else ("CASH" if snapshot_payload else None)
     )
+    account_equity_usd = first_present_runtime_value(
+        snapshot_summary.get("account_equity_usd"),
+        status_payload.get("account_equity_usd"),
+    )
+    position_notional_usd = (
+        parse_float_maybe(snapshot_open_position.get("position_notional_usd"))
+        if isinstance(snapshot_open_position, dict)
+        else None
+    )
+    parsed_account_equity = parse_float_maybe(account_equity_usd)
+    current_exposure = None
+    if (
+        position_notional_usd is not None
+        and parsed_account_equity is not None
+        and parsed_account_equity > 0.0
+    ):
+        current_exposure = abs(position_notional_usd) / parsed_account_equity
+
     summary: dict[str, Any] = {
         "status": status_payload.get("status") or ("ok" if snapshot_payload else None),
         "provider": status_payload.get("provider") or snapshot_source.get("provider"),
@@ -3542,10 +3574,7 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
         "mode": status_payload.get("mode") or snapshot_payload.get("execution_mode"),
         "trading_enabled": status_payload.get("trading_enabled") if "trading_enabled" in status_payload else snapshot_payload.get("trading_enabled"),
         "kill_switch": status_payload.get("kill_switch") if "kill_switch" in status_payload else snapshot_payload.get("kill_switch"),
-        "account_equity_usd": first_present_runtime_value(
-            snapshot_summary.get("account_equity_usd"),
-            status_payload.get("account_equity_usd"),
-        ),
+        "account_equity_usd": account_equity_usd,
         "available_balance_usd": first_present_runtime_value(
             snapshot_summary.get("available_balance_usd"),
             status_payload.get("available_balance_usd"),
@@ -3575,6 +3604,7 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
             snapshot_open_position,
             status_payload.get("open_position"),
         ),
+        "current_exposure": current_exposure,
         "last_action": status_payload.get("last_action"),
         "last_action_result": status_payload.get("last_action_result"),
         "error": status_payload.get("error"),
@@ -3874,6 +3904,7 @@ def build_runtime_snapshot(
         production_timeseries_last_row=production_timeseries_last_row,
         data_health_payload=data_health_payload,
         live_market_payload=live_market_payload,
+        production_run_payload=production_run_payload,
         generated_at_utc=app_runtime_generated_at_utc,
     )
     production_execution_state = {

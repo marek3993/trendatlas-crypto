@@ -39,14 +39,8 @@ from scripts.production.data_health_common import (
 
 APP_EXECUTE_BRIDGE_IMPORT_ERROR = ""
 try:
-    from scripts.execution.app_execute_bridge import (
-        BACKEND_CONFIRM_TOKEN as APP_BACKEND_CONFIRM_TOKEN,
-        UI_CONFIRMATION_TEXT as APP_UI_CONFIRMATION_TEXT,
-        run_app_execute_action,
-    )
+    from scripts.execution.app_execute_bridge import run_app_execute_action
 except Exception as exc:  # pragma: no cover - Streamlit fallback only
-    APP_BACKEND_CONFIRM_TOKEN = "CONTROLLED_REAL_ORDER"
-    APP_UI_CONFIRMATION_TEXT = "POTVRDZUJEM VYKONAT OBCHOD"
     run_app_execute_action = None
     APP_EXECUTE_BRIDGE_IMPORT_ERROR = str(exc)
 
@@ -2579,9 +2573,12 @@ def select_preferred_account_runtime_snapshot(authority_runtime_snapshot: dict) 
     local_account_as_of = parse_iso_datetime_optional(
         local_runtime_snapshot.get("account_snapshot_as_of_utc")
     )
-    if local_account_as_of and (
-        authority_account_as_of is None or local_account_as_of > authority_account_as_of
-    ):
+    if authority_account_as_of is not None:
+        if local_account_as_of is None or local_account_as_of < authority_account_as_of:
+            return authority_runtime_snapshot
+        if local_account_as_of > authority_account_as_of:
+            return local_runtime_snapshot
+    elif local_account_as_of is not None:
         return local_runtime_snapshot
 
     authority_generated_at = parse_iso_datetime_optional(
@@ -2608,15 +2605,26 @@ def load_dashboard_public_status_for_app(
     target_closed_day = str(production_snapshot.get("closed_day") or "").strip()
     candidates: list[tuple[datetime, int, dict[str, Any]]] = []
     payload_candidates = [
-        (
-            dict(runtime_snapshot.get("dashboard_public_status") or {}),
-            0,
-        ),
-        (
-            load_json_optional(LOCAL_DASHBOARD_PUBLIC_STATUS_PATH),
-            1,
-        ),
+        (dict(runtime_snapshot.get("dashboard_public_status") or {}), 0),
     ]
+    local_runtime_snapshot = load_runtime_snapshot_for_app(
+        load_json_optional(LOCAL_APP_RUNTIME_SNAPSHOT_PATH),
+        LOCAL_APP_RUNTIME_SNAPSHOT_PATH,
+    )
+    selected_account_as_of = parse_iso_datetime_optional(
+        runtime_snapshot.get("account_snapshot_as_of_utc")
+    )
+    local_account_as_of = parse_iso_datetime_optional(
+        local_runtime_snapshot.get("account_snapshot_as_of_utc")
+    )
+    local_status_eligible = not (
+        selected_account_as_of is not None
+        and (local_account_as_of is None or local_account_as_of < selected_account_as_of)
+    )
+    if local_status_eligible:
+        payload_candidates.append(
+            (load_json_optional(LOCAL_DASHBOARD_PUBLIC_STATUS_PATH), 1)
+        )
     required_sections = {
         "real_account",
         "execution",
@@ -6929,23 +6937,23 @@ dashboard_public_state = resolve_dashboard_public_status_state(
 dashboard_public_chart_timeseries_df = load_dashboard_public_chart_timeseries_frame(
     LOCAL_DASHBOARD_PUBLIC_CHART_TIMESERIES_PATH
 )
-runtime_real_account_state = dict(runtime_snapshot.get("real_account_state") or {})
+runtime_real_account_state = dict(account_runtime_snapshot.get("real_account_state") or {})
 runtime_model_signal_state = dict(
     dashboard_public_state.get("model_signal_state")
-    or runtime_snapshot.get("model_signal_state")
+    or account_runtime_snapshot.get("model_signal_state")
     or {}
 )
 runtime_model_performance_state = dict(
     dashboard_public_state.get("model_performance_state")
-    or runtime_snapshot.get("model_performance_state")
+    or account_runtime_snapshot.get("model_performance_state")
     or {}
 )
 dashboard_public_labels_sk = dict(dashboard_public_state.get("public_labels_sk") or {})
-runtime_health_payload = dict(runtime_snapshot.get("runtime_health_summary") or {})
-dry_run_decision_payload = dict(runtime_snapshot.get("dry_run_summary") or {})
-real_order_gate_payload = dict(runtime_snapshot.get("gate_summary") or {})
-execution_mode_payload = dict(runtime_snapshot.get("execution_mode_posture") or {})
-live_order_policy_payload = dict(runtime_snapshot.get("live_order_policy_summary") or {})
+runtime_health_payload = dict(account_runtime_snapshot.get("runtime_health_summary") or {})
+dry_run_decision_payload = dict(account_runtime_snapshot.get("dry_run_summary") or {})
+real_order_gate_payload = dict(account_runtime_snapshot.get("gate_summary") or {})
+execution_mode_payload = dict(account_runtime_snapshot.get("execution_mode_posture") or {})
+live_order_policy_payload = dict(account_runtime_snapshot.get("live_order_policy_summary") or {})
 trading_operation_mode_payload = dict(execution_mode_payload.get("trading_operation_mode") or {})
 runtime_last_sync_utc = runtime_snapshot.get("runtime_last_sync_utc")
 account_snapshot_as_of_utc = account_runtime_snapshot.get("account_snapshot_as_of_utc")
@@ -7446,14 +7454,6 @@ with tabs[1]:
         if not dry_run_decision_payload:
             dry_run_missing_artifacts.append("latest_dry_run_decision.json")
 
-        live_gate_state = build_live_execute_gate_state(
-            bridge_available=bridge_available,
-            bridge_import_error=APP_EXECUTE_BRIDGE_IMPORT_ERROR,
-            execution_mode_payload=execution_mode_payload,
-            live_order_policy_payload=live_order_policy_payload,
-            dry_run_decision_payload=dry_run_decision_payload,
-            real_order_gate_payload=real_order_gate_payload,
-        )
         operation_mode = str(trading_operation_mode_payload.get("mode") or "").strip().lower()
         operation_mode_label = (
             "Zapnutá"
@@ -7749,7 +7749,6 @@ with tabs[3]:
                 st.error(f"{t(lang, 'contact_failed')}: {e}")
 
     st.caption(t(lang, "contact_files"))
-
 
 
 

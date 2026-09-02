@@ -73,11 +73,18 @@
 - GitHub Actions role: `validation_only`
 - Pi authority is runtime/publish authority and remains separate from Production Core strategy truth.
 - Canonical daily Pi production entrypoint is `scripts/execution/run_trendatlas_production.py`; it owns refresh through final authority publish under one single-run lock and one run manifest.
+- Completed production execution must be finalized in the run manifest after post-trade verification and before dashboard/runtime materialization; authority publication consumes that finalized state and must never publish `RUNNING` as a completed run status.
+- Public real exposure is fresh wallet position notional divided by real account equity, never the model target. `dashboard_public_status.execution.live_order_sent` remains a boolean compatibility field and must reflect finalized run submission evidence.
+- Manual Streamlit `live_execute` is intentionally disabled. Live reconciliation is owned only by the credential-mounted canonical systemd production service.
 - `publish-existing` remains an internal authority-publish primitive and is not a production scheduler entrypoint.
 - `--mode full-refresh` requires explicit approval.
 - The orchestrator reuses the validated fast dependency refresh and must not escalate to `--mode full-refresh` without explicit approval.
 - Live submission is permitted only after the current run has validated Production Core, canonical intent/gate provenance, current data health, fresh account state, deterministic reconciliation, and durable pre-submit idempotency recovery.
+- The production Hyperliquid signer must be the named API/agent wallet `TrendAtlasProd` authorized by master account `0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856`; account queries must continue to use the master-account address, never the agent address.
+- Signer material must be supplied only through the `mrv1-production.service` systemd encrypted credential `hyperliquid-agent-private-key`; inline config, environment-secret, command-line, journal, artifact, dashboard, and run-manifest secret transport are forbidden.
+- Every production run, including `--no-submit`, must derive the signer address locally and validate the configured master account plus current exchange-side named-agent authorization without submitting an order.
 - Execution sizing is `fresh_account_equity_usd * validated_target_exposure`; fixed-dollar policy limits must not clip a valid strategy target. Relative safety ceilings block instead of resizing.
+- A same-asset residual that is within the explicit post-trade tolerance and below the exchange minimum order notional is precision-limited alignment: the recurring planner must emit `NO_ACTION`, retain the residual for observability, and must not create or submit a dust order.
 - Every submitted transition uses a deterministic Hyperliquid CLOID and a durable journal record written before the exchange request. Restart recovery queries exchange state by CLOID and refreshes the account before deciding whether any residual order is safe.
 - Authority success for a run requiring execution is published only after exchange outcome and post-trade account verification are known.
 
@@ -105,7 +112,7 @@
 - Current stale research-only BTC derivatives panel blocks only the relevant research probe.
 
 ## Runtime/live state
-- Recurring scheduler: ready
+- Recurring scheduler: active through the single canonical production timer
 - Live runtime: armed
 - Remaining proof gap: first non-CASH end-to-end dynamic leverage evidence run
 - Canonical scheduler target: `scripts/execution/run_trendatlas_production.py`; legacy fast/authority/full-auto scripts are internal tools and must not be enabled as competing automatic production schedulers.

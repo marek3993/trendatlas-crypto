@@ -12,9 +12,9 @@
   - `outputs/execution/authority/latest_attempt_status.json`
 - Legacy snapshot/runtime/refresh paths are non-authoritative for app reasoning.
 
-## Stable Pi/runtime/dashboard state recorded 2026-05-16
+## Stable Pi/runtime/dashboard state recorded 2026-09-02
 - Raspberry Pi authority automation is installed and working.
-- `mrv1-daily-live.timer` is enabled and active.
+- `mrv1-production.timer` is enabled and active as the single canonical production scheduler.
 - Nightly authority run is scheduled for 02:10 local time, after the UTC candle close.
 - `mrv1-watchdog.timer` is enabled and active.
 - `home-blinds-dashboard.service` is enabled and active.
@@ -29,7 +29,7 @@
   - `GATE=2026-05-15 CASH blocked False`
   - `REAL_ACCOUNT=CASH / 0.00x`
   - `MODEL_SIGNAL=CASH / 0.0x`
-- Live order/leverage test is intentionally not done while the current strategy says `CASH`.
+- First canonical production reconciliation completed as `FILLED_AND_ALIGNED` with order `533921077867`; no further order is authorized for compatibility hardening.
 - Current public homepage graph policy is locked: the main `Modelový vývoj vs BTC` graph is the only public graph section, no extra expandable `Reálny účet` graph is allowed, and graph legends must not be added unless explicitly requested.
 - Public main graph semantics are authorized-model only: the red model line uses the model strategy after trend permission, and the lower strip uses authorized model exposure after trend permission.
 - Candidate/preferred asset is model preference only. It is not authorized exposure and not real wallet exposure.
@@ -46,9 +46,13 @@
 - Candidate `BTC` does not automatically mean live market exposure.
 
 ## Active operational focus
-- Migrate recurring production scheduling to the single canonical orchestrator `scripts/execution/run_trendatlas_production.py` and disable only competing production execution timers after deployment verification.
+- Keep recurring production scheduling on the single canonical orchestrator `scripts/execution/run_trendatlas_production.py`; competing production execution timers remain disabled.
+- `mrv1-production.service` uses `LoadCredentialEncrypted=hyperliquid-agent-private-key`; the named `TrendAtlasProd` signer is validated against master account `0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856` before execution.
+- The former process-environment signer is intentionally unrecoverable and must not be searched for. Browser-wallet extraction, credential dumping, filesystem-forensic secret recovery, and any master-private-key request are forbidden.
+- Exchange authorization expiry is an operational lifecycle condition: daily signer validation must surface the public expiry and fail closed once authorization is expired.
 - Live runtime activation settings remain armed, but execution must fail closed unless deterministic CLOID recovery, canonical provenance, fresh account/margin state, and post-trade verification all pass.
-- Remaining proof gap is the first non-CASH end-to-end dynamic equity-sized evidence run through the new orchestrator.
+- Public compatibility hardening must keep verified real exposure separate from the 0.5 model target, preserve `live_order_sent=true` for the first filled run, and publish only a finalized terminal production status.
+- Manual app `live_execute` is intentionally disabled because the Streamlit process does not own the systemd signer credential; the canonical service is the only live execution entrypoint.
 - Confirm Production Core remains the app homepage and execution primary strategy truth interface.
 - Current live/app truth is `phase68g_etf_flow_impulse_early_risk_cooldown_15`.
 - Official softer fallback is `phase68g_btc_persistence_10d_early_risk_075`.
