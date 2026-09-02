@@ -201,7 +201,7 @@ def extract_spot_balance_rows(spot_state: Any) -> list[dict[str, Any]]:
             if coin:
                 break
         total = None
-        available = None
+        hold = None
         for candidate in candidate_dicts:
             total = first_float(
                 candidate,
@@ -210,32 +210,72 @@ def extract_spot_balance_rows(spot_state: Any) -> list[dict[str, Any]]:
             if total is not None:
                 break
         for candidate in candidate_dicts:
-            available = first_float(
-                candidate,
-                ["available", "withdrawable", "free", "transferable", "availableBalance"],
-            )
-            if available is not None:
+            hold = first_float(candidate, ["hold"])
+            if hold is not None:
                 break
-        if available is None:
-            available = total
         rows.append(
             {
                 "coin": coin or "UNKNOWN",
+                "token": entry.get("token"),
                 "total": total,
-                "available": available,
+                "hold": hold,
                 "raw": entry,
             }
         )
     return rows
 
 
-def sum_spot_balances(rows: list[dict[str, Any]]) -> tuple[float | None, float | None]:
+def sum_spot_balances(
+    rows: list[dict[str, Any]],
+) -> tuple[float | None, float | None, float | None]:
     matching = [row for row in rows if row.get("coin") in STABLE_BALANCE_SYMBOLS]
     if not matching:
-        return None, None
-    total = sum(row["total"] for row in matching if row.get("total") is not None)
-    available = sum(row["available"] for row in matching if row.get("available") is not None)
-    return total, available
+        return None, None, None
+    total = (
+        sum(float(row["total"]) for row in matching)
+        if all(row.get("total") is not None for row in matching)
+        else None
+    )
+    hold = (
+        sum(float(row["hold"]) for row in matching)
+        if all(row.get("hold") is not None for row in matching)
+        else None
+    )
+    free_after_hold = None
+    if total is not None and hold is not None:
+        candidate = total - hold
+        if candidate >= -NUMERIC_EPSILON and candidate <= total + NUMERIC_EPSILON:
+            free_after_hold = max(candidate, 0.0)
+    return total, hold, free_after_hold
+
+
+def stable_available_after_maintenance(
+    spot_state: Any,
+    rows: list[dict[str, Any]],
+) -> float | None:
+    if not isinstance(spot_state, dict):
+        return None
+    raw_values = spot_state.get("tokenToAvailableAfterMaintenance")
+    if not isinstance(raw_values, list):
+        return None
+    stable_tokens = {
+        int(row["token"])
+        for row in rows
+        if row.get("coin") in STABLE_BALANCE_SYMBOLS
+        and isinstance(row.get("token"), (int, float))
+    }
+    values: list[float] = []
+    for entry in raw_values:
+        if not isinstance(entry, list) or len(entry) != 2:
+            continue
+        try:
+            token = int(entry[0])
+        except (TypeError, ValueError):
+            continue
+        value = to_float(entry[1])
+        if token in stable_tokens and value is not None:
+            values.append(value)
+    return sum(values) if values else None
 
 
 def summarize_balance_sources(
@@ -263,41 +303,74 @@ def summarize_balance_sources(
     if perp_account_value is None:
         perp_account_value = first_float(perp_cross_summary, ["accountValue"])
 
+    margin_used_usd = first_float(perp_margin_summary, ["totalMarginUsed"])
+    if margin_used_usd is None:
+        margin_used_usd = first_float(perp_cross_summary, ["totalMarginUsed"])
+    position_notional_usd = first_float(perp_margin_summary, ["totalNtlPos"])
+    if position_notional_usd is None:
+        position_notional_usd = first_float(perp_cross_summary, ["totalNtlPos"])
+    maintenance_margin_used_usd = (
+        to_float(clearinghouse_state.get("crossMaintenanceMarginUsed"))
+        if isinstance(clearinghouse_state, dict)
+        else None
+    )
+
     spot_rows = extract_spot_balance_rows(spot_state)
-    spot_stable_total, spot_stable_available = sum_spot_balances(spot_rows)
+    spot_stable_total, spot_stable_hold, spot_stable_available = sum_spot_balances(spot_rows)
+    available_after_maintenance_usd = stable_available_after_maintenance(spot_state, spot_rows)
     spot_source_available = isinstance(spot_state, (dict, list))
 
     balance_source_of_truth = "perp_clearinghouse"
     account_equity_usd = perp_account_value
-    available_balance_usd = perp_withdrawable
+    free_collateral_usd = perp_withdrawable
+    free_collateral_source = "clearinghouseState.withdrawable"
+    withdrawable_usd = perp_withdrawable
+    withdrawable_source = "clearinghouseState.withdrawable"
 
     abstraction = str(account_abstraction or "").strip()
     unified_balance = abstraction.lower() in {"unifiedaccount", "portfoliomargin"}
-    if (
-        unified_balance
-        and
-        spot_source_available
-        and spot_stable_total is not None
-        and abs(spot_stable_total) > NUMERIC_EPSILON
-    ):
+    if unified_balance:
         balance_source_of_truth = "spot_stable_balance"
-        account_equity_usd = spot_stable_total
-        available_balance_usd = (
-            spot_stable_available if spot_stable_available is not None else spot_stable_total
+        account_equity_usd = spot_stable_total if spot_source_available else None
+        free_collateral_usd = spot_stable_available
+        free_collateral_source = (
+            "spotClearinghouseState.stable_total_minus_native_hold"
+            if free_collateral_usd is not None
+            else "unavailable_missing_or_incoherent_spot_total_hold"
         )
-
-    if available_balance_usd is None:
-        available_balance_usd = account_equity_usd
+        # Hyperliquid documents individual perp DEX user states as not meaningful
+        # for unified and portfolio-margin API users. Preserve the raw diagnostic,
+        # but do not publish it as a unified-account withdrawable amount.
+        withdrawable_usd = None
+        withdrawable_source = "unavailable_individual_perp_state_not_meaningful"
+        if (
+            margin_used_usd is not None
+            and margin_used_usd > NUMERIC_EPSILON
+            and (spot_stable_hold is None or spot_stable_hold <= NUMERIC_EPSILON)
+        ):
+            free_collateral_usd = None
+            free_collateral_source = "unavailable_incoherent_nonzero_margin_without_native_hold"
 
     return {
         "balance_source_of_truth": balance_source_of_truth,
         "account_equity_usd": account_equity_usd,
-        "available_balance_usd": available_balance_usd,
+        "free_collateral_usd": free_collateral_usd,
+        "available_balance_usd": free_collateral_usd,
+        "free_collateral_status": "available" if free_collateral_usd is not None else "unavailable",
+        "free_collateral_source": free_collateral_source,
+        "withdrawable_usd": withdrawable_usd,
+        "withdrawable_status": "available" if withdrawable_usd is not None else "unavailable",
+        "withdrawable_source": withdrawable_source,
+        "margin_used_usd": margin_used_usd,
+        "position_notional_usd": position_notional_usd,
+        "maintenance_margin_used_usd": maintenance_margin_used_usd,
+        "available_after_maintenance_usd": available_after_maintenance_usd,
         "perp_account_value": perp_account_value,
         "perp_withdrawable": perp_withdrawable,
         "spot_balance_count": len(spot_rows),
         "spot_balance_symbols": sorted({row["coin"] for row in spot_rows if row.get("coin")}),
         "spot_stable_total_usd": spot_stable_total,
+        "spot_stable_hold_usd": spot_stable_hold,
         "spot_stable_available_usd": spot_stable_available,
         "spot_source_available": spot_source_available,
         "account_abstraction": abstraction or None,
@@ -426,12 +499,23 @@ def main() -> None:
             "cross_margin_summary": balances,
             "balance_source_of_truth": balance_summary["balance_source_of_truth"],
             "account_equity_usd": balance_summary["account_equity_usd"],
+            "free_collateral_usd": balance_summary["free_collateral_usd"],
             "available_balance_usd": balance_summary["available_balance_usd"],
+            "free_collateral_status": balance_summary["free_collateral_status"],
+            "free_collateral_source": balance_summary["free_collateral_source"],
+            "withdrawable_usd": balance_summary["withdrawable_usd"],
+            "withdrawable_status": balance_summary["withdrawable_status"],
+            "withdrawable_source": balance_summary["withdrawable_source"],
+            "margin_used_usd": balance_summary["margin_used_usd"],
+            "position_notional_usd": balance_summary["position_notional_usd"],
+            "maintenance_margin_used_usd": balance_summary["maintenance_margin_used_usd"],
+            "available_after_maintenance_usd": balance_summary["available_after_maintenance_usd"],
             "perp_account_value": balance_summary["perp_account_value"],
             "perp_withdrawable": balance_summary["perp_withdrawable"],
             "spot_balance_count": balance_summary["spot_balance_count"],
             "spot_balance_symbols": balance_summary["spot_balance_symbols"],
             "spot_stable_total_usd": balance_summary["spot_stable_total_usd"],
+            "spot_stable_hold_usd": balance_summary["spot_stable_hold_usd"],
             "spot_stable_available_usd": balance_summary["spot_stable_available_usd"],
             "spot_source_available": balance_summary["spot_source_available"],
             "account_abstraction": balance_summary["account_abstraction"],
@@ -460,7 +544,11 @@ def main() -> None:
         "recent_fills_count": snapshot["summary"]["recent_fills_count"],
         "balance_source_of_truth": snapshot["summary"]["balance_source_of_truth"],
         "account_equity_usd": snapshot["summary"]["account_equity_usd"],
+        "free_collateral_usd": snapshot["summary"]["free_collateral_usd"],
         "available_balance_usd": snapshot["summary"]["available_balance_usd"],
+        "withdrawable_usd": snapshot["summary"]["withdrawable_usd"],
+        "margin_used_usd": snapshot["summary"]["margin_used_usd"],
+        "position_notional_usd": snapshot["summary"]["position_notional_usd"],
         "spot_source_available": snapshot["summary"]["spot_source_available"],
         "account_abstraction": snapshot["summary"]["account_abstraction"],
         "spot_balance_usable_for_perps": snapshot["summary"]["spot_balance_usable_for_perps"],

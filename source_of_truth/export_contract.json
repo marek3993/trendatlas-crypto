@@ -148,7 +148,19 @@
                                                                                "balances",
                                                                                "positions",
                                                                                "activity"
-                                                                           ]
+                                                                           ],
+                                                           "real_account_balance_semantics":  {
+                                                                                                  "account_equity_usd":  "total_real_account_equity_from_the_current_Hyperliquid_account_abstraction; unifiedAccount_uses_spotClearinghouseState_stable_total",
+                                                                                                  "free_collateral_usd":  "funds_not_held_by_the_exchange_for_positions_or_orders; unifiedAccount_uses_spot_stable_total_minus_the_exchange_native_spot_hold_only_when_both_fields_are_present_and_coherent",
+                                                                                                  "available_balance_usd":  "deprecated_compatibility_alias_of_free_collateral_usd; nullable_and_never_falls_back_to_account_equity_usd",
+                                                                                                  "withdrawable_usd":  "exchange_native_withdrawable_amount_only_when_valid_for_the_current_account_abstraction; nullable_for_unifiedAccount_when_only_the_non_meaningful_individual_perp_state_is_available",
+                                                                                                  "margin_used_usd":  "clearinghouseState.marginSummary.totalMarginUsed",
+                                                                                                  "position_notional_usd":  "clearinghouseState.marginSummary.totalNtlPos_cross_checked_against_open_position_positionValue",
+                                                                                                  "real_exposure_x":  "absolute_position_notional_usd_divided_by_account_equity_usd",
+                                                                                                  "unified_account_rule":  "spot_stable_total_is_total_equity_not_free_collateral; spot_balance_visibility_must_never_make_free_collateral_equal_equity_when_a_nonzero_native_hold_exists",
+                                                                                                  "missing_native_free_collateral_rule":  "publish_null_and_display_unavailable_never_fabricate_equity_minus_margin_or_copy_total_equity",
+                                                                                                  "model_boundary":  "all_real_account_balance_and_position_fields_come_only_from_verified_Hyperliquid_wallet_state_never_model_fields"
+                                                                                              }
                                                        }
                                        },
     "normalized_public_runtime_contracts":  {
@@ -168,7 +180,19 @@
                                                                                                   "would_place_real_order"
                                                                                               ],
                                                                            "semantic_boundary":  "real_wallet_and_execution_state_only",
-                                                                           "exposure_rule":  "derive_from_fresh_wallet_position_notional_divided_by_real_account_equity_or_use_matching_finalized_post_trade_verified_run_exposure_never_model_target_exposure"
+                                                                           "exposure_rule":  "derive_from_fresh_wallet_position_notional_divided_by_real_account_equity_or_use_matching_finalized_post_trade_verified_run_exposure_never_model_target_exposure",
+                                                                           "additive_balance_fields":  [
+                                                                                                             "account_equity_usd",
+                                                                                                             "free_collateral_usd",
+                                                                                                             "available_balance_usd",
+                                                                                                             "withdrawable_usd",
+                                                                                                             "margin_used_usd",
+                                                                                                             "position_notional_usd",
+                                                                                                             "balance_source_of_truth",
+                                                                                                             "free_collateral_source",
+                                                                                                             "withdrawable_source"
+                                                                                                         ],
+                                                                           "available_balance_compatibility_rule":  "available_balance_usd_is_a_nullable_alias_of_free_collateral_usd_and_must_never_copy_account_equity_usd"
                                                                        },
                                                 "model_signal_state":  {
                                                                             "status":  "required",
@@ -304,6 +328,7 @@
                                            "schema_compatibility_rule":  "schema_version_1_and_existing_required_keys_and_types_are_preserved",
                                            "snapshot_precedence_rule":  "authority_runtime_is_default; local_Pi_runtime_may_override_only_when_its_account_snapshot_as_of_utc_is_newer_or_equal_with_a_newer_materialization; an older_local_account_snapshot_must_never_override_newer_authority",
                                            "real_account_exposure_rule":  "real_account.exposure_x_is_verified_wallet_position_notional_divided_by_real_account_equity_and_is_separate_from_execution.target_size_pct_and_model_signal.exposure_x",
+                                           "real_account_balance_rule":  "real_account.account_equity_usd_is_total_equity; real_account.free_collateral_usd_and_legacy_available_balance_usd_are_distinct_nullable_free_collateral; margin_used_usd_and_position_notional_usd_are_exchange_native_wallet_state",
                                            "live_order_sent_rule":  "execution.live_order_sent_is_boolean_and_uses_finalized_production_run_submission_evidence_when_available",
                                            "real_account_chart_semantics":  {
                                                                                "upper_line":  "real_account_index",

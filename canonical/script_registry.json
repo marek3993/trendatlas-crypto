@@ -287,7 +287,7 @@
       "output_type": "read_only_snapshot",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "No order placement."
+      "notes": "No order placement. Unified-account observability uses spot stable total as total equity, native spot hold for free collateral, and publishes unavailable instead of fabricating missing free/withdrawable values."
     },
     {
       "script_path": "scripts/execution/render_execution_app_status.py",

@@ -1165,6 +1165,11 @@ def parse_float_maybe(raw: str | None) -> float | None:
     return value if math.isfinite(value) else None
 
 
+def round_optional_float(raw: Any, digits: int = 6) -> float | None:
+    value = parse_float_maybe(raw)
+    return round(value, digits) if value is not None else None
+
+
 def required_metric_field_issue(field: str, value: Any) -> str | None:
     if value is None:
         return "missing"
@@ -2921,6 +2926,25 @@ def build_dashboard_public_status_quality(
 
     data_health_not_blocking_app = runtime_bool(data_health.get("block_app")) is not True
 
+    equity_value = parse_float_maybe(real_account.get("account_equity_usd"))
+    free_collateral_value = parse_float_maybe(real_account.get("free_collateral_usd"))
+    available_alias_value = parse_float_maybe(real_account.get("available_balance_usd"))
+    margin_used_value = parse_float_maybe(real_account.get("margin_used_usd"))
+    free_collateral_alias_valid = (
+        free_collateral_value is None and available_alias_value is None
+    ) or (
+        free_collateral_value is not None
+        and available_alias_value is not None
+        and math.isclose(free_collateral_value, available_alias_value, abs_tol=1e-9)
+    )
+    open_position_free_collateral_not_total_equity = not (
+        margin_used_value is not None
+        and margin_used_value > 1e-12
+        and equity_value is not None
+        and free_collateral_value is not None
+        and math.isclose(free_collateral_value, equity_value, abs_tol=1e-9)
+    )
+
     checks = {
         "real_account_not_model_fields": real_account_not_model_fields,
         "real_account_cash_flat_when_no_history": real_account_cash_flat_when_no_history,
@@ -2930,6 +2954,8 @@ def build_dashboard_public_status_quality(
         "live_strategy_contract_valid": live_strategy_contract_valid,
         "strategy_execution_pair_aligned": strategy_execution_pair_aligned,
         "data_health_not_blocking_app": data_health_not_blocking_app,
+        "free_collateral_alias_valid": free_collateral_alias_valid,
+        "open_position_free_collateral_not_total_equity": open_position_free_collateral_not_total_equity,
     }
 
     errors = [
@@ -2943,6 +2969,8 @@ def build_dashboard_public_status_quality(
             ("live_strategy_contract_valid", "live_strategy chart fields diverged from pre-live or Production Core launch-window semantics"),
             ("strategy_execution_pair_aligned", "strategy_execution compatibility alias diverged from live_strategy fields"),
             ("data_health_not_blocking_app", "data_health.block_app is true"),
+            ("free_collateral_alias_valid", "available_balance_usd must be a nullable alias of free_collateral_usd"),
+            ("open_position_free_collateral_not_total_equity", "nonzero margin cannot publish all account equity as free collateral"),
         )
         if not checks[check_name]
     ]
@@ -3308,8 +3336,15 @@ def build_dashboard_public_status_contract(
         "position_label_sk": position_label_sk,
         "exposure_x": round(float(exposure_x or 0.0), 6),
         "in_market": in_market,
-        "account_equity_usd": round(float(parse_float_maybe(account_summary.get("account_equity_usd")) or 0.0), 6),
-        "available_balance_usd": round(float(parse_float_maybe(account_summary.get("available_balance_usd")) or 0.0), 6),
+        "account_equity_usd": round_optional_float(account_summary.get("account_equity_usd")),
+        "free_collateral_usd": round_optional_float(account_summary.get("free_collateral_usd")),
+        "available_balance_usd": round_optional_float(account_summary.get("free_collateral_usd")),
+        "withdrawable_usd": round_optional_float(account_summary.get("withdrawable_usd")),
+        "margin_used_usd": round_optional_float(account_summary.get("margin_used_usd")),
+        "position_notional_usd": round_optional_float(account_summary.get("position_notional_usd")),
+        "balance_source_of_truth": account_summary.get("balance_source_of_truth"),
+        "free_collateral_source": account_summary.get("free_collateral_source"),
+        "withdrawable_source": account_summary.get("withdrawable_source"),
     }
     data_health = build_dashboard_public_data_health_contract(data_health_payload)
     live_market_state = build_dashboard_public_live_market_state_contract(
@@ -3405,7 +3440,14 @@ def build_runtime_public_status_views_from_dashboard_public_status(
             "intent_target_asset": normalize_runtime_asset(execution.get("target_asset")) or None,
             "intent_target_size_pct": parse_float_maybe(execution.get("target_size_pct")),
             "account_equity_usd": parse_float_maybe(real_account.get("account_equity_usd")),
+            "free_collateral_usd": parse_float_maybe(real_account.get("free_collateral_usd")),
             "available_balance_usd": parse_float_maybe(real_account.get("available_balance_usd")),
+            "withdrawable_usd": parse_float_maybe(real_account.get("withdrawable_usd")),
+            "margin_used_usd": parse_float_maybe(real_account.get("margin_used_usd")),
+            "position_notional_usd": parse_float_maybe(real_account.get("position_notional_usd")),
+            "balance_source_of_truth": real_account.get("balance_source_of_truth"),
+            "free_collateral_source": real_account.get("free_collateral_source"),
+            "withdrawable_source": real_account.get("withdrawable_source"),
             "label_sk": str(public_labels_sk.get("real_account") or "Reálny účet").strip(),
         },
         "model_signal_state": {
@@ -3575,9 +3617,44 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
         "trading_enabled": status_payload.get("trading_enabled") if "trading_enabled" in status_payload else snapshot_payload.get("trading_enabled"),
         "kill_switch": status_payload.get("kill_switch") if "kill_switch" in status_payload else snapshot_payload.get("kill_switch"),
         "account_equity_usd": account_equity_usd,
+        "free_collateral_usd": first_present_runtime_value(
+            snapshot_summary.get("free_collateral_usd"),
+            status_payload.get("free_collateral_usd"),
+        ),
         "available_balance_usd": first_present_runtime_value(
+            snapshot_summary.get("free_collateral_usd"),
+            status_payload.get("free_collateral_usd"),
             snapshot_summary.get("available_balance_usd"),
             status_payload.get("available_balance_usd"),
+        ),
+        "free_collateral_status": first_present_runtime_value(
+            snapshot_summary.get("free_collateral_status"),
+            status_payload.get("free_collateral_status"),
+        ),
+        "free_collateral_source": first_present_runtime_value(
+            snapshot_summary.get("free_collateral_source"),
+            status_payload.get("free_collateral_source"),
+        ),
+        "withdrawable_usd": first_present_runtime_value(
+            snapshot_summary.get("withdrawable_usd"),
+            status_payload.get("withdrawable_usd"),
+        ),
+        "withdrawable_status": first_present_runtime_value(
+            snapshot_summary.get("withdrawable_status"),
+            status_payload.get("withdrawable_status"),
+        ),
+        "withdrawable_source": first_present_runtime_value(
+            snapshot_summary.get("withdrawable_source"),
+            status_payload.get("withdrawable_source"),
+        ),
+        "margin_used_usd": first_present_runtime_value(
+            snapshot_summary.get("margin_used_usd"),
+            status_payload.get("margin_used_usd"),
+        ),
+        "position_notional_usd": first_present_runtime_value(
+            position_notional_usd,
+            snapshot_summary.get("position_notional_usd"),
+            status_payload.get("position_notional_usd"),
         ),
         "balance_source_of_truth": first_present_runtime_value(
             snapshot_summary.get("balance_source_of_truth"),

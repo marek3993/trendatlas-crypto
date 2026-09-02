@@ -13,13 +13,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.execution.hyperliquid_live_canary import (  # noqa: E402
-    ACCOUNT_CONFIG_PATH,
     MODE_CONFIG_PATH,
-    fetch_open_orders,
-    fetch_spot_user_state,
-    fetch_user_state,
-    info_request,
-    summarize_snapshot,
 )
 from scripts.execution.trading_operation_mode import (  # noqa: E402
     DEFAULT_TRADING_OPERATION_MODE_PATH,
@@ -256,17 +250,6 @@ def run_allowlisted_script(
     return step_result
 
 
-def load_account_address() -> str:
-    account_cfg = read_json(ACCOUNT_CONFIG_PATH)
-    account_address = str(account_cfg.get("account_address", "")).strip()
-    if not account_address:
-        raise AppBridgeError(
-            f"{ACCOUNT_CONFIG_PATH} missing account_address required for operational refresh",
-            status="failed",
-        )
-    return account_address
-
-
 def extract_current_position(payload: dict[str, Any]) -> str:
     open_position = payload.get("open_position")
     if isinstance(open_position, dict):
@@ -274,102 +257,6 @@ def extract_current_position(payload: dict[str, Any]) -> str:
         if symbol:
             return symbol
     return normalize_asset(payload.get("current_position")) or "CASH"
-
-
-def build_operational_snapshot_artifacts() -> dict[str, Any]:
-    account_address = load_account_address()
-    mode_cfg = read_json(MODE_CONFIG_PATH)
-
-    state = fetch_user_state(account_address)
-    spot_state = fetch_spot_user_state(account_address)
-    open_orders = fetch_open_orders(account_address)
-    user_fills = info_request({"type": "userFills", "user": account_address})
-    if not isinstance(user_fills, list):
-        user_fills = []
-
-    summary = summarize_snapshot(account_address, state, spot_state, open_orders)
-    snapshot = {
-        "snapshot_type": "hyperliquid_read_only_account_snapshot",
-        "as_of_utc": utc_now_iso(),
-        "execution_mode": str(mode_cfg.get("mode") or "").strip() or "unknown",
-        "trading_enabled": bool(mode_cfg.get("trading_enabled", False)),
-        "kill_switch": bool(mode_cfg.get("kill_switch", True)),
-        "account_address": account_address,
-        "source": {
-            "provider": "Hyperliquid",
-            "info_url": "https://api.hyperliquid.xyz/info",
-            "bridge_source": "scripts/execution/app_execute_bridge.py",
-        },
-        "raw": {
-            "clearinghouseState": state,
-            "spotClearinghouseState": spot_state,
-            "openOrders": open_orders,
-            "userFills": user_fills,
-        },
-        "summary": {
-            "positions_count": summary.get("positions_count"),
-            "open_orders_count": summary.get("open_orders_count"),
-            "recent_fills_count": len(user_fills),
-            "withdrawable": summary.get("withdrawable"),
-            "margin_summary": summary.get("margin_summary"),
-            "cross_margin_summary": summary.get("cross_margin_summary"),
-            "balance_source_of_truth": summary.get("balance_source_of_truth"),
-            "account_equity_usd": summary.get("account_equity_usd"),
-            "available_balance_usd": summary.get("available_balance_usd"),
-            "perp_account_value": summary.get("perp_account_value"),
-            "perp_withdrawable": summary.get("perp_withdrawable"),
-            "spot_balance_count": summary.get("spot_balance_count"),
-            "spot_balance_symbols": summary.get("spot_balance_symbols"),
-            "spot_stable_total_usd": summary.get("spot_stable_total_usd"),
-            "spot_stable_available_usd": summary.get("spot_stable_available_usd"),
-            "spot_source_available": summary.get("spot_source_available"),
-        },
-    }
-    quality = {
-        "snapshot_ok": True,
-        "mode": snapshot["execution_mode"],
-        "trading_enabled": snapshot["trading_enabled"],
-        "kill_switch": snapshot["kill_switch"],
-        "account_address_present": True,
-        "positions_count": snapshot["summary"]["positions_count"],
-        "open_orders_count": snapshot["summary"]["open_orders_count"],
-        "recent_fills_count": snapshot["summary"]["recent_fills_count"],
-        "balance_source_of_truth": snapshot["summary"]["balance_source_of_truth"],
-        "account_equity_usd": snapshot["summary"]["account_equity_usd"],
-        "available_balance_usd": snapshot["summary"]["available_balance_usd"],
-    }
-    manifest = {
-        "artifact_name": "hyperliquid_account_snapshot_from_app_bridge",
-        "generated_at_utc": utc_now_iso(),
-        "script_path": str(Path(__file__).resolve()),
-        "input_paths": [
-            str(ACCOUNT_CONFIG_PATH.resolve()),
-            str(MODE_CONFIG_PATH.resolve()),
-        ],
-        "output_paths": [
-            str(SNAPSHOT_PATH.resolve()),
-            str(SNAPSHOT_QUALITY_PATH.resolve()),
-            str(SNAPSHOT_MANIFEST_PATH.resolve()),
-        ],
-        "status": "success",
-    }
-
-    write_json(SNAPSHOT_PATH, snapshot)
-    write_json(SNAPSHOT_QUALITY_PATH, quality)
-    write_json(SNAPSHOT_MANIFEST_PATH, manifest)
-
-    return {
-        "step_name": "refresh_operational_snapshot",
-        "ok": True,
-        "snapshot_path": str(SNAPSHOT_PATH.resolve()),
-        "quality_path": str(SNAPSHOT_QUALITY_PATH.resolve()),
-        "manifest_path": str(SNAPSHOT_MANIFEST_PATH.resolve()),
-        "account_address": account_address,
-        "mode": snapshot["execution_mode"],
-        "trading_enabled": snapshot["trading_enabled"],
-        "kill_switch": snapshot["kill_switch"],
-        "finished_at_utc": utc_now_iso(),
-    }
 
 
 def summarize_refresh_artifacts(steps: list[dict[str, Any]]) -> dict[str, Any]:
@@ -398,7 +285,11 @@ def summarize_refresh_artifacts(steps: list[dict[str, Any]]) -> dict[str, Any]:
             "open_orders_count": open_orders_count,
             "recent_fills_count": recent_fills_count,
             "account_equity_usd": status_payload.get("account_equity_usd"),
+            "free_collateral_usd": status_payload.get("free_collateral_usd"),
             "available_balance_usd": status_payload.get("available_balance_usd"),
+            "withdrawable_usd": status_payload.get("withdrawable_usd"),
+            "margin_used_usd": status_payload.get("margin_used_usd"),
+            "position_notional_usd": status_payload.get("position_notional_usd"),
         },
         "user_summary": (
             "Refresh hotovy: "

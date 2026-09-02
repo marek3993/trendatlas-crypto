@@ -26,6 +26,9 @@ from scripts.execution.hyperliquid_credentials import (  # noqa: E402
     get_account_setup as get_secure_account_setup,
     load_secret_key as load_systemd_secret_key,
 )
+from scripts.execution.hyperliquid_read_only_snapshot import (  # noqa: E402
+    summarize_balance_sources as summarize_read_only_balance_sources,
+)
 
 EXECUTION_DIR = ROOT / "execution"
 CONFIG_DIR = EXECUTION_DIR / "config"
@@ -53,7 +56,6 @@ DEFAULT_EXPIRES_AFTER_MS = 180_000
 DEFAULT_POLL_SECONDS = 15.0
 DEFAULT_POLL_INTERVAL_SECONDS = 1.5
 POSITION_TOLERANCE = 1e-9
-STABLE_BALANCE_SYMBOLS = {"USDC", "USD", "USDT", "CASH"}
 
 TERMINAL_ORDER_STATES = {
     "canceled",
@@ -501,134 +503,21 @@ def first_float(payload: dict[str, Any], keys: list[str]) -> float | None:
     return None
 
 
-def extract_spot_balance_rows(spot_state: Any) -> list[dict[str, Any]]:
-    if isinstance(spot_state, list):
-        raw_rows = spot_state
-    elif isinstance(spot_state, dict):
-        raw_rows = []
-        for key in ("balances", "tokenBalances", "spotBalances", "assets"):
-            candidate = spot_state.get(key)
-            if isinstance(candidate, list):
-                raw_rows = candidate
-                break
-    else:
-        raw_rows = []
-
-    rows: list[dict[str, Any]] = []
-    for entry in raw_rows:
-        if not isinstance(entry, dict):
-            continue
-        nested = entry.get("balance")
-        candidate_dicts = [nested, entry] if isinstance(nested, dict) else [entry]
-        coin = ""
-        for candidate in candidate_dicts:
-            coin = normalize_asset(
-                candidate.get("coin")
-                or candidate.get("token")
-                or candidate.get("name")
-                or candidate.get("asset")
-            )
-            if coin:
-                break
-        total = None
-        available = None
-        for candidate in candidate_dicts:
-            total = first_float(
-                candidate,
-                ["total", "balance", "amount", "totalBalance", "totalRaw", "equity"],
-            )
-            if total is not None:
-                break
-        for candidate in candidate_dicts:
-            available = first_float(
-                candidate,
-                ["available", "withdrawable", "free", "transferable", "availableBalance"],
-            )
-            if available is not None:
-                break
-        if available is None:
-            available = total
-        rows.append(
-            {
-                "coin": coin or "UNKNOWN",
-                "total": total,
-                "available": available,
-                "raw": entry,
-            }
-        )
-    return rows
-
-
-def sum_spot_balances(rows: list[dict[str, Any]]) -> tuple[float | None, float | None]:
-    matching = [row for row in rows if row.get("coin") in STABLE_BALANCE_SYMBOLS]
-    if not matching:
-        return None, None
-    total = sum(row["total"] for row in matching if row.get("total") is not None)
-    available = sum(row["available"] for row in matching if row.get("available") is not None)
-    return total, available
-
-
-def summarize_balance_sources(state: dict[str, Any], spot_state: dict[str, Any] | None) -> dict[str, Any]:
-    margin_summary = (
-        state.get("marginSummary", {})
-        if isinstance(state.get("marginSummary"), dict)
-        else {}
-    )
-    cross_summary = (
-        state.get("crossMarginSummary", {})
-        if isinstance(state.get("crossMarginSummary"), dict)
-        else {}
-    )
-    perp_account_value = first_float(margin_summary, ["accountValue"])
-    if perp_account_value is None:
-        perp_account_value = first_float(cross_summary, ["accountValue"])
-    perp_withdrawable = to_float(state.get("withdrawable"))
-
-    spot_rows = extract_spot_balance_rows(spot_state)
-    spot_stable_total, spot_stable_available = sum_spot_balances(spot_rows)
-    spot_source_available = spot_state is not None
-
-    balance_source_of_truth = "perp_clearinghouse"
-    account_equity_usd = perp_account_value
-    available_balance_usd = perp_withdrawable
-    if (
-        spot_source_available
-        and spot_stable_total is not None
-        and abs(spot_stable_total) > POSITION_TOLERANCE
-    ):
-        balance_source_of_truth = "spot_stable_balance"
-        account_equity_usd = spot_stable_total
-        available_balance_usd = (
-            spot_stable_available if spot_stable_available is not None else spot_stable_total
-        )
-
-    if available_balance_usd is None:
-        available_balance_usd = account_equity_usd
-
-    return {
-        "balance_source_of_truth": balance_source_of_truth,
-        "account_equity_usd": account_equity_usd,
-        "available_balance_usd": available_balance_usd,
-        "perp_account_value": perp_account_value,
-        "perp_withdrawable": perp_withdrawable,
-        "spot_balance_count": len(spot_rows),
-        "spot_balance_symbols": sorted({row["coin"] for row in spot_rows if row.get("coin")}),
-        "spot_stable_total_usd": spot_stable_total,
-        "spot_stable_available_usd": spot_stable_available,
-        "spot_source_available": spot_source_available,
-    }
-
-
 def summarize_snapshot(
     account_address: str,
     state: dict[str, Any],
     spot_state: dict[str, Any] | None,
     open_orders: list[dict[str, Any]],
+    account_abstraction: Any = None,
 ) -> dict[str, Any]:
     positions = extract_positions(state)
     margin_summary = state.get("marginSummary", {}) if isinstance(state.get("marginSummary"), dict) else {}
     cross_summary = state.get("crossMarginSummary", {}) if isinstance(state.get("crossMarginSummary"), dict) else {}
-    balance_summary = summarize_balance_sources(state, spot_state)
+    balance_summary = summarize_read_only_balance_sources(
+        state,
+        spot_state,
+        account_abstraction,
+    )
     return {
         "account_address": account_address,
         "positions": positions,
@@ -640,7 +529,14 @@ def summarize_snapshot(
         "withdrawable": state.get("withdrawable"),
         "balance_source_of_truth": balance_summary["balance_source_of_truth"],
         "account_equity_usd": balance_summary["account_equity_usd"],
+        "free_collateral_usd": balance_summary["free_collateral_usd"],
         "available_balance_usd": balance_summary["available_balance_usd"],
+        "withdrawable_usd": balance_summary["withdrawable_usd"],
+        "margin_used_usd": balance_summary["margin_used_usd"],
+        "position_notional_usd": balance_summary["position_notional_usd"],
+        "free_collateral_source": balance_summary["free_collateral_source"],
+        "withdrawable_source": balance_summary["withdrawable_source"],
+        "account_abstraction": balance_summary["account_abstraction"],
         "perp_account_value": balance_summary["perp_account_value"],
         "perp_withdrawable": balance_summary["perp_withdrawable"],
         "spot_balance_count": balance_summary["spot_balance_count"],
@@ -1060,7 +956,12 @@ def build_preflight(
             "margin_summary": snapshot.get("margin_summary", {}),
             "balance_source_of_truth": snapshot.get("balance_source_of_truth"),
             "account_equity_usd": snapshot.get("account_equity_usd"),
+            "free_collateral_usd": snapshot.get("free_collateral_usd"),
             "available_balance_usd": snapshot.get("available_balance_usd"),
+            "withdrawable_usd": snapshot.get("withdrawable_usd"),
+            "margin_used_usd": snapshot.get("margin_used_usd"),
+            "position_notional_usd": snapshot.get("position_notional_usd"),
+            "account_abstraction": snapshot.get("account_abstraction"),
             "perp_account_value": snapshot.get("perp_account_value"),
             "perp_withdrawable": snapshot.get("perp_withdrawable"),
             "spot_balance_count": snapshot.get("spot_balance_count"),
@@ -1400,11 +1301,13 @@ def main() -> None:
     pre_state = fetch_user_state(account_setup["account_address"])
     pre_spot_state = fetch_spot_user_state(account_setup["account_address"])
     pre_open_orders = fetch_open_orders(account_setup["account_address"])
+    account_abstraction = fetch_user_abstraction(account_setup["account_address"])
     pre_snapshot = summarize_snapshot(
         account_setup["account_address"],
         pre_state,
         pre_spot_state,
         pre_open_orders,
+        account_abstraction,
     )
 
     preflight, abort_conditions, order_preview = build_preflight(
@@ -1592,6 +1495,7 @@ def main() -> None:
         post_state,
         post_spot_state,
         post_open_orders,
+        account_abstraction,
     )
     write_json(artifact_paths["order_timeline"], timeline)
     write_json(artifact_paths["post_snapshot"], post_snapshot)
