@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-09-02T11:31:07Z",
+  "generated_at_utc": "2026-09-02T13:57:19Z",
   "closed_day": "2026-09-01",
   "real_account": {
     "asset": "BTC",
     "position_label_sk": "V trhu",
-    "exposure_x": 0.5,
+    "exposure_x": 0.487577,
     "in_market": true,
-    "account_equity_usd": 39.465861,
-    "available_balance_usd": 39.465861
+    "account_equity_usd": 39.698882,
+    "available_balance_usd": 39.698882
   },
   "execution": {
     "target_asset": "BTC",
     "target_size_pct": 0.5,
     "gate_status": "ready_if_enabled",
     "would_place_real_order": true,
-    "live_order_sent": false
+    "live_order_sent": true
   },
   "model_signal": {
     "preferred_asset": "BTC",
@@ -24,9 +24,9 @@
     "not_real_wallet_exposure": true
   },
   "model_performance": {
-    "account_24h_pct": -0.7268,
+    "account_24h_pct": -0.7087,
     "btc_24h_pct": -1.4536,
-    "account_vs_btc_24h_pct": 0.7268,
+    "account_vs_btc_24h_pct": 0.7449,
     "public_average_annual_growth_pct": 178.32,
     "since_etf_start_cagr_pct": 196.08,
     "since2025_cagr_pct": 179.93
@@ -43,8 +43,8 @@
     "btc_24h_pct_expected_live_source": "live_ticker",
     "btc_24h_pct_snapshot_is_not_live": true,
     "published_snapshot_btc_24h_pct": -1.4536,
-    "account_24h_pct": -0.7268,
-    "account_vs_btc_24h_pct": 0.7268
+    "account_24h_pct": -0.7087,
+    "account_vs_btc_24h_pct": 0.7449
   },
   "public_labels_sk": {
     "account_24h": "Účet 24h",
@@ -54,7 +54,7 @@
   },
   "production_execution": {
     "run_id": "prod_20260902T112943Z_710313",
-    "final_status": "RUNNING",
+    "final_status": "SUCCESS",
     "model_target": {
       "asset": "BTC",
       "exposure": 0.5,

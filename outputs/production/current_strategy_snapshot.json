@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot",
   "schema_version": 4,
-  "generated_at_utc": "2026-09-02T11:30:53Z",
+  "generated_at_utc": "2026-09-02T13:57:05Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "closed_day": "2026-09-01",
@@ -305,15 +305,15 @@
       },
       "project_truth": {
         "path": "source_of_truth/project_truth.json",
-        "sha256": "9bbfe0ad885e7452b3696c242e12ad98ebdc69d09efe0268dc9e11cfcda72ed4",
-        "size_bytes": 46710,
-        "modified_utc": "2026-09-02T08:17:35Z"
+        "sha256": "8ab020792126c25f347f861589afecc13f7b2c168313bfc97f07b3608dcd5852",
+        "size_bytes": 47710,
+        "modified_utc": "2026-09-02T13:45:12Z"
       },
       "export_contract": {
         "path": "source_of_truth/export_contract.json",
-        "sha256": "caa46dc3e7ee48421e2bc334efd03f0333c1c836d9ca388d47c84dc4da72c85f",
-        "size_bytes": 58492,
-        "modified_utc": "2026-09-02T08:17:36Z"
+        "sha256": "7e9bbd9a99c3391bb5cf30064f8165210d96b39a33c0288a6a53253cc2d46d48",
+        "size_bytes": 60717,
+        "modified_utc": "2026-09-02T13:45:12Z"
       }
     },
     "cost_model": {
@@ -417,7 +417,7 @@
       "source_of_truth/export_contract.json"
     ],
     "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
-    "git_commit": "52177146effa60cf12e3eea80915ea6215d2095b",
+    "git_commit": "72570f043d8bd2b35036853335479bb50700d27b",
     "wait_condition": {
       "code": "already_in_target_state",
       "text": "The active Production Core is already in its current authorized state for BTC.",

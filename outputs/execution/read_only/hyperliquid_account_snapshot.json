@@ -1,6 +1,6 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-09-02T11:30:32Z",
+  "as_of_utc": "2026-09-02T13:45:48Z",
   "execution_mode": "live",
   "trading_enabled": true,
   "kill_switch": false,
@@ -12,19 +12,19 @@
   "raw": {
     "clearinghouseState": {
       "marginSummary": {
-        "accountValue": "9.561375",
-        "totalNtlPos": "19.12275",
-        "totalRawUsd": "-9.561375",
-        "totalMarginUsed": "9.561375"
+        "accountValue": "9.794396",
+        "totalNtlPos": "19.35625",
+        "totalRawUsd": "-9.561854",
+        "totalMarginUsed": "9.678125"
       },
       "crossMarginSummary": {
-        "accountValue": "9.561375",
-        "totalNtlPos": "19.12275",
-        "totalRawUsd": "-9.561375",
-        "totalMarginUsed": "9.561375"
+        "accountValue": "9.794396",
+        "totalNtlPos": "19.35625",
+        "totalRawUsd": "-9.561854",
+        "totalMarginUsed": "9.678125"
       },
-      "crossMaintenanceMarginUsed": "0.239034",
-      "withdrawable": "0.0",
+      "crossMaintenanceMarginUsed": "0.241953",
+      "withdrawable": "0.116271",
       "assetPositions": [
         {
           "type": "oneWay",
@@ -36,29 +36,29 @@
               "value": 2
             },
             "entryPx": "76495.0",
-            "positionValue": "19.12275",
-            "unrealizedPnl": "-0.001",
-            "returnOnEquity": "-0.000104582",
+            "positionValue": "19.35625",
+            "unrealizedPnl": "0.2325",
+            "returnOnEquity": "0.0243153147",
             "liquidationPx": null,
-            "marginUsed": "9.561375",
+            "marginUsed": "9.678125",
             "maxLeverage": 40,
             "cumFunding": {
-              "allTime": "0.0",
-              "sinceOpen": "0.0",
-              "sinceChange": "0.0"
+              "allTime": "0.000479",
+              "sinceOpen": "0.000479",
+              "sinceChange": "0.000479"
             }
           }
         }
       ],
-      "time": 1788348631200
+      "time": 1788356747132
     },
     "spotClearinghouseState": {
       "balances": [
         {
           "coin": "USDC",
           "token": 0,
-          "total": "39.465861",
-          "hold": "9.561375",
+          "total": "39.698882",
+          "hold": "9.678125",
           "entryNtl": "0.0"
         },
         {
@@ -86,7 +86,7 @@
       "tokenToAvailableAfterMaintenance": [
         [
           0,
-          "39.226827"
+          "39.456929"
         ]
       ]
     },
@@ -322,24 +322,24 @@
     "open_orders_count": 0,
     "recent_fills_count": 13,
     "runtime_posture": "live_runtime_read_only_observability",
-    "withdrawable": "0.0",
+    "withdrawable": "0.116271",
     "margin_summary": {
-      "accountValue": "9.561375",
-      "totalNtlPos": "19.12275",
-      "totalRawUsd": "-9.561375",
-      "totalMarginUsed": "9.561375"
+      "accountValue": "9.794396",
+      "totalNtlPos": "19.35625",
+      "totalRawUsd": "-9.561854",
+      "totalMarginUsed": "9.678125"
     },
     "cross_margin_summary": {
-      "accountValue": "9.561375",
-      "totalNtlPos": "19.12275",
-      "totalRawUsd": "-9.561375",
-      "totalMarginUsed": "9.561375"
+      "accountValue": "9.794396",
+      "totalNtlPos": "19.35625",
+      "totalRawUsd": "-9.561854",
+      "totalMarginUsed": "9.678125"
     },
     "balance_source_of_truth": "spot_stable_balance",
-    "account_equity_usd": 39.465861,
-    "available_balance_usd": 39.465861,
-    "perp_account_value": 9.561375,
-    "perp_withdrawable": 0.0,
+    "account_equity_usd": 39.698882,
+    "available_balance_usd": 39.698882,
+    "perp_account_value": 9.794396,
+    "perp_withdrawable": 0.116271,
     "spot_balance_count": 4,
     "spot_balance_symbols": [
       "USDC",
@@ -347,8 +347,8 @@
       "USDH",
       "USDT0"
     ],
-    "spot_stable_total_usd": 39.465861,
-    "spot_stable_available_usd": 39.465861,
+    "spot_stable_total_usd": 39.698882,
+    "spot_stable_available_usd": 39.698882,
     "spot_source_available": true,
     "account_abstraction": "unifiedAccount",
     "spot_balance_usable_for_perps": true
