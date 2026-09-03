@@ -3677,9 +3677,12 @@ def build_runtime_account_summary(status_payload: dict[str, Any], snapshot_paylo
             status_payload.get("current_position"),
             "CASH",
         ),
-        "open_position": first_present_runtime_value(
-            snapshot_open_position,
-            status_payload.get("open_position"),
+        # An empty position list in a fresh exchange snapshot is affirmative
+        # CASH truth. Do not resurrect an older rendered status position.
+        "open_position": (
+            snapshot_open_position
+            if snapshot_payload
+            else status_payload.get("open_position")
         ),
         "current_exposure": current_exposure,
         "last_action": status_payload.get("last_action"),

@@ -198,6 +198,56 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
         self.assertEqual(status["model_signal"]["exposure_x"], 0.5)
         self.assertTrue(status["execution"]["live_order_sent"])
 
+    def test_fresh_zero_position_snapshot_overrides_stale_rendered_position(self):
+        account_summary = materializer.build_runtime_account_summary(
+            {
+                "current_position": "BTC",
+                "positions_count": 1,
+                "open_position": {
+                    "symbol": "BTC",
+                    "size": 0.00025,
+                    "position_notional_usd": 20.0,
+                },
+            },
+            {
+                "summary": {
+                    "account_equity_usd": 83.0,
+                    "free_collateral_usd": 83.0,
+                    "position_notional_usd": 0.0,
+                    "positions_count": 0,
+                    "open_orders_count": 0,
+                },
+                "raw": {
+                    "clearinghouseState": {"assetPositions": []},
+                    "openOrders": [],
+                },
+            },
+        )
+        status = materializer.build_dashboard_public_status_contract(
+            account_summary=account_summary,
+            intent_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            dry_run_payload={},
+            gate_payload={
+                "target_asset": "CASH",
+                "status": "no_action",
+                "would_place_real_order": False,
+            },
+            production_snapshot_payload={
+                "closed_day": "2026-09-02",
+                "candidate_asset": "ETH",
+                "model_candidate_exposure": 1.0,
+                "trend_permission_active": False,
+            },
+        )
+
+        self.assertEqual(account_summary["current_position"], "CASH")
+        self.assertIsNone(account_summary["open_position"])
+        self.assertEqual(status["real_account"]["asset"], "CASH")
+        self.assertEqual(status["real_account"]["exposure_x"], 0.0)
+        self.assertFalse(status["real_account"]["in_market"])
+        self.assertEqual(status["model_signal"]["preferred_asset"], "ETH")
+        self.assertEqual(status["execution"]["target_asset"], "CASH")
+
     def test_base_label_does_not_zero_authorized_model_exposure(self):
         status = self.build_cash_blocked_status()
         rows = [
