@@ -1,7 +1,7 @@
 {
   "artifact_type": "data_health_report_manifest",
   "schema_version": 1,
-  "generated_at_utc": "2026-09-03T17:25:29Z",
+  "generated_at_utc": "2026-09-03T12:00:00Z",
   "script_path": "/opt/market_regime_v1/scripts/production/data_health_common.py",
   "root_path": "/opt/market_regime_v1",
   "output_paths": {
