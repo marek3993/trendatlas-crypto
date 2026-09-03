@@ -49,6 +49,8 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 - `--no-submit` must validate credential presence, derive the public signer address locally, and validate master role plus named-agent authorization without instantiating the order-submission adapter or mutating exchange state
 - every live transition must have a durable pre-submission journal record and deterministic Hyperliquid CLOID before the request is sent
 - restart recovery must query the exchange by CLOID and refresh account/open-order state before any residual submission
+- the canonical service uses `Restart=on-failure` with `RestartSec=15min`; a temporary failure retries the same orchestrator, while a successful pass is not restarted
+- during a legitimate first attempt for closed day D, the prior successful authority snapshot may be D-1 only when the in-progress attempt plus canonical Production Core, intent, gate, and account fingerprints all prove the same run and D; stale underlying inputs and mismatched bindings still block
 - fixed-dollar sizing is forbidden; target notional is fresh account equity multiplied by validated Production Core target exposure, with safety violations blocking rather than clipping
 - no manual authority snapshot edits
 - no manual generated outputs/data commits outside official authority producer

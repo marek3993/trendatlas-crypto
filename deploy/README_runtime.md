@@ -125,7 +125,7 @@ sudo -u trendatlas git -C /opt/market_regime_v1 status --short -- source_of_trut
 
 - The timer runs daily at `00:10:00 UTC`, which keeps a simple post-close buffer for 1D candles.
 - `Persistent=true` means a missed nightly run is triggered once after the machine comes back up.
-- `Restart=no` keeps each timer activation to one controlled pass only; if a pass fails, inspect the journal, fix the cause, and rerun manually.
+- `Restart=on-failure` with `RestartSec=15min` retries the same canonical service after a temporary network/API or other fail-closed error. A successful pass is not restarted; the orchestrator lock, fresh-data gates, deterministic CLOID, durable journal recovery, and account read-back remain authoritative on every retry.
 - `ProtectSystem=strict` plus `ReadWritePaths=/opt/market_regime_v1/data /opt/market_regime_v1/outputs /opt/market_regime_v1__authority_publish` means runtime writes are confined to operational artifacts, refreshed market data, and the dedicated authority publish clone.
 - `ReadOnlyPaths=/opt/market_regime_v1/source_of_truth` adds an explicit runtime guardrail against truth writes from the service.
 - `ExecStartPost=/usr/bin/test -f ...` checks make the unit fail if the expected execution artifacts were not produced.

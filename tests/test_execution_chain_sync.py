@@ -175,6 +175,154 @@ class TestExecutionChainSync(unittest.TestCase):
             "data_health": data_health_path,
         }
 
+    def prepare_same_run_authority_advance(
+        self,
+        root: Path,
+        paths: dict[str, Path],
+        *,
+        previous_day: str = "2026-08-30",
+        attempt_run_id: str = "run-current",
+        intent_run_id: str = "run-current",
+        attempt_status: str = "in_progress",
+    ) -> tuple[Path, Path]:
+        success_path = root / "outputs/execution/authority/latest_successful_snapshot.json"
+        attempt_path = root / "outputs/execution/authority/latest_attempt_status.json"
+        write_json(
+            success_path,
+            {
+                "artifact_type": "execution_authority_latest_successful_snapshot",
+                "target_closed_day_utc": previous_day,
+                "latest_authoritative_attempt_status": "success",
+                "currentness_status": "current",
+                "generated_at_utc": "2026-08-31T00:05:00Z",
+                "app_product_snapshot": {},
+                "app_runtime_snapshot": {},
+            },
+        )
+        write_json(
+            attempt_path,
+            {
+                "artifact_type": "execution_authority_latest_attempt_status",
+                "run_id": attempt_run_id,
+                "target_closed_day_utc": DAY,
+                "latest_available_closed_utc_day": DAY,
+                "latest_authoritative_attempt_status": attempt_status,
+                "currentness_status": "refresh_in_progress",
+                "generated_at_utc": "2026-09-01T00:15:00Z",
+            },
+        )
+        intent = json.loads(paths["intent"].read_text(encoding="utf-8"))
+        intent["guardrail_flags"].update(
+            {
+                "same_run_authority_allowed": True,
+                "same_run_authority_run_id": intent_run_id,
+                "same_run_authority_target_closed_day": DAY,
+            }
+        )
+        write_json(paths["intent"], intent)
+        gate = json.loads(paths["gate"].read_text(encoding="utf-8"))
+        gate["source_fingerprints"]["intent_sha256"] = sha256_file(paths["intent"])
+        write_json(paths["gate"], gate)
+        return success_path, attempt_path
+
+    @staticmethod
+    def closed_day_context() -> dict[str, str]:
+        return {
+            "latest_closed_utc_day": DAY,
+            "btc_last_day": DAY,
+            "active_strategy_closed_day": DAY,
+            "main_strategy_model": MODEL,
+        }
+
+    def test_previous_success_d_minus_1_passes_for_proven_same_run_day_d(self):
+        root, paths = self.make_root()
+        self.prepare_same_run_authority_advance(root, paths)
+        source_ids = (
+            "execution_authority_latest_successful_snapshot",
+            "execution_authority_latest_attempt_status",
+            "execution_latest_execution_intent",
+            "execution_latest_real_order_gate_decision",
+        )
+        sources = [
+            data_health_common.evaluate_source(
+                spec=data_health_common.SOURCE_INDEX[source_id],
+                root=root,
+                reference_now=None,
+                context=self.closed_day_context(),
+                path_overrides={},
+                env_overrides={},
+            )
+            for source_id in source_ids
+        ]
+        self.assertTrue(all(source["status"] == "ok" for source in sources))
+        self.assertIs(sources[0]["same_run_new_closed_day_accepted"], True)
+        self.assertFalse(data_health_common.summarize_sources(sources)["block_execution"])
+
+    def test_same_run_advance_does_not_mask_stale_underlying_data(self):
+        root, paths = self.make_root()
+        self.prepare_same_run_authority_advance(root, paths)
+        btc_path = root / "data/ohlcv/BTCUSDT_1d.csv"
+        btc_path.parent.mkdir(parents=True, exist_ok=True)
+        btc_path.write_text(
+            "date,open,high,low,close,volume\n2026-08-30,1,1,1,1,1\n",
+            encoding="utf-8",
+        )
+        stale = data_health_common.evaluate_source(
+            spec=data_health_common.SOURCE_INDEX["data_ohlcv_btcusdt_1d"],
+            root=root,
+            reference_now=None,
+            context=self.closed_day_context(),
+            path_overrides={},
+            env_overrides={},
+        )
+        self.assertEqual(stale["status"], "stale")
+        self.assertTrue(data_health_common.summarize_sources([stale])["block_execution"])
+
+    def test_mismatched_same_run_authority_binding_still_blocks(self):
+        root, paths = self.make_root()
+        self.prepare_same_run_authority_advance(
+            root,
+            paths,
+            attempt_run_id="different-run",
+        )
+        sources = [
+            data_health_common.evaluate_source(
+                spec=data_health_common.SOURCE_INDEX[source_id],
+                root=root,
+                reference_now=None,
+                context=self.closed_day_context(),
+                path_overrides={},
+                env_overrides={},
+            )
+            for source_id in (
+                "execution_authority_latest_successful_snapshot",
+                "execution_authority_latest_attempt_status",
+            )
+        ]
+        self.assertNotEqual(sources[0]["status"], "ok")
+        self.assertEqual(sources[1]["status"], "failed")
+        self.assertTrue(data_health_common.summarize_sources(sources)["block_execution"])
+
+    def test_old_authority_without_in_progress_same_run_still_blocks(self):
+        root, paths = self.make_root()
+        self.prepare_same_run_authority_advance(
+            root,
+            paths,
+            attempt_status="success",
+        )
+        stale = data_health_common.evaluate_source(
+            spec=data_health_common.SOURCE_INDEX[
+                "execution_authority_latest_successful_snapshot"
+            ],
+            root=root,
+            reference_now=None,
+            context=self.closed_day_context(),
+            path_overrides={},
+            env_overrides={},
+        )
+        self.assertEqual(stale["status"], "stale")
+        self.assertTrue(data_health_common.summarize_sources([stale])["block_execution"])
+
     def test_fast_cycle_contract_rejects_older_intent_and_accepts_exact_chain(self):
         root, paths = self.make_root()
 

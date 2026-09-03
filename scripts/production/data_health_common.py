@@ -845,6 +845,78 @@ def canonical_execution_alignment_errors(
     return errors
 
 
+def same_run_new_closed_day_is_proven(
+    *,
+    root: Path,
+    path_overrides: dict[str, str],
+    expected_day: str,
+    previous_success_day: str,
+) -> tuple[bool, str | None]:
+    """Allow only a one-day authority advance proven by the canonical same run."""
+    expected_date = iso_day_to_date(expected_day)
+    previous_date = iso_day_to_date(previous_success_day)
+    if expected_date is None or previous_date is None or (expected_date - previous_date).days != 1:
+        return False, "Previous successful authority is not exactly one closed day behind."
+
+    attempt, _ = load_effective_json_source(
+        "execution_authority_latest_attempt_status",
+        root=root,
+        path_overrides=path_overrides,
+    )
+    intent, _ = load_effective_json_source(
+        "execution_latest_execution_intent",
+        root=root,
+        path_overrides=path_overrides,
+    )
+    production, _ = load_effective_json_source(
+        "production_current_strategy_snapshot",
+        root=root,
+        path_overrides=path_overrides,
+    )
+    gate, _ = load_effective_json_source(
+        "execution_latest_real_order_gate_decision",
+        root=root,
+        path_overrides=path_overrides,
+    )
+    if not all(isinstance(payload, dict) for payload in (attempt, intent, production, gate)):
+        return False, "Canonical same-run authority evidence is incomplete."
+
+    guardrails = intent.get("guardrail_flags")
+    guardrails = guardrails if isinstance(guardrails, dict) else {}
+    attempt_run_id = str(attempt.get("run_id") or "").strip()
+    intent_run_id = str(guardrails.get("same_run_authority_run_id") or "").strip()
+    attempt_day = str(attempt.get("target_closed_day_utc") or "").strip()
+    available_day = str(attempt.get("latest_available_closed_utc_day") or "").strip()
+    intent_day = str(guardrails.get("same_run_authority_target_closed_day") or "").strip()
+    if str(attempt.get("latest_authoritative_attempt_status") or "").strip().lower() != "in_progress":
+        return False, "Canonical authority attempt is not in progress."
+    if not bool(guardrails.get("same_run_authority_allowed")):
+        return False, "Canonical intent does not allow its bound same-run authority advance."
+    if not attempt_run_id or attempt_run_id != intent_run_id:
+        return False, "Canonical same-run authority run_id does not match the intent binding."
+    if {attempt_day, available_day, intent_day} != {expected_day}:
+        return False, "Canonical same-run authority day does not match the new closed day."
+    if str(production.get("closed_day") or "").strip() != expected_day:
+        return False, "Production Core does not prove the new closed day."
+    if str(intent.get("as_of_source") or "").strip() != expected_day:
+        return False, "Canonical intent does not prove the new closed day."
+    if canonical_execution_alignment_errors(
+        "execution_latest_execution_intent",
+        intent,
+        root=root,
+        path_overrides=path_overrides,
+    ):
+        return False, "Canonical intent provenance does not match Production Core."
+    if canonical_execution_alignment_errors(
+        "execution_latest_real_order_gate_decision",
+        gate,
+        root=root,
+        path_overrides=path_overrides,
+    ):
+        return False, "Canonical gate provenance does not match same-run inputs."
+    return True, None
+
+
 def build_failure_reason_for_lag(expected_last_date: str, actual_last_date: str, max_allowed_lag_days: int, lag_days: int) -> str:
     return (
         "Stale source: expected_last_date="
@@ -1168,13 +1240,24 @@ def evaluate_source(
             else:
                 lag_days = (expected_day - actual_day).days
                 if lag_days > spec.max_allowed_lag_days:
-                    source["status"] = STATUS_STALE
-                    source["failure_reason"] = build_failure_reason_for_lag(
-                        source["expected_last_date"],
-                        source["actual_last_date"],
-                        spec.max_allowed_lag_days,
-                        lag_days,
-                    )
+                    same_run_proven = False
+                    if spec.source_id == "execution_authority_latest_successful_snapshot":
+                        same_run_proven, _ = same_run_new_closed_day_is_proven(
+                            root=root,
+                            path_overrides=path_overrides,
+                            expected_day=source["expected_last_date"],
+                            previous_success_day=source["actual_last_date"],
+                        )
+                    if same_run_proven:
+                        source["same_run_new_closed_day_accepted"] = True
+                    else:
+                        source["status"] = STATUS_STALE
+                        source["failure_reason"] = build_failure_reason_for_lag(
+                            source["expected_last_date"],
+                            source["actual_last_date"],
+                            spec.max_allowed_lag_days,
+                            lag_days,
+                        )
 
         if source["status"] == STATUS_OK and source["expected_last_date"] and source["actual_last_date"] is None:
             source["status"] = STATUS_INVALID_SCHEMA

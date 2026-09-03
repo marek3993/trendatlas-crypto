@@ -67,6 +67,7 @@
                                                                                   "must_match_production_core":  true,
                                                                                   "gate_must_consume_canonical_intent":  true,
                                                                                   "gate_must_consume_current_account_snapshot":  true,
+                                                                                  "new_closed_day_authority_advance_rule":  "previous_success_may_be_exactly_one_closed_day_behind_only_when_the_in_progress_attempt_and_canonical_production_intent_gate_and_account_fingerprints_prove_the_same_run_and_new_day",
                                                                                   "temporary_execution_path_overrides_forbidden":  true,
                                                                                   "mismatch_action":  "block_execution_fail_closed"
                                                                               },
@@ -107,6 +108,7 @@
                                             "submission_idempotency":  "journal_PREPARED_before_request_and_deterministic_128_bit_cloid",
                                             "uncertain_execution_rule":  "exchange_cloid_lookup_and_account_readback_before_residual_decision",
                                             "authority_success_rule":  "required_execution_and_post_trade_verification_must_finish_first",
+                                            "scheduler_retry_rule":  "the_single_canonical_systemd_service_restarts_on_failure_after_15_minutes_and_never_restarts_after_success",
                                             "finalization_publish_order":  "execution_and_post_trade_verification_then_finalize_run_manifest_then_materialize_dashboard_runtime_then_authority_publish",
                                             "public_terminal_state_rule":  "a_completed_production_run_must_never_be_materialized_or_published_with_final_status_RUNNING",
                                             "public_live_order_sent_rule":  "dashboard_public_status.execution.live_order_sent_must_reflect_finalized_production_run_real_order_sent_and_must_never_be_false_when_verified_run_evidence_records_a_submission",

@@ -410,6 +410,8 @@
     "production_execution_orchestrator":  {
                                                "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
                                                "single_automatic_production_entrypoint":  true,
+                                               "new_closed_day_authority_advance_rule":  "allow_previous_success_exactly_D_minus_1_only_when_same_run_production_intent_gate_and_account_provenance_exactly_match_D",
+                                               "scheduler_retry_rule":  "mrv1-production.service_restart_on_failure_after_15_minutes_stop_after_success",
                                                "state_machine":  [
                                                                      "lock",
                                                                      "refresh",

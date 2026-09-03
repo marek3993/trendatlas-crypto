@@ -266,6 +266,8 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         self.assertNotIn("run_full_auto", service)
         self.assertNotIn("submit_controlled_real_order.py", service)
         self.assertEqual(service.count("ExecStart="), 1)
+        self.assertIn("Restart=on-failure", service)
+        self.assertIn("RestartSec=15min", service)
         self.assertIn("Unit=mrv1-production.service", timer)
 
     def test_signer_failure_is_redacted_from_run_manifest(self):
