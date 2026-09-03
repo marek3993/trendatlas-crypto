@@ -1,24 +1,24 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-09-02T15:05:46Z",
-  "as_of_source": "2026-09-01",
+  "generated_at_utc": "2026-09-03T17:22:07Z",
+  "as_of_source": "2026-09-02",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
   "kill_switch_required": true,
   "strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "reference_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
-  "target_asset": "BTC",
-  "target_side": "long_only_hold_selected_asset_or_cash",
-  "target_regime": "BTC",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
+  "target_asset": "CASH",
+  "target_side": "hold_cash_no_market_entry",
+  "target_regime": "CASH",
   "size_mode": "production_snapshot_target_exposure",
-  "target_size_pct": 0.5,
+  "target_size_pct": 0.0,
   "target_notional_usd": null,
   "reference_asset": null,
   "staleness_ok": true,
   "stale_signal": false,
-  "allow_live_order_candidate": true,
+  "allow_live_order_candidate": false,
   "guardrail_flags": {
     "contract_validated": true,
     "trading_disabled": true,
@@ -27,11 +27,11 @@
     "leverage_live_truth_allowed": false,
     "production_snapshot_validated": true,
     "same_run_authority_allowed": false,
-    "same_run_authority_run_id": null,
-    "same_run_authority_target_closed_day": null
+    "same_run_authority_run_id": "prod_20260903T172045Z_493859",
+    "same_run_authority_target_closed_day": "2026-09-02"
   },
   "source_fingerprints": {
-    "production_snapshot_sha256": "c9865300e9588957958a90a9222478cce4901f7b75ad42861570339d5f687aef"
+    "production_snapshot_sha256": "511a8942d36c810dfa33a468cfabce5dc754650607e86d1b39c64f003cc7d4da"
   },
   "source_paths": {
     "production_snapshot": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
@@ -42,33 +42,33 @@
   "authority_day_context": {
     "attempt_status": "success",
     "attempt_currentness_status": "current",
-    "attempt_target_closed_day": "2026-09-01",
-    "attempt_latest_available_closed_day": "2026-09-01",
+    "attempt_target_closed_day": "2026-09-02",
+    "attempt_latest_available_closed_day": "2026-09-02",
     "success_currentness_status": "current",
-    "success_target_closed_day": "2026-09-01",
-    "success_latest_available_closed_day": "2026-09-01",
+    "success_target_closed_day": "2026-09-02",
+    "success_latest_available_closed_day": "2026-09-02",
     "success_attempt_status": "success",
-    "aligned_closed_day": "2026-09-01",
+    "aligned_closed_day": "2026-09-02",
     "authority_alignment_mode": "published_authority_snapshot",
     "same_run_authority_allowed": false,
-    "same_run_authority_run_id": null,
-    "same_run_authority_target_closed_day": null
+    "same_run_authority_run_id": "prod_20260903T172045Z_493859",
+    "same_run_authority_target_closed_day": "2026-09-02"
   },
   "source_samples": {
     "production_snapshot_execution_intent": {
-      "target_asset": "BTC",
-      "target_exposure": 0.5,
-      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
+      "target_asset": "CASH",
+      "target_exposure": 0.0,
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
       "stale_signal": false,
-      "allow_live_order_candidate": true
+      "allow_live_order_candidate": false
     },
     "production_snapshot_summary": {
       "strategy_status": "ready",
-      "candidate_asset": "BTC",
-      "current_asset": "BTC",
-      "effective_market_exposure": 0.5,
-      "trend_permission_active": true,
-      "current_regime": "BTC",
+      "candidate_asset": "ETH",
+      "current_asset": "CASH",
+      "effective_market_exposure": 0.0,
+      "trend_permission_active": false,
+      "current_regime": "CASH",
       "validation_status": "passed"
     }
   },

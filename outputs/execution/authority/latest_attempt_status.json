@@ -1,26 +1,26 @@
 {
   "artifact_type": "authority_latest_attempt_status",
   "schema_version": 1,
-  "target_closed_day_utc": "2026-09-01",
-  "latest_available_closed_utc_day": "2026-09-01",
-  "refresh_started_at_utc": "2026-09-02T15:05:36Z",
-  "refresh_finished_at_utc": "2026-09-02T15:05:49Z",
-  "refresh_started_at_local": "2026-09-02T17:05:36+02:00",
-  "refresh_finished_at_local": "2026-09-02T17:05:49+02:00",
+  "target_closed_day_utc": "2026-09-02",
+  "latest_available_closed_utc_day": "2026-09-02",
+  "refresh_started_at_utc": "2026-09-03T17:21:57Z",
+  "refresh_finished_at_utc": "2026-09-03T17:22:11Z",
+  "refresh_started_at_local": "2026-09-03T19:21:57+02:00",
+  "refresh_finished_at_local": "2026-09-03T19:22:11+02:00",
   "display_timezone": "Europe/Bratislava",
   "latest_authoritative_attempt_status": "success",
   "latest_authoritative_attempt_error": null,
-  "strategy_artifact_closed_day_utc": "2026-09-01",
+  "strategy_artifact_closed_day_utc": "2026-09-02",
   "currentness_status": "current",
-  "currentness_reason": "The authoritative strategy artifact is aligned with the latest closed UTC market day 2026-09-01.",
-  "generated_at_utc": "2026-09-02T15:05:49Z",
-  "generated_at_local": "2026-09-02T17:05:49+02:00",
-  "run_id": "20260902_150536",
+  "currentness_reason": "The authoritative strategy artifact is aligned with the latest closed UTC market day 2026-09-02.",
+  "generated_at_utc": "2026-09-03T17:22:11Z",
+  "generated_at_local": "2026-09-03T19:22:11+02:00",
+  "run_id": "20260903_172157",
   "authority_role": "pi_only_authoritative_producer",
   "automatic_producer_id": "raspberry_pi",
   "manual_recovery_only": true,
   "github_actions_role": "validation_only",
-  "source_manifest_path": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260902_150536/app_refresh_pipeline_manifest.json",
+  "source_manifest_path": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260903_172157/app_refresh_pipeline_manifest.json",
   "latest_successful_snapshot_path": "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
   "latest_attempt_status_path": "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json",
   "attempt_stage": "daily_refresh_app_pipeline",
@@ -29,7 +29,7 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "running",
-      "started_at_utc": "2026-09-02T15:05:36Z",
+      "started_at_utc": "2026-09-03T17:21:57Z",
       "finished_at_utc": null,
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
@@ -40,8 +40,8 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "success",
-      "started_at_utc": "2026-09-02T15:05:36Z",
-      "finished_at_utc": "2026-09-02T15:05:49Z",
+      "started_at_utc": "2026-09-03T17:21:57Z",
+      "finished_at_utc": "2026-09-03T17:22:11Z",
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
       "stderr_log": null,
@@ -49,13 +49,13 @@
       "non_authoritative_support_only": false
     }
   ],
-  "authority_wallet_sync_utc": "2026-09-02T14:48:49Z",
-  "authority_account_snapshot_as_of_utc": "2026-09-02T14:48:49Z",
-  "authority_runtime_snapshot_generated_at_utc": "2026-09-02T15:05:49Z",
+  "authority_wallet_sync_utc": "2026-09-03T17:21:35Z",
+  "authority_account_snapshot_as_of_utc": "2026-09-03T17:21:35Z",
+  "authority_runtime_snapshot_generated_at_utc": "2026-09-03T17:22:10Z",
   "app_product_snapshot": {
     "snapshot_type": "app_product_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-09-02T15:05:48Z",
+    "app_export_generated_at_utc": "2026-09-03T17:22:09Z",
     "product_name": "TrendAtlas Crypto",
     "page_scope": "homepage",
     "current_main_strategy_root_contract": {
@@ -79,18 +79,18 @@
     "main_strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
     "reference_strategy_model": "phase67j_no_neo_main",
     "benchmark": "BTC",
-    "strategy_last_closed_day": "2026-09-01",
-    "freshness_target_closed_day": "2026-09-01",
+    "strategy_last_closed_day": "2026-09-02",
+    "freshness_target_closed_day": "2026-09-02",
     "freshness": {
       "status": "ok",
-      "generated_at_utc": "2026-09-02T11:30:18+00:00",
+      "generated_at_utc": "2026-09-03T17:21:22+00:00",
       "checks": {
-        "btc_raw_last_date": "2026-09-01",
-        "phase66g_paper_last_date": "2026-09-01",
-        "phase66g_live_latest_available_date": "2026-09-01",
-        "phase66g_trend_last_date": "2026-09-01",
-        "phase67j_paper_last_date": "2026-09-01",
-        "phase67j_live_latest_available_date": "2026-09-01",
+        "btc_raw_last_date": "2026-09-02",
+        "phase66g_paper_last_date": "2026-09-02",
+        "phase66g_live_latest_available_date": "2026-09-02",
+        "phase66g_trend_last_date": "2026-09-02",
+        "phase67j_paper_last_date": "2026-09-02",
+        "phase67j_live_latest_available_date": "2026-09-02",
         "macro_last_date": "2026-03-08",
         "top100_assets_checked": [
           "NEO",
@@ -101,45 +101,45 @@
           "LINK"
         ],
         "top100_asset_last_dates": {
-          "NEO": "2026-09-01",
-          "DOGE": "2026-09-01",
-          "STX": "2026-09-01",
-          "APT": "2026-09-01",
-          "HBAR": "2026-09-01",
-          "LINK": "2026-09-01"
+          "NEO": "2026-09-02",
+          "DOGE": "2026-09-02",
+          "STX": "2026-09-02",
+          "APT": "2026-09-02",
+          "HBAR": "2026-09-02",
+          "LINK": "2026-09-02"
         },
-        "top100_min_last_date": "2026-09-01",
-        "top100_max_last_date": "2026-09-01"
+        "top100_min_last_date": "2026-09-02",
+        "top100_max_last_date": "2026-09-02"
       },
       "warnings": [],
       "errors": []
     },
     "main_strategy_metrics": {
       "model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-      "total_return_pct": 502440.44,
+      "total_return_pct": 501824.83,
       "total_return_pct_gross": 672144.11,
-      "total_return_pct_net": 502440.44,
-      "cagr_pct": 178.32,
-      "cagr_pct_gross": 188.22,
-      "cagr_pct_net": 178.32,
+      "total_return_pct_net": 501824.83,
+      "cagr_pct": 178.18,
+      "cagr_pct_gross": 188.12,
+      "cagr_pct_net": 178.18,
       "max_drawdown_pct": -12.93,
       "max_drawdown_pct_gross": -12.42,
       "max_drawdown_pct_net": -12.93,
-      "since2023_cagr_pct": 196.08,
-      "since2023_cagr_pct_gross": 206.32,
-      "since2023_cagr_pct_net": 196.08,
-      "since2025_cagr_pct": 179.93,
-      "since2025_cagr_pct_gross": 185.87,
-      "since2025_cagr_pct_net": 179.93,
-      "sharpe": 2.1804,
-      "sortino": 3.5689,
-      "switch_count": 202,
-      "cash_days_pct": 77.2189,
-      "btc_days_pct": 6.2459,
-      "trading_fees_total_pct": 11.4187,
+      "since2023_cagr_pct": 195.74,
+      "since2023_cagr_pct_gross": 206.07,
+      "since2023_cagr_pct_net": 195.74,
+      "since2025_cagr_pct": 179.26,
+      "since2025_cagr_pct_gross": 185.38,
+      "since2025_cagr_pct_net": 179.26,
+      "sharpe": 2.1798,
+      "sortino": 3.57,
+      "switch_count": 203,
+      "cash_days_pct": 77.2264,
+      "btc_days_pct": 6.2438,
+      "trading_fees_total_pct": 11.4413,
       "funding_total_pct": 0.0,
       "borrow_cost_total_pct": 2.4476,
-      "tradable_slippage_cost_total_pct": 15.5,
+      "tradable_slippage_cost_total_pct": 15.6,
       "fee_side_mode": "taker",
       "taker_fee_bps": 4.5,
       "maker_fee_bps": 1.5,
@@ -148,27 +148,27 @@
       "effective_trading_fee_bps": 4.5
     },
     "main_strategy_top_performance_metrics": {
-      "cagr_pct": 178.32,
-      "since2023_cagr_pct": 196.08,
-      "since2025_cagr_pct": 179.93,
+      "cagr_pct": 178.18,
+      "since2023_cagr_pct": 195.74,
+      "since2025_cagr_pct": 179.26,
       "model": "phase68g_etf_flow_impulse_early_risk_cooldown_15"
     },
     "live_public_state": {
-      "date": "2026-09-01",
-      "portfolio_held_asset": "BTC",
-      "baseline_held_asset": "BTC",
-      "tradable_governed_asset": "BTC",
+      "date": "2026-09-02",
+      "portfolio_held_asset": "CASH",
+      "baseline_held_asset": "ETH",
+      "tradable_governed_asset": "CASH",
       "trend_state_label": "negativny",
-      "trend_score": -0.732059,
+      "trend_score": -0.698657,
       "buy_threshold": 0.0,
       "crossed_up_today": false,
       "crossed_down_today": false,
-      "cash_day": false,
-      "leverage_state_reason": "early_risk",
+      "cash_day": true,
+      "leverage_state_reason": "cash",
       "model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-      "held_asset_public": "BTC",
+      "held_asset_public": "CASH",
       "held_state_label": "negativny",
-      "execution_state": "BTC",
+      "execution_state": "CASH",
       "live_truth_mode": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
       "execution_profile": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
       "leverage_mode": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
@@ -178,27 +178,27 @@
     },
     "trend_barometer_summary": {
       "model": "phase66g_production_soft_filters",
-      "latest_available_date": "2026-09-01",
+      "latest_available_date": "2026-09-02",
       "current_asset": "ETH",
       "latest_decision_date": "2026-08-30",
       "latest_period_start": "2026-08-31",
-      "latest_period_end": "2026-09-01",
+      "latest_period_end": "2026-09-02",
       "next_rebalance_date": "2026-09-06",
       "latest_keep_reason": "min_hold",
       "candidate_assets_loaded": 9,
       "failed_assets_count": 0,
       "suspended_assets_now": 1,
-      "trend_score": -0.7320587254930926,
+      "trend_score": -0.6986565780127129,
       "trend_state_label": "negativny",
       "buy_threshold": 0.0,
-      "prev_trend_score": -0.46953111880630627,
+      "prev_trend_score": -0.7320587254930926,
       "crossed_up_today": false,
       "crossed_down_today": false,
-      "trend_input_raw": -0.0678470470591711,
+      "trend_input_raw": -0.06383878936152554,
       "trend_threshold_raw": 0.02,
       "trend_band": 0.12,
-      "trend_score_raw": -0.7320587254930926,
-      "trend_calc_date": "2026-09-01"
+      "trend_score_raw": -0.6986565780127129,
+      "trend_calc_date": "2026-09-02"
     },
     "chart_source_paths": {
       "main_strategy": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
@@ -238,15 +238,15 @@
         "source_type": "canonical_app_summary",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 923,
-        "modified_utc": "2026-09-02T15:05:48Z",
+        "size_bytes": 921,
+        "modified_utc": "2026-09-03T17:22:09Z",
         "operational_metrics": {
           "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
           "source_type": "canonical_app_paper_held_state_series",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 2480612,
-          "modified_utc": "2026-09-02T15:05:48Z",
+          "size_bytes": 2481471,
+          "modified_utc": "2026-09-03T17:22:09Z",
           "semantic_role": "current_live_main_strategy_operational_metrics",
           "series_semantics": "homepage_current_main_strategy_held_state_history",
           "held_state_column": "portfolio_held_asset",
@@ -257,10 +257,10 @@
             "held_asset",
             "state"
           ],
-          "held_state_total_rows": 3042,
-          "held_state_non_empty_rows": 3042,
-          "held_state_denominator_rows": 3042,
-          "held_state_last_value": "BTC",
+          "held_state_total_rows": 3043,
+          "held_state_non_empty_rows": 3043,
+          "held_state_denominator_rows": 3043,
+          "held_state_last_value": "CASH",
           "derived_fields": [
             "switch_count",
             "cash_days_pct",
@@ -276,8 +276,8 @@
         "source_type": "canonical_phase68g_etf_flow_authoritative_net_compare_top_cards",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 923,
-        "modified_utc": "2026-09-02T15:05:48Z",
+        "size_bytes": 921,
+        "modified_utc": "2026-09-03T17:22:09Z",
         "source_fields": [
           "cagr_pct",
           "since2023_cagr_pct",
@@ -289,8 +289,8 @@
         "source_type": "canonical_app_paper",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 2480612,
-        "modified_utc": "2026-09-02T15:05:48Z",
+        "size_bytes": 2481471,
+        "modified_utc": "2026-09-03T17:22:09Z",
         "source_field": "last_row.date"
       },
       "freshness_target_closed_day": {
@@ -299,7 +299,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1002,
-        "modified_utc": "2026-09-02T11:30:18Z",
+        "modified_utc": "2026-09-03T17:21:22Z",
         "source_field": "latest_closed_utc_date"
       },
       "app_export_generated_at_utc": {
@@ -307,8 +307,8 @@
         "source_type": "app_product_snapshot",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 12100,
-        "modified_utc": "2026-09-02T15:05:44Z",
+        "size_bytes": 12096,
+        "modified_utc": "2026-09-03T17:22:06Z",
         "source_field": "generated_by_materializer_clock"
       },
       "live_public_state": {
@@ -316,8 +316,8 @@
         "source_type": "canonical_app_paper",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 2480612,
-        "modified_utc": "2026-09-02T15:05:48Z",
+        "size_bytes": 2481471,
+        "modified_utc": "2026-09-03T17:22:09Z",
         "source_fields": [
           "date",
           "portfolio_held_asset",
@@ -338,7 +338,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1002,
-        "modified_utc": "2026-09-02T11:30:18Z"
+        "modified_utc": "2026-09-03T17:21:22Z"
       },
       "trend_barometer_summary": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -346,7 +346,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 616,
-        "modified_utc": "2026-09-02T00:10:36Z"
+        "modified_utc": "2026-09-03T00:10:50Z"
       },
       "chart_source_paths": {
         "main_strategy": {
@@ -354,16 +354,16 @@
           "source_type": "canonical_app_paper",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 2480612,
-          "modified_utc": "2026-09-02T15:05:48Z"
+          "size_bytes": 2481471,
+          "modified_utc": "2026-09-03T17:22:09Z"
         },
         "reference_strategy": {
           "path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
           "source_type": "canonical_app_paper",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 151349,
-          "modified_utc": "2026-09-02T11:30:16Z"
+          "size_bytes": 151409,
+          "modified_utc": "2026-09-03T17:21:20Z"
         }
       },
       "benchmark_source_path": {
@@ -371,40 +371,40 @@
         "source_type": "benchmark_ohlcv",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 284696,
-        "modified_utc": "2026-09-02T00:10:03Z"
+        "size_bytes": 284783,
+        "modified_utc": "2026-09-03T00:10:18Z"
       },
       "trend_history_source_path": {
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
         "source_type": "canonical_trend_history",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 392787,
-        "modified_utc": "2026-09-02T11:30:11Z"
+        "size_bytes": 392926,
+        "modified_utc": "2026-09-03T17:21:14Z"
       }
     }
   },
   "app_runtime_snapshot": {
     "snapshot_type": "app_runtime_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-09-02T15:05:48Z",
-    "app_runtime_snapshot_generated_at_utc": "2026-09-02T15:05:49Z",
+    "app_export_generated_at_utc": "2026-09-03T17:22:09Z",
+    "app_runtime_snapshot_generated_at_utc": "2026-09-03T17:22:10Z",
     "page_scope": "account_page",
     "runtime_last_sync_utc": "2026-04-06T09:16:26Z",
-    "account_snapshot_as_of_utc": "2026-09-02T14:48:49Z",
+    "account_snapshot_as_of_utc": "2026-09-03T17:21:35Z",
     "dry_run_generated_at_utc": "2026-04-18T10:35:48Z",
-    "gate_generated_at_utc": "2026-09-02T15:05:46Z",
+    "gate_generated_at_utc": "2026-09-03T17:22:07Z",
     "latest_refresh_run_id": "20260420_222226",
     "latest_refresh_run_status": "OK",
     "refresh_run_id": "20260420_222226",
     "refresh_success": true,
     "refresh_status": "OK",
     "refresh_finished_at_utc": "2026-04-20T22:23:53+00:00",
-    "latest_strategy_artifact_date": "2026-09-01",
+    "latest_strategy_artifact_date": "2026-09-02",
     "latest_successful_refresh_runtime_utc": "2026-04-20T22:23:53+00:00",
-    "latest_trend_calculation_date": "2026-09-01",
-    "latest_wallet_sync_utc": "2026-09-02T14:48:49Z",
-    "latest_available_closed_utc_date": "2026-09-01",
+    "latest_trend_calculation_date": "2026-09-02",
+    "latest_wallet_sync_utc": "2026-09-03T17:21:35Z",
+    "latest_available_closed_utc_date": "2026-09-02",
     "refresh_currentness_state": "current",
     "refresh_currentness_reason": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
     "refresh_currentness_reason_code": "strategy_refresh_current",
@@ -429,18 +429,18 @@
       "refresh_manifest_path": "outputs/app_refresh_pipeline/20260420_222226/app_refresh_pipeline_manifest.json",
       "latest_successful_refresh_runtime_utc": "2026-04-20T22:23:53+00:00",
       "latest_successful_refresh_run_id": "20260420_222226",
-      "latest_strategy_artifact_date": "2026-09-01",
-      "latest_trend_calculation_date": "2026-09-01",
-      "latest_wallet_sync_utc": "2026-09-02T14:48:49Z",
-      "latest_available_closed_utc_date": "2026-09-01",
-      "evaluated_at_utc": "2026-09-02T15:05:49Z"
+      "latest_strategy_artifact_date": "2026-09-02",
+      "latest_trend_calculation_date": "2026-09-02",
+      "latest_wallet_sync_utc": "2026-09-03T17:21:35Z",
+      "latest_available_closed_utc_date": "2026-09-02",
+      "evaluated_at_utc": "2026-09-03T17:22:10Z"
     },
     "runtime_table_snapshot": {
       "last_pi_update_utc": "2026-04-12T22:10:09Z",
       "last_pc_refresh_utc": "2026-04-20T22:23:53+00:00",
       "last_refresh_status": "OK",
       "last_refresh_run_id": "20260420_222226",
-      "last_wallet_sync_utc": "2026-09-02T14:48:49Z",
+      "last_wallet_sync_utc": "2026-09-03T17:21:35Z",
       "currentness_state": "current",
       "currentness_reason": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
       "source_metadata": {
@@ -489,8 +489,8 @@
           "source_type": "read_only_account_snapshot",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 10375,
-          "modified_utc": "2026-09-02T14:48:49Z",
+          "size_bytes": 10123,
+          "modified_utc": "2026-09-03T17:21:35Z",
           "source_field": "as_of_utc",
           "value_present": true
         },
@@ -500,7 +500,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-09-02T11:30:18Z",
+          "modified_utc": "2026-09-03T17:21:22Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -520,8 +520,8 @@
               "source_type": "canonical_app_paper",
               "owner": "DATA",
               "exists": true,
-              "size_bytes": 2480612,
-              "modified_utc": "2026-09-02T15:05:48Z"
+              "size_bytes": 2481471,
+              "modified_utc": "2026-09-03T17:22:09Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -529,7 +529,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 616,
-              "modified_utc": "2026-09-02T00:10:36Z"
+              "modified_utc": "2026-09-03T00:10:50Z"
             }
           }
         },
@@ -539,7 +539,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-09-02T11:30:18Z",
+          "modified_utc": "2026-09-03T17:21:22Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -559,8 +559,8 @@
               "source_type": "canonical_app_paper",
               "owner": "DATA",
               "exists": true,
-              "size_bytes": 2480612,
-              "modified_utc": "2026-09-02T15:05:48Z"
+              "size_bytes": 2481471,
+              "modified_utc": "2026-09-03T17:22:09Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -568,12 +568,12 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 616,
-              "modified_utc": "2026-09-02T00:10:36Z"
+              "modified_utc": "2026-09-03T00:10:50Z"
             }
           }
         }
       },
-      "evaluated_at_utc": "2026-09-02T15:05:49Z"
+      "evaluated_at_utc": "2026-09-03T17:22:10Z"
     },
     "account_observability_contract": {
       "enabled": true,
@@ -599,58 +599,58 @@
     },
     "dashboard_public_status": {
       "schema_version": 1,
-      "generated_at_utc": "2026-09-02T15:05:49Z",
-      "closed_day": "2026-09-01",
+      "generated_at_utc": "2026-09-03T17:22:10Z",
+      "closed_day": "2026-09-02",
       "real_account": {
         "asset": "BTC",
         "position_label_sk": "V trhu",
-        "exposure_x": 0.486966,
+        "exposure_x": 1.0,
         "in_market": true,
-        "account_equity_usd": 39.651141,
-        "free_collateral_usd": 29.996766,
-        "available_balance_usd": 29.996766,
+        "account_equity_usd": 83.186462,
+        "free_collateral_usd": 83.186462,
+        "available_balance_usd": 83.186462,
         "withdrawable_usd": null,
-        "margin_used_usd": 9.654375,
-        "position_notional_usd": 19.30875,
+        "margin_used_usd": 0.0,
+        "position_notional_usd": 0.0,
         "balance_source_of_truth": "spot_stable_balance",
         "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
         "withdrawable_source": "unavailable_individual_perp_state_not_meaningful"
       },
       "execution": {
-        "target_asset": "BTC",
-        "target_size_pct": 0.5,
-        "gate_status": "ready_if_enabled",
-        "would_place_real_order": true,
+        "target_asset": "CASH",
+        "target_size_pct": 0.0,
+        "gate_status": "no_action",
+        "would_place_real_order": false,
         "live_order_sent": true
       },
       "model_signal": {
-        "preferred_asset": "BTC",
-        "exposure_x": 0.5,
+        "preferred_asset": "ETH",
+        "exposure_x": 1.0,
         "label_sk": "Modelový signál",
         "not_real_wallet_exposure": true
       },
       "model_performance": {
-        "account_24h_pct": -0.7079,
-        "btc_24h_pct": -1.4536,
-        "account_vs_btc_24h_pct": 0.7457,
-        "public_average_annual_growth_pct": 178.32,
-        "since_etf_start_cagr_pct": 196.08,
-        "since2025_cagr_pct": 179.93
+        "account_24h_pct": -0.1278,
+        "btc_24h_pct": -0.1278,
+        "account_vs_btc_24h_pct": 0.0,
+        "public_average_annual_growth_pct": 178.18,
+        "since_etf_start_cagr_pct": 195.74,
+        "since2025_cagr_pct": 179.26
       },
       "data_health": {
-        "reference_closed_day": "2026-09-01",
+        "reference_closed_day": "2026-09-02",
         "overall_status": "warning",
         "block_app": false,
         "block_execution": false
       },
       "live_market_state": {
-        "btc_24h_pct": -1.4536,
+        "btc_24h_pct": -0.1278,
         "btc_24h_pct_source": "published_snapshot",
         "btc_24h_pct_expected_live_source": "live_ticker",
         "btc_24h_pct_snapshot_is_not_live": true,
-        "published_snapshot_btc_24h_pct": -1.4536,
-        "account_24h_pct": -0.7079,
-        "account_vs_btc_24h_pct": 0.7457
+        "published_snapshot_btc_24h_pct": -0.1278,
+        "account_24h_pct": -0.1278,
+        "account_vs_btc_24h_pct": 0.0
       },
       "public_labels_sk": {
         "account_24h": "Účet 24h",
@@ -659,168 +659,108 @@
         "model_signal": "Modelový signál"
       },
       "production_execution": {
-        "run_id": "prod_20260902T112943Z_710313",
+        "run_id": "prod_20260903T172045Z_493859",
         "final_status": "SUCCESS",
         "model_target": {
-          "asset": "BTC",
-          "exposure": 0.5,
-          "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC"
+          "asset": "CASH",
+          "exposure": 0.0,
+          "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH"
         },
         "real_account": {
           "before": {
-            "asset": "CASH",
-            "notional_usd": 0.0
+            "asset": "BTC",
+            "notional_usd": 20.26
           },
-          "after": [
-            {
-              "asset": "BTC",
-              "notional_usd": 19.12275,
-              "raw": {
-                "position": {
-                  "coin": "BTC",
-                  "cumFunding": {
-                    "allTime": "0.0",
-                    "sinceChange": "0.0",
-                    "sinceOpen": "0.0"
-                  },
-                  "entryPx": "76495.0",
-                  "leverage": {
-                    "type": "cross",
-                    "value": 2
-                  },
-                  "liquidationPx": null,
-                  "marginUsed": "9.561375",
-                  "maxLeverage": 40,
-                  "positionValue": "19.12275",
-                  "returnOnEquity": "-0.000104582",
-                  "szi": "0.00025",
-                  "unrealizedPnl": "-0.001"
-                },
-                "type": "oneWay"
-              },
-              "reference_price": 76494.5,
-              "size": 0.00025
-            }
-          ],
-          "equity_before": 39.475466,
-          "equity_after": 39.465861,
-          "exposure_after": 0.48453902982124225
+          "after": [],
+          "equity_before": 83.195828,
+          "equity_after": 83.186462,
+          "exposure_after": 0.0
         },
         "execution_plan": {
-          "action": "INCREASE",
-          "target_notional": 19.737733,
-          "planned_delta": 19.737733
+          "action": "EXIT",
+          "target_notional": 0.0,
+          "planned_delta": -20.26
         },
         "last_order": {
           "requested": true,
           "order_id": [
-            533921077867
+            535241989779
           ],
           "cloid": [
-            "0x33589f27c95af6fdb47eb1a2704ae7a1"
+            "0xefb79c6e0cb5e7059ef1ee5bf30f16c9"
           ],
           "result": "FILLED_AND_ALIGNED"
         },
         "post_trade_verified_state": {
           "status": "FILLED_AND_ALIGNED",
-          "residual_delta": 0.6101805
+          "residual_delta": -0.0
         },
         "source_path": "outputs/execution/production_runs/latest_production_run.json"
       }
     },
     "production_execution_state": {
-      "run_id": "prod_20260902T112943Z_710313",
+      "run_id": "prod_20260903T172045Z_493859",
       "final_status": "SUCCESS",
       "model_target": {
-        "asset": "BTC",
-        "exposure": 0.5,
-        "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC"
+        "asset": "CASH",
+        "exposure": 0.0,
+        "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH"
       },
       "real_account": {
         "before": {
-          "asset": "CASH",
-          "notional_usd": 0.0
+          "asset": "BTC",
+          "notional_usd": 20.26
         },
-        "after": [
-          {
-            "asset": "BTC",
-            "notional_usd": 19.12275,
-            "raw": {
-              "position": {
-                "coin": "BTC",
-                "cumFunding": {
-                  "allTime": "0.0",
-                  "sinceChange": "0.0",
-                  "sinceOpen": "0.0"
-                },
-                "entryPx": "76495.0",
-                "leverage": {
-                  "type": "cross",
-                  "value": 2
-                },
-                "liquidationPx": null,
-                "marginUsed": "9.561375",
-                "maxLeverage": 40,
-                "positionValue": "19.12275",
-                "returnOnEquity": "-0.000104582",
-                "szi": "0.00025",
-                "unrealizedPnl": "-0.001"
-              },
-              "type": "oneWay"
-            },
-            "reference_price": 76494.5,
-            "size": 0.00025
-          }
-        ],
-        "equity_before": 39.475466,
-        "equity_after": 39.465861,
-        "exposure_after": 0.48453902982124225
+        "after": [],
+        "equity_before": 83.195828,
+        "equity_after": 83.186462,
+        "exposure_after": 0.0
       },
       "execution_plan": {
-        "action": "INCREASE",
-        "target_notional": 19.737733,
-        "planned_delta": 19.737733
+        "action": "EXIT",
+        "target_notional": 0.0,
+        "planned_delta": -20.26
       },
       "last_order": {
         "requested": true,
         "order_id": [
-          533921077867
+          535241989779
         ],
         "cloid": [
-          "0x33589f27c95af6fdb47eb1a2704ae7a1"
+          "0xefb79c6e0cb5e7059ef1ee5bf30f16c9"
         ],
         "result": "FILLED_AND_ALIGNED"
       },
       "post_trade_verified_state": {
         "status": "FILLED_AND_ALIGNED",
-        "residual_delta": 0.6101805
+        "residual_delta": -0.0
       },
       "source_path": "outputs/execution/production_runs/latest_production_run.json"
     },
     "real_account_state": {
       "asset": "BTC",
-      "exposure_x": 0.486966,
+      "exposure_x": 1.0,
       "in_market": true,
       "position_label_sk": "V trhu",
       "source": "wallet/intent/gate",
-      "gate_status": "ready_if_enabled",
-      "would_place_real_order": true,
-      "intent_target_asset": "BTC",
-      "intent_target_size_pct": 0.5,
-      "account_equity_usd": 39.651141,
-      "free_collateral_usd": 29.996766,
-      "available_balance_usd": 29.996766,
+      "gate_status": "no_action",
+      "would_place_real_order": false,
+      "intent_target_asset": "CASH",
+      "intent_target_size_pct": 0.0,
+      "account_equity_usd": 83.186462,
+      "free_collateral_usd": 83.186462,
+      "available_balance_usd": 83.186462,
       "withdrawable_usd": null,
-      "margin_used_usd": 9.654375,
-      "position_notional_usd": 19.30875,
+      "margin_used_usd": 0.0,
+      "position_notional_usd": 0.0,
       "balance_source_of_truth": "spot_stable_balance",
       "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
       "withdrawable_source": "unavailable_individual_perp_state_not_meaningful",
       "label_sk": "Reálny účet"
     },
     "model_signal_state": {
-      "preferred_asset": "BTC",
-      "exposure_x": 0.5,
+      "preferred_asset": "ETH",
+      "exposure_x": 1.0,
       "label_sk": "Modelový signál",
       "not_real_wallet_exposure": true,
       "source": "model_signal"
@@ -830,28 +770,28 @@
       "label_sk": "Modelový vývoj vs BTC",
       "equity_curve_semantics": "model/paper, never real account PnL",
       "source": "model_performance",
-      "account_24h_pct": -0.7079,
-      "btc_24h_pct": -1.4536,
-      "account_vs_btc_24h_pct": 0.7457,
-      "public_average_annual_growth_pct": 178.32,
-      "since_etf_start_cagr_pct": 196.08,
-      "since2025_cagr_pct": 179.93
+      "account_24h_pct": -0.1278,
+      "btc_24h_pct": -0.1278,
+      "account_vs_btc_24h_pct": 0.0,
+      "public_average_annual_growth_pct": 178.18,
+      "since_etf_start_cagr_pct": 195.74,
+      "since2025_cagr_pct": 179.26
     },
     "data_health_state": {
-      "reference_closed_day": "2026-09-01",
+      "reference_closed_day": "2026-09-02",
       "overall_status": "warning",
       "block_app": false,
       "block_execution": false,
       "source": "data_health"
     },
     "live_market_state": {
-      "btc_24h_pct": -1.4536,
+      "btc_24h_pct": -0.1278,
       "btc_24h_pct_source": "published_snapshot",
       "btc_24h_pct_expected_live_source": "live_ticker",
       "btc_24h_pct_snapshot_is_not_live": true,
-      "published_snapshot_btc_24h_pct": -1.4536,
-      "account_24h_pct": -0.7079,
-      "account_vs_btc_24h_pct": 0.7457,
+      "published_snapshot_btc_24h_pct": -0.1278,
+      "account_24h_pct": -0.1278,
+      "account_vs_btc_24h_pct": 0.0,
       "source": "live_market_state"
     },
     "account_snapshot_summary": {
@@ -861,21 +801,21 @@
       "mode": "live",
       "trading_enabled": true,
       "kill_switch": false,
-      "account_equity_usd": 39.651141,
-      "free_collateral_usd": 29.996766,
-      "available_balance_usd": 29.996766,
+      "account_equity_usd": 83.186462,
+      "free_collateral_usd": 83.186462,
+      "available_balance_usd": 83.186462,
       "free_collateral_status": "available",
       "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
       "withdrawable_usd": null,
       "withdrawable_status": "unavailable",
       "withdrawable_source": "unavailable_individual_perp_state_not_meaningful",
-      "margin_used_usd": 9.654375,
-      "position_notional_usd": 19.30875,
+      "margin_used_usd": 0.0,
+      "position_notional_usd": 0.0,
       "balance_source_of_truth": "spot_stable_balance",
-      "positions_count": 1,
+      "positions_count": 0,
       "open_orders_count": 0,
-      "recent_fills_count": 13,
-      "current_position": "BTC",
+      "recent_fills_count": 14,
+      "current_position": "CASH",
       "open_position": {
         "symbol": "BTC",
         "side": "LONG",
@@ -884,9 +824,9 @@
         "mark_price": 77235.0,
         "position_notional_usd": 19.30875,
         "unrealized_pnl_usd": 0.185,
-        "unrealized_pnl_pct": 0.0193476698
+        "unrealized_pnl_pct": 1.9347669800000002
       },
-      "current_exposure": 0.4869658101389818,
+      "current_exposure": null,
       "last_action": "execution_status_render",
       "last_action_result": "ok",
       "error": null
@@ -924,28 +864,30 @@
       }
     },
     "execution_intent_summary": {
-      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
-      "target_asset": "BTC",
-      "target_size_pct": 0.5,
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
+      "target_asset": "CASH",
+      "target_size_pct": 0.0,
       "target_exposure": null,
       "stale_signal": false,
       "source_path": "outputs/execution/intents/latest_execution_intent.json"
     },
     "gate_summary": {
-      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
-      "target_asset": "BTC",
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
+      "target_asset": "CASH",
       "mode": "live",
       "approval_gate_status": "approved_and_applied",
-      "would_place_real_order": true,
+      "would_place_real_order": false,
       "real_orders_enabled": true,
-      "status": "ready_if_enabled",
-      "block_reasons": [],
+      "status": "no_action",
+      "block_reasons": [
+        "no_market_entry_authorized"
+      ],
       "checks": {
         "signal_present": true,
         "target_asset_present": true,
         "target_asset_allowed": true,
-        "target_asset_is_cash": false,
-        "target_exposure_positive": true,
+        "target_asset_is_cash": true,
+        "target_exposure_positive": false,
         "contract_validated": true,
         "mode_known": true,
         "execution_trading_enabled": true,
@@ -969,16 +911,16 @@
         "same_run_authority": false,
         "same_run_authority_binding_required": false,
         "same_run_authority_binding_matches_intent": false,
-        "positions_count": 1,
+        "positions_count": 0,
         "exit_required": false,
         "account_address_present": true,
         "production_snapshot_validation_passed": true,
         "production_snapshot_closed_day_present": true,
         "production_snapshot_signal_present": true,
         "production_snapshot_target_asset_present": true,
-        "production_snapshot_target_exposure_positive": true,
-        "production_snapshot_trend_permission_active": true,
-        "production_snapshot_allow_live_order_candidate": true,
+        "production_snapshot_target_exposure_positive": false,
+        "production_snapshot_trend_permission_active": false,
+        "production_snapshot_allow_live_order_candidate": false,
         "production_snapshot_stale_signal": false,
         "intent_day_matches_production_snapshot": true,
         "intent_signal_matches_production_snapshot": true,
@@ -990,17 +932,17 @@
       },
       "production_signal_context": {
         "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-        "closed_day": "2026-09-01",
+        "closed_day": "2026-09-02",
         "validation_status": "passed",
-        "candidate_asset": "BTC",
-        "current_asset": "BTC",
-        "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-01::target_BTC::candidate_BTC",
-        "target_asset": "BTC",
-        "target_exposure": 0.5,
-        "effective_market_exposure": 0.5,
-        "model_candidate_exposure": 0.5,
-        "trend_permission_active": true,
-        "allow_live_order_candidate": true
+        "candidate_asset": "ETH",
+        "current_asset": "CASH",
+        "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
+        "target_asset": "CASH",
+        "target_exposure": 0.0,
+        "effective_market_exposure": 0.0,
+        "model_candidate_exposure": 1.0,
+        "trend_permission_active": false,
+        "allow_live_order_candidate": false
       }
     },
     "runtime_health_summary": {
@@ -1074,15 +1016,15 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-09-02T11:30:18Z"
+          "modified_utc": "2026-09-03T17:21:22Z"
         },
         "strategy_artifact": {
           "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
           "source_type": "canonical_app_paper",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 2480612,
-          "modified_utc": "2026-09-02T15:05:48Z"
+          "size_bytes": 2481471,
+          "modified_utc": "2026-09-03T17:22:09Z"
         },
         "trend_calculation": {
           "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -1090,21 +1032,21 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 616,
-          "modified_utc": "2026-09-02T00:10:36Z"
+          "modified_utc": "2026-09-03T00:10:50Z"
         },
         "wallet_sync": {
           "path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
           "source_type": "read_only_account_snapshot",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 10375,
-          "modified_utc": "2026-09-02T14:48:49Z"
+          "size_bytes": 10123,
+          "modified_utc": "2026-09-03T17:21:35Z"
         }
       },
       "runtime_table_snapshot": {
         "source_type": "authoritative_runtime_table_snapshot",
         "owner": "DATA",
-        "evaluated_at_utc": "2026-09-02T15:05:49Z",
+        "evaluated_at_utc": "2026-09-03T17:22:10Z",
         "fields": {
           "last_pi_update_utc": {
             "path": "outputs/execution/full_auto_scheduler/latest_scheduler_entry_manifest.json",
@@ -1151,8 +1093,8 @@
             "source_type": "read_only_account_snapshot",
             "owner": "DATA",
             "exists": true,
-            "size_bytes": 10375,
-            "modified_utc": "2026-09-02T14:48:49Z",
+            "size_bytes": 10123,
+            "modified_utc": "2026-09-03T17:21:35Z",
             "source_field": "as_of_utc",
             "value_present": true
           },
@@ -1162,7 +1104,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1002,
-            "modified_utc": "2026-09-02T11:30:18Z",
+            "modified_utc": "2026-09-03T17:21:22Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -1182,8 +1124,8 @@
                 "source_type": "canonical_app_paper",
                 "owner": "DATA",
                 "exists": true,
-                "size_bytes": 2480612,
-                "modified_utc": "2026-09-02T15:05:48Z"
+                "size_bytes": 2481471,
+                "modified_utc": "2026-09-03T17:22:09Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -1191,7 +1133,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 616,
-                "modified_utc": "2026-09-02T00:10:36Z"
+                "modified_utc": "2026-09-03T00:10:50Z"
               }
             }
           },
@@ -1201,7 +1143,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1002,
-            "modified_utc": "2026-09-02T11:30:18Z",
+            "modified_utc": "2026-09-03T17:21:22Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -1221,8 +1163,8 @@
                 "source_type": "canonical_app_paper",
                 "owner": "DATA",
                 "exists": true,
-                "size_bytes": 2480612,
-                "modified_utc": "2026-09-02T15:05:48Z"
+                "size_bytes": 2481471,
+                "modified_utc": "2026-09-03T17:22:09Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -1230,7 +1172,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 616,
-                "modified_utc": "2026-09-02T00:10:36Z"
+                "modified_utc": "2026-09-03T00:10:50Z"
               }
             }
           }
@@ -1249,8 +1191,8 @@
         "source_type": "read_only_account_snapshot",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 10375,
-        "modified_utc": "2026-09-02T14:48:49Z"
+        "size_bytes": 10123,
+        "modified_utc": "2026-09-03T17:21:35Z"
       },
       "dry_run_summary": {
         "path": "outputs/execution/dry_run/latest_dry_run_decision.json",
@@ -1265,16 +1207,16 @@
         "source_type": "execution_intent",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 3574,
-        "modified_utc": "2026-09-02T15:05:46Z"
+        "size_bytes": 3640,
+        "modified_utc": "2026-09-03T17:22:07Z"
       },
       "gate_summary": {
         "path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
         "source_type": "real_order_gate_decision",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 4503,
-        "modified_utc": "2026-09-02T15:05:46Z"
+        "size_bytes": 4543,
+        "modified_utc": "2026-09-03T17:22:07Z"
       },
       "runtime_health_summary": {
         "path": "outputs/execution/runtime_health/latest_runtime_health.json",
@@ -1321,8 +1263,8 @@
         "source_type": "read_only_account_snapshot",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 10375,
-        "modified_utc": "2026-09-02T14:48:49Z"
+        "size_bytes": 10123,
+        "modified_utc": "2026-09-03T17:21:35Z"
       },
       "dry_run_generated_at_utc": {
         "path": "outputs/execution/dry_run/latest_dry_run_decision.json",
@@ -1337,8 +1279,8 @@
         "source_type": "real_order_gate_decision",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 4503,
-        "modified_utc": "2026-09-02T15:05:46Z"
+        "size_bytes": 4543,
+        "modified_utc": "2026-09-03T17:22:07Z"
       }
     }
   }

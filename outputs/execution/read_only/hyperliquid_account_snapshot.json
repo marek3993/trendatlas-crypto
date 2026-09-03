@@ -1,6 +1,6 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-09-02T14:48:49Z",
+  "as_of_utc": "2026-09-03T17:21:35Z",
   "execution_mode": "live",
   "trading_enabled": true,
   "kill_switch": false,
@@ -12,53 +12,29 @@
   "raw": {
     "clearinghouseState": {
       "marginSummary": {
-        "accountValue": "9.746655",
-        "totalNtlPos": "19.30875",
-        "totalRawUsd": "-9.562095",
-        "totalMarginUsed": "9.654375"
+        "accountValue": "0.0",
+        "totalNtlPos": "0.0",
+        "totalRawUsd": "0.0",
+        "totalMarginUsed": "0.0"
       },
       "crossMarginSummary": {
-        "accountValue": "9.746655",
-        "totalNtlPos": "19.30875",
-        "totalRawUsd": "-9.562095",
-        "totalMarginUsed": "9.654375"
+        "accountValue": "0.0",
+        "totalNtlPos": "0.0",
+        "totalRawUsd": "0.0",
+        "totalMarginUsed": "0.0"
       },
-      "crossMaintenanceMarginUsed": "0.241359",
-      "withdrawable": "0.09228",
-      "assetPositions": [
-        {
-          "type": "oneWay",
-          "position": {
-            "coin": "BTC",
-            "szi": "0.00025",
-            "leverage": {
-              "type": "cross",
-              "value": 2
-            },
-            "entryPx": "76495.0",
-            "positionValue": "19.30875",
-            "unrealizedPnl": "0.185",
-            "returnOnEquity": "0.0193476698",
-            "liquidationPx": null,
-            "marginUsed": "9.654375",
-            "maxLeverage": 40,
-            "cumFunding": {
-              "allTime": "0.00072",
-              "sinceOpen": "0.00072",
-              "sinceChange": "0.00072"
-            }
-          }
-        }
-      ],
-      "time": 1788360527900
+      "crossMaintenanceMarginUsed": "0.0",
+      "withdrawable": "0.0",
+      "assetPositions": [],
+      "time": 1788456093627
     },
     "spotClearinghouseState": {
       "balances": [
         {
           "coin": "USDC",
           "token": 0,
-          "total": "39.651141",
-          "hold": "9.654375",
+          "total": "83.186462",
+          "hold": "0.0",
           "entryNtl": "0.0"
         },
         {
@@ -86,12 +62,30 @@
       "tokenToAvailableAfterMaintenance": [
         [
           0,
-          "39.409782"
+          "83.186462"
         ]
       ]
     },
     "openOrders": [],
     "userFills": [
+      {
+        "coin": "BTC",
+        "px": "81039.0",
+        "sz": "0.00025",
+        "side": "A",
+        "time": 1788456093152,
+        "startPosition": "0.00025",
+        "dir": "Close Long",
+        "closedPnl": "1.136",
+        "hash": "0x0a46799bdfd0436e0bc004439bd4450201c400817ad36240ae0f24ee9ed41d58",
+        "oid": 535241989779,
+        "crossed": true,
+        "fee": "0.009116",
+        "tid": 310675632260517,
+        "cloid": "0xefb79c6e0cb5e7059ef1ee5bf30f16c9",
+        "feeToken": "USDC",
+        "twapId": null
+      },
       {
         "coin": "BTC",
         "px": "76495.0",
@@ -318,38 +312,38 @@
     "userAbstraction": "unifiedAccount"
   },
   "summary": {
-    "positions_count": 1,
+    "positions_count": 0,
     "open_orders_count": 0,
-    "recent_fills_count": 13,
+    "recent_fills_count": 14,
     "runtime_posture": "live_runtime_read_only_observability",
-    "withdrawable": "0.09228",
+    "withdrawable": "0.0",
     "margin_summary": {
-      "accountValue": "9.746655",
-      "totalNtlPos": "19.30875",
-      "totalRawUsd": "-9.562095",
-      "totalMarginUsed": "9.654375"
+      "accountValue": "0.0",
+      "totalNtlPos": "0.0",
+      "totalRawUsd": "0.0",
+      "totalMarginUsed": "0.0"
     },
     "cross_margin_summary": {
-      "accountValue": "9.746655",
-      "totalNtlPos": "19.30875",
-      "totalRawUsd": "-9.562095",
-      "totalMarginUsed": "9.654375"
+      "accountValue": "0.0",
+      "totalNtlPos": "0.0",
+      "totalRawUsd": "0.0",
+      "totalMarginUsed": "0.0"
     },
     "balance_source_of_truth": "spot_stable_balance",
-    "account_equity_usd": 39.651141,
-    "free_collateral_usd": 29.996766,
-    "available_balance_usd": 29.996766,
+    "account_equity_usd": 83.186462,
+    "free_collateral_usd": 83.186462,
+    "available_balance_usd": 83.186462,
     "free_collateral_status": "available",
     "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
     "withdrawable_usd": null,
     "withdrawable_status": "unavailable",
     "withdrawable_source": "unavailable_individual_perp_state_not_meaningful",
-    "margin_used_usd": 9.654375,
-    "position_notional_usd": 19.30875,
-    "maintenance_margin_used_usd": 0.241359,
-    "available_after_maintenance_usd": 39.409782,
-    "perp_account_value": 9.746655,
-    "perp_withdrawable": 0.09228,
+    "margin_used_usd": 0.0,
+    "position_notional_usd": 0.0,
+    "maintenance_margin_used_usd": 0.0,
+    "available_after_maintenance_usd": 83.186462,
+    "perp_account_value": 0.0,
+    "perp_withdrawable": 0.0,
     "spot_balance_count": 4,
     "spot_balance_symbols": [
       "USDC",
@@ -357,9 +351,9 @@
       "USDH",
       "USDT0"
     ],
-    "spot_stable_total_usd": 39.651141,
-    "spot_stable_hold_usd": 9.654375,
-    "spot_stable_available_usd": 29.996766,
+    "spot_stable_total_usd": 83.186462,
+    "spot_stable_hold_usd": 0.0,
+    "spot_stable_available_usd": 83.186462,
     "spot_source_available": true,
     "account_abstraction": "unifiedAccount",
     "spot_balance_usable_for_perps": true
