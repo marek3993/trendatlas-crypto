@@ -274,8 +274,8 @@
       "writes_source_of_truth": false,
       "notes": "Read-only validator for the two-file authority consumer contract."
     },
-    {
-      "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
+      {
+        "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
       "layer": "execution_data",
       "status": "active",
       "purpose": "Fetches Hyperliquid account state in read-only mode and writes snapshot/quality/manifest artifacts.",
@@ -290,6 +290,21 @@
       "notes": "No order placement. Unified-account observability uses spot stable total as total equity, native spot hold for free collateral, and publishes unavailable instead of fabricating missing free/withdrawable values."
     },
     {
+        "script_path": "scripts/execution/build_hyperliquid_real_performance_ledger.py",
+        "layer": "execution_data",
+        "status": "active",
+        "purpose": "Builds the canonical exchange-native, cash-flow-adjusted real-account performance ledger from read-only Hyperliquid data.",
+        "primary_outputs": [
+          "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
+          "outputs/execution/read_only/hyperliquid_real_performance_ledger.quality.json",
+          "outputs/execution/read_only/hyperliquid_real_performance_ledger.manifest.json"
+        ],
+        "output_type": "real_account_performance_ledger",
+        "decision_relevance": "support_only",
+        "writes_source_of_truth": false,
+        "notes": "Read-only accounting only. Deposits and withdrawals are never PnL."
+      },
+      {
       "script_path": "scripts/execution/render_execution_app_status.py",
       "layer": "execution_data",
       "status": "active",

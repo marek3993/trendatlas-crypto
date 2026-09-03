@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -33,10 +34,22 @@ STABLE_BALANCE_SYMBOLS = {"USDC", "USD", "USDT", "CASH"}
 NUMERIC_EPSILON = 1e-9
 HTTP_SESSION = requests.Session()
 HTTP_SESSION.trust_env = False
+DEFAULT_LEDGER_START_UTC = "2026-09-02T00:00:00Z"
 
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def ledger_start_time_ms() -> int:
+    value = os.environ.get("HYPERLIQUID_LEDGER_START_UTC", DEFAULT_LEDGER_START_UTC).strip()
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        fail("HYPERLIQUID_LEDGER_START_UTC must be an ISO-8601 UTC timestamp")
+    if parsed.tzinfo is None:
+        fail("HYPERLIQUID_LEDGER_START_UTC must include a timezone")
+    return int(parsed.timestamp() * 1000)
 
 
 def log(msg: str) -> None:
@@ -406,12 +419,17 @@ def main() -> None:
     )
     log(f"[CONFIG] account_address={account_address}")
 
+    ledger_start_ms = ledger_start_time_ms()
     payloads = {
         "clearinghouseState": {"type": "clearinghouseState", "user": account_address},
         "spotClearinghouseState": {"type": "spotClearinghouseState", "user": account_address},
         "openOrders": {"type": "openOrders", "user": account_address},
         "userFills": {"type": "userFills", "user": account_address},
         "userAbstraction": {"type": "userAbstraction", "user": account_address},
+        "userFillsByTime": {"type": "userFillsByTime", "user": account_address, "startTime": ledger_start_ms},
+        "userFunding": {"type": "userFunding", "user": account_address, "startTime": ledger_start_ms},
+        "userNonFundingLedgerUpdates": {"type": "userNonFundingLedgerUpdates", "user": account_address, "startTime": ledger_start_ms},
+        "portfolio": {"type": "portfolio", "user": account_address},
     }
 
     log("[FETCH] clearinghouseState")
@@ -443,6 +461,18 @@ def main() -> None:
     )
     if not user_abstraction_result.get("ok"):
         log(f"[WARN] userAbstraction unavailable: {user_abstraction_result.get('error')}")
+
+    log("[FETCH] userFillsByTime")
+    user_fills_by_time = post_info(payloads["userFillsByTime"])
+
+    log("[FETCH] userFunding")
+    user_funding = post_info(payloads["userFunding"])
+
+    log("[FETCH] userNonFundingLedgerUpdates")
+    user_non_funding_ledger_updates = post_info(payloads["userNonFundingLedgerUpdates"])
+
+    log("[FETCH] portfolio")
+    portfolio = post_info(payloads["portfolio"])
 
     positions = []
     margin_summary = {}
@@ -483,16 +513,24 @@ def main() -> None:
             ),
             "openOrders": open_orders,
             "userFills": user_fills,
+            "userFillsByTime": user_fills_by_time,
             "userAbstraction": (
                 user_abstraction
                 if user_abstraction_result.get("ok")
                 else {"fetch_error": user_abstraction_result}
             ),
+            "userFunding": user_funding,
+            "userNonFundingLedgerUpdates": user_non_funding_ledger_updates,
+            "portfolio": portfolio,
         },
         "summary": {
             "positions_count": len(positions) if isinstance(positions, list) else 0,
             "open_orders_count": len(open_orders) if isinstance(open_orders, list) else 0,
             "recent_fills_count": len(user_fills) if isinstance(user_fills, list) else 0,
+            "historical_fills_count": len(user_fills_by_time) if isinstance(user_fills_by_time, list) else 0,
+            "ledger_start_utc": datetime.fromtimestamp(ledger_start_ms / 1000, tz=timezone.utc).isoformat().replace("+00:00", "Z"),
+            "funding_events_count": len(user_funding) if isinstance(user_funding, list) else 0,
+            "non_funding_ledger_events_count": len(user_non_funding_ledger_updates) if isinstance(user_non_funding_ledger_updates, list) else 0,
             "runtime_posture": runtime_posture["runtime_posture"],
             "withdrawable": withdrawable,
             "margin_summary": margin_summary,
@@ -542,6 +580,9 @@ def main() -> None:
         "positions_count": snapshot["summary"]["positions_count"],
         "open_orders_count": snapshot["summary"]["open_orders_count"],
         "recent_fills_count": snapshot["summary"]["recent_fills_count"],
+        "historical_fills_count": snapshot["summary"]["historical_fills_count"],
+        "funding_events_count": snapshot["summary"]["funding_events_count"],
+        "non_funding_ledger_events_count": snapshot["summary"]["non_funding_ledger_events_count"],
         "balance_source_of_truth": snapshot["summary"]["balance_source_of_truth"],
         "account_equity_usd": snapshot["summary"]["account_equity_usd"],
         "free_collateral_usd": snapshot["summary"]["free_collateral_usd"],

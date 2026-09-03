@@ -121,6 +121,10 @@ def build_fast_dependency_steps(root: Path = ROOT) -> tuple[PythonStep, ...]:
             "hyperliquid_read_only_snapshot",
             root / "scripts" / "execution" / "hyperliquid_read_only_snapshot.py",
         ),
+        PythonStep(
+            "hyperliquid_real_performance_ledger",
+            root / "scripts" / "execution" / "build_hyperliquid_real_performance_ledger.py",
+        ),
     )
 
 
@@ -584,6 +588,7 @@ def run_fast_daily_authority_refresh(
         "phase60_fast_dependency": "dependency_only",
         "phase63_fast_dependency": "winner_only",
         "hyperliquid_read_only_snapshot": "completed",
+        "hyperliquid_real_performance_ledger": "completed",
         "rebalance_boundary_dependency_refresh": rebalance_boundary_dependency_refresh,
         "rebalance_boundary_check": rebalance_boundary_check.as_dict(),
         "publish_existing_dry_run": "completed",

@@ -197,6 +197,21 @@
                                                                                                          ],
                                                                            "available_balance_compatibility_rule":  "available_balance_usd_is_a_nullable_alias_of_free_collateral_usd_and_must_never_copy_account_equity_usd"
                                                                        },
+                                                "real_account_performance_state":  {
+                                                                                       "status":  "required",
+                                                                                       "authoritative_source_path":  "outputs/execution/authority/latest_attempt_status.json",
+                                                                                       "json_path":  "app_runtime_snapshot.real_account_performance",
+                                                                                       "fallback_source_path":  "outputs/execution/authority/latest_successful_snapshot.json",
+                                                                                       "fallback_json_path":  "app_runtime_snapshot.real_account_performance",
+                                                                                       "minimum_fields":  [
+                                                                                                              "ledger_type",
+                                                                                                              "current",
+                                                                                                              "windows",
+                                                                                                              "history_days",
+                                                                                                              "reconciliation_status"
+                                                                                                          ],
+                                                                                       "semantic_boundary":  "exchange_native_real_account_pnl_and_cash_flow_accounting_only_never_model_performance"
+                                                                                   },
                                                 "model_signal_state":  {
                                                                             "status":  "required",
                                                                             "authoritative_source_path":  "outputs/execution/authority/latest_attempt_status.json",
@@ -273,7 +288,9 @@
                                                                                           ],
                                "real_account_pnl_must_not_be_inferred_from_fields":  [
                                                                                           "model_equity",
-                                                                                          "paper_equity"
+                                                                                          "paper_equity",
+                                                                                          "rolling_return_30d",
+                                                                                          "rolling_return_90d"
                                                                                       ],
                                "model_exposure_must_not_be_shown_as_real_account_exposure":  true,
                                "dashboards_must_not_infer_account_state_from_model_fields":  true,

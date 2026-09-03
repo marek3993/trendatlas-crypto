@@ -100,6 +100,7 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
                 "dev_only_build_btc_etf_flow_daily_panel",
                 "verify_app_freshness",
                 "hyperliquid_read_only_snapshot",
+                "hyperliquid_real_performance_ledger",
             ],
         )
 

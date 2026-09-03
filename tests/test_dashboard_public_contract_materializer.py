@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class TestDashboardPublicContractMaterializer(unittest.TestCase):
-    def build_cash_blocked_status(self, *, live_market_payload: dict | None = None) -> dict:
+    def build_cash_blocked_status(self, *, live_market_payload: dict | None = None, real_account_performance: dict | None = None) -> dict:
         return materializer.build_dashboard_public_status_contract(
             account_summary={
                 "current_position": "CASH",
@@ -64,6 +64,7 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
                 },
             },
             live_market_payload=live_market_payload,
+            real_account_performance=real_account_performance,
             generated_at_utc="2026-05-11T08:15:00Z",
         )
 
@@ -248,6 +249,26 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
         self.assertEqual(status["model_signal"]["preferred_asset"], "ETH")
         self.assertEqual(status["execution"]["target_asset"], "CASH")
 
+    def test_fresh_zero_position_snapshot_remains_cash_when_target_is_btc(self):
+        account_summary = materializer.build_runtime_account_summary(
+            {"current_position": "BTC", "positions_count": 1},
+            {
+                "summary": {"account_equity_usd": 83.0, "positions_count": 0},
+                "raw": {"clearinghouseState": {"assetPositions": []}},
+            },
+        )
+        status = materializer.build_dashboard_public_status_contract(
+            account_summary=account_summary,
+            intent_payload={"target_asset": "BTC", "target_size_pct": 1.0},
+            dry_run_payload={},
+            gate_payload={"target_asset": "BTC", "status": "ready_if_enabled", "would_place_real_order": False},
+            production_snapshot_payload={"candidate_asset": "BTC", "model_candidate_exposure": 1.0},
+        )
+
+        self.assertEqual(status["real_account"]["asset"], "CASH")
+        self.assertEqual(status["real_account"]["exposure_x"], 0.0)
+        self.assertFalse(status["real_account"]["in_market"])
+
     def test_base_label_does_not_zero_authorized_model_exposure(self):
         status = self.build_cash_blocked_status()
         rows = [
@@ -296,6 +317,19 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
         self.assertEqual(status["live_market_state"]["btc_24h_pct"], 1.9)
         self.assertEqual(status["live_market_state"]["account_24h_pct"], 0.0)
         self.assertEqual(status["live_market_state"]["account_vs_btc_24h_pct"], -1.9)
+
+    def test_real_account_performance_is_passed_through_without_model_fields(self):
+        ledger = {
+            "ledger_type": "hyperliquid_real_account_performance_ledger",
+            "history_days": 2,
+            "reconciliation_status": "ok",
+            "current": {"pnl_since_inception_usd": 1.11},
+            "windows": {"30d": {"available": False, "history_days": 2}},
+        }
+        status = self.build_cash_blocked_status(real_account_performance=ledger)
+        self.assertEqual(status["real_account"]["performance"], ledger)
+        self.assertNotIn("rolling_return_30d", status["real_account"]["performance"])
+        self.assertNotIn("rolling_return_90d", status["real_account"]["performance"])
 
     def test_model_signal_preserves_desired_exposure_but_normalizes_internal_asset_label(self):
         status = materializer.build_dashboard_public_status_contract(

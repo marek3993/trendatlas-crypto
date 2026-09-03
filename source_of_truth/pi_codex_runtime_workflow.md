@@ -77,17 +77,18 @@ That wrapper must run exactly the fast dependency chain before publish-existing:
 7. `scripts/dev_only_build_btc_etf_flow_daily_panel.py`
 8. `scripts/verify_app_freshness.py`
 9. `scripts/execution/hyperliquid_read_only_snapshot.py`
-10. conditional rebalance-boundary dependency refresh only when the canonical durable BTC-persistence dependency source day would otherwise carry forward across `next_rebalance_date`:
+10. `scripts/execution/build_hyperliquid_real_performance_ledger.py` (read-only exchange-native account accounting; never places an order)
+11. conditional rebalance-boundary dependency refresh only when the canonical durable BTC-persistence dependency source day would otherwise carry forward across `next_rebalance_date`:
     - `scripts/execution/materialize_execution_app_exports.py --production-core-dependencies-only`
     - `scripts/production/build_current_strategy_snapshot.py`
-11. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`; its required safe internal chain is:
+12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`; its required safe internal chain is:
     - validate the current Production Core snapshot
     - run `scripts/execution/build_execution_intent_from_strategy_exports.py` into the canonical intent paths
     - run `scripts/execution/prepare_real_order_gate.py` from that canonical intent and the current read-only Hyperliquid snapshot into the canonical gate paths
     - validate data health against the real canonical intent and gate; temporary execution-source path overrides are forbidden
     - rematerialize app/runtime/dashboard artifacts from the refreshed canonical execution state
     - do not invoke reconciliation or any live-order submitter
-12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`; it must repeat/verify the canonical execution chain against the written authority files before publishing
+13. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`; it must repeat/verify the canonical execution chain against the written authority files before publishing
 
 The orchestrator must not invoke `--mode full-refresh`, the old full Phase63 grid, or any manual authority snapshot edit. It may invoke the controlled live execution primitive only after its pre-submit checks and only when not running `--no-submit`. Manual Streamlit `live_execute` is intentionally disabled; only the credential-mounted canonical systemd production service may reach live submission.
 

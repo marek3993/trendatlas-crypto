@@ -170,6 +170,7 @@
                                                                               },
                                                               "required_normalized_public_runtime_contracts":  [
                                                                                                                  "real_account_state",
+                                                                                                                 "real_account_performance_state",
                                                                                                                  "model_signal_state",
                                                                                                                  "model_performance_state",
                                                                                                                  "authority_state",
@@ -214,6 +215,15 @@
                                                                                                       "model_fields_forbidden":  true
                                                                                                   }
                                                                        },
+                                                "real_account_performance_state":  {
+                                                                                       "status":  "required_public_runtime_contract",
+                                                                                       "authoritative_source_priority":  [
+                                                                                                                             "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.real_account_performance",
+                                                                                                                             "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.real_account_performance"
+                                                                                                                         ],
+                                                                                       "semantic_boundary":  "exchange_native_real_account_pnl_and_cash_flow_accounting_only_never_model_performance",
+                                                                                       "consumer_rule":  "use_for_real_account_pnl_and_cash_flow_display_only"
+                                                                                   },
                                                 "model_signal_state":  {
                                                                             "status":  "required_public_runtime_contract",
                                                                             "authoritative_source_priority":  [
@@ -260,7 +270,9 @@
                                                                                                     ],
                                          "real_account_pnl_must_not_be_inferred_from_fields":  [
                                                                                                     "model_equity",
-                                                                                                    "paper_equity"
+                                                                                                    "paper_equity",
+                                                                                                    "rolling_return_30d",
+                                                                                                    "rolling_return_90d"
                                                                                                 ],
                                          "model_exposure_must_not_be_shown_as_real_account_exposure":  true,
                                          "dashboards_must_not_infer_account_state_from_model_fields":  true

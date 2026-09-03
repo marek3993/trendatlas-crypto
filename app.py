@@ -6941,6 +6941,7 @@ account_runtime_snapshot = select_preferred_account_runtime_snapshot(runtime_sna
 account_status_payload = dict(account_runtime_snapshot.get("execution_status") or {})
 account_snapshot_payload = dict(account_runtime_snapshot.get("account_snapshot_summary") or {})
 account_snapshot_view = dict(account_snapshot_payload)
+account_snapshot_view["performance"] = dict(account_runtime_snapshot.get("real_account_performance") or {})
 dashboard_public_status = load_dashboard_public_status_for_app(
     account_runtime_snapshot,
     production_snapshot,
@@ -7722,6 +7723,48 @@ with tabs[1]:
             "Zdroj zostatku" if lang == "sk" else "Balance source",
             balance_source_text,
         )
+
+        performance = account_snapshot_view.get("performance") if isinstance(account_snapshot_view.get("performance"), dict) else {}
+        performance_current = performance.get("current") if isinstance(performance.get("current"), dict) else {}
+        performance_windows = performance.get("windows") if isinstance(performance.get("windows"), dict) else {}
+        if performance:
+            def performance_value(window: str, field: str) -> str:
+                payload = performance_windows.get(window) if isinstance(performance_windows.get(window), dict) else {}
+                if payload.get("available") is not True:
+                    days = payload.get("history_days")
+                    return (f"História: {days} dní" if lang == "sk" else f"History: {days} days") if days is not None else t(lang, "na")
+                value = payload.get(field)
+                if value is None:
+                    return t(lang, "na")
+                if field == "return_pct":
+                    return f"{float(value):+.2f}%"
+                return f"${float(value):+,.2f}"
+
+            st.markdown("#### Výkonnosť reálneho účtu" if lang == "sk" else "#### Real account performance")
+            render_ops_kpi_row(
+                [
+                    {"label": "Celkové live PnL" if lang == "sk" else "Total live PnL", "value": safe_usd_text(performance_current.get("pnl_since_inception_usd"), lang=lang), "subtitle": "Od začiatku live" if lang == "sk" else "Since live inception"},
+                    {"label": "Live výnos" if lang == "sk" else "Live return", "value": (f"{float(performance_current.get('return_since_inception_pct')):+.2f}%" if performance_current.get("return_since_inception_available") else (f"História: {performance.get('history_days', 0)} dní" if lang == "sk" else f"History: {performance.get('history_days', 0)} days")), "subtitle": "Po zohľadnení tokov" if lang == "sk" else "Cash-flow adjusted"},
+                    {"label": "Dnes" if lang == "sk" else "Today", "value": performance_value("today", "pnl_usd"), "subtitle": performance_value("today", "return_pct")},
+                    {"label": "30 dní" if lang == "sk" else "30 days", "value": performance_value("30d", "pnl_usd"), "subtitle": performance_value("30d", "return_pct")},
+                    {"label": "90 dní" if lang == "sk" else "90 days", "value": performance_value("90d", "pnl_usd"), "subtitle": performance_value("90d", "return_pct")},
+                ],
+                tone="balance",
+            )
+            render_ops_inline_note(
+                "Poznámka" if lang == "sk" else "Note",
+                "Vklady a výbery nie sú súčasťou PnL." if lang == "sk" else "Deposits and withdrawals are not part of PnL.",
+            )
+            render_ops_kpi_row(
+                [
+                    {"label": "Obchodné PnL" if lang == "sk" else "Trading PnL", "value": safe_usd_text(performance_current.get("trading_pnl_since_inception_usd"), lang=lang), "subtitle": "Od začiatku live" if lang == "sk" else "Since live inception"},
+                    {"label": "Financovanie" if lang == "sk" else "Funding", "value": safe_usd_text(performance_current.get("funding_since_inception_usd"), lang=lang), "subtitle": "Od začiatku live" if lang == "sk" else "Since live inception"},
+                    {"label": "Poplatky" if lang == "sk" else "Fees", "value": safe_usd_text(performance_current.get("fees_since_inception_usd"), lang=lang), "subtitle": "Od začiatku live" if lang == "sk" else "Since live inception"},
+                    {"label": "Vklady" if lang == "sk" else "Deposits", "value": safe_usd_text(performance_current.get("deposits_since_inception_usd"), lang=lang), "subtitle": "Mimo PnL" if lang == "sk" else "Outside PnL"},
+                    {"label": "Výbery" if lang == "sk" else "Withdrawals", "value": safe_usd_text(performance_current.get("withdrawals_since_inception_usd"), lang=lang), "subtitle": "Mimo PnL" if lang == "sk" else "Outside PnL"},
+                ],
+                tone="balance",
+            )
 
         dense_cols = st.columns(2, gap="large")
         with dense_cols[0]:

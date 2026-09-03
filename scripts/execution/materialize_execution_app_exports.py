@@ -112,6 +112,7 @@ APP_FRESHNESS_REPORT_PATH = FRESHNESS_DIR / "app_freshness_report.json"
 BENCHMARK_BTC_SOURCE_PATH = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
 EXECUTION_STATUS_PATH = OUTPUTS_DIR / "live_status" / "execution_status.json"
 ACCOUNT_SNAPSHOT_PATH = OUTPUTS_DIR / "read_only" / "hyperliquid_account_snapshot.json"
+REAL_PERFORMANCE_LEDGER_PATH = OUTPUTS_DIR / "read_only" / "hyperliquid_real_performance_ledger.json"
 RUNTIME_HEALTH_PATH = OUTPUTS_DIR / "runtime_health" / "latest_runtime_health.json"
 FULL_AUTO_SCHEDULER_MANIFEST_PATH = OUTPUTS_DIR / "full_auto_scheduler" / "latest_scheduler_entry_manifest.json"
 DRY_RUN_DECISION_PATH = OUTPUTS_DIR / "dry_run" / "latest_dry_run_decision.json"
@@ -3155,11 +3156,13 @@ def build_dashboard_public_status_contract(
     data_health_payload: dict[str, Any] | None = None,
     live_market_payload: dict[str, Any] | None = None,
     production_run_payload: dict[str, Any] | None = None,
+    real_account_performance: dict[str, Any] | None = None,
     generated_at_utc: str | None = None,
 ) -> dict[str, Any]:
     product_snapshot_payload = (
         product_snapshot_payload if isinstance(product_snapshot_payload, dict) else {}
     )
+    real_account_performance = real_account_performance if isinstance(real_account_performance, dict) else {}
     production_timeseries_last_row = (
         production_timeseries_last_row
         if isinstance(production_timeseries_last_row, dict)
@@ -3220,6 +3223,11 @@ def build_dashboard_public_status_contract(
         if finalized_run_order_sent is not None:
             live_order_sent = finalized_run_order_sent
 
+    fresh_zero_position = (
+        not open_position_asset
+        and int(parse_float_maybe(account_summary.get("positions_count")) or 0) == 0
+        and is_runtime_cash_asset(account_summary.get("current_position"))
+    )
     if open_position_asset and open_position_size > 1e-12:
         real_asset = open_position_asset
         exposure_candidate = parse_float_maybe(
@@ -3234,6 +3242,11 @@ def build_dashboard_public_status_contract(
             exposure_x = 1.0
         in_market = True
         position_label_sk = "V trhu"
+    elif fresh_zero_position:
+        real_asset = "CASH"
+        exposure_x = 0.0
+        in_market = False
+        position_label_sk = "Mimo trhu"
     else:
         execution_points_to_cash = (
             is_runtime_cash_asset(target_asset)
@@ -3345,6 +3358,7 @@ def build_dashboard_public_status_contract(
         "balance_source_of_truth": account_summary.get("balance_source_of_truth"),
         "free_collateral_source": account_summary.get("free_collateral_source"),
         "withdrawable_source": account_summary.get("withdrawable_source"),
+        "performance": real_account_performance,
     }
     data_health = build_dashboard_public_data_health_contract(data_health_payload)
     live_market_state = build_dashboard_public_live_market_state_contract(
@@ -3510,6 +3524,7 @@ def build_runtime_public_status_contract(
     production_timeseries_last_row: dict[str, Any] | None = None,
     data_health_payload: dict[str, Any] | None = None,
     live_market_payload: dict[str, Any] | None = None,
+    real_account_performance: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     dashboard_public_status = build_dashboard_public_status_contract(
         account_summary=account_summary,
@@ -3521,6 +3536,7 @@ def build_runtime_public_status_contract(
         production_timeseries_last_row=production_timeseries_last_row,
         data_health_payload=data_health_payload,
         live_market_payload=live_market_payload,
+        real_account_performance=real_account_performance,
     )
     return build_runtime_public_status_views_from_dashboard_public_status(dashboard_public_status)
 
@@ -3950,6 +3966,7 @@ def build_runtime_snapshot(
 ) -> dict[str, Any]:
     status_payload = read_json_optional(EXECUTION_STATUS_PATH)
     account_snapshot_payload = read_json_optional(ACCOUNT_SNAPSHOT_PATH)
+    real_account_performance = read_json_optional(REAL_PERFORMANCE_LEDGER_PATH)
     runtime_health_payload = read_json_optional(RUNTIME_HEALTH_PATH)
     dry_run_payload = read_json_optional(DRY_RUN_DECISION_PATH)
     intent_payload = read_json_optional(EXECUTION_INTENT_PATH)
@@ -3985,6 +4002,7 @@ def build_runtime_snapshot(
         data_health_payload=data_health_payload,
         live_market_payload=live_market_payload,
         production_run_payload=production_run_payload,
+        real_account_performance=real_account_performance,
         generated_at_utc=app_runtime_generated_at_utc,
     )
     production_execution_state = {
@@ -4128,9 +4146,11 @@ def build_runtime_snapshot(
         "real_account_state": public_status_contract["real_account_state"],
         "model_signal_state": public_status_contract["model_signal_state"],
         "model_performance_state": public_status_contract["model_performance_state"],
+        "real_account_performance_state": real_account_performance,
         "data_health_state": public_status_contract["data_health_state"],
         "live_market_state": public_status_contract["live_market_state"],
         "account_snapshot_summary": account_summary,
+        "real_account_performance": real_account_performance,
         "dry_run_summary": {
             "signal_id": dry_run_payload.get("signal_id"),
             "strategy_model": dry_run_payload.get("strategy_model"),
@@ -4202,6 +4222,7 @@ def build_runtime_snapshot(
                 "strategy_artifact": source_metadata(main_paper_path, "canonical_app_paper"),
                 "trend_calculation": source_metadata(PHASE66G_LIVE_STATUS_PATH, "canonical_trend_live_status"),
                 "wallet_sync": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
+                "real_account_performance": source_metadata(REAL_PERFORMANCE_LEDGER_PATH, "real_account_performance_ledger"),
             },
             "runtime_table_snapshot": {
                 "source_type": "authoritative_runtime_table_snapshot",
@@ -4214,6 +4235,7 @@ def build_runtime_snapshot(
             },
             "execution_status": source_metadata(EXECUTION_STATUS_PATH, "execution_status"),
             "account_snapshot_summary": source_metadata(ACCOUNT_SNAPSHOT_PATH, "read_only_account_snapshot"),
+            "real_account_performance": source_metadata(REAL_PERFORMANCE_LEDGER_PATH, "real_account_performance_ledger"),
             "dry_run_summary": source_metadata(DRY_RUN_DECISION_PATH, "dry_run_decision"),
             "execution_intent_summary": source_metadata(EXECUTION_INTENT_PATH, "execution_intent"),
             "gate_summary": source_metadata(REAL_ORDER_GATE_PATH, "real_order_gate_decision"),
@@ -4237,6 +4259,7 @@ def materialize_dashboard_public_contract_artifacts(
         source_paths=[
             EXECUTION_STATUS_PATH,
             ACCOUNT_SNAPSHOT_PATH,
+            REAL_PERFORMANCE_LEDGER_PATH,
             DRY_RUN_DECISION_PATH,
             EXECUTION_INTENT_PATH,
             REAL_ORDER_GATE_PATH,
