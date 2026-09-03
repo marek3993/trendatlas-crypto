@@ -65,11 +65,12 @@ That wrapper must run exactly the fast dependency chain before publish-existing:
 7. `scripts/dev_only_build_btc_etf_flow_daily_panel.py`
 8. `scripts/verify_app_freshness.py`
 9. `scripts/execution/hyperliquid_read_only_snapshot.py`
-10. conditional rebalance-boundary dependency refresh only when the canonical durable BTC-persistence dependency source day would otherwise carry forward across `next_rebalance_date`:
+10. `scripts/execution/build_hyperliquid_real_performance_ledger.py` (read-only exchange-native account accounting; never places an order)
+11. conditional rebalance-boundary dependency refresh only when the canonical durable BTC-persistence dependency source day would otherwise carry forward across `next_rebalance_date`:
     - `scripts/execution/materialize_execution_app_exports.py --production-core-dependencies-only`
     - `scripts/production/build_current_strategy_snapshot.py`
-11. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
-12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
+12. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing --dry-run`
+13. `scripts/execution/run_pi_authoritative_producer.py --mode publish-existing` only when `MRV1_ENABLE_AUTHORITY_PUBLISH=1` and `MRV1_AUTHORITY_MODE=authoritative`
 
 The nightly wrapper must not invoke `--mode full-refresh`, the old full Phase63 grid, a live-order submitter, or any manual authority snapshot edit.
 

@@ -13,6 +13,7 @@ JSON_FILES = [
 
 REQUIRED_NORMALIZED_CONTRACTS = {
     "real_account_state",
+    "real_account_performance_state",
     "model_signal_state",
     "model_performance_state",
     "authority_state",
@@ -123,7 +124,7 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         )
         self.assertEqual(
             forbidden_shortcuts.get("real_account_pnl_must_not_be_inferred_from_fields"),
-            ["model_equity", "paper_equity"],
+            ["model_equity", "paper_equity", "rolling_return_30d", "rolling_return_90d"],
         )
         self.assertTrue(
             forbidden_shortcuts.get("model_exposure_must_not_be_shown_as_real_account_exposure")
@@ -146,6 +147,13 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         )
         self.assertEqual(real_account_state.get("json_path"), "app_runtime_snapshot.real_account_state")
         self.assertIn("would_place_real_order", real_account_state.get("minimum_fields", []))
+
+        real_account_performance_state = normalized_contracts["real_account_performance_state"]
+        self.assertEqual(
+            real_account_performance_state.get("json_path"),
+            "app_runtime_snapshot.real_account_performance",
+        )
+        self.assertIn("reconciliation_status", real_account_performance_state.get("minimum_fields", []))
 
         model_signal_state = normalized_contracts["model_signal_state"]
         self.assertEqual(model_signal_state.get("json_path"), "app_runtime_snapshot.model_signal_state")
@@ -181,7 +189,7 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         )
         self.assertEqual(
             consumer_guardrails.get("real_account_pnl_must_not_be_inferred_from_fields"),
-            ["model_equity", "paper_equity"],
+            ["model_equity", "paper_equity", "rolling_return_30d", "rolling_return_90d"],
         )
         self.assertTrue(
             consumer_guardrails.get("model_exposure_must_not_be_shown_as_real_account_exposure")

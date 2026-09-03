@@ -181,15 +181,16 @@
     },
     {
       "output_path": "outputs/execution/read_only/",
-      "generated_by": [
-        "scripts/execution/hyperliquid_read_only_snapshot.py"
+        "generated_by": [
+          "scripts/execution/hyperliquid_read_only_snapshot.py",
+          "scripts/execution/build_hyperliquid_real_performance_ledger.py"
       ],
       "layer": "execution_data",
       "status": "active",
       "output_kind": "read_only_snapshot_outputs",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Hyperliquid read-only account snapshots and validation sidecars."
+        "notes": "Hyperliquid read-only account snapshots and canonical real-account performance ledger sidecars."
     },
     {
       "output_path": "outputs/execution/live_status/",
