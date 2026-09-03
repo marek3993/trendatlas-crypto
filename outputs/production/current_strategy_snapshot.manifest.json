@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
   "schema_version": 4,
-  "generated_at_utc": "2026-09-03T17:21:56Z",
+  "generated_at_utc": "2026-09-03T17:25:17Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
@@ -261,9 +261,9 @@
       },
       "export_contract": {
         "path": "source_of_truth/export_contract.json",
-        "sha256": "a499c2f3ee667fb59e69621dc97a0899e54c88a2127059007928eb5ad4e76287",
-        "size_bytes": 65748,
-        "modified_utc": "2026-09-03T17:19:29Z"
+        "sha256": "990f554d1aa34c62bae39333e0210a9279faca042a20fc9a48c3c5e30fc521c9",
+        "size_bytes": 65953,
+        "modified_utc": "2026-09-03T17:24:27Z"
       }
     },
     "cost_model": {

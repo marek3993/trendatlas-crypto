@@ -1,6 +1,6 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-09-03T17:22:07Z",
+  "generated_at_utc": "2026-09-03T17:25:29Z",
   "as_of_source": "2026-09-02",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
@@ -27,11 +27,11 @@
     "leverage_live_truth_allowed": false,
     "production_snapshot_validated": true,
     "same_run_authority_allowed": false,
-    "same_run_authority_run_id": "prod_20260903T172045Z_493859",
-    "same_run_authority_target_closed_day": "2026-09-02"
+    "same_run_authority_run_id": null,
+    "same_run_authority_target_closed_day": null
   },
   "source_fingerprints": {
-    "production_snapshot_sha256": "511a8942d36c810dfa33a468cfabce5dc754650607e86d1b39c64f003cc7d4da"
+    "production_snapshot_sha256": "5c0fa9e6db7f7ea38d4183c87763299636947bee5d3b733a145504aa7c654bac"
   },
   "source_paths": {
     "production_snapshot": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
@@ -51,8 +51,8 @@
     "aligned_closed_day": "2026-09-02",
     "authority_alignment_mode": "published_authority_snapshot",
     "same_run_authority_allowed": false,
-    "same_run_authority_run_id": "prod_20260903T172045Z_493859",
-    "same_run_authority_target_closed_day": "2026-09-02"
+    "same_run_authority_run_id": null,
+    "same_run_authority_target_closed_day": null
   },
   "source_samples": {
     "production_snapshot_execution_intent": {
