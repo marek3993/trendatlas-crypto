@@ -1,0 +1,12 @@
+:root { color: #eaf0f5; background: #08121c; font-family: Arial, Helvetica, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: linear-gradient(135deg, #08121c, #102332); }
+a { color: #9fd8ff; }
+main { width: min(100% - 32px, 680px); margin: 0 auto; padding: 64px 0; }
+.card { background: #10202d; border: 1px solid #244254; border-radius: 14px; padding: 28px; box-shadow: 0 20px 50px #0004; }
+h1 { margin-top: 0; font-size: 2rem; } h2 { margin-top: 28px; }
+form { display: grid; gap: 14px; } label { display: grid; gap: 7px; font-weight: 600; }
+input { min-height: 42px; border-radius: 8px; border: 1px solid #406275; background: #091720; color: inherit; padding: 10px; font: inherit; }
+button, .button { display: inline-flex; justify-content: center; align-items: center; min-height: 42px; border: 0; border-radius: 8px; padding: 10px 16px; color: #041018; background: #74d5c0; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+button[disabled] { opacity: .65; cursor: wait; } .muted { color: #b9c7d0; } .error { color: #ffb3b3; } .notice { color: #b8f3dd; }
+.row { display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; } .checkbox { display: flex; gap: 8px; align-items: center; font-weight: 400; }
