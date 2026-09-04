@@ -49,8 +49,14 @@ describe("Hyperliquid read-only onboarding", () => {
     expect(migration.match(/auth\.uid\(\)\) = user_id/g)?.length).toBeGreaterThanOrEqual(5);
   });
 
-  it("permits only the two required Info API request types", () => {
-    expect(infoClient).toContain('ALLOWED_INFO_REQUEST_TYPES = ["clearinghouseState", "openOrders"]');
+  it("permits only the documented read-only account and performance Info request types", () => {
+    expect(infoClient).toContain('"clearinghouseState"');
+    expect(infoClient).toContain('"openOrders"');
+    expect(infoClient).toContain('"portfolio"');
+    expect(infoClient).toContain('"userFillsByTime"');
+    expect(infoClient).toContain('"userFunding"');
+    expect(infoClient).toContain('"userNonFundingLedgerUpdates"');
+    expect(infoClient).not.toMatch(/"(exchange|order|cancel|transfer|withdraw|updateLeverage)"/i);
     expect(infoClient).toContain('method: "POST"');
     expect(infoClient).toContain("https://api.hyperliquid.xyz/info");
     expect(infoClient).toContain("withdrawableUsd");
@@ -92,7 +98,7 @@ describe("Hyperliquid read-only onboarding", () => {
   it("queries the dashboard with the logged-in user's account only", () => {
     expect(dashboard).toContain("const { supabase, user } = await requireUser()");
     expect(dashboard).toContain('.eq("user_id", user.id)');
-    expect(dashboard).toContain("getHyperliquidAccountSnapshot(account.master_address)");
+    expect(dashboard).toContain("getHyperliquidAccountPerformance(account.master_address)");
   });
 
   it("disconnects only the logged-in user's connection", () => {

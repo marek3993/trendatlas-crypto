@@ -5,7 +5,18 @@ import { validateHyperliquidAddress } from "@/lib/hyperliquid/address";
 const INFO_API_URL = "https://api.hyperliquid.xyz/info";
 const REQUEST_TIMEOUT_MS = 8_000;
 
-export const ALLOWED_INFO_REQUEST_TYPES = ["clearinghouseState", "openOrders"] as const;
+/**
+ * This is intentionally an Info-only allowlist. Every member is required for
+ * the read-only account view or cash-flow-adjusted performance calculation.
+ */
+export const ALLOWED_INFO_REQUEST_TYPES = [
+  "clearinghouseState",
+  "openOrders",
+  "portfolio",
+  "userFillsByTime",
+  "userFunding",
+  "userNonFundingLedgerUpdates"
+] as const;
 type AllowedInfoRequestType = (typeof ALLOWED_INFO_REQUEST_TYPES)[number];
 
 type ClearinghouseState = {
@@ -40,15 +51,20 @@ function numberOrNull(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
-async function requestInfo<T>(type: string, user: string): Promise<T> {
+type HistoryRequest = { startTime: number; endTime: number };
+
+async function requestInfo<T>(type: string, user: string, history?: HistoryRequest): Promise<T> {
   if (!isAllowedInfoRequestType(type)) throw new HyperliquidInfoError();
+  if (history && (!Number.isSafeInteger(history.startTime) || !Number.isSafeInteger(history.endTime) || history.startTime < 0 || history.endTime < history.startTime)) {
+    throw new HyperliquidInfoError();
+  }
 
   let response: Response;
   try {
     response = await fetch(INFO_API_URL, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ type, user }),
+      body: JSON.stringify({ type, user, ...(history ?? {}) }),
       cache: "no-store",
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
     });
@@ -65,9 +81,23 @@ async function requestInfo<T>(type: string, user: string): Promise<T> {
 }
 
 /** Exported for regression tests; unknown request types fail before any fetch. */
-export async function requestReadOnlyInfoForTest(type: string, user: string): Promise<unknown> {
-  return requestInfo<unknown>(type, user);
+export async function requestReadOnlyInfoForTest(type: string, user: string, history?: HistoryRequest): Promise<unknown> {
+  return requestInfo<unknown>(type, user, history);
 }
+
+export type HyperliquidPortfolioResponse = Array<[
+  string,
+  { accountValueHistory?: Array<[number, string | number]> }
+]>;
+
+export type HyperliquidFill = { time?: number; timestamp?: number; closedPnl?: string | number; fee?: string | number };
+export type HyperliquidFunding = { time?: number; timestamp?: number; usdc?: string | number; delta?: { usdc?: string | number } };
+export type HyperliquidNonFundingLedgerUpdate = {
+  time?: number;
+  timestamp?: number;
+  hash?: string;
+  delta?: { type?: string; usdc?: string | number; usdcValue?: string | number; amount?: string | number; destination?: string; user?: string };
+};
 
 export async function getHyperliquidAccountSnapshot(rawAddress: string): Promise<HyperliquidAccountSnapshot> {
   const validation = validateHyperliquidAddress(rawAddress);
@@ -96,4 +126,42 @@ export async function getHyperliquidAccountSnapshot(rawAddress: string): Promise
     positions,
     openOrderCount: openOrders.length
   };
+}
+
+/** Fetches only documented read-only history required by the performance ledger. */
+export async function getHyperliquidPerformanceInputs(rawAddress: string): Promise<{
+  snapshot: HyperliquidAccountSnapshot;
+  portfolio: HyperliquidPortfolioResponse;
+  fills: HyperliquidFill[];
+  funding: HyperliquidFunding[];
+  nonFundingLedgerUpdates: HyperliquidNonFundingLedgerUpdate[];
+  asOfMs: number;
+}> {
+  const validation = validateHyperliquidAddress(rawAddress);
+  if (!validation.ok) throw new HyperliquidInfoError();
+
+  const [snapshot, portfolio] = await Promise.all([
+    getHyperliquidAccountSnapshot(validation.address),
+    requestInfo<HyperliquidPortfolioResponse>("portfolio", validation.address)
+  ]);
+  if (!Array.isArray(portfolio)) throw new HyperliquidInfoError();
+
+  const allTime = portfolio.find(([period]) => period === "allTime")?.[1]?.accountValueHistory;
+  const timestamps = Array.isArray(allTime)
+    ? allTime.map(([timestamp]) => timestamp).filter((timestamp) => Number.isSafeInteger(timestamp) && timestamp >= 0)
+    : [];
+  const earliest = timestamps.length > 0 ? Math.min(...timestamps) : Number.NaN;
+  const asOfMs = Date.now();
+  if (!Number.isSafeInteger(earliest) || earliest > asOfMs) {
+    return { snapshot, portfolio, fills: [], funding: [], nonFundingLedgerUpdates: [], asOfMs };
+  }
+
+  const history = { startTime: earliest, endTime: asOfMs };
+  const [fills, funding, nonFundingLedgerUpdates] = await Promise.all([
+    requestInfo<HyperliquidFill[]>("userFillsByTime", validation.address, history),
+    requestInfo<HyperliquidFunding[]>("userFunding", validation.address, history),
+    requestInfo<HyperliquidNonFundingLedgerUpdate[]>("userNonFundingLedgerUpdates", validation.address, history)
+  ]);
+  if (!Array.isArray(fills) || !Array.isArray(funding) || !Array.isArray(nonFundingLedgerUpdates)) throw new HyperliquidInfoError();
+  return { snapshot, portfolio, fills, funding, nonFundingLedgerUpdates, asOfMs };
 }

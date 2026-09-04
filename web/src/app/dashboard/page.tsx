@@ -3,7 +3,9 @@ import { LogoutButton } from "@/components/logout-button";
 import { requireUser } from "@/lib/auth/require-user";
 import { disconnectHyperliquidAccount } from "@/app/onboarding/actions";
 import { displayHyperliquidAddress } from "@/lib/hyperliquid/address";
-import { getHyperliquidAccountSnapshot, type HyperliquidAccountSnapshot } from "@/lib/hyperliquid/info";
+import { type HyperliquidAccountSnapshot } from "@/lib/hyperliquid/info";
+import { getHyperliquidAccountPerformance, type HyperliquidAccountPerformance, type PerformanceWindow } from "@/lib/hyperliquid/performance";
+import { RefreshPerformanceButton } from "@/components/refresh-performance-button";
 
 type Profile = { display_name: string | null };
 type HyperliquidAccount = { master_address: string; connection_status: string };
@@ -13,9 +15,18 @@ function formatUsd(value: number | null): string {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
 }
 
+function formatPercent(value: number | null): string {
+  return value === null ? "Unavailable" : `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
+}
+
 function positionSummary(positions: HyperliquidAccountSnapshot["positions"]): string {
   if (positions.length === 0) return "None";
   return positions.map(({ coin, size }) => `${coin} ${size}`).join(", ");
+}
+
+function windowLabel(label: string, window: PerformanceWindow) {
+  if (!window.available) return <p>{label}: <span className="muted">Unavailable — more live history is needed.</span></p>;
+  return <p>{label}: {formatUsd(window.pnlUsd)} <span className="muted">Return: {formatPercent(window.returnPct)}</span></p>;
 }
 
 export default async function DashboardPage() {
@@ -27,12 +38,12 @@ export default async function DashboardPage() {
     .eq("user_id", user.id)
     .maybeSingle<HyperliquidAccount>();
   const name = data?.display_name?.trim() || "there";
-  let snapshot: HyperliquidAccountSnapshot | null = null;
+  let performance: HyperliquidAccountPerformance | null = null;
   if (account?.connection_status === "read_only_connected") {
     try {
-      snapshot = await getHyperliquidAccountSnapshot(account.master_address);
+      performance = await getHyperliquidAccountPerformance(account.master_address);
     } catch {
-      snapshot = null;
+      performance = null;
     }
   }
 
@@ -43,11 +54,25 @@ export default async function DashboardPage() {
     {account?.connection_status === "read_only_connected" ? <>
       <p className="notice">Connected</p>
       <p>Address: {displayHyperliquidAddress(account.master_address)}</p>
-      {snapshot ? <>
-        <p>Capital: {formatUsd(snapshot.accountEquityUsd)}</p>
-        <p>Withdrawable: {formatUsd(snapshot.withdrawableUsd)}</p>
-        <p>Positions: {positionSummary(snapshot.positions)}</p>
-        <p>Open orders: {snapshot.openOrderCount}</p>
+      {performance ? <>
+        <h2>Performance</h2>
+        <p>Capital: {formatUsd(performance.snapshot.accountEquityUsd)}</p>
+        <p>Total live PnL: {formatUsd(performance.totalLivePnlUsd)}</p>
+        {windowLabel("Today", performance.windows.today)}
+        {windowLabel("30 days", performance.windows["30d"])}
+        {windowLabel("90 days", performance.windows["90d"])}
+        <h3>Breakdown</h3>
+        <p>Trading PnL: {formatUsd(performance.breakdown?.tradingPnlUsd ?? null)}</p>
+        <p>Fees: {formatUsd(performance.breakdown?.feesUsd ?? null)}</p>
+        <p>Funding: {formatUsd(performance.breakdown?.fundingUsd ?? null)}</p>
+        <p>Deposits: {formatUsd(performance.breakdown?.depositsUsd ?? null)}</p>
+        <p>Withdrawals: {formatUsd(performance.breakdown?.withdrawalsUsd ?? null)}</p>
+        <p>Cash-flow-adjusted return: {formatPercent(performance.cashFlowAdjustedReturnPct)}</p>
+        <p className="muted">Live history begins {performance.liveGenesisDay ?? "when sufficient exchange history is available"} · {performance.historyDays} days</p>
+        <p>Withdrawable: {formatUsd(performance.snapshot.withdrawableUsd)}</p>
+        <p>Positions: {positionSummary(performance.snapshot.positions)}</p>
+        <p>Open orders: {performance.snapshot.openOrderCount}</p>
+        <RefreshPerformanceButton />
       </> : <p className="muted">Account data is temporarily unavailable.</p>}
       <form action={disconnectHyperliquidAccount}><button type="submit">Disconnect</button></form>
     </> : <>
