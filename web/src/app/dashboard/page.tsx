@@ -6,9 +6,11 @@ import { displayHyperliquidAddress } from "@/lib/hyperliquid/address";
 import { type HyperliquidAccountSnapshot } from "@/lib/hyperliquid/info";
 import { getHyperliquidAccountPerformance, type HyperliquidAccountPerformance, type PerformanceWindow } from "@/lib/hyperliquid/performance";
 import { RefreshPerformanceButton } from "@/components/refresh-performance-button";
+import { AgentAuthorizationPanel } from "@/components/agent-authorization-panel";
 
 type Profile = { display_name: string | null };
-type HyperliquidAccount = { master_address: string; connection_status: string };
+type HyperliquidAccount = { id: string; master_address: string; connection_status: string };
+type AgentAuthorization = { authorization_status: string; auto_trading_requested: boolean; execution_status: string };
 
 function formatUsd(value: number | null): string {
   if (value === null) return "Unavailable";
@@ -34,10 +36,17 @@ export default async function DashboardPage() {
   const { data } = await supabase.from("profiles").select("display_name").eq("id", user.id).maybeSingle<Profile>();
   const { data: account } = await supabase
     .from("hyperliquid_accounts")
-    .select("master_address, connection_status")
+    .select("id, master_address, connection_status")
     .eq("user_id", user.id)
     .maybeSingle<HyperliquidAccount>();
   const name = data?.display_name?.trim() || "there";
+  const { data: authorization } = account ? await supabase
+    .from("hyperliquid_agent_authorizations")
+    .select("authorization_status, auto_trading_requested, execution_status")
+    .eq("user_id", user.id)
+    .eq("hyperliquid_account_id", account.id)
+    .eq("authorization_status", "authorized")
+    .maybeSingle<AgentAuthorization>() : { data: null };
   let performance: HyperliquidAccountPerformance | null = null;
   if (account?.connection_status === "read_only_connected") {
     try {
@@ -52,8 +61,13 @@ export default async function DashboardPage() {
     <h1>Welcome, {name}</h1>
     <h2>Hyperliquid</h2>
     {account?.connection_status === "read_only_connected" ? <>
-      <p className="notice">Connected</p>
+      <p className="notice">Read-only connected</p>
       <p>Address: {displayHyperliquidAddress(account.master_address)}</p>
+      <AgentAuthorizationPanel authorization={authorization ? {
+        authorizationStatus: authorization.authorization_status,
+        autoTradingRequested: authorization.auto_trading_requested,
+        executionStatus: authorization.execution_status
+      } : null} />
       {performance ? <>
         <h2>Performance</h2>
         <p>Capital: {formatUsd(performance.snapshot.accountEquityUsd)}</p>

@@ -15,7 +15,8 @@ export const ALLOWED_INFO_REQUEST_TYPES = [
   "portfolio",
   "userFillsByTime",
   "userFunding",
-  "userNonFundingLedgerUpdates"
+  "userNonFundingLedgerUpdates",
+  "userRole"
 ] as const;
 type AllowedInfoRequestType = (typeof ALLOWED_INFO_REQUEST_TYPES)[number];
 
@@ -40,6 +41,8 @@ export class HyperliquidInfoError extends Error {
     super("Hyperliquid account data is unavailable.");
   }
 }
+
+export type HyperliquidUserRole = "missing" | "user" | "agent" | "vault" | "subAccount";
 
 function isAllowedInfoRequestType(value: string): value is AllowedInfoRequestType {
   return (ALLOWED_INFO_REQUEST_TYPES as readonly string[]).includes(value);
@@ -83,6 +86,19 @@ async function requestInfo<T>(type: string, user: string, history?: HistoryReque
 /** Exported for regression tests; unknown request types fail before any fetch. */
 export async function requestReadOnlyInfoForTest(type: string, user: string, history?: HistoryRequest): Promise<unknown> {
   return requestInfo<unknown>(type, user, history);
+}
+
+/** Reads only the exchange role binding; it never authorizes or changes account state. */
+export async function getHyperliquidUserRole(rawAddress: string): Promise<{ role: HyperliquidUserRole; user: string | null }> {
+  const validation = validateHyperliquidAddress(rawAddress);
+  if (!validation.ok) throw new HyperliquidInfoError();
+  const result = await requestInfo<{ role?: unknown; data?: { user?: unknown } }>("userRole", validation.address);
+  const role = result?.role;
+  if (role !== "missing" && role !== "user" && role !== "agent" && role !== "vault" && role !== "subAccount") {
+    throw new HyperliquidInfoError();
+  }
+  const user = typeof result.data?.user === "string" ? validateHyperliquidAddress(result.data.user) : null;
+  return { role, user: user?.ok ? user.address : null };
 }
 
 export type HyperliquidPortfolioResponse = Array<[

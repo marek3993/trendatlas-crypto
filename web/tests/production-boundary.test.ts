@@ -22,22 +22,50 @@ function gitDiffNames(paths: string[]): string[] {
   return output.split(/\r?\n/).filter(Boolean);
 }
 
+const webSourceDirectory = path.join(process.cwd(), "src");
+const sourceFiles = filesUnder(webSourceDirectory);
+const sourceText = (file: string) => fs.readFileSync(file, "utf8");
+const allWebSource = sourceFiles.map(sourceText).join("\n");
+const clientModules = sourceFiles.filter((file) => /^\s*["']use client["']/.test(sourceText(file)));
+const clientSource = clientModules.map(sourceText).join("\n");
+const agentAuthorizationModule = source("lib/hyperliquid/agent-authorization.ts");
+const adminModule = source("lib/supabase/admin.ts");
+
+function source(relativePath: string): string {
+  return fs.readFileSync(path.join(webSourceDirectory, relativePath), "utf8");
+}
+
 describe("production isolation boundary", () => {
   it("keeps production execution code unreachable from the web source", () => {
-    const appSource = filesUnder(path.join(process.cwd(), "src"))
-      .map((file) => fs.readFileSync(file, "utf8"))
-      .join("\n");
-    expect(appSource).not.toMatch(/scripts\/execution|run_trendatlas_production|live[_-]?order|submit[_-]?order/i);
-    expect(appSource).not.toMatch(/private[_-]?key|service[_-]?role/i);
+    expect(allWebSource).not.toMatch(/scripts\/execution|run_trendatlas_production|live[_-]?order|submit[_-]?order/i);
+  });
+
+  it("keeps browser modules free of wallet-secret inputs and secret identifiers", () => {
+    expect(clientSource).not.toMatch(/name\s*=\s*["'][^"']*(private|seed|mnemonic|secret)[^"']*["']/i);
+    expect(clientSource).not.toMatch(/(?:privateKey|private_key|encryptedPrivateKey|encrypted_private_key|service[_-]?role|SUPABASE_ADMIN_KEY|TRENDATLAS_AGENT_KEK_B64)/);
+    expect(clientSource).not.toMatch(/(?:formData|FormData)\.get\([^)]*(private|seed|mnemonic|secret)/i);
+  });
+
+  it("keeps agent key handling server-only and excludes its secret helper from client modules", () => {
+    expect(agentAuthorizationModule).toMatch(/^import "server-only";/);
+    expect(adminModule).toMatch(/^import "server-only";/);
+    clientModules.forEach((file) => {
+      const contents = sourceText(file);
+      expect(contents).not.toMatch(/from\s+["'][^"']*agent-authorization[^"']*["']/);
+      expect(contents).not.toMatch(/from\s+["'][^"']*supabase\/admin[^"']*["']/);
+    });
+  });
+
+  it("never accepts a master-wallet secret and never publishes an admin credential", () => {
+    expect(allWebSource).not.toMatch(/(?:master|wallet|user)[A-Za-z_]*\s*(?:privateKey|private_key|seedPhrase|seed_phrase|mnemonic)/i);
+    expect(allWebSource).not.toMatch(/process\.env\.NEXT_PUBLIC_[A-Z0-9_]*(?:ADMIN|SERVICE|SECRET|KEK|PRIVATE)/);
+    expect(source("../.env.example")).not.toMatch(/^NEXT_PUBLIC_[A-Z0-9_]*(?:ADMIN|SERVICE|SECRET|KEK|PRIVATE)/m);
   });
 
   it("does not copy a protected account address from production code", () => {
     const protectedSource = fs.readFileSync(path.join(repositoryRoot, protectedFiles[0]), "utf8");
     const addresses = protectedSource.match(/0x[a-fA-F0-9]{40}/g) ?? [];
-    const appSource = filesUnder(path.join(process.cwd(), "src"))
-      .map((file) => fs.readFileSync(file, "utf8"))
-      .join("\n");
-    addresses.forEach((address) => expect(appSource).not.toContain(address));
+    addresses.forEach((address) => expect(allWebSource).not.toContain(address));
   });
 
   it("leaves protected production files unchanged", () => {
