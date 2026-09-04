@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth/require-user";
 import { getHyperliquidAccountPerformance } from "@/lib/hyperliquid/performance";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export type RefreshPerformanceState = { message: string };
 
@@ -33,8 +34,9 @@ export async function refreshMyAccountPerformance(_previousState: RefreshPerform
       deposits_usd: breakdown?.depositsUsd ?? null,
       withdrawals_usd: breakdown?.withdrawalsUsd ?? null
     };
+    const admin = createAdminClient();
     const [{ error: currentError }, { error: historyError }] = await Promise.all([
-      supabase.from("hyperliquid_account_performance").upsert({
+      admin.from("hyperliquid_account_performance").upsert({
         ...common,
         live_genesis_at: performance.liveGenesisAtMs === null ? null : new Date(performance.liveGenesisAtMs).toISOString(),
         history_days: performance.historyDays,
@@ -42,7 +44,7 @@ export async function refreshMyAccountPerformance(_previousState: RefreshPerform
         cash_flow_adjusted_return_available: performance.cashFlowAdjustedReturnAvailable,
         cash_flow_adjusted_return_reason: performance.cashFlowAdjustedReturnReason
       }, { onConflict: "hyperliquid_account_id" }),
-      supabase.from("hyperliquid_account_performance_history").upsert({
+      admin.from("hyperliquid_account_performance_history").upsert({
         ...common,
         performance_day: new Date(performance.asOfMs).toISOString().slice(0, 10)
       }, { onConflict: "hyperliquid_account_id,performance_day" })
