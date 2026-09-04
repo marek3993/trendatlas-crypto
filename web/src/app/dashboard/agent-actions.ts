@@ -252,7 +252,10 @@ export async function setAutoTradingRequested(requested: boolean): Promise<Agent
   if (!account) return failure("Connect a read-only Hyperliquid account first.");
   const { data: updated, error } = await createAdminClient()
     .from("hyperliquid_agent_authorizations")
-    .update({ auto_trading_requested: requested })
+    .update({
+      auto_trading_requested: requested,
+      execution_status: requested ? "ready" : "disabled_by_user"
+    })
     .eq("user_id", user.id)
     .eq("hyperliquid_account_id", account.id)
     .eq("authorization_status", "authorized")

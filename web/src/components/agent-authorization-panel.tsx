@@ -17,6 +17,7 @@ type AuthorizationState = {
   authorizationStatus: string;
   autoTradingRequested: boolean;
   executionStatus: string;
+  liveExecutorEnabled: boolean;
 } | null;
 
 type BrowserChallenge = {
@@ -96,8 +97,8 @@ export function AgentAuthorizationPanel({ authorization }: { authorization: Auth
       <h2>TrendAtlas</h2>
       <p>Ownership <span className="notice">Verified</span></p>
       <p>TrendAtlas agent <span className="notice">Authorized</span></p>
-      <p>Auto trading <strong>{authorization.autoTradingRequested ? "ON" : "OFF"}</strong></p>
-      <p>Execution <span className="muted">{authorization.executionStatus === "pending_multi_account_executor" ? "Waiting for multi-account executor" : "Unavailable"}</span></p>
+      <p>Auto trading preference <strong>{authorization.autoTradingRequested ? "ON" : "OFF"}</strong></p>
+      <p>Executor <span className="muted">{authorization.liveExecutorEnabled ? "Ready" : "Live executor: not enabled yet"}</span></p>
       <button type="button" disabled={pending} onClick={changePreference}>
         Turn auto trading {authorization.autoTradingRequested ? "off" : "on"}
       </button>

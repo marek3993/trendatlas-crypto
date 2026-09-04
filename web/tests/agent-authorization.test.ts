@@ -187,9 +187,9 @@ describe("Stage 4 agent authorization boundary", () => {
     expect(actions).toContain("auto_trading_requested: true");
   });
 
-  it("retains the non-live execution status", () => {
+  it("keeps Stage 4 authorization non-live while the new executor remains globally disabled", () => {
     expect(migration).toContain("pending_multi_account_executor");
-    expect(panel).toContain("Waiting for multi-account executor");
+    expect(panel).toContain("Live executor: not enabled yet");
   });
 
   it("changes the local preference without invoking Hyperliquid", () => {

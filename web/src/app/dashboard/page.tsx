@@ -7,6 +7,7 @@ import { type HyperliquidAccountSnapshot } from "@/lib/hyperliquid/info";
 import { getHyperliquidAccountPerformance, type HyperliquidAccountPerformance, type PerformanceWindow } from "@/lib/hyperliquid/performance";
 import { RefreshPerformanceButton } from "@/components/refresh-performance-button";
 import { AgentAuthorizationPanel } from "@/components/agent-authorization-panel";
+import { executionMode } from "@/server/multi-account-executor/mode";
 
 type Profile = { display_name: string | null };
 type HyperliquidAccount = { id: string; master_address: string; connection_status: string };
@@ -66,7 +67,8 @@ export default async function DashboardPage() {
       <AgentAuthorizationPanel authorization={authorization ? {
         authorizationStatus: authorization.authorization_status,
         autoTradingRequested: authorization.auto_trading_requested,
-        executionStatus: authorization.execution_status
+        executionStatus: authorization.execution_status,
+        liveExecutorEnabled: executionMode() === "live"
       } : null} />
       {performance ? <>
         <h2>Performance</h2>
