@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-09-03T17:25:32Z",
-  "closed_day": "2026-09-02",
+  "generated_at_utc": "2026-09-04T00:11:47Z",
+  "closed_day": "2026-09-03",
   "real_account": {
     "asset": "CASH",
     "position_label_sk": "Mimo trhu",
@@ -22,7 +22,7 @@
     "target_size_pct": 0.0,
     "gate_status": "no_action",
     "would_place_real_order": false,
-    "live_order_sent": true
+    "live_order_sent": false
   },
   "model_signal": {
     "preferred_asset": "ETH",
@@ -32,26 +32,26 @@
   },
   "model_performance": {
     "account_24h_pct": 0.0,
-    "btc_24h_pct": -0.1278,
-    "account_vs_btc_24h_pct": 0.1278,
-    "public_average_annual_growth_pct": 178.18,
-    "since_etf_start_cagr_pct": 195.74,
-    "since2025_cagr_pct": 179.26
+    "btc_24h_pct": 5.0819,
+    "account_vs_btc_24h_pct": -5.0819,
+    "public_average_annual_growth_pct": 178.09,
+    "since_etf_start_cagr_pct": 195.5,
+    "since2025_cagr_pct": 178.79
   },
   "data_health": {
-    "reference_closed_day": "2026-09-02",
+    "reference_closed_day": "2026-09-03",
     "overall_status": "warning",
     "block_app": false,
     "block_execution": false
   },
   "live_market_state": {
-    "btc_24h_pct": -0.1278,
+    "btc_24h_pct": 5.0819,
     "btc_24h_pct_source": "published_snapshot",
     "btc_24h_pct_expected_live_source": "live_ticker",
     "btc_24h_pct_snapshot_is_not_live": true,
-    "published_snapshot_btc_24h_pct": -0.1278,
+    "published_snapshot_btc_24h_pct": 5.0819,
     "account_24h_pct": 0.0,
-    "account_vs_btc_24h_pct": 0.1278
+    "account_vs_btc_24h_pct": -5.0819
   },
   "public_labels_sk": {
     "account_24h": "Účet 24h",
@@ -60,40 +60,36 @@
     "model_signal": "Modelový signál"
   },
   "production_execution": {
-    "run_id": "prod_20260903T172045Z_493859",
+    "run_id": "prod_20260904T001018Z_731529",
     "final_status": "SUCCESS",
     "model_target": {
       "asset": "CASH",
       "exposure": 0.0,
-      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH"
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-03::target_CASH::candidate_ETH"
     },
     "real_account": {
       "before": {
-        "asset": "BTC",
-        "notional_usd": 20.26
+        "asset": "CASH",
+        "notional_usd": 0.0
       },
       "after": [],
-      "equity_before": 83.195828,
+      "equity_before": 83.186462,
       "equity_after": 83.186462,
       "exposure_after": 0.0
     },
     "execution_plan": {
-      "action": "EXIT",
+      "action": "NO_ACTION",
       "target_notional": 0.0,
-      "planned_delta": -20.26
+      "planned_delta": -0.0
     },
     "last_order": {
-      "requested": true,
-      "order_id": [
-        535241989779
-      ],
-      "cloid": [
-        "0xefb79c6e0cb5e7059ef1ee5bf30f16c9"
-      ],
-      "result": "FILLED_AND_ALIGNED"
+      "requested": false,
+      "order_id": null,
+      "cloid": [],
+      "result": "NO_ACTION"
     },
     "post_trade_verified_state": {
-      "status": "FILLED_AND_ALIGNED",
+      "status": "NO_ACTION",
       "residual_delta": -0.0
     },
     "source_path": "outputs/execution/production_runs/latest_production_run.json"

@@ -1,12 +1,12 @@
 {
   "artifact_type": "current_strategy_diagnostics",
   "schema_version": 4,
-  "generated_at_utc": "2026-09-03T17:25:17Z",
+  "generated_at_utc": "2026-09-04T00:11:33Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "closed_day": "2026-09-02",
+  "closed_day": "2026-09-03",
   "latest_state_explanation": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
-  "current_flatline_explanation": "Authorized capital should stay flat during the current CASH streak of 1 days because no market exposure is currently authorized.",
+  "current_flatline_explanation": "Authorized capital should stay flat during the current CASH streak of 2 days because no market exposure is currently authorized.",
   "current_cash_or_risk_reason": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
   "recent_regime_changes": [
     {
@@ -94,21 +94,21 @@
   },
   "current_data_health_summary": {
     "status": "passed",
-    "closed_day": "2026-09-02",
-    "softer_fallback_closed_day": "2026-09-02",
+    "closed_day": "2026-09-03",
+    "softer_fallback_closed_day": "2026-09-03",
     "full_history_start_date": "2018-05-05",
     "etf_flow_evidence_window_start": "2024-01-12",
-    "etf_flow_evidence_window_end": "2026-09-02",
-    "trend_status_day": "2026-09-02",
-    "trend_history_last_day": "2026-09-02",
-    "freshness_closed_day": "2026-09-02",
-    "benchmark_last_day": "2026-09-02",
-    "benchmark_raw_last_day": "2026-09-02",
+    "etf_flow_evidence_window_end": "2026-09-03",
+    "trend_status_day": "2026-09-03",
+    "trend_history_last_day": "2026-09-03",
+    "freshness_closed_day": "2026-09-03",
+    "benchmark_last_day": "2026-09-03",
+    "benchmark_raw_last_day": "2026-09-03",
     "benchmark_source_mode": "raw_btc_ohlcv",
     "etf_panel_latest_source_session_day": "2026-09-03",
     "etf_panel_latest_causal_available_day": "2026-09-04",
-    "etf_panel_active_source_session_day": "2026-09-01",
-    "etf_panel_active_source_causal_available_day": "2026-09-02",
+    "etf_panel_active_source_session_day": "2026-09-02",
+    "etf_panel_active_source_causal_available_day": "2026-09-03",
     "etf_panel_evaluation_mode": "same_day_causal_evaluation",
     "etf_panel_carry_forward_reason": "no_carry_forward_needed",
     "etf_panel_carry_forward_days_applied": 0,
@@ -215,15 +215,15 @@
           "cooldown_days": 15,
           "period": "full_etf_overlap",
           "period_start": "2018-05-05",
-          "period_end": "2026-09-02",
+          "period_end": "2026-09-03",
           "baseline_not_cash": 589,
           "etf_flow_not_ready": 2380,
           "flow_2_of_3_not_positive": 2643,
-          "flow_3d_sum_below_floor": 2833,
+          "flow_3d_sum_below_floor": 2834,
           "btc_price_filter_failed": 1453,
           "hard_invalidation_on": 204,
           "permission_on_but_baseline_already_full_risk": 75,
-          "cooldown_active_days": 180,
+          "cooldown_active_days": 181,
           "cooldown_blocked_entry_days": 31
         },
         {
@@ -232,23 +232,23 @@
           "cooldown_days": 15,
           "period": "since2025",
           "period_start": "2025-01-01",
-          "period_end": "2026-09-02",
+          "period_end": "2026-09-03",
           "baseline_not_cash": 94,
           "etf_flow_not_ready": 191,
           "flow_2_of_3_not_positive": 382,
-          "flow_3d_sum_below_floor": 493,
+          "flow_3d_sum_below_floor": 494,
           "btc_price_filter_failed": 309,
           "hard_invalidation_on": 58,
           "permission_on_but_baseline_already_full_risk": 35,
-          "cooldown_active_days": 113,
+          "cooldown_active_days": 114,
           "cooldown_blocked_entry_days": 25
         }
       ]
     },
     "cash_drag": {
       "status": "elevated",
-      "cash_days_pct": 77.226421,
-      "current_cash_streak_days": 1
+      "cash_days_pct": 77.233903,
+      "current_cash_streak_days": 2
     },
     "current_research_questions": [
       "Does the ETF-flow cooldown still improve net performance once BTC persistence is the softer fallback?",
@@ -290,8 +290,8 @@
       {
         "code": "cash_drag_elevated",
         "severity": "medium",
-        "text": "Cash participation remains elevated at 77.2264% of history.",
-        "metric_value": 77.226421,
+        "text": "Cash participation remains elevated at 77.2339% of history.",
+        "metric_value": 77.233903,
         "metric_unit": "pct"
       },
       {
@@ -314,8 +314,8 @@
     {
       "code": "cash_drag_elevated",
       "severity": "medium",
-      "text": "Cash participation remains elevated at 77.2264% of history.",
-      "metric_value": 77.226421,
+      "text": "Cash participation remains elevated at 77.2339% of history.",
+      "metric_value": 77.233903,
       "metric_unit": "pct"
     },
     {

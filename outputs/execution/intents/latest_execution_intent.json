@@ -1,14 +1,14 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-09-03T17:25:29Z",
-  "as_of_source": "2026-09-02",
+  "generated_at_utc": "2026-09-04T00:11:44Z",
+  "as_of_source": "2026-09-03",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
   "kill_switch_required": true,
   "strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "reference_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-03::target_CASH::candidate_ETH",
   "target_asset": "CASH",
   "target_side": "hold_cash_no_market_entry",
   "target_regime": "CASH",
@@ -27,11 +27,11 @@
     "leverage_live_truth_allowed": false,
     "production_snapshot_validated": true,
     "same_run_authority_allowed": false,
-    "same_run_authority_run_id": null,
-    "same_run_authority_target_closed_day": null
+    "same_run_authority_run_id": "prod_20260904T001018Z_731529",
+    "same_run_authority_target_closed_day": "2026-09-03"
   },
   "source_fingerprints": {
-    "production_snapshot_sha256": "5c0fa9e6db7f7ea38d4183c87763299636947bee5d3b733a145504aa7c654bac"
+    "production_snapshot_sha256": "d98f8de106fb40dbad9bb2366268e68bb8e508e472e7e6d884f13f87993a4de4"
   },
   "source_paths": {
     "production_snapshot": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
@@ -42,23 +42,23 @@
   "authority_day_context": {
     "attempt_status": "success",
     "attempt_currentness_status": "current",
-    "attempt_target_closed_day": "2026-09-02",
-    "attempt_latest_available_closed_day": "2026-09-02",
+    "attempt_target_closed_day": "2026-09-03",
+    "attempt_latest_available_closed_day": "2026-09-03",
     "success_currentness_status": "current",
-    "success_target_closed_day": "2026-09-02",
-    "success_latest_available_closed_day": "2026-09-02",
+    "success_target_closed_day": "2026-09-03",
+    "success_latest_available_closed_day": "2026-09-03",
     "success_attempt_status": "success",
-    "aligned_closed_day": "2026-09-02",
+    "aligned_closed_day": "2026-09-03",
     "authority_alignment_mode": "published_authority_snapshot",
     "same_run_authority_allowed": false,
-    "same_run_authority_run_id": null,
-    "same_run_authority_target_closed_day": null
+    "same_run_authority_run_id": "prod_20260904T001018Z_731529",
+    "same_run_authority_target_closed_day": "2026-09-03"
   },
   "source_samples": {
     "production_snapshot_execution_intent": {
       "target_asset": "CASH",
       "target_exposure": 0.0,
-      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-03::target_CASH::candidate_ETH",
       "stale_signal": false,
       "allow_live_order_candidate": false
     },

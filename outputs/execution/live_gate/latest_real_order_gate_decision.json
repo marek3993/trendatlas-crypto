@@ -1,7 +1,7 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-09-03T17:25:29Z",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
+  "generated_at_utc": "2026-09-04T00:11:44Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-03::target_CASH::candidate_ETH",
   "target_asset": "CASH",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
@@ -62,11 +62,11 @@
   },
   "production_signal_context": {
     "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "closed_day": "2026-09-02",
+    "closed_day": "2026-09-03",
     "validation_status": "passed",
     "candidate_asset": "ETH",
     "current_asset": "CASH",
-    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-02::target_CASH::candidate_ETH",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-03::target_CASH::candidate_ETH",
     "target_asset": "CASH",
     "target_exposure": 0.0,
     "effective_market_exposure": 0.0,
@@ -75,9 +75,9 @@
     "allow_live_order_candidate": false
   },
   "source_fingerprints": {
-    "intent_sha256": "f430da8c8036adc7c9a4cc4e40a9e66e3d4746525d71dea937c43fa0c6617634",
-    "account_snapshot_sha256": "4be2db165c2765f10ca6a74bca87b58622ce3255e095a4c4ed0062305ca9d4bc",
-    "production_snapshot_sha256": "5c0fa9e6db7f7ea38d4183c87763299636947bee5d3b733a145504aa7c654bac"
+    "intent_sha256": "88217691bc895e8aedeec5e4fdbad4532ccfe1186084d514e6c470e6cb2a5220",
+    "account_snapshot_sha256": "10626ad516b64943d645716020ba7aa27866c4d7f8f7b2755c64cdc822ced8a6",
+    "production_snapshot_sha256": "d98f8de106fb40dbad9bb2366268e68bb8e508e472e7e6d884f13f87993a4de4"
   },
   "notes": [
     "This is a gate-preparation artifact only.",

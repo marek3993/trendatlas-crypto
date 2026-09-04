@@ -1,6 +1,6 @@
 {
   "snapshot_type": "hyperliquid_read_only_account_snapshot",
-  "as_of_utc": "2026-09-03T17:21:35Z",
+  "as_of_utc": "2026-09-04T00:11:13Z",
   "execution_mode": "live",
   "trading_enabled": true,
   "kill_switch": false,
@@ -26,7 +26,7 @@
       "crossMaintenanceMarginUsed": "0.0",
       "withdrawable": "0.0",
       "assetPositions": [],
-      "time": 1788456093627
+      "time": 1788480671747
     },
     "spotClearinghouseState": {
       "balances": [
