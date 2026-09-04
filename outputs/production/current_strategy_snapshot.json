@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot",
   "schema_version": 4,
-  "generated_at_utc": "2026-09-04T00:11:33Z",
+  "generated_at_utc": "2026-09-04T12:33:11Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "closed_day": "2026-09-03",
@@ -305,15 +305,15 @@
       },
       "project_truth": {
         "path": "source_of_truth/project_truth.json",
-        "sha256": "b5d4367ed20bcbc1324b950a031f946386557f4cd82f4555f0c771934ec525ef",
-        "size_bytes": 49913,
-        "modified_utc": "2026-09-03T17:19:29Z"
+        "sha256": "0f68b626edecc4915f86f301a7636bf85e26ceae94ff5d08a715189a0f9dcd0c",
+        "size_bytes": 51678,
+        "modified_utc": "2026-09-04T12:29:10Z"
       },
       "export_contract": {
         "path": "source_of_truth/export_contract.json",
-        "sha256": "990f554d1aa34c62bae39333e0210a9279faca042a20fc9a48c3c5e30fc521c9",
-        "size_bytes": 65953,
-        "modified_utc": "2026-09-03T17:24:27Z"
+        "sha256": "797f3550870e6e0ba09eb6c64087059cc33a54030cfeadd24c96e8017615a8dc",
+        "size_bytes": 68132,
+        "modified_utc": "2026-09-04T12:29:10Z"
       }
     },
     "cost_model": {
@@ -417,7 +417,7 @@
       "source_of_truth/export_contract.json"
     ],
     "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
-    "git_commit": "e3e5d4bae6bf703d95b7cccf21f53ca3f8d6bf97",
+    "git_commit": "fdbc903faf796ba472d4e3853c3b7016bc72bea8",
     "wait_condition": {
       "code": "candidate_entry_not_authorized",
       "text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",

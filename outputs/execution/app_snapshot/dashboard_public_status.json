@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-09-04T00:11:47Z",
+  "generated_at_utc": "2026-09-04T12:33:25Z",
   "closed_day": "2026-09-03",
   "real_account": {
     "asset": "CASH",
@@ -15,7 +15,1223 @@
     "position_notional_usd": 0.0,
     "balance_source_of_truth": "spot_stable_balance",
     "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
-    "withdrawable_source": "unavailable_individual_perp_state_not_meaningful"
+    "withdrawable_source": "unavailable_individual_perp_state_not_meaningful",
+    "performance": {
+      "ledger_type": "hyperliquid_real_account_performance_ledger",
+      "version": 1,
+      "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+      "generated_at_utc": "2026-09-04T12:29:14Z",
+      "source_complete": true,
+      "missing_sources": [],
+      "reconciliation_status": "ok",
+      "events": [
+        {
+          "event_id": "fill:761694821841565",
+          "event_type": "fill",
+          "timestamp_utc": "2026-09-02T11:30:30Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": -0.008605,
+          "funding_usd": 0.0,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFillsByTime.closedPnl/fee",
+          "raw": {
+            "coin": "BTC",
+            "px": "76495.0",
+            "sz": "0.00025",
+            "side": "B",
+            "time": 1788348630725,
+            "startPosition": "0.0",
+            "dir": "Open Long",
+            "closedPnl": "0.0",
+            "hash": "0xdc1cdf24f444ac18dd96044384e3a002039c000a8f47caea7fe58a77b3488603",
+            "oid": 533921077867,
+            "crossed": true,
+            "fee": "0.008605",
+            "tid": 761694821841565,
+            "cloid": "0x33589f27c95af6fdb47eb1a2704ae7a1",
+            "feeToken": "USDC",
+            "twapId": null
+          }
+        },
+        {
+          "event_id": "funding:1788350400021:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T12:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.00024,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788350400021,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.00024",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788354000073:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T13:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000239,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788354000073,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000239",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788357600004:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T14:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788357600004,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788361200060:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T15:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.00024,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788361200060,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.00024",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "nonfunding:0x756f9a82807d9e9876e90443881d0b0000aab2681b70bd6a193845d53f717883",
+          "event_type": "send",
+          "timestamp_utc": "2026-09-02T15:42:05Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": 0.0,
+          "deposits_usd": 42.6,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userNonFundingLedgerUpdates.delta",
+          "raw": {
+            "time": 1788363725417,
+            "hash": "0x756f9a82807d9e9876e90443881d0b0000aab2681b70bd6a193845d53f717883",
+            "delta": {
+              "type": "send",
+              "user": "0x6b9e773128f453f5c2c60935ee2de2cbc5390a24",
+              "destination": "0xae8d1a44f5c32ecb235519a06bb6691a4b33e856",
+              "sourceDex": "spot",
+              "destinationDex": "",
+              "token": "USDC",
+              "amount": "42.6",
+              "usdcValue": "42.6",
+              "fee": "0.0",
+              "nativeTokenFee": "0.0",
+              "nonce": 3094455,
+              "feeToken": ""
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788364800044:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T16:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788364800044,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788368400004:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T17:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788368400004,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788372000004:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T18:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788372000004,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788375600017:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T19:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788375600017,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788379200046:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T20:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788379200046,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788382800055:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T21:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788382800055,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788386400010:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T22:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788386400010,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788390000041:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-02T23:00:00Z",
+          "effective_day": "2026-09-02",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.00024,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788390000041,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.00024",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788393600075:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T00:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788393600075,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788397200052:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T01:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.00024,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788397200052,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.00024",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788400800011:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T02:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000241,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788400800011,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000241",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788404400026:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T03:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000243,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788404400026,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000243",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788408000025:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T04:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000242,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788408000025,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000242",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788411600015:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T05:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000243,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788411600015,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000243",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788415200016:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T06:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000243,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788415200016,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000243",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788418800040:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T07:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000243,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788418800040,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000243",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788422400025:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T08:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000242,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788422400025,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000242",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788426000011:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T09:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000243,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788426000011,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000243",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788429600005:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T10:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000242,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788429600005,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000242",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788433200031:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T11:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000242,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788433200031,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000242",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788436800063:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T12:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000243,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788436800063,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000243",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788440400007:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T13:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000245,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788440400007,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000245",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788444000032:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T14:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000246,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788444000032,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000246",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788447600014:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T15:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000251,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788447600014,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000251",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788451200021:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T16:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000254,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788451200021,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000254",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "funding:1788454800038:BTC",
+          "event_type": "funding",
+          "timestamp_utc": "2026-09-03T17:00:00Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 0.0,
+          "fees_usd": 0.0,
+          "funding_usd": -0.000252,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFunding.usdc",
+          "raw": {
+            "time": 1788454800038,
+            "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "delta": {
+              "type": "funding",
+              "coin": "BTC",
+              "usdc": "-0.000252",
+              "szi": "0.00025",
+              "fundingRate": "0.0000125",
+              "nSamples": null
+            }
+          }
+        },
+        {
+          "event_id": "fill:310675632260517",
+          "event_type": "fill",
+          "timestamp_utc": "2026-09-03T17:21:33Z",
+          "effective_day": "2026-09-03",
+          "realized_trading_pnl_usd": 1.136,
+          "fees_usd": -0.009116,
+          "funding_usd": 0.0,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "source": "Hyperliquid userFillsByTime.closedPnl/fee",
+          "raw": {
+            "coin": "BTC",
+            "px": "81039.0",
+            "sz": "0.00025",
+            "side": "A",
+            "time": 1788456093152,
+            "startPosition": "0.00025",
+            "dir": "Close Long",
+            "closedPnl": "1.136",
+            "hash": "0x0a46799bdfd0436e0bc004439bd4450201c400817ad36240ae0f24ee9ed41d58",
+            "oid": 535241989779,
+            "crossed": true,
+            "fee": "0.009116",
+            "tid": 310675632260517,
+            "cloid": "0xefb79c6e0cb5e7059ef1ee5bf30f16c9",
+            "feeToken": "USDC",
+            "twapId": null
+          }
+        }
+      ],
+      "equity_valuations": [
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T02:10:00Z",
+          "timestamp_utc": "2026-09-02T02:10:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 39.475466,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T04:30:00Z",
+          "timestamp_utc": "2026-09-02T04:30:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 39.475466,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T06:30:00Z",
+          "timestamp_utc": "2026-09-02T06:30:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 39.475466,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T08:50:00Z",
+          "timestamp_utc": "2026-09-02T08:50:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 39.475466,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T10:50:00Z",
+          "timestamp_utc": "2026-09-02T10:50:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 39.475466,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T13:10:00Z",
+          "timestamp_utc": "2026-09-02T13:10:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 39.532882,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T15:10:00Z",
+          "timestamp_utc": "2026-09-02T15:10:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 39.552151,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T15:42:05Z",
+          "timestamp_utc": "2026-09-02T15:42:05Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 82.254651,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T17:50:00Z",
+          "timestamp_utc": "2026-09-02T17:50:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 82.284919,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T20:10:00Z",
+          "timestamp_utc": "2026-09-02T20:10:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 82.280696,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T22:10:00Z",
+          "timestamp_utc": "2026-09-02T22:10:00Z",
+          "effective_day": "2026-09-02",
+          "equity_usd": 82.213589,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T00:30:00Z",
+          "timestamp_utc": "2026-09-03T00:30:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 82.192633,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T02:50:00Z",
+          "timestamp_utc": "2026-09-03T02:50:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 82.396752,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T05:10:00Z",
+          "timestamp_utc": "2026-09-03T05:10:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 82.359574,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T07:30:00Z",
+          "timestamp_utc": "2026-09-03T07:30:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 82.422038,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T09:50:00Z",
+          "timestamp_utc": "2026-09-03T09:50:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 82.336553,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T12:10:00Z",
+          "timestamp_utc": "2026-09-03T12:10:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 82.419076,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T14:10:00Z",
+          "timestamp_utc": "2026-09-03T14:10:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 82.64731,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T16:10:00Z",
+          "timestamp_utc": "2026-09-03T16:10:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 83.17183,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T18:30:00Z",
+          "timestamp_utc": "2026-09-03T18:30:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T20:50:00Z",
+          "timestamp_utc": "2026-09-03T20:50:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-03T22:50:00Z",
+          "timestamp_utc": "2026-09-03T22:50:00Z",
+          "effective_day": "2026-09-03",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T01:10:00Z",
+          "timestamp_utc": "2026-09-04T01:10:00Z",
+          "effective_day": "2026-09-04",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T03:30:00Z",
+          "timestamp_utc": "2026-09-04T03:30:00Z",
+          "effective_day": "2026-09-04",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T05:50:00Z",
+          "timestamp_utc": "2026-09-04T05:50:00Z",
+          "effective_day": "2026-09-04",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T07:50:00Z",
+          "timestamp_utc": "2026-09-04T07:50:00Z",
+          "effective_day": "2026-09-04",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T10:10:00Z",
+          "timestamp_utc": "2026-09-04T10:10:00Z",
+          "effective_day": "2026-09-04",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T12:29:13Z",
+          "timestamp_utc": "2026-09-04T12:29:13Z",
+          "effective_day": "2026-09-04",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T12:29:14Z",
+          "timestamp_utc": "2026-09-04T12:29:14Z",
+          "effective_day": "2026-09-04",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": 83.186462,
+          "margin_used_usd": 0.0,
+          "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
+        }
+      ],
+      "daily": [
+        {
+          "timestamp_utc": "2026-09-02T22:10:00Z",
+          "effective_day": "2026-09-02",
+          "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+          "equity_usd": 82.213589,
+          "beginning_equity_usd": 39.475466,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "deposits_usd": 42.6,
+          "withdrawals_usd": 0.0,
+          "net_external_flow_usd": 42.6,
+          "realized_trading_pnl_usd": 0.0,
+          "unrealized_pnl_usd": null,
+          "fees_usd": -0.008605,
+          "funding_usd": -0.002887,
+          "daily_net_pnl_usd": 0.138123,
+          "cumulative_net_pnl_usd": 0.138123,
+          "exchange_event_net_pnl_usd": -0.011492,
+          "equity_event_reconciliation_delta_usd": 0.149615
+        },
+        {
+          "timestamp_utc": "2026-09-03T22:50:00Z",
+          "effective_day": "2026-09-03",
+          "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+          "equity_usd": 83.186462,
+          "beginning_equity_usd": 82.213589,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "deposits_usd": 0.0,
+          "withdrawals_usd": 0.0,
+          "net_external_flow_usd": 0.0,
+          "realized_trading_pnl_usd": 1.136,
+          "unrealized_pnl_usd": null,
+          "fees_usd": -0.009116,
+          "funding_usd": -0.004396,
+          "daily_net_pnl_usd": 0.972873,
+          "cumulative_net_pnl_usd": 1.110996,
+          "exchange_event_net_pnl_usd": 1.122488,
+          "equity_event_reconciliation_delta_usd": -0.149615
+        },
+        {
+          "timestamp_utc": "2026-09-04T12:29:14Z",
+          "effective_day": "2026-09-04",
+          "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+          "equity_usd": 83.186462,
+          "beginning_equity_usd": 83.186462,
+          "free_collateral_usd": 83.186462,
+          "margin_used_usd": 0.0,
+          "deposits_usd": 0,
+          "withdrawals_usd": 0,
+          "net_external_flow_usd": 0,
+          "realized_trading_pnl_usd": 0,
+          "unrealized_pnl_usd": null,
+          "fees_usd": 0,
+          "funding_usd": 0,
+          "daily_net_pnl_usd": 0.0,
+          "cumulative_net_pnl_usd": 1.110996,
+          "exchange_event_net_pnl_usd": 0,
+          "equity_event_reconciliation_delta_usd": 0.0
+        }
+      ],
+      "live_genesis_date": "2026-09-02",
+      "history_days": 3,
+      "current": {
+        "timestamp_utc": "2026-09-04T12:29:14Z",
+        "effective_day": "2026-09-04",
+        "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+        "equity_usd": 83.186462,
+        "beginning_equity_usd": 83.186462,
+        "free_collateral_usd": 83.186462,
+        "margin_used_usd": 0.0,
+        "deposits_usd": 0,
+        "withdrawals_usd": 0,
+        "net_external_flow_usd": 0,
+        "realized_trading_pnl_usd": 0,
+        "unrealized_pnl_usd": 0.0,
+        "fees_usd": 0,
+        "funding_usd": 0,
+        "daily_net_pnl_usd": 0.0,
+        "cumulative_net_pnl_usd": 1.110996,
+        "exchange_event_net_pnl_usd": 0,
+        "equity_event_reconciliation_delta_usd": 0.0,
+        "pnl_since_inception_usd": 1.110996,
+        "return_since_inception_pct": null,
+        "return_since_inception_available": false,
+        "return_since_inception_reason": "cash_flow_without_intraday_valuation",
+        "trading_pnl_since_inception_usd": 1.136,
+        "fees_since_inception_usd": -0.017721,
+        "funding_since_inception_usd": -0.007283,
+        "deposits_since_inception_usd": 42.6,
+        "withdrawals_since_inception_usd": 0.0,
+        "exchange_event_pnl_since_inception_usd": 1.110996,
+        "cumulative_equity_event_reconciliation_delta_usd": 0.0
+      },
+      "windows": {
+        "today": {
+          "available": true,
+          "history_days": 3,
+          "pnl_usd": 0.0,
+          "return_pct": 0.0,
+          "reason": null
+        },
+        "7d": {
+          "available": false,
+          "history_days": 3,
+          "pnl_usd": null,
+          "return_pct": null,
+          "reason": "insufficient_live_history"
+        },
+        "30d": {
+          "available": false,
+          "history_days": 3,
+          "pnl_usd": null,
+          "return_pct": null,
+          "reason": "insufficient_live_history"
+        },
+        "90d": {
+          "available": false,
+          "history_days": 3,
+          "pnl_usd": null,
+          "return_pct": null,
+          "reason": "insufficient_live_history"
+        }
+      },
+      "source_fields": {
+        "equity": "clearinghouseState.marginSummary.accountValue or spotClearinghouseState stable balance",
+        "external_cash_flows": "userNonFundingLedgerUpdates.delta.type/usdc",
+        "fills_fees_realized": "userFillsByTime.closedPnl/fee",
+        "funding": "userFunding.usdc",
+        "unrealized": "clearinghouseState.assetPositions[].position.unrealizedPnl"
+      }
+    }
   },
   "execution": {
     "target_asset": "CASH",

@@ -1,6 +1,6 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-09-04T00:11:44Z",
+  "generated_at_utc": "2026-09-04T12:33:22Z",
   "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-03::target_CASH::candidate_ETH",
   "target_asset": "CASH",
   "mode": "live",
@@ -75,9 +75,9 @@
     "allow_live_order_candidate": false
   },
   "source_fingerprints": {
-    "intent_sha256": "88217691bc895e8aedeec5e4fdbad4532ccfe1186084d514e6c470e6cb2a5220",
-    "account_snapshot_sha256": "10626ad516b64943d645716020ba7aa27866c4d7f8f7b2755c64cdc822ced8a6",
-    "production_snapshot_sha256": "d98f8de106fb40dbad9bb2366268e68bb8e508e472e7e6d884f13f87993a4de4"
+    "intent_sha256": "82433f26c1cecf8e5625b7edb03b2573874685855c6d4eb086921f77f2063cdf",
+    "account_snapshot_sha256": "7e37c6e1752b887d4d1add3e9b8f12ec84ada01889e147181546b0e8df32a590",
+    "production_snapshot_sha256": "83dd1eaabb257151fcef5e258026eedcceaadc32105cf508c09f88f71a117d18"
   },
   "notes": [
     "This is a gate-preparation artifact only.",
