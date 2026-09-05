@@ -81,6 +81,19 @@ export class MultiAccountExecutor {
         return { accountId: account.accountId, status: "BLOCKED", reason: plan.reason };
       }
       if (this.mode === "dry_run") {
+        for (const action of plan.actions) {
+          const cloid = deterministicCloid({
+            userId: account.userId,
+            accountId: account.accountId,
+            signalId: target.signalId,
+            closedDay: target.closedDay,
+            target: target.asset,
+            action: action.action,
+            leg: action.leg,
+            attempt: 0
+          });
+          await this.repository.recordAction(runId, action, cloid, "NOT_SUBMITTED");
+        }
         await this.repository.finishRun(runId, "DRY_RUN", before.equityUsd);
         return { accountId: account.accountId, status: "DRY_RUN" };
       }

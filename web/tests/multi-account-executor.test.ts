@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { AuthorityError, parseAuthorizedTarget } from "@/server/multi-account-executor/authority";
 import { deterministicCloid } from "@/server/multi-account-executor/cloid";
 import { MultiAccountExecutor, isEligibleMultiAccount, type ExchangeGateway, type ExecutionRepository } from "@/server/multi-account-executor/engine";
+import { HyperliquidDryRunGateway } from "@/server/multi-account-executor/dry-run-gateway";
 import { canWriteExchange, executionMode } from "@/server/multi-account-executor/mode";
 import { buildPlan } from "@/server/multi-account-executor/planner";
 import type { AccountState, AuthorizedTarget, EligibleAccount, MarketSpec } from "@/server/multi-account-executor/types";
@@ -15,6 +16,8 @@ const source = (relative: string) => fs.readFileSync(path.join(webRoot, relative
 const migration = source("supabase/migrations/202609050001_create_multi_account_execution.sql");
 const engineSource = source("src/server/multi-account-executor/engine.ts");
 const workerSource = source("src/server/multi-account-executor/worker.ts");
+const dryRunGatewaySource = source("src/server/multi-account-executor/dry-run-gateway.ts");
+const dryRunRunnerSource = source("scripts/run-multi-account-dry-run.ts");
 const productionSource = fs.readFileSync(path.join(repoRoot, "scripts/execution/run_trendatlas_production.py"), "utf8");
 
 const target = (asset: "BTC" | "ETH" | "CASH", exposure = asset === "CASH" ? 0 : 1): AuthorizedTarget => ({ strategyVersion: "v1", closedDay: "2026-09-03", signalId: `signal-${asset}`, asset, exposure, stale: false, executionGate: asset === "CASH" ? "no_action" : "approved" });
@@ -104,6 +107,21 @@ describe("idempotency, modes, and isolation", () => {
     expect(canWriteExchange("live")).toBe(true);
   });
   it("requires an explicit live environment value", () => expect(executionMode("anything-else")).toBe("disabled"));
+  it("keeps the dry-run gateway unable to submit or inspect executable orders", async () => {
+    const gateway = new HyperliquidDryRunGateway();
+    await expect(gateway.findByCloid(candidate().masterAddress, "0x00000000000000000000000000000000")).rejects.toThrow("Dry-run gateway cannot inspect executable orders.");
+    await expect(gateway.writeIoc({} as never)).rejects.toThrow("Dry-run gateway cannot submit orders.");
+    expect(dryRunGatewaySource).toContain("https://api.hyperliquid.xyz/info");
+    expect(dryRunGatewaySource).not.toContain("https://api.hyperliquid.xyz/exchange");
+  });
+
+  it("refuses every runner mode except exact dry_run before importing the worker", () => {
+    const guard = dryRunRunnerSource.indexOf('mode !== "dry_run"');
+    const workerImport = dryRunRunnerSource.indexOf('import("@/server/multi-account-executor/worker")');
+    expect(guard).toBeGreaterThanOrEqual(0);
+    expect(workerImport).toBeGreaterThan(guard);
+  });
+
   it("keeps the worker outside browser routes and server actions", () => {
     expect(workerSource).toContain('import "server-only"');
     expect(workerSource).not.toContain('"use server"');
@@ -147,6 +165,41 @@ describe("durable journal and production boundary", () => {
     await new MultiAccountExecutor(repository, exchange, "dry_run").runAllForTarget(target("ETH"));
     expect(writeIoc).not.toHaveBeenCalled();
   });
+  it("journals dry-run actions without reserving a nonce or writing", async () => {
+    const recordAction = vi.fn();
+    const reserveNonce = vi.fn(async () => 1n);
+    const writeIoc = vi.fn();
+    const repository: ExecutionRepository = {
+      listMultiAccountCandidates: async () => [candidate()],
+      tryAcquire: async () => true,
+      release: async () => undefined,
+      reserveNonce,
+      createRun: async () => "run",
+      recordAction,
+      finishRun: async () => undefined,
+      setAccountStatus: async () => undefined
+    };
+    const exchange: ExchangeGateway = {
+      readAccount: async () => account(),
+      readMarkets: async () => markets,
+      userRole: async () => ({ role: "agent", user: candidate().masterAddress }),
+      findByCloid: async () => null,
+      writeIoc
+    };
+
+    const results = await new MultiAccountExecutor(repository, exchange, "dry_run").runAllForTarget(target("ETH"));
+
+    expect(results).toEqual([{ accountId: "account-a", status: "DRY_RUN" }]);
+    expect(recordAction).toHaveBeenCalledWith(
+      "run",
+      expect.objectContaining({ action: "ENTER", asset: "ETH" }),
+      expect.stringMatching(/^0x[0-9a-f]{32}$/),
+      "NOT_SUBMITTED"
+    );
+    expect(reserveNonce).not.toHaveBeenCalled();
+    expect(writeIoc).not.toHaveBeenCalled();
+  });
+
   it("isolates one account failure from other accounts", async () => {
     const writeIoc = vi.fn();
     const first = candidate({ accountId: "a", masterAddress: "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", agentAddress: "0x1111111111111111111111111111111111111111" });
