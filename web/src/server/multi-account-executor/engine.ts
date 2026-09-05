@@ -13,6 +13,7 @@ export interface ExchangeGateway {
   readAccount(masterAddress: string): Promise<AccountState>;
   readMarkets(): Promise<Map<"BTC" | "ETH", MarketSpec>>;
   userRole(agentAddress: string): Promise<{ role: string; user: string | null }>;
+  agentAuthorization(masterAddress: string, agentAddress: string, agentName: string): Promise<{ authorized: boolean; validUntilMs: number | null }>;
   findByCloid(masterAddress: string, cloid: string): Promise<KnownOrder>;
   writeIoc(order: ExchangeOrder): Promise<{ orderId?: string }>;
 }
@@ -30,7 +31,7 @@ export interface ExecutionRepository {
 export type AccountResult = { accountId: string; status: FinalStatus; reason?: string };
 
 export function isEligibleMultiAccount(account: EligibleAccount): boolean {
-  return account.connectionStatus === "read_only_connected" && account.authorizationStatus === "authorized" && Boolean(account.ownershipVerifiedAt) && Boolean(account.agentAuthorizedAt) && account.autoTradingRequested === true && (account.executionStatus === "ready" || account.executionStatus === "aligned") && account.hasEncryptedSecret === true;
+  return account.connectionStatus === "read_only_connected" && account.authorizationStatus === "authorized" && Boolean(account.ownershipVerifiedAt) && Boolean(account.agentAuthorizedAt) && account.autoTradingRequested === true && (account.executionStatus === "ready" || account.executionStatus === "aligned" || account.executionStatus === "executing") && account.hasEncryptedSecret === true;
 }
 
 function sanitizedError(): string {
@@ -67,10 +68,17 @@ export class MultiAccountExecutor {
     try {
       if (!await this.repository.tryAcquire(account.accountId, holderId)) return { accountId: account.accountId, status: "BLOCKED", reason: "account is already executing" };
       lockHeld = true;
-      const role = await this.exchange.userRole(account.agentAddress);
+      const [role, authorization] = await Promise.all([
+        this.exchange.userRole(account.agentAddress),
+        this.exchange.agentAuthorization(account.masterAddress, account.agentAddress, account.agentName)
+      ]);
       if (role.role !== "agent" || role.user?.toLowerCase() !== account.masterAddress.toLowerCase()) {
         await this.repository.setAccountStatus(account.authorizationId, "blocked");
         return { accountId: account.accountId, status: "BLOCKED", reason: "agent binding is invalid" };
+      }
+      if (!authorization.authorized || authorization.validUntilMs === null || authorization.validUntilMs <= Date.now()) {
+        await this.repository.setAccountStatus(account.authorizationId, "blocked");
+        return { accountId: account.accountId, status: "BLOCKED", reason: "agent authorization is missing or expired" };
       }
       const [before, markets] = await Promise.all([this.exchange.readAccount(account.masterAddress), this.exchange.readMarkets()]);
       const plan = buildPlan(target, before, markets);
@@ -102,6 +110,7 @@ export class MultiAccountExecutor {
       await this.repository.setAccountStatus(account.authorizationId, "executing");
       for (const action of plan.actions) {
         const cloid = deterministicCloid({ userId: account.userId, accountId: account.accountId, signalId: target.signalId, closedDay: target.closedDay, target: target.asset, action: action.action, leg: action.leg, attempt: 0 });
+        await this.repository.recordAction(runId, action, cloid, "NOT_SUBMITTED");
         const known = await this.exchange.findByCloid(account.masterAddress, cloid);
         if (known?.state === "open" || known?.state === "unknown") {
           await this.repository.recordAction(runId, action, cloid, "AMBIGUOUS", known.orderId);

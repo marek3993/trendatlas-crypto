@@ -36,10 +36,7 @@ async function main(): Promise<void> {
     results
   }, null, 2));
 
-  if (results.some(({ status }) =>
-    status === "FAILED" ||
-    status === "UNKNOWN_SUBMISSION_STATE"
-  )) {
+  if (results.length === 0 || results.some(({ status }) => status !== "DRY_RUN")) {
     process.exitCode = 1;
   }
 }

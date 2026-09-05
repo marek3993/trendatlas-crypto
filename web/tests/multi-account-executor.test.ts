@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { describe, expect, it, vi } from "vitest";
+import { createEnvironmentAgentSecretProtector } from "@/lib/hyperliquid/agent-authorization";
 import { AuthorityError, parseAuthorizedTarget } from "@/server/multi-account-executor/authority";
 import { deterministicCloid } from "@/server/multi-account-executor/cloid";
 import { MultiAccountExecutor, isEligibleMultiAccount, type ExchangeGateway, type ExecutionRepository } from "@/server/multi-account-executor/engine";
@@ -15,6 +16,7 @@ const repoRoot = path.resolve(webRoot, "..");
 const source = (relative: string) => fs.readFileSync(path.join(webRoot, relative), "utf8");
 const migration = source("supabase/migrations/202609050001_create_multi_account_execution.sql");
 const engineSource = source("src/server/multi-account-executor/engine.ts");
+const repositorySource = source("src/server/multi-account-executor/repository.ts");
 const workerSource = source("src/server/multi-account-executor/worker.ts");
 const dryRunGatewaySource = source("src/server/multi-account-executor/dry-run-gateway.ts");
 const dryRunRunnerSource = source("scripts/run-multi-account-dry-run.ts");
@@ -26,7 +28,8 @@ const markets = new Map<"BTC" | "ETH", MarketSpec>([
   ["ETH", { asset: "ETH", markPrice: 10, minNotionalUsd: 10, sizeDecimals: 3 }]
 ]);
 const account = (equityUsd = 100, positions: AccountState["positions"] = [], openOrderCount = 0): AccountState => ({ equityUsd, positions, openOrderCount });
-const candidate = (overrides: Partial<EligibleAccount> = {}): EligibleAccount => ({ userId: "user-a", accountId: "account-a", masterAddress: "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", agentAddress: "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", authorizationId: "auth-a", connectionStatus: "read_only_connected", authorizationStatus: "authorized", ownershipVerifiedAt: "2026-09-01T00:00:00Z", agentAuthorizedAt: "2026-09-01T00:00:00Z", autoTradingRequested: true, executionStatus: "ready", hasEncryptedSecret: true, ...overrides });
+const candidate = (overrides: Partial<EligibleAccount> = {}): EligibleAccount => ({ userId: "user-a", accountId: "account-a", masterAddress: "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", agentAddress: "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb", agentName: "TA-1234abcd", authorizationId: "auth-a", connectionStatus: "read_only_connected", authorizationStatus: "authorized", ownershipVerifiedAt: "2026-09-01T00:00:00Z", agentAuthorizedAt: "2026-09-01T00:00:00Z", autoTradingRequested: true, executionStatus: "ready", hasEncryptedSecret: true, ...overrides });
+const validAgentAuthorization = async () => ({ authorized: true, validUntilMs: Date.parse("2100-01-01T00:00:00Z") });
 
 function authorityFixture(asset: "BTC" | "ETH" | "CASH", exposure = asset === "CASH" ? 0 : 1) {
   const signal = "canonical-signal";
@@ -59,11 +62,18 @@ describe("multi-account executor authority and eligibility", () => {
   it("skips an unauthorized agent", () => expect(isEligibleMultiAccount(candidate({ authorizationStatus: "pending" }))).toBe(false));
   it("skips auto trading OFF", () => expect(isEligibleMultiAccount(candidate({ autoTradingRequested: false }))).toBe(false));
   it("requires a stored encrypted secret", () => expect(isEligibleMultiAccount(candidate({ hasEncryptedSecret: false }))).toBe(false));
+  it("allows an interrupted executing account to reach lease and CLOID recovery", () => expect(isEligibleMultiAccount(candidate({ executionStatus: "executing" }))).toBe(true));
   it("requires the explicit multi-user authorization join, not an account address alone", () => {
-    expect(source("src/server/multi-account-executor/repository.ts")).toContain('from("hyperliquid_agent_authorizations")');
-    expect(source("src/server/multi-account-executor/repository.ts")).toContain("hyperliquid_accounts!inner");
+    expect(repositorySource).toContain('from("hyperliquid_agent_authorizations")');
+    expect(repositorySource).toContain("hyperliquid_accounts!inner");
+    expect(repositorySource).toContain('.eq("auto_trading_requested", true)');
+    expect(repositorySource).toContain('.in("execution_status", ["ready", "aligned", "executing"])');
   });
   it("rechecks the exact agent-to-master binding", () => expect(engineSource).toContain('role.user?.toLowerCase() !== account.masterAddress.toLowerCase()'));
+  it("rechecks the exact named agent grant and expiry", () => {
+    expect(engineSource).toContain("account.agentName");
+    expect(engineSource).toContain("authorization.validUntilMs <= Date.now()");
+  });
 });
 
 describe("multi-account executor planning", () => {
@@ -90,6 +100,50 @@ describe("idempotency, modes, and isolation", () => {
   it("creates distinct per-user CLOID namespaces", () => expect(deterministicCloid(cloidInput)).not.toBe(deterministicCloid({ ...cloidInput, userId: "other" })));
   it("uses a 128-bit Hyperliquid CLOID format", () => expect(deterministicCloid(cloidInput)).toMatch(/^0x[0-9a-f]{32}$/));
   it("queries a CLOID before it can write", () => expect(engineSource.indexOf("findByCloid")).toBeLessThan(engineSource.indexOf("writeIoc")));
+  it("durably journals each live action before CLOID recovery or submission", () => {
+    const liveBranch = engineSource.indexOf("if (!canWriteExchange");
+    const prepared = engineSource.indexOf('recordAction(runId, action, cloid, "NOT_SUBMITTED")', liveBranch);
+    const recovery = engineSource.indexOf("findByCloid(account.masterAddress, cloid)", liveBranch);
+    const submit = engineSource.indexOf("writeIoc({", liveBranch);
+    expect(prepared).toBeGreaterThan(liveBranch);
+    expect(prepared).toBeLessThan(recovery);
+    expect(recovery).toBeLessThan(submit);
+  });
+  it("persists NOT_SUBMITTED before recovering a previously filled live CLOID", async () => {
+    const originalKek = process.env.TRENDATLAS_AGENT_KEK_B64;
+    process.env.TRENDATLAS_AGENT_KEK_B64 = Buffer.alloc(32, 7).toString("base64");
+    const encryptedSecret = createEnvironmentAgentSecretProtector(process.env.TRENDATLAS_AGENT_KEK_B64)
+      .encrypt(`0x${"11".repeat(32)}`);
+    const events: string[] = [];
+    let accountRead = 0;
+    const repository: ExecutionRepository = {
+      listMultiAccountCandidates: async () => [{ ...candidate(), encryptedSecret }],
+      tryAcquire: async () => true,
+      release: async () => undefined,
+      reserveNonce: async () => 1n,
+      createRun: async () => "run",
+      recordAction: async (_runId, _action, _cloid, state) => { events.push(`journal:${state}`); },
+      finishRun: async () => undefined,
+      setAccountStatus: async () => undefined
+    };
+    const exchange: ExchangeGateway = {
+      readAccount: async () => accountRead++ === 0 ? account() : account(100, [{ asset: "ETH", size: 10, markPrice: 10 }]),
+      readMarkets: async () => markets,
+      userRole: async () => ({ role: "agent", user: candidate().masterAddress }),
+      agentAuthorization: validAgentAuthorization,
+      findByCloid: async () => { events.push("find"); return { state: "filled", orderId: "known-order" }; },
+      writeIoc: async () => { events.push("write"); return {}; }
+    };
+
+    try {
+      const results = await new MultiAccountExecutor(repository, exchange, "live").runAllForTarget(target("ETH"));
+      expect(results).toEqual([{ accountId: "account-a", status: "FILLED_AND_ALIGNED" }]);
+      expect(events).toEqual(["journal:NOT_SUBMITTED", "find", "journal:KNOWN"]);
+    } finally {
+      if (originalKek === undefined) delete process.env.TRENDATLAS_AGENT_KEK_B64;
+      else process.env.TRENDATLAS_AGENT_KEK_B64 = originalKek;
+    }
+  });
   it("recovers a previously known order without another write", () => expect(engineSource).toContain('if (!known)'));
   it("records unknown submissions without blind retry", () => expect(engineSource).toContain('"UNKNOWN_SUBMISSION_STATE"'));
   it("reserves monotonic per-agent nonces in the database", () => {
@@ -120,6 +174,7 @@ describe("idempotency, modes, and isolation", () => {
     const workerImport = dryRunRunnerSource.indexOf('import("@/server/multi-account-executor/worker")');
     expect(guard).toBeGreaterThanOrEqual(0);
     expect(workerImport).toBeGreaterThan(guard);
+    expect(dryRunRunnerSource).toContain('results.length === 0 || results.some(({ status }) => status !== "DRY_RUN")');
   });
 
   it("keeps the worker outside browser routes and server actions", () => {
@@ -154,16 +209,26 @@ describe("durable journal and production boundary", () => {
   it("does not send a write in disabled mode", async () => {
     const writeIoc = vi.fn();
     const repository: ExecutionRepository = { listMultiAccountCandidates: async () => [candidate()], tryAcquire: async () => true, release: async () => undefined, reserveNonce: async () => 1n, createRun: async () => "run", recordAction: async () => undefined, finishRun: async () => undefined, setAccountStatus: async () => undefined };
-    const exchange: ExchangeGateway = { readAccount: async () => account(), readMarkets: async () => markets, userRole: async () => ({ role: "agent", user: candidate().masterAddress }), findByCloid: async () => null, writeIoc };
+    const exchange: ExchangeGateway = { readAccount: async () => account(), readMarkets: async () => markets, userRole: async () => ({ role: "agent", user: candidate().masterAddress }), agentAuthorization: validAgentAuthorization, findByCloid: async () => null, writeIoc };
     await new MultiAccountExecutor(repository, exchange, "disabled").runAllForTarget(target("ETH"));
     expect(writeIoc).not.toHaveBeenCalled();
   });
   it("does not send a write in dry-run mode", async () => {
     const writeIoc = vi.fn();
     const repository: ExecutionRepository = { listMultiAccountCandidates: async () => [candidate()], tryAcquire: async () => true, release: async () => undefined, reserveNonce: async () => 1n, createRun: async () => "run", recordAction: async () => undefined, finishRun: async () => undefined, setAccountStatus: async () => undefined };
-    const exchange: ExchangeGateway = { readAccount: async () => account(), readMarkets: async () => markets, userRole: async () => ({ role: "agent", user: candidate().masterAddress }), findByCloid: async () => null, writeIoc };
+    const exchange: ExchangeGateway = { readAccount: async () => account(), readMarkets: async () => markets, userRole: async () => ({ role: "agent", user: candidate().masterAddress }), agentAuthorization: validAgentAuthorization, findByCloid: async () => null, writeIoc };
     await new MultiAccountExecutor(repository, exchange, "dry_run").runAllForTarget(target("ETH"));
     expect(writeIoc).not.toHaveBeenCalled();
+  });
+  it("blocks an expired named-agent grant before reading account state", async () => {
+    const readAccount = vi.fn(async () => account());
+    const repository: ExecutionRepository = { listMultiAccountCandidates: async () => [candidate()], tryAcquire: async () => true, release: async () => undefined, reserveNonce: async () => 1n, createRun: async () => "run", recordAction: async () => undefined, finishRun: async () => undefined, setAccountStatus: async () => undefined };
+    const exchange: ExchangeGateway = { readAccount, readMarkets: async () => markets, userRole: async () => ({ role: "agent", user: candidate().masterAddress }), agentAuthorization: async () => ({ authorized: true, validUntilMs: 0 }), findByCloid: async () => null, writeIoc: async () => ({}) };
+
+    const results = await new MultiAccountExecutor(repository, exchange, "dry_run").runAllForTarget(target("ETH"));
+
+    expect(results).toEqual([{ accountId: "account-a", status: "BLOCKED", reason: "agent authorization is missing or expired" }]);
+    expect(readAccount).not.toHaveBeenCalled();
   });
   it("journals dry-run actions without reserving a nonce or writing", async () => {
     const recordAction = vi.fn();
@@ -183,6 +248,7 @@ describe("durable journal and production boundary", () => {
       readAccount: async () => account(),
       readMarkets: async () => markets,
       userRole: async () => ({ role: "agent", user: candidate().masterAddress }),
+      agentAuthorization: validAgentAuthorization,
       findByCloid: async () => null,
       writeIoc
     };
@@ -210,7 +276,7 @@ describe("durable journal and production boundary", () => {
     const exchange: ExchangeGateway = { readAccount: async () => account(), readMarkets: async () => markets, userRole: async (agent) => {
       if (agent === broken.agentAddress) throw new Error("account B adapter failure");
       return { role: "agent", user: agent === first.agentAddress ? first.masterAddress : third.masterAddress };
-    }, findByCloid: async () => null, writeIoc };
+    }, agentAuthorization: validAgentAuthorization, findByCloid: async () => null, writeIoc };
     const results = await new MultiAccountExecutor(repository, exchange, "dry_run").runAllForTarget(target("ETH"));
     expect(results).toEqual([
       { accountId: "a", status: "DRY_RUN" },

@@ -20,6 +20,7 @@ export type EligibleAccount = {
   accountId: string;
   masterAddress: string;
   agentAddress: string;
+  agentName: string;
   authorizationId: string;
   connectionStatus: string;
   authorizationStatus: string;

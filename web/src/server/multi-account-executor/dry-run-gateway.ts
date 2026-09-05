@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  getHyperliquidAgentAuthorization,
   getHyperliquidAccountSnapshot,
   getHyperliquidUserRole
 } from "@/lib/hyperliquid/info";
@@ -150,6 +151,10 @@ export class HyperliquidDryRunGateway implements ExchangeGateway {
 
   async userRole(agentAddress: string) {
     return getHyperliquidUserRole(agentAddress);
+  }
+
+  async agentAuthorization(masterAddress: string, agentAddress: string, agentName: string) {
+    return getHyperliquidAgentAuthorization(masterAddress, agentAddress, agentName);
   }
 
   async findByCloid(

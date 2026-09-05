@@ -6,7 +6,7 @@ import type { AuthorizedTarget, EligibleAccount, FinalStatus, PlannedAction } fr
 import type { ExecutionRepository } from "./engine";
 
 type CandidateRow = {
-  id: string; user_id: string; hyperliquid_account_id: string; agent_address: string;
+  id: string; user_id: string; hyperliquid_account_id: string; agent_address: string; agent_name: string;
   authorization_status: string; ownership_verified_at: string | null; agent_authorized_at: string | null;
   auto_trading_requested: boolean; execution_status: EligibleAccount["executionStatus"];
   hyperliquid_accounts: { id: string; master_address: string; connection_status: "read_only_connected" } | null;
@@ -18,14 +18,16 @@ export class SupabaseExecutionRepository implements ExecutionRepository {
 
   async listMultiAccountCandidates(): Promise<Array<EligibleAccount & { encryptedSecret?: EncryptedAgentSecret }>> {
     const { data, error } = await this.db.from("hyperliquid_agent_authorizations")
-      .select("id,user_id,hyperliquid_account_id,agent_address,authorization_status,ownership_verified_at,agent_authorized_at,auto_trading_requested,execution_status,hyperliquid_accounts!inner(id,master_address,connection_status),hyperliquid_agent_secrets(encrypted_private_key,encryption_nonce,encryption_key_version)")
-      .eq("authorization_status", "authorized");
+      .select("id,user_id,hyperliquid_account_id,agent_address,agent_name,authorization_status,ownership_verified_at,agent_authorized_at,auto_trading_requested,execution_status,hyperliquid_accounts!inner(id,master_address,connection_status),hyperliquid_agent_secrets(encrypted_private_key,encryption_nonce,encryption_key_version)")
+      .eq("authorization_status", "authorized")
+      .eq("auto_trading_requested", true)
+      .in("execution_status", ["ready", "aligned", "executing"]);
     if (error) throw new Error("eligible accounts are unavailable");
     return ((data ?? []) as unknown as CandidateRow[]).flatMap((row) => {
       const account = row.hyperliquid_accounts;
       const secret = row.hyperliquid_agent_secrets;
       if (!account) return [];
-      return [{ userId: row.user_id, accountId: account.id, masterAddress: account.master_address, agentAddress: row.agent_address, authorizationId: row.id, connectionStatus: account.connection_status, authorizationStatus: row.authorization_status, ownershipVerifiedAt: row.ownership_verified_at, agentAuthorizedAt: row.agent_authorized_at, autoTradingRequested: row.auto_trading_requested, executionStatus: row.execution_status, hasEncryptedSecret: Boolean(secret), encryptedSecret: secret ? { encryptedPrivateKey: secret.encrypted_private_key, encryptionNonce: secret.encryption_nonce, encryptionKeyVersion: secret.encryption_key_version } : undefined }];
+      return [{ userId: row.user_id, accountId: account.id, masterAddress: account.master_address, agentAddress: row.agent_address, agentName: row.agent_name, authorizationId: row.id, connectionStatus: account.connection_status, authorizationStatus: row.authorization_status, ownershipVerifiedAt: row.ownership_verified_at, agentAuthorizedAt: row.agent_authorized_at, autoTradingRequested: row.auto_trading_requested, executionStatus: row.execution_status, hasEncryptedSecret: Boolean(secret), encryptedSecret: secret ? { encryptedPrivateKey: secret.encrypted_private_key, encryptionNonce: secret.encryption_nonce, encryptionKeyVersion: secret.encryption_key_version } : undefined }];
     });
   }
 

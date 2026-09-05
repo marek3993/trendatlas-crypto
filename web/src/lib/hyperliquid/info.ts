@@ -1,6 +1,6 @@
 import "server-only";
 
-import { validateHyperliquidAddress } from "@/lib/hyperliquid/address";
+import { normalizeHyperliquidAddress, validateHyperliquidAddress } from "@/lib/hyperliquid/address";
 
 const INFO_API_URL = "https://api.hyperliquid.xyz/info";
 const REQUEST_TIMEOUT_MS = 8_000;
@@ -17,7 +17,8 @@ export const ALLOWED_INFO_REQUEST_TYPES = [
   "userFillsByTime",
   "userFunding",
   "userNonFundingLedgerUpdates",
-  "userRole"
+  "userRole",
+  "extraAgents"
 ] as const;
 type AllowedInfoRequestType = (typeof ALLOWED_INFO_REQUEST_TYPES)[number];
 
@@ -48,6 +49,10 @@ export class HyperliquidInfoError extends Error {
 }
 
 export type HyperliquidUserRole = "missing" | "user" | "agent" | "vault" | "subAccount";
+export type HyperliquidAgentAuthorization = {
+  authorized: boolean;
+  validUntilMs: number | null;
+};
 
 function isAllowedInfoRequestType(value: string): value is AllowedInfoRequestType {
   return (ALLOWED_INFO_REQUEST_TYPES as readonly string[]).includes(value);
@@ -104,6 +109,38 @@ export async function getHyperliquidUserRole(rawAddress: string): Promise<{ role
   }
   const user = typeof result.data?.user === "string" ? validateHyperliquidAddress(result.data.user) : null;
   return { role, user: user?.ok ? user.address : null };
+}
+
+/** Revalidates the exact named agent grant and its exchange expiry. */
+export async function getHyperliquidAgentAuthorization(
+  rawMasterAddress: string,
+  rawAgentAddress: string,
+  expectedAgentName: string
+): Promise<HyperliquidAgentAuthorization> {
+  const master = validateHyperliquidAddress(rawMasterAddress);
+  const agent = validateHyperliquidAddress(rawAgentAddress);
+  if (!master.ok || !agent.ok || !/^TA-[a-f0-9]{8}$/.test(expectedAgentName)) {
+    throw new HyperliquidInfoError();
+  }
+
+  const result = await requestInfo<Array<{ address?: unknown; name?: unknown; validUntil?: unknown }>>(
+    "extraAgents",
+    master.address
+  );
+  if (!Array.isArray(result)) throw new HyperliquidInfoError();
+
+  const match = result.find((entry) =>
+    typeof entry?.address === "string" &&
+    normalizeHyperliquidAddress(entry.address) === agent.address &&
+    entry.name === expectedAgentName
+  );
+  if (!match) return { authorized: false, validUntilMs: null };
+
+  const validUntilMs = numberOrNull(match.validUntil);
+  if (validUntilMs === null || !Number.isSafeInteger(validUntilMs) || validUntilMs < 0) {
+    throw new HyperliquidInfoError();
+  }
+  return { authorized: true, validUntilMs };
 }
 
 export type HyperliquidPortfolioResponse = Array<[

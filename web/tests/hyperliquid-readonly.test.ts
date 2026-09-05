@@ -56,6 +56,7 @@ describe("Hyperliquid read-only onboarding", () => {
     expect(infoClient).toContain('"userFillsByTime"');
     expect(infoClient).toContain('"userFunding"');
     expect(infoClient).toContain('"userNonFundingLedgerUpdates"');
+    expect(infoClient).toContain('"extraAgents"');
     expect(infoClient).not.toMatch(/"(exchange|order|cancel|transfer|withdraw|updateLeverage)"/i);
     expect(infoClient).toContain('method: "POST"');
     expect(infoClient).toContain("https://api.hyperliquid.xyz/info");
@@ -69,6 +70,12 @@ describe("Hyperliquid read-only onboarding", () => {
     expect(infoClient).toContain('spotState.balances.find(({ coin }) => coin === "USDC")');
     expect(infoClient).toContain("perpsAccountEquityUsd + spotUsdcUsd");
     expect(infoClient).toContain("perpsWithdrawableUsd + spotUsdcUsd");
+  });
+
+  it("revalidates a named trading agent and its exchange expiry", () => {
+    expect(infoClient).toContain("getHyperliquidAgentAuthorization");
+    expect(infoClient).toContain('requestInfo<Array<{ address?: unknown; name?: unknown; validUntil?: unknown }>>');
+    expect(infoClient).toContain("validUntilMs");
   });
 
   it("fails closed before network access for an unknown Info request", () => {
