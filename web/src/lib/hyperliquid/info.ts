@@ -11,6 +11,7 @@ const REQUEST_TIMEOUT_MS = 8_000;
  */
 export const ALLOWED_INFO_REQUEST_TYPES = [
   "clearinghouseState",
+  "spotClearinghouseState",
   "openOrders",
   "portfolio",
   "userFillsByTime",
@@ -24,6 +25,10 @@ type ClearinghouseState = {
   marginSummary?: { accountValue?: string; totalMarginUsed?: string };
   withdrawable?: string;
   assetPositions?: Array<{ position?: { coin?: string; szi?: string; entryPx?: string } }>;
+};
+
+type SpotClearinghouseState = {
+  balances?: Array<{ coin?: string; total?: string }>;
 };
 
 type OpenOrder = { oid?: number | string };
@@ -119,16 +124,27 @@ export async function getHyperliquidAccountSnapshot(rawAddress: string): Promise
   const validation = validateHyperliquidAddress(rawAddress);
   if (!validation.ok) throw new HyperliquidInfoError();
 
-  const [state, openOrders] = await Promise.all([
+  const [state, spotState, openOrders] = await Promise.all([
     requestInfo<ClearinghouseState>("clearinghouseState", validation.address),
+    requestInfo<SpotClearinghouseState>("spotClearinghouseState", validation.address),
     requestInfo<OpenOrder[]>("openOrders", validation.address)
   ]);
-  const accountEquityUsd = numberOrNull(state.marginSummary?.accountValue);
-  if (accountEquityUsd === null || accountEquityUsd < 0 || !Array.isArray(state.assetPositions) || !Array.isArray(openOrders)) {
+  const perpsAccountEquityUsd = numberOrNull(state.marginSummary?.accountValue);
+  if (perpsAccountEquityUsd === null || perpsAccountEquityUsd < 0 || !Array.isArray(state.assetPositions) || !Array.isArray(spotState.balances) || !Array.isArray(openOrders)) {
     throw new HyperliquidInfoError();
   }
 
-  const withdrawableUsd = numberOrNull(state.withdrawable);
+  const spotUsdcBalance = spotState.balances.find(({ coin }) => coin === "USDC");
+  const spotUsdcUsd = spotUsdcBalance ? numberOrNull(spotUsdcBalance.total) : 0;
+  if (spotUsdcUsd === null || spotUsdcUsd < 0) {
+    throw new HyperliquidInfoError();
+  }
+
+  const accountEquityUsd = perpsAccountEquityUsd + spotUsdcUsd;
+  const perpsWithdrawableUsd = numberOrNull(state.withdrawable);
+  const withdrawableUsd = perpsWithdrawableUsd !== null && perpsWithdrawableUsd >= 0
+    ? perpsWithdrawableUsd + spotUsdcUsd
+    : spotUsdcUsd;
   const positions = state.assetPositions.flatMap(({ position }) => {
     const size = numberOrNull(position?.szi);
     if (!position?.coin || size === null || size === 0) return [];
@@ -173,10 +189,11 @@ export async function getHyperliquidPerformanceInputs(rawAddress: string): Promi
   }
 
   const history = { startTime: earliest, endTime: asOfMs };
+  const fullLedgerHistory = { startTime: 0, endTime: asOfMs };
   const [fills, funding, nonFundingLedgerUpdates] = await Promise.all([
     requestInfo<HyperliquidFill[]>("userFillsByTime", validation.address, history),
     requestInfo<HyperliquidFunding[]>("userFunding", validation.address, history),
-    requestInfo<HyperliquidNonFundingLedgerUpdate[]>("userNonFundingLedgerUpdates", validation.address, history)
+    requestInfo<HyperliquidNonFundingLedgerUpdate[]>("userNonFundingLedgerUpdates", validation.address, fullLedgerHistory)
   ]);
   if (!Array.isArray(fills) || !Array.isArray(funding) || !Array.isArray(nonFundingLedgerUpdates)) throw new HyperliquidInfoError();
   return { snapshot, portfolio, fills, funding, nonFundingLedgerUpdates, asOfMs };

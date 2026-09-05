@@ -63,6 +63,14 @@ describe("Hyperliquid read-only onboarding", () => {
     expect(infoClient).not.toContain("freeCollateralUsd");
   });
 
+  it("includes spot USDC in combined equity and withdrawable balances", () => {
+    expect(infoClient).toContain('"spotClearinghouseState"');
+    expect(infoClient).toContain('requestInfo<SpotClearinghouseState>("spotClearinghouseState", validation.address)');
+    expect(infoClient).toContain('spotState.balances.find(({ coin }) => coin === "USDC")');
+    expect(infoClient).toContain("perpsAccountEquityUsd + spotUsdcUsd");
+    expect(infoClient).toContain("perpsWithdrawableUsd + spotUsdcUsd");
+  });
+
   it("fails closed before network access for an unknown Info request", () => {
     const guard = infoClient.indexOf("if (!isAllowedInfoRequestType(type)) throw new HyperliquidInfoError()");
     const request = infoClient.indexOf("response = await fetch");

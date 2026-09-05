@@ -244,21 +244,35 @@ export function calculateHyperliquidAccountPerformance(input: PerformanceCalcula
   if (!genesis || !end || end.at <= genesis.at) return unavailablePerformance(input);
 
   const events = eventsFromInput(input);
-  const historyDays = Math.floor((startOfUtcDay(end.at) - startOfUtcDay(genesis.at)) / DAY_MS) + 1;
-  const inceptionEvents = eventsAfter(events, genesis.at, end.at);
+  const firstEvent = events[0];
+  const beginsWithOpeningDeposit = Boolean(
+    firstEvent &&
+    firstEvent.at < genesis.at &&
+    firstEvent.depositsUsd > EPSILON &&
+    firstEvent.withdrawalsUsd <= EPSILON &&
+    Math.abs(firstEvent.tradingPnlUsd) <= EPSILON &&
+    Math.abs(firstEvent.feesUsd) <= EPSILON &&
+    Math.abs(firstEvent.fundingUsd) <= EPSILON
+  );
+  const liveGenesisAt = beginsWithOpeningDeposit && firstEvent ? firstEvent.at : genesis.at;
+  const liveGenesisEquityUsd = beginsWithOpeningDeposit ? 0 : genesis.equityUsd;
+  const historyDays = Math.floor((startOfUtcDay(end.at) - startOfUtcDay(liveGenesisAt)) / DAY_MS) + 1;
+  const inceptionEvents = beginsWithOpeningDeposit
+    ? events.filter((event) => event.at >= liveGenesisAt && event.at <= end.at)
+    : eventsAfter(events, liveGenesisAt, end.at);
   const breakdown = sumBreakdown(inceptionEvents);
-  const totalLivePnlUsd = rounded(end.equityUsd - genesis.equityUsd - breakdown.depositsUsd + breakdown.withdrawalsUsd);
+  const totalLivePnlUsd = rounded(end.equityUsd - liveGenesisEquityUsd - breakdown.depositsUsd + breakdown.withdrawalsUsd);
   const hasCashFlow = Math.abs(breakdown.depositsUsd - breakdown.withdrawalsUsd) > EPSILON;
-  const returnAvailable = !hasCashFlow && genesis.equityUsd > EPSILON;
-  const cashFlowAdjustedReturnPct = returnAvailable ? rounded(((end.equityUsd / genesis.equityUsd) - 1) * 100) : null;
+  const returnAvailable = !hasCashFlow && liveGenesisEquityUsd > EPSILON;
+  const cashFlowAdjustedReturnPct = returnAvailable ? rounded(((end.equityUsd / liveGenesisEquityUsd) - 1) * 100) : null;
   const returnReason = returnAvailable ? null : (hasCashFlow ? "cash_flow_without_intraday_valuation" : "invalid_starting_equity");
 
   return {
     address: input.address,
     snapshot: input.snapshot,
     asOfMs: input.asOfMs,
-    liveGenesisAtMs: genesis.at,
-    liveGenesisDay: utcDay(genesis.at),
+    liveGenesisAtMs: liveGenesisAt,
+    liveGenesisDay: utcDay(liveGenesisAt),
     historyDays,
     totalLivePnlUsd,
     cashFlowAdjustedReturnPct,

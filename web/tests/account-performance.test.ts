@@ -57,6 +57,34 @@ describe("per-user real account performance", () => {
     expect(result.breakdown?.withdrawalsUsd).toBe(50);
   });
 
+  it("calculates all-time PnL from an opening deposit before portfolio history", () => {
+    const result = calculateHyperliquidAccountPerformance(input({
+      snapshot: {
+        address: addressA,
+        accountEquityUsd: 83.186462,
+        withdrawableUsd: 83.186462,
+        positions: [],
+        openOrderCount: 0
+      },
+      portfolio: [["allTime", {
+        accountValueHistory: [
+          [ms("2026-04-08"), "9.94"],
+          [ms("2026-09-03"), "83.186462"]
+        ]
+      }]],
+      nonFundingLedgerUpdates: [
+        { time: ms("2026-04-05"), delta: { type: "send", user: addressB, destination: addressA, amount: "9.94", usdcValue: "9.94" } },
+        { time: ms("2026-05-11"), delta: { type: "deposit", usdc: "29.64" } },
+        { time: ms("2026-09-02"), delta: { type: "send", user: addressB, destination: addressA, amount: "42.6", usdcValue: "42.6" } }
+      ]
+    }));
+
+    expect(result.totalLivePnlUsd).toBe(1.006462);
+    expect(result.breakdown?.depositsUsd).toBe(82.18);
+    expect(result.liveGenesisAtMs).toBe(ms("2026-04-05"));
+    expect(result.cashFlowAdjustedReturnAvailable).toBe(false);
+  });
+
   it("includes fees and funding in the independent breakdown", () => {
     const result = calculateHyperliquidAccountPerformance(input({
       snapshot: { address: addressA, accountEquityUsd: 109.4, withdrawableUsd: 109.4, positions: [], openOrderCount: 0 },

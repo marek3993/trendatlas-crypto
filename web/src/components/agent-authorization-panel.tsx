@@ -26,9 +26,26 @@ type BrowserChallenge = {
   action: { agentAddress: string; agentName: string; nonce: string };
 };
 
+type DetectableProvider = EIP1193Provider & {
+  isTrust?: boolean;
+  isTrustWallet?: boolean;
+  providers?: DetectableProvider[];
+};
+
 function walletProvider(): EIP1193Provider | null {
-  const provider = typeof window === "undefined" ? undefined : (window as unknown as { ethereum?: EIP1193Provider }).ethereum;
-  return provider ?? null;
+  if (typeof window === "undefined") return null;
+  const browser = window as unknown as {
+    ethereum?: DetectableProvider;
+    trustwallet?: DetectableProvider | { ethereum?: DetectableProvider };
+  };
+  const trustWallet = browser.trustwallet;
+  const nestedTrustWallet = (trustWallet as { ethereum?: DetectableProvider } | undefined)?.ethereum;
+  if (nestedTrustWallet) return nestedTrustWallet;
+  const directTrustWallet = trustWallet as DetectableProvider | undefined;
+  if (typeof directTrustWallet?.request === "function") return directTrustWallet;
+  const injected = browser.ethereum;
+  return injected?.providers?.find((provider) => provider.isTrust || provider.isTrustWallet) ??
+    (injected?.isTrust || injected?.isTrustWallet ? injected : injected ?? null);
 }
 
 export function AgentAuthorizationPanel({ authorization }: { authorization: AuthorizationState }) {
