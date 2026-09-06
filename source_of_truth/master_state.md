@@ -119,6 +119,7 @@
 - Live runtime: armed
 - Remaining proof gap: first non-CASH end-to-end dynamic leverage evidence run
 - Canonical scheduler target: `scripts/execution/run_trendatlas_production.py`; legacy fast/authority/full-auto scripts are internal tools and must not be enabled as competing automatic production schedulers.
+- Approved migration target (not active until cutover validation completes): the same canonical production orchestrator may delegate its execution stage to the fail-closed multi-account backend while retaining the existing single timer, single lock, refresh, validation, verification, and authority-publish ownership. Dual legacy plus multi-account order submission is forbidden.
 
 ## AI LAB dev-only governance
 - `phase69` remains paused.

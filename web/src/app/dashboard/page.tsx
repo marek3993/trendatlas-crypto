@@ -92,7 +92,8 @@ export default async function DashboardPage() {
   const connected = account?.connection_status === "read_only_connected";
   const authorized = authorization?.authorization_status === "authorized";
   const autoTrading = authorization?.auto_trading_requested === true;
-  const liveExecutorEnabled = executionMode() === "live";
+  const accountExecutionReady = ["ready", "aligned", "executing"].includes(authorization?.execution_status ?? "");
+  const liveExecutorEnabled = executionMode() === "live" || process.env.TRENDATLAS_MULTI_ACCOUNT_EXECUTOR_AVAILABLE === "true";
 
   return <main className="dashboard-shell">
     <header className="dashboard-header">
@@ -132,7 +133,7 @@ export default async function DashboardPage() {
             <div><span>Real account</span><strong>{performance ? (performance.snapshot.positions.length ? "In market" : "Out of market") : "Unavailable"}</strong></div>
             <div><span>Account asset</span><strong>{performance ? accountAsset(performance.snapshot.positions) : "Unavailable"}</strong></div>
             <div><span>Open orders</span><strong>{performance?.snapshot.openOrderCount ?? "—"}</strong></div>
-            <div><span>Order sending</span><strong>{liveExecutorEnabled && authorized && autoTrading ? "Ready" : "Blocked"}</strong></div>
+            <div><span>Order sending</span><strong>{liveExecutorEnabled && authorized && autoTrading && accountExecutionReady ? "Ready" : "Blocked"}</strong></div>
           </div>
           <AgentAuthorizationPanel authorization={authorization ? {
             authorizationStatus: authorization.authorization_status,

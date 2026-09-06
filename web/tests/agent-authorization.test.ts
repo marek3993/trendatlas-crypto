@@ -187,8 +187,9 @@ describe("Stage 4 agent authorization boundary", () => {
     expect(actions).toContain("auto_trading_requested: true");
   });
 
-  it("keeps Stage 4 authorization non-live while the new executor remains globally disabled", () => {
-    expect(migration).toContain("pending_multi_account_executor");
+  it("marks a verified authorization ready without exposing a Vercel execution path", () => {
+    expect(actions).toContain('execution_status: "ready"');
+    expect(actions).not.toContain("run-multi-account-production-cycle");
     expect(panel).toContain("Live executor: not enabled yet");
   });
 
@@ -206,9 +207,11 @@ describe("Stage 4 agent authorization boundary", () => {
     expect(webSource).not.toContain("TrendAtlasProd");
   });
 
-  it("leaves protected production files unchanged", () => {
-    const changed = execFileSync("git", ["diff", "--name-only", "--", "scripts/execution/run_trendatlas_production.py", "deploy/systemd/mrv1-production.service", "deploy/systemd/mrv1-production.timer"], { cwd: repoRoot, encoding: "utf8" });
-    expect(changed.trim()).toBe("");
+  it("keeps the approved production executor unreachable from authorization actions", () => {
+    const production = fs.readFileSync(path.join(repoRoot, "scripts/execution/run_trendatlas_production.py"), "utf8");
+    expect(production).toContain("run_multi_account_backend");
+    expect(actions).not.toContain("run_multi_account_backend");
+    expect(actions).not.toContain("run-multi-account-production-cycle");
   });
 
   it("does not modify generated data or outputs", () => {

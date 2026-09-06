@@ -484,6 +484,29 @@
                                                                                   "no_submit_rule":  "validate_signer_without_instantiating_order_submission_adapter_or_mutating_exchange"
                                                                               }
                                            },
+    "approved_multi_account_execution_cutover":  {
+                                                       "status":  "implementation_pending_pi_preflight_and_activation",
+                                                       "approved_at":  "2026-09-06",
+                                                       "scheduler":  "mrv1-production.timer_only",
+                                                       "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
+                                                       "execution_backend":  "multi_account",
+                                                       "runner":  "web/scripts/run-multi-account-production-cycle.ts",
+                                                       "legacy_order_adapter_when_active":  "forbidden",
+                                                       "owner_account_must_be_uniquely_eligible":  true,
+                                                       "batch_preflight_scope":  "all_eligible_accounts_before_first_write",
+                                                       "production_batch_concurrency":  1,
+                                                       "stop_after_unsafe_account_result":  true,
+                                                       "per_account_sizing":  "fresh_account_equity_times_validated_target_exposure",
+                                                       "authority_success_requires":  "terminal_multi_account_batch_success_plus_owner_account_readback_alignment",
+                                                       "vercel_exchange_writes":  "disabled",
+                                                       "activation_requires":  [
+                                                                                   "updated_code_and_tests",
+                                                                                   "pi_no_submit_preflight",
+                                                                                   "exact_eligible_account_review",
+                                                                                   "rollback_commands_ready",
+                                                                                   "explicit_final_live_confirmation"
+                                                                               ]
+                                                   },
     "production_authority_model":  {
                                        "automatic_production_producer":  "raspberry_pi",
                                        "pc_role":  "manual_recovery_debug_only",

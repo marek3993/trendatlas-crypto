@@ -136,7 +136,7 @@ class HyperliquidSystemdCredentialTests(unittest.TestCase):
         with self.assertRaises(SignerValidationError):
             get_account_setup(wrong, FakeCrypto(), environ=self.environ)
 
-    def test_repo_config_and_unit_forbid_legacy_secret_transport(self):
+    def test_repo_legacy_config_remains_safe_but_multi_account_unit_does_not_mount_it(self):
         root = Path(__file__).resolve().parents[1]
         config = json.loads(
             (root / "execution/config/hyperliquid_account.json").read_text(encoding="utf-8")
@@ -149,7 +149,8 @@ class HyperliquidSystemdCredentialTests(unittest.TestCase):
         service = (root / "deploy/systemd/mrv1-production.service").read_text(
             encoding="utf-8"
         )
-        self.assertIn("LoadCredentialEncrypted=hyperliquid-agent-private-key:", service)
+        self.assertNotIn("LoadCredentialEncrypted=hyperliquid-agent-private-key:", service)
+        self.assertIn("MRV1_EXECUTION_BACKEND=multi_account", service)
         self.assertIn("User=trendatlas", service)
         self.assertNotIn("HYPERLIQUID_SECRET_KEY", service)
 

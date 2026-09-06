@@ -231,7 +231,7 @@ export async function submitAgentAuthorization(challengeId: string, signature: s
       ownership_verified_at: now,
       agent_authorized_at: now,
       auto_trading_requested: true,
-      execution_status: "pending_multi_account_executor"
+      execution_status: "ready"
     })
     .eq("id", authorization.id)
     .eq("user_id", user.id)
@@ -243,7 +243,7 @@ export async function submitAgentAuthorization(challengeId: string, signature: s
     return failure("Authorization was confirmed but could not be saved. Please contact support.");
   }
   revalidatePath("/dashboard");
-  return { message: "TrendAtlas agent authorized." };
+  return { message: "TrendAtlas agent authorized and ready for the next production cycle." };
 }
 
 export async function setAutoTradingRequested(requested: boolean): Promise<AgentActionState> {

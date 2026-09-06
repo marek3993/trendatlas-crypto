@@ -241,6 +241,50 @@ describe("exclusive live ownership guard", () => {
 });
 
 describe("ambiguous live submission recovery", () => {
+  it("rechecks the one-shot notional cap on the final plan before CLOID lookup or write", async () => {
+    const originalKek = process.env.TRENDATLAS_AGENT_KEK_B64;
+    process.env.TRENDATLAS_AGENT_KEK_B64 = Buffer.alloc(32, 12).toString("base64");
+    const encryptedSecret = createEnvironmentAgentSecretProtector(process.env.TRENDATLAS_AGENT_KEK_B64).encrypt(privateKey);
+    const candidate = {
+      userId: "user-a", accountId: "account-a", masterAddress, agentAddress, agentName: "TA-1234abcd",
+      authorizationId: "auth-a", connectionStatus: "read_only_connected", authorizationStatus: "authorized",
+      ownershipVerifiedAt: "2026-09-01T00:00:00Z", agentAuthorizedAt: "2026-09-01T00:00:00Z",
+      autoTradingRequested: true, executionStatus: "ready" as const, hasEncryptedSecret: true, encryptedSecret
+    };
+    const finishRun = vi.fn();
+    const repository: ExecutionRepository = {
+      listMultiAccountCandidates: async () => [candidate], tryAcquire: async () => true, release: async () => undefined,
+      reserveNonce: async () => nonce, createRun: async () => "run", recordAction: async () => undefined,
+      finishRun, setAccountStatus: async () => undefined
+    };
+    const findByCloid = vi.fn();
+    const writeIoc = vi.fn();
+    const gateway: ExchangeGateway = {
+      readAccount: async () => ({ equityUsd: 100, positions: [], openOrderCount: 0 }),
+      readMarkets: async () => new Map([
+        ["BTC", { asset: "BTC", markPrice: 60_000, minNotionalUsd: 10, sizeDecimals: 5 }],
+        ["ETH", { asset: "ETH", markPrice: 2_500, minNotionalUsd: 10, sizeDecimals: 4 }]
+      ]),
+      userRole: async () => ({ role: "agent", user: masterAddress }),
+      agentAuthorization: async () => ({ authorized: true, validUntilMs: Date.parse("2100-01-01T00:00:00Z") }),
+      findByCloid,
+      writeIoc
+    };
+    const target: AuthorizedTarget = { strategyVersion: "v1", closedDay: "2026-09-03", signalId: "signal", asset: "ETH", exposure: 1, stale: false, executionGate: "approved" };
+
+    try {
+      await expect(new MultiAccountExecutor(repository, gateway, "live", 1, { maxActionNotionalUsd: 50 }).runAllForTarget(target)).resolves.toEqual([
+        { accountId: "account-a", status: "BLOCKED", reason: "planned action exceeds the live notional cap" }
+      ]);
+      expect(findByCloid).not.toHaveBeenCalled();
+      expect(writeIoc).not.toHaveBeenCalled();
+      expect(finishRun).toHaveBeenCalledWith("run", "BLOCKED", 100, "planned action exceeds the live notional cap");
+    } finally {
+      if (originalKek === undefined) delete process.env.TRENDATLAS_AGENT_KEK_B64;
+      else process.env.TRENDATLAS_AGENT_KEK_B64 = originalKek;
+    }
+  });
+
   it("stops without retry when both the write and post-write CLOID lookup fail", async () => {
     const originalKek = process.env.TRENDATLAS_AGENT_KEK_B64;
     process.env.TRENDATLAS_AGENT_KEK_B64 = Buffer.alloc(32, 10).toString("base64");

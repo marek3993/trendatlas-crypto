@@ -122,6 +122,19 @@
                                                                         "safe_preflight_rule":  "derive_and_validate_named_agent_authorization_without_exchange_mutation",
                                                                         "secret_output_rule":  "never_emit_signer_secret_to_logs_artifacts_dashboards_or_manifests"
                                                                     },
+                                            "approved_multi_account_backend":  {
+                                                                                     "status":  "pending_pi_preflight_and_activation",
+                                                                                     "single_scheduler_and_lock":  true,
+                                                                                     "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
+                                                                                     "execution_runner":  "web/scripts/run-multi-account-production-cycle.ts",
+                                                                                     "target_binding":  "current_run_id_plus_current_signal_id_plus_production_intent_gate_fingerprints",
+                                                                                     "owner_account_must_be_uniquely_eligible":  true,
+                                                                                     "all_account_preflight_before_first_write":  true,
+                                                                                     "production_batch_concurrency":  1,
+                                                                                     "unsafe_result_action":  "stop_remaining_accounts_and_block_authority_success",
+                                                                                     "legacy_python_order_adapter_when_active":  "must_not_be_instantiated",
+                                                                                     "vercel_exchange_writes":  "disabled"
+                                                                                 },
                                             "dashboard_sections":  [
                                                                         "model_target",
                                                                         "real_account",

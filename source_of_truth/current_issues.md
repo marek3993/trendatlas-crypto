@@ -48,6 +48,8 @@
 ## Active operational focus
 - Keep recurring production scheduling on the single canonical orchestrator `scripts/execution/run_trendatlas_production.py`; competing production execution timers remain disabled.
 - `mrv1-production.service` uses `LoadCredentialEncrypted=hyperliquid-agent-private-key`; the named `TrendAtlasProd` signer is validated against master account `0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856` before execution.
+- Full migration to the multi-account execution backend is approved and implemented on the rollout branch but is not active on the Pi until the final no-submit preflight and cutover. The target keeps the same `mrv1-production.timer`, canonical Python orchestrator, and single-run lock; it replaces only the execution stage, executes accounts sequentially, requires the owner account to be uniquely eligible, and stops after the first unsafe account result.
+- After the approved cutover is activated, `mrv1-production.service` must not mount or pre-validate the legacy `TrendAtlasProd` signer. Per-user encrypted agent secrets are decrypted only inside the Pi worker, while Vercel exchange writes remain disabled.
 - The former process-environment signer is intentionally unrecoverable and must not be searched for. Browser-wallet extraction, credential dumping, filesystem-forensic secret recovery, and any master-private-key request are forbidden.
 - Exchange authorization expiry is an operational lifecycle condition: daily signer validation must surface the public expiry and fail closed once authorization is expired.
 - Live runtime activation settings remain armed, but execution must fail closed unless deterministic CLOID recovery, canonical provenance, fresh account/margin state, and post-trade verification all pass.

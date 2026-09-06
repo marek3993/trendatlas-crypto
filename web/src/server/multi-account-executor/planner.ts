@@ -45,7 +45,7 @@ export function buildPlan(target: AuthorizedTarget, account: AccountState, marke
   const currentNotional = Math.abs(current.size * current.markPrice);
   const delta = targetNotional - currentNotional;
   if (Math.abs(delta) <= RESIDUAL_TOLERANCE_USD) return { state: "NO_ACTION", actions: [] };
-  if (Math.abs(delta) < targetMarket.minNotionalUsd) return { state: "BLOCKED", actions: [], reason: "residual is below executable minimum" };
+  if (Math.abs(delta) < targetMarket.minNotionalUsd) return { state: "NO_ACTION", actions: [], reason: "precision-limited residual below exchange minimum" };
   const action = makeAction("RESIZE", target.asset, Math.abs(delta), targetMarket, delta < 0, 0);
   return action ? { state: "RESIZE", actions: [action] } : { state: "BLOCKED", actions: [], reason: "resize precision is invalid" };
 }

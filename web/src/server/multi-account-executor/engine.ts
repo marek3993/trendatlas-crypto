@@ -30,6 +30,7 @@ export interface ExecutionRepository {
 }
 
 export type AccountResult = { accountId: string; status: FinalStatus; reason?: string };
+type ExecutorSafety = { maxActionNotionalUsd?: number; stopOnUnsafeResult?: boolean };
 
 export function isEligibleMultiAccount(account: EligibleAccount): boolean {
   return account.connectionStatus === "read_only_connected" && account.authorizationStatus === "authorized" && Boolean(account.ownershipVerifiedAt) && Boolean(account.agentAuthorizedAt) && account.autoTradingRequested === true && (account.executionStatus === "ready" || account.executionStatus === "aligned" || account.executionStatus === "executing") && account.hasEncryptedSecret === true;
@@ -44,16 +45,31 @@ function isAligned(plan: Plan): boolean {
 }
 
 export class MultiAccountExecutor {
-  constructor(private readonly repository: ExecutionRepository, private readonly exchange: ExchangeGateway, private readonly mode: ExecutionMode, private readonly maxConcurrency = 4) {}
+  constructor(
+    private readonly repository: ExecutionRepository,
+    private readonly exchange: ExchangeGateway,
+    private readonly mode: ExecutionMode,
+    private readonly maxConcurrency = 4,
+    private readonly safety: ExecutorSafety = {}
+  ) {}
 
   async runAllForTarget(target: AuthorizedTarget): Promise<AccountResult[]> {
     const accounts = await this.repository.listMultiAccountCandidates();
     const results = new Array<AccountResult>(accounts.length);
     let next = 0;
+    let stopAfterUnsafeResult = false;
     const workers = Array.from({ length: Math.min(this.maxConcurrency, accounts.length) }, async () => {
       while (next < accounts.length) {
         const index = next++;
-        results[index] = await this.runOne(accounts[index], target);
+        if (stopAfterUnsafeResult) {
+          results[index] = { accountId: accounts[index].accountId, status: "BLOCKED", reason: "batch stopped after another account failed" };
+          continue;
+        }
+        const result = await this.runOne(accounts[index], target);
+        results[index] = result;
+        if (this.safety.stopOnUnsafeResult && !["NO_ACTION", "FILLED_AND_ALIGNED"].includes(result.status)) {
+          stopAfterUnsafeResult = true;
+        }
       }
     });
     await Promise.all(workers);
@@ -83,11 +99,21 @@ export class MultiAccountExecutor {
       }
       const [before, markets] = await Promise.all([this.exchange.readAccount(account.masterAddress), this.exchange.readMarkets()]);
       const plan = buildPlan(target, before, markets);
-      runId = await this.repository.createRun(account, target, before.equityUsd, plan.state === "BLOCKED" ? "BLOCKED" : this.mode === "dry_run" ? "DRY_RUN" : "NO_ACTION");
+      const cap = this.safety.maxActionNotionalUsd;
+      const liveCapExceeded = this.mode === "live" && cap !== undefined && (
+        !Number.isFinite(cap) || cap <= 0 || plan.actions.some(({ requestedNotionalUsd }) => requestedNotionalUsd > cap)
+      );
+      runId = await this.repository.createRun(account, target, before.equityUsd, plan.state === "BLOCKED" || liveCapExceeded ? "BLOCKED" : this.mode === "dry_run" ? "DRY_RUN" : "NO_ACTION");
       if (plan.state === "BLOCKED") {
         await this.repository.setAccountStatus(account.authorizationId, "blocked");
         await this.repository.finishRun(runId, "BLOCKED", before.equityUsd, plan.reason);
         return { accountId: account.accountId, status: "BLOCKED", reason: plan.reason };
+      }
+      if (liveCapExceeded) {
+        const reason = "planned action exceeds the live notional cap";
+        await this.repository.setAccountStatus(account.authorizationId, "blocked");
+        await this.repository.finishRun(runId, "BLOCKED", before.equityUsd, reason);
+        return { accountId: account.accountId, status: "BLOCKED", reason };
       }
       if (this.mode === "dry_run") {
         for (const action of plan.actions) {

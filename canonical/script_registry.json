@@ -227,7 +227,18 @@
       "output_type": "production_orchestration",
       "decision_relevance": "execution_authoritative",
       "writes_source_of_truth": false,
-      "notes": "Default mode may submit a live order only after all current-run gates pass. --no-submit never instantiates the live exchange adapter."
+      "notes": "Default mode may submit a live order only after all current-run gates pass. --no-submit never instantiates a live exchange adapter. The approved multi_account backend delegates only the EXECUTE stage to the server-only Node runner while this orchestrator retains the single lock and authority lifecycle."
+    },
+    {
+      "script_path": "web/scripts/run-multi-account-production-cycle.ts",
+      "layer": "production_execution",
+      "status": "approved_pending_pi_activation",
+      "purpose": "Executes the current canonical run target across all eligible Supabase-backed accounts after an all-account read-only preflight.",
+      "primary_outputs": [],
+      "output_type": "production_execution_child",
+      "decision_relevance": "execution_authoritative",
+      "writes_source_of_truth": false,
+      "notes": "Callable only as the child EXECUTE stage of run_trendatlas_production.py. Requires exact run/signal fingerprint binding, one uniquely eligible owner account, sequential execution, and fail-stop batch behavior. Vercel routes cannot invoke it."
     },
     {
       "script_path": "scripts/execution/production_execution.py",

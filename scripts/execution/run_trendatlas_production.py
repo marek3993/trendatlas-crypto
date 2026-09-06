@@ -198,6 +198,8 @@ def new_manifest(run_id: str, target_day: str, *, no_submit: bool) -> dict[str, 
         "failure_reason": None,
         "live_order_chain": "NOT_INVOKED",
         "real_order_sent": False,
+        "execution_backend": None,
+        "multi_account_execution": None,
     }
 
 
@@ -211,10 +213,14 @@ class TrendAtlasProductionOrchestrator:
         market_loader: Callable[[], tuple[dict[str, float], dict[str, int]]] = load_live_market_context,
         adapter_factory: Callable[[], Any] = HyperliquidProductionExchangeAdapter,
         signer_validator: Callable[[], dict[str, Any]] | None = None,
+        execution_backend: str | None = None,
         now: Callable[[], str] = utc_now_iso,
     ) -> None:
         self.root = root.resolve()
         self.no_submit = no_submit
+        self.execution_backend = str(execution_backend or os.environ.get("MRV1_EXECUTION_BACKEND") or "legacy").strip()
+        if self.execution_backend not in {"legacy", "multi_account"}:
+            raise ValueError("MRV1_EXECUTION_BACKEND must be legacy or multi_account")
         self.command_runner = command_runner
         self.market_loader = market_loader
         self.adapter_factory = adapter_factory
@@ -229,6 +235,7 @@ class TrendAtlasProductionOrchestrator:
         self.run_dir = self.root / "outputs" / "execution" / "production_runs" / self.run_id
         self.latest_run_path = self.root / "outputs" / "execution" / "production_runs" / "latest_production_run.json"
         self.manifest = new_manifest(self.run_id, self.target_day, no_submit=no_submit)
+        self.manifest["execution_backend"] = self.execution_backend
         self.current_stage: str | None = None
         self.authority_state: dict[str, Any] | None = None
         self.env = build_pi_authoritative_env(env=os.environ, root=self.root)
@@ -261,6 +268,45 @@ class TrendAtlasProductionOrchestrator:
         completed = self.command_runner(command, cwd=str(self.root), env=dict(self.env), check=False)
         if completed.returncode != 0:
             raise RuntimeError(f"{label}_failed_returncode_{completed.returncode}")
+
+    def run_multi_account_backend(self, signal_id: str, *, no_submit: bool) -> tuple[dict[str, Any], int]:
+        web_root = Path(str(self.env.get("MRV1_MULTI_ACCOUNT_WEB_ROOT") or "")).resolve()
+        node_binary = Path(str(self.env.get("MRV1_MULTI_ACCOUNT_NODE_BINARY") or "")).resolve()
+        runner = web_root / "scripts/run-multi-account-production-cycle.ts"
+        if web_root != self.root / "web" or not node_binary.is_file() or not os.access(node_binary, os.X_OK) or not runner.is_file():
+            raise ExecutionSafetyError("multi_account_runtime_is_incomplete")
+        execution_env = dict(self.env)
+        execution_env.update({
+            "TRENDATLAS_MULTI_ACCOUNT_EXECUTION_MODE": "dry_run" if no_submit else "live",
+            "TRENDATLAS_EXECUTION_OWNER": "multi_account",
+            "TRENDATLAS_MULTI_ACCOUNT_EXECUTION_CONTEXT": "canonical_orchestrator",
+            "TRENDATLAS_MULTI_ACCOUNT_CONFIRMATION": "ENABLE:ALL_ELIGIBLE_ACCOUNTS",
+            "TRENDATLAS_AUTHORITY_REPOSITORY_ROOT": str(self.root),
+            "TRENDATLAS_LIVE_SIGNAL_CONFIRMATION": signal_id,
+        })
+        completed = self.command_runner(
+            [
+                str(node_binary),
+                "--conditions=react-server",
+                "--import", "tsx",
+                str(runner),
+            ],
+            cwd=str(web_root),
+            env=execution_env,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        stdout = str(completed.stdout or "").strip()
+        try:
+            report = json.loads(stdout.splitlines()[-1])
+        except Exception as exc:
+            raise ExecutionSafetyError(
+                f"multi_account_runner_failed_returncode_{completed.returncode}"
+            ) from exc
+        if not isinstance(report, dict) or report.get("runId") != self.run_id or report.get("signalId") != signal_id:
+            raise ExecutionSafetyError("multi_account_result_binding_mismatch")
+        return report, int(completed.returncode)
 
     def load_runtime(self) -> tuple[dict, dict, dict, dict, dict, dict]:
         return tuple(
@@ -462,11 +508,27 @@ class TrendAtlasProductionOrchestrator:
             self.stage_finish("READ_ACCOUNT_BEFORE")
 
             self.stage_start("VALIDATE_SIGNER")
-            signer_validation = self.signer_validator()
-            if str(signer_validation.get("status") or "").upper() != "PASS":
-                raise ExecutionSafetyError("production_signer_validation_not_passed")
-            if bool(signer_validation.get("credential_value_exposed")):
-                raise ExecutionSafetyError("production_signer_secret_exposure_detected")
+            if self.execution_backend == "multi_account":
+                required_multi_account_env = (
+                    "NEXT_PUBLIC_SUPABASE_URL",
+                    "SUPABASE_ADMIN_KEY",
+                    "TRENDATLAS_AGENT_KEK_B64",
+                    "MRV1_MULTI_ACCOUNT_NODE_BINARY",
+                    "MRV1_MULTI_ACCOUNT_WEB_ROOT",
+                )
+                if any(not str(self.env.get(name) or "").strip() for name in required_multi_account_env):
+                    raise ExecutionSafetyError("multi_account_credentials_or_runtime_missing")
+                signer_validation = {
+                    "status": "PASS",
+                    "mode": "multi_account_per_account_preflight",
+                    "credential_value_exposed": False,
+                }
+            else:
+                signer_validation = self.signer_validator()
+                if str(signer_validation.get("status") or "").upper() != "PASS":
+                    raise ExecutionSafetyError("production_signer_validation_not_passed")
+                if bool(signer_validation.get("credential_value_exposed")):
+                    raise ExecutionSafetyError("production_signer_secret_exposure_detected")
             self.manifest["signer_validation"] = signer_validation
             self.stage_finish("VALIDATE_SIGNER")
 
@@ -550,7 +612,35 @@ class TrendAtlasProductionOrchestrator:
             self.stage_finish("LIVE_PREFLIGHT")
 
             self.stage_start("EXECUTE")
-            if self.no_submit:
+            if self.execution_backend == "multi_account":
+                if not self.no_submit:
+                    self.manifest["live_order_chain"] = "INVOKED"
+                    self.manifest["order_requested"] = None
+                    self.manifest["real_order_sent"] = None
+                    self.manifest["order_result"] = "MULTI_ACCOUNT_EXECUTING_OR_UNCERTAIN"
+                    self.persist()
+                multi_account_report, returncode = self.run_multi_account_backend(
+                    str(self.manifest["signal_id"]),
+                    no_submit=self.no_submit,
+                )
+                self.manifest["multi_account_execution"] = multi_account_report
+                self.manifest["real_order_sent"] = multi_account_report.get("realOrderSent")
+                self.manifest["order_requested"] = multi_account_report.get("realOrderSent")
+                self.manifest["order_result"] = "PREFLIGHT_ONLY" if self.no_submit else ("SUCCESS" if multi_account_report.get("successful") else "FAILED_OR_AMBIGUOUS")
+                self.persist()
+                if returncode != 0 or multi_account_report.get("successful") is not True:
+                    raise ExecutionSafetyError("multi_account_execution_not_terminal_success")
+                if self.no_submit:
+                    execution_result = {"status": "PREFLIGHT_ONLY", "order_requested": False, "action_results": []}
+                    self.stage_finish("EXECUTE", "SKIPPED", reason="multi_account_no_submit")
+                else:
+                    execution_result = {
+                        "status": "FILLED_AND_ALIGNED" if multi_account_report.get("realOrderSent") is True else "NO_ACTION",
+                        "order_requested": multi_account_report.get("realOrderSent") is True,
+                        "action_results": multi_account_report.get("results", []),
+                    }
+                    self.stage_finish("EXECUTE")
+            elif self.no_submit:
                 execution_result = {"status": "PREFLIGHT_ONLY", "order_requested": False, "action_results": []}
                 self.stage_finish("EXECUTE", "SKIPPED", reason="no_submit")
             elif plan["action"] == "NO_ACTION":
@@ -598,7 +688,7 @@ class TrendAtlasProductionOrchestrator:
             self.persist()
 
             self.stage_start("READ_ACCOUNT_AFTER")
-            if self.no_submit or plan["action"] == "NO_ACTION":
+            if self.no_submit or self.execution_backend == "multi_account" or plan["action"] == "NO_ACTION":
                 self.run_script(
                     self.root / "scripts/execution/hyperliquid_read_only_snapshot.py",
                     label="read_account_after",
@@ -625,7 +715,11 @@ class TrendAtlasProductionOrchestrator:
             verification_status = (
                 "PREFLIGHT_ONLY"
                 if self.no_submit
-                else ("NO_ACTION" if plan["action"] == "NO_ACTION" else execution_result["status"])
+                else (
+                    execution_result["status"]
+                    if self.execution_backend == "multi_account"
+                    else ("NO_ACTION" if plan["action"] == "NO_ACTION" else execution_result["status"])
+                )
             )
             if not self.no_submit and verification_status in FINAL_EXECUTION_SUCCESS and not aligned_after:
                 raise ExecutionSafetyError("post_trade_account_not_aligned")

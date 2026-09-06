@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { SUPPORTED_TARGETS, type AuthorizedTarget, type TargetAsset } from "./types";
@@ -42,4 +43,56 @@ export async function loadAuthorizedTarget(repositoryRoot: string): Promise<Auth
     readFile(path.join(base, "latest_attempt_status.json"), "utf8")
   ]);
   return parseAuthorizedTarget(JSON.parse(snapshot), JSON.parse(attempt));
+}
+
+function sha256(value: string): string {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+/**
+ * Loads the target created inside the currently locked canonical production run.
+ * This path is only for the orchestrator-owned multi-account execution stage,
+ * before that same run is allowed to publish its terminal authority snapshot.
+ */
+export async function loadCanonicalRunTarget(
+  repositoryRoot: string,
+  expectedRunId: string,
+  expectedSignalId: string
+): Promise<AuthorizedTarget> {
+  if (!expectedRunId.trim() || !expectedSignalId.trim()) throw new AuthorityError("canonical run binding is missing");
+  const productionPath = path.join(repositoryRoot, "outputs", "production", "current_strategy_snapshot.json");
+  const intentPath = path.join(repositoryRoot, "outputs", "execution", "intents", "latest_execution_intent.json");
+  const gatePath = path.join(repositoryRoot, "outputs", "execution", "live_gate", "latest_real_order_gate_decision.json");
+  const accountPath = path.join(repositoryRoot, "outputs", "execution", "read_only", "hyperliquid_account_snapshot.json");
+  const [productionText, intentText, gateText, accountText] = await Promise.all([
+    readFile(productionPath, "utf8"),
+    readFile(intentPath, "utf8"),
+    readFile(gatePath, "utf8"),
+    readFile(accountPath, "utf8")
+  ]);
+  const production = asRecord(JSON.parse(productionText));
+  const productionIntent = asRecord(production.execution_intent);
+  const intent = asRecord(JSON.parse(intentText));
+  const gate = asRecord(JSON.parse(gateText));
+  const context = asRecord(gate.production_signal_context);
+  const fingerprints = asRecord(gate.source_fingerprints);
+  const intentFingerprints = asRecord(intent.source_fingerprints);
+  const strategyVersion = asString(production.strategy_version);
+  const closedDay = asString(production.closed_day);
+  const signalId = asString(productionIntent.signal_id);
+  const asset = asString(productionIntent.target_asset);
+  const exposure = asNumber(productionIntent.target_exposure);
+
+  if (process.env.MRV1_CURRENT_AUTHORITY_RUN_ID !== expectedRunId) throw new AuthorityError("canonical run id does not match the orchestrator");
+  if (process.env.MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY !== closedDay) throw new AuthorityError("canonical closed day does not match the orchestrator");
+  if (production.artifact_type !== "current_strategy_snapshot" || production.schema_version !== 4) throw new AuthorityError("Production Core schema is invalid");
+  if (!strategyVersion || !closedDay || !signalId || signalId !== expectedSignalId || !asset || exposure === null) throw new AuthorityError("canonical target is incomplete");
+  if (!SUPPORTED_TARGETS.includes(asset as TargetAsset) || productionIntent.stale_signal !== false || asRecord(production.validation).status !== "passed") throw new AuthorityError("canonical target is stale or unsupported");
+  if (intent.signal_id !== signalId || intent.target_asset !== asset || asNumber(intent.target_size_pct) !== exposure || intent.strategy_model !== strategyVersion || intent.as_of_source !== closedDay || intent.stale_signal !== false) throw new AuthorityError("canonical intent does not match Production Core");
+  if (context.signal_id !== signalId || context.target_asset !== asset || asNumber(context.target_exposure) !== exposure || context.strategy_version !== strategyVersion || context.closed_day !== closedDay || context.validation_status !== "passed") throw new AuthorityError("canonical gate does not match Production Core");
+  if (fingerprints.production_snapshot_sha256 !== sha256(productionText) || intentFingerprints.production_snapshot_sha256 !== sha256(productionText) || fingerprints.intent_sha256 !== sha256(intentText) || fingerprints.account_snapshot_sha256 !== sha256(accountText)) throw new AuthorityError("canonical source fingerprints do not match");
+  const gatePermitsTarget = gate.status === "no_action" || (gate.approval_gate_status === "approved_and_applied" && gate.real_orders_enabled === true && gate.would_place_real_order === true);
+  if (!gatePermitsTarget) throw new AuthorityError("canonical gate does not permit execution");
+  if ((asset === "CASH" && exposure !== 0) || (asset !== "CASH" && exposure <= 0)) throw new AuthorityError("canonical target exposure is invalid");
+  return { strategyVersion, closedDay, signalId, asset: asset as TargetAsset, exposure, stale: false, executionGate: gate.status === "no_action" ? "no_action" : "approved" };
 }

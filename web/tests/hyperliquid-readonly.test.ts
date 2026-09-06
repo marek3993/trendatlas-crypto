@@ -1,4 +1,3 @@
-import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -123,6 +122,8 @@ describe("Hyperliquid read-only onboarding", () => {
     expect(dashboard).toContain("Real account performance");
     expect(dashboard).toContain("performance.snapshot.positions");
     expect(dashboard).toContain("performance.snapshot.openOrderCount");
+    expect(dashboard).toContain('TRENDATLAS_MULTI_ACCOUNT_EXECUTOR_AVAILABLE === "true"');
+    expect(dashboard).toContain("accountExecutionReady");
   });
 
   it("disconnects only the logged-in user's connection", () => {
@@ -137,12 +138,10 @@ describe("Hyperliquid read-only onboarding", () => {
     addresses.forEach((address) => expect(appSource).not.toContain(address));
   });
 
-  it("leaves protected production paths unchanged", () => {
-    const output = execFileSync(
-      "git",
-      ["diff", "--name-only", "--", "scripts/execution/run_trendatlas_production.py", "deploy/systemd/mrv1-production.service", "deploy/systemd/mrv1-production.timer"],
-      { cwd: repositoryRoot, encoding: "utf8" }
-    );
-    expect(output.trim()).toBe("");
+  it("keeps read-only browser code isolated from the approved production cutover", () => {
+    const production = fs.readFileSync(path.join(repositoryRoot, "scripts/execution/run_trendatlas_production.py"), "utf8");
+    const appSource = filesUnder(path.join(webRoot, "src", "app")).map((file) => fs.readFileSync(file, "utf8")).join("\n");
+    expect(production).toContain("run_multi_account_backend");
+    expect(appSource).not.toContain("run_multi_account_backend");
   });
 });

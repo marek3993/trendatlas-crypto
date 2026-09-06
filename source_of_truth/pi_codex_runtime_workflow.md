@@ -59,6 +59,17 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
   - `heavy_refresh_steps=skipped`
   - `live_order_chain=not_invoked`
 
+## Approved Multi-Account Cutover (Pending Activation)
+- Keep `mrv1-production.timer` as the only automatic production timer and `scripts/execution/run_trendatlas_production.py` as its only entrypoint.
+- The approved `multi_account` backend replaces only the orchestrator's EXECUTE stage. It must run as a child process while the canonical Python single-run lock is held.
+- Before activation, install the server-only Supabase URL/admin key and agent KEK in `/etc/default/trendatlas-multi-account` with owner `root:trendatlas` and mode `0640`; never copy the real values into Git, chat, logs, or command arguments.
+- The owner master account must be uniquely present in the eligible set. Every eligible account must pass the complete read-only preflight before the first write.
+- Production multi-account execution is sequential (`TRENDATLAS_MULTI_ACCOUNT_MAX_CONCURRENCY=1`) and stops before later accounts after any unsafe result.
+- In the activated multi-account unit, do not mount or pre-validate the legacy `TrendAtlasProd` systemd credential. Keep the encrypted file at rest only for rollback.
+- Vercel remains `TRENDATLAS_MULTI_ACCOUNT_EXECUTION_MODE=disabled`; no Vercel route or browser action may invoke production execution.
+- Before enabling the timer, run the same service code with `run_trendatlas_production.py --no-submit`, inspect the exact eligible set separately, and obtain explicit final confirmation for the first live start.
+- Rollback is: stop the service, disable the timer, restore the previous service file/commit, reload systemd, run the legacy `--no-submit` preflight with its encrypted credential mounted, and only then re-enable the same timer. Never enable a second timer.
+
 ## Required Pi Nightly Service Workflow
 The installed Pi production service must call only:
 

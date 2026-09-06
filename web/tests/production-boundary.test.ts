@@ -33,7 +33,9 @@ const agentAuthorizationModule = source("lib/hyperliquid/agent-authorization.ts"
 const adminModule = source("lib/supabase/admin.ts");
 const liveGatewayModule = source("server/multi-account-executor/hyperliquid-live-gateway.ts");
 const liveGuardModule = source("server/multi-account-executor/exclusive-live-guard.ts");
+const canonicalGuardModule = source("server/multi-account-executor/canonical-production-guard.ts");
 const liveOnceRunner = fs.readFileSync(path.join(process.cwd(), "scripts/run-multi-account-live-once.ts"), "utf8");
+const productionRunner = fs.readFileSync(path.join(process.cwd(), "scripts/run-multi-account-production-cycle.ts"), "utf8");
 const packageJson = source("../package.json");
 
 function source(relativePath: string): string {
@@ -59,6 +61,8 @@ describe("production isolation boundary", () => {
     expect(liveOnceRunner).toContain("candidates.length !== 1");
     expect(liveOnceRunner).toContain("TRENDATLAS_LIVE_SIGNAL_CONFIRMATION !== target.signalId");
     expect(liveOnceRunner).toContain("maxActionNotionalUsd > guard.maxNotionalUsd");
+    expect(liveOnceRunner).toContain("maxActionNotionalUsd: guard.maxNotionalUsd");
+    expect(packageJson).toContain("flock --nonblock ../outputs/execution/production_runs/trendatlas_production.lock");
   });
 
   it("keeps browser modules free of wallet-secret inputs and secret identifiers", () => {
@@ -89,8 +93,26 @@ describe("production isolation boundary", () => {
     addresses.forEach((address) => expect(allWebSource).not.toContain(address));
   });
 
-  it("leaves protected production files unchanged", () => {
-    expect(gitDiffNames(protectedFiles)).toEqual([]);
+  it("keeps the approved cutover inside the existing canonical service and timer", () => {
+    const service = fs.readFileSync(path.join(repositoryRoot, protectedFiles[1]), "utf8");
+    const timer = fs.readFileSync(path.join(repositoryRoot, protectedFiles[2]), "utf8");
+    expect(service).toContain("MRV1_EXECUTION_BACKEND=multi_account");
+    expect(service).toContain("run_trendatlas_production.py");
+    expect(service).not.toContain("LoadCredentialEncrypted=hyperliquid-agent-private-key");
+    expect(timer).toContain("Unit=mrv1-production.service");
+  });
+
+  it("binds production execution to the canonical run, owner account, and sequential batch", () => {
+    expect(canonicalGuardModule).toMatch(/^import "server-only";/);
+    expect(canonicalGuardModule).toContain('TRENDATLAS_MULTI_ACCOUNT_EXECUTION_CONTEXT !== "canonical_orchestrator"');
+    expect(canonicalGuardModule).toContain("MRV1_CURRENT_AUTHORITY_RUN_ID");
+    expect(canonicalGuardModule).toContain("MRV1_HYPERLIQUID_ACCOUNT_ADDRESS");
+    expect(canonicalGuardModule).toContain("maxConcurrency !== 1");
+    expect(productionRunner).toContain("the canonical owner account is not uniquely eligible");
+    expect(productionRunner).toContain("stopOnUnsafeResult: true");
+    expect(productionRunner).toContain('guard.mode === "dry_run"');
+    expect(productionRunner.indexOf('guard.mode === "dry_run"')).toBeLessThan(productionRunner.indexOf("new MultiAccountExecutor"));
+    expect(appSource).not.toContain("run-multi-account-production-cycle");
   });
 
   it("does not change generated data or outputs", () => {

@@ -45,7 +45,10 @@ async function main(): Promise<void> {
     finishRun: repository.finishRun.bind(repository),
     setAccountStatus: repository.setAccountStatus.bind(repository)
   };
-  const results = await new MultiAccountExecutor(fixedRepository, exchange, "live", 1).runAllForTarget(target);
+  const results = await new MultiAccountExecutor(fixedRepository, exchange, "live", 1, {
+    maxActionNotionalUsd: guard.maxNotionalUsd,
+    stopOnUnsafeResult: true
+  }).runAllForTarget(target);
   console.log(JSON.stringify({ mode: "live_once", target: target.asset, signalId: target.signalId, results }, null, 2));
   if (results.some(({ status }) => !["NO_ACTION", "FILLED_AND_ALIGNED"].includes(status))) process.exitCode = 1;
 }

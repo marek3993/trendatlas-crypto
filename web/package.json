@@ -14,7 +14,8 @@
     "test": "vitest run",
     "multi-account:dry-run": "node --env-file=.env.local --conditions=react-server --import tsx scripts/run-multi-account-dry-run.ts",
     "multi-account:live-preflight": "node --env-file=.env.local --conditions=react-server --import tsx scripts/run-multi-account-live-preflight.ts",
-    "multi-account:live-once": "node --env-file=.env.local --conditions=react-server --import tsx scripts/run-multi-account-live-once.ts"
+    "multi-account:live-once": "flock --nonblock ../outputs/execution/production_runs/trendatlas_production.lock node --env-file=.env.local --conditions=react-server --import tsx scripts/run-multi-account-live-once.ts",
+    "multi-account:production-cycle": "node --env-file=.env.local --conditions=react-server --import tsx scripts/run-multi-account-production-cycle.ts"
   },
   "dependencies": {
     "@msgpack/msgpack": "3.1.3",

@@ -1,10 +1,11 @@
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import { createEnvironmentAgentSecretProtector } from "@/lib/hyperliquid/agent-authorization";
 import { privateKeyToAccount } from "viem/accounts";
-import { AuthorityError, parseAuthorizedTarget } from "@/server/multi-account-executor/authority";
+import { AuthorityError, loadCanonicalRunTarget, parseAuthorizedTarget } from "@/server/multi-account-executor/authority";
 import { deterministicCloid } from "@/server/multi-account-executor/cloid";
 import { MultiAccountExecutor, isEligibleMultiAccount, type ExchangeGateway, type ExecutionRepository } from "@/server/multi-account-executor/engine";
 import { HyperliquidDryRunGateway } from "@/server/multi-account-executor/dry-run-gateway";
@@ -75,6 +76,49 @@ describe("multi-account executor authority and eligibility", () => {
     expect(engineSource).toContain("account.agentName");
     expect(engineSource).toContain("authorization.validUntilMs <= Date.now()");
   });
+  it("loads only a fingerprint-bound target from the currently locked canonical run", async () => {
+    const temporaryRoot = fs.mkdtempSync(path.join(os.tmpdir(), "trendatlas-canonical-target-"));
+    const productionValue = {
+      artifact_type: "current_strategy_snapshot", schema_version: 4, closed_day: "2026-09-03", strategy_version: "v1",
+      validation: { status: "passed" }, execution_intent: { signal_id: "signal-ETH", target_asset: "ETH", target_exposure: 1, stale_signal: false }
+    };
+    const productionText = `${JSON.stringify(productionValue)}\n`;
+    const productionHash = createHash("sha256").update(productionText).digest("hex");
+    const intentValue = { as_of_source: "2026-09-03", strategy_model: "v1", signal_id: "signal-ETH", target_asset: "ETH", target_size_pct: 1, stale_signal: false, source_fingerprints: { production_snapshot_sha256: productionHash } };
+    const intentText = `${JSON.stringify(intentValue)}\n`;
+    const accountText = `${JSON.stringify({ account_address: candidate().masterAddress })}\n`;
+    const gateValue = {
+      status: "ready_if_enabled", approval_gate_status: "approved_and_applied", real_orders_enabled: true, would_place_real_order: true,
+      production_signal_context: { strategy_version: "v1", closed_day: "2026-09-03", signal_id: "signal-ETH", target_asset: "ETH", target_exposure: 1, validation_status: "passed" },
+      source_fingerprints: {
+        production_snapshot_sha256: productionHash,
+        intent_sha256: createHash("sha256").update(intentText).digest("hex"),
+        account_snapshot_sha256: createHash("sha256").update(accountText).digest("hex")
+      }
+    };
+    const write = (relative: string, value: string) => {
+      const destination = path.join(temporaryRoot, relative);
+      fs.mkdirSync(path.dirname(destination), { recursive: true });
+      fs.writeFileSync(destination, value);
+    };
+    write("outputs/production/current_strategy_snapshot.json", productionText);
+    write("outputs/execution/intents/latest_execution_intent.json", intentText);
+    write("outputs/execution/live_gate/latest_real_order_gate_decision.json", `${JSON.stringify(gateValue)}\n`);
+    write("outputs/execution/read_only/hyperliquid_account_snapshot.json", accountText);
+    const originalRun = process.env.MRV1_CURRENT_AUTHORITY_RUN_ID;
+    const originalDay = process.env.MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY;
+    process.env.MRV1_CURRENT_AUTHORITY_RUN_ID = "run-1";
+    process.env.MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY = "2026-09-03";
+    try {
+      await expect(loadCanonicalRunTarget(temporaryRoot, "run-1", "signal-ETH")).resolves.toMatchObject({ asset: "ETH", exposure: 1, closedDay: "2026-09-03" });
+      write("outputs/execution/read_only/hyperliquid_account_snapshot.json", `${JSON.stringify({ changed: true })}\n`);
+      await expect(loadCanonicalRunTarget(temporaryRoot, "run-1", "signal-ETH")).rejects.toThrow("canonical source fingerprints do not match");
+    } finally {
+      if (originalRun === undefined) delete process.env.MRV1_CURRENT_AUTHORITY_RUN_ID; else process.env.MRV1_CURRENT_AUTHORITY_RUN_ID = originalRun;
+      if (originalDay === undefined) delete process.env.MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY; else process.env.MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY = originalDay;
+      fs.rmSync(temporaryRoot, { recursive: true, force: true });
+    }
+  });
 });
 
 describe("multi-account executor planning", () => {
@@ -91,6 +135,13 @@ describe("multi-account executor planning", () => {
   it("plans a same-asset increase", () => expect(buildPlan(target("ETH", 1), account(100, [{ asset: "ETH", size: 5, markPrice: 10 }]), markets).actions[0]).toMatchObject({ action: "RESIZE", reduceOnly: false }));
   it("plans a same-asset reduction as reduce-only", () => expect(buildPlan(target("ETH", 0.5), account(100, [{ asset: "ETH", size: 10, markPrice: 10 }]), markets).actions[0]).toMatchObject({ action: "RESIZE", reduceOnly: true }));
   it("leaves an aligned account alone", () => expect(buildPlan(target("ETH"), account(100, [{ asset: "ETH", size: 10, markPrice: 10 }]), markets).state).toBe("NO_ACTION"));
+  it("treats a same-asset dust residual below the exchange minimum as precision-limited alignment", () => {
+    expect(buildPlan(target("ETH"), account(100, [{ asset: "ETH", size: 9.5, markPrice: 10 }]), markets)).toMatchObject({
+      state: "NO_ACTION",
+      actions: [],
+      reason: "precision-limited residual below exchange minimum"
+    });
+  });
   it("blocks unsupported third-party positions without closing them", () => expect(buildPlan(target("ETH"), account(100, [{ asset: "SOL", size: 1, markPrice: 100 }]), markets).state).toBe("BLOCKED"));
   it("blocks unexpected open orders", () => expect(buildPlan(target("ETH"), account(100, [], 1), markets).state).toBe("BLOCKED"));
 });
@@ -204,10 +255,10 @@ describe("durable journal and production boundary", () => {
   });
   it("treats residuals outside tolerance as unaligned", () => expect(engineSource).toContain('if (!isAligned(finalPlan) || after.openOrderCount !== 0)'));
   it("correctly treats zero managed positions as CASH", () => expect(buildPlan(target("CASH"), account(), markets).state).toBe("NO_ACTION"));
-  it("keeps the protected production signer and orchestrator untouched", () => {
-    expect(productionSource).toContain("TrendAtlasProd");
-    const changed = execFileSync("git", ["diff", "--name-only", "--", "scripts/execution/run_trendatlas_production.py", "deploy/systemd/mrv1-production.service", "deploy/systemd/mrv1-production.timer"], { cwd: repoRoot, encoding: "utf8" });
-    expect(changed.trim()).toBe("");
+  it("delegates only the execution stage and skips the legacy signer in multi-account mode", () => {
+    expect(productionSource).toContain('self.execution_backend == "multi_account"');
+    expect(productionSource).toContain("run_multi_account_backend");
+    expect(productionSource.indexOf('if self.execution_backend == "multi_account"')).toBeLessThan(productionSource.indexOf("signer_validation = self.signer_validator()"));
   });
   it("does not send a write in disabled mode", async () => {
     const writeIoc = vi.fn();
@@ -288,6 +339,28 @@ describe("durable journal and production boundary", () => {
     ]);
     expect(released.sort()).toEqual(["a", "b", "c"]);
     expect(writeIoc).not.toHaveBeenCalled();
+  });
+  it("stops the sequential production batch after the first unsafe account result", async () => {
+    const first = candidate({ accountId: "a" });
+    const second = candidate({ accountId: "b", masterAddress: "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" });
+    const userRole = vi.fn(async () => ({ role: "agent", user: "0xcccccccccccccccccccccccccccccccccccccccc" }));
+    const repository: ExecutionRepository = {
+      listMultiAccountCandidates: async () => [first, second], tryAcquire: async () => true, release: async () => undefined,
+      reserveNonce: async () => 1n, createRun: async () => "run", recordAction: async () => undefined,
+      finishRun: async () => undefined, setAccountStatus: async () => undefined
+    };
+    const exchange: ExchangeGateway = {
+      readAccount: async () => account(), readMarkets: async () => markets, userRole,
+      agentAuthorization: validAgentAuthorization, findByCloid: async () => null, writeIoc: async () => ({})
+    };
+
+    const results = await new MultiAccountExecutor(repository, exchange, "live", 1, { stopOnUnsafeResult: true }).runAllForTarget(target("ETH"));
+
+    expect(results).toEqual([
+      { accountId: "a", status: "BLOCKED", reason: "agent binding is invalid" },
+      { accountId: "b", status: "BLOCKED", reason: "batch stopped after another account failed" }
+    ]);
+    expect(userRole).toHaveBeenCalledTimes(1);
   });
   it("does not log plaintext agent secrets", () => expect(engineSource).not.toMatch(/console\.(log|error).*agentPrivateKey|agentPrivateKey.*console\.(log|error)/));
   it("requires more than a user preference before trading", () => {

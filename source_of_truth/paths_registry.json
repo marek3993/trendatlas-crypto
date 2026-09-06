@@ -624,6 +624,24 @@
       ],
       "write_mode": "future_write_through_candidate"
     },
+    "multi_account_production_runner": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\web\\scripts\\run-multi-account-production-cycle.ts",
+      "legacy_aliases": [],
+      "owner": "AUTOMATION",
+      "artifact_type": "production_execution_runner",
+      "truth_domain": "execution_runtime",
+      "read_scope": ["execution", "audit"],
+      "write_mode": "canonical_production_orchestrator_child_only"
+    },
+    "multi_account_systemd_environment_example": {
+      "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\deploy\\systemd\\trendatlas-multi-account.env.example",
+      "legacy_aliases": [],
+      "owner": "AUTOMATION",
+      "artifact_type": "deployment_template",
+      "truth_domain": "execution_runtime",
+      "read_scope": ["deployment", "audit"],
+      "write_mode": "template_only_no_real_secrets"
+    },
     "production_run_manifest": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\production_runs\\latest_production_run.json",
       "legacy_aliases": [],

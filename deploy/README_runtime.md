@@ -104,6 +104,32 @@ sudo journalctl -u mrv1-production.service -n 200 --no-pager
 sudo journalctl -u mrv1-production.service --since "today 00:00" --no-pager
 ```
 
+## Multi-account execution cutover
+
+The approved cutover keeps `mrv1-production.timer` and `run_trendatlas_production.py` as the only scheduler and entrypoint. It replaces only the execution backend.
+
+Before installing the updated unit, create the root-owned environment file from the tracked placeholder without printing its values:
+
+```bash
+sudo install -o root -g trendatlas -m 0640 deploy/systemd/trendatlas-multi-account.env.example /etc/default/trendatlas-multi-account
+sudoedit /etc/default/trendatlas-multi-account
+```
+
+Install dependencies and validate without an exchange write:
+
+```bash
+cd /opt/market_regime_v1/web
+sudo -u trendatlas env PATH=/opt/market_regime_v1/.runtime/node-v22.13.1-linux-arm64/bin:/usr/bin:/bin /opt/market_regime_v1/.runtime/node-v22.13.1-linux-arm64/bin/npm ci
+cd /opt/market_regime_v1
+sudo install -D -m 0644 deploy/systemd/mrv1-production.service /etc/systemd/system/mrv1-production.service
+sudo systemctl daemon-reload
+sudo systemd-analyze verify /etc/systemd/system/mrv1-production.service /etc/systemd/system/mrv1-production.timer
+sudo systemctl disable --now mrv1-production.timer
+sudo systemd-run --unit=mrv1-multi-account-preflight --wait --collect --pipe --property=Type=oneshot --property=User=trendatlas --property=Group=trendatlas --property=WorkingDirectory=/opt/market_regime_v1 --property=EnvironmentFile=/etc/default/trendatlas-multi-account --property=Environment=MRV1_EXECUTION_BACKEND=multi_account --property=Environment=MRV1_MULTI_ACCOUNT_WEB_ROOT=/opt/market_regime_v1/web --property=Environment=MRV1_MULTI_ACCOUNT_NODE_BINARY=/opt/market_regime_v1/.runtime/node-v22.13.1-linux-arm64/bin/node --property=Environment=MRV1_HYPERLIQUID_ACCOUNT_ADDRESS=0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856 /opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/run_trendatlas_production.py --no-submit
+```
+
+Do not start or enable the production timer until the preflight result, exact eligible account set, and rollback readiness have been reviewed. The Vercel environment remains in `disabled` execution mode.
+
 Check the expected operational artifacts:
 
 ```bash

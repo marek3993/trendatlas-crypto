@@ -127,6 +127,26 @@ Marek approved a controlled migration of the existing owner account to the multi
 
 The first live execution remains manual and one-shot. It must fail closed unless the legacy `mrv1-production.timer` is both disabled and inactive, `mrv1-production.service` is inactive, the eligible account set contains exactly the explicitly allowlisted master address, the current canonical signal id is confirmed, and every planned action is within the configured USD cap. No competing timer may be installed or enabled during the canary phase.
 
+## Approved full production cutover architecture — 2026-09-06
+
+Marek explicitly selected the full owner-account migration instead of a permanent hybrid deployment. The target architecture keeps exactly one automatic scheduler and one canonical locked daily state machine:
+
+- `mrv1-production.timer` remains the only automatic production timer.
+- `scripts/execution/run_trendatlas_production.py` remains the only automatic production entrypoint and continues to own data refresh, Production Core validation, canonical intent/gate construction, final account verification, dashboard materialization, and authority publication.
+- The execution step may use the `multi_account` backend only when explicitly configured by the systemd service. In that backend, the legacy Python order adapter must not be instantiated or called.
+- The multi-account backend must execute inside the canonical orchestrator's existing single-run lock, must bind to that exact run id and signal id, and must re-read and validate the current canonical Production Core, intent, and gate before any exchange write.
+- The existing owner account participates through its registered, independently authorized multi-account agent secret. The legacy `TrendAtlasProd` signer is not an order signer for the multi-account backend.
+- Once the cutover is activated, the systemd service must neither mount nor pre-validate the legacy `TrendAtlasProd` credential. The encrypted credential may remain at rest for rollback but is not available to the running multi-account service.
+- Every eligible account must pass its own current exchange role, named-agent authorization, encrypted-key identity, account-state, market, and plan checks before the batch may cross the exchange mutation boundary.
+- A newly verified agent authorization with auto trading requested enters `ready`; this changes only Pi eligibility and never exposes an exchange-write path from Vercel.
+- The registered owner master address must appear exactly once in the eligible account set. Normal production executes sequentially and stops before later accounts after any blocked, failed, partial, or ambiguous result.
+- A fixed-dollar canary cap remains a manual one-shot protection only. Normal production sizing remains fresh per-account equity multiplied by the validated strategy target exposure; safety limits block rather than silently resize.
+- The canonical orchestrator may publish authority success only after the multi-account batch returns terminal success and the owner account's canonical read-back is aligned. Any blocked, failed, partial, or ambiguous account result blocks authority success and must remain retry-safe through the database lease, deterministic CLOID, pre-submit journal, and exchange lookup recovery.
+- No second production timer, Vercel trading route, browser trading path, or parallel legacy order path is permitted.
+- `TRENDATLAS_MULTI_ACCOUNT_EXECUTION_MODE` remains `disabled` on Vercel. Only the Pi canonical orchestrator injects live execution context into the server-only worker process.
+
+This target architecture is approved for implementation and validation. Exchange writes remain prohibited until the updated code, tests, systemd unit, Pi preflight, exact eligible-account set, and rollback procedure have been reviewed immediately before cutover.
+
 ## Security requirements
 
 - no secrets committed to Git
