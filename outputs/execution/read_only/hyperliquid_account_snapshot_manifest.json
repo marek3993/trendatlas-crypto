@@ -1,6 +1,6 @@
 {
   "artifact_name": "hyperliquid_read_only_account_snapshot",
-  "generated_at_utc": "2026-09-04T12:29:14Z",
+  "generated_at_utc": "2026-09-06T00:11:07Z",
   "script_path": "/opt/market_regime_v1/scripts/execution/hyperliquid_read_only_snapshot.py",
   "config_paths": [
     "/opt/market_regime_v1/execution/config/execution_mode.json",
@@ -12,6 +12,6 @@
     "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot_manifest.json"
   ],
   "status": "success",
-  "started_at_utc": "2026-09-04T12:29:11Z",
+  "started_at_utc": "2026-09-06T00:11:04Z",
   "runtime_posture": "live_runtime_read_only_observability"
 }
