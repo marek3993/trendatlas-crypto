@@ -12,6 +12,7 @@ export type LivePreflightResult = {
   accountId: string;
   status: "READY" | "ALIGNED" | "BLOCKED" | "FAILED";
   actionCount: number;
+  maxActionNotionalUsd: number;
   reason?: string;
 };
 
@@ -19,7 +20,7 @@ type Candidate = EligibleAccount & { encryptedSecret?: EncryptedAgentSecret };
 
 async function preflightOne(candidate: Candidate, target: Awaited<ReturnType<typeof loadAuthorizedTarget>>, exchange: ExchangeGateway): Promise<LivePreflightResult> {
   if (!isEligibleMultiAccount(candidate) || !candidate.encryptedSecret) {
-    return { accountId: candidate.accountId, status: "BLOCKED", actionCount: 0, reason: "account is not eligible" };
+    return { accountId: candidate.accountId, status: "BLOCKED", actionCount: 0, maxActionNotionalUsd: 0, reason: "account is not eligible" };
   }
   try {
     const [role, authorization, account, markets] = await Promise.all([
@@ -29,24 +30,25 @@ async function preflightOne(candidate: Candidate, target: Awaited<ReturnType<typ
       exchange.readMarkets()
     ]);
     if (role.role !== "agent" || role.user?.toLowerCase() !== candidate.masterAddress.toLowerCase()) {
-      return { accountId: candidate.accountId, status: "BLOCKED", actionCount: 0, reason: "agent binding is invalid" };
+      return { accountId: candidate.accountId, status: "BLOCKED", actionCount: 0, maxActionNotionalUsd: 0, reason: "agent binding is invalid" };
     }
     if (!authorization.authorized || authorization.validUntilMs === null || authorization.validUntilMs <= Date.now()) {
-      return { accountId: candidate.accountId, status: "BLOCKED", actionCount: 0, reason: "agent authorization is missing or expired" };
+      return { accountId: candidate.accountId, status: "BLOCKED", actionCount: 0, maxActionNotionalUsd: 0, reason: "agent authorization is missing or expired" };
     }
     const privateKey = createEnvironmentAgentSecretProtector(process.env.TRENDATLAS_AGENT_KEK_B64).decrypt(candidate.encryptedSecret);
     assertAgentPrivateKeyMatches(privateKey, candidate.agentAddress);
     const plan = buildPlan(target, account, markets);
     if (plan.state === "BLOCKED") {
-      return { accountId: candidate.accountId, status: "BLOCKED", actionCount: 0, reason: plan.reason };
+      return { accountId: candidate.accountId, status: "BLOCKED", actionCount: 0, maxActionNotionalUsd: 0, reason: plan.reason };
     }
     return {
       accountId: candidate.accountId,
       status: plan.actions.length === 0 ? "ALIGNED" : "READY",
-      actionCount: plan.actions.length
+      actionCount: plan.actions.length,
+      maxActionNotionalUsd: Math.max(0, ...plan.actions.map(({ requestedNotionalUsd }) => requestedNotionalUsd))
     };
   } catch {
-    return { accountId: candidate.accountId, status: "FAILED", actionCount: 0, reason: "live preflight could not be verified" };
+    return { accountId: candidate.accountId, status: "FAILED", actionCount: 0, maxActionNotionalUsd: 0, reason: "live preflight could not be verified" };
   }
 }
 

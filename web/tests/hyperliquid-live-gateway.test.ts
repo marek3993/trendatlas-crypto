@@ -6,6 +6,7 @@ import { privateKeyToAccount } from "viem/accounts";
 import { createEnvironmentAgentSecretProtector } from "@/lib/hyperliquid/agent-authorization";
 import { MultiAccountExecutor, type ExchangeGateway, type ExchangeOrder, type ExecutionRepository } from "@/server/multi-account-executor/engine";
 import { HyperliquidLiveGateway, normalizeHyperliquidOrderStatus } from "@/server/multi-account-executor/hyperliquid-live-gateway";
+import { requireExclusiveMultiAccountLiveOwnership } from "@/server/multi-account-executor/exclusive-live-guard";
 import {
   buildSignedHyperliquidIocPayload,
   computeHyperliquidIocLimitPrice,
@@ -186,7 +187,7 @@ describe("multi-account no-submit live preflight", () => {
 
     try {
       await expect(preflightMultiAccountCandidates([candidate], target, gateway)).resolves.toEqual([
-        { accountId: "account-a", status: "READY", actionCount: 1 }
+        { accountId: "account-a", status: "READY", actionCount: 1, maxActionNotionalUsd: 100 }
       ]);
       expect(findByCloid).not.toHaveBeenCalled();
       expect(writeIoc).not.toHaveBeenCalled();
@@ -204,6 +205,38 @@ describe("multi-account no-submit live preflight", () => {
     expect(runner).not.toMatch(/writeIoc|reserveNonce|runEligibleAccountsOnce/);
     expect(packageJson).toContain('"multi-account:live-preflight"');
     expect(packageJson).not.toContain('"multi-account:live"');
+  });
+});
+
+describe("exclusive live ownership guard", () => {
+  const env = {
+    TRENDATLAS_MULTI_ACCOUNT_EXECUTION_MODE: "live",
+    TRENDATLAS_EXECUTION_OWNER: "multi_account",
+    TRENDATLAS_LIVE_MASTER_ADDRESS: masterAddress,
+    TRENDATLAS_LIVE_CONFIRMATION: `ENABLE:${masterAddress}`,
+    TRENDATLAS_LIVE_MAX_NOTIONAL_USD: "100"
+  };
+  const stopped = (operation: "is-active" | "is-enabled", unit: string) =>
+    operation === "is-enabled" && unit === "mrv1-production.timer" ? "disabled" : "inactive";
+
+  it("accepts only an exclusive stopped-legacy cutover", () => {
+    expect(requireExclusiveMultiAccountLiveOwnership(env, stopped)).toEqual({
+      allowedMasterAddress: masterAddress,
+      maxNotionalUsd: 100
+    });
+  });
+
+  it("refuses while the legacy production timer can run", () => {
+    expect(() => requireExclusiveMultiAccountLiveOwnership(env, (operation, unit) =>
+      operation === "is-enabled" && unit === "mrv1-production.timer" ? "enabled" : "inactive"
+    )).toThrow("legacy production timer is not disabled");
+  });
+
+  it("refuses a mismatched account confirmation or oversized cap", () => {
+    expect(() => requireExclusiveMultiAccountLiveOwnership({ ...env, TRENDATLAS_LIVE_CONFIRMATION: "ENABLE:wrong" }, stopped))
+      .toThrow("live account confirmation does not match");
+    expect(() => requireExclusiveMultiAccountLiveOwnership({ ...env, TRENDATLAS_LIVE_MAX_NOTIONAL_USD: "101" }, stopped))
+      .toThrow("live notional cap must be between 10 and 100 USD");
   });
 });
 

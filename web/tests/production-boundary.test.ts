@@ -32,6 +32,8 @@ const appSource = filesUnder(path.join(webSourceDirectory, "app")).map(sourceTex
 const agentAuthorizationModule = source("lib/hyperliquid/agent-authorization.ts");
 const adminModule = source("lib/supabase/admin.ts");
 const liveGatewayModule = source("server/multi-account-executor/hyperliquid-live-gateway.ts");
+const liveGuardModule = source("server/multi-account-executor/exclusive-live-guard.ts");
+const liveOnceRunner = fs.readFileSync(path.join(process.cwd(), "scripts/run-multi-account-live-once.ts"), "utf8");
 const packageJson = source("../package.json");
 
 function source(relativePath: string): string {
@@ -48,6 +50,15 @@ describe("production isolation boundary", () => {
     expect(clientSource).not.toContain("hyperliquid-live-gateway");
     expect(appSource).not.toContain("hyperliquid-live-gateway");
     expect(packageJson).not.toContain('"multi-account:live"');
+  });
+
+  it("requires exclusive legacy shutdown, an account allowlist, signal confirmation, and a notional cap", () => {
+    expect(liveGuardModule).toContain('readSystemdState("is-enabled", "mrv1-production.timer") !== "disabled"');
+    expect(liveGuardModule).toContain('readSystemdState("is-active", "mrv1-production.timer") !== "inactive"');
+    expect(liveGuardModule).toContain('readSystemdState("is-active", "mrv1-production.service") !== "inactive"');
+    expect(liveOnceRunner).toContain("candidates.length !== 1");
+    expect(liveOnceRunner).toContain("TRENDATLAS_LIVE_SIGNAL_CONFIRMATION !== target.signalId");
+    expect(liveOnceRunner).toContain("maxActionNotionalUsd > guard.maxNotionalUsd");
   });
 
   it("keeps browser modules free of wallet-secret inputs and secret identifiers", () => {

@@ -122,6 +122,11 @@ Do not auto-create, auto-link, or auto-migrate Marek's existing live Hyperliquid
 
 The owner account migration will be a separate explicitly reviewed step after multi-user auth, account isolation, and Hyperliquid onboarding are proven safe.
 
+## Explicit owner-account cutover approval — 2026-09-06
+Marek approved a controlled migration of the existing owner account to the multi-account executor. This approval does not itself enable exchange writes.
+
+The first live execution remains manual and one-shot. It must fail closed unless the legacy `mrv1-production.timer` is both disabled and inactive, `mrv1-production.service` is inactive, the eligible account set contains exactly the explicitly allowlisted master address, the current canonical signal id is confirmed, and every planned action is within the configured USD cap. No competing timer may be installed or enabled during the canary phase.
+
 ## Security requirements
 
 - no secrets committed to Git
