@@ -21,7 +21,7 @@ Environment=MRV1_REQUIRE_PI_RUNTIME=1
 Environment=MRV1_HYPERLIQUID_ACCOUNT_ADDRESS=0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856
 Environment=MRV1_EXECUTION_BACKEND=multi_account
 Environment=MRV1_MULTI_ACCOUNT_WEB_ROOT=/opt/market_regime_v1/web
-Environment=MRV1_MULTI_ACCOUNT_NODE_BINARY=/usr/bin/node
+Environment=MRV1_MULTI_ACCOUNT_NODE_BINARY=/opt/market_regime_v1/.runtime/node-v22.23.2-linux-arm64/bin/node
 Environment=TRENDATLAS_MULTI_ACCOUNT_MAX_CONCURRENCY=1
 Environment="MRV1_AUTHORITY_PUBLISH_TREE=/home/trendatlas/mrv1_publish/market_regime_v1__authority_publish"
 Environment="MRV1_AUTHORITY_GIT_USER_NAME=MRV1 Pi Authority"
