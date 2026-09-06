@@ -3,24 +3,24 @@
   "schema_version": 1,
   "target_closed_day_utc": "2026-09-05",
   "latest_available_closed_utc_day": "2026-09-05",
-  "refresh_started_at_utc": "2026-09-06T00:11:29Z",
-  "refresh_finished_at_utc": "2026-09-06T00:11:42Z",
-  "refresh_started_at_local": "2026-09-06T02:11:29+02:00",
-  "refresh_finished_at_local": "2026-09-06T02:11:42+02:00",
+  "refresh_started_at_utc": "2026-09-06T20:12:54Z",
+  "refresh_finished_at_utc": "2026-09-06T20:13:07Z",
+  "refresh_started_at_local": "2026-09-06T22:12:54+02:00",
+  "refresh_finished_at_local": "2026-09-06T22:13:07+02:00",
   "display_timezone": "Europe/Bratislava",
   "latest_authoritative_attempt_status": "success",
   "latest_authoritative_attempt_error": null,
   "strategy_artifact_closed_day_utc": "2026-09-05",
   "currentness_status": "current",
   "currentness_reason": "The authoritative strategy artifact is aligned with the latest closed UTC market day 2026-09-05.",
-  "generated_at_utc": "2026-09-06T00:11:42Z",
-  "generated_at_local": "2026-09-06T02:11:42+02:00",
-  "run_id": "20260906_001129",
+  "generated_at_utc": "2026-09-06T20:13:07Z",
+  "generated_at_local": "2026-09-06T22:13:07+02:00",
+  "run_id": "20260906_201254",
   "authority_role": "pi_only_authoritative_producer",
   "automatic_producer_id": "raspberry_pi",
   "manual_recovery_only": true,
   "github_actions_role": "validation_only",
-  "source_manifest_path": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260906_001129/app_refresh_pipeline_manifest.json",
+  "source_manifest_path": "/opt/market_regime_v1/outputs/execution/tmp/publish_existing_validation/20260906_201254/app_refresh_pipeline_manifest.json",
   "latest_successful_snapshot_path": "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
   "latest_attempt_status_path": "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json",
   "attempt_stage": "daily_refresh_app_pipeline",
@@ -29,7 +29,7 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "running",
-      "started_at_utc": "2026-09-06T00:11:29Z",
+      "started_at_utc": "2026-09-06T20:12:54Z",
       "finished_at_utc": null,
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
@@ -40,8 +40,8 @@
     {
       "stage_name": "daily_refresh_app_pipeline",
       "status": "success",
-      "started_at_utc": "2026-09-06T00:11:29Z",
-      "finished_at_utc": "2026-09-06T00:11:42Z",
+      "started_at_utc": "2026-09-06T20:12:54Z",
+      "finished_at_utc": "2026-09-06T20:13:07Z",
       "script_path": "/opt/market_regime_v1/scripts/daily_refresh_app_pipeline.py",
       "stdout_log": null,
       "stderr_log": null,
@@ -49,13 +49,13 @@
       "non_authoritative_support_only": false
     }
   ],
-  "authority_wallet_sync_utc": "2026-09-06T00:11:07Z",
-  "authority_account_snapshot_as_of_utc": "2026-09-06T00:11:07Z",
-  "authority_runtime_snapshot_generated_at_utc": "2026-09-06T00:11:42Z",
+  "authority_wallet_sync_utc": "2026-09-06T20:12:33Z",
+  "authority_account_snapshot_as_of_utc": "2026-09-06T20:12:33Z",
+  "authority_runtime_snapshot_generated_at_utc": "2026-09-06T20:13:07Z",
   "app_product_snapshot": {
     "snapshot_type": "app_product_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-09-06T00:11:41Z",
+    "app_export_generated_at_utc": "2026-09-06T20:13:06Z",
     "product_name": "TrendAtlas Crypto",
     "page_scope": "homepage",
     "current_main_strategy_root_contract": {
@@ -83,7 +83,7 @@
     "freshness_target_closed_day": "2026-09-05",
     "freshness": {
       "status": "ok",
-      "generated_at_utc": "2026-09-06T00:10:49+00:00",
+      "generated_at_utc": "2026-09-06T20:12:14+00:00",
       "checks": {
         "btc_raw_last_date": "2026-09-05",
         "phase66g_paper_last_date": "2026-09-05",
@@ -239,14 +239,14 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 920,
-        "modified_utc": "2026-09-06T00:11:41Z",
+        "modified_utc": "2026-09-06T20:13:06Z",
         "operational_metrics": {
           "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
           "source_type": "canonical_app_paper_held_state_series",
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2483986,
-          "modified_utc": "2026-09-06T00:11:40Z",
+          "modified_utc": "2026-09-06T20:13:05Z",
           "semantic_role": "current_live_main_strategy_operational_metrics",
           "series_semantics": "homepage_current_main_strategy_held_state_history",
           "held_state_column": "portfolio_held_asset",
@@ -277,7 +277,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 920,
-        "modified_utc": "2026-09-06T00:11:41Z",
+        "modified_utc": "2026-09-06T20:13:06Z",
         "source_fields": [
           "cagr_pct",
           "since2023_cagr_pct",
@@ -290,7 +290,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 2483986,
-        "modified_utc": "2026-09-06T00:11:40Z",
+        "modified_utc": "2026-09-06T20:13:05Z",
         "source_field": "last_row.date"
       },
       "freshness_target_closed_day": {
@@ -299,7 +299,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1002,
-        "modified_utc": "2026-09-06T00:10:50Z",
+        "modified_utc": "2026-09-06T20:12:14Z",
         "source_field": "latest_closed_utc_date"
       },
       "app_export_generated_at_utc": {
@@ -308,7 +308,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 12125,
-        "modified_utc": "2026-09-06T00:11:37Z",
+        "modified_utc": "2026-09-06T20:13:02Z",
         "source_field": "generated_by_materializer_clock"
       },
       "live_public_state": {
@@ -317,7 +317,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 2483986,
-        "modified_utc": "2026-09-06T00:11:40Z",
+        "modified_utc": "2026-09-06T20:13:05Z",
         "source_fields": [
           "date",
           "portfolio_held_asset",
@@ -338,7 +338,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 1002,
-        "modified_utc": "2026-09-06T00:10:50Z"
+        "modified_utc": "2026-09-06T20:12:14Z"
       },
       "trend_barometer_summary": {
         "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -355,7 +355,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2483986,
-          "modified_utc": "2026-09-06T00:11:40Z"
+          "modified_utc": "2026-09-06T20:13:05Z"
         },
         "reference_strategy": {
           "path": "outputs/execution/app_exports/phase67j_no_neo_main_paper.csv",
@@ -363,7 +363,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 151583,
-          "modified_utc": "2026-09-06T00:10:47Z"
+          "modified_utc": "2026-09-06T20:12:12Z"
         }
       },
       "benchmark_source_path": {
@@ -380,20 +380,20 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 393357,
-        "modified_utc": "2026-09-06T00:10:42Z"
+        "modified_utc": "2026-09-06T20:12:06Z"
       }
     }
   },
   "app_runtime_snapshot": {
     "snapshot_type": "app_runtime_snapshot",
     "schema_version": 2,
-    "app_export_generated_at_utc": "2026-09-06T00:11:41Z",
-    "app_runtime_snapshot_generated_at_utc": "2026-09-06T00:11:42Z",
+    "app_export_generated_at_utc": "2026-09-06T20:13:06Z",
+    "app_runtime_snapshot_generated_at_utc": "2026-09-06T20:13:07Z",
     "page_scope": "account_page",
     "runtime_last_sync_utc": "2026-04-06T09:16:26Z",
-    "account_snapshot_as_of_utc": "2026-09-06T00:11:07Z",
+    "account_snapshot_as_of_utc": "2026-09-06T20:12:33Z",
     "dry_run_generated_at_utc": "2026-04-18T10:35:48Z",
-    "gate_generated_at_utc": "2026-09-06T00:11:39Z",
+    "gate_generated_at_utc": "2026-09-06T20:13:04Z",
     "latest_refresh_run_id": "20260420_222226",
     "latest_refresh_run_status": "OK",
     "refresh_run_id": "20260420_222226",
@@ -403,7 +403,7 @@
     "latest_strategy_artifact_date": "2026-09-05",
     "latest_successful_refresh_runtime_utc": "2026-04-20T22:23:53+00:00",
     "latest_trend_calculation_date": "2026-09-05",
-    "latest_wallet_sync_utc": "2026-09-06T00:11:07Z",
+    "latest_wallet_sync_utc": "2026-09-06T20:12:33Z",
     "latest_available_closed_utc_date": "2026-09-05",
     "refresh_currentness_state": "current",
     "refresh_currentness_reason": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
@@ -431,16 +431,16 @@
       "latest_successful_refresh_run_id": "20260420_222226",
       "latest_strategy_artifact_date": "2026-09-05",
       "latest_trend_calculation_date": "2026-09-05",
-      "latest_wallet_sync_utc": "2026-09-06T00:11:07Z",
+      "latest_wallet_sync_utc": "2026-09-06T20:12:33Z",
       "latest_available_closed_utc_date": "2026-09-05",
-      "evaluated_at_utc": "2026-09-06T00:11:42Z"
+      "evaluated_at_utc": "2026-09-06T20:13:07Z"
     },
     "runtime_table_snapshot": {
       "last_pi_update_utc": "2026-04-12T22:10:09Z",
       "last_pc_refresh_utc": "2026-04-20T22:23:53+00:00",
       "last_refresh_status": "OK",
       "last_refresh_run_id": "20260420_222226",
-      "last_wallet_sync_utc": "2026-09-06T00:11:07Z",
+      "last_wallet_sync_utc": "2026-09-06T20:12:33Z",
       "currentness_state": "current",
       "currentness_reason": "Current: the latest refresh succeeded and strategy data is aligned with the latest available closed UTC day.",
       "source_metadata": {
@@ -489,8 +489,8 @@
           "source_type": "read_only_account_snapshot",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 74785,
-          "modified_utc": "2026-09-06T00:11:07Z",
+          "size_bytes": 74184,
+          "modified_utc": "2026-09-06T20:12:33Z",
           "source_field": "as_of_utc",
           "value_present": true
         },
@@ -500,7 +500,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-09-06T00:10:50Z",
+          "modified_utc": "2026-09-06T20:12:14Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -521,7 +521,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 2483986,
-              "modified_utc": "2026-09-06T00:11:40Z"
+              "modified_utc": "2026-09-06T20:13:05Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -539,7 +539,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-09-06T00:10:50Z",
+          "modified_utc": "2026-09-06T20:12:14Z",
           "source_field": "latest_closed_utc_date",
           "value_present": true,
           "derived_from": [
@@ -560,7 +560,7 @@
               "owner": "DATA",
               "exists": true,
               "size_bytes": 2483986,
-              "modified_utc": "2026-09-06T00:11:40Z"
+              "modified_utc": "2026-09-06T20:13:05Z"
             },
             "trend_calculation": {
               "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -573,7 +573,7 @@
           }
         }
       },
-      "evaluated_at_utc": "2026-09-06T00:11:42Z"
+      "evaluated_at_utc": "2026-09-06T20:13:07Z"
     },
     "account_observability_contract": {
       "enabled": true,
@@ -599,7 +599,7 @@
     },
     "dashboard_public_status": {
       "schema_version": 1,
-      "generated_at_utc": "2026-09-06T00:11:42Z",
+      "generated_at_utc": "2026-09-06T20:13:07Z",
       "closed_day": "2026-09-05",
       "real_account": {
         "asset": "CASH",
@@ -619,7 +619,7 @@
           "ledger_type": "hyperliquid_real_account_performance_ledger",
           "version": 1,
           "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
-          "generated_at_utc": "2026-09-06T00:10:50Z",
+          "generated_at_utc": "2026-09-06T20:12:14Z",
           "source_complete": true,
           "missing_sources": [],
           "reconciliation_status": "ok",
@@ -1443,7 +1443,7 @@
               "equity_usd": 39.475466,
               "free_collateral_usd": null,
               "margin_used_usd": null,
-              "source": "Hyperliquid portfolio.month.accountValueHistory"
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
             },
             {
               "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T04:30:00Z",
@@ -1452,7 +1452,7 @@
               "equity_usd": 39.475466,
               "free_collateral_usd": null,
               "margin_used_usd": null,
-              "source": "Hyperliquid portfolio.week.accountValueHistory"
+              "source": "Hyperliquid portfolio.month.accountValueHistory"
             },
             {
               "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T06:30:00Z",
@@ -1479,7 +1479,7 @@
               "equity_usd": 39.475466,
               "free_collateral_usd": null,
               "margin_used_usd": null,
-              "source": "Hyperliquid portfolio.month.accountValueHistory"
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
             },
             {
               "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T13:10:00Z",
@@ -1488,7 +1488,7 @@
               "equity_usd": 39.532882,
               "free_collateral_usd": null,
               "margin_used_usd": null,
-              "source": "Hyperliquid portfolio.week.accountValueHistory"
+              "source": "Hyperliquid portfolio.month.accountValueHistory"
             },
             {
               "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T15:10:00Z",
@@ -1659,7 +1659,7 @@
               "equity_usd": 83.186462,
               "free_collateral_usd": null,
               "margin_used_usd": null,
-              "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
             },
             {
               "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T07:50:00Z",
@@ -1668,7 +1668,7 @@
               "equity_usd": 83.186462,
               "free_collateral_usd": null,
               "margin_used_usd": null,
-              "source": "Hyperliquid portfolio.month.accountValueHistory"
+              "source": "Hyperliquid portfolio.allTime.accountValueHistory"
             },
             {
               "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T10:10:00Z",
@@ -1768,6 +1768,222 @@
               "free_collateral_usd": 83.186462,
               "margin_used_usd": 0.0,
               "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T01:10:00Z",
+              "timestamp_utc": "2026-09-05T01:10:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.month.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T03:30:00Z",
+              "timestamp_utc": "2026-09-05T03:30:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T05:30:00Z",
+              "timestamp_utc": "2026-09-05T05:30:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T07:50:00Z",
+              "timestamp_utc": "2026-09-05T07:50:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T09:50:00Z",
+              "timestamp_utc": "2026-09-05T09:50:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.month.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T12:10:00Z",
+              "timestamp_utc": "2026-09-05T12:10:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T14:10:00Z",
+              "timestamp_utc": "2026-09-05T14:10:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T16:10:00Z",
+              "timestamp_utc": "2026-09-05T16:10:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T18:30:00Z",
+              "timestamp_utc": "2026-09-05T18:30:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.month.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T20:30:00Z",
+              "timestamp_utc": "2026-09-05T20:30:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T22:50:00Z",
+              "timestamp_utc": "2026-09-05T22:50:00Z",
+              "effective_day": "2026-09-05",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T00:11:06Z",
+              "timestamp_utc": "2026-09-06T00:11:06Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+            },
+            {
+              "valuation_id": "equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T00:11:07Z",
+              "timestamp_utc": "2026-09-06T00:11:07Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": 83.186462,
+              "margin_used_usd": 0.0,
+              "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T01:10:00Z",
+              "timestamp_utc": "2026-09-06T01:10:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T03:30:00Z",
+              "timestamp_utc": "2026-09-06T03:30:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.month.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T05:50:00Z",
+              "timestamp_utc": "2026-09-06T05:50:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T07:50:00Z",
+              "timestamp_utc": "2026-09-06T07:50:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T10:10:00Z",
+              "timestamp_utc": "2026-09-06T10:10:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T12:10:00Z",
+              "timestamp_utc": "2026-09-06T12:10:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.month.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T14:30:00Z",
+              "timestamp_utc": "2026-09-06T14:30:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T16:30:00Z",
+              "timestamp_utc": "2026-09-06T16:30:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T18:50:00Z",
+              "timestamp_utc": "2026-09-06T18:50:00Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.week.accountValueHistory"
+            },
+            {
+              "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T19:30:44Z",
+              "timestamp_utc": "2026-09-06T19:30:44Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+            },
+            {
+              "valuation_id": "equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T19:30:44Z",
+              "timestamp_utc": "2026-09-06T19:30:44Z",
+              "effective_day": "2026-09-06",
+              "equity_usd": 83.186462,
+              "free_collateral_usd": 83.186462,
+              "margin_used_usd": 0.0,
+              "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
             }
           ],
           "daily": [
@@ -1832,8 +2048,28 @@
               "equity_event_reconciliation_delta_usd": 0.0
             },
             {
-              "timestamp_utc": "2026-09-05T00:11:06Z",
+              "timestamp_utc": "2026-09-05T22:50:00Z",
               "effective_day": "2026-09-05",
+              "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+              "equity_usd": 83.186462,
+              "beginning_equity_usd": 83.186462,
+              "free_collateral_usd": null,
+              "margin_used_usd": null,
+              "deposits_usd": 0,
+              "withdrawals_usd": 0,
+              "net_external_flow_usd": 0,
+              "realized_trading_pnl_usd": 0,
+              "unrealized_pnl_usd": null,
+              "fees_usd": 0,
+              "funding_usd": 0,
+              "daily_net_pnl_usd": 0.0,
+              "cumulative_net_pnl_usd": 1.110996,
+              "exchange_event_net_pnl_usd": 0,
+              "equity_event_reconciliation_delta_usd": 0.0
+            },
+            {
+              "timestamp_utc": "2026-09-06T19:30:44Z",
+              "effective_day": "2026-09-06",
               "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
               "equity_usd": 83.186462,
               "beginning_equity_usd": 83.186462,
@@ -1853,10 +2089,10 @@
             }
           ],
           "live_genesis_date": "2026-09-02",
-          "history_days": 4,
+          "history_days": 5,
           "current": {
-            "timestamp_utc": "2026-09-05T00:11:06Z",
-            "effective_day": "2026-09-05",
+            "timestamp_utc": "2026-09-06T19:30:44Z",
+            "effective_day": "2026-09-06",
             "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
             "equity_usd": 83.186462,
             "beginning_equity_usd": 83.186462,
@@ -1888,28 +2124,28 @@
           "windows": {
             "today": {
               "available": true,
-              "history_days": 4,
+              "history_days": 5,
               "pnl_usd": 0.0,
               "return_pct": 0.0,
               "reason": null
             },
             "7d": {
               "available": false,
-              "history_days": 4,
+              "history_days": 5,
               "pnl_usd": null,
               "return_pct": null,
               "reason": "insufficient_live_history"
             },
             "30d": {
               "available": false,
-              "history_days": 4,
+              "history_days": 5,
               "pnl_usd": null,
               "return_pct": null,
               "reason": "insufficient_live_history"
             },
             "90d": {
               "available": false,
-              "history_days": 4,
+              "history_days": 5,
               "pnl_usd": null,
               "return_pct": null,
               "reason": "insufficient_live_history"
@@ -1967,7 +2203,7 @@
         "model_signal": "Modelový signál"
       },
       "production_execution": {
-        "run_id": "prod_20260906T001010Z_029042",
+        "run_id": "prod_20260906T201138Z_941189",
         "final_status": "SUCCESS",
         "model_target": {
           "asset": "CASH",
@@ -2003,7 +2239,7 @@
       }
     },
     "production_execution_state": {
-      "run_id": "prod_20260906T001010Z_029042",
+      "run_id": "prod_20260906T201138Z_941189",
       "final_status": "SUCCESS",
       "model_target": {
         "asset": "CASH",
@@ -2081,7 +2317,7 @@
       "ledger_type": "hyperliquid_real_account_performance_ledger",
       "version": 1,
       "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
-      "generated_at_utc": "2026-09-06T00:10:50Z",
+      "generated_at_utc": "2026-09-06T20:12:14Z",
       "source_complete": true,
       "missing_sources": [],
       "reconciliation_status": "ok",
@@ -2905,7 +3141,7 @@
           "equity_usd": 39.475466,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.month.accountValueHistory"
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T04:30:00Z",
@@ -2914,7 +3150,7 @@
           "equity_usd": 39.475466,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.week.accountValueHistory"
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T06:30:00Z",
@@ -2941,7 +3177,7 @@
           "equity_usd": 39.475466,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.month.accountValueHistory"
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T13:10:00Z",
@@ -2950,7 +3186,7 @@
           "equity_usd": 39.532882,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.week.accountValueHistory"
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T15:10:00Z",
@@ -3121,7 +3357,7 @@
           "equity_usd": 83.186462,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T07:50:00Z",
@@ -3130,7 +3366,7 @@
           "equity_usd": 83.186462,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.month.accountValueHistory"
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T10:10:00Z",
@@ -3230,6 +3466,222 @@
           "free_collateral_usd": 83.186462,
           "margin_used_usd": 0.0,
           "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T01:10:00Z",
+          "timestamp_utc": "2026-09-05T01:10:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T03:30:00Z",
+          "timestamp_utc": "2026-09-05T03:30:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T05:30:00Z",
+          "timestamp_utc": "2026-09-05T05:30:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T07:50:00Z",
+          "timestamp_utc": "2026-09-05T07:50:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T09:50:00Z",
+          "timestamp_utc": "2026-09-05T09:50:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T12:10:00Z",
+          "timestamp_utc": "2026-09-05T12:10:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T14:10:00Z",
+          "timestamp_utc": "2026-09-05T14:10:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T16:10:00Z",
+          "timestamp_utc": "2026-09-05T16:10:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T18:30:00Z",
+          "timestamp_utc": "2026-09-05T18:30:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T20:30:00Z",
+          "timestamp_utc": "2026-09-05T20:30:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T22:50:00Z",
+          "timestamp_utc": "2026-09-05T22:50:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T00:11:06Z",
+          "timestamp_utc": "2026-09-06T00:11:06Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T00:11:07Z",
+          "timestamp_utc": "2026-09-06T00:11:07Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": 83.186462,
+          "margin_used_usd": 0.0,
+          "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T01:10:00Z",
+          "timestamp_utc": "2026-09-06T01:10:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T03:30:00Z",
+          "timestamp_utc": "2026-09-06T03:30:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T05:50:00Z",
+          "timestamp_utc": "2026-09-06T05:50:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T07:50:00Z",
+          "timestamp_utc": "2026-09-06T07:50:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T10:10:00Z",
+          "timestamp_utc": "2026-09-06T10:10:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T12:10:00Z",
+          "timestamp_utc": "2026-09-06T12:10:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T14:30:00Z",
+          "timestamp_utc": "2026-09-06T14:30:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T16:30:00Z",
+          "timestamp_utc": "2026-09-06T16:30:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T18:50:00Z",
+          "timestamp_utc": "2026-09-06T18:50:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T19:30:44Z",
+          "timestamp_utc": "2026-09-06T19:30:44Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T19:30:44Z",
+          "timestamp_utc": "2026-09-06T19:30:44Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": 83.186462,
+          "margin_used_usd": 0.0,
+          "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
         }
       ],
       "daily": [
@@ -3294,8 +3746,28 @@
           "equity_event_reconciliation_delta_usd": 0.0
         },
         {
-          "timestamp_utc": "2026-09-05T00:11:06Z",
+          "timestamp_utc": "2026-09-05T22:50:00Z",
           "effective_day": "2026-09-05",
+          "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+          "equity_usd": 83.186462,
+          "beginning_equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "deposits_usd": 0,
+          "withdrawals_usd": 0,
+          "net_external_flow_usd": 0,
+          "realized_trading_pnl_usd": 0,
+          "unrealized_pnl_usd": null,
+          "fees_usd": 0,
+          "funding_usd": 0,
+          "daily_net_pnl_usd": 0.0,
+          "cumulative_net_pnl_usd": 1.110996,
+          "exchange_event_net_pnl_usd": 0,
+          "equity_event_reconciliation_delta_usd": 0.0
+        },
+        {
+          "timestamp_utc": "2026-09-06T19:30:44Z",
+          "effective_day": "2026-09-06",
           "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
           "equity_usd": 83.186462,
           "beginning_equity_usd": 83.186462,
@@ -3315,10 +3787,10 @@
         }
       ],
       "live_genesis_date": "2026-09-02",
-      "history_days": 4,
+      "history_days": 5,
       "current": {
-        "timestamp_utc": "2026-09-05T00:11:06Z",
-        "effective_day": "2026-09-05",
+        "timestamp_utc": "2026-09-06T19:30:44Z",
+        "effective_day": "2026-09-06",
         "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
         "equity_usd": 83.186462,
         "beginning_equity_usd": 83.186462,
@@ -3350,28 +3822,28 @@
       "windows": {
         "today": {
           "available": true,
-          "history_days": 4,
+          "history_days": 5,
           "pnl_usd": 0.0,
           "return_pct": 0.0,
           "reason": null
         },
         "7d": {
           "available": false,
-          "history_days": 4,
+          "history_days": 5,
           "pnl_usd": null,
           "return_pct": null,
           "reason": "insufficient_live_history"
         },
         "30d": {
           "available": false,
-          "history_days": 4,
+          "history_days": 5,
           "pnl_usd": null,
           "return_pct": null,
           "reason": "insufficient_live_history"
         },
         "90d": {
           "available": false,
-          "history_days": 4,
+          "history_days": 5,
           "pnl_usd": null,
           "return_pct": null,
           "reason": "insufficient_live_history"
@@ -3434,7 +3906,7 @@
       "ledger_type": "hyperliquid_real_account_performance_ledger",
       "version": 1,
       "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
-      "generated_at_utc": "2026-09-06T00:10:50Z",
+      "generated_at_utc": "2026-09-06T20:12:14Z",
       "source_complete": true,
       "missing_sources": [],
       "reconciliation_status": "ok",
@@ -4258,7 +4730,7 @@
           "equity_usd": 39.475466,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.month.accountValueHistory"
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T04:30:00Z",
@@ -4267,7 +4739,7 @@
           "equity_usd": 39.475466,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.week.accountValueHistory"
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T06:30:00Z",
@@ -4294,7 +4766,7 @@
           "equity_usd": 39.475466,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.month.accountValueHistory"
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T13:10:00Z",
@@ -4303,7 +4775,7 @@
           "equity_usd": 39.532882,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.week.accountValueHistory"
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-02T15:10:00Z",
@@ -4474,7 +4946,7 @@
           "equity_usd": 83.186462,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T07:50:00Z",
@@ -4483,7 +4955,7 @@
           "equity_usd": 83.186462,
           "free_collateral_usd": null,
           "margin_used_usd": null,
-          "source": "Hyperliquid portfolio.month.accountValueHistory"
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
         },
         {
           "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-04T10:10:00Z",
@@ -4583,6 +5055,222 @@
           "free_collateral_usd": 83.186462,
           "margin_used_usd": 0.0,
           "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T01:10:00Z",
+          "timestamp_utc": "2026-09-05T01:10:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T03:30:00Z",
+          "timestamp_utc": "2026-09-05T03:30:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T05:30:00Z",
+          "timestamp_utc": "2026-09-05T05:30:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T07:50:00Z",
+          "timestamp_utc": "2026-09-05T07:50:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T09:50:00Z",
+          "timestamp_utc": "2026-09-05T09:50:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T12:10:00Z",
+          "timestamp_utc": "2026-09-05T12:10:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T14:10:00Z",
+          "timestamp_utc": "2026-09-05T14:10:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T16:10:00Z",
+          "timestamp_utc": "2026-09-05T16:10:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T18:30:00Z",
+          "timestamp_utc": "2026-09-05T18:30:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T20:30:00Z",
+          "timestamp_utc": "2026-09-05T20:30:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-05T22:50:00Z",
+          "timestamp_utc": "2026-09-05T22:50:00Z",
+          "effective_day": "2026-09-05",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T00:11:06Z",
+          "timestamp_utc": "2026-09-06T00:11:06Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T00:11:07Z",
+          "timestamp_utc": "2026-09-06T00:11:07Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": 83.186462,
+          "margin_used_usd": 0.0,
+          "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T01:10:00Z",
+          "timestamp_utc": "2026-09-06T01:10:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T03:30:00Z",
+          "timestamp_utc": "2026-09-06T03:30:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T05:50:00Z",
+          "timestamp_utc": "2026-09-06T05:50:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T07:50:00Z",
+          "timestamp_utc": "2026-09-06T07:50:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T10:10:00Z",
+          "timestamp_utc": "2026-09-06T10:10:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T12:10:00Z",
+          "timestamp_utc": "2026-09-06T12:10:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.month.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T14:30:00Z",
+          "timestamp_utc": "2026-09-06T14:30:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T16:30:00Z",
+          "timestamp_utc": "2026-09-06T16:30:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T18:50:00Z",
+          "timestamp_utc": "2026-09-06T18:50:00Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T19:30:44Z",
+          "timestamp_utc": "2026-09-06T19:30:44Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-09-06T19:30:44Z",
+          "timestamp_utc": "2026-09-06T19:30:44Z",
+          "effective_day": "2026-09-06",
+          "equity_usd": 83.186462,
+          "free_collateral_usd": 83.186462,
+          "margin_used_usd": 0.0,
+          "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
         }
       ],
       "daily": [
@@ -4647,8 +5335,28 @@
           "equity_event_reconciliation_delta_usd": 0.0
         },
         {
-          "timestamp_utc": "2026-09-05T00:11:06Z",
+          "timestamp_utc": "2026-09-05T22:50:00Z",
           "effective_day": "2026-09-05",
+          "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+          "equity_usd": 83.186462,
+          "beginning_equity_usd": 83.186462,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "deposits_usd": 0,
+          "withdrawals_usd": 0,
+          "net_external_flow_usd": 0,
+          "realized_trading_pnl_usd": 0,
+          "unrealized_pnl_usd": null,
+          "fees_usd": 0,
+          "funding_usd": 0,
+          "daily_net_pnl_usd": 0.0,
+          "cumulative_net_pnl_usd": 1.110996,
+          "exchange_event_net_pnl_usd": 0,
+          "equity_event_reconciliation_delta_usd": 0.0
+        },
+        {
+          "timestamp_utc": "2026-09-06T19:30:44Z",
+          "effective_day": "2026-09-06",
           "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
           "equity_usd": 83.186462,
           "beginning_equity_usd": 83.186462,
@@ -4668,10 +5376,10 @@
         }
       ],
       "live_genesis_date": "2026-09-02",
-      "history_days": 4,
+      "history_days": 5,
       "current": {
-        "timestamp_utc": "2026-09-05T00:11:06Z",
-        "effective_day": "2026-09-05",
+        "timestamp_utc": "2026-09-06T19:30:44Z",
+        "effective_day": "2026-09-06",
         "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
         "equity_usd": 83.186462,
         "beginning_equity_usd": 83.186462,
@@ -4703,28 +5411,28 @@
       "windows": {
         "today": {
           "available": true,
-          "history_days": 4,
+          "history_days": 5,
           "pnl_usd": 0.0,
           "return_pct": 0.0,
           "reason": null
         },
         "7d": {
           "available": false,
-          "history_days": 4,
+          "history_days": 5,
           "pnl_usd": null,
           "return_pct": null,
           "reason": "insufficient_live_history"
         },
         "30d": {
           "available": false,
-          "history_days": 4,
+          "history_days": 5,
           "pnl_usd": null,
           "return_pct": null,
           "reason": "insufficient_live_history"
         },
         "90d": {
           "available": false,
-          "history_days": 4,
+          "history_days": 5,
           "pnl_usd": null,
           "return_pct": null,
           "reason": "insufficient_live_history"
@@ -4923,7 +5631,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 1002,
-          "modified_utc": "2026-09-06T00:10:50Z"
+          "modified_utc": "2026-09-06T20:12:14Z"
         },
         "strategy_artifact": {
           "path": "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_paper.csv",
@@ -4931,7 +5639,7 @@
           "owner": "DATA",
           "exists": true,
           "size_bytes": 2483986,
-          "modified_utc": "2026-09-06T00:11:40Z"
+          "modified_utc": "2026-09-06T20:13:05Z"
         },
         "trend_calculation": {
           "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -4946,22 +5654,22 @@
           "source_type": "read_only_account_snapshot",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 74785,
-          "modified_utc": "2026-09-06T00:11:07Z"
+          "size_bytes": 74184,
+          "modified_utc": "2026-09-06T20:12:33Z"
         },
         "real_account_performance": {
           "path": "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
           "source_type": "real_account_performance_ledger",
           "owner": "DATA",
           "exists": true,
-          "size_bytes": 43448,
-          "modified_utc": "2026-09-06T00:10:50Z"
+          "size_bytes": 52914,
+          "modified_utc": "2026-09-06T20:12:14Z"
         }
       },
       "runtime_table_snapshot": {
         "source_type": "authoritative_runtime_table_snapshot",
         "owner": "DATA",
-        "evaluated_at_utc": "2026-09-06T00:11:42Z",
+        "evaluated_at_utc": "2026-09-06T20:13:07Z",
         "fields": {
           "last_pi_update_utc": {
             "path": "outputs/execution/full_auto_scheduler/latest_scheduler_entry_manifest.json",
@@ -5008,8 +5716,8 @@
             "source_type": "read_only_account_snapshot",
             "owner": "DATA",
             "exists": true,
-            "size_bytes": 74785,
-            "modified_utc": "2026-09-06T00:11:07Z",
+            "size_bytes": 74184,
+            "modified_utc": "2026-09-06T20:12:33Z",
             "source_field": "as_of_utc",
             "value_present": true
           },
@@ -5019,7 +5727,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1002,
-            "modified_utc": "2026-09-06T00:10:50Z",
+            "modified_utc": "2026-09-06T20:12:14Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -5040,7 +5748,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 2483986,
-                "modified_utc": "2026-09-06T00:11:40Z"
+                "modified_utc": "2026-09-06T20:13:05Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -5058,7 +5766,7 @@
             "owner": "DATA",
             "exists": true,
             "size_bytes": 1002,
-            "modified_utc": "2026-09-06T00:10:50Z",
+            "modified_utc": "2026-09-06T20:12:14Z",
             "source_field": "latest_closed_utc_date",
             "value_present": true,
             "derived_from": [
@@ -5079,7 +5787,7 @@
                 "owner": "DATA",
                 "exists": true,
                 "size_bytes": 2483986,
-                "modified_utc": "2026-09-06T00:11:40Z"
+                "modified_utc": "2026-09-06T20:13:05Z"
               },
               "trend_calculation": {
                 "path": "outputs/execution/app_exports/phase66g_live_status.csv",
@@ -5106,16 +5814,16 @@
         "source_type": "read_only_account_snapshot",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 74785,
-        "modified_utc": "2026-09-06T00:11:07Z"
+        "size_bytes": 74184,
+        "modified_utc": "2026-09-06T20:12:33Z"
       },
       "real_account_performance": {
         "path": "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
         "source_type": "real_account_performance_ledger",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 43448,
-        "modified_utc": "2026-09-06T00:10:50Z"
+        "size_bytes": 52914,
+        "modified_utc": "2026-09-06T20:12:14Z"
       },
       "dry_run_summary": {
         "path": "outputs/execution/dry_run/latest_dry_run_decision.json",
@@ -5131,7 +5839,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 3640,
-        "modified_utc": "2026-09-06T00:11:38Z"
+        "modified_utc": "2026-09-06T20:13:03Z"
       },
       "gate_summary": {
         "path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
@@ -5139,7 +5847,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 4543,
-        "modified_utc": "2026-09-06T00:11:39Z"
+        "modified_utc": "2026-09-06T20:13:04Z"
       },
       "runtime_health_summary": {
         "path": "outputs/execution/runtime_health/latest_runtime_health.json",
@@ -5186,8 +5894,8 @@
         "source_type": "read_only_account_snapshot",
         "owner": "DATA",
         "exists": true,
-        "size_bytes": 74785,
-        "modified_utc": "2026-09-06T00:11:07Z"
+        "size_bytes": 74184,
+        "modified_utc": "2026-09-06T20:12:33Z"
       },
       "dry_run_generated_at_utc": {
         "path": "outputs/execution/dry_run/latest_dry_run_decision.json",
@@ -5203,7 +5911,7 @@
         "owner": "DATA",
         "exists": true,
         "size_bytes": 4543,
-        "modified_utc": "2026-09-06T00:11:39Z"
+        "modified_utc": "2026-09-06T20:13:04Z"
       }
     }
   }

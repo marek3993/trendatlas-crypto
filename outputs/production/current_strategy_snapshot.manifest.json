@@ -1,12 +1,12 @@
 {
   "artifact_type": "current_strategy_snapshot_manifest",
   "schema_version": 4,
-  "generated_at_utc": "2026-09-06T00:11:27Z",
+  "generated_at_utc": "2026-09-06T20:12:52Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
   "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
-  "git_commit": "fdbc903faf796ba472d4e3853c3b7016bc72bea8",
+  "git_commit": "d0935a00dbba9556edccfb0e4ae2315349074418",
   "source_inputs": {
     "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
     "strategy_id": "current_strategy",
@@ -84,7 +84,7 @@
             "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
             "sha256": "0dd4fea660e8db56d187b5ee72df270f1f0795304dba66e30c5a1f1872b7589e",
             "size_bytes": 393357,
-            "modified_utc": "2026-09-06T00:10:42Z",
+            "modified_utc": "2026-09-06T20:12:06Z",
             "last_date": "2026-09-05",
             "row_count": 3046,
             "materialized_closed_day": "2026-09-05",
@@ -93,9 +93,9 @@
           },
           "durable_baseline_freshness_report": {
             "path": "outputs/execution/freshness/app_freshness_report.json",
-            "sha256": "daf9f1c2049b5f9919591979be5f93ad6c203194906556c077fe505d24d0a92f",
+            "sha256": "cb73078686d0a8e467bdd0f1f7216f95e22582b1ff858b3d4401522ae5a25148",
             "size_bytes": 1002,
-            "modified_utc": "2026-09-06T00:10:50Z",
+            "modified_utc": "2026-09-06T20:12:14Z",
             "closed_day": "2026-09-05",
             "status": "ok",
             "materialized_closed_day": "2026-09-05",
@@ -175,7 +175,7 @@
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
         "sha256": "0dd4fea660e8db56d187b5ee72df270f1f0795304dba66e30c5a1f1872b7589e",
         "size_bytes": 393357,
-        "modified_utc": "2026-09-06T00:10:42Z",
+        "modified_utc": "2026-09-06T20:12:06Z",
         "last_date": "2026-09-05",
         "row_count": 3046,
         "materialized_closed_day": "2026-09-05",
@@ -184,9 +184,9 @@
       },
       "durable_baseline_freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
-        "sha256": "daf9f1c2049b5f9919591979be5f93ad6c203194906556c077fe505d24d0a92f",
+        "sha256": "cb73078686d0a8e467bdd0f1f7216f95e22582b1ff858b3d4401522ae5a25148",
         "size_bytes": 1002,
-        "modified_utc": "2026-09-06T00:10:50Z",
+        "modified_utc": "2026-09-06T20:12:14Z",
         "closed_day": "2026-09-05",
         "status": "ok",
         "materialized_closed_day": "2026-09-05",
@@ -209,9 +209,9 @@
       },
       "etf_panel": {
         "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
-        "sha256": "70e57fe6d65816cdbef0319a50d8edd87a4ed3097b249ff0a02700339d01a6a3",
+        "sha256": "a4144998404a1a2952a5cd513c9e0d3f3ff51c2368adf221663cdb135aa3c435",
         "size_bytes": 251419,
-        "modified_utc": "2026-09-06T00:10:49Z",
+        "modified_utc": "2026-09-06T20:12:14Z",
         "last_date": "2026-09-05",
         "row_count": 666,
         "latest_source_session_day": "2026-09-04",
@@ -255,15 +255,15 @@
       },
       "project_truth": {
         "path": "source_of_truth/project_truth.json",
-        "sha256": "0f68b626edecc4915f86f301a7636bf85e26ceae94ff5d08a715189a0f9dcd0c",
-        "size_bytes": 51678,
-        "modified_utc": "2026-09-04T12:29:10Z"
+        "sha256": "4371629e0690d817358177fb8e5278e3193ccd5c0172f5bad0f2dc824bdc9dae",
+        "size_bytes": 54070,
+        "modified_utc": "2026-09-06T18:04:56Z"
       },
       "export_contract": {
         "path": "source_of_truth/export_contract.json",
-        "sha256": "797f3550870e6e0ba09eb6c64087059cc33a54030cfeadd24c96e8017615a8dc",
-        "size_bytes": 68132,
-        "modified_utc": "2026-09-04T12:29:10Z"
+        "sha256": "01d6e5a5c311c087aed00bdf89e50e7077054ffdd748fd7d698fee5022e93f89",
+        "size_bytes": 69895,
+        "modified_utc": "2026-09-06T18:04:56Z"
       }
     },
     "cost_model": {
