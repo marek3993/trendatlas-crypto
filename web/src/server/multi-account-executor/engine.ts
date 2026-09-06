@@ -3,6 +3,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { createEnvironmentAgentSecretProtector, type EncryptedAgentSecret } from "@/lib/hyperliquid/agent-authorization";
 import { deterministicCloid } from "./cloid";
+import { assertAgentPrivateKeyMatches } from "./hyperliquid-l1-signing";
 import { canWriteExchange } from "./mode";
 import { buildPlan } from "./planner";
 import type { AccountState, AuthorizedTarget, EligibleAccount, ExecutionMode, FinalStatus, MarketSpec, Plan, PlannedAction } from "./types";
@@ -107,6 +108,7 @@ export class MultiAccountExecutor {
       }
       if (!canWriteExchange(this.mode) || !account.encryptedSecret) throw new Error("secret is unavailable");
       const secret = createEnvironmentAgentSecretProtector(process.env.TRENDATLAS_AGENT_KEK_B64).decrypt(account.encryptedSecret);
+      assertAgentPrivateKeyMatches(secret, account.agentAddress);
       await this.repository.setAccountStatus(account.authorizationId, "executing");
       for (const action of plan.actions) {
         const cloid = deterministicCloid({ userId: account.userId, accountId: account.accountId, signalId: target.signalId, closedDay: target.closedDay, target: target.asset, action: action.action, leg: action.leg, attempt: 0 });
@@ -128,7 +130,12 @@ export class MultiAccountExecutor {
             const response = await this.exchange.writeIoc({ ...action, cloid, nonce, masterAddress: account.masterAddress, agentAddress: account.agentAddress, agentPrivateKey: secret });
             await this.repository.recordAction(runId, action, cloid, "SUBMITTED", response.orderId);
           } catch {
-            const recovered = await this.exchange.findByCloid(account.masterAddress, cloid);
+            let recovered: KnownOrder = { state: "unknown" };
+            try {
+              recovered = await this.exchange.findByCloid(account.masterAddress, cloid);
+            } catch {
+              // An unverified post-submit lookup is ambiguous and must never trigger a retry.
+            }
             await this.repository.recordAction(runId, action, cloid, recovered?.state === "filled" ? "KNOWN" : "AMBIGUOUS", recovered?.orderId);
             await this.repository.finishRun(runId, recovered?.state === "filled" ? "PARTIAL" : "UNKNOWN_SUBMISSION_STATE", null);
             return { accountId: account.accountId, status: recovered?.state === "filled" ? "PARTIAL" : "UNKNOWN_SUBMISSION_STATE" };

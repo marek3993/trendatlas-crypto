@@ -2,6 +2,9 @@
   "name": "trendatlas-accounts",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,9 +12,11 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "multi-account:dry-run": "node --env-file=.env.local --conditions=react-server --import tsx scripts/run-multi-account-dry-run.ts"
+    "multi-account:dry-run": "node --env-file=.env.local --conditions=react-server --import tsx scripts/run-multi-account-dry-run.ts",
+    "multi-account:live-preflight": "node --env-file=.env.local --conditions=react-server --import tsx scripts/run-multi-account-live-preflight.ts"
   },
   "dependencies": {
+    "@msgpack/msgpack": "3.1.3",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.57.0",
     "next": "16.3.4",

@@ -15,12 +15,13 @@ import type {
   MarketSpec
 } from "./types";
 
-const INFO_API_URL = "https://api.hyperliquid.xyz/info";
-const REQUEST_TIMEOUT_MS = 8_000;
+export const HYPERLIQUID_INFO_API_URL = "https://api.hyperliquid.xyz/info";
+export const HYPERLIQUID_REQUEST_TIMEOUT_MS = 8_000;
 const MIN_NOTIONAL_USD = 10;
 const MANAGED_ASSETS: readonly ManagedAsset[] = ["BTC", "ETH"];
 
-type MarketRow = {
+export type HyperliquidMarketRow = {
+  assetIndex: number;
   markPrice: number;
   sizeDecimals: number;
 };
@@ -34,13 +35,13 @@ type AssetContext = {
   markPx?: unknown;
 };
 
-async function fetchMarketIndex(): Promise<Map<string, MarketRow>> {
-  const response = await fetch(INFO_API_URL, {
+export async function fetchHyperliquidMarketIndex(fetcher: typeof fetch = fetch): Promise<Map<string, HyperliquidMarketRow>> {
+  const response = await fetcher(HYPERLIQUID_INFO_API_URL, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ type: "metaAndAssetCtxs" }),
     cache: "no-store",
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+    signal: AbortSignal.timeout(HYPERLIQUID_REQUEST_TIMEOUT_MS)
   });
 
   if (!response.ok) {
@@ -59,7 +60,7 @@ async function fetchMarketIndex(): Promise<Map<string, MarketRow>> {
     throw new Error("Hyperliquid market metadata is invalid.");
   }
 
-  const markets = new Map<string, MarketRow>();
+  const markets = new Map<string, HyperliquidMarketRow>();
 
   meta.universe.forEach((entry, index) => {
     const name = typeof entry?.name === "string"
@@ -75,7 +76,7 @@ async function fetchMarketIndex(): Promise<Map<string, MarketRow>> {
       Number.isFinite(markPrice) &&
       markPrice > 0
     ) {
-      markets.set(name, { markPrice, sizeDecimals });
+      markets.set(name, { assetIndex: index, markPrice, sizeDecimals });
     }
   });
 
@@ -93,10 +94,12 @@ async function fetchMarketIndex(): Promise<Map<string, MarketRow>> {
  * Both order-related methods fail closed.
  */
 export class HyperliquidDryRunGateway implements ExchangeGateway {
-  private marketIndexPromise: Promise<Map<string, MarketRow>> | null = null;
+  private marketIndexPromise: Promise<Map<string, HyperliquidMarketRow>> | null = null;
 
-  private marketIndex(): Promise<Map<string, MarketRow>> {
-    this.marketIndexPromise ??= fetchMarketIndex();
+  constructor(private readonly fetcher: typeof fetch = fetch) {}
+
+  protected marketIndex(): Promise<Map<string, HyperliquidMarketRow>> {
+    this.marketIndexPromise ??= fetchHyperliquidMarketIndex(this.fetcher);
     return this.marketIndexPromise;
   }
 

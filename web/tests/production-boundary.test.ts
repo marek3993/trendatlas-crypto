@@ -28,8 +28,11 @@ const sourceText = (file: string) => fs.readFileSync(file, "utf8");
 const allWebSource = sourceFiles.map(sourceText).join("\n");
 const clientModules = sourceFiles.filter((file) => /^\s*["']use client["']/.test(sourceText(file)));
 const clientSource = clientModules.map(sourceText).join("\n");
+const appSource = filesUnder(path.join(webSourceDirectory, "app")).map(sourceText).join("\n");
 const agentAuthorizationModule = source("lib/hyperliquid/agent-authorization.ts");
 const adminModule = source("lib/supabase/admin.ts");
+const liveGatewayModule = source("server/multi-account-executor/hyperliquid-live-gateway.ts");
+const packageJson = source("../package.json");
 
 function source(relativePath: string): string {
   return fs.readFileSync(path.join(webSourceDirectory, relativePath), "utf8");
@@ -38,6 +41,13 @@ function source(relativePath: string): string {
 describe("production isolation boundary", () => {
   it("keeps production execution code unreachable from the web source", () => {
     expect(allWebSource).not.toMatch(/scripts\/execution|run_trendatlas_production|live[_-]?order|submit[_-]?order/i);
+  });
+
+  it("keeps the server-only order gateway unreachable from browser and request routes", () => {
+    expect(liveGatewayModule).toMatch(/^import "server-only";/);
+    expect(clientSource).not.toContain("hyperliquid-live-gateway");
+    expect(appSource).not.toContain("hyperliquid-live-gateway");
+    expect(packageJson).not.toContain('"multi-account:live"');
   });
 
   it("keeps browser modules free of wallet-secret inputs and secret identifiers", () => {

@@ -3,6 +3,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { describe, expect, it, vi } from "vitest";
 import { createEnvironmentAgentSecretProtector } from "@/lib/hyperliquid/agent-authorization";
+import { privateKeyToAccount } from "viem/accounts";
 import { AuthorityError, parseAuthorizedTarget } from "@/server/multi-account-executor/authority";
 import { deterministicCloid } from "@/server/multi-account-executor/cloid";
 import { MultiAccountExecutor, isEligibleMultiAccount, type ExchangeGateway, type ExecutionRepository } from "@/server/multi-account-executor/engine";
@@ -112,12 +113,14 @@ describe("idempotency, modes, and isolation", () => {
   it("persists NOT_SUBMITTED before recovering a previously filled live CLOID", async () => {
     const originalKek = process.env.TRENDATLAS_AGENT_KEK_B64;
     process.env.TRENDATLAS_AGENT_KEK_B64 = Buffer.alloc(32, 7).toString("base64");
+    const privateKey = `0x${"11".repeat(32)}` as const;
+    const agentAddress = privateKeyToAccount(privateKey).address.toLowerCase();
     const encryptedSecret = createEnvironmentAgentSecretProtector(process.env.TRENDATLAS_AGENT_KEK_B64)
-      .encrypt(`0x${"11".repeat(32)}`);
+      .encrypt(privateKey);
     const events: string[] = [];
     let accountRead = 0;
     const repository: ExecutionRepository = {
-      listMultiAccountCandidates: async () => [{ ...candidate(), encryptedSecret }],
+      listMultiAccountCandidates: async () => [{ ...candidate({ agentAddress }), encryptedSecret }],
       tryAcquire: async () => true,
       release: async () => undefined,
       reserveNonce: async () => 1n,
