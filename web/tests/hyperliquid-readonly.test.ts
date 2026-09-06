@@ -116,6 +116,15 @@ describe("Hyperliquid read-only onboarding", () => {
     expect(dashboard).toContain("getHyperliquidAccountPerformance(account.master_address)");
   });
 
+  it("gives every authenticated account the complete responsive dashboard structure", () => {
+    expect(dashboard).toContain('className="dashboard-shell"');
+    expect(dashboard).toContain("Status and controls");
+    expect(dashboard).toContain("Wallet snapshot");
+    expect(dashboard).toContain("Real account performance");
+    expect(dashboard).toContain("performance.snapshot.positions");
+    expect(dashboard).toContain("performance.snapshot.openOrderCount");
+  });
+
   it("disconnects only the logged-in user's connection", () => {
     expect(onboardingAction).toContain('delete().eq("user_id", user.id)');
     expect(onboardingAction).not.toMatch(/formData\.get\([^)]*(id|user)/i);
