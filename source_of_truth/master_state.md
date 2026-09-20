@@ -73,7 +73,7 @@
 - GitHub Actions role: `validation_only`
 - Pi authority is runtime/publish authority and remains separate from Production Core strategy truth.
 - Canonical daily Pi production entrypoint is `scripts/execution/run_trendatlas_production.py`; it owns refresh through final authority publish under one single-run lock and one run manifest.
-- On a first attempt for a new closed day, the previous successful authority snapshot may be exactly one day behind only when the in-progress attempt and canonical Production Core, intent, gate, and account fingerprints prove the same run and new day; all underlying stale inputs still block.
+- On a first attempt or recovery after missed runs, the previous successful authority snapshot may be one or more days behind only when the in-progress attempt and canonical Production Core, intent, gate, and account fingerprints prove the same run and new day; all underlying stale inputs still block. Recovery reconciles only the current target; it never replays missed orders or edits the old successful snapshot.
 - `mrv1-production.service` retries a failed canonical pass after 15 minutes and stops retrying after success; no second scheduler or execution path is introduced.
 - Completed production execution must be finalized in the run manifest after post-trade verification and before dashboard/runtime materialization; authority publication consumes that finalized state and must never publish `RUNNING` as a completed run status.
 - Public real exposure is fresh wallet position notional divided by real account equity, never the model target. `dashboard_public_status.execution.live_order_sent` remains a boolean compatibility field and must reflect finalized run submission evidence.

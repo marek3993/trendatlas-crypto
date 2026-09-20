@@ -852,11 +852,16 @@ def same_run_new_closed_day_is_proven(
     expected_day: str,
     previous_success_day: str,
 ) -> tuple[bool, str | None]:
-    """Allow only a one-day authority advance proven by the canonical same run."""
+    """Allow a forward authority advance proven by the canonical current run.
+
+    The previous publication may predate an outage. It is not used as today's
+    trading input: all same-run evidence below and normal source freshness checks
+    remain mandatory. This does not publish success or replay historical orders.
+    """
     expected_date = iso_day_to_date(expected_day)
     previous_date = iso_day_to_date(previous_success_day)
-    if expected_date is None or previous_date is None or (expected_date - previous_date).days != 1:
-        return False, "Previous successful authority is not exactly one closed day behind."
+    if expected_date is None or previous_date is None or previous_date >= expected_date:
+        return False, "Previous successful authority must precede the target closed day."
 
     attempt, _ = load_effective_json_source(
         "execution_authority_latest_attempt_status",

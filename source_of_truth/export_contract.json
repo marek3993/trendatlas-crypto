@@ -67,7 +67,7 @@
                                                                                   "must_match_production_core":  true,
                                                                                   "gate_must_consume_canonical_intent":  true,
                                                                                   "gate_must_consume_current_account_snapshot":  true,
-                                                                                  "new_closed_day_authority_advance_rule":  "previous_success_may_be_exactly_one_closed_day_behind_only_when_the_in_progress_attempt_and_canonical_production_intent_gate_and_account_fingerprints_prove_the_same_run_and_new_day",
+                                                                                  "new_closed_day_authority_advance_rule":  "previous_success_may_be_one_or_more_closed_days_behind_only_when_the_in_progress_attempt_and_canonical_production_intent_gate_and_account_fingerprints_prove_the_same_run_and_new_day_all_current_source_freshness_checks_remain_required_no_historical_order_replay",
                                                                                   "temporary_execution_path_overrides_forbidden":  true,
                                                                                   "mismatch_action":  "block_execution_fail_closed"
                                                                               },
