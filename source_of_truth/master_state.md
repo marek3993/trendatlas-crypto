@@ -131,6 +131,10 @@
 - Dev-only post-run anomaly step is attached after successful daily refresh.
 - All such outputs remain `dev_only=true` and `non_authoritative=true`.
 
+- User-authorized local evolution research (2026-09-20) is dev-only: 10 candidates,
+  6 survivors, 4 new mutations, real historical backtests and a sealed final test.
+  IML is not required. Results cannot alter production, authority or scheduling.
+
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.

@@ -4,6 +4,17 @@
   "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
   "scripts": [
     {
+      "script_path": "research_os/dev_only/evolution/__main__.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Offline 10/6/4 evolution with real OHLCV backtests, transactional persistence and a sealed final test.",
+      "primary_outputs": ["outputs/research_os/dev_only/evolution/"],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Local-only, no production imports or scheduler attachment, no IML requirement, no automatic promotion. Run with python -m research_os.dev_only.evolution."
+    },
+    {
       "script_path": "automation/tools/bootstrap_automation.py",
       "layer": "automation",
       "status": "active",

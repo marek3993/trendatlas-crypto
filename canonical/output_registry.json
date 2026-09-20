@@ -4,6 +4,16 @@
   "last_updated_note": "Update when a new output folder/file becomes relevant, active, deprecated, or decision-relevant.",
   "outputs": [
     {
+      "output_path": "outputs/research_os/dev_only/evolution/",
+      "generated_by": ["research_os/dev_only/evolution/__main__.py"],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "research_backtest_database_and_report",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Ignored generated SQLite and JSON: immutable inputs, candidates, lineage, metrics, curves, trades, generations and one final test per sealed run."
+    },
+    {
       "output_path": "automation/runs/",
       "generated_by": [
         "automation/tools/create_run.py",

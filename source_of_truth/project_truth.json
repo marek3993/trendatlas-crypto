@@ -526,6 +526,26 @@
                                                                                    "outputs/execution/live_status/*"
                                                                                ]
                                    },
+    "isolated_evolution_research": {
+        "authorization_date": "2026-09-20",
+        "scope": "user_requested_local_dev_only_evolution_research",
+        "dev_only": true,
+        "non_authoritative": true,
+        "population_size": 10,
+        "survivors": 6,
+        "new_mutations": 4,
+        "iml_required": false,
+        "input_contract": "immutable_validated_daily_ohlcv_copy_with_sha256",
+        "backtest_contract": "previous_closed_day_signal_next_open_execution_costs_and_daily_mark_to_market",
+        "selection_contract": "training_and_validation_only_never_final_holdout",
+        "holdout_contract": "fixed_before_search_evaluate_frozen_validation_champion_once_after_planned_generations_no_further_evolution",
+        "persistence": "transactional_sqlite_candidates_lineage_metrics_trades_curves_and_run_provenance",
+        "output_root": "outputs/research_os/dev_only/evolution",
+        "production_imports_or_writes": "forbidden",
+        "exchange_access": "forbidden",
+        "scheduler_attachment": "none",
+        "promotion": "forbidden_without_separate_explicit_approval"
+    },
     "legacy_phase_chain_status":  {
                                       "role":  "research_archive_input_lineage",
                                       "primary_runtime_production_truth_interface":  false

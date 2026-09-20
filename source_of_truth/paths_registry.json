@@ -72,6 +72,15 @@
     "execution_journal": "durable_pre_submit_idempotency_and_exchange_recovery_record"
   },
   "artifacts": {
+    "isolated_evolution_results": {
+      "canonical": "outputs/research_os/dev_only/evolution/<run_id>/research.sqlite3",
+      "legacy_aliases": [],
+      "owner": "AI_LAB",
+      "artifact_type": "research_backtest_database",
+      "truth_domain": "non_authoritative_research",
+      "read_scope": ["research", "audit"],
+      "write_mode": "isolated_evolution_controller_only"
+    },
     "phase67j_winner_paper": {
       "canonical": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\execution\\app_exports\\phase67j_no_neo_main_paper.csv",
       "legacy_aliases": [
