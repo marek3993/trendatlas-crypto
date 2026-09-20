@@ -1,0 +1,64 @@
+[Unit]
+Description=TrendAtlas isolated finite evolution worker
+Conflicts=mrv1-production.service
+After=mrv1-production.service
+RefuseManualStart=yes
+
+[Service]
+Type=exec
+User=trendatlas-research
+Group=trendatlas-research
+WorkingDirectory=@RELEASE@
+ExecCondition=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B @RELEASE@/research_os/dev_only/evolution_worker/bootstrap.py ready
+ExecCondition=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B @RELEASE@/research_os/dev_only/evolution_worker/gate.py
+ExecStart=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B @RELEASE@/research_os/dev_only/evolution_worker/bootstrap.py run
+Restart=no
+TimeoutStopSec=2s
+RuntimeMaxSec=35min
+KillMode=control-group
+SendSIGKILL=yes
+StateDirectory=trendatlas-research
+StateDirectoryMode=0750
+UMask=0027
+Nice=19
+IOSchedulingClass=idle
+CPUQuota=20%
+CPUWeight=1
+IOWeight=1
+MemoryHigh=256M
+MemoryMax=384M
+MemorySwapMax=0
+TasksMax=16
+LimitFSIZE=128M
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+PrivateNetwork=yes
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectProc=invisible
+ProcSubset=pid
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @reboot @swap
+ReadWritePaths=/var/lib/trendatlas-research
+ReadOnlyPaths=/var/lib/trendatlas-research/queue
+InaccessiblePaths=/opt/market_regime_v1 /opt/home_automation /etc/default -/etc/credstore -/etc/credstore.encrypted -/run/credentials -/run/user
+BindReadOnlyPaths=/opt/market_regime_v1/data/ohlcv/BTCUSDT_1d.csv:/opt/trendatlas-research/input/BTCUSDT_1d.csv
+StandardOutput=journal
+StandardError=journal
+LogRateLimitIntervalSec=1min
+LogRateLimitBurst=10

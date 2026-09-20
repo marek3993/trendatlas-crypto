@@ -4,6 +4,16 @@
   "last_updated_note": "Update when a new output folder/file becomes relevant, active, deprecated, or decision-relevant.",
   "outputs": [
     {
+      "output_path": "/var/lib/trendatlas-research/",
+      "generated_by": ["research_os/dev_only/evolution_worker/bootstrap.py"],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "isolated_queue_ledger_and_sealed_research_jobs",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Proposed Pi state root: finite operator queue, frozen inputs/specs, transactional generations, immutable seals and audits. Installation pending approval."
+    },
+    {
       "output_path": "outputs/research_os/dev_only/mean_reversion/",
       "generated_by": ["research_os/dev_only/mean_reversion/__main__.py"],
       "layer": "research_os_dev_only",

@@ -72,6 +72,15 @@
     "execution_journal": "durable_pre_submit_idempotency_and_exchange_recovery_record"
   },
   "artifacts": {
+    "pi_evolution_worker_state": {
+      "canonical": "/var/lib/trendatlas-research",
+      "legacy_aliases": [],
+      "owner": "AI_LAB",
+      "artifact_type": "isolated_preregistered_queue_and_sqlite_results",
+      "truth_domain": "non_authoritative_development_retrospective",
+      "read_scope": ["research", "audit"],
+      "write_mode": "dedicated_research_user_after_installation_approval_only"
+    },
     "isolated_mean_reversion_results": {
       "canonical": "outputs/research_os/dev_only/mean_reversion/<run_id>/research.sqlite3",
       "legacy_aliases": [],

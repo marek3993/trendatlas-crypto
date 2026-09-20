@@ -4,6 +4,17 @@
   "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
   "scripts": [
     {
+      "script_path": "research_os/dev_only/evolution_worker/bootstrap.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Runs a finite local preregistered research queue in an isolated pinned release; Pi installation pending review.",
+      "primary_outputs": ["/var/lib/trendatlas-research/"],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No AI API, IML, production writes or automatic new studies. Research-only systemd units require explicit installation approval."
+    },
+    {
       "script_path": "research_os/dev_only/mean_reversion/__main__.py",
       "layer": "research_os_dev_only",
       "status": "active",

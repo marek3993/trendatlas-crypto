@@ -565,6 +565,19 @@
         "production_promotion_allowed": false,
         "pi_monitor_installation": "stop_before_installation_for_concrete_review_only_if_historically_qualified"
     },
+    "local_evolution_worker": {
+        "contract": "research_os/dev_only/evolution_worker/CONTRACT.md",
+        "scope": "user_authorized_worker_implementation_and_fixture_validation",
+        "installation_status": "pending_concrete_review_and_explicit_approval",
+        "release_root": "/opt/trendatlas-research",
+        "state_root": "/var/lib/trendatlas-research",
+        "production_checkout_mutation": "forbidden",
+        "production_unit_mutation": "forbidden",
+        "production_priority": "exclusive_preemptible_research_only",
+        "credentials_network_orders": "forbidden",
+        "new_historical_search_this_task": false,
+        "queue": "operator_preregistered_finite_jobs_only"
+    },
     "legacy_phase_chain_status":  {
                                       "role":  "research_archive_input_lineage",
                                       "primary_runtime_production_truth_interface":  false

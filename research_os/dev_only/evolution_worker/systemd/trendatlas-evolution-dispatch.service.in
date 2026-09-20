@@ -1,0 +1,29 @@
+[Unit]
+Description=Admit queued TrendAtlas research without stopping production
+After=mrv1-production.service
+OnSuccess=trendatlas-evolution-worker.service
+OnSuccessJobMode=ignore-requirements
+
+[Service]
+Type=oneshot
+User=trendatlas-research
+Group=trendatlas-research
+ExecCondition=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B @RELEASE@/research_os/dev_only/evolution_worker/bootstrap.py ready
+ExecStart=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B @RELEASE@/research_os/dev_only/evolution_worker/gate.py --dispatch
+Restart=no
+TimeoutStartSec=15s
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+PrivateNetwork=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectProc=invisible
+RestrictAddressFamilies=AF_UNIX
+InaccessiblePaths=/opt/market_regime_v1 /opt/home_automation /etc/default -/etc/credstore -/etc/credstore.encrypted -/run/credentials -/run/user
+Nice=19
+IOSchedulingClass=idle
+CPUQuota=5%
+MemoryMax=64M
+TasksMax=8

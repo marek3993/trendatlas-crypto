@@ -1,0 +1,12 @@
+[Unit]
+Description=Check finite preregistered TrendAtlas research queue
+
+[Timer]
+OnBootSec=10min
+OnUnitInactiveSec=15min
+AccuracySec=1min
+RandomizedDelaySec=30s
+Unit=trendatlas-evolution-dispatch.service
+
+[Install]
+WantedBy=timers.target
