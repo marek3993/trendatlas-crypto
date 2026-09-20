@@ -99,14 +99,19 @@ class ControllerTests(unittest.TestCase):
         db = ctl.connect(self.root, "test")
         with db:
             self.assertEqual(db.execute("SELECT COUNT(*) FROM populations WHERE generation=1").fetchone()[0], 10)
-            self.assertEqual(db.execute("SELECT COUNT(*) FROM evaluations").fetchone()[0], 20)
+            self.assertEqual(db.execute("SELECT COUNT(*) FROM evaluations").fetchone()[0], 30)
             self.assertGreater(db.execute("SELECT COUNT(*) FROM curves").fetchone()[0], 0)
             self.assertGreater(db.execute("SELECT COUNT(*) FROM trades").fetchone()[0], 0)
             for cid in result["mutations"]:
                 child, parent = db.execute("SELECT genes,parent FROM candidates WHERE id=?", (cid,)).fetchone()
                 original = json.loads(db.execute("SELECT genes FROM candidates WHERE id=?", (parent,)).fetchone()[0])
                 self.assertIn(parent, result["survivors"])
-                self.assertEqual(sum(value != original[key] for key, value in json.loads(child).items()), 1)
+                decoded = json.loads(child)
+                changed = [key for key, value in decoded.items() if value != original[key]]
+                self.assertEqual(len(changed), 1)
+                key = changed[0]
+                domain = engine.DOMAINS[key]
+                self.assertEqual(abs(domain.index(decoded[key]) - domain.index(original[key])), 1)
         db.close()
         self.assertEqual(ctl.status(self.root, "test")["metadata"]["completed_generations"], 1)
 
@@ -127,6 +132,15 @@ class ControllerTests(unittest.TestCase):
         result = ctl.finalize(self.root, "test")
         self.assertEqual(result["champion"], champion)
         self.assertEqual(result["start"], "2021-07-01")
+        self.assertEqual(result["cash"]["total_return"], 0.0)
+        self.assertEqual(result["cash"]["max_drawdown"], 0.0)
+        expected = (
+            "PASS"
+            if result["candidate"]["total_return"] > 0
+            and result["candidate"]["fitness"] > 0
+            else "REJECT"
+        )
+        self.assertEqual(result["research_decision"]["status"], expected)
         self.assertEqual(ctl.status(self.root, "test")["metadata"]["state"], "SEALED")
         for action in (ctl.evolve, ctl.finalize):
             with self.assertRaises(ValueError):
@@ -181,6 +195,17 @@ class ControllerTests(unittest.TestCase):
         self.kwargs["validation_end"] = "2020-12-31"
         with self.assertRaises(ValueError):
             self.init()
+
+    def test_ranking_prefers_worst_fold_then_mean(self):
+        scores = {
+            "spike": (1.0, -0.20),
+            "stable": (0.05, 0.05),
+            "tie_low_mean": (0.05, 0.06),
+        }
+        self.assertEqual(
+            ctl.rank_candidates(scores),
+            ["tie_low_mean", "stable", "spike"],
+        )
 
     def test_time_budget_rolls_back(self):
         self.init()

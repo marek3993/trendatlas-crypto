@@ -12,7 +12,7 @@
       "output_type": "research_outputs",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Local-only, no production imports or scheduler attachment, no IML requirement, no automatic promotion. Run with python -m research_os.dev_only.evolution."
+      "notes": "Local-only. Uses two chronological validation folds ranked by worst then mean score, adjacent one-gene mutations, and cash plus buy-and-hold final benchmarks. No production imports or scheduler attachment, no IML requirement, no automatic promotion. Run with python -m research_os.dev_only.evolution."
     },
     {
       "script_path": "automation/tools/bootstrap_automation.py",

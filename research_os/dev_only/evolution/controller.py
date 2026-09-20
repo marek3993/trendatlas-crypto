@@ -13,7 +13,10 @@ import sqlite3
 import time
 import uuid
 
-from .backtest import Bar, DOMAINS, WARMUP, backtest, candidate_id, canonical, read_bars
+from .backtest import (
+    Bar, DOMAINS, WARMUP, backtest, candidate_id, canonical, cash_backtest,
+    read_bars,
+)
 
 ROOT = Path(__file__).resolve().parents[3]
 OUTPUT = Path("outputs/research_os/dev_only/evolution")
@@ -80,6 +83,52 @@ def population(rng):
     return result
 
 
+def validation_folds(meta):
+    start = date.fromisoformat(meta["validation_start"])
+    end = date.fromisoformat(meta["validation_end"])
+    days = (end - start).days + 1
+    if days < 180:
+        raise ValueError("Validation needs at least two 90-day folds")
+    first_end = start + timedelta(days=days // 2 - 1)
+    return (
+        ("validation_1", start.isoformat(), first_end.isoformat()),
+        ("validation_2", (first_end + timedelta(days=1)).isoformat(), end.isoformat()),
+    )
+
+
+def rank_candidates(fold_scores):
+    """Prefer the strongest weak period, then mean performance."""
+    return sorted(
+        fold_scores,
+        key=lambda cid: (
+            -min(fold_scores[cid]),
+            -(sum(fold_scores[cid]) / len(fold_scores[cid])),
+            cid,
+        ),
+    )
+
+
+def adjacent_children(survivors, genes_by_id, seen, rng):
+    """Return four unseen mutations moving exactly one domain step."""
+    choices = {}
+    for parent in survivors:
+        genes = genes_by_id[parent]
+        for key, domain in DOMAINS.items():
+            index = domain.index(genes[key])
+            for next_index in (index - 1, index + 1):
+                if 0 <= next_index < len(domain):
+                    child = dict(genes)
+                    child[key] = domain[next_index]
+                    cid = candidate_id(child)
+                    if cid not in seen and cid not in choices:
+                        choices[cid] = (child, parent)
+    ids = sorted(choices)
+    if len(ids) < 4:
+        raise ValueError("Could not produce four unseen adjacent mutations")
+    selected = rng.sample(ids, 4)
+    return [(cid, *choices[cid]) for cid in selected]
+
+
 def initialize(root, run_id, input_path, *, train_start, train_end, validation_end,
                holdout_end, generations=3, seed=20260920, cost_bps=15.0, max_seconds=300):
     if type(generations) is not int or not 1 <= generations <= 100:
@@ -89,8 +138,10 @@ def initialize(root, run_id, input_path, *, train_start, train_end, validation_e
     dates = [date.fromisoformat(s) for s in (train_start, train_end, validation_end, holdout_end)]
     if not dates[0] < dates[1] < dates[2] < dates[3]:
         raise ValueError("Train, validation and final test must be ordered and disjoint")
-    if any((b - a).days < 90 for a, b in zip(dates, dates[1:])):
-        raise ValueError("Each evaluation period needs at least 90 days")
+    if (dates[1] - dates[0]).days < 90 or (dates[3] - dates[2]).days < 90:
+        raise ValueError("Training and final-test periods need at least 90 days")
+    if (dates[2] - dates[1]).days < 180:
+        raise ValueError("Validation needs at least two 90-day folds")
     raw = Path(input_path).read_bytes()
     bars = read_bars(raw)
     day_set = {bar.day for bar in bars}
@@ -116,7 +167,7 @@ def initialize(root, run_id, input_path, *, train_start, train_end, validation_e
         "generations": generations, "completed_generations": 0, "seed": seed,
         "cost_bps": cost_bps, "max_seconds_per_operation": max_seconds,
         "population_size": 10, "survivors": 6, "mutations": 4,
-        "fitness": "validation_cagr_minus_2_absolute_max_drawdown",
+        "fitness": "rank_worst_then_mean_of_two_validation_fold_cagr_minus_2_absolute_max_drawdown",
         "adapter": "btc_daily_long_cash_trend_momentum_volatility_v1",
         "domains": DOMAINS, "champion": None,
     }
@@ -175,10 +226,15 @@ def evolve(root, run_id):
             rows = db.execute("SELECT c.id,c.genes FROM populations p JOIN candidates c ON c.id=p.candidate WHERE p.generation=? ORDER BY p.slot", (generation,)).fetchall()
             if len(rows) != 10:
                 raise ValueError("Population is not exactly ten")
-            scores, genes_by_id = {}, {}
+            scores, fold_scores, genes_by_id = {}, {}, {}
             for cid, raw in rows:
                 genes = genes_by_id[cid] = json.loads(raw)
-                for split, start, end in (("train", meta["train_start"], meta["train_end"]), ("validation", meta["validation_start"], meta["validation_end"])):
+                evaluations = (
+                    ("train", meta["train_start"], meta["train_end"]),
+                    *validation_folds(meta),
+                )
+                fold_scores[cid] = []
+                for split, start, end in evaluations:
                     check_deadline(deadline)
                     cached = db.execute("SELECT metrics FROM evaluations WHERE candidate=? AND split=?", (cid, split)).fetchone()
                     if cached:
@@ -187,28 +243,19 @@ def evolve(root, run_id):
                         result = backtest(bars, genes, start, end, meta["cost_bps"])
                         store_evaluation(db, cid, split, result)
                         measured = result["metrics"]
-                    if split == "validation":
-                        scores[cid] = measured["fitness"]
-            survivors = sorted(scores, key=lambda cid: (-scores[cid], cid))[:6]
+                    if split.startswith("validation_"):
+                        fold_scores[cid].append(measured["fitness"])
+                scores[cid] = min(fold_scores[cid])
+            survivors = rank_candidates(fold_scores)[:6]
             seen = {row[0] for row in db.execute("SELECT id FROM candidates")}
             rng = random.Random(meta["seed"] + generation + 1)
+            selected_children = adjacent_children(survivors, genes_by_id, seen, rng)
             mutations = []
-            for _ in range(10000):
-                if len(mutations) == 4:
-                    break
+            for cid, child, parent in selected_children:
                 check_deadline(deadline)
-                parent = rng.choice(survivors)
-                child = dict(genes_by_id[parent])
-                key = rng.choice(list(DOMAINS))
-                child[key] = rng.choice([v for v in DOMAINS[key] if v != child[key]])
-                cid = candidate_id(child)
-                if cid in seen:
-                    continue
                 seen.add(cid)
                 mutations.append(cid)
                 db.execute("INSERT INTO candidates VALUES (?,?,?,?)", (cid, canonical(child), parent, generation + 1))
-            if len(mutations) != 4:
-                raise ValueError("Could not produce four unseen mutations")
             db.executemany("INSERT INTO populations VALUES (?,?,?)", [(generation + 1, n, cid) for n, cid in enumerate(survivors + mutations)])
             db.execute("INSERT INTO generations VALUES (?,?,?)", (generation, canonical(survivors), canonical(mutations)))
             meta["completed_generations"] += 1
@@ -240,8 +287,20 @@ def finalize(root, run_id):
             db.execute("INSERT INTO candidates VALUES (?,?,NULL,-1)", (baseline_id, canonical(genes)))
             baseline = backtest(bars, genes, meta["holdout_start"], meta["holdout_end"], meta["cost_bps"], benchmark=True)
             store_evaluation(db, baseline_id, "final_test", baseline)
+            cash_id = "benchmark_cash"
+            db.execute("INSERT INTO candidates VALUES (?,?,NULL,-1)", (cash_id, canonical(genes)))
+            cash = cash_backtest(bars, meta["holdout_start"], meta["holdout_end"])
+            store_evaluation(db, cash_id, "final_test", cash)
+            beats_cash_return = result["metrics"]["total_return"] > cash["metrics"]["total_return"]
+            beats_cash_risk_adjusted = result["metrics"]["fitness"] > cash["metrics"]["fitness"]
             report = {"champion": cid, "genes": genes, "start": meta["holdout_start"], "end": meta["holdout_end"],
                       "candidate": result["metrics"], "buy_and_hold": baseline["metrics"],
+                      "cash": cash["metrics"],
+                      "research_decision": {
+                          "beats_cash_return": beats_cash_return,
+                          "beats_cash_risk_adjusted": beats_cash_risk_adjusted,
+                          "status": "PASS" if beats_cash_return and beats_cash_risk_adjusted else "REJECT",
+                      },
                       "dev_only": True, "non_authoritative": True, "promotion_allowed": False}
             check_deadline(deadline)
             db.execute("INSERT INTO final_test VALUES (1,?)", (canonical(report),))

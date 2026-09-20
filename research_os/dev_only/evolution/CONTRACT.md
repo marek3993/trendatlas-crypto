@@ -4,7 +4,8 @@ Class D (backtest math) and B (persisted research results). This module implemen
 the user's 2026-09-20 research request only. It does not change the live strategy.
 
 - Ten distinct candidates per generation, six survive, four unseen one-gene
-  mutations fill the next population. IML is optional and is not imported.
+  mutations fill the next population. Each mutation moves exactly one adjacent
+  step in that gene's frozen domain. IML is optional and is not imported.
 - Initial adapter: daily BTC long/cash trend and momentum strategies, with
   trailing volatility sizing capped at 1x. These are research candidates, not
   replicas of the production strategy. No synthetic fitness values.
@@ -17,13 +18,16 @@ the user's 2026-09-20 research request only. It does not change the live strateg
   overnight, mark at each close, liquidate at the final close with costs.
 - Train, validation and final test are consecutive, disjoint periods. Earlier
   observations may warm up trailing features. Every period starts with cash.
-  Search reads no bars after validation end. Rank by validation CAGR minus twice
-  absolute maximum drawdown; break ties by candidate ID. Training metrics are
-  diagnostics, never reported as an independent test.
+  Search reads no bars after validation end. Split validation into two
+  chronological folds and rank first by the weaker fold's CAGR minus twice
+  absolute maximum drawdown, then by mean fold score and candidate ID. Training
+  metrics are diagnostics, never reported as an independent test.
 - Freeze the champion from the last evaluated generation before final testing.
-  Evaluate only that champion and buy-and-hold on the final period, once after
-  the fixed generation budget. Persist the result and seal the run; no subsequent
-  mutation, selection, or resumed search can use this final test.
+  Evaluate only that champion, cash and buy-and-hold on the final period, once
+  after the fixed generation budget. A research PASS requires beating cash in
+  both net return and the declared risk-adjusted fitness. Persist the result and
+  seal the run; no subsequent mutation, selection, or resumed search can use
+  this final test.
 - SQLite transactions store inputs, candidates, lineage, populations, survivors,
   per-period metrics, daily curves and trades. Interrupted generations roll back.
   All runs remain visible: rejected candidates and poor final results are retained.

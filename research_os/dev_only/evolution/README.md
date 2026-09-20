@@ -20,15 +20,18 @@ python -m research_os.dev_only.evolution report btc_pilot_20260920
 python -m research_os.dev_only.evolution status btc_pilot_20260920
 ```
 
-Each `step` evaluates ten candidates, retains six, and produces four unique
+Each `step` evaluates ten candidates on two chronological validation folds,
+retains six by worst-fold then mean score, and produces four unique adjacent
 one-gene mutations. Unchanged survivors reuse the same immutable-period results.
 After the final planned generation the champion is frozen. The next population
 is retained for audit but its four new mutations are unevaluated and cannot be
 searched after final testing. Resume an interrupted search with `step` until the
 predeclared budget is complete; a failed generation rolls back atomically.
 
-`finalize` evaluates the frozen champion and BTC buy-and-hold on the final period
-and seals the run. It refuses an early or repeated final test. All subsequent
+`finalize` evaluates the frozen champion, cash and BTC buy-and-hold on the final
+period and seals the run. The report rejects a candidate unless it beats cash in
+both return and declared risk-adjusted fitness. It refuses an early or repeated
+final test. All subsequent
 evolution is refused. A new study requires a new run ID and must disclose that
 prior test results have been viewed. No final test is used to choose a winner.
 
@@ -41,9 +44,10 @@ snapshot beside the database. Generated results are ignored by Git.
 The default experiment uses three generations, seed 20260920, a 300-second
 per-operation limit, sequential execution and 15 bps total one-way transaction
 cost (fees plus assumed slippage). No external API or future data is fetched.
-Training metrics are diagnostics; validation fitness is CAGR minus twice the
-absolute maximum drawdown. Returns and exposure here are simulated research
-values, never real account PnL or positions. There is no automatic promotion.
+Training metrics are diagnostics; two validation folds use CAGR minus twice the
+absolute maximum drawdown and selection prioritizes the weaker fold. Returns and
+exposure here are simulated research values, never real account PnL or positions.
+There is no automatic promotion.
 
 Validation:
 

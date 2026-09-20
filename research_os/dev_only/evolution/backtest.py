@@ -161,3 +161,12 @@ def backtest(bars, genes, start, end, cost_bps, *, benchmark=False):
         curve.append({"day": bar.day, "equity": equity, "weight": weight})
         history.append(bar.close)
     return {"metrics": metrics(curve, trades), "curve": curve, "trades": trades}
+
+
+def cash_backtest(bars, start, end):
+    """Zero-risk cash reference for judging whether trading added value."""
+    active = [bar for bar in bars if start <= bar.day <= end]
+    if not active or active[0].day != start or active[-1].day != end:
+        raise ValueError("Input does not cover the complete period")
+    curve = [{"day": bar.day, "equity": 1.0, "weight": 0.0} for bar in active]
+    return {"metrics": metrics(curve, []), "curve": curve, "trades": []}
