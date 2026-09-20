@@ -1,7 +1,7 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-09-06T20:13:04Z",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-05::target_CASH::candidate_BTC",
+  "generated_at_utc": "2026-09-20T07:12:02Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-19::target_CASH::candidate_BNB",
   "target_asset": "CASH",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
@@ -62,22 +62,22 @@
   },
   "production_signal_context": {
     "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "closed_day": "2026-09-05",
+    "closed_day": "2026-09-19",
     "validation_status": "passed",
-    "candidate_asset": "BTC",
+    "candidate_asset": "BNB",
     "current_asset": "CASH",
-    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-05::target_CASH::candidate_BTC",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-19::target_CASH::candidate_BNB",
     "target_asset": "CASH",
     "target_exposure": 0.0,
     "effective_market_exposure": 0.0,
-    "model_candidate_exposure": 0.5,
+    "model_candidate_exposure": 1.0,
     "trend_permission_active": false,
     "allow_live_order_candidate": false
   },
   "source_fingerprints": {
-    "intent_sha256": "7482ee39fd8bef6286038f4cc58475de8c457d2df0657323fd42bc864419e9a1",
-    "account_snapshot_sha256": "c5c3d667e53c1c8ad78be37a4f2213721c788f5cb6a09d660d6c7bb80509763a",
-    "production_snapshot_sha256": "cc48020dfa01280b7725cd4127d29187e6beb90dd5955b914b4474e58d92cd1b"
+    "intent_sha256": "22bde43cdfd0ac1ba5caf68e29b42be2b4bacfe48a179af0c01d6bcd216d0220",
+    "account_snapshot_sha256": "91261ae35737d3311dc0ed962e72ad09b135c9ae5365ab52f1f524e36bc25dd5",
+    "production_snapshot_sha256": "f4b0e32935c59d2e9c6763770d68c26109d32da092cbea7d370703fee95fc4c7"
   },
   "notes": [
     "This is a gate-preparation artifact only.",
