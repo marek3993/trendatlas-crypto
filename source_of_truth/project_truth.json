@@ -548,6 +548,23 @@
         "scheduler_attachment": "none",
         "promotion": "forbidden_without_separate_explicit_approval"
     },
+    "isolated_mean_reversion_research": {
+        "authorization_date": "2026-09-20",
+        "family": "btc_short_horizon_long_only_mean_reversion",
+        "contract": "research_os/dev_only/mean_reversion/CONTRACT.md",
+        "study": "research_os/dev_only/mean_reversion/study.json",
+        "all_history_role": "development_retrospective",
+        "population": 10,
+        "survivors": 6,
+        "adjacent_one_gene_mutations": 4,
+        "generations": 5,
+        "max_annualized_turnover": 24.0,
+        "max_opening_exposure": 0.75,
+        "allowed_outcomes": ["HISTORICAL_REJECT", "HISTORICAL_QUALIFIED_AWAITING_FORWARD"],
+        "iml_required": false,
+        "production_promotion_allowed": false,
+        "pi_monitor_installation": "stop_before_installation_for_concrete_review_only_if_historically_qualified"
+    },
     "legacy_phase_chain_status":  {
                                       "role":  "research_archive_input_lineage",
                                       "primary_runtime_production_truth_interface":  false
