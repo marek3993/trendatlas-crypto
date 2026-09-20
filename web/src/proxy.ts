@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { protectedRouteRedirect, publicRouteRedirect } from "@/lib/auth/redirects";
 import { updateSession } from "@/lib/supabase/middleware";
 
-const protectedPaths = new Set(["/dashboard", "/onboarding", "/settings", "/update-password"]);
+const protectedPaths = new Set(["/dashboard", "/onboarding", "/settings", "/strategy", "/update-password"]);
 const publicAuthPaths = new Set(["/login", "/register"]);
 
 export async function proxy(request: NextRequest) {
@@ -20,5 +20,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard", "/onboarding", "/settings", "/update-password", "/login", "/register"]
+  matcher: ["/dashboard", "/onboarding", "/settings", "/strategy", "/update-password", "/login", "/register"]
 };

@@ -7,6 +7,7 @@ import { requireUser } from "@/lib/auth/require-user";
 import { displayHyperliquidAddress } from "@/lib/hyperliquid/address";
 import { type HyperliquidAccountSnapshot } from "@/lib/hyperliquid/info";
 import { getHyperliquidAccountPerformance, type HyperliquidAccountPerformance, type PerformanceWindow } from "@/lib/hyperliquid/performance";
+import { persistHyperliquidAccountPerformance } from "@/lib/hyperliquid/performance-store";
 import { executionMode } from "@/server/multi-account-executor/mode";
 
 type Profile = { display_name: string | null };
@@ -84,6 +85,15 @@ export default async function DashboardPage() {
   if (account?.connection_status === "read_only_connected") {
     try {
       performance = await getHyperliquidAccountPerformance(account.master_address);
+      try {
+        await persistHyperliquidAccountPerformance({
+          userId: user.id,
+          accountId: account.id,
+          performance
+        });
+      } catch {
+        // Performance persistence must never hide fresh exchange data from the account owner.
+      }
     } catch {
       performance = null;
     }
@@ -100,6 +110,7 @@ export default async function DashboardPage() {
       <Link className="dashboard-brand" href="/dashboard">TrendAtlas</Link>
       <nav className="dashboard-nav" aria-label="Account navigation">
         <Link className="active" href="/dashboard">Account</Link>
+        <Link href="/strategy">Strategy</Link>
         <Link href="/settings">Settings</Link>
       </nav>
       <LogoutButton />

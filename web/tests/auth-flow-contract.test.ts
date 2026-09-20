@@ -6,7 +6,16 @@ const root = process.cwd();
 const source = (relativePath: string) => fs.readFileSync(path.join(root, relativePath), "utf8");
 
 describe("authentication flow plumbing", () => {
-  it("has email verification callback exchange and safe callback redirect", () => {
+  it("creates a session directly instead of depending on a verification email", () => {
+    const form = source("src/components/register-form.tsx");
+    expect(form).toContain("data.session");
+    expect(form).toContain('router.replace("/dashboard")');
+    expect(form).not.toContain("auth.resend");
+    expect(form).not.toContain("emailRedirectTo");
+    expect(form).not.toContain("verificationEmail");
+  });
+
+  it("keeps the callback exchange for password recovery and legacy confirmation links", () => {
     const callback = source("src/app/auth/callback/route.ts");
     expect(callback).toContain("exchangeCodeForSession");
     expect(callback).toContain("safeRedirectPath");

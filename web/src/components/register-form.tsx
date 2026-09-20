@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { validateRegistration } from "@/lib/auth/validation";
 
@@ -25,9 +26,9 @@ function isExistingAccount(error: AuthFailure) {
 }
 
 export function RegisterForm() {
+  const router = useRouter();
   const [message, setMessage] = useState<string>("");
   const [messageKind, setMessageKind] = useState<MessageKind>("notice");
-  const [verificationEmail, setVerificationEmail] = useState("");
   const [pending, setPending] = useState(false);
 
   function showMessage(kind: MessageKind, text: string) {
@@ -50,27 +51,39 @@ export function RegisterForm() {
       return;
     }
 
-    setVerificationEmail(validation.email);
     setPending(true);
     try {
-      const { error } = await createClient().auth.signUp({
+      const { data, error } = await createClient().auth.signUp({
         email: validation.email,
         password: String(form.get("password")),
         options: {
-          data: { display_name: validation.displayName },
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`
+          data: { display_name: validation.displayName }
         }
       });
 
-      if (!error) {
-        showMessage("notice", "Account created. Check your email (including spam) to verify it.");
-      } else if (isExistingAccount(error)) {
-        showMessage("notice", "This email is already registered. Sign in, or resend the verification email below.");
-      } else if (isEmailRateLimit(error)) {
-        showMessage("notice", "The account may already be created, but email sending is temporarily limited. Wait a minute, then resend the verification email.");
-      } else {
-        showMessage("error", "We could not complete registration. Please check the details and try again.");
+      if (error) {
+        if (isExistingAccount(error)) {
+          showMessage("notice", "This email already has an account. Sign in instead.");
+        } else if (isEmailRateLimit(error)) {
+          showMessage("error", "Too many attempts. Wait a minute and try again.");
+        } else {
+          showMessage("error", "We could not create your account. Check the details and try again.");
+        }
+        return;
       }
+
+      if (data.session) {
+        router.replace("/dashboard");
+        router.refresh();
+        return;
+      }
+
+      if (data.user?.identities?.length === 0) {
+        showMessage("notice", "This email already has an account. Sign in instead.");
+        return;
+      }
+
+      showMessage("error", "Your account was created, but instant access is not enabled. Contact Marek.");
     } catch {
       showMessage("error", "The registration service could not be reached. Please try again.");
     } finally {
@@ -78,42 +91,15 @@ export function RegisterForm() {
     }
   }
 
-  async function resendVerification() {
-    if (!verificationEmail) return;
-
-    setPending(true);
-    try {
-      const { error } = await createClient().auth.resend({
-        type: "signup",
-        email: verificationEmail,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`
-        }
-      });
-
-      if (!error) {
-        showMessage("notice", "Verification email sent. Check your inbox and spam folder.");
-      } else if (isEmailRateLimit(error)) {
-        showMessage("notice", "Please wait a minute before requesting another verification email.");
-      } else {
-        showMessage("error", "We could not resend the verification email. Please try again.");
-      }
-    } catch {
-      showMessage("error", "The email service could not be reached. Please try again.");
-    } finally {
-      setPending(false);
-    }
-  }
-
   return <form onSubmit={onSubmit} noValidate>
+    <p className="muted">No verification email is required. After registration you continue directly to your private dashboard.</p>
     <label>Name<input name="displayName" autoComplete="name" required /></label>
     <label>Email<input name="email" type="email" autoComplete="email" required /></label>
     <label>Password<input name="password" type="password" autoComplete="new-password" required /></label>
     <label>Confirm password<input name="passwordConfirmation" type="password" autoComplete="new-password" required /></label>
     <label className="checkbox"><input name="terms" type="checkbox" /> I accept the terms.</label>
     {message && <p className={messageKind} role="status">{message}</p>}
-    <button disabled={pending} type="submit">{pending ? "Please wait…" : "Create account"}</button>
-    {verificationEmail && <button disabled={pending} type="button" onClick={resendVerification}>Resend verification email</button>}
+    <button disabled={pending} type="submit">{pending ? "Creating account…" : "Create account"}</button>
     <p className="muted">Already have an account? <Link href="/login">Sign in</Link></p>
   </form>;
 }
