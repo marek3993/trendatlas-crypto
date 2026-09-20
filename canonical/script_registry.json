@@ -4,6 +4,17 @@
   "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
   "scripts": [
     {
+      "script_path": "research_os/dev_only/mean_reversion/__main__.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Runs the preregistered BTC short-horizon long-only mean-reversion historical study in a separate local SQLite store.",
+      "primary_outputs": ["outputs/research_os/dev_only/mean_reversion/"],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Standard library only, no IML, production imports/writes, exchange access or scheduler. Ten candidates, six eligible survivors, four adjacent mutations, five generations. Historical qualification still requires forward review."
+    },
+    {
       "script_path": "research_os/dev_only/evolution/__main__.py",
       "layer": "research_os_dev_only",
       "status": "active",

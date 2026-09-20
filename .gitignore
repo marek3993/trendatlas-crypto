@@ -96,6 +96,7 @@ tmp_test_artifacts/
 outputs/research_os/dev_only/imlayer_exports/
 outputs/research_os/dev_only/imlayer_ingestion/
 outputs/research_os/dev_only/evolution/
+outputs/research_os/dev_only/mean_reversion/
 
 # --- Large binary artifacts ---
 *.zip

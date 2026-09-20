@@ -4,6 +4,16 @@
   "last_updated_note": "Update when a new output folder/file becomes relevant, active, deprecated, or decision-relevant.",
   "outputs": [
     {
+      "output_path": "outputs/research_os/dev_only/mean_reversion/",
+      "generated_by": ["research_os/dev_only/mean_reversion/__main__.py"],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "retrospective_research_database_and_report",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Separate preregistered BTC mean-reversion family. All history is development/retrospective; cash/BTC comparisons, immutable inputs, full curves/trades, adjacent mutations, fixed five-generation budget. No production promotion or Pi attachment."
+    },
+    {
       "output_path": "outputs/research_os/dev_only/evolution/",
       "generated_by": ["research_os/dev_only/evolution/__main__.py"],
       "layer": "research_os_dev_only",
