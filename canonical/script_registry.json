@@ -7,7 +7,7 @@
       "script_path": "research_os/dev_only/evolution_worker/bootstrap.py",
       "layer": "research_os_dev_only",
       "status": "active",
-      "purpose": "Runs a finite local preregistered research queue in an isolated pinned release; Pi installation pending review.",
+      "purpose": "Runs a finite local preregistered research queue in an isolated pinned release; approved Pi release installed and verified idle on 2026-09-20.",
       "primary_outputs": ["/var/lib/trendatlas-research/"],
       "output_type": "research_outputs",
       "decision_relevance": "support_only",

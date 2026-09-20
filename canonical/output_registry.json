@@ -11,7 +11,7 @@
       "output_kind": "isolated_queue_ledger_and_sealed_research_jobs",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Proposed Pi state root: finite operator queue, frozen inputs/specs, transactional generations, immutable seals and audits. Installation pending approval."
+      "notes": "Installed Pi state root: finite operator queue, frozen inputs/specs, transactional generations, immutable seals and audits. Explicit installation approval applied 2026-09-20; queue verified empty, no historical search authorized."
     },
     {
       "output_path": "outputs/research_os/dev_only/mean_reversion/",
