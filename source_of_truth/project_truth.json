@@ -565,6 +565,14 @@
         "production_promotion_allowed": false,
         "pi_monitor_installation": "stop_before_installation_for_concrete_review_only_if_historically_qualified"
     },
+    "multi_asset_rotation_research": {
+        "contract": "research_os/dev_only/multi_asset/CONTRACT.md",
+        "study": "research_os/dev_only/multi_asset/study.json",
+        "scope": "one_preregistered_pi_study_five_generations_then_sealed_stop",
+        "data_role": "development_retrospective_already_seen_final",
+        "production_promotion_allowed": false,
+        "iml_required": false
+    },
     "local_evolution_worker": {
         "contract": "research_os/dev_only/evolution_worker/CONTRACT.md",
         "scope": "user_authorized_pinned_worker_installation_empty_queue_only",

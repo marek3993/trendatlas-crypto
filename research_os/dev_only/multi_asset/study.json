@@ -1,0 +1,233 @@
+{
+  "schema_version": 1,
+  "experiment_id": "multi_asset_rotation_v1_20260920",
+  "family": "multi_asset_cross_sectional_momentum_long_cash",
+  "base_commit": "39ec38c3165879917dd1800b7456af605b7c597b",
+  "data_role": "development_retrospective_not_globally_unseen",
+  "seen_final_disclosure": "2025-01-01 through 2026-08-19 has already been viewed; final is sealed only from this study selection, never production evidence",
+  "universe": [
+    "ADAUSDT",
+    "AVAXUSDT",
+    "BNBUSDT",
+    "BTCUSDT",
+    "DOGEUSDT",
+    "DOTUSDT",
+    "ETHUSDT",
+    "LINKUSDT",
+    "LTCUSDT",
+    "SOLUSDT",
+    "TRXUSDT",
+    "XRPUSDT"
+  ],
+  "inputs": {
+    "ADAUSDT_1d.csv": "a67ce47e580b04484a23a345209d59837c8e9b43b81c0d06aaa3e0240062fd12",
+    "AVAXUSDT_1d.csv": "80b776fd41df9b15a6324ec2504869198db3e19d0679febeb1860b69a0b7c7b0",
+    "BNBUSDT_1d.csv": "1f6926a27fb23f30d15b53136a09e5afd36f590dee7ad9d963787c8ebb65473c",
+    "BTCUSDT_1d.csv": "ee0306daad88fd63c03ed0fbb3afd6c79557b4911319bf259795a0624f31d998",
+    "DOGEUSDT_1d.csv": "807603d504c2e0f2eb36fdd63a25b19d771c1bc12ca8bf57f6498e8bab2538d9",
+    "DOTUSDT_1d.csv": "a18a41f842321111a98352588e0ee54899526a9b5ab0528f8e3c74785a1945b1",
+    "ETHUSDT_1d.csv": "9e7f0a4e49a5694038c5a3adb7f70eb6d148dbea7ee58af4491b67d764d656a1",
+    "LINKUSDT_1d.csv": "7168b440061542a86227bdbb94e48ecba4367c4ecd890b31ecc2dc7de8b5dd15",
+    "LTCUSDT_1d.csv": "1be5d8c3bf8630464f2ad6b870f22967d95104fcd64e0566080216f62276df4b",
+    "SOLUSDT_1d.csv": "cd4ae84beccf4318ac15431e057c20c866bedf385c3cff13e8acb194e7daefb6",
+    "TRXUSDT_1d.csv": "13c2c80668647a35067511f78eaa1ac14c8ad4141b32a9b2653df94cd70df34e",
+    "XRPUSDT_1d.csv": "d8d8f2e810241877f06c96f98230de6dde5560529d23c98b6a8643b026c6a361"
+  },
+  "input_selection": "all regular *_1d.csv in production data/ohlcv with complete unique consecutive UTC dates 2021-01-01..2026-08-20, finite valid positive OHLC and positive volume; no performance filtering",
+  "input_period": {
+    "start": "2021-01-01",
+    "end": "2026-08-20"
+  },
+  "warmup_days": 200,
+  "train": {
+    "start": "2021-08-01",
+    "end": "2022-12-30"
+  },
+  "validation": [
+    {
+      "start": "2023-01-01",
+      "end": "2023-12-30"
+    },
+    {
+      "start": "2024-01-01",
+      "end": "2024-12-30"
+    }
+  ],
+  "final": {
+    "start": "2025-01-01",
+    "end": "2026-08-19"
+  },
+  "period_semantics": "trade from start open using prior closes; mark daily closes; exit after end close at next calendar day open; one-day gaps prevent overlapping fold execution",
+  "domains": {
+    "momentum_days": [
+      20,
+      40,
+      60,
+      90
+    ],
+    "top_k": [
+      1,
+      2,
+      3
+    ],
+    "rebalance_days": [
+      7,
+      14,
+      28
+    ],
+    "regime_days": [
+      90,
+      150,
+      200
+    ],
+    "min_momentum": [
+      0.0,
+      0.03,
+      0.06
+    ],
+    "vol_target": [
+      0.2,
+      0.35,
+      0.5
+    ],
+    "exposure_cap": [
+      0.5,
+      0.75,
+      1.0
+    ],
+    "confirmation_days": [
+      1,
+      3,
+      5
+    ]
+  },
+  "initial_candidates": [
+    {
+      "momentum_days": 40,
+      "top_k": 1,
+      "rebalance_days": 7,
+      "regime_days": 90,
+      "min_momentum": 0.0,
+      "vol_target": 0.5,
+      "exposure_cap": 0.5,
+      "confirmation_days": 3
+    },
+    {
+      "momentum_days": 60,
+      "top_k": 1,
+      "rebalance_days": 28,
+      "regime_days": 150,
+      "min_momentum": 0.03,
+      "vol_target": 0.2,
+      "exposure_cap": 0.75,
+      "confirmation_days": 3
+    },
+    {
+      "momentum_days": 20,
+      "top_k": 2,
+      "rebalance_days": 28,
+      "regime_days": 90,
+      "min_momentum": 0.0,
+      "vol_target": 0.5,
+      "exposure_cap": 1.0,
+      "confirmation_days": 5
+    },
+    {
+      "momentum_days": 40,
+      "top_k": 3,
+      "rebalance_days": 14,
+      "regime_days": 150,
+      "min_momentum": 0.03,
+      "vol_target": 0.5,
+      "exposure_cap": 1.0,
+      "confirmation_days": 5
+    },
+    {
+      "momentum_days": 40,
+      "top_k": 1,
+      "rebalance_days": 28,
+      "regime_days": 150,
+      "min_momentum": 0.0,
+      "vol_target": 0.35,
+      "exposure_cap": 0.5,
+      "confirmation_days": 5
+    },
+    {
+      "momentum_days": 90,
+      "top_k": 3,
+      "rebalance_days": 28,
+      "regime_days": 200,
+      "min_momentum": 0.06,
+      "vol_target": 0.35,
+      "exposure_cap": 0.5,
+      "confirmation_days": 1
+    },
+    {
+      "momentum_days": 40,
+      "top_k": 3,
+      "rebalance_days": 7,
+      "regime_days": 200,
+      "min_momentum": 0.0,
+      "vol_target": 0.5,
+      "exposure_cap": 0.75,
+      "confirmation_days": 3
+    },
+    {
+      "momentum_days": 90,
+      "top_k": 1,
+      "rebalance_days": 7,
+      "regime_days": 90,
+      "min_momentum": 0.06,
+      "vol_target": 0.2,
+      "exposure_cap": 0.75,
+      "confirmation_days": 5
+    },
+    {
+      "momentum_days": 20,
+      "top_k": 2,
+      "rebalance_days": 28,
+      "regime_days": 90,
+      "min_momentum": 0.06,
+      "vol_target": 0.35,
+      "exposure_cap": 0.75,
+      "confirmation_days": 5
+    },
+    {
+      "momentum_days": 40,
+      "top_k": 2,
+      "rebalance_days": 7,
+      "regime_days": 90,
+      "min_momentum": 0.0,
+      "vol_target": 0.35,
+      "exposure_cap": 0.75,
+      "confirmation_days": 1
+    }
+  ],
+  "seed": 20260921,
+  "generations": 5,
+  "population": 10,
+  "survivors": 6,
+  "mutations": 4,
+  "costs": {
+    "fee_bps_one_way": 10,
+    "slippage_bps_one_way": 5
+  },
+  "volatility_days": 30,
+  "fitness": "cagr_minus_2_absolute_max_drawdown",
+  "ranking": "weakest_validation_fitness_then_mean_then_candidate_sha256_ascending",
+  "drawdown_limit": 0.25,
+  "critical_fold_rule": "each_validation_net_return_gt_zero_and_fitness_gt_zero_and_abs_drawdown_le_0.25",
+  "pass_rule": "both_validation_folds_and_final_net_return_gt_cash_and_fitness_gt_cash_and_abs_drawdown_le_0.25",
+  "benchmarks": [
+    "CASH",
+    "BTCUSDT_buy_and_hold_net_same_costs"
+  ],
+  "max_seconds_per_generation": 300,
+  "final_evaluations": 1,
+  "allowed_outcomes": [
+    "PASS",
+    "REJECT"
+  ],
+  "production_promotion_allowed": false,
+  "iml_required": false
+}
