@@ -31,6 +31,18 @@ the user's 2026-09-20 research request only. It does not change the live strateg
 - SQLite transactions store inputs, candidates, lineage, populations, survivors,
   per-period metrics, daily curves and trades. Interrupted generations roll back.
   All runs remain visible: rejected candidates and poor final results are retained.
+- Optional versioned chronological-control protocol is bound to the input hash,
+  seed, costs, splits and generation budget before search. All control windows
+  follow the selection cutoff, are consecutive and disjoint, and precede the
+  explicitly already-seen exploratory interval. A single frozen champion is
+  tested on each window, their continuous union, and the exploratory interval.
+  Each comparison persists candidate, cash (0% nominal, no yield) and BTC metrics,
+  curves and trades. The continuous union is not counted as another independent
+  window. PASS requires positive net return and positive declared fitness versus
+  cash in every control window and their continuous union. Exploratory failure
+  can veto PASS; exploratory success never supplies independent evidence.
+  Failure means REJECT and no further generations. No re-selection on controls.
+  Historical controls remain retrospective checks, not prospective proof.
 - Writes are confined to the resolved repository research output root; reject
   symlink escapes. No production imports, credentials, exchange calls, authority
   writes, publish calls, scheduler hooks, or automatic promotion.

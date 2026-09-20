@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 from research_os.dev_only.evolution import backtest as engine
 from research_os.dev_only.evolution import controller as ctl
+from research_os.dev_only.evolution.protocol import RULE, comparison, stability_decision
 
 
 GENES = {"fast": 5, "slow": 60, "momentum": 10, "threshold": 0.0, "vol_target": 0.75, "cap": 1.0}
@@ -90,6 +91,108 @@ class ControllerTests(unittest.TestCase):
 
     def init(self, run="test"):
         return ctl.initialize(self.root, run, self.input, **self.kwargs)
+
+    def protocol(self, run="test"):
+        return {
+            "protocol_version": "cash_stability_v2", "experiment_id": run,
+            "input_sha256": hashlib.sha256(self.input.read_bytes()).hexdigest(),
+            **self.kwargs, "seed": 20260920, "cost_bps": 15.0,
+            "control_windows": [
+                {"id": "control_july", "start": "2021-07-01", "end": "2021-07-31"},
+                {"id": "control_august", "start": "2021-08-01", "end": "2021-08-31"},
+                {"id": "control_september", "start": "2021-09-01", "end": "2021-09-30"},
+            ],
+            "exploratory": {"id": "seen_exploratory", "start": "2021-10-01", "end": "2022-01-31",
+                            "already_seen": True, "evidence_role": "exploratory_only"},
+            "decision_rule": RULE, "iml_required": False, "promotion_allowed": False,
+        }
+
+    def test_chronological_protocol_persists_comparisons_without_selection_leak(self):
+        spec = self.protocol()
+        ctl.initialize(self.root, "test", self.input, **self.kwargs, evaluation_protocol=spec)
+        spec["exploratory"]["already_seen"] = False
+        real = ctl.backtest
+        def selection_only(bars, *args, **kwargs):
+            self.assertLessEqual(bars[-1].day, "2021-06-30")
+            return real(bars, *args, **kwargs)
+        with patch.object(ctl, "backtest", side_effect=selection_only):
+            ctl.evolve(self.root, "test")
+            ctl.evolve(self.root, "test")
+        with self.assertRaises(ValueError):
+            ctl.evolve(self.root, "test")
+        champion = ctl.status(self.root, "test")["metadata"]["champion"]
+        result = ctl.finalize(self.root, "test")
+        self.assertEqual(result["champion"], champion)
+        self.assertEqual(len(result["chronological_controls"]), 3)
+        self.assertTrue(result["seen_exploratory"]["already_seen"])
+        self.assertEqual(result["seen_exploratory"]["evidence_role"], "exploratory_only")
+        self.assertFalse(result["research_decision"]["generation_extension_allowed"])
+        db = ctl.connect(self.root, "test")
+        try:
+            for window in [*result["chronological_controls"], result["continuous_controls"], result["seen_exploratory"]]:
+                self.assertEqual(db.execute("SELECT COUNT(*) FROM evaluations WHERE split=?", (window["id"],)).fetchone()[0], 3)
+                cash = db.execute("SELECT MIN(equity),MAX(equity) FROM curves WHERE split=? AND candidate='benchmark_cash'", (window["id"],)).fetchone()
+                self.assertEqual(cash, (1.0, 1.0))
+        finally:
+            db.close()
+
+    def test_protocol_rejects_overlap_missing_disclosure_or_changed_budget(self):
+        for case in ("overlap", "unseen", "budget", "input"):
+            spec = self.protocol()
+            if case == "overlap":
+                spec["control_windows"][0]["start"] = "2021-06-01"
+            elif case == "unseen":
+                spec["exploratory"]["already_seen"] = False
+            elif case == "budget":
+                spec["generations"] += 1
+            else:
+                spec["input_sha256"] = "wrong"
+            with self.subTest(case=case), self.assertRaises(ValueError):
+                ctl.initialize(self.root, "test", self.input, **self.kwargs, evaluation_protocol=spec)
+            self.assertFalse(ctl.database_path(self.root, "test").exists())
+
+    def test_cash_stability_rejects_risky_return_and_one_failed_window(self):
+        cash = {"total_return": 0.0, "fitness": 0.0}
+        btc = {"total_return": -0.3, "fitness": -0.5}
+        poor = comparison({"total_return": 0.02, "fitness": -0.4}, cash, btc)
+        good = comparison({"total_return": 0.1, "fitness": 0.05}, cash, btc)
+        self.assertEqual(poor["status"], "REJECT")
+        self.assertGreater(poor["return_delta_vs_btc"], 0)
+        self.assertEqual(stability_decision([good, poor, good], good, good)["status"], "REJECT")
+        self.assertEqual(stability_decision([good] * 3, good, poor)["status"], "REJECT")
+        self.assertEqual(stability_decision([good] * 3, good, good)["status"], "PASS")
+
+    def test_new_protocol_run_does_not_modify_prior_sealed_artifacts(self):
+        self.init("old")
+        ctl.evolve(self.root, "old")
+        ctl.evolve(self.root, "old")
+        ctl.finalize(self.root, "old")
+        ctl.export_report(self.root, "old")
+        old_files = list(ctl.database_path(self.root, "old").parent.iterdir())
+        hashes = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in old_files}
+        ctl.initialize(self.root, "test", self.input, **self.kwargs, evaluation_protocol=self.protocol())
+        ctl.evolve(self.root, "test")
+        ctl.evolve(self.root, "test")
+        ctl.finalize(self.root, "test")
+        ctl.export_report(self.root, "test")
+        self.assertEqual(hashes, {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in old_files})
+
+    def test_late_chronological_failure_rolls_back_all_final_evaluations(self):
+        ctl.initialize(self.root, "test", self.input, **self.kwargs, evaluation_protocol=self.protocol())
+        ctl.evolve(self.root, "test")
+        ctl.evolve(self.root, "test")
+        before = ctl.status(self.root, "test")["evaluation_count"]
+        real = ctl.backtest
+        def fail_last(bars, genes, start, end, costs, **kwargs):
+            if start == "2021-10-01":
+                raise RuntimeError("interrupted exploratory evaluation")
+            return real(bars, genes, start, end, costs, **kwargs)
+        with patch.object(ctl, "backtest", side_effect=fail_last), self.assertRaises(RuntimeError):
+            ctl.finalize(self.root, "test")
+        state = ctl.status(self.root, "test")
+        self.assertEqual(state["evaluation_count"], before)
+        self.assertEqual(state["metadata"]["state"], "FROZEN")
+        self.assertIsNone(state["final_test"])
 
     def test_population_survival_mutation_lineage_and_persistence(self):
         self.init()

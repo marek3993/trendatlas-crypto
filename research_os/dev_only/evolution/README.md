@@ -51,6 +51,24 @@ There is no automatic promotion.
 
 Validation:
 
+The versioned `studies/btc_cash_stability_v2_20260920.json` adds three forward
+control years (2022, 2023, 2024) after selection ends in 2021. It explicitly marks
+2025-01-01..2026-08-19 as already seen and exploratory. Initialize it with:
+
+```powershell
+python -m research_os.dev_only.evolution init btc_cash_stability_v2_20260920 --input C:/Users/benda/Desktop/market_regime_v1/data/ohlcv/BTCUSDT_1d.csv --train-start 2018-08-01 --train-end 2019-12-31 --validation-end 2021-12-31 --holdout-end 2026-08-19 --generations 5 --cost-bps 15 --evaluation-protocol research_os/dev_only/evolution/studies/btc_cash_stability_v2_20260920.json
+```
+
+Run `step` exactly five times, then `finalize` and `report`. The protocol, its hash,
+input hash and five-generation budget are frozen at initialization. Finalization
+stores all three benchmarks for every chronological window in one transaction.
+The same champion is used throughout. PASS requires beating cash in net return
+and fitness in every control year and the continuous control period; a failed
+exploratory check also vetoes PASS. Historical or exploratory success does not
+authorize production deployment. A REJECT ends this study without extra generations.
+
+Regression validation:
+
 ```powershell
 python -m unittest discover -s tests -p test_evolution_research.py -v
 ```

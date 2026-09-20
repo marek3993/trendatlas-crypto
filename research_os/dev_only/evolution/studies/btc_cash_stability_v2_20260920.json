@@ -1,0 +1,29 @@
+{
+  "protocol_version": "cash_stability_v2",
+  "experiment_id": "btc_cash_stability_v2_20260920",
+  "review_base_commit": "16bcc2b45522a1e8d38d65a85cfa3a5196476ab7",
+  "input_sha256": "52a54850a11110a5f4cf00c0668645ab80e210f577a97427396b8721704b6b26",
+  "train_start": "2018-08-01",
+  "train_end": "2019-12-31",
+  "validation_end": "2021-12-31",
+  "holdout_end": "2026-08-19",
+  "generations": 5,
+  "seed": 20260920,
+  "cost_bps": 15.0,
+  "control_windows": [
+    {"id": "control_2022", "start": "2022-01-01", "end": "2022-12-31"},
+    {"id": "control_2023", "start": "2023-01-01", "end": "2023-12-31"},
+    {"id": "control_2024", "start": "2024-01-01", "end": "2024-12-31"}
+  ],
+  "exploratory": {
+    "id": "seen_exploratory_2025_2026",
+    "start": "2025-01-01",
+    "end": "2026-08-19",
+    "already_seen": true,
+    "evidence_role": "exploratory_only"
+  },
+  "decision_rule": "all_controls_and_continuous_union_beat_cash_net_return_and_fitness_exploratory_failure_vetoes",
+  "on_reject": "stop_at_five_generations_propose_different_strategy_family",
+  "promotion_allowed": false,
+  "iml_required": false
+}

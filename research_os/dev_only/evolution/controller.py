@@ -17,6 +17,7 @@ from .backtest import (
     Bar, DOMAINS, WARMUP, backtest, candidate_id, canonical, cash_backtest,
     read_bars,
 )
+from .protocol import comparison, stability_decision, validate_protocol
 
 ROOT = Path(__file__).resolve().parents[3]
 OUTPUT = Path("outputs/research_os/dev_only/evolution")
@@ -130,7 +131,8 @@ def adjacent_children(survivors, genes_by_id, seen, rng):
 
 
 def initialize(root, run_id, input_path, *, train_start, train_end, validation_end,
-               holdout_end, generations=3, seed=20260920, cost_bps=15.0, max_seconds=300):
+               holdout_end, generations=3, seed=20260920, cost_bps=15.0, max_seconds=300,
+               evaluation_protocol=None):
     if type(generations) is not int or not 1 <= generations <= 100:
         raise ValueError("Generation budget must be 1..100")
     if not 1 <= max_seconds <= 3600 or not 0 <= cost_bps <= 100:
@@ -149,6 +151,16 @@ def initialize(root, run_id, input_path, *, train_start, train_end, validation_e
         raise ValueError("Input does not cover all frozen boundaries")
     if sum(bar.day < train_start for bar in bars) < WARMUP:
         raise ValueError("Insufficient training warmup")
+    input_digest = hashlib.sha256(raw).hexdigest()
+    if evaluation_protocol is not None:
+        # Store a detached canonical copy; later changes to the spec cannot alter a run.
+        evaluation_protocol = json.loads(canonical(evaluation_protocol))
+        validate_protocol(evaluation_protocol, {
+            "experiment_id": run_id, "input_sha256": input_digest,
+            "train_start": train_start, "train_end": train_end,
+            "validation_end": validation_end, "holdout_end": holdout_end,
+            "generations": generations, "seed": seed, "cost_bps": cost_bps,
+        })
     path = database_path(root, run_id)
     path.parent.mkdir(parents=True, exist_ok=True)
     # Exclusive creation prevents accidental overwrite or a duplicate final test.
@@ -159,7 +171,7 @@ def initialize(root, run_id, input_path, *, train_start, train_end, validation_e
         "dev_only": True, "non_authoritative": True, "iml_required": False,
         "created_at_utc": datetime.now(timezone.utc).isoformat(),
         "input_path": str(Path(input_path).resolve()),
-        "input_sha256": hashlib.sha256(raw).hexdigest(), "code_sha256": code_hash(),
+        "input_sha256": input_digest, "code_sha256": code_hash(),
         "train_start": train_start, "train_end": train_end,
         "validation_start": (dates[1] + timedelta(days=1)).isoformat(),
         "validation_end": validation_end,
@@ -171,6 +183,10 @@ def initialize(root, run_id, input_path, *, train_start, train_end, validation_e
         "adapter": "btc_daily_long_cash_trend_momentum_volatility_v1",
         "domains": DOMAINS, "champion": None,
     }
+    if evaluation_protocol is not None:
+        meta["evaluation_protocol"] = evaluation_protocol
+        meta["evaluation_protocol_sha256"] = hashlib.sha256(canonical(evaluation_protocol).encode()).hexdigest()
+        meta["final_period_role"] = "retrospective_controls_plus_already_seen_exploration"
     db = connect(root, run_id)
     try:
         with db:
@@ -302,6 +318,30 @@ def finalize(root, run_id):
                           "status": "PASS" if beats_cash_return and beats_cash_risk_adjusted else "REJECT",
                       },
                       "dev_only": True, "non_authoritative": True, "promotion_allowed": False}
+            protocol = meta.get("evaluation_protocol")
+            if protocol is not None:
+                expected_hash = hashlib.sha256(canonical(protocol).encode()).hexdigest()
+                if expected_hash != meta["evaluation_protocol_sha256"]:
+                    raise ValueError("Frozen evaluation protocol hash mismatch")
+                controls = protocol["control_windows"]
+                continuous = {"id": "control_continuous", "start": controls[0]["start"], "end": controls[-1]["end"]}
+                comparisons = []
+                for window in [*controls, continuous, protocol["exploratory"]]:
+                    check_deadline(deadline)
+                    # Only prior observations can warm up each forward window.
+                    window_bars = [bar for bar in bars if bar.day <= window["end"]]
+                    candidate_result = backtest(window_bars, genes, window["start"], window["end"], meta["cost_bps"])
+                    btc_result = backtest(window_bars, genes, window["start"], window["end"], meta["cost_bps"], benchmark=True)
+                    cash_result = cash_backtest(window_bars, window["start"], window["end"])
+                    for result_id, measured in ((cid, candidate_result), (baseline_id, btc_result), (cash_id, cash_result)):
+                        store_evaluation(db, result_id, window["id"], measured)
+                    comparisons.append({**window, **comparison(candidate_result["metrics"], cash_result["metrics"], btc_result["metrics"])})
+                report["mixed_period_decision_diagnostic_only"] = report["research_decision"]
+                report["chronological_controls"] = comparisons[:-2]
+                report["continuous_controls"] = comparisons[-2]
+                report["seen_exploratory"] = comparisons[-1]
+                report["research_decision"] = stability_decision(comparisons[:-2], comparisons[-2], comparisons[-1])
+                report["final_period_role"] = meta["final_period_role"]
             check_deadline(deadline)
             db.execute("INSERT INTO final_test VALUES (1,?)", (canonical(report),))
             meta["state"] = "SEALED"

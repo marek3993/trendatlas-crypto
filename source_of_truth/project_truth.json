@@ -538,6 +538,8 @@
         "input_contract": "immutable_validated_daily_ohlcv_copy_with_sha256",
         "backtest_contract": "previous_closed_day_signal_next_open_execution_costs_and_daily_mark_to_market",
         "selection_contract": "training_diagnostics_plus_two_chronological_validation_folds_ranked_by_worst_then_mean_never_final_holdout",
+        "chronological_control_protocol": "optional_versioned_protocol_frozen_before_search_controls_strictly_after_selection_compare_cash_and_btc_in_every_window_require_all_cash_gates_no_post_result_generation_extension",
+        "seen_period_disclosure": "2025-01-01_through_2026-08-19_already_seen_exploratory_only_cannot_establish_independent_evidence",
         "holdout_contract": "fixed_before_search_evaluate_frozen_validation_champion_once_against_cash_and_buy_hold_after_planned_generations_no_further_evolution_cash_return_and_risk_adjusted_gate_required",
         "persistence": "transactional_sqlite_candidates_lineage_metrics_trades_curves_and_run_provenance",
         "output_root": "outputs/research_os/dev_only/evolution",
