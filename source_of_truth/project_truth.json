@@ -373,7 +373,13 @@
                                        },
     "maintenance_watchdog": {
         "contract": "source_of_truth/watchdog_maintenance_contract.md",
-        "deployment_status": "implementation_pending_verification",
+        "deployment_status": "deployed_verified_20260921",
+        "deployed_source_commit": "4c8fdbd5c54603c9c8f40bd9faaccfe7f2d10590",
+        "deployment_audit": "docs/watchdog-deployment-audit-20260921.md",
+        "watchdog_timer": "enabled_active_four_times_daily_UTC",
+        "openai_key_available_at_deployment": false,
+        "openai_request_sent_at_deployment": false,
+        "observed_incident": "research_btc_derivatives_stale_only",
         "ai_optional": true,
         "production_scheduler": false,
         "orders_allowed": false

@@ -99,3 +99,11 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs remain research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+## Watchdog deployment observed 2026-09-21
+- Dependency-scoped watchdog 4c8fdbd5c54603c9c8f40bd9faaccfe7f2d10590 deployed as reviewed file overlays; Pi HEAD remains 1bb2d0d64363d111d92e4257d0a7345b484b8532.
+- mrv1-watchdog.timer enabled/active at 01:25, 07:25, 13:25, 19:25 UTC + <=5min jitter. Production timer unchanged enabled/active.
+- Research BTC derivatives panel/quality is stale (2026-04-19); only run_research_btc_derivatives is blocked. system_available=true, block_app=false, block_execution=false.
+- Deterministic diagnostic cache repair succeeded. OpenAI key/file absent, warning only; no API request or order sent. AI waits for operator-provided OPENAI_API_KEY in /etc/default/trendatlas-watchdog.
+- 55 targeted local tests and 19 Pi regressions passed. Broader account-schema test has an independently reproduced pre-existing performance={} expectation mismatch, outside this maintenance change.
+- Deployment evidence and preservation exceptions (three expected latest watchdog reports) are recorded in docs/watchdog-deployment-audit-20260921.md.

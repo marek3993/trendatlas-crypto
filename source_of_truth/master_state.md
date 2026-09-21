@@ -138,3 +138,8 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+## Dependency-scoped maintenance observed 2026-09-21
+- Watchdog is installed and enabled four times daily UTC; it can repair only its own diagnostic cache, never run production/refresh/publish or submit orders.
+- Source failures affect declared capabilities/actions; system availability remains true. Order freshness/provenance checks remain fail-closed for new_trade_transition.
+- AI diagnosis is optional; missing OPENAI_API_KEY currently leaves deterministic maintenance active with warning. Deployment audit: docs/watchdog-deployment-audit-20260921.md.

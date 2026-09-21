@@ -41,6 +41,8 @@
                                       "candidate_btc_does_not_automatically_mean_live_market_exposure":  true
                                   },
     "data_health_guard_contract":  {
+                                       "scoped_incident_fields": ["incident_level", "affected_capability_ids", "blocked_action_ids", "system_available"],
+                                       "block_execution_semantics": "new_trade_transition_only_not_system_shutdown",
                                        "status":  "active",
                                        "role":  "data_source_availability_guard",
                                        "separate_from_production_core_strategy_truth":  true,
@@ -286,10 +288,6 @@
                                                                                                  "research_status",
                                                                                                  "block_app",
                                                                                                  "block_execution",
-                                                                                                 "incident_level",
-                                                                                                 "affected_capability_ids",
-                                                                                                 "blocked_action_ids",
-                                                                                                 "system_available",
                                                                                                  "research_blocked_source_ids",
                                                                                                  "warning_source_ids"
                                                                                              ],
