@@ -1,7 +1,7 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-09-20T07:12:02Z",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-19::target_CASH::candidate_BNB",
+  "generated_at_utc": "2026-09-21T00:11:40Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-20::target_CASH::candidate_BNB",
   "target_asset": "CASH",
   "mode": "live",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
@@ -62,11 +62,11 @@
   },
   "production_signal_context": {
     "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-    "closed_day": "2026-09-19",
+    "closed_day": "2026-09-20",
     "validation_status": "passed",
     "candidate_asset": "BNB",
     "current_asset": "CASH",
-    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-19::target_CASH::candidate_BNB",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-20::target_CASH::candidate_BNB",
     "target_asset": "CASH",
     "target_exposure": 0.0,
     "effective_market_exposure": 0.0,
@@ -75,9 +75,9 @@
     "allow_live_order_candidate": false
   },
   "source_fingerprints": {
-    "intent_sha256": "22bde43cdfd0ac1ba5caf68e29b42be2b4bacfe48a179af0c01d6bcd216d0220",
-    "account_snapshot_sha256": "91261ae35737d3311dc0ed962e72ad09b135c9ae5365ab52f1f524e36bc25dd5",
-    "production_snapshot_sha256": "f4b0e32935c59d2e9c6763770d68c26109d32da092cbea7d370703fee95fc4c7"
+    "intent_sha256": "be16ff9646b6ddbfd9cce3f7916839f6f36c70f5921bd4242309c4db61785e73",
+    "account_snapshot_sha256": "8725d2b9e766c17e13dd918768d3936e27723f85c34f33d90f32f147aee0d991",
+    "production_snapshot_sha256": "5b8ea18aa45284a05dfe5772f264fe188e0b045a50c51cea1e575b64895027bf"
   },
   "notes": [
     "This is a gate-preparation artifact only.",
