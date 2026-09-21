@@ -14,7 +14,7 @@
                            "execution_readable",
                            "audit_only"
                        ],
-    "authoritative_reading_rule":  "App must read source_of_truth/export_contract.json first.\nPrimary strategy truth must then be read from Production Core v1:\n- outputs/production/current_strategy_snapshot.json\n- outputs/production/current_strategy_timeseries.csv\n- outputs/production/current_strategy_diagnostics.json\nData/source availability must then be read from the Data Health / Source Availability Guard:\n- outputs/production/data_health_report.json\n- outputs/production/data_health_report.quality.json\n- outputs/production/data_health_report.manifest.json\nRuntime authority state must then be read only from:\n- outputs/execution/authority/latest_successful_snapshot.json\n- outputs/execution/authority/latest_attempt_status.json\nPublic/runtime consumers must then use the normalized contracts defined in normalized_public_runtime_contracts and must not infer account state from raw model fields.\nProduction-critical failures block app and execution fail-closed; app-critical failures block app; execution-critical failures block execution; research-only failures block only the relevant research probe; missing optional env/API keys surface as unavailable/warn_only; no silent fallback is allowed.\nCandidate BTC in Production Core does not by itself authorize live market exposure; actual_held_asset/current_asset/effective_market_exposure are not real wallet exposure; model equity/paper equity are not real account PnL; model exposure must not be shown as real account exposure.\nLegacy app snapshot/runtime/refresh/full_auto_scheduler/runtime_health/live_status paths must not redefine app authority.",
+    "authoritative_reading_rule":  "App must read source_of_truth/export_contract.json first.\nPrimary strategy truth must then be read from Production Core v1:\n- outputs/production/current_strategy_snapshot.json\n- outputs/production/current_strategy_timeseries.csv\n- outputs/production/current_strategy_diagnostics.json\nData/source availability must then be read from the Data Health / Source Availability Guard:\n- outputs/production/data_health_report.json\n- outputs/production/data_health_report.quality.json\n- outputs/production/data_health_report.manifest.json\nRuntime authority state must then be read only from:\n- outputs/execution/authority/latest_successful_snapshot.json\n- outputs/execution/authority/latest_attempt_status.json\nPublic/runtime consumers must then use the normalized contracts defined in normalized_public_runtime_contracts and must not infer account state from raw model fields.\nProduction/execution dependency failures block only new_trade_transition; app-critical failures degrade only the dependent display capability; system_available remains true and block_app false; research-only failures block only the relevant research probe; missing optional env/API keys surface as unavailable/warn_only; no silent fallback is allowed.\nCandidate BTC in Production Core does not by itself authorize live market exposure; actual_held_asset/current_asset/effective_market_exposure are not real wallet exposure; model equity/paper equity are not real account PnL; model exposure must not be shown as real account exposure.\nLegacy app snapshot/runtime/refresh/full_auto_scheduler/runtime_health/live_status paths must not redefine app authority.",
     "default_fallback_rule":  "If this file is missing or unreadable, only explicit safe app fallbacks may be used; legacy authority paths must not redefine truth or freshness, guarded data/source availability must never degrade through silent fallback, and dashboards must not backfill account state from model fields.",
     "production_core_truth_contract":  {
                                            "status":  "active_primary_strategy_truth_interface",
@@ -52,14 +52,14 @@
                                        "validation_script":  "scripts/production/validate_data_health_report.py",
                                        "no_silent_fallback":  true,
                                        "criticality_contract":  {
-                                                                    "production_critical":  "block_app_and_execution_fail_closed",
-                                                                    "app_critical":  "block_app_fail_closed",
+                                                                    "production_critical":  "block_dependent_new_trade_transition_only",
+                                                                    "app_critical":  "degrade_dependent_display_capability_only",
                                                                     "execution_critical":  "block_execution_fail_closed",
                                                                     "research_only":  "block_relevant_research_probe_only",
                                                                     "informational_optional_env_or_api_keys":  "surface_unavailable_warn_only"
                                                                 },
                                        "production_critical_btc_ohlcv_source_id":  "data_ohlcv_btcusdt_1d",
-                                       "production_critical_btc_ohlcv_rule":  "stale_or_missing_blocks_production_and_execution",
+                                       "production_critical_btc_ohlcv_rule":  "stale_or_missing_blocks_new_trade_transition_not_system_availability",
                                        "canonical_execution_health_rule":  {
                                                                                   "intent_path":  "outputs/execution/intents/latest_execution_intent.json",
                                                                                   "gate_path":  "outputs/execution/live_gate/latest_real_order_gate_decision.json",
@@ -286,6 +286,10 @@
                                                                                                  "research_status",
                                                                                                  "block_app",
                                                                                                  "block_execution",
+                                                                                                 "incident_level",
+                                                                                                 "affected_capability_ids",
+                                                                                                 "blocked_action_ids",
+                                                                                                 "system_available",
                                                                                                  "research_blocked_source_ids",
                                                                                                  "warning_source_ids"
                                                                                              ],

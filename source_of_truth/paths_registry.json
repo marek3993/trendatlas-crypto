@@ -72,6 +72,18 @@
     "execution_journal": "durable_pre_submit_idempotency_and_exchange_recovery_record"
   },
   "artifacts": {
+    "maintenance_watchdog": {
+      "canonical": "outputs/execution/watchdog",
+      "legacy_aliases": [],
+      "owner": "AUTOMATION",
+      "artifact_type": "scoped_maintenance_report",
+      "truth_domain": "non_authoritative_diagnostics",
+      "read_scope": [
+        "maintenance",
+        "audit"
+      ],
+      "write_mode": "watchdog_only_no_production_writes"
+    },
     "pi_evolution_worker_state": {
       "canonical": "/var/lib/trendatlas-research",
       "legacy_aliases": [],

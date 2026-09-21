@@ -1,14 +1,37 @@
 [Unit]
-Description=MRV1 safe self-healing watchdog
+Description=TrendAtlas dependency-scoped maintenance watchdog
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=oneshot
+User=trendatlas
+Group=trendatlas
 WorkingDirectory=/opt/market_regime_v1
-ExecStart=/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/execution/mrv1_self_healing_watchdog.py --remediate-safe --json
+EnvironmentFile=-/etc/default/trendatlas-watchdog
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/market_regime_v1/.venv/bin/python -B /opt/market_regime_v1/scripts/execution/mrv1_self_healing_watchdog.py --remediate-safe --ai-diagnose --json
+Nice=10
+CPUQuota=50%
+MemoryMax=1G
+TimeoutStartSec=3min
+Restart=no
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/opt/market_regime_v1/outputs/execution/watchdog
+InaccessiblePaths=-/etc/default/trendatlas-multi-account -/etc/credstore -/etc/credstore.encrypted -/run/credentials -/run/user
+InaccessiblePaths=/opt/market_regime_v1/scripts/execution/run_trendatlas_production.py /opt/market_regime_v1/scripts/execution/run_pi_fast_daily_authority_refresh.py /opt/market_regime_v1/scripts/execution/run_pi_authoritative_producer.py
+InaccessiblePaths=-/opt/market_regime_v1/.env -/opt/market_regime_v1/web/.env.local
+UMask=0077
 StandardOutput=journal
 StandardError=journal
-
-[Install]
-WantedBy=multi-user.target

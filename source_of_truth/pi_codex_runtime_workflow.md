@@ -139,6 +139,10 @@ If step 3 invalidates the approved fresh runtime bundle, restore the approved st
 - Keep an explicit open-task list with `task name / owner / status / next action / blocker`.
 
 ## Hard Runtime Boundaries
+- Dependency-scoped maintenance follows `source_of_truth/watchdog_maintenance_contract.md`.
+- The watchdog may refresh only its own diagnostic cache; it must never invoke a
+  fast/full refresh, authority producer/publisher, production service control or
+  order path. AI is optional and cannot expand deterministic action eligibility.
 - No live order outside the canonical production orchestrator.
 - `--no-submit` must never invoke an exchange mutation.
 - Missing, malformed, expired, wrong-account, wrong-name, or unauthorized signer credentials must block before any exchange mutation.

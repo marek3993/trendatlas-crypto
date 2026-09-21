@@ -101,14 +101,14 @@
 - Validation script: `scripts/production/validate_data_health_report.py`
 - The guard is separate from Production Core strategy truth and separate from Pi runtime authority.
 - The guard governs data/source availability only.
-- Production-critical failures block app and execution fail-closed.
-- App-critical failures block app fail-closed.
+- Production/execution dependency failures block only new_trade_transition; block_app remains false and system_available true.
+- App-critical failures degrade only the dependent display capability.
 - Execution-critical failures block execution fail-closed.
 - Research-only failures do not block production, but they block the relevant research probe.
 - Missing optional env/API keys are surfaced as `unavailable` / `warn_only`.
 - No silent fallback is allowed for degraded or missing guarded sources.
 - Execution health must validate the canonical intent and gate paths directly against Production Core and the canonical read-only account snapshot; temporary execution-source path overrides are forbidden.
-- Stale or missing `BTC` daily OHLCV is production-critical and blocks production/execution.
+- Stale or missing `BTC` daily OHLCV blocks new_trade_transition only; unrelated capabilities remain available.
 - Current real state: `overall_status=warning`, `app_status=ok`, `execution_status=ok`, `research_status=warning`.
 - Current block flags: `block_app=false`, `block_execution=false`.
 - Production remains allowed in the current state.

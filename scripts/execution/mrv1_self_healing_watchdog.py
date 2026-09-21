@@ -1,1353 +1,304 @@
+"""Dependency-scoped diagnostics and finite, deterministic maintenance only."""
 from __future__ import annotations
 
 import argparse
-import contextlib
-import csv
-import errno
+from contextlib import contextmanager
+from datetime import datetime, timedelta, timezone
 import hashlib
-import io
 import json
 import os
-import shutil
+from pathlib import Path
 import subprocess
 import sys
-from datetime import date, datetime, timedelta, timezone
-from pathlib import Path
-from typing import Any
-import traceback
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRIPTS_DIR = ROOT / "scripts"
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from scripts.production import data_health_common as health
+from services.shared import openai_responses
 
-for candidate in (ROOT, SCRIPTS_DIR):
-    candidate_text = str(candidate)
-    if candidate_text not in sys.path:
-        sys.path.insert(0, candidate_text)
-
-OUTPUT_DIR = ROOT / "outputs" / "execution" / "watchdog"
-LOGS_DIR = OUTPUT_DIR / "logs"
-LOCK_PATH = OUTPUT_DIR / "watchdog.lock"
+OUTPUT_DIR = ROOT / "outputs/execution/watchdog"
 REPORT_PATH = OUTPUT_DIR / "latest_watchdog_report.json"
 SUMMARY_PATH = OUTPUT_DIR / "latest_watchdog_summary.txt"
 ACTIONS_PATH = OUTPUT_DIR / "latest_watchdog_actions.json"
-
-AUTHORITY_ATTEMPT_PATH = ROOT / "outputs" / "execution" / "authority" / "latest_attempt_status.json"
-AUTHORITY_SUCCESS_PATH = ROOT / "outputs" / "execution" / "authority" / "latest_successful_snapshot.json"
-FRESHNESS_REPORT_PATH = ROOT / "outputs" / "execution" / "freshness" / "app_freshness_report.json"
-APP_PRODUCT_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "app_product_snapshot.json"
-APP_RUNTIME_SNAPSHOT_PATH = ROOT / "outputs" / "execution" / "app_snapshot" / "app_runtime_snapshot.json"
-APP_EXPORT_MAIN_PAPER_PATH = ROOT / "outputs" / "execution" / "app_exports" / "phase68g_66g_1p25x_candidate_paper.csv"
-APP_EXPORT_MAIN_METRICS_PATH = ROOT / "outputs" / "execution" / "app_exports" / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
-APP_EXPORT_REFERENCE_PAPER_PATH = ROOT / "outputs" / "execution" / "app_exports" / "phase67j_no_neo_main_paper.csv"
-APP_EXPORT_PHASE66G_LIVE_PATH = ROOT / "outputs" / "execution" / "app_exports" / "phase66g_live_status.csv"
-BTC_RAW_PATH = ROOT / "data" / "ohlcv" / "BTCUSDT_1d.csv"
-
-LATEST_MANIFEST_GLOB = "*/app_refresh_pipeline_manifest.json"
-
-DAILY_REFRESH_SCRIPT = ROOT / "scripts" / "daily_refresh_app_pipeline.py"
-MATERIALIZE_SCRIPT = ROOT / "scripts" / "execution" / "materialize_execution_app_exports.py"
-PI_AUTHORITY_PRODUCER_SCRIPT = ROOT / "scripts" / "execution" / "run_pi_authoritative_producer.py"
-PI_FAST_DAILY_AUTHORITY_REFRESH_SCRIPT = (
-    ROOT / "scripts" / "execution" / "run_pi_fast_daily_authority_refresh.py"
-)
-DAILY_LIVE_SERVICE_NAME = "mrv1-daily-live.service"
-AUTHORITY_PUBLISH_TREE_ENV = "MRV1_AUTHORITY_PUBLISH_TREE"
-
-UPSTREAM_PHASE68G_SOURCE_PAPER_PATH = (
-    ROOT
-    / "outputs"
-    / "phase68g_portfolio_exposure_leverage_validation"
-    / "papers"
-    / "phase68g_66g_1p25x_candidate_paper.csv"
-)
-UPSTREAM_PHASE68G_SOURCE_METRICS_PATH = (
-    ROOT
-    / "outputs"
-    / "phase68g_portfolio_exposure_leverage_validation"
-    / "phase68g_66g_1p25x_candidate_authoritative_net_compare_export.csv"
-)
-UPSTREAM_PHASE67J_SOURCE_PAPER_PATH = (
-    ROOT / "outputs" / "phase67j_final_narrow_validation_pack" / "phase67j_no_neo_main_paper.csv"
-)
-UPSTREAM_PHASE66G_SOURCE_LIVE_PATH = (
-    ROOT / "outputs" / "phase66g_production_candidate_live" / "phase66g_live_status.csv"
-)
-
-INCIDENT_CLASSES = {
-    "OK_CURRENT",
-    "NOT_TIME_YET",
-    "SCHEDULER_NOT_RUN",
-    "PIPELINE_FAILED",
-    "RAW_DATA_STALE",
-    "APP_EXPORT_STALE",
-    "AUTHORITY_ATTEMPT_FAILED",
-    "AUTHORITY_SNAPSHOT_STALE",
-    "AUTHORITY_SUPPORT_FILES_MISMATCH",
-    "AUTHORITY_PUBLISH_STALE",
-    "DAILY_SERVICE_FAILED_BUT_AUTHORITY_CURRENT",
-    "UNKNOWN_NEEDS_HUMAN",
-}
-CURRENT_STATUSES = {"current", "stale", "not_time_yet"}
-SUCCESS_STATUSES = {"OK", "SUCCESS", "PASS", "PASSED"}
-NOT_TIME_YET_GRACE_HOURS = 6
-SUPPORT_FILE_SPECS = [
-    {
-        "path": FRESHNESS_REPORT_PATH,
-        "observed_key": "freshness_report_latest_closed_utc_date",
-        "source_field": "latest_closed_utc_date",
-    },
-    {
-        "path": APP_EXPORT_REFERENCE_PAPER_PATH,
-        "observed_key": "app_export_reference_paper_last_date",
-        "source_field": "date",
-    },
-    {
-        "path": APP_EXPORT_PHASE66G_LIVE_PATH,
-        "observed_key": "app_export_phase66g_live_latest_available_date",
-        "source_field": "latest_available_date",
-    },
-    {
-        "path": APP_PRODUCT_SNAPSHOT_PATH,
-        "observed_key": "local_app_product_strategy_last_closed_day",
-        "source_field": "strategy_last_closed_day",
-    },
-    {
-        "path": APP_RUNTIME_SNAPSHOT_PATH,
-        "observed_key": "local_app_runtime_latest_strategy_artifact_date",
-        "source_field": "latest_strategy_artifact_date",
-    },
-    {
-        "path": APP_RUNTIME_SNAPSHOT_PATH,
-        "observed_key": "local_app_runtime_latest_available_closed_utc_date",
-        "source_field": "latest_available_closed_utc_date",
-    },
-    {
-        "path": BTC_RAW_PATH,
-        "observed_key": "btc_raw_last_date",
-        "source_field": "date",
-    },
-]
+CONFIG_PATH = ROOT / "configs/maintenance/watchdog_openai.json"
+CACHE_DIR = OUTPUT_DIR / "data_health"
+ACTION_ID = "refresh_dependency_health_cache"
+ACTION_ALLOWLIST = frozenset({ACTION_ID})
+HEALTHY = {"OK_CURRENT", "NOT_TIME_YET"}
+INCIDENTS = HEALTHY | {"DEPENDENCY_UNHEALTHY", "DIAGNOSTIC_CACHE_STALE", "PRODUCTION_BUSY",
+                       "SCHEDULER_ATTENTION", "UNKNOWN_NEEDS_HUMAN"}
 
 
-def utc_now() -> datetime:
+def utc_now():
     return datetime.now(timezone.utc)
 
 
-def utc_now_iso() -> str:
-    return utc_now().replace(microsecond=0).isoformat().replace("+00:00", "Z")
+def atomic_json(path, payload):
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(path.name + ".pending")
+    if path.is_symlink() or temporary.is_symlink():
+        raise ValueError("Linked output path")
+    with temporary.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, sort_keys=True, indent=2, allow_nan=False)
+        handle.write("\n"); handle.flush(); os.fsync(handle.fileno())
+    os.replace(temporary, path)
+    if os.name == "posix":
+        fd = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
 
 
-def utc_day_start(ts: datetime | None = None) -> datetime:
-    current = ts or utc_now()
-    return datetime(current.year, current.month, current.day, tzinfo=timezone.utc)
-
-
-def expected_latest_closed_utc_day(ts: datetime | None = None) -> str:
-    return (utc_day_start(ts) - timedelta(days=1)).date().isoformat()
-
-
-def relative_path(path: Path) -> str:
-    try:
-        return path.resolve().relative_to(ROOT.resolve()).as_posix()
-    except ValueError:
-        return str(path.resolve())
-
-
-def ensure_output_dirs() -> None:
+@contextmanager
+def acquire_watchdog_lock(*, remediation_enabled=False):
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    LOGS_DIR.mkdir(parents=True, exist_ok=True)
-
-
-def safe_token(value: str) -> str:
-    sanitized = "".join(char if char.isalnum() else "_" for char in value.strip().lower())
-    compact = "_".join(part for part in sanitized.split("_") if part)
-    return compact or "unknown"
-
-
-def build_log_paths(action: str, started_at_utc: str) -> tuple[Path, Path]:
-    timestamp_token = safe_token(started_at_utc.replace("T", "_"))
-    action_token = safe_token(action)
-    stem = f"{timestamp_token}_{action_token}"
-    return (
-        LOGS_DIR / f"{stem}_stdout.log",
-        LOGS_DIR / f"{stem}_stderr.log",
-    )
-
-
-def write_log_file(path: Path, content: str) -> str:
-    ensure_output_dirs()
-    path.write_text(content, encoding="utf-8")
-    return relative_path(path)
-
-
-def read_lock_payload() -> dict[str, Any]:
-    return read_json_optional(LOCK_PATH)
-
-
-def lock_pid_is_running(pid: Any) -> bool:
-    try:
-        pid_value = int(pid)
-    except (TypeError, ValueError):
-        return False
-    if pid_value <= 0:
-        return False
-    try:
-        os.kill(pid_value, 0)
-    except OSError as exc:
-        return exc.errno == errno.EPERM
-    return True
-
-
-@contextlib.contextmanager
-def acquire_watchdog_lock(*, remediation_enabled: bool) -> Any:
-    ensure_output_dirs()
-    lock_payload = {
-        "pid": os.getpid(),
-        "acquired_at_utc": utc_now_iso(),
-        "mode": "remediate_safe" if remediation_enabled else "check_only",
-        "lock_path": relative_path(LOCK_PATH),
-    }
-
-    while True:
-        try:
-            fd = os.open(str(LOCK_PATH), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        except FileExistsError as exc:
-            existing_payload = read_lock_payload()
-            if existing_payload and not lock_pid_is_running(existing_payload.get("pid")):
-                try:
-                    LOCK_PATH.unlink()
-                    continue
-                except FileNotFoundError:
-                    continue
-            owner_pid = existing_payload.get("pid")
-            acquired_at = existing_payload.get("acquired_at_utc")
-            raise RuntimeError(
-                "Watchdog lock is already held "
-                f"(pid={owner_pid}, acquired_at_utc={acquired_at}, path={relative_path(LOCK_PATH)})"
-            ) from exc
+    path = OUTPUT_DIR / "maintenance.lock"
+    if path.is_symlink():
+        raise ValueError("Linked lock")
+    with path.open("a+b") as handle:
+        if os.name == "posix":
+            import fcntl
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         else:
-            try:
-                with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                    json.dump(lock_payload, handle, indent=2, ensure_ascii=False)
-                    handle.write("\n")
-                yield lock_payload
-            finally:
-                try:
-                    LOCK_PATH.unlink()
-                except FileNotFoundError:
-                    pass
-            return
+            import msvcrt
+            if handle.tell() == 0:
+                handle.write(b"0"); handle.flush()
+            handle.seek(0); msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+        try:
+            yield
+        finally:
+            if os.name == "posix":
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+            else:
+                handle.seek(0); msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
 
 
-def parse_iso_datetime(value: Any) -> datetime | None:
-    text = str(value or "").strip()
-    if not text:
-        return None
+def production_state():
+    """Fixed read-only systemctl calls; never accept a command from config or AI."""
+    result = {"known": False, "inactive": False, "timer_ready": False, "pending": True}
     try:
-        parsed = datetime.fromisoformat(text.replace("Z", "+00:00"))
-    except ValueError:
-        return None
-    if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
-    return parsed.astimezone(timezone.utc)
+        for unit, prefix in (("mrv1-production.service", "service"), ("mrv1-production.timer", "timer")):
+            output = subprocess.check_output(
+                ["systemctl", "show", unit, "-p", "LoadState", "-p", "ActiveState",
+                 "-p", "SubState", "-p", "Result", "-p", "UnitFileState"],
+                text=True, stderr=subprocess.DEVNULL, timeout=10)
+            result[prefix] = dict(line.split("=", 1) for line in output.splitlines() if "=" in line)
+        jobs = subprocess.check_output(["systemctl", "list-jobs", "--no-legend", "--no-pager"],
+                                       text=True, stderr=subprocess.DEVNULL, timeout=10)
+        result["known"] = all(result[x].get("LoadState") == "loaded" for x in ("service", "timer"))
+        result["pending"] = any("mrv1-production.service" in line.split() for line in jobs.splitlines())
+        result["inactive"] = (result["service"].get("ActiveState") == "inactive" and
+                              result["service"].get("Result") == "success" and not result["pending"])
+        result["timer_ready"] = (result["timer"].get("ActiveState") == "active" and
+                                 result["timer"].get("UnitFileState") == "enabled")
+    except (OSError, subprocess.SubprocessError, ValueError):
+        pass
+    return result
 
 
-def parse_iso_date(value: Any) -> date | None:
-    text = str(value or "").strip()
-    if not text:
-        return None
+def safe_sources(sources):
+    result = []
+    for source in sources:
+        if not isinstance(source, dict):
+            continue
+        source_id = source.get("source_id")
+        if source_id not in health.SOURCE_INDEX:
+            source_id = "unknown"
+        status = source.get("status")
+        if status not in health.STATUS_VALUES:
+            status = "failed"
+        row = {"source_id": source_id, "status": status,
+               "criticality": source.get("criticality") if source.get("criticality") in health.CRITICALITY_VALUES else "informational",
+               "action": source.get("action") if source.get("action") in health.ACTION_VALUES else "warn_only"}
+        for field in ("actual_last_date", "expected_last_date"):
+            row[field] = health.parse_iso_day(source.get(field))
+        row.update(health.dependency_impact(row))
+        result.append(row)
+    return result
+
+
+def signature(sources):
+    return hashlib.sha256(json.dumps(sources, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def collect_state():
+    now = utc_now()
+    production = production_state()
+    errors = []
     try:
-        return datetime.strptime(text, "%Y-%m-%d").date()
-    except ValueError:
-        return None
-
-
-def iso_date(value: date | None) -> str | None:
-    return value.isoformat() if value is not None else None
-
-
-def sha256_file(path: Path) -> str | None:
-    if not path.exists() or not path.is_file():
-        return None
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def read_json_optional(path: Path) -> dict[str, Any]:
-    if not path.exists() or not path.is_file():
-        return {}
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
+        bundle = health.build_report_bundle(root=ROOT, write_outputs=False)
+        sources = safe_sources(bundle["report"]["sources"])
     except Exception:
-        return {}
-    return payload if isinstance(payload, dict) else {}
-
-
-def read_csv_rows(path: Path) -> list[dict[str, str]]:
-    with path.open("r", encoding="utf-8-sig", newline="") as handle:
-        return list(csv.DictReader(handle))
-
-
-def read_last_csv_date(path: Path, columns: list[str]) -> date | None:
-    if not path.exists() or not path.is_file():
-        return None
-    rows = read_csv_rows(path)
-    if not rows:
-        return None
-    for column in columns:
-        if column in rows[0]:
-            raw = str(rows[-1].get(column, "")).strip()
-            parsed = parse_iso_date(raw)
-            if parsed is not None:
-                return parsed
-    return None
-
-
-def read_first_csv_date(path: Path, columns: list[str]) -> date | None:
-    if not path.exists() or not path.is_file():
-        return None
-    rows = read_csv_rows(path)
-    if not rows:
-        return None
-    for column in columns:
-        raw = str(rows[0].get(column, "")).strip()
-        parsed = parse_iso_date(raw)
-        if parsed is not None:
-            return parsed
-    return None
-
-
-def path_mtime_utc(path: Path) -> str | None:
-    if not path.exists():
-        return None
-    return datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).replace(microsecond=0).isoformat().replace(
-        "+00:00",
-        "Z",
-    )
-
-
-def summarize_path(
-    path: Path,
-    *,
-    date_reader: tuple[str, list[str]] | None = None,
-    extra_fields: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    record: dict[str, Any] = {
-        "path": relative_path(path),
-        "exists": path.exists() and path.is_file(),
-        "mtime_utc": path_mtime_utc(path),
-        "size_bytes": path.stat().st_size if path.exists() and path.is_file() else None,
-        "sha256": sha256_file(path),
-        "last_date": None,
-    }
-    if date_reader and record["exists"]:
-        reader_mode, columns = date_reader
-        try:
-            if reader_mode == "csv_last":
-                parsed = read_last_csv_date(path, columns)
-            elif reader_mode == "csv_first":
-                parsed = read_first_csv_date(path, columns)
-            else:
-                parsed = None
-        except Exception as exc:
-            record["date_error"] = str(exc)
-            parsed = None
-        record["last_date"] = iso_date(parsed)
-    if extra_fields:
-        record.update(extra_fields)
-    return record
-
-
-def support_file_mismatches(observed_dates: dict[str, Any], expected_closed_utc_day: str | None) -> list[dict[str, Any]]:
-    mismatches: list[dict[str, Any]] = []
-    for spec in SUPPORT_FILE_SPECS:
-        observed_date = str(observed_dates.get(spec["observed_key"]) or "").strip() or None
-        if observed_date == expected_closed_utc_day:
-            continue
-        mismatches.append(
-            {
-                "path": relative_path(spec["path"]),
-                "observed_date": observed_date,
-                "expected_date": expected_closed_utc_day,
-                "source_field": spec["source_field"],
-            }
-        )
-    return mismatches
-
-
-def discover_latest_manifest() -> Path | None:
-    manifest_dir = ROOT / "outputs" / "app_refresh_pipeline"
-    if not manifest_dir.exists():
-        return None
-    manifests = sorted(
-        manifest_dir.glob(LATEST_MANIFEST_GLOB),
-        key=lambda candidate: candidate.stat().st_mtime if candidate.exists() else 0,
-        reverse=True,
-    )
-    return manifests[0] if manifests else None
-
-
-def parse_systemctl_show_output(output: str) -> dict[str, str]:
-    properties: dict[str, str] = {}
-    for raw_line in output.splitlines():
-        line = raw_line.strip()
-        if not line or "=" not in line:
-            continue
-        key, value = line.split("=", 1)
-        properties[key.strip()] = value.strip()
-    return properties
-
-
-def detect_daily_live_service_state() -> dict[str, Any]:
-    result: dict[str, Any] = {
-        "daily_service_status_checked": False,
-        "daily_service_result": None,
-        "daily_service_exec_status": None,
-        "daily_service_active_state": None,
-        "daily_service_sub_state": None,
-        "daily_service_invocation": None,
-        "daily_service_failed": False,
-        "daily_service_check_reason": "systemctl_unavailable",
-    }
-    systemctl_path = shutil.which("systemctl")
-    if not systemctl_path:
-        return result
-
-    command = [
-        systemctl_path,
-        "show",
-        DAILY_LIVE_SERVICE_NAME,
-        "--property",
-        "Result",
-        "--property",
-        "ExecMainStatus",
-        "--property",
-        "ActiveState",
-        "--property",
-        "SubState",
-        "--property",
-        "InvocationID",
-        "--property",
-        "ExecMainExitTimestamp",
-        "--property",
-        "ActiveEnterTimestamp",
-        "--property",
-        "InactiveEnterTimestamp",
-    ]
-    completed = subprocess.run(
-        command,
-        cwd=str(ROOT),
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    if completed.returncode != 0:
-        stderr_text = (completed.stderr or "").strip()
-        stdout_text = (completed.stdout or "").strip()
-        details = stderr_text or stdout_text or f"returncode={completed.returncode}"
-        result["daily_service_check_reason"] = f"systemctl_show_failed::{details}"
-        return result
-
-    props = parse_systemctl_show_output(completed.stdout or "")
-    result_value = str(props.get("Result") or "").strip() or None
-    exec_status = str(props.get("ExecMainStatus") or "").strip() or None
-    active_state = str(props.get("ActiveState") or "").strip() or None
-    sub_state = str(props.get("SubState") or "").strip() or None
-    invocation = (
-        str(props.get("InvocationID") or "").strip()
-        or str(props.get("ExecMainExitTimestamp") or "").strip()
-        or str(props.get("ActiveEnterTimestamp") or "").strip()
-        or str(props.get("InactiveEnterTimestamp") or "").strip()
-        or None
-    )
-    normalized_result = str(result_value or "").strip().lower()
-    normalized_active_state = str(active_state or "").strip().lower()
-    normalized_sub_state = str(sub_state or "").strip().lower()
-    daily_service_failed = (
-        normalized_result not in {"", "success"}
-        or normalized_active_state == "failed"
-        or normalized_sub_state == "failed"
-        or (exec_status not in {None, "", "0"})
-    )
-    result.update(
-        {
-            "daily_service_status_checked": True,
-            "daily_service_result": result_value,
-            "daily_service_exec_status": exec_status,
-            "daily_service_active_state": active_state,
-            "daily_service_sub_state": sub_state,
-            "daily_service_invocation": invocation,
-            "daily_service_failed": daily_service_failed,
-            "daily_service_check_reason": "ok",
-        }
-    )
-    return result
-
-
-def ensure_publish_tree_writable(publish_tree: Path) -> None:
-    probe_root = publish_tree if publish_tree.exists() else publish_tree.parent
-    if not probe_root.exists():
-        raise RuntimeError(f"Authority publish tree parent is missing: {publish_tree.parent}")
-    if publish_tree.exists() and not publish_tree.is_dir():
-        raise RuntimeError(f"Authority publish tree path is not a directory: {publish_tree}")
-
-    probe_path = probe_root / f".watchdog_write_probe_{os.getpid()}"
+        sources = []; errors.append("health_metadata_unreadable")
+    cache_stale = True
     try:
-        probe_path.write_text("watchdog\n", encoding="utf-8")
-    except OSError as exc:
-        raise RuntimeError(f"Authority publish tree is not writable: {probe_root}") from exc
-    finally:
-        with contextlib.suppress(FileNotFoundError):
-            probe_path.unlink()
+        cache = json.loads((CACHE_DIR / "dependency_health_cache.json").read_text(encoding="utf-8"))
+        age = (now - datetime.fromisoformat(cache["generated_at_utc"])).total_seconds()
+        cache_stale = not (cache["source_sha256"] == signature(sources) and 0 <= age < 6 * 3600 and cache["schema_version"] == 2)
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    bad = [s for s in sources if s["status"] != "ok"]
+    trade_bad = [s for s in bad if "new_trade_transition" in s["blocked_action_ids"]]
+    expected = (now.date() - timedelta(days=1)).isoformat()
+    prior = (now.date() - timedelta(days=2)).isoformat()
+    not_time_yet = bool(now.hour < 1 and trade_bad and all(
+        s["status"] == "stale" and s["actual_last_date"] == prior for s in trade_bad))
+    if errors or not production["known"]:
+        incident = "UNKNOWN_NEEDS_HUMAN"
+    elif not production["inactive"]:
+        incident = "PRODUCTION_BUSY"
+    elif not production["timer_ready"]:
+        incident = "SCHEDULER_ATTENTION"
+    elif not_time_yet:
+        incident = "NOT_TIME_YET"
+    elif bad:
+        incident = "DEPENDENCY_UNHEALTHY"
+    elif cache_stale:
+        incident = "DIAGNOSTIC_CACHE_STALE"
+    else:
+        incident = "OK_CURRENT"
+    return {"incident_class": incident, "production": production, "sources": sources,
+            "cache_stale": cache_stale, "errors": errors, "expected_closed_utc_day": expected}
 
 
-def validate_publish_remediation_env(env: dict[str, str]) -> dict[str, Any]:
-    publish_tree_raw = str(os.environ.get(AUTHORITY_PUBLISH_TREE_ENV) or "").strip()
-    if not publish_tree_raw:
-        raise RuntimeError(
-            f"Safe publish remediation requires {AUTHORITY_PUBLISH_TREE_ENV} to be set in the environment."
-        )
-    env[AUTHORITY_PUBLISH_TREE_ENV] = publish_tree_raw
+def choose_safe_action(incident_class, truths):
+    production = truths.get("production", {})
+    eligible = (incident_class in {"DIAGNOSTIC_CACHE_STALE", "DEPENDENCY_UNHEALTHY"} and
+                truths.get("cache_stale") is True and not truths.get("errors") and
+                production.get("known") is True and production.get("inactive") is True and
+                production.get("timer_ready") is True and production.get("pending") is False)
+    return {"eligible": eligible, "action": ACTION_ID if eligible else "none",
+            "reason": "cache_needs_refresh" if eligible else "no_eligible_deterministic_action"}
 
+
+def load_ai_config():
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    fixed = {"model": "gpt-5.4", "reasoning_effort": "low", "api_key_env": "OPENAI_API_KEY",
+             "responses_api": openai_responses.DEFAULT_RESPONSES_API_URL,
+             "strict_schema_validation": True, "fail_closed": False}
+    if any(config.get(k) != value for k, value in fixed.items()):
+        raise ValueError("AI config violates maintenance contract")
+    if not 1 <= config["timeout_seconds"] <= 60 or not 128 <= config["max_output_tokens"] <= 2048:
+        raise ValueError("Unbounded AI request")
+    return config
+
+
+def ai_diagnose(state, action, *, enabled):
+    result = {"requested": bool(enabled), "api_request_sent": False,
+              "api_key_present": bool(os.environ.get("OPENAI_API_KEY", "").strip()),
+              "action_id": action["action"], "needs_human": False, "warning": None,
+              "status": "not_requested", "model": "gpt-5.4", "reasoning_effort": "low"}
+    if not enabled:
+        return result
+    if not result["api_key_present"]:
+        result.update(status="deterministic_fallback", warning="missing_api_key")
+        return result
+    if state["incident_class"] in HEALTHY | {"PRODUCTION_BUSY", "DIAGNOSTIC_CACHE_STALE"}:
+        result["status"] = "skipped_healthy_or_busy"
+        return result
     try:
-        from scripts.execution.run_pi_authoritative_producer import (
-            _resolve_authority_git_identity,
-            authority_repo_publish_context_from_env,
-        )
+        config = load_ai_config()
+        if not config.get("enabled"):
+            result["status"] = "disabled_by_config"; return result
+    except Exception:
+        result.update(status="deterministic_fallback", warning="invalid_ai_config")
+        return result
+    allowed = ["none"] + ([action["action"]] if action["eligible"] else [])
+    schema = {"type": "object", "additionalProperties": False,
+              "properties": {"action_id": {"type": "string", "enum": allowed},
+                             "needs_human": {"type": "boolean"},
+                             "reason_code": {"type": "string", "enum": ["eligible_repair", "no_safe_action", "human_review"]}},
+              "required": ["action_id", "needs_human", "reason_code"]}
+    payload = {"incident_class": state["incident_class"] if state["incident_class"] in INCIDENTS else "UNKNOWN_NEEDS_HUMAN",
+               "system_available": True, "eligible_action_ids": allowed,
+               "sources": [{k: s[k] for k in ("source_id", "status")} for s in safe_sources(state["sources"])]}
+    try:
+        result["api_request_sent"] = True
+        response = openai_responses.invoke_structured_response(
+            config, system_prompt="Analyze these sanitized maintenance enums. Choose only an eligible action ID or none. You cannot run commands, change trade permissions or request other actions.",
+            user_payload=payload, schema_name="watchdog_maintenance_decision", schema=schema)
+        parsed = response.parsed
+        if (response.status != "completed" or set(parsed) != {"action_id", "needs_human", "reason_code"} or
+                parsed["action_id"] not in allowed or type(parsed["needs_human"]) is not bool or
+                parsed["reason_code"] not in schema["properties"]["reason_code"]["enum"]):
+            raise ValueError("Invalid model decision")
+        result.update(status="completed", action_id=parsed["action_id"], needs_human=parsed["needs_human"])
     except Exception as exc:
-        raise RuntimeError(f"Failed to import authority publish helpers: {exc}") from exc
-
-    context = authority_repo_publish_context_from_env(env, root=ROOT)
-    publish_tree = Path(str(context["publish_tree"]))
-    ensure_publish_tree_writable(publish_tree)
-    git_user_name, git_user_email = _resolve_authority_git_identity(
-        runtime_root=ROOT,
-        env=env,
-    )
-    return {
-        "publish_tree": str(publish_tree),
-        "git_user_name": git_user_name,
-        "git_user_email": git_user_email,
-    }
-
-
-def compute_publish_tree_state() -> dict[str, Any]:
-    result: dict[str, Any] = {
-        "current": None,
-        "reason": "publish_tree_unchecked",
-        "publish_tree": None,
-        "path_count": 0,
-        "mismatches": [],
-    }
-    try:
-        from scripts.execution.run_pi_authoritative_producer import (
-            authority_repo_publish_context_from_env,
-            resolve_authority_publish_paths,
-        )
-    except Exception as exc:
-        result["reason"] = f"publish_helper_import_failed::{exc}"
-        return result
-
-    try:
-        context = authority_repo_publish_context_from_env(root=ROOT)
-    except Exception as exc:
-        result["reason"] = f"publish_context_failed::{exc}"
-        return result
-
-    publish_tree = Path(str(context["publish_tree"]))
-    result["publish_tree"] = str(publish_tree)
-    if not publish_tree.exists():
-        result["reason"] = "publish_tree_missing"
-        return result
-    if not (publish_tree / ".git").exists():
-        result["reason"] = "publish_tree_not_git_clone"
-        return result
-
-    try:
-        publish_paths = resolve_authority_publish_paths(root=ROOT)
-    except Exception as exc:
-        result["reason"] = f"resolve_publish_paths_failed::{exc}"
-        return result
-
-    result["path_count"] = len(publish_paths)
-    mismatches: list[dict[str, Any]] = []
-    for source_path in publish_paths:
-        relative = source_path.relative_to(ROOT)
-        published_path = publish_tree / relative
-        local_hash = sha256_file(source_path)
-        published_hash = sha256_file(published_path)
-        if local_hash != published_hash:
-            mismatches.append(
-                {
-                    "path": relative.as_posix(),
-                    "local_exists": source_path.exists(),
-                    "published_exists": published_path.exists(),
-                    "local_sha256": local_hash,
-                    "published_sha256": published_hash,
-                }
-            )
-
-    result["mismatches"] = mismatches
-    result["current"] = not mismatches
-    result["reason"] = "publish_tree_matches_local_authority_paths" if not mismatches else "publish_tree_drift_detected"
-    return result
-
-
-def collect_state() -> dict[str, Any]:
-    manifest_path = discover_latest_manifest()
-    manifest_payload = read_json_optional(manifest_path) if manifest_path else {}
-    authority_attempt = read_json_optional(AUTHORITY_ATTEMPT_PATH)
-    authority_success = read_json_optional(AUTHORITY_SUCCESS_PATH)
-    freshness_payload = read_json_optional(FRESHNESS_REPORT_PATH)
-    local_product_snapshot = read_json_optional(APP_PRODUCT_SNAPSHOT_PATH)
-    local_runtime_snapshot = read_json_optional(APP_RUNTIME_SNAPSHOT_PATH)
-    daily_service_state = detect_daily_live_service_state()
-
-    checked_files = [
-        summarize_path(AUTHORITY_ATTEMPT_PATH),
-        summarize_path(AUTHORITY_SUCCESS_PATH),
-        summarize_path(FRESHNESS_REPORT_PATH),
-        summarize_path(APP_EXPORT_MAIN_PAPER_PATH, date_reader=("csv_last", ["date"])),
-        summarize_path(APP_EXPORT_MAIN_METRICS_PATH, date_reader=("csv_first", ["latest_available_date"])),
-        summarize_path(APP_EXPORT_REFERENCE_PAPER_PATH, date_reader=("csv_last", ["date"])),
-        summarize_path(APP_EXPORT_PHASE66G_LIVE_PATH, date_reader=("csv_first", ["latest_available_date"])),
-        summarize_path(BTC_RAW_PATH, date_reader=("csv_last", ["date"])),
-        summarize_path(APP_PRODUCT_SNAPSHOT_PATH),
-        summarize_path(APP_RUNTIME_SNAPSHOT_PATH),
-    ]
-    if manifest_path is not None:
-        checked_files.append(summarize_path(manifest_path))
-
-    observed_dates = {
-        "expected_closed_utc_day": expected_latest_closed_utc_day(),
-        "btc_raw_last_date": iso_date(read_last_csv_date(BTC_RAW_PATH, ["date"])),
-        "app_export_main_paper_last_date": iso_date(read_last_csv_date(APP_EXPORT_MAIN_PAPER_PATH, ["date"])),
-        "app_export_main_metrics_latest_available_date": iso_date(
-            read_first_csv_date(APP_EXPORT_MAIN_METRICS_PATH, ["latest_available_date"])
-        ),
-        "app_export_reference_paper_last_date": iso_date(
-            read_last_csv_date(APP_EXPORT_REFERENCE_PAPER_PATH, ["date"])
-        ),
-        "app_export_phase66g_live_latest_available_date": iso_date(
-            read_first_csv_date(APP_EXPORT_PHASE66G_LIVE_PATH, ["latest_available_date"])
-        ),
-        "freshness_report_latest_closed_utc_date": str(freshness_payload.get("latest_closed_utc_date") or "").strip() or None,
-        "local_app_product_strategy_last_closed_day": str(
-            local_product_snapshot.get("strategy_last_closed_day") or ""
-        ).strip()
-        or None,
-        "local_app_runtime_latest_strategy_artifact_date": str(
-            local_runtime_snapshot.get("latest_strategy_artifact_date") or ""
-        ).strip()
-        or None,
-        "local_app_runtime_latest_available_closed_utc_date": str(
-            local_runtime_snapshot.get("latest_available_closed_utc_date") or ""
-        ).strip()
-        or None,
-        "authority_attempt_target_closed_day_utc": str(
-            authority_attempt.get("target_closed_day_utc") or ""
-        ).strip()
-        or None,
-        "authority_attempt_latest_available_closed_utc_day": str(
-            authority_attempt.get("latest_available_closed_utc_day") or ""
-        ).strip()
-        or None,
-        "authority_attempt_strategy_artifact_closed_day_utc": str(
-            authority_attempt.get("strategy_artifact_closed_day_utc") or ""
-        ).strip()
-        or None,
-        "authority_success_target_closed_day_utc": str(
-            authority_success.get("target_closed_day_utc") or ""
-        ).strip()
-        or None,
-        "authority_success_strategy_artifact_closed_day_utc": str(
-            authority_success.get("strategy_artifact_closed_day_utc") or ""
-        ).strip()
-        or None,
-        "authority_success_app_product_strategy_last_closed_day": str(
-            (authority_success.get("app_product_snapshot") or {}).get("strategy_last_closed_day") or ""
-        ).strip()
-        or None,
-        "authority_success_app_runtime_latest_strategy_artifact_date": str(
-            (authority_success.get("app_runtime_snapshot") or {}).get("latest_strategy_artifact_date") or ""
-        ).strip()
-        or None,
-        "latest_manifest_target_closed_day_utc": str(
-            ((manifest_payload.get("raw_skip_preflight") or {}).get("target_last_closed_date")) or ""
-        ).strip()
-        or None,
-    }
-
-    export_dates = [
-        parse_iso_date(observed_dates["app_export_main_paper_last_date"]),
-        parse_iso_date(observed_dates["app_export_main_metrics_latest_available_date"]),
-        parse_iso_date(observed_dates["app_export_reference_paper_last_date"]),
-        parse_iso_date(observed_dates["app_export_phase66g_live_latest_available_date"]),
-    ]
-    available_export_dates = [value for value in export_dates if value is not None]
-    latest_strategy_artifact_date = min(available_export_dates).isoformat() if available_export_dates else None
-
-    latest_available_candidates = [
-        parse_iso_date(observed_dates["btc_raw_last_date"]),
-        parse_iso_date(observed_dates["authority_attempt_latest_available_closed_utc_day"]),
-        parse_iso_date(observed_dates["local_app_runtime_latest_available_closed_utc_date"]),
-        parse_iso_date(observed_dates["freshness_report_latest_closed_utc_date"]),
-    ]
-    available_candidates = [value for value in latest_available_candidates if value is not None]
-    latest_available_closed_utc_day = max(available_candidates).isoformat() if available_candidates else None
-    comparison_target = min(
-        parse_iso_date(observed_dates["expected_closed_utc_day"]) or date.min,
-        parse_iso_date(latest_available_closed_utc_day) or date.min,
-    ).isoformat() if available_candidates else None
-
-    publish_tree_state = compute_publish_tree_state()
-
-    return {
-        "generated_at_utc": utc_now_iso(),
-        "checked_files": checked_files,
-        "observed_dates": observed_dates,
-        "authority_attempt": authority_attempt,
-        "authority_success": authority_success,
-        "freshness_payload": freshness_payload,
-        "local_product_snapshot": local_product_snapshot,
-        "local_runtime_snapshot": local_runtime_snapshot,
-        "latest_manifest_path": relative_path(manifest_path) if manifest_path else None,
-        "latest_manifest_payload": manifest_payload,
-        "expected_closed_utc_day": observed_dates["expected_closed_utc_day"],
-        "latest_available_closed_utc_day": latest_available_closed_utc_day,
-        "latest_strategy_artifact_date": latest_strategy_artifact_date,
-        "comparison_target_closed_utc_day": comparison_target,
-        "last_successful_run_id": str(authority_success.get("run_id") or manifest_payload.get("run_id") or "").strip() or None,
-        "last_attempt_run_id": str(authority_attempt.get("run_id") or manifest_payload.get("run_id") or "").strip() or None,
-        "latest_authoritative_attempt_status": str(
-            authority_attempt.get("latest_authoritative_attempt_status") or ""
-        ).strip()
-        or None,
-        "github_published_local_files_current": publish_tree_state,
-        "daily_service_state": daily_service_state,
-    }
-
-
-def state_truths(state: dict[str, Any]) -> dict[str, Any]:
-    expected_day = parse_iso_date(state["expected_closed_utc_day"])
-    latest_available_day = parse_iso_date(state["latest_available_closed_utc_day"])
-    comparison_target = parse_iso_date(state["comparison_target_closed_utc_day"])
-    observed = state["observed_dates"]
-    manifest_payload = state["latest_manifest_payload"]
-    authority_attempt = state["authority_attempt"]
-    authority_success = state["authority_success"]
-    freshness_payload = state["freshness_payload"]
-    local_product_snapshot = state["local_product_snapshot"]
-    local_runtime_snapshot = state["local_runtime_snapshot"]
-
-    export_date_values = {
-        "main_paper": parse_iso_date(observed["app_export_main_paper_last_date"]),
-        "main_metrics": parse_iso_date(observed["app_export_main_metrics_latest_available_date"]),
-        "reference_paper": parse_iso_date(observed["app_export_reference_paper_last_date"]),
-        "phase66g_live": parse_iso_date(observed["app_export_phase66g_live_latest_available_date"]),
-    }
-    mismatched_support_files = support_file_mismatches(observed, state["expected_closed_utc_day"])
-    support_files_current = not mismatched_support_files
-
-    app_exports_current = bool(comparison_target) and all(
-        value == comparison_target for value in export_date_values.values() if value is not None
-    )
-    app_snapshots_current = bool(comparison_target) and (
-        parse_iso_date(observed["local_app_product_strategy_last_closed_day"]) == comparison_target
-        and parse_iso_date(observed["local_app_runtime_latest_strategy_artifact_date"]) == comparison_target
-        and parse_iso_date(observed["freshness_report_latest_closed_utc_date"]) == comparison_target
-    )
-    authority_current = bool(expected_day) and (
-        str(authority_attempt.get("latest_authoritative_attempt_status") or "").strip().lower() == "success"
-        and parse_iso_date(observed["authority_attempt_target_closed_day_utc"]) == expected_day
-        and parse_iso_date(observed["authority_attempt_strategy_artifact_closed_day_utc"]) == expected_day
-        and parse_iso_date(observed["authority_success_target_closed_day_utc"]) == expected_day
-        and parse_iso_date(observed["authority_success_strategy_artifact_closed_day_utc"]) == expected_day
-        and parse_iso_date(observed["authority_success_app_product_strategy_last_closed_day"]) == expected_day
-        and parse_iso_date(observed["authority_success_app_runtime_latest_strategy_artifact_date"]) == expected_day
-    )
-
-    manifest_status = str(
-        manifest_payload.get("main_refresh_chain_status")
-        or manifest_payload.get("refresh_source_status")
-        or manifest_payload.get("status")
-        or ""
-    ).strip().upper()
-    manifest_success = manifest_status in SUCCESS_STATUSES
-    manifest_target = parse_iso_date(observed["latest_manifest_target_closed_day_utc"])
-    scheduler_has_target_day_run = bool(expected_day and manifest_target == expected_day)
-    scheduler_has_current_run = bool(expected_day and manifest_target == expected_day and manifest_success)
-
-    authority_attempt_status = str(authority_attempt.get("latest_authoritative_attempt_status") or "").strip().lower()
-    authority_attempt_failed = authority_attempt_status == "failed"
-    authority_attempt_success = authority_attempt_status == "success"
-
-    freshness_status_ok = str(freshness_payload.get("status") or "").strip().lower() == "ok"
-    raw_btc_last_date = parse_iso_date(observed["btc_raw_last_date"])
-    raw_data_current = bool(comparison_target and raw_btc_last_date == comparison_target)
-    raw_data_stale = bool(expected_day and raw_btc_last_date and raw_btc_last_date < expected_day)
-
-    not_time_yet = bool(
-        expected_day
-        and latest_available_day
-        and latest_available_day < expected_day
-        and utc_now() < utc_day_start() + timedelta(hours=NOT_TIME_YET_GRACE_HOURS)
-        and app_exports_current
-        and authority_current
-    )
-
-    local_backend_current = (
-        authority_current
-        and support_files_current
-        and app_exports_current
-        and app_snapshots_current
-        and freshness_status_ok
-        and raw_data_current
-    )
-
-    publish_state = state["github_published_local_files_current"]
-    publish_current = publish_state.get("current")
-    publish_known_stale = publish_current is False
-    publish_current_verified = publish_current is not None
-    daily_service_state = state["daily_service_state"]
-    daily_service_status_checked = bool(daily_service_state.get("daily_service_status_checked"))
-    daily_service_failed = bool(daily_service_state.get("daily_service_failed"))
-
-    upstream_date_values = {
-        "phase68g_source_paper": read_last_csv_date(UPSTREAM_PHASE68G_SOURCE_PAPER_PATH, ["date"]),
-        "phase68g_source_metrics": read_first_csv_date(UPSTREAM_PHASE68G_SOURCE_METRICS_PATH, ["latest_available_date"]),
-        "phase67j_source_paper": read_last_csv_date(UPSTREAM_PHASE67J_SOURCE_PAPER_PATH, ["date"]),
-        "phase66g_source_live": read_first_csv_date(UPSTREAM_PHASE66G_SOURCE_LIVE_PATH, ["latest_available_date"]),
-    }
-    upstream_phase_outputs_current = bool(comparison_target) and all(
-        value == comparison_target for value in upstream_date_values.values() if value is not None
-    )
-
-    authority_snapshot_present = bool(authority_success)
-    authority_snapshot_stale = authority_attempt_success and not authority_current
-
-    return {
-        "comparison_target": iso_date(comparison_target),
-        "export_date_values": {key: iso_date(value) for key, value in export_date_values.items()},
-        "upstream_date_values": {key: iso_date(value) for key, value in upstream_date_values.items()},
-        "app_exports_current": app_exports_current,
-        "app_snapshots_current": app_snapshots_current,
-        "authority_current": authority_current,
-        "support_files_current": support_files_current,
-        "mismatched_support_files": mismatched_support_files,
-        "authority_attempt_failed": authority_attempt_failed,
-        "authority_attempt_success": authority_attempt_success,
-        "authority_snapshot_present": authority_snapshot_present,
-        "authority_snapshot_stale": authority_snapshot_stale,
-        "manifest_success": manifest_success,
-        "manifest_status": manifest_status or None,
-        "manifest_target": iso_date(manifest_target),
-        "scheduler_has_target_day_run": scheduler_has_target_day_run,
-        "scheduler_has_current_run": scheduler_has_current_run,
-        "freshness_status_ok": freshness_status_ok,
-        "raw_data_current": raw_data_current,
-        "raw_data_stale": raw_data_stale,
-        "not_time_yet": not_time_yet,
-        "local_backend_current": local_backend_current,
-        "publish_current": publish_current,
-        "publish_known_stale": publish_known_stale,
-        "publish_current_verified": publish_current_verified,
-        "daily_service_status_checked": daily_service_status_checked,
-        "daily_service_failed": daily_service_failed,
-        "upstream_phase_outputs_current": upstream_phase_outputs_current,
-    }
-
-
-def classify_incident(state: dict[str, Any], truths: dict[str, Any]) -> tuple[str, str, str, str | None]:
-    comparison_target = truths["comparison_target"]
-    expected_day = state["expected_closed_utc_day"]
-
-    if truths["not_time_yet"]:
-        return (
-            "waiting",
-            "NOT_TIME_YET",
-            (
-                "Latest closed-day raw data has not fully arrived within the configured UTC grace window; "
-                f"backend artifacts remain aligned to {comparison_target}."
-            ),
-            None,
-        )
-
-    if truths["authority_attempt_failed"]:
-        return (
-            "needs_attention",
-            "AUTHORITY_ATTEMPT_FAILED",
-            "The latest authority attempt ended in failed state, so the backend cannot trust the most recent refresh output.",
-            "Inspect outputs/execution/authority/latest_attempt_status.json and the upstream authoritative run logs.",
-        )
-
-    if not truths["authority_current"] and not truths["scheduler_has_target_day_run"]:
-        return (
-            "needs_attention",
-            "SCHEDULER_NOT_RUN",
-            (
-                "The local app refresh pipeline has not produced a run for the latest required closed day, "
-                "so the local support/app-facing layer is missing a current rebuild."
-            ),
-            f"Rerun {relative_path(DAILY_REFRESH_SCRIPT)} to rebuild the local app-facing layer for {expected_day}.",
-        )
-
-    if (
-        not truths["authority_current"]
-        and state["latest_manifest_path"]
-        and truths["manifest_target"] == expected_day
-        and not truths["manifest_success"]
-    ):
-        return (
-            "needs_attention",
-            "PIPELINE_FAILED",
-            "The latest local app refresh manifest targeted the expected day but did not finish successfully.",
-            "Inspect the latest app refresh pipeline logs and rerun the refresh pipeline after fixing the failing step.",
-        )
-
-    if truths["authority_snapshot_stale"] or not truths["authority_snapshot_present"]:
-        return (
-            "needs_attention",
-            "AUTHORITY_SNAPSHOT_STALE",
-            "Authority attempt metadata exists, but the latest successful authority snapshot is missing or not aligned with the expected closed day.",
-            "Repair the authority publish step on the authoritative producer and republish the snapshot.",
-        )
-
-    if truths["authority_current"] and not truths["support_files_current"]:
-        return (
-            "needs_attention",
-            "AUTHORITY_SUPPORT_FILES_MISMATCH",
-            "Authority is current, but one or more local support/app-facing files are stale or mixed.",
-            "Run the Pi authoritative producer or restore/publish the missing support files; do not change strategy truth.",
-        )
-
-    if truths["raw_data_stale"]:
-        return (
-            "needs_attention",
-            "RAW_DATA_STALE",
-            f"BTC raw daily data is still behind the expected latest closed UTC day {expected_day}.",
-            "Refresh the raw OHLCV source before attempting further app-facing rebuilds.",
-        )
-
-    if not truths["app_exports_current"] and truths["upstream_phase_outputs_current"]:
-        return (
-            "needs_attention",
-            "APP_EXPORT_STALE",
-            "Canonical app export files are stale relative to current upstream phase outputs.",
-            f"Rerun {relative_path(MATERIALIZE_SCRIPT)} to rematerialize canonical app exports.",
-        )
-
-    if (
-        truths["authority_current"]
-        and truths["support_files_current"]
-        and truths["app_exports_current"]
-        and truths["app_snapshots_current"]
-        and truths["daily_service_failed"]
-        and truths["publish_current"] is not True
-    ):
-        return (
-            "needs_attention",
-            "DAILY_SERVICE_FAILED_BUT_AUTHORITY_CURRENT",
-            (
-                "Local authority artifacts are current for the expected closed day, but the latest "
-                f"{DAILY_LIVE_SERVICE_NAME} execution ended in failed state and the publish tree could not prove current."
-            ),
-            "Run publish-only remediation and inspect the daily live service failure that blocked the original publish.",
-        )
-
-    if (
-        truths["authority_current"]
-        and truths["support_files_current"]
-        and truths["app_exports_current"]
-        and truths["app_snapshots_current"]
-        and truths["publish_known_stale"]
-    ):
-        return (
-            "needs_attention",
-            "AUTHORITY_PUBLISH_STALE",
-            "Authority artifacts are current locally, but the authority publish tree is stale or mixed.",
-            "Republish authority artifacts only; do not change strategy truth or live-order state.",
-        )
-
-    if truths["local_backend_current"] and truths["publish_current"] is not False:
-        return (
-            "ok",
-            "OK_CURRENT",
-            f"Local backend artifacts and authority artifacts are aligned with {comparison_target or expected_day}.",
-            None,
-        )
-
-    return (
-        "needs_attention",
-        "UNKNOWN_NEEDS_HUMAN",
-        "The watchdog found stale or divergent backend state, but it did not match a safe deterministic remediation pattern.",
-        "Review the checked files, authority state, and latest manifest manually.",
-    )
-
-
-def choose_safe_action(incident_class: str, truths: dict[str, Any]) -> dict[str, Any]:
-    if incident_class == "SCHEDULER_NOT_RUN":
-        return {
-            "eligible": True,
-            "action": "run_pi_fast_daily_authority_refresh",
-            "kind": "subprocess",
-            "command": [sys.executable, str(PI_FAST_DAILY_AUTHORITY_REFRESH_SCRIPT)],
-            "reason": "Scheduler has not produced the required current-day authority run; fast dependencies must refresh before publish-existing.",
-        }
-    if incident_class == "APP_EXPORT_STALE" and truths["upstream_phase_outputs_current"]:
-        return {
-            "eligible": True,
-            "action": "materialize_execution_app_exports",
-            "kind": "subprocess",
-            "command": [sys.executable, str(MATERIALIZE_SCRIPT)],
-            "reason": "Canonical app exports are stale while upstream phase outputs are already current.",
-        }
-    if incident_class == "AUTHORITY_SUPPORT_FILES_MISMATCH" and truths["authority_current"]:
-        return {
-            "eligible": True,
-            "action": "run_pi_fast_daily_authority_refresh",
-            "kind": "subprocess",
-            "command": [sys.executable, str(PI_FAST_DAILY_AUTHORITY_REFRESH_SCRIPT)],
-            "reason": "Authority is current, but support files are stale or mixed and should be rebuilt through the fast daily wrapper.",
-        }
-    if incident_class == "AUTHORITY_PUBLISH_STALE":
-        return {
-            "eligible": True,
-            "action": "publish_authority_artifacts_to_repo",
-            "kind": "callable",
-            "command": None,
-            "reason": "Local authority artifacts are current and only the authority publish tree needs refresh.",
-        }
-    if incident_class == "DAILY_SERVICE_FAILED_BUT_AUTHORITY_CURRENT":
-        return {
-            "eligible": True,
-            "action": "publish_authority_artifacts_to_repo",
-            "kind": "callable",
-            "command": None,
-            "reason": "Local authority artifacts are current, but the failed daily service likely prevented publish-only completion.",
-        }
-    return {
-        "eligible": False,
-        "action": None,
-        "kind": None,
-        "command": None,
-        "reason": "No safe remediation action is allowed for this incident class.",
-    }
-
-
-def build_skipped_action_result(action: dict[str, Any], *, reason: str) -> dict[str, Any]:
-    return {
-        "status": "skipped",
-        "action": action.get("action"),
-        "reason": reason,
-        "exit_code": None,
-        "command": action.get("command"),
-        "stdout_log": None,
-        "stderr_log": None,
-        "started_at_utc": None,
-        "finished_at_utc": None,
-        "error": None,
-    }
-
-
-def run_subprocess_action(action: dict[str, Any]) -> dict[str, Any]:
-    started_at_utc = utc_now_iso()
-    stdout_log_path, stderr_log_path = build_log_paths(action["action"], started_at_utc)
-    completed = subprocess.run(
-        action["command"],
-        cwd=str(ROOT),
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-    finished_at_utc = utc_now_iso()
-    return {
-        "status": "completed" if completed.returncode == 0 else "failed",
-        "action": action["action"],
-        "reason": action["reason"],
-        "exit_code": completed.returncode,
-        "command": action["command"],
-        "stdout_log": write_log_file(stdout_log_path, completed.stdout),
-        "stderr_log": write_log_file(stderr_log_path, completed.stderr),
-        "started_at_utc": started_at_utc,
-        "finished_at_utc": finished_at_utc,
-        "error": None if completed.returncode == 0 else (completed.stderr or completed.stdout or "").strip() or None,
-    }
-
-
-def run_publish_authority_action(action: dict[str, Any]) -> dict[str, Any]:
-    started_at_utc = utc_now_iso()
-    stdout_log_path, stderr_log_path = build_log_paths(action["action"], started_at_utc)
-    stdout_buffer = io.StringIO()
-    stderr_buffer = io.StringIO()
-    exit_code = 0
-    status = "completed"
-    error: str | None = None
-    try:
-        from scripts.execution.run_pi_authoritative_producer import (
-            build_pi_authoritative_env,
-            publish_authority_artifacts_to_repo,
-        )
-
-        publish_env = build_pi_authoritative_env()
-        preflight = validate_publish_remediation_env(publish_env)
-        with contextlib.redirect_stdout(stdout_buffer), contextlib.redirect_stderr(stderr_buffer):
-            result = publish_authority_artifacts_to_repo(
-                root=ROOT,
-                env=publish_env,
-            )
-        stdout_buffer.write(
-            json.dumps(
-                {
-                    "preflight": preflight,
-                    "publish_result": result,
-                },
-                indent=2,
-                ensure_ascii=False,
-            )
-        )
-        stdout_buffer.write("\n")
-    except Exception as exc:
-        exit_code = 1
-        status = "failed"
-        error = str(exc)
-        stderr_buffer.write(traceback.format_exc())
-    finished_at_utc = utc_now_iso()
-    return {
-        "status": status,
-        "action": action["action"],
-        "reason": action["reason"],
-        "exit_code": exit_code,
-        "command": None,
-        "stdout_log": write_log_file(stdout_log_path, stdout_buffer.getvalue()),
-        "stderr_log": write_log_file(stderr_log_path, stderr_buffer.getvalue()),
-        "started_at_utc": started_at_utc,
-        "finished_at_utc": finished_at_utc,
-        "error": error,
-    }
-
-
-def run_safe_action(action: dict[str, Any]) -> dict[str, Any]:
-    if not action.get("eligible"):
-        return build_skipped_action_result(action, reason=action.get("reason") or "not_eligible")
-    if action.get("kind") == "subprocess":
-        return run_subprocess_action(action)
-    if action.get("kind") == "callable" and action.get("action") == "publish_authority_artifacts_to_repo":
-        return run_publish_authority_action(action)
-    return build_skipped_action_result(action, reason="unsupported_safe_action")
-
-
-def build_summary(report: dict[str, Any]) -> str:
-    lines = [
-        f"status: {report['status']}",
-        f"incident_class: {report['incident_class']}",
-        f"root_cause: {report['root_cause']}",
-        f"expected_closed_utc_day: {report['expected_closed_utc_day']}",
-        f"latest_available_closed_utc_day: {report['latest_available_closed_utc_day']}",
-        f"latest_strategy_artifact_date: {report['latest_strategy_artifact_date']}",
-        f"latest_authoritative_attempt_status: {report['latest_authoritative_attempt_status']}",
-        f"currentness_status: {report['currentness_status']}",
-        f"authority_current: {report['authority_current']}",
-        f"support_files_current: {report['support_files_current']}",
-        f"daily_service_status_checked: {report['daily_service_status_checked']}",
-        f"daily_service_result: {report['daily_service_result']}",
-        f"daily_service_exec_status: {report['daily_service_exec_status']}",
-        f"daily_service_failed: {report['daily_service_failed']}",
-        f"last_successful_run_id: {report['last_successful_run_id']}",
-        f"last_attempt_run_id: {report['last_attempt_run_id']}",
-        (
-            "github_published_local_files_current: "
-            + json.dumps(report["github_published_local_files_current"]["current"])
-        ),
-        f"publish_current_verified: {report['publish_current_verified']}",
-        f"remediation_allowed: {report['remediation_allowed']}",
-        f"remediation_action: {report['remediation_action']}",
-        f"remediation_status: {report['action_result'].get('status')}",
-        f"publish_remediation_attempted: {report['publish_remediation_attempted']}",
-        f"publish_remediation_result: {report['publish_remediation_result']}",
-        f"post_remediation_status: {report['post_remediation_status']}",
-        f"post_remediation_incident_class: {report['post_remediation_incident_class']}",
-    ]
-    if report.get("manual_next_step"):
-        lines.append(f"manual_next_step: {report['manual_next_step']}")
-    return "\n".join(lines) + "\n"
-
-
-def currentness_status_from_incident(incident_class: str) -> str:
-    if incident_class == "OK_CURRENT":
-        return "current"
-    if incident_class == "NOT_TIME_YET":
-        return "not_time_yet"
-    return "stale"
-
-
-def build_report(*, remediation_enabled: bool) -> tuple[dict[str, Any], dict[str, Any]]:
-    state = collect_state()
-    truths = state_truths(state)
-    status, incident_class, root_cause, manual_next_step = classify_incident(state, truths)
-    if incident_class not in INCIDENT_CLASSES:
-        raise RuntimeError(f"Unexpected incident class: {incident_class}")
-
-    safe_action = choose_safe_action(incident_class, truths)
-    action_result: dict[str, Any]
-    final_state = state
-    final_truths = truths
-    final_status = status
-    final_incident_class = incident_class
-    final_root_cause = root_cause
-    final_manual_next_step = manual_next_step
-    post_remediation_status: str | None = None
-    post_remediation_incident_class: str | None = None
-
-    if remediation_enabled and safe_action.get("eligible"):
-        action_result = run_safe_action(safe_action)
-        try:
-            final_state = collect_state()
-            final_truths = state_truths(final_state)
-            (
-                post_remediation_status,
-                post_remediation_incident_class,
-                final_root_cause,
-                final_manual_next_step,
-            ) = classify_incident(final_state, final_truths)
-            final_incident_class = post_remediation_incident_class
-        except Exception as exc:
-            post_remediation_status = "unknown"
-            post_remediation_incident_class = "UNKNOWN_NEEDS_HUMAN"
-            final_status = "remediation_failed"
-            final_incident_class = "UNKNOWN_NEEDS_HUMAN"
-            final_root_cause = f"Safe remediation post-check failed: {exc}"
-            final_manual_next_step = "Inspect watchdog remediation logs and rerun the watchdog after resolving the post-check failure."
+        code = getattr(exc, "code", "invalid_ai_decision")
+        if code in {"api_failure", "timeout", "missing_api_key", "bootstrap_config_error"}:
+            result.update(status="deterministic_fallback", warning="ai_api_unavailable")
         else:
-            if action_result.get("status") == "completed":
-                final_status = post_remediation_status
-            elif action_result.get("status") == "failed":
-                if safe_action.get("action") == "publish_authority_artifacts_to_repo":
-                    final_status = post_remediation_status or status
-                    final_root_cause = (
-                        f"{final_root_cause} Publish remediation failed: {action_result.get('error') or 'unknown error'}."
-                    )
-                    final_manual_next_step = (
-                        "Inspect watchdog publish remediation logs, fix publish auth/tree issues, "
-                        "and rerun the watchdog."
-                    )
-                else:
-                    final_status = "remediation_failed"
-            else:
-                final_status = status
-    else:
-        action_result = build_skipped_action_result(
-            safe_action,
-            reason="check_only_mode" if not remediation_enabled else (safe_action.get("reason") or "not_eligible"),
-        )
-
-    report = {
-        "generated_at_utc": utc_now_iso(),
-        "mode": "remediate_safe" if remediation_enabled else "check_only",
-        "status": final_status,
-        "incident_class": final_incident_class,
-        "root_cause": final_root_cause,
-        "expected_closed_utc_day": final_state["expected_closed_utc_day"],
-        "latest_available_closed_utc_day": final_state["latest_available_closed_utc_day"],
-        "latest_strategy_artifact_date": final_state["latest_strategy_artifact_date"],
-        "latest_authoritative_attempt_status": final_state["latest_authoritative_attempt_status"],
-        "currentness_status": currentness_status_from_incident(final_incident_class),
-        "authority_current": final_truths["authority_current"],
-        "support_files_current": final_truths["support_files_current"],
-        "daily_service_status_checked": final_state["daily_service_state"]["daily_service_status_checked"],
-        "daily_service_result": final_state["daily_service_state"]["daily_service_result"],
-        "daily_service_exec_status": final_state["daily_service_state"]["daily_service_exec_status"],
-        "daily_service_active_state": final_state["daily_service_state"]["daily_service_active_state"],
-        "daily_service_sub_state": final_state["daily_service_state"]["daily_service_sub_state"],
-        "daily_service_invocation": final_state["daily_service_state"]["daily_service_invocation"],
-        "daily_service_failed": final_truths["daily_service_failed"],
-        "mismatched_support_files": final_truths["mismatched_support_files"],
-        "last_successful_run_id": final_state["last_successful_run_id"],
-        "last_attempt_run_id": final_state["last_attempt_run_id"],
-        "github_published_local_files_current": final_state["github_published_local_files_current"],
-        "publish_current_verified": final_truths["publish_current_verified"],
-        "observed_dates": final_state["observed_dates"],
-        "checked_files": final_state["checked_files"],
-        "latest_manifest_path": final_state["latest_manifest_path"],
-        "latest_manifest_status": final_truths["manifest_status"],
-        "latest_manifest_target_closed_day_utc": final_truths["manifest_target"],
-        "comparison_target_closed_utc_day": final_truths["comparison_target"],
-        "diagnostic_flags": {
-            "app_exports_current": final_truths["app_exports_current"],
-            "app_snapshots_current": final_truths["app_snapshots_current"],
-            "authority_current": final_truths["authority_current"],
-            "support_files_current": final_truths["support_files_current"],
-            "raw_data_current": final_truths["raw_data_current"],
-            "raw_data_stale": final_truths["raw_data_stale"],
-            "scheduler_has_target_day_run": final_truths["scheduler_has_target_day_run"],
-            "scheduler_has_current_run": final_truths["scheduler_has_current_run"],
-            "upstream_phase_outputs_current": final_truths["upstream_phase_outputs_current"],
-            "not_time_yet": final_truths["not_time_yet"],
-            "daily_service_status_checked": final_truths["daily_service_status_checked"],
-            "daily_service_failed": final_truths["daily_service_failed"],
-            "publish_current_verified": final_truths["publish_current_verified"],
-        },
-        "date_breakdown": {
-            "app_exports": final_truths["export_date_values"],
-            "upstream_phase_outputs": final_truths["upstream_date_values"],
-        },
-        "remediation_allowed": bool(safe_action.get("eligible")),
-        "remediation_action": safe_action.get("action"),
-        "remediation_started_at_utc": action_result.get("started_at_utc"),
-        "remediation_finished_at_utc": action_result.get("finished_at_utc"),
-        "remediation_exit_code": action_result.get("exit_code"),
-        "remediation_stdout_log": action_result.get("stdout_log"),
-        "remediation_stderr_log": action_result.get("stderr_log"),
-        "post_remediation_status": post_remediation_status,
-        "post_remediation_incident_class": post_remediation_incident_class,
-        "publish_remediation_attempted": bool(
-            remediation_enabled and safe_action.get("action") == "publish_authority_artifacts_to_repo"
-        ),
-        "publish_remediation_result": (
-            action_result.get("status")
-            if remediation_enabled and safe_action.get("action") == "publish_authority_artifacts_to_repo"
-            else None
-        ),
-        "action_taken": safe_action["action"] if remediation_enabled and safe_action.get("eligible") else "none",
-        "action_result": action_result,
-        "manual_next_step": final_manual_next_step,
-    }
-    actions_payload = {
-        "generated_at_utc": report["generated_at_utc"],
-        "mode": report["mode"],
-        "incident_class": report["incident_class"],
-        "selected_action": safe_action,
-        "action_result": action_result,
-    }
-    return report, actions_payload
+            result.update(status="rejected", action_id="none", needs_human=True, warning="invalid_ai_decision")
+    return result
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Deterministic MRV1 backend self-healing watchdog")
-    parser.add_argument("--check-only", action="store_true", help="Run diagnostics only (default).")
-    parser.add_argument("--remediate-safe", action="store_true", help="Allow only safe remediation actions.")
-    parser.add_argument("--json", action="store_true", help="Print the final report JSON to stdout.")
-    return parser.parse_args()
+def run_safe_action(action, state):
+    current = collect_state()
+    expected = choose_safe_action(current["incident_class"], current)
+    if (not action.get("eligible") or action.get("action") not in ACTION_ALLOWLIST or
+            action["action"] != expected["action"] or not expected["eligible"]):
+        return {"status": "skipped", "action": "none", "reason": "eligibility_changed"}
+    atomic_json(CACHE_DIR / "dependency_health_cache.json", {
+        "schema_version": 2, "generated_at_utc": utc_now().isoformat(),
+        "source_sha256": signature(current["sources"]), "sources": current["sources"],
+        "system_available": True})
+    return {"status": "completed", "action": ACTION_ID, "reason": "diagnostic_cache_refreshed"}
 
 
-def main() -> None:
-    args = parse_args()
-    remediation_enabled = bool(args.remediate_safe)
-    with acquire_watchdog_lock(remediation_enabled=remediation_enabled):
-        report, actions_payload = build_report(remediation_enabled=remediation_enabled)
+def build_report(*, remediation_enabled, ai_enabled=False):
+    state = collect_state()
+    initial_incident = state["incident_class"]
+    action = choose_safe_action(initial_incident, state)
+    ai = ai_diagnose(state, action, enabled=ai_enabled and remediation_enabled)
+    selected = dict(action)
+    if ai["action_id"] != action["action"] or ai["needs_human"]:
+        selected.update(eligible=False, action="none")
+    result = {"status": "skipped", "action": "none", "reason": "check_only" if not remediation_enabled else "not_eligible"}
+    if remediation_enabled and selected["eligible"]:
+        try:
+            result = run_safe_action(selected, state)
+            state = collect_state()
+        except Exception:
+            result = {"status": "failed", "action": selected["action"], "reason": "repair_failed"}
+    impacts = [health.dependency_impact(s) for s in state["sources"]]
+    affected = sorted({x for i in impacts for x in i["affected_capability_ids"]})
+    blocked = sorted({x for i in impacts for x in i["blocked_action_ids"]})
+    unknown = state["incident_class"] not in INCIDENTS or state["incident_class"] == "UNKNOWN_NEEDS_HUMAN"
+    if unknown and "maintenance_diagnostics" not in affected:
+        affected.append("maintenance_diagnostics")
+    report = {"schema_version": 2, "generated_at_utc": utc_now().isoformat(),
+              "mode": "remediate_safe" if remediation_enabled else "check_only",
+              "incident_class": state["incident_class"] if not unknown else "UNKNOWN_NEEDS_HUMAN",
+              "initial_incident_class": initial_incident, "system_available": True,
+              "incident_level": "action_blocked" if "new_trade_transition" in blocked else ("degraded" if blocked else ("warning" if affected or unknown else "none")),
+              "affected_capability_ids": affected, "blocked_action_ids": blocked,
+              "block_app": False, "block_execution": "new_trade_transition" in blocked,
+              "sources": state["sources"], "production": state["production"],
+              "expected_closed_utc_day": state["expected_closed_utc_day"],
+              "needs_human": unknown or ai["needs_human"] or bool(blocked) or result["status"] == "failed",
+              "ai": ai, "warnings": ([ai["warning"]] if ai["warning"] else []) + state["errors"] + (["repair_failed"] if result["status"] == "failed" else []),
+              "remediation_allowed": action["eligible"], "action_taken": result["action"],
+              "action_result": result, "orders_sent": False, "live_order_chain": "NOT_INVOKED",
+              "production_writes": False, "strategy_changed": False}
+    return report, {"selected_action": selected, "action_result": result, "ai": ai}
 
-        ensure_output_dirs()
-        REPORT_PATH.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-        SUMMARY_PATH.write_text(build_summary(report), encoding="utf-8")
-        ACTIONS_PATH.write_text(json.dumps(actions_payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    if args.json:
-        print(json.dumps(report, indent=2, ensure_ascii=False))
-    else:
-        print(build_summary(report), end="")
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--check-only", action="store_true")
+    modes.add_argument("--remediate-safe", action="store_true")
+    parser.add_argument("--ai-diagnose", action="store_true")
+    parser.add_argument("--json", action="store_true")
+    args = parser.parse_args()
+    with acquire_watchdog_lock(remediation_enabled=args.remediate_safe):
+        report, actions = build_report(remediation_enabled=args.remediate_safe, ai_enabled=args.ai_diagnose)
+        atomic_json(REPORT_PATH, report); atomic_json(ACTIONS_PATH, actions)
+        atomic_json(SUMMARY_PATH, {k: report[k] for k in ("incident_class", "system_available", "action_taken", "warnings", "orders_sent")})
+    print(json.dumps(report, indent=2) if args.json else report["incident_class"])
 
 
 if __name__ == "__main__":

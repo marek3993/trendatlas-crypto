@@ -72,8 +72,8 @@
 - Current real state is `warning`, while production remains allowed.
 - Current status split: `app_status=ok`, `execution_status=ok`, `research_status=warning`.
 - Current block flags: `block_app=false`, `block_execution=false`.
-- Production-critical failures block app and execution fail-closed.
-- App-critical failures block app fail-closed.
+- Production/execution dependency failures block only new_trade_transition; block_app remains false and system_available true.
+- App-critical failures degrade only the dependent display capability.
 - Execution-critical failures block execution fail-closed.
 - Research-only failures do not block production, but block the relevant research probe.
 - Missing optional env/API keys are surfaced as `unavailable` / `warn_only`.

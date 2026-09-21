@@ -1,0 +1,12 @@
+{
+  "enabled": true,
+  "model": "gpt-5.4",
+  "reasoning_effort": "low",
+  "fail_closed": false,
+  "api_key_env": "OPENAI_API_KEY",
+  "responses_api": "https://api.openai.com/v1/responses",
+  "prompt_template": "watchdog_sanitized_eligible_actions_v1",
+  "strict_schema_validation": true,
+  "timeout_seconds": 30,
+  "max_output_tokens": 1024
+}

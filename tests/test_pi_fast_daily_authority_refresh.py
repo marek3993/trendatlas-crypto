@@ -400,15 +400,10 @@ class TestPiFastDailyAuthorityRefresh(unittest.TestCase):
                 text,
             )
 
-    def test_watchdog_scheduler_remediation_uses_safe_wrapper(self):
+    def test_watchdog_cannot_compete_with_production_scheduler(self):
         action = watchdog.choose_safe_action("SCHEDULER_NOT_RUN", {})
-
-        self.assertTrue(action["eligible"])
-        self.assertEqual(action["action"], "run_pi_fast_daily_authority_refresh")
-        self.assertEqual(
-            Path(action["command"][1]).name,
-            "run_pi_fast_daily_authority_refresh.py",
-        )
+        self.assertFalse(action["eligible"])
+        self.assertEqual(action["action"], "none")
 
     def test_source_contract_documents_single_production_orchestrator_and_internal_fast_path(self):
         text = (ROOT / "source_of_truth" / "pi_codex_runtime_workflow.md").read_text(

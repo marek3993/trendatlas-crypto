@@ -4,6 +4,18 @@
   "last_updated_note": "Update when a new output folder/file becomes relevant, active, deprecated, or decision-relevant.",
   "outputs": [
     {
+      "output_path": "outputs/execution/watchdog/",
+      "generated_by": [
+        "scripts/execution/mrv1_self_healing_watchdog.py"
+      ],
+      "layer": "maintenance",
+      "status": "active",
+      "output_kind": "scoped_health_diagnostics_and_action_audit",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Availability is separate from new_trade_transition safety. AI receives sanitized enums only; absence is warning."
+    },
+    {
       "output_path": "/var/lib/trendatlas-research/",
       "generated_by": ["research_os/dev_only/evolution_worker/bootstrap.py"],
       "layer": "research_os_dev_only",

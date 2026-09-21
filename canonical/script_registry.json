@@ -4,6 +4,19 @@
   "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
   "scripts": [
     {
+      "script_path": "scripts/execution/mrv1_self_healing_watchdog.py",
+      "layer": "maintenance",
+      "status": "active",
+      "purpose": "Dependency-scoped maintenance; optional sanitized AI choice from deterministic incident allowlist.",
+      "primary_outputs": [
+        "outputs/execution/watchdog/"
+      ],
+      "output_type": "diagnostics",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No competing orchestrator, refresh, publish, order API or service stop. Only own diagnostic cache repair."
+    },
+    {
       "script_path": "research_os/dev_only/evolution_worker/bootstrap.py",
       "layer": "research_os_dev_only",
       "status": "active",

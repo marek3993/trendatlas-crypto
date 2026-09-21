@@ -371,6 +371,13 @@
                                            "separation_rule":  "pi_runtime_publish_authority_is_separate_from_production_core_strategy_truth",
                                            "legacy_phase_chain_role":  "research_archive_input_lineage_not_primary_runtime_truth_interface"
                                        },
+    "maintenance_watchdog": {
+        "contract": "source_of_truth/watchdog_maintenance_contract.md",
+        "deployment_status": "implementation_pending_verification",
+        "ai_optional": true,
+        "production_scheduler": false,
+        "orders_allowed": false
+    },
     "data_health_guard":  {
                               "status":  "active",
                               "role":  "data_source_availability_guard",
@@ -392,14 +399,14 @@
                                                                             "mismatch_action":  "block_execution_fail_closed"
                                                                         },
                               "gating_contract":  {
-                                                       "production_critical":  "block_app_and_execution_fail_closed",
-                                                       "app_critical":  "block_app_fail_closed",
+                                                       "production_critical":  "block_dependent_new_trade_transition_only",
+                                                       "app_critical":  "degrade_dependent_display_capability_only",
                                                        "execution_critical":  "block_execution_fail_closed",
                                                        "research_only":  "block_relevant_research_probe_only",
                                                        "informational_optional_env_or_api_keys":  "surface_unavailable_warn_only"
                                                    },
                               "production_critical_btc_ohlcv_source_id":  "data_ohlcv_btcusdt_1d",
-                              "production_critical_btc_ohlcv_rule":  "stale_or_missing_blocks_production_and_execution",
+                              "production_critical_btc_ohlcv_rule":  "stale_or_missing_blocks_new_trade_transition_not_system_availability",
                               "current_state":  {
                                                     "overall_status":  "warning",
                                                     "app_status":  "ok",
