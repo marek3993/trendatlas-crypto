@@ -31,7 +31,7 @@
       "cycle_outputs": ["status.json", "ledger.sqlite3", "inputs/<sha>.csv", "cycles/<id>/research.sqlite3", "cycles/<id>/SEALED.json"],
       "generated_by": ["research_os/dev_only/evolution_worker/continuous.py"],
       "layer": "research_os_dev_only",
-      "status": "planned_not_yet_deployed",
+      "status": "active_five_cycles_sealed_waiting_for_new_closed_input",
       "output_kind": "isolated_continuous_historical_research_ledger_and_sealed_cycles",
       "decision_relevance": "support_only",
       "official_truth": false,

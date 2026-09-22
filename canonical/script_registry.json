@@ -22,18 +22,18 @@
       "campaign_scope": "finite_10_walk_forward_experiments_5_generations_10_6_4_thermal_guard_no_production_promotion",
       "layer": "research_os_dev_only",
       "status": "active",
-      "purpose": "Runs the installed v3 preregistered queue in an isolated pinned research release; the ten-study campaign is SEALED.",
+      "purpose": "Entrypoint for the installed isolated research release: preserves the SEALED v3 queue and routes authorized continuous cycles to their separate ledger.",
       "primary_outputs": ["/var/lib/trendatlas-research/"],
       "output_type": "research_outputs",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "The prior v3 campaign and SEALED artifacts remain immutable. New continuous cycles require a separate pinned release and continuous authorization; no AI API, IML, exchange orders or production writes."
+      "notes": "The v3 campaign and SEALED artifacts remain immutable. Continuous v1 uses its own pinned release and root authorization; no AI API, IML, exchange orders or production writes."
     },
     {
       "script_path": "research_os/dev_only/evolution_worker/continuous.py",
       "continuous_contract": "research_os/dev_only/evolution_worker/CONTINUOUS_CONTRACT.md",
       "layer": "research_os_dev_only",
-      "status": "planned_not_yet_deployed",
+      "status": "active_waiting_for_new_closed_input_after_five_historical_rejects",
       "purpose": "Schedules distinct bounded historical research cycles from a frozen policy and rejection history, with SQLite resume and production preemption.",
       "primary_outputs": ["/var/lib/trendatlas-research/continuous/"],
       "output_type": "research_outputs",
