@@ -1,12 +1,54 @@
 """Pinned OS-only memory restriction; original engine release is never modified."""
 import ctypes
 import json
+import os
 from pathlib import Path
 import runpy
+import sqlite3
 import sys
 
 CAP = 384 * 1024 * 1024
 BOOTSTRAP = Path('/opt/trendatlas-research/releases/d534035a216a134cce610f80eec32afb8f0461bd/research_os/dev_only/evolution_worker/bootstrap.py')
+STATE = Path('/var/lib/trendatlas-research')
+
+
+def recover_interrupted_sqlite(state=STATE):
+    """Let SQLite roll back its own hot journals under the existing worker lock."""
+    state = Path(state).absolute()
+    def safe(path):
+        if not path.is_relative_to(state):
+            raise RuntimeError('Recovery path escaped state')
+        for part in [path, *path.parents]:
+            if part.is_symlink() or part.is_junction():
+                raise RuntimeError('Recovery path is linked')
+        if path.is_file() and path.stat().st_nlink != 1:
+            raise RuntimeError('Recovery path is hard linked')
+        return path
+    with safe(state / 'worker.lock').open('a+b') as handle:
+        if os.name == 'posix':
+            import fcntl
+            fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        else:
+            import msvcrt
+            handle.seek(0); handle.write(b'0'); handle.flush(); handle.seek(0)
+            msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+        recovered = []
+        paths = [state / 'queue.sqlite3'] + list((state / 'jobs').glob('*/research.sqlite3'))
+        for path in paths:
+            safe(path)
+            if path.parent != state and safe(path.parent / 'SEALED.json').exists():
+                continue
+            journal = safe(Path(str(path) + '-journal'))
+            if not path.exists() or not journal.exists() or journal.stat().st_size <= 512:
+                continue
+            # SQLite decides whether the journal is hot; no hand-written repair.
+            db = sqlite3.connect(path, timeout=1)
+            try:
+                db.execute('SELECT COUNT(*) FROM sqlite_master').fetchone()
+            finally:
+                db.close()
+            recovered.append(path.relative_to(state).as_posix())
+        return recovered
 
 
 def lock_memory(resource_module=None, libc=None, status_path=Path('/proc/self/status')):
@@ -31,13 +73,20 @@ def lock_memory(resource_module=None, libc=None, status_path=Path('/proc/self/st
 
 
 def main():
-    if sys.argv[1:] not in ([], ['--probe']):
+    if sys.argv[1:] not in ([], ['--probe'], ['--ready']):
         raise RuntimeError('Only the pinned bootstrap or memory-only probe is allowed')
     result = lock_memory()
     print(json.dumps(result), flush=True)
     if sys.argv[1:] == ['--probe']:
         return
-    sys.argv = [str(BOOTSTRAP), 'run']
+    try:
+        recovered = recover_interrupted_sqlite()
+    except BlockingIOError:
+        raise SystemExit(1)  # Another worker owns admission; never interfere.
+    if recovered:
+        print(json.dumps({'sqlite_recovered': recovered}), flush=True)
+    command = 'ready' if sys.argv[1:] == ['--ready'] else 'run'
+    sys.argv = [str(BOOTSTRAP), command]
     runpy.run_path(str(BOOTSTRAP), run_name='__main__')
 
 

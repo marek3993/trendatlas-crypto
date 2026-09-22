@@ -1,0 +1,7 @@
+[Service]
+LimitAS=64M
+LimitMEMLOCK=384M
+ReadWritePaths=/var/lib/trendatlas-research
+ReadOnlyPaths=/var/lib/trendatlas-research/queue -/var/lib/trendatlas-research/campaign.json -/var/lib/trendatlas-research/campaign-input
+ExecCondition=
+ExecCondition=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B @GUARD@/memory_guard.py --ready

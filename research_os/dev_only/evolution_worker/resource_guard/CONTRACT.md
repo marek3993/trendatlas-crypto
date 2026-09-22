@@ -22,3 +22,14 @@ This is an external process-launch resource restriction, not a research-code upd
 or experiment restart. Record the wrapper/drop-in SHA256 separately in the deployment
 audit. Resume only after a real same-sandbox probe reports VmLck >0 and VmSwap=0,
 the original 384 MiB address-space hard limit, and the successful mlockall call.
+
+Crash recovery addendum: a killed SQLite writer may leave a hot rollback journal.
+The original ready/status readers open SQLite read-only, which cannot roll back
+that journal. Before dispatcher admission, the pinned launch wrapper acquires
+worker.lock non-blocking and asks SQLite to recover only existing hot journals in
+queue.sqlite3 or unsealed jobs/*/research.sqlite3. Never open a SEALED job writable.
+No custom SQL mutation, metadata rewrite or re-selection is allowed. The dispatcher
+gets write access only to research state for this recovery, keeps its original
+production/worker gates and runs only the original bootstrap ready command.
+The status command remains read-only. This fixes restart recovery without editing
+the immutable running research release or any accepted experiment/code hash.
