@@ -107,3 +107,6 @@
 - Deterministic diagnostic cache repair succeeded. OpenAI key/file absent, warning only; no API request or order sent. AI waits for operator-provided OPENAI_API_KEY in /etc/default/trendatlas-watchdog.
 - 55 targeted local tests and 19 Pi regressions passed. Broader account-schema test has an independently reproduced pre-existing performance={} expectation mismatch, outside this maintenance change.
 - Deployment evidence and preservation exceptions (three expected latest watchdog reports) are recorded in docs/watchdog-deployment-audit-20260921.md.
+
+## Evolution empty-queue operation resolved 2026-09-22
+- The former empty-queue installation scope was superseded by explicit campaign authorization. All ten real historical studies completed on Pi (260 evaluated candidate instances; 1,430 period evaluations), all HISTORICAL_REJECT; budget exhausted with no unregistered follow-on work. Prior REJECT/SEALED studies remain unchanged. The Pi lacks a memory cgroup controller: research now additionally uses LimitAS=384M and mlockall(CURRENT|FUTURE), with observed zero worker swap. Historical results are exploratory and cannot establish a production PASS. See docs/evolution-campaign-deployment-20260922.md.

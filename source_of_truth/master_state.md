@@ -143,3 +143,6 @@
 - Watchdog is installed and enabled four times daily UTC; it can repair only its own diagnostic cache, never run production/refresh/publish or submit orders.
 - Source failures affect declared capabilities/actions; system availability remains true. Order freshness/provenance checks remain fail-closed for new_trade_transition.
 - AI diagnosis is optional; missing OPENAI_API_KEY currently leaves deterministic maintenance active with warning. Deployment audit: docs/watchdog-deployment-audit-20260921.md.
+
+## Bounded research campaign observed 2026-09-22
+- The explicitly authorized v3 campaign completed on Pi: all ten rolling walk-forward experiments finished five generations of 10/6/4 and SEALED HISTORICAL_REJECT. The finite budget is exhausted; worker is inactive and dispatcher timer remains enabled. Offline CPU research is isolated from production and uses immutable pinned input/release, SQLite checkpoints, thermal hysteresis and an independently pinned memory guard. See docs/evolution-campaign-deployment-20260922.md; no production promotion or order.

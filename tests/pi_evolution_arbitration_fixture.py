@@ -111,9 +111,19 @@ def main():
                 wait_for(lambda: (root / "production.active").exists())
                 assert not (root / "worker.active").exists()
                 assert not (root / "OVERLAP").exists()
+            ctl("stop", dispatch, prod, worker)
+            dispatch_path = unit_dir / dispatch
+            dispatch_path.write_text(dispatch_path.read_text().replace(
+                "[Service]\n", '[Service]\nExecCondition=/usr/bin/python3 -c "import sys; sys.exit(255)"\n'))
+            ctl("daemon-reload")
+            assert ctl("start", dispatch, check=False).returncode != 0
+            time.sleep(.25)
+            assert ctl("show", dispatch, "-p", "Result", "--value").stdout.strip() == "exit-code"
+            assert not (root / "worker.active").exists()
             print(json.dumps({"dummy_user_units_only": True, "manual_start_refused": True,
                 "production_not_stopped_by_dispatch": True, "worker_preempted_before_production": True,
                 "redispatch_during_preemption_no_overlap": True,
+                "busy_condition_failed_without_onsuccess": True,
                 "admission_races_without_overlap": 12, "real_production_touched": False}))
         except Exception:
             print(ctl("show", prod, worker, dispatch, "-p", "ActiveState", "-p", "SubState", "-p", "Result", check=False).stdout)

@@ -589,12 +589,12 @@
     "local_evolution_worker": {
         "contract": "research_os/dev_only/evolution_worker/CONTRACT.md",
         "scope": "explicit_user_authorized_bounded_campaign_20260922",
-        "installation_status": "installed_verified_idle_20260920",
-        "pinned_source_commit": "2a2319cd4bd2a2655e3b999ffa75802bf2136020",
-        "release_sha256": "685659d6e069f96fade59096ea42e381bf0f1ba1418396550cdeb51a55445651",
-        "installation_audit": "docs/evolution-worker-post-install-20260920.md",
+        "installation_status": "campaign_completed_sealed_20260922",
+        "pinned_source_commit": "d534035a216a134cce610f80eec32afb8f0461bd",
+        "release_sha256": "75632b88261d821efb4329648b7e4fe2a96a8d35849717527cfd81e681b4deb4",
+        "installation_audit": "docs/evolution-campaign-deployment-20260922.md",
         "enabled_research_unit": "trendatlas-evolution-dispatch.timer",
-        "queue_at_installation": "empty_no_new_research_authorized",
+        "queue_at_installation": "v3_real_job_enqueued_and_evaluations_verified",
         "release_root": "/opt/trendatlas-research",
         "state_root": "/var/lib/trendatlas-research",
         "production_checkout_mutation": "forbidden",
@@ -605,12 +605,19 @@
         "queue": "operator_preregistered_finite_jobs_only",
         "campaign_v3": {
             "authorization_date": "2026-09-22",
-            "status": "implemented_pending_pi_verification",
+            "status": "completed_10_of_10_all_historical_reject",
             "contract": "research_os/dev_only/evolution_worker/CAMPAIGN_CONTRACT.md",
             "spec": "research_os/dev_only/evolution_worker/campaign_v3.json",
             "max_experiments": 10,
-            "production_promotion_allowed": false
-        }
+            "production_promotion_allowed": false,
+            "observed_at": "2026-09-22T21:17:54+02:00",
+            "evaluated_candidate_instances": 260,
+            "globally_distinct_evaluated_genes": 250,
+            "completed_generations": 50,
+            "worker_after_budget": "inactive_no_remaining_authorized_work"
+        },
+        "previous_installation_audit": "docs/evolution-worker-post-install-20260920.md",
+        "resource_guard_commit": "47661e4f74d41478f0202bbd26485aaf4c9666b6"
     },
     "legacy_phase_chain_status":  {
                                       "role":  "research_archive_input_lineage",
