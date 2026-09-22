@@ -93,7 +93,20 @@
       "artifact_type": "isolated_preregistered_queue_and_sqlite_results",
       "truth_domain": "non_authoritative_development_retrospective",
       "read_scope": ["research", "audit"],
-      "write_mode": "dedicated_research_user_explicitly_authorized_finite_campaign_only"
+      "write_mode": "dedicated_research_user_prior_finite_campaign_sealed_immutable"
+    },
+    "pi_continuous_evolution_state": {
+      "canonical": "/var/lib/trendatlas-research/continuous",
+      "status": "/var/lib/trendatlas-research/continuous/status.json",
+      "ledger": "/var/lib/trendatlas-research/continuous/ledger.sqlite3",
+      "cycles": "/var/lib/trendatlas-research/continuous/cycles/<id>/",
+      "contract": "research_os/dev_only/evolution_worker/CONTINUOUS_CONTRACT.md",
+      "legacy_aliases": [],
+      "owner": "AI_LAB",
+      "artifact_type": "isolated_preregistered_queue_and_sqlite_results",
+      "truth_domain": "non_authoritative_development_retrospective",
+      "read_scope": ["research", "audit"],
+      "write_mode": "dedicated_research_user_continuous_pinned_policy_only_no_production_writes"
     },
     "isolated_mean_reversion_results": {
       "canonical": "outputs/research_os/dev_only/mean_reversion/<run_id>/research.sqlite3",

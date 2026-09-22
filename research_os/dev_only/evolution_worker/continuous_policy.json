@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "mode": "continuous_evolution_v1",
+  "generations": 5,
+  "population": 10,
+  "survivors": 6,
+  "mutations": 4,
+  "selection_fold_count": 4,
+  "fold_days": 180,
+  "warmup_days": 200,
+  "min_new_closed_days": 30,
+  "cost_bps_one_way": 15,
+  "max_annualized_turnover": 24,
+  "exposure_ceiling": 0.75,
+  "cycle_elapsed_seconds": 7200,
+  "cycle_disk_bytes": 67108864,
+  "history_role": "seen_development_retrospective",
+  "allowed_outcomes": ["HISTORICAL_REJECT", "HISTORICAL_QUALIFIED_AWAITING_FORWARD"],
+  "templates": [
+    {
+      "id": "trend_momentum_base_v1",
+      "family_id": "trend_momentum",
+      "seed": 2026092201,
+      "domains": {
+        "fast_window": [10, 20, 30],
+        "slow_window": [90, 150, 200],
+        "momentum_window": [10, 20, 40],
+        "entry_threshold": [0.0, 0.02, 0.05],
+        "exposure_cap": [0.5, 0.75]
+      }
+    },
+    {
+      "id": "trend_momentum_low_turnover_v1",
+      "family_id": "trend_low_turnover",
+      "seed": 2026092202,
+      "domains": {
+        "slow_window": [90, 150, 200],
+        "momentum_window": [20, 40, 60],
+        "entry_threshold": [0.02, 0.05, 0.1],
+        "min_hold": [10, 20, 30],
+        "exposure_cap": [0.5, 0.75]
+      }
+    },
+    {
+      "id": "mean_reversion_entry_v1",
+      "family_id": "mean_reversion_entry",
+      "seed": 2026092203,
+      "domains": {
+        "mean_window": [10, 20, 30],
+        "entry_z": [1.0, 1.5, 2.0],
+        "regime_window": [90, 150, 200],
+        "downtrend_floor": [0.1, 0.15, 0.2],
+        "max_hold": [3, 5, 10],
+        "cooldown": [3, 7, 14],
+        "exposure_cap": [0.5, 0.75]
+      }
+    },
+    {
+      "id": "trend_momentum_pullback_protected_v1",
+      "family_id": "trend_momentum_protected",
+      "seed": 2026092204,
+      "domains": {
+        "fast_window": [10, 20, 30],
+        "slow_window": [90, 150, 200],
+        "momentum_window": [10, 20, 40],
+        "entry_threshold": [0.0, 0.02, 0.05],
+        "mean_window": [10, 20, 30],
+        "overbought_z_veto": [0.5, 1.0, 1.5],
+        "exposure_cap": [0.5, 0.75]
+      }
+    },
+    {
+      "id": "regime_ensemble_v1",
+      "family_id": "regime_ensemble",
+      "seed": 2026092205,
+      "domains": {
+        "fast_window": [10, 20, 30],
+        "slow_window": [90, 150, 200],
+        "momentum_window": [10, 20, 40],
+        "mean_window": [10, 20, 30],
+        "entry_z": [1.0, 1.5, 2.0],
+        "regime_floor": [0.1, 0.15, 0.2],
+        "max_hold": [5, 10, 20],
+        "exposure_cap": [0.5, 0.75]
+      }
+    }
+  ]
+}

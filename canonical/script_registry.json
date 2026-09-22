@@ -22,12 +22,24 @@
       "campaign_scope": "finite_10_walk_forward_experiments_5_generations_10_6_4_thermal_guard_no_production_promotion",
       "layer": "research_os_dev_only",
       "status": "active",
-      "purpose": "Runs a finite local preregistered research queue in an isolated pinned release; approved Pi release installed and verified idle on 2026-09-20.",
+      "purpose": "Runs the installed v3 preregistered queue in an isolated pinned research release; the ten-study campaign is SEALED.",
       "primary_outputs": ["/var/lib/trendatlas-research/"],
       "output_type": "research_outputs",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "No AI API, IML, production writes or automatic new studies. Research-only systemd units require explicit installation approval."
+      "notes": "The prior v3 campaign and SEALED artifacts remain immutable. New continuous cycles require a separate pinned release and continuous authorization; no AI API, IML, exchange orders or production writes."
+    },
+    {
+      "script_path": "research_os/dev_only/evolution_worker/continuous.py",
+      "continuous_contract": "research_os/dev_only/evolution_worker/CONTINUOUS_CONTRACT.md",
+      "layer": "research_os_dev_only",
+      "status": "planned_not_yet_deployed",
+      "purpose": "Schedules distinct bounded historical research cycles from a frozen policy and rejection history, with SQLite resume and production preemption.",
+      "primary_outputs": ["/var/lib/trendatlas-research/continuous/"],
+      "output_type": "research_outputs",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No repeat of rejected fingerprints on identical inputs, no production promotion or order access. Historical results remain retrospective; exhaustion of valid hypotheses waits for new closed data."
     },
     {
       "script_path": "research_os/dev_only/mean_reversion/__main__.py",

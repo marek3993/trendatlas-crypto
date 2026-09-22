@@ -617,7 +617,26 @@
             "worker_after_budget": "inactive_no_remaining_authorized_work"
         },
         "previous_installation_audit": "docs/evolution-worker-post-install-20260920.md",
-        "resource_guard_commit": "47661e4f74d41478f0202bbd26485aaf4c9666b6"
+        "resource_guard_commit": "47661e4f74d41478f0202bbd26485aaf4c9666b6",
+        "continuous_v1": {
+            "authorization_date": "2026-09-22",
+            "scope": "user_authorized_unattended_continuous_local_research_distinct_bounded_cycles",
+            "status": "contract_in_implementation_not_yet_deployed",
+            "contract": "research_os/dev_only/evolution_worker/CONTINUOUS_CONTRACT.md",
+            "policy": "research_os/dev_only/evolution_worker/continuous_policy.json",
+            "state_root": "/var/lib/trendatlas-research/continuous",
+            "prior_campaign_v3_and_sealed_jobs": "immutable_and_not_requeued",
+            "cycle_rule": "each_cycle_has_frozen_input_code_hypothesis_family_domain_seed_folds_budget_and_criteria_then_seals",
+            "successor_rule": "rejection_reason_and_fingerprint_history_select_a_distinct_predeclared_hypothesis_family_or_search_space_automatically",
+            "family_catalog": ["trend_momentum", "trend_low_turnover", "trend_momentum_protected", "mean_reversion_entry", "regime_ensemble"],
+            "same_data_catalog_exhausted": "waiting_for_new_closed_input_no_duplicate_rejected_search",
+            "historical_evidence_role": "development_retrospective_only_never_production_pass",
+            "production_preemption": "required",
+            "exchange_access_and_orders": "forbidden",
+            "automatic_strategy_promotion": false,
+            "credentials_and_network": "forbidden",
+            "iml_required": false
+        }
     },
     "legacy_phase_chain_status":  {
                                       "role":  "research_archive_input_lineage",

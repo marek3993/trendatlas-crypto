@@ -24,7 +24,18 @@
       "output_kind": "isolated_queue_ledger_and_sealed_research_jobs",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Installed Pi state root: finite operator queue, frozen inputs/specs, transactional generations, immutable seals and audits. Explicit installation approval applied 2026-09-20; queue verified empty, no historical search authorized."
+      "notes": "Installed Pi state root with an immutable SEALED v3 ten-study campaign; old artifacts and pinned releases are preserved."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-research/continuous/",
+      "cycle_outputs": ["status.json", "ledger.sqlite3", "inputs/<sha>.csv", "cycles/<id>/research.sqlite3", "cycles/<id>/SEALED.json"],
+      "generated_by": ["research_os/dev_only/evolution_worker/continuous.py"],
+      "layer": "research_os_dev_only",
+      "status": "planned_not_yet_deployed",
+      "output_kind": "isolated_continuous_historical_research_ledger_and_sealed_cycles",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Frozen policy schedules distinct finite cycles using rejection history; exhaustion waits for new closed input. No production authority, strategy promotion, account access or orders."
     },
     {
       "output_path": "outputs/research_os/dev_only/mean_reversion/",
