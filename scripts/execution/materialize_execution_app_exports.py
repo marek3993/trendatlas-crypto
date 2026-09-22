@@ -3277,6 +3277,40 @@ def build_dashboard_public_status_contract(
             production_snapshot_payload.get("effective_market_exposure"),
         )
     )
+    decision_context = (
+        production_snapshot_payload.get("decision_context")
+        if isinstance(production_snapshot_payload.get("decision_context"), dict)
+        else {}
+    )
+    provenance = (
+        production_snapshot_payload.get("provenance")
+        if isinstance(production_snapshot_payload.get("provenance"), dict)
+        else {}
+    )
+    wait_condition = (
+        provenance.get("wait_condition")
+        if isinstance(provenance.get("wait_condition"), dict)
+        else {}
+    )
+    gate_block_reasons = gate_payload.get("block_reasons")
+    gate_block_reasons = (
+        [str(reason).strip() for reason in gate_block_reasons if str(reason).strip()]
+        if isinstance(gate_block_reasons, list)
+        else []
+    )
+    candidate_waits_for_authorization = bool(
+        preferred_asset
+        and not is_runtime_cash_asset(preferred_asset)
+        and is_runtime_cash_asset(target_asset)
+        and (target_size_pct is None or math.isclose(target_size_pct, 0.0, abs_tol=1e-12))
+    )
+    signal_status = (
+        "candidate_unconfirmed"
+        if candidate_waits_for_authorization
+        else "authorized"
+        if target_asset and not is_runtime_cash_asset(target_asset) and (target_size_pct or 0.0) > 0.0
+        else "cash"
+    )
 
     btc_return_ratio = parse_float_maybe(
         first_present_runtime_value(
@@ -3378,6 +3412,12 @@ def build_dashboard_public_status_contract(
             "gate_status": gate_status or None,
             "would_place_real_order": would_place_real_order,
             "live_order_sent": live_order_sent,
+            "signal_status": signal_status,
+            "wait_reason_code": str(
+                wait_condition.get("code") or decision_context.get("current_reason_code") or ""
+            ).strip() or None,
+            "next_rebalance_date": str(production_snapshot_payload.get("next_rebalance_date") or "").strip() or None,
+            "block_reasons": gate_block_reasons,
         },
         "model_signal": {
             "preferred_asset": preferred_asset or None,

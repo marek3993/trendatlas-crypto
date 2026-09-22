@@ -1,7 +1,7 @@
 import ast
 import math
 import unittest
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -45,6 +45,9 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
     namespace: dict[str, object] = {
         "Any": Any,
         "date": date,
+        "datetime": datetime,
+        "timedelta": timedelta,
+        "timezone": timezone,
         "pd": pd,
         "go": go,
         "make_subplots": make_subplots,
@@ -122,6 +125,7 @@ class TestAppPublicStatusContract(unittest.TestCase):
             "get_nested_value",
             "_first_numeric_value",
             "resolve_real_account_exposure_state",
+            "build_public_execution_wait_state",
             "resolve_dashboard_public_status_state",
             "safe_text_value",
             "authority_success_closed_day_text",
@@ -328,6 +332,85 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(state["value"], "Mimo trhu / 0.00x")
         self.assertEqual(state["target_asset"], "CASH")
         self.assertFalse(state["would_place_real_order"])
+
+    def test_cash_no_action_is_waiting_and_never_mislabeled_blocked(self):
+        contract = build_dashboard_public_status_contract(
+            account_summary={"current_position": "CASH", "positions_count": 0, "open_position": None},
+            intent_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            dry_run_payload={"target_asset": "CASH", "target_size_pct": 0.0},
+            gate_payload={
+                "target_asset": "CASH",
+                "status": "no_action",
+                "would_place_real_order": False,
+                "block_reasons": ["no_market_entry_authorized"],
+            },
+            production_snapshot_payload={
+                "closed_day": "2026-09-21",
+                "candidate_asset": "AVAX",
+                "model_candidate_exposure": 1.0,
+                "trend_permission_active": False,
+                "next_rebalance_date": "2026-09-27",
+                "provenance": {"wait_condition": {"code": "candidate_entry_not_authorized"}},
+            },
+        )
+        self.assertEqual(contract["execution"]["signal_status"], "candidate_unconfirmed")
+        self.assertEqual(contract["execution"]["wait_reason_code"], "candidate_entry_not_authorized")
+        self.assertEqual(contract["execution"]["next_rebalance_date"], "2026-09-27")
+        self.assertEqual(contract["execution"]["block_reasons"], ["no_market_entry_authorized"])
+        resolve_public_state = self.__class__.ns["resolve_dashboard_public_status_state"]
+        wait_view = self.__class__.ns["build_public_execution_wait_state"](
+            contract["execution"],
+            contract["model_signal"],
+            "sk",
+            now_utc=datetime(2026, 9, 22, 12, tzinfo=timezone.utc),
+        )
+        self.assertEqual(wait_view["order_status"], "Bez objednávky")
+        self.assertIn("AVAX", wait_view["signal_text"])
+        self.assertIn("nepotvrdil vstup", wait_view["reason_text"])
+        self.assertEqual(wait_view["daily_review_text"], "23.9.2026 00:10 UTC")
+        self.assertEqual(wait_view["rebalance_review_text"], "28.9.2026 00:10 UTC")
+        self.assertNotIn("Blokovan", str(wait_view))
+        state = resolve_public_state(contract, "sk")
+        self.assertNotIn("blokovan", state["real_account_exposure_state"]["subtitle"].lower())
+        self.assertEqual(state["real_account_exposure_state"]["asset"], "CASH")
+
+    def test_actual_gate_block_remains_visible_and_reason_is_not_raw(self):
+        wait_view = self.__class__.ns["build_public_execution_wait_state"](
+            {
+                "target_asset": "AVAX",
+                "target_size_pct": 1.0,
+                "gate_status": "blocked",
+                "would_place_real_order": False,
+                "block_reasons": ["private_internal_gate_rule"],
+            },
+            {"preferred_asset": "AVAX"},
+            "sk",
+            now_utc=datetime(2026, 9, 22, 12, tzinfo=timezone.utc),
+        )
+        self.assertEqual(wait_view["order_status"], "Blokované")
+        self.assertIn("Bezpečnostná kontrola", wait_view["gate_text"])
+        self.assertNotIn("private_internal_gate_rule", str(wait_view))
+        stale_view = self.__class__.ns["build_public_execution_wait_state"](
+            {"target_asset": "AVAX", "target_size_pct": 1.0, "gate_status": "blocked", "block_reasons": ["stale_signal"]},
+            {"preferred_asset": "AVAX"},
+            "sk",
+            now_utc=datetime(2026, 9, 22, 12, tzinfo=timezone.utc),
+        )
+        self.assertIn("Neaktuálny signál", stale_view["gate_text"])
+        missing_target = self.__class__.ns["build_public_execution_wait_state"](
+            {"target_asset": None, "target_size_pct": 0.0, "gate_status": "no_action", "would_place_real_order": False},
+            {"preferred_asset": "AVAX"},
+            "sk",
+            now_utc=datetime(2026, 9, 22, 12, tzinfo=timezone.utc),
+        )
+        self.assertEqual(missing_target["order_status"], "Podľa aktuálnej kontroly")
+        ready = self.__class__.ns["build_public_execution_wait_state"](
+            {"target_asset": "AVAX", "target_size_pct": 1.0, "gate_status": "ready", "would_place_real_order": True},
+            {"preferred_asset": "AVAX"},
+            "sk",
+            now_utc=datetime(2026, 9, 22, 12, tzinfo=timezone.utc),
+        )
+        self.assertEqual(ready["order_status"], "Pripravené")
 
     def test_production_chart_separates_real_cash_account_from_model_signal(self):
         resolve_state = self.__class__.ns["resolve_real_account_exposure_state"]
@@ -583,6 +666,7 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "balance_source_of_truth": "spot_stable_balance",
                 "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
                 "withdrawable_source": "unavailable_individual_perp_state_not_meaningful",
+                "performance": {},
             },
         )
         self.assertEqual(
@@ -593,6 +677,10 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "gate_status": "blocked",
                 "would_place_real_order": False,
                 "live_order_sent": False,
+                "signal_status": "candidate_unconfirmed",
+                "wait_reason_code": None,
+                "next_rebalance_date": None,
+                "block_reasons": [],
             },
         )
         self.assertEqual(

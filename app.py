@@ -8,7 +8,7 @@ import math
 import os
 import re
 import uuid
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 import sys
@@ -2667,6 +2667,127 @@ def load_dashboard_public_status_for_app(
     return candidates[-1][2]
 
 
+def build_public_execution_wait_state(
+    execution: dict[str, Any],
+    model_signal: dict[str, Any],
+    lang: str,
+    *,
+    now_utc: datetime | None = None,
+) -> dict[str, str]:
+    """Describe a scheduled no-action separately from an actual execution block."""
+    gate_status = str(execution.get("gate_status") or "").strip().lower()
+    target_asset = str(execution.get("target_asset") or "").strip().upper()
+    target_size = as_float(execution.get("target_size_pct"))
+    no_market_target = target_asset in {"CASH", "USD", "USDC", "USDT"} or (
+        bool(target_asset) and target_size is not None and math.isclose(target_size, 0.0, abs_tol=1e-12)
+    )
+    no_action = gate_status == "no_action" and no_market_target
+    blocked = gate_status == "blocked"
+    preferred_asset = normalize_public_asset_code(model_signal.get("preferred_asset"))
+    candidate_waiting = (
+        str(execution.get("signal_status") or "") == "candidate_unconfirmed"
+        or (no_action and preferred_asset not in {"", "CASH"})
+    )
+    reason_code = str(execution.get("wait_reason_code") or "").strip().lower()
+    reason_sk = {
+        "candidate_entry_not_authorized": "Model zatiaľ nepotvrdil vstup do trhu.",
+        "early_risk_cooldown_block": "Po poslednej zmene ešte trvá čakacia lehota.",
+        "cooldown_clearance_pending_for_candidate_entry": "Po poslednej zmene ešte trvá čakacia lehota.",
+        "no_market_entry_authorized": "Model zatiaľ nepotvrdil vstup do trhu.",
+    }
+    reason_en = {
+        "candidate_entry_not_authorized": "The model has not yet authorized market entry.",
+        "early_risk_cooldown_block": "The waiting period after the last change is still active.",
+        "cooldown_clearance_pending_for_candidate_entry": "The waiting period after the last change is still active.",
+        "no_market_entry_authorized": "The model has not yet authorized market entry.",
+    }
+    if blocked:
+        order_status = "Blokované" if lang == "sk" else "Blocked"
+        raw_reasons = execution.get("block_reasons")
+        reasons = [str(reason).strip().lower() for reason in raw_reasons] if isinstance(raw_reasons, list) else []
+        reason_labels = (
+            [
+                ("stale", "Neaktuálny signál"),
+                ("fresh", "Neaktuálne vstupné údaje"),
+                ("data_health", "Neaktuálne vstupné údaje"),
+                ("duplicate", "Riziko duplicitnej objednávky"),
+                ("kill_switch", "Bezpečnostná poistka"),
+                ("collateral", "Nedostatok voľných prostriedkov"),
+                ("manual_approval", "Chýbajúce schválenie"),
+            ]
+            if lang == "sk"
+            else [
+                ("stale", "Stale signal"),
+                ("fresh", "Stale input data"),
+                ("data_health", "Stale input data"),
+                ("duplicate", "Duplicate order risk"),
+                ("kill_switch", "Safety switch"),
+                ("collateral", "Insufficient free collateral"),
+                ("manual_approval", "Approval missing"),
+            ]
+        )
+        known_reason = next((label for reason in reasons for token, label in reason_labels if token in reason), None)
+        gate_text = (
+            f"Bezpečnostná kontrola pozastavila obchod: {known_reason}."
+            if lang == "sk" and known_reason
+            else "Bezpečnostná kontrola pozastavila obchod; podrobný dôvod nie je dostupný."
+            if lang == "sk"
+            else f"An execution safety check blocked the trade: {known_reason}."
+            if known_reason
+            else "An execution safety check blocked the trade; the detailed reason is unavailable."
+        )
+        subtitle = "Obchod je pozastavený bezpečnostnou kontrolou" if lang == "sk" else "Trade blocked by an execution safety check"
+    elif no_action:
+        order_status = "Bez objednávky" if lang == "sk" else "No order due"
+        gate_text = "Žiadna bezpečnostná blokácia." if lang == "sk" else "No execution safety block."
+        subtitle = "Čaká sa na potvrdený vstupný signál" if lang == "sk" else "Waiting for an authorized entry signal"
+    elif as_bool(execution.get("would_place_real_order")) is True:
+        order_status = "Pripravené" if lang == "sk" else "Ready"
+        gate_text = "Obchod podlieha aktuálnym kontrolám." if lang == "sk" else "The trade remains subject to current checks."
+        subtitle = "Schválený cieľ čaká na bežné spracovanie" if lang == "sk" else "The authorized target awaits normal processing"
+    else:
+        order_status = "Podľa aktuálnej kontroly" if lang == "sk" else "Per current checks"
+        gate_text = "Obchod podlieha aktuálnej kontrole." if lang == "sk" else "The trade remains subject to current checks."
+        subtitle = "Podľa aktuálneho stavu účtu a signálu" if lang == "sk" else "Based on current account and signal"
+    if candidate_waiting:
+        signal_text = (
+            f"Model preferuje {preferred_asset}, vstup však ešte nie je potvrdený."
+            if lang == "sk" else f"The model prefers {preferred_asset}, but entry is not yet authorized."
+        )
+    else:
+        signal_text = "Platí aktuálny schválený cieľ stratégie." if lang == "sk" else "The current authorized strategy target applies."
+    reason_text = (reason_sk if lang == "sk" else reason_en).get(reason_code)
+    if not reason_text:
+        reason_text = (
+            "Čaká sa na potvrdenie podmienok pre vstup."
+            if lang == "sk" and candidate_waiting
+            else "Waiting for entry conditions to be confirmed."
+            if candidate_waiting
+            else gate_text
+        )
+    current = (now_utc or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    next_review = current.replace(hour=0, minute=10, second=0, microsecond=0)
+    if current >= next_review:
+        next_review += timedelta(days=1)
+    daily_review_text = f"{next_review.day}.{next_review.month}.{next_review.year} 00:10 UTC"
+    rebalance_review_text = ""
+    try:
+        rebalance_day = date.fromisoformat(str(execution.get("next_rebalance_date") or ""))
+        review_day = date.fromordinal(rebalance_day.toordinal() + 1)
+        rebalance_review_text = f"{review_day.day}.{review_day.month}.{review_day.year} 00:10 UTC"
+    except ValueError:
+        pass
+    return {
+        "order_status": order_status,
+        "account_subtitle": subtitle,
+        "signal_text": signal_text,
+        "reason_text": reason_text,
+        "gate_text": gate_text,
+        "daily_review_text": daily_review_text,
+        "rebalance_review_text": rebalance_review_text,
+    }
+
+
 def resolve_dashboard_public_status_state(
     dashboard_public_status: dict[str, Any],
     lang: str,
@@ -2726,15 +2847,9 @@ def resolve_dashboard_public_status_state(
     exposure_text = f"{real_exposure_value:.2f}x"
     gate_status = str(execution.get("gate_status") or "").strip().lower()
     would_place_real_order = as_bool(execution.get("would_place_real_order"))
-    ordering_blocked = gate_status == "blocked" or would_place_real_order is False
+    execution_wait_state = build_public_execution_wait_state(execution, model_signal, lang)
     subtitle = (
-        "CASH | Odoslanie obchodu blokovane"
-        if lang == "sk" and ordering_blocked
-        else "CASH | Podla uctu a vykonavacich kontrol"
-        if lang == "sk"
-        else "CASH | Order placement blocked"
-        if ordering_blocked
-        else "CASH | Based on account and execution checks"
+        f"CASH | {execution_wait_state['account_subtitle']}"
     )
     if in_market:
         subtitle = (
@@ -2752,6 +2867,7 @@ def resolve_dashboard_public_status_state(
 
     return {
         "public_labels_sk": public_labels_sk,
+        "execution_wait_state": execution_wait_state,
         "real_account_exposure_state": {
             "is_out_of_market": not in_market,
             "asset": real_asset,
@@ -2763,6 +2879,7 @@ def resolve_dashboard_public_status_state(
             "target_asset": str(execution.get("target_asset") or real_asset).strip().upper() or real_asset,
             "gate_status": gate_status,
             "would_place_real_order": would_place_real_order,
+            "order_status": execution_wait_state["order_status"],
             "label_sk": str(public_labels_sk.get("real_account") or "Reálny účet").strip(),
         },
         "model_signal_state": {
@@ -5314,12 +5431,26 @@ def resolve_real_account_exposure_state(
         exposure_text = f"{exposure_value:.2f}x"
         gate_status = str(runtime_real_account_state.get("gate_status") or "").strip().lower()
         would_place_real_order = as_bool(runtime_real_account_state.get("would_place_real_order"))
+        runtime_target_asset = str(runtime_real_account_state.get("intent_target_asset") or asset).strip().upper()
+        runtime_wait_view = build_public_execution_wait_state(
+            {
+                "target_asset": runtime_target_asset,
+                "target_size_pct": runtime_real_account_state.get("intent_target_size_pct"),
+                "gate_status": gate_status,
+                "would_place_real_order": would_place_real_order,
+                "next_rebalance_date": production_snapshot.get("next_rebalance_date"),
+                "wait_reason_code": first_present_value(
+                    get_nested_value(production_snapshot, "provenance", "wait_condition", "code"),
+                    get_nested_value(production_snapshot, "decision_context", "current_reason_code"),
+                ),
+            },
+            {"preferred_asset": production_snapshot.get("candidate_asset")},
+            lang,
+        )
         subtitle = (
-            "CASH | Odoslanie obchodu blokovane"
-            if lang == "sk" and (gate_status == "blocked" or would_place_real_order is False)
-            else "CASH | Order placement blocked"
-            if gate_status == "blocked" or would_place_real_order is False
-            else str(runtime_real_account_state.get("source") or "wallet/intent/gate")
+            f"CASH | {runtime_wait_view['account_subtitle']}"
+            if not in_market
+            else f"Otvorená pozícia: {asset}" if lang == "sk" else f"Open position: {asset}"
         )
         return {
             "is_out_of_market": not in_market,
@@ -5332,6 +5463,7 @@ def resolve_real_account_exposure_state(
             "target_asset": str(runtime_real_account_state.get("intent_target_asset") or asset).strip().upper(),
             "gate_status": gate_status,
             "would_place_real_order": would_place_real_order,
+            "order_status": runtime_wait_view["order_status"],
         }
 
     open_position = (
@@ -5399,22 +5531,26 @@ def resolve_real_account_exposure_state(
     execution_points_to_cash = (
         target_asset in {"", "CASH", "USD", "USDC", "USDT", "NONE", "NULL"}
         or (target_exposure is not None and math.isclose(target_exposure, 0.0, abs_tol=1e-12))
-        or gate_status == "blocked"
-        or would_place_real_order is False
     )
     if execution_points_to_cash:
         state_text = t(lang, "production_state_out_of_market")
         exposure_text = "0.00x"
-        ordering_blocked = gate_status == "blocked" or would_place_real_order is False
-        subtitle = (
-            "CASH | Odoslanie obchodu blokovane"
-            if lang == "sk" and ordering_blocked
-            else "CASH | Podla uctu a vykonavacich kontrol"
-            if lang == "sk"
-            else "CASH | Order placement blocked"
-            if ordering_blocked
-            else "CASH | Based on account and execution checks"
+        wait_view = build_public_execution_wait_state(
+            {
+                "target_asset": target_asset or "CASH",
+                "target_size_pct": target_exposure,
+                "gate_status": gate_status,
+                "would_place_real_order": would_place_real_order,
+                "next_rebalance_date": production_snapshot.get("next_rebalance_date"),
+                "wait_reason_code": first_present_value(
+                    get_nested_value(production_snapshot, "provenance", "wait_condition", "code"),
+                    get_nested_value(production_snapshot, "decision_context", "current_reason_code"),
+                ),
+            },
+            {"preferred_asset": production_snapshot.get("candidate_asset")},
+            lang,
         )
+        subtitle = f"CASH | {wait_view['account_subtitle']}"
         return {
             "is_out_of_market": True,
             "asset": "CASH",
@@ -5426,6 +5562,7 @@ def resolve_real_account_exposure_state(
             "target_asset": target_asset or "CASH",
             "gate_status": gate_status,
             "would_place_real_order": would_place_real_order,
+            "order_status": wait_view["order_status"],
         }
 
     state_text = t(lang, "production_state_out_of_market")
@@ -7022,6 +7159,29 @@ with tabs[0]:
             lang=lang,
             runtime_real_account_state=runtime_real_account_state,
         )
+    execution_wait_state = dict(dashboard_public_state.get("execution_wait_state") or {})
+    if not execution_wait_state:
+        execution_wait_state = build_public_execution_wait_state(
+            {
+                "target_asset": first_present_value(
+                    real_order_gate_payload.get("target_asset"),
+                    get_nested_value(production_snapshot, "execution_intent", "target_asset"),
+                ),
+                "target_size_pct": first_present_value(
+                    dry_run_decision_payload.get("target_size_pct"),
+                    get_nested_value(production_snapshot, "execution_intent", "target_exposure"),
+                ),
+                "gate_status": real_order_gate_payload.get("status"),
+                "would_place_real_order": real_order_gate_payload.get("would_place_real_order"),
+                "next_rebalance_date": production_snapshot.get("next_rebalance_date"),
+                "wait_reason_code": first_present_value(
+                    get_nested_value(production_snapshot, "provenance", "wait_condition", "code"),
+                    get_nested_value(production_snapshot, "decision_context", "current_reason_code"),
+                ),
+            },
+            runtime_model_signal_state,
+            lang,
+        )
     strategy_signal_exposure = _first_numeric_value(
         runtime_model_signal_state.get("exposure_x"),
     )
@@ -7128,6 +7288,27 @@ with tabs[0]:
                 item["help"],
                 item["accent"],
             )
+    review_context = (
+        f"Najbližšia plánovaná kontrola: {execution_wait_state['daily_review_text']}."
+        if lang == "sk"
+        else f"Next scheduled evaluation: {execution_wait_state['daily_review_text']}."
+    )
+    if execution_wait_state["rebalance_review_text"]:
+        review_context += (
+            f" Po ďalšom rebalance sa cieľ vyhodnotí najskôr {execution_wait_state['rebalance_review_text']}; obchod závisí od potvrdeného signálu a kontrol."
+            if lang == "sk"
+            else f" After the next rebalance, the target is reviewed no earlier than {execution_wait_state['rebalance_review_text']}; any trade depends on an authorized signal and safety checks."
+        )
+    st.info(
+        "\n\n".join(
+            [
+                ("Stav signálu: " if lang == "sk" else "Signal: ") + execution_wait_state["signal_text"],
+                ("Dôvod čakania: " if lang == "sk" else "Reason: ") + execution_wait_state["reason_text"],
+                review_context,
+                ("Bezpečnostná kontrola: " if lang == "sk" else "Execution check: ") + execution_wait_state["gate_text"],
+            ]
+        )
+    )
 
     model_chart_title = (
         str(runtime_model_performance_state.get("label_sk") or "").strip()
@@ -7588,21 +7769,7 @@ with tabs[1]:
                     },
                     {
                         "label": "Odoslanie obchodu" if lang == "sk" else "Order placement",
-                        "value": (
-                            "Blokovane"
-                            if lang == "sk" and (
-                                real_account_exposure_state.get("gate_status") == "blocked"
-                                or real_account_exposure_state.get("would_place_real_order") is False
-                            )
-                            else "Blocked"
-                            if (
-                                real_account_exposure_state.get("gate_status") == "blocked"
-                                or real_account_exposure_state.get("would_place_real_order") is False
-                            )
-                            else "Povolene"
-                            if lang == "sk"
-                            else "Allowed"
-                        ),
+                        "value": execution_wait_state["order_status"],
                     },
                 ],
                 tone="control",

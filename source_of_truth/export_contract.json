@@ -365,6 +365,15 @@
                                            "real_account_exposure_rule":  "real_account.exposure_x_is_verified_wallet_position_notional_divided_by_real_account_equity_and_is_separate_from_execution.target_size_pct_and_model_signal.exposure_x",
                                            "real_account_balance_rule":  "real_account.account_equity_usd_is_total_equity; real_account.free_collateral_usd_and_legacy_available_balance_usd_are_distinct_nullable_free_collateral; margin_used_usd_and_position_notional_usd_are_exchange_native_wallet_state",
                                            "live_order_sent_rule":  "execution.live_order_sent_is_boolean_and_uses_finalized_production_run_submission_evidence_when_available",
+                                           "execution_wait_display_rule":  "execution.gate_status=no_action with execution.would_place_real_order=false and an authorized CASH/zero target means no order is due, not a blocked order. The dashboard must distinguish the unconfirmed model candidate, the currently authorized CASH intent, the next scheduled daily evaluation and the strategy next_rebalance_date. Only gate_status=blocked may be labelled an execution block; expose its applicable reasons separately. A preferred model asset or candidate exposure must never be shown as a real position or promised future order.",
+                                           "execution_wait_optional_fields":  [
+                                                                                "execution.signal_status",
+                                                                                "execution.wait_reason_code",
+                                                                                "execution.next_rebalance_date",
+                                                                                "execution.block_reasons"
+                                                                            ],
+                                           "execution_wait_timing_rule":  "next_rebalance_date is a strategy decision day, not a promised fill; the next production evaluation follows the single mrv1-production.timer at 00:10 UTC daily, and any execution depends on a newly authorized intent and all order gates",
+                                           "tablet_wallet_fallback_rule":  "The separate /opt/home_automation dashboard may display CASH/zero from a read-only wallet snapshot explicitly reporting positions_count=0, or asset/exposure from the normalized real-account runtime/public wallet state. If wallet evidence is unavailable it must display unavailable; it must never infer real position or exposure from execution intent, candidate asset, model signal, or strategy held-asset fields.",
                                            "real_account_chart_semantics":  {
                                                                                "upper_line":  "real_account_index",
                                                                                "lower_strip":  "real_account_exposure_x",
