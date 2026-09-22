@@ -24,9 +24,17 @@ A cycle is immutable once created: policy/release SHA, input SHA and last closed
 date, family/template, domains, seed, folds, cost, population and criteria are
 in `accepted.json`. A SHA256 fingerprint covers them without the cosmetic cycle
 ID. SQLite checkpoints each candidate/fold and each generation transactionally.
-Each cycle has a 7200-second elapsed deadline, 64 MiB local disk budget and at
-most the five generations. Resource expiry is ERROR/blocked for review, not a
-strategy rejection. `SEALED.json` hashes all final files and is never edited.
+Each cycle has a 7200-second accumulated active-service-time budget, 64 MiB
+local disk budget and at most the five generations. Active time is checkpointed
+in SQLite; time while the process is preempted by production, thermally paused
+or waiting for the next dispatch does not consume it. Immediately before each
+backtest, the ledger reserves 300 seconds of active time; a per-bar monotonic
+guard bounds that one backtest to 300 seconds. Successful period commits replace
+the reservation with measured active time. An interruption during the evaluation
+keeps the conservative reservation, so repeated kills cannot reset the budget.
+The final charged time is included in the SHA-sealed report and audit. Resource
+expiry is ERROR/blocked for review, not a strategy rejection. `SEALED.json`
+hashes all final files and is never edited.
 
 ## Automatic succession and scientific limits
 
