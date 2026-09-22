@@ -130,6 +130,11 @@ worker inactive/success, `last_reject_reason=no_entries`, `orders_sent=false`,
 active and will admit another cycle only after at least 30 *append-only, closed
 UTC* BTC bars are available. It will not replay these five rejected fingerprints
 on the unchanged history.
+The next automatic dispatcher tick occurred at 2026-09-22 22:48:37 CEST:
+its no-work `ExecCondition` skipped execution, the worker stayed inactive,
+the ledger still contained exactly five SEALED historical rejects, and the
+timer scheduled the following check for 23:04:03 CEST. This is an idle wait,
+not a worker error or a sixth replayed experiment.
 
 ## Preservation, no-order evidence and next 24 hours
 
