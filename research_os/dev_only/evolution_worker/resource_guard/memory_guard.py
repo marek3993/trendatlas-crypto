@@ -82,7 +82,9 @@ def main():
     try:
         recovered = recover_interrupted_sqlite()
     except BlockingIOError:
-        raise SystemExit(1)  # Another worker owns admission; never interfere.
+        # ExecCondition=1 is skipped and may trigger OnSuccess on this Pi version.
+        # 255 fails admission: never replace a worker stop job during preemption.
+        raise SystemExit(255)
     if recovered:
         print(json.dumps({'sqlite_recovered': recovered}), flush=True)
     command = 'ready' if sys.argv[1:] == ['--ready'] else 'run'

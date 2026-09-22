@@ -34,6 +34,12 @@ class MemoryGuardTests(unittest.TestCase):
             with self.assertRaises(RuntimeError): g.main()
             run.assert_not_called()
 
+    def test_busy_worker_condition_fails_without_onsuccess_activation(self):
+        with patch.object(g.sys, 'argv', ['guard', '--ready']), patch.object(g, 'lock_memory', return_value={}), patch.object(g, 'recover_interrupted_sqlite', side_effect=BlockingIOError), patch.object(g.runpy, 'run_path') as run, patch('builtins.print'):
+            with self.assertRaises(SystemExit) as error: g.main()
+            self.assertEqual(error.exception.code, 255)
+            run.assert_not_called()
+
     def test_killed_sqlite_writer_recovery_preserves_committed_state(self):
         with tempfile.TemporaryDirectory() as temp:
             state = Path(temp)
