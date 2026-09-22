@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 BASE = "research_os/dev_only/evolution_worker/"
 FILES = [
     BASE + p for p in ("__init__.py", "runtime.py", "bootstrap.py", "fixture.py", "gate.py", "CONTRACT.md",
+                       "campaign.py", "walk_forward.py", "campaign_v3.json", "CAMPAIGN_CONTRACT.md",
                        "systemd/trendatlas-evolution-worker.service.in",
                        "systemd/trendatlas-evolution-dispatch.service.in",
                        "systemd/trendatlas-evolution-dispatch.timer")]

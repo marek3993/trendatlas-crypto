@@ -129,3 +129,49 @@ The final installation review document records the exact commit, paths, package
 size/hashes, units, validation evidence, installation commands and rollback. Approval
 must precede service-account creation, copying the release to /opt, real systemd
 unit installation or enabling the research timer.
+
+
+## Bounded campaign v3 (authorized 2026-09-22)
+
+The new pinned release includes campaign_v3.json: ten predeclared rolling windows,
+five generations each, distinct fixed seeds and a later frozen-candidate assessment.
+This is a retrospective study of the existing pure mean-reversion family, not a
+restart of its rejected v1 study or the old trend/cash v2 run. Every date is seen /
+exploratory. No historical production PASS, API calls or automatic monitor install.
+
+Operator activation after release verification (full paths pinned to COMMIT):
+
+```sh
+sudo /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B /opt/trendatlas-research/releases/COMMIT/research_os/dev_only/evolution_worker/bootstrap.py activate-campaign --preregistration-commit 8ade6f8992b6d89a63109d621d1a78f6046823fa
+sudo /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B /opt/trendatlas-research/releases/COMMIT/research_os/dev_only/evolution_worker/bootstrap.py enqueue --job-file /var/lib/trendatlas-research/first-job.json
+sudo systemctl start trendatlas-evolution-dispatch.service
+```
+
+Never manually start the RefuseManualStart worker. The existing dispatcher and
+worker gate preserve production priority. Its timer resumes committed SQLite
+periods after preemption/reboot; one activation can process the finite remaining
+campaign budget. Existing root queue remains read-only. campaign_queue is writable
+only inside research state and every record must match the exact pinned definition.
+BLOCKED anywhere prevents further campaign advancement. Expiry is not a fake REJECT.
+
+Read-only status (no worker start, no SQLite writes):
+
+```sh
+sudo /usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B /opt/trendatlas-research/releases/COMMIT/research_os/dev_only/evolution_worker/bootstrap.py status
+```
+
+Atomic status is /var/lib/trendatlas-research/status.json. Raw committed evidence:
+queue.sqlite3; jobs/JOB/research.sqlite3 tables candidates, evaluations, populations,
+generations, meta; immutable report.json/audit.json/SEALED.json at completion.
+No large/sensitive logs are shown. Status distinguishes completed generation from
+current generation and unique evaluated candidates from total period evaluations.
+A checkpointed candidate can have only part of its folds complete; generation
+selection always requires every fold. CPU seconds are for the current service
+activation, not a fabricated cumulative value across reboots. systemd CPU accounting
+is also returned when available. Timer admission can take up to 15 minutes plus jitter.
+
+Temperature >75 C pauses; a persisted thermal latch clears only below 68 C. Sensor
+failure pauses. Disk, 7200-second elapsed job deadline (including pauses), seven-day
+campaign deadline and ten-experiment budget are fixed before execution. No automatic
+deletion or widening. After all ten seal, the timer can safely remain idle: the finite
+budget is exhausted, with a recorded reason. Next campaign requires new authorization.

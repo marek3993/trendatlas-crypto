@@ -56,6 +56,7 @@ SystemCallFilter=@system-service
 SystemCallFilter=~@privileged @resources @mount @reboot @swap
 ReadWritePaths=/var/lib/trendatlas-research
 ReadOnlyPaths=/var/lib/trendatlas-research/queue
+ReadOnlyPaths=-/var/lib/trendatlas-research/campaign.json -/var/lib/trendatlas-research/campaign-input
 InaccessiblePaths=/opt/market_regime_v1 /opt/home_automation /etc/default -/etc/credstore -/etc/credstore.encrypted -/run/credentials -/run/user
 BindReadOnlyPaths=/opt/market_regime_v1/data/ohlcv/BTCUSDT_1d.csv:/opt/trendatlas-research/input/BTCUSDT_1d.csv
 StandardOutput=journal

@@ -17,6 +17,7 @@
     },
     {
       "output_path": "/var/lib/trendatlas-research/",
+      "campaign_outputs": ["status.json", "campaign_queue/", "jobs/<id>/research.sqlite3", "jobs/<id>/SEALED.json"],
       "generated_by": ["research_os/dev_only/evolution_worker/bootstrap.py"],
       "layer": "research_os_dev_only",
       "status": "active",

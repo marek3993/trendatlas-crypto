@@ -18,6 +18,8 @@
     },
     {
       "script_path": "research_os/dev_only/evolution_worker/bootstrap.py",
+      "campaign_contract": "research_os/dev_only/evolution_worker/CAMPAIGN_CONTRACT.md",
+      "campaign_scope": "finite_10_walk_forward_experiments_5_generations_10_6_4_thermal_guard_no_production_promotion",
       "layer": "research_os_dev_only",
       "status": "active",
       "purpose": "Runs a finite local preregistered research queue in an isolated pinned release; approved Pi release installed and verified idle on 2026-09-20.",

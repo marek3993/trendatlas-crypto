@@ -6,7 +6,7 @@ import sys
 def properties(unit):
     result = subprocess.run(["/usr/bin/systemctl", "show", unit,
         "-p", "LoadState", "-p", "ActiveState", "-p", "SubState", "-p", "Result",
-        "-p", "ExecMainExitTimestampMonotonic", "-p", "UnitFileState"],
+        "-p", "ExecMainExitTimestampMonotonic", "-p", "UnitFileState", "-p", "MainPID", "-p", "CPUUsageNSec"],
         check=True, capture_output=True, text=True, timeout=5, env={"PATH": "/usr/bin:/bin", "LANG": "C"})
     return dict(line.split("=", 1) for line in result.stdout.splitlines() if "=" in line)
 
