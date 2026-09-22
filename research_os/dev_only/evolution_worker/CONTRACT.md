@@ -1,6 +1,7 @@
-> Current authorization (2026-09-22): see [CAMPAIGN_CONTRACT.md](CAMPAIGN_CONTRACT.md).
-> The historical installation-only/empty-queue restrictions below describe v1; the
-> explicit bounded campaign authorization supersedes those restrictions for v3 only.
+> Current new-release authorization (2026-09-22): see
+> [CONTINUOUS_CONTRACT.md](CONTINUOUS_CONTRACT.md). The installation-only v1 and
+> bounded v3 campaign rules below are historical for their respective pinned
+> releases and SEALED artifacts. Continuous cycles use a separate state namespace.
 
 # Local Pi Evolution Worker contract
 

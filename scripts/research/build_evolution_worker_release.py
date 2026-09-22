@@ -11,6 +11,11 @@ BASE = "research_os/dev_only/evolution_worker/"
 FILES = [
     BASE + p for p in ("__init__.py", "runtime.py", "bootstrap.py", "fixture.py", "gate.py", "CONTRACT.md",
                        "campaign.py", "walk_forward.py", "campaign_v3.json", "CAMPAIGN_CONTRACT.md",
+                       "continuous.py", "continuous_engine.py", "continuous_family.py", "continuous_fixture.py",
+                       "continuous_policy.json", "CONTINUOUS_CONTRACT.md",
+                       "resource_guard/continuous_memory_guard.py",
+                       "resource_guard/worker-resource-limits.conf.in",
+                       "resource_guard/dispatch-recovery.conf.in",
                        "systemd/trendatlas-evolution-worker.service.in",
                        "systemd/trendatlas-evolution-dispatch.service.in",
                        "systemd/trendatlas-evolution-dispatch.timer")]
@@ -33,9 +38,13 @@ def build(destination, commit):
     release_path = "/opt/trendatlas-research/releases/" + revision
     for name in list(contents):
         if name.endswith(".in"):
-            contents["units/" + Path(name).name[:-3]] = contents[name].replace(b"@RELEASE@", release_path.encode())
+            contents["units/" + Path(name).name[:-3]] = (contents[name]
+                .replace(b"@RELEASE@", release_path.encode())
+                .replace(b"@GUARD@", (release_path + "/guards").encode()))
         elif name.endswith(".timer"):
             contents["units/" + Path(name).name] = contents[name]
+        elif name.endswith("resource_guard/continuous_memory_guard.py"):
+            contents["guards/memory_guard.py"] = contents[name]
     for name, raw in contents.items():
         path = destination / name
         path.parent.mkdir(parents=True, exist_ok=True)

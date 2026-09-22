@@ -20,19 +20,33 @@ def verified_root():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=("run", "ready", "fixture", "enqueue", "activate-campaign", "status"))
+    parser.add_argument("command", choices=("run", "ready", "fixture", "continuous-fixture",
+                                            "continuous-fixture-start", "continuous-fixture-resume", "enqueue",
+                                            "activate-campaign", "activate-continuous", "status"))
     parser.add_argument("--state", default="/var/lib/trendatlas-research")
     parser.add_argument("--job-file")
     parser.add_argument("--preregistration-commit")
     parser.add_argument("--probe-input", help="Fixture-only read-only mount inspection")
+    parser.add_argument("--fixture-id", help="Stable synthetic fixture ID for separate-process restart test")
     args = parser.parse_args()
     release = verified_root()
     from research_os.dev_only.evolution_worker import runtime
     manifest = runtime.verify_release(release)
     state = runtime.state_path(args.state)
     from research_os.dev_only.evolution_worker import campaign
+    from research_os.dev_only.evolution_worker import continuous
     if args.command == "status":
-        print(json.dumps(campaign.read_status(state, inspect_system=True), indent=2))
+        value = (continuous.read_status(state, inspect_system=True)
+                 if (state / "continuous" / "authorization.json").exists() else
+                 campaign.read_status(state, inspect_system=True))
+        print(json.dumps(value, indent=2))
+        return 0
+    if args.command == "activate-continuous":
+        if os.geteuid() != 0 or args.state != "/var/lib/trendatlas-research":
+            raise ValueError("Continuous activation requires the operator and fixed state")
+        with runtime.worker_lock(state):
+            value = continuous.activate(state, manifest, release)
+        print(json.dumps(value))
         return 0
     if args.command == "activate-campaign":
         if os.geteuid() != 0 or args.state != "/var/lib/trendatlas-research":
@@ -46,6 +60,8 @@ def main():
     if args.command in ("run", "ready") and args.state != "/var/lib/trendatlas-research":
         raise ValueError("Installed worker has a fixed research state path")
     if args.command == "ready":
+        if (state / "continuous" / "authorization.json").exists():
+            return 0 if continuous.ready(state, manifest, release) else 1
         if (state / "campaign.json").exists():
             return 0 if campaign.pending(state, manifest) else 1
         return 0 if runtime.pending(args.state) else 1
@@ -74,8 +90,16 @@ def main():
     if args.command == "fixture":
         from research_os.dev_only.evolution_worker.fixture import run_fixture
         result = run_fixture(release, args.state, probe_input=args.probe_input)
+    elif args.command in ("continuous-fixture", "continuous-fixture-start", "continuous-fixture-resume"):
+        if args.state != "/var/lib/trendatlas-research":
+            raise ValueError("Installed continuous fixture has a fixed research state path")
+        from research_os.dev_only.evolution_worker.continuous_fixture import run_fixture
+        phase = {"continuous-fixture": "all", "continuous-fixture-start": "start",
+                 "continuous-fixture-resume": "resume"}[args.command]
+        result = run_fixture(release, state, phase=phase, fixture_id=args.fixture_id)
     else:
-        result = (campaign.run(release, state) if (state / "campaign.json").exists() else
+        result = (continuous.run(release, state) if (state / "continuous" / "authorization.json").exists() else
+                  campaign.run(release, state) if (state / "campaign.json").exists() else
                   runtime.run_once(release, args.state, Path("/opt/trendatlas-research/input")))
     print(json.dumps(result, indent=2))
     return 0

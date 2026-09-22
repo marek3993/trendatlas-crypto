@@ -1,5 +1,5 @@
 [Unit]
-Description=Check finite preregistered TrendAtlas research queue
+Description=Admit the next bounded TrendAtlas continuous research cycle
 
 [Timer]
 OnBootSec=10min

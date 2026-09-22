@@ -1,6 +1,31 @@
-> Current authorization (2026-09-22): see [CAMPAIGN_CONTRACT.md](CAMPAIGN_CONTRACT.md).
-> The historical installation-only/empty-queue restrictions below describe v1; the
-> explicit bounded campaign authorization supersedes those restrictions for v3 only.
+> Current new-release authorization (2026-09-22): see
+> [CONTINUOUS_CONTRACT.md](CONTINUOUS_CONTRACT.md). The v1 installation-only and
+> bounded v3 sections below remain historical for their original pinned releases.
+
+The continuous release uses `continuous_policy.json` and the isolated
+`/var/lib/trendatlas-research/continuous/` state. The read-only `status` command
+reports the current input campaign, cycle, family, template, generation,
+candidate count, last reject, next hypothesis change and resource state. SEALED
+finishes one cycle. The dispatcher starts the next unused hypothesis after a
+reject and waits for 30 new closed UTC bars after all five are exhausted.
+The current research source and outputs stay separate from the old SEALED jobs.
+
+Synthetic acceptance from two separate processes, run as the research user
+against the new pinned release under the existing CPU/memory/no-swap guard:
+
+```sh
+/usr/bin/python3 -I -B RELEASE/research_os/dev_only/evolution_worker/bootstrap.py continuous-fixture-start --fixture-id acceptance_v1
+/usr/bin/python3 -I -B RELEASE/research_os/dev_only/evolution_worker/bootstrap.py continuous-fixture-resume --fixture-id acceptance_v1
+```
+
+The first command exits after one committed synthetic period. The second
+resumes the same SQLite cycle, seals it, then creates and seals a distinct
+mean-reversion-entry cycle without enqueueing it. This fixture never reads
+production prices or writes production paths. Use a fresh fixture ID for any
+new acceptance run. Real continuous activation is the separate root-only
+`activate-continuous` command after deploying the pinned release and new guard.
+
+## Historical v1 installation notes
 
 # TrendAtlas local Evolution Worker
 
