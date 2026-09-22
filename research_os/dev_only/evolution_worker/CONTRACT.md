@@ -1,3 +1,7 @@
+> Current authorization (2026-09-22): see [CAMPAIGN_CONTRACT.md](CAMPAIGN_CONTRACT.md).
+> The historical installation-only/empty-queue restrictions below describe v1; the
+> explicit bounded campaign authorization supersedes those restrictions for v3 only.
+
 # Local Pi Evolution Worker contract
 
 Classes B/C; authorized implementation and fixture validation, installation pending

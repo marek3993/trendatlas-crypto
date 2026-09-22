@@ -1,611 +1,622 @@
 {
-    "project_name":  "Market Regime v1",
-    "official_core_baseline":  {
-                                   "model":  "phase66g_production_soft_filters",
-                                   "status":  "official_core_production_baseline"
-                               },
-    "official_universe_winner":  {
-                                     "model":  "phase67j_no_neo_main",
-                                     "status":  "validated_universe_winner",
-                                     "shortlist":  [
-                                                       "APT",
-                                                       "BCH",
-                                                       "DOGE",
-                                                       "ICP",
-                                                       "STX",
-                                                       "XTZ"
-                                                   ],
-                                     "removed_assets":  [
-                                                            "NEO"
-                                                        ],
-                                     "metrics":  {
-                                                     "cagr_pct":  141.75,
-                                                     "max_drawdown_pct":  -26.16,
-                                                     "since2023_cagr_pct":  203.52,
-                                                     "since2025_cagr_pct":  113.9
-                                                 },
-                                     "delta_vs_66g":  {
-                                                          "cagr_pct":  28.03,
-                                                          "since2023_cagr_pct":  67.06,
-                                                          "since2025_cagr_pct":  0.0,
-                                                          "max_drawdown_pct":  -2.56
-                                                      },
-                                     "forensic_status":  "passed"
-                                 },
-    "official_phase63_compare_baseline":  {
-                                              "model":  "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
-                                              "paper_path":  "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
-                                              "status":  "pinned_compare_baseline"
-                                          },
-    "app_product_truth":  {
-                              "main_strategy_model":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                              "reference_strategy_model":  "phase67j_no_neo_main",
-                              "benchmark":  "BTC",
-                              "status":  "official_app_main_live_switched"
-                          },
-    "production_core_truth":  {
-                                  "status":  "active_primary_strategy_truth_interface",
-                                  "strategy_id":  "current_strategy",
-                                  "strategy_version":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                  "snapshot_path":  "outputs/production/current_strategy_snapshot.json",
-                                  "timeseries_path":  "outputs/production/current_strategy_timeseries.csv",
-                                  "diagnostics_path":  "outputs/production/current_strategy_diagnostics.json",
-                                  "build_script":  "scripts/production/build_current_strategy_snapshot.py",
-                                  "validation_script":  "scripts/production/validate_current_strategy_snapshot.py",
-                                  "adapter_entrypoint":  "scripts/production/strategy_adapters/phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter.py",
-                                  "adapter_model":  "strategy_adapter_replacement_model",
-                                  "app_primary_truth_interface":  "production_core_v1",
-                                  "execution_primary_truth_interface":  "production_core_v1"
-                              },
-    "production_core_semantics":  {
-                                      "candidate_asset":  "model_candidate_not_automatic_live_exposure",
-                                      "selected_asset":  "selected_model_candidate",
-                                      "actual_held_asset":  "current_authorized_asset",
-                                      "authorized_tradable_asset":  "current_authorized_asset",
-                                      "effective_market_exposure":  "current_authorized_market_exposure",
-                                      "model_candidate_exposure":  "candidate_exposure_if_permission_allows",
-                                      "trend_permission_active":  "gates_market_exposure",
-                                      "execution_target_asset":  "authorized_execution_target_asset",
-                                      "execution_target_exposure":  "authorized_execution_target_exposure",
-                                      "candidate_btc_does_not_automatically_mean_live_market_exposure":  true
-                                  },
-    "leverage_truth":  {
-                           "current_live_truth":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                           "research_raw_winner":  "phase68i_66g_1p50x_static",
-                           "best_deployment_candidate":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                           "official_softer_fallback":  "phase68g_btc_persistence_10d_early_risk_075",
-                           "secondary_fallback":  "phase68g_66g_1p25x_candidate",
-                           "phase68i_dynamic_ladder_candidate":  "legacy / historical fallback only",
-                           "phase68j_simple_tail_risk_guardrails":  "rejected",
-                           "ordering_remains_unchanged":  false,
-                           "truth_promotion_ready":  true,
-                           "direct_auto_switch_app_live_approved":  true
-                       },
-    "segment_next_steps":  {
-                               "MASTER":  "maintain_truth",
-                               "CORE":  "no_active_core_research_leverage_branch_done",
-                               "UNIVERSE":  "frozen",
-                               "DATA":  "production_core_primary_strategy_truth_interface_operational",
-                               "FORENSIC":  "targeted_validation_only",
-                               "APP":  "production_core_primary_truth_interface_active",
-                               "AI_LAB":  "dev_only_governance_active_phase69_paused",
-                               "AUTOMATION":  "recurring_scheduler_ready_live_runtime_armed"
-                           },
-    "app_live_mode_contract":  {
-                                   "current":  {
-                                                   "live_truth_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                                   "execution_profile":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                                   "leverage_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                                   "deployment_candidate_label":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                                   "fallback_profile_label":  "phase68g_btc_persistence_10d_early_risk_075",
-                                                   "approval_gate_status":  "approved_and_applied",
-                                                   "real_order_gate_status":  "live_order_enabled_and_approved",
-                                                   "real_order_eligible_status":  "live_order_enabled_and_approved"
-                                               },
-                                   "future_target":  {
-                                                         "live_truth_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                                         "execution_profile":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-                                                         "leverage_mode":  "phase68g_etf_flow_impulse_early_risk_cooldown_15"
-                                                     },
-                                   "future_fallback":  {
-                                                           "live_truth_mode":  "phase68g_btc_persistence_10d_early_risk_075",
-                                                           "execution_profile":  "phase68g_btc_persistence_10d_early_risk_075",
-                                                           "leverage_mode":  "phase68g_btc_persistence_10d_early_risk_075"
-                                                       }
-                               },
-    "automation_capabilities":  {
-                                    "safe_code_apply_layer_available":  true,
-                                    "code_apply_flow":  "approval_gated",
-                                    "supported_code_patch_types":  [
-                                                                       "replace_entire_file",
-                                                                       "replace_exact_block"
-                                                                   ],
-                                    "dispatcher_available":  true,
-                                    "uncontrolled_auto_write":  false,
-                                    "local_pc_controlled_runtime_loop_available":  true,
-                                    "runtime_loop_validated_safe_posture":  {
-                                                                                "mode":  "read_only",
-                                                                                "trading_enabled":  false,
-                                                                                "dry_run_enabled":  true,
-                                                                                "kill_switch":  true
-                                                                            },
-                                    "runtime_loop_default_behavior":  "one_pass",
-                                    "continuous_runtime_loop_requires_explicit_request":  true,
-                                    "source_of_truth_runtime_writes_allowed":  false,
-                                    "pi_authoritative_runtime_available":  true,
-                                    "automatic_production_producer":  "raspberry_pi",
-                                    "local_pc_role":  "manual_recovery_debug_only",
-                                    "local_pc_production_authority":  false,
-                                    "github_actions_role":  "validation_only",
-                                    "github_actions_production_authority":  false,
-                                    "app_authority_model":  "two_file_pi_authority"
-                                },
-    "workflow_rules":  {
-                           "repo_heavy_or_multi_step_tasks":  {
-                                                                  "codex_should_be_used_for_patching":  true,
-                                                                  "local_user_runs_heavy_validations":  true,
-                                                                  "segment_chat_interprets_results_and_gives_next_step":  true,
-                                                                  "codex_non_trivial_output_contract_required":  true
-                                                              },
-                           "truth_sensitive_tasks":  {
-                                                         "files_read_header_required":  true,
-                                                         "source_of_truth_header_required":  true,
-                                                         "must_list_actual_ssot_files_read_before_repo_based_conclusions":  true,
-                                                         "must_read_export_contract_before_app_execution_dashboard_patch":  true
-                                                     },
-                           "contract_first_repo_policy":  {
-                                                              "status":  "official_repo_wide_discipline",
-                                                              "bug_classification_required_before_patching":  true,
-                                                              "bug_classes":  {
-                                                                                  "A":  "wording_ui_only",
-                                                                                  "B":  "runtime_data_contract",
-                                                                                  "C":  "execution_authority_scheduler",
-                                                                                  "D":  "strategy_math"
-                                                                              },
-                                                              "patch_order":  {
-                                                                                  "do_not_start_with_ui_patch_for_bug_classes_b_c_d":  true,
-                                                                                  "patch_source_contract_first_for_bug_classes_b_c_d":  true,
-                                                                                  "validate_source_contract_before_consumer_patch":  true,
-                                                                                  "patch_consumers_only_after_source_contract_validation":  true
-                                                                              },
-                                                              "required_normalized_public_runtime_contracts":  [
-                                                                                                                 "real_account_state",
-                                                                                                                 "real_account_performance_state",
-                                                                                                                 "model_signal_state",
-                                                                                                                 "model_performance_state",
-                                                                                                                 "authority_state",
-                                                                                                                 "data_health_state"
-                                                                                                             ],
-                                                              "regression_rule":  {
-                                                                                      "every_recurring_bug_requires_regression_test":  true,
-                                                                                      "wording_only_fix_allowed_only_for_bug_class_a":  true
-                                                                                  },
-                                                              "codex_non_trivial_output_sections":  [
-                                                                                                        "FILES READ",
-                                                                                                        "SOURCE OF TRUTH",
-                                                                                                        "exact root cause",
-                                                                                                        "exact contract impact",
-                                                                                                        "exact files changed",
-                                                                                                        "regression test added/updated",
-                                                                                                        "forbidden old path checked",
-                                                                                                        "validation commands/results",
-                                                                                                        "exact git add list",
-                                                                                                        "commit message"
-                                                                                                    ]
-                                                     }
-                       },
-    "normalized_public_runtime_contracts":  {
-                                                "real_account_state":  {
-                                                                           "status":  "required_public_runtime_contract",
-                                                                           "authoritative_source_priority":  [
-                                                                                                                 "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.real_account_state",
-                                                                                                                 "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.real_account_state"
-                                                                                                             ],
-                                                                           "semantic_boundary":  "real_wallet_and_execution_state_only",
-                                                                           "consumer_rule":  "use_as_the_only_public_runtime_account_exposure_and_balance_contract",
-                                                                           "balance_semantics":  {
-                                                                                                      "account_equity_usd":  "total_real_account_equity",
-                                                                                                      "free_collateral_usd":  "exchange_held_funds_excluded_and_nullable_if_native_inputs_are_missing_or_incoherent",
-                                                                                                      "available_balance_usd":  "deprecated_nullable_alias_of_free_collateral_usd_never_total_equity",
-                                                                                                      "withdrawable_usd":  "exchange_native_only_when_valid_for_current_account_abstraction_otherwise_null",
-                                                                                                      "margin_used_usd":  "clearinghouse_marginSummary_totalMarginUsed",
-                                                                                                      "position_notional_usd":  "clearinghouse_marginSummary_totalNtlPos",
-                                                                                                      "unified_account_equity_source":  "spotClearinghouseState_stable_total",
-                                                                                                      "unified_account_free_collateral_source":  "spotClearinghouseState_stable_total_minus_native_hold",
-                                                                                                      "model_fields_forbidden":  true
-                                                                                                  }
-                                                                       },
-                                                "real_account_performance_state":  {
-                                                                                       "status":  "required_public_runtime_contract",
-                                                                                       "authoritative_source_priority":  [
-                                                                                                                             "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.real_account_performance",
-                                                                                                                             "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.real_account_performance"
-                                                                                                                         ],
-                                                                                       "semantic_boundary":  "exchange_native_real_account_pnl_and_cash_flow_accounting_only_never_model_performance",
-                                                                                       "consumer_rule":  "use_for_real_account_pnl_and_cash_flow_display_only"
-                                                                                   },
-                                                "model_signal_state":  {
-                                                                            "status":  "required_public_runtime_contract",
-                                                                            "authoritative_source_priority":  [
-                                                                                                                  "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.model_signal_state",
-                                                                                                                  "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.model_signal_state"
-                                                                                                              ],
-                                                                            "semantic_boundary":  "normalized_model_signal_only_not_real_wallet_exposure",
-                                                                            "consumer_rule":  "use_for_model_preference_display_only"
-                                                                        },
-                                                "model_performance_state":  {
-                                                                                 "status":  "required_public_runtime_contract",
-                                                                                 "authoritative_source_priority":  [
-                                                                                                                       "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.model_performance_state",
-                                                                                                                       "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.model_performance_state"
-                                                                                                                   ],
-                                                                                 "semantic_boundary":  "strategy_curve_only_not_account_statement",
-                                                                                 "consumer_rule":  "use_for_model_performance_display_only"
-                                                                             },
-                                                "authority_state":  {
-                                                                        "status":  "required_public_runtime_contract",
-                                                                        "authoritative_source_priority":  [
-                                                                                                              "outputs/execution/authority/latest_successful_snapshot.json",
-                                                                                                              "outputs/execution/authority/latest_attempt_status.json"
-                                                                                                          ],
-                                                                        "semantic_boundary":  "execution_authority_scheduler_and_currentness_only",
-                                                                        "consumer_rule":  "use_for_authority_mode_currentness_and_publish_status_only"
-                                                                    },
-                                                "data_health_state":  {
-                                                                          "status":  "required_public_runtime_contract",
-                                                                          "authoritative_source_priority":  [
-                                                                                                                "outputs/production/data_health_report.json",
-                                                                                                                "outputs/production/data_health_report.quality.json",
-                                                                                                                "outputs/production/data_health_report.manifest.json"
-                                                                                                            ],
-                                                                          "semantic_boundary":  "data_source_availability_and_fail_closed_gating_only",
-                                                                          "consumer_rule":  "use_for_data_health_and_blocking_status_only"
-                                                                      }
-                                            },
-    "forbidden_semantic_shortcuts":  {
-                                         "real_wallet_exposure_must_not_be_inferred_from_fields":  [
-                                                                                                        "actual_held_asset",
-                                                                                                        "current_asset",
-                                                                                                        "effective_market_exposure"
-                                                                                                    ],
-                                         "real_account_pnl_must_not_be_inferred_from_fields":  [
-                                                                                                    "model_equity",
-                                                                                                    "paper_equity",
-                                                                                                    "rolling_return_30d",
-                                                                                                    "rolling_return_90d"
-                                                                                                ],
-                                         "model_exposure_must_not_be_shown_as_real_account_exposure":  true,
-                                         "dashboards_must_not_infer_account_state_from_model_fields":  true
-                                     },
-    "accepted_state_catchup_2026_04_06":  {
-                                              "summary":  "Official truth catch-up block to reflect already accepted project progress without changing winners, baselines, or live truth.",
-                                              "preserved_truth":  {
-                                                                      "current_live_truth":  "phase68g_66g_1p25x_candidate",
-                                                                      "real_order_gate_status":  "live_order_enabled_and_approved",
-                                                                      "source_of_truth_runtime_writes":  false,
-                                                                      "strategy_semantics_changed":  false
-                                                                  },
-                                              "automation":  {
-                                                                 "accepted_current_state":  [
-                                                                                                "recurring_scheduler_ready",
-                                                                                                "live_runtime_armed"
-                                                                                            ],
-                                                                 "remaining_proof_gap":  "first_non_cash_end_to_end_dynamic_leverage_evidence_run",
-                                                                 "widened_scope_approved":  [
-                                                                                                "controlled_continuous_runtime_loop_preparation",
-                                                                                                "hyperliquid_api_canary_live_execution_proof",
-                                                                                                "runtime_operability_hardening",
-                                                                                                "preflight_gate",
-                                                                                                "partial_output_detection",
-                                                                                                "unified_controlled_loop_run_manifest",
-                                                                                                "generated_output_restore_profile",
-                                                                                                "logging_health_evidence_improvements"
-                                                                                            ],
-                                                                 "clarification":  "AUTOMATION truth previously lagged accepted project progress."
-                                                             },
-                                              "ai_lab":  {
-                                                             "phase69_state":  "paused",
-                                                             "official_strategy_advancement":  "paused",
-                                                             "widened_dev_only_anomaly_operating_mode_approved":  true,
-                                                             "dev_only_runner_spec_maintenance_allowed":  true,
-                                                             "approved_dev_only_layers":  [
-                                                                                              "response_shape_bot_v1",
-                                                                                              "bot_vs_bot_compare",
-                                                                                              "supportive_vs_caution_subset_layer_v1"
-                                                                                                                   ],
-                                                             "post_run_anomaly_step":  "attached_after_successful_daily_refresh",
-                                                             "required_output_flags":  {
-                                                                                           "dev_only":  true,
-                                                                                           "non_authoritative":  true
-                                                                                       }
-                                                         },
-                                              "app":  {
-                                                          "parallel_track_allowed":  [
-                                                                                         "dashboard_skeleton",
-                                                                                         "read_only_live_account_observability",
-                                                                                         "account_balance_equity_pnl_open_positions_last_sync_model"
-                                                                                     ]
-                                                      }
-                                          },
-    "ai_lab_dev_only_governance":  {
-                                       "phase69_status":  "paused",
-                                       "strategy_advancement_status":  "paused",
-                                       "dev_only_execution_mode":  "approved",
-                                       "dev_only_runner_spec_maintenance_allowed":  true,
-                                       "widened_dev_only_anomaly_operating_mode":  "approved",
-                                       "response_shape_bot_v1":  "approved",
-                                       "bot_vs_bot_compare":  "approved",
-                                       "supportive_vs_caution_subset_layer_v1":  "approved",
-                                       "dev_only_post_run_anomaly_step_after_successful_daily_refresh":  "attached",
-                                       "approved_dev_only_families":  [
-                                                                          "cross_asset_decoupling_stack",
-                                                                          "liquidity_stress_anomaly_stack",
-                                                                          "event_context_flags_stack"
-                                                                      ],
-                                       "output_constraints":  {
-                                                                  "dev_only":  true,
-                                                                  "non_authoritative":  true
-                                                              },
-                                       "forbidden_boundaries":  {
-                                                                    "source_of_truth_mutation_from_ai_lab_outputs":  "forbidden",
-                                                                    "new_strategy_line":  "forbidden",
-                                                                    "reopening_phase69_as_active_research_line":  "forbidden",
-                                                                    "scoring_loosening":  "forbidden",
-                                                                    "app_data_execution_live_order_drift":  "forbidden"
-                                                                }
-                                   },
-    "strategy_truth_authority_split":  {
-                                           "production_core_role":  "primary_strategy_truth_interface",
-                                           "production_core_artifacts":  [
-                                                                             "outputs/production/current_strategy_snapshot.json",
-                                                                             "outputs/production/current_strategy_timeseries.csv",
-                                                                             "outputs/production/current_strategy_diagnostics.json"
-                                                                         ],
-                                           "runtime_publish_authority_role":  "pi_only_runtime_publish_authority",
-                                           "runtime_authority_files":  [
-                                                                           "outputs/execution/authority/latest_successful_snapshot.json",
-                                                                           "outputs/execution/authority/latest_attempt_status.json"
-                                                                       ],
-                                           "pc_role":  "manual_recovery_debug_only",
-                                           "github_actions_role":  "validation_only",
-                                           "separation_rule":  "pi_runtime_publish_authority_is_separate_from_production_core_strategy_truth",
-                                           "legacy_phase_chain_role":  "research_archive_input_lineage_not_primary_runtime_truth_interface"
-                                       },
-    "maintenance_watchdog": {
-        "contract": "source_of_truth/watchdog_maintenance_contract.md",
-        "deployment_status": "deployed_verified_20260921",
-        "deployed_source_commit": "4c8fdbd5c54603c9c8f40bd9faaccfe7f2d10590",
-        "deployment_audit": "docs/watchdog-deployment-audit-20260921.md",
-        "watchdog_timer": "enabled_active_four_times_daily_UTC",
-        "openai_key_available_at_deployment": false,
-        "openai_request_sent_at_deployment": false,
-        "observed_incident": "research_btc_derivatives_stale_only",
-        "ai_optional": true,
-        "production_scheduler": false,
-        "orders_allowed": false
+  "project_name": "Market Regime v1",
+  "official_core_baseline": {
+    "model": "phase66g_production_soft_filters",
+    "status": "official_core_production_baseline"
+  },
+  "official_universe_winner": {
+    "model": "phase67j_no_neo_main",
+    "status": "validated_universe_winner",
+    "shortlist": [
+      "APT",
+      "BCH",
+      "DOGE",
+      "ICP",
+      "STX",
+      "XTZ"
+    ],
+    "removed_assets": [
+      "NEO"
+    ],
+    "metrics": {
+      "cagr_pct": 141.75,
+      "max_drawdown_pct": -26.16,
+      "since2023_cagr_pct": 203.52,
+      "since2025_cagr_pct": 113.9
     },
-    "data_health_guard":  {
-                              "status":  "active",
-                              "role":  "data_source_availability_guard",
-                              "separate_from_production_core_strategy_truth":  true,
-                              "separate_from_pi_runtime_publish_authority":  true,
-                              "report_path":  "outputs/production/data_health_report.json",
-                              "quality_path":  "outputs/production/data_health_report.quality.json",
-                              "manifest_path":  "outputs/production/data_health_report.manifest.json",
-                              "build_script":  "scripts/production/build_data_health_report.py",
-                              "validation_script":  "scripts/production/validate_data_health_report.py",
-                              "no_silent_fallback":  true,
-                              "canonical_execution_health_contract":  {
-                                                                            "intent_path":  "outputs/execution/intents/latest_execution_intent.json",
-                                                                            "gate_path":  "outputs/execution/live_gate/latest_real_order_gate_decision.json",
-                                                                            "account_snapshot_path":  "outputs/execution/read_only/hyperliquid_account_snapshot.json",
-                                                                            "must_match_production_core":  true,
-                                                                            "gate_must_consume_canonical_intent_and_account_snapshot":  true,
-                                                                            "temporary_execution_path_overrides_forbidden":  true,
-                                                                            "mismatch_action":  "block_execution_fail_closed"
-                                                                        },
-                              "gating_contract":  {
-                                                       "production_critical":  "block_dependent_new_trade_transition_only",
-                                                       "app_critical":  "degrade_dependent_display_capability_only",
-                                                       "execution_critical":  "block_execution_fail_closed",
-                                                       "research_only":  "block_relevant_research_probe_only",
-                                                       "informational_optional_env_or_api_keys":  "surface_unavailable_warn_only"
-                                                   },
-                              "production_critical_btc_ohlcv_source_id":  "data_ohlcv_btcusdt_1d",
-                              "production_critical_btc_ohlcv_rule":  "stale_or_missing_blocks_new_trade_transition_not_system_availability",
-                              "current_state":  {
-                                                    "overall_status":  "warning",
-                                                    "app_status":  "ok",
-                                                    "execution_status":  "ok",
-                                                    "research_status":  "warning",
-                                                    "block_app":  false,
-                                                    "block_execution":  false,
-                                                    "production_allowed":  true,
-                                                    "research_blocked_source_ids":  [
-                                                                                        "research_btc_derivatives_daily_panel_csv",
-                                                                                        "research_btc_derivatives_daily_panel_quality"
-                                                                                    ],
-                                                    "warning_source_ids":  [
-                                                                               "env_mrv1_btc_etf_flow_primary_provider",
-                                                                               "env_mrv1_coinglass_api_key",
-                                                                               "env_mrv1_sosovalue_api_key"
-                                                                           ]
-                                                }
-                          },
-    "production_execution_orchestrator":  {
-                                               "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
-                                               "single_automatic_production_entrypoint":  true,
-                                               "new_closed_day_authority_advance_rule":  "allow_previous_success_before_D_only_when_same_run_production_intent_gate_and_account_provenance_exactly_match_D_no_historical_order_replay",
-                                               "scheduler_retry_rule":  "mrv1-production.service_restart_on_failure_after_15_minutes_stop_after_success",
-                                               "state_machine":  [
-                                                                     "lock",
-                                                                     "refresh",
-                                                                     "precheck_health",
-                                                                     "production_core",
-                                                                     "fresh_account",
-                                                                     "canonical_intent",
-                                                                     "canonical_gate",
-                                                                     "reconciliation",
-                                                                     "controlled_execution",
-                                                                     "account_readback",
-                                                                     "post_trade_verification",
-                                                                     "finalize_run_manifest",
-                                                                     "dashboard_runtime",
-                                                                     "authority_publish"
-                                                                 ],
-                                               "sizing_contract":  "fresh_account_equity_times_validated_target_exposure",
-                                               "fixed_usd_sizing_or_clipping_forbidden":  true,
-                                               "precision_limited_residual_rule":  "same_asset_residual_within_post_trade_tolerance_and_below_exchange_minimum_is_no_action",
-                                               "relative_safety_violation_action":  "block_fail_closed",
-                                               "idempotency_contract":  "durable_pre_submit_journal_plus_deterministic_hyperliquid_cloid",
-                                               "power_loss_recovery":  "query_exchange_by_cloid_then_refresh_account_before_any_residual_order",
-                                               "run_manifest_path":  "outputs/execution/production_runs/latest_production_run.json",
-                                               "execution_journal_path":  "outputs/execution/execution_journal/",
-                                               "authority_success_after_required_execution_verification":  true,
-                                               "completed_run_publication_requires_terminal_manifest":  true,
-                                               "real_account_exposure_source":  "wallet_position_notional_divided_by_real_account_equity_never_model_target",
-                                               "public_live_order_sent_source":  "finalized_production_run_real_order_sent",
-                                               "manual_app_live_execution":  "intentionally_disabled_use_canonical_systemd_production_orchestrator",
-                                               "safe_preflight_flag":  "--no-submit",
-                                               "production_signer_contract":  {
-                                                                                  "account_address":  "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
-                                                                                  "agent_name":  "TrendAtlasProd",
-                                                                                  "credential_name":  "hyperliquid-agent-private-key",
-                                                                                  "credential_mechanism":  "systemd_LoadCredentialEncrypted_host_key",
-                                                                                  "secret_sources_allowed":  [
-                                                                                                                  "systemd_service_credential"
-                                                                                                              ],
-                                                                                  "secret_sources_forbidden":  [
-                                                                                                                    "git",
-                                                                                                                    "inline_config",
-                                                                                                                    "process_environment",
-                                                                                                                    "command_line",
-                                                                                                                    "journal",
-                                                                                                                    "execution_artifacts",
-                                                                                                                    "dashboard",
-                                                                                                                    "run_manifest"
-                                                                                                                ],
-                                                                                  "preflight_requirements":  [
-                                                                                                                  "credential_present_without_value_output",
-                                                                                                                  "derive_signer_address_locally",
-                                                                                                                  "configured_master_account_exact_match",
-                                                                                                                  "master_account_role_is_user",
-                                                                                                                  "signer_is_distinct_agent_wallet",
-                                                                                                                  "named_agent_address_match",
-                                                                                                                  "agent_authorization_not_expired"
-                                                                                                              ],
-                                                                                  "no_submit_rule":  "validate_signer_without_instantiating_order_submission_adapter_or_mutating_exchange"
-                                                                              }
-                                           },
-    "approved_multi_account_execution_cutover":  {
-                                                       "status":  "implementation_pending_pi_preflight_and_activation",
-                                                       "approved_at":  "2026-09-06",
-                                                       "scheduler":  "mrv1-production.timer_only",
-                                                       "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
-                                                       "execution_backend":  "multi_account",
-                                                       "runner":  "web/scripts/run-multi-account-production-cycle.ts",
-                                                       "legacy_order_adapter_when_active":  "forbidden",
-                                                       "owner_account_must_be_uniquely_eligible":  true,
-                                                       "batch_preflight_scope":  "all_eligible_accounts_before_first_write",
-                                                       "production_batch_concurrency":  1,
-                                                       "stop_after_unsafe_account_result":  true,
-                                                       "per_account_sizing":  "fresh_account_equity_times_validated_target_exposure",
-                                                       "authority_success_requires":  "terminal_multi_account_batch_success_plus_owner_account_readback_alignment",
-                                                       "vercel_exchange_writes":  "disabled",
-                                                       "activation_requires":  [
-                                                                                   "updated_code_and_tests",
-                                                                                   "pi_no_submit_preflight",
-                                                                                   "exact_eligible_account_review",
-                                                                                   "rollback_commands_ready",
-                                                                                   "explicit_final_live_confirmation"
-                                                                               ]
-                                                   },
-    "production_authority_model":  {
-                                       "automatic_production_producer":  "raspberry_pi",
-                                       "pc_role":  "manual_recovery_debug_only",
-                                       "github_actions_role":  "validation_only",
-                                       "runtime_authority_scope":  "runtime_publish_authority_only",
-                                       "separate_from_production_core_strategy_truth":  true,
-                                       "local_runtime_override_rule":  "only_when_account_snapshot_is_objectively_newer_or_equal_with_newer_materialization_never_when_older_than_authority",
-                                       "app_authority_files":  [
-                                                                   "outputs/execution/authority/latest_successful_snapshot.json",
-                                                                   "outputs/execution/authority/latest_attempt_status.json"
-                                                               ],
-                                       "legacy_non_authoritative_app_inputs":  [
-                                                                                   "outputs/execution/app_snapshot/*",
-                                                                                   "outputs/app_refresh_pipeline/*",
-                                                                                   "outputs/execution/full_auto_scheduler/*",
-                                                                                   "outputs/execution/runtime_health/*",
-                                                                                   "outputs/execution/live_status/*"
-                                                                               ]
-                                   },
-    "isolated_evolution_research": {
-        "authorization_date": "2026-09-20",
-        "scope": "user_requested_local_dev_only_evolution_research",
+    "delta_vs_66g": {
+      "cagr_pct": 28.03,
+      "since2023_cagr_pct": 67.06,
+      "since2025_cagr_pct": 0.0,
+      "max_drawdown_pct": -2.56
+    },
+    "forensic_status": "passed"
+  },
+  "official_phase63_compare_baseline": {
+    "model": "phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3",
+    "paper_path": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\phase63_btc_participation_overlay\\phase63_btcpref_f20_s100_r30_m12_rm150_rb-03_v30_045_wb30_wt+02_cd3_paper.csv",
+    "status": "pinned_compare_baseline"
+  },
+  "app_product_truth": {
+    "main_strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "reference_strategy_model": "phase67j_no_neo_main",
+    "benchmark": "BTC",
+    "status": "official_app_main_live_switched"
+  },
+  "production_core_truth": {
+    "status": "active_primary_strategy_truth_interface",
+    "strategy_id": "current_strategy",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "snapshot_path": "outputs/production/current_strategy_snapshot.json",
+    "timeseries_path": "outputs/production/current_strategy_timeseries.csv",
+    "diagnostics_path": "outputs/production/current_strategy_diagnostics.json",
+    "build_script": "scripts/production/build_current_strategy_snapshot.py",
+    "validation_script": "scripts/production/validate_current_strategy_snapshot.py",
+    "adapter_entrypoint": "scripts/production/strategy_adapters/phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter.py",
+    "adapter_model": "strategy_adapter_replacement_model",
+    "app_primary_truth_interface": "production_core_v1",
+    "execution_primary_truth_interface": "production_core_v1"
+  },
+  "production_core_semantics": {
+    "candidate_asset": "model_candidate_not_automatic_live_exposure",
+    "selected_asset": "selected_model_candidate",
+    "actual_held_asset": "current_authorized_asset",
+    "authorized_tradable_asset": "current_authorized_asset",
+    "effective_market_exposure": "current_authorized_market_exposure",
+    "model_candidate_exposure": "candidate_exposure_if_permission_allows",
+    "trend_permission_active": "gates_market_exposure",
+    "execution_target_asset": "authorized_execution_target_asset",
+    "execution_target_exposure": "authorized_execution_target_exposure",
+    "candidate_btc_does_not_automatically_mean_live_market_exposure": true
+  },
+  "leverage_truth": {
+    "current_live_truth": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "research_raw_winner": "phase68i_66g_1p50x_static",
+    "best_deployment_candidate": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "official_softer_fallback": "phase68g_btc_persistence_10d_early_risk_075",
+    "secondary_fallback": "phase68g_66g_1p25x_candidate",
+    "phase68i_dynamic_ladder_candidate": "legacy / historical fallback only",
+    "phase68j_simple_tail_risk_guardrails": "rejected",
+    "ordering_remains_unchanged": false,
+    "truth_promotion_ready": true,
+    "direct_auto_switch_app_live_approved": true
+  },
+  "segment_next_steps": {
+    "MASTER": "maintain_truth",
+    "CORE": "no_active_core_research_leverage_branch_done",
+    "UNIVERSE": "frozen",
+    "DATA": "production_core_primary_strategy_truth_interface_operational",
+    "FORENSIC": "targeted_validation_only",
+    "APP": "production_core_primary_truth_interface_active",
+    "AI_LAB": "dev_only_governance_active_phase69_paused",
+    "AUTOMATION": "recurring_scheduler_ready_live_runtime_armed"
+  },
+  "app_live_mode_contract": {
+    "current": {
+      "live_truth_mode": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "execution_profile": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "leverage_mode": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "deployment_candidate_label": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "fallback_profile_label": "phase68g_btc_persistence_10d_early_risk_075",
+      "approval_gate_status": "approved_and_applied",
+      "real_order_gate_status": "live_order_enabled_and_approved",
+      "real_order_eligible_status": "live_order_enabled_and_approved"
+    },
+    "future_target": {
+      "live_truth_mode": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "execution_profile": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "leverage_mode": "phase68g_etf_flow_impulse_early_risk_cooldown_15"
+    },
+    "future_fallback": {
+      "live_truth_mode": "phase68g_btc_persistence_10d_early_risk_075",
+      "execution_profile": "phase68g_btc_persistence_10d_early_risk_075",
+      "leverage_mode": "phase68g_btc_persistence_10d_early_risk_075"
+    }
+  },
+  "automation_capabilities": {
+    "safe_code_apply_layer_available": true,
+    "code_apply_flow": "approval_gated",
+    "supported_code_patch_types": [
+      "replace_entire_file",
+      "replace_exact_block"
+    ],
+    "dispatcher_available": true,
+    "uncontrolled_auto_write": false,
+    "local_pc_controlled_runtime_loop_available": true,
+    "runtime_loop_validated_safe_posture": {
+      "mode": "read_only",
+      "trading_enabled": false,
+      "dry_run_enabled": true,
+      "kill_switch": true
+    },
+    "runtime_loop_default_behavior": "one_pass",
+    "continuous_runtime_loop_requires_explicit_request": true,
+    "source_of_truth_runtime_writes_allowed": false,
+    "pi_authoritative_runtime_available": true,
+    "automatic_production_producer": "raspberry_pi",
+    "local_pc_role": "manual_recovery_debug_only",
+    "local_pc_production_authority": false,
+    "github_actions_role": "validation_only",
+    "github_actions_production_authority": false,
+    "app_authority_model": "two_file_pi_authority"
+  },
+  "workflow_rules": {
+    "repo_heavy_or_multi_step_tasks": {
+      "codex_should_be_used_for_patching": true,
+      "local_user_runs_heavy_validations": true,
+      "segment_chat_interprets_results_and_gives_next_step": true,
+      "codex_non_trivial_output_contract_required": true
+    },
+    "truth_sensitive_tasks": {
+      "files_read_header_required": true,
+      "source_of_truth_header_required": true,
+      "must_list_actual_ssot_files_read_before_repo_based_conclusions": true,
+      "must_read_export_contract_before_app_execution_dashboard_patch": true
+    },
+    "contract_first_repo_policy": {
+      "status": "official_repo_wide_discipline",
+      "bug_classification_required_before_patching": true,
+      "bug_classes": {
+        "A": "wording_ui_only",
+        "B": "runtime_data_contract",
+        "C": "execution_authority_scheduler",
+        "D": "strategy_math"
+      },
+      "patch_order": {
+        "do_not_start_with_ui_patch_for_bug_classes_b_c_d": true,
+        "patch_source_contract_first_for_bug_classes_b_c_d": true,
+        "validate_source_contract_before_consumer_patch": true,
+        "patch_consumers_only_after_source_contract_validation": true
+      },
+      "required_normalized_public_runtime_contracts": [
+        "real_account_state",
+        "real_account_performance_state",
+        "model_signal_state",
+        "model_performance_state",
+        "authority_state",
+        "data_health_state"
+      ],
+      "regression_rule": {
+        "every_recurring_bug_requires_regression_test": true,
+        "wording_only_fix_allowed_only_for_bug_class_a": true
+      },
+      "codex_non_trivial_output_sections": [
+        "FILES READ",
+        "SOURCE OF TRUTH",
+        "exact root cause",
+        "exact contract impact",
+        "exact files changed",
+        "regression test added/updated",
+        "forbidden old path checked",
+        "validation commands/results",
+        "exact git add list",
+        "commit message"
+      ]
+    }
+  },
+  "normalized_public_runtime_contracts": {
+    "real_account_state": {
+      "status": "required_public_runtime_contract",
+      "authoritative_source_priority": [
+        "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.real_account_state",
+        "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.real_account_state"
+      ],
+      "semantic_boundary": "real_wallet_and_execution_state_only",
+      "consumer_rule": "use_as_the_only_public_runtime_account_exposure_and_balance_contract",
+      "balance_semantics": {
+        "account_equity_usd": "total_real_account_equity",
+        "free_collateral_usd": "exchange_held_funds_excluded_and_nullable_if_native_inputs_are_missing_or_incoherent",
+        "available_balance_usd": "deprecated_nullable_alias_of_free_collateral_usd_never_total_equity",
+        "withdrawable_usd": "exchange_native_only_when_valid_for_current_account_abstraction_otherwise_null",
+        "margin_used_usd": "clearinghouse_marginSummary_totalMarginUsed",
+        "position_notional_usd": "clearinghouse_marginSummary_totalNtlPos",
+        "unified_account_equity_source": "spotClearinghouseState_stable_total",
+        "unified_account_free_collateral_source": "spotClearinghouseState_stable_total_minus_native_hold",
+        "model_fields_forbidden": true
+      }
+    },
+    "real_account_performance_state": {
+      "status": "required_public_runtime_contract",
+      "authoritative_source_priority": [
+        "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.real_account_performance",
+        "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.real_account_performance"
+      ],
+      "semantic_boundary": "exchange_native_real_account_pnl_and_cash_flow_accounting_only_never_model_performance",
+      "consumer_rule": "use_for_real_account_pnl_and_cash_flow_display_only"
+    },
+    "model_signal_state": {
+      "status": "required_public_runtime_contract",
+      "authoritative_source_priority": [
+        "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.model_signal_state",
+        "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.model_signal_state"
+      ],
+      "semantic_boundary": "normalized_model_signal_only_not_real_wallet_exposure",
+      "consumer_rule": "use_for_model_preference_display_only"
+    },
+    "model_performance_state": {
+      "status": "required_public_runtime_contract",
+      "authoritative_source_priority": [
+        "outputs/execution/authority/latest_attempt_status.json::app_runtime_snapshot.model_performance_state",
+        "outputs/execution/authority/latest_successful_snapshot.json::app_runtime_snapshot.model_performance_state"
+      ],
+      "semantic_boundary": "strategy_curve_only_not_account_statement",
+      "consumer_rule": "use_for_model_performance_display_only"
+    },
+    "authority_state": {
+      "status": "required_public_runtime_contract",
+      "authoritative_source_priority": [
+        "outputs/execution/authority/latest_successful_snapshot.json",
+        "outputs/execution/authority/latest_attempt_status.json"
+      ],
+      "semantic_boundary": "execution_authority_scheduler_and_currentness_only",
+      "consumer_rule": "use_for_authority_mode_currentness_and_publish_status_only"
+    },
+    "data_health_state": {
+      "status": "required_public_runtime_contract",
+      "authoritative_source_priority": [
+        "outputs/production/data_health_report.json",
+        "outputs/production/data_health_report.quality.json",
+        "outputs/production/data_health_report.manifest.json"
+      ],
+      "semantic_boundary": "data_source_availability_and_fail_closed_gating_only",
+      "consumer_rule": "use_for_data_health_and_blocking_status_only"
+    }
+  },
+  "forbidden_semantic_shortcuts": {
+    "real_wallet_exposure_must_not_be_inferred_from_fields": [
+      "actual_held_asset",
+      "current_asset",
+      "effective_market_exposure"
+    ],
+    "real_account_pnl_must_not_be_inferred_from_fields": [
+      "model_equity",
+      "paper_equity",
+      "rolling_return_30d",
+      "rolling_return_90d"
+    ],
+    "model_exposure_must_not_be_shown_as_real_account_exposure": true,
+    "dashboards_must_not_infer_account_state_from_model_fields": true
+  },
+  "accepted_state_catchup_2026_04_06": {
+    "summary": "Official truth catch-up block to reflect already accepted project progress without changing winners, baselines, or live truth.",
+    "preserved_truth": {
+      "current_live_truth": "phase68g_66g_1p25x_candidate",
+      "real_order_gate_status": "live_order_enabled_and_approved",
+      "source_of_truth_runtime_writes": false,
+      "strategy_semantics_changed": false
+    },
+    "automation": {
+      "accepted_current_state": [
+        "recurring_scheduler_ready",
+        "live_runtime_armed"
+      ],
+      "remaining_proof_gap": "first_non_cash_end_to_end_dynamic_leverage_evidence_run",
+      "widened_scope_approved": [
+        "controlled_continuous_runtime_loop_preparation",
+        "hyperliquid_api_canary_live_execution_proof",
+        "runtime_operability_hardening",
+        "preflight_gate",
+        "partial_output_detection",
+        "unified_controlled_loop_run_manifest",
+        "generated_output_restore_profile",
+        "logging_health_evidence_improvements"
+      ],
+      "clarification": "AUTOMATION truth previously lagged accepted project progress."
+    },
+    "ai_lab": {
+      "phase69_state": "paused",
+      "official_strategy_advancement": "paused",
+      "widened_dev_only_anomaly_operating_mode_approved": true,
+      "dev_only_runner_spec_maintenance_allowed": true,
+      "approved_dev_only_layers": [
+        "response_shape_bot_v1",
+        "bot_vs_bot_compare",
+        "supportive_vs_caution_subset_layer_v1"
+      ],
+      "post_run_anomaly_step": "attached_after_successful_daily_refresh",
+      "required_output_flags": {
         "dev_only": true,
-        "non_authoritative": true,
-        "population_size": 10,
-        "survivors": 6,
-        "new_mutations": 4,
-        "iml_required": false,
-        "input_contract": "immutable_validated_daily_ohlcv_copy_with_sha256",
-        "backtest_contract": "previous_closed_day_signal_next_open_execution_costs_and_daily_mark_to_market",
-        "selection_contract": "training_diagnostics_plus_two_chronological_validation_folds_ranked_by_worst_then_mean_never_final_holdout",
-        "chronological_control_protocol": "optional_versioned_protocol_frozen_before_search_controls_strictly_after_selection_compare_cash_and_btc_in_every_window_require_all_cash_gates_no_post_result_generation_extension",
-        "seen_period_disclosure": "2025-01-01_through_2026-08-19_already_seen_exploratory_only_cannot_establish_independent_evidence",
-        "holdout_contract": "fixed_before_search_evaluate_frozen_validation_champion_once_against_cash_and_buy_hold_after_planned_generations_no_further_evolution_cash_return_and_risk_adjusted_gate_required",
-        "persistence": "transactional_sqlite_candidates_lineage_metrics_trades_curves_and_run_provenance",
-        "output_root": "outputs/research_os/dev_only/evolution",
-        "production_imports_or_writes": "forbidden",
-        "exchange_access": "forbidden",
-        "scheduler_attachment": "none",
-        "promotion": "forbidden_without_separate_explicit_approval"
+        "non_authoritative": true
+      }
     },
-    "isolated_mean_reversion_research": {
-        "authorization_date": "2026-09-20",
-        "family": "btc_short_horizon_long_only_mean_reversion",
-        "contract": "research_os/dev_only/mean_reversion/CONTRACT.md",
-        "study": "research_os/dev_only/mean_reversion/study.json",
-        "all_history_role": "development_retrospective",
-        "population": 10,
-        "survivors": 6,
-        "adjacent_one_gene_mutations": 4,
-        "generations": 5,
-        "max_annualized_turnover": 24.0,
-        "max_opening_exposure": 0.75,
-        "allowed_outcomes": ["HISTORICAL_REJECT", "HISTORICAL_QUALIFIED_AWAITING_FORWARD"],
-        "iml_required": false,
-        "production_promotion_allowed": false,
-        "pi_monitor_installation": "stop_before_installation_for_concrete_review_only_if_historically_qualified"
+    "app": {
+      "parallel_track_allowed": [
+        "dashboard_skeleton",
+        "read_only_live_account_observability",
+        "account_balance_equity_pnl_open_positions_last_sync_model"
+      ]
+    }
+  },
+  "ai_lab_dev_only_governance": {
+    "phase69_status": "paused",
+    "strategy_advancement_status": "paused",
+    "dev_only_execution_mode": "approved",
+    "dev_only_runner_spec_maintenance_allowed": true,
+    "widened_dev_only_anomaly_operating_mode": "approved",
+    "response_shape_bot_v1": "approved",
+    "bot_vs_bot_compare": "approved",
+    "supportive_vs_caution_subset_layer_v1": "approved",
+    "dev_only_post_run_anomaly_step_after_successful_daily_refresh": "attached",
+    "approved_dev_only_families": [
+      "cross_asset_decoupling_stack",
+      "liquidity_stress_anomaly_stack",
+      "event_context_flags_stack"
+    ],
+    "output_constraints": {
+      "dev_only": true,
+      "non_authoritative": true
     },
-    "multi_asset_rotation_research": {
-        "contract": "research_os/dev_only/multi_asset/CONTRACT.md",
-        "study": "research_os/dev_only/multi_asset/study.json",
-        "scope": "one_preregistered_pi_study_five_generations_then_sealed_stop",
-        "data_role": "development_retrospective_already_seen_final",
-        "production_promotion_allowed": false,
-        "iml_required": false
+    "forbidden_boundaries": {
+      "source_of_truth_mutation_from_ai_lab_outputs": "forbidden",
+      "new_strategy_line": "forbidden",
+      "reopening_phase69_as_active_research_line": "forbidden",
+      "scoring_loosening": "forbidden",
+      "app_data_execution_live_order_drift": "forbidden"
+    }
+  },
+  "strategy_truth_authority_split": {
+    "production_core_role": "primary_strategy_truth_interface",
+    "production_core_artifacts": [
+      "outputs/production/current_strategy_snapshot.json",
+      "outputs/production/current_strategy_timeseries.csv",
+      "outputs/production/current_strategy_diagnostics.json"
+    ],
+    "runtime_publish_authority_role": "pi_only_runtime_publish_authority",
+    "runtime_authority_files": [
+      "outputs/execution/authority/latest_successful_snapshot.json",
+      "outputs/execution/authority/latest_attempt_status.json"
+    ],
+    "pc_role": "manual_recovery_debug_only",
+    "github_actions_role": "validation_only",
+    "separation_rule": "pi_runtime_publish_authority_is_separate_from_production_core_strategy_truth",
+    "legacy_phase_chain_role": "research_archive_input_lineage_not_primary_runtime_truth_interface"
+  },
+  "maintenance_watchdog": {
+    "contract": "source_of_truth/watchdog_maintenance_contract.md",
+    "deployment_status": "deployed_verified_20260921",
+    "deployed_source_commit": "4c8fdbd5c54603c9c8f40bd9faaccfe7f2d10590",
+    "deployment_audit": "docs/watchdog-deployment-audit-20260921.md",
+    "watchdog_timer": "enabled_active_four_times_daily_UTC",
+    "openai_key_available_at_deployment": false,
+    "openai_request_sent_at_deployment": false,
+    "observed_incident": "research_btc_derivatives_stale_only",
+    "ai_optional": true,
+    "production_scheduler": false,
+    "orders_allowed": false
+  },
+  "data_health_guard": {
+    "status": "active",
+    "role": "data_source_availability_guard",
+    "separate_from_production_core_strategy_truth": true,
+    "separate_from_pi_runtime_publish_authority": true,
+    "report_path": "outputs/production/data_health_report.json",
+    "quality_path": "outputs/production/data_health_report.quality.json",
+    "manifest_path": "outputs/production/data_health_report.manifest.json",
+    "build_script": "scripts/production/build_data_health_report.py",
+    "validation_script": "scripts/production/validate_data_health_report.py",
+    "no_silent_fallback": true,
+    "canonical_execution_health_contract": {
+      "intent_path": "outputs/execution/intents/latest_execution_intent.json",
+      "gate_path": "outputs/execution/live_gate/latest_real_order_gate_decision.json",
+      "account_snapshot_path": "outputs/execution/read_only/hyperliquid_account_snapshot.json",
+      "must_match_production_core": true,
+      "gate_must_consume_canonical_intent_and_account_snapshot": true,
+      "temporary_execution_path_overrides_forbidden": true,
+      "mismatch_action": "block_execution_fail_closed"
     },
-    "local_evolution_worker": {
-        "contract": "research_os/dev_only/evolution_worker/CONTRACT.md",
-        "scope": "user_authorized_pinned_worker_installation_empty_queue_only",
-        "installation_status": "installed_verified_idle_20260920",
-        "pinned_source_commit": "2a2319cd4bd2a2655e3b999ffa75802bf2136020",
-        "release_sha256": "685659d6e069f96fade59096ea42e381bf0f1ba1418396550cdeb51a55445651",
-        "installation_audit": "docs/evolution-worker-post-install-20260920.md",
-        "enabled_research_unit": "trendatlas-evolution-dispatch.timer",
-        "queue_at_installation": "empty_no_new_research_authorized",
-        "release_root": "/opt/trendatlas-research",
-        "state_root": "/var/lib/trendatlas-research",
-        "production_checkout_mutation": "forbidden",
-        "production_unit_mutation": "forbidden",
-        "production_priority": "exclusive_preemptible_research_only",
-        "credentials_network_orders": "forbidden",
-        "new_historical_search_this_task": false,
-        "queue": "operator_preregistered_finite_jobs_only"
+    "gating_contract": {
+      "production_critical": "block_dependent_new_trade_transition_only",
+      "app_critical": "degrade_dependent_display_capability_only",
+      "execution_critical": "block_execution_fail_closed",
+      "research_only": "block_relevant_research_probe_only",
+      "informational_optional_env_or_api_keys": "surface_unavailable_warn_only"
     },
-    "legacy_phase_chain_status":  {
-                                      "role":  "research_archive_input_lineage",
-                                      "primary_runtime_production_truth_interface":  false
-                                   }
+    "production_critical_btc_ohlcv_source_id": "data_ohlcv_btcusdt_1d",
+    "production_critical_btc_ohlcv_rule": "stale_or_missing_blocks_new_trade_transition_not_system_availability",
+    "current_state": {
+      "overall_status": "warning",
+      "app_status": "ok",
+      "execution_status": "ok",
+      "research_status": "warning",
+      "block_app": false,
+      "block_execution": false,
+      "production_allowed": true,
+      "research_blocked_source_ids": [
+        "research_btc_derivatives_daily_panel_csv",
+        "research_btc_derivatives_daily_panel_quality"
+      ],
+      "warning_source_ids": [
+        "env_mrv1_btc_etf_flow_primary_provider",
+        "env_mrv1_coinglass_api_key",
+        "env_mrv1_sosovalue_api_key"
+      ]
+    }
+  },
+  "production_execution_orchestrator": {
+    "canonical_entrypoint": "scripts/execution/run_trendatlas_production.py",
+    "single_automatic_production_entrypoint": true,
+    "new_closed_day_authority_advance_rule": "allow_previous_success_before_D_only_when_same_run_production_intent_gate_and_account_provenance_exactly_match_D_no_historical_order_replay",
+    "scheduler_retry_rule": "mrv1-production.service_restart_on_failure_after_15_minutes_stop_after_success",
+    "state_machine": [
+      "lock",
+      "refresh",
+      "precheck_health",
+      "production_core",
+      "fresh_account",
+      "canonical_intent",
+      "canonical_gate",
+      "reconciliation",
+      "controlled_execution",
+      "account_readback",
+      "post_trade_verification",
+      "finalize_run_manifest",
+      "dashboard_runtime",
+      "authority_publish"
+    ],
+    "sizing_contract": "fresh_account_equity_times_validated_target_exposure",
+    "fixed_usd_sizing_or_clipping_forbidden": true,
+    "precision_limited_residual_rule": "same_asset_residual_within_post_trade_tolerance_and_below_exchange_minimum_is_no_action",
+    "relative_safety_violation_action": "block_fail_closed",
+    "idempotency_contract": "durable_pre_submit_journal_plus_deterministic_hyperliquid_cloid",
+    "power_loss_recovery": "query_exchange_by_cloid_then_refresh_account_before_any_residual_order",
+    "run_manifest_path": "outputs/execution/production_runs/latest_production_run.json",
+    "execution_journal_path": "outputs/execution/execution_journal/",
+    "authority_success_after_required_execution_verification": true,
+    "completed_run_publication_requires_terminal_manifest": true,
+    "real_account_exposure_source": "wallet_position_notional_divided_by_real_account_equity_never_model_target",
+    "public_live_order_sent_source": "finalized_production_run_real_order_sent",
+    "manual_app_live_execution": "intentionally_disabled_use_canonical_systemd_production_orchestrator",
+    "safe_preflight_flag": "--no-submit",
+    "production_signer_contract": {
+      "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+      "agent_name": "TrendAtlasProd",
+      "credential_name": "hyperliquid-agent-private-key",
+      "credential_mechanism": "systemd_LoadCredentialEncrypted_host_key",
+      "secret_sources_allowed": [
+        "systemd_service_credential"
+      ],
+      "secret_sources_forbidden": [
+        "git",
+        "inline_config",
+        "process_environment",
+        "command_line",
+        "journal",
+        "execution_artifacts",
+        "dashboard",
+        "run_manifest"
+      ],
+      "preflight_requirements": [
+        "credential_present_without_value_output",
+        "derive_signer_address_locally",
+        "configured_master_account_exact_match",
+        "master_account_role_is_user",
+        "signer_is_distinct_agent_wallet",
+        "named_agent_address_match",
+        "agent_authorization_not_expired"
+      ],
+      "no_submit_rule": "validate_signer_without_instantiating_order_submission_adapter_or_mutating_exchange"
+    }
+  },
+  "approved_multi_account_execution_cutover": {
+    "status": "implementation_pending_pi_preflight_and_activation",
+    "approved_at": "2026-09-06",
+    "scheduler": "mrv1-production.timer_only",
+    "canonical_entrypoint": "scripts/execution/run_trendatlas_production.py",
+    "execution_backend": "multi_account",
+    "runner": "web/scripts/run-multi-account-production-cycle.ts",
+    "legacy_order_adapter_when_active": "forbidden",
+    "owner_account_must_be_uniquely_eligible": true,
+    "batch_preflight_scope": "all_eligible_accounts_before_first_write",
+    "production_batch_concurrency": 1,
+    "stop_after_unsafe_account_result": true,
+    "per_account_sizing": "fresh_account_equity_times_validated_target_exposure",
+    "authority_success_requires": "terminal_multi_account_batch_success_plus_owner_account_readback_alignment",
+    "vercel_exchange_writes": "disabled",
+    "activation_requires": [
+      "updated_code_and_tests",
+      "pi_no_submit_preflight",
+      "exact_eligible_account_review",
+      "rollback_commands_ready",
+      "explicit_final_live_confirmation"
+    ]
+  },
+  "production_authority_model": {
+    "automatic_production_producer": "raspberry_pi",
+    "pc_role": "manual_recovery_debug_only",
+    "github_actions_role": "validation_only",
+    "runtime_authority_scope": "runtime_publish_authority_only",
+    "separate_from_production_core_strategy_truth": true,
+    "local_runtime_override_rule": "only_when_account_snapshot_is_objectively_newer_or_equal_with_newer_materialization_never_when_older_than_authority",
+    "app_authority_files": [
+      "outputs/execution/authority/latest_successful_snapshot.json",
+      "outputs/execution/authority/latest_attempt_status.json"
+    ],
+    "legacy_non_authoritative_app_inputs": [
+      "outputs/execution/app_snapshot/*",
+      "outputs/app_refresh_pipeline/*",
+      "outputs/execution/full_auto_scheduler/*",
+      "outputs/execution/runtime_health/*",
+      "outputs/execution/live_status/*"
+    ]
+  },
+  "isolated_evolution_research": {
+    "authorization_date": "2026-09-20",
+    "scope": "user_requested_local_dev_only_evolution_research",
+    "dev_only": true,
+    "non_authoritative": true,
+    "population_size": 10,
+    "survivors": 6,
+    "new_mutations": 4,
+    "iml_required": false,
+    "input_contract": "immutable_validated_daily_ohlcv_copy_with_sha256",
+    "backtest_contract": "previous_closed_day_signal_next_open_execution_costs_and_daily_mark_to_market",
+    "selection_contract": "training_diagnostics_plus_two_chronological_validation_folds_ranked_by_worst_then_mean_never_final_holdout",
+    "chronological_control_protocol": "optional_versioned_protocol_frozen_before_search_controls_strictly_after_selection_compare_cash_and_btc_in_every_window_require_all_cash_gates_no_post_result_generation_extension",
+    "seen_period_disclosure": "2025-01-01_through_2026-08-19_already_seen_exploratory_only_cannot_establish_independent_evidence",
+    "holdout_contract": "fixed_before_search_evaluate_frozen_validation_champion_once_against_cash_and_buy_hold_after_planned_generations_no_further_evolution_cash_return_and_risk_adjusted_gate_required",
+    "persistence": "transactional_sqlite_candidates_lineage_metrics_trades_curves_and_run_provenance",
+    "output_root": "outputs/research_os/dev_only/evolution",
+    "production_imports_or_writes": "forbidden",
+    "exchange_access": "forbidden",
+    "scheduler_attachment": "none",
+    "promotion": "forbidden_without_separate_explicit_approval"
+  },
+  "isolated_mean_reversion_research": {
+    "authorization_date": "2026-09-20",
+    "family": "btc_short_horizon_long_only_mean_reversion",
+    "contract": "research_os/dev_only/mean_reversion/CONTRACT.md",
+    "study": "research_os/dev_only/mean_reversion/study.json",
+    "all_history_role": "development_retrospective",
+    "population": 10,
+    "survivors": 6,
+    "adjacent_one_gene_mutations": 4,
+    "generations": 5,
+    "max_annualized_turnover": 24.0,
+    "max_opening_exposure": 0.75,
+    "allowed_outcomes": [
+      "HISTORICAL_REJECT",
+      "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+    ],
+    "iml_required": false,
+    "production_promotion_allowed": false,
+    "pi_monitor_installation": "stop_before_installation_for_concrete_review_only_if_historically_qualified"
+  },
+  "multi_asset_rotation_research": {
+    "contract": "research_os/dev_only/multi_asset/CONTRACT.md",
+    "study": "research_os/dev_only/multi_asset/study.json",
+    "scope": "one_preregistered_pi_study_five_generations_then_sealed_stop",
+    "data_role": "development_retrospective_already_seen_final",
+    "production_promotion_allowed": false,
+    "iml_required": false
+  },
+  "local_evolution_worker": {
+    "contract": "research_os/dev_only/evolution_worker/CONTRACT.md",
+    "scope": "user_authorized_pinned_worker_installation_empty_queue_only",
+    "installation_status": "installed_verified_idle_20260920",
+    "pinned_source_commit": "2a2319cd4bd2a2655e3b999ffa75802bf2136020",
+    "release_sha256": "685659d6e069f96fade59096ea42e381bf0f1ba1418396550cdeb51a55445651",
+    "installation_audit": "docs/evolution-worker-post-install-20260920.md",
+    "enabled_research_unit": "trendatlas-evolution-dispatch.timer",
+    "queue_at_installation": "empty_no_new_research_authorized",
+    "release_root": "/opt/trendatlas-research",
+    "state_root": "/var/lib/trendatlas-research",
+    "production_checkout_mutation": "forbidden",
+    "production_unit_mutation": "forbidden",
+    "production_priority": "exclusive_preemptible_research_only",
+    "credentials_network_orders": "forbidden",
+    "new_historical_search_this_task": false,
+    "queue": "operator_preregistered_finite_jobs_only",
+    "campaign_v3": {
+      "authorization_date": "2026-09-22",
+      "status": "preregistered_not_yet_run",
+      "contract": "research_os/dev_only/evolution_worker/CAMPAIGN_CONTRACT.md",
+      "spec": "research_os/dev_only/evolution_worker/campaign_v3.json",
+      "max_experiments": 10,
+      "production_promotion_allowed": false
+    }
+  },
+  "legacy_phase_chain_status": {
+    "role": "research_archive_input_lineage",
+    "primary_runtime_production_truth_interface": false
+  }
 }

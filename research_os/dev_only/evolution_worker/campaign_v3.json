@@ -1,0 +1,962 @@
+{
+  "schema_version": 1,
+  "campaign_id": "btc_walk_forward_campaign_v3_20260922",
+  "engine": "btc_walk_forward_mr_v3",
+  "max_experiments": 10,
+  "max_elapsed_seconds": 604800,
+  "state_budget_bytes": 536870912,
+  "free_disk_min_bytes": 1140850688,
+  "thermal_pause_above_c": 75,
+  "thermal_resume_below_c": 68,
+  "all_history_seen": true,
+  "seen_period_disclosure": "All existing history is seen/development/retrospective, including 2025-01-01..2026-08-19. No untouched historical holdout claim. Rolling selection windows overlap; report every result without cherry-picking.",
+  "forward_plan": {
+    "earliest_start": "2026-09-23",
+    "minimum_calendar_days": 180,
+    "condition": "After qualification freeze candidate/hash; separate review before any read-only paper monitor installation. Real start must be after candidate freeze; never backfill forward evidence.",
+    "orders_allowed": false,
+    "automatic_installation": false
+  },
+  "studies": [
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260922,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2019-07-01",
+          "end": "2019-12-31"
+        },
+        {
+          "id": "selection_2",
+          "start": "2020-01-01",
+          "end": "2020-06-30"
+        },
+        {
+          "id": "selection_3",
+          "start": "2020-07-01",
+          "end": "2020-12-31"
+        },
+        {
+          "id": "selection_4",
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2021-07-01",
+        "end": "2021-12-31"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w02",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260923,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2020-01-01",
+          "end": "2020-06-30"
+        },
+        {
+          "id": "selection_2",
+          "start": "2020-07-01",
+          "end": "2020-12-31"
+        },
+        {
+          "id": "selection_3",
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        },
+        {
+          "id": "selection_4",
+          "start": "2021-07-01",
+          "end": "2021-12-31"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2022-01-01",
+        "end": "2022-06-30"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w03",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260924,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2020-07-01",
+          "end": "2020-12-31"
+        },
+        {
+          "id": "selection_2",
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        },
+        {
+          "id": "selection_3",
+          "start": "2021-07-01",
+          "end": "2021-12-31"
+        },
+        {
+          "id": "selection_4",
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2022-07-01",
+        "end": "2022-12-31"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w04",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260925,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2021-01-01",
+          "end": "2021-06-30"
+        },
+        {
+          "id": "selection_2",
+          "start": "2021-07-01",
+          "end": "2021-12-31"
+        },
+        {
+          "id": "selection_3",
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        },
+        {
+          "id": "selection_4",
+          "start": "2022-07-01",
+          "end": "2022-12-31"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2023-01-01",
+        "end": "2023-06-30"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w05",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260926,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2021-07-01",
+          "end": "2021-12-31"
+        },
+        {
+          "id": "selection_2",
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        },
+        {
+          "id": "selection_3",
+          "start": "2022-07-01",
+          "end": "2022-12-31"
+        },
+        {
+          "id": "selection_4",
+          "start": "2023-01-01",
+          "end": "2023-06-30"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2023-07-01",
+        "end": "2023-12-31"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w06",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260927,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2022-01-01",
+          "end": "2022-06-30"
+        },
+        {
+          "id": "selection_2",
+          "start": "2022-07-01",
+          "end": "2022-12-31"
+        },
+        {
+          "id": "selection_3",
+          "start": "2023-01-01",
+          "end": "2023-06-30"
+        },
+        {
+          "id": "selection_4",
+          "start": "2023-07-01",
+          "end": "2023-12-31"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2024-01-01",
+        "end": "2024-06-30"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w07",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260928,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2022-07-01",
+          "end": "2022-12-31"
+        },
+        {
+          "id": "selection_2",
+          "start": "2023-01-01",
+          "end": "2023-06-30"
+        },
+        {
+          "id": "selection_3",
+          "start": "2023-07-01",
+          "end": "2023-12-31"
+        },
+        {
+          "id": "selection_4",
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2024-07-01",
+        "end": "2024-12-31"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w08",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260929,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2023-01-01",
+          "end": "2023-06-30"
+        },
+        {
+          "id": "selection_2",
+          "start": "2023-07-01",
+          "end": "2023-12-31"
+        },
+        {
+          "id": "selection_3",
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        {
+          "id": "selection_4",
+          "start": "2024-07-01",
+          "end": "2024-12-31"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2025-01-01",
+        "end": "2025-06-30"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w09",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260930,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2023-07-01",
+          "end": "2023-12-31"
+        },
+        {
+          "id": "selection_2",
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        {
+          "id": "selection_3",
+          "start": "2024-07-01",
+          "end": "2024-12-31"
+        },
+        {
+          "id": "selection_4",
+          "start": "2025-01-01",
+          "end": "2025-06-30"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2025-07-01",
+        "end": "2025-12-31"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    },
+    {
+      "experiment_id": "btc_walk_forward_evolution_v3_20260922_w10",
+      "schema_version": 2,
+      "engine": "btc_walk_forward_mr_v3",
+      "data_role": "seen_exploratory_retrospective",
+      "input_sha256": "4d71367947e5789ca807e42d98541a079bd5a0c04054ec58a6781e8cc6a77712",
+      "domains": {
+        "mean_window": [
+          10,
+          20,
+          30
+        ],
+        "entry_z": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "regime_window": [
+          90,
+          150,
+          200
+        ],
+        "range_band": [
+          0.05,
+          0.1,
+          0.15
+        ],
+        "downtrend_floor": [
+          0.1,
+          0.15,
+          0.2
+        ],
+        "max_hold": [
+          3,
+          5,
+          10
+        ],
+        "cooldown": [
+          3,
+          7,
+          14
+        ],
+        "exposure_cap": [
+          0.5,
+          0.75
+        ]
+      },
+      "seed": 20260931,
+      "generations": 5,
+      "population": 10,
+      "survivors": 6,
+      "mutations": 4,
+      "fee_bps_one_way": 10,
+      "slippage_bps_one_way": 5,
+      "max_annualized_turnover": 24.0,
+      "warmup_days": 200,
+      "max_elapsed_seconds": 7200,
+      "disk_budget_bytes": 67108864,
+      "selection_folds": [
+        {
+          "id": "selection_1",
+          "start": "2024-01-01",
+          "end": "2024-06-30"
+        },
+        {
+          "id": "selection_2",
+          "start": "2024-07-01",
+          "end": "2024-12-31"
+        },
+        {
+          "id": "selection_3",
+          "start": "2025-01-01",
+          "end": "2025-06-30"
+        },
+        {
+          "id": "selection_4",
+          "start": "2025-07-01",
+          "end": "2025-12-31"
+        }
+      ],
+      "assessment": {
+        "id": "walk_forward_assessment",
+        "start": "2026-01-01",
+        "end": "2026-06-30"
+      },
+      "ranking": "worst_then_median_then_mean_fitness_then_sha256",
+      "qualification": "positive_net_return_and_fitness_vs_cash_all_selection_continuous_and_assessment_turnover_lte24",
+      "allowed_outcomes": [
+        "HISTORICAL_REJECT",
+        "HISTORICAL_QUALIFIED_AWAITING_FORWARD"
+      ],
+      "iml_required": false,
+      "production_promotion_allowed": false
+    }
+  ]
+}
