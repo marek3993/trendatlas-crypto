@@ -1,0 +1,5 @@
+[Service]
+LimitAS=384M
+LimitMEMLOCK=384M
+ExecStart=
+ExecStart=/usr/bin/env -i PATH=/usr/bin:/bin LANG=C.UTF-8 HOME=/nonexistent /usr/bin/python3 -I -B @GUARD@/memory_guard.py
