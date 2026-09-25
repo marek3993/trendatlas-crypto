@@ -18,7 +18,8 @@ export const ALLOWED_INFO_REQUEST_TYPES = [
   "userFunding",
   "userNonFundingLedgerUpdates",
   "userRole",
-  "extraAgents"
+  "extraAgents",
+  "userAbstraction"
 ] as const;
 type AllowedInfoRequestType = (typeof ALLOWED_INFO_REQUEST_TYPES)[number];
 
@@ -29,10 +30,13 @@ type ClearinghouseState = {
 };
 
 type SpotClearinghouseState = {
-  balances?: Array<{ coin?: string; total?: string }>;
+  balances?: Array<{ coin?: string; total?: string; hold?: string; token?: number }>;
 };
 
-type OpenOrder = { oid?: number | string };
+// Cash-equivalent valuation convention, never a restriction on tradable assets.
+const CASH_BALANCE_SYMBOLS = new Set(["USDC", "USD", "USDT", "USDE", "USDH", "USDT0"]);
+
+type OpenOrder = { oid?: number | string; coin?: string; cloid?: string; side?: string; sz?: string | number };
 
 export type HyperliquidAccountSnapshot = {
   address: string;
@@ -40,6 +44,8 @@ export type HyperliquidAccountSnapshot = {
   withdrawableUsd: number | null;
   positions: Array<{ coin: string; size: number; entryPrice: number | null }>;
   openOrderCount: number;
+  openOrders?: Array<{ asset: string; orderId: string; cloid?: string; side?: "buy" | "sell"; size?: number }>;
+  marginAvailableUsd?: number;
 };
 
 export class HyperliquidInfoError extends Error {
@@ -60,6 +66,7 @@ function isAllowedInfoRequestType(value: string): value is AllowedInfoRequestTyp
 
 function numberOrNull(value: unknown): number | null {
   if (typeof value !== "string" && typeof value !== "number") return null;
+  if (typeof value === "string" && value.trim() === "") return null;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : null;
 }
@@ -161,10 +168,11 @@ export async function getHyperliquidAccountSnapshot(rawAddress: string): Promise
   const validation = validateHyperliquidAddress(rawAddress);
   if (!validation.ok) throw new HyperliquidInfoError();
 
-  const [state, spotState, openOrders] = await Promise.all([
+  const [state, spotState, openOrders, abstraction] = await Promise.all([
     requestInfo<ClearinghouseState>("clearinghouseState", validation.address),
     requestInfo<SpotClearinghouseState>("spotClearinghouseState", validation.address),
-    requestInfo<OpenOrder[]>("openOrders", validation.address)
+    requestInfo<OpenOrder[]>("openOrders", validation.address),
+    requestInfo<unknown>("userAbstraction", validation.address)
   ]);
   const perpsAccountEquityUsd = numberOrNull(state.marginSummary?.accountValue);
   if (perpsAccountEquityUsd === null || perpsAccountEquityUsd < 0 || !Array.isArray(state.assetPositions) || !Array.isArray(spotState.balances) || !Array.isArray(openOrders)) {
@@ -177,15 +185,28 @@ export async function getHyperliquidAccountSnapshot(rawAddress: string): Promise
     throw new HyperliquidInfoError();
   }
 
-  const accountEquityUsd = perpsAccountEquityUsd + spotUsdcUsd;
+  if (typeof abstraction !== "string" || !["unifiedAccount", "portfolioMargin", "disabled", "default", "dexAbstraction"].includes(abstraction)) throw new HyperliquidInfoError();
+  const unified = abstraction === "unifiedAccount" || abstraction === "portfolioMargin";
+  const cashBalances = spotState.balances.filter(({ coin }) => CASH_BALANCE_SYMBOLS.has(coin?.toUpperCase() ?? ""));
+  const cashTotal = cashBalances.reduce((total, balance) => {
+    const value = numberOrNull(balance.total);
+    if (value === null || value < 0) throw new HyperliquidInfoError();
+    return total + value;
+  }, 0);
+  // Unified collateral is already reported in spot; adding perps equity double-counts it.
+  const accountEquityUsd = unified ? cashTotal : perpsAccountEquityUsd + spotUsdcUsd;
   const perpsWithdrawableUsd = numberOrNull(state.withdrawable);
-  const withdrawableUsd = perpsWithdrawableUsd !== null && perpsWithdrawableUsd >= 0
+  const withdrawableUsd = unified ? null : perpsWithdrawableUsd !== null && perpsWithdrawableUsd >= 0
     ? perpsWithdrawableUsd + spotUsdcUsd
     : spotUsdcUsd;
-  const positions = state.assetPositions.flatMap(({ position }) => {
+  const positions = state.assetPositions.flatMap((entry) => {
+    const position = entry?.position;
     const size = numberOrNull(position?.szi);
-    if (!position?.coin || size === null || size === 0) return [];
-    return [{ coin: position.coin, size, entryPrice: numberOrNull(position.entryPx) }];
+    if (size === null) throw new HyperliquidInfoError();
+    if (size === 0) return [];
+    const coin = typeof position?.coin === "string" ? position.coin.trim() : "";
+    if (!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$/.test(coin)) throw new HyperliquidInfoError();
+    return [{ coin, size, entryPrice: numberOrNull(position?.entryPx) }];
   });
 
   return {
@@ -193,7 +214,16 @@ export async function getHyperliquidAccountSnapshot(rawAddress: string): Promise
     accountEquityUsd,
     withdrawableUsd: withdrawableUsd !== null && withdrawableUsd >= 0 ? withdrawableUsd : null,
     positions,
-    openOrderCount: openOrders.length
+    openOrderCount: openOrders.length,
+    openOrders: openOrders.flatMap((order) => {
+      if (typeof order.coin !== "string" || (typeof order.oid !== "string" && typeof order.oid !== "number")) return [];
+      const size = numberOrNull(order.sz);
+      return [{ asset: order.coin.trim().toUpperCase(), orderId: String(order.oid), ...(typeof order.cloid === "string" ? { cloid: order.cloid } : {}), ...(order.side === "B" ? { side: "buy" as const } : order.side === "A" ? { side: "sell" as const } : {}), ...(size !== null && size >= 0 ? { size } : {}) }];
+    }),
+    // Spot wallet equity is not automatically available as perpetual collateral.
+    marginAvailableUsd: unified
+      ? Math.max(0, spotUsdcUsd - (numberOrNull(spotUsdcBalance?.hold) ?? spotUsdcUsd))
+      : Math.max(0, perpsAccountEquityUsd - (numberOrNull(state.marginSummary?.totalMarginUsed) ?? perpsAccountEquityUsd))
   };
 }
 

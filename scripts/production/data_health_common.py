@@ -190,7 +190,7 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
         path="outputs/execution/authority/latest_successful_snapshot.json",
         kind="json",
         criticality=CRITICALITY_APP,
-        action_on_failure=ACTION_BLOCK_EXECUTION,
+        action_on_failure=ACTION_WARN_ONLY,
         label_sk="posledný úspešný autoritatívny snapshot",
         label_en="latest successful authority snapshot",
         required_keys=(
@@ -210,8 +210,8 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
         source_type="authority_status_json",
         path="outputs/execution/authority/latest_attempt_status.json",
         kind="json",
-        criticality=CRITICALITY_EXECUTION,
-        action_on_failure=ACTION_BLOCK_EXECUTION,
+        criticality=CRITICALITY_APP,
+        action_on_failure=ACTION_WARN_ONLY,
         label_sk="stav posledného autoritatívneho pokusu",
         label_en="latest authority attempt status",
         required_keys=(
@@ -837,8 +837,14 @@ def canonical_execution_alignment_errors(
     expected_fingerprints = {
         "intent_sha256": sha256_file(intent_path),
         "production_snapshot_sha256": sha256_file(production_path),
-        "account_snapshot_sha256": sha256_file(account_snapshot_path),
     }
+    owner_observation_unavailable = (
+        payload.get("account_validation_scope") == "per_account_exchange"
+        and payload.get("account_snapshot_available") is False
+        and fingerprints.get("account_snapshot_sha256") is None
+    )
+    if not owner_observation_unavailable:
+        expected_fingerprints["account_snapshot_sha256"] = sha256_file(account_snapshot_path)
     for field_name, expected_value in expected_fingerprints.items():
         if not expected_value or fingerprints.get(field_name) != expected_value:
             errors.append(f"gate {field_name} does not match its canonical source")

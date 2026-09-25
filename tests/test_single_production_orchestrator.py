@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.execution.production_execution import sha256_file
+from scripts.execution.production_execution import sha256_file, build_execution_plan, ExecutionJournal
 from scripts.execution.run_trendatlas_production import (
     AlreadyRunning,
     SingleRunLock,
@@ -140,6 +140,7 @@ class FixtureOrchestrator(TrendAtlasProductionOrchestrator):
             "signalId": signal_id,
             "successful": True,
             "realOrderSent": False if no_submit else True,
+            "ownerResult": {"accountId": "account-a", "status": "PREFLIGHT_READY" if no_submit else "FILLED_AND_ALIGNED"},
             "results": [{"accountId": "account-a", "status": "PREFLIGHT_READY" if no_submit else "FILLED_AND_ALIGNED"}],
         }, 0)
 
@@ -399,6 +400,232 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         self.assertNotIn(private_key, rendered)
         self.assertNotIn(private_key[2:], rendered)
         self.assertIn("[REDACTED_PRIVATE_KEY]", rendered)
+
+
+    def test_multi_exit_callback_checks_only_last_completed_close_and_fresh_residual(self):
+        from datetime import datetime, timezone
+        mids, precision = {"BTC": 100000.0, "ETH": 4000.0, "AVAX": 25.0}, {"BTC": 5, "ETH": 4, "AVAX": 2}
+        snapshot = account(True)
+        snapshot["summary"]["spot_stable_total_usd"] = 1000
+        snapshot["summary"]["spot_stable_available_usd"] = 1000
+        snapshot["raw"]["clearinghouseState"]["assetPositions"].append({"position": {"coin": "ETH", "szi": ".05", "positionValue": "200"}})
+        prod, canonical_intent = production("AVAX", 1.25), intent("AVAX", 1.25)
+        canonical_gate = {"signal_id": "sig-1", "target_asset": "AVAX", "production_signal_context": {"closed_day": "2026-08-31"}}
+        plan = build_execution_plan(production=prod, intent=canonical_intent, gate=canonical_gate, account_snapshot=snapshot, policy=policy(), mids=mids, size_decimals=precision, now=datetime(2026, 9, 1, 12, tzinfo=timezone.utc))
+        runner = TrendAtlasProductionOrchestrator(root=self.root, market_loader=lambda: (mids, precision))
+        runner.run_script = unittest.mock.Mock()
+        runner.load_runtime = lambda: (prod, canonical_intent, canonical_gate, snapshot, {"kill_switch": False}, policy())
+        result_rows = [{"step": plan["steps"][0], "response": {"acknowledged": True}}]
+        # An exchange acknowledgement alone cannot authorize ENTRY.
+        still_open = runner.post_trade_verifier(plan, result_rows)
+        self.assertFalse(still_open["safe_for_next_step"])
+        snapshot["raw"]["clearinghouseState"]["assetPositions"] = [row for row in snapshot["raw"]["clearinghouseState"]["assetPositions"] if row["position"]["coin"] != "BTC"]
+        after_first = runner.post_trade_verifier(plan, result_rows)
+        self.assertTrue(after_first["safe_for_next_step"])
+        self.assertEqual([p["asset"] for p in after_first["residual_plan"]["unwanted_positions"]], ["ETH"])
+        self.assertEqual(after_first["residual_plan"]["steps"][0]["asset"], "ETH")
+        snapshot["raw"]["clearinghouseState"]["assetPositions"] = []
+        snapshot["summary"]["spot_stable_total_usd"] = 900
+        result_rows.append({"step": plan["steps"][1], "response": {"acknowledged": True}})
+        after_second = runner.post_trade_verifier(plan, result_rows)
+        self.assertTrue(after_second["safe_for_next_step"])
+        self.assertEqual(after_second["residual_plan"]["target_notional_usd"], 1125)
+        self.assertEqual(after_second["residual_plan"]["unwanted_positions"], [])
+        self.assertEqual(runner.run_script.call_count, 3)
+
+    def test_multi_account_owner_plan_error_does_not_prevent_child_accounts(self):
+        class OwnerSnapshotError(FixtureOrchestrator):
+            child_ran = False
+            def run_script(self, script, *arguments, label):
+                super().run_script(script, *arguments, label=label)
+                if label == "read_account_before":
+                    broken = account()
+                    broken["summary"]["spot_stable_total_usd"] = None
+                    write_json(self.root / "outputs/execution/read_only/hyperliquid_account_snapshot.json", broken)
+            def run_multi_account_backend(self, signal_id, *, no_submit):
+                self.child_ran = True
+                return super().run_multi_account_backend(signal_id, no_submit=no_submit)
+        runner = OwnerSnapshotError(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
+            result = runner.run()
+        self.assertTrue(runner.child_ran)
+        self.assertEqual(result["final_status"], "SUCCESS")
+        self.assertIsNone(result["account_equity_before"])
+        self.assertEqual(result["account_equity_after"], 20)
+
+    def test_publication_failure_preserves_execution_and_retry_never_resubmits(self):
+        class PublishFailure(FixtureOrchestrator):
+            def run_script(self, script, *arguments, label):
+                if label == "authority_publish_existing":
+                    raise TimeoutError("temporary publication failure")
+                super().run_script(script, *arguments, label=label)
+        adapter = FakeAdapter()
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()), patch("scripts.execution.run_trendatlas_production.authority_publish_helpers.publish_authority_refresh_failure", return_value={"published": True}):
+            failed = PublishFailure(self.root, no_submit=False, adapter=adapter).run()
+            self.assertEqual(failed["final_status"], "EXECUTION_COMPLETE_PUBLISH_FAILED")
+            self.assertEqual(failed["execution_outcome"], "FILLED_AND_ALIGNED")
+            self.assertEqual(len(adapter.submits), 1)
+            success = FixtureOrchestrator(self.root, no_submit=False, adapter=adapter).run()
+        self.assertEqual(success["final_status"], "SUCCESS")
+        self.assertEqual(len(adapter.submits), 1)
+        self.assertEqual(success["execution_outcome"], "FILLED_AND_ALIGNED")
+        self.assertFalse(success["real_order_sent"])
+
+    def test_dashboard_failure_preserves_execution_and_retry_never_resubmits(self):
+        class DashboardFailure(FixtureOrchestrator):
+            def run_script(self, script, *arguments, label):
+                if label == "materialize_dashboard_runtime":
+                    raise TimeoutError("dashboard storage unavailable")
+                super().run_script(script, *arguments, label=label)
+        adapter = FakeAdapter()
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()), patch("scripts.execution.run_trendatlas_production.authority_publish_helpers.publish_authority_refresh_failure", return_value={"published": True}):
+            failed = DashboardFailure(self.root, no_submit=False, adapter=adapter).run()
+            self.assertEqual(failed["final_status"], "EXECUTION_COMPLETE_PUBLISH_FAILED")
+            self.assertEqual(failed["execution_outcome"], "FILLED_AND_ALIGNED")
+            self.assertEqual(len(adapter.submits), 1)
+            success = FixtureOrchestrator(self.root, no_submit=False, adapter=adapter).run()
+        self.assertEqual(success["final_status"], "SUCCESS")
+        self.assertEqual(len(adapter.submits), 1)
+
+    def test_presentation_steps_run_after_execution_and_fail_as_warnings(self):
+        class PresentationFailure(FixtureOrchestrator):
+            presentation_labels = []
+            def run_script(self, script, *arguments, label):
+                if label in {"verify_app_freshness", "hyperliquid_real_performance_ledger"}:
+                    self.presentation_labels.append((label, self.manifest.get("execution_outcome")))
+                    raise RuntimeError("presentation source unavailable")
+                super().run_script(script, *arguments, label=label)
+        runner = PresentationFailure(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
+            result = runner.run()
+        self.assertEqual(result["final_status"], "SUCCESS")
+        self.assertEqual(set(result["presentation_warnings"]), {"verify_app_freshness", "hyperliquid_real_performance_ledger"})
+        self.assertEqual(len(runner.presentation_labels), 2)
+        self.assertTrue(all(outcome == "FILLED_AND_ALIGNED" for _, outcome in runner.presentation_labels))
+
+    def test_owner_readback_failure_preserves_terminal_batch_results_and_marks_wallet_unknown(self):
+        class ReadbackFailure(FixtureOrchestrator):
+            def run_script(self, script, *arguments, label):
+                if label == "read_account_after":
+                    raise TimeoutError("owner presentation read unavailable")
+                super().run_script(script, *arguments, label=label)
+        runner = ReadbackFailure(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()), patch("scripts.execution.run_trendatlas_production.authority_publish_helpers.publish_authority_refresh_failure", return_value={"published": True}):
+            result = runner.run()
+        self.assertEqual(result["final_status"], "EXECUTION_COMPLETE_PUBLISH_FAILED")
+        self.assertEqual(result["execution_outcome"], "FILLED_AND_ALIGNED")
+        self.assertEqual(result["multi_account_execution"]["results"][0]["status"], "FILLED_AND_ALIGNED")
+        self.assertFalse(result["owner_account_snapshot_available"])
+        self.assertIsNone(result["real_position_after"])
+        self.assertIsNone(result["real_exposure_after"])
+        self.assertEqual(runner.authority_calls, [])
+
+    def test_staying_cash_is_terminal_only_after_flat_exchange_readback(self):
+        class StayingCash(FixtureOrchestrator):
+            leave_position = False
+            def run_multi_account_backend(self, signal_id, *, no_submit):
+                report, _ = super().run_multi_account_backend(signal_id, no_submit=no_submit)
+                report.update({"successful": False, "failureKind": "deterministic", "ownerResult": {"status": "EXITED_ENTRY_FAILED_STAYING_CASH"}})
+                return report, 2
+            def run_script(self, script, *arguments, label):
+                super().run_script(script, *arguments, label=label)
+                if label == "read_account_after":
+                    write_json(self.root / "outputs/execution/read_only/hyperliquid_account_snapshot.json", account(self.leave_position))
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()), patch("scripts.execution.run_trendatlas_production.authority_publish_helpers.publish_authority_refresh_failure", return_value={"published": True}):
+            runner = StayingCash(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+            result = runner.run()
+            self.assertEqual(result["final_status"], "EXITED_ENTRY_FAILED_STAYING_CASH")
+            self.assertEqual(result["real_position_after"], [])
+            self.assertEqual(result["real_exposure_after"], 0)
+            self.assertEqual(result["authority_status"], "EXECUTION_TARGET_NOT_ALIGNED")
+            self.assertEqual(runner.authority_calls, [])
+            bad = StayingCash(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+            bad.leave_position = True
+            invalid = bad.run()
+        self.assertEqual(invalid["final_status"], "BLOCKED")
+        self.assertEqual(invalid["execution_outcome"], "POST_TRADE_VERIFICATION_FAILED")
+        self.assertEqual(invalid["failure_stage"], "POST_TRADE_VERIFY")
+
+    def test_deterministic_exit_status_stops_retry_without_disabling_next_daily_run(self):
+        import contextlib
+        import io
+        from scripts.execution import run_trendatlas_production as module
+        service = (Path(__file__).resolve().parents[1] / "deploy/systemd/mrv1-production.service").read_text(encoding="utf-8")
+        self.assertIn("RestartPreventExitStatus=2", service)
+        with patch.object(module, "ROOT", self.root), patch.object(module, "TrendAtlasProductionOrchestrator") as runner_type, contextlib.redirect_stdout(io.StringIO()):
+            runner_type.return_value.run.return_value = {"final_status": "BLOCKED", "failure_kind": "deterministic"}
+            self.assertEqual(module.main([]), 2)
+            runner_type.return_value.run.return_value = {"final_status": "FAILED", "failure_kind": "retryable"}
+            self.assertEqual(module.main([]), 1)
+        write_json(self.root / "outputs/execution/production_runs/latest_production_run.json", {"target_closed_day": "2026-08-30", "failure_kind": "deterministic", "retry_attempt": 3})
+        next_run = FixtureOrchestrator(self.root, no_submit=False, adapter=FakeAdapter())
+        self.assertEqual(next_run.manifest["retry_attempt"], 0)
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
+            result = next_run.run()
+        self.assertEqual(result["final_status"], "SUCCESS")
+
+    def test_live_batch_never_infers_owner_alignment_from_another_account_order(self):
+        class MissingOwner(FixtureOrchestrator):
+            def run_multi_account_backend(self, signal_id, *, no_submit):
+                report, code = super().run_multi_account_backend(signal_id, no_submit=no_submit)
+                del report["ownerResult"]
+                return report, code
+        runner = MissingOwner(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()), patch("scripts.execution.run_trendatlas_production.authority_publish_helpers.publish_authority_refresh_failure", return_value={"published": True}):
+            result = runner.run()
+        self.assertEqual(result["final_status"], "BLOCKED")
+        self.assertIn("owner_result_missing", result["failure_reason"])
+        self.assertEqual(runner.authority_calls, [])
+
+
+    def test_owner_snapshot_read_failure_does_not_block_independent_accounts(self):
+        class ReadFailure(FixtureOrchestrator):
+            child_ran = False
+            def run_script(self, script, *arguments, label):
+                if label == "read_account_before":
+                    raise TimeoutError("owner account temporarily unavailable")
+                super().run_script(script, *arguments, label=label)
+            def run_multi_account_backend(self, signal_id, *, no_submit):
+                self.child_ran = True
+                return super().run_multi_account_backend(signal_id, no_submit=no_submit)
+        runner = ReadFailure(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
+            result = runner.run()
+        self.assertTrue(runner.child_ran)
+        self.assertEqual(result["final_status"], "SUCCESS")
+        self.assertIn("temporarily unavailable", result["owner_account_snapshot_warning"])
+
+
+    def test_missing_owner_snapshot_is_optional_and_not_fabricated_before_batch(self):
+        class MissingOwnerObservation(FixtureOrchestrator):
+            child_ran_without_snapshot = False
+            def run_script(self, script, *arguments, label):
+                path = self.root / "outputs/execution/read_only/hyperliquid_account_snapshot.json"
+                if label == "read_account_before":
+                    path.unlink(missing_ok=True)
+                    raise TimeoutError("owner read unavailable")
+                if label == "build_real_order_gate":
+                    prod = self.root / "outputs/production/current_strategy_snapshot.json"
+                    canonical_intent = self.root / "outputs/execution/intents/latest_execution_intent.json"
+                    write_json(self.root / "outputs/execution/live_gate/latest_real_order_gate_decision.json", {
+                        "signal_id": "sig-1", "target_asset": "BTC", "status": "ready_if_enabled", "would_place_real_order": True,
+                        "real_orders_enabled": True, "strategy_validated": True,
+                        "account_validation_scope": "per_account_exchange", "account_snapshot_available": False,
+                        "production_signal_context": {"closed_day": "2026-08-31"},
+                        "source_fingerprints": {"production_snapshot_sha256": sha256_file(prod), "intent_sha256": sha256_file(canonical_intent), "account_snapshot_sha256": None},
+                    })
+                    return
+                super().run_script(script, *arguments, label=label)
+            def run_multi_account_backend(self, signal_id, *, no_submit):
+                self.child_ran_without_snapshot = not (self.root / "outputs/execution/read_only/hyperliquid_account_snapshot.json").exists()
+                return super().run_multi_account_backend(signal_id, no_submit=no_submit)
+        runner = MissingOwnerObservation(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
+            result = runner.run()
+        self.assertTrue(runner.child_ran_without_snapshot)
+        self.assertEqual(result["final_status"], "SUCCESS")
+        self.assertIsNone(result["account_equity_before"])
+        self.assertEqual(result["account_equity_after"], 20)
 
 
 if __name__ == "__main__":

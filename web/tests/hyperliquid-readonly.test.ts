@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { normalizeHyperliquidAddress, validateHyperliquidAddress } from "@/lib/hyperliquid/address";
+import { getHyperliquidAccountSnapshot } from "@/lib/hyperliquid/info";
 
 const webRoot = process.cwd();
 const repositoryRoot = path.resolve(webRoot, "..");
@@ -20,6 +21,39 @@ function filesUnder(directory: string): string[] {
 }
 
 describe("Hyperliquid read-only onboarding", () => {
+  it.each([{ coin: "BTC", szi: "bad" }, { coin: "BTC", szi: "" }, { szi: "0.1" }, { coin: "BTC" }])("rejects malformed position rows instead of inventing CASH: %j", async (position) => {
+    vi.stubGlobal("fetch", vi.fn(async (_url: unknown, init: RequestInit) => {
+      const request = JSON.parse(String(init.body)) as { type: string };
+      const responses: Record<string, unknown> = {
+        userAbstraction: "unifiedAccount",
+        clearinghouseState: { marginSummary: { accountValue: "100", totalMarginUsed: "0" }, assetPositions: [{ position }] },
+        spotClearinghouseState: { balances: [{ coin: "USDC", total: "100", hold: "0" }] }, openOrders: []
+      };
+      return new Response(JSON.stringify(responses[request.type]));
+    }));
+    try { await expect(getHyperliquidAccountSnapshot("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")).rejects.toThrow("account data is unavailable"); } finally { vi.unstubAllGlobals(); }
+  });
+  it("uses unified native balances without double-counting meaningless perps equity", async () => {
+    const fetcher = vi.fn(async (_url: unknown, init: RequestInit) => {
+      const request = JSON.parse(String(init.body)) as { type: string };
+      const responses: Record<string, unknown> = {
+        userAbstraction: "unifiedAccount",
+        clearinghouseState: { marginSummary: { accountValue: "19.63", totalMarginUsed: "20.18" }, withdrawable: "0", assetPositions: [{ position: { coin: "BTC", szi: "0.0004", entryPx: "100000" } }] },
+        spotClearinghouseState: { balances: [{ coin: "USDC", total: "82.08", hold: "20.18" }, { coin: "USDH", total: "2", hold: "0" }, { coin: "USDE", total: "3", hold: "0" }, { coin: "USDT0", total: "4", hold: "0" }] },
+        openOrders: [{ coin: "AVAX", oid: 77, side: "A", sz: "1.2" }]
+      };
+      return new Response(JSON.stringify(responses[request.type]));
+    });
+    vi.stubGlobal("fetch", fetcher);
+    try {
+      const snapshot = await getHyperliquidAccountSnapshot("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+      expect(snapshot.accountEquityUsd).toBeCloseTo(91.08);
+      expect(snapshot.marginAvailableUsd).toBeCloseTo(61.9);
+      expect(snapshot.withdrawableUsd).toBeNull();
+      expect(snapshot.openOrders).toEqual([{ asset: "AVAX", orderId: "77", side: "sell", size: 1.2 }]);
+      expect(fetcher.mock.calls.every(([, request]) => !String(request.body).includes('"type":"order"'))).toBe(true);
+    } finally { vi.unstubAllGlobals(); }
+  });
   it("accepts and normalizes a valid Hyperliquid address", () => {
     const input = "  0xAbCdEf0123456789aBCdEf0123456789aBcDeF01  ";
     expect(validateHyperliquidAddress(input)).toEqual({ ok: true, address: "0xabcdef0123456789abcdef0123456789abcdef01" });
@@ -99,8 +133,8 @@ describe("Hyperliquid read-only onboarding", () => {
     expect(appSource).not.toMatch(/require\(["'][^"']*(hyperliquid-sdk|hyperliquid.*exchange|nktkas)[^"']*["']\)/i);
   });
 
-  it("does not expose an order submitter from the web source", () => {
-    const appSource = filesUnder(path.join(webRoot, "src")).map((file) => fs.readFileSync(file, "utf8")).join("\n");
+  it("does not expose an order submitter or cancellation from browser routes", () => {
+    const appSource = filesUnder(path.join(webRoot, "src", "app")).map((file) => fs.readFileSync(file, "utf8")).join("\n");
     expect(appSource).not.toMatch(/marketOrder|limitOrder|submitOrder|cancelOrder|modifyOrder|transfer\s*\(|withdraw\s*\(|updateLeverage/i);
   });
 
@@ -123,7 +157,10 @@ describe("Hyperliquid read-only onboarding", () => {
     expect(dashboard).toContain("performance.snapshot.positions");
     expect(dashboard).toContain("performance.snapshot.openOrderCount");
     expect(dashboard).toContain('TRENDATLAS_MULTI_ACCOUNT_EXECUTOR_AVAILABLE === "true"');
-    expect(dashboard).toContain("accountExecutionReady");
+    expect(dashboard).toContain("automaticTradingLabel");
+    expect(dashboard).toContain("Last evaluated strategy target");
+    expect(dashboard).toContain("Real wallet position");
+    expect(dashboard).toContain("Last execution result");
   });
 
   it("disconnects only the logged-in user's connection", () => {

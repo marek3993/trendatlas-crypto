@@ -83,35 +83,15 @@ def ensure_dirs() -> None:
 
 
 def validate_runtime_posture(mode_cfg: dict[str, Any]) -> dict[str, Any]:
-    mode = str(mode_cfg.get("mode") or "").strip().lower()
-    trading_enabled = bool(mode_cfg.get("trading_enabled"))
-    kill_switch = bool(mode_cfg.get("kill_switch"))
-
-    if mode == "read_only":
-        if trading_enabled:
-            fail("execution_mode.json has trading_enabled=true. Read-only posture is invalid.")
-        if not kill_switch:
-            fail("execution_mode.json must keep kill_switch=true for read-only posture.")
-        return {
-            "mode": mode,
-            "trading_enabled": trading_enabled,
-            "kill_switch": kill_switch,
-            "runtime_posture": "read_only_guarded",
-        }
-
-    if mode == "live":
-        return {
-            "mode": mode,
-            "trading_enabled": trading_enabled,
-            "kill_switch": kill_switch,
-            "runtime_posture": "live_runtime_read_only_observability",
-        }
-
-    fail(
-        "execution_mode.json must use mode='read_only' or mode='live' for account observability. "
-        f"Current: {mode_cfg.get('mode')}"
-    )
-    raise RuntimeError("unreachable")
+    # This invocation has only the exchange info API. Old mode switches are
+    # compatibility observations, never permission to read or mutate a wallet.
+    return {
+        "mode": str(mode_cfg.get("mode") or "read_only").strip().lower(),
+        "trading_enabled": bool(mode_cfg.get("trading_enabled")),
+        "kill_switch": mode_cfg.get("kill_switch") is not False,
+        "runtime_posture": "read_only_observability",
+        "exchange_writes_allowed": False,
+    }
 
 
 def post_info(payload: dict[str, Any]) -> Any:
@@ -563,17 +543,9 @@ def main() -> None:
 
     quality = {
         "snapshot_ok": True,
-        "mode_ok": runtime_posture["mode"] in {"read_only", "live"},
-        "trading_disabled_ok": (
-            bool(mode_cfg.get("trading_enabled")) is False
-            if runtime_posture["mode"] == "read_only"
-            else None
-        ),
-        "kill_switch_ok": (
-            bool(mode_cfg.get("kill_switch")) is True
-            if runtime_posture["mode"] == "read_only"
-            else None
-        ),
+        "mode_ok": True,
+        "trading_disabled_ok": not runtime_posture["exchange_writes_allowed"],
+        "kill_switch_ok": None,
         "runtime_posture": runtime_posture["runtime_posture"],
         "account_address_present": True,
         "http_source": INFO_URL,

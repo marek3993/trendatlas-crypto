@@ -315,8 +315,8 @@ class TestDashboardPublicContractMaterializer(unittest.TestCase):
 
         self.assertEqual(status["model_performance"]["btc_24h_pct"], -0.5)
         self.assertEqual(status["live_market_state"]["btc_24h_pct"], 1.9)
-        self.assertEqual(status["live_market_state"]["account_24h_pct"], 0.0)
-        self.assertEqual(status["live_market_state"]["account_vs_btc_24h_pct"], -1.9)
+        self.assertIsNone(status["live_market_state"]["account_24h_pct"])
+        self.assertIsNone(status["live_market_state"]["account_vs_btc_24h_pct"])
 
     def test_real_account_performance_is_passed_through_without_model_fields(self):
         ledger = {

@@ -21,8 +21,8 @@ from scripts.execution.hyperliquid_read_only_snapshot import summarize_balance_s
 
 
 NOW = datetime(2026, 9, 1, 12, 0, tzinfo=timezone.utc)
-MID = {"BTC": 100_000.0, "ETH": 4_000.0}
-PRECISION = {"BTC": 5, "ETH": 4}
+MID = {"BTC": 100_000.0, "ETH": 4_000.0, "AVAX": 25.0, "NEWCOIN": 2.0}
+PRECISION = {"BTC": 5, "ETH": 4, "AVAX": 2, "NEWCOIN": 1}
 
 
 def production(asset: str = "BTC", exposure: float = 0.5, *, stale: bool = False) -> dict:
@@ -101,21 +101,14 @@ def account(
 
 def policy(**overrides) -> dict:
     base = {
-        "allow_live_orders": True,
-        "manual_approval_required": False,
-        "require_kill_switch_off": True,
         "sizing_mode": "equity_target_exposure",
-        "max_strategy_target_exposure": 2.0,
-        "max_delta_fraction_of_equity": 2.0,
         "execution_leverage": 2,
-        "max_execution_leverage": 3,
         "margin_buffer_fraction": 0.05,
         "reconciliation_tolerance_fraction_of_equity": 0.01,
         "post_trade_tolerance_fraction_of_equity": 0.02,
         "minimum_order_notional_usd": 10.0,
         "max_slippage_bps": 100,
         "account_snapshot_max_age_seconds": 180,
-        "allowed_assets": ["BTC", "ETH", "CASH"],
     }
     base.update(overrides)
     return base
@@ -235,12 +228,13 @@ def test_intent_gate_mismatch_blocks() -> None:
     assert "intent_gate_mismatch:signal_id" in plan["block_reasons"]
 
 
-def test_disallowed_asset_blocks() -> None:
+def test_legacy_asset_membership_cannot_reject_supported_strategy_target() -> None:
     plan = build_execution_plan(
         production=production("ETH"), intent=intent("ETH"), gate=gate("ETH"), account_snapshot=account(),
         policy=policy(allowed_assets=["BTC", "CASH"]), mids=MID, size_decimals=PRECISION, now=NOW,
     )
-    assert "disallowed_asset" in plan["block_reasons"]
+    assert plan["status"] == "READY"
+    assert plan["block_reasons"] == []
 
 
 def test_invalid_quantity_blocks() -> None:
@@ -260,14 +254,16 @@ def test_insufficient_margin_blocks_standard_account() -> None:
     assert "insufficient_margin_or_available_balance" in make_plan(snapshot=snapshot)["block_reasons"]
 
 
-def test_conflicting_open_order_blocks() -> None:
-    assert "conflicting_open_order" in make_plan(snapshot=account(open_orders=[{"oid": 1}]))["block_reasons"]
+def test_conflicting_open_order_is_a_reconciliation_step() -> None:
+    plan = make_plan(snapshot=account(open_orders=[{"oid": 1, "coin": "BTC"}]))
+    assert plan["block_reasons"] == []
+    assert plan["cancel_orders"][0]["oid"] == 1
 
 
-def test_relative_safety_ceiling_blocks_without_clipping() -> None:
+def test_executor_cannot_override_validated_strategy_exposure() -> None:
     plan = make_plan(exposure=1.5, max_strategy_target_exposure=1.0)
     assert plan["target_notional_usd"] == 30_000
-    assert "target_exposure_exceeds_relative_safety_ceiling" in plan["block_reasons"]
+    assert plan["status"] == "READY"
 
 
 def test_bad_provenance_hash_blocks(tmp_path: Path) -> None:
@@ -412,7 +408,7 @@ def test_duplicate_execution_id_never_submits_again(tmp_path: Path) -> None:
         plan=plan, run_id="run-2", journal=journal, adapter=adapter,
         refresh_and_verify=lambda _p, _r: {"status": "FILLED_AND_ALIGNED"},
     )
-    assert result["status"] == "UNCERTAIN"
+    assert result["status"] == "FILLED_AND_ALIGNED"
     assert adapter.submits == []
 
 
@@ -439,7 +435,7 @@ def test_process_death_after_exchange_acceptance_recovers_without_duplicate(tmp_
         plan=plan, run_id="run-2", journal=journal, adapter=adapter,
         refresh_and_verify=lambda _p, _r: {"status": "FILLED_AND_ALIGNED"},
     )
-    assert recovered["status"] == "UNCERTAIN"
+    assert recovered["status"] == "FILLED_AND_ALIGNED"
     assert adapter.submits == []
 
 
@@ -457,7 +453,7 @@ def test_uncertain_exchange_response_is_not_retried(tmp_path: Path) -> None:
         plan=plan, run_id="run-2", journal=ExecutionJournal(tmp_path), adapter=adapter2,
         refresh_and_verify=lambda _p, _r: {"status": "FILLED_AND_ALIGNED"},
     )
-    assert again["status"] == "UNCERTAIN"
+    assert again["status"] == "FILLED_AND_ALIGNED"
     assert adapter2.submits == []
 
 
@@ -512,6 +508,7 @@ def test_prior_same_signal_open_cloid_blocks_residual_submission(tmp_path: Path)
     first = make_plan(snapshot=account())
     journal = ExecutionJournal(tmp_path)
     payload = journal.prepare(first, run_id="run-1")
+    payload = journal.transition(payload, "SUBMITTING", active_step_index=0)
     journal.transition(payload, "PARTIAL")
     residual = make_plan(snapshot=account(asset="BTC", notional=5_000))
     adapter = FakeAdapter(query={"found": True, "status": "open"})
@@ -537,6 +534,371 @@ def test_terminal_prior_cloid_allows_objective_residual_reconciliation(tmp_path:
     assert result["status"] == "FILLED_AND_ALIGNED"
     assert len(adapter.submits) == 1
 
+
+
+class StatefulExchange:
+    """Exchange fixture with actual account changes, read-backs and CLOID lookup."""
+    def __init__(self, snapshot, target="AVAX", exposure=1.25, *, mids=None, precision=None, fail_entry=False, available_after_exit=None):
+        import copy
+        self.snapshot = copy.deepcopy(snapshot)
+        self.target, self.exposure = target, exposure
+        self.mids = dict(MID if mids is None else mids)
+        self.precision = dict(PRECISION if precision is None else precision)
+        self.fail_entry = fail_entry
+        self.available_after_exit = available_after_exit
+        self.submits, self.cancelled, self.queries, self.readbacks = [], [], [], []
+        self.orders = {}
+
+    def plan(self):
+        return build_execution_plan(production=production(self.target, self.exposure), intent=intent(self.target, self.exposure), gate=gate(self.target), account_snapshot=self.snapshot, policy=policy(), mids=self.mids, size_decimals=self.precision, now=NOW)
+
+    def submit_ioc_order(self, step):
+        self.submits.append(dict(step))
+        if self.fail_entry and not step["reduce_only"]:
+            response = {"acknowledged": False, "submit_state": "error", "error": "entry_rejected"}
+            self.orders[step["cloid"]] = {"found": True, "status": "rejected"}
+            return response
+        positions = self.snapshot["raw"]["clearinghouseState"]["assetPositions"]
+        existing = next((p for p in positions if p["position"]["coin"] == step["asset"]), None)
+        size = float(existing["position"]["szi"]) if existing else 0
+        delta = step["quantity"] * (1 if step["side"] == "BUY" else -1)
+        new_size = 0 if step.get("full_close") else size + delta
+        positions[:] = [p for p in positions if p["position"]["coin"] != step["asset"]]
+        if abs(new_size) > 1e-12:
+            positions.append({"position": {"coin": step["asset"], "szi": str(new_size), "positionValue": str(abs(new_size) * self.mids[step["asset"]])}})
+        if step["reduce_only"] and self.available_after_exit is not None:
+            self.snapshot["summary"]["spot_stable_available_usd"] = self.available_after_exit
+        self.orders[step["cloid"]] = {"found": True, "status": "filled"}
+        return {"acknowledged": True, "submit_state": "filled", "oid": len(self.submits)}
+
+    def query_order_by_cloid(self, cloid):
+        self.queries.append(cloid)
+        return self.orders.get(cloid, {"found": False, "status": "missing"})
+
+    def cancel_order(self, order):
+        self.cancelled.append(order["oid"])
+        self.snapshot["raw"]["openOrders"] = [row for row in self.snapshot["raw"]["openOrders"] if row["oid"] != order["oid"]]
+        return {"acknowledged": True}
+
+    def verify(self, original, results):
+        residual = self.plan()
+        positions = residual["current_positions"]
+        self.readbacks.append([p["asset"] for p in positions])
+        last = results[-1]["step"] if results else None
+        last_closed = not last or not last.get("full_close") or not any(p["asset"] == last["asset"] for p in positions)
+        aligned, _, _ = post_trade_alignment(residual, policy())
+        return {"status": "FILLED_AND_ALIGNED" if aligned else "FILLED_WITH_RESIDUAL", "safe_for_next_step": last_closed and not self.snapshot["raw"]["openOrders"], "positions": positions, "open_orders": self.snapshot["raw"]["openOrders"], "residual_plan": residual}
+
+    def run(self, path, plan=None):
+        return execute_plan_once(plan=plan or self.plan(), run_id="fixture", journal=ExecutionJournal(path), adapter=self, refresh_and_verify=self.verify)
+
+
+def test_incident_btc_point49_to_avax_125(tmp_path: Path) -> None:
+    exchange = StatefulExchange(account(1000, asset="BTC", notional=490))
+    result = exchange.run(tmp_path)
+    assert result["status"] == "FILLED_AND_ALIGNED"
+    assert [(s["asset"], s["side"], s["reduce_only"]) for s in exchange.submits] == [("BTC", "SELL", True), ("AVAX", "BUY", False)]
+    assert exchange.readbacks[0] == []
+    assert exchange.plan()["current_notional_usd"] == 1250
+
+
+def test_every_metadata_asset_can_rotate_to_every_supported_target(tmp_path: Path) -> None:
+    # Iteration is driven by the fixture's metadata, with no executor asset list.
+    for current in MID:
+        for target in MID:
+            exchange = StatefulExchange(account(1000, asset=current, notional=490), target=target)
+            result = exchange.run(tmp_path / current / target)
+            assert result["status"] == "FILLED_AND_ALIGNED", (current, target, result)
+            assert exchange.plan()["current_asset"] == target
+
+
+def test_cash_to_avax_and_avax_to_btc(tmp_path: Path) -> None:
+    for name, snapshot, target in [("entry", account(1000), "AVAX"), ("rotation", account(1000, asset="AVAX", notional=490), "BTC")]:
+        exchange = StatefulExchange(snapshot, target=target)
+        assert exchange.run(tmp_path / name)["status"] == "FILLED_AND_ALIGNED"
+        assert exchange.plan()["current_asset"] == target
+
+
+def test_cash_closes_all_long_and_short_positions(tmp_path: Path) -> None:
+    snapshot = account(1000, asset="BTC", notional=490)
+    snapshot["raw"]["clearinghouseState"]["assetPositions"] += account(1000, asset="AVAX", notional=200, short=True)["raw"]["clearinghouseState"]["assetPositions"]
+    exchange = StatefulExchange(snapshot, target="CASH", exposure=0)
+    result = exchange.run(tmp_path)
+    assert result["status"] == "FILLED_AND_ALIGNED"
+    assert len(exchange.submits) == 2
+    assert all(s["reduce_only"] for s in exchange.submits)
+    assert exchange.submits[0]["asset"] == "AVAX" and exchange.submits[0]["side"] == "BUY"
+    assert exchange.plan()["current_positions"] == []
+
+
+def test_multiple_positions_are_closed_before_target_entry(tmp_path: Path) -> None:
+    snapshot = account(1000, asset="BTC", notional=490)
+    snapshot["raw"]["clearinghouseState"]["assetPositions"] += account(1000, asset="ETH", notional=200)["raw"]["clearinghouseState"]["assetPositions"]
+    exchange = StatefulExchange(snapshot)
+    assert exchange.run(tmp_path)["status"] == "FILLED_AND_ALIGNED"
+    assert [s["reduce_only"] for s in exchange.submits] == [True, True, False]
+    assert exchange.readbacks[1] == []
+
+
+def test_unsupported_entry_still_exits_and_stays_cash(tmp_path: Path) -> None:
+    exchange = StatefulExchange(account(1000, asset="BTC", notional=490), target="UNLISTED")
+    assert exchange.plan()["status"] == "READY"
+    result = exchange.run(tmp_path)
+    assert result["status"] == "EXITED_ENTRY_FAILED_STAYING_CASH"
+    assert result["staying_cash"] is True
+    assert [s["asset"] for s in exchange.submits] == ["BTC"]
+    assert exchange.plan()["current_positions"] == []
+
+
+def test_margin_is_rechecked_after_exit_and_never_blocks_exit(tmp_path: Path) -> None:
+    for available, expected in [(0, "EXITED_ENTRY_FAILED_STAYING_CASH"), (1000, "FILLED_AND_ALIGNED")]:
+        snapshot = account(1000, asset="BTC", notional=490)
+        snapshot["summary"]["spot_stable_available_usd"] = 0
+        exchange = StatefulExchange(snapshot, available_after_exit=available)
+        assert exchange.plan()["status"] == "READY"
+        result = exchange.run(tmp_path / str(available))
+        assert result["status"] == expected
+        assert exchange.submits[0]["reduce_only"] is True
+
+
+def test_entry_precision_and_minimum_do_not_block_exit(tmp_path: Path) -> None:
+    missing_precision = StatefulExchange(account(1000, asset="BTC", notional=490), precision={"BTC": 5})
+    minimum = StatefulExchange(account(5, asset="BTC", notional=2.45))
+    for name, exchange in [("precision", missing_precision), ("minimum", minimum)]:
+        result = exchange.run(tmp_path / name)
+        assert result["status"] == "EXITED_ENTRY_FAILED_STAYING_CASH"
+        assert len(exchange.submits) == 1 and exchange.submits[0]["reduce_only"]
+
+
+def test_rejected_entry_after_exit_never_reopens_old_asset(tmp_path: Path) -> None:
+    exchange = StatefulExchange(account(1000, asset="BTC", notional=490), fail_entry=True)
+    result = exchange.run(tmp_path)
+    assert result["status"] == "EXITED_ENTRY_FAILED_STAYING_CASH"
+    assert exchange.plan()["current_positions"] == []
+    assert [s["asset"] for s in exchange.submits] == ["BTC", "AVAX"]
+
+
+def test_power_loss_after_exit_resumes_only_missing_entry(tmp_path: Path) -> None:
+    exchange = StatefulExchange(account(1000, asset="BTC", notional=490))
+    original = exchange.plan()
+    def power_loss(plan, results):
+        raise RuntimeError("simulated process termination after exchange fill")
+    try:
+        execute_plan_once(plan=original, run_id="before", journal=ExecutionJournal(tmp_path), adapter=exchange, refresh_and_verify=power_loss)
+    except RuntimeError:
+        pass
+    assert [s["asset"] for s in exchange.submits] == ["BTC"]
+    result = exchange.run(tmp_path, original)
+    assert result["status"] == "FILLED_AND_ALIGNED"
+    assert [s["asset"] for s in exchange.submits] == ["BTC", "AVAX"]
+    assert exchange.queries == [original["steps"][0]["cloid"]]
+
+
+def test_repeated_filled_signal_does_not_duplicate_order(tmp_path: Path) -> None:
+    exchange = StatefulExchange(account(1000, asset="BTC", notional=490))
+    original = exchange.plan()
+    assert exchange.run(tmp_path, original)["status"] == "FILLED_AND_ALIGNED"
+    count = len(exchange.submits)
+    assert exchange.run(tmp_path, original)["status"] == "FILLED_AND_ALIGNED"
+    assert len(exchange.submits) == count
+
+
+def test_owned_conflicting_order_is_cancelled_and_freshly_reconciled(tmp_path: Path) -> None:
+    snapshot = account(1000, open_orders=[{"oid": 9, "coin": "AVAX", "managed_by_execution": True}])
+    exchange = StatefulExchange(snapshot)
+    assert exchange.run(tmp_path)["status"] == "FILLED_AND_ALIGNED"
+    assert exchange.cancelled == [9]
+    assert exchange.snapshot["raw"]["openOrders"] == []
+    assert exchange.readbacks[0] == []
+
+
+def test_unknown_order_ownership_is_not_cancelled_blindly(tmp_path: Path) -> None:
+    exchange = StatefulExchange(account(1000, open_orders=[{"oid": 9, "coin": "AVAX"}]))
+    assert exchange.run(tmp_path)["status"] == "BLOCKED"
+    assert exchange.cancelled == [] and exchange.submits == []
+
+
+def test_dynamic_metadata_loader_uses_coherent_meta_and_contexts() -> None:
+    from unittest.mock import patch
+    from scripts.execution import submit_controlled_real_order as submit
+    metadata = {"universe": [{"name": "NEWMARKET", "szDecimals": 3}]}
+    with patch.object(submit, "fetch_meta_and_asset_contexts", return_value=(metadata, [{"midPx": "3.5"}])):
+        mids, precision = submit.load_live_market_context()
+    assert mids == {"NEWMARKET": 3.5} and precision == {"NEWMARKET": 3}
+
+
+def test_standalone_live_submit_is_disabled() -> None:
+    from argparse import Namespace
+    from unittest.mock import patch
+    from scripts.execution import submit_controlled_real_order as submit
+    with patch.object(submit, "fail", side_effect=RuntimeError("disabled")):
+        try:
+            submit.ensure_manual_execution(Namespace(execute_live=True, manual_confirm="CONTROLLED_REAL_ORDER"))
+        except RuntimeError as exc:
+            assert str(exc) == "disabled"
+        else:
+            raise AssertionError("standalone live helper must be disabled")
+
+
+def test_account_identity_is_bound_into_cloid() -> None:
+    first = account()
+    second = account()
+    second["account_address"] = "0xdef"
+    assert make_plan(snapshot=first)["steps"][0]["cloid"] != make_plan(snapshot=second)["steps"][0]["cloid"]
+
+
+def test_missing_entry_collateral_still_allows_reduce_only_exit(tmp_path: Path) -> None:
+    snapshot = account(1000, asset="BTC", notional=490)
+    snapshot["summary"]["spot_stable_available_usd"] = None
+    exchange = StatefulExchange(snapshot)
+    assert exchange.plan()["status"] == "READY"
+    result = exchange.run(tmp_path)
+    assert result["status"] == "EXITED_ENTRY_FAILED_STAYING_CASH"
+    assert len(exchange.submits) == 1 and exchange.submits[0]["reduce_only"]
+
+
+def test_prior_filled_exit_does_not_hide_unknown_entry_cloid(tmp_path: Path) -> None:
+    first = make_plan("AVAX", 1.25, account(1000, asset="BTC", notional=490))
+    journal = ExecutionJournal(tmp_path)
+    payload = journal.prepare(first, run_id="before")
+    rows = payload["steps"]
+    rows[0]["state"] = "VERIFIED"
+    rows[1]["state"] = "SUBMITTING"
+    journal.transition(payload, "UNCERTAIN", active_step_index=1, steps=rows)
+    residual = make_plan("AVAX", 1.25, account(1000))
+    class AmbiguousAdapter(FakeAdapter):
+        def query_order_by_cloid(self, cloid):
+            return {"found": True, "status": "filled"} if cloid == first["steps"][0]["cloid"] else {"found": False, "status": "unknown"}
+    adapter = AmbiguousAdapter()
+    result = execute_plan_once(plan=residual, run_id="after", journal=journal, adapter=adapter, refresh_and_verify=lambda p, r: {"positions": [], "status": "FILLED_WITH_RESIDUAL"})
+    assert result["status"] == "UNCERTAIN" and adapter.submits == []
+
+
+def test_active_python_execution_has_no_static_trading_membership_or_duplicate_gates() -> None:
+    root = Path(__file__).resolve().parents[1]
+    forbidden = ("allowed_assets", "allowed_approval_gate_statuses", "allow_live_orders", "require_kill_switch_off", "max_live_order_attempts_per_run", "target_asset_not_allowlisted", "disallowed_asset")
+    for relative in ("execution/config/live_order_policy.json", "scripts/execution/prepare_real_order_gate.py", "scripts/execution/production_execution.py", "scripts/execution/submit_controlled_real_order.py", "scripts/execution/hyperliquid_live_canary.py", "scripts/execution/preview_live_order_enable_package.py", "scripts/execution/app_execute_bridge.py", "scripts/execution/reconcile_live_execution_state.py", "scripts/execution/run_dry_execution_bridge.py"):
+        source = (root / relative).read_text(encoding="utf-8")
+        assert not any(name in source for name in forbidden), relative
+
+
+def test_unresolved_prior_day_other_asset_blocks_new_signal_until_cloid_resolved(tmp_path: Path) -> None:
+    old = make_plan("BTC", .5, account(1000))
+    journal = ExecutionJournal(tmp_path)
+    payload = journal.prepare(old, run_id="prior-day")
+    journal.transition(payload, "SUBMITTING", active_step_index=0)
+    new_production = production("AVAX", 1.25)
+    new_intent = intent("AVAX", 1.25)
+    new_gate = gate("AVAX")
+    new_production["execution_intent"]["signal_id"] = "next-day-signal"
+    new_intent["signal_id"] = new_gate["signal_id"] = "next-day-signal"
+    current = build_execution_plan(production=new_production, intent=new_intent, gate=new_gate, account_snapshot=account(1000), policy=policy(), mids=MID, size_decimals=PRECISION, now=NOW)
+    adapter = FakeAdapter()
+    result = execute_plan_once(plan=current, run_id="new-day", journal=journal, adapter=adapter, refresh_and_verify=lambda p, r: {"status": "FILLED_WITH_RESIDUAL", "positions": []})
+    assert result["status"] == "UNCERTAIN" and adapter.submits == []
+    # Once the prior request is definitively rejected, an untouched current
+    # journal must remain recoverable, instead of inventing another unknown order.
+    adapter.query = {"found": True, "status": "rejected"}
+    resumed = execute_plan_once(plan=current, run_id="resolved", journal=journal, adapter=adapter, refresh_and_verify=lambda p, r: {"status": "FILLED_AND_ALIGNED", "positions": []})
+    assert resumed["status"] == "FILLED_AND_ALIGNED" and len(adapter.submits) == 1
+
+
+def test_malformed_submit_response_remains_uncertain_not_safe_to_retry(tmp_path: Path) -> None:
+    adapter = FakeAdapter(response={"acknowledged": False, "submit_state": "manual_review_required", "normalization_ok": False})
+    plan = make_plan()
+    result = execute_plan_once(plan=plan, run_id="malformed", journal=ExecutionJournal(tmp_path), adapter=adapter, refresh_and_verify=lambda p, r: {"status": "FILLED_WITH_RESIDUAL", "positions": []})
+    assert result["status"] == "UNCERTAIN"
+    assert result["journal"]["steps"][0]["state"] == "SUBMITTING"
+    again = execute_plan_once(plan=plan, run_id="retry", journal=ExecutionJournal(tmp_path), adapter=adapter, refresh_and_verify=lambda p, r: {"status": "FILLED_WITH_RESIDUAL", "positions": []})
+    assert again["status"] == "UNCERTAIN" and len(adapter.submits) == 1
+
+
+def test_open_order_ownership_can_be_proved_by_durable_exchange_oid(tmp_path: Path) -> None:
+    old = make_plan("AVAX", 1.25, account(1000))
+    journal = ExecutionJournal(tmp_path)
+    payload = journal.prepare(old, run_id="owned")
+    rows = payload["steps"]
+    rows[0].update({"state": "ACKNOWLEDGED", "response": {"oid": 9}})
+    # Definitive old journal retained the exchange OID; openOrders need not
+    # expose a CLOID for ownership to be recoverable.
+    journal.transition(payload, "FILLED_WITH_RESIDUAL", steps=rows)
+    exchange = StatefulExchange(account(1000, open_orders=[{"oid": 9, "coin": "AVAX"}]))
+    exchange.orders[old["steps"][0]["cloid"]] = {"found": True, "status": "filled"}
+    result = exchange.run(tmp_path)
+    assert result["status"] == "FILLED_WITH_RESIDUAL" or result["status"] == "FILLED_AND_ALIGNED"
+    assert exchange.cancelled == [9]
+
+
+def test_read_only_account_query_never_depends_on_obsolete_runtime_modes() -> None:
+    from scripts.execution.hyperliquid_read_only_snapshot import validate_runtime_posture
+    for config in ({}, {"mode": "read_only", "trading_enabled": True, "kill_switch": False}, {"mode": "obsolete", "dry_run_enabled": False}, {"mode": "live", "trading_enabled": True, "kill_switch": True}):
+        posture = validate_runtime_posture(config)
+        assert posture["runtime_posture"] == "read_only_observability"
+        assert posture["exchange_writes_allowed"] is False
+
+
+def test_only_explicit_valid_empty_exchange_positions_mean_cash() -> None:
+    from scripts.execution.production_execution import ExecutionSafetyError, extract_positions
+    assert extract_positions(account(), MID) == []
+    malformed = [
+        {}, {"raw": None}, {"raw": {}}, {"raw": {"clearinghouseState": None}},
+        {"raw": {"clearinghouseState": {}}},
+        {"raw": {"clearinghouseState": {"assetPositions": None}}},
+        {"raw": {"clearinghouseState": {"assetPositions": {}}}},
+    ]
+    for snapshot in malformed:
+        try:
+            extract_positions(snapshot, MID)
+        except ExecutionSafetyError:
+            pass
+        else:
+            raise AssertionError(f"Malformed exchange observation was treated as CASH: {snapshot}")
+
+
+def test_invalid_position_rows_never_disappear_from_account_state() -> None:
+    from scripts.execution.production_execution import ExecutionSafetyError, extract_positions
+    rows = [None, {}, {"position": None}, {"coin": "BTC", "szi": "1"},
+        {"position": {"szi": "0"}}, {"position": {"coin": None, "szi": "0"}},
+        {"position": {"coin": 123, "szi": "0"}}, {"position": {"coin": "BTC USD", "szi": "0"}},
+        {"position": {"coin": "CASH", "szi": "0"}},
+        {"position": {"coin": "BTC"}}, {"position": {"coin": "BTC", "size": "0"}},
+        {"position": {"coin": "BTC", "szi": None}},
+        {"position": {"coin": "BTC", "szi": "nan"}},
+        {"position": {"coin": "BTC", "szi": "infinity"}},
+        {"position": {"coin": "BTC", "szi": "unknown"}}]
+    for row in rows:
+        snapshot = account()
+        snapshot["raw"]["clearinghouseState"]["assetPositions"] = [row]
+        try:
+            extract_positions(snapshot, MID)
+        except ExecutionSafetyError:
+            pass
+        else:
+            raise AssertionError(f"Malformed position was silently discarded: {row}")
+
+
+def test_known_zero_position_is_ignored_but_real_dust_position_remains() -> None:
+    from scripts.execution.production_execution import extract_positions
+    snapshot = account()
+    snapshot["raw"]["clearinghouseState"]["assetPositions"] = [
+        {"position": {"coin": "BTC", "szi": "0"}},
+        {"position": {"coin": "AVAX", "szi": "0.0000000000001", "positionValue": "0.0000000000025"}},
+    ]
+    positions = extract_positions(snapshot, MID)
+    assert len(positions) == 1 and positions[0]["asset"] == "AVAX"
+    assert positions[0]["size"] > 0
+
+
+def test_malformed_account_blocks_order_planning_instead_of_entering_as_cash() -> None:
+    from scripts.execution.production_execution import ExecutionSafetyError
+    snapshot = account(1000)
+    del snapshot["raw"]["clearinghouseState"]["assetPositions"]
+    try:
+        make_plan("AVAX", 1.25, snapshot)
+    except ExecutionSafetyError as exc:
+        assert "account_positions_missing_or_invalid" in exc.reasons
+    else:
+        raise AssertionError("Missing exchange positions must never create an ENTRY plan")
 
 def load_tests(_loader, _tests, _pattern):
     suite = unittest.TestSuite()

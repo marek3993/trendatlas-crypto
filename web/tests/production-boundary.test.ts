@@ -32,7 +32,6 @@ const appSource = filesUnder(path.join(webSourceDirectory, "app")).map(sourceTex
 const agentAuthorizationModule = source("lib/hyperliquid/agent-authorization.ts");
 const adminModule = source("lib/supabase/admin.ts");
 const liveGatewayModule = source("server/multi-account-executor/hyperliquid-live-gateway.ts");
-const liveGuardModule = source("server/multi-account-executor/exclusive-live-guard.ts");
 const canonicalGuardModule = source("server/multi-account-executor/canonical-production-guard.ts");
 const liveOnceRunner = fs.readFileSync(path.join(process.cwd(), "scripts/run-multi-account-live-once.ts"), "utf8");
 const productionRunner = fs.readFileSync(path.join(process.cwd(), "scripts/run-multi-account-production-cycle.ts"), "utf8");
@@ -43,8 +42,17 @@ function source(relativePath: string): string {
 }
 
 describe("production isolation boundary", () => {
+  it("keeps trading membership out of active execution sources", () => {
+    const files = ["types", "authority", "planner", "engine", "live-preflight", "repository", "dry-run-gateway", "hyperliquid-live-gateway", "canonical-production-guard"];
+    for (const file of files) {
+      expect(source(`server/multi-account-executor/${file}.ts`), file).not.toMatch(/\b(?:SUPPORTED_TARGETS|MANAGED|MANAGED_ASSETS|allowed_assets|allowed_approval_gate_statuses|target_asset_not_allowlisted|disallowed_asset|stopOnUnsafeResult|max_live_order_attempts_per_run)\b/);
+    }
+    const types = source("server/multi-account-executor/types.ts");
+    expect(types).toMatch(/type TargetAsset = string/);
+    expect(types).toMatch(/type ManagedAsset = string/);
+  });
   it("keeps production execution code unreachable from the web source", () => {
-    expect(allWebSource).not.toMatch(/scripts\/execution|run_trendatlas_production|live[_-]?order|submit[_-]?order/i);
+    expect(clientSource + appSource).not.toMatch(/scripts\/execution|run_trendatlas_production|submit[_-]?order|hyperliquid-live-gateway/i);
   });
 
   it("keeps the server-only order gateway unreachable from browser and request routes", () => {
@@ -54,15 +62,12 @@ describe("production isolation boundary", () => {
     expect(packageJson).not.toContain('"multi-account:live"');
   });
 
-  it("requires exclusive legacy shutdown, an account allowlist, signal confirmation, and a notional cap", () => {
-    expect(liveGuardModule).toContain('readSystemdState("is-enabled", "mrv1-production.timer") !== "disabled"');
-    expect(liveGuardModule).toContain('readSystemdState("is-active", "mrv1-production.timer") !== "inactive"');
-    expect(liveGuardModule).toContain('readSystemdState("is-active", "mrv1-production.service") !== "inactive"');
-    expect(liveOnceRunner).toContain("candidates.length !== 1");
-    expect(liveOnceRunner).toContain("TRENDATLAS_LIVE_SIGNAL_CONFIRMATION !== target.signalId");
-    expect(liveOnceRunner).toContain("maxActionNotionalUsd > guard.maxNotionalUsd");
-    expect(liveOnceRunner).toContain("maxActionNotionalUsd: guard.maxNotionalUsd");
-    expect(packageJson).toContain("flock --nonblock ../outputs/execution/production_runs/trendatlas_production.lock");
+  it("retires the independent submitter and preserves the canonical single-run lock", () => {
+    expect(liveOnceRunner).toContain("process.exitCode = 2");
+    expect(liveOnceRunner).not.toMatch(/new MultiAccountExecutor|new HyperliquidLiveGateway|submitOrder/);
+    const orchestrator = fs.readFileSync(path.join(repositoryRoot, protectedFiles[0]), "utf8");
+    expect(orchestrator).toContain("LOCK_NB");
+    expect(orchestrator).toContain("trendatlas_production.lock");
   });
 
   it("keeps browser modules free of wallet-secret inputs and secret identifiers", () => {
@@ -108,8 +113,10 @@ describe("production isolation boundary", () => {
     expect(canonicalGuardModule).toContain("MRV1_CURRENT_AUTHORITY_RUN_ID");
     expect(canonicalGuardModule).toContain("MRV1_HYPERLIQUID_ACCOUNT_ADDRESS");
     expect(canonicalGuardModule).toContain("maxConcurrency !== 1");
-    expect(productionRunner).toContain("the canonical owner account is not uniquely eligible");
-    expect(productionRunner).toContain("stopOnUnsafeResult: true");
+    expect(productionRunner).toContain("summarizeAccountBatch");
+    expect(productionRunner).toContain("isolateDuplicateWallets");
+    expect(productionRunner).not.toContain("stopOnUnsafeResult");
+    expect(productionRunner).toContain("runPreflightedBatch");
     expect(productionRunner).toContain('guard.mode === "dry_run"');
     expect(productionRunner.indexOf('guard.mode === "dry_run"')).toBeLessThan(productionRunner.indexOf("new MultiAccountExecutor"));
     expect(appSource).not.toContain("run-multi-account-production-cycle");

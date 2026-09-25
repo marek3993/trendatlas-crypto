@@ -351,10 +351,19 @@ def get_account_setup(account_cfg: dict[str, Any], crypto: CryptoDeps) -> dict[s
 
 
 def fetch_meta() -> dict[str, Any]:
-    meta = info_request({"type": "meta"})
-    if not isinstance(meta, dict) or not isinstance(meta.get("universe"), list):
-        fail("Hyperliquid meta response is missing universe data")
-    return meta
+    return fetch_meta_and_asset_contexts()[0]
+
+
+def fetch_meta_and_asset_contexts() -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    payload = info_request({"type": "metaAndAssetCtxs"})
+    if not isinstance(payload, list) or len(payload) != 2:
+        raise ValueError("Hyperliquid metaAndAssetCtxs response must contain metadata and contexts")
+    meta, contexts = payload
+    if not isinstance(meta, dict) or not isinstance(meta.get("universe"), list) or not isinstance(contexts, list):
+        raise ValueError("Hyperliquid metaAndAssetCtxs response is malformed")
+    if len(meta["universe"]) != len(contexts):
+        raise ValueError("Hyperliquid market metadata/context length mismatch")
+    return meta, contexts
 
 
 def fetch_all_mids() -> dict[str, Any]:
@@ -832,10 +841,6 @@ def build_preflight(
     agent_verification: dict[str, Any] | None,
 ) -> tuple[dict[str, Any], list[str], dict[str, Any]]:
     coin = normalize_asset(args.coin)
-    allowed_assets = {
-        normalize_asset(item) for item in policy_cfg.get("allowed_assets", [])
-        if str(item).strip()
-    }
     market_entry = market_map.get(coin)
     positions = snapshot.get("positions", [])
     buy_slippage = float(args.slippage)
@@ -846,20 +851,12 @@ def build_preflight(
         abort_conditions.append("missing_account_address")
     if args.execute_live and args.manual_confirm != MANUAL_CONFIRM_TOKEN:
         abort_conditions.append("manual_confirm_token_missing_or_invalid")
-    if normalize_asset(mode_cfg.get("mode")) != "LIVE":
-        abort_conditions.append("execution_mode_not_live")
-    if not bool(mode_cfg.get("trading_enabled", False)):
-        abort_conditions.append("execution_trading_disabled")
-    if bool(policy_cfg.get("require_kill_switch_off", True)) and bool(mode_cfg.get("kill_switch", True)):
+    if mode_cfg.get("kill_switch") is not False:
         abort_conditions.append("kill_switch_enabled")
-    if not bool(policy_cfg.get("allow_live_orders", False)):
-        abort_conditions.append("allow_live_orders=false")
-    if bool(policy_cfg.get("manual_approval_required", False)):
-        abort_conditions.append("manual_approval_required=true")
+    if args.execute_live:
+        abort_conditions.append("standalone_live_execution_disabled")
     if coin == "CASH":
         abort_conditions.append("cash_not_supported_for_canary")
-    if coin not in allowed_assets:
-        abort_conditions.append("coin_not_allowlisted")
     if market_entry is None:
         abort_conditions.append("coin_not_listed_in_hyperliquid_meta")
     if snapshot.get("open_orders_count", 0) > 0:
@@ -868,12 +865,6 @@ def build_preflight(
         abort_conditions.append("active_positions_present")
     if args.notional_usd < MIN_CANARY_NOTIONAL_USD and args.command == "run":
         abort_conditions.append(f"canary_notional_below_{MIN_CANARY_NOTIONAL_USD:.0f}_usd_minimum")
-
-    max_notional = float(policy_cfg.get("max_order_notional_usd", 0.0))
-    if max_notional <= 0:
-        abort_conditions.append("max_order_notional_not_enabled")
-    elif args.notional_usd > max_notional and args.command == "run":
-        abort_conditions.append("canary_notional_exceeds_policy_max")
 
     if buy_slippage <= 0 or buy_slippage > 0.05:
         abort_conditions.append("slippage_out_of_bounds")
@@ -941,13 +932,7 @@ def build_preflight(
         "signer_address": account_setup["signer_address"],
         "uses_agent_wallet": account_setup["uses_agent_wallet"],
         "mode_config": mode_cfg,
-        "live_order_policy": {
-            "allow_live_orders": bool(policy_cfg.get("allow_live_orders", False)),
-            "manual_approval_required": bool(policy_cfg.get("manual_approval_required", False)),
-            "require_kill_switch_off": bool(policy_cfg.get("require_kill_switch_off", True)),
-            "max_order_notional_usd": max_notional,
-            "allowed_assets": sorted(allowed_assets),
-        },
+        "live_order_policy": {"market_source": "metaAndAssetCtxs", "canonical_only": True},
         "snapshot_summary": {
             "positions_count": snapshot.get("positions_count", 0),
             "open_orders_count": snapshot.get("open_orders_count", 0),
@@ -1248,6 +1233,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    if args.execute_live:
+        fail("Standalone live execution is disabled; use run_trendatlas_production.py through the canonical production service.")
     coin = normalize_asset(args.coin)
     run_id, run_dir = create_run_dir(args.command, coin)
     artifact_paths = build_artifact_paths(run_dir)

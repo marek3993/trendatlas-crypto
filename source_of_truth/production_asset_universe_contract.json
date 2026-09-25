@@ -1,0 +1,17 @@
+{
+  "contract_version": 1,
+  "effective_date": "2026-09-25",
+  "artifact_field": "current_strategy_snapshot.source_inputs.current_emittable_universe",
+  "authority": "active_production_strategy_adapter",
+  "adapter_source": "scripts/production/strategy_adapters/phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter.py",
+  "selector_source": "outputs/phase66g_production_candidate_live/phase66g_production_candidate_asset_quality.csv",
+  "selector_semantics": "successfully_loaded_current_production_selector_candidates_after_existing_research_filters",
+  "additional_assets": "strategy_owned_overlay_asset_parameters_and_CASH_only",
+  "current_target_rule": "a_non_cash_current_target_must_belong_to_the_adapter_derived_universe",
+  "historical_series_rule": "stitched_baseline_and_historical_aggregate_labels_are_performance_history_not_current_selector_instrument_capabilities",
+  "freshness_rule": "every_selector_candidate_source_end_date_must_reach_the_current_production_closed_day",
+  "fingerprint_rule": "publish_selector_source_sha256_and_adapter_source_sha256_with_the_derived_assets_and_verify_both_against_declared_source_files_before_deployment",
+  "missing_or_invalid_source": "universe_unavailable_and_strategy_deployment_fails_closed",
+  "executor_rule": "metadata_and_plan_validation_for_every_derived_asset_without_a_second_manual_asset_list",
+  "strategy_math_changed": false
+}

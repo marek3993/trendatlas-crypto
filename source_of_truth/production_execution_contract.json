@@ -1,0 +1,85 @@
+{
+  "contract_version": 1,
+  "effective_date": "2026-09-25",
+  "incident_class": ["C", "B"],
+  "canonical_entrypoint": "scripts/execution/run_trendatlas_production.py",
+  "strategy_authority": {
+    "source": "outputs/production/current_strategy_snapshot.json",
+    "required": ["validated_current_target", "fresh_direct_dependencies", "trend_permission_active_for_entry", "allow_live_order_candidate_for_entry", "canonical_intent_fingerprint", "canonical_gate_fingerprint"],
+    "asset": "normalized_validated_string_not_an_execution_allowlist",
+    "exposure": "validated_production_target_without_executor_clipping_or_independent_strategy_ceiling",
+    "invalid_target_action": "NO_TRADE",
+    "prior_approval_artifact": "informational_only",
+    "prior_authority_publish": "presentation_only_never_current_trade_permission"
+  },
+  "exchange_contract": {
+    "market_source": "Hyperliquid_metaAndAssetCtxs",
+    "required_assets": "current_target_plus_all_open_positions_plus_conflicting_open_orders",
+    "symbol_validation": "syntax_and_exact_metadata_identity_not_manual_asset_membership",
+    "minimum_precision_margin": "validated_per_step_margin_only_for_risk_increasing_entry",
+    "unsupported_target": "does_not_block_valid_reduce_only_exits"
+  },
+  "operator_control": {
+    "emergency_switch": "execution/config/execution_mode.json::kill_switch",
+    "dry_run": "invocation_--no-submit_only",
+    "per_account_consent": "explicit_user_trading_enabled_is_required",
+    "no_submit": "no_exchange_writes_no_order_cancellation_no_live_adapter"
+  },
+  "state_machine": ["VALIDATE_TARGET", "RECOVER_JOURNAL", "RECONCILE_ORDERS", "EXIT", "VERIFY_EXIT", "REPLAN_ENTRY", "ENTRY", "VERIFY_ACCOUNT", "FINALIZE_EXECUTION", "PUBLISH"],
+  "exit_contract": {
+    "scope": "all_non_target_positions_and_all_shorts_or_all_positions_when_target_CASH",
+    "reduce_only": true,
+    "side": "sell_long_buy_short",
+    "after_each_step": "fresh_exchange_account_readback_confirms_that_position_closed",
+    "independent_of": ["entry_market_support", "entry_margin", "entry_minimum", "entry_precision", "dashboard", "authority_publish"],
+    "never_reopen_old_position": true
+  },
+  "entry_contract": {
+    "prerequisite": "all_undesired_and_short_positions_verified_closed_and_conflicting_orders_resolved",
+    "sizing": "fresh_account_equity_times_validated_target_exposure",
+    "failure_after_verified_exit": "EXITED_ENTRY_FAILED_STAYING_CASH",
+    "failure_without_exit_when_flat": "ENTRY_FAILED_STAYING_CASH",
+    "unsupported_or_unaffordable": "remain_CASH_without_rollback"
+  },
+  "open_orders": {
+    "policy": "load_details_reconcile_or_cancel_conflicts_owned_by_automatic_executor",
+    "unknown_ownership": "isolate_affected_account_never_cancel_unowned_order_blindly",
+    "confirmation": "fresh_open_orders_and_account_readback_before_entry"
+  },
+  "idempotency": {
+    "before_submit": "durable_PREPARED_journal_with_deterministic_account_signal_asset_side_CLOID",
+    "unknown_result": "query_CLOID_and_read_account_before_any_residual_no_blind_duplicate",
+    "power_loss_between_exit_and_entry": "recover_completed_exit_and_replan_only_missing_entry",
+    "publish_failure": "preserve_terminal_execution_evidence_never_resubmit_verified_fill"
+  },
+  "multi_account": {
+    "shared_failure": "invalid_common_target_or_unavailable_exchange_metadata_stops_batch",
+    "account_snapshot_binding": "per_account_exchange_fresh_reads; optional_canonical_owner_snapshot_is_informational_only_and_may_have_null_fingerprint",
+    "account_failure": "isolate_and_continue_independent_accounts",
+    "retryable_statuses_remain_eligible": ["blocked", "error"],
+    "permanent_disable_only": ["explicit_user_choice", "unrecoverable_revoked_or_expired_authorization", "missing_or_invalid_signer_secret"],
+    "concurrency": 1
+  },
+  "retry": {
+    "transient": "bounded_same_run_recovery_using_journal_and_readback",
+    "deterministic": "terminal_failure_no_15_minute_restart_loop",
+    "next_scheduled_run": "fresh_validation_and_account_recovery_remain_enabled"
+  },
+  "health": {
+    "execution_dependencies": ["validated_Production_Core", "direct_strategy_inputs", "fresh_account", "valid_signer", "fresh_exchange_metadata"],
+    "presentation_and_research": "degrade_only_dependent_capability_never_trade_permission"
+  },
+  "public_contract": {
+    "model_target_state": "validated_authorized_Production_Core_target_and_exposure_separate_from_candidate",
+    "real_account_state": "wallet_only_positions_and_summed_notional_divided_by_wallet_equity_nullable_when_unavailable",
+    "execution_result_state": "last_terminal_execution_outcome_staying_cash_and_public_message",
+    "no_internal_labels_or_notes": true
+  },
+  "deployment_invariant": {
+    "asset_source": "production_adapter_or_current_Production_Core_timeseries",
+    "verification": "each_emittable_asset_has_current_exchange_metadata_and_a_valid_plan",
+    "second_manual_asset_list": "forbidden",
+    "unsupported_asset": "reject_strategy_deployment_before_activation"
+  },
+  "retained_protections": ["validated_target_provenance", "account_consent", "signer_authorization", "single_run_lock", "account_lease", "durable_journal", "CLOID_recovery", "reduce_only_exit", "per_step_exchange_precision", "entry_margin", "exchange_readback", "secrets_isolation", "filesystem_publish_allowlists"]
+}

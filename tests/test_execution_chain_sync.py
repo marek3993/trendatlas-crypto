@@ -1,6 +1,7 @@
 import argparse
 import hashlib
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -278,7 +279,7 @@ class TestExecutionChainSync(unittest.TestCase):
         self.assertEqual(stale["status"], "stale")
         self.assertTrue(data_health_common.summarize_sources([stale])["block_execution"])
 
-    def test_mismatched_same_run_authority_binding_still_blocks(self):
+    def test_mismatched_same_run_authority_binding_degrades_presentation_only(self):
         root, paths = self.make_root()
         self.prepare_same_run_authority_advance(
             root,
@@ -301,9 +302,9 @@ class TestExecutionChainSync(unittest.TestCase):
         ]
         self.assertNotEqual(sources[0]["status"], "ok")
         self.assertEqual(sources[1]["status"], "failed")
-        self.assertTrue(data_health_common.summarize_sources(sources)["block_execution"])
+        self.assertFalse(data_health_common.summarize_sources(sources)["block_execution"])
 
-    def test_old_authority_without_in_progress_same_run_still_blocks(self):
+    def test_old_authority_without_in_progress_same_run_degrades_presentation_only(self):
         root, paths = self.make_root()
         self.prepare_same_run_authority_advance(
             root,
@@ -321,7 +322,7 @@ class TestExecutionChainSync(unittest.TestCase):
             env_overrides={},
         )
         self.assertEqual(stale["status"], "stale")
-        self.assertTrue(data_health_common.summarize_sources([stale])["block_execution"])
+        self.assertFalse(data_health_common.summarize_sources([stale])["block_execution"])
 
     def test_fast_cycle_contract_rejects_older_intent_and_accepts_exact_chain(self):
         root, paths = self.make_root()
@@ -345,6 +346,32 @@ class TestExecutionChainSync(unittest.TestCase):
                 root=root,
                 require_execution_health=False,
             )
+
+    def test_multi_account_health_allows_missing_owner_observation_only_with_explicit_scope(self):
+        root, paths = self.make_root()
+        gate = json.loads(paths["gate"].read_text(encoding="utf-8"))
+        account_path = root / data_health_common.CANONICAL_ACCOUNT_SNAPSHOT_PATH
+        account_path.unlink()
+        gate["account_validation_scope"] = "per_account_exchange"
+        gate["account_snapshot_available"] = False
+        gate["source_fingerprints"]["account_snapshot_sha256"] = None
+        write_json(paths["gate"], gate)
+        def evaluate():
+            return data_health_common.canonical_execution_alignment_errors(
+                "execution_latest_real_order_gate_decision", gate, root=root, path_overrides={})
+        self.assertEqual(evaluate(), [])
+        actual_hash = data_health_common.sha256_file
+        def unreadable_account_hash(path):
+            if path == account_path:
+                raise PermissionError("owner observation is unreadable")
+            return actual_hash(path)
+        with mock.patch.object(data_health_common, "sha256_file", side_effect=unreadable_account_hash):
+            self.assertEqual(evaluate(), [])
+        gate["account_validation_scope"] = "canonical_owner_snapshot"
+        self.assertIn("gate account_snapshot_sha256 does not match its canonical source", evaluate())
+        gate["account_validation_scope"] = "per_account_exchange"
+        gate["source_fingerprints"]["production_snapshot_sha256"] = "wrong"
+        self.assertIn("gate production_snapshot_sha256 does not match its canonical source", evaluate())
 
     def test_data_health_blocks_stale_or_misaligned_canonical_execution(self):
         root, paths = self.make_root()
@@ -374,6 +401,17 @@ class TestExecutionChainSync(unittest.TestCase):
         )
         self.assertEqual(intent_source["status"], "ok")
         self.assertEqual(gate_source["status"], "ok")
+
+        account_blocked_gate = json.loads(paths["gate"].read_text(encoding="utf-8"))
+        account_blocked_gate.update(status="blocked", would_place_real_order=False,
+                                    block_reasons=["entry_margin_insufficient"])
+        write_json(paths["gate"], account_blocked_gate)
+        account_blocked_source = data_health_common.evaluate_source(
+            spec=data_health_common.SOURCE_INDEX["execution_latest_real_order_gate_decision"],
+            root=root, reference_now=None, context=context, path_overrides={}, env_overrides={},
+        )
+        self.assertEqual(account_blocked_source["status"], "ok")
+        self.assertFalse(data_health_common.summarize_sources([account_blocked_source])["block_execution"])
 
         stale_intent = json.loads(paths["intent"].read_text(encoding="utf-8"))
         stale_intent["as_of_source"] = "2026-05-08"
@@ -477,7 +515,7 @@ class TestExecutionChainSync(unittest.TestCase):
             env_overrides={},
         )
         self.assertEqual(mismatch["status"], "failed")
-        self.assertTrue(
+        self.assertFalse(
             data_health_common.summarize_sources([mismatch])["block_execution"]
         )
 
@@ -561,6 +599,8 @@ class TestExecutionChainSync(unittest.TestCase):
         production_validation: str = "passed",
         same_run: bool = False,
         intent_same_run_id: str = "run-current",
+        execution_backend: str = "legacy",
+        account_snapshot_state: str = "available",
     ) -> tuple[dict | None, Path]:
         root, paths = self.make_root(
             target_asset=target_asset,
@@ -649,7 +689,12 @@ class TestExecutionChainSync(unittest.TestCase):
             quality_path=quality_path,
             manifest_path=manifest_path,
         )
+        if account_snapshot_state == "missing":
+            paths["account"].unlink()
+        elif account_snapshot_state == "unreadable":
+            paths["account"].write_text("malformed observation", encoding="utf-8")
         with ExitStack() as stack:
+            stack.enter_context(mock.patch.dict(os.environ, {"MRV1_EXECUTION_BACKEND": execution_backend}))
             stack.enter_context(mock.patch.object(gate_builder, "parse_args", return_value=args))
             stack.enter_context(
                 mock.patch.object(
@@ -663,7 +708,7 @@ class TestExecutionChainSync(unittest.TestCase):
             if same_run:
                 stack.enter_context(
                     mock.patch.dict(
-                        gate_builder.os.environ,
+                        os.environ,
                         {
                             "MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN": "1",
                             "MRV1_CURRENT_AUTHORITY_RUN_ID": "run-current",
@@ -698,14 +743,30 @@ class TestExecutionChainSync(unittest.TestCase):
         self.assertTrue(btc_gate["real_orders_enabled"])
         mocked_submitter.assert_not_called()
 
-    def test_gate_requires_exact_same_run_binding_declared_by_canonical_intent(self):
+    def test_multi_account_gate_does_not_require_owner_snapshot_or_fabricate_one(self):
+        for state in ("missing", "unreadable"):
+            decision, _ = self.run_gate_case(target_asset="BTC", target_exposure=0.5, execution_backend="multi_account", account_snapshot_state=state)
+            self.assertEqual(decision["status"], "ready_if_enabled")
+            self.assertIs(decision["strategy_validated"], True)
+            self.assertEqual(decision["account_validation_scope"], "per_account_exchange")
+            self.assertIs(decision["account_snapshot_available"], False)
+            self.assertIsNone(decision["source_fingerprints"]["account_snapshot_sha256"])
+            path = Path(decision["source_paths"]["account_snapshot_path"])
+            if state == "missing":
+                self.assertFalse(path.exists())
+            else:
+                self.assertEqual(path.read_text(encoding="utf-8"), "malformed observation")
+        decision, _ = self.run_gate_case(target_asset="BTC", target_exposure=0.5, account_snapshot_state="missing")
+        self.assertIsNone(decision)
+
+    def test_gate_uses_current_production_not_previous_publication_approval(self):
         aligned, _ = self.run_gate_case(
             target_asset="BTC",
             target_exposure=0.5,
             same_run=True,
         )
         self.assertEqual(aligned["status"], "ready_if_enabled")
-        self.assertIs(aligned["checks"]["same_run_authority_binding_matches_intent"], True)
+        self.assertIs(aligned["strategy_validated"], True)
 
         mismatched, _ = self.run_gate_case(
             target_asset="BTC",
@@ -713,8 +774,8 @@ class TestExecutionChainSync(unittest.TestCase):
             same_run=True,
             intent_same_run_id="different-run",
         )
-        self.assertEqual(mismatched["status"], "blocked")
-        self.assertIn("same_run_authority_binding_mismatch", mismatched["block_reasons"])
+        self.assertEqual(mismatched["status"], "ready_if_enabled")
+        self.assertIs(mismatched["strategy_validated"], True)
 
     def test_gate_and_intent_fail_closed_guardrails_remain_intact(self):
         duplicate_gate, _ = self.run_gate_case(
@@ -722,7 +783,8 @@ class TestExecutionChainSync(unittest.TestCase):
             target_exposure=0.5,
             duplicate_order_risk=True,
         )
-        self.assertIn("duplicate_order_risk", duplicate_gate["block_reasons"])
+        self.assertNotIn("duplicate_order_risk", duplicate_gate["block_reasons"])
+        self.assertEqual(duplicate_gate["status"], "ready_if_enabled")
 
         stale_gate, _ = self.run_gate_case(
             target_asset="BTC",
@@ -736,10 +798,7 @@ class TestExecutionChainSync(unittest.TestCase):
             target_exposure=0.5,
             authority_day="2026-08-30",
         )
-        self.assertIn(
-            "approval_source_day_mismatch",
-            authority_mismatch_gate["block_reasons"],
-        )
+        self.assertEqual(authority_mismatch_gate["status"], "ready_if_enabled")
 
         blocked_policy_gate, _ = self.run_gate_case(
             target_asset="BTC",
@@ -747,7 +806,7 @@ class TestExecutionChainSync(unittest.TestCase):
             allow_live_orders=False,
             kill_switch=True,
         )
-        self.assertIn("allow_live_orders=false", blocked_policy_gate["block_reasons"])
+        self.assertNotIn("allow_live_orders=false", blocked_policy_gate["block_reasons"])
         self.assertIn("kill_switch_enabled", blocked_policy_gate["block_reasons"])
 
         invalid_gate, invalid_decision_path = self.run_gate_case(
@@ -777,27 +836,23 @@ class TestExecutionChainSync(unittest.TestCase):
                 "allow_live_order_candidate": True,
             },
         }
-        with mock.patch.object(
-            intent_builder,
-            "fail",
-            side_effect=RuntimeError("blocked"),
-        ):
-            with self.assertRaisesRegex(RuntimeError, "blocked"):
-                intent_builder.validate_authority_alignment(
-                    latest_attempt_status={
-                        "latest_authoritative_attempt_status": "success",
-                        "currentness_status": "current",
-                        "target_closed_day_utc": "2026-08-30",
-                        "latest_available_closed_utc_day": "2026-08-30",
-                    },
-                    latest_successful_snapshot={
-                        "latest_authoritative_attempt_status": "success",
-                        "currentness_status": "current",
-                        "target_closed_day_utc": "2026-08-30",
-                        "latest_available_closed_utc_day": "2026-08-30",
-                    },
-                    expected_closed_day=production["closed_day"],
-                )
+        result = intent_builder.validate_authority_alignment(
+            latest_attempt_status={
+                "latest_authoritative_attempt_status": "success",
+                "currentness_status": "current",
+                "target_closed_day_utc": "2026-08-30",
+                "latest_available_closed_utc_day": "2026-08-30",
+            },
+            latest_successful_snapshot={
+                "latest_authoritative_attempt_status": "success",
+                "currentness_status": "current",
+                "target_closed_day_utc": "2026-08-30",
+                "latest_available_closed_utc_day": "2026-08-30",
+            },
+            expected_closed_day=production["closed_day"],
+        )
+        self.assertEqual(result["authority_alignment_mode"], "validated_production_core")
+        self.assertIs(result["prior_publish_required_for_execution"], False)
 
     def test_repair_paths_never_include_a_real_order_submitter(self):
         planned_paths = {

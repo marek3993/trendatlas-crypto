@@ -4,6 +4,28 @@
   "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
   "scripts": [
     {
+      "script_path": "web/scripts/check-production-asset-support.ts",
+      "layer": "execution",
+      "status": "active",
+      "purpose": "Reject deployment when a current adapter-derived target lacks dynamic exchange metadata or a valid reconciliation plan.",
+      "primary_outputs": [],
+      "output_type": "read_only_deployment_verification",
+      "decision_relevance": "deployment_gate",
+      "writes_source_of_truth": false,
+      "notes": "Uses current_emittable_universe; no independent asset list; no exchange writes."
+    },
+    {
+      "script_path": "scripts/production/strategy_adapters/current_emittable_universe.py",
+      "layer": "production",
+      "status": "active",
+      "purpose": "Derive present selector capabilities and fingerprints without treating stitched historical baskets as instruments.",
+      "primary_outputs": ["outputs/production/current_strategy_snapshot.json::source_inputs.current_emittable_universe"],
+      "output_type": "embedded_source_contract",
+      "decision_relevance": "deployment_gate",
+      "writes_source_of_truth": false,
+      "notes": "Reads the current production selector candidate quality export and active strategy overlay parameters."
+    },
+    {
       "script_path": "scripts/execution/mrv1_self_healing_watchdog.py",
       "layer": "maintenance",
       "status": "active",

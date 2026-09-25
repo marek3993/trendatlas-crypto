@@ -72,6 +72,24 @@
     "execution_journal": "durable_pre_submit_idempotency_and_exchange_recovery_record"
   },
   "artifacts": {
+    "production_execution_contract": {
+      "canonical": "source_of_truth/production_execution_contract.json",
+      "legacy_aliases": [],
+      "owner": "EXECUTION",
+      "artifact_type": "contract",
+      "truth_domain": "execution",
+      "read_scope": ["execution", "validation", "deployment"],
+      "write_mode": "explicit_user_authorized_contract_change"
+    },
+    "production_asset_universe_contract": {
+      "canonical": "source_of_truth/production_asset_universe_contract.json",
+      "legacy_aliases": [],
+      "owner": "PRODUCTION",
+      "artifact_type": "contract",
+      "truth_domain": "execution",
+      "read_scope": ["production", "validation", "deployment"],
+      "write_mode": "explicit_user_authorized_contract_change"
+    },
     "maintenance_watchdog": {
       "canonical": "outputs/execution/watchdog",
       "legacy_aliases": [],

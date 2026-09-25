@@ -466,19 +466,8 @@ def validate_live_submit_readiness() -> dict[str, Any]:
 
     reasons: list[str] = []
 
-    if str(mode_cfg.get("mode") or "").strip().lower() != "live":
-        reasons.append("execution_mode.json nema mode=live.")
-    if as_bool(mode_cfg.get("trading_enabled")) is not True:
-        reasons.append("execution_mode.json nema trading_enabled=true.")
-    if as_bool(policy_cfg.get("allow_live_orders")) is not True:
-        reasons.append("live_order_policy.json nema allow_live_orders=true.")
-    if as_bool(policy_cfg.get("manual_approval_required")) is True:
-        reasons.append("live_order_policy.json stale vyzaduje manual_approval_required=true.")
-    if (
-        as_bool(policy_cfg.get("require_kill_switch_off")) is True
-        and as_bool(mode_cfg.get("kill_switch")) is True
-    ):
-        reasons.append("live_order_policy.json vyzaduje kill_switch=false.")
+    if mode_cfg.get("kill_switch") is not False:
+        reasons.append("Obchodovanie je pozastavene nudzovym vypinacom.")
 
     gate_status = str(gate_payload.get("status") or "").strip()
     if gate_status != "ready_if_enabled":
@@ -487,16 +476,8 @@ def validate_live_submit_readiness() -> dict[str, Any]:
         )
     if as_bool(gate_payload.get("would_place_real_order")) is not True:
         reasons.append("latest_real_order_gate_decision.json nema would_place_real_order=true.")
-    if as_bool(checks.get("approval_status_allowed")) is not True:
-        reasons.append("Gate nepotvrdzuje approval_status_allowed=true.")
-    if as_bool(checks.get("execution_trading_enabled")) is not True:
-        reasons.append("Gate nepotvrdzuje execution_trading_enabled=true.")
-    if as_bool(checks.get("allow_live_orders")) is not True:
-        reasons.append("Gate nepotvrdzuje allow_live_orders=true.")
     if as_bool(checks.get("account_address_present")) is not True:
-        reasons.append("Gate nepotvrdzuje account_address_present=true.")
-    if as_bool(checks.get("leverage_live_truth_allowed")) is not True:
-        reasons.append("Gate nepotvrdzuje leverage_live_truth_allowed=true.")
+        reasons.append("Chyba pripojeny obchodny ucet.")
     reasons.extend(gate_block_reasons)
 
     if not target_asset:
@@ -527,8 +508,6 @@ def validate_live_submit_readiness() -> dict[str, Any]:
         "mode": mode_cfg.get("mode"),
         "trading_enabled": mode_cfg.get("trading_enabled"),
         "kill_switch": mode_cfg.get("kill_switch"),
-        "allow_live_orders": policy_cfg.get("allow_live_orders"),
-        "manual_approval_required": policy_cfg.get("manual_approval_required"),
         "gate_status": gate_status,
         "gate_would_place_real_order": gate_payload.get("would_place_real_order"),
         "gate_leverage_live_truth_allowed": checks.get("leverage_live_truth_allowed"),

@@ -329,7 +329,7 @@ def main() -> None:
             "runtime_trading_enabled": runtime_trading_enabled,
             "runtime_kill_switch": runtime_kill_switch,
             "kill_switch_required": True,
-            "manual_approval_required_for_live_orders": True,
+            "live_execution_entrypoint": "canonical_production_service",
             "contract_validated": bool(guardrail_flags.get("contract_validated")),
             "staleness_ok": bool(intent.get("staleness_ok")),
         },

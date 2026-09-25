@@ -2514,7 +2514,20 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
         active_timeseries = transform_candidate_timeseries_to_active(candidate_timeseries)
         active_timeseries["strategy_id"] = self.strategy_id
         active_timeseries["strategy_version"] = self.strategy_version
+        universe = self.build_current_emittable_universe(inputs)
+        current_target = str(active_timeseries.iloc[-1]["execution_target_asset"]).strip().upper()
+        if universe["status"] == "available" and current_target not in universe["assets"]:
+            raise ValueError("Current strategy target is not an instrument emitted by the active selector or overlay")
         return active_timeseries
+
+    def build_current_emittable_universe(self, inputs: dict[str, Any]) -> dict[str, Any]:
+        from scripts.production.strategy_adapters.current_emittable_universe import derive_current_emittable_universe
+
+        return derive_current_emittable_universe(
+            root=Path(inputs["repo_root"]), closed_day=inputs["closed_day"],
+            strategy_version=self.strategy_version, adapter_path=Path(__file__),
+            overlay_assets=(EARLY_RISK_ASSET,),
+        )
 
     def build_reason_text(self, row: pd.Series) -> str:
         from scripts.production.staged_candidate_promotion_support import (
@@ -2539,6 +2552,7 @@ class Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter:
         durable_baseline_source_inputs = dict(inputs["durable_baseline_source_inputs"])
         durable_baseline_files = dict(durable_baseline_source_inputs["files"])
         return {
+            "current_emittable_universe": self.build_current_emittable_universe(inputs),
             "adapter_name": self.adapter_name,
             "strategy_id": self.strategy_id,
             "strategy_version": self.strategy_version,

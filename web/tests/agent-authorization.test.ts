@@ -190,7 +190,7 @@ describe("Stage 4 agent authorization boundary", () => {
   it("marks a verified authorization ready without exposing a Vercel execution path", () => {
     expect(actions).toContain('execution_status: "ready"');
     expect(actions).not.toContain("run-multi-account-production-cycle");
-    expect(panel).toContain("Live executor: not enabled yet");
+    expect(panel).toContain("automaticTradingLabel");
   });
 
   it("changes the local preference without invoking Hyperliquid", () => {

@@ -35,6 +35,7 @@ SyslogIdentifier=mrv1-production
 TimeoutStartSec=90min
 Restart=on-failure
 RestartSec=15min
+RestartPreventExitStatus=2
 NoNewPrivileges=true
 PrivateTmp=true
 PrivateDevices=true

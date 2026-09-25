@@ -286,7 +286,7 @@ class TestSourceOfTruthJsonValid(unittest.TestCase):
         self.assertIsInstance(live_market_semantics, dict)
         self.assertEqual(live_market_semantics.get("btc_24h_pct_expected_source"), "live_ticker")
         self.assertIn(
-            "real_account.exposure_x * live_market_state.btc_24h_pct",
+            "exchange_native_24h_return_if_available_else_null",
             live_market_semantics.get("live_dashboard_account_24h_formula", ""),
         )
         self.assertIn(

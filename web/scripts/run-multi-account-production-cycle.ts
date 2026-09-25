@@ -1,84 +1,72 @@
+import { sharedFailureReport, type ProductionStage } from "@/server/multi-account-executor/batch";
+
+let stage: ProductionStage = "configuration";
+let currentRunId: string | null = null;
+let currentSignalId: string | null = process.env.TRENDATLAS_LIVE_SIGNAL_CONFIRMATION?.trim() || null;
+let noSubmit = process.env.TRENDATLAS_MULTI_ACCOUNT_EXECUTION_MODE !== "live";
+
 async function main(): Promise<void> {
   const [
-    { requireCanonicalProductionContext },
-    { loadCanonicalRunTarget },
-    { MultiAccountExecutor },
-    { HyperliquidLiveGateway },
-    { preflightMultiAccountCandidates },
-    { SupabaseExecutionRepository }
+    { requireCanonicalProductionContext }, { loadCanonicalRunTarget }, { MultiAccountExecutor },
+    { HyperliquidDryRunGateway }, { preflightMultiAccountCandidates }, { SupabaseExecutionRepository },
+    { runPreflightedBatch, isolateDuplicateWallets, summarizeAccountBatch }
   ] = await Promise.all([
     import("@/server/multi-account-executor/canonical-production-guard"),
     import("@/server/multi-account-executor/authority"),
     import("@/server/multi-account-executor/engine"),
-    import("@/server/multi-account-executor/hyperliquid-live-gateway"),
+    import("@/server/multi-account-executor/dry-run-gateway"),
     import("@/server/multi-account-executor/live-preflight"),
-    import("@/server/multi-account-executor/repository")
+    import("@/server/multi-account-executor/repository"),
+    import("@/server/multi-account-executor/batch")
   ]);
-
   const guard = requireCanonicalProductionContext();
+  currentRunId = guard.runId;
+  currentSignalId = guard.signalId;
+  noSubmit = guard.mode === "dry_run";
   const repository = new SupabaseExecutionRepository();
-  const exchange = new HyperliquidLiveGateway();
-  const [target, candidates] = await Promise.all([
-    loadCanonicalRunTarget(guard.repositoryRoot, guard.runId, guard.signalId),
-    repository.listMultiAccountCandidates()
-  ]);
+  const exchange = new HyperliquidDryRunGateway();
+  stage = "authority";
+  const target = await loadCanonicalRunTarget(guard.repositoryRoot, guard.runId, guard.signalId);
   if (target.signalId !== guard.signalId) throw new Error("canonical target does not match the confirmed signal");
-  if (candidates.length === 0) throw new Error("no eligible multi-account candidates were found");
-  if (candidates.filter(({ masterAddress }) => masterAddress.toLowerCase() === guard.ownerMasterAddress).length !== 1) {
-    throw new Error("the canonical owner account is not uniquely eligible for multi-account execution");
-  }
-
-  const preflight = await preflightMultiAccountCandidates(candidates, target, exchange);
-  if (preflight.length !== candidates.length || preflight.some(({ status }) => status === "BLOCKED" || status === "FAILED")) {
-    throw new Error("one or more eligible accounts failed the all-account preflight");
-  }
-
-  let results: Array<{ accountId: string; status: string; reason?: string }>;
-  let successful: boolean;
-  let realOrderSent: boolean | null;
-  if (guard.mode === "dry_run") {
-    results = preflight.map(({ accountId, status, reason }) => ({
-      accountId,
-      status: status === "ALIGNED" ? "PREFLIGHT_ALIGNED" : "PREFLIGHT_READY",
-      ...(reason ? { reason } : {})
-    }));
-    successful = true;
-    realOrderSent = false;
-  } else {
+  stage = "candidates";
+  const candidates = await repository.listMultiAccountCandidates();
+  stage = "metadata";
+  await exchange.readMarkets();
+  stage = "preflight";
+  const preflight = isolateDuplicateWallets(candidates, await preflightMultiAccountCandidates(candidates, target, exchange, repository));
+  stage = "execution";
+  const results = await runPreflightedBatch(preflight, noSubmit, async (readyIds) => {
+    const { HyperliquidLiveGateway } = await import("@/server/multi-account-executor/hyperliquid-live-gateway");
     const fixedRepository = {
-      listMultiAccountCandidates: async () => candidates,
-      tryAcquire: repository.tryAcquire.bind(repository),
-      release: repository.release.bind(repository),
-      reserveNonce: repository.reserveNonce.bind(repository),
-      createRun: repository.createRun.bind(repository),
-      recordAction: repository.recordAction.bind(repository),
-      finishRun: repository.finishRun.bind(repository),
-      setAccountStatus: repository.setAccountStatus.bind(repository)
+      listMultiAccountCandidates: async () => candidates.filter(({ accountId }) => readyIds.includes(accountId)),
+      tryAcquire: repository.tryAcquire.bind(repository), release: repository.release.bind(repository),
+      reserveNonce: repository.reserveNonce.bind(repository), createRun: repository.createRun.bind(repository),
+      recordAction: repository.recordAction.bind(repository), readActions: repository.readActions.bind(repository),
+      readUnresolvedActions: repository.readUnresolvedActions.bind(repository), markActionVerified: repository.markActionVerified.bind(repository),
+      isManagedOrder: repository.isManagedOrder.bind(repository), renewLease: repository.renewLease.bind(repository),
+      finishRun: repository.finishRun.bind(repository), setAccountStatus: repository.setAccountStatus.bind(repository)
     };
-    results = await new MultiAccountExecutor(fixedRepository, exchange, "live", guard.maxConcurrency, {
-      stopOnUnsafeResult: true
-    }).runAllForTarget(target);
-    successful = results.every(({ status }) => status === "NO_ACTION" || status === "FILLED_AND_ALIGNED");
-    const ambiguous = results.some(({ status }) => status === "UNKNOWN_SUBMISSION_STATE" || status === "PARTIAL");
-    realOrderSent = ambiguous ? null : results.some(({ status }) => status === "FILLED_AND_ALIGNED");
-  }
-  const report = {
-    mode: guard.mode === "live" ? "canonical_multi_account_production" : "canonical_multi_account_preflight",
-    runId: guard.runId,
-    target: target.asset,
-    signalId: target.signalId,
-    accountCount: candidates.length,
-    preflight,
-    results,
-    successful,
-    realOrderSent
-  };
-  console.log(JSON.stringify(report));
-  if (!successful) process.exitCode = 1;
+    return new MultiAccountExecutor(fixedRepository, new HyperliquidLiveGateway(), "live", guard.maxConcurrency).runAllForTarget(target);
+  }, async (failed) => {
+    const candidate = candidates.find(({ accountId }) => accountId === failed.accountId);
+    if (!candidate) throw new Error("preflight account context is unavailable");
+    const status = failed.status === "FAILED" ? "FAILED" : "BLOCKED";
+    const runId = await repository.createRun(candidate, target, failed.accountEquityUsd ?? null, status);
+    // A failed preflight is an attempt outcome, never confirmation of pending orders.
+    await repository.finishRun(runId, status, failed.accountEquityUsd ?? null, failed.reason);
+    await repository.setAccountStatus(candidate.authorizationId, status === "FAILED" ? "error" : "blocked");
+  });
+  const summary = summarizeAccountBatch(candidates, results, guard.ownerMasterAddress);
+  console.log(JSON.stringify({
+    mode: noSubmit ? "canonical_multi_account_preflight" : "canonical_multi_account_production",
+    runId: guard.runId, target: target.asset, signalId: target.signalId,
+    accountCount: candidates.length, preflight, results, ...summary
+  }));
+  if (!summary.successful) process.exitCode = 1;
 }
 
-void main().catch((error) => {
-  const message = error instanceof Error ? error.message : "unknown multi-account production error";
-  console.error(`Canonical multi-account production refused safely: ${message}`);
+void main().catch(() => {
+  console.log(JSON.stringify(sharedFailureReport(stage, currentRunId, noSubmit, currentSignalId)));
+  console.error("Canonical multi-account production could not be verified.");
   process.exitCode = 1;
 });

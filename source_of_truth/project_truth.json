@@ -1,4 +1,5 @@
 {
+    "production_execution_source_contract": "source_of_truth/production_execution_contract.json",
     "project_name":  "Market Regime v1",
     "official_core_baseline":  {
                                    "model":  "phase66g_production_soft_filters",
@@ -436,7 +437,7 @@
                                                "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
                                                "single_automatic_production_entrypoint":  true,
                                                "new_closed_day_authority_advance_rule":  "allow_previous_success_before_D_only_when_same_run_production_intent_gate_and_account_provenance_exactly_match_D_no_historical_order_replay",
-                                               "scheduler_retry_rule":  "mrv1-production.service_restart_on_failure_after_15_minutes_stop_after_success",
+                                               "scheduler_retry_rule":  "bounded_transient_retries_only_exit_2_prevents_restart_next_daily_timer_remains_enabled",
                                                "state_machine":  [
                                                                      "lock",
                                                                      "refresh",
@@ -456,7 +457,7 @@
                                                "sizing_contract":  "fresh_account_equity_times_validated_target_exposure",
                                                "fixed_usd_sizing_or_clipping_forbidden":  true,
                                                "precision_limited_residual_rule":  "same_asset_residual_within_post_trade_tolerance_and_below_exchange_minimum_is_no_action",
-                                               "relative_safety_violation_action":  "block_fail_closed",
+                                               "relative_safety_violation_action":  "exchange_margin_precision_and_minimum_per_step_only",
                                                "idempotency_contract":  "durable_pre_submit_journal_plus_deterministic_hyperliquid_cloid",
                                                "power_loss_recovery":  "query_exchange_by_cloid_then_refresh_account_before_any_residual_order",
                                                "run_manifest_path":  "outputs/execution/production_runs/latest_production_run.json",
@@ -506,11 +507,11 @@
                                                        "runner":  "web/scripts/run-multi-account-production-cycle.ts",
                                                        "legacy_order_adapter_when_active":  "forbidden",
                                                        "owner_account_must_be_uniquely_eligible":  true,
-                                                       "batch_preflight_scope":  "all_eligible_accounts_before_first_write",
+                                                       "batch_preflight_scope":  "per_account_preflight_isolated_failures_before_each_account_write",
                                                        "production_batch_concurrency":  1,
-                                                       "stop_after_unsafe_account_result":  true,
+                                                       "stop_after_unsafe_account_result":  false,
                                                        "per_account_sizing":  "fresh_account_equity_times_validated_target_exposure",
-                                                       "authority_success_requires":  "terminal_multi_account_batch_success_plus_owner_account_readback_alignment",
+                                                       "authority_success_requires":  "terminal_owner_account_readback_alignment_plus_all_account_outcomes",
                                                        "vercel_exchange_writes":  "disabled",
                                                        "activation_requires":  [
                                                                                    "updated_code_and_tests",

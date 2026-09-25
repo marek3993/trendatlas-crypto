@@ -104,6 +104,34 @@ def load_app_symbols(*function_names: str) -> dict[str, object]:
 
 
 class TestAppPublicStatusContract(unittest.TestCase):
+    def test_unknown_wallet_stays_unknown_and_multiple_positions_use_public_names(self):
+        resolve = self.__class__.ns["resolve_dashboard_public_status_state"]
+        result = resolve({"schema_version": 1, "real_account": {
+            "asset": None, "exposure_x": None, "in_market": None, "state_available": False,
+        }, "execution": {"target_asset": "AVAX", "target_size_pct": 1.25}}, "sk")
+        self.assertIsNone(result["real_account_exposure_state"]["is_out_of_market"])
+        self.assertIsNone(result["real_account_exposure_state"]["exposure"])
+        self.assertNotIn("CASH", result["real_account_exposure_state"]["subtitle"])
+        result = resolve({"schema_version": 1, "real_account": {
+            "asset": "MULTIPLE", "exposure_x": 0.74, "in_market": True,
+            "positions": [{"symbol": "BTC"}, {"symbol": "ETH"}],
+        }}, "sk")
+        self.assertEqual(result["real_account_exposure_state"]["asset"], "BTC, ETH")
+        self.assertNotIn("MULTIPLE", result["real_account_exposure_state"]["subtitle"])
+
+    def test_last_execution_cash_outcome_and_validated_target_are_public_and_separate(self):
+        result = self.__class__.ns["resolve_dashboard_public_status_state"]({
+            "schema_version": 1,
+            "real_account": {"asset": "CASH", "exposure_x": 0, "in_market": False},
+            "model_target_state": {"asset": "AVAX", "exposure_x": 1.25, "validated": True},
+            "execution_result_state": {"outcome": "EXITED_ENTRY_FAILED_STAYING_CASH", "staying_cash": True,
+                                       "public_message_sk": "Vstup sa nepodaril. Účet zostáva mimo trhu."},
+        }, "sk")
+        self.assertEqual(result["model_target_state"]["asset"], "AVAX")
+        self.assertEqual(result["real_account_exposure_state"]["asset"], "CASH")
+        self.assertEqual(result["execution_wait_state"]["order_status"], "Zostáva mimo trhu")
+        self.assertNotIn("STAYING_CASH", result["execution_wait_state"]["gate_text"])
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.ns = load_app_symbols(
@@ -639,6 +667,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "generated_at_utc",
                 "closed_day",
                 "real_account",
+                "model_target_state",
+                "execution_result_state",
                 "execution",
                 "model_signal",
                 "model_performance",
@@ -657,6 +687,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "position_label_sk": "Mimo trhu",
                 "exposure_x": 0.0,
                 "in_market": False,
+                "state_available": True,
+                "positions": [],
                 "account_equity_usd": 39.475466,
                 "free_collateral_usd": 39.475466,
                 "available_balance_usd": 39.475466,
@@ -692,9 +724,9 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "not_real_wallet_exposure": True,
             },
         )
-        self.assertEqual(contract["model_performance"]["account_24h_pct"], 0.0)
+        self.assertIsNone(contract["model_performance"]["account_24h_pct"])
         self.assertEqual(contract["model_performance"]["btc_24h_pct"], -0.5)
-        self.assertEqual(contract["model_performance"]["account_vs_btc_24h_pct"], 0.5)
+        self.assertIsNone(contract["model_performance"]["account_vs_btc_24h_pct"])
         self.assertEqual(contract["model_performance"]["public_average_annual_growth_pct"], 216.86)
         self.assertEqual(contract["model_performance"]["since_etf_start_cagr_pct"], 322.34)
         self.assertEqual(contract["model_performance"]["since2025_cagr_pct"], 251.64)
@@ -715,8 +747,8 @@ class TestAppPublicStatusContract(unittest.TestCase):
                 "btc_24h_pct_expected_live_source": "live_ticker",
                 "btc_24h_pct_snapshot_is_not_live": True,
                 "published_snapshot_btc_24h_pct": -0.5,
-                "account_24h_pct": 0.0,
-                "account_vs_btc_24h_pct": 0.5,
+                "account_24h_pct": None,
+                "account_vs_btc_24h_pct": None,
             },
         )
         self.assertEqual(
@@ -760,14 +792,14 @@ class TestAppPublicStatusContract(unittest.TestCase):
         )
 
         self.assertEqual(contract["model_performance"]["btc_24h_pct"], -0.5)
-        self.assertEqual(contract["model_performance"]["account_24h_pct"], 0.0)
-        self.assertEqual(contract["model_performance"]["account_vs_btc_24h_pct"], 0.5)
+        self.assertIsNone(contract["model_performance"]["account_24h_pct"])
+        self.assertIsNone(contract["model_performance"]["account_vs_btc_24h_pct"])
         self.assertEqual(contract["live_market_state"]["btc_24h_pct"], 1.9)
         self.assertEqual(contract["live_market_state"]["btc_24h_pct_source"], "live_ticker")
         self.assertFalse(contract["live_market_state"]["btc_24h_pct_snapshot_is_not_live"])
         self.assertEqual(contract["live_market_state"]["published_snapshot_btc_24h_pct"], -0.5)
-        self.assertEqual(contract["live_market_state"]["account_24h_pct"], 0.0)
-        self.assertEqual(contract["live_market_state"]["account_vs_btc_24h_pct"], -1.9)
+        self.assertIsNone(contract["live_market_state"]["account_24h_pct"])
+        self.assertIsNone(contract["live_market_state"]["account_vs_btc_24h_pct"])
 
     def test_dashboard_public_status_state_resolver_uses_contract_only(self):
         resolve_public_state = self.__class__.ns["resolve_dashboard_public_status_state"]
@@ -1252,7 +1284,7 @@ class TestAppPublicStatusContract(unittest.TestCase):
         self.assertEqual(real_state["position_label_sk"], "Mimo trhu")
         self.assertEqual(real_state["gate_status"], "blocked")
         self.assertFalse(real_state["would_place_real_order"])
-        self.assertEqual(real_state["source"], "wallet/intent/gate")
+        self.assertEqual(real_state["source"], "exchange_account_snapshot")
         self.assertEqual(real_state["intent_target_asset"], "CASH")
         self.assertEqual(real_state["intent_target_size_pct"], 0.0)
         self.assertEqual(model_state["preferred_asset"], "BTC")

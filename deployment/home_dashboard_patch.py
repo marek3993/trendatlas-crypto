@@ -178,6 +178,53 @@ JS_PATCHES = [
 ]
 
 
+EXECUTION_PY_PATCHES = [
+    (
+        '    candidate_waiting = bool(model_preferred_asset and str(model_preferred_asset).upper() != "CASH" and target_is_cash)',
+        '''    execution_result_state = dashboard_contract.get("execution_result_state") or {}
+    model_target_state = dashboard_contract.get("model_target_state") or {}
+    if real_account_asset == "MULTIPLE":
+        real_account_asset = "Viac pozícií"
+    last_execution_message = execution_result_state.get("public_message_sk") or "Výsledok posledného obchodného pokusu nie je dostupný."
+    if execution_result_state.get("staying_cash") is True:
+        trade_submission_state = "Zostáva mimo trhu"
+        blocking_gate = last_execution_message
+    elif execution_result_state.get("outcome"):
+        blocking_gate = last_execution_message
+
+    candidate_waiting = bool(model_preferred_asset and str(model_preferred_asset).upper() != "CASH" and target_is_cash)''',
+    ),
+    (
+        '        "signal_status": signal_status,',
+        '''        "last_execution_message": last_execution_message,
+        "model_target_asset": model_target_state.get("asset"),
+        "model_target_exposure": model_target_state.get("exposure_x"),
+        "model_target_validated": model_target_state.get("validated") is True,
+        "signal_status": signal_status,''',
+    ),
+]
+EXECUTION_JS_PATCHES = [
+    (
+        '  $("strategyExplanation").textContent = `Reálny účet:',
+        '''  const confirmedTarget = status.model_target_validated
+    ? `Potvrdený cieľ: ${status.model_target_asset || "Nedostupný"}, ${formatExposure(status.model_target_exposure) || "Nedostupné"}.`
+    : "Potvrdený cieľ nie je dostupný.";
+  $("strategyExplanation").textContent = `${confirmedTarget} ${status.last_execution_message || ""} Reálny účet:''',
+    ),
+]
+
+
+def build_execution_result_patch(python_raw: bytes, js_raw: bytes) -> tuple[bytes, bytes]:
+    if b'"last_execution_message": last_execution_message' in python_raw:
+        verify_installed_sources(python_raw, js_raw)
+        return python_raw, js_raw
+    verify_installed_sources(python_raw, js_raw)
+    python_new = apply_anchors(python_raw, EXECUTION_PY_PATCHES)
+    js_new = apply_anchors(js_raw, EXECUTION_JS_PATCHES)
+    verify_installed_sources(python_new, js_new)
+    return python_new, js_new
+
+
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -208,13 +255,17 @@ def build_patched_sources(python_raw: bytes, js_raw: bytes, *, verify_hash: bool
         if not shutil.which("node"):
             raise RuntimeError("node --check is required before modifying kiosk JavaScript")
         subprocess.run(["node", "--check", str(js_check)], check=True, capture_output=True)
-    return python_new, js_new
+    return build_execution_result_patch(python_new, js_new)
 
 
 def verify_installed_sources(python_raw: bytes, js_raw: bytes) -> None:
+    checked_python, checked_js = python_raw, js_raw
+    if b'"last_execution_message": last_execution_message' in python_raw:
+        checked_python = apply_anchors(python_raw, [(new, old) for old, new in reversed(EXECUTION_PY_PATCHES)])
+        checked_js = apply_anchors(js_raw, [(new, old) for old, new in reversed(EXECUTION_JS_PATCHES)])
     for raw, patches, name in (
-        (python_raw, PY_PATCHES, "home_dashboard.py"),
-        (js_raw, JS_PATCHES, "static/app.js"),
+        (checked_python, PY_PATCHES, "home_dashboard.py"),
+        (checked_js, JS_PATCHES, "static/app.js"),
     ):
         text = raw.decode("utf-8").replace("\r\n", "\n")
         for old, new in patches:
@@ -257,16 +308,19 @@ def main() -> None:
     already = b'"next_rebalance_review_utc": next_rebalance_review_utc' in current["home_dashboard.py"] and b"const reviewText = status.next_evaluation_utc" in current["static/app.js"]
     if already:
         verify_installed_sources(current["home_dashboard.py"], current["static/app.js"])
-        print(f"ALREADY_APPLIED python_sha256={sha256(current['home_dashboard.py'])} js_sha256={sha256(current['static/app.js'])}")
-        return
-    patched_py, patched_js = build_patched_sources(current["home_dashboard.py"], current["static/app.js"])
+        patched_py, patched_js = build_execution_result_patch(current["home_dashboard.py"], current["static/app.js"])
+        if patched_py == current["home_dashboard.py"] and patched_js == current["static/app.js"]:
+            print(f"ALREADY_APPLIED python_sha256={sha256(patched_py)} js_sha256={sha256(patched_js)}")
+            return
+    else:
+        patched_py, patched_js = build_patched_sources(current["home_dashboard.py"], current["static/app.js"])
     print(f"CHECK_OK python_sha256={sha256(patched_py)} js_sha256={sha256(patched_js)}")
     if not args.apply:
         return
     backups = {}
     try:
         for name, path in paths.items():
-            backup = path.with_name(path.name + ".trendatlas-before-wait-fix.bak")
+            backup = path.with_name(path.name + ".trendatlas-before-execution-result.bak")
             if backup.exists():
                 raise FileExistsError(f"Existing backup {backup}; inspect before continuing")
             shutil.copy2(path, backup)
@@ -278,7 +332,7 @@ def main() -> None:
             if name in backups and path.read_bytes() != current[name]:
                 atomic_preserving_write(path, current[name])
         raise
-    print("APPLIED; originals preserved in .trendatlas-before-wait-fix.bak files")
+    print("APPLIED; originals preserved in .trendatlas-before-execution-result.bak files")
 
 
 if __name__ == "__main__":

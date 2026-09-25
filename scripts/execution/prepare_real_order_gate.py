@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import sys
 from datetime import datetime, timezone
@@ -177,7 +178,10 @@ def require_float(value: Any, context: str) -> float:
     text = str(value).strip()
     if not text:
         raise ValueError(f"{context} is missing")
-    return float(text)
+    number = float(text)
+    if not math.isfinite(number):
+        raise ValueError(f"{context} must be finite")
+    return number
 
 
 def load_production_snapshot_context(snapshot: dict[str, Any]) -> dict[str, Any]:
@@ -242,6 +246,8 @@ def load_production_snapshot_context(snapshot: dict[str, Any]) -> dict[str, Any]
         snapshot.get("strategy_version"),
         "production snapshot strategy_version",
     )
+    if target_exposure < 0 or (is_cash_like_asset(target_asset) and target_exposure != 0):
+        raise ValueError("production snapshot has invalid target exposure")
     if not trend_permission_active:
         if effective_market_exposure > 1e-9:
             raise ValueError("production snapshot reports exposure while trend_permission_active=false")
@@ -254,6 +260,8 @@ def load_production_snapshot_context(snapshot: dict[str, Any]) -> dict[str, Any]
         if allow_live_order_candidate:
             raise ValueError("production snapshot allow_live_order_candidate must be false while trend_permission_active=false")
     else:
+        if target_exposure <= 0:
+            raise ValueError("production snapshot non-CASH target exposure must be positive")
         if effective_market_exposure <= 1e-9:
             raise ValueError("production snapshot effective_market_exposure must be above zero while trend_permission_active=true")
         if is_cash_like_asset(target_asset):
@@ -276,68 +284,6 @@ def load_production_snapshot_context(snapshot: dict[str, Any]) -> dict[str, Any]
         "strategy_status": str(snapshot.get("strategy_status") or "").strip(),
         "execution_intent": execution_intent,
     }
-
-
-def extract_authority_approval_gate_context(
-    *,
-    expected_strategy_model: str,
-    expected_closed_day: str,
-    authority_snapshot_path: Path = AUTHORITY_LATEST_SUCCESSFUL_SNAPSHOT_PATH,
-) -> dict[str, Any]:
-    payload = read_json(authority_snapshot_path)
-    product_snapshot = payload.get("app_product_snapshot")
-    if not isinstance(product_snapshot, dict):
-        raise ValueError(
-            "authority latest_successful_snapshot missing app_product_snapshot"
-        )
-    live_public_state = product_snapshot.get("live_public_state")
-    if not isinstance(live_public_state, dict):
-        raise ValueError(
-            "authority latest_successful_snapshot missing app_product_snapshot.live_public_state"
-        )
-    approval_gate_status = str(live_public_state.get("approval_gate_status") or "").strip()
-    strategy_model = str(product_snapshot.get("main_strategy_model") or "").strip()
-    product_closed_day = normalize_iso_day_text(
-        product_snapshot.get("strategy_last_closed_day"),
-        context="authority latest_successful_snapshot app_product_snapshot.strategy_last_closed_day",
-    )
-    target_closed_day = normalize_iso_day_text(
-        payload.get("target_closed_day_utc"),
-        context="authority latest_successful_snapshot target_closed_day_utc",
-    )
-    return {
-        "approval_gate_status": approval_gate_status,
-        "strategy_model": strategy_model,
-        "product_closed_day": product_closed_day,
-        "target_closed_day": target_closed_day,
-        "expected_strategy_model": expected_strategy_model,
-        "expected_closed_day": expected_closed_day,
-        "source_path": str(authority_snapshot_path.resolve()),
-    }
-
-
-def validate_same_run_authority_attempt(
-    *,
-    expected_closed_day: str,
-    authority_attempt_path: Path,
-) -> dict[str, Any]:
-    payload = read_json(authority_attempt_path)
-    status = str(payload.get("latest_authoritative_attempt_status") or "").strip().lower()
-    target_day = normalize_iso_day_text(
-        payload.get("target_closed_day_utc"),
-        context="authority latest_attempt_status target_closed_day_utc",
-    )
-    expected_run_id = str(os.environ.get("MRV1_CURRENT_AUTHORITY_RUN_ID") or "").strip()
-    actual_run_id = str(payload.get("run_id") or "").strip()
-    if os.environ.get("MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN") != "1":
-        raise ValueError("same-run in-progress authority is not enabled")
-    if status != "in_progress":
-        raise ValueError(f"same-run authority attempt must be in_progress (actual={status})")
-    if not expected_run_id or actual_run_id != expected_run_id:
-        raise ValueError("same-run authority attempt run_id mismatch")
-    if target_day != expected_closed_day:
-        raise ValueError("same-run authority attempt target day mismatch")
-    return {"run_id": actual_run_id, "target_closed_day": target_day, "status": status}
 
 
 def parse_args() -> argparse.Namespace:
@@ -371,436 +317,122 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    authority_attempt_path = getattr(
-        args,
-        "authority_latest_attempt_status_path",
-        AUTHORITY_LATEST_ATTEMPT_STATUS_PATH,
-    )
     LIVE_GATE_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
-
     started_at = utc_now_iso()
     log("[START] prepare_real_order_gate")
-
-    data_health_bundle = build_report_bundle(
-        root=ROOT,
-        output_dir=PRODUCTION_DIR,
-        write_outputs=True,
-    )
-    data_health_report = data_health_bundle["report"]
-    health_blockers = select_real_order_gate_health_blockers(data_health_report)
+    bundle = build_report_bundle(root=ROOT, output_dir=PRODUCTION_DIR, write_outputs=True)
+    health_blockers = select_real_order_gate_health_blockers(bundle["report"])
     if health_blockers:
-        blocker_summary = " | ".join(
-            f"{item['source_id']}:{item['status']}" for item in health_blockers
-        )
-        fail(f"Real-order gate blocked by data_health_report: {blocker_summary}")
-
+        fail("Real-order gate blocked by direct dependencies: " + " | ".join(f"{item['source_id']}:{item['status']}" for item in health_blockers))
     mode_cfg = read_json(args.mode_config_path)
     policy_cfg = read_json(args.live_order_policy_path)
     intent = read_json(args.intent_path)
-    account_snapshot = read_json(args.snapshot_path)
+    multi_account = os.environ.get("MRV1_EXECUTION_BACKEND") == "multi_account"
+    account_snapshot_available = True
+    if multi_account:
+        try:
+            account_snapshot = json.loads(args.snapshot_path.read_text(encoding="utf-8"))
+            if not isinstance(account_snapshot, dict):
+                raise ValueError("account observation is not an object")
+        except (OSError, ValueError):
+            account_snapshot = {}
+            account_snapshot_available = False
+    else:
+        account_snapshot = read_json(args.snapshot_path)
     production_snapshot = read_json(args.production_snapshot_path)
-
     try:
-        production_context = load_production_snapshot_context(production_snapshot)
+        context = load_production_snapshot_context(production_snapshot)
     except Exception as exc:
         fail(f"Real-order gate blocked: invalid production snapshot ({type(exc).__name__}: {exc})")
-
-    mode = str(mode_cfg.get("mode", "")).strip()
-    execution_trading_enabled = bool(mode_cfg.get("trading_enabled", False))
-    kill_switch = bool(mode_cfg.get("kill_switch", True))
-
-    allow_live_orders = bool(policy_cfg.get("allow_live_orders", False))
-    manual_approval_required = bool(policy_cfg.get("manual_approval_required", True))
-    require_kill_switch_off = bool(policy_cfg.get("require_kill_switch_off", True))
-    sizing_mode = str(policy_cfg.get("sizing_mode") or "").strip()
-    max_strategy_target_exposure = float(
-        policy_cfg.get("max_strategy_target_exposure", 0.0)
-    )
-    allowed_assets = {
-        normalize_asset(x)
-        for x in policy_cfg.get("allowed_assets", [])
-        if str(x).strip()
-    }
-    allowed_approval_gate_statuses = {
-        str(x).strip()
-        for x in policy_cfg.get("allowed_approval_gate_statuses", [])
-        if str(x).strip()
-    }
-
-    signal_id = str(intent.get("signal_id") or "").strip()
     target_asset = normalize_asset(intent.get("target_asset"))
-    target_size_pct = float(intent.get("target_size_pct", 0.0) or 0.0)
-    stale_signal = bool(intent.get("stale_signal", False))
-    allow_live_order_candidate = bool(intent.get("allow_live_order_candidate", False))
-    guardrail_flags = (
-        intent.get("guardrail_flags", {})
-        if isinstance(intent.get("guardrail_flags"), dict)
-        else {}
-    )
-    contract_validated = bool(guardrail_flags.get("contract_validated", False))
-    duplicate_order_risk = bool(intent.get("duplicate_order_risk", False))
-    leverage_live_truth_allowed = bool(
-        guardrail_flags.get("leverage_live_truth_allowed", False)
-    )
-    same_run_binding_required = bool(
-        guardrail_flags.get("same_run_authority_allowed", False)
-    )
-    intent_same_run_id = str(
-        guardrail_flags.get("same_run_authority_run_id") or ""
-    ).strip()
-    intent_same_run_day = str(
-        guardrail_flags.get("same_run_authority_target_closed_day") or ""
-    ).strip()
-
-    signal_as_of_source = str(intent.get("as_of_source") or "").strip()
-    signal_strategy_model = str(intent.get("strategy_model") or "").strip()
-    approval_source_error: str | None = None
-    authority_approval_context: dict[str, Any] | None = None
-    same_run_authority_context: dict[str, Any] | None = None
-    try:
-        authority_approval_context = extract_authority_approval_gate_context(
-            expected_strategy_model=production_context["strategy_version"],
-            expected_closed_day=production_context["closed_day"],
-            authority_snapshot_path=args.authority_latest_successful_snapshot_path,
-        )
-    except Exception as exc:
-        approval_source_error = str(exc)
-
-    try:
-        same_run_authority_context = validate_same_run_authority_attempt(
-            expected_closed_day=production_context["closed_day"],
-            authority_attempt_path=authority_attempt_path,
-        )
-    except Exception:
-        same_run_authority_context = None
-
-    same_run_binding_matches_intent = bool(
-        same_run_authority_context
-        and str(same_run_authority_context.get("run_id") or "").strip()
-        == intent_same_run_id
-        and str(same_run_authority_context.get("target_closed_day") or "").strip()
-        == intent_same_run_day
-    )
-
-    approval_gate_status = str(
-        (authority_approval_context or {}).get("approval_gate_status") or ""
-    ).strip()
-    open_orders_count = extract_open_orders_count(account_snapshot)
-    positions_count = extract_positions_count(account_snapshot)
-    account_address = str(account_snapshot.get("account_address", "")).strip()
+    signal_id = str(intent.get("signal_id") or "").strip()
+    target_exposure = require_float(intent.get("target_size_pct"), "intent target exposure")
     target_is_cash = is_cash_like_asset(target_asset)
-    exit_required = target_is_cash and positions_count > 0
-    no_action_cash = target_is_cash and positions_count == 0
-
+    positions_count = extract_positions_count(account_snapshot)
+    open_orders_count = extract_open_orders_count(account_snapshot)
+    no_action_cash = not multi_account and target_is_cash and positions_count == 0 and open_orders_count == 0
+    guardrails = intent.get("guardrail_flags") or {}
     checks = {
-        "signal_present": bool(signal_id),
-        "target_asset_present": bool(target_asset),
-        "target_asset_allowed": (
-            True if is_cash_like_asset(target_asset) else (target_asset in allowed_assets if target_asset else False)
-        ),
+        "signal_present": bool(signal_id), "target_asset_present": bool(target_asset),
         "target_asset_is_cash": target_is_cash,
-        "target_exposure_positive": target_size_pct > 1e-9,
-        "contract_validated": contract_validated,
-        "mode_known": bool(mode),
-        "execution_trading_enabled": execution_trading_enabled,
-        "allow_live_orders": allow_live_orders,
-        "kill_switch": kill_switch,
-        "require_kill_switch_off": require_kill_switch_off,
-        "stale_signal": stale_signal,
-        "duplicate_order_risk": duplicate_order_risk,
-        "open_orders_present": open_orders_count > 0,
-        "manual_approval_required": manual_approval_required,
-        "approval_source_readable": approval_source_error is None,
-        "approval_gate_status": approval_gate_status,
-        "approval_status_present": bool(approval_gate_status),
-        "approval_source_model_match": (
-            authority_approval_context is not None
-            and str(authority_approval_context.get("strategy_model") or "").strip()
-            == production_context["strategy_version"]
-        ),
-        "approval_source_day_match": bool(
-            same_run_authority_context
-            or (
-                authority_approval_context is not None
-                and str(authority_approval_context.get("product_closed_day") or "").strip()
-                == production_context["closed_day"]
-                and str(authority_approval_context.get("target_closed_day") or "").strip()
-                == production_context["closed_day"]
-            )
-        ),
-        "approval_status_allowed": approval_gate_status in allowed_approval_gate_statuses,
-        "leverage_live_truth_allowed": leverage_live_truth_allowed,
-        "sizing_mode": sizing_mode,
-        "max_strategy_target_exposure": max_strategy_target_exposure,
-        "target_exposure_within_safety_ceiling": (
-            target_size_pct >= 0
-            and max_strategy_target_exposure > 0
-            and target_size_pct <= max_strategy_target_exposure + 1e-9
-        ),
-        "same_run_authority": same_run_authority_context is not None,
-        "same_run_authority_binding_required": same_run_binding_required,
-        "same_run_authority_binding_matches_intent": same_run_binding_matches_intent,
-        "positions_count": positions_count,
-        "exit_required": exit_required,
-        "account_address_present": bool(account_address),
-        "production_snapshot_validation_passed": (
-            production_context["validation_status"] == "passed"
-        ),
-        "production_snapshot_closed_day_present": bool(production_context["closed_day"]),
-        "production_snapshot_signal_present": bool(production_context["signal_id"]),
-        "production_snapshot_target_asset_present": bool(
-            production_context["target_asset"]
-        ),
-        "production_snapshot_target_exposure_positive": (
-            production_context["target_exposure"] > 1e-9
-        ),
-        "production_snapshot_trend_permission_active": production_context[
-            "trend_permission_active"
-        ],
-        "production_snapshot_allow_live_order_candidate": production_context[
-            "allow_live_order_candidate"
-        ],
-        "production_snapshot_stale_signal": production_context["stale_signal"],
-        "intent_day_matches_production_snapshot": (
-            signal_as_of_source == production_context["closed_day"]
-        ),
-        "intent_signal_matches_production_snapshot": (
-            signal_id == production_context["signal_id"]
-        ),
-        "intent_target_asset_matches_production_snapshot": (
-            target_asset == production_context["target_asset"]
-        ),
-        "intent_target_exposure_matches_production_snapshot": (
-            abs(target_size_pct - production_context["target_exposure"]) <= 1e-9
-        ),
-        "intent_stale_signal_matches_production_snapshot": (
-            stale_signal == production_context["stale_signal"]
-        ),
-        "intent_strategy_model_matches_production_snapshot": (
-            signal_strategy_model == production_context["strategy_version"]
-        ),
-        "intent_allow_live_order_candidate_matches_snapshot": (
-            allow_live_order_candidate
-            == production_context["allow_live_order_candidate"]
-        ),
+        "contract_validated": bool(guardrails.get("contract_validated")),
+        "stale_signal": bool(intent.get("stale_signal")),
+        "kill_switch": mode_cfg.get("kill_switch") is not False,
+        "account_address_present": bool(str(account_snapshot.get("account_address") or "").strip()),
+        "production_snapshot_validation_passed": context["validation_status"] == "passed",
+        "intent_day_matches_production_snapshot": str(intent.get("as_of_source") or "") == context["closed_day"],
+        "intent_signal_matches_production_snapshot": signal_id == context["signal_id"],
+        "intent_target_asset_matches_production_snapshot": target_asset == context["target_asset"],
+        "intent_target_exposure_matches_production_snapshot": abs(target_exposure - context["target_exposure"]) <= 1e-9,
+        "intent_strategy_model_matches_production_snapshot": str(intent.get("strategy_model") or "") == context["strategy_version"],
+        "intent_allow_live_order_candidate_matches_snapshot": bool(intent.get("allow_live_order_candidate")) == context["allow_live_order_candidate"],
+        "intent_stale_signal_matches_production_snapshot": bool(intent.get("stale_signal")) == context["stale_signal"],
+        "positions_count": positions_count, "open_orders_present": open_orders_count > 0,
+        "exit_required": target_is_cash and positions_count > 0,
     }
-
-    block_reasons: list[str] = []
-
-    if not checks["signal_present"]:
-        block_reasons.append("missing_signal_id")
-    if not checks["target_asset_present"]:
-        block_reasons.append("missing_target_asset")
+    strategy_reasons = []
+    for name, reason in (
+        ("signal_present", "missing_signal_id"), ("target_asset_present", "missing_target_asset"),
+        ("contract_validated", "contract_not_validated"),
+        ("intent_day_matches_production_snapshot", "intent_day_mismatch_vs_production_snapshot"),
+        ("intent_signal_matches_production_snapshot", "intent_signal_mismatch_vs_production_snapshot"),
+        ("intent_target_asset_matches_production_snapshot", "intent_target_asset_mismatch_vs_production_snapshot"),
+        ("intent_target_exposure_matches_production_snapshot", "intent_target_exposure_mismatch_vs_production_snapshot"),
+        ("intent_strategy_model_matches_production_snapshot", "intent_strategy_model_mismatch_vs_production_snapshot"),
+        ("intent_allow_live_order_candidate_matches_snapshot", "intent_allow_live_order_candidate_mismatch_vs_production_snapshot"),
+        ("intent_stale_signal_matches_production_snapshot", "intent_stale_signal_mismatch_vs_production_snapshot"),
+    ):
+        if not checks[name]:
+            strategy_reasons.append(reason)
+    if checks["stale_signal"] or context["stale_signal"]:
+        strategy_reasons.append("stale_signal")
+    if not target_is_cash and not context["allow_live_order_candidate"]:
+        strategy_reasons.append("production_snapshot_allow_live_order_candidate=false")
+    if policy_cfg.get("sizing_mode") != "equity_target_exposure":
+        strategy_reasons.append("equity_target_exposure_sizing_not_enabled")
+    block_reasons = list(strategy_reasons)
+    if checks["kill_switch"]:
+        block_reasons.append("kill_switch_enabled")
+    if not multi_account and not checks["account_address_present"]:
+        block_reasons.append("missing_account_address")
     if no_action_cash:
         block_reasons.append("no_market_entry_authorized")
-    if not checks["target_asset_allowed"]:
-        block_reasons.append("target_asset_not_allowlisted")
-    if not checks["contract_validated"]:
-        block_reasons.append("contract_not_validated")
-    if checks["stale_signal"]:
-        block_reasons.append("stale_signal")
-    if checks["duplicate_order_risk"]:
-        block_reasons.append("duplicate_order_risk")
-    if checks["open_orders_present"]:
-        block_reasons.append("open_orders_present")
-    if checks["require_kill_switch_off"] and checks["kill_switch"]:
-        block_reasons.append("kill_switch_enabled")
-    if not checks["account_address_present"]:
-        block_reasons.append("missing_account_address")
-    if not checks["approval_source_readable"]:
-        block_reasons.append(f"approval_source_unreadable:{approval_source_error}")
-    if not checks["approval_status_present"]:
-        block_reasons.append("missing_approval_gate_status")
-    if not checks["approval_source_model_match"]:
-        block_reasons.append("approval_source_model_mismatch")
-    if not checks["approval_source_day_match"]:
-        block_reasons.append("approval_source_day_mismatch")
-    if same_run_binding_required and not checks["same_run_authority_binding_matches_intent"]:
-        block_reasons.append("same_run_authority_binding_mismatch")
-    if checks["manual_approval_required"]:
-        block_reasons.append("manual_approval_required")
-    if not checks["approval_status_allowed"]:
-        block_reasons.append(f"approval_gate_status={approval_gate_status}")
-    if checks["sizing_mode"] != "equity_target_exposure":
-        block_reasons.append("equity_target_exposure_sizing_not_enabled")
-    if checks["max_strategy_target_exposure"] <= 0:
-        block_reasons.append("relative_exposure_safety_ceiling_not_enabled")
-    if not checks["target_exposure_within_safety_ceiling"]:
-        block_reasons.append("target_exposure_exceeds_relative_safety_ceiling")
-    if not checks["allow_live_orders"]:
-        block_reasons.append("allow_live_orders=false")
-    if not checks["execution_trading_enabled"]:
-        block_reasons.append("execution_mode_trading_disabled")
-    if not checks["production_snapshot_validation_passed"]:
-        block_reasons.append("production_snapshot_validation_not_passed")
-    if not checks["production_snapshot_closed_day_present"]:
-        block_reasons.append("production_snapshot_closed_day_missing")
-    if not checks["production_snapshot_signal_present"]:
-        block_reasons.append("production_snapshot_signal_missing")
-    if not checks["production_snapshot_target_asset_present"]:
-        block_reasons.append("production_snapshot_target_asset_missing")
-    if not target_is_cash and not checks["production_snapshot_target_exposure_positive"]:
-        block_reasons.append("production_snapshot_target_exposure_zero")
-    if not target_is_cash and not checks["production_snapshot_trend_permission_active"]:
-        block_reasons.append("production_snapshot_trend_permission_inactive")
-    if not target_is_cash and not checks["production_snapshot_allow_live_order_candidate"]:
-        block_reasons.append("production_snapshot_allow_live_order_candidate=false")
-    if checks["production_snapshot_stale_signal"]:
-        block_reasons.append("production_snapshot_stale_signal")
-    if not checks["intent_day_matches_production_snapshot"]:
-        block_reasons.append("intent_day_mismatch_vs_production_snapshot")
-    if not checks["intent_signal_matches_production_snapshot"]:
-        block_reasons.append("intent_signal_mismatch_vs_production_snapshot")
-    if not checks["intent_target_asset_matches_production_snapshot"]:
-        block_reasons.append("intent_target_asset_mismatch_vs_production_snapshot")
-    if not checks["intent_target_exposure_matches_production_snapshot"]:
-        block_reasons.append("intent_target_exposure_mismatch_vs_production_snapshot")
-    if not checks["intent_stale_signal_matches_production_snapshot"]:
-        block_reasons.append("intent_stale_signal_mismatch_vs_production_snapshot")
-    if not checks["intent_strategy_model_matches_production_snapshot"]:
-        block_reasons.append("intent_strategy_model_mismatch_vs_production_snapshot")
-    if not checks["intent_allow_live_order_candidate_matches_snapshot"]:
-        block_reasons.append(
-            "intent_allow_live_order_candidate_mismatch_vs_production_snapshot"
-        )
-
-    would_place_real_order = len(block_reasons) == 0 and not no_action_cash
-    status = (
-        "ready_if_enabled"
-        if would_place_real_order
-        else ("no_action" if no_action_cash and block_reasons == ["no_market_entry_authorized"] else "blocked")
-    )
-    real_orders_enabled = bool(
-        allow_live_orders
-        and execution_trading_enabled
-        and (not require_kill_switch_off or not kill_switch)
-    )
-
+    ready = not block_reasons
+    status = "ready_if_enabled" if ready else ("no_action" if no_action_cash and block_reasons == ["no_market_entry_authorized"] else "blocked")
     decision = {
-        "decision_type": "real_order_gate_decision",
-        "generated_at_utc": utc_now_iso(),
-        "signal_id": signal_id,
-        "target_asset": target_asset,
-        "mode": mode,
-        "account_address": account_address,
-        "approval_gate_status": approval_gate_status,
-        "would_place_real_order": would_place_real_order,
-        "real_orders_enabled": real_orders_enabled,
-        "status": status,
-        "block_reasons": block_reasons,
-        "checks": checks,
-        "production_signal_context": {
-            "strategy_version": production_context["strategy_version"],
-            "closed_day": production_context["closed_day"],
-            "validation_status": production_context["validation_status"],
-            "candidate_asset": production_context["candidate_asset"],
-            "current_asset": production_context["current_asset"],
-            "signal_id": production_context["signal_id"],
-            "target_asset": production_context["target_asset"],
-            "target_exposure": production_context["target_exposure"],
-            "effective_market_exposure": production_context["effective_market_exposure"],
-            "model_candidate_exposure": production_context["model_candidate_exposure"],
-            "trend_permission_active": production_context["trend_permission_active"],
-            "allow_live_order_candidate": production_context[
-                "allow_live_order_candidate"
-            ],
-        },
+        "decision_type": "real_order_gate_decision", "generated_at_utc": utc_now_iso(),
+        "signal_id": signal_id, "target_asset": target_asset, "mode": "canonical_invocation",
+        "account_address": account_snapshot.get("account_address"),
+        "account_validation_scope": "per_account_exchange" if multi_account else "canonical_owner_snapshot",
+        "account_snapshot_available": account_snapshot_available,
+        "strategy_validated": not strategy_reasons,
+        "emergency_execution_blocked": checks["kill_switch"],
+        "would_place_real_order": ready, "real_orders_enabled": not checks["kill_switch"],
+        "status": status, "block_reasons": block_reasons, "checks": checks,
+        "production_signal_context": {key: value for key, value in context.items() if key != "execution_intent"},
         "source_fingerprints": {
             "intent_sha256": sha256_file(args.intent_path),
-            "account_snapshot_sha256": sha256_file(args.snapshot_path),
+            "account_snapshot_sha256": sha256_file(args.snapshot_path) if account_snapshot_available else None,
             "production_snapshot_sha256": sha256_file(args.production_snapshot_path),
         },
-        "notes": [
-            "This is a gate-preparation artifact only.",
-            "Strategy signal truth is read from outputs/production/current_strategy_snapshot.json.",
-            "No real order placement is performed by this script.",
-            "Real-order readiness still requires current policy, approval, account, and safety checks.",
-        ],
+        "notes": ["Read-only validation of the current Production Core target and canonical intent.", "Exchange feasibility and order reconciliation are evaluated by the executor per account and per step."],
         "source_paths": {
             "mode_config_path": str(args.mode_config_path.resolve()),
             "live_order_policy_path": str(args.live_order_policy_path.resolve()),
             "intent_path": str(args.intent_path.resolve()),
             "account_snapshot_path": str(args.snapshot_path.resolve()),
             "production_snapshot_path": str(args.production_snapshot_path.resolve()),
-            "authority_latest_successful_snapshot_path": str(
-                args.authority_latest_successful_snapshot_path.resolve()
-            ),
-            "authority_latest_attempt_status_path": str(
-                authority_attempt_path.resolve()
-            ),
         },
     }
-
-    quality = {
-        "gate_ok": True,
-        "signal_present": checks["signal_present"],
-        "target_asset_present": checks["target_asset_present"],
-        "target_asset_allowed": checks["target_asset_allowed"],
-        "contract_validated": checks["contract_validated"],
-        "production_snapshot_validation_passed": checks[
-            "production_snapshot_validation_passed"
-        ],
-        "intent_day_matches_production_snapshot": checks[
-            "intent_day_matches_production_snapshot"
-        ],
-        "intent_signal_matches_production_snapshot": checks[
-            "intent_signal_matches_production_snapshot"
-        ],
-        "blocked": bool(block_reasons),
-        "block_reason_count": len(block_reasons),
-        "would_place_real_order": would_place_real_order,
-        "status": status,
-    }
-
-    manifest = {
-        "artifact_name": "latest_real_order_gate_decision",
-        "generated_at_utc": utc_now_iso(),
-        "started_at_utc": started_at,
-        "script_path": str(Path(__file__).resolve()),
-        "input_paths": [
-            str(args.mode_config_path.resolve()),
-            str(args.live_order_policy_path.resolve()),
-            str(args.intent_path.resolve()),
-            str(args.snapshot_path.resolve()),
-            str(args.production_snapshot_path.resolve()),
-            str(args.authority_latest_successful_snapshot_path.resolve()),
-            str(authority_attempt_path.resolve()),
-        ],
-        "output_paths": [
-            str(args.decision_path.resolve()),
-            str(args.quality_path.resolve()),
-            str(args.manifest_path.resolve()),
-        ],
-        "status": "success",
-    }
-
-    args.decision_path.parent.mkdir(parents=True, exist_ok=True)
-    args.quality_path.parent.mkdir(parents=True, exist_ok=True)
-    args.manifest_path.parent.mkdir(parents=True, exist_ok=True)
-
-    args.decision_path.write_text(
-        json.dumps(decision, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-    args.quality_path.write_text(
-        json.dumps(quality, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-    args.manifest_path.write_text(
-        json.dumps(manifest, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-
-    log(f"[SAVED] {args.decision_path}")
-    log(f"[SAVED] {args.quality_path}")
-    log(f"[SAVED] {args.manifest_path}")
-    build_report_bundle(
-        root=ROOT,
-        output_dir=PRODUCTION_DIR,
-        write_outputs=True,
-    )
-    log(f"[END] prepare_real_order_gate success status={decision['status']}")
+    quality = {"gate_ok": True, "signal_present": checks["signal_present"], "target_asset_present": checks["target_asset_present"], "contract_validated": checks["contract_validated"], "production_snapshot_validation_passed": True, "intent_day_matches_production_snapshot": checks["intent_day_matches_production_snapshot"], "intent_signal_matches_production_snapshot": checks["intent_signal_matches_production_snapshot"], "blocked": bool(block_reasons), "block_reason_count": len(block_reasons), "would_place_real_order": ready, "status": status}
+    manifest = {"artifact_name": "latest_real_order_gate_decision", "generated_at_utc": utc_now_iso(), "started_at_utc": started_at, "script_path": str(Path(__file__).resolve()), "input_paths": list(decision["source_paths"].values()), "output_paths": [str(path.resolve()) for path in (args.decision_path, args.quality_path, args.manifest_path)], "status": "success"}
+    for path, payload in ((args.decision_path, decision), (args.quality_path, quality), (args.manifest_path, manifest)):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
+        log(f"[SAVED] {path}")
+    build_report_bundle(root=ROOT, output_dir=PRODUCTION_DIR, write_outputs=True)
+    log(f"[END] prepare_real_order_gate success status={status}")
 
 
 if __name__ == "__main__":

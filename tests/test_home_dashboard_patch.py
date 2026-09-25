@@ -4,7 +4,7 @@ from datetime import date, datetime, timedelta, timezone
 from http import HTTPStatus
 from pathlib import Path
 
-from deployment.home_dashboard_patch import build_patched_sources, verify_installed_sources
+from deployment.home_dashboard_patch import build_patched_sources, build_execution_result_patch, verify_installed_sources
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -35,6 +35,10 @@ class TestHomeDashboardPatch(unittest.TestCase):
         self.assertNotIn('status.real_account_exposure ?? status.target_exposure', js)
         self.assertNotIn("canonical Hyperliquid PnL", js)
         self.assertIn('"next_rebalance_review_utc": next_rebalance_review_utc', source)
+
+    def test_execution_outcome_upgrade_is_idempotent(self):
+        self.assertEqual(build_execution_result_patch(self.python_new, self.js_new), (self.python_new, self.js_new))
+        self.assertIn("Potvrdený cieľ", self.js_new.decode("utf-8"))
 
     def test_no_action_cash_is_waiting_and_unknown_wallet_is_not_model(self):
         module = ast.parse(self.python_new.decode("utf-8"))
@@ -113,6 +117,18 @@ class TestHomeDashboardPatch(unittest.TestCase):
         self.assertIn("nepotvrdil", state["wait_reason"])
         self.assertEqual(state["next_rebalance_review_utc"], "28.09.2026 00:10 UTC")
         self.assertIn("Žiadna bezpečnostná blokácia", state["blocking_gate"])
+
+        documents["public"]["execution_result_state"] = {
+            "outcome": "EXITED_ENTRY_FAILED_STAYING_CASH", "staying_cash": True,
+            "public_message_sk": "Vstup sa nepodaril. Účet zostáva mimo trhu.",
+        }
+        documents["public"]["model_target_state"] = {"asset": "AVAX", "exposure_x": 1.25, "validated": True}
+        _, result = namespace["trendatlas_payload"]()
+        self.assertEqual(result["state"]["trade_submission_state"], "Zostáva mimo trhu")
+        self.assertEqual(result["state"]["model_target_asset"], "AVAX")
+        self.assertEqual(result["state"]["model_target_exposure"], 1.25)
+        self.assertEqual(result["state"]["real_account_asset"], "CASH")
+        self.assertNotIn("STAYING_CASH", result["state"]["last_execution_message"])
 
         documents["account"] = {"summary": {}}
         documents["public"] = {}

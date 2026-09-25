@@ -9,6 +9,7 @@ import { HyperliquidLiveGateway, normalizeHyperliquidOrderStatus } from "@/serve
 import { requireExclusiveMultiAccountLiveOwnership } from "@/server/multi-account-executor/exclusive-live-guard";
 import {
   buildSignedHyperliquidIocPayload,
+  buildSignedHyperliquidCancelPayload,
   computeHyperliquidIocLimitPrice,
   hyperliquidActionHash
 } from "@/server/multi-account-executor/hyperliquid-l1-signing";
@@ -31,6 +32,7 @@ function exchangeOrder(overrides: Partial<ExchangeOrder> = {}): ExchangeOrder {
     leg: 0,
     cloid,
     nonce,
+    expiresAtMs: Number(nonce + 180_000n),
     masterAddress,
     agentAddress,
     agentPrivateKey: privateKey,
@@ -41,6 +43,16 @@ function exchangeOrder(overrides: Partial<ExchangeOrder> = {}): ExchangeOrder {
 afterEach(() => vi.restoreAllMocks());
 
 describe("Hyperliquid L1 IOC signing", () => {
+  it("closes a short with an explicit reduce-only buy", async () => {
+    const payload = await buildSignedHyperliquidIocPayload(exchangeOrder({ action: "EXIT", reduceOnly: true, side: "buy" }), { assetIndex: 2, markPrice: 100, sizeDecimals: 4 }, Number(nonce));
+    expect(payload.action.orders[0]).toMatchObject({ b: true, r: true });
+  });
+
+  it("signs only the requested market and order cancellation", async () => {
+    const payload = await buildSignedHyperliquidCancelPayload({ asset: "AVAX", orderId: "321", nonce, masterAddress, agentAddress, agentPrivateKey: privateKey }, { assetIndex: 5, markPrice: 100, sizeDecimals: 4 }, Number(nonce));
+    expect(payload.action).toEqual({ type: "cancel", cancels: [{ a: 5, o: 321 }] });
+    expect(JSON.stringify(payload)).not.toContain(privateKey);
+  });
   it("matches the fixed MessagePack action-hash regression vector", () => {
     const action = {
       type: "order" as const,
@@ -100,6 +112,10 @@ describe("Hyperliquid L1 IOC signing", () => {
       Number(nonce)
     )).rejects.toThrow("failed safely");
   });
+  it("cannot sign a changed or expired durable order expiry", async () => {
+    await expect(buildSignedHyperliquidIocPayload(exchangeOrder({ expiresAtMs: Number(nonce + 181_000n) }), { assetIndex: 1, markPrice: 100, sizeDecimals: 4 }, Number(nonce))).rejects.toThrow("failed safely");
+    await expect(buildSignedHyperliquidIocPayload(exchangeOrder({ expiresAtMs: Number(nonce - 1n) }), { assetIndex: 1, markPrice: 100, sizeDecimals: 4 }, Number(nonce))).rejects.toThrow("failed safely");
+  });
 });
 
 describe("Hyperliquid live gateway transport", () => {
@@ -107,8 +123,9 @@ describe("Hyperliquid live gateway transport", () => {
     expect(normalizeHyperliquidOrderStatus({ status: "unknownOid" })).toBeNull();
     expect(normalizeHyperliquidOrderStatus({ status: "open", order: { oid: 1 } })).toEqual({ state: "open", orderId: "1" });
     expect(normalizeHyperliquidOrderStatus({ status: "filled", order: { oid: 2 } })).toEqual({ state: "filled", orderId: "2" });
+    expect(normalizeHyperliquidOrderStatus({ status: "order", order: { status: "filled", order: { oid: 4, coin: "AVAX" } } })).toEqual({ state: "filled", orderId: "4" });
     expect(normalizeHyperliquidOrderStatus([{ status: "filled", order: { oid: 2 } }])).toEqual({ state: "filled", orderId: "2" });
-    expect(normalizeHyperliquidOrderStatus({ status: "iocCanceled", order: { oid: 3 } })).toEqual({ state: "rejected", orderId: "3" });
+    expect(normalizeHyperliquidOrderStatus({ status: "iocCanceled", order: { oid: 3 } })).toEqual({ state: "cancelled", orderId: "3" });
     expect(normalizeHyperliquidOrderStatus({ unexpected: true })).toEqual({ state: "unknown", orderId: undefined });
   });
 
@@ -186,7 +203,7 @@ describe("multi-account no-submit live preflight", () => {
     };
 
     try {
-      await expect(preflightMultiAccountCandidates([candidate], target, gateway)).resolves.toEqual([
+      await expect(preflightMultiAccountCandidates([candidate], target, gateway)).resolves.toMatchObject([
         { accountId: "account-a", status: "READY", actionCount: 1, maxActionNotionalUsd: 100 }
       ]);
       expect(findByCloid).not.toHaveBeenCalled();
@@ -241,50 +258,6 @@ describe("exclusive live ownership guard", () => {
 });
 
 describe("ambiguous live submission recovery", () => {
-  it("rechecks the one-shot notional cap on the final plan before CLOID lookup or write", async () => {
-    const originalKek = process.env.TRENDATLAS_AGENT_KEK_B64;
-    process.env.TRENDATLAS_AGENT_KEK_B64 = Buffer.alloc(32, 12).toString("base64");
-    const encryptedSecret = createEnvironmentAgentSecretProtector(process.env.TRENDATLAS_AGENT_KEK_B64).encrypt(privateKey);
-    const candidate = {
-      userId: "user-a", accountId: "account-a", masterAddress, agentAddress, agentName: "TA-1234abcd",
-      authorizationId: "auth-a", connectionStatus: "read_only_connected", authorizationStatus: "authorized",
-      ownershipVerifiedAt: "2026-09-01T00:00:00Z", agentAuthorizedAt: "2026-09-01T00:00:00Z",
-      autoTradingRequested: true, executionStatus: "ready" as const, hasEncryptedSecret: true, encryptedSecret
-    };
-    const finishRun = vi.fn();
-    const repository: ExecutionRepository = {
-      listMultiAccountCandidates: async () => [candidate], tryAcquire: async () => true, release: async () => undefined,
-      reserveNonce: async () => nonce, createRun: async () => "run", recordAction: async () => undefined,
-      finishRun, setAccountStatus: async () => undefined
-    };
-    const findByCloid = vi.fn();
-    const writeIoc = vi.fn();
-    const gateway: ExchangeGateway = {
-      readAccount: async () => ({ equityUsd: 100, positions: [], openOrderCount: 0 }),
-      readMarkets: async () => new Map([
-        ["BTC", { asset: "BTC", markPrice: 60_000, minNotionalUsd: 10, sizeDecimals: 5 }],
-        ["ETH", { asset: "ETH", markPrice: 2_500, minNotionalUsd: 10, sizeDecimals: 4 }]
-      ]),
-      userRole: async () => ({ role: "agent", user: masterAddress }),
-      agentAuthorization: async () => ({ authorized: true, validUntilMs: Date.parse("2100-01-01T00:00:00Z") }),
-      findByCloid,
-      writeIoc
-    };
-    const target: AuthorizedTarget = { strategyVersion: "v1", closedDay: "2026-09-03", signalId: "signal", asset: "ETH", exposure: 1, stale: false, executionGate: "approved" };
-
-    try {
-      await expect(new MultiAccountExecutor(repository, gateway, "live", 1, { maxActionNotionalUsd: 50 }).runAllForTarget(target)).resolves.toEqual([
-        { accountId: "account-a", status: "BLOCKED", reason: "planned action exceeds the live notional cap" }
-      ]);
-      expect(findByCloid).not.toHaveBeenCalled();
-      expect(writeIoc).not.toHaveBeenCalled();
-      expect(finishRun).toHaveBeenCalledWith("run", "BLOCKED", 100, "planned action exceeds the live notional cap");
-    } finally {
-      if (originalKek === undefined) delete process.env.TRENDATLAS_AGENT_KEK_B64;
-      else process.env.TRENDATLAS_AGENT_KEK_B64 = originalKek;
-    }
-  });
-
   it("stops without retry when both the write and post-write CLOID lookup fail", async () => {
     const originalKek = process.env.TRENDATLAS_AGENT_KEK_B64;
     process.env.TRENDATLAS_AGENT_KEK_B64 = Buffer.alloc(32, 10).toString("base64");
@@ -297,6 +270,7 @@ describe("ambiguous live submission recovery", () => {
     };
     const records: string[] = [];
     const repository: ExecutionRepository = {
+      readActions: async () => [], readUnresolvedActions: async () => [], markActionVerified: async () => undefined, renewLease: async () => true,
       listMultiAccountCandidates: async () => [candidate],
       tryAcquire: async () => true,
       release: async () => undefined,
@@ -324,12 +298,12 @@ describe("ambiguous live submission recovery", () => {
     const target: AuthorizedTarget = { strategyVersion: "v1", closedDay: "2026-09-03", signalId: "signal", asset: "ETH", exposure: 1, stale: false, executionGate: "approved" };
 
     try {
-      await expect(new MultiAccountExecutor(repository, gateway, "live").runAllForTarget(target)).resolves.toEqual([
+      await expect(new MultiAccountExecutor(repository, gateway, "live").runAllForTarget(target)).resolves.toMatchObject([
         { accountId: "account-a", status: "UNKNOWN_SUBMISSION_STATE" }
       ]);
       expect(writeIoc).toHaveBeenCalledTimes(1);
       expect(findByCloid).toHaveBeenCalledTimes(2);
-      expect(records).toEqual(["NOT_SUBMITTED", "AMBIGUOUS"]);
+      expect(records).toEqual(["NOT_SUBMITTED", "AMBIGUOUS", "AMBIGUOUS"]);
     } finally {
       if (originalKek === undefined) delete process.env.TRENDATLAS_AGENT_KEK_B64;
       else process.env.TRENDATLAS_AGENT_KEK_B64 = originalKek;

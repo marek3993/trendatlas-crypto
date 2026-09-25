@@ -12,6 +12,7 @@ import {
   submitAgentAuthorization
 } from "@/app/dashboard/agent-actions";
 import { normalizeHyperliquidAddress } from "@/lib/hyperliquid/address";
+import { automaticTradingLabel } from "@/lib/execution-display";
 
 type AuthorizationState = {
   authorizationStatus: string;
@@ -110,13 +111,12 @@ export function AgentAuthorizationPanel({ authorization }: { authorization: Auth
   }
 
   if (authorization?.authorizationStatus === "authorized") {
-    const executionReady = authorization.liveExecutorEnabled && ["ready", "aligned", "executing"].includes(authorization.executionStatus);
     return <section className="authorization-panel" aria-label="TrendAtlas authorization">
       <h2>TrendAtlas</h2>
       <p>Ownership <span className="notice">Verified</span></p>
       <p>TrendAtlas agent <span className="notice">Authorized</span></p>
       <p>Auto trading preference <strong>{authorization.autoTradingRequested ? "ON" : "OFF"}</strong></p>
-      <p>Executor <span className="muted">{executionReady ? "Ready" : "Live executor: not enabled yet"}</span></p>
+      <p>Automatic trading <span className="muted">{automaticTradingLabel(authorization.liveExecutorEnabled, authorization.autoTradingRequested, authorization.executionStatus)}</span></p>
       <button type="button" disabled={pending} onClick={changePreference}>
         Turn auto trading {authorization.autoTradingRequested ? "off" : "on"}
       </button>

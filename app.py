@@ -2826,11 +2826,13 @@ def resolve_dashboard_public_status_state(
         else {}
     )
 
-    real_asset = str(real_account.get("asset") or "CASH").strip().upper() or "CASH"
+    real_asset = str(real_account.get("asset") or "").strip().upper()
+    positions = real_account.get("positions") or []
+    if real_asset == "MULTIPLE":
+        real_asset = ", ".join(str(row.get("symbol") or row.get("asset") or "").upper() for row in positions if isinstance(row, dict)) or ("Viac pozícií" if lang == "sk" else "Multiple positions")
     real_exposure_value = as_float(real_account.get("exposure_x"))
-    if real_exposure_value is None:
-        real_exposure_value = 0.0
-    in_market = as_bool(real_account.get("in_market")) is True
+    in_market = as_bool(real_account.get("in_market"))
+    available = bool(real_asset) and in_market is not None and real_account.get("state_available") is not False
     state_text = (
         str(real_account.get("position_label_sk") or "").strip()
         if lang == "sk"
@@ -2844,10 +2846,20 @@ def resolve_dashboard_public_status_state(
             if in_market
             else t(lang, "production_state_out_of_market")
         )
-    exposure_text = f"{real_exposure_value:.2f}x"
+    if not available:
+        state_text = "Stav účtu nedostupný" if lang == "sk" else "Account state unavailable"
+        real_asset = t(lang, "na")
+    exposure_text = f"{real_exposure_value:.2f}x" if real_exposure_value is not None else t(lang, "na")
     gate_status = str(execution.get("gate_status") or "").strip().lower()
     would_place_real_order = as_bool(execution.get("would_place_real_order"))
     execution_wait_state = build_public_execution_wait_state(execution, model_signal, lang)
+    execution_result_state = dict(dashboard_public_status.get("execution_result_state") or {})
+    model_target_state = dict(dashboard_public_status.get("model_target_state") or {})
+    if execution_result_state.get("staying_cash") is True:
+        public_message = execution_result_state.get("public_message_sk" if lang == "sk" else "public_message_en")
+        execution_wait_state["order_status"] = "Zostáva mimo trhu" if lang == "sk" else "Staying in cash"
+        execution_wait_state["gate_text"] = public_message or execution_wait_state["order_status"]
+        execution_wait_state["account_subtitle"] = execution_wait_state["order_status"]
     subtitle = (
         f"CASH | {execution_wait_state['account_subtitle']}"
     )
@@ -2858,6 +2870,8 @@ def resolve_dashboard_public_status_state(
             else f"Open position: {real_asset}"
         )
 
+    if not available:
+        subtitle = state_text
     model_exposure_value = as_float(model_signal.get("exposure_x"))
     model_exposure_text = (
         f"{model_exposure_value:.2f}x"
@@ -2867,9 +2881,11 @@ def resolve_dashboard_public_status_state(
 
     return {
         "public_labels_sk": public_labels_sk,
+        "model_target_state": model_target_state,
+        "execution_result_state": execution_result_state,
         "execution_wait_state": execution_wait_state,
         "real_account_exposure_state": {
-            "is_out_of_market": not in_market,
+            "is_out_of_market": not in_market if available else None,
             "asset": real_asset,
             "exposure": real_exposure_value,
             "exposure_text": exposure_text,
@@ -3596,81 +3612,12 @@ def build_live_execute_gate_state(
     dry_run_decision_payload: dict,
     real_order_gate_payload: dict,
 ) -> dict[str, object]:
-    reasons: list[str] = []
-    checks = get_nested_dict(real_order_gate_payload, "checks")
-
-    if not bridge_available:
-        reasons.append("APP bridge pre live execute nie je dostupny.")
-        if bridge_import_error:
-            reasons.append(f"Import bridge zlyhal: {bridge_import_error}")
-    if not execution_mode_payload:
-        reasons.append("Chyba execution_mode.json.")
-    if not live_order_policy_payload:
-        reasons.append("Chyba live_order_policy.json.")
-    if not dry_run_decision_payload:
-        reasons.append("Chyba latest_dry_run_decision.json.")
-    if not real_order_gate_payload:
-        reasons.append("Chyba latest_real_order_gate_decision.json.")
-
-    if execution_mode_payload and str(execution_mode_payload.get("mode") or "").strip().lower() != "live":
-        reasons.append("execution_mode.json nema mode=live.")
-    if execution_mode_payload and as_bool(execution_mode_payload.get("trading_enabled")) is not True:
-        reasons.append("execution_mode.json nema trading_enabled=true.")
-    if live_order_policy_payload and as_bool(live_order_policy_payload.get("allow_live_orders")) is not True:
-        reasons.append("live_order_policy.json nema allow_live_orders=true.")
-    if live_order_policy_payload and as_bool(live_order_policy_payload.get("manual_approval_required")) is True:
-        reasons.append("live_order_policy.json stale vyzaduje manual_approval_required=true.")
-    if (
-        execution_mode_payload
-        and live_order_policy_payload
-        and as_bool(live_order_policy_payload.get("require_kill_switch_off")) is True
-        and as_bool(execution_mode_payload.get("kill_switch")) is True
-    ):
-        reasons.append("Live policy vyzaduje kill_switch=false.")
-
-    gate_status = str(real_order_gate_payload.get("status") or "").strip()
-    if real_order_gate_payload and gate_status != "ready_if_enabled":
-        reasons.append(f"Gate status nie je ready_if_enabled: {gate_status or 'neznamy'}.")
-    if real_order_gate_payload and as_bool(real_order_gate_payload.get("would_place_real_order")) is not True:
-        reasons.append("Gate artefakt nepotvrdzuje would_place_real_order=true.")
-    if real_order_gate_payload and checks and as_bool(checks.get("approval_status_allowed")) is not True:
-        reasons.append("Approval status nie je povoleny pre live execute.")
-    if real_order_gate_payload and checks and as_bool(checks.get("leverage_live_truth_allowed")) is not True:
-        reasons.append("Gate nepotvrdzuje leverage_live_truth_allowed=true.")
-    if real_order_gate_payload and checks and as_bool(checks.get("account_address_present")) is not True:
-        reasons.append("Gate nepotvrdzuje account_address.")
-
-    dry_run_action = str(dry_run_decision_payload.get("recommended_action") or "").strip()
-    dry_run_would_place_order = as_bool(
-        get_nested_value(dry_run_decision_payload, "simulated_order", "would_place_order")
-    )
-    if dry_run_decision_payload and dry_run_would_place_order is not True:
-        reasons.append(
-            "Dry-run dnes neukazuje realny submit "
-            f"({dry_run_action or 'neznamy stav'})."
-        )
-    if dry_run_decision_payload and dry_run_action.startswith("block_"):
-        reasons.append(f"Dry-run hlasi blocker: {dry_run_action}.")
-    if dry_run_decision_payload and as_bool(dry_run_decision_payload.get("stale_signal")) is True:
-        reasons.append("Dry-run hlasi stale_signal=true.")
-    if dry_run_decision_payload and as_bool(dry_run_decision_payload.get("duplicate_order_risk")) is True:
-        reasons.append("Dry-run hlasi duplicate_order_risk=true.")
-    if (
-        dry_run_decision_payload
-        and as_bool(get_nested_value(dry_run_decision_payload, "guardrails", "contract_validated")) is not True
-    ):
-        reasons.append("Dry-run nema guardrails.contract_validated=true.")
-
-    for item in real_order_gate_payload.get("block_reasons", []) or []:
-        text = str(item).strip()
-        if text and text not in reasons:
-            reasons.append(text)
-
+    # Interactive views never submit orders or evaluate an alternative live gate.
     return {
-        "ok": not reasons,
-        "reasons": reasons,
-        "status": gate_status,
-        "would_place_real_order": as_bool(real_order_gate_payload.get("would_place_real_order")),
+        "ok": False,
+        "reasons": ["Automatické obchodovanie spravuje plánovaná služba."],
+        "status": "disabled",
+        "would_place_real_order": False,
     }
 
 
@@ -3701,31 +3648,16 @@ def build_strategy_state_label(operation_mode: str | None, lang: str) -> str:
 
 
 def build_safety_posture_label(payload: dict[str, Any], lang: str) -> str:
-    if not payload:
-        return "Chyba execution_mode.json." if lang == "sk" else "execution_mode.json missing."
-    mode = str(payload.get("mode") or "").strip().lower()
-    trading_enabled = as_bool(payload.get("trading_enabled"))
-    kill_switch = as_bool(payload.get("kill_switch"))
-    if mode == "live" and trading_enabled is True and kill_switch is False:
-        return "Live povolene" if lang == "sk" else "Live armed"
-    if mode == "read_only" and trading_enabled is False and kill_switch is True:
-        return "Fail-closed"
-    return pretty_token(mode or "unknown", lang)
+    emergency = as_bool(payload.get("kill_switch"))
+    if emergency is True:
+        return "Obchodovanie pozastavené" if lang == "sk" else "Trading paused"
+    if emergency is False:
+        return "Automatické obchodovanie" if lang == "sk" else "Automatic trading"
+    return "Stav obchodovania nedostupný" if lang == "sk" else "Trading status unavailable"
 
 
 def build_safety_posture_detail(payload: dict[str, Any], lang: str) -> str:
-    if not payload:
-        return (
-            "execution_mode.json chyba alebo je neplatny."
-            if lang == "sk"
-            else "execution_mode.json missing or invalid."
-        )
-    mode = str(payload.get("mode") or "").strip() or "unknown"
-    trading_enabled = payload.get("trading_enabled")
-    kill_switch = payload.get("kill_switch")
-    return (
-        f"mode={mode} | trading_enabled={trading_enabled} | kill_switch={kill_switch}"
-    )
+    return build_safety_posture_label(payload, lang)
 
 
 def extract_trading_operation_mode_bridge_payload(result: dict[str, Any]) -> dict[str, Any]:
@@ -3929,10 +3861,6 @@ def simplify_live_block_reason(reason: str, lang: str) -> str:
         return "Odoslanie obchodu teraz nie je zapnuté."
     if "execution_mode.json nema trading_enabled=true" in lowered:
         return "Odoslanie obchodu je teraz vypnuté."
-    if "allow_live_orders=true" in lowered:
-        return "Odoslanie obchodu teraz nie je povolené."
-    if "manual_approval_required=true" in lowered:
-        return "Obchod ešte vyžaduje manuálne schválenie."
     if "kill_switch=false" in lowered:
         return "Bezpečnostná poistka je zapnutá."
     if "gate status nie je ready_if_enabled" in lowered:
@@ -5418,171 +5346,40 @@ def resolve_real_account_exposure_state(
     runtime_real_account_state: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if isinstance(runtime_real_account_state, dict) and runtime_real_account_state:
-        asset = str(runtime_real_account_state.get("asset") or "CASH").strip().upper() or "CASH"
-        exposure_value = as_float(runtime_real_account_state.get("exposure_x"))
-        if exposure_value is None:
-            exposure_value = 0.0
-        in_market = as_bool(runtime_real_account_state.get("in_market")) is True
-        state_text = (
-            t(lang, "production_state_in_market")
-            if in_market
-            else t(lang, "production_state_out_of_market")
-        )
-        exposure_text = f"{exposure_value:.2f}x"
-        gate_status = str(runtime_real_account_state.get("gate_status") or "").strip().lower()
-        would_place_real_order = as_bool(runtime_real_account_state.get("would_place_real_order"))
-        runtime_target_asset = str(runtime_real_account_state.get("intent_target_asset") or asset).strip().upper()
-        runtime_wait_view = build_public_execution_wait_state(
-            {
-                "target_asset": runtime_target_asset,
-                "target_size_pct": runtime_real_account_state.get("intent_target_size_pct"),
-                "gate_status": gate_status,
-                "would_place_real_order": would_place_real_order,
-                "next_rebalance_date": production_snapshot.get("next_rebalance_date"),
-                "wait_reason_code": first_present_value(
-                    get_nested_value(production_snapshot, "provenance", "wait_condition", "code"),
-                    get_nested_value(production_snapshot, "decision_context", "current_reason_code"),
-                ),
-            },
-            {"preferred_asset": production_snapshot.get("candidate_asset")},
-            lang,
-        )
-        subtitle = (
-            f"CASH | {runtime_wait_view['account_subtitle']}"
-            if not in_market
-            else f"Otvorená pozícia: {asset}" if lang == "sk" else f"Open position: {asset}"
-        )
-        return {
-            "is_out_of_market": not in_market,
-            "asset": asset,
-            "exposure": exposure_value,
-            "exposure_text": exposure_text,
-            "state_text": state_text,
-            "value": f"{state_text} / {exposure_text}",
-            "subtitle": subtitle,
-            "target_asset": str(runtime_real_account_state.get("intent_target_asset") or asset).strip().upper(),
-            "gate_status": gate_status,
-            "would_place_real_order": would_place_real_order,
-            "order_status": runtime_wait_view["order_status"],
+        wallet = dict(runtime_real_account_state)
+    else:
+        position = account_snapshot_view.get("open_position") or {}
+        has_position = bool(position.get("symbol") or position.get("asset") or position.get("coin")) and abs(as_float(position.get("size")) or 0.0) > 0
+        confirmed_cash = account_snapshot_view.get("positions_count") == 0 and not has_position
+        exposure = as_float(account_snapshot_view.get("current_exposure"))
+        if exposure is None and has_position:
+            equity = as_float(account_snapshot_view.get("account_equity_usd"))
+            notional = as_float(account_snapshot_view.get("position_notional_usd"))
+            if equity is not None and equity > 0 and notional is not None:
+                exposure = abs(notional) / equity
+        wallet = {
+            "asset": (position.get("symbol") or position.get("asset") or position.get("coin")) if has_position else "CASH" if confirmed_cash else None,
+            "exposure_x": exposure if has_position else 0.0 if confirmed_cash else None,
+            "in_market": True if has_position else False if confirmed_cash else None,
+            "state_available": has_position or confirmed_cash,
+            "positions": account_snapshot_view.get("positions") or ([position] if has_position else []),
         }
-
-    open_position = (
-        account_snapshot_view.get("open_position")
-        if isinstance(account_snapshot_view.get("open_position"), dict)
-        else None
-    )
-    open_position_asset = ""
-    open_position_size = 0.0
-    if open_position:
-        open_position_asset = str(
-            open_position.get("symbol") or open_position.get("asset") or open_position.get("coin") or ""
-        ).strip().upper()
-        open_position_size = abs(as_float(open_position.get("size")) or 0.0)
-
-    production_signal_context = dict(real_order_gate_payload.get("production_signal_context") or {})
-    production_intent = dict(production_snapshot.get("execution_intent") or {})
-    target_asset = str(
-        first_present_value(
-            real_order_gate_payload.get("target_asset"),
-            dry_run_decision_payload.get("target_asset"),
-            production_signal_context.get("target_asset"),
-            production_intent.get("target_asset"),
-        )
-        or ""
-    ).strip().upper()
-    target_exposure = _first_numeric_value(
-        dry_run_decision_payload.get("target_size_pct"),
-        dry_run_decision_payload.get("target_exposure"),
-        production_signal_context.get("target_exposure"),
-        production_intent.get("target_exposure"),
-        real_order_gate_payload.get("target_exposure"),
-    )
-    gate_status = str(real_order_gate_payload.get("status") or "").strip().lower()
-    would_place_real_order = as_bool(real_order_gate_payload.get("would_place_real_order"))
-    account_has_open_position = bool(open_position_asset and open_position_size > 1e-12)
-
-    if account_has_open_position:
-        exposure_value = _first_numeric_value(
-            account_snapshot_view.get("current_exposure"),
-            target_exposure,
-            production_signal_context.get("effective_market_exposure"),
-            production_snapshot.get("effective_market_exposure"),
-        )
-        exposure_text = f"{exposure_value:.2f}x" if exposure_value is not None else t(lang, "na")
-        state_text = t(lang, "production_state_in_market")
-        subtitle = (
-            f"Otvorena pozicia: {open_position_asset}"
-            if lang == "sk"
-            else f"Open position: {open_position_asset}"
-        )
-        return {
-            "is_out_of_market": False,
-            "asset": open_position_asset,
-            "exposure": exposure_value,
-            "exposure_text": exposure_text,
-            "state_text": state_text,
-            "value": f"{state_text} / {exposure_text}",
-            "subtitle": subtitle,
-            "target_asset": target_asset,
-            "gate_status": gate_status,
-            "would_place_real_order": would_place_real_order,
-        }
-
-    execution_points_to_cash = (
-        target_asset in {"", "CASH", "USD", "USDC", "USDT", "NONE", "NULL"}
-        or (target_exposure is not None and math.isclose(target_exposure, 0.0, abs_tol=1e-12))
-    )
-    if execution_points_to_cash:
-        state_text = t(lang, "production_state_out_of_market")
-        exposure_text = "0.00x"
-        wait_view = build_public_execution_wait_state(
-            {
-                "target_asset": target_asset or "CASH",
-                "target_size_pct": target_exposure,
-                "gate_status": gate_status,
-                "would_place_real_order": would_place_real_order,
-                "next_rebalance_date": production_snapshot.get("next_rebalance_date"),
-                "wait_reason_code": first_present_value(
-                    get_nested_value(production_snapshot, "provenance", "wait_condition", "code"),
-                    get_nested_value(production_snapshot, "decision_context", "current_reason_code"),
-                ),
-            },
-            {"preferred_asset": production_snapshot.get("candidate_asset")},
-            lang,
-        )
-        subtitle = f"CASH | {wait_view['account_subtitle']}"
-        return {
-            "is_out_of_market": True,
-            "asset": "CASH",
-            "exposure": 0.0,
-            "exposure_text": exposure_text,
-            "state_text": state_text,
-            "value": f"{state_text} / {exposure_text}",
-            "subtitle": subtitle,
-            "target_asset": target_asset or "CASH",
-            "gate_status": gate_status,
-            "would_place_real_order": would_place_real_order,
-            "order_status": wait_view["order_status"],
-        }
-
-    state_text = t(lang, "production_state_out_of_market")
-    exposure_text = "0.00x"
-    return {
-        "is_out_of_market": True,
-        "asset": "CASH",
-        "exposure": 0.0,
-        "exposure_text": exposure_text,
-        "state_text": state_text,
-        "value": f"{state_text} / {exposure_text}",
-        "subtitle": (
-            "Signal este nie je otvorena pozicia na ucte"
-            if lang == "sk"
-            else "Signal is not yet an open account position"
+    production_intent = production_snapshot.get("execution_intent") or {}
+    execution = {
+        "target_asset": production_intent.get("target_asset"),
+        "target_size_pct": production_intent.get("target_exposure"),
+        "gate_status": real_order_gate_payload.get("status") or wallet.get("gate_status"),
+        "would_place_real_order": real_order_gate_payload.get("would_place_real_order"),
+        "next_rebalance_date": production_snapshot.get("next_rebalance_date"),
+        "wait_reason_code": first_present_value(
+            get_nested_value(production_snapshot, "provenance", "wait_condition", "code"),
+            get_nested_value(production_snapshot, "decision_context", "current_reason_code"),
         ),
-        "target_asset": target_asset,
-        "gate_status": gate_status,
-        "would_place_real_order": would_place_real_order,
     }
+    return resolve_dashboard_public_status_state({
+        "schema_version": 1, "real_account": wallet, "execution": execution,
+        "model_signal": {"preferred_asset": production_snapshot.get("candidate_asset")},
+    }, lang)["real_account_exposure_state"]
 
 
 def production_wait_reason_short(
@@ -7106,8 +6903,6 @@ runtime_health_payload = dict(account_runtime_snapshot.get("runtime_health_summa
 dry_run_decision_payload = dict(account_runtime_snapshot.get("dry_run_summary") or {})
 real_order_gate_payload = dict(account_runtime_snapshot.get("gate_summary") or {})
 execution_mode_payload = dict(account_runtime_snapshot.get("execution_mode_posture") or {})
-live_order_policy_payload = dict(account_runtime_snapshot.get("live_order_policy_summary") or {})
-trading_operation_mode_payload = dict(execution_mode_payload.get("trading_operation_mode") or {})
 runtime_last_sync_utc = runtime_snapshot.get("runtime_last_sync_utc")
 account_snapshot_as_of_utc = account_runtime_snapshot.get("account_snapshot_as_of_utc")
 dry_run_generated_at_utc = runtime_snapshot.get("dry_run_generated_at_utc")
@@ -7302,6 +7097,19 @@ with tabs[0]:
     st.info(
         "\n\n".join(
             [
+                (
+                    ("Potvrdený cieľ stratégie: " if lang == "sk" else "Confirmed strategy target: ")
+                    + (
+                        f"{(dashboard_public_state.get('model_target_state') or {}).get('asset')}, "
+                        f"{float((dashboard_public_state.get('model_target_state') or {}).get('exposure_x') or 0):.2f}x"
+                        if (dashboard_public_state.get("model_target_state") or {}).get("validated") is True
+                        else t(lang, "na")
+                    )
+                ),
+                ("Posledný obchodný výsledok: " if lang == "sk" else "Last trading result: ")
+                + str((dashboard_public_state.get("execution_result_state") or {}).get(
+                    "public_message_sk" if lang == "sk" else "public_message_en"
+                ) or t(lang, "na")),
                 ("Stav signálu: " if lang == "sk" else "Signal: ") + execution_wait_state["signal_text"],
                 ("Dôvod čakania: " if lang == "sk" else "Reason: ") + execution_wait_state["reason_text"],
                 review_context,
@@ -7651,16 +7459,7 @@ with tabs[1]:
         if not dry_run_decision_payload:
             dry_run_missing_artifacts.append("latest_dry_run_decision.json")
 
-        operation_mode = str(trading_operation_mode_payload.get("mode") or "").strip().lower()
-        operation_mode_label = (
-            "Zapnutá"
-            if lang == "sk" and operation_mode == "automatic"
-            else "Vypnutá"
-            if lang == "sk"
-            else "Enabled"
-            if operation_mode == "automatic"
-            else "Disabled"
-        )
+        operation_mode_label = build_safety_posture_label(execution_mode_payload, lang)
 
         if refresh_missing_artifacts:
             refresh_missing_artifacts = [
@@ -7675,10 +7474,6 @@ with tabs[1]:
                 else "Some dry-run inputs are currently missing."
             ]
 
-        live_trading_enabled_value = first_present_value(
-            execution_mode_payload.get("trading_enabled"),
-            get_nested_value(real_order_gate_payload, "checks", "execution_trading_enabled"),
-        )
         live_kill_switch_value = first_present_value(
             execution_mode_payload.get("kill_switch"),
             get_nested_value(real_order_gate_payload, "checks", "kill_switch"),
@@ -7775,41 +7570,16 @@ with tabs[1]:
                 tone="control",
             )
 
-            toggle_col, refresh_col = st.columns(2)
-            toggle_is_automatic = operation_mode == "automatic"
-            toggle_label = (
-                "Vypnúť automatické obchody"
-                if toggle_is_automatic and lang == "sk"
-                else "Zapnúť automatické obchody"
-                if lang == "sk"
-                else "Disable automatic trading"
-                if toggle_is_automatic
-                else "Enable automatic trading"
-            )
-            toggle_action = "set_manual_mode" if toggle_is_automatic else "set_automatic_mode"
-
-            with toggle_col:
-                if st.button(
-                    toggle_label,
-                    key="execution_controls_toggle_automatic_mode",
-                    width="stretch",
-                    disabled=not bridge_available,
-                ):
-                    result = run_app_execute_action(action=toggle_action)
-                    st.session_state.execution_bridge_result = result
-                    st.rerun()
-
-            with refresh_col:
-                if st.button(
-                    "Obnoviť údaje z peňaženky" if lang == "sk" else "Refresh wallet data",
-                    key="execution_controls_refresh",
-                    width="stretch",
-                    disabled=not bridge_available,
-                ):
-                    with st.spinner("Obnovujem údaje z peňaženky..." if lang == "sk" else "Refreshing wallet data..."):
-                        result = run_app_execute_action(action="refresh")
-                    st.session_state.execution_bridge_result = result
-                    st.rerun()
+            if st.button(
+                "Obnoviť údaje z peňaženky" if lang == "sk" else "Refresh wallet data",
+                key="execution_controls_refresh",
+                width="stretch",
+                disabled=not bridge_available,
+            ):
+                with st.spinner("Obnovujem údaje z peňaženky..." if lang == "sk" else "Refreshing wallet data..."):
+                    result = run_app_execute_action(action="refresh")
+                st.session_state.execution_bridge_result = result
+                st.rerun()
 
         st.markdown(f"#### {account_ui_text(lang, 'overview')}")
         render_ops_strip(

@@ -4,6 +4,36 @@
   "last_updated_note": "Update when a new output folder/file becomes relevant, active, deprecated, or decision-relevant.",
   "outputs": [
     {
+      "output_path": "source_of_truth/production_execution_contract.json",
+      "generated_by": [],
+      "layer": "source_of_truth",
+      "status": "active",
+      "output_kind": "execution_contract",
+      "decision_relevance": "official_truth",
+      "official_truth": true,
+      "notes": "User-authorized 2026-09-25 dynamic execution contract; current validated target, exit-first, isolated accounts and durable recovery."
+    },
+    {
+      "output_path": "source_of_truth/production_asset_universe_contract.json",
+      "generated_by": [],
+      "layer": "source_of_truth",
+      "status": "active",
+      "output_kind": "deployment_contract",
+      "decision_relevance": "official_truth",
+      "official_truth": true,
+      "notes": "Current strategy selector capabilities, not stitched historical basket labels, feed exchange support verification."
+    },
+    {
+      "output_path": "docs/execution-reconciliation-20260925.md",
+      "generated_by": [],
+      "layer": "execution",
+      "status": "active",
+      "output_kind": "repair_report",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Code repair evidence and operator deployment instructions; no claim of completed financial reconciliation."
+    },
+    {
       "output_path": "outputs/execution/watchdog/",
       "generated_by": [
         "scripts/execution/mrv1_self_healing_watchdog.py"

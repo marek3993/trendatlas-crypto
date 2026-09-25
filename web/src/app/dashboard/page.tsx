@@ -8,10 +8,12 @@ import { displayHyperliquidAddress } from "@/lib/hyperliquid/address";
 import { type HyperliquidAccountSnapshot } from "@/lib/hyperliquid/info";
 import { getHyperliquidAccountPerformance, type HyperliquidAccountPerformance, type PerformanceWindow } from "@/lib/hyperliquid/performance";
 import { executionMode } from "@/server/multi-account-executor/mode";
+import { automaticTradingLabel, executionOutcomeLabel } from "@/lib/execution-display";
 
 type Profile = { display_name: string | null };
 type HyperliquidAccount = { id: string; master_address: string; connection_status: string };
 type AgentAuthorization = { authorization_status: string; auto_trading_requested: boolean; execution_status: string };
+type ExecutionHistory = { authorized_target_asset: string; authorized_target_exposure: number; canonical_closed_day: string; status: string; completed_at: string | null };
 
 function formatUsd(value: number | null): string {
   if (value === null) return "Unavailable";
@@ -92,8 +94,12 @@ export default async function DashboardPage() {
   const connected = account?.connection_status === "read_only_connected";
   const authorized = authorization?.authorization_status === "authorized";
   const autoTrading = authorization?.auto_trading_requested === true;
-  const accountExecutionReady = ["ready", "aligned", "executing"].includes(authorization?.execution_status ?? "");
   const liveExecutorEnabled = executionMode() === "live" || process.env.TRENDATLAS_MULTI_ACCOUNT_EXECUTOR_AVAILABLE === "true";
+  const { data: lastExecution } = account ? await supabase.from("multi_account_execution_runs")
+    .select("authorized_target_asset,authorized_target_exposure,canonical_closed_day,status,completed_at")
+    .eq("user_id", user.id).eq("hyperliquid_account_id", account.id)
+    .order("canonical_closed_day", { ascending: false }).order("started_at", { ascending: false })
+    .limit(1).maybeSingle<ExecutionHistory>() : { data: null };
 
   return <main className="dashboard-shell">
     <header className="dashboard-header">
@@ -123,7 +129,7 @@ export default async function DashboardPage() {
         <div className="section-heading">
           <div><p className="eyebrow">Account protection</p><h2 id="controls-heading">Status and controls</h2></div>
           <span className={`status-badge ${liveExecutorEnabled ? "status-badge--ready" : "status-badge--safe"}`}>
-            {liveExecutorEnabled ? "Executor ready" : "Execution safely disabled"}
+            {liveExecutorEnabled ? "Trading service available" : "Trading service unavailable"}
           </span>
         </div>
 
@@ -133,7 +139,7 @@ export default async function DashboardPage() {
             <div><span>Real account</span><strong>{performance ? (performance.snapshot.positions.length ? "In market" : "Out of market") : "Unavailable"}</strong></div>
             <div><span>Account asset</span><strong>{performance ? accountAsset(performance.snapshot.positions) : "Unavailable"}</strong></div>
             <div><span>Open orders</span><strong>{performance?.snapshot.openOrderCount ?? "—"}</strong></div>
-            <div><span>Order sending</span><strong>{liveExecutorEnabled && authorized && autoTrading && accountExecutionReady ? "Ready" : "Blocked"}</strong></div>
+            <div><span>Automatic trading</span><strong>{automaticTradingLabel(liveExecutorEnabled, authorized && autoTrading, authorization?.execution_status ?? "")}</strong></div>
           </div>
           <AgentAuthorizationPanel authorization={authorization ? {
             authorizationStatus: authorization.authorization_status,
@@ -141,6 +147,19 @@ export default async function DashboardPage() {
             executionStatus: authorization.execution_status,
             liveExecutorEnabled
           } : null} />
+        </div>
+      </section>
+
+      <section className="dashboard-section" aria-labelledby="strategy-status-heading">
+        <div className="section-heading"><h2 id="strategy-status-heading">Strategy and account</h2></div>
+        <div className="metric-grid metric-grid--three">
+          <MetricCard label="Last evaluated strategy target"
+            value={lastExecution ? `${lastExecution.authorized_target_asset} ${Number(lastExecution.authorized_target_exposure).toFixed(2)}×` : "Unavailable"}
+            detail={lastExecution ? `Validated for ${lastExecution.canonical_closed_day}` : "Awaiting the next strategy check"} />
+          <MetricCard label="Real wallet position" value={performance ? accountAsset(performance.snapshot.positions) : "Unavailable"}
+            detail={performance ? positionSummary(performance.snapshot.positions) : "Exchange data unavailable"} />
+          <MetricCard label="Last execution result" value={executionOutcomeLabel(lastExecution?.status)}
+            detail={lastExecution?.completed_at ? formatAsOf(Date.parse(lastExecution.completed_at)) : undefined} />
         </div>
       </section>
 

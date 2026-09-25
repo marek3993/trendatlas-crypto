@@ -1,4 +1,5 @@
 {
+  "production_execution_source_contract": "source_of_truth/production_execution_contract.json",
     "contract_version":  2,
     "artifact_name":  "app_export_contract",
     "artifact_type":  "export",
@@ -110,7 +111,7 @@
                                             "submission_idempotency":  "journal_PREPARED_before_request_and_deterministic_128_bit_cloid",
                                             "uncertain_execution_rule":  "exchange_cloid_lookup_and_account_readback_before_residual_decision",
                                             "authority_success_rule":  "required_execution_and_post_trade_verification_must_finish_first",
-                                            "scheduler_retry_rule":  "the_single_canonical_systemd_service_restarts_on_failure_after_15_minutes_and_never_restarts_after_success",
+                                            "scheduler_retry_rule":  "bounded_transient_failures_retry_after_15_minutes_deterministic_exit_2_does_not_restart_next_daily_timer_remains_enabled",
                                             "finalization_publish_order":  "execution_and_post_trade_verification_then_finalize_run_manifest_then_materialize_dashboard_runtime_then_authority_publish",
                                             "public_terminal_state_rule":  "a_completed_production_run_must_never_be_materialized_or_published_with_final_status_RUNNING",
                                             "public_live_order_sent_rule":  "dashboard_public_status.execution.live_order_sent_must_reflect_finalized_production_run_real_order_sent_and_must_never_be_false_when_verified_run_evidence_records_a_submission",
@@ -133,7 +134,7 @@
                                                                                      "owner_account_must_be_uniquely_eligible":  true,
                                                                                      "all_account_preflight_before_first_write":  true,
                                                                                      "production_batch_concurrency":  1,
-                                                                                     "unsafe_result_action":  "stop_remaining_accounts_and_block_authority_success",
+                                                                                     "unsafe_result_action":  "isolate_account_continue_others_publish_owner_outcome",
                                                                                      "legacy_python_order_adapter_when_active":  "must_not_be_instantiated",
                                                                                      "vercel_exchange_writes":  "disabled"
                                                                                  },
@@ -410,13 +411,13 @@
                                                                       },
                                            "published_snapshot_semantics":  {
                                                                                 "model_performance_btc_24h_pct":  "published_snapshot_closed_day_value",
-                                                                                "model_performance_account_24h_pct":  "published_snapshot_real_account_exposure_x_times_snapshot_btc_24h_pct",
+                                                                                "model_performance_account_24h_pct":  "exchange_native_24h_return_if_available_else_null",
                                                                                 "model_performance_account_vs_btc_24h_pct":  "published_snapshot_account_24h_pct_minus_snapshot_btc_24h_pct"
                                                                             },
                                            "live_market_semantics":  {
                                                                           "btc_24h_pct_expected_source":  "live_ticker",
                                                                           "btc_24h_pct_snapshot_is_not_live_flag_path":  "dashboard_public_status.live_market_state.btc_24h_pct_snapshot_is_not_live",
-                                                                          "live_dashboard_account_24h_formula":  "real_account.exposure_x * live_market_state.btc_24h_pct",
+                                                                          "live_dashboard_account_24h_formula":  "exchange_native_24h_return_if_available_else_null",
                                                                           "live_dashboard_account_vs_btc_formula":  "live_market_state.account_24h_pct - live_market_state.btc_24h_pct"
                                                                       },
                                            "forbidden_chart_hybrids":  [

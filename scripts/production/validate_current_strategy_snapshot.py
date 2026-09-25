@@ -945,6 +945,9 @@ def validate_production_payloads(
     if not isinstance(source_inputs, dict):
         errors.append("snapshot.source_inputs must be an object")
     else:
+        if "current_emittable_universe" in expected_source_inputs:
+            if source_inputs.get("current_emittable_universe") != expected_source_inputs["current_emittable_universe"]:
+                errors.append("snapshot.source_inputs.current_emittable_universe diverges from current adapter sources")
         current_files = source_inputs.get("files")
         expected_files = expected_source_inputs["files"]
         if not isinstance(current_files, dict):

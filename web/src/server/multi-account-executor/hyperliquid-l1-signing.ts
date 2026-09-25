@@ -4,12 +4,13 @@ import { encode } from "@msgpack/msgpack";
 import { isAddress, keccak256, parseSignature, zeroAddress, type Address, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { normalizeHyperliquidAddress } from "@/lib/hyperliquid/address";
-import type { ExchangeOrder } from "./engine";
+import type { ExchangeOrder, ExchangeCancellation } from "./engine";
 import type { HyperliquidMarketRow } from "./dry-run-gateway";
 
 const MAX_UINT64 = 18_446_744_073_709_551_615n;
 const MAX_NONCE_CLOCK_SKEW_MS = 30_000;
-const EXPIRES_AFTER_MS = 180_000;
+export const HYPERLIQUID_ORDER_EXPIRY_MS = 180_000;
+export const HYPERLIQUID_EXPIRY_READBACK_SKEW_MS = 30_000;
 const IOC_SLIPPAGE = 0.01;
 
 type OrderWire = {
@@ -27,6 +28,7 @@ export type HyperliquidOrderAction = {
   orders: [OrderWire];
   grouping: "na";
 };
+export type HyperliquidCancelAction = { type: "cancel"; cancels: [{ a: number; o: number }] };
 
 export type SignedIocPayload = {
   action: HyperliquidOrderAction;
@@ -82,7 +84,7 @@ export function assertAgentPrivateKeyMatches(agentPrivateKey: Hex, expectedAgent
   return actual;
 }
 
-export function hyperliquidActionHash(action: HyperliquidOrderAction, nonce: bigint, expiresAfter: bigint): Hex {
+export function hyperliquidActionHash(action: HyperliquidOrderAction | HyperliquidCancelAction, nonce: bigint, expiresAfter: bigint): Hex {
   const encodedAction = Buffer.from(encode(action));
   const encoded = Buffer.concat([
     encodedAction,
@@ -109,11 +111,11 @@ export async function buildSignedHyperliquidIocPayload(
   if (!Number.isInteger(market.assetIndex) || market.assetIndex < 0 || !Number.isFinite(order.size) || order.size <= 0) {
     throw new HyperliquidSigningError();
   }
-  if ((order.action === "ENTER" && order.reduceOnly) || (order.action === "EXIT" && !order.reduceOnly)) {
+  if (order.action === "CANCEL" || (order.action === "ENTER" && order.reduceOnly) || (order.action === "EXIT" && !order.reduceOnly) || (!order.reduceOnly && order.side === "sell")) {
     throw new HyperliquidSigningError();
   }
 
-  const isBuy = !order.reduceOnly;
+  const isBuy = order.side ? order.side === "buy" : !order.reduceOnly;
   const limitPrice = computeHyperliquidIocLimitPrice(market.markPrice, isBuy, market.sizeDecimals);
   const action: HyperliquidOrderAction = {
     type: "order",
@@ -128,7 +130,8 @@ export async function buildSignedHyperliquidIocPayload(
     }],
     grouping: "na"
   };
-  const expiresAfter = order.nonce + BigInt(EXPIRES_AFTER_MS);
+  if (!Number.isSafeInteger(order.expiresAtMs) || order.expiresAtMs !== Number(order.nonce + BigInt(HYPERLIQUID_ORDER_EXPIRY_MS)) || order.expiresAtMs <= nowMs) throw new HyperliquidSigningError();
+  const expiresAfter = BigInt(order.expiresAtMs);
   const connectionId = hyperliquidActionHash(action, order.nonce, expiresAfter);
   const signatureHex = await privateKeyToAccount(order.agentPrivateKey).signTypedData({
     domain: { chainId: 1337, name: "Exchange", verifyingContract: zeroAddress, version: "1" },
@@ -146,4 +149,23 @@ export async function buildSignedHyperliquidIocPayload(
   if (expectedAgentAddress !== normalizeHyperliquidAddress(order.agentAddress)) throw new HyperliquidSigningError();
 
   return { action, nonce, signature: { r: parsed.r, s: parsed.s, v }, expiresAfter: expiresAfterNumber };
+}
+
+/** The only additional write capability is cancellation of a verified executor-owned order. */
+export async function buildSignedHyperliquidCancelPayload(order: ExchangeCancellation, market: HyperliquidMarketRow, nowMs = Date.now()) {
+  assertAgentPrivateKeyMatches(order.agentPrivateKey, order.agentAddress);
+  const oid = Number(order.orderId);
+  if (!isAddress(order.masterAddress, { strict: false }) || !Number.isSafeInteger(oid) || oid < 0 || !Number.isInteger(market.assetIndex) || market.assetIndex < 0 || !Number.isSafeInteger(nowMs) || order.nonce < BigInt(nowMs - MAX_NONCE_CLOCK_SKEW_MS) || order.nonce > BigInt(nowMs + MAX_NONCE_CLOCK_SKEW_MS)) throw new HyperliquidSigningError();
+  const action: HyperliquidCancelAction = { type: "cancel", cancels: [{ a: market.assetIndex, o: oid }] };
+  const expiresAfter = order.nonce + BigInt(HYPERLIQUID_ORDER_EXPIRY_MS);
+  const connectionId = hyperliquidActionHash(action, order.nonce, expiresAfter);
+  const signature = parseSignature(await privateKeyToAccount(order.agentPrivateKey).signTypedData({
+    domain: { chainId: 1337, name: "Exchange", verifyingContract: zeroAddress, version: "1" },
+    types: { Agent: [{ name: "source", type: "string" }, { name: "connectionId", type: "bytes32" }] },
+    primaryType: "Agent",
+    message: { source: "a", connectionId }
+  }));
+  const v = Number(signature.v ?? BigInt((signature.yParity ?? 0) + 27));
+  if (!Number.isSafeInteger(Number(order.nonce)) || !Number.isSafeInteger(Number(expiresAfter)) || (v !== 27 && v !== 28)) throw new HyperliquidSigningError();
+  return { action, nonce: Number(order.nonce), signature: { r: signature.r, s: signature.s, v }, expiresAfter: Number(expiresAfter) };
 }

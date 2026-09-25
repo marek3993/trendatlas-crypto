@@ -34,8 +34,6 @@ QUALITY_PATH = PREVIEW_DIR / "live_order_enable_package_preview_quality.json"
 MANIFEST_PATH = PREVIEW_DIR / "live_order_enable_package_preview_manifest.json"
 LOG_PATH = LOGS_DIR / "preview_live_order_enable_package.log"
 
-PREVIEW_MAX_ORDER_NOTIONAL_USD = 250.0
-
 
 def utc_now_iso() -> str:
     return (
@@ -115,32 +113,11 @@ def main() -> None:
     current_trading_enabled = bool_or_default(mode_cfg.get("trading_enabled"), False)
     current_kill_switch = bool_or_default(mode_cfg.get("kill_switch"), True)
 
-    current_allow_live_orders = bool_or_default(policy_cfg.get("allow_live_orders"), False)
-    current_manual_approval_required = bool_or_default(policy_cfg.get("manual_approval_required"), True)
-    current_require_kill_switch_off = bool_or_default(policy_cfg.get("require_kill_switch_off"), True)
-    current_allowed_assets = [
-        normalize_asset(x)
-        for x in policy_cfg.get("allowed_assets", [])
-        if str(x).strip()
-    ]
-
     preview_target_values = {
-        "approval_gate_status": "live_order_enabled_and_approved",
         "real_order_gate_status": "ready_if_enabled",
-        "execution_mode": {
-            "mode": "live",
-            "trading_enabled": True,
-            "kill_switch": False if current_require_kill_switch_off else current_kill_switch,
-        },
-        "live_order_policy": {
-            "allow_live_orders": True,
-            "allowed_approval_gate_statuses": ["live_order_enabled_and_approved"],
-            "manual_approval_required": True,
-            "manual_approval_for_first_order_status": "still_required",
-            "require_kill_switch_off": current_require_kill_switch_off,
-            "max_order_notional_usd": PREVIEW_MAX_ORDER_NOTIONAL_USD,
-            "allowed_assets": current_allowed_assets,
-        },
+        "execution_control": {"kill_switch": current_kill_switch, "dry_run": "--no-submit"},
+        "strategy_authority": "validated_current_Production_Core_target",
+        "market_source": "metaAndAssetCtxs",
     }
 
     counterfactual_blockers: list[str] = []
@@ -149,14 +126,9 @@ def main() -> None:
         counterfactual_blockers.append("missing_signal_id")
     if not current_target_asset:
         counterfactual_blockers.append("missing_target_asset")
-    if current_target_asset not in current_allowed_assets:
-        counterfactual_blockers.append("target_asset_not_allowlisted")
-    if open_orders_count > 0:
-        counterfactual_blockers.append("open_orders_present")
-    if not current_reconciled:
-        counterfactual_blockers.append("reconciliation_not_passed")
 
-    counterfactual_blockers.append("manual_approval_not_yet_satisfied")
+    if current_kill_switch:
+        counterfactual_blockers.append("kill_switch_enabled")
 
     if current_target_asset == "CASH" and current_state == "CASH":
         counterfactual_blockers.append("no_actionable_order_current_signal_is_cash_and_already_reconciled")
@@ -201,25 +173,18 @@ def main() -> None:
             "blockers_if_applied_now": counterfactual_blockers,
         },
         "exact_preflight_checklist_before_future_enable": [
-            "approval_gate_status == live_order_enabled_and_approved",
-            "real_order_gate_status == ready_if_enabled",
-            "execution_mode.trading_enabled == true",
-            "live_order_policy.allow_live_orders == true",
-            "kill switch policy satisfied",
-            "max_order_notional_usd > 0",
-            "target asset on allowlist",
-            "fresh valid intent exists",
-            "account snapshot exists and account address present",
-            "open_orders_count == 0",
-            "reconciliation passes",
-            "manual approval explicitly satisfied for first order",
-            "submit preview would_submit == true",
+            "current Production Core target and direct dependencies validated",
+            "emergency execution switch is off",
+            "fresh account and authorized signer validated",
+            "fresh exchange metadata loaded for target, positions and orders",
+            "durable journal and CLOID recovery completed",
+            "reduce-only exits verified before fresh entry planning",
         ],
         "notes": [
             "Preview only. No file is applied by this script.",
             "No trading is enabled by this script.",
             "No real order is placed by this script.",
-            "Current blocked state of the real system remains unchanged."
+            "Only the canonical production service may submit orders."
         ],
         "source_paths": {
             "project_truth_path": str(PROJECT_TRUTH_PATH.resolve()),
@@ -235,11 +200,10 @@ def main() -> None:
 
     quality = {
         "preview_ok": True,
-        "current_system_still_blocked": True,
+        "current_system_still_blocked": current_gate_status == "blocked",
         "counterfactual_would_submit_if_applied_now": counterfactual_would_submit,
         "counterfactual_blocker_count": len(counterfactual_blockers),
-        "preview_max_order_notional_usd": PREVIEW_MAX_ORDER_NOTIONAL_USD,
-        "manual_approval_still_required_in_preview": True,
+        "preview_only": True,
     }
 
     manifest = {

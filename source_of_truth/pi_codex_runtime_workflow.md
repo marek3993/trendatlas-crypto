@@ -49,7 +49,7 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 - `--no-submit` must validate credential presence, derive the public signer address locally, and validate master role plus named-agent authorization without instantiating the order-submission adapter or mutating exchange state
 - every live transition must have a durable pre-submission journal record and deterministic Hyperliquid CLOID before the request is sent
 - restart recovery must query the exchange by CLOID and refresh account/open-order state before any residual submission
-- the canonical service uses `Restart=on-failure` with `RestartSec=15min`; a temporary failure retries the same orchestrator, while a successful pass is not restarted
+- the canonical service uses `Restart=on-failure` with `RestartSec=15min`; a transient failure retries the same orchestrator at most three times for the current day; deterministic failures return exit 2 (RestartPreventExitStatus=2), while the next daily timer remains enabled
 - during a legitimate first attempt or outage recovery for closed day D, the prior successful authority snapshot may precede D by one or more days only when the in-progress attempt plus canonical Production Core, intent, gate, and account fingerprints all prove the same run and D; stale underlying inputs and mismatched bindings still block. Same-day or future snapshots do not qualify for this exception. Recovery reconciles only the current target; no missed historical orders are replayed and no old successful snapshot is rewritten.
 - fixed-dollar sizing is forbidden; target notional is fresh account equity multiplied by validated Production Core target exposure, with safety violations blocking rather than clipping
 - no manual authority snapshot edits
@@ -63,8 +63,8 @@ This file is the approved Pi authority runtime runbook for Codex, segmented chat
 - Keep `mrv1-production.timer` as the only automatic production timer and `scripts/execution/run_trendatlas_production.py` as its only entrypoint.
 - The approved `multi_account` backend replaces only the orchestrator's EXECUTE stage. It must run as a child process while the canonical Python single-run lock is held.
 - Before activation, install the server-only Supabase URL/admin key and agent KEK in `/etc/default/trendatlas-multi-account` with owner `root:trendatlas` and mode `0640`; never copy the real values into Git, chat, logs, or command arguments.
-- The owner master account must be uniquely present in the eligible set. Every eligible account must pass the complete read-only preflight before the first write.
-- Production multi-account execution is sequential (`TRENDATLAS_MULTI_ACCOUNT_MAX_CONCURRENCY=1`) and stops before later accounts after any unsafe result.
+- The owner master account must be uniquely present in the enrolled set. Validate the common target once, then isolate account-specific preflight failures and continue independent ready accounts. Temporary blocked/error states remain eligible on the next scheduled run.
+- Production multi-account execution is sequential (`TRENDATLAS_MULTI_ACCOUNT_MAX_CONCURRENCY=1`) and continues independent accounts after an account-specific failure.
 - In the activated multi-account unit, do not mount or pre-validate the legacy `TrendAtlasProd` systemd credential. Keep the encrypted file at rest only for rollback.
 - Vercel remains `TRENDATLAS_MULTI_ACCOUNT_EXECUTION_MODE=disabled`; no Vercel route or browser action may invoke production execution.
 - Before enabling the timer, run the same service code with `run_trendatlas_production.py --no-submit`, inspect the exact eligible set separately, and obtain explicit final confirmation for the first live start.
@@ -152,3 +152,12 @@ If step 3 invalidates the approved fresh runtime bundle, restore the approved st
 - No manual generated `outputs/*` or `data/*` commits outside the official authority producer path.
 - No default escalation from `publish-existing` to `full-refresh`.
 - No dashboard or tablet task may redefine repo authority away from the Pi authority files.
+
+## Dynamic execution contract (2026-09-25)
+- Normative source: `source_of_truth/production_execution_contract.json`. This supersedes historical trading allowlists, approval-artifact gates, exposure ceilings, and fail-stop batch rules above.
+- Current validated Production Core is the asset/exposure authority. Previous authority publication and dashboards are downstream observability only.
+- Keep only `execution_mode.kill_switch` as the operator emergency switch; `--no-submit` controls rehearsal and performs no exchange mutation, including cancellation. Per-account user consent and signer authorization remain required.
+- Recover durable CLOIDs, reconcile journal-owned conflicting orders, reduce-only close every non-target/short position, verify each close from the exchange, then replan ENTRY from fresh equity/margin/metadata. ENTRY failure leaves confirmed CASH and never reopens the previous asset.
+- Market support comes from current `metaAndAssetCtxs`; deployment verifies assets derived from production data/adapter, without a second asset list.
+- Preserve terminal execution evidence across dashboard/publish failures. No retry may replay a verified fill.
+- Agent-assisted verification does not authorize the assistant to execute financial trades. Stage/deploy with a service `--no-submit` override until the operator chooses live activation.
