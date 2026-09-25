@@ -228,6 +228,7 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         ):
             result = orchestrator.run()
         self.assertEqual(result["final_status"], "PREFLIGHT_READY")
+        self.assertEqual(result["heavy_refresh_steps"], "skipped")
         self.assertEqual(adapter.submits, [])
         self.assertEqual(result["live_order_chain"], "NOT_INVOKED")
         self.assertFalse(result["real_order_sent"])

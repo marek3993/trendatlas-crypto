@@ -3423,6 +3423,9 @@ def build_dashboard_public_status_contract(
     elif outcome in {"SUCCESS", "ALIGNED", "FILLED_AND_ALIGNED", "NO_ACTION", "ALREADY_ALIGNED"}:
         message_sk = "Účet je zosúladený s cieľom stratégie."
         message_en = "The account is aligned with the strategy target."
+    elif outcome in {"PREFLIGHT_ONLY", "PREFLIGHT_READY"} and production_run_final_status == "PREFLIGHT_READY":
+        message_sk = "Kontrola pripravenosti prešla. Objednávky neboli odoslané."
+        message_en = "Readiness checks passed. No orders were sent."
     elif outcome:
         message_sk = "Posledný obchodný pokus sa nedokončil. Stav účtu je uvedený samostatne."
         message_en = "The last trading attempt did not complete. Account state is shown separately."

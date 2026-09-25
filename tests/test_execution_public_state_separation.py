@@ -79,6 +79,14 @@ class ExecutionPublicStateTests(unittest.TestCase):
         status = self.status({}, {"final_status": "RUNNING", "order_result": "FILLED_AND_ALIGNED"})
         self.assertIsNone(status["execution_result_state"]["outcome"])
 
+    def test_successful_preview_is_not_reported_as_failed_trade_or_wallet_alignment(self):
+        status = self.status({"open_position": {"symbol": "BTC", "size": 0.00048}, "current_exposure": 0.49}, {
+            "final_status": "PREFLIGHT_READY", "execution_outcome": "PREFLIGHT_ONLY", "no_submit": True,
+        })
+        self.assertEqual(status["execution_result_state"]["public_message_en"], "Readiness checks passed. No orders were sent.")
+        self.assertEqual(status["real_account"]["asset"], "BTC")
+        self.assertFalse(status["execution_result_state"]["staying_cash"])
+
     def test_failed_owner_readback_cannot_reuse_stale_wallet_as_current_state(self):
         status = self.status({"positions_count": 0, "current_position": "CASH"}, {
             "final_status": "EXECUTION_COMPLETE_PUBLISH_FAILED", "execution_outcome": "FILLED_AND_ALIGNED",
