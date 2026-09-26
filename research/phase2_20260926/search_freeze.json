@@ -1,0 +1,788 @@
+{
+  "budgets_per_partition": {
+    "adaptive_retries": 0,
+    "base_variants": 66,
+    "double_cost": 66,
+    "entry_delay": 66,
+    "neighbors_per_base_policy": 3,
+    "normal": 66,
+    "oos_base_policies": 10,
+    "oos_overlay_policies": 4
+  },
+  "costs": {
+    "borrow_annual": 0,
+    "double_multiplier": 2,
+    "fee_bps": 4.5,
+    "funding_annual_debit": 0.12,
+    "funding_basis": "entire held notional",
+    "funding_is_proxy": true,
+    "liquidation_fee_bps": 50,
+    "maintenance_ratio": 0.05,
+    "model": "Linear long marked exposure on spot price proxy. Not historical Hyperliquid perps, oracle/mark, funding, liquidity or contract listings.",
+    "slippage_bps": 10
+  },
+  "created_at": "2026-09-26T18:02:29.986754+00:00",
+  "development": [
+    "2018-08-01",
+    "2020-12-31"
+  ],
+  "diagnostic_sha256": "6e5852f1e6adddac2649aa1e342dd6209d4174e379a3d38b638204db997587a7",
+  "folds": [
+    {
+      "id": "2021",
+      "test_end": "2021-12-31",
+      "test_start": "2021-01-01",
+      "train_end": "2019-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01"
+    },
+    {
+      "id": "2022",
+      "test_end": "2022-12-31",
+      "test_start": "2022-01-01",
+      "train_end": "2020-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01"
+    },
+    {
+      "id": "2023",
+      "test_end": "2023-12-31",
+      "test_start": "2023-01-01",
+      "train_end": "2021-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01"
+    },
+    {
+      "id": "2024",
+      "test_end": "2024-12-31",
+      "test_start": "2024-01-01",
+      "train_end": "2022-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01"
+    },
+    {
+      "id": "2025",
+      "test_end": "2025-12-31",
+      "test_start": "2025-01-01",
+      "train_end": "2023-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01"
+    },
+    {
+      "id": "2026",
+      "test_end": "2026-09-25",
+      "test_start": "2026-01-01",
+      "train_end": "2024-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01"
+    }
+  ],
+  "hashes": {
+    "research/causal_search_20260926/engine.py": "f1a7be15f0eb2ef9d96706ac53a3c0d2d1848a1eab550b58d6e3da46d6e5f811",
+    "research/causal_search_20260926/inputs.zip": "cd7771575ab445485413b2473398c11c16b15fdc4e1f3a6bea244cddfbd06363",
+    "research/phase2_20260926/common.py": "2612efca9568aba4673ba2cba5a86f04881d258cf6ac86c6e2a0549773df7d9b",
+    "research/phase2_20260926/replay.py": "9b2f24d814f3d95bf05294547f9b4a217b36339ea9bae361ed587889e1a1a993",
+    "research/phase2_20260926/search.py": "eadc098c68039aeb7fa9cde420ac5bf100b32589095b387f18f2297ffeddaa7b",
+    "research/phase2_20260926/signals.py": "77a93543744081ecc8d426404d5e48d895c83983e89db4e2992d47a80e4f25ec",
+    "research/phase2_20260926/test_phase2.py": "7e7cf7b90d9be6ffd5501d506af67b280cf297cd982b0c8d4f494ed907c1d4ff",
+    "scripts/research_objectives.py": "83df7524b1d109df0792e3bcada13ae8765c70d7e2dd2bbc021d13ccce9b7ae1",
+    "source_of_truth/research_objectives_contract.json": "a642090da96c312dacdb4987ebdb7dbc466668c6b0588bd53c4f02c5d88ab9a4",
+    "source_of_truth/research_phase2_contract.json": "338be5122f857f5554d5b812b73b72bf1ccb8028d0e226ce3737e7f9742d39cb"
+  },
+  "historical_seal": false,
+  "history_already_researched": true,
+  "history_end": "2026-09-25",
+  "history_start": "2018-08-01",
+  "identity": [
+    {
+      "asset": "ADA",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "ADAUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "ADAUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "AVAX",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "AVAXUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "AVAXUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "BNB",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "BNBUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "BNBUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "BTC",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "BTCUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "BTCUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "DOGE",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "DOGEUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "DOGEUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "DOT",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "DOTUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "DOTUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "ETH",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "ETHUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "ETHUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "LINK",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "LINKUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "LINKUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "LTC",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "LTCUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "LTCUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "SOL",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "SOLUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "SOLUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "TRX",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "TRXUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "TRXUSDT",
+      "venue": "Binance"
+    },
+    {
+      "asset": "XRP",
+      "identity_rule": "Exact member filename and symbol key; no BASE, aliases, synthetic returns or relabeling.",
+      "instrument": "spot",
+      "member": "XRPUSDT_1d.csv",
+      "quote": "USDT",
+      "symbol": "XRPUSDT",
+      "venue": "Binance"
+    }
+  ],
+  "input_members": {
+    "ADAUSDT_1d.csv": "30a4f2f1575353e8ff3fc85bcfa50708fd4e1708fd047d0afc241ab54d405c64",
+    "AVAXUSDT_1d.csv": "626846a8fe13635f53a35956b700cf3ed784fd5039ab6ce3b19640df85a4bdf9",
+    "BNBUSDT_1d.csv": "05efd728bdee0bfab4d83efa7bcf86447f8566f011488ec71ca2d8c8c94924b1",
+    "BTCUSDT_1d.csv": "ab728dff0abba81fdc054d1846cd43717ae5bbd79122bc4666a9e17ad999b5ff",
+    "DOGEUSDT_1d.csv": "61025d10f24be7a8d0240053495091efe8a205afe92effbfda18967ea854e535",
+    "DOTUSDT_1d.csv": "3a39308c8416f205669227e1d97a705c4877bacf1e22802e4c0d0cfab929ce80",
+    "ETHUSDT_1d.csv": "2c9eacd21c23e09ea48c5152869b45d23e18ec8b16195eeaafbf1a8440dc8b05",
+    "LINKUSDT_1d.csv": "3988b04bca3dc6cdf19996afa209c191cf32e18991696aab20abb5b70c920aed",
+    "LTCUSDT_1d.csv": "db554504a3b917f87a13305b6e4d1916505ea5be365a3ae13cf3e6d92c51b1e9",
+    "SOLUSDT_1d.csv": "f91832901c9b5011b854c1dc63f78391aabd2c10ee48406ce8832eaddc5d0bfe",
+    "TRXUSDT_1d.csv": "6b4d850163a3cff2eb3b397ba5fd5097d0a1882fea2892c0f95e697ff7fad29f",
+    "XRPUSDT_1d.csv": "6c93a6b3798ed8d5fa41d8b07b020043342bdfd405aa26613a5385ca0152d666"
+  },
+  "neighbors": "Three separate replays per base: vol_target x.8, x1.2; nearest different same-family lookback/cadence at same vol target, lexical tie. Pass each if CAGR>0 and >=70% base CAGR and DD<=base DD+.10. Structural grid stability uses all one-axis adjacent variants, never favorable subsets.",
+  "nomination": "A numeric high-return eligible 2020-validation policy; B highest CAGR feasible robust 2020 policy; C highest Calmar feasible aggressive 2020 policy. Freeze before stitched OOS. No sealed historical access; nominal forward parameters are 2026 choices, frozen before OOS metrics.",
+  "overlay_base": "Each partition all_calmar, chosen solely on no-overlay preceding-year validation; all four overlays paired with identical frozen base choices. Not OOS-selected or used to replace base.",
+  "overlays": {
+    "cat4": {
+      "catastrophic": 4,
+      "cooldown": 3,
+      "tp": 0,
+      "tp_atr": 2,
+      "trail": 0
+    },
+    "tp25_trail3": {
+      "catastrophic": 0,
+      "cooldown": 3,
+      "tp": 0.25,
+      "tp_atr": 2,
+      "trail": 3
+    },
+    "tp50_trail3": {
+      "catastrophic": 0,
+      "cooldown": 3,
+      "tp": 0.5,
+      "tp_atr": 2,
+      "trail": 3
+    },
+    "trail3": {
+      "catastrophic": 0,
+      "cooldown": 3,
+      "tp": 0,
+      "tp_atr": 2,
+      "trail": 3
+    }
+  },
+  "parameters": "No fitted labels. Lookbacks approximate crypto calendar months 30/90/180/365 days. Breakout close above previous 55/100-day close high; exit below previous 20/55-day close low. Signal code is hashed verbatim.",
+  "partitions": [
+    {
+      "cap": 1.25,
+      "dd_cap": 0.25,
+      "id": "robust_1.25",
+      "mode": "robust"
+    },
+    {
+      "cap": 1.25,
+      "dd_cap": 0.35,
+      "id": "aggressive_1.25",
+      "mode": "aggressive"
+    },
+    {
+      "cap": 1.5,
+      "dd_cap": 0.35,
+      "id": "aggressive_1.5",
+      "mode": "aggressive"
+    },
+    {
+      "cap": 2.0,
+      "dd_cap": 0.35,
+      "id": "aggressive_2",
+      "mode": "aggressive"
+    },
+    {
+      "cap": 2.5,
+      "dd_cap": 0.35,
+      "id": "aggressive_2.5",
+      "mode": "aggressive"
+    },
+    {
+      "cap": 3.0,
+      "dd_cap": 0.35,
+      "id": "aggressive_3",
+      "mode": "aggressive"
+    }
+  ],
+  "selection": "Feasibility-first 15-objective Pareto within each family or all families, using preceding calendar validation year only; CAGR>0. Family/all_calmar tie by Calmar, then DD, Sharpe, turnover, lexical ID. all_growth tie by CAGR, DD, turnover, lexical ID. Empty eligible front => CASH.",
+  "selectors": [
+    "cross_sectional",
+    "dual_momentum",
+    "relative_strength",
+    "breakout",
+    "vol_adjusted",
+    "ensemble",
+    "regime_allocation",
+    "slow_hysteresis",
+    "all_growth",
+    "all_calmar"
+  ],
+  "sizing": "Volatility target .25/.5/1 annualized, .9*cap headroom; BTC bear <=.5, fast/slow volatility >1.2/1.3/1.8 limits 1/.75/.5. Rebalance on cadence or material >20% risk reduction; no averaging down. Equal protection/exposure-guard mechanics from phase 1.",
+  "variants": [
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_30_monthly_v25",
+      "lookback": 30,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_30_monthly_v50",
+      "lookback": 30,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_30_monthly_v100",
+      "lookback": 30,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_90_monthly_v25",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_90_monthly_v50",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_90_monthly_v100",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_180_monthly_v25",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_180_monthly_v50",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_180_monthly_v100",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_365_monthly_v25",
+      "lookback": 365,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_365_monthly_v50",
+      "lookback": 365,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "cross_sectional",
+      "id": "cross_sectional_365_monthly_v100",
+      "lookback": 365,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_30_monthly_v25",
+      "lookback": 30,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_30_monthly_v50",
+      "lookback": 30,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_30_monthly_v100",
+      "lookback": 30,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_90_monthly_v25",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_90_monthly_v50",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_90_monthly_v100",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_180_monthly_v25",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_180_monthly_v50",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_180_monthly_v100",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_365_monthly_v25",
+      "lookback": 365,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_365_monthly_v50",
+      "lookback": 365,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "dual_momentum",
+      "id": "dual_momentum_365_monthly_v100",
+      "lookback": 365,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_90_weekly_v25",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_90_weekly_v50",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_90_weekly_v100",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_90_monthly_v25",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_90_monthly_v50",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_90_monthly_v100",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_180_weekly_v25",
+      "lookback": 180,
+      "schedule": "weekly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_180_weekly_v50",
+      "lookback": 180,
+      "schedule": "weekly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_180_weekly_v100",
+      "lookback": 180,
+      "schedule": "weekly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_180_monthly_v25",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_180_monthly_v50",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "relative_strength",
+      "id": "relative_strength_180_monthly_v100",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "breakout",
+      "id": "breakout_55_daily_v25",
+      "lookback": 55,
+      "schedule": "daily",
+      "vol_target": 0.25
+    },
+    {
+      "family": "breakout",
+      "id": "breakout_55_daily_v50",
+      "lookback": 55,
+      "schedule": "daily",
+      "vol_target": 0.5
+    },
+    {
+      "family": "breakout",
+      "id": "breakout_55_daily_v100",
+      "lookback": 55,
+      "schedule": "daily",
+      "vol_target": 1.0
+    },
+    {
+      "family": "breakout",
+      "id": "breakout_100_daily_v25",
+      "lookback": 100,
+      "schedule": "daily",
+      "vol_target": 0.25
+    },
+    {
+      "family": "breakout",
+      "id": "breakout_100_daily_v50",
+      "lookback": 100,
+      "schedule": "daily",
+      "vol_target": 0.5
+    },
+    {
+      "family": "breakout",
+      "id": "breakout_100_daily_v100",
+      "lookback": 100,
+      "schedule": "daily",
+      "vol_target": 1.0
+    },
+    {
+      "family": "vol_adjusted",
+      "id": "vol_adjusted_90_monthly_v25",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "vol_adjusted",
+      "id": "vol_adjusted_90_monthly_v50",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "vol_adjusted",
+      "id": "vol_adjusted_90_monthly_v100",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "vol_adjusted",
+      "id": "vol_adjusted_180_monthly_v25",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "vol_adjusted",
+      "id": "vol_adjusted_180_monthly_v50",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "vol_adjusted",
+      "id": "vol_adjusted_180_monthly_v100",
+      "lookback": 180,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "ensemble",
+      "id": "ensemble_90_weekly_v25",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "ensemble",
+      "id": "ensemble_90_weekly_v50",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "ensemble",
+      "id": "ensemble_90_weekly_v100",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "ensemble",
+      "id": "ensemble_90_monthly_v25",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "ensemble",
+      "id": "ensemble_90_monthly_v50",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "ensemble",
+      "id": "ensemble_90_monthly_v100",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "regime_allocation",
+      "id": "regime_allocation_90_weekly_v25",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "regime_allocation",
+      "id": "regime_allocation_90_weekly_v50",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "regime_allocation",
+      "id": "regime_allocation_90_weekly_v100",
+      "lookback": 90,
+      "schedule": "weekly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "regime_allocation",
+      "id": "regime_allocation_180_weekly_v25",
+      "lookback": 180,
+      "schedule": "weekly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "regime_allocation",
+      "id": "regime_allocation_180_weekly_v50",
+      "lookback": 180,
+      "schedule": "weekly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "regime_allocation",
+      "id": "regime_allocation_180_weekly_v100",
+      "lookback": 180,
+      "schedule": "weekly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "slow_hysteresis",
+      "hysteresis": 0.1,
+      "id": "slow_hysteresis_90_monthly_v25",
+      "lookback": 90,
+      "min_hold": 30,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "slow_hysteresis",
+      "hysteresis": 0.1,
+      "id": "slow_hysteresis_90_monthly_v50",
+      "lookback": 90,
+      "min_hold": 30,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "slow_hysteresis",
+      "hysteresis": 0.1,
+      "id": "slow_hysteresis_90_monthly_v100",
+      "lookback": 90,
+      "min_hold": 30,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    },
+    {
+      "family": "slow_hysteresis",
+      "hysteresis": 0.1,
+      "id": "slow_hysteresis_180_monthly_v25",
+      "lookback": 180,
+      "min_hold": 60,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    {
+      "family": "slow_hysteresis",
+      "hysteresis": 0.1,
+      "id": "slow_hysteresis_180_monthly_v50",
+      "lookback": 180,
+      "min_hold": 60,
+      "schedule": "monthly",
+      "vol_target": 0.5
+    },
+    {
+      "family": "slow_hysteresis",
+      "hysteresis": 0.1,
+      "id": "slow_hysteresis_180_monthly_v100",
+      "lookback": 180,
+      "min_hold": 60,
+      "schedule": "monthly",
+      "vol_target": 1.0
+    }
+  ]
+}

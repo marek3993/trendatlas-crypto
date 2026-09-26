@@ -1,0 +1,74 @@
+{
+  "aggressive_1.25__calmar": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.93129189996722e-17
+  },
+  "aggressive_1.25__defensive": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.982791503160282e-17
+  },
+  "aggressive_1.25__growth": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.952975943416931e-17
+  },
+  "aggressive_1.5__calmar": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.93129189996722e-17
+  },
+  "aggressive_1.5__defensive": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.982791503160282e-17
+  },
+  "aggressive_1.5__growth": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.952975943416931e-17
+  },
+  "aggressive_2.5__calmar": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.974659986866641e-17
+  },
+  "aggressive_2.5__defensive": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.982791503160282e-17
+  },
+  "aggressive_2.5__growth": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.974659986866641e-17
+  },
+  "aggressive_2__calmar": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.974659986866641e-17
+  },
+  "aggressive_2__defensive": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.982791503160282e-17
+  },
+  "aggressive_2__growth": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.8879238130678e-17
+  },
+  "aggressive_3__calmar": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.974659986866641e-17
+  },
+  "aggressive_3__defensive": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.982791503160282e-17
+  },
+  "aggressive_3__growth": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.952975943416931e-17
+  },
+  "robust_1.25__calmar": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.974659986866641e-17
+  },
+  "robust_1.25__defensive": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.982791503160282e-17
+  },
+  "robust_1.25__growth": {
+    "legacy_equivalent": true,
+    "max_return_error": 9.974659986866641e-17
+  }
+}
