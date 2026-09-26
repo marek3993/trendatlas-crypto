@@ -26,6 +26,8 @@ tests and source JSON tests, and the new code/evidence files listed in GIT_ADD.t
 The sibling causal-baseline worktree supplied its input manifest and input ZIP;
 the source bundle and all twelve extracted price members were SHA256-verified.
 Historical baseline reports were context, never treated as this run's result.
+The trigger block in `.github/workflows/app_refresh.yml` was read before push:
+it contains only manual dispatch and schedule triggers, not a push trigger.
 No Pi/runtime/scheduler/publish work was planned or executed.
 
 ## SOURCE OF TRUTH
@@ -96,7 +98,7 @@ binary ZIP/PNG bytes across Windows checkouts.
 
 ## Regression tests added/updated
 
-38 research tests exercise causal prefixes/future mutations, same-day rejection,
+39 research tests exercise causal prefixes/future mutations, same-day rejection,
 listing admission, identity/account PnL reconciliation, gap and intrabar stops,
 partial TP, monotonic trailing, rotation priority, cooldown/reentry, no averaging
 down, delayed entries, exposure limits, bankruptcy, calendar annualization,
@@ -108,7 +110,7 @@ The earlier 23 objectives tests also pass. Navigation/source checks add another
 14 passes: five script-registry tests, six source JSON tests and three output
 registry field tests. Exact commands and tool outputs are in `test_results.json`
 and the superseding research-suite record `final_research_test_results.json`:
-**75 tests passed**. The unrelated legacy output-registry enum suite is not
+**76 tests passed**. The unrelated legacy output-registry enum suite is not
 claimed as passing or repaired by this work.
 
 ## Forbidden old path checked

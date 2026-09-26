@@ -21,7 +21,8 @@ HERE=Path(__file__).resolve().parent
 
 def policy_hashes():
     spec,_=engine.load_spec()
-    files=[HERE/'paper.py',HERE/'engine.py',HERE/'pre_registration.json',engine.ROOT/spec['contract_path']]
+    assert digest((HERE/'inputs.zip').read_bytes())==spec['input_bundle_sha256'],'Frozen history bundle changed'
+    files=[HERE/'paper.py',HERE/'engine.py',HERE/'pre_registration.json',HERE/'inputs.zip',engine.ROOT/spec['contract_path']]
     return {p.relative_to(engine.ROOT).as_posix():digest(p.read_bytes()) for p in files}
 
 

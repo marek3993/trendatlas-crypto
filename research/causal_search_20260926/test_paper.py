@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 import pandas as pd
 sys.path.insert(0,str(Path(__file__).resolve().parent))
@@ -46,6 +47,12 @@ class PaperTests(unittest.TestCase):
         self.seal['source_hashes']={}
         with self.assertRaisesRegex(AssertionError,'fingerprint mismatch'):
             paper.evaluate(self.seal,self.prices,self.out,today=date(2026,9,28))
+
+    def test_changed_historical_bundle_is_rejected_before_forward_evaluation(self):
+        altered=self.root/'tampered';altered.mkdir();(altered/'inputs.zip').write_bytes(b'changed history')
+        with patch.object(paper,'HERE',altered):
+            with self.assertRaisesRegex(AssertionError,'Frozen history bundle changed'):
+                paper.policy_hashes()
 
 
 if __name__=='__main__':unittest.main()
