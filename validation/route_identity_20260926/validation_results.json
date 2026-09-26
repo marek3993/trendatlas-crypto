@@ -1,0 +1,59 @@
+{
+  "code_commit": "ed157cc0dfcc2031dbea91c690b1b15d25fcabd1",
+  "test_counts_are_per_command_not_unique_totals": true,
+  "checks": [
+    {
+      "command": "python -m unittest tests.test_production_route_identity tests.test_production_execution tests.test_single_production_orchestrator tests.test_dashboard_public_contract_materializer tests.test_execution_chain_sync tests.test_execution_current_strategy_root_contract tests.test_execution_public_state_separation tests.test_source_of_truth_json_valid tests.test_authority_outage_recovery tests.test_dynamic_execution_source_contract -q",
+      "result": "PASS",
+      "tests": 165
+    },
+    {
+      "command": "python -m unittest tests.test_production_route_identity -q",
+      "result": "PASS",
+      "tests": 15,
+      "note": "Final route code including continuous ETF metric window; run after the larger suite."
+    },
+    {
+      "command": "python research/causal_baseline_20260926/run.py --out research/causal_baseline_20260926/scratch/determinism; python research/causal_baseline_20260926/test_causal.py -q",
+      "result": "PASS",
+      "tests": 19,
+      "note": "Offline frozen-input replay, not a production/full refresh. All committed result hashes match."
+    },
+    {
+      "command": "python -m unittest tests.test_source_of_truth_json_valid tests.test_dynamic_execution_source_contract tests.test_script_registry_required_fields tests.test_script_registry_paths_exist tests.test_output_registry_required_fields tests.test_output_registry_source_of_truth_consistency tests.test_output_registry_official_truth_flags tests.test_pi_fast_daily_authority_refresh -q",
+      "result": "PASS",
+      "tests": 33
+    },
+    {
+      "command": "npm --prefix web test -- --reporter=dot",
+      "result": "PASS",
+      "tests": 126,
+      "files": 6
+    },
+    {
+      "command": "npm --prefix web run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "git diff --cached --check",
+      "result": "PASS"
+    },
+    {
+      "command": "python -m unittest tests.test_output_registry_allowed_values -q",
+      "result": "FAIL_PREEXISTING",
+      "tests": 2,
+      "same_result_on_unmodified_base": "e3b0ea4073cd02f3a9b1b649c164aea3d26e2188",
+      "reason": "The old enum test rejects registry layers/relevance values already present on the base, including production_core, execution_data and support_only. This repair does not change those output enums."
+    }
+  ],
+  "forbidden_old_paths_checked": {
+    "inactive_candidate_override": "BASE LTC/AVAX, TRX/DOGE, SOL and arbitrary symbols; explicit active candidate required",
+    "double_shifted_BASE_label": "Phase63 same-interval holding regression",
+    "legacy_same_day_model_index": "causal chart ignores/tamper-rejects old equity/return fields",
+    "legacy_synthetic_phase68_dependency": "new production dependency preparation never invokes native old Phase68 rebuild",
+    "static_execution_membership": "existing Python/TS dynamic metadata tests and arbitrary new symbol rotations",
+    "global_unsupported_entry_block": "old-position reduce-only EXIT remains plannable; per-account/entry isolation",
+    "no_submit_mutations": "exchange and database mutation callback spies remain uncalled",
+    "full_refresh_live_submit_authority_publish": "full service no-submit skips submit and successful authority publish; heavy_refresh_steps=skipped"
+  }
+}

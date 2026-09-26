@@ -1,0 +1,23 @@
+{
+  "status": "passed",
+  "assets": [
+    "ADA",
+    "AVAX",
+    "BNB",
+    "BTC",
+    "CASH",
+    "DOGE",
+    "ETH",
+    "LINK",
+    "LTC",
+    "SOL",
+    "TRX",
+    "XRP"
+  ],
+  "planCount": 312,
+  "unsupportedAssets": [],
+  "metadataSource": "Hyperliquid metaAndAssetCtxs",
+  "snapshotSha256": "895e5da1f70c00ad4867e0f1d0282edf51a74434d539078fb09086929f46ff43",
+  "timeseriesSha256": "4bfde7039fdd1c753e30439a9d33a334383fe9456359070558347f619e175a99",
+  "exchangeWrites": false
+}

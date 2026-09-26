@@ -1,0 +1,401 @@
+{
+  "review_root": "/opt/trendatlas_route_review_20260926",
+  "source_root": "/opt/market_regime_v1",
+  "canonical_entrypoint": "scripts/execution/run_trendatlas_production.py --no-submit",
+  "service": "mrv1-route-review-20260926.service (isolated copy of canonical service configuration; no timer)",
+  "production_service_not_replaced": true,
+  "run": {
+    "run_id": "prod_20260926T145857Z_593402",
+    "started_at": "2026-09-26T14:58:57Z",
+    "finished_at": "2026-09-26T15:00:33Z",
+    "target_closed_day": "2026-09-25",
+    "final_status": "PREFLIGHT_READY",
+    "no_submit": true,
+    "execution_backend": "multi_account",
+    "heavy_refresh_steps": "skipped",
+    "execution_outcome": "PREFLIGHT_ONLY",
+    "real_order_sent": false,
+    "live_order_chain": "NOT_INVOKED",
+    "failure_stage": null,
+    "failure_reason": null,
+    "dashboard_status": "PASSED",
+    "authority_status": "SKIPPED_NO_SUBMIT"
+  },
+  "stages": {
+    "ACQUIRE_LOCK": {
+      "error": null,
+      "finished_at": "2026-09-26T14:58:57Z",
+      "started_at": "2026-09-26T14:58:57Z",
+      "status": "PASSED"
+    },
+    "AUTHORITY_PUBLISH": {
+      "error": null,
+      "finished_at": "2026-09-26T15:00:33Z",
+      "reason": "SKIPPED_NO_SUBMIT",
+      "started_at": "2026-09-26T15:00:33Z",
+      "status": "SKIPPED"
+    },
+    "BUILD_CANONICAL_INTENT": {
+      "error": null,
+      "finished_at": "2026-09-26T14:59:58Z",
+      "started_at": "2026-09-26T14:59:57Z",
+      "status": "PASSED"
+    },
+    "BUILD_PRODUCTION_CORE": {
+      "error": null,
+      "finished_at": "2026-09-26T14:59:47Z",
+      "started_at": "2026-09-26T14:59:33Z",
+      "status": "PASSED"
+    },
+    "BUILD_REAL_ORDER_GATE": {
+      "error": null,
+      "finished_at": "2026-09-26T14:59:59Z",
+      "started_at": "2026-09-26T14:59:58Z",
+      "status": "PASSED"
+    },
+    "DASHBOARD_RUNTIME": {
+      "error": null,
+      "finished_at": "2026-09-26T15:00:33Z",
+      "started_at": "2026-09-26T15:00:32Z",
+      "status": "PASSED"
+    },
+    "EXECUTE": {
+      "error": null,
+      "finished_at": "2026-09-26T15:00:28Z",
+      "reason": "multi_account_no_submit",
+      "started_at": "2026-09-26T15:00:00Z",
+      "status": "SKIPPED"
+    },
+    "LIVE_PREFLIGHT": {
+      "error": null,
+      "finished_at": "2026-09-26T15:00:00Z",
+      "started_at": "2026-09-26T15:00:00Z",
+      "status": "PASSED"
+    },
+    "POST_TRADE_VERIFY": {
+      "error": null,
+      "finished_at": "2026-09-26T15:00:32Z",
+      "started_at": "2026-09-26T15:00:31Z",
+      "status": "PASSED"
+    },
+    "PRECHECK_DATA_HEALTH": {
+      "blocker_count": 0,
+      "error": null,
+      "finished_at": "2026-09-26T14:59:33Z",
+      "started_at": "2026-09-26T14:59:32Z",
+      "status": "PASSED"
+    },
+    "READ_ACCOUNT_AFTER": {
+      "error": null,
+      "finished_at": "2026-09-26T15:00:31Z",
+      "started_at": "2026-09-26T15:00:28Z",
+      "status": "PASSED"
+    },
+    "READ_ACCOUNT_BEFORE": {
+      "error": null,
+      "finished_at": "2026-09-26T14:59:57Z",
+      "started_at": "2026-09-26T14:59:54Z",
+      "status": "PASSED"
+    },
+    "RECONCILE": {
+      "error": null,
+      "finished_at": "2026-09-26T15:00:00Z",
+      "started_at": "2026-09-26T14:59:59Z",
+      "status": "PASSED"
+    },
+    "REFRESH_DATA": {
+      "error": null,
+      "finished_at": "2026-09-26T14:59:32Z",
+      "started_at": "2026-09-26T14:58:57Z",
+      "status": "PASSED"
+    },
+    "VALIDATE_DATA_HEALTH": {
+      "error": null,
+      "finished_at": "2026-09-26T14:59:59Z",
+      "started_at": "2026-09-26T14:59:59Z",
+      "status": "PASSED"
+    },
+    "VALIDATE_PRODUCTION_CORE": {
+      "error": null,
+      "finished_at": "2026-09-26T14:59:54Z",
+      "started_at": "2026-09-26T14:59:47Z",
+      "status": "PASSED"
+    },
+    "VALIDATE_SIGNER": {
+      "error": null,
+      "finished_at": "2026-09-26T14:59:57Z",
+      "started_at": "2026-09-26T14:59:57Z",
+      "status": "PASSED"
+    }
+  },
+  "fresh_target": {
+    "closed_day": "2026-09-25",
+    "route_type": "BASE",
+    "base_economic_asset": "LTC",
+    "candidate_asset": "AVAX",
+    "candidate_trigger_active": false,
+    "resolved_execution_asset": "LTC",
+    "resolution_reason": "same_interval_base_holding",
+    "signal_available_at": "2026-09-26T14:59:40.296799+00:00",
+    "current_exposure": 1.25,
+    "generated_at_utc": "2026-09-26T14:59:40Z"
+  },
+  "code_commit_in_snapshot": "ed157cc0dfcc2031dbea91c690b1b15d25fcabd1",
+  "input_fingerprints": {
+    "source_of_truth/production_route_identity_contract.json": {
+      "path": "source_of_truth/production_route_identity_contract.json",
+      "sha256": "29eb4805edeac46ddc523e62fa2a6a3a5563f501d16051fc57566f8e9a7c721f",
+      "size_bytes": 3351
+    },
+    "outputs/phase60_selective_restore_robustness/phase60_restore_trx_sol_base_paper.csv": {
+      "path": "outputs/phase60_selective_restore_robustness/phase60_restore_trx_sol_base_paper.csv",
+      "sha256": "bb3502eddb48af12208889a3efd1eeeb3e50ca2eb793ce4514087b30898ca78a",
+      "size_bytes": 407809
+    },
+    "outputs/phase66g_production_candidate_live/phase66g_production_soft_filters_paper.csv": {
+      "path": "outputs/phase66g_production_candidate_live/phase66g_production_soft_filters_paper.csv",
+      "sha256": "6387998563e32556c79ec661c51f18e9a778695631fa6da67dedddb7d8dd7da9",
+      "size_bytes": 394427
+    },
+    "outputs/phase66g_production_candidate_live/phase66g_trend_barometer_history.csv": {
+      "path": "outputs/phase66g_production_candidate_live/phase66g_trend_barometer_history.csv",
+      "sha256": "d9538159fb415050a51bb2e658d54702f736cd4322913e68b4981e09d9256e53",
+      "size_bytes": 396056
+    },
+    "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv": {
+      "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+      "sha256": "9788a169e3a426efcec6f9a9b58fee21d6f22e310af40af8fcc0b602a17e3a6e",
+      "size_bytes": 256690
+    },
+    "outputs/execution/freshness/app_freshness_report.json": {
+      "path": "outputs/execution/freshness/app_freshness_report.json",
+      "sha256": "236230d68a2101cdb810a65a70adb3ee5a30912804094f24f6db2c2fcc02974c",
+      "size_bytes": 1002
+    },
+    "data/ohlcv/ADAUSDT_1d.csv": {
+      "path": "data/ohlcv/ADAUSDT_1d.csv",
+      "sha256": "30a4f2f1575353e8ff3fc85bcfa50708fd4e1708fd047d0afc241ab54d405c64",
+      "size_bytes": 230496
+    },
+    "data/ohlcv/AVAXUSDT_1d.csv": {
+      "path": "data/ohlcv/AVAXUSDT_1d.csv",
+      "sha256": "626846a8fe13635f53a35956b700cf3ed784fd5039ab6ce3b19640df85a4bdf9",
+      "size_bytes": 167426
+    },
+    "data/ohlcv/BNBUSDT_1d.csv": {
+      "path": "data/ohlcv/BNBUSDT_1d.csv",
+      "sha256": "05efd728bdee0bfab4d83efa7bcf86447f8566f011488ec71ca2d8c8c94924b1",
+      "size_bytes": 255422
+    },
+    "data/ohlcv/BTCUSDT_1d.csv": {
+      "path": "data/ohlcv/BTCUSDT_1d.csv",
+      "sha256": "ab728dff0abba81fdc054d1846cd43717ae5bbd79122bc4666a9e17ad999b5ff",
+      "size_bytes": 286780
+    },
+    "data/ohlcv/DOGEUSDT_1d.csv": {
+      "path": "data/ohlcv/DOGEUSDT_1d.csv",
+      "sha256": "61025d10f24be7a8d0240053495091efe8a205afe92effbfda18967ea854e535",
+      "size_bytes": 199047
+    },
+    "data/ohlcv/ETHUSDT_1d.csv": {
+      "path": "data/ohlcv/ETHUSDT_1d.csv",
+      "sha256": "2c9eacd21c23e09ea48c5152869b45d23e18ec8b16195eeaafbf1a8440dc8b05",
+      "size_bytes": 274615
+    },
+    "data/ohlcv/LINKUSDT_1d.csv": {
+      "path": "data/ohlcv/LINKUSDT_1d.csv",
+      "sha256": "3988b04bca3dc6cdf19996afa209c191cf32e18991696aab20abb5b70c920aed",
+      "size_bytes": 211487
+    },
+    "data/ohlcv/LTCUSDT_1d.csv": {
+      "path": "data/ohlcv/LTCUSDT_1d.csv",
+      "sha256": "db554504a3b917f87a13305b6e4d1916505ea5be365a3ae13cf3e6d92c51b1e9",
+      "size_bytes": 248071
+    },
+    "data/ohlcv/SOLUSDT_1d.csv": {
+      "path": "data/ohlcv/SOLUSDT_1d.csv",
+      "sha256": "f91832901c9b5011b854c1dc63f78391aabd2c10ee48406ce8832eaddc5d0bfe",
+      "size_bytes": 175391
+    },
+    "data/ohlcv/TRXUSDT_1d.csv": {
+      "path": "data/ohlcv/TRXUSDT_1d.csv",
+      "sha256": "6b4d850163a3cff2eb3b397ba5fd5097d0a1882fea2892c0f95e697ff7fad29f",
+      "size_bytes": 227888
+    },
+    "data/ohlcv/XRPUSDT_1d.csv": {
+      "path": "data/ohlcv/XRPUSDT_1d.csv",
+      "sha256": "6c93a6b3798ed8d5fa41d8b07b020043342bdfd405aa26613a5385ca0152d666",
+      "size_bytes": 229453
+    }
+  },
+  "artifact_fingerprints": {
+    "outputs/production/current_strategy_snapshot.json": "895e5da1f70c00ad4867e0f1d0282edf51a74434d539078fb09086929f46ff43",
+    "outputs/production/current_strategy_timeseries.csv": "4bfde7039fdd1c753e30439a9d33a334383fe9456359070558347f619e175a99",
+    "outputs/execution/intents/latest_execution_intent.json": "a6d3bd1a678295b1d3be451f048ffe3ee6b7b17091ab421f83f3cac899b3a6f5",
+    "outputs/execution/live_gate/latest_real_order_gate_decision.json": "4f11dfc8d1f3c77a7d91916e9cb776a5f972f8d11dc06da8f7e97dcf42c7ba66",
+    "outputs/execution/read_only/hyperliquid_account_snapshot.json": "c37324801de612e695b51bf468f351f5d02444af6241b6c277455a8ddc70f3e6",
+    "outputs/execution/production_runs/latest_production_run.json": "33c30f78c876984991d2542c965d50d9a244bcaf63ff4bc1c326f289aad47793",
+    "outputs/execution/app_snapshot/dashboard_public_status.json": "62ee694a3b806150be3397458dcf5909c3380562ec024df046a62a4d6f5faccd",
+    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": "613d8ee17bf5651ff01148f300537d008cf306ccc64c370ccff905b0b4a01fac",
+    "outputs/execution/production_runs/prod_20260926T145857Z_593402/execution_plan.json": "52dcbe58ff8c410bd34bd25255a2ec8d8a0f6fd449a2cc396731b9c8af67e672"
+  },
+  "identity_checks": {
+    "core_intent_dashboard_agree": true,
+    "exposure_agrees": true,
+    "real_account_separate": true,
+    "model_performance_contract": "causal_execution_interval_ledger_v1"
+  },
+  "owner_preflight": {
+    "status": "READY",
+    "accountEquityUsd": 85.118814,
+    "targetAsset": "LTC",
+    "targetExposure": 1.25,
+    "positions": [
+      {
+        "asset": "AVAX",
+        "markPrice": 11.039,
+        "size": 9.58
+      }
+    ],
+    "actions": [
+      {
+        "action": "EXIT",
+        "asset": "AVAX",
+        "leg": 0,
+        "reduceOnly": true,
+        "requestedNotionalUsd": 105.75362,
+        "side": "sell",
+        "size": 9.58
+      },
+      {
+        "action": "ENTER",
+        "asset": "LTC",
+        "leg": 1,
+        "reduceOnly": false,
+        "requestedNotionalUsd": 106.3985175,
+        "side": "buy",
+        "size": 1.45
+      }
+    ],
+    "actionCount": 2,
+    "cancelOrderIds": [],
+    "maxActionNotionalUsd": 106.3985175
+  },
+  "account_readback": {
+    "as_of_utc": "2026-09-26T15:00:31Z",
+    "equity_after_no_submit": 85.166714,
+    "positions_after": [
+      {
+        "asset": "AVAX",
+        "size": 9.58,
+        "notional_usd": 105.80152,
+        "reference_price": 11.0365
+      }
+    ],
+    "open_orders_count": 0
+  },
+  "reconciliation_sequence": [
+    "reduce-only EXIT unwanted positions",
+    "fresh exchange account and open-orders read-back",
+    "recompute equity, margin, current metadata, price and precision",
+    "ENTRY current resolved target only if fresh entry checks pass"
+  ],
+  "entry_preview_is_conditional": true,
+  "entry_preview_basis": "pre-exit observed equity and metadata; no post-exit equity/fill is claimed",
+  "python_preview": {
+    "status": "READY",
+    "action": "ROTATE",
+    "target_asset": null,
+    "target_exposure": 1.25,
+    "account_equity_usd": 85.120135,
+    "target_notional_usd": 106.40016875,
+    "block_reasons": [],
+    "entry_block_reasons": [],
+    "exit_block_reasons": []
+  },
+  "old_live_target": {
+    "closed_day": "2026-09-25",
+    "asset": "AVAX",
+    "exposure": 1.25
+  },
+  "old_live_order_evidence": [
+    {
+      "run_id": "prod_20260926T101542Z_354970",
+      "started_at": "2026-09-26T10:15:42Z",
+      "finished_at": "2026-09-26T10:17:29Z",
+      "target_closed_day": "2026-09-25",
+      "model_target_asset": "AVAX",
+      "model_target_exposure": 1.25,
+      "execution_action": "ROTATE",
+      "execution_outcome": "FILLED_AND_ALIGNED",
+      "real_order_sent": true
+    }
+  ],
+  "preservation": {
+    "original_runtime_changed_paths": [],
+    "original_runtime_file_count_checked": 10,
+    "original_runtime_fingerprints": {
+      "outputs/execution/authority/latest_successful_snapshot.json": "08c1b25e5414cd90d1eb28702074aa74f6c7549949e64a780d60e32cb5da0b5c",
+      "outputs/execution/authority/latest_attempt_status.json": "bbb2c2e52d1492947bd1c5e56f46e9be82f1a85e0ab23672b9121d27d37a7d26",
+      "outputs/execution/read_only/hyperliquid_account_snapshot.json": "f24f9483d2b7cc50b958f093028d1fe29d90a221edfbe21a338b0389300edff9",
+      "outputs/execution/production_runs/latest_production_run.json": "1c24c22237d1e3386d4de28a8ba92a873cd1ccdc7b8637f9f720cf9d1318475b",
+      "outputs/execution/execution_journal/exec_445e5da83a53a04f10710c25a31941a8.json": "de56dab75a357b502158e227db665b5d5614c675c7d5100775742ffe324f1746",
+      "outputs/execution/execution_journal/exec_f973fc01cb74cdd176f9eeb497fd2351.json": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48",
+      "outputs/execution/execution_journal/exec_5f6cb22125733364f46dc3fd6f65d4bd.json": "1100fb8e7914828b31878504b51ed924d17df90c8413f168deea6ce1948821bd",
+      "outputs/execution/execution_journal/exec_4a16bcd2bc00e64ad01723670414d938.json": "4fac2f5ff8459b6fb7494870ce55da563a783e1449fbce3e61642ef8675f2ac4",
+      "outputs/execution/execution_journal/exec_817ce43d04e3f8cd1f4a3bf5980d6d87.json": "68e68b61ac45f8a327677092b5fb1ed2337c698a658cb8347d7c98e5f16303e8",
+      "outputs/execution/execution_journal/latest_execution_journal.json": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48"
+    },
+    "production_service_config_unchanged": true,
+    "production_timer_config_unchanged": true,
+    "production_head": "5ee031cef7de9c385056cec22f6511391d3e4f4f"
+  },
+  "service_status": {
+    "Result": "success",
+    "ExecMainStatus": "0",
+    "ActiveState": "inactive",
+    "SubState": "dead",
+    "UnitFileState": "disabled"
+  },
+  "timer_status": {
+    "NextElapseUSecRealtime": "Sun 2026-09-27 02:10:00 CEST",
+    "LastTriggerUSec": "Sat 2026-09-26 10:53:33 CEST",
+    "Result": "success",
+    "Persistent": "yes",
+    "ActiveState": "active",
+    "SubState": "waiting",
+    "UnitFileState": "enabled"
+  },
+  "review_service_status": {
+    "Result": "success",
+    "ExecMainStatus": "0",
+    "ActiveState": "inactive",
+    "SubState": "dead",
+    "UnitFileState": "static"
+  },
+  "model_metrics": {
+    "total_return_pct_net": 892.7171,
+    "cagr_pct_net": 31.4471,
+    "max_drawdown_pct_net": -40.6292,
+    "sharpe": 0.7511,
+    "sortino": 1.589,
+    "cash_days_pct": 77.821265,
+    "btc_days_pct": 13.013699,
+    "trade_count": 280,
+    "switch_count": 280,
+    "since_etf_start_cagr_pct": 29.4203,
+    "since2023_cagr_pct_net": 17.7574,
+    "since2025_cagr_pct_net": 7.5853,
+    "trading_fees_total_pct": 13.891597,
+    "funding_total_pct": 20.819638,
+    "borrow_cost_total_pct": 2.780179,
+    "slippage_cost_total_pct": 30.870216
+  },
+  "exchange_mutations": {
+    "orders_submitted": false,
+    "orders_cancelled": false,
+    "orders_modified": false,
+    "leverage_changed": false
+  },
+  "database_mutations_by_no_submit": false
+}

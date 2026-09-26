@@ -1,0 +1,33 @@
+{
+  "code_commit": "ed157cc0dfcc2031dbea91c690b1b15d25fcabd1",
+  "source_files_checked": 79,
+  "byte_identical_to_commit": 75,
+  "git_line_ending_normalization_only": [
+    {
+      "path": "source_of_truth/production_asset_universe_contract.json",
+      "review_bytes_sha256": "d873189153270dceab481fe5538ebbaee62f41a422456394e7a36e9ca9b18a1d",
+      "git_blob_bytes_sha256": "4b7f102f5ffb3a87ddc7da3bcb9b80e6a47a71da150fc7178ecf98868e7a9826",
+      "difference": "CRLF_to_LF_only"
+    },
+    {
+      "path": "source_of_truth/production_route_identity_contract.json",
+      "review_bytes_sha256": "29eb4805edeac46ddc523e62fa2a6a3a5563f501d16051fc57566f8e9a7c721f",
+      "git_blob_bytes_sha256": "5af4e7700a1e1106ed8bdba95437b46abf6af9306585b8fc70d60a0b05f63dda",
+      "difference": "CRLF_to_LF_only"
+    },
+    {
+      "path": "web/.gitignore",
+      "review_bytes_sha256": "23fdf51d8502bdae83e63cf0b8b81a48de6a68f6ac017c35071fd5ad0970c83d",
+      "git_blob_bytes_sha256": "6f5d9561bf6ca0b4aae0552a0f9023dda3dcf79c2f41f024792eac8ee278e1df",
+      "difference": "CRLF_to_LF_only"
+    },
+    {
+      "path": "web/README_route_runtime.md",
+      "review_bytes_sha256": "c7a127d45f284bbc3e58c8fac4d38831b3cbffeb371823e354e96a87fbc2645d",
+      "git_blob_bytes_sha256": "b607f86841b79a81ea575d68b959646b2d1f7ac438d869722d7eb043eb4d4567",
+      "difference": "CRLF_to_LF_only"
+    }
+  ],
+  "runtime_overlay_byte_hashes": "code_manifest.json",
+  "semantic_code_changes_after_tested_commit": false
+}
