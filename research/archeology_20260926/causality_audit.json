@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "fill_lineage_and_log_pnl_reconciliation": {
+      "fills_checked": 24340,
+      "passed": true,
+      "strategies": 40
+    },
+    "future_perturbation": {
+      "passed": true,
+      "signal_rows_per_strategy": 2591,
+      "strategies": 40,
+      "through": "2024-09-19"
+    },
+    "prefix": {
+      "passed": true,
+      "signal_rows_per_strategy": 2591,
+      "strategies": 40,
+      "through": "2024-09-19"
+    }
+  },
+  "historical_venue_fills_and_funding": "UNVERIFIED: common proxies only",
+  "macro_etf_publication_vintages": "UNVERIFIED",
+  "point_in_time_market_membership": "UNVERIFIED: historical delisted membership missing",
+  "sealed_oos": "UNAVAILABLE: previously researched history",
+  "seconds": 140.43693852424622,
+  "status": "passed_computational_checks_with_evidence_gaps"
+}

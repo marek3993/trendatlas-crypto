@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "contract_id": "research_objectives_20260926",
+  "classification": ["D", "B"],
+  "scope": "offline_research_only",
+  "authority": "explicit_user_research_objectives_amendment_2026_09_26",
+  "supersedes": "Prior research objectives, fitness and finalist criteria only; frozen historical runs remain immutable evidence.",
+  "production_promotion_allowed": false,
+  "orders_allowed": false,
+  "automatic_deployment_allowed": false,
+  "units": {
+    "returns_cagr_drawdown_concentration": "fractions; 1.5 means 150 percent CAGR; drawdown is a nonnegative loss magnitude",
+    "account_exposure": "sum(abs(target_notional)) / simulated_account_equity",
+    "turnover": "annual sum of absolute executed notional changes divided by pre-fill equity; both rotation legs",
+    "cost_drag": "annual sum of fees, slippage and funding debits divided by pre-charge equity; credits disclosed separately"
+  },
+  "targets": {
+    "oos_cagr_range": [1.5, 2.0],
+    "drawdown_target": 0.2,
+    "drawdown_acceptable": 0.3,
+    "drawdown_absolute_cap": 0.35,
+    "sharpe_min": 1.5,
+    "calmar_min": 4.0,
+    "profitable_fold_fraction_min": 0.75,
+    "conservative_reference_cagr_range": [0.2, 0.35],
+    "conservative_reference_is_goal": false,
+    "above_target_cagr": "Do not reject above 200 percent; apply the same audits and report separately as above target."
+  },
+  "modes": {
+    "robust": {
+      "exposure_caps": [1.25],
+      "drawdown_cap": 0.25,
+      "cagr_floor": null,
+      "objective": "Highest causal out-of-sample CAGR under the drawdown and exposure caps; retain lower-return Pareto alternatives.",
+      "quality_targets": "Report Sharpe, Calmar and fold targets even when missed; B is best robust candidate, not a claim of meeting the high-return goal."
+    },
+    "aggressive": {
+      "exposure_caps": [1.25, 1.5, 2.0, 2.5, 3.0],
+      "drawdown_cap": 0.35,
+      "cagr_floor": null,
+      "objective": "Search for 150-200 percent OOS CAGR; lower-CAGR feasible candidates remain available for Pareto comparison."
+    }
+  },
+  "exposure_rules": {
+    "exchange_leverage_is_position_size": false,
+    "exchange_leverage_10x_is_not_exposure": true,
+    "permanent_max_exposure_above_1x_allowed": false,
+    "controller": "volatility_target_and_regime",
+    "adverse_market_levels": [1.0, 0.75, 0.5, 0.0],
+    "volatility_inputs": "Only completed bars available before the order; rising volatility must reduce, never mechanically increase, the risk budget.",
+    "enforcement": "Check aggregate gross notional/equity, including partial fills and price drift, at every simulated event; record breaches, margin and liquidation events. No missing-price liquidation exemption."
+  },
+  "high_return_gates": {
+    "oos_cagr_min": 1.5,
+    "sealed_cagr_min": 1.5,
+    "max_drawdown_max": 0.35,
+    "sharpe_min": 1.5,
+    "calmar_min": 4.0,
+    "without_best_day_cagr_min": 1.0,
+    "without_top_three_trades_cagr_min": 0.8,
+    "double_cost_cagr_min": 1.0,
+    "delayed_entry_cagr_strict_min": 0.0,
+    "asset_log_growth_share_max": 0.35,
+    "trade_log_growth_share_max": 0.15,
+    "profitable_fold_fraction_min": 0.75,
+    "worst_fold_loss_max": 0.35,
+    "parameter_stability_required": true,
+    "extended_audit_trigger_cagr": 1.5
+  },
+  "fitness": {
+    "method": "feasibility_first_pareto",
+    "scalar_cagr_fitness_allowed": false,
+    "objectives": {
+      "cagr": "max",
+      "max_drawdown": "min",
+      "calmar": "max",
+      "sharpe": "max",
+      "profitable_fold_fraction": "max",
+      "worst_fold_return": "max",
+      "asset_log_growth_share": "min",
+      "trade_log_growth_share": "min",
+      "turnover": "min",
+      "cost_drag": "min",
+      "parameter_stability": "max",
+      "delayed_entry_cagr": "max",
+      "double_cost_cagr": "max",
+      "without_best_day_cagr": "max",
+      "without_top_three_trades_cagr": "max"
+    },
+    "development_selection": "Use inner validation only. Separate populations, search budgets, Pareto fronts and registries by mode and exposure cap; never train or select with outer OOS or sealed results.",
+    "frozen_nominees": "Freeze A, B and C nominees and tie-breaks before opening sealed data. A: among eligible development Pareto candidates, prioritize target DD then acceptable DD, then Calmar, Sharpe, CAGR, lower turnover, lexical ID. B: highest CAGR on robust feasible Pareto front, then smaller DD, lower turnover, lexical ID. C: highest Calmar on the combined feasible development Pareto front, then smaller DD, Sharpe, lower turnover, lexical ID. These are disclosed tie-breaks, not a scalar fitness.",
+    "final_comparison": "OOS/sealed Pareto fronts describe the frozen candidates only; no reselection, retries or parameter tuning after seeing them. A failing sealed nominee is not replaced by another using the same seal."
+  },
+  "evaluation_protocol": {
+    "freeze_before_run": ["input_hashes", "code_hashes", "contract_hash", "universe_and_asset_lineage", "data_availability_timestamps", "train_validation_oos_boundaries", "sealed_boundaries_and_access_log", "seed", "search_budget_per_mode", "risk_parameter_grid", "neighbor_definition_and_tolerances", "cost_model", "fill_model", "fold_selection_rule", "nominee_selection_rule"],
+    "oos": "Chronological, non-overlapping outer walk-forward test intervals; all selection inside prior train/validation data. Purge overlapping labels/holding horizons and embargo as predeclared. Include cash and losing folds, not only active/profitable folds.",
+    "sealed": "Untouched evaluation opened once after freezing candidates and selection. Previously inspected repository history cannot be retroactively sealed; use independently uninspected or prospective data. Seal access and all trials must be logged.",
+    "metrics": "Net simulated account returns, including all costs and cash bars. CAGR uses elapsed UTC years (365.25 days); MDD includes starting equity and intrabar event equity; daily Sharpe uses sample standard deviation, 365.25 periods/year and zero cash/risk-free rate. Calmar = CAGR / positive MDD. Invalid/non-finite metrics fail closed.",
+    "gate_scope": "Apply numeric high-return risk/stress/concentration gates independently to stitched outer OOS and sealed evaluation; fold profitability and worst-fold loss use outer WF folds. This scope is fixed before evaluation.",
+    "fold_profit": "Net compounded fold return strictly above zero; zero-return folds are not profitable.",
+    "remove_best_day": "Replace the highest net UTC daily return by zero, retain all dates and annualization denominator, compound the remaining daily returns.",
+    "remove_best_trades": "Rank complete flat-to-flat position episodes by reconciled log-growth contribution. Combine partial exits/reentries within the declared episode rule; never split a winner into child fills. Remove the top three episode contributions, retain the calendar and reconcile remaining growth; do not retune the strategy.",
+    "log_attribution": "Use reconciled additive log-growth attribution by concrete asset and complete position episode, summing to total net log growth. Share = positive contribution / total net log growth, not sum of positive contributions; nonpositive total growth is invalid. Overlapping positions require an explicit reconciled allocation convention.",
+    "double_cost": "Rerun fills/accounting with 2x fees, 2x adverse slippage and 2x funding debits; do not double funding credits to improve stress results. Report signed-2x funding sensitivity separately if relevant. Preserve strategy parameters and model margin/size feedback.",
+    "delay": "Rerun with each entry delayed by one additional realizable bar after its normal causal fill; no backward fills, no new information injected into the frozen decision. Report skipped/expired signals and changed position state.",
+    "neighbors": "Freeze adjacent parameter values, coverage and numeric similarity tolerances before results. Rerun neighbors on the same causal protocol; missing/preselected favorable neighbors cannot pass.",
+    "missing_evidence": "unverified; never zero, pass, or a successful finalist",
+    "realistic_boundary": "Report only the observed feasible frontier of the tested universe, period, parameter space and cost/fill assumptions; do not present it as a proven global attainable limit. State numerical cost in drawdown, concentration, turnover and robustness for higher return."
+  },
+  "required_audits": ["oos_walk_forward", "causal_signal_timing", "asset_lineage", "realizable_fills", "venue_cost_coverage", "dynamic_exposure", "risk_state_machine", "parameter_neighbors"],
+  "extended_audit_checks": ["prefix_replay_invariance", "future_data_perturbation_invariance", "same_day_filter_rejection", "point_in_time_universe", "signal_publication_timestamps", "asset_price_fill_lineage", "pnl_reconciliation", "gap_and_intrabar_fill_order", "cost_funding_alignment"],
+  "extended_audit_rule": "Automatically request and run every extended check when any development/OOS/sealed CAGR reaches 150 percent, including values above 200 percent. Block finalist status until all evidence exists and passes. The evaluator reports missing checks; the replay/audit runner must execute them, never auto-fill pass flags.",
+  "risk_research": {
+    "volatility_targeted_exposure": true,
+    "reduce_on_rising_volatility": true,
+    "catastrophic_atr_stop": true,
+    "partial_take_profit_fractions": [0.25, 0.5],
+    "trail_remaining_position": true,
+    "trailing_boundary": "Monotonic toward profit only; completed-bar information; never widen after TP or restart.",
+    "trend_loss": "CASH",
+    "reentry": "Confirmed rebound from completed data with per-position cooldown/hysteresis; no averaging down during a continuing decline.",
+    "rotation_priority": "Normal rotation into a new target immediately supersedes the old position's stop, TP, cooldown and reentry state. Close old position and reset state; do not block a new target.",
+    "required_replays": ["rising_volatility_reduces_exposure", "adverse_regime_1_075_05_cash", "gap_through_atr_stop", "partial_tp_25", "partial_tp_50", "monotonic_trailing", "trend_loss_to_cash", "confirmed_rebound_only", "no_dip_averaging", "cooldown_hysteresis", "rotation_overrides_cooldown", "rotation_after_partial_tp"]
+  },
+  "verdicts": {
+    "A": "Frozen high-return nominee passed every OOS and sealed gate and extended audit; report 150-200 percent or above-target result explicitly.",
+    "B": "Best frozen robust nominee at maximum 1.25x and maximum 25 percent drawdown; no 150 percent CAGR floor.",
+    "C": "Frozen feasible Pareto compromise; disclose missed main targets and every tradeoff.",
+    "D": "No validated high-return winner when A fails or evidence is missing; explain invalid leverage, concentration, leakage, overfitting or insufficient evidence. D can coexist with B and C."
+  }
+}

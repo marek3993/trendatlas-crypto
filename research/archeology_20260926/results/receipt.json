@@ -1,0 +1,10 @@
+{
+  "freeze_sha256": "e9d2b8c07d9ca5f4fc837bd03b4695206d17b285bfaac17a7269e625e944bc70",
+  "production_writes": false,
+  "protected_files": 3028,
+  "protected_tree_unchanged": true,
+  "seconds": 182.83437848091125,
+  "source_hashes_verified": true,
+  "stored_paper_returns_read": false,
+  "strategies": 40
+}

@@ -1,0 +1,9 @@
+{
+  "verdict": "REPLACE_STRATEGY",
+  "scope": "research architecture recommendation only",
+  "deployment_allowed": false,
+  "validated_replacement": false,
+  "reason": "Current and both selector-only replacements fail predeclared drawdown/fold robustness criteria.",
+  "data_pit_certification": "UNVERIFIED",
+  "sealed_evidence": false
+}

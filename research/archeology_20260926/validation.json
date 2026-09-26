@@ -1,0 +1,31 @@
+{
+  "base_commit": "ae83345fb218826ca9c5afde6f67d64e809328da",
+  "branch": "codex/strategy-archeology-20260926",
+  "causality": {
+    "fill_lineage_and_log_pnl_reconciliation": {
+      "fills_checked": 24340,
+      "passed": true,
+      "strategies": 40
+    },
+    "future_perturbation": {
+      "passed": true,
+      "signal_rows_per_strategy": 2591,
+      "strategies": 40,
+      "through": "2024-09-19"
+    },
+    "prefix": {
+      "passed": true,
+      "signal_rows_per_strategy": 2591,
+      "strategies": 40,
+      "through": "2024-09-19"
+    }
+  },
+  "comparison_rows": 40,
+  "frozen_code_contract_inputs_verified": true,
+  "git_diff_cached_check": "PASS with frozen-byte CRLF attribute",
+  "optimization": false,
+  "original_checkout_modified": false,
+  "production_writes": false,
+  "scope": "Only new research/archeology_20260926 files",
+  "unit_tests_passed": 21
+}

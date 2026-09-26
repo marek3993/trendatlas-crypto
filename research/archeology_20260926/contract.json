@@ -1,0 +1,411 @@
+{
+  "ablations": {
+    "A": "source phase61 selector alone",
+    "B": "A + phase63 BTC/risk permission + trend permission wrapper at 1x",
+    "C": "B + phase66g soft governance + phase67j challenger governance BEFORE pruning",
+    "D": "C + LTC/SOL exclusion in phase66 and NEO exclusion in reference shortlist",
+    "E": "D + 1.25 exposure, plus separate persistence bridge E_persistence",
+    "F": "E_persistence + ETF entry with zero cooldown",
+    "G": "F + 15-day cooldown = current corrected literal-asset route",
+    "H": "G with base rotation selector replaced by volatility-adjusted 90d momentum; every dependent shadow/permission recomputed",
+    "I": "G with same original score selector on monthly schedule, 30-day minimum hold and 10 score-point hysteresis; immediate risk exit"
+  },
+  "accounting": "Concrete single-asset linear exposure marked on spot OHLC. Daily rebalance to post-cost target exposure including drift. Fees on actual adverse fill notional; funding debit on open held notional, 12% annual proxy. Liquidate at maintenance crossing, adverse gaps at open. Conservative high-before-low intraday DD. Exit at every year end and final end, charge costs. Shadow selection portfolios use this same ledger and costs; only completed shadow returns enter rules.",
+  "classification": [
+    "D",
+    "B"
+  ],
+  "corrections": [
+    "No stored paper returns/metrics are inputs",
+    "Resolve BASE through explicit source target and every named target through its own prices",
+    "All nested shadows D+2 fills with uniform costs",
+    "DD deterioration = baseline signed DD minus candidate signed DD; prepend initial equity and include first return",
+    "Anchor weekly scheduling independent of terminal length",
+    "No price forward/back fill; fail on missing held quotes"
+  ],
+  "costs": {
+    "fee_bps": 4.5,
+    "funding_annual_debit": 0.12,
+    "liquidation_fee_bps": 50,
+    "maintenance_ratio": 0.05,
+    "slippage_bps": 10
+  },
+  "coverage": [
+    {
+      "asset": "BTC",
+      "first": "2017-08-17",
+      "last": "2026-08-19",
+      "rows": 3290
+    },
+    {
+      "asset": "ETH",
+      "first": "2017-08-17",
+      "last": "2026-08-19",
+      "rows": 3290
+    },
+    {
+      "asset": "BNB",
+      "first": "2017-11-06",
+      "last": "2026-08-19",
+      "rows": 3209
+    },
+    {
+      "asset": "XRP",
+      "first": "2018-05-04",
+      "last": "2026-08-19",
+      "rows": 3030
+    },
+    {
+      "asset": "SOL",
+      "first": "2020-08-11",
+      "last": "2026-08-19",
+      "rows": 2200
+    },
+    {
+      "asset": "ADA",
+      "first": "2018-04-17",
+      "last": "2026-08-19",
+      "rows": 3047
+    },
+    {
+      "asset": "DOGE",
+      "first": "2019-07-05",
+      "last": "2026-08-19",
+      "rows": 2603
+    },
+    {
+      "asset": "LINK",
+      "first": "2019-01-16",
+      "last": "2026-08-19",
+      "rows": 2773
+    },
+    {
+      "asset": "AVAX",
+      "first": "2020-09-22",
+      "last": "2026-08-19",
+      "rows": 2158
+    },
+    {
+      "asset": "LTC",
+      "first": "2017-12-13",
+      "last": "2026-08-19",
+      "rows": 3172
+    },
+    {
+      "asset": "TRX",
+      "first": "2018-06-11",
+      "last": "2026-08-19",
+      "rows": 2992
+    },
+    {
+      "asset": "DOT",
+      "first": "2020-08-18",
+      "last": "2026-08-19",
+      "rows": 2193
+    },
+    {
+      "asset": "APT",
+      "first": "2022-10-19",
+      "last": "2026-08-19",
+      "rows": 1401
+    },
+    {
+      "asset": "BCH",
+      "first": "2019-11-28",
+      "last": "2026-04-06",
+      "rows": 2322
+    },
+    {
+      "asset": "ICP",
+      "first": "2021-05-11",
+      "last": "2026-04-06",
+      "rows": 1792
+    },
+    {
+      "asset": "STX",
+      "first": "2019-10-25",
+      "last": "2026-08-19",
+      "rows": 2491
+    },
+    {
+      "asset": "XTZ",
+      "first": "2019-09-24",
+      "last": "2026-04-06",
+      "rows": 2387
+    },
+    {
+      "asset": "NEO",
+      "first": "2019-01-01",
+      "last": "2026-08-19",
+      "rows": 2788
+    },
+    {
+      "asset": "HBAR",
+      "first": "2019-09-29",
+      "last": "2026-08-19",
+      "rows": 2517
+    }
+  ],
+  "decision_rule": "KEEP only if current net CAGR positive, MDD<=35%, 2x cost CAGR positive and >=75% profitable folds. SELECTOR replacement only if H or I meets these gates and dominates current risk/stress with positive growth in >=4 of 6 folds; otherwise REPLACE_STRATEGY as research architecture recommendation, not deployment approval or proof of a validated replacement.",
+  "end": "2026-04-06",
+  "evidence_gaps": [
+    "No historical macro release vintages",
+    "ETF first publication timestamps and revision vintages absent",
+    "No venue-specific historical order book or perp funding/listing history",
+    "No untouched holdout; no validated deployable winner can be declared"
+  ],
+  "folds": [
+    {
+      "id": "2021",
+      "test_end": "2021-12-31",
+      "test_start": "2021-01-01",
+      "train_end": "2019-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01"
+    },
+    {
+      "id": "2022",
+      "test_end": "2022-12-31",
+      "test_start": "2022-01-01",
+      "train_end": "2020-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01"
+    },
+    {
+      "id": "2023",
+      "test_end": "2023-12-31",
+      "test_start": "2023-01-01",
+      "train_end": "2021-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01"
+    },
+    {
+      "id": "2024",
+      "test_end": "2024-12-31",
+      "test_start": "2024-01-01",
+      "train_end": "2022-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01"
+    },
+    {
+      "id": "2025",
+      "test_end": "2025-12-31",
+      "test_start": "2025-01-01",
+      "train_end": "2023-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01"
+    },
+    {
+      "id": "2026",
+      "test_end": "2026-04-06",
+      "test_start": "2026-01-01",
+      "train_end": "2024-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01"
+    }
+  ],
+  "history_start": "2018-08-01",
+  "identity": "Phase68 uses nonblank phase66 weekly chosen_asset even if that challenger signal is inactive, otherwise phase67 reference policy. BASE is resolved to underlying source target; named coin always earns that coin return. Separate economic-route sensitivity uses true phase66 executed target.",
+  "inference": "Paired deltas are conditional path-dependent ablations, not additive causal effects. Compare both full history folds and ETF-available window. Chronological algorithmic OOS, NOT untouched historical or sealed evidence. All selected historical masks and parameters have prior research selection bias.",
+  "input_bundle_sha256": "594665dee0d66c12d4b911b97ebeb91780137e1b2b87b8a5a1233a005beca64f",
+  "input_members": {
+    "ADA.csv": {
+      "sha256": "a28c626c23855d8752e413a092e6f7e52d7d7922e75e8e59ce1bebef1fa979df",
+      "source": "data/ohlcv/ADAUSDT_1d.csv"
+    },
+    "APT.csv": {
+      "sha256": "ee1d38eade521faec6d2861ab802704227ca2fa9801a5a88f7eb72bdc1d71527",
+      "source": "data/ohlcv_phase67_top100/APTUSDT_1d.csv"
+    },
+    "AVAX.csv": {
+      "sha256": "98c0f18aa69cc1dceba897a15bff77b4e656374abf77fe7c30c324a317e9cf2c",
+      "source": "data/ohlcv/AVAXUSDT_1d.csv"
+    },
+    "BCH.csv": {
+      "sha256": "882c36c5cefc5fee7ad0345cede456c5c8ec9923111883e49c32a2b627e4525b",
+      "source": "data/ohlcv_phase67_top100/BCHUSDT_1d.csv"
+    },
+    "BNB.csv": {
+      "sha256": "fe5cddc1f691a53c3ef495455d34e746b20442b03c314a34b71d642639752cd7",
+      "source": "data/ohlcv/BNBUSDT_1d.csv"
+    },
+    "BTC.csv": {
+      "sha256": "52a54850a11110a5f4cf00c0668645ab80e210f577a97427396b8721704b6b26",
+      "source": "data/ohlcv/BTCUSDT_1d.csv"
+    },
+    "DOGE.csv": {
+      "sha256": "99d66cacf35c5704fa2befaea7f48d5a817f61b592f7763251cff8292de7cfce",
+      "source": "data/ohlcv/DOGEUSDT_1d.csv"
+    },
+    "DOT.csv": {
+      "sha256": "9038e701b6bbeeaec0fa23bd5877ff20faefca1204c55d4c0a5527c3ae554402",
+      "source": "data/ohlcv/DOTUSDT_1d.csv"
+    },
+    "ETH.csv": {
+      "sha256": "e043ce303cec5d56532e08eab3a9ffc06bf06ee43d43d6b9e440322da47129cc",
+      "source": "data/ohlcv/ETHUSDT_1d.csv"
+    },
+    "HBAR.csv": {
+      "sha256": "14b1fa7c54945c879fe4d11ae2ab4bae74a17909d5d4dd675249bfcde71a764d",
+      "source": "data/ohlcv_phase67_top100/HBARUSDT_1d.csv"
+    },
+    "ICP.csv": {
+      "sha256": "3154c27249e8082ed54c46d10885bfded659d48a23de9545edefa46e4755818b",
+      "source": "data/ohlcv_phase67_top100/ICPUSDT_1d.csv"
+    },
+    "LINK.csv": {
+      "sha256": "a4ac8e8fb78336524f56820612bfcc5cc823b76c7c310deb1d26415aabecd716",
+      "source": "data/ohlcv/LINKUSDT_1d.csv"
+    },
+    "LTC.csv": {
+      "sha256": "708d696c200b17d54af5d3e83cd98e52d7639437ea74e38a1fa0d0df23428477",
+      "source": "data/ohlcv/LTCUSDT_1d.csv"
+    },
+    "NEO.csv": {
+      "sha256": "ecf418f6fa19adb4533704040317e265a9ac76f348c94fd3588cbd42ba6355a5",
+      "source": "data/ohlcv_phase67_top100/NEOUSDT_1d.csv"
+    },
+    "SOL.csv": {
+      "sha256": "7a12f5b0f7c5045d41c9128513d17b3bbaed40bc054a336b9cb36eb943bf1154",
+      "source": "data/ohlcv/SOLUSDT_1d.csv"
+    },
+    "STX.csv": {
+      "sha256": "fbcc07ac79d95df0996e9a1eab87829a0770a9630806d24c5a736a9c01b4e27f",
+      "source": "data/ohlcv_phase67_top100/STXUSDT_1d.csv"
+    },
+    "TRX.csv": {
+      "sha256": "6eb8b7a63cd531a21c338d7a6954ee1655678d04fa08c688dde662c58bb9c511",
+      "source": "data/ohlcv/TRXUSDT_1d.csv"
+    },
+    "XRP.csv": {
+      "sha256": "b3ec748ce9950d9f524d5d97197f31d5ab1923aa8ba934bc093979a801101c99",
+      "source": "data/ohlcv/XRPUSDT_1d.csv"
+    },
+    "XTZ.csv": {
+      "sha256": "ee818c15680b66a0c38c75b8eecdf0c2332df87c48bc55f4bedcd0da1a287b57",
+      "source": "data/ohlcv_phase67_top100/XTZUSDT_1d.csv"
+    },
+    "etf.csv": {
+      "sha256": "167cebacf9dcc1769a0bf486abca4c4e30a0d74b533de29e3cad743fa912ea02",
+      "source": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv"
+    },
+    "macro.csv": {
+      "sha256": "463223b305eabfcec4d52de0dce99fc6efe1c9637233731bbe191d82bd3c11c9",
+      "source": "data/macro/global_liquidity_weekly.csv"
+    }
+  },
+  "metrics": {
+    "cagr": "365.25 elapsed UTC years including cash",
+    "costs": "annual sum cost debit / precharge equity; not compounded drag",
+    "double_cost": "rerun accounting at 2x fees, adverse slippage and funding debit with frozen signals; second full dependent-rule rebuild sensitivity",
+    "mdd": "intraday conservative event drawdown with initial equity",
+    "remove_best_day": "replace largest net daily return with zero retaining calendar",
+    "remove_three_trades": "subtract top 3 positive complete episode log contributions, retaining calendar",
+    "sharpe": "sample SD daily; zero risk free",
+    "trades": "complete same-asset flat-to-flat episodes; resizing never splits episode",
+    "turnover": "annual executed absolute fill notional / prefill equity, both legs"
+  },
+  "oos_start": "2021-01-01",
+  "optimization": "none; source-pinned rules and one predeclared representative per phase-2 family; no parameter search or OOS winner refit",
+  "orders_allowed": false,
+  "phase2": {
+    "cap": 1.25,
+    "ensemble_lookbacks": [
+      30,
+      90,
+      180
+    ],
+    "hysteresis": 0.1,
+    "lookback": 90,
+    "min_hold": 30,
+    "schedule": "monthly",
+    "vol_target": 0.4
+  },
+  "production_changes_allowed": false,
+  "schema_version": 1,
+  "scope": "offline research only",
+  "source_hashes": {
+    "phase60_selective_restore_robustness.py": "71e860f4b46134b288ff26dbb0ebe5b35989dbc998be0749b776de595b864d3d",
+    "phase61_final_compare.py": "76eb20d9fe7a7e3a25c2228368664c2fd2cf64639ab53cab35fe8272d94cdde7",
+    "scripts/approved_strategy_net_export_helper.py": "c6f2ae57e5d16ac9b9041d755d2d1ba52a64030e95e772b9414c06bf48c963e5",
+    "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py": "1508262bcb5c36814d3e860dd04efe3f96f86eb042a0f086e8a81d08dedbe4b3",
+    "scripts/dev_only_phase68g_etf_flow_impulse_probe.py": "52658b50d5c1cfecfbdc762a74b7c6b59e52bbccdc5574ef48bb516196c9ec9a",
+    "scripts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.py": "be317fe0c76354c6e74920c350c402f9ee5f218803ce374c61eada16e340b2bf",
+    "scripts/phase62_btc_overlay.py": "3c03fe20eb796e343b4ebfa044988bdc880b877dc232aea94657958bea7fee4c",
+    "scripts/phase63_btc_participation_overlay.py": "aebd447331e7e198d70cd09c8fae65de1fdaac5091eb4380401dc601075525ad",
+    "scripts/phase66e_probation_governance.py": "53c0d3f7c15e9964914d00dc64c6af8cfcc789e24826ab30965da2a73ccb16f1",
+    "scripts/phase66g_production_candidate_live.py": "e8e263072ae6f2236e9aaac564fbc6c9a14e95293adc5f38d3867ef9fb311f95",
+    "scripts/phase67j_final_narrow_validation_pack.py": "015a82eb65bd1580639a97a486bb74c33562397813f25066eb5de0a0c71b7eee",
+    "scripts/phase68g_portfolio_exposure_leverage_validation.py": "21dd9cc17c8c395eee5002d2736e76f665324d6a58930ecfa1a0ae1229748e09",
+    "scripts/phase68h_dynamic_leverage_ladder_candidate.py": "be376a55050cabb0fac5f168276e493b8f29d8dc988c5ca367db5997e4eec93e",
+    "scripts/phase68j_tail_risk_guardrail_check.py": "2d450732971c6df54ab62297096de63ea1687299700eb12ecb2f62edc5ec4465",
+    "scripts/production/strategy_adapters/phase68g_66g_1p25x_candidate_adapter.py": "3e5b182d9d7c40504004d3412c09b4ddddbbd007ad6a2c61e81de0d9c8664a53",
+    "scripts/production/strategy_adapters/phase68g_btc_persistence_10d_early_risk_075_adapter.py": "c13bd0c3de0cfd9f68bbed5b58fedbb85ac9de0f246267ba33afa694a6638c4b",
+    "scripts/production/strategy_adapters/phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter.py": "195f3cbe67b36c4f076c0a0f614ad9307bfd4600c4cac2f2b8828667713534de",
+    "src/market_regime_v1/__init__.py": "0abc22df692cb0bc6ccd8488a9ff7b1b897e2ca753cee33e9b12a75af95b2dbf",
+    "src/market_regime_v1/config.py": "4b040b0ae1adc9587d5433bc1c40e4ac6152f3bea228389f4cd064fd657a8595",
+    "src/market_regime_v1/exchange_base.py": "58d17502ba24f53b63f16e2b115fd6d9a317853c920e845d6b7f479f2b340c74",
+    "src/market_regime_v1/features.py": "7401ddcea01bf2f2bf254f72b6cbce40eb66ba511985ae765b710bbefa66ca51",
+    "src/market_regime_v1/indicators.py": "0446c51ee2e6002990f1992e660cdd634d39a5a9ec85f9be6bebb33ed89adf35",
+    "src/market_regime_v1/leverage.py": "8f08aca95b104701b2339b03160708af5115156b5ad69d2fe30f62925b1e3287",
+    "src/market_regime_v1/macro.py": "e8f05092be4b4cb5698d0315d428c181fc19531b796896f645b7715b81bc1a93",
+    "src/market_regime_v1/paper.py": "4dbee0f7612b3c527367d879d9adfa42c8dac64996524a3d3cbd6bf5d70e6b69",
+    "src/market_regime_v1/phase1_time_semantics.py": "2414e95a1738b8b41c7140b8aa59631a9377fac068d146b59ae2d0c9370b3c17",
+    "src/market_regime_v1/ranking.py": "f8eecde6584e58e29353fd62a4ae124952992a0415f1927fa44d7a310e6d8724",
+    "src/market_regime_v1/scoring.py": "c8a7ba65bcd8aec4ce035d5ccc12c08a1018160a64e2a6864904fcec2ba5cc36",
+    "src/market_regime_v1/types.py": "bee2301188aaeec4a46054ba422d3960d8b931e08436b28a371f842c2ef301bc",
+    "src/market_regime_v1/utils.py": "9f0af873c44b4b5602aa4915b5c34f378e40ee096385090080ffb05e3b2e57d6"
+  },
+  "timing": "Close D signal assumed available D+1 00:00:01 UTC, fill D+2 open. No D+1 open can precede its signal. ETF uses explicit D+1 session availability; additional bar sensitivity is reported.",
+  "universe": {
+    "admission": "260 observed complete positive OHLCV bars, positive volume and current raw bar; never future full-file history. All models share this availability mask; historical model-specific exclusions remain explicit experimental treatments.",
+    "assets": [
+      "BTC",
+      "ETH",
+      "BNB",
+      "XRP",
+      "SOL",
+      "ADA",
+      "DOGE",
+      "LINK",
+      "AVAX",
+      "LTC",
+      "TRX",
+      "DOT",
+      "APT",
+      "BCH",
+      "ICP",
+      "STX",
+      "XTZ",
+      "NEO",
+      "HBAR"
+    ],
+    "core_exclusions": [
+      "LTC",
+      "SOL"
+    ],
+    "runtime_shortlist": [
+      "NEO",
+      "DOGE",
+      "STX",
+      "APT",
+      "HBAR",
+      "LINK"
+    ],
+    "ssot_shortlist": [
+      "APT",
+      "BCH",
+      "DOGE",
+      "ICP",
+      "STX",
+      "XTZ"
+    ],
+    "unverified": "Complete historical exchange listings/delistings, historical shortlist vintages and survivorship-free pool unavailable. This is causal admission within frozen archival cohort, NOT certified point-in-time market universe."
+  }
+}

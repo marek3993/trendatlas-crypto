@@ -1,0 +1,272 @@
+{
+  "original": {
+    "core": {
+      "governance": {
+        "max_allowed_dd_worsen_pct": 3.0,
+        "min_history_days": 260,
+        "min_hold_periods": 3,
+        "min_recent_delta_pct": 0.25,
+        "min_total_delta_pct": 0.5,
+        "min_triggers_in_train": 4,
+        "probation_ban_periods": 6,
+        "probation_lookback_days": 45,
+        "probation_min_delta_pct": 0.0,
+        "profile_name": "phase66g_production_soft_filters",
+        "rebalance_every_days": 7,
+        "recent_days": 60,
+        "switch_score_margin": 3.0,
+        "trailing_train_days": 365
+      },
+      "overlay": {
+        "candidate_fast_ma": 20,
+        "candidate_ret_lb": 30,
+        "candidate_ret_min": 0.12,
+        "candidate_risk_buffer": -0.03,
+        "candidate_risk_ma": 150,
+        "candidate_slow_ma": 100,
+        "candidate_vol_cap": 0.045,
+        "candidate_vol_lb": 30,
+        "cooldown_days": 3,
+        "weak_base_lb": 30,
+        "weak_base_threshold": 0.02
+      },
+      "pool": [
+        "ETH",
+        "BNB",
+        "XRP",
+        "ADA",
+        "DOGE",
+        "LINK",
+        "AVAX",
+        "TRX",
+        "DOT"
+      ]
+    },
+    "core_reviews": 362,
+    "reference": {
+      "governance": {
+        "bnb_shield_margin_pct": 1.0,
+        "downside_lookback_days": 42,
+        "downside_max_worsen_pct": 2.5,
+        "max_allowed_dd_worsen_pct": 6.0,
+        "min_hold_periods": 2,
+        "min_recent_delta_pct": 0.0,
+        "min_total_delta_pct": 0.0,
+        "min_triggers_in_train": 3,
+        "persistence_weeks": 2,
+        "probation_ban_periods": 4,
+        "probation_lookback_days": 45,
+        "probation_min_delta_pct": -0.5,
+        "profile_name": "phase67j_no_neo_main",
+        "promotion_margin_pct": 2.0,
+        "rebalance_every_days": 7,
+        "recent_days": 42,
+        "reentry_cooldown_days": 7,
+        "switch_score_margin": 2.0,
+        "trailing_train_days": 365
+      },
+      "overlay": {
+        "cooldown_days": 3,
+        "edge_vs_core": 0.03,
+        "fast_ma": 20,
+        "min_score": 0.12,
+        "rel_recent_lb": 30,
+        "rel_recent_min_edge": 0.0,
+        "risk_buffer": -0.03,
+        "risk_ma": 150,
+        "score_lb": 30,
+        "slow_ma": 100,
+        "vol_cap": 0.045,
+        "vol_lb": 30
+      },
+      "pool": [
+        "DOGE",
+        "STX",
+        "APT",
+        "HBAR",
+        "LINK"
+      ]
+    },
+    "reference_reviews": 362
+  },
+  "slow": {
+    "core": {
+      "governance": {
+        "max_allowed_dd_worsen_pct": 3.0,
+        "min_history_days": 260,
+        "min_hold_periods": 3,
+        "min_recent_delta_pct": 0.25,
+        "min_total_delta_pct": 0.5,
+        "min_triggers_in_train": 4,
+        "probation_ban_periods": 6,
+        "probation_lookback_days": 45,
+        "probation_min_delta_pct": 0.0,
+        "profile_name": "phase66g_production_soft_filters",
+        "rebalance_every_days": 7,
+        "recent_days": 60,
+        "switch_score_margin": 3.0,
+        "trailing_train_days": 365
+      },
+      "overlay": {
+        "candidate_fast_ma": 20,
+        "candidate_ret_lb": 30,
+        "candidate_ret_min": 0.12,
+        "candidate_risk_buffer": -0.03,
+        "candidate_risk_ma": 150,
+        "candidate_slow_ma": 100,
+        "candidate_vol_cap": 0.045,
+        "candidate_vol_lb": 30,
+        "cooldown_days": 3,
+        "weak_base_lb": 30,
+        "weak_base_threshold": 0.02
+      },
+      "pool": [
+        "ETH",
+        "BNB",
+        "XRP",
+        "ADA",
+        "DOGE",
+        "LINK",
+        "AVAX",
+        "TRX",
+        "DOT"
+      ]
+    },
+    "core_reviews": 362,
+    "reference": {
+      "governance": {
+        "bnb_shield_margin_pct": 1.0,
+        "downside_lookback_days": 42,
+        "downside_max_worsen_pct": 2.5,
+        "max_allowed_dd_worsen_pct": 6.0,
+        "min_hold_periods": 2,
+        "min_recent_delta_pct": 0.0,
+        "min_total_delta_pct": 0.0,
+        "min_triggers_in_train": 3,
+        "persistence_weeks": 2,
+        "probation_ban_periods": 4,
+        "probation_lookback_days": 45,
+        "probation_min_delta_pct": -0.5,
+        "profile_name": "phase67j_no_neo_main",
+        "promotion_margin_pct": 2.0,
+        "rebalance_every_days": 7,
+        "recent_days": 42,
+        "reentry_cooldown_days": 7,
+        "switch_score_margin": 2.0,
+        "trailing_train_days": 365
+      },
+      "overlay": {
+        "cooldown_days": 3,
+        "edge_vs_core": 0.03,
+        "fast_ma": 20,
+        "min_score": 0.12,
+        "rel_recent_lb": 30,
+        "rel_recent_min_edge": 0.0,
+        "risk_buffer": -0.03,
+        "risk_ma": 150,
+        "score_lb": 30,
+        "slow_ma": 100,
+        "vol_cap": 0.045,
+        "vol_lb": 30
+      },
+      "pool": [
+        "DOGE",
+        "STX",
+        "APT",
+        "HBAR",
+        "LINK"
+      ]
+    },
+    "reference_reviews": 362
+  },
+  "vol_adjusted": {
+    "core": {
+      "governance": {
+        "max_allowed_dd_worsen_pct": 3.0,
+        "min_history_days": 260,
+        "min_hold_periods": 3,
+        "min_recent_delta_pct": 0.25,
+        "min_total_delta_pct": 0.5,
+        "min_triggers_in_train": 4,
+        "probation_ban_periods": 6,
+        "probation_lookback_days": 45,
+        "probation_min_delta_pct": 0.0,
+        "profile_name": "phase66g_production_soft_filters",
+        "rebalance_every_days": 7,
+        "recent_days": 60,
+        "switch_score_margin": 3.0,
+        "trailing_train_days": 365
+      },
+      "overlay": {
+        "candidate_fast_ma": 20,
+        "candidate_ret_lb": 30,
+        "candidate_ret_min": 0.12,
+        "candidate_risk_buffer": -0.03,
+        "candidate_risk_ma": 150,
+        "candidate_slow_ma": 100,
+        "candidate_vol_cap": 0.045,
+        "candidate_vol_lb": 30,
+        "cooldown_days": 3,
+        "weak_base_lb": 30,
+        "weak_base_threshold": 0.02
+      },
+      "pool": [
+        "ETH",
+        "BNB",
+        "XRP",
+        "ADA",
+        "DOGE",
+        "LINK",
+        "AVAX",
+        "TRX",
+        "DOT"
+      ]
+    },
+    "core_reviews": 362,
+    "reference": {
+      "governance": {
+        "bnb_shield_margin_pct": 1.0,
+        "downside_lookback_days": 42,
+        "downside_max_worsen_pct": 2.5,
+        "max_allowed_dd_worsen_pct": 6.0,
+        "min_hold_periods": 2,
+        "min_recent_delta_pct": 0.0,
+        "min_total_delta_pct": 0.0,
+        "min_triggers_in_train": 3,
+        "persistence_weeks": 2,
+        "probation_ban_periods": 4,
+        "probation_lookback_days": 45,
+        "probation_min_delta_pct": -0.5,
+        "profile_name": "phase67j_no_neo_main",
+        "promotion_margin_pct": 2.0,
+        "rebalance_every_days": 7,
+        "recent_days": 42,
+        "reentry_cooldown_days": 7,
+        "switch_score_margin": 2.0,
+        "trailing_train_days": 365
+      },
+      "overlay": {
+        "cooldown_days": 3,
+        "edge_vs_core": 0.03,
+        "fast_ma": 20,
+        "min_score": 0.12,
+        "rel_recent_lb": 30,
+        "rel_recent_min_edge": 0.0,
+        "risk_buffer": -0.03,
+        "risk_ma": 150,
+        "score_lb": 30,
+        "slow_ma": 100,
+        "vol_cap": 0.045,
+        "vol_lb": 30
+      },
+      "pool": [
+        "DOGE",
+        "STX",
+        "APT",
+        "HBAR",
+        "LINK"
+      ]
+    },
+    "reference_reviews": 362
+  }
+}

@@ -1,0 +1,26 @@
+test_adverse_prices_and_two_rotation_legs (__main__.Accounting.test_adverse_prices_and_two_rotation_legs) ... ok
+test_cash_and_folds (__main__.Accounting.test_cash_and_folds) ... ok
+test_cash_permission_cannot_create_exposure (__main__.Accounting.test_cash_permission_cannot_create_exposure) ... ok
+test_contract_scope (__main__.Accounting.test_contract_scope) ... ok
+test_corrected_dd_sign_first_return (__main__.Accounting.test_corrected_dd_sign_first_return) ... ok
+test_d_plus_two_and_first_trade_cost (__main__.Accounting.test_d_plus_two_and_first_trade_cost) ... ok
+test_double_cost_worse_on_flat_market (__main__.Accounting.test_double_cost_worse_on_flat_market) ... ok
+test_episode_reconciliation_and_resize (__main__.Accounting.test_episode_reconciliation_and_resize) ... ok
+test_exact_open_to_open_holding_duration (__main__.Accounting.test_exact_open_to_open_holding_duration) ... ok
+test_future_perturbation_cannot_change_past_ledger (__main__.Accounting.test_future_perturbation_cannot_change_past_ledger) ... ok
+test_future_unlisted_asset_cannot_affect_cross_section (__main__.Accounting.test_future_unlisted_asset_cannot_affect_cross_section) ... ok
+test_initial_equity_intrabar_drawdown (__main__.Accounting.test_initial_equity_intrabar_drawdown) ... ok
+test_maintenance_liquidation (__main__.Accounting.test_maintenance_liquidation) ... ok
+test_missing_exit_quote_rejected (__main__.Accounting.test_missing_exit_quote_rejected) ... ok
+test_no_other_asset_return (__main__.Accounting.test_no_other_asset_return) ... ok
+test_no_prelisting_fill (__main__.Accounting.test_no_prelisting_fill) ... ok
+test_persistence_source_threshold (__main__.Accounting.test_persistence_source_threshold) ... ok
+test_same_day_and_unknown_rejected (__main__.Accounting.test_same_day_and_unknown_rejected) ... ok
+test_selector_replacement_preserves_original_pool (__main__.Accounting.test_selector_replacement_preserves_original_pool) ... ok
+test_slow_selector_preserves_market_risk_exit (__main__.Accounting.test_slow_selector_preserves_market_risk_exit) ... ok
+test_tail_trigger_relabel_not_future_return (__main__.Accounting.test_tail_trigger_relabel_not_future_return) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.529s
+
+OK

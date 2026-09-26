@@ -1,0 +1,14 @@
+{
+  "code_sha256": {
+    "engine.py": "22a229a912645973dc21788ad7bbc25a8f605ba6fa0fa33ab528858f81d380c9",
+    "prepare.py": "da68201507d11e7f0e561f3a9a86a4ca3c28385134f955be7ace9e2407b22a8a",
+    "rules.py": "37421295fab0a27ce464712dfeadf08604b095743ccb0fbd166ad072f6fedfa6",
+    "run.py": "b12406d49ee616feefff6bf0d2fdb8e4e6525b014fad0ce51f5d8611dec0c722"
+  },
+  "contract_sha256": "549259e00d65ed5a3916d46907ab0b31df024cefb708db73ce5cb40cce04b27b",
+  "input_sha256": "594665dee0d66c12d4b911b97ebeb91780137e1b2b87b8a5a1233a005beca64f",
+  "numpy": "2.4.1",
+  "pandas": "3.0.2",
+  "python": "3.12.10",
+  "started_utc": "2026-09-26T18:57:15.314741+00:00"
+}

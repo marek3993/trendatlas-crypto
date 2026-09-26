@@ -1,0 +1,189 @@
+{
+  "algorithm": "sha256; exact bytes; excludes self",
+  "files": {
+    "research/archeology_20260926/.gitattributes": {
+      "bytes": 147,
+      "sha256": "e02dcf3146e67d63093b22c78a0dff177bd0752fb1bdfd1064746f5874f0ce9c"
+    },
+    "research/archeology_20260926/ARCHAEOLOGY.md": {
+      "bytes": 11803,
+      "sha256": "1d1a33010fbbdb59df7c9d17c4f5fcca401a31e9514ea6ea15def0537512e7bf"
+    },
+    "research/archeology_20260926/AUDIT.md": {
+      "bytes": 10965,
+      "sha256": "98076c94b84cfd9d1264ac17d65e8689574a6191c9fdf0642d5875a5a80d7bc8"
+    },
+    "research/archeology_20260926/GIT_ADD.txt": {
+      "bytes": 2326,
+      "sha256": "69c20d23172d363e7c785b33bf71e29f9e8a8e7f73aff50a2d33c7d71f5bf5ab"
+    },
+    "research/archeology_20260926/README.md": {
+      "bytes": 3888,
+      "sha256": "3ab961a7330d8cdab09f996ad4e21fbedf97e9c0fa7651683583ccf65f01fd9b"
+    },
+    "research/archeology_20260926/REPORT.md": {
+      "bytes": 15039,
+      "sha256": "1aabd0af34aeddd1f838ded37febfbda713743a4b9846c6b3efe52176fed425f"
+    },
+    "research/archeology_20260926/ablation_deltas.csv": {
+      "bytes": 1722,
+      "sha256": "c98aec32290b834be6f5dda390dc70dc2260f8edf6a47e954096c8d483a010d0"
+    },
+    "research/archeology_20260926/attempts/preaudit_artifacts.zip": {
+      "bytes": 5540427,
+      "sha256": "e9e9939eca9382c2a451b09bccd0bd54725a3b1cc36f13550d319281fa434734"
+    },
+    "research/archeology_20260926/attempts/selector_scope_before_fix.zip": {
+      "bytes": 20419,
+      "sha256": "ceb10cd40077cf89991c2a02b21355792fa4b9e49060a7fb1287dfe61d284005"
+    },
+    "research/archeology_20260926/audit.py": {
+      "bytes": 3838,
+      "sha256": "05517b8978ad65d9afd3366b1d453eb035e788805fd37577616aa4f80d3f3d64"
+    },
+    "research/archeology_20260926/causality_audit.json": {
+      "bytes": 843,
+      "sha256": "cdc91c789becf057756881e0af9bdc171a6d2ef2d124e1aeab3562b9da41ce26"
+    },
+    "research/archeology_20260926/contract.json": {
+      "bytes": 17079,
+      "sha256": "549259e00d65ed5a3916d46907ab0b31df024cefb708db73ce5cb40cce04b27b"
+    },
+    "research/archeology_20260926/coverage.csv": {
+      "bytes": 635,
+      "sha256": "bf166b39c6d725f256af43acc9a2f73c95018b909f879c1b4deb172c2046fb82"
+    },
+    "research/archeology_20260926/decision.json": {
+      "bytes": 347,
+      "sha256": "d3d48b92f57a69c60601bc2a6a241b3be1afb86c4f01489a34d99ac736775ec9"
+    },
+    "research/archeology_20260926/engine.py": {
+      "bytes": 9274,
+      "sha256": "f6ffdebecec41b5861f96f6d7dd446ce79086ced38e26d12a1d736320f1bb8f8"
+    },
+    "research/archeology_20260926/equity.png": {
+      "bytes": 166703,
+      "sha256": "8eedb446883dfedd0f54594b8d4648a5fbdcea587d7cc0f66b9202225ae5da89"
+    },
+    "research/archeology_20260926/feedback/comparison.csv": {
+      "bytes": 9815,
+      "sha256": "2945bee7e2bc88cd0f705215f58ec6ab9d3c08d80dd483eeba2327d66be1b8f9"
+    },
+    "research/archeology_20260926/feedback/etf_window.csv": {
+      "bytes": 9562,
+      "sha256": "5a1532057de38bae6c453e9d5bd7e17ffb4517d5cfecd3e604e007fa6da7443b"
+    },
+    "research/archeology_20260926/feedback/folds.csv": {
+      "bytes": 10807,
+      "sha256": "678f43e9b0569f375ff83801f22a3651ca2a291579657da3e5a52962b11c7b9f"
+    },
+    "research/archeology_20260926/feedback/ledgers.zip": {
+      "bytes": 3059628,
+      "sha256": "b7122031eeeb7300c195b39dcf94a16a3146b57c75210ef7bd757792dd335938"
+    },
+    "research/archeology_20260926/feedback/receipt.json": {
+      "bytes": 318,
+      "sha256": "d6d5af7b1f117a70152c49ad219ccc9255b782f767cccda2f52516de0c081cd6"
+    },
+    "research/archeology_20260926/feedback/source_rule_configs.json": {
+      "bytes": 7523,
+      "sha256": "e0a32b186bac873a506b1a37c12e3d74f5f2611afef9674cce654d02a708f387"
+    },
+    "research/archeology_20260926/feedback_freeze.json": {
+      "bytes": 931,
+      "sha256": "e9d2b8c07d9ca5f4fc837bd03b4695206d17b285bfaac17a7269e625e944bc70"
+    },
+    "research/archeology_20260926/initial_failed_freeze.json": {
+      "bytes": 669,
+      "sha256": "89548c6264df37f373017046dafa7ddc5dbc1c1e769e8ef1105d9f92e356aceb"
+    },
+    "research/archeology_20260926/inputs.zip": {
+      "bytes": 1032657,
+      "sha256": "594665dee0d66c12d4b911b97ebeb91780137e1b2b87b8a5a1233a005beca64f"
+    },
+    "research/archeology_20260926/macro_coverage.json": {
+      "bytes": 858,
+      "sha256": "019a8016a3a5c9fb370bd181aa53286df2bb63309da5cdcb049c5fd99ccf0374"
+    },
+    "research/archeology_20260926/objectives_reference.json": {
+      "bytes": 10871,
+      "sha256": "a642090da96c312dacdb4987ebdb7dbc466668c6b0588bd53c4f02c5d88ab9a4"
+    },
+    "research/archeology_20260926/prepare.py": {
+      "bytes": 8425,
+      "sha256": "da68201507d11e7f0e561f3a9a86a4ca3c28385134f955be7ace9e2407b22a8a"
+    },
+    "research/archeology_20260926/render.py": {
+      "bytes": 14100,
+      "sha256": "7056ca275d032ab47376a91987bae1c28fcc49e79e35852ca07bf477c4821b1e"
+    },
+    "research/archeology_20260926/requirements.txt": {
+      "bytes": 46,
+      "sha256": "2269bb82f5a758bb6847d38e9007b5c430ea3b5a5e95e4b074d0815eb09c47ec"
+    },
+    "research/archeology_20260926/results/comparison.csv": {
+      "bytes": 11683,
+      "sha256": "eb4a6e371845d4f1771e339dd87e50dcd8d40cc18b8b5e041d06c8c92435e65c"
+    },
+    "research/archeology_20260926/results/etf_window.csv": {
+      "bytes": 9555,
+      "sha256": "4c01681f18d6faa06aec60ba38b95893872e6f4ca7202a3f2e9a1989fe31d9e5"
+    },
+    "research/archeology_20260926/results/folds.csv": {
+      "bytes": 10809,
+      "sha256": "39d9339966e336abec8b202eb81a1a23d0b91c8d5d34ccf4e2355eca4b14a844"
+    },
+    "research/archeology_20260926/results/ledgers.zip": {
+      "bytes": 3087008,
+      "sha256": "8ac66cb731c920b261ee680fb89f21b044283fd20b8a4f2346fa8213047d279d"
+    },
+    "research/archeology_20260926/results/receipt.json": {
+      "bytes": 318,
+      "sha256": "ef07d80c4adef9b14cfcd8a8c2dc2eb5251357fba7606cd91205ea0c6ffc236e"
+    },
+    "research/archeology_20260926/results/source_rule_configs.json": {
+      "bytes": 7523,
+      "sha256": "e0a32b186bac873a506b1a37c12e3d74f5f2611afef9674cce654d02a708f387"
+    },
+    "research/archeology_20260926/rules.py": {
+      "bytes": 21790,
+      "sha256": "e3249c29dc1a183ae26d412d575bc4fe38d428490f050a02a849dc80a5a8ade5"
+    },
+    "research/archeology_20260926/run.py": {
+      "bytes": 3914,
+      "sha256": "b12406d49ee616feefff6bf0d2fdb8e4e6525b014fad0ce51f5d8611dec0c722"
+    },
+    "research/archeology_20260926/run_freeze.json": {
+      "bytes": 931,
+      "sha256": "e9d2b8c07d9ca5f4fc837bd03b4695206d17b285bfaac17a7269e625e944bc70"
+    },
+    "research/archeology_20260926/second_failed_freeze.json": {
+      "bytes": 760,
+      "sha256": "0ba32aa7c415a75a3192f29b33ee0d08dff2c2e5b33e31ec958b00684b3f601c"
+    },
+    "research/archeology_20260926/selector_scope_validation.json": {
+      "bytes": 6185,
+      "sha256": "aa5733e1a807d93a2c56168425ddbafcf377d580b85bf67be51fba8de6487d4a"
+    },
+    "research/archeology_20260926/source_reference/phase2_contract.json": {
+      "bytes": 2818,
+      "sha256": "338be5122f857f5554d5b812b73b72bf1ccb8028d0e226ce3737e7f9742d39cb"
+    },
+    "research/archeology_20260926/source_reference/phase2_signals.py.txt": {
+      "bytes": 3658,
+      "sha256": "77a93543744081ecc8d426404d5e48d895c83983e89db4e2992d47a80e4f25ec"
+    },
+    "research/archeology_20260926/test_replay.py": {
+      "bytes": 6836,
+      "sha256": "ba9e82d0e65f2bec52010b6c77e210cc294beff6ddffa3b5b6ca50cc1371245e"
+    },
+    "research/archeology_20260926/test_results.txt": {
+      "bytes": 2300,
+      "sha256": "f21bb6c2d221af57c8349290a163712df4c288e2e9b5a688c65abfee402e9315"
+    },
+    "research/archeology_20260926/validation.json": {
+      "bytes": 907,
+      "sha256": "8755e39812aeb84469aeb9405199807e05e6075d831f063171d57a4814481154"
+    }
+  }
+}
