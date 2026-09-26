@@ -1,0 +1,19 @@
+{
+  "api_calls": 0,
+  "archive_crc_pass": true,
+  "causal_audit": "PASS_COMPUTATIONAL_AUDIT",
+  "chart_visually_reviewed": true,
+  "exact_staging_list_verified": true,
+  "forbidden_paths": "AST import allowlist, explicit BASE instrument rejection, source grep reviewed. Matches are documentation/test plus the unrelated public archive URL constant named BASE. No old paper/PnL input or production/order call.",
+  "forward_opened": false,
+  "frozen_code_data_hashes_verified": 19,
+  "full_search_completed": true,
+  "git_diff_cached_check": "PASS",
+  "production_tracked_diff": [],
+  "protected_files_unchanged": 3237,
+  "raw_archive_checksum_triplets_verified": 2090,
+  "source_commit": "d3be15dbd4da8be1f97cb526dc8cacf8cd7d0e75",
+  "source_ledger_identical_to_source_commit": true,
+  "staged_scope": "79 added research artifacts only",
+  "tests_passed": 21
+}

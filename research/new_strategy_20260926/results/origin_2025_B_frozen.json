@@ -1,0 +1,24 @@
+{
+  "champion": {
+    "ablation": null,
+    "candidate": {
+      "absolute": true,
+      "blend": true,
+      "cadence": "monthly",
+      "family": "B",
+      "lookback": 90,
+      "vol_adjusted": false
+    },
+    "candidate_id": "B_27f2a32778e7",
+    "execution_stage": "nominal",
+    "generation": 3,
+    "origin": 2025,
+    "reason": "Participation cap exceeded at 2024-01-01 00:00:00: LINKUSDT; order_notional=9990.009990, known_quote=7233051.382870, cap_fraction=0.001",
+    "scope": "development",
+    "status": "REJECT_DATA_OR_EXECUTION",
+    "year": 2024
+  },
+  "development_pareto": [],
+  "frozen_before_oos": true,
+  "validation_year": 2024
+}

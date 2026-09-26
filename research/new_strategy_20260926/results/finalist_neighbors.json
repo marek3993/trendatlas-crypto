@@ -1,0 +1,261 @@
+{
+  "nominees_reselected": false,
+  "rows": [
+    {
+      "ablation": null,
+      "asset_concentration": null,
+      "asset_log_growth": {
+        "BTCUSDT": -0.16897904258551763
+      },
+      "attribution_valid": false,
+      "cagr": -0.1555711367729225,
+      "calmar": -0.4350521618399899,
+      "candidate": {
+        "breadth": 0.6,
+        "cadence": "weekly",
+        "confirm": 15,
+        "family": "A",
+        "fast": 50,
+        "slow": 150
+      },
+      "candidate_id": "A_30c6a79913be",
+      "costs": 0.007997481968087057,
+      "delayed_cagr": -0.16833887742526982,
+      "delayed_mdd": 0.3687995931599801,
+      "double_cost_cagr": -0.16230422364340227,
+      "double_cost_mdd": 0.36015642340114473,
+      "fee": 0.003998738985671858,
+      "fold_count": 1,
+      "fold_returns": {
+        "2025": -0.15547339770538326
+      },
+      "funding": 0.0,
+      "liquidations": 0,
+      "mdd": 0.35759191751848096,
+      "median_holding": 90.08333333333334,
+      "parent_id": "A_7c88e125f612",
+      "profitable_folds": 0,
+      "scope": "finalist_validation_neighbor",
+      "sharpe": -0.4143817999921424,
+      "slippage": 0.003998742982415199,
+      "slot": "A",
+      "status": "VALID",
+      "total_log_growth": -0.16897904258551863,
+      "trade_concentration": null,
+      "trades": 2,
+      "turnover": 3.998738985671858,
+      "without_best_day": -0.22912018309602283,
+      "without_three_trades": -0.1555711367729225,
+      "worst_fold": -0.15547339770538326,
+      "year": 2025
+    },
+    {
+      "ablation": null,
+      "asset_concentration": 1.0,
+      "asset_log_growth": {
+        "BTCUSDT": 0.0633987662401275
+      },
+      "attribution_valid": true,
+      "cagr": 0.06549788764417543,
+      "calmar": 0.2936795128119058,
+      "candidate": {
+        "breadth": 0.6,
+        "cadence": "weekly",
+        "confirm": 15,
+        "family": "A",
+        "fast": 20,
+        "slow": 100
+      },
+      "candidate_id": "A_4d234c4f7a87",
+      "costs": 0.007997481968087116,
+      "delayed_cagr": 0.06616624215910241,
+      "delayed_mdd": 0.22279230938343497,
+      "double_cost_cagr": 0.057002098181925184,
+      "double_cost_mdd": 0.22612674819807188,
+      "fee": 0.003998738985671862,
+      "fold_count": 1,
+      "fold_returns": {
+        "2025": 0.06545162066824232
+      },
+      "funding": 0.0,
+      "liquidations": 0,
+      "mdd": 0.22302504869015205,
+      "median_holding": 83.08333333333333,
+      "parent_id": "A_7c88e125f612",
+      "profitable_folds": 1,
+      "scope": "finalist_validation_neighbor",
+      "sharpe": 0.3972712651927549,
+      "slippage": 0.003998742982415254,
+      "slot": "A",
+      "status": "VALID",
+      "total_log_growth": 0.06339876624012933,
+      "trade_concentration": 0.7531073500166044,
+      "trades": 2,
+      "turnover": 3.998738985671862,
+      "without_best_day": 0.021263216046350827,
+      "without_three_trades": 1.833122694734682e-15,
+      "worst_fold": 0.06545162066824232,
+      "year": 2025
+    },
+    {
+      "ablation": null,
+      "asset_concentration": null,
+      "asset_log_growth": {
+        "BTCUSDT": -0.04574982651737393
+      },
+      "attribution_valid": false,
+      "cagr": -0.04474901548049891,
+      "calmar": -0.15652845525929296,
+      "candidate": {
+        "breadth": 0.6,
+        "cadence": "monthly",
+        "confirm": 15,
+        "family": "A",
+        "fast": 50,
+        "slow": 100
+      },
+      "candidate_id": "A_65a5710a1f20",
+      "costs": 0.007997481968087227,
+      "delayed_cagr": -0.054395121900987754,
+      "delayed_mdd": 0.28588422090009713,
+      "double_cost_cagr": -0.05236574690924558,
+      "double_cost_mdd": 0.2858842209000996,
+      "fee": 0.00399873898567186,
+      "fold_count": 1,
+      "fold_returns": {
+        "2025": -0.044719081746559176
+      },
+      "funding": 0.0,
+      "liquidations": 0,
+      "mdd": 0.2858842209000986,
+      "median_holding": 106.08333333333333,
+      "parent_id": "A_7c88e125f612",
+      "profitable_folds": 0,
+      "scope": "finalist_validation_neighbor",
+      "sharpe": -0.03426388379426876,
+      "slippage": 0.003998742982415368,
+      "slot": "A",
+      "status": "VALID",
+      "total_log_growth": -0.04574982651737307,
+      "trade_concentration": null,
+      "trades": 2,
+      "turnover": 3.9987389856718605,
+      "without_best_day": -0.08440673238798632,
+      "without_three_trades": -0.09181215021964778,
+      "worst_fold": -0.044719081746559176,
+      "year": 2025
+    },
+    {
+      "ablation": null,
+      "asset_concentration": 1.0,
+      "asset_log_growth": {
+        "BTCUSDT": 0.10586208210136426
+      },
+      "attribution_valid": true,
+      "cagr": 0.11174915503486434,
+      "calmar": 0.5157872591588724,
+      "candidate": {
+        "breadth": 0.6,
+        "cadence": "weekly",
+        "confirm": 10,
+        "family": "A",
+        "fast": 50,
+        "slow": 100
+      },
+      "candidate_id": "A_922773bcd35f",
+      "costs": 0.011996222952130623,
+      "delayed_cagr": 0.12131530049813721,
+      "delayed_mdd": 0.22120185184616803,
+      "double_cost_cagr": 0.09847883247904081,
+      "double_cost_mdd": 0.21978457434719578,
+      "fee": 0.005998108478507791,
+      "fold_count": 1,
+      "fold_returns": {
+        "2025": 0.11166854694335383
+      },
+      "funding": 0.0,
+      "liquidations": 0,
+      "mdd": 0.21665745527933533,
+      "median_holding": 47.166666666666664,
+      "parent_id": "A_7c88e125f612",
+      "profitable_folds": 1,
+      "scope": "finalist_validation_neighbor",
+      "sharpe": 0.5781750616464236,
+      "slippage": 0.005998114473622833,
+      "slot": "A",
+      "status": "VALID",
+      "total_log_growth": 0.10586208210136414,
+      "trade_concentration": 0.6905211854628054,
+      "trades": 3,
+      "turnover": 5.998108478507791,
+      "without_best_day": 0.06559433920424934,
+      "without_three_trades": -1.2498563827736457e-16,
+      "worst_fold": 0.11166854694335383,
+      "year": 2025
+    },
+    {
+      "ablation": null,
+      "asset_concentration": null,
+      "asset_log_growth": {
+        "BTCUSDT": -0.04843321765258189
+      },
+      "attribution_valid": false,
+      "cagr": -0.04731064238070018,
+      "calmar": -0.15694069107764333,
+      "candidate": {
+        "breadth": 0.4,
+        "cadence": "weekly",
+        "confirm": 15,
+        "family": "A",
+        "fast": 50,
+        "slow": 100
+      },
+      "candidate_id": "A_a1c344c25d89",
+      "costs": 0.007997481968087014,
+      "delayed_cagr": -0.04710285780362082,
+      "delayed_mdd": 0.3028593119377536,
+      "double_cost_cagr": -0.054906948576248345,
+      "double_cost_mdd": 0.30424415360084334,
+      "fee": 0.003998738985671865,
+      "fold_count": 1,
+      "fold_returns": {
+        "2025": -0.047279037876342016
+      },
+      "funding": 0.0,
+      "liquidations": 0,
+      "mdd": 0.30145555021988635,
+      "median_holding": 100.58333333333334,
+      "parent_id": "A_7c88e125f612",
+      "profitable_folds": 0,
+      "scope": "finalist_validation_neighbor",
+      "sharpe": -0.008282912453893215,
+      "slippage": 0.003998742982415148,
+      "slot": "A",
+      "status": "VALID",
+      "total_log_growth": -0.04843321765257981,
+      "trade_concentration": null,
+      "trades": 2,
+      "turnover": 3.998738985671865,
+      "without_best_day": -0.13028908703889044,
+      "without_three_trades": -0.12678066102222194,
+      "worst_fold": -0.047279037876342016,
+      "year": 2025
+    }
+  ],
+  "summary": [
+    {
+      "candidate_id": "A_7c88e125f612",
+      "median_cagr": -0.04474901548049891,
+      "neighbors": 5,
+      "passed": false,
+      "qualified": 2,
+      "slots": [
+        "A",
+        "B",
+        "C",
+        "aggressive_diagnostic"
+      ],
+      "valid": 5
+    }
+  ]
+}

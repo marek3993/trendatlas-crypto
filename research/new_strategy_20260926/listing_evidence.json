@@ -1,0 +1,182 @@
+[
+  {
+    "archive_sha256": "4f96569190147d64b7ce55f6760dc3e7962aeb3e209c969b200200e3d7045e70",
+    "first_traded_minute_utc": "2017-08-17 04:00:00",
+    "index_sha256": "8db7429418dca2412491769589909659b40e8409ecbd7bb5a0f6e478ef788def",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FBTCUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2017-08.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "BTCUSDT"
+  },
+  {
+    "archive_sha256": "0d3142f0c1b70ab25c29ac39e0bfb72e83a92e9ee2d361a4a0bfb9f3452cf369",
+    "first_traded_minute_utc": "2017-08-17 04:00:00",
+    "index_sha256": "d539202f2454705d1f947d6550271ac632a68daa56e8bece595f8ce98a0e8e42",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FETHUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/ETHUSDT/1m/ETHUSDT-1m-2017-08.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "ETHUSDT"
+  },
+  {
+    "archive_sha256": "9df66c853a09575e87c440552ef0f86e4af261438f663fc79a7836bef80dd64b",
+    "first_traded_minute_utc": "2018-05-04 08:11:00",
+    "index_sha256": "c4161fc319fef23aef1edb7f99cf2157e6c901983597ffb074c09980a8e8ade1",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FXRPUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/XRPUSDT/1m/XRPUSDT-1m-2018-05.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "XRPUSDT"
+  },
+  {
+    "archive_sha256": "f59488b0d9243d37b15dee210729b4a83da6d14778396de249e59309984d36fc",
+    "first_traded_minute_utc": "2017-12-13 03:32:00",
+    "index_sha256": "d55e66db187cb60daee574a9b317fe4a79f7e40e776a74505cc22ef6ce20f45a",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FLTCUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/LTCUSDT/1m/LTCUSDT-1m-2017-12.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "LTCUSDT"
+  },
+  {
+    "archive_sha256": "587c2b1b53d7a2fb4e201c3e427f723f5e03284b2a39c8ae864a1aac363eff24",
+    "first_traded_minute_utc": "2019-11-28 10:00:00",
+    "index_sha256": "a63fff732be3d6e0f1892e42175cdbc8095e23c3bdbb3be03ba98339cf22cd51",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FBCHUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2019-11.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "BCHUSDT"
+  },
+  {
+    "archive_sha256": "066fa8856a8ac1205fdc8cb68dee1f45087f4a0ea2f8d11aeebad6e97c8ce657",
+    "first_traded_minute_utc": "2019-01-16 10:00:00",
+    "index_sha256": "a195cf7ec6fbaecfc2d4021c4d0d1dba3e8f7f6ded768ab1e3b35352133e40e2",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FLINKUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/LINKUSDT/1m/LINKUSDT-1m-2019-01.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "LINKUSDT"
+  },
+  {
+    "archive_sha256": "59070b0790874154f7d66aaa1c7e851b561955885c52208096110a377e2c9365",
+    "first_traded_minute_utc": "2017-11-06 03:54:00",
+    "index_sha256": "1240024cb7bf318eb21f8b11ebd5b6ac3f7d7793e9a5c772b83e773e8d0eae80",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FBNBUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/BNBUSDT/1m/BNBUSDT-1m-2017-11.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "BNBUSDT"
+  },
+  {
+    "archive_sha256": "0727dd148c4d6cfcd901f42863a9a1dc20bd82a2468711f889a00c6b51c6cfb1",
+    "first_traded_minute_utc": "2018-04-17 04:02:00",
+    "index_sha256": "657675f523bf27fab29d0180d5a26b1d84a412b46c18496fd1e31d4203fa85a4",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FADAUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2018-04.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "ADAUSDT"
+  },
+  {
+    "archive_sha256": "c6681d4b9b7e1a6c7026743ffe9c1bcfecab2f0674aae69cd61c863761238b22",
+    "first_traded_minute_utc": "2018-05-31 09:30:00",
+    "index_sha256": "e9c3a3372ee97eeda8f6b57bead3981c804b2d67b73c0bff6f754180b09d4273",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FXLMUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/XLMUSDT/1m/XLMUSDT-1m-2018-05.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "XLMUSDT"
+  },
+  {
+    "archive_sha256": "b206a668fd5a89b26de7e7e67176e270d499547f8c2d7e3d517584f3244ba54a",
+    "first_traded_minute_utc": "2020-08-18 23:00:00",
+    "index_sha256": "c27289fc1d60ac39d99dcbbf91ce7b01f11eb1f631e566d93f45f84169007176",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FDOTUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/DOTUSDT/1m/DOTUSDT-1m-2020-08.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "DOTUSDT"
+  },
+  {
+    "archive_sha256": "f9604efc1e6499873fb5bba565b879141006d4dbdeb720706c2199f44d9e7632",
+    "first_traded_minute_utc": "2020-08-10 12:00:00",
+    "index_sha256": "c5755ff13a11d5e2cf86541da39282b48e42706655b5ec9f76987ed0b9c53f71",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FYFIUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/YFIUSDT/1m/YFIUSDT-1m-2020-08.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "YFIUSDT"
+  },
+  {
+    "archive_sha256": "2f8b7896e856d65f2034ab8cf232060d2ebe9e78ed43892445097013497bb06e",
+    "first_traded_minute_utc": "2018-05-28 05:00:00",
+    "index_sha256": "2d670452a9c1e35b2e97cebc7d8ce8857ca350764302fa27ec9a0d3362ddd172",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FEOSUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/EOSUSDT/1m/EOSUSDT-1m-2018-05.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "EOSUSDT"
+  },
+  {
+    "archive_sha256": "59f74a46791d8c3da676c243e06e1a758b045f7d707e521d3cfb5290c4650f5f",
+    "first_traded_minute_utc": "2019-02-19 11:04:00",
+    "index_sha256": "3631680d0ce0b3806fe07dd73f399bc9046ab057d2de6e2337f400a2b7acf67e",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FZILUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/ZILUSDT/1m/ZILUSDT-1m-2019-02.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "ZILUSDT"
+  },
+  {
+    "archive_sha256": "331d475d71d3b745952c5fec97ed4408b74c975d03f7f9abf40a1fbca9622f79",
+    "first_traded_minute_utc": "2020-09-01 11:00:00",
+    "index_sha256": "096f36185a23a1b5fff3e3b21fb8fa545f9119b514e99db72b5341ab0aef9c09",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FSUSHIUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2020-09.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "SUSHIUSDT"
+  },
+  {
+    "archive_sha256": "08d63b35d038ff2831f5687073684f26c7a35a8915667c7f600abbd94c8ea952",
+    "first_traded_minute_utc": "2018-06-11 11:30:00",
+    "index_sha256": "11ea154ec7afe059a9f5db3b3ddba24c1258b3a92e23890d689cd18de57a699c",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FTRXUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2018-06.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "TRXUSDT"
+  },
+  {
+    "archive_sha256": "d28bbd0e291a5ccadc23ff91776ef86530f796f13a52d42b3e8bbf38b973f384",
+    "first_traded_minute_utc": "2020-09-17 03:00:00",
+    "index_sha256": "c0e4a38bb62f6c1e4ab5bd1288663c1a0167a4dc0ebe63c97d5bfa4a6d53f5ed",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FUNIUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2020-09.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "UNIUSDT"
+  },
+  {
+    "archive_sha256": "2bd4208c58911fa11e4e9397debaa4c29f67291b86d7f5f952012a0401dce47e",
+    "first_traded_minute_utc": "2018-07-25 04:00:00",
+    "index_sha256": "49685e4e5920548739344560baa600907e0cff43c88dd15b958d9e7560754246",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FVETUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/VETUSDT/1m/VETUSDT-1m-2018-07.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "VETUSDT"
+  },
+  {
+    "archive_sha256": "40b96256f5de7beeebae90d814a10897d3af9725e8e06f6837b29adb3df1bf58",
+    "first_traded_minute_utc": "2019-04-10 04:00:00",
+    "index_sha256": "2a9916d1287a12aeb04bc69042202123bbb0d70561d6d91919de4e637306d5a5",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FTHETAUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/THETAUSDT/1m/THETAUSDT-1m-2019-04.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "THETAUSDT"
+  },
+  {
+    "archive_sha256": "39d952d2ce7550424fae401384acd743c527c44cf6f9663c02c4b1a51f332244",
+    "first_traded_minute_utc": "2020-10-15 03:00:00",
+    "index_sha256": "e8a06bd5e6bdac19dc3d41d81e3f117ea309b3ed0d8818193e7e68648159c446",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FAAVEUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/AAVEUSDT/1m/AAVEUSDT-1m-2020-10.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "AAVEUSDT"
+  },
+  {
+    "archive_sha256": "644fde7e90159e94bc41a3ded5824e678302810001f4c669ac9c5a606feb5d89",
+    "first_traded_minute_utc": "2020-10-15 17:00:00",
+    "index_sha256": "1e574a30d1695510cdfc4b0726e4c92d287f07132b18e8d0126692faa97cd6b1",
+    "index_url": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?prefix=data%2Fspot%2Fmonthly%2Fklines%2FFILUSDT%2F1m%2F&max-keys=2",
+    "source_url": "https://data.binance.vision/data/spot/monthly/klines/FILUSDT/1m/FILUSDT-1m-2020-10.zip",
+    "status": "OBSERVED_FIRST_MINUTE_NOT_ADMINISTRATIVE_ANNOUNCEMENT",
+    "symbol": "FILUSDT"
+  }
+]

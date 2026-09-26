@@ -1,0 +1,102 @@
+{
+  "champion": {
+    "ablation": null,
+    "asset_concentration": 1.0,
+    "asset_log_growth": {
+      "BTCUSDT": 0.039571022097899124
+    },
+    "attribution_valid": true,
+    "cagr": 0.04039258295795986,
+    "calmar": 0.3552462018138716,
+    "candidate": {
+      "confirm": 15,
+      "entry": "breakout",
+      "entry_bars": 48,
+      "exit_bars": 48,
+      "family": "C",
+      "slow": 100
+    },
+    "candidate_id": "C_44c92235e04f",
+    "costs": 0.05598237377660961,
+    "delayed_cagr": 0.04447834027367018,
+    "delayed_mdd": 0.1287836494761213,
+    "double_cost_cagr": -0.016305956206557694,
+    "double_cost_mdd": 0.14161565154628664,
+    "fee": 0.027991172899703032,
+    "fold_count": 1,
+    "fold_returns": {
+      "2025": 0.040364385122357765
+    },
+    "funding": 0.0,
+    "generation": 3,
+    "liquidations": 0,
+    "mdd": 0.11370306776460126,
+    "median_holding": 4.583333333333334,
+    "origin": 2026,
+    "profitable_folds": 1,
+    "scope": "development",
+    "sharpe": 0.32309361638166195,
+    "slippage": 0.027991200876906576,
+    "status": "VALID",
+    "total_log_growth": 0.039571022097896584,
+    "trade_concentration": 1.477507913824988,
+    "trades": 14,
+    "turnover": 27.991172899703034,
+    "without_best_day": -0.0005216427810746739,
+    "without_three_trades": -0.07402665916103705,
+    "worst_fold": 0.040364385122357765,
+    "year": 2025
+  },
+  "development_pareto": [
+    {
+      "ablation": null,
+      "asset_concentration": 1.0,
+      "asset_log_growth": {
+        "BTCUSDT": 0.039571022097899124
+      },
+      "attribution_valid": true,
+      "cagr": 0.04039258295795986,
+      "calmar": 0.3552462018138716,
+      "candidate": {
+        "confirm": 15,
+        "entry": "breakout",
+        "entry_bars": 48,
+        "exit_bars": 48,
+        "family": "C",
+        "slow": 100
+      },
+      "candidate_id": "C_44c92235e04f",
+      "costs": 0.05598237377660961,
+      "delayed_cagr": 0.04447834027367018,
+      "delayed_mdd": 0.1287836494761213,
+      "double_cost_cagr": -0.016305956206557694,
+      "double_cost_mdd": 0.14161565154628664,
+      "fee": 0.027991172899703032,
+      "fold_count": 1,
+      "fold_returns": {
+        "2025": 0.040364385122357765
+      },
+      "funding": 0.0,
+      "generation": 3,
+      "liquidations": 0,
+      "mdd": 0.11370306776460126,
+      "median_holding": 4.583333333333334,
+      "origin": 2026,
+      "profitable_folds": 1,
+      "scope": "development",
+      "sharpe": 0.32309361638166195,
+      "slippage": 0.027991200876906576,
+      "status": "VALID",
+      "total_log_growth": 0.039571022097896584,
+      "trade_concentration": 1.477507913824988,
+      "trades": 14,
+      "turnover": 27.991172899703034,
+      "without_best_day": -0.0005216427810746739,
+      "without_three_trades": -0.07402665916103705,
+      "worst_fold": 0.040364385122357765,
+      "year": 2025
+    }
+  ],
+  "frozen_before_oos": true,
+  "validation_year": 2025
+}

@@ -1,0 +1,635 @@
+{
+  "api_calls": 0,
+  "events": [
+    {
+      "accepted": [
+        "A_9a59aa82c767",
+        "A_897b84cd4018",
+        "A_3332f03f6da7",
+        "A_8c3f53739a33"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463126
+    },
+    {
+      "accepted": [
+        "A_3689f31e7697",
+        "A_caa74b7ab493",
+        "A_c0630710ce1d",
+        "A_66839718c176"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463127
+    },
+    {
+      "accepted": [
+        "A_2d90e7af8802",
+        "A_20f44ef40197",
+        "A_02d668f3f26f",
+        "A_077b5b9e7b67"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463128
+    },
+    {
+      "accepted": [
+        "B_6fdd4a4d5d58",
+        "B_ef04925a9e12",
+        "B_9b9f0e5be89a",
+        "B_aaae6972bf72"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463127
+    },
+    {
+      "accepted": [
+        "B_4917edcf7d1c",
+        "B_385a8b9988c5",
+        "B_8d87ebd3240a",
+        "B_11c03db494ac"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463128
+    },
+    {
+      "accepted": [
+        "B_e754a3fb52aa",
+        "B_c3c48f75f80b",
+        "B_d3938c068581",
+        "B_7a6225c2e515"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463129
+    },
+    {
+      "accepted": [
+        "C_76a90be84068",
+        "C_de11f65a3990",
+        "C_9687060255ed",
+        "C_d5294cd71137"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463128
+    },
+    {
+      "accepted": [
+        "C_630864623ed2",
+        "C_8fb14cbd98a1",
+        "C_ca70af357aff",
+        "C_56c5cc4c4187"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463129
+    },
+    {
+      "accepted": [
+        "C_3aa0dfaf822e",
+        "C_8e60cfe40ec1",
+        "C_0274311a3d6f",
+        "C_60203ba3f290"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463130
+    },
+    {
+      "accepted": [
+        "A_922773bcd35f",
+        "A_02d668f3f26f",
+        "A_948fdef0e339",
+        "A_8313a8b67bd3"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463226
+    },
+    {
+      "accepted": [
+        "A_232e9a399c22",
+        "A_d99f6bffa222",
+        "A_7c88e125f612",
+        "A_8231eddf79f3"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463227
+    },
+    {
+      "accepted": [
+        "A_0a4e0aeecf06",
+        "A_bdf07b95efe5",
+        "A_5ece5d1a92f2",
+        "A_1813397f3f96"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463228
+    },
+    {
+      "accepted": [
+        "B_9ade6cfff8e4",
+        "B_27f2a32778e7",
+        "B_a20fad3d0609",
+        "B_7a6225c2e515"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463227
+    },
+    {
+      "accepted": [
+        "B_6fdd4a4d5d58",
+        "B_d6438a0a8f9c",
+        "B_c3c48f75f80b",
+        "B_e1724c70474a"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463228
+    },
+    {
+      "accepted": [
+        "B_f54cb3630607",
+        "B_11c03db494ac",
+        "B_76025458c7e0",
+        "B_b960e8e12245"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463229
+    },
+    {
+      "accepted": [
+        "C_c1454e676a57",
+        "C_327c7f314c21",
+        "C_08494100f35c",
+        "C_376289d26266"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463228
+    },
+    {
+      "accepted": [
+        "C_8fb14cbd98a1",
+        "C_9b8185026daa",
+        "C_5e0a376e096c",
+        "C_9687060255ed"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463229
+    },
+    {
+      "accepted": [
+        "C_5f5659d4e785",
+        "C_c62aee2696e3",
+        "C_7126b7c0c6b7",
+        "C_ac3f214c281c"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463230
+    },
+    {
+      "accepted": [
+        "A_d91f02bbf053",
+        "A_ad12578e205a",
+        "A_e68f9e791cad",
+        "A_3e0910b08066"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463326
+    },
+    {
+      "accepted": [
+        "A_1787504e464d",
+        "A_a28f69ecd6c5",
+        "A_0a4e0aeecf06",
+        "A_f07a775bba77"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463327
+    },
+    {
+      "accepted": [
+        "A_60def8f43de4",
+        "A_ed07fbb41efd",
+        "A_29fb99f13ae0",
+        "A_9d82c20272b5"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463328
+    },
+    {
+      "accepted": [
+        "B_27f2a32778e7",
+        "B_c3c48f75f80b",
+        "B_ef04925a9e12",
+        "B_aaae6972bf72"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463327
+    },
+    {
+      "accepted": [
+        "B_9ade6cfff8e4",
+        "B_d6438a0a8f9c",
+        "B_8d87ebd3240a",
+        "B_a20fad3d0609"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463328
+    },
+    {
+      "accepted": [
+        "B_6fdd4a4d5d58",
+        "B_e1724c70474a",
+        "B_e754a3fb52aa",
+        "B_7a6225c2e515"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463329
+    },
+    {
+      "accepted": [
+        "C_9dc9d9c7c0fc",
+        "C_630864623ed2",
+        "C_2cd34fb929ee",
+        "C_dc85879b289b"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463328
+    },
+    {
+      "accepted": [
+        "C_8309bf87ff56",
+        "C_403ba761f057",
+        "C_56c5cc4c4187",
+        "C_8fb14cbd98a1"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463329
+    },
+    {
+      "accepted": [
+        "C_ca9bbb99c526",
+        "C_f4e03a53f92d",
+        "C_0d206da56939",
+        "C_7b497253c7c5"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463330
+    },
+    {
+      "accepted": [
+        "A_0fdd66c479bb",
+        "A_e68f9e791cad",
+        "A_3e0910b08066",
+        "A_0f50befd7249"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463426
+    },
+    {
+      "accepted": [
+        "A_8231eddf79f3",
+        "A_4d234c4f7a87",
+        "A_b62337fcf507",
+        "A_361cb805de85"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463427
+    },
+    {
+      "accepted": [
+        "A_a1c344c25d89",
+        "A_d29be7bb4403",
+        "A_30eab4425ac4",
+        "A_673062b3d238"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463428
+    },
+    {
+      "accepted": [
+        "B_ef04925a9e12",
+        "B_8d87ebd3240a",
+        "B_9ade6cfff8e4",
+        "B_a20fad3d0609"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463427
+    },
+    {
+      "accepted": [
+        "B_9b9f0e5be89a",
+        "B_d3938c068581",
+        "B_7a6225c2e515",
+        "B_aaae6972bf72"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463428
+    },
+    {
+      "accepted": [
+        "B_e754a3fb52aa",
+        "B_6fdd4a4d5d58",
+        "B_c3c48f75f80b",
+        "B_27f2a32778e7"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463429
+    },
+    {
+      "accepted": [
+        "C_ac3f214c281c",
+        "C_8beeb09f570a",
+        "C_de11f65a3990",
+        "C_b24356ab9c8b"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463428
+    },
+    {
+      "accepted": [
+        "C_9b8185026daa",
+        "C_7061047851ec",
+        "C_16fd2862febe",
+        "C_1818fbc5bc25"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463429
+    },
+    {
+      "accepted": [
+        "C_6f4738614dba",
+        "C_bb7d9314ee92",
+        "C_c5ba03ccf405",
+        "C_31c956d909ba"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463430
+    },
+    {
+      "accepted": [
+        "A_f07a775bba77",
+        "A_ed07fbb41efd",
+        "A_89e142ba21b6",
+        "A_30c6a79913be"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463526
+    },
+    {
+      "accepted": [
+        "A_20f44ef40197",
+        "A_d43718c17cee",
+        "A_7c88e125f612",
+        "A_7cf17a12d34f"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463527
+    },
+    {
+      "accepted": [
+        "A_006f3398d20b",
+        "A_673062b3d238",
+        "A_46047cf72dce",
+        "A_fa4669ef4a97"
+      ],
+      "api_called": false,
+      "family": "A",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463528
+    },
+    {
+      "accepted": [
+        "B_a277d228d6dc",
+        "B_aaae6972bf72",
+        "B_d3938c068581",
+        "B_27f2a32778e7"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463527
+    },
+    {
+      "accepted": [
+        "B_e1724c70474a",
+        "B_ef04925a9e12",
+        "B_e754a3fb52aa",
+        "B_6fdd4a4d5d58"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463528
+    },
+    {
+      "accepted": [
+        "B_7a6225c2e515",
+        "B_11c03db494ac",
+        "B_9ade6cfff8e4",
+        "B_76025458c7e0"
+      ],
+      "api_called": false,
+      "family": "B",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463529
+    },
+    {
+      "accepted": [
+        "C_7d24393f4564",
+        "C_96c81515c8ea",
+        "C_bdb7f8770201",
+        "C_5ccdd2f02890"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463528
+    },
+    {
+      "accepted": [
+        "C_d56a2349d7f6",
+        "C_b4409ad33396",
+        "C_68d37c86b9b9",
+        "C_aa2f7cf77390"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463529
+    },
+    {
+      "accepted": [
+        "C_13e3c1869abc",
+        "C_ca70af357aff",
+        "C_44c92235e04f",
+        "C_5981f657ece4"
+      ],
+      "api_called": false,
+      "family": "C",
+      "input_scope": "development",
+      "mode": "deterministic",
+      "reason": "No API key available",
+      "seed": 20463530
+    }
+  ]
+}

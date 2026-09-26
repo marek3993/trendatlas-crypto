@@ -1,0 +1,1790 @@
+{
+  "all_observed": [
+    {
+      "quote_volume": 719511516.54155,
+      "rows": 7,
+      "symbol": "1INCHUSDT"
+    },
+    {
+      "quote_volume": 745163810.372606,
+      "rows": 31,
+      "symbol": "AAVEUSDT"
+    },
+    {
+      "quote_volume": 2580882228.387686,
+      "rows": 31,
+      "symbol": "ADAUSDT"
+    },
+    {
+      "quote_volume": 39417741.614314996,
+      "rows": 31,
+      "symbol": "AKROUSDT"
+    },
+    {
+      "quote_volume": 291117987.054458,
+      "rows": 31,
+      "symbol": "ALGOUSDT"
+    },
+    {
+      "quote_volume": 161967527.15858102,
+      "rows": 31,
+      "symbol": "ALPHAUSDT"
+    },
+    {
+      "quote_volume": 16794652.675995,
+      "rows": 31,
+      "symbol": "AIONUSDT"
+    },
+    {
+      "quote_volume": 109000962.713029,
+      "rows": 31,
+      "symbol": "ANKRUSDT"
+    },
+    {
+      "quote_volume": 21498025.925496,
+      "rows": 31,
+      "symbol": "ANTUSDT"
+    },
+    {
+      "quote_volume": 82100185.891353,
+      "rows": 31,
+      "symbol": "ARPAUSDT"
+    },
+    {
+      "quote_volume": 8395170.489803,
+      "rows": 31,
+      "symbol": "ARDRUSDT"
+    },
+    {
+      "quote_volume": 13707633.509679,
+      "rows": 2,
+      "symbol": "ASRUSDT"
+    },
+    {
+      "quote_volume": 21249622.955155,
+      "rows": 2,
+      "symbol": "ATMUSDT"
+    },
+    {
+      "quote_volume": 337746787.093892,
+      "rows": 31,
+      "symbol": "ATOMUSDT"
+    },
+    {
+      "quote_volume": 67542912.045131,
+      "rows": 31,
+      "symbol": "AUDIOUSDT"
+    },
+    {
+      "quote_volume": 71596127.39519101,
+      "rows": 31,
+      "symbol": "AVAXUSDT"
+    },
+    {
+      "quote_volume": 145546867.443642,
+      "rows": 31,
+      "symbol": "AXSUSDT"
+    },
+    {
+      "quote_volume": 5590164.889962002,
+      "rows": 31,
+      "symbol": "AVAUSDT"
+    },
+    {
+      "quote_volume": 290666826.2566731,
+      "rows": 31,
+      "symbol": "BANDUSDT"
+    },
+    {
+      "quote_volume": 54776658.767492995,
+      "rows": 31,
+      "symbol": "BALUSDT"
+    },
+    {
+      "quote_volume": 149345804.588642,
+      "rows": 31,
+      "symbol": "BATUSDT"
+    },
+    {
+      "quote_volume": 118501997.131503,
+      "rows": 31,
+      "symbol": "BELUSDT"
+    },
+    {
+      "quote_volume": 3013388964.0919003,
+      "rows": 31,
+      "symbol": "BCHUSDT"
+    },
+    {
+      "quote_volume": 26582989.907188,
+      "rows": 31,
+      "symbol": "BEAMUSDT"
+    },
+    {
+      "quote_volume": 27085814.283057,
+      "rows": 31,
+      "symbol": "BLZUSDT"
+    },
+    {
+      "quote_volume": 2652009559.3901796,
+      "rows": 31,
+      "symbol": "BNBUSDT"
+    },
+    {
+      "quote_volume": 152743057.553312,
+      "rows": 31,
+      "symbol": "BNTUSDT"
+    },
+    {
+      "quote_volume": 55748654003.597725,
+      "rows": 31,
+      "symbol": "BTCUSDT"
+    },
+    {
+      "quote_volume": 17105865.547184996,
+      "rows": 31,
+      "symbol": "BTSUSDT"
+    },
+    {
+      "quote_volume": 120106575.2428544,
+      "rows": 31,
+      "symbol": "BTTUSDT"
+    },
+    {
+      "quote_volume": 82100134.96167602,
+      "rows": 31,
+      "symbol": "BZRXUSDT"
+    },
+    {
+      "quote_volume": 16218245.236739999,
+      "rows": 31,
+      "symbol": "CELRUSDT"
+    },
+    {
+      "quote_volume": 18434045.811369002,
+      "rows": 31,
+      "symbol": "CHRUSDT"
+    },
+    {
+      "quote_volume": 325773394.208934,
+      "rows": 31,
+      "symbol": "CHZUSDT"
+    },
+    {
+      "quote_volume": 7980075.045312,
+      "rows": 31,
+      "symbol": "COCOSUSDT"
+    },
+    {
+      "quote_volume": 299394843.4031568,
+      "rows": 31,
+      "symbol": "COMPUSDT"
+    },
+    {
+      "quote_volume": 11286555.327196,
+      "rows": 31,
+      "symbol": "COSUSDT"
+    },
+    {
+      "quote_volume": 118520267.312458,
+      "rows": 31,
+      "symbol": "COTIUSDT"
+    },
+    {
+      "quote_volume": 385749140.729922,
+      "rows": 31,
+      "symbol": "CRVUSDT"
+    },
+    {
+      "quote_volume": 138244468.563575,
+      "rows": 31,
+      "symbol": "CTKUSDT"
+    },
+    {
+      "quote_volume": 28952234.843315,
+      "rows": 31,
+      "symbol": "CTSIUSDT"
+    },
+    {
+      "quote_volume": 5983314.016782999,
+      "rows": 31,
+      "symbol": "CTXCUSDT"
+    },
+    {
+      "quote_volume": 235694007.58798298,
+      "rows": 31,
+      "symbol": "CVCUSDT"
+    },
+    {
+      "quote_volume": 467033317.1382244,
+      "rows": 31,
+      "symbol": "DASHUSDT"
+    },
+    {
+      "quote_volume": 29867445.136505,
+      "rows": 31,
+      "symbol": "DATAUSDT"
+    },
+    {
+      "quote_volume": 38717293.023076996,
+      "rows": 31,
+      "symbol": "DCRUSDT"
+    },
+    {
+      "quote_volume": 6982802.0031832,
+      "rows": 31,
+      "symbol": "DENTUSDT"
+    },
+    {
+      "quote_volume": 53006191.206530996,
+      "rows": 31,
+      "symbol": "DGBUSDT"
+    },
+    {
+      "quote_volume": 57227408.13726,
+      "rows": 31,
+      "symbol": "DNTUSDT"
+    },
+    {
+      "quote_volume": 74293596.113658,
+      "rows": 31,
+      "symbol": "DIAUSDT"
+    },
+    {
+      "quote_volume": 32723705.994676996,
+      "rows": 31,
+      "symbol": "DOCKUSDT"
+    },
+    {
+      "quote_volume": 218074406.57204622,
+      "rows": 31,
+      "symbol": "DOGEUSDT"
+    },
+    {
+      "quote_volume": 1834212752.1293612,
+      "rows": 31,
+      "symbol": "DOTUSDT"
+    },
+    {
+      "quote_volume": 15667830.779629001,
+      "rows": 31,
+      "symbol": "DREPUSDT"
+    },
+    {
+      "quote_volume": 47680870.11950399,
+      "rows": 31,
+      "symbol": "DUSKUSDT"
+    },
+    {
+      "quote_volume": 687523570.3256352,
+      "rows": 31,
+      "symbol": "EGLDUSDT"
+    },
+    {
+      "quote_volume": 64861303.49300699,
+      "rows": 31,
+      "symbol": "ENJUSDT"
+    },
+    {
+      "quote_volume": 587932912.1689,
+      "rows": 31,
+      "symbol": "ETCUSDT"
+    },
+    {
+      "quote_volume": 1608872990.297475,
+      "rows": 31,
+      "symbol": "EOSUSDT"
+    },
+    {
+      "quote_volume": 43346657.294890985,
+      "rows": 31,
+      "symbol": "FETUSDT"
+    },
+    {
+      "quote_volume": 687783344.8138801,
+      "rows": 31,
+      "symbol": "FILUSDT"
+    },
+    {
+      "quote_volume": 19119402122.69965,
+      "rows": 31,
+      "symbol": "ETHUSDT"
+    },
+    {
+      "quote_volume": 36693059.99368,
+      "rows": 31,
+      "symbol": "FIOUSDT"
+    },
+    {
+      "quote_volume": 69942650.856809,
+      "rows": 31,
+      "symbol": "FLMUSDT"
+    },
+    {
+      "quote_volume": 62127777.080027,
+      "rows": 31,
+      "symbol": "FTMUSDT"
+    },
+    {
+      "quote_volume": 33769271.752512,
+      "rows": 31,
+      "symbol": "FTTUSDT"
+    },
+    {
+      "quote_volume": 10272123.851435998,
+      "rows": 31,
+      "symbol": "FUNUSDT"
+    },
+    {
+      "quote_volume": 4785323630.282074,
+      "rows": 15,
+      "symbol": "GRTUSDT"
+    },
+    {
+      "quote_volume": 65778040.724801004,
+      "rows": 31,
+      "symbol": "GTOUSDT"
+    },
+    {
+      "quote_volume": 4834198.8629250005,
+      "rows": 31,
+      "symbol": "GXSUSDT"
+    },
+    {
+      "quote_volume": 220055952.964955,
+      "rows": 31,
+      "symbol": "HARDUSDT"
+    },
+    {
+      "quote_volume": 43634682.353961006,
+      "rows": 31,
+      "symbol": "HBARUSDT"
+    },
+    {
+      "quote_volume": 22695121.523536995,
+      "rows": 31,
+      "symbol": "HNTUSDT"
+    },
+    {
+      "quote_volume": 28454552.687182095,
+      "rows": 31,
+      "symbol": "HOTUSDT"
+    },
+    {
+      "quote_volume": 7589652.627447,
+      "rows": 31,
+      "symbol": "HIVEUSDT"
+    },
+    {
+      "quote_volume": 108800062.832512,
+      "rows": 31,
+      "symbol": "ICXUSDT"
+    },
+    {
+      "quote_volume": 313839489.08091897,
+      "rows": 31,
+      "symbol": "INJUSDT"
+    },
+    {
+      "quote_volume": 143965544.59159902,
+      "rows": 31,
+      "symbol": "IOSTUSDT"
+    },
+    {
+      "quote_volume": 11840174.883709999,
+      "rows": 31,
+      "symbol": "IOTXUSDT"
+    },
+    {
+      "quote_volume": 141696445.09362897,
+      "rows": 31,
+      "symbol": "IOTAUSDT"
+    },
+    {
+      "quote_volume": 17947752.262591004,
+      "rows": 31,
+      "symbol": "IRISUSDT"
+    },
+    {
+      "quote_volume": 68266592.163461,
+      "rows": 31,
+      "symbol": "JSTUSDT"
+    },
+    {
+      "quote_volume": 150068793.193005,
+      "rows": 11,
+      "symbol": "JUVUSDT"
+    },
+    {
+      "quote_volume": 76244592.514283,
+      "rows": 31,
+      "symbol": "KAVAUSDT"
+    },
+    {
+      "quote_volume": 13077272.159538003,
+      "rows": 31,
+      "symbol": "KEYUSDT"
+    },
+    {
+      "quote_volume": 55040827.28628899,
+      "rows": 31,
+      "symbol": "KNCUSDT"
+    },
+    {
+      "quote_volume": 7705908.338150001,
+      "rows": 31,
+      "symbol": "KMDUSDT"
+    },
+    {
+      "quote_volume": 193993061.89172798,
+      "rows": 31,
+      "symbol": "KSMUSDT"
+    },
+    {
+      "quote_volume": 2793631117.263482,
+      "rows": 31,
+      "symbol": "LINKUSDT"
+    },
+    {
+      "quote_volume": 62988205.22198201,
+      "rows": 31,
+      "symbol": "LRCUSDT"
+    },
+    {
+      "quote_volume": 11920224.840715999,
+      "rows": 31,
+      "symbol": "LSKUSDT"
+    },
+    {
+      "quote_volume": 6957456546.267643,
+      "rows": 31,
+      "symbol": "LTCUSDT"
+    },
+    {
+      "quote_volume": 123365833.119719,
+      "rows": 31,
+      "symbol": "LUNAUSDT"
+    },
+    {
+      "quote_volume": 44531125.90508301,
+      "rows": 31,
+      "symbol": "MANAUSDT"
+    },
+    {
+      "quote_volume": 95171834.645171,
+      "rows": 31,
+      "symbol": "MATICUSDT"
+    },
+    {
+      "quote_volume": 46063869.452888004,
+      "rows": 31,
+      "symbol": "LTOUSDT"
+    },
+    {
+      "quote_volume": 25219234.378551,
+      "rows": 31,
+      "symbol": "MBLUSDT"
+    },
+    {
+      "quote_volume": 11828554.458022,
+      "rows": 31,
+      "symbol": "MDTUSDT"
+    },
+    {
+      "quote_volume": 23482669.877451003,
+      "rows": 31,
+      "symbol": "MFTUSDT"
+    },
+    {
+      "quote_volume": 88424152.254646,
+      "rows": 31,
+      "symbol": "MITHUSDT"
+    },
+    {
+      "quote_volume": 64338133.19902739,
+      "rows": 31,
+      "symbol": "MKRUSDT"
+    },
+    {
+      "quote_volume": 25762250.055880003,
+      "rows": 31,
+      "symbol": "MTLUSDT"
+    },
+    {
+      "quote_volume": 23345098.914369002,
+      "rows": 31,
+      "symbol": "NANOUSDT"
+    },
+    {
+      "quote_volume": 186358881.873124,
+      "rows": 31,
+      "symbol": "NBSUSDT"
+    },
+    {
+      "quote_volume": 271700897.125167,
+      "rows": 31,
+      "symbol": "NEARUSDT"
+    },
+    {
+      "quote_volume": 369320322.471813,
+      "rows": 31,
+      "symbol": "NEOUSDT"
+    },
+    {
+      "quote_volume": 6828547.873972001,
+      "rows": 31,
+      "symbol": "NKNUSDT"
+    },
+    {
+      "quote_volume": 28193379.229695,
+      "rows": 31,
+      "symbol": "NMRUSDT"
+    },
+    {
+      "quote_volume": 7772505.7440915005,
+      "rows": 31,
+      "symbol": "NPXSUSDT"
+    },
+    {
+      "quote_volume": 14021030.764579995,
+      "rows": 31,
+      "symbol": "NULSUSDT"
+    },
+    {
+      "quote_volume": 154728193.625651,
+      "rows": 31,
+      "symbol": "OCEANUSDT"
+    },
+    {
+      "quote_volume": 25040301.608206995,
+      "rows": 31,
+      "symbol": "OGNUSDT"
+    },
+    {
+      "quote_volume": 19477526.571144,
+      "rows": 2,
+      "symbol": "OGUSDT"
+    },
+    {
+      "quote_volume": 318825979.591136,
+      "rows": 31,
+      "symbol": "OMGUSDT"
+    },
+    {
+      "quote_volume": 44000704.129749,
+      "rows": 31,
+      "symbol": "ONEUSDT"
+    },
+    {
+      "quote_volume": 27574212.017033998,
+      "rows": 31,
+      "symbol": "ONGUSDT"
+    },
+    {
+      "quote_volume": 226840037.457345,
+      "rows": 31,
+      "symbol": "ONTUSDT"
+    },
+    {
+      "quote_volume": 52992960.75947301,
+      "rows": 31,
+      "symbol": "ORNUSDT"
+    },
+    {
+      "quote_volume": 79047721.989966,
+      "rows": 31,
+      "symbol": "OXTUSDT"
+    },
+    {
+      "quote_volume": 35925875.643693,
+      "rows": 31,
+      "symbol": "PERLUSDT"
+    },
+    {
+      "quote_volume": 21410289.91738169,
+      "rows": 31,
+      "symbol": "PAXGUSDT"
+    },
+    {
+      "quote_volume": 22888781.586548,
+      "rows": 31,
+      "symbol": "PNTUSDT"
+    },
+    {
+      "quote_volume": 252605212.31818897,
+      "rows": 11,
+      "symbol": "PSGUSDT"
+    },
+    {
+      "quote_volume": 148914547.85705397,
+      "rows": 31,
+      "symbol": "QTUMUSDT"
+    },
+    {
+      "quote_volume": 285370265.776607,
+      "rows": 3,
+      "symbol": "REEFUSDT"
+    },
+    {
+      "quote_volume": 56935190.28945201,
+      "rows": 31,
+      "symbol": "REPUSDT"
+    },
+    {
+      "quote_volume": 31069062.952286,
+      "rows": 31,
+      "symbol": "RLCUSDT"
+    },
+    {
+      "quote_volume": 168749463.49781802,
+      "rows": 31,
+      "symbol": "RENUSDT"
+    },
+    {
+      "quote_volume": 284748122.19035304,
+      "rows": 31,
+      "symbol": "ROSEUSDT"
+    },
+    {
+      "quote_volume": 164785559.949172,
+      "rows": 31,
+      "symbol": "RUNEUSDT"
+    },
+    {
+      "quote_volume": 181675106.62882003,
+      "rows": 31,
+      "symbol": "RSRUSDT"
+    },
+    {
+      "quote_volume": 27735851.918794997,
+      "rows": 31,
+      "symbol": "RVNUSDT"
+    },
+    {
+      "quote_volume": 64649389.173404,
+      "rows": 31,
+      "symbol": "SANDUSDT"
+    },
+    {
+      "quote_volume": 19775622.152729,
+      "rows": 31,
+      "symbol": "SCUSDT"
+    },
+    {
+      "quote_volume": 351229283.17793995,
+      "rows": 31,
+      "symbol": "SKLUSDT"
+    },
+    {
+      "quote_volume": 392554428.74779207,
+      "rows": 31,
+      "symbol": "SNXUSDT"
+    },
+    {
+      "quote_volume": 101635596.82651898,
+      "rows": 31,
+      "symbol": "SOLUSDT"
+    },
+    {
+      "quote_volume": 117938251.91505502,
+      "rows": 31,
+      "symbol": "SRMUSDT"
+    },
+    {
+      "quote_volume": 31571852.977392998,
+      "rows": 31,
+      "symbol": "STMXUSDT"
+    },
+    {
+      "quote_volume": 32889564.615399,
+      "rows": 31,
+      "symbol": "STORJUSDT"
+    },
+    {
+      "quote_volume": 8601910.352499,
+      "rows": 31,
+      "symbol": "STPTUSDT"
+    },
+    {
+      "quote_volume": 19423346.974117998,
+      "rows": 31,
+      "symbol": "SUNUSDT"
+    },
+    {
+      "quote_volume": 83630768.722616,
+      "rows": 31,
+      "symbol": "STXUSDT"
+    },
+    {
+      "quote_volume": 14644945.509691,
+      "rows": 31,
+      "symbol": "STRAXUSDT"
+    },
+    {
+      "quote_volume": 1181076731.8139653,
+      "rows": 31,
+      "symbol": "SUSHIUSDT"
+    },
+    {
+      "quote_volume": 35106819.30091899,
+      "rows": 31,
+      "symbol": "TCTUSDT"
+    },
+    {
+      "quote_volume": 287048442.37172884,
+      "rows": 31,
+      "symbol": "TFUELUSDT"
+    },
+    {
+      "quote_volume": 419890839.34781003,
+      "rows": 31,
+      "symbol": "SXPUSDT"
+    },
+    {
+      "quote_volume": 758757707.693622,
+      "rows": 31,
+      "symbol": "THETAUSDT"
+    },
+    {
+      "quote_volume": 70121380.23079298,
+      "rows": 31,
+      "symbol": "TOMOUSDT"
+    },
+    {
+      "quote_volume": 106089467.97240397,
+      "rows": 31,
+      "symbol": "TRBUSDT"
+    },
+    {
+      "quote_volume": 9406598.227427997,
+      "rows": 31,
+      "symbol": "TROYUSDT"
+    },
+    {
+      "quote_volume": 1087515393.019593,
+      "rows": 31,
+      "symbol": "TRXUSDT"
+    },
+    {
+      "quote_volume": 70510866.660064,
+      "rows": 31,
+      "symbol": "UMAUSDT"
+    },
+    {
+      "quote_volume": 489839919.17762196,
+      "rows": 31,
+      "symbol": "UNFIUSDT"
+    },
+    {
+      "quote_volume": 890050207.181244,
+      "rows": 31,
+      "symbol": "UNIUSDT"
+    },
+    {
+      "quote_volume": 26918712.982129995,
+      "rows": 31,
+      "symbol": "UTKUSDT"
+    },
+    {
+      "quote_volume": 850395392.8087221,
+      "rows": 31,
+      "symbol": "VETUSDT"
+    },
+    {
+      "quote_volume": 7853729.117045001,
+      "rows": 31,
+      "symbol": "VITEUSDT"
+    },
+    {
+      "quote_volume": 11713079.942932002,
+      "rows": 31,
+      "symbol": "VTHOUSDT"
+    },
+    {
+      "quote_volume": 26125031.525592998,
+      "rows": 31,
+      "symbol": "WANUSDT"
+    },
+    {
+      "quote_volume": 413790594.39332104,
+      "rows": 31,
+      "symbol": "WAVESUSDT"
+    },
+    {
+      "quote_volume": 142971885.337158,
+      "rows": 31,
+      "symbol": "WINGUSDT"
+    },
+    {
+      "quote_volume": 23477131.247728642,
+      "rows": 31,
+      "symbol": "WINUSDT"
+    },
+    {
+      "quote_volume": 42467249.29118801,
+      "rows": 31,
+      "symbol": "WNXMUSDT"
+    },
+    {
+      "quote_volume": 11522158.394434003,
+      "rows": 31,
+      "symbol": "WRXUSDT"
+    },
+    {
+      "quote_volume": 9964401.561986001,
+      "rows": 31,
+      "symbol": "WTCUSDT"
+    },
+    {
+      "quote_volume": 1846158265.8724208,
+      "rows": 31,
+      "symbol": "XLMUSDT"
+    },
+    {
+      "quote_volume": 287682910.75687903,
+      "rows": 31,
+      "symbol": "XEMUSDT"
+    },
+    {
+      "quote_volume": 16214213587.29052,
+      "rows": 31,
+      "symbol": "XRPUSDT"
+    },
+    {
+      "quote_volume": 309194439.69793695,
+      "rows": 31,
+      "symbol": "XTZUSDT"
+    },
+    {
+      "quote_volume": 97148118.34132999,
+      "rows": 31,
+      "symbol": "XVSUSDT"
+    },
+    {
+      "quote_volume": 359576710.62523896,
+      "rows": 31,
+      "symbol": "YFIIUSDT"
+    },
+    {
+      "quote_volume": 1727263586.53282,
+      "rows": 31,
+      "symbol": "YFIUSDT"
+    },
+    {
+      "quote_volume": 517449791.1800108,
+      "rows": 31,
+      "symbol": "XMRUSDT"
+    },
+    {
+      "quote_volume": 478878212.8491563,
+      "rows": 31,
+      "symbol": "ZECUSDT"
+    },
+    {
+      "quote_volume": 100268136.21210101,
+      "rows": 31,
+      "symbol": "ZENUSDT"
+    },
+    {
+      "quote_volume": 16125760.900960002,
+      "rows": 31,
+      "symbol": "XZCUSDT"
+    },
+    {
+      "quote_volume": 1266867126.2175686,
+      "rows": 31,
+      "symbol": "ZILUSDT"
+    },
+    {
+      "quote_volume": 75519688.64301299,
+      "rows": 31,
+      "symbol": "ZRXUSDT"
+    }
+  ],
+  "asof": "2020-12-31",
+  "ranking": [
+    {
+      "quote_volume": 55748654003.597725,
+      "rows": 31,
+      "symbol": "BTCUSDT"
+    },
+    {
+      "quote_volume": 19119402122.69965,
+      "rows": 31,
+      "symbol": "ETHUSDT"
+    },
+    {
+      "quote_volume": 16214213587.29052,
+      "rows": 31,
+      "symbol": "XRPUSDT"
+    },
+    {
+      "quote_volume": 6957456546.267643,
+      "rows": 31,
+      "symbol": "LTCUSDT"
+    },
+    {
+      "quote_volume": 3013388964.0919003,
+      "rows": 31,
+      "symbol": "BCHUSDT"
+    },
+    {
+      "quote_volume": 2793631117.263482,
+      "rows": 31,
+      "symbol": "LINKUSDT"
+    },
+    {
+      "quote_volume": 2652009559.3901796,
+      "rows": 31,
+      "symbol": "BNBUSDT"
+    },
+    {
+      "quote_volume": 2580882228.387686,
+      "rows": 31,
+      "symbol": "ADAUSDT"
+    },
+    {
+      "quote_volume": 1846158265.8724208,
+      "rows": 31,
+      "symbol": "XLMUSDT"
+    },
+    {
+      "quote_volume": 1834212752.1293612,
+      "rows": 31,
+      "symbol": "DOTUSDT"
+    },
+    {
+      "quote_volume": 1727263586.53282,
+      "rows": 31,
+      "symbol": "YFIUSDT"
+    },
+    {
+      "quote_volume": 1608872990.297475,
+      "rows": 31,
+      "symbol": "EOSUSDT"
+    },
+    {
+      "quote_volume": 1266867126.2175686,
+      "rows": 31,
+      "symbol": "ZILUSDT"
+    },
+    {
+      "quote_volume": 1181076731.8139653,
+      "rows": 31,
+      "symbol": "SUSHIUSDT"
+    },
+    {
+      "quote_volume": 1087515393.019593,
+      "rows": 31,
+      "symbol": "TRXUSDT"
+    },
+    {
+      "quote_volume": 890050207.181244,
+      "rows": 31,
+      "symbol": "UNIUSDT"
+    },
+    {
+      "quote_volume": 850395392.8087221,
+      "rows": 31,
+      "symbol": "VETUSDT"
+    },
+    {
+      "quote_volume": 758757707.693622,
+      "rows": 31,
+      "symbol": "THETAUSDT"
+    },
+    {
+      "quote_volume": 745163810.372606,
+      "rows": 31,
+      "symbol": "AAVEUSDT"
+    },
+    {
+      "quote_volume": 687783344.8138801,
+      "rows": 31,
+      "symbol": "FILUSDT"
+    },
+    {
+      "quote_volume": 687523570.3256352,
+      "rows": 31,
+      "symbol": "EGLDUSDT"
+    },
+    {
+      "quote_volume": 587932912.1689,
+      "rows": 31,
+      "symbol": "ETCUSDT"
+    },
+    {
+      "quote_volume": 517449791.1800108,
+      "rows": 31,
+      "symbol": "XMRUSDT"
+    },
+    {
+      "quote_volume": 489839919.17762196,
+      "rows": 31,
+      "symbol": "UNFIUSDT"
+    },
+    {
+      "quote_volume": 478878212.8491563,
+      "rows": 31,
+      "symbol": "ZECUSDT"
+    },
+    {
+      "quote_volume": 467033317.1382244,
+      "rows": 31,
+      "symbol": "DASHUSDT"
+    },
+    {
+      "quote_volume": 419890839.34781003,
+      "rows": 31,
+      "symbol": "SXPUSDT"
+    },
+    {
+      "quote_volume": 413790594.39332104,
+      "rows": 31,
+      "symbol": "WAVESUSDT"
+    },
+    {
+      "quote_volume": 392554428.74779207,
+      "rows": 31,
+      "symbol": "SNXUSDT"
+    },
+    {
+      "quote_volume": 385749140.729922,
+      "rows": 31,
+      "symbol": "CRVUSDT"
+    },
+    {
+      "quote_volume": 369320322.471813,
+      "rows": 31,
+      "symbol": "NEOUSDT"
+    },
+    {
+      "quote_volume": 359576710.62523896,
+      "rows": 31,
+      "symbol": "YFIIUSDT"
+    },
+    {
+      "quote_volume": 351229283.17793995,
+      "rows": 31,
+      "symbol": "SKLUSDT"
+    },
+    {
+      "quote_volume": 337746787.093892,
+      "rows": 31,
+      "symbol": "ATOMUSDT"
+    },
+    {
+      "quote_volume": 325773394.208934,
+      "rows": 31,
+      "symbol": "CHZUSDT"
+    },
+    {
+      "quote_volume": 318825979.591136,
+      "rows": 31,
+      "symbol": "OMGUSDT"
+    },
+    {
+      "quote_volume": 313839489.08091897,
+      "rows": 31,
+      "symbol": "INJUSDT"
+    },
+    {
+      "quote_volume": 309194439.69793695,
+      "rows": 31,
+      "symbol": "XTZUSDT"
+    },
+    {
+      "quote_volume": 299394843.4031568,
+      "rows": 31,
+      "symbol": "COMPUSDT"
+    },
+    {
+      "quote_volume": 291117987.054458,
+      "rows": 31,
+      "symbol": "ALGOUSDT"
+    },
+    {
+      "quote_volume": 290666826.2566731,
+      "rows": 31,
+      "symbol": "BANDUSDT"
+    },
+    {
+      "quote_volume": 287682910.75687903,
+      "rows": 31,
+      "symbol": "XEMUSDT"
+    },
+    {
+      "quote_volume": 287048442.37172884,
+      "rows": 31,
+      "symbol": "TFUELUSDT"
+    },
+    {
+      "quote_volume": 284748122.19035304,
+      "rows": 31,
+      "symbol": "ROSEUSDT"
+    },
+    {
+      "quote_volume": 271700897.125167,
+      "rows": 31,
+      "symbol": "NEARUSDT"
+    },
+    {
+      "quote_volume": 235694007.58798298,
+      "rows": 31,
+      "symbol": "CVCUSDT"
+    },
+    {
+      "quote_volume": 226840037.457345,
+      "rows": 31,
+      "symbol": "ONTUSDT"
+    },
+    {
+      "quote_volume": 220055952.964955,
+      "rows": 31,
+      "symbol": "HARDUSDT"
+    },
+    {
+      "quote_volume": 218074406.57204622,
+      "rows": 31,
+      "symbol": "DOGEUSDT"
+    },
+    {
+      "quote_volume": 193993061.89172798,
+      "rows": 31,
+      "symbol": "KSMUSDT"
+    },
+    {
+      "quote_volume": 186358881.873124,
+      "rows": 31,
+      "symbol": "NBSUSDT"
+    },
+    {
+      "quote_volume": 181675106.62882003,
+      "rows": 31,
+      "symbol": "RSRUSDT"
+    },
+    {
+      "quote_volume": 168749463.49781802,
+      "rows": 31,
+      "symbol": "RENUSDT"
+    },
+    {
+      "quote_volume": 164785559.949172,
+      "rows": 31,
+      "symbol": "RUNEUSDT"
+    },
+    {
+      "quote_volume": 161967527.15858102,
+      "rows": 31,
+      "symbol": "ALPHAUSDT"
+    },
+    {
+      "quote_volume": 154728193.625651,
+      "rows": 31,
+      "symbol": "OCEANUSDT"
+    },
+    {
+      "quote_volume": 152743057.553312,
+      "rows": 31,
+      "symbol": "BNTUSDT"
+    },
+    {
+      "quote_volume": 149345804.588642,
+      "rows": 31,
+      "symbol": "BATUSDT"
+    },
+    {
+      "quote_volume": 148914547.85705397,
+      "rows": 31,
+      "symbol": "QTUMUSDT"
+    },
+    {
+      "quote_volume": 145546867.443642,
+      "rows": 31,
+      "symbol": "AXSUSDT"
+    },
+    {
+      "quote_volume": 143965544.59159902,
+      "rows": 31,
+      "symbol": "IOSTUSDT"
+    },
+    {
+      "quote_volume": 142971885.337158,
+      "rows": 31,
+      "symbol": "WINGUSDT"
+    },
+    {
+      "quote_volume": 141696445.09362897,
+      "rows": 31,
+      "symbol": "IOTAUSDT"
+    },
+    {
+      "quote_volume": 138244468.563575,
+      "rows": 31,
+      "symbol": "CTKUSDT"
+    },
+    {
+      "quote_volume": 123365833.119719,
+      "rows": 31,
+      "symbol": "LUNAUSDT"
+    },
+    {
+      "quote_volume": 120106575.2428544,
+      "rows": 31,
+      "symbol": "BTTUSDT"
+    },
+    {
+      "quote_volume": 118520267.312458,
+      "rows": 31,
+      "symbol": "COTIUSDT"
+    },
+    {
+      "quote_volume": 118501997.131503,
+      "rows": 31,
+      "symbol": "BELUSDT"
+    },
+    {
+      "quote_volume": 117938251.91505502,
+      "rows": 31,
+      "symbol": "SRMUSDT"
+    },
+    {
+      "quote_volume": 109000962.713029,
+      "rows": 31,
+      "symbol": "ANKRUSDT"
+    },
+    {
+      "quote_volume": 108800062.832512,
+      "rows": 31,
+      "symbol": "ICXUSDT"
+    },
+    {
+      "quote_volume": 106089467.97240397,
+      "rows": 31,
+      "symbol": "TRBUSDT"
+    },
+    {
+      "quote_volume": 101635596.82651898,
+      "rows": 31,
+      "symbol": "SOLUSDT"
+    },
+    {
+      "quote_volume": 100268136.21210101,
+      "rows": 31,
+      "symbol": "ZENUSDT"
+    },
+    {
+      "quote_volume": 97148118.34132999,
+      "rows": 31,
+      "symbol": "XVSUSDT"
+    },
+    {
+      "quote_volume": 95171834.645171,
+      "rows": 31,
+      "symbol": "MATICUSDT"
+    },
+    {
+      "quote_volume": 88424152.254646,
+      "rows": 31,
+      "symbol": "MITHUSDT"
+    },
+    {
+      "quote_volume": 83630768.722616,
+      "rows": 31,
+      "symbol": "STXUSDT"
+    },
+    {
+      "quote_volume": 82100185.891353,
+      "rows": 31,
+      "symbol": "ARPAUSDT"
+    },
+    {
+      "quote_volume": 82100134.96167602,
+      "rows": 31,
+      "symbol": "BZRXUSDT"
+    },
+    {
+      "quote_volume": 79047721.989966,
+      "rows": 31,
+      "symbol": "OXTUSDT"
+    },
+    {
+      "quote_volume": 76244592.514283,
+      "rows": 31,
+      "symbol": "KAVAUSDT"
+    },
+    {
+      "quote_volume": 75519688.64301299,
+      "rows": 31,
+      "symbol": "ZRXUSDT"
+    },
+    {
+      "quote_volume": 74293596.113658,
+      "rows": 31,
+      "symbol": "DIAUSDT"
+    },
+    {
+      "quote_volume": 71596127.39519101,
+      "rows": 31,
+      "symbol": "AVAXUSDT"
+    },
+    {
+      "quote_volume": 70510866.660064,
+      "rows": 31,
+      "symbol": "UMAUSDT"
+    },
+    {
+      "quote_volume": 70121380.23079298,
+      "rows": 31,
+      "symbol": "TOMOUSDT"
+    },
+    {
+      "quote_volume": 69942650.856809,
+      "rows": 31,
+      "symbol": "FLMUSDT"
+    },
+    {
+      "quote_volume": 68266592.163461,
+      "rows": 31,
+      "symbol": "JSTUSDT"
+    },
+    {
+      "quote_volume": 67542912.045131,
+      "rows": 31,
+      "symbol": "AUDIOUSDT"
+    },
+    {
+      "quote_volume": 65778040.724801004,
+      "rows": 31,
+      "symbol": "GTOUSDT"
+    },
+    {
+      "quote_volume": 64861303.49300699,
+      "rows": 31,
+      "symbol": "ENJUSDT"
+    },
+    {
+      "quote_volume": 64649389.173404,
+      "rows": 31,
+      "symbol": "SANDUSDT"
+    },
+    {
+      "quote_volume": 64338133.19902739,
+      "rows": 31,
+      "symbol": "MKRUSDT"
+    },
+    {
+      "quote_volume": 62988205.22198201,
+      "rows": 31,
+      "symbol": "LRCUSDT"
+    },
+    {
+      "quote_volume": 62127777.080027,
+      "rows": 31,
+      "symbol": "FTMUSDT"
+    },
+    {
+      "quote_volume": 57227408.13726,
+      "rows": 31,
+      "symbol": "DNTUSDT"
+    },
+    {
+      "quote_volume": 56935190.28945201,
+      "rows": 31,
+      "symbol": "REPUSDT"
+    },
+    {
+      "quote_volume": 55040827.28628899,
+      "rows": 31,
+      "symbol": "KNCUSDT"
+    },
+    {
+      "quote_volume": 54776658.767492995,
+      "rows": 31,
+      "symbol": "BALUSDT"
+    },
+    {
+      "quote_volume": 53006191.206530996,
+      "rows": 31,
+      "symbol": "DGBUSDT"
+    },
+    {
+      "quote_volume": 52992960.75947301,
+      "rows": 31,
+      "symbol": "ORNUSDT"
+    },
+    {
+      "quote_volume": 47680870.11950399,
+      "rows": 31,
+      "symbol": "DUSKUSDT"
+    },
+    {
+      "quote_volume": 46063869.452888004,
+      "rows": 31,
+      "symbol": "LTOUSDT"
+    },
+    {
+      "quote_volume": 44531125.90508301,
+      "rows": 31,
+      "symbol": "MANAUSDT"
+    },
+    {
+      "quote_volume": 44000704.129749,
+      "rows": 31,
+      "symbol": "ONEUSDT"
+    },
+    {
+      "quote_volume": 43634682.353961006,
+      "rows": 31,
+      "symbol": "HBARUSDT"
+    },
+    {
+      "quote_volume": 43346657.294890985,
+      "rows": 31,
+      "symbol": "FETUSDT"
+    },
+    {
+      "quote_volume": 42467249.29118801,
+      "rows": 31,
+      "symbol": "WNXMUSDT"
+    },
+    {
+      "quote_volume": 39417741.614314996,
+      "rows": 31,
+      "symbol": "AKROUSDT"
+    },
+    {
+      "quote_volume": 38717293.023076996,
+      "rows": 31,
+      "symbol": "DCRUSDT"
+    },
+    {
+      "quote_volume": 36693059.99368,
+      "rows": 31,
+      "symbol": "FIOUSDT"
+    },
+    {
+      "quote_volume": 35925875.643693,
+      "rows": 31,
+      "symbol": "PERLUSDT"
+    },
+    {
+      "quote_volume": 35106819.30091899,
+      "rows": 31,
+      "symbol": "TCTUSDT"
+    },
+    {
+      "quote_volume": 33769271.752512,
+      "rows": 31,
+      "symbol": "FTTUSDT"
+    },
+    {
+      "quote_volume": 32889564.615399,
+      "rows": 31,
+      "symbol": "STORJUSDT"
+    },
+    {
+      "quote_volume": 32723705.994676996,
+      "rows": 31,
+      "symbol": "DOCKUSDT"
+    },
+    {
+      "quote_volume": 31571852.977392998,
+      "rows": 31,
+      "symbol": "STMXUSDT"
+    },
+    {
+      "quote_volume": 31069062.952286,
+      "rows": 31,
+      "symbol": "RLCUSDT"
+    },
+    {
+      "quote_volume": 29867445.136505,
+      "rows": 31,
+      "symbol": "DATAUSDT"
+    },
+    {
+      "quote_volume": 28952234.843315,
+      "rows": 31,
+      "symbol": "CTSIUSDT"
+    },
+    {
+      "quote_volume": 28454552.687182095,
+      "rows": 31,
+      "symbol": "HOTUSDT"
+    },
+    {
+      "quote_volume": 28193379.229695,
+      "rows": 31,
+      "symbol": "NMRUSDT"
+    },
+    {
+      "quote_volume": 27735851.918794997,
+      "rows": 31,
+      "symbol": "RVNUSDT"
+    },
+    {
+      "quote_volume": 27574212.017033998,
+      "rows": 31,
+      "symbol": "ONGUSDT"
+    },
+    {
+      "quote_volume": 27085814.283057,
+      "rows": 31,
+      "symbol": "BLZUSDT"
+    },
+    {
+      "quote_volume": 26918712.982129995,
+      "rows": 31,
+      "symbol": "UTKUSDT"
+    },
+    {
+      "quote_volume": 26582989.907188,
+      "rows": 31,
+      "symbol": "BEAMUSDT"
+    },
+    {
+      "quote_volume": 26125031.525592998,
+      "rows": 31,
+      "symbol": "WANUSDT"
+    },
+    {
+      "quote_volume": 25762250.055880003,
+      "rows": 31,
+      "symbol": "MTLUSDT"
+    },
+    {
+      "quote_volume": 25219234.378551,
+      "rows": 31,
+      "symbol": "MBLUSDT"
+    },
+    {
+      "quote_volume": 25040301.608206995,
+      "rows": 31,
+      "symbol": "OGNUSDT"
+    },
+    {
+      "quote_volume": 23482669.877451003,
+      "rows": 31,
+      "symbol": "MFTUSDT"
+    },
+    {
+      "quote_volume": 23477131.247728642,
+      "rows": 31,
+      "symbol": "WINUSDT"
+    },
+    {
+      "quote_volume": 23345098.914369002,
+      "rows": 31,
+      "symbol": "NANOUSDT"
+    },
+    {
+      "quote_volume": 22888781.586548,
+      "rows": 31,
+      "symbol": "PNTUSDT"
+    },
+    {
+      "quote_volume": 22695121.523536995,
+      "rows": 31,
+      "symbol": "HNTUSDT"
+    },
+    {
+      "quote_volume": 21498025.925496,
+      "rows": 31,
+      "symbol": "ANTUSDT"
+    },
+    {
+      "quote_volume": 21410289.91738169,
+      "rows": 31,
+      "symbol": "PAXGUSDT"
+    },
+    {
+      "quote_volume": 19775622.152729,
+      "rows": 31,
+      "symbol": "SCUSDT"
+    },
+    {
+      "quote_volume": 19423346.974117998,
+      "rows": 31,
+      "symbol": "SUNUSDT"
+    },
+    {
+      "quote_volume": 18434045.811369002,
+      "rows": 31,
+      "symbol": "CHRUSDT"
+    },
+    {
+      "quote_volume": 17947752.262591004,
+      "rows": 31,
+      "symbol": "IRISUSDT"
+    },
+    {
+      "quote_volume": 17105865.547184996,
+      "rows": 31,
+      "symbol": "BTSUSDT"
+    },
+    {
+      "quote_volume": 16794652.675995,
+      "rows": 31,
+      "symbol": "AIONUSDT"
+    },
+    {
+      "quote_volume": 16218245.236739999,
+      "rows": 31,
+      "symbol": "CELRUSDT"
+    },
+    {
+      "quote_volume": 16125760.900960002,
+      "rows": 31,
+      "symbol": "XZCUSDT"
+    },
+    {
+      "quote_volume": 15667830.779629001,
+      "rows": 31,
+      "symbol": "DREPUSDT"
+    },
+    {
+      "quote_volume": 14644945.509691,
+      "rows": 31,
+      "symbol": "STRAXUSDT"
+    },
+    {
+      "quote_volume": 14021030.764579995,
+      "rows": 31,
+      "symbol": "NULSUSDT"
+    },
+    {
+      "quote_volume": 13077272.159538003,
+      "rows": 31,
+      "symbol": "KEYUSDT"
+    },
+    {
+      "quote_volume": 11920224.840715999,
+      "rows": 31,
+      "symbol": "LSKUSDT"
+    },
+    {
+      "quote_volume": 11840174.883709999,
+      "rows": 31,
+      "symbol": "IOTXUSDT"
+    },
+    {
+      "quote_volume": 11828554.458022,
+      "rows": 31,
+      "symbol": "MDTUSDT"
+    },
+    {
+      "quote_volume": 11713079.942932002,
+      "rows": 31,
+      "symbol": "VTHOUSDT"
+    },
+    {
+      "quote_volume": 11522158.394434003,
+      "rows": 31,
+      "symbol": "WRXUSDT"
+    },
+    {
+      "quote_volume": 11286555.327196,
+      "rows": 31,
+      "symbol": "COSUSDT"
+    },
+    {
+      "quote_volume": 10272123.851435998,
+      "rows": 31,
+      "symbol": "FUNUSDT"
+    },
+    {
+      "quote_volume": 9964401.561986001,
+      "rows": 31,
+      "symbol": "WTCUSDT"
+    },
+    {
+      "quote_volume": 9406598.227427997,
+      "rows": 31,
+      "symbol": "TROYUSDT"
+    },
+    {
+      "quote_volume": 8601910.352499,
+      "rows": 31,
+      "symbol": "STPTUSDT"
+    },
+    {
+      "quote_volume": 8395170.489803,
+      "rows": 31,
+      "symbol": "ARDRUSDT"
+    },
+    {
+      "quote_volume": 7980075.045312,
+      "rows": 31,
+      "symbol": "COCOSUSDT"
+    },
+    {
+      "quote_volume": 7853729.117045001,
+      "rows": 31,
+      "symbol": "VITEUSDT"
+    },
+    {
+      "quote_volume": 7772505.7440915005,
+      "rows": 31,
+      "symbol": "NPXSUSDT"
+    },
+    {
+      "quote_volume": 7705908.338150001,
+      "rows": 31,
+      "symbol": "KMDUSDT"
+    },
+    {
+      "quote_volume": 7589652.627447,
+      "rows": 31,
+      "symbol": "HIVEUSDT"
+    },
+    {
+      "quote_volume": 6982802.0031832,
+      "rows": 31,
+      "symbol": "DENTUSDT"
+    },
+    {
+      "quote_volume": 6828547.873972001,
+      "rows": 31,
+      "symbol": "NKNUSDT"
+    },
+    {
+      "quote_volume": 5983314.016782999,
+      "rows": 31,
+      "symbol": "CTXCUSDT"
+    },
+    {
+      "quote_volume": 5590164.889962002,
+      "rows": 31,
+      "symbol": "AVAUSDT"
+    },
+    {
+      "quote_volume": 4834198.8629250005,
+      "rows": 31,
+      "symbol": "GXSUSDT"
+    }
+  ],
+  "selection_uses_future": false,
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "XRPUSDT",
+    "LTCUSDT",
+    "BCHUSDT",
+    "LINKUSDT",
+    "BNBUSDT",
+    "ADAUSDT",
+    "XLMUSDT",
+    "DOTUSDT",
+    "YFIUSDT",
+    "EOSUSDT",
+    "ZILUSDT",
+    "SUSHIUSDT",
+    "TRXUSDT",
+    "UNIUSDT",
+    "VETUSDT",
+    "THETAUSDT",
+    "AAVEUSDT",
+    "FILUSDT"
+  ]
+}

@@ -1,0 +1,101 @@
+--- archaeology_commit/engine.py
++++ new_research/ledger.py
+@@ -1 +1,3 @@
+-"""One deterministic, asset-resolved, D+2 research ledger for every strategy."""
++"""Asset-resolved archaeology ledger, extended for timestamped spot 4h bars.
++See ledger_changes.diff and tests for parent parity. No strategy logic here.
++"""
+@@ -3 +5 @@
+-import hashlib, io, json, zipfile
++import json
+@@ -5,0 +8,4 @@
++HERE=Path(__file__).resolve().parent
++CONTRACT=json.loads((HERE/'contract.json').read_text())
++def spec():
++    return {'costs':{'fee_bps':CONTRACT['accounting']['spot_fee_bps'],'slippage_bps':CONTRACT['accounting']['slippage_bps'],'funding_annual_debit':0.,'maintenance_ratio':0.,'liquidation_fee_bps':0.}}
+@@ -7,40 +13,2 @@
+-HERE=Path(__file__).resolve().parent
+-def spec(): return json.loads((HERE/'contract.json').read_text())
+-def digest(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+-
+-def load():
+-    s=spec(); assert digest(HERE/'inputs.zip')==s['input_bundle_sha256']
+-    raw={}
+-    with zipfile.ZipFile(HERE/'inputs.zip') as z:
+-        for a in s['universe']['assets']:
+-            b=z.read(a+'.csv');assert hashlib.sha256(b).hexdigest()==s['input_members'][a+'.csv']['sha256']
+-            f=pd.read_csv(io.BytesIO(b)); f.index=pd.to_datetime(f.iloc[:,0]);f=f[['open','high','low','close','volume']].astype(float)
+-            assert f.index.is_unique and f.index.is_monotonic_increasing
+-            raw[a]=f.loc[:s['end']]
+-        macro=pd.read_csv(io.BytesIO(z.read('macro.csv')));macro.index=pd.to_datetime(macro.iloc[:,0]);macro=macro.iloc[:,1:]
+-        etf=pd.read_csv(io.BytesIO(z.read('etf.csv')))
+-    dates=pd.date_range(raw['BTC'].index[0],s['end'],freq='D'); assets=s['universe']['assets']
+-    prices=np.stack([raw[a].reindex(dates)[['open','high','low','close','volume']].to_numpy() for a in assets],axis=1)
+-    valid=np.isfinite(prices).all(axis=2)&(prices>0).all(axis=2)
+-    for a,f in raw.items():
+-        assert (f.high>=f[['open','close','low']].max(axis=1)).all(),a
+-        assert (f.low<=f[['open','close','high']].min(axis=1)).all(),a
+-    eligible=(np.cumsum(valid,axis=0)>=260)&valid
+-    return dict(dates=dates,assets=assets,prices=prices,eligible=eligible,raw=raw,macro=macro,etf=etf)
+-
+-def target(m, asset=None, weight=1.):
+-    x=pd.DataFrame(index=m['dates']);x['asset']='CASH' if asset is None else asset;x['weight']=weight
+-    x.loc[x.asset.eq('CASH'),'weight']=0.
+-    return x
+-
+-def admit(m,t):
+-    x=t.reindex(m['dates']).copy();x['asset']=x.asset.fillna('CASH');x['weight']=x.weight.fillna(0.)
+-    assert set(x.asset)<=set(m['assets'])|{'CASH'},set(x.asset)-set(m['assets'])
+-    for a in m['assets']:
+-        bad=x.asset.eq(a)&~m['eligible'][:,m['assets'].index(a)]
+-        x.loc[bad,['asset','weight']]=['CASH',0.]
+-    x.loc[x.weight.eq(0),'asset']='CASH'
+-    return x
+-
+-def simulate(m,t,*,start=None,end=None,mult=1.,lag=2,fold_reset=True,terminal_exit=True,details=False):
+-    if lag<2: raise ValueError('Signal available after next open: D+2 minimum')
++def simulate(m,t,*,start=None,end=None,mult=1.,lag=2,fold_reset=True,terminal_exit=True,details=False,rebalance=False,capacity=True,capital_scale=1.):
++    if lag<2: raise ValueError('Signal available after next open: two 4h rows minimum')
+@@ -51 +19 @@
+-    if not np.isfinite(t.weight).all() or (t.weight<0).any():raise ValueError('Invalid exposure')
++    if not np.isfinite(t.weight).all() or (t.weight<0).any() or (t.weight>1).any():raise ValueError('Spot baseline exposure must be 0..1')
+@@ -57,0 +26 @@
++    step=dates[1]-dates[0] if len(dates)>1 else pd.Timedelta(hours=4)
+@@ -73,0 +43,5 @@
++        if capacity and 'quote' in m:
++            known=m['quote'][j,held]
++            if not np.isfinite(known) or known<=0 or abs(delta)*execution*CONTRACT['accounting']['initial_usd']*capital_scale>known*CONTRACT['accounting']['max_participation_previous_bar_quote']:
++                raise ValueError(f'Participation cap exceeded at {date}: {names[held]}; order_notional={abs(delta)*execution*CONTRACT["accounting"]["initial_usd"]*capital_scale:.6f}, known_quote={known:.6f}, cap_fraction={CONTRACT["accounting"]["max_participation_previous_bar_quote"]}')
++            if P[i,held,4]<=0:raise ValueError('No actual volume at fill')
+@@ -78 +52 @@
+-        if details:fills.append(dict(date=str(date.date()),signal_date=str(dates[j].date()) if j>=0 else '',asset=names[held],side='buy' if delta>0 else 'sell',quantity=abs(delta),reference_price=price,fill_price=execution,fee=fee_amount,kind=kind,episode=ep['id']))
++        if details:fills.append(dict(date=str(date+step if kind=='fold_exit' else date),signal_date=str(dates[j]) if j>=0 else '',asset=names[held],side='buy' if delta>0 else 'sell',quantity=abs(delta),reference_price=price,fill_price=execution,fee=fee_amount,kind=kind,episode=ep['id'],available_at=str(dates[j]+step+pd.Timedelta(seconds=CONTRACT['accounting']['publication_latency_seconds']))))
+@@ -85,2 +59,2 @@
+-            fraction=1. if kind=='fold_exit' else .5 if kind=='intraday_liquidation' else 0.
+-            ep.update(exit=str(date.date()),exit_kind=kind,holding_days=(date-pd.Timestamp(ep['entry'])).days+fraction);episodes.append(ep);ep=None
++            fraction=step/pd.Timedelta(days=1) if kind=='fold_exit' else step/pd.Timedelta(days=2) if kind=='intraday_liquidation' else 0.
++            ep.update(exit=str(date),exit_kind=kind,holding_days=(date-pd.Timestamp(ep['entry']))/pd.Timedelta(days=1)+fraction);episodes.append(ep);ep=None
+@@ -87,0 +62 @@
++    period_begin=inds[0]
+@@ -89,0 +65 @@
++        if fold_reset and i>inds[0] and date.year!=dates[i-1].year:period_begin=i
+@@ -90,0 +67,3 @@
++        # A forced flat start creates a new order even if its target was already
++        # long in warmup. Delay that initial order too, not only later signals.
++        if i-period_begin<lag-2:a=-1;w=0.
+@@ -102 +81 @@
+-                held=a;mark=float(P[i,a,0]);ep=dict(id=len(episodes)+1,asset=names[a],entry=str(date.date()),log_growth=0.)
++                held=a;mark=float(P[i,a,0]);ep=dict(id=len(episodes)+1,asset=names[a],entry=str(date),log_growth=0.)
+@@ -107 +86,2 @@
+-            fill(notional/mark-q,mark,'entry_or_resize')
++            if rebalance or q==0:
++                fill(notional/mark-q,mark,'entry_or_resize')
+@@ -117 +97 @@
+-        if q and ((fold_reset and date.month==12 and date.day==31) or (terminal_exit and i==inds[-1])):flatten(mark,'fold_exit')
++        if q and ((fold_reset and (date+step).year!=date.year) or (terminal_exit and i==inds[-1])):flatten(mark,'fold_exit')
+@@ -120 +100 @@
+-    if ep is not None:ep.update(exit=None,holding_days=(finish-pd.Timestamp(ep['entry'])).days+1);episodes.append(ep)
++    if ep is not None:ep.update(exit=None,holding_days=(finish-pd.Timestamp(ep['entry'])+step)/pd.Timedelta(days=1));episodes.append(ep)
+@@ -125 +105 @@
+-    d=run['daily'];r=d.net_return.to_numpy();years=((d.index[-1]-d.index[0]).days+1)/365.25
++    d=run['daily'];bar=d.net_return;daily=(1+bar).groupby(d.index.normalize()).prod()-1;r=daily.to_numpy();step=d.index[1]-d.index[0] if len(d)>1 else pd.Timedelta(hours=4);years=float((d.index[-1]-d.index[0]+step)/pd.Timedelta(days=365.25))

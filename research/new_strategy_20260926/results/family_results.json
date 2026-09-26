@@ -1,0 +1,200 @@
+[
+  {
+    "asset_concentration": 1.0,
+    "asset_log_growth": {
+      "BTCUSDT": 0.429646727683707
+    },
+    "attribution_valid": true,
+    "baseline_qualifies": false,
+    "cagr": 0.11339252371518264,
+    "calmar": 0.34162164646597126,
+    "costs": 0.00899100898876323,
+    "delayed_cagr": 0.09070586833034094,
+    "delayed_mdd": 0.34236026971892997,
+    "double_cost_cagr": 0.10341692525377176,
+    "double_cost_mdd": 0.33459126524712846,
+    "family": "A",
+    "fee": 0.004495502247752249,
+    "fold_count": 4,
+    "fold_returns": {
+      "2022": -0.16821084758301683,
+      "2023": 0.2881604692108094,
+      "2024": 0.37294991692911916,
+      "2025": 0.04461266761462734
+    },
+    "funding": 0.0,
+    "liquidations": 0,
+    "mdd": 0.33192429369805054,
+    "median_holding": 31.166666666666668,
+    "profitable_folds": 3,
+    "sharpe": 0.5204637506200254,
+    "slippage": 0.0044955067410109815,
+    "status": "VALID",
+    "total_log_growth": 0.4296467276837089,
+    "trade_concentration": 0.814710452071523,
+    "trades": 9,
+    "turnover": 4.495502247752248,
+    "without_best_day": 0.0881148430505137,
+    "without_three_trades": -0.06713738408396909,
+    "worst_fold": -0.16821084758301683
+  },
+  {
+    "family": "B",
+    "status": "REJECT_INCOMPLETE_EXECUTION_EVIDENCE",
+    "valid_folds": []
+  },
+  {
+    "asset_concentration": null,
+    "asset_log_growth": {
+      "BTCUSDT": -0.25514866288939253
+    },
+    "attribution_valid": false,
+    "baseline_qualifies": false,
+    "cagr": -0.0617953396061787,
+    "calmar": -0.1383829637766407,
+    "costs": 0.16983016978775023,
+    "delayed_cagr": -0.024869232667396258,
+    "delayed_mdd": 0.4038170857655352,
+    "double_cost_cagr": -0.20847005123341977,
+    "double_cost_mdd": 0.6974748460774134,
+    "family": "C",
+    "fee": 0.08491504245754246,
+    "fold_count": 4,
+    "fold_returns": {
+      "2022": 0.0,
+      "2023": -0.08383768526052172,
+      "2024": 0.03585948826475377,
+      "2025": -0.18357353995330764
+    },
+    "funding": 0.0,
+    "liquidations": 0,
+    "mdd": 0.4465530865917895,
+    "median_holding": 0.8333333333333334,
+    "profitable_folds": 1,
+    "sharpe": -0.16092440969134647,
+    "slippage": 0.08491512733020778,
+    "status": "VALID",
+    "total_log_growth": -0.25514866288939786,
+    "trade_concentration": null,
+    "trades": 170,
+    "turnover": 84.91504245754246,
+    "without_best_day": -0.08450944461508678,
+    "without_three_trades": -0.18296394150219533,
+    "worst_fold": -0.18357353995330764
+  },
+  {
+    "asset_concentration": null,
+    "asset_log_growth": {},
+    "attribution_valid": false,
+    "cagr": 0.0,
+    "calmar": 0.0,
+    "costs": 0.0,
+    "family": "baseline_CASH",
+    "fee": 0.0,
+    "fold_count": 4,
+    "fold_returns": {
+      "2022": 0.0,
+      "2023": 0.0,
+      "2024": 0.0,
+      "2025": 0.0
+    },
+    "funding": 0.0,
+    "liquidations": 0,
+    "mdd": 0.0,
+    "median_holding": 0.0,
+    "profitable_folds": 0,
+    "sharpe": 0.0,
+    "slippage": 0.0,
+    "status": "VALID",
+    "total_log_growth": 0.0,
+    "trade_concentration": null,
+    "trades": 0,
+    "turnover": 0.0,
+    "without_best_day": 0.0,
+    "without_three_trades": 0.0,
+    "worst_fold": 0.0
+  },
+  {
+    "asset_concentration": 1.0,
+    "asset_log_growth": {
+      "BTCUSDT": 0.6240232012858844
+    },
+    "attribution_valid": true,
+    "cagr": 0.16883298267724747,
+    "calmar": 0.24870313059975185,
+    "costs": 0.0039960039950059,
+    "family": "baseline_BTC_hold",
+    "fee": 0.001998000999000996,
+    "fold_count": 4,
+    "fold_returns": {
+      "2022": -0.6434994158860032,
+      "2023": 1.5459659662728242,
+      "2024": 1.204223092902342,
+      "2025": -0.06708635488392492
+    },
+    "funding": 0.0,
+    "liquidations": 0,
+    "mdd": 0.6788534678679108,
+    "median_holding": 365.0,
+    "profitable_folds": 2,
+    "sharpe": 0.5602923823806362,
+    "slippage": 0.0019980029960049044,
+    "status": "VALID",
+    "total_log_growth": 0.6240232012858664,
+    "trade_concentration": 1.4975567103784655,
+    "trades": 4,
+    "turnover": 1.998000999000996,
+    "without_best_day": 0.12996439305010618,
+    "without_three_trades": -0.24059155437839916,
+    "worst_fold": -0.6434994158860032
+  },
+  {
+    "asset_concentration": 1.0,
+    "asset_log_growth": {
+      "BTCUSDT": 1.0245803557921165
+    },
+    "attribution_valid": true,
+    "cagr": 0.29194016058098676,
+    "calmar": 0.8846423464152443,
+    "costs": 0.01798201797752649,
+    "family": "baseline_BTC_SMA200",
+    "fee": 0.008991004495504492,
+    "fold_count": 4,
+    "fold_returns": {
+      "2022": 0.0,
+      "2023": 0.8488378375101158,
+      "2024": 0.7658125615738505,
+      "2025": -0.14665200547014562
+    },
+    "funding": 0.0,
+    "liquidations": 0,
+    "mdd": 0.3300092537554745,
+    "median_holding": 4.5,
+    "profitable_folds": 2,
+    "sharpe": 0.8963272062315779,
+    "slippage": 0.008991013482021998,
+    "status": "VALID",
+    "total_log_growth": 1.0245803557921125,
+    "trade_concentration": 0.38903503832549674,
+    "trades": 18,
+    "turnover": 8.991004495504491,
+    "without_best_day": 0.26066205494852895,
+    "without_three_trades": 0.002167251515202906,
+    "worst_fold": -0.14665200547014562
+  },
+  {
+    "family": "D",
+    "reason": "Actual funding captured, but matched perpetual trade/mark and historical maintenance/liquidation evidence incomplete",
+    "status": "NOT_RUN_DATA_GATE"
+  },
+  {
+    "family": "E",
+    "members_by_year": {
+      "2022": [],
+      "2023": [],
+      "2024": [],
+      "2025": []
+    },
+    "status": "NOT_RUN_NO_QUALIFIED_MEMBERS"
+  }
+]

@@ -1,0 +1,5 @@
+archive/
+__pycache__/
+*.pyc
+attempts/before_initial_fill_delay_results/
+attempts/before_cohort_boundary_results/

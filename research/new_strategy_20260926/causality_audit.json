@@ -1,0 +1,108 @@
+{
+  "episodes_reconciled": 201,
+  "fills_checked": 402,
+  "fold_nominees_frozen_before_oos": true,
+  "forward_opened": false,
+  "frozen_code_and_data_verified": true,
+  "generation_transitions_verified": 60,
+  "historical_admin_listing_dates": "PARTIAL; first traded minute evidence separate from official administrative notice",
+  "import_allowlist": {
+    "designer.py": [
+      "common",
+      "itertools",
+      "json",
+      "os",
+      "random",
+      "urllib"
+    ],
+    "signals.py": [
+      "common",
+      "numpy",
+      "pandas"
+    ]
+  },
+  "invariance": [
+    {
+      "candidate_id": "A_2d90e7af8802",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "B_76de29c602ad",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "C_ca70af357aff",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "A_02d668f3f26f",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "B_27f2a32778e7",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "C_08494100f35c",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "A_f07a775bba77",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "C_510df43c3c65",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "A_30eab4425ac4",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "C_7061047851ec",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "A_7c88e125f612",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "B_11c03db494ac",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    },
+    {
+      "candidate_id": "C_44c92235e04f",
+      "future_perturbation": true,
+      "prefix": true,
+      "rows": 9952
+    }
+  ],
+  "perpetual_venue_model": "NOT_VERIFIED_NOT_SCORED",
+  "status": "PASS_COMPUTATIONAL_AUDIT",
+  "unavailable_symbol_invariance": true,
+  "unique_search_evaluations": 330
+}

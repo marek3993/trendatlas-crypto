@@ -1,0 +1,11 @@
+[
+  {
+    "symbol": "EOSUSDT",
+    "venue": "Binance spot",
+    "published_utc": "2025-05-14 09:00:00",
+    "effective_utc": "2025-05-26 03:00:00",
+    "event": "EOS spot pairs cease trading for Vaulta token swap",
+    "source": "https://www.binance.com/en/support/announcement/detail/1e89a9ca957c4b0ca7502e60b993e201",
+    "policy": "Exit before the scheduled cessation using publication-aware two-day buffer. Do not splice A prices or returns into EOS."
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "ablation_evaluations": 36,
+  "api_calls": 0,
+  "forward_opened": false,
+  "frozen_inputs_and_code_verified": true,
+  "generations": 60,
+  "neighbor_evaluations": 86,
+  "outer_fold_evaluations": 12,
+  "production_writes": false,
+  "protected_files": 3237,
+  "protected_tree_unchanged": true,
+  "reason": "Validated-winner claim requires prospective sealed evidence and main numeric gates; no risk layers promoted",
+  "seconds": 319.0603892803192,
+  "status": "completed",
+  "unique_search_evaluations": 330,
+  "verdict": "REJECT"
+}

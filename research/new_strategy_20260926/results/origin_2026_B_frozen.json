@@ -1,0 +1,24 @@
+{
+  "champion": {
+    "ablation": null,
+    "candidate": {
+      "absolute": true,
+      "blend": true,
+      "cadence": "weekly",
+      "family": "B",
+      "lookback": 90,
+      "vol_adjusted": true
+    },
+    "candidate_id": "B_11c03db494ac",
+    "execution_stage": "nominal",
+    "generation": 3,
+    "origin": 2026,
+    "reason": "Participation cap exceeded at 2025-06-02 04:00:00: TRXUSDT; order_notional=10724.081794, known_quote=6826370.902050, cap_fraction=0.001",
+    "scope": "development",
+    "status": "REJECT_DATA_OR_EXECUTION",
+    "year": 2025
+  },
+  "development_pareto": [],
+  "frozen_before_oos": true,
+  "validation_year": 2025
+}

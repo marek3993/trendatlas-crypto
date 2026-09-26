@@ -1,0 +1,24 @@
+{
+  "champion": {
+    "ablation": null,
+    "candidate": {
+      "absolute": true,
+      "blend": true,
+      "cadence": "monthly",
+      "family": "B",
+      "lookback": 90,
+      "vol_adjusted": false
+    },
+    "candidate_id": "B_27f2a32778e7",
+    "execution_stage": "nominal",
+    "generation": 1,
+    "origin": 2024,
+    "reason": "Participation cap exceeded at 2023-01-01 04:00:00: LTCUSDT; order_notional=9990.009990, known_quote=3687735.570500, cap_fraction=0.001",
+    "scope": "development",
+    "status": "REJECT_DATA_OR_EXECUTION",
+    "year": 2023
+  },
+  "development_pareto": [],
+  "frozen_before_oos": true,
+  "validation_year": 2023
+}

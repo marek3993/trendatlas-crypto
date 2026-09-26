@@ -1,0 +1,74 @@
+[
+  {
+    "ablation": null,
+    "candidate": {
+      "absolute": true,
+      "blend": false,
+      "cadence": "monthly",
+      "family": "B",
+      "lookback": 180,
+      "vol_adjusted": true
+    },
+    "candidate_id": "B_76de29c602ad",
+    "execution_stage": "nominal",
+    "family": "B",
+    "reason": "Participation cap exceeded at 2022-08-10 04:00:00: TRXUSDT; order_notional=4581.716922, known_quote=2421011.457250, cap_fraction=0.001",
+    "scope": "outer_oos",
+    "status": "REJECT_DATA_OR_EXECUTION",
+    "year": 2022
+  },
+  {
+    "ablation": null,
+    "candidate": {
+      "absolute": true,
+      "blend": true,
+      "cadence": "monthly",
+      "family": "B",
+      "lookback": 90,
+      "vol_adjusted": false
+    },
+    "candidate_id": "B_27f2a32778e7",
+    "execution_stage": "nominal",
+    "family": "B",
+    "reason": "Participation cap exceeded at 2023-01-01 04:00:00: LTCUSDT; order_notional=9990.009990, known_quote=3687735.570500, cap_fraction=0.001",
+    "scope": "outer_oos",
+    "status": "REJECT_DATA_OR_EXECUTION",
+    "year": 2023
+  },
+  {
+    "ablation": null,
+    "candidate": {
+      "absolute": true,
+      "blend": true,
+      "cadence": "monthly",
+      "family": "B",
+      "lookback": 90,
+      "vol_adjusted": false
+    },
+    "candidate_id": "B_27f2a32778e7",
+    "execution_stage": "nominal",
+    "family": "B",
+    "reason": "Participation cap exceeded at 2024-01-01 00:00:00: LINKUSDT; order_notional=9990.009990, known_quote=7233051.382870, cap_fraction=0.001",
+    "scope": "outer_oos",
+    "status": "REJECT_DATA_OR_EXECUTION",
+    "year": 2024
+  },
+  {
+    "ablation": null,
+    "candidate": {
+      "absolute": true,
+      "blend": true,
+      "cadence": "monthly",
+      "family": "B",
+      "lookback": 90,
+      "vol_adjusted": false
+    },
+    "candidate_id": "B_27f2a32778e7",
+    "execution_stage": "nominal",
+    "family": "B",
+    "reason": "Participation cap exceeded at 2025-01-01 00:00:00: XLMUSDT; order_notional=9990.009990, known_quote=4290219.754500, cap_fraction=0.001",
+    "scope": "outer_oos",
+    "status": "REJECT_DATA_OR_EXECUTION",
+    "year": 2025
+  }
+]

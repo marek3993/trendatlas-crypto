@@ -1,0 +1,27 @@
+Command: python -W ignore research/new_strategy_20260926/test_framework.py
+test_adverse_fills_and_complete_episodes (__main__.Framework.test_adverse_fills_and_complete_episodes) ... ok
+test_asset_identity (__main__.Framework.test_asset_identity) ... ok
+test_capacity_is_not_ignored (__main__.Framework.test_capacity_is_not_ignored) ... ok
+test_cohort_cannot_authorize_preformation_trade (__main__.Framework.test_cohort_cannot_authorize_preformation_trade) ... ok
+test_contract (__main__.Framework.test_contract) ... ok
+test_delay_includes_carried_target_at_fold_start (__main__.Framework.test_delay_includes_carried_target_at_fold_start) ... ok
+test_designer_cannot_see_oos (__main__.Framework.test_designer_cannot_see_oos) ... ok
+test_deterministic_mutations (__main__.Framework.test_deterministic_mutations) ... ok
+test_double_cost_and_daily_sharpe (__main__.Framework.test_double_cost_and_daily_sharpe) ... ok
+test_future_prices_do_not_change_past_ledger (__main__.Framework.test_future_prices_do_not_change_past_ledger) ... ok
+test_json_rejects_untrusted_edits (__main__.Framework.test_json_rejects_untrusted_edits) ... ok
+test_latency_D_plus_one (__main__.Framework.test_latency_D_plus_one) ... ok
+test_missing_exit_quote_fails (__main__.Framework.test_missing_exit_quote_fails) ... ok
+test_parent_daily_ledger_parity (__main__.Framework.test_parent_daily_ledger_parity) ... ok
+test_pareto_drawdown_direction (__main__.Framework.test_pareto_drawdown_direction) ... ok
+test_pit_and_zero_fill_prohibited (__main__.Framework.test_pit_and_zero_fill_prohibited) ... ok
+test_slow_confirmation (__main__.Framework.test_slow_confirmation) ... ok
+test_spot_no_funding_or_short_or_leverage (__main__.Framework.test_spot_no_funding_or_short_or_leverage) ... ok
+test_symbol_url_unicode (__main__.Framework.test_symbol_url_unicode) ... ok
+test_unavailable_asset_removed_before_liquidity_rank (__main__.Framework.test_unavailable_asset_removed_before_liquidity_rank) ... ok
+test_year_exit_once_at_close (__main__.Framework.test_year_exit_once_at_close) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.655s
+
+OK

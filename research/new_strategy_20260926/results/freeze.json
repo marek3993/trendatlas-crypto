@@ -1,0 +1,31 @@
+{
+  "created_utc": "2026-09-26T21:26:31.525620+00:00",
+  "hashes": {
+    "acquire.py": "f0459015dde16eca50722749dd74b835088f2cbeda2d884e3fc0f9f627486099",
+    "audit.py": "47bdbfa9d0691aa3c1c1cc63c923fdf56ecb0c109851ece6b1fa763acafc3be2",
+    "cohort.json": "1169104027cff404b7ff8830b8979b66290a9cad250462ca02f988f2990b9ec1",
+    "common.py": "61f690b7e03f84f9a461ba3527b02a28ea648e89a5f064f00043703d517e80c4",
+    "contract.json": "dd7edf253f2aada1a1b4f752f093e6be3dcd6825efe43a15af1fe89a36ee6f0a",
+    "designer.py": "21324502fc73f3e04898dedda31f71109efa6bf937cd042766e19e997f1564fd",
+    "evaluate.py": "b978474956e66a79f7afdcc6bfb5512764f3c1677dab73e64834259d0b2aed86",
+    "extra_validation.py": "b2f1a9f6a04335880ccdc1f3df606121ca7ee4fc86f36833a7d3427daa332727",
+    "ledger.py": "c4c9ec15d62316347db665aa1ffa6d857e64eb1006a5d986cc0c541bc20817f3",
+    "listing_evidence.json": "c34e26606c3acd6a0ed7bc87c0393229bd11595ada75e81a574bc11a9f095f7c",
+    "listings.py": "12b1a6d74a17d5d0f64c122ae8598f8a246719d8e96c7c82e8c7787165bb27b2",
+    "market.py": "e68ecbd37e6a9110d7b5425604d99288c13bcb57da5097675f62dea48aa1b784",
+    "market_inputs.zip": "ed48645dcd3ddbbe6efbe21220ba891e518ab8b1faf38007368df2596324da4b",
+    "render.py": "25230697a08e9457e31531236c8b16bbe830703f9574f8cecc651fef6d69372a",
+    "reproduce.py": "a855dba07b49186c7a909a227e5221d4ef90595b29faa271c46d1559c091558b",
+    "run.py": "d8543d2a0d4d4909def6fd4a29e97964f634f6a2cc5e4439a1f8370267335287",
+    "signals.py": "20e36eb5decac4f96efdb730fc48a88d5d824570c8a8a9b9f943bd5f78791809",
+    "test_framework.py": "4f4c2c50a125147cd706b4275602faeae26b5492621db18b1f67fc0c745bef45",
+    "venue_notices.json": "116ee10848e26546fa80e0a3d15f817d9833e53ceec5ffad8e9c0e277421a2dc"
+  },
+  "numpy": "2.4.1",
+  "pandas": "3.0.2",
+  "parent_ledger_sha256": "f6ffdebecec41b5861f96f6d7dd446ce79086ced38e26d12a1d736320f1bb8f8",
+  "python": "3.12.10",
+  "sealed_opened": false,
+  "search_budget": 330,
+  "source_commit": "d3be15dbd4da8be1f97cb526dc8cacf8cd7d0e75"
+}

@@ -1,0 +1,146 @@
+{
+  "bytes": 14545534,
+  "events": [
+    {
+      "bytes": 614912,
+      "checksum": "0d3142f0c1b70ab25c29ac39e0bfb72e83a92e9ee2d361a4a0bfb9f3452cf369  ETHUSDT-1m-2017-08.zip",
+      "key": "data/spot/monthly/klines/ETHUSDT/1m/ETHUSDT-1m-2017-08.zip",
+      "sha256": "0d3142f0c1b70ab25c29ac39e0bfb72e83a92e9ee2d361a4a0bfb9f3452cf369",
+      "status": "verified"
+    },
+    {
+      "bytes": 128752,
+      "checksum": "587c2b1b53d7a2fb4e201c3e427f723f5e03284b2a39c8ae864a1aac363eff24  BCHUSDT-1m-2019-11.zip",
+      "key": "data/spot/monthly/klines/BCHUSDT/1m/BCHUSDT-1m-2019-11.zip",
+      "sha256": "587c2b1b53d7a2fb4e201c3e427f723f5e03284b2a39c8ae864a1aac363eff24",
+      "status": "verified"
+    },
+    {
+      "bytes": 441381,
+      "checksum": "066fa8856a8ac1205fdc8cb68dee1f45087f4a0ea2f8d11aeebad6e97c8ce657  LINKUSDT-1m-2019-01.zip",
+      "key": "data/spot/monthly/klines/LINKUSDT/1m/LINKUSDT-1m-2019-01.zip",
+      "sha256": "066fa8856a8ac1205fdc8cb68dee1f45087f4a0ea2f8d11aeebad6e97c8ce657",
+      "status": "verified"
+    },
+    {
+      "bytes": 595271,
+      "checksum": "4f96569190147d64b7ce55f6760dc3e7962aeb3e209c969b200200e3d7045e70  BTCUSDT-1m-2017-08.zip",
+      "key": "data/spot/monthly/klines/BTCUSDT/1m/BTCUSDT-1m-2017-08.zip",
+      "sha256": "4f96569190147d64b7ce55f6760dc3e7962aeb3e209c969b200200e3d7045e70",
+      "status": "verified"
+    },
+    {
+      "bytes": 991029,
+      "checksum": "f59488b0d9243d37b15dee210729b4a83da6d14778396de249e59309984d36fc  LTCUSDT-1m-2017-12.zip",
+      "key": "data/spot/monthly/klines/LTCUSDT/1m/LTCUSDT-1m-2017-12.zip",
+      "sha256": "f59488b0d9243d37b15dee210729b4a83da6d14778396de249e59309984d36fc",
+      "status": "verified"
+    },
+    {
+      "bytes": 821021,
+      "checksum": "0727dd148c4d6cfcd901f42863a9a1dc20bd82a2468711f889a00c6b51c6cfb1  ADAUSDT-1m-2018-04.zip",
+      "key": "data/spot/monthly/klines/ADAUSDT/1m/ADAUSDT-1m-2018-04.zip",
+      "sha256": "0727dd148c4d6cfcd901f42863a9a1dc20bd82a2468711f889a00c6b51c6cfb1",
+      "status": "verified"
+    },
+    {
+      "bytes": 627358,
+      "checksum": "59070b0790874154f7d66aaa1c7e851b561955885c52208096110a377e2c9365  BNBUSDT-1m-2017-11.zip",
+      "key": "data/spot/monthly/klines/BNBUSDT/1m/BNBUSDT-1m-2017-11.zip",
+      "sha256": "59070b0790874154f7d66aaa1c7e851b561955885c52208096110a377e2c9365",
+      "status": "verified"
+    },
+    {
+      "bytes": 1487096,
+      "checksum": "9df66c853a09575e87c440552ef0f86e4af261438f663fc79a7836bef80dd64b  XRPUSDT-1m-2018-05.zip",
+      "key": "data/spot/monthly/klines/XRPUSDT/1m/XRPUSDT-1m-2018-05.zip",
+      "sha256": "9df66c853a09575e87c440552ef0f86e4af261438f663fc79a7836bef80dd64b",
+      "status": "verified"
+    },
+    {
+      "bytes": 31868,
+      "checksum": "c6681d4b9b7e1a6c7026743ffe9c1bcfecab2f0674aae69cd61c863761238b22  XLMUSDT-1m-2018-05.zip",
+      "key": "data/spot/monthly/klines/XLMUSDT/1m/XLMUSDT-1m-2018-05.zip",
+      "sha256": "c6681d4b9b7e1a6c7026743ffe9c1bcfecab2f0674aae69cd61c863761238b22",
+      "status": "verified"
+    },
+    {
+      "bytes": 229332,
+      "checksum": "2f8b7896e856d65f2034ab8cf232060d2ebe9e78ed43892445097013497bb06e  EOSUSDT-1m-2018-05.zip",
+      "key": "data/spot/monthly/klines/EOSUSDT/1m/EOSUSDT-1m-2018-05.zip",
+      "sha256": "2f8b7896e856d65f2034ab8cf232060d2ebe9e78ed43892445097013497bb06e",
+      "status": "verified"
+    },
+    {
+      "bytes": 234148,
+      "checksum": "59f74a46791d8c3da676c243e06e1a758b045f7d707e521d3cfb5290c4650f5f  ZILUSDT-1m-2019-02.zip",
+      "key": "data/spot/monthly/klines/ZILUSDT/1m/ZILUSDT-1m-2019-02.zip",
+      "sha256": "59f74a46791d8c3da676c243e06e1a758b045f7d707e521d3cfb5290c4650f5f",
+      "status": "verified"
+    },
+    {
+      "bytes": 811966,
+      "checksum": "b206a668fd5a89b26de7e7e67176e270d499547f8c2d7e3d517584f3244ba54a  DOTUSDT-1m-2020-08.zip",
+      "key": "data/spot/monthly/klines/DOTUSDT/1m/DOTUSDT-1m-2020-08.zip",
+      "sha256": "b206a668fd5a89b26de7e7e67176e270d499547f8c2d7e3d517584f3244ba54a",
+      "status": "verified"
+    },
+    {
+      "bytes": 1258767,
+      "checksum": "f9604efc1e6499873fb5bba565b879141006d4dbdeb720706c2199f44d9e7632  YFIUSDT-1m-2020-08.zip",
+      "key": "data/spot/monthly/klines/YFIUSDT/1m/YFIUSDT-1m-2020-08.zip",
+      "sha256": "f9604efc1e6499873fb5bba565b879141006d4dbdeb720706c2199f44d9e7632",
+      "status": "verified"
+    },
+    {
+      "bytes": 1739087,
+      "checksum": "331d475d71d3b745952c5fec97ed4408b74c975d03f7f9abf40a1fbca9622f79  SUSHIUSDT-1m-2020-09.zip",
+      "key": "data/spot/monthly/klines/SUSHIUSDT/1m/SUSHIUSDT-1m-2020-09.zip",
+      "sha256": "331d475d71d3b745952c5fec97ed4408b74c975d03f7f9abf40a1fbca9622f79",
+      "status": "verified"
+    },
+    {
+      "bytes": 890474,
+      "checksum": "d28bbd0e291a5ccadc23ff91776ef86530f796f13a52d42b3e8bbf38b973f384  UNIUSDT-1m-2020-09.zip",
+      "key": "data/spot/monthly/klines/UNIUSDT/1m/UNIUSDT-1m-2020-09.zip",
+      "sha256": "d28bbd0e291a5ccadc23ff91776ef86530f796f13a52d42b3e8bbf38b973f384",
+      "status": "verified"
+    },
+    {
+      "bytes": 366888,
+      "checksum": "2bd4208c58911fa11e4e9397debaa4c29f67291b86d7f5f952012a0401dce47e  VETUSDT-1m-2018-07.zip",
+      "key": "data/spot/monthly/klines/VETUSDT/1m/VETUSDT-1m-2018-07.zip",
+      "sha256": "2bd4208c58911fa11e4e9397debaa4c29f67291b86d7f5f952012a0401dce47e",
+      "status": "verified"
+    },
+    {
+      "bytes": 1058888,
+      "checksum": "08d63b35d038ff2831f5687073684f26c7a35a8915667c7f600abbd94c8ea952  TRXUSDT-1m-2018-06.zip",
+      "key": "data/spot/monthly/klines/TRXUSDT/1m/TRXUSDT-1m-2018-06.zip",
+      "sha256": "08d63b35d038ff2831f5687073684f26c7a35a8915667c7f600abbd94c8ea952",
+      "status": "verified"
+    },
+    {
+      "bytes": 488000,
+      "checksum": "40b96256f5de7beeebae90d814a10897d3af9725e8e06f6837b29adb3df1bf58  THETAUSDT-1m-2019-04.zip",
+      "key": "data/spot/monthly/klines/THETAUSDT/1m/THETAUSDT-1m-2019-04.zip",
+      "sha256": "40b96256f5de7beeebae90d814a10897d3af9725e8e06f6837b29adb3df1bf58",
+      "status": "verified"
+    },
+    {
+      "bytes": 742671,
+      "checksum": "39d952d2ce7550424fae401384acd743c527c44cf6f9663c02c4b1a51f332244  AAVEUSDT-1m-2020-10.zip",
+      "key": "data/spot/monthly/klines/AAVEUSDT/1m/AAVEUSDT-1m-2020-10.zip",
+      "sha256": "39d952d2ce7550424fae401384acd743c527c44cf6f9663c02c4b1a51f332244",
+      "status": "verified"
+    },
+    {
+      "bytes": 968946,
+      "checksum": "644fde7e90159e94bc41a3ded5824e678302810001f4c669ac9c5a606feb5d89  FILUSDT-1m-2020-10.zip",
+      "key": "data/spot/monthly/klines/FILUSDT/1m/FILUSDT-1m-2020-10.zip",
+      "sha256": "644fde7e90159e94bc41a3ded5824e678302810001f4c669ac9c5a606feb5d89",
+      "status": "verified"
+    }
+  ],
+  "requests": 60
+}

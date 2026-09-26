@@ -1,0 +1,253 @@
+{
+  "D_status": "NOT_RUN_DATA_GATE",
+  "actual_funding": [
+    {
+      "events": 6455,
+      "first": "2020-02-10 08:00:00",
+      "last": "2025-12-31 16:00:00.001000",
+      "negative_events": 1731,
+      "rate_max": 0.00441898,
+      "rate_min": -0.00584369,
+      "symbol": "BNBUSDT",
+      "used_for_spot": false,
+      "venue": "Binance USD-M"
+    },
+    {
+      "events": 6576,
+      "first": "2020-01-01 00:00:00",
+      "last": "2025-12-31 16:00:00.001000",
+      "negative_events": 823,
+      "rate_max": 0.003,
+      "rate_min": -0.003,
+      "symbol": "BTCUSDT",
+      "used_for_spot": false,
+      "venue": "Binance USD-M"
+    },
+    {
+      "events": 6576,
+      "first": "2020-01-01 00:00:00",
+      "last": "2025-12-31 16:00:00.001000",
+      "negative_events": 771,
+      "rate_max": 0.00375,
+      "rate_min": -0.00356332,
+      "symbol": "ETHUSDT",
+      "used_for_spot": false,
+      "venue": "Binance USD-M"
+    },
+    {
+      "events": 5881,
+      "first": "2020-09-13 16:00:00.004000",
+      "last": "2025-12-31 16:00:00.001000",
+      "negative_events": 1524,
+      "rate_max": 0.00332469,
+      "rate_min": -0.02,
+      "symbol": "SOLUSDT",
+      "used_for_spot": false,
+      "venue": "Binance USD-M"
+    },
+    {
+      "events": 6560,
+      "first": "2020-01-06 08:00:00",
+      "last": "2025-12-31 16:00:00.001000",
+      "negative_events": 1103,
+      "rate_max": 0.00487889,
+      "rate_min": -0.005025,
+      "symbol": "XRPUSDT",
+      "used_for_spot": false,
+      "venue": "Binance USD-M"
+    }
+  ],
+  "forward_opened": false,
+  "historical_pit_scope": "Ex-ante December2020 cohort with observed admission and trailing liquidity; administrative listing evidence incomplete",
+  "perpetual_status": "BLOCKED_MISSING_HISTORICAL_MARGIN_AND_MATCHED_MARK_TRADE_QUOTES",
+  "symbols": [
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2020-10-15 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 3918,
+      "symbol": "AAVEUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "ADAUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-11-28 08:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 1989,
+      "symbol": "BCHUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "BNBUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "BTCUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2020-08-18 20:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 3575,
+      "symbol": "DOTUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": {
+        "effective_utc": "2025-05-26 03:00:00",
+        "event": "EOS spot pairs cease trading for Vaulta token swap",
+        "policy": "Exit before the scheduled cessation using publication-aware two-day buffer. Do not splice A prices or returns into EOS.",
+        "published_utc": "2025-05-14 09:00:00",
+        "source": "https://www.binance.com/en/support/announcement/detail/1e89a9ca957c4b0ca7502e60b993e201",
+        "symbol": "EOSUSDT",
+        "venue": "Binance spot"
+      },
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-05-26 00:00:00",
+      "missing_4h_bars": 1324,
+      "symbol": "EOSUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "ETHUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2020-10-15 16:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 3922,
+      "symbol": "FILUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-16 08:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 97,
+      "symbol": "LINKUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "LTCUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2020-09-01 08:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 3656,
+      "symbol": "SUSHIUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-04-10 04:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 599,
+      "symbol": "THETAUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "TRXUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2020-09-17 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 3750,
+      "symbol": "UNIUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "VETUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "XLMUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-01-01 00:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 5,
+      "symbol": "XRPUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2020-08-10 12:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 3525,
+      "symbol": "YFIUSDT",
+      "venue": "Binance spot"
+    },
+    {
+      "administrative_listing_date": "UNVERIFIED; first bar is observational lower bound",
+      "delisting_notice": null,
+      "first_observed": "2019-02-19 08:00:00",
+      "last_observed": "2025-12-31 20:00:00",
+      "missing_4h_bars": 301,
+      "symbol": "ZILUSDT",
+      "venue": "Binance spot"
+    }
+  ]
+}

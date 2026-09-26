@@ -1,0 +1,67 @@
+{
+  "id": "TrendAtlas replacement research 20260926",
+  "classification": ["B", "D"],
+  "source_commit": "d3be15dbd4da8be1f97cb526dc8cacf8cd7d0e75",
+  "scope": "research decision engine only; no production imports, changes, orders, merge or deployment",
+  "universe": {
+    "venue": "Binance spot USDT",
+    "cohort_asof": "2020-12-31",
+    "cohort_rule": "Top 20 by December 2020 observed quote turnover, among archived USDT symbols with >=28 daily bars that month. Exclude stablecoin bases and leveraged UP/DOWN/BULL/BEAR products. Fixed ex-ante cohort; no later winners added. All historical archived symbols are enumerated, including delisted ones. This is a bounded investable cohort, not a whole-market claim.",
+    "stable_bases": ["USDC", "BUSD", "TUSD", "USDP", "PAX", "DAI", "SUSD", "USDS", "USDSB", "UST", "USDT", "BIDR", "IDRT", "EUR", "GBP", "AUD", "RUB", "BRL", "TRY", "UAH", "NGN", "BVND", "VAI"],
+    "minimum_observed_days": 365,
+    "liquidity_window_days": 30,
+    "minimum_mean_quote_usd": 10000000,
+    "liquidity_top_n": 10,
+    "missing_prices": "Never impute/rank a missing asset. No future last-date liquidation. Missing held quotes fail the replay closed. Listings are first-observed tradable-bar lower bounds; delisting notices require published and effective times. Unverified administrative dates remain explicitly unverified."
+  },
+  "data": {
+    "start": "2019-01-01",
+    "end": "2025-12-31",
+    "interval": "4h",
+    "provider": "https://data.binance.vision",
+    "checksum_required": true,
+    "acquisition_budget": {"max_archive_requests": 16000, "max_workers": 8, "max_bytes": 400000000, "retries": 2},
+    "spot_funding": 0,
+    "perpetual_gate": "Require contract-specific trade and mark OHLC, actual timestamped funding, listing/delisting notices and historical maintenance/liquidation schedule. Missing evidence blocks perpetual and short scoring; spot prices cannot substitute for perpetual prices."
+  },
+  "accounting": {
+    "parent_engine": "research/archeology_20260926/engine.py",
+    "required_invariants": ["concrete asset", "adverse fills", "charge both rotation legs", "complete episode log attribution", "conservative intrabar drawdown", "fail missing held quote", "no saved model PnL", "no synthetic labels"],
+    "publication_latency_seconds": 60,
+    "fill": "A completed daily close D is available D+1 00:01 UTC; fill at first subsequent captured 4h open, D+1 04:00 UTC. A 4h close signal is available close+60s and fills at next captured 4h open. Signal row to fill row = 2 bars. Stress adds one 4h bar to the entire target stream.",
+    "spot_fee_bps": 10,
+    "slippage_bps": 10,
+    "initial_usd": 10000,
+    "max_participation_previous_bar_quote": 0.001,
+    "exposure": "Unlevered 1x or CASH only. No ETF, TP, stop, cooldown or leverage during baseline search.",
+    "sizing": "Fixed units between decision changes. On entry solve post-cost notional = NAV; spot holding has no funding. No drift rebalancing absent a decision change.",
+    "fold_exit": "Charge close exit on final 4h bar of each calendar year and evaluation window. Warmup only uses observations strictly before the first test trade."
+  },
+  "experiment_schema": {
+    "A": {"slow": [100, 150, 200, 250], "fast": [20, 50], "confirm": [5, 10, 15], "breadth": [0.0, 0.4, 0.6], "cadence": ["weekly", "monthly"]},
+    "B": {"lookback": [30, 90, 180, 365], "vol_adjusted": [false, true], "cadence": ["weekly", "monthly"], "absolute": [true], "blend": [false, true]},
+    "C": {"slow": [100, 150, 200, 250], "confirm": [5, 10, 15], "entry": ["ema", "breakout"], "entry_bars": [12, 24, 48], "exit_bars": [12, 24, 48]},
+    "D": "Blocked until perpetual data gate passes; signed-accounting tests may run but no fabricated performance.",
+    "E": "Only independently qualifying prior OOS family champions can enter an ensemble; require >=2 members. Cash otherwise. No blend of failed baselines."
+  },
+  "evolution": {"population": 10, "survivors": 6, "new_mutations": 4, "generations": 4, "seed": 20260926, "separate_families": ["A", "B", "C"], "origins": [2022, 2023, 2024, 2025, 2026], "max_unique_evaluations": 330, "selection": "Prior calendar year inner validation only; feasibility-first Pareto nondominated sorting and deterministic crowding. No outer OOS or forward data enter mutation or selection. Each origin resets populations independently. Origin 2026 is final nomination only; 2026 outcomes are not read."},
+  "folds": [
+    {"oos_year": 2022, "train_end": "2020-12-31", "validation_year": 2021},
+    {"oos_year": 2023, "train_end": "2021-12-31", "validation_year": 2022},
+    {"oos_year": 2024, "train_end": "2022-12-31", "validation_year": 2023},
+    {"oos_year": 2025, "train_end": "2023-12-31", "validation_year": 2024}
+  ],
+  "selection": {
+    "fitness": ["cagr:max", "mdd:min", "sharpe:max", "calmar:max", "turnover:min", "costs:min", "double_cost_cagr:max", "delayed_cagr:max", "without_three_trades:max", "asset_concentration:min", "trade_concentration:min"],
+    "baseline_qualifies": "Stitched prior outer OOS: positive CAGR and both cost/delay stresses, MDD<=35%, Sharpe>=0.75, >=75% strictly positive annual folds. This modest gate permits further research layers, not main-goal PASS.",
+    "family_champion": "Feasible Pareto then smallest MDD, highest Calmar, highest Sharpe, highest CAGR, lower turnover, lexical ID. Development feasibility: positive CAGR, MDD<=35%, both stresses positive.",
+    "finalists": "Freeze A high-return diagnostic, B robust (MDD<=25%), C compromise (MDD<=35%) using only final-origin development Pareto. A prioritizes DD<=20%, then DD<=30%, then Calmar/Sharpe/CAGR; B highest CAGR; C highest Calmar. If no feasible candidate, nominee is null; retain explicitly rejected diagnostic representatives rather than relabeling them feasible."
+  },
+  "targets": {"cagr_min": 1.5, "cagr_upper_reference": 2.0, "mdd_max": 0.35, "sharpe_min": 1.5, "calmar_min": 4.0, "profitable_fold_fraction_min": 0.75, "double_cost_cagr_min": 1.0, "without_best_day_cagr_min": 1.0, "without_three_trades_cagr_min": 0.8, "asset_concentration_max": 0.35, "trade_concentration_max": 0.15},
+  "neighbors": {"rule": "Every immediately adjacent enum value of each numeric/boolean/cadence parameter, one coordinate at a time; no favorable subsampling", "pass": "At least75% have positive validation CAGR and MDD<=35%; median CAGR>=75% of parent positive CAGR. Pure validation evidence; OOS neighbors are descriptive only."},
+  "ablations": "For each frozen family champion: A remove breadth and remove slow confirmation separately; B remove volatility ranking and isolate each 30/90/180/365 lookback; C remove intraday entry (daily regime alone), then remove daily regime. Test baseline components, not extra risk overlays. Never use these OOS contrasts to revise a nominee.",
+  "deepseek": {"endpoint": "https://api.deepseek.com/chat/completions", "model": "deepseek-flash", "max_calls": 45, "max_tokens_per_call": 1000, "response_format": "json_object", "input": "Only schema and sanitized prior-year development candidate configurations and metrics", "output": "Exactly four candidate parameter objects for the current family; strict no-extra-key/type/enum validation. No code, paths, tools or evaluator changes.", "fallback": "Deterministic adjacent parameter mutations when key/API/valid JSON unavailable. Never read arbitrary dotenv files or expose keys. Never transmit OOS, future or sealed results."},
+  "forward": {"nomination_freeze_required": true, "start": "2026-09-27", "minimum_end": "2027-09-26", "sealed_available": false, "rule": "Previously inspected repository history is not a new seal. Freeze nominees before any prospective data acquisition. This run must return REJECT for validated-winner claims when sealed/venue evidence is missing."},
+  "production_changes_allowed": false,
+  "orders_allowed": false
+}

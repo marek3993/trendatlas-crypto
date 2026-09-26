@@ -1,0 +1,152 @@
+[
+  {
+    "family": "A",
+    "median_cagr": -0.10830179813582401,
+    "neighbors": 5,
+    "origin": 2022,
+    "parent_id": "A_2d90e7af8802",
+    "passed": false,
+    "qualified": 0,
+    "valid": 5
+  },
+  {
+    "family": "B",
+    "median_cagr": -0.6868161791071642,
+    "neighbors": 5,
+    "origin": 2022,
+    "parent_id": "B_76de29c602ad",
+    "passed": false,
+    "qualified": 0,
+    "valid": 3
+  },
+  {
+    "family": "C",
+    "median_cagr": 0.12588287286386252,
+    "neighbors": 6,
+    "origin": 2022,
+    "parent_id": "C_ca70af357aff",
+    "passed": false,
+    "qualified": 3,
+    "valid": 6
+  },
+  {
+    "family": "A",
+    "median_cagr": 0.00886434377106297,
+    "neighbors": 6,
+    "origin": 2023,
+    "parent_id": "A_02d668f3f26f",
+    "passed": false,
+    "qualified": 4,
+    "valid": 6
+  },
+  {
+    "family": "B",
+    "median_cagr": -0.8088633203089223,
+    "neighbors": 5,
+    "origin": 2023,
+    "parent_id": "B_27f2a32778e7",
+    "passed": false,
+    "qualified": 0,
+    "valid": 4
+  },
+  {
+    "family": "C",
+    "median_cagr": 0.0,
+    "neighbors": 8,
+    "origin": 2023,
+    "parent_id": "C_08494100f35c",
+    "passed": false,
+    "qualified": 0,
+    "valid": 8
+  },
+  {
+    "family": "A",
+    "median_cagr": 0.24686696362010677,
+    "neighbors": 6,
+    "origin": 2024,
+    "parent_id": "A_f07a775bba77",
+    "passed": true,
+    "qualified": 6,
+    "valid": 6
+  },
+  {
+    "family": "B",
+    "median_cagr": null,
+    "neighbors": 5,
+    "origin": 2024,
+    "parent_id": "B_27f2a32778e7",
+    "passed": false,
+    "qualified": 0,
+    "valid": 0
+  },
+  {
+    "family": "C",
+    "median_cagr": 0.13374515649834273,
+    "neighbors": 6,
+    "origin": 2024,
+    "parent_id": "C_510df43c3c65",
+    "passed": true,
+    "qualified": 5,
+    "valid": 6
+  },
+  {
+    "family": "A",
+    "median_cagr": 1.042478933308733,
+    "neighbors": 6,
+    "origin": 2025,
+    "parent_id": "A_30eab4425ac4",
+    "passed": true,
+    "qualified": 6,
+    "valid": 6
+  },
+  {
+    "family": "B",
+    "median_cagr": null,
+    "neighbors": 5,
+    "origin": 2025,
+    "parent_id": "B_27f2a32778e7",
+    "passed": false,
+    "qualified": 0,
+    "valid": 0
+  },
+  {
+    "family": "C",
+    "median_cagr": 0.22536110008850496,
+    "neighbors": 8,
+    "origin": 2025,
+    "parent_id": "C_7061047851ec",
+    "passed": true,
+    "qualified": 8,
+    "valid": 8
+  },
+  {
+    "family": "A",
+    "median_cagr": -0.04474901548049891,
+    "neighbors": 5,
+    "origin": 2026,
+    "parent_id": "A_7c88e125f612",
+    "passed": false,
+    "qualified": 2,
+    "valid": 5
+  },
+  {
+    "family": "B",
+    "median_cagr": null,
+    "neighbors": 5,
+    "origin": 2026,
+    "parent_id": "B_11c03db494ac",
+    "passed": false,
+    "qualified": 0,
+    "valid": 0
+  },
+  {
+    "family": "C",
+    "median_cagr": -0.04750292225342775,
+    "neighbors": 5,
+    "origin": 2026,
+    "parent_id": "C_44c92235e04f",
+    "passed": false,
+    "qualified": 1,
+    "valid": 5
+  }
+]
