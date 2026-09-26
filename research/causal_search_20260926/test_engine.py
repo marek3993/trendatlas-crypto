@@ -104,10 +104,29 @@ class EngineTests(unittest.TestCase):
         stress=e.summarize(e.simulate(m,params('rotation'),1.25,cost_multiplier=2,**kw))
         self.assertLess(stress['cagr'],normal['cagr']);self.assertGreater(stress['cost_drag'],normal['cost_drag'])
 
-    def test_delay_moves_source_timestamp_one_bar_earlier(self):
+    def test_delay_moves_entry_one_bar_later_with_frozen_source(self):
         m=e.market_from_frames(fixture());kw=dict(start=str(m.dates[270].date()),end=str(m.dates[290].date()))
-        a=e.simulate(m,params(),1.25,**kw);b=e.simulate(m,params(),1.25,delay=1,**kw)
-        self.assertEqual(pd.Timestamp(a['signals'][0][1])-pd.Timestamp(b['signals'][0][1]),pd.Timedelta(days=1))
+        a=e.simulate(m,params(),1.25,ledger=True,**kw);b=e.simulate(m,params(),1.25,delay=1,ledger=True,**kw)
+        entry_a=next(x for x in a['events'] if x[6]=='entry');entry_b=next(x for x in b['events'] if x[6]=='entry')
+        self.assertEqual(pd.Timestamp(entry_b[0])-pd.Timestamp(entry_a[0]),pd.Timedelta(days=1))
+        self.assertEqual(a['signals'][0][1],b['signals'][1][1])
+        self.assertEqual(a['signals'][0][3],b['signals'][1][3])
+
+    def test_delayed_entry_does_not_delay_cash_exit(self):
+        m=e.market_from_frames(fixture());p=params('rotation')
+        m.features['mom21']=m.features['mom21'].copy();m.features['mom21'][284:,:]=-1
+        kw=dict(start=str(m.dates[280].date()),end=str(m.dates[291].date()),ledger=True)
+        a=e.simulate(m,p,1.25,**kw);b=e.simulate(m,p,1.25,delay=1,**kw)
+        exit_a=next(x for x in a['events'] if x[6]=='rotation');exit_b=next(x for x in b['events'] if x[6]=='rotation')
+        self.assertEqual(exit_a[0],exit_b[0]);self.assertEqual(exit_a[0],str(m.dates[286].date()))
+
+    def test_expired_delayed_signal_does_not_fill_new_target_retroactively(self):
+        m=e.market_from_frames(fixture());p=params('rotation')
+        m.features['mom21']=m.features['mom21'].copy();m.features['mom21'][279:,1]=1
+        r=e.simulate(m,p,1.25,start=str(m.dates[280].date()),end=str(m.dates[284].date()),delay=1,ledger=True)
+        entries=[x for x in r['events'] if x[6]=='entry']
+        self.assertEqual(entries[0][0],str(m.dates[282].date()));self.assertEqual(entries[0][1],'ETH')
+        self.assertGreater(r['counters']['expired_entries'],0)
 
     def test_cash_days_retained_in_annualization(self):
         m=e.market_from_frames(fixture());run=e.simulate(m,params(),1.25,start=str(m.dates[0].date()),end=str(m.dates[240].date()))

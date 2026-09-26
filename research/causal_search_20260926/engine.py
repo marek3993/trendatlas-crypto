@@ -92,6 +92,10 @@ class State:
     blocked: int=-1
     cooldown_end: int=-1
     bankrupt: bool=False
+    pending_asset: int=-1
+    pending_exposure: float=0.0
+    pending_due: int=-1
+    pending_source: int=-1
 
 
 def emit(s, events, before, kind, price=0, qty=0, cost=0, turnover=0):
@@ -181,12 +185,13 @@ def simulate(m,p,cap,*,start='2018-08-01',end='2026-09-25',cost_multiplier=1,del
     funding=costs['funding_annual_debit']*cost_multiplier/365.25
     indices=np.flatnonzero((m.dates>=start)&(m.dates<=end));n=len(indices)
     s=State();rows=np.zeros((n,9));asset_logs=np.zeros((n,len(m.assets)));trade_logs=[];all_events=[];signals=[]
-    counters={k:0 for k in ['rotation','stop','partial_tp','exposure_guard','liquidation','gap_cap_breach','no_average_down','reentry_blocked','entries','ambiguous_bars']}
+    counters={k:0 for k in ['rotation','stop','partial_tp','exposure_guard','liquidation','gap_cap_breach','no_average_down','reentry_blocked','entries','ambiguous_bars','delayed_entries','expired_entries']}
     for row_i,i in enumerate(indices):
         if m.dates[i].strftime('%m-%d')=='01-01':
             assert not s.qty, 'Annual fold boundary must be flat'
             s.blocked=-1;s.cooldown_end=-1
-        old_equity=s.equity;events=[];j=i-2-delay
+            s.pending_asset=-1
+        old_equity=s.equity;events=[];j=i-2
         if old_equity<=0:
             rows[row_i]=[0,1,1,0,0,0,0,0,0];continue
         target,target_exp=choose_target(m,p,j,s.asset)
@@ -221,10 +226,21 @@ def simulate(m,p,cap,*,start='2018-08-01',end='2026-09-25',cost_multiplier=1,del
             if rotation:s.blocked=-1;s.cooldown_end=-1
             blocked=(target==s.blocked and (i<=s.cooldown_end or not m.features['rebound'][j,target]))
             if not s.qty and not (did_exit and not rotation) and not blocked:
-                s.asset=target;s.mark=price;s.entry=price;s.last_add=price;s.entry_atr=float(m.features['atr'][j,target])
-                s.entry_i=i;s.high_water=price;s.trail=0;s.tp_done=False;s.episode+=1
-                qty=target_exp*s.equity/(price*(1+target_exp*rate))
-                trade(s,qty,price,rate,events,'entry');counters['entries']+=1
+                entry_source=j;entry_exposure=target_exp;ready=not delay
+                if delay:
+                    if s.pending_asset>=0 and s.pending_asset!=target:
+                        counters['expired_entries']+=1;s.pending_asset=-1
+                    if s.pending_asset==target and s.pending_due<=i:
+                        entry_source=s.pending_source;entry_exposure=s.pending_exposure;ready=True
+                        counters['delayed_entries']+=1
+                    elif s.pending_asset<0:
+                        s.pending_asset=target;s.pending_exposure=target_exp;s.pending_due=i+delay;s.pending_source=j
+                if ready:
+                    s.asset=target;s.mark=price;s.entry=price;s.last_add=price;s.entry_atr=float(m.features['atr'][entry_source,target])
+                    s.entry_i=i;s.high_water=price;s.trail=0;s.tp_done=False;s.episode+=1
+                    qty=entry_exposure*s.equity/(price*(1+entry_exposure*rate))
+                    trade(s,qty,price,rate,events,'entry');counters['entries']+=1;s.pending_asset=-1
+                    signals[-1]=(str(m.dates[i].date()),str(m.dates[entry_source].date()),target,entry_exposure)
             elif blocked and not s.qty:counters['reentry_blocked']+=1
             elif s.qty and s.asset==target:
                 wanted=target_exp*s.equity/(price*(1+target_exp*rate))
@@ -234,6 +250,9 @@ def simulate(m,p,cap,*,start='2018-08-01',end='2026-09-25',cost_multiplier=1,del
                 elif abs(change)*price/max(s.equity,1e-100)>.01:
                     trade(s,change,price,rate,events,'resize')
                     if change>0:s.last_add=price
+        if target<0 or did_exit and not rotation:
+            if s.pending_asset>=0:counters['expired_entries']+=1
+            s.pending_asset=-1
         day_max=max(day_max,exposure(s))
         # Declared conservative daily funding proxy: full opening held notional
         # is debited before the intraday path, even if stopped later that day.
