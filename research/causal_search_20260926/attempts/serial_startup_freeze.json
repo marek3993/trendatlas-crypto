@@ -1,0 +1,21 @@
+{
+  "availability": "D close +1 second; execution D+2 open; delayed D+3 open",
+  "code_sha256": {
+    "research/causal_search_20260926/engine.py": "141cd3e16c17883174521a8dd38bb97ce3868d4beffd8cc0dc0871cfa6d2089e",
+    "research/causal_search_20260926/pre_registration.json": "792a96e03eccfb6cf4841f72660e9e17c0bbe3d227ff3b03cd03830f85ec43b4",
+    "research/causal_search_20260926/prepare.py": "cf722c3c98e626a2e013b8f1f99fbf6b656bb97bca7fd5eddf19797e7378d621",
+    "research/causal_search_20260926/run.py": "f46958c8df9f00d24fda1d8a4c6c6f5d494c987a4cfbeda0fcd1dd08bde299fb",
+    "research/causal_search_20260926/test_engine.py": "dab2b92b11239232fed1d4859049f07fdca2ad114cd390cd239323fdaae41d79",
+    "scripts/research_objectives.py": "83df7524b1d109df0792e3bcada13ae8765c70d7e2dd2bbc021d13ccce9b7ae1",
+    "source_of_truth/research_objectives_contract.json": "a642090da96c312dacdb4987ebdb7dbc466668c6b0588bd53c4f02c5d88ab9a4"
+  },
+  "contract_sha256": "a642090da96c312dacdb4987ebdb7dbc466668c6b0588bd53c4f02c5d88ab9a4",
+  "frozen_at_utc": "2026-09-26T16:22:03.783238+00:00",
+  "funding": "12% annual debit on full opening held notional, charged before intraday path even if position exits later that day; explicit conservative proxy",
+  "input_sha256": "cd7771575ab445485413b2473398c11c16b15fdc4e1f3a6bea244cddfbd06363",
+  "numpy": "2.4.1",
+  "pandas": "3.0.2",
+  "search_fingerprint": "e9f9bbb774b09cb3bd6ed227f404b68eaaa5bd8ddcb096774405daa2f2b5eb65",
+  "source_commit": "fb6926fa46f3b2da9eb2713a021333772ce4a7c0",
+  "validation_stability": "Past validation-year quarterly net returns; outer fold stability uses six annual OOS returns"
+}

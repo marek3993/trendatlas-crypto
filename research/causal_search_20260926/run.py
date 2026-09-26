@@ -4,6 +4,7 @@ Search outputs are research evidence only. Sealed history is explicitly absent.
 """
 from __future__ import annotations
 import argparse
+from concurrent.futures import ProcessPoolExecutor
 import copy
 from datetime import datetime, timezone
 import hashlib
@@ -210,8 +211,13 @@ def main():
     m=engine.load_market();variant_map={p['id']:p for p in spec['variants']}
     print('Verified inputs and implementation freeze; market shape',m.prices.shape,flush=True)
     records_by_part={};selection={};development={};rows=[]
+    # Independent frozen budgets; no information is shared between workers.
+    with ProcessPoolExecutor(max_workers=6) as pool:
+        futures={part['id']:pool.submit(run_search,m,spec,part,out,cache,fingerprint) for part in spec['partitions']}
+        for part in spec['partitions']:
+            records_by_part[part['id']]=futures[part['id']].result()
     for part in spec['partitions']:
-        records=run_search(m,spec,part,out,cache,fingerprint);records_by_part[part['id']]=records
+        records=records_by_part[part['id']]
         for p_id,windows in records.items():
             for window,metrics in windows.items():
                 rows.append(dict(partition=part['id'],variant=p_id,window=window,**{k:v for k,v in metrics.items() if not isinstance(v,list)}))
