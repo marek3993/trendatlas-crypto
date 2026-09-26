@@ -1,0 +1,4225 @@
+{
+  "A": "ARCHIVED_REJECT",
+  "C": "ARCHIVED_REJECT_NO_NEW_MUTATION",
+  "D": "NOT_RUN",
+  "E": "NOT_RUN_NO_TWO_INDEPENDENT_QUALIFIED_FAMILIES",
+  "overall": "REJECT",
+  "production_winner": false,
+  "rows": [
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": false,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": true,
+          "calmar": true,
+          "concentration": true,
+          "folds": true,
+          "mdd": true,
+          "sharpe": true
+        },
+        "passed": false
+      },
+      "capital": 100,
+      "decision": "BENCHMARK",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": true,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "BTC_SMA200"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": false,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": true,
+          "calmar": true,
+          "concentration": true,
+          "folds": true,
+          "mdd": true,
+          "sharpe": true
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "BENCHMARK",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": true,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "BTC_SMA200"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": false,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": true,
+          "calmar": true,
+          "concentration": true,
+          "folds": true,
+          "mdd": true,
+          "sharpe": true
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "BENCHMARK",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": true,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "BTC_SMA200"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": false,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": true,
+          "calmar": true,
+          "concentration": true,
+          "folds": true,
+          "mdd": true,
+          "sharpe": true
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "BENCHMARK",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": true,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "BTC_SMA200"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": false,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": true,
+          "calmar": true,
+          "concentration": true,
+          "folds": true,
+          "mdd": true,
+          "sharpe": true
+        },
+        "passed": false
+      },
+      "capital": 1000000,
+      "decision": "BENCHMARK",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": true,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "BTC_SMA200"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deterministic"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deterministic"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deterministic"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deterministic"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deterministic"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deepseek"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deepseek"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deepseek"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deepseek"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "B_deepseek"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_b665c17b4320"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_b665c17b4320"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_b665c17b4320"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_b665c17b4320"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_b665c17b4320"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f9293b3741f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f9293b3741f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f9293b3741f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f9293b3741f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f9293b3741f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4e2532a9a414"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4e2532a9a414"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4e2532a9a414"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4e2532a9a414"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4e2532a9a414"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a2d9dc36194b"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a2d9dc36194b"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a2d9dc36194b"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a2d9dc36194b"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a2d9dc36194b"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fa9ed6bad977"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fa9ed6bad977"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fa9ed6bad977"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fa9ed6bad977"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fa9ed6bad977"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_f286c850dc97"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_f286c850dc97"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_f286c850dc97"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_f286c850dc97"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_f286c850dc97"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_41999f301120"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_41999f301120"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_41999f301120"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_41999f301120"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_41999f301120"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_22243dfe1c19"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_22243dfe1c19"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_22243dfe1c19"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_22243dfe1c19"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_22243dfe1c19"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_0260acb869d9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_0260acb869d9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_0260acb869d9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_0260acb869d9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_0260acb869d9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_55244d77913e"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_55244d77913e"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_55244d77913e"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_55244d77913e"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_55244d77913e"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5bdbde016f85"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5bdbde016f85"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5bdbde016f85"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5bdbde016f85"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5bdbde016f85"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_23f6b8896b6b"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_23f6b8896b6b"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_23f6b8896b6b"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_23f6b8896b6b"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_23f6b8896b6b"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_6611da298ff3"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_6611da298ff3"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_6611da298ff3"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_6611da298ff3"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_6611da298ff3"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2b2686ed519b"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2b2686ed519b"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2b2686ed519b"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2b2686ed519b"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2b2686ed519b"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_37344a673174"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_37344a673174"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_37344a673174"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_37344a673174"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_37344a673174"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a86abb6f1cae"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a86abb6f1cae"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a86abb6f1cae"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a86abb6f1cae"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_a86abb6f1cae"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_83315a112930"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_83315a112930"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_83315a112930"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_83315a112930"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_83315a112930"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fb8f03bffcaf"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fb8f03bffcaf"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fb8f03bffcaf"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fb8f03bffcaf"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_fb8f03bffcaf"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_d53331949bce"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_d53331949bce"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_d53331949bce"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_d53331949bce"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_d53331949bce"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f3185272941"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f3185272941"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f3185272941"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f3185272941"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_5f3185272941"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_3a51ed51f1b9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_3a51ed51f1b9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_3a51ed51f1b9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_3a51ed51f1b9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_3a51ed51f1b9"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4f766480827f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4f766480827f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4f766480827f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4f766480827f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4f766480827f"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2a32821abc4c"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2a32821abc4c"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": false,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2a32821abc4c"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2a32821abc4c"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_2a32821abc4c"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 100,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4033f3322d03"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 1000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4033f3322d03"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 10000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4033f3322d03"
+    },
+    {
+      "benchmark": {
+        "improvements": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "noninferiority": {
+          "cagr": false,
+          "calmar": false,
+          "concentration": true,
+          "folds": true,
+          "mdd": false,
+          "sharpe": false
+        },
+        "passed": false
+      },
+      "capital": 100000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": true,
+        "folds": true,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4033f3322d03"
+    },
+    {
+      "benchmark": {
+        "passed": false,
+        "reason": "Incomplete execution evidence"
+      },
+      "capital": 1000000,
+      "decision": "REJECT",
+      "gates": {
+        "asset_concentration": false,
+        "benchmark": false,
+        "cagr": false,
+        "calmar": false,
+        "delayed": false,
+        "development_feasible": false,
+        "double_cost": false,
+        "execution": false,
+        "folds": false,
+        "mdd": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "sharpe": false,
+        "trade_concentration": false
+      },
+      "label": "panel_B_4033f3322d03"
+    }
+  ]
+}

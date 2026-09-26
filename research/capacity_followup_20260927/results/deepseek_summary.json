@@ -1,0 +1,13 @@
+{
+  "accepted_proposals": 60,
+  "calls": 15,
+  "estimated_usd": 0.0037883399999999994,
+  "events_file": "designer_events.jsonl",
+  "input_scope": "Development whitelist only; all API calls precede outer evaluation",
+  "key_available": true,
+  "price_is_estimate_not_invoice": true,
+  "rejected_proposals": 0,
+  "reserved_upper_usd": 0.0632817,
+  "successful_responses": 15,
+  "total_tokens": 32577
+}

@@ -1,0 +1,164 @@
+[
+  {
+    "label": "BTC_SMA200",
+    "max_execution_safe_tested_usd": 1000000,
+    "max_faithful_stress_tested_usd": 100000,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "B_deepseek",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "B_deterministic",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": 100000,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_0260acb869d9",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_22243dfe1c19",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_23f6b8896b6b",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_2a32821abc4c",
+    "max_execution_safe_tested_usd": 10000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_2b2686ed519b",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_37344a673174",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_3a51ed51f1b9",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_4033f3322d03",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_41999f301120",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_4e2532a9a414",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_4f766480827f",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_55244d77913e",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_5bdbde016f85",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_5f3185272941",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_5f9293b3741f",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_6611da298ff3",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_83315a112930",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_a2d9dc36194b",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_a86abb6f1cae",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_b665c17b4320",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_d53331949bce",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_f286c850dc97",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_fa9ed6bad977",
+    "max_execution_safe_tested_usd": 100000,
+    "max_faithful_stress_tested_usd": 100,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  },
+  {
+    "label": "panel_B_fb8f03bffcaf",
+    "max_execution_safe_tested_usd": null,
+    "max_faithful_stress_tested_usd": null,
+    "scope": "Lower bound on tested grid; not interpolated maximum; Binance research assumptions, not Hyperliquid live capacity"
+  }
+]

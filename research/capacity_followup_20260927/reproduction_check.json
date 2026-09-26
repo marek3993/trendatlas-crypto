@@ -1,0 +1,131 @@
+{
+  "replays": [
+    {
+      "capital": 100,
+      "label": "BTC_SMA200",
+      "stage": "nominal",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 100,
+      "label": "BTC_SMA200",
+      "stage": "double",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 100,
+      "label": "BTC_SMA200",
+      "stage": "delayed",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "BTC_SMA200",
+      "stage": "nominal",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "BTC_SMA200",
+      "stage": "double",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "BTC_SMA200",
+      "stage": "delayed",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 100,
+      "label": "B_deterministic",
+      "stage": "nominal",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 100,
+      "label": "B_deterministic",
+      "stage": "double",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 100,
+      "label": "B_deterministic",
+      "stage": "delayed",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "B_deterministic",
+      "stage": "nominal",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "B_deterministic",
+      "stage": "double",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "B_deterministic",
+      "stage": "delayed",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 100,
+      "label": "B_deepseek",
+      "stage": "nominal",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 100,
+      "label": "B_deepseek",
+      "stage": "double",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 100,
+      "label": "B_deepseek",
+      "stage": "delayed",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "B_deepseek",
+      "stage": "nominal",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "B_deepseek",
+      "stage": "double",
+      "status": "MATCH",
+      "year": 2023
+    },
+    {
+      "capital": 1000000,
+      "label": "B_deepseek",
+      "stage": "delayed",
+      "status": "MATCH",
+      "year": 2023
+    }
+  ],
+  "status": "PASS"
+}

@@ -1,0 +1,1286 @@
+[
+  {
+    "arm": "deterministic",
+    "generation": 0,
+    "origin": 2022,
+    "pareto": [
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e",
+      "B_4f766480827f",
+      "B_a449bd971465",
+      "B_37344a673174"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 1,
+    "origin": 2022,
+    "pareto": [
+      "B_073708342600",
+      "B_45d0ef5ec46e",
+      "B_b2f20e47cac8",
+      "B_6d48f141cfc3"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e",
+      "B_4f766480827f",
+      "B_a449bd971465",
+      "B_37344a673174",
+      "B_a2d9dc36194b",
+      "B_b2f20e47cac8",
+      "B_6d48f141cfc3",
+      "B_f0d126a045e6"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_6d48f141cfc3",
+      "B_b2f20e47cac8",
+      "B_45d0ef5ec46e",
+      "B_4033f3322d03",
+      "B_4f766480827f"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 2,
+    "origin": 2022,
+    "pareto": [
+      "B_073708342600",
+      "B_6d48f141cfc3",
+      "B_b2f20e47cac8",
+      "B_45d0ef5ec46e",
+      "B_3174a28754e5",
+      "B_4cb6a0f8434c"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_6d48f141cfc3",
+      "B_b2f20e47cac8",
+      "B_45d0ef5ec46e",
+      "B_4033f3322d03",
+      "B_4f766480827f",
+      "B_23f6b8896b6b",
+      "B_afd5352d331b",
+      "B_3174a28754e5",
+      "B_4cb6a0f8434c"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_4cb6a0f8434c",
+      "B_6d48f141cfc3",
+      "B_b2f20e47cac8",
+      "B_3174a28754e5",
+      "B_45d0ef5ec46e"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 3,
+    "origin": 2022,
+    "pareto": [
+      "B_4cb6a0f8434c",
+      "B_6d48f141cfc3",
+      "B_b2f20e47cac8",
+      "B_45d0ef5ec46e",
+      "B_04a70db3cbbf",
+      "B_957066ac8e8e"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_4cb6a0f8434c",
+      "B_6d48f141cfc3",
+      "B_b2f20e47cac8",
+      "B_3174a28754e5",
+      "B_45d0ef5ec46e",
+      "B_04a70db3cbbf",
+      "B_c99fbc59e08b",
+      "B_e58c26f10c49",
+      "B_957066ac8e8e"
+    ],
+    "survivors": [
+      "B_04a70db3cbbf",
+      "B_4cb6a0f8434c",
+      "B_6d48f141cfc3",
+      "B_b2f20e47cac8",
+      "B_45d0ef5ec46e",
+      "B_957066ac8e8e"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 0,
+    "origin": 2022,
+    "pareto": [
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e",
+      "B_4f766480827f",
+      "B_a449bd971465",
+      "B_37344a673174"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 1,
+    "origin": 2022,
+    "pareto": [
+      "B_073708342600",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e",
+      "B_4f766480827f",
+      "B_a449bd971465",
+      "B_618ab480af9b",
+      "B_e868c7b9eff1"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e",
+      "B_4f766480827f",
+      "B_a449bd971465",
+      "B_37344a673174",
+      "B_aa9dae3ce2bb",
+      "B_618ab480af9b",
+      "B_a35597ec0a14",
+      "B_e868c7b9eff1"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_45d0ef5ec46e",
+      "B_4f766480827f",
+      "B_618ab480af9b",
+      "B_a449bd971465",
+      "B_e868c7b9eff1"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 2,
+    "origin": 2022,
+    "pareto": [
+      "B_4f766480827f",
+      "B_618ab480af9b",
+      "B_405989abb5a3",
+      "B_8b05daa93d29"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_45d0ef5ec46e",
+      "B_4f766480827f",
+      "B_618ab480af9b",
+      "B_a449bd971465",
+      "B_e868c7b9eff1",
+      "B_eb2cc4852bdc",
+      "B_405989abb5a3",
+      "B_8b05daa93d29",
+      "B_f0d126a045e6"
+    ],
+    "survivors": [
+      "B_405989abb5a3",
+      "B_4f766480827f",
+      "B_618ab480af9b",
+      "B_8b05daa93d29",
+      "B_073708342600",
+      "B_a449bd971465"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 3,
+    "origin": 2022,
+    "pareto": [
+      "B_405989abb5a3",
+      "B_4f766480827f",
+      "B_618ab480af9b",
+      "B_8b05daa93d29",
+      "B_6eba0a560c2f",
+      "B_cb9c5e0bdbc3"
+    ],
+    "population": [
+      "B_405989abb5a3",
+      "B_4f766480827f",
+      "B_618ab480af9b",
+      "B_8b05daa93d29",
+      "B_073708342600",
+      "B_a449bd971465",
+      "B_6eba0a560c2f",
+      "B_08641b4bd755",
+      "B_cb9c5e0bdbc3",
+      "B_5c8a358bfb52"
+    ],
+    "survivors": [
+      "B_405989abb5a3",
+      "B_618ab480af9b",
+      "B_6eba0a560c2f",
+      "B_8b05daa93d29",
+      "B_cb9c5e0bdbc3",
+      "B_4f766480827f"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 0,
+    "origin": 2023,
+    "pareto": [
+      "B_a449bd971465"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_4033f3322d03"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 1,
+    "origin": 2023,
+    "pareto": [
+      "B_a449bd971465",
+      "B_59c1961c3b03"
+    ],
+    "population": [
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_4033f3322d03",
+      "B_59c1961c3b03",
+      "B_f286c850dc97",
+      "B_f0d126a045e6",
+      "B_5bdbde016f85"
+    ],
+    "survivors": [
+      "B_59c1961c3b03",
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 2,
+    "origin": 2023,
+    "pareto": [
+      "B_59c1961c3b03",
+      "B_a449bd971465"
+    ],
+    "population": [
+      "B_59c1961c3b03",
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_405989abb5a3",
+      "B_d53331949bce",
+      "B_5f9293b3741f",
+      "B_3a51ed51f1b9"
+    ],
+    "survivors": [
+      "B_59c1961c3b03",
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 3,
+    "origin": 2023,
+    "pareto": [
+      "B_59c1961c3b03",
+      "B_a449bd971465"
+    ],
+    "population": [
+      "B_59c1961c3b03",
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_5c8a358bfb52",
+      "B_6611da298ff3",
+      "B_04a70db3cbbf",
+      "B_3174a28754e5"
+    ],
+    "survivors": [
+      "B_59c1961c3b03",
+      "B_a449bd971465",
+      "B_04a70db3cbbf",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 0,
+    "origin": 2023,
+    "pareto": [
+      "B_a449bd971465"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_4033f3322d03"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 1,
+    "origin": 2023,
+    "pareto": [
+      "B_a449bd971465"
+    ],
+    "population": [
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_4033f3322d03",
+      "B_5c8a358bfb52",
+      "B_5037403ac5a6",
+      "B_5301e215a590",
+      "B_869b7151ee7f"
+    ],
+    "survivors": [
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_4033f3322d03"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 2,
+    "origin": 2023,
+    "pareto": [
+      "B_a449bd971465",
+      "B_548a1cbab084"
+    ],
+    "population": [
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_4033f3322d03",
+      "B_9c52d8b87ecf",
+      "B_c1cb13d910c0",
+      "B_548a1cbab084",
+      "B_e865db066c2c"
+    ],
+    "survivors": [
+      "B_548a1cbab084",
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 3,
+    "origin": 2023,
+    "pareto": [
+      "B_548a1cbab084",
+      "B_a449bd971465",
+      "B_dd4dc473244e"
+    ],
+    "population": [
+      "B_548a1cbab084",
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_2a32821abc4c",
+      "B_37344a673174",
+      "B_004c52228678",
+      "B_402af951efa4",
+      "B_bb732d3a7353",
+      "B_dd4dc473244e"
+    ],
+    "survivors": [
+      "B_548a1cbab084",
+      "B_a449bd971465",
+      "B_dd4dc473244e",
+      "B_004c52228678",
+      "B_073708342600",
+      "B_22243dfe1c19"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 0,
+    "origin": 2024,
+    "pareto": [
+      "B_37344a673174",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 1,
+    "origin": 2024,
+    "pareto": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_6611da298ff3"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e",
+      "B_f7b9d51322c0",
+      "B_7afa07a1c235",
+      "B_6611da298ff3",
+      "B_d119b5d14f7b"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_6611da298ff3",
+      "B_22243dfe1c19",
+      "B_4033f3322d03"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 2,
+    "origin": 2024,
+    "pareto": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_6611da298ff3"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_6611da298ff3",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_eb4f50d02ed2",
+      "B_becdbf9c2012",
+      "B_a2d9dc36194b",
+      "B_04a70db3cbbf"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_6611da298ff3",
+      "B_04a70db3cbbf",
+      "B_22243dfe1c19"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 3,
+    "origin": 2024,
+    "pareto": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_6611da298ff3",
+      "B_2b2686ed519b",
+      "B_dd4dc473244e"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_6611da298ff3",
+      "B_04a70db3cbbf",
+      "B_22243dfe1c19",
+      "B_8b05daa93d29",
+      "B_2b2686ed519b",
+      "B_3cc836542730",
+      "B_dd4dc473244e"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_6611da298ff3",
+      "B_dd4dc473244e",
+      "B_2b2686ed519b"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 0,
+    "origin": 2024,
+    "pareto": [
+      "B_37344a673174",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 1,
+    "origin": 2024,
+    "pareto": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_fe7ab126bd79"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_45d0ef5ec46e",
+      "B_5037403ac5a6",
+      "B_fe7ab126bd79",
+      "B_eb4f50d02ed2",
+      "B_1a50ebacb8a5"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_fe7ab126bd79",
+      "B_1a50ebacb8a5",
+      "B_22243dfe1c19"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 2,
+    "origin": 2024,
+    "pareto": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_fe7ab126bd79",
+      "B_2b2686ed519b"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_fe7ab126bd79",
+      "B_1a50ebacb8a5",
+      "B_22243dfe1c19",
+      "B_f286c850dc97",
+      "B_2b2686ed519b",
+      "B_8b05daa93d29",
+      "B_0260acb869d9"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_fe7ab126bd79",
+      "B_2b2686ed519b",
+      "B_1a50ebacb8a5"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 3,
+    "origin": 2024,
+    "pareto": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_fe7ab126bd79",
+      "B_2b2686ed519b"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_fe7ab126bd79",
+      "B_2b2686ed519b",
+      "B_1a50ebacb8a5",
+      "B_92d3421ae985",
+      "B_5c8a358bfb52",
+      "B_6eba0a560c2f",
+      "B_953095689b49"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_37344a673174",
+      "B_4f766480827f",
+      "B_fe7ab126bd79",
+      "B_2b2686ed519b",
+      "B_1a50ebacb8a5"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 0,
+    "origin": 2025,
+    "pareto": [
+      "B_2a32821abc4c",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_a86abb6f1cae",
+      "B_4f766480827f"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 1,
+    "origin": 2025,
+    "pareto": [
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_04a70db3cbbf"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_a86abb6f1cae",
+      "B_4f766480827f",
+      "B_04a70db3cbbf",
+      "B_ff72e549f2d0",
+      "B_a2d9dc36194b",
+      "B_2b2686ed519b"
+    ],
+    "survivors": [
+      "B_04a70db3cbbf",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_073708342600",
+      "B_2b2686ed519b",
+      "B_4f766480827f"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 2,
+    "origin": 2025,
+    "pareto": [
+      "B_04a70db3cbbf",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a87959b1cc4c"
+    ],
+    "population": [
+      "B_04a70db3cbbf",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_073708342600",
+      "B_2b2686ed519b",
+      "B_4f766480827f",
+      "B_869b7151ee7f",
+      "B_8b05daa93d29",
+      "B_5037403ac5a6",
+      "B_a87959b1cc4c"
+    ],
+    "survivors": [
+      "B_04a70db3cbbf",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a87959b1cc4c",
+      "B_073708342600",
+      "B_2b2686ed519b"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 3,
+    "origin": 2025,
+    "pareto": [
+      "B_04a70db3cbbf",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a87959b1cc4c",
+      "B_d53331949bce",
+      "B_601eab5b054f"
+    ],
+    "population": [
+      "B_04a70db3cbbf",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a87959b1cc4c",
+      "B_073708342600",
+      "B_2b2686ed519b",
+      "B_d53331949bce",
+      "B_601eab5b054f",
+      "B_a35c90ee130f",
+      "B_5f3185272941"
+    ],
+    "survivors": [
+      "B_04a70db3cbbf",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_601eab5b054f",
+      "B_d53331949bce",
+      "B_a87959b1cc4c"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 0,
+    "origin": 2025,
+    "pareto": [
+      "B_2a32821abc4c",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_a86abb6f1cae",
+      "B_4f766480827f"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 1,
+    "origin": 2025,
+    "pareto": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_a86abb6f1cae",
+      "B_4f766480827f",
+      "B_c1cb13d910c0",
+      "B_eb4f50d02ed2"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_a86abb6f1cae",
+      "B_4f766480827f",
+      "B_08641b4bd755",
+      "B_c1cb13d910c0",
+      "B_6775a5638b88",
+      "B_eb4f50d02ed2"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_c1cb13d910c0",
+      "B_a86abb6f1cae"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 2,
+    "origin": 2025,
+    "pareto": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_c1cb13d910c0",
+      "B_a86abb6f1cae",
+      "B_9aef542114f4"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_c1cb13d910c0",
+      "B_a86abb6f1cae",
+      "B_e868c7b9eff1",
+      "B_9aef542114f4",
+      "B_618ab480af9b",
+      "B_a35597ec0a14"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_c1cb13d910c0",
+      "B_a86abb6f1cae"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 3,
+    "origin": 2025,
+    "pareto": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_c1cb13d910c0",
+      "B_a86abb6f1cae",
+      "B_a9f7dc7c3a1b",
+      "B_004c52228678",
+      "B_92cfebe17325"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_c1cb13d910c0",
+      "B_a86abb6f1cae",
+      "B_d9ae258b4a91",
+      "B_a9f7dc7c3a1b",
+      "B_004c52228678",
+      "B_92cfebe17325"
+    ],
+    "survivors": [
+      "B_004c52228678",
+      "B_2a32821abc4c",
+      "B_4033f3322d03",
+      "B_92cfebe17325",
+      "B_a449bd971465",
+      "B_c1cb13d910c0"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 0,
+    "origin": 2026,
+    "pareto": [
+      "B_41999f301120",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_a86abb6f1cae",
+      "B_4f766480827f"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 1,
+    "origin": 2026,
+    "pareto": [
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_a86abb6f1cae",
+      "B_4f766480827f",
+      "B_f0d126a045e6",
+      "B_92d3421ae985",
+      "B_2c32e4a6ac0b"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_a86abb6f1cae",
+      "B_4f766480827f",
+      "B_f0d126a045e6",
+      "B_92d3421ae985",
+      "B_3a51ed51f1b9",
+      "B_2c32e4a6ac0b"
+    ],
+    "survivors": [
+      "B_22243dfe1c19",
+      "B_2c32e4a6ac0b",
+      "B_41999f301120",
+      "B_92d3421ae985",
+      "B_f0d126a045e6",
+      "B_4f766480827f"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 2,
+    "origin": 2026,
+    "pareto": [
+      "B_22243dfe1c19",
+      "B_2c32e4a6ac0b",
+      "B_41999f301120",
+      "B_92d3421ae985",
+      "B_f0d126a045e6",
+      "B_4f766480827f",
+      "B_51ad958be4fe",
+      "B_08815c484821",
+      "B_3174a28754e5"
+    ],
+    "population": [
+      "B_22243dfe1c19",
+      "B_2c32e4a6ac0b",
+      "B_41999f301120",
+      "B_92d3421ae985",
+      "B_f0d126a045e6",
+      "B_4f766480827f",
+      "B_4e2532a9a414",
+      "B_51ad958be4fe",
+      "B_08815c484821",
+      "B_3174a28754e5"
+    ],
+    "survivors": [
+      "B_08815c484821",
+      "B_22243dfe1c19",
+      "B_2c32e4a6ac0b",
+      "B_41999f301120",
+      "B_51ad958be4fe",
+      "B_92d3421ae985"
+    ]
+  },
+  {
+    "arm": "deterministic",
+    "generation": 3,
+    "origin": 2026,
+    "pareto": [
+      "B_08815c484821",
+      "B_22243dfe1c19",
+      "B_2c32e4a6ac0b",
+      "B_41999f301120",
+      "B_51ad958be4fe",
+      "B_92d3421ae985",
+      "B_e868c7b9eff1",
+      "B_dd4dc473244e"
+    ],
+    "population": [
+      "B_08815c484821",
+      "B_22243dfe1c19",
+      "B_2c32e4a6ac0b",
+      "B_41999f301120",
+      "B_51ad958be4fe",
+      "B_92d3421ae985",
+      "B_f7b9d51322c0",
+      "B_e868c7b9eff1",
+      "B_dd4dc473244e",
+      "B_1a50ebacb8a5"
+    ],
+    "survivors": [
+      "B_08815c484821",
+      "B_22243dfe1c19",
+      "B_2c32e4a6ac0b",
+      "B_41999f301120",
+      "B_51ad958be4fe",
+      "B_92d3421ae985"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 0,
+    "origin": 2026,
+    "pareto": [
+      "B_41999f301120",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "population": [
+      "B_41999f301120",
+      "B_37344a673174",
+      "B_2a32821abc4c",
+      "B_22243dfe1c19",
+      "B_a86abb6f1cae",
+      "B_4033f3322d03",
+      "B_a449bd971465",
+      "B_45d0ef5ec46e",
+      "B_073708342600",
+      "B_4f766480827f"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_a86abb6f1cae",
+      "B_4f766480827f"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 1,
+    "origin": 2026,
+    "pareto": [
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_a86abb6f1cae",
+      "B_4f766480827f",
+      "B_92d3421ae985",
+      "B_e868c7b9eff1"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_a86abb6f1cae",
+      "B_4f766480827f",
+      "B_92d3421ae985",
+      "B_e868c7b9eff1",
+      "B_08641b4bd755",
+      "B_fe7ab126bd79"
+    ],
+    "survivors": [
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_92d3421ae985",
+      "B_e868c7b9eff1"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 2,
+    "origin": 2026,
+    "pareto": [
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_92d3421ae985",
+      "B_e868c7b9eff1",
+      "B_51ad958be4fe",
+      "B_004c52228678",
+      "B_92cfebe17325"
+    ],
+    "population": [
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_4033f3322d03",
+      "B_41999f301120",
+      "B_92d3421ae985",
+      "B_e868c7b9eff1",
+      "B_51ad958be4fe",
+      "B_004c52228678",
+      "B_e58c26f10c49",
+      "B_92cfebe17325"
+    ],
+    "survivors": [
+      "B_004c52228678",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_41999f301120",
+      "B_51ad958be4fe",
+      "B_e868c7b9eff1"
+    ]
+  },
+  {
+    "arm": "deepseek",
+    "generation": 3,
+    "origin": 2026,
+    "pareto": [
+      "B_004c52228678",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_41999f301120",
+      "B_51ad958be4fe",
+      "B_e868c7b9eff1",
+      "B_405989abb5a3",
+      "B_c1cb13d910c0",
+      "B_dd4dc473244e",
+      "B_a35597ec0a14"
+    ],
+    "population": [
+      "B_004c52228678",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_41999f301120",
+      "B_51ad958be4fe",
+      "B_e868c7b9eff1",
+      "B_405989abb5a3",
+      "B_c1cb13d910c0",
+      "B_dd4dc473244e",
+      "B_a35597ec0a14"
+    ],
+    "survivors": [
+      "B_004c52228678",
+      "B_073708342600",
+      "B_22243dfe1c19",
+      "B_41999f301120",
+      "B_51ad958be4fe",
+      "B_a35597ec0a14"
+    ]
+  }
+]

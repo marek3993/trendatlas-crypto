@@ -1,0 +1,455 @@
+{
+  "complete_day_checks": [
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "ADAUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1014,
+      "symbol": "ARBUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2435,
+      "symbol": "ATOMUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1926,
+      "symbol": "AVAXUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2295,
+      "symbol": "BANDUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2224,
+      "symbol": "BCHUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1596,
+      "symbol": "BLZUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "BNBUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 747,
+      "symbol": "BONKUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "BTCUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1077,
+      "symbol": "BTTUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1738,
+      "symbol": "CFXUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2307,
+      "symbol": "CHZUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2467,
+      "symbol": "DASHUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [
+        {
+          "date": "2021-10-28 00:00:00",
+          "relative_error": 0.00033355570380244615
+        }
+      ],
+      "complete_days": 2369,
+      "symbol": "DOGEUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1961,
+      "symbol": "DOTUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 638,
+      "symbol": "ENAUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2446,
+      "symbol": "ENJUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2333,
+      "symbol": "EOSUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "ETCUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "ETHUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2494,
+      "symbol": "FETUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1903,
+      "symbol": "FILUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 971,
+      "symbol": "FLOKIUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2040,
+      "symbol": "FTMUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1891,
+      "symbol": "FTTUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1570,
+      "symbol": "GALAUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2284,
+      "symbol": "HBARUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2504,
+      "symbol": "HOTUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1696,
+      "symbol": "ICPUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1897,
+      "symbol": "INJUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1470,
+      "symbol": "LINAUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2537,
+      "symbol": "LINKUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2028,
+      "symbol": "LRCUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "LTCUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1939,
+      "symbol": "LUNAUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1209,
+      "symbol": "LUNCUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1973,
+      "symbol": "MANAUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1681,
+      "symbol": "MASKUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1960,
+      "symbol": "MATICUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1904,
+      "symbol": "NEARUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "NEOUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1827,
+      "symbol": "OGUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1898,
+      "symbol": "OMGUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1759,
+      "symbol": "OMUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1309,
+      "symbol": "OPUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1469,
+      "symbol": "PEOPLEUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 971,
+      "symbol": "PEPEUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1698,
+      "symbol": "PERPUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1542,
+      "symbol": "RAREUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 967,
+      "symbol": "RNDRUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1944,
+      "symbol": "RUNEUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1965,
+      "symbol": "SANDUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1696,
+      "symbol": "SHIBUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1968,
+      "symbol": "SOLUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 973,
+      "symbol": "SUIUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 629,
+      "symbol": "TAOUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2411,
+      "symbol": "TFUELUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2454,
+      "symbol": "THETAUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1950,
+      "symbol": "TRBUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "TRXUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1799,
+      "symbol": "TWTUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1447,
+      "symbol": "UNFIUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1932,
+      "symbol": "UNIUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "VETUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1972,
+      "symbol": "WAVESUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 666,
+      "symbol": "WIFUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2342,
+      "symbol": "WINUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 891,
+      "symbol": "WLDUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "XLMUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1799,
+      "symbol": "XMRUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2553,
+      "symbol": "XRPUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1669,
+      "symbol": "XVGUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 1559,
+      "symbol": "YGGUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2474,
+      "symbol": "ZECUSDT"
+    },
+    {
+      "close_mismatches_over_1e_7": [],
+      "complete_days": 2503,
+      "symbol": "ZILUSDT"
+    }
+  ],
+  "extreme_price_ratios": [
+    {
+      "date": "2023-02-22 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 0.009031339031339031,
+      "symbol": "BNXUSDT",
+      "used_as_price_adjustment": false
+    },
+    {
+      "date": "2021-01-23 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 1295.3956834532373,
+      "symbol": "COCOSUSDT",
+      "used_as_price_adjustment": false
+    },
+    {
+      "date": "2021-04-02 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 107.57760194765673,
+      "symbol": "DREPUSDT",
+      "used_as_price_adjustment": false
+    },
+    {
+      "date": "2022-05-11 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 0.061678121420389455,
+      "symbol": "LUNAUSDT",
+      "used_as_price_adjustment": false
+    },
+    {
+      "date": "2022-05-12 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 0.000297149224626242,
+      "symbol": "LUNAUSDT",
+      "used_as_price_adjustment": false
+    },
+    {
+      "date": "2022-05-31 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 177399.99999999997,
+      "symbol": "LUNAUSDT",
+      "used_as_price_adjustment": false
+    },
+    {
+      "date": "2023-07-21 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 0.000804177897574124,
+      "symbol": "QUICKUSDT",
+      "used_as_price_adjustment": false
+    },
+    {
+      "date": "2021-06-18 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 0.0011986798201073555,
+      "symbol": "SUNUSDT",
+      "used_as_price_adjustment": false
+    },
+    {
+      "date": "2022-11-09 00:00:00",
+      "known_epoch_event": true,
+      "observed_close_ratio": 0.051236525047558656,
+      "symbol": "VIDTUSDT",
+      "used_as_price_adjustment": false
+    }
+  ],
+  "notes": "Data-only audit, no performance-based exclusion. Epoch events use primary notices, crashes are retained unchanged. Daily-vs-4h compares complete six-bar days only; no resampling supplies unavailable trading prices."
+}

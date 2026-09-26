@@ -1,0 +1,36 @@
+test_arms_equal_without_key (test_followup.Followup.test_arms_equal_without_key) ... ok
+test_benchmark_no_CAGR_only_win (test_followup.Followup.test_benchmark_no_CAGR_only_win) ... ok
+test_cash_and_asset_identity (test_followup.Followup.test_cash_and_asset_identity) ... ok
+test_cash_cost_reconciliation (test_followup.Followup.test_cash_cost_reconciliation) ... ok
+test_daily_close_D_plus_one (test_followup.Followup.test_daily_close_D_plus_one) ... ok
+test_drawdown_direction (test_followup.Followup.test_drawdown_direction) ... ok
+test_entry_unavailable_cancels_without_rejecting_cash (test_followup.Followup.test_entry_unavailable_cancels_without_rejecting_cash) ... ok
+test_epoch_split_prefix_invariant (test_followup.Followup.test_epoch_split_prefix_invariant) ... ok
+test_exit_dust_remains_visible (test_followup.Followup.test_exit_dust_remains_visible) ... ok
+test_exit_ttl_does_not_force_fill (test_followup.Followup.test_exit_ttl_does_not_force_fill) ... ok
+test_frozen_protocol (test_followup.Followup.test_frozen_protocol) ... ok
+test_future_ledger_invariance (test_followup.Followup.test_future_ledger_invariance) ... ok
+test_grid_and_neighbors_canonical (test_followup.Followup.test_grid_and_neighbors_canonical) ... ok
+test_known_unavailability_before_rank (test_followup.Followup.test_known_unavailability_before_rank) ... ok
+test_latency_and_initial_delay (test_followup.Followup.test_latency_and_initial_delay) ... ok
+test_missing_held_quote_fails (test_followup.Followup.test_missing_held_quote_fails) ... ok
+test_missing_symbols_do_not_rank_as_zero (test_followup.Followup.test_missing_symbols_do_not_rank_as_zero) ... ok
+test_new_listing_can_enter_after_history (test_followup.Followup.test_new_listing_can_enter_after_history) ... ok
+test_new_target_cancels_stale_buy (test_followup.Followup.test_new_target_cancels_stale_buy) ... ok
+test_no_OOS_at_designer_boundary (test_followup.Followup.test_no_OOS_at_designer_boundary) ... ok
+test_no_leverage_short_nan (test_followup.Followup.test_no_leverage_short_nan) ... ok
+test_numpy_bool_json_serialization (test_followup.Followup.test_numpy_bool_json_serialization) ... ok
+test_parent_ledger_parity_no_cap_binding (test_followup.Followup.test_parent_ledger_parity_no_cap_binding) ... ok
+test_partial_buy_and_ttl (test_followup.Followup.test_partial_buy_and_ttl) ... ok
+test_partial_exit_is_real (test_followup.Followup.test_partial_exit_is_real) ... ok
+test_participation_each_fill (test_followup.Followup.test_participation_each_fill) ... ok
+test_strict_candidate_schema (test_followup.Followup.test_strict_candidate_schema) ... ok
+test_ticker_reuse_is_new_identity (test_followup.Followup.test_ticker_reuse_is_new_identity) ... ok
+test_two_assets_and_episode_reconciliation (test_followup.Followup.test_two_assets_and_episode_reconciliation) ... ok
+test_two_costs_worse (test_followup.Followup.test_two_costs_worse) ... ok
+test_variable_timestamp_funding_coverage (test_followup.Followup.test_variable_timestamp_funding_coverage) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 0.265s
+
+OK

@@ -1,0 +1,30 @@
+{
+  "before_any_real_performance": true,
+  "hashes": {
+    "../new_strategy_20260926/contract.json": "dd7edf253f2aada1a1b4f752f093e6be3dcd6825efe43a15af1fe89a36ee6f0a",
+    "../new_strategy_20260926/ledger.py": "c4c9ec15d62316347db665aa1ffa6d857e64eb1006a5d986cc0c541bc20817f3",
+    "common.py": "4d4d58395dceabb86674e085f607d73794b6b135f96ed8e3f41bcd422d3c3ffa",
+    "contract.json": "039d6e0eee5908c3e7242552cd658ce7441284462dbab7041ffe000eda092175",
+    "designer.py": "72513bdce5d1f2275891473e0e8a070803baa8993f7a46f821fa82bdaba804ce",
+    "evaluate.py": "b8c478457247831a3accc4e50441b97a28f8028b0fc8a86b6bc560eb58fb8b8f",
+    "funding.zip": "e6a51b3fb2e67db82d8a762c2bf60038a0cefe762d4c8a7a277067fbdd539e71",
+    "identity.py": "018c2fa70281de83b731b73faa379a7401af3ba3ca7688760ad8f2d35aeae38f",
+    "identity_events.json": "a62e62989a82a8e962dd4576299b88061823f543d7993d81611769116356da3e",
+    "indexes.zip": "706f6fd70a6b7266fc979cef70783530bcb754b80ef27217223c2b75b07840c0",
+    "ledger.py": "451952d1086dd27c135cfbbdcafbe2878b5fc9623a07575ac7329adce79b1ff5",
+    "market.py": "c27d0377b89b1c04d8f48adcc50a39c2cda69f42fd011f59d65786c9dbb01706",
+    "perp_mark.zip": "1817905a37289487f37a06a8331ebda43f1a4712090dcc59595010429d69aaa2",
+    "perp_trade.zip": "31fa010a307171fdc19e1238f7742fcdcae83be3820a1e18302173b1c057aa6d",
+    "perpetual_gate.py": "47d42beb58b256020334edfb62be2d4a4bebd7155317500da6186f91ad16d85d",
+    "pit_membership.zip": "5add262339134ad3ac47f71e58f8a74ee912889f07fced2b9d1e12df932c9f52",
+    "run.py": "9ac9a35a43ed33c60c981be69c5a1806c49a8db31c2d2196b770b02c2fd21592",
+    "signals.py": "884568bd4af4a21557b21d098e3d87f463a40d7c75e28b6d465fcf2ac39cbf33",
+    "spot_4h.zip": "657a0d64e9c4cc9ea02bb8a81766dc2d9bc2b852a2c88c8a9055e39e33e72409",
+    "spot_daily.zip": "21cdd19d993258ceaa14638887c372bfd6cb352a8f7e955a9d67a68db52fba45",
+    "test_followup.py": "0a670b715f2ae9ce2404c5f3d0d9d4fca04016e51644599cfc0e4dd33472533c",
+    "venue_notices.json": "5c5785987f38ce267d2dd4c2910836a1ff650d6198d700f7eff26f5e3aa5ea26"
+  },
+  "protocol_sha256": "a68b7298a2cd4f6f1a00fb5023842fc4624e286a8e6f167046aed9cf52f47922",
+  "source_commit": "f5ecbfd1a35dec62a4482cd1a1aa5181e6790551",
+  "utc": "2026-09-26T22:48:58.512796+00:00"
+}

@@ -1,0 +1,5402 @@
+{
+  "0GUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 101,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "1000CATUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 380,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-12",
+    "first_observed_daily": "2024-12-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "1000CHEEMSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 326,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-02",
+    "first_observed_daily": "2025-02-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "1000SATSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 751,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-12",
+    "first_observed_daily": "2023-12-12 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "1INCHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1833,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "1MBABYDOGEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 472,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-09",
+    "first_observed_daily": "2024-09-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "2ZUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 91,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "A2ZUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 155,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-07",
+    "first_observed_daily": "2025-07-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AAOIBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "AAPLBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "AAVEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1904,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ACAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1437,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ACEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 745,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-12",
+    "first_observed_daily": "2023-12-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ACHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1452,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ACMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1772,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-02",
+    "first_observed_daily": "2021-02-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ACTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 416,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-11",
+    "first_observed_daily": "2024-11-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ACXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 391,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-12",
+    "first_observed_daily": "2024-12-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ADAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2018-04",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ADXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1525,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AERGOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 694,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-05",
+    "first_observed_daily": "2023-05-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-03-28 00:00:00"
+  },
+  "AEROUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "AEVOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 659,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-03",
+    "first_observed_daily": "2024-03-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AGIXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 501,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-02",
+    "first_observed_daily": "2023-02-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-07-01 00:00:00"
+  },
+  "AGLDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1549,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AIGENSYNUSDT": {
+    "first_archive_month": "2026-05"
+  },
+  "AIONUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1105,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-02-27 00:00:00"
+  },
+  "AIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 728,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-01",
+    "first_observed_daily": "2024-01-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AIXBTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 356,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AKROUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1515,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-12-25 00:00:00"
+  },
+  "ALABBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "ALCXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1493,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ALGOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2385,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-06",
+    "first_observed_daily": "2019-06-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ALICEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1753,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ALLOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 51,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-11",
+    "first_observed_daily": "2025-11-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ALPACAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1361,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-05-02 00:00:00"
+  },
+  "ALPHAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1729,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-07-04 00:00:00"
+  },
+  "ALPINEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1410,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-02",
+    "first_observed_daily": "2022-02-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ALTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 707,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-01",
+    "first_observed_daily": "2024-01-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AMATBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "AMBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 725,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-02-24 00:00:00"
+  },
+  "AMDBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "AMPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1500,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AMZNBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "ANCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 337,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-12-27 00:00:00"
+  },
+  "ANIMEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 343,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ANKRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2354,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-07",
+    "first_observed_daily": "2019-07-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ANTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1287,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-02-20 00:00:00"
+  },
+  "ANYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 117,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-03-30 00:00:00"
+  },
+  "APEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1386,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-03",
+    "first_observed_daily": "2022-03-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "API3USDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1441,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "APTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1170,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-10",
+    "first_observed_daily": "2022-10-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ARBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1015,
+    "first_4h_observed": "2023-03-23 12:00:00",
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-23 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ARDRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2057,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-05",
+    "first_observed_daily": "2020-05-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ARKMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 898,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-07",
+    "first_observed_daily": "2023-07-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ARKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 832,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-09",
+    "first_observed_daily": "2023-09-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ARMBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "ARPAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2248,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-11",
+    "first_observed_daily": "2019-11-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ARUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1693,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-05",
+    "first_observed_daily": "2021-05-14 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ASMLBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "ASRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1828,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ASTERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 87,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ASTRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1403,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-02",
+    "first_observed_daily": "2022-02-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ASTSBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "ASTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 680,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-05",
+    "first_observed_daily": "2023-05-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-03-28 00:00:00"
+  },
+  "ATAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1669,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "2021-06-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ATMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1828,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ATOMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2439,
+    "first_4h_observed": "2019-04-29 04:00:00",
+    "first_archive_month": "2019-04",
+    "first_observed_daily": "2019-04-29 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ATUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 35,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-11",
+    "first_observed_daily": "2025-11-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AUCTIONUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1525,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AUDIOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1896,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 218,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AUTOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 747,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-04-18 00:00:00"
+  },
+  "AVAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1864,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AVAXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1927,
+    "first_4h_observed": "2020-09-22 04:00:00",
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-22 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AVGOBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "AVNTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 108,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AWEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 225,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AXLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 671,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-03",
+    "first_observed_daily": "2024-03-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AXSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1884,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "AXTIBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "BABABUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "BABYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 266,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BADGERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1507,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "BAKEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1602,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-09-17 00:00:00"
+  },
+  "BALUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1710,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "BANANAS31USDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 280,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BANANAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 530,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-07",
+    "first_observed_daily": "2024-07-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BANDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2297,
+    "first_4h_observed": "2019-09-18 12:00:00",
+    "first_archive_month": "2019-09",
+    "first_observed_daily": "2019-09-18 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BANKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 49,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-11",
+    "first_observed_daily": "2025-11-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BARDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 105,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BARUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1716,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BATUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2495,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-03",
+    "first_observed_daily": "2019-03-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 598,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-05",
+    "first_observed_daily": "2024-05-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BCCUSDT": {
+    "first_archive_month": "2017-11"
+  },
+  "BCHABCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 332,
+    "first_4h_observed": null,
+    "first_archive_month": "2018-11",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2019-11-28 00:00:00"
+  },
+  "BCHSVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 112,
+    "first_4h_observed": null,
+    "first_archive_month": "2018-11",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2019-04-22 00:00:00"
+  },
+  "BCHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2226,
+    "first_4h_observed": "2019-11-28 08:00:00",
+    "first_archive_month": "2019-11",
+    "first_observed_daily": "2019-11-28 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BEAMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1224,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-09",
+    "first_observed_daily": "2019-09-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-01-26 00:00:00"
+  },
+  "BEAMXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 779,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-11",
+    "first_observed_daily": "2023-11-14 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BEBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "BELUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1934,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BERAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 329,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-02",
+    "first_observed_daily": "2025-02-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BETAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1287,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "BETHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 223,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-10-11 00:00:00"
+  },
+  "BFUSDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 141,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-08",
+    "first_observed_daily": "2025-08-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BICOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1484,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BIFIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1371,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-04",
+    "first_observed_daily": "2022-04-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BIGTIMEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 265,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BIOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 363,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BKRWUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 33,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2020-08-07 00:00:00"
+  },
+  "BLURUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 769,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-11",
+    "first_observed_daily": "2023-11-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BLZUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1598,
+    "first_4h_observed": "2020-08-11 04:00:00",
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-11 00:00:00",
+    "last_4h_observed": "2024-12-25 00:00:00",
+    "last_observed_daily": "2024-12-25 00:00:00"
+  },
+  "BMNRBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "BMTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 289,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BNBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2017-11",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BNSOLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 441,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-10",
+    "first_observed_daily": "2024-10-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BNTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2156,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BNXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1226,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-03-18 00:00:00"
+  },
+  "BOMEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 656,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-03",
+    "first_observed_daily": "2024-03-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BONDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1114,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-07",
+    "first_observed_daily": "2021-07-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-07-22 00:00:00"
+  },
+  "BONKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 748,
+    "first_4h_observed": "2023-12-15 08:00:00",
+    "first_archive_month": "2023-12",
+    "first_observed_daily": "2023-12-15 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BREVUSDT": {
+    "first_archive_month": "2026-01"
+  },
+  "BROCCOLI714USDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 280,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BSWUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1202,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-03",
+    "first_observed_daily": "2022-03-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-07-04 00:00:00"
+  },
+  "BTCSTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 682,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-01",
+    "first_observed_daily": "2021-01-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-11-28 00:00:00"
+  },
+  "BTCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2017-08",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BTGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 557,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-10-24 00:00:00"
+  },
+  "BTSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1401,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-12-07 00:00:00"
+  },
+  "BTTCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1437,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "BTTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1083,
+    "first_4h_observed": "2019-01-31 08:00:00",
+    "first_archive_month": "2019-01",
+    "first_observed_daily": "2019-01-31 00:00:00",
+    "last_4h_observed": "2022-01-17 00:00:00",
+    "last_observed_daily": "2022-01-17 00:00:00"
+  },
+  "BURGERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1429,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-03-28 00:00:00"
+  },
+  "BZRXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 477,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-31 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2021-12-20 00:00:00"
+  },
+  "C98USDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1623,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-07",
+    "first_observed_daily": "2021-07-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CAKEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1777,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-02",
+    "first_observed_daily": "2021-02-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CATIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 468,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-09",
+    "first_observed_daily": "2024-09-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CBRSBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "CELOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1822,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-01",
+    "first_observed_daily": "2021-01-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CELRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2474,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-03",
+    "first_observed_daily": "2019-03-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CETUSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 421,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-11",
+    "first_observed_daily": "2024-11-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CFGUSDT": {
+    "first_archive_month": "2026-03"
+  },
+  "CFXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1739,
+    "first_4h_observed": "2021-03-29 08:00:00",
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-29 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CGPTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 356,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CHESSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1532,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CHIPUSDT": {
+    "first_archive_month": "2026-04"
+  },
+  "CHRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2065,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-05",
+    "first_observed_daily": "2020-05-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CHZUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2309,
+    "first_4h_observed": "2019-09-06 04:00:00",
+    "first_archive_month": "2019-09",
+    "first_observed_daily": "2019-09-06 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CITYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1513,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CKBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1801,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-01",
+    "first_observed_daily": "2021-01-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CLVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1307,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-07",
+    "first_observed_daily": "2021-07-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-02-24 00:00:00"
+  },
+  "COCOSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1375,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-05-29 00:00:00"
+  },
+  "COHRBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "COINBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "COMBOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 666,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-06",
+    "first_observed_daily": "2023-06-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-03-28 00:00:00"
+  },
+  "COMPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2016,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-06",
+    "first_observed_daily": "2020-06-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "COOKIEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 356,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "COSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2343,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "COTIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2136,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "COWUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 421,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-11",
+    "first_observed_daily": "2024-11-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CRCLBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "CRDOBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "CREAMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 573,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-09",
+    "first_observed_daily": "2023-09-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "CRVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1965,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CRWVBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "CTKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1892,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CTSIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2079,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-04",
+    "first_observed_daily": "2020-04-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CTXCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1973,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-11",
+    "first_observed_daily": "2019-11-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "CUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 167,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-07",
+    "first_observed_daily": "2025-07-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CVCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2166,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CVPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1058,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-08-26 00:00:00"
+  },
+  "CVXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1470,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "CYBERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 870,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-08",
+    "first_observed_daily": "2023-08-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DARUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1160,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-01-06 00:00:00"
+  },
+  "DASHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2471,
+    "first_4h_observed": "2019-03-28 04:00:00",
+    "first_archive_month": "2019-03",
+    "first_observed_daily": "2019-03-28 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DATAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2095,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-04",
+    "first_observed_daily": "2020-04-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DCRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1981,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DEGOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1758,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DELLBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "DENTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2319,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DEXEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1623,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-07",
+    "first_observed_daily": "2021-07-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DFUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1560,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DGBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1991,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DIAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1945,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DJTBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "DNTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 714,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-10-24 00:00:00"
+  },
+  "DOCKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1792,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-07-22 00:00:00"
+  },
+  "DODOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1777,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-02",
+    "first_observed_daily": "2021-02-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DOGEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2372,
+    "first_4h_observed": "2019-07-05 12:00:00",
+    "first_archive_month": "2019-07",
+    "first_observed_daily": "2019-07-05 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DOGSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 493,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-08",
+    "first_observed_daily": "2024-08-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DOLOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 127,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-08",
+    "first_observed_daily": "2025-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DOTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1962,
+    "first_4h_observed": "2020-08-18 20:00:00",
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-18 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DRAMBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "DREPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1537,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-01",
+    "first_observed_daily": "2020-01-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-04-03 00:00:00"
+  },
+  "DUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 357,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DUSKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2355,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-07",
+    "first_observed_daily": "2019-07-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DYDXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1575,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "DYMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 695,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-02",
+    "first_observed_daily": "2024-02-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "EDENUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 93,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "EDUUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 979,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-04",
+    "first_observed_daily": "2023-04-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "EGLDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1946,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "EIGENUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 457,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-10",
+    "first_observed_daily": "2024-10-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ELFUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1317,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "ENAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 639,
+    "first_4h_observed": "2024-04-02 08:00:00",
+    "first_archive_month": "2024-04",
+    "first_observed_daily": "2024-04-02 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ENJUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2450,
+    "first_4h_observed": "2019-04-18 04:00:00",
+    "first_archive_month": "2019-04",
+    "first_observed_daily": "2019-04-18 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ENSOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 79,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-14 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ENSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1513,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "EOSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2338,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2018-05",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-05-26 00:00:00",
+    "last_observed_daily": "2025-05-26 00:00:00"
+  },
+  "EPICUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 294,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "EPSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 403,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-05-09 00:00:00"
+  },
+  "EPXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 827,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-05",
+    "first_observed_daily": "2022-05-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-08-26 00:00:00"
+  },
+  "ERAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 168,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-07",
+    "first_observed_daily": "2025-07-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ERDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 425,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-07",
+    "first_observed_daily": "2019-07-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2020-08-31 00:00:00"
+  },
+  "ERNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1358,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "2021-06-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-03-10 00:00:00"
+  },
+  "ESPUSDT": {
+    "first_archive_month": "2026-02"
+  },
+  "ETCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2018-06",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ETHFIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 654,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-03",
+    "first_observed_daily": "2024-03-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ETHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2017-08",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "EULUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 80,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "EWYBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "FARMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1604,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FETUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2499,
+    "first_4h_observed": "2019-02-28 08:00:00",
+    "first_archive_month": "2019-02",
+    "first_observed_daily": "2019-02-28 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FFUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 94,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FIDAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1554,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FILUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1904,
+    "first_4h_observed": "2020-10-15 16:00:00",
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-15 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FIOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1945,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FIROUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1539,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-01",
+    "first_observed_daily": "2021-01-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "FISUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1751,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-17 00:00:00"
+  },
+  "FLMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1872,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-11-12 00:00:00"
+  },
+  "FLNCBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "FLOKIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 972,
+    "first_4h_observed": "2023-05-05 16:00:00",
+    "first_archive_month": "2023-05",
+    "first_observed_daily": "2023-05-05 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FLOWUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1616,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-07",
+    "first_observed_daily": "2021-07-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FLUXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1483,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FOGOUSDT": {
+    "first_archive_month": "2026-01"
+  },
+  "FORMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 288,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FORTHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1714,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FORUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1103,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-08-26 00:00:00"
+  },
+  "FRAXUSDT": {
+    "first_archive_month": "2026-01"
+  },
+  "FRONTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1059,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-08-27 00:00:00"
+  },
+  "FTMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2044,
+    "first_4h_observed": "2019-06-11 04:00:00",
+    "first_archive_month": "2019-06",
+    "first_observed_daily": "2019-06-11 00:00:00",
+    "last_4h_observed": "2025-01-13 00:00:00",
+    "last_observed_daily": "2025-01-13 00:00:00"
+  },
+  "FTTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1894,
+    "first_4h_observed": "2019-12-20 00:00:00",
+    "first_archive_month": "2019-12",
+    "first_observed_daily": "2019-12-20 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FUNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2319,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 68,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "FXSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1483,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GALAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1571,
+    "first_4h_observed": "2021-09-13 04:00:00",
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-13 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GALUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 803,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-05",
+    "first_observed_daily": "2022-05-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-07-15 00:00:00"
+  },
+  "GASUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1021,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GENIUSUSDT": {
+    "first_archive_month": "2026-05"
+  },
+  "GFTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 439,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-09",
+    "first_observed_daily": "2023-09-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-12-03 00:00:00"
+  },
+  "GHSTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1595,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GIGGLEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 68,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GLMRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1451,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GLMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1021,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GLWBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "GMEBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "GMTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1394,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-03",
+    "first_observed_daily": "2022-03-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GMXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1184,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-10",
+    "first_observed_daily": "2022-10-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GNOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1585,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GNSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1049,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-02",
+    "first_observed_daily": "2023-02-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GOOGLBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "GPSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 303,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GRAMUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "GRTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1841,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GSBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "GTCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1666,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "2021-06-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GTOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1247,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-07",
+    "first_observed_daily": "2019-07-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-11-28 00:00:00"
+  },
+  "GUNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 276,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-31 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 531,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-07",
+    "first_observed_daily": "2024-07-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "GXSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 713,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-05",
+    "first_observed_daily": "2020-05-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-04-25 00:00:00"
+  },
+  "HAEDALUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 225,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HARDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1623,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "HBARUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2286,
+    "first_4h_observed": "2019-09-29 04:00:00",
+    "first_archive_month": "2019-09",
+    "first_observed_daily": "2019-09-29 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 413,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-09",
+    "first_observed_daily": "2019-09-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2020-11-10 00:00:00"
+  },
+  "HEIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 322,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-02",
+    "first_observed_daily": "2025-02-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HEMIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 100,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HFTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1151,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-11",
+    "first_observed_daily": "2022-11-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HIFIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 980,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-01",
+    "first_observed_daily": "2023-01-12 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-09-17 00:00:00"
+  },
+  "HIGHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1476,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HIVEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2075,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-04",
+    "first_observed_daily": "2020-04-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HMSTRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 462,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-09",
+    "first_observed_daily": "2024-09-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HNTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 751,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-10-14 00:00:00"
+  },
+  "HOLOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 112,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HOMEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 203,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-06",
+    "first_observed_daily": "2025-06-12 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HOODBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "HOOKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1127,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-12",
+    "first_observed_daily": "2022-12-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HOTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2509,
+    "first_4h_observed": "2019-02-18 08:00:00",
+    "first_archive_month": "2019-02",
+    "first_observed_daily": "2019-02-18 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HUMAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 220,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "HYPERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 254,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IBMBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "ICPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1696,
+    "first_4h_observed": "2021-05-11 00:00:00",
+    "first_archive_month": "2021-05",
+    "first_observed_daily": "2021-05-11 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ICXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": null,
+    "first_archive_month": "2018-06",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IDEXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1575,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1016,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ILVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1562,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IMXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1452,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "INITUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 252,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "INJUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1898,
+    "first_4h_observed": "2020-10-21 04:00:00",
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-21 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "INTCBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "INTWBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "IOSTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2477,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-03",
+    "first_observed_daily": "2019-03-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IOTAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": null,
+    "first_archive_month": "2018-05",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IOTXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2240,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-11",
+    "first_observed_daily": "2019-11-14 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 569,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-06",
+    "first_observed_daily": "2024-06-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IQUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 832,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-09",
+    "first_observed_daily": "2023-09-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "IRENBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "IRISUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1583,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-12-10 00:00:00"
+  },
+  "JASMYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1501,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "JOEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1465,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "JSTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1969,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "JTOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 756,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-12",
+    "first_observed_daily": "2023-12-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "JUVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1837,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KAIAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 427,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-10",
+    "first_observed_daily": "2024-10-31 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KAITOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 315,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-02",
+    "first_observed_daily": "2025-02-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KATUSDT": {
+    "first_archive_month": "2026-03"
+  },
+  "KAVAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2260,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-10",
+    "first_observed_daily": "2019-10-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KDAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1343,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-03",
+    "first_observed_daily": "2022-03-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-11-12 00:00:00"
+  },
+  "KEEPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 245,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "2021-06-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-02-16 00:00:00"
+  },
+  "KERNELUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 262,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-14 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KEYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1906,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-12-10 00:00:00"
+  },
+  "KGSTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 8,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-12",
+    "first_observed_daily": "2025-12-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KITEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 59,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-11",
+    "first_observed_daily": "2025-11-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KLAYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1225,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "1970-01-20 23:55:40.800000",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-10-30 00:00:00"
+  },
+  "KMDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1789,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-07-04 00:00:00"
+  },
+  "KMNOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 240,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KNCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2029,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-06",
+    "first_observed_daily": "2020-06-12 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "KORUBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "KP3RUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1091,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-12 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-11-06 00:00:00"
+  },
+  "KSMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1945,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 176,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-07",
+    "first_observed_daily": "2025-07-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LAYERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 324,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-02",
+    "first_observed_daily": "2025-02-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LAZIOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1533,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LDOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1333,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-05",
+    "first_observed_daily": "2022-05-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LENDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 151,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-05",
+    "first_observed_daily": "2020-05-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2020-10-12 00:00:00"
+  },
+  "LEVERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1088,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-07",
+    "first_observed_daily": "2022-07-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-07-04 00:00:00"
+  },
+  "LINAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1472,
+    "first_4h_observed": "2021-03-18 12:00:00",
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-18 00:00:00",
+    "last_4h_observed": "2025-03-28 00:00:00",
+    "last_observed_daily": "2025-03-28 00:00:00"
+  },
+  "LINEAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 113,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LINKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2542,
+    "first_4h_observed": "2019-01-16 08:00:00",
+    "first_archive_month": "2019-01",
+    "first_observed_daily": "2019-01-16 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LISTAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 560,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-06",
+    "first_observed_daily": "2024-06-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LITEBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "LITUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1468,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-02",
+    "first_observed_daily": "2021-02-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-02-10 00:00:00"
+  },
+  "LOKAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1286,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-07-28 00:00:00"
+  },
+  "LOOMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 522,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-08-26 00:00:00"
+  },
+  "LPTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1679,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-05",
+    "first_observed_daily": "2021-05-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LQTYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1038,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-02",
+    "first_observed_daily": "2023-02-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LRCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2029,
+    "first_4h_observed": "2020-06-12 08:00:00",
+    "first_archive_month": "2020-06",
+    "first_observed_daily": "2020-06-12 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LSKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2156,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LTCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2017-12",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LTOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1975,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-07-04 00:00:00"
+  },
+  "LUMIAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 440,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-10",
+    "first_observed_daily": "2024-10-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LUNAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1942,
+    "first_4h_observed": "2020-08-21 08:00:00",
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-21 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "LUNCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1210,
+    "first_4h_observed": "2022-09-09 08:00:00",
+    "first_archive_month": "2022-09",
+    "first_observed_daily": "2022-09-09 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MAGICUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1116,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-12",
+    "first_observed_daily": "2022-12-12 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MANAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1974,
+    "first_4h_observed": "2020-08-06 08:00:00",
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-06 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MANTAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 714,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-01",
+    "first_observed_daily": "2024-01-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MANTRAUSDT": {
+    "first_archive_month": "2026-03"
+  },
+  "MASKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1682,
+    "first_4h_observed": "2021-05-25 04:00:00",
+    "first_archive_month": "2021-05",
+    "first_observed_daily": "2021-05-25 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MATICUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1965,
+    "first_4h_observed": "2019-04-26 12:00:00",
+    "first_archive_month": "2019-04",
+    "first_observed_daily": "2019-04-26 00:00:00",
+    "last_4h_observed": "2024-09-10 00:00:00",
+    "last_observed_daily": "2024-09-10 00:00:00"
+  },
+  "MAVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 918,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-06",
+    "first_observed_daily": "2023-06-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MBLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2141,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MBOXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1596,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MCOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 340,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-11",
+    "first_observed_daily": "2019-11-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2020-10-23 00:00:00"
+  },
+  "MCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 706,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-11-07 00:00:00"
+  },
+  "MDTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2036,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-06",
+    "first_observed_daily": "2020-06-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MDXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1156,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-05",
+    "first_observed_daily": "2021-05-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-07-22 00:00:00"
+  },
+  "MEGAUSDT": {
+    "first_archive_month": "2026-04"
+  },
+  "MEMEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 790,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-11",
+    "first_observed_daily": "2023-11-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "METABUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "METISUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 661,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-03",
+    "first_observed_daily": "2024-03-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "METUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 49,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-11",
+    "first_observed_daily": "2025-11-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 387,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-12",
+    "first_observed_daily": "2024-12-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MFTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1226,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-01-03 00:00:00"
+  },
+  "MINAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1605,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MIRAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 97,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MIRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 618,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-12-27 00:00:00"
+  },
+  "MITHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1344,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-04",
+    "first_observed_daily": "2019-04-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-12-22 00:00:00"
+  },
+  "MITOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 125,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-08",
+    "first_observed_daily": "2025-08-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MKRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1881,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-09-15 00:00:00"
+  },
+  "MLNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1641,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-07",
+    "first_observed_daily": "2021-07-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MMTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 58,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-11",
+    "first_observed_daily": "2025-11-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MOBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 706,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-04",
+    "first_observed_daily": "2022-04-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-04-03 00:00:00"
+  },
+  "MORPHOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 90,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MOVEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 388,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-12",
+    "first_observed_daily": "2024-12-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MOVRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1515,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MRVLBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "MSFTBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "MSTRBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "MTLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2323,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MUBARAKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 280,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "MUBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "MULTIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 686,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-04",
+    "first_observed_daily": "2022-04-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-02-20 00:00:00"
+  },
+  "MUUBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "MVLLBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "NANOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1028,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-04",
+    "first_observed_daily": "2019-04-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-01-24 00:00:00"
+  },
+  "NBISBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "NBSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 764,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-10-24 00:00:00"
+  },
+  "NBTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 336,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-03",
+    "first_observed_daily": "2022-03-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-02-28 00:00:00"
+  },
+  "NEARUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1905,
+    "first_4h_observed": "2020-10-14 04:00:00",
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-14 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NEBLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 187,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-10",
+    "first_observed_daily": "2022-10-14 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-04-18 00:00:00"
+  },
+  "NEIROUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 472,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-09",
+    "first_observed_daily": "2024-09-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NEOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2017-11",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NEWTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 191,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-06",
+    "first_observed_daily": "2025-06-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NEXOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1343,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-04",
+    "first_observed_daily": "2022-04-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NFLXBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "NFPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 736,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-12",
+    "first_observed_daily": "2023-12-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NIGHTUSDT": {
+    "first_archive_month": "2026-03"
+  },
+  "NILUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 283,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NKNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2274,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-10",
+    "first_observed_daily": "2019-10-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NMRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1961,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NOKBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "NOMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 92,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NOTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 595,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-05",
+    "first_observed_daily": "2024-05-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NPXSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 602,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2021-04-05 00:00:00"
+  },
+  "NTRNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 814,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-10",
+    "first_observed_daily": "2023-10-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "NULSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2298,
+    "first_4h_observed": null,
+    "first_archive_month": "2018-07",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "NUUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 258,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "2021-06-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-02-16 00:00:00"
+  },
+  "NVDABUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "NXPCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 231,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "OAXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 628,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-12-10 00:00:00"
+  },
+  "OCEANUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1413,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-07-01 00:00:00"
+  },
+  "OGNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2184,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-01",
+    "first_observed_daily": "2020-01-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "OGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1828,
+    "first_4h_observed": "2020-12-30 04:00:00",
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-30 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "OMGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1903,
+    "first_4h_observed": "2019-04-03 04:00:00",
+    "first_archive_month": "2019-04",
+    "first_observed_daily": "2019-04-03 00:00:00",
+    "last_4h_observed": "2024-06-17 00:00:00",
+    "last_observed_daily": "2024-06-17 00:00:00"
+  },
+  "OMNIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 531,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-04",
+    "first_observed_daily": "2024-04-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-09-29 00:00:00"
+  },
+  "OMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1760,
+    "first_4h_observed": "2021-03-08 08:00:00",
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-08 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ONDOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 265,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ONEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2406,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-06",
+    "first_observed_daily": "2019-06-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ONGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2511,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-02",
+    "first_observed_daily": "2019-02-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ONTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": null,
+    "first_archive_month": "2018-06",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "OOKIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1049,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-11-06 00:00:00"
+  },
+  "OPENUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 115,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "OPGUSDT": {
+    "first_archive_month": "2026-05"
+  },
+  "OPNUSDT": {
+    "first_archive_month": "2026-03"
+  },
+  "OPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1310,
+    "first_4h_observed": "2022-06-01 08:00:00",
+    "first_archive_month": "2022-06",
+    "first_observed_daily": "2022-06-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ORCAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 391,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-12",
+    "first_observed_daily": "2024-12-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ORCLBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "ORDIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 786,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-11",
+    "first_observed_daily": "2023-11-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ORNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1477,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-10-15 00:00:00"
+  },
+  "OSMOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1161,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-10",
+    "first_observed_daily": "2022-10-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "OXTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1928,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PARTIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 282,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PAXGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1952,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PDAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 428,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-03",
+    "first_observed_daily": "2024-03-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-05-02 00:00:00"
+  },
+  "PENDLEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 913,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-07",
+    "first_observed_daily": "2023-07-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PENGUUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 380,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-12",
+    "first_observed_daily": "2024-12-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PEOPLEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1470,
+    "first_4h_observed": "2021-12-23 04:00:00",
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-23 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PEPEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 972,
+    "first_4h_observed": "2023-05-05 16:00:00",
+    "first_archive_month": "2023-05",
+    "first_observed_daily": "2023-05-05 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PERLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1565,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-12-07 00:00:00"
+  },
+  "PERPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1700,
+    "first_4h_observed": "2021-03-19 08:00:00",
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-19 00:00:00",
+    "last_4h_observed": "2025-11-12 00:00:00",
+    "last_observed_daily": "2025-11-12 00:00:00"
+  },
+  "PHAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1651,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "2021-06-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PHBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1140,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-11",
+    "first_observed_daily": "2022-11-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PIVXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 777,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-11",
+    "first_observed_daily": "2023-11-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PIXELUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 682,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-02",
+    "first_observed_daily": "2024-02-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PLAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 826,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-02-26 00:00:00"
+  },
+  "PLTRBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "PLUMEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 136,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-08",
+    "first_observed_daily": "2025-08-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PNTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1382,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-06",
+    "first_observed_daily": "2020-06-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-04-03 00:00:00"
+  },
+  "PNUTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 416,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-11",
+    "first_observed_daily": "2024-11-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "POLSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1161,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-05",
+    "first_observed_daily": "2021-05-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-07-22 00:00:00"
+  },
+  "POLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 475,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-09",
+    "first_observed_daily": "2024-09-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "POLYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 397,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-10-10 00:00:00"
+  },
+  "POLYXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1172,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-10",
+    "first_observed_daily": "2022-10-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PONDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1759,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PORTALUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 672,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-02",
+    "first_observed_daily": "2024-02-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PORTOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1507,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "POWRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1506,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PROMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1021,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PROSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 811,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-01",
+    "first_observed_daily": "2023-01-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "PROVEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 149,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-08",
+    "first_observed_daily": "2025-08-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PSGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1837,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PUMPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 112,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PUNDIXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1728,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PYPLBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "PYRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1497,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "PYTHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 699,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-02",
+    "first_observed_daily": "2024-02-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "QCOMBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "QIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1508,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "QKCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1021,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "QNTBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "QNTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1617,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-07",
+    "first_observed_daily": "2021-07-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "QQQBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "QTUMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": null,
+    "first_archive_month": "2018-03",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "QUICKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1599,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RADUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1547,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RAMPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 470,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-07-04 00:00:00"
+  },
+  "RAREUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1543,
+    "first_4h_observed": "2021-10-11 04:00:00",
+    "first_archive_month": "2021-10",
+    "first_observed_daily": "2021-10-11 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RAYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1605,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RDNTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1008,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "REDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 307,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-02",
+    "first_observed_daily": "2025-02-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "REEFUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1337,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-08-26 00:00:00"
+  },
+  "REIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1324,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-05",
+    "first_observed_daily": "2022-05-04 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-17 00:00:00"
+  },
+  "RENDERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 524,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-07",
+    "first_observed_daily": "2024-07-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RENUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1904,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-09",
+    "first_observed_daily": "2019-09-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-12-10 00:00:00"
+  },
+  "REPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 924,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-06",
+    "first_observed_daily": "2020-06-12 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-12-22 00:00:00"
+  },
+  "REQUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1595,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RESOLVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 204,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-06",
+    "first_observed_daily": "2025-06-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "REUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "REZUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 611,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-04",
+    "first_observed_daily": "2024-04-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RGTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 130,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-03-14 00:00:00"
+  },
+  "RIFUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1820,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-01",
+    "first_observed_daily": "2021-01-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RKLBBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "RLCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2240,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-11",
+    "first_observed_daily": "2019-11-14 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RLUSDUSDT": {
+    "first_archive_month": "2026-01"
+  },
+  "RNDRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 969,
+    "first_4h_observed": "2021-11-27 08:00:00",
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-27 00:00:00",
+    "last_4h_observed": "2024-07-22 00:00:00",
+    "last_observed_daily": "2024-07-22 00:00:00"
+  },
+  "ROBOUSDT": {
+    "first_archive_month": "2026-03"
+  },
+  "RONINUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 696,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-02",
+    "first_observed_daily": "2024-02-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ROSEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1869,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RPLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1079,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-01",
+    "first_observed_daily": "2023-01-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RSRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1953,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RUNEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1945,
+    "first_4h_observed": "2020-09-04 04:00:00",
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-04 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "RVNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2290,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-09",
+    "first_observed_daily": "2019-09-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SAGAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 632,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-04",
+    "first_observed_daily": "2024-04-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SAHARAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 189,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-06",
+    "first_observed_daily": "2025-06-26 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SANDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1966,
+    "first_4h_observed": "2020-08-14 12:00:00",
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-14 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SANTOSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1492,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SAPIENUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 56,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-11",
+    "first_observed_daily": "2025-11-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SCRTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1441,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SCRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 447,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-10",
+    "first_observed_daily": "2024-10-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2005,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SEIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 870,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-08",
+    "first_observed_daily": "2023-08-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SENTUSDT": {
+    "first_archive_month": "2026-01"
+  },
+  "SFPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1788,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-02",
+    "first_observed_daily": "2021-02-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SHELLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 308,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-02",
+    "first_observed_daily": "2025-02-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SHIBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1697,
+    "first_4h_observed": "2021-05-10 08:00:00",
+    "first_archive_month": "2021-05",
+    "first_observed_daily": "2021-05-10 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SIGNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 248,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SKHYBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "SKLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1857,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-12",
+    "first_observed_daily": "2020-12-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SKYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 106,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SLFUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 384,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-08",
+    "first_observed_daily": "2024-08-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-09-17 00:00:00"
+  },
+  "SLPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1707,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SMCIBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "SMHBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "SNDKBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "SNTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 699,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-05",
+    "first_observed_daily": "2023-05-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "SNXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2002,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SNXXBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "SOLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1969,
+    "first_4h_observed": "2020-08-11 04:00:00",
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-11 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SOLVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 349,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SOMIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 121,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SOPHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 218,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SOXLBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "SOXSBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "SPCXBUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "SPELLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1469,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SPKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 198,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-06",
+    "first_observed_daily": "2025-06-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SPYBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "SRMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 840,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-11-28 00:00:00"
+  },
+  "SSVUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1042,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-02",
+    "first_observed_daily": "2023-02-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "STEEMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1350,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-04",
+    "first_observed_daily": "2022-04-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "STGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1231,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-08",
+    "first_observed_daily": "2022-08-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "STMXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1720,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-06",
+    "first_observed_daily": "2020-06-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-02-24 00:00:00"
+  },
+  "STORJUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1981,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-30 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "STORMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 287,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2020-06-08 00:00:00"
+  },
+  "STOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 244,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "STPTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1882,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-03",
+    "first_observed_daily": "2020-03-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-05-19 00:00:00"
+  },
+  "STRATUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 268,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2020-11-12 00:00:00"
+  },
+  "STRAXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1863,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-18 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "STRKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 681,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-02",
+    "first_observed_daily": "2024-02-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "STXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2260,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-10",
+    "first_observed_daily": "2019-10-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SUIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 974,
+    "first_4h_observed": "2023-05-03 12:00:00",
+    "first_archive_month": "2023-05",
+    "first_observed_daily": "2023-05-03 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SUNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1925,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SUPERUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1743,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-03",
+    "first_observed_daily": "2021-03-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 350,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SUSHIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1948,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SXPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1991,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SXTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 238,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-05",
+    "first_observed_daily": "2025-05-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SYNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1044,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-02",
+    "first_observed_daily": "2023-02-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "SYSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1560,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TAOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 630,
+    "first_4h_observed": "2024-04-11 12:00:00",
+    "first_archive_month": "2024-04",
+    "first_observed_daily": "2024-04-11 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TCTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1008,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-01",
+    "first_observed_daily": "2020-01-21 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-10-24 00:00:00"
+  },
+  "TFUELUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2414,
+    "first_4h_observed": "2019-05-24 08:00:00",
+    "first_archive_month": "2019-05",
+    "first_observed_daily": "2019-05-24 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "THETAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2458,
+    "first_4h_observed": "2019-04-10 04:00:00",
+    "first_archive_month": "2019-04",
+    "first_observed_daily": "2019-04-10 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "THEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 400,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-11",
+    "first_observed_daily": "2024-11-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TIAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 793,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-10",
+    "first_observed_daily": "2023-10-31 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TKOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1730,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TLMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1724,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-04",
+    "first_observed_daily": "2021-04-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TNSRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 633,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-04",
+    "first_observed_daily": "2024-04-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TOMOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1550,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-11-20 00:00:00"
+  },
+  "TONUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 511,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-08",
+    "first_observed_daily": "2024-08-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TORNUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 565,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "2021-06-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-12-27 00:00:00"
+  },
+  "TOWNSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 149,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-08",
+    "first_observed_daily": "2025-08-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TQQQBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "TRBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1951,
+    "first_4h_observed": "2020-08-29 04:00:00",
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-29 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TREEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 156,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-07",
+    "first_observed_daily": "2025-07-29 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TRIBEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 462,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2022-11-28 00:00:00"
+  },
+  "TROYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1960,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-12",
+    "first_observed_daily": "2019-12-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "TRUMPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 347,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-01",
+    "first_observed_daily": "2025-01-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TRUUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1808,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-01",
+    "first_observed_daily": "2021-01-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TRXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2018-06",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TSLABUSDT": {
+    "first_archive_month": "2026-06"
+  },
+  "TSMBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "TSTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 326,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-02",
+    "first_observed_daily": "2025-02-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TURBOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 472,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-09",
+    "first_observed_daily": "2024-09-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TURTLEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 71,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1406,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-02",
+    "first_observed_daily": "2022-02-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TUTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 280,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "TVKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 844,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-11-27 00:00:00"
+  },
+  "TWTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1800,
+    "first_4h_observed": "2021-01-27 08:00:00",
+    "first_archive_month": "2021-01",
+    "first_observed_daily": "2021-01-27 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "UFTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 762,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-03",
+    "first_observed_daily": "2023-03-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "UMAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1940,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "UNFIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1449,
+    "first_4h_observed": "2020-11-19 04:00:00",
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-19 00:00:00",
+    "last_4h_observed": "2024-11-06 00:00:00",
+    "last_observed_daily": "2024-11-06 00:00:00"
+  },
+  "UNIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1932,
+    "first_4h_observed": "2020-09-17 00:00:00",
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-17 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "USARBUSDT": {
+    "first_archive_month": "2026-08"
+  },
+  "USDSOLDUSDT": {
+    "first_archive_month": null
+  },
+  "USUALUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 408,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-11",
+    "first_observed_daily": "2024-11-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "UTKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1917,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-02 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "UUSDT": {
+    "first_archive_month": "2026-01"
+  },
+  "VANAUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 381,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-12",
+    "first_observed_daily": "2024-12-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "VANRYUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 762,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-12",
+    "first_observed_daily": "2023-12-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "VELODROMEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 384,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-12",
+    "first_observed_daily": "2024-12-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "VENUSDT": {
+    "first_archive_month": "2018-06"
+  },
+  "VETUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2018-07",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "VGXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1009,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-11",
+    "first_observed_daily": "2021-11-22 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-08-26 00:00:00"
+  },
+  "VIBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 799,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-02",
+    "first_observed_daily": "2023-02-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-05-02 00:00:00"
+  },
+  "VICUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 769,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-11",
+    "first_observed_daily": "2023-11-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "VIDTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1308,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-04-16 00:00:00"
+  },
+  "VIRTUALUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 265,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-11 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "VITEUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1901,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-12",
+    "first_observed_daily": "2019-12-13 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-02-24 00:00:00"
+  },
+  "VOXELUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1465,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-12",
+    "first_observed_daily": "2021-12-14 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-17 00:00:00"
+  },
+  "VTHOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1994,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WALUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 83,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WANUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2319,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-27 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WAVESUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1978,
+    "first_4h_observed": "2019-01-18 08:00:00",
+    "first_archive_month": "2019-01",
+    "first_observed_daily": "2019-01-18 00:00:00",
+    "last_4h_observed": "2024-06-17 00:00:00",
+    "last_observed_daily": "2024-06-17 00:00:00"
+  },
+  "WAXPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1592,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-08",
+    "first_observed_daily": "2021-08-23 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WBETHUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 897,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-07",
+    "first_observed_daily": "2023-07-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WBTCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 979,
+    "first_4h_observed": null,
+    "first_archive_month": "2023-04",
+    "first_observed_daily": "2023-04-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WCTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 261,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-04",
+    "first_observed_daily": "2025-04-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WDCBUSDT": {
+    "first_archive_month": "2026-07"
+  },
+  "WIFUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 667,
+    "first_4h_observed": "2024-03-05 12:00:00",
+    "first_archive_month": "2024-03",
+    "first_observed_daily": "2024-03-05 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WINGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1690,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-16 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-05-02 00:00:00"
+  },
+  "WINUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2345,
+    "first_4h_observed": "2019-08-01 08:00:00",
+    "first_archive_month": "2019-08",
+    "first_observed_daily": "2019-08-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WLDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 892,
+    "first_4h_observed": "2023-07-24 08:00:00",
+    "first_archive_month": "2023-07",
+    "first_observed_daily": "2023-07-24 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WLFIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 122,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WNXMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1390,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-06-17 00:00:00"
+  },
+  "WOOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1423,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-02",
+    "first_observed_daily": "2022-02-08 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "WRXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1786,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-02",
+    "first_observed_daily": "2020-02-05 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-12-25 00:00:00"
+  },
+  "WTCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1340,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-04",
+    "first_observed_daily": "2020-04-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-12-07 00:00:00"
+  },
+  "WUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 638,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-04",
+    "first_observed_daily": "2024-04-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XAIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 723,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-01",
+    "first_observed_daily": "2024-01-09 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XAUTUSDT": {
+    "first_archive_month": "2026-03"
+  },
+  "XECUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1581,
+    "first_4h_observed": null,
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-03 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XEMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1302,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-11",
+    "first_observed_daily": "2020-11-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2024-06-17 00:00:00"
+  },
+  "XLMUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2018-05",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XMRUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1804,
+    "first_4h_observed": "2019-03-15 04:00:00",
+    "first_archive_month": "2019-03",
+    "first_observed_daily": "2019-03-15 00:00:00",
+    "last_4h_observed": "2024-02-20 00:00:00",
+    "last_observed_daily": "2024-02-20 00:00:00"
+  },
+  "XNOUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1434,
+    "first_4h_observed": null,
+    "first_archive_month": "2022-01",
+    "first_observed_daily": "2022-01-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XPLUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 98,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-25 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XRPUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2557,
+    "first_4h_observed": "2019-01-01 00:00:00",
+    "first_archive_month": "2018-05",
+    "first_observed_daily": "2019-01-01 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XTZUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2291,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-09",
+    "first_observed_daily": "2019-09-24 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XUSDUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 288,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-03",
+    "first_observed_daily": "2025-03-19 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XVGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1670,
+    "first_4h_observed": "2021-06-06 08:00:00",
+    "first_archive_month": "2021-06",
+    "first_observed_daily": "2021-06-06 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XVSUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1913,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-10",
+    "first_observed_daily": "2020-10-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "XZCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 294,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-04",
+    "first_observed_daily": "2020-04-07 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2021-01-25 00:00:00"
+  },
+  "YBUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 78,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "YFIIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1086,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-09",
+    "first_observed_daily": "2020-09-01 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2023-08-22 00:00:00"
+  },
+  "YFIUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1970,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-08",
+    "first_observed_daily": "2020-08-10 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "YGGUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 1560,
+    "first_4h_observed": "2021-09-24 04:00:00",
+    "first_archive_month": "2021-09",
+    "first_observed_daily": "2021-09-24 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ZAMAUSDT": {
+    "first_archive_month": "2026-02"
+  },
+  "ZBTUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 76,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-10",
+    "first_observed_daily": "2025-10-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ZECUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2478,
+    "first_4h_observed": "2019-03-21 04:00:00",
+    "first_archive_month": "2019-03",
+    "first_observed_daily": "2019-03-21 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ZENUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2005,
+    "first_4h_observed": null,
+    "first_archive_month": "2020-07",
+    "first_observed_daily": "2020-07-06 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ZILUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2508,
+    "first_4h_observed": "2019-02-19 08:00:00",
+    "first_archive_month": "2019-02",
+    "first_observed_daily": "2019-02-19 00:00:00",
+    "last_4h_observed": "2025-12-31 20:00:00",
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ZKCUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 108,
+    "first_4h_observed": null,
+    "first_archive_month": "2025-09",
+    "first_observed_daily": "2025-09-15 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ZKPUSDT": {
+    "first_archive_month": "2026-01"
+  },
+  "ZKUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 563,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-06",
+    "first_observed_daily": "2024-06-17 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ZROUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 560,
+    "first_4h_observed": null,
+    "first_archive_month": "2024-06",
+    "first_observed_daily": "2024-06-20 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "ZRXUSDT": {
+    "administrative_dates": "NOT_CERTIFIED_BY_BAR_EVIDENCE",
+    "daily_rows": 2499,
+    "first_4h_observed": null,
+    "first_archive_month": "2019-02",
+    "first_observed_daily": "2019-02-28 00:00:00",
+    "last_4h_observed": null,
+    "last_observed_daily": "2025-12-31 00:00:00"
+  },
+  "\u5e01\u5b89\u4eba\u751fUSDT": {
+    "first_archive_month": "2026-01"
+  }
+}

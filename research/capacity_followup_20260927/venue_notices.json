@@ -1,0 +1,99 @@
+[
+  {
+    "effective_utc": "2025-05-26 03:00:00",
+    "event": "EOS spot pairs cease trading for Vaulta token swap",
+    "policy": "Exit before the scheduled cessation using publication-aware 72-hour buffer. Do not splice A prices or returns into EOS.",
+    "published_utc": "2025-05-14 09:00:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/1e89a9ca957c4b0ca7502e60b993e201",
+    "symbol": "EOSUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2024-12-25 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2024-12-18 08:01:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/b140faee7cf9482cb10257308abda245",
+    "symbol": "BLZUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2022-01-17 04:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2022-01-10 11:15:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/2722e6da4f5141dd9b2fb07b5b1f3f75",
+    "symbol": "BTTUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2025-01-13 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2024-12-24 07:00:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/aec6fcbc84b749eeab6690e6bcac2f3d",
+    "symbol": "FTMUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2025-03-28 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2025-03-21 05:50:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/db7ad1c7aa6248cda735102cdcdc4b8d",
+    "symbol": "LINAUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2024-09-10 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2024-08-28 09:00:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/6a6de383727f4659a3050f7982e1620f",
+    "symbol": "MATICUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2024-06-17 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2024-06-03 03:00:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/f65faeeefe07417a8b6dd2900ba8da7e",
+    "symbol": "OMGUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2024-06-17 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2024-06-03 03:00:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/f65faeeefe07417a8b6dd2900ba8da7e",
+    "symbol": "WAVESUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2025-11-12 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2025-10-29 03:00:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/a6c810fc36424548917e146dbe21469a",
+    "symbol": "PERPUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2024-07-22 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2024-07-10 06:30:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/d1f2ae8d99b24439a7a900caa9bb6b3b",
+    "symbol": "RNDRUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2024-11-06 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2024-10-23 07:00:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/043c8407bb904652a428573a50d07e07",
+    "symbol": "UNFIUSDT",
+    "venue": "Binance spot"
+  },
+  {
+    "effective_utc": "2024-02-20 03:00:00",
+    "policy": "72h publication-aware exit buffer; no successor return splice.",
+    "published_utc": "2024-02-06 07:00:00",
+    "source": "https://www.binance.com/en/support/announcement/detail/f73b083ba6834771b07dbe5319917ae5",
+    "symbol": "XMRUSDT",
+    "venue": "Binance spot"
+  }
+]

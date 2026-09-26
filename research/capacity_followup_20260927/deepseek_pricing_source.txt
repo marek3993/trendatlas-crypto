@@ -1,0 +1,10 @@
+DeepSeek pricing facts recorded 2026-09-26 UTC
+Source: https://api-docs.deepseek.com/quick_start/pricing
+Model identifier: deepseek-flash (DeepSeek V4.1 Flash).
+Rates in USD per million tokens:
+Peak: cached input 0.006; uncached input 0.30; output 1.20.
+Off-peak: cached input 0.003; uncached input 0.15; output 0.60.
+Peak windows: Monday-Friday 01:00-04:00 and 06:00-10:00 UTC, excluding Chinese public holidays.
+The experiment ran during off-peak. Token usage comes from actual API responses.
+Research cost is a tariff estimate, not an account invoice.
+Hash of the initially retrieved text extraction: ceab160910c734176292617bc9e46a22f9baedcb54fd593329d1bd9d8a304ca5

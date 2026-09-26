@@ -1,0 +1,541 @@
+{
+  "administrative_notice_coverage": "Known named notices only; complete global administrative timeline NOT certified. Missing held prices fail closed; bars give observed listing/cessation and never authorize advance exit.",
+  "bar_evidence_not_admin_dates": true,
+  "eligible_instruments": [
+    {
+      "eligible_days": 1255,
+      "first_eligible": "2020-01-31 00:00:00",
+      "instrument": "ADAUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "ADAUSDT"
+    },
+    {
+      "eligible_days": 32,
+      "first_eligible": "2024-03-21 00:00:00",
+      "instrument": "ARBUSDT",
+      "last_eligible": "2024-05-29 00:00:00",
+      "venue_symbol": "ARBUSDT"
+    },
+    {
+      "eligible_days": 55,
+      "first_eligible": "2022-01-24 00:00:00",
+      "instrument": "ATOMUSDT",
+      "last_eligible": "2022-10-24 00:00:00",
+      "venue_symbol": "ATOMUSDT"
+    },
+    {
+      "eligible_days": 464,
+      "first_eligible": "2021-09-21 00:00:00",
+      "instrument": "AVAXUSDT",
+      "last_eligible": "2025-10-28 00:00:00",
+      "venue_symbol": "AVAXUSDT"
+    },
+    {
+      "eligible_days": 2,
+      "first_eligible": "2020-09-20 00:00:00",
+      "instrument": "BANDUSDT",
+      "last_eligible": "2020-09-21 00:00:00",
+      "venue_symbol": "BANDUSDT"
+    },
+    {
+      "eligible_days": 209,
+      "first_eligible": "2020-11-26 00:00:00",
+      "instrument": "BCHUSDT",
+      "last_eligible": "2024-05-02 00:00:00",
+      "venue_symbol": "BCHUSDT"
+    },
+    {
+      "eligible_days": 17,
+      "first_eligible": "2023-09-05 00:00:00",
+      "instrument": "BLZUSDT",
+      "last_eligible": "2023-09-21 00:00:00",
+      "venue_symbol": "BLZUSDT"
+    },
+    {
+      "eligible_days": 2193,
+      "first_eligible": "2019-12-31 00:00:00",
+      "instrument": "BNBUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "BNBUSDT"
+    },
+    {
+      "eligible_days": 9,
+      "first_eligible": "2025-07-22 00:00:00",
+      "instrument": "BONKUSDT",
+      "last_eligible": "2025-07-30 00:00:00",
+      "venue_symbol": "BONKUSDT"
+    },
+    {
+      "eligible_days": 2193,
+      "first_eligible": "2019-12-31 00:00:00",
+      "instrument": "BTCUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "BTCUSDT"
+    },
+    {
+      "eligible_days": 38,
+      "first_eligible": "2021-03-31 00:00:00",
+      "instrument": "BTTUSDT",
+      "last_eligible": "2021-05-08 00:00:00",
+      "venue_symbol": "BTTUSDT"
+    },
+    {
+      "eligible_days": 101,
+      "first_eligible": "2023-03-06 00:00:00",
+      "instrument": "CFXUSDT",
+      "last_eligible": "2023-06-14 00:00:00",
+      "venue_symbol": "CFXUSDT"
+    },
+    {
+      "eligible_days": 171,
+      "first_eligible": "2021-03-10 00:00:00",
+      "instrument": "CHZUSDT",
+      "last_eligible": "2022-12-22 00:00:00",
+      "venue_symbol": "CHZUSDT"
+    },
+    {
+      "eligible_days": 25,
+      "first_eligible": "2020-04-11 00:00:00",
+      "instrument": "DASHUSDT",
+      "last_eligible": "2025-12-01 00:00:00",
+      "venue_symbol": "DASHUSDT"
+    },
+    {
+      "eligible_days": 1437,
+      "first_eligible": "2021-01-28 00:00:00",
+      "instrument": "DOGEUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "DOGEUSDT"
+    },
+    {
+      "eligible_days": 172,
+      "first_eligible": "2021-08-17 00:00:00",
+      "instrument": "DOTUSDT",
+      "last_eligible": "2022-06-12 00:00:00",
+      "venue_symbol": "DOTUSDT"
+    },
+    {
+      "eligible_days": 67,
+      "first_eligible": "2025-07-31 00:00:00",
+      "instrument": "ENAUSDT",
+      "last_eligible": "2025-10-05 00:00:00",
+      "venue_symbol": "ENAUSDT"
+    },
+    {
+      "eligible_days": 19,
+      "first_eligible": "2021-03-17 00:00:00",
+      "instrument": "ENJUSDT",
+      "last_eligible": "2021-04-04 00:00:00",
+      "venue_symbol": "ENJUSDT"
+    },
+    {
+      "eligible_days": 442,
+      "first_eligible": "2019-12-31 00:00:00",
+      "instrument": "EOSUSDT",
+      "last_eligible": "2021-06-25 00:00:00",
+      "venue_symbol": "EOSUSDT"
+    },
+    {
+      "eligible_days": 322,
+      "first_eligible": "2020-01-14 00:00:00",
+      "instrument": "ETCUSDT",
+      "last_eligible": "2024-02-09 00:00:00",
+      "venue_symbol": "ETCUSDT"
+    },
+    {
+      "eligible_days": 2193,
+      "first_eligible": "2019-12-31 00:00:00",
+      "instrument": "ETHUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "ETHUSDT"
+    },
+    {
+      "eligible_days": 61,
+      "first_eligible": "2024-07-05 00:00:00",
+      "instrument": "FETUSDT",
+      "last_eligible": "2024-10-18 00:00:00",
+      "venue_symbol": "FETUSDT"
+    },
+    {
+      "eligible_days": 105,
+      "first_eligible": "2021-10-14 00:00:00",
+      "instrument": "FILUSDT",
+      "last_eligible": "2024-03-20 00:00:00",
+      "venue_symbol": "FILUSDT"
+    },
+    {
+      "eligible_days": 75,
+      "first_eligible": "2024-05-28 00:00:00",
+      "instrument": "FLOKIUSDT",
+      "last_eligible": "2024-09-25 00:00:00",
+      "venue_symbol": "FLOKIUSDT"
+    },
+    {
+      "eligible_days": 239,
+      "first_eligible": "2021-09-08 00:00:00",
+      "instrument": "FTMUSDT",
+      "last_eligible": "2023-04-22 00:00:00",
+      "venue_symbol": "FTMUSDT"
+    },
+    {
+      "eligible_days": 31,
+      "first_eligible": "2022-11-08 00:00:00",
+      "instrument": "FTTUSDT",
+      "last_eligible": "2023-12-09 00:00:00",
+      "venue_symbol": "FTTUSDT"
+    },
+    {
+      "eligible_days": 41,
+      "first_eligible": "2023-01-09 00:00:00",
+      "instrument": "GALAUSDT",
+      "last_eligible": "2023-02-18 00:00:00",
+      "venue_symbol": "GALAUSDT"
+    },
+    {
+      "eligible_days": 1,
+      "first_eligible": "2025-01-17 00:00:00",
+      "instrument": "HBARUSDT",
+      "last_eligible": "2025-01-17 00:00:00",
+      "venue_symbol": "HBARUSDT"
+    },
+    {
+      "eligible_days": 18,
+      "first_eligible": "2021-03-30 00:00:00",
+      "instrument": "HOTUSDT",
+      "last_eligible": "2021-04-20 00:00:00",
+      "venue_symbol": "HOTUSDT"
+    },
+    {
+      "eligible_days": 9,
+      "first_eligible": "2024-01-13 00:00:00",
+      "instrument": "ICPUSDT",
+      "last_eligible": "2025-12-05 00:00:00",
+      "venue_symbol": "ICPUSDT"
+    },
+    {
+      "eligible_days": 13,
+      "first_eligible": "2023-05-08 00:00:00",
+      "instrument": "INJUSDT",
+      "last_eligible": "2024-02-22 00:00:00",
+      "venue_symbol": "INJUSDT"
+    },
+    {
+      "eligible_days": 29,
+      "first_eligible": "2023-06-03 00:00:00",
+      "instrument": "LINAUSDT",
+      "last_eligible": "2023-07-01 00:00:00",
+      "venue_symbol": "LINAUSDT"
+    },
+    {
+      "eligible_days": 683,
+      "first_eligible": "2020-01-30 00:00:00",
+      "instrument": "LINKUSDT",
+      "last_eligible": "2025-09-21 00:00:00",
+      "venue_symbol": "LINKUSDT"
+    },
+    {
+      "eligible_days": 13,
+      "first_eligible": "2021-11-20 00:00:00",
+      "instrument": "LRCUSDT",
+      "last_eligible": "2021-12-02 00:00:00",
+      "venue_symbol": "LRCUSDT"
+    },
+    {
+      "eligible_days": 801,
+      "first_eligible": "2019-12-31 00:00:00",
+      "instrument": "LTCUSDT",
+      "last_eligible": "2025-03-20 00:00:00",
+      "venue_symbol": "LTCUSDT"
+    },
+    {
+      "eligible_days": 196,
+      "first_eligible": "2021-08-24 00:00:00",
+      "instrument": "LUNAUSDT@original",
+      "last_eligible": "2022-05-12 00:00:00",
+      "venue_symbol": "LUNAUSDT"
+    },
+    {
+      "eligible_days": 13,
+      "first_eligible": "2023-12-14 00:00:00",
+      "instrument": "LUNCUSDT",
+      "last_eligible": "2023-12-26 00:00:00",
+      "venue_symbol": "LUNCUSDT"
+    },
+    {
+      "eligible_days": 57,
+      "first_eligible": "2021-10-31 00:00:00",
+      "instrument": "MANAUSDT",
+      "last_eligible": "2021-12-26 00:00:00",
+      "venue_symbol": "MANAUSDT"
+    },
+    {
+      "eligible_days": 15,
+      "first_eligible": "2022-11-16 00:00:00",
+      "instrument": "MASKUSDT",
+      "last_eligible": "2022-12-25 00:00:00",
+      "venue_symbol": "MASKUSDT"
+    },
+    {
+      "eligible_days": 674,
+      "first_eligible": "2020-06-01 00:00:00",
+      "instrument": "MATICUSDT",
+      "last_eligible": "2024-03-13 00:00:00",
+      "venue_symbol": "MATICUSDT"
+    },
+    {
+      "eligible_days": 155,
+      "first_eligible": "2022-01-16 00:00:00",
+      "instrument": "NEARUSDT",
+      "last_eligible": "2024-09-30 00:00:00",
+      "venue_symbol": "NEARUSDT"
+    },
+    {
+      "eligible_days": 24,
+      "first_eligible": "2020-09-25 00:00:00",
+      "instrument": "NEOUSDT",
+      "last_eligible": "2020-10-22 00:00:00",
+      "venue_symbol": "NEOUSDT"
+    },
+    {
+      "eligible_days": 15,
+      "first_eligible": "2023-04-23 00:00:00",
+      "instrument": "OGUSDT",
+      "last_eligible": "2023-05-07 00:00:00",
+      "venue_symbol": "OGUSDT"
+    },
+    {
+      "eligible_days": 27,
+      "first_eligible": "2020-08-24 00:00:00",
+      "instrument": "OMGUSDT",
+      "last_eligible": "2020-09-19 00:00:00",
+      "venue_symbol": "OMGUSDT"
+    },
+    {
+      "eligible_days": 5,
+      "first_eligible": "2025-05-07 00:00:00",
+      "instrument": "OMUSDT",
+      "last_eligible": "2025-05-11 00:00:00",
+      "venue_symbol": "OMUSDT"
+    },
+    {
+      "eligible_days": 83,
+      "first_eligible": "2023-08-03 00:00:00",
+      "instrument": "OPUSDT",
+      "last_eligible": "2024-02-15 00:00:00",
+      "venue_symbol": "OPUSDT"
+    },
+    {
+      "eligible_days": 81,
+      "first_eligible": "2024-01-20 00:00:00",
+      "instrument": "PEOPLEUSDT",
+      "last_eligible": "2024-08-04 00:00:00",
+      "venue_symbol": "PEOPLEUSDT"
+    },
+    {
+      "eligible_days": 480,
+      "first_eligible": "2024-05-03 00:00:00",
+      "instrument": "PEPEUSDT",
+      "last_eligible": "2025-10-14 00:00:00",
+      "venue_symbol": "PEPEUSDT"
+    },
+    {
+      "eligible_days": 14,
+      "first_eligible": "2023-09-17 00:00:00",
+      "instrument": "PERPUSDT",
+      "last_eligible": "2023-10-03 00:00:00",
+      "venue_symbol": "PERPUSDT"
+    },
+    {
+      "eligible_days": 4,
+      "first_eligible": "2024-08-26 00:00:00",
+      "instrument": "RAREUSDT",
+      "last_eligible": "2024-09-13 00:00:00",
+      "venue_symbol": "RAREUSDT"
+    },
+    {
+      "eligible_days": 39,
+      "first_eligible": "2023-05-14 00:00:00",
+      "instrument": "RNDRUSDT",
+      "last_eligible": "2023-06-21 00:00:00",
+      "venue_symbol": "RNDRUSDT"
+    },
+    {
+      "eligible_days": 68,
+      "first_eligible": "2023-10-29 00:00:00",
+      "instrument": "RUNEUSDT",
+      "last_eligible": "2024-08-25 00:00:00",
+      "venue_symbol": "RUNEUSDT"
+    },
+    {
+      "eligible_days": 119,
+      "first_eligible": "2021-11-05 00:00:00",
+      "instrument": "SANDUSDT",
+      "last_eligible": "2022-03-13 00:00:00",
+      "venue_symbol": "SANDUSDT"
+    },
+    {
+      "eligible_days": 484,
+      "first_eligible": "2022-05-09 00:00:00",
+      "instrument": "SHIBUSDT",
+      "last_eligible": "2024-12-11 00:00:00",
+      "venue_symbol": "SHIBUSDT"
+    },
+    {
+      "eligible_days": 1596,
+      "first_eligible": "2021-08-16 00:00:00",
+      "instrument": "SOLUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "SOLUSDT"
+    },
+    {
+      "eligible_days": 482,
+      "first_eligible": "2024-08-20 00:00:00",
+      "instrument": "SUIUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "SUIUSDT"
+    },
+    {
+      "eligible_days": 9,
+      "first_eligible": "2025-11-08 00:00:00",
+      "instrument": "TAOUSDT",
+      "last_eligible": "2025-11-16 00:00:00",
+      "venue_symbol": "TAOUSDT"
+    },
+    {
+      "eligible_days": 9,
+      "first_eligible": "2020-06-12 00:00:00",
+      "instrument": "TFUELUSDT",
+      "last_eligible": "2020-06-20 00:00:00",
+      "venue_symbol": "TFUELUSDT"
+    },
+    {
+      "eligible_days": 51,
+      "first_eligible": "2021-03-24 00:00:00",
+      "instrument": "THETAUSDT",
+      "last_eligible": "2021-08-15 00:00:00",
+      "venue_symbol": "THETAUSDT"
+    },
+    {
+      "eligible_days": 73,
+      "first_eligible": "2023-09-24 00:00:00",
+      "instrument": "TRBUSDT",
+      "last_eligible": "2024-01-30 00:00:00",
+      "venue_symbol": "TRBUSDT"
+    },
+    {
+      "eligible_days": 682,
+      "first_eligible": "2019-12-31 00:00:00",
+      "instrument": "TRXUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "TRXUSDT"
+    },
+    {
+      "eligible_days": 1,
+      "first_eligible": "2022-12-12 00:00:00",
+      "instrument": "TWTUSDT",
+      "last_eligible": "2022-12-12 00:00:00",
+      "venue_symbol": "TWTUSDT"
+    },
+    {
+      "eligible_days": 4,
+      "first_eligible": "2022-07-02 00:00:00",
+      "instrument": "UNFIUSDT",
+      "last_eligible": "2022-07-05 00:00:00",
+      "venue_symbol": "UNFIUSDT"
+    },
+    {
+      "eligible_days": 31,
+      "first_eligible": "2025-06-20 00:00:00",
+      "instrument": "UNIUSDT",
+      "last_eligible": "2025-12-10 00:00:00",
+      "venue_symbol": "UNIUSDT"
+    },
+    {
+      "eligible_days": 149,
+      "first_eligible": "2020-06-11 00:00:00",
+      "instrument": "VETUSDT",
+      "last_eligible": "2021-07-07 00:00:00",
+      "venue_symbol": "VETUSDT"
+    },
+    {
+      "eligible_days": 24,
+      "first_eligible": "2022-03-30 00:00:00",
+      "instrument": "WAVESUSDT",
+      "last_eligible": "2022-06-29 00:00:00",
+      "venue_symbol": "WAVESUSDT"
+    },
+    {
+      "eligible_days": 21,
+      "first_eligible": "2025-05-29 00:00:00",
+      "instrument": "WIFUSDT",
+      "last_eligible": "2025-06-19 00:00:00",
+      "venue_symbol": "WIFUSDT"
+    },
+    {
+      "eligible_days": 32,
+      "first_eligible": "2021-04-05 00:00:00",
+      "instrument": "WINUSDT",
+      "last_eligible": "2021-05-06 00:00:00",
+      "venue_symbol": "WINUSDT"
+    },
+    {
+      "eligible_days": 65,
+      "first_eligible": "2024-07-22 00:00:00",
+      "instrument": "WLDUSDT",
+      "last_eligible": "2025-10-08 00:00:00",
+      "venue_symbol": "WLDUSDT"
+    },
+    {
+      "eligible_days": 139,
+      "first_eligible": "2020-07-11 00:00:00",
+      "instrument": "XLMUSDT",
+      "last_eligible": "2024-12-18 00:00:00",
+      "venue_symbol": "XLMUSDT"
+    },
+    {
+      "eligible_days": 20,
+      "first_eligible": "2020-10-23 00:00:00",
+      "instrument": "XMRUSDT",
+      "last_eligible": "2020-11-11 00:00:00",
+      "venue_symbol": "XMRUSDT"
+    },
+    {
+      "eligible_days": 2154,
+      "first_eligible": "2019-12-31 00:00:00",
+      "instrument": "XRPUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "XRPUSDT"
+    },
+    {
+      "eligible_days": 22,
+      "first_eligible": "2023-07-10 00:00:00",
+      "instrument": "XVGUSDT",
+      "last_eligible": "2023-08-01 00:00:00",
+      "venue_symbol": "XVGUSDT"
+    },
+    {
+      "eligible_days": 24,
+      "first_eligible": "2023-08-12 00:00:00",
+      "instrument": "YGGUSDT",
+      "last_eligible": "2023-09-04 00:00:00",
+      "venue_symbol": "YGGUSDT"
+    },
+    {
+      "eligible_days": 92,
+      "first_eligible": "2020-08-15 00:00:00",
+      "instrument": "ZECUSDT",
+      "last_eligible": "2025-12-31 00:00:00",
+      "venue_symbol": "ZECUSDT"
+    },
+    {
+      "eligible_days": 55,
+      "first_eligible": "2020-06-21 00:00:00",
+      "instrument": "ZILUSDT",
+      "last_eligible": "2022-05-05 00:00:00",
+      "venue_symbol": "ZILUSDT"
+    }
+  ],
+  "instrument_epochs": 576,
+  "intraday_instruments": 77,
+  "raw_symbols": 568
+}

@@ -1,0 +1,570 @@
+{
+  "current_margin_assumed_historical": false,
+  "family": "D",
+  "missing_contract_evidence": [
+    {
+      "component": "versioned_maintenance_margin_brackets",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "BTCUSDT"
+    },
+    {
+      "component": "versioned_liquidation_insurance_fee_rules",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "BTCUSDT"
+    },
+    {
+      "component": "certified_listing_delisting_timeline",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "BTCUSDT"
+    },
+    {
+      "component": "historical_account_fee_tier_and_symbol_filters",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "BTCUSDT"
+    },
+    {
+      "component": "versioned_maintenance_margin_brackets",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "ETHUSDT"
+    },
+    {
+      "component": "versioned_liquidation_insurance_fee_rules",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "ETHUSDT"
+    },
+    {
+      "component": "certified_listing_delisting_timeline",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "ETHUSDT"
+    },
+    {
+      "component": "historical_account_fee_tier_and_symbol_filters",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "ETHUSDT"
+    },
+    {
+      "component": "versioned_maintenance_margin_brackets",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "BNBUSDT"
+    },
+    {
+      "component": "versioned_liquidation_insurance_fee_rules",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "BNBUSDT"
+    },
+    {
+      "component": "certified_listing_delisting_timeline",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "BNBUSDT"
+    },
+    {
+      "component": "historical_account_fee_tier_and_symbol_filters",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "BNBUSDT"
+    },
+    {
+      "component": "versioned_maintenance_margin_brackets",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "XRPUSDT"
+    },
+    {
+      "component": "versioned_liquidation_insurance_fee_rules",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "XRPUSDT"
+    },
+    {
+      "component": "certified_listing_delisting_timeline",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "XRPUSDT"
+    },
+    {
+      "component": "historical_account_fee_tier_and_symbol_filters",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "XRPUSDT"
+    },
+    {
+      "component": "versioned_maintenance_margin_brackets",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "SOLUSDT"
+    },
+    {
+      "component": "versioned_liquidation_insurance_fee_rules",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "SOLUSDT"
+    },
+    {
+      "component": "certified_listing_delisting_timeline",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "SOLUSDT"
+    },
+    {
+      "component": "historical_account_fee_tier_and_symbol_filters",
+      "missing_intervals": [
+        [
+          "2021-01-01 00:00:00",
+          "2026-01-01 00:00:00"
+        ]
+      ],
+      "reason": "No complete versioned historical evidence acquired; present-day values cannot certify this interval.",
+      "symbol": "SOLUSDT"
+    }
+  ],
+  "price_funding_evidence": [
+    {
+      "bundle_sha256": "31fa010a307171fdc19e1238f7742fcdcae83be3820a1e18302173b1c057aa6d",
+      "component": "perp_trade",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "note": "Actual venue archive, not spot",
+      "rows": 10956,
+      "symbol": "BTCUSDT"
+    },
+    {
+      "bundle_sha256": "31fa010a307171fdc19e1238f7742fcdcae83be3820a1e18302173b1c057aa6d",
+      "component": "perp_trade",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "note": "Actual venue archive, not spot",
+      "rows": 10956,
+      "symbol": "ETHUSDT"
+    },
+    {
+      "bundle_sha256": "31fa010a307171fdc19e1238f7742fcdcae83be3820a1e18302173b1c057aa6d",
+      "component": "perp_trade",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "note": "Actual venue archive, not spot",
+      "rows": 10956,
+      "symbol": "BNBUSDT"
+    },
+    {
+      "bundle_sha256": "31fa010a307171fdc19e1238f7742fcdcae83be3820a1e18302173b1c057aa6d",
+      "component": "perp_trade",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "note": "Actual venue archive, not spot",
+      "rows": 10926,
+      "symbol": "XRPUSDT"
+    },
+    {
+      "bundle_sha256": "31fa010a307171fdc19e1238f7742fcdcae83be3820a1e18302173b1c057aa6d",
+      "component": "perp_trade",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "note": "Actual venue archive, not spot",
+      "rows": 10926,
+      "symbol": "SOLUSDT"
+    },
+    {
+      "bundle_sha256": "1817905a37289487f37a06a8331ebda43f1a4712090dcc59595010429d69aaa2",
+      "component": "perp_mark",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "note": "Actual venue archive, not spot",
+      "rows": 10908,
+      "symbol": "BTCUSDT"
+    },
+    {
+      "bundle_sha256": "1817905a37289487f37a06a8331ebda43f1a4712090dcc59595010429d69aaa2",
+      "component": "perp_mark",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "note": "Actual venue archive, not spot",
+      "rows": 10944,
+      "symbol": "ETHUSDT"
+    },
+    {
+      "bundle_sha256": "1817905a37289487f37a06a8331ebda43f1a4712090dcc59595010429d69aaa2",
+      "component": "perp_mark",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "note": "Actual venue archive, not spot",
+      "rows": 10908,
+      "symbol": "BNBUSDT"
+    },
+    {
+      "bundle_sha256": "1817905a37289487f37a06a8331ebda43f1a4712090dcc59595010429d69aaa2",
+      "component": "perp_mark",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "note": "Actual venue archive, not spot",
+      "rows": 10914,
+      "symbol": "XRPUSDT"
+    },
+    {
+      "bundle_sha256": "1817905a37289487f37a06a8331ebda43f1a4712090dcc59595010429d69aaa2",
+      "component": "perp_mark",
+      "first": "2021-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "note": "Actual venue archive, not spot",
+      "rows": 10914,
+      "symbol": "SOLUSDT"
+    },
+    {
+      "bundle_sha256": "e6a51b3fb2e67db82d8a762c2bf60038a0cefe762d4c8a7a277067fbdd539e71",
+      "component": "funding",
+      "first": "2021-01-01 00:00:00.002000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "note": "Actual millisecond timestamps/rates retained. Coverage tolerates subsecond scheduling and uses recorded variable intervals; transitions are explicit, not zero-filled.",
+      "rows": 5478,
+      "symbol": "BTCUSDT"
+    },
+    {
+      "bundle_sha256": "e6a51b3fb2e67db82d8a762c2bf60038a0cefe762d4c8a7a277067fbdd539e71",
+      "component": "funding",
+      "first": "2021-01-01 00:00:00.002000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "note": "Actual millisecond timestamps/rates retained. Coverage tolerates subsecond scheduling and uses recorded variable intervals; transitions are explicit, not zero-filled.",
+      "rows": 5478,
+      "symbol": "ETHUSDT"
+    },
+    {
+      "bundle_sha256": "e6a51b3fb2e67db82d8a762c2bf60038a0cefe762d4c8a7a277067fbdd539e71",
+      "component": "funding",
+      "first": "2021-01-01 00:00:00.002000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "note": "Actual millisecond timestamps/rates retained. Coverage tolerates subsecond scheduling and uses recorded variable intervals; transitions are explicit, not zero-filled.",
+      "rows": 5478,
+      "symbol": "BNBUSDT"
+    },
+    {
+      "bundle_sha256": "e6a51b3fb2e67db82d8a762c2bf60038a0cefe762d4c8a7a277067fbdd539e71",
+      "component": "funding",
+      "first": "2021-01-01 00:00:00.002000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "note": "Actual millisecond timestamps/rates retained. Coverage tolerates subsecond scheduling and uses recorded variable intervals; transitions are explicit, not zero-filled.",
+      "rows": 5478,
+      "symbol": "XRPUSDT"
+    },
+    {
+      "bundle_sha256": "e6a51b3fb2e67db82d8a762c2bf60038a0cefe762d4c8a7a277067fbdd539e71",
+      "component": "funding",
+      "first": "2021-01-01 00:00:00.002000",
+      "interval_changes": [
+        {
+          "after_hours": 4,
+          "at": "2022-11-09 20:00:00.018000",
+          "before_hours": 8
+        },
+        {
+          "after_hours": 2,
+          "at": "2022-11-10 04:00:00.011000",
+          "before_hours": 4
+        },
+        {
+          "after_hours": 8,
+          "at": "2022-11-18 16:00:00",
+          "before_hours": 2
+        }
+      ],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "note": "Actual millisecond timestamps/rates retained. Coverage tolerates subsecond scheduling and uses recorded variable intervals; transitions are explicit, not zero-filled.",
+      "rows": 5553,
+      "symbol": "SOLUSDT"
+    }
+  ],
+  "recipes": [
+    {
+      "name": "long_short_cross_sectional_momentum",
+      "performance": null,
+      "reason": "Historical venue risk/administrative evidence incomplete; data gate run, no fabricated strategy returns.",
+      "rules": "Monthly 90d momentum divided by 60d volatility; top2 long, bottom2 short, inverse-vol weights, gross1 net0; distinct long/short cashflows, timestamp funding required.",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "BTC_long_cash_short_SMA200",
+      "performance": null,
+      "reason": "Historical venue risk/administrative evidence incomplete; data gate run, no fabricated strategy returns.",
+      "rules": "BTC daily close above SMA200 for 7 consecutive days: +1; below for 7: -1; otherwise retain last confirmed regime, start CASH. Daily decision, delayed venue fill.",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "beta_neutral_top_bottom",
+      "performance": null,
+      "reason": "Historical venue risk/administrative evidence incomplete; data gate run, no fabricated strategy returns.",
+      "rules": "Monthly 90d momentum top2/bottom2; 180d venue daily BTC betas and vol60; solve nonnegative leg weights for zero estimated BTC beta, gross<=1; infeasible solution CASH.",
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "funding_aware",
+      "performance": null,
+      "reason": "Historical venue risk/administrative evidence incomplete; data gate run, no fabricated strategy returns.",
+      "rules": "Same long/short cross-sectional base; only published trailing7d actual funding may remove a leg whose adverse annualized funding exceeds positive annualized90d signed momentum. No future funding sign available to selector.",
+      "status": "NOT_RUN"
+    }
+  ],
+  "required_period": [
+    "2021-01-01",
+    "2025-12-31"
+  ],
+  "sources": [
+    {
+      "finding": "Authenticated USER_DATA endpoint gives brackets; no documented historical as-of argument. Not called; no account credential loaded.",
+      "url": "https://developers.binance.com/docs/derivatives/usds-margined-futures/account/rest-api/Notional-and-Leverage-Brackets"
+    },
+    {
+      "finding": "BTCUSDT bracket update 2021-03-18 proves version changes exist.",
+      "url": "https://www.binance.com/en/support/announcement/detail/86cf9aa472574b8cb2e05bb751c2a9a6"
+    },
+    {
+      "finding": "Further BTCUSDT bracket update 2021-06-22; isolated announcements do not establish complete series.",
+      "url": "https://www.binance.com/en/support/announcement/detail/f55d25695ca8453ab4c132c1fd4dc36a"
+    },
+    {
+      "finding": "Multiple perpetual tier changes 2022-06-16.",
+      "url": "https://www.binance.com/en/support/announcement/detail/10a8048af25140489a1b9c65d822031a"
+    },
+    {
+      "finding": "Public trade/mark/funding archives do not certify historical account margin and liquidation tables.",
+      "url": "https://github.com/binance/binance-public-data"
+    }
+  ],
+  "spot_used_as_perpetual": false,
+  "status": "NOT_RUN"
+}

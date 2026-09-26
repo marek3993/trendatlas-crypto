@@ -1,0 +1,10 @@
+{
+  "branch": "codex/capacity-followup-20260927",
+  "numpy": "2.4.1",
+  "pandas": "3.0.2",
+  "platform": "win32",
+  "production_actions": false,
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "source_commit": "f5ecbfd1a35dec62a4482cd1a1aa5181e6790551",
+  "worktree": "C:/Users/benda/Desktop/ta_capacity_followup"
+}
