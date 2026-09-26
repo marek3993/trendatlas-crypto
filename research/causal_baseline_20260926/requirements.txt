@@ -1,0 +1,5 @@
+numpy==2.4.1
+pandas==3.0.2
+matplotlib==3.10.7
+# Only needed for a new authorized read-only Pi capture:
+paramiko==5.0.0

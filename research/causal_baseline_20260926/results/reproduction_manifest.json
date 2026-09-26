@@ -1,0 +1,48 @@
+{
+  "borrow_proxy": "Legacy 12% annual charge on notional above equity, additional to the funding friction; not a claim about Hyperliquid spot/perpetual financing",
+  "bundle_sha256": "8a6c7009ca7da558146c3576d6d1adfbcac29c99fc809ccb961e0e9cc078a355",
+  "costs": {
+    "annual_borrow": 0.12,
+    "daily_funding_proxy": 0.0003,
+    "fee_rate": 0.00045,
+    "slippage_rate": 0.001
+  },
+  "execution_convention": "Binance spot daily open-to-open; first daily open after availability; last close is valuation only, no fill",
+  "funding_proxy": "3bp/day full notional; an extra positive stress friction, not measured Hyperliquid funding or a guaranteed upper bound",
+  "historical_availability": "Archived original build-validation time when captured, otherwise explicit D+1 12:00 UTC schedule assumption. Corrected signals are counterfactual.",
+  "numpy": "2.4.1",
+  "pandas": "3.0.2",
+  "point_in_time_limit": "No full historical venue marks/funding or macro revision vintages. Frozen OHLCV and macro data support a reproducible causal schedule candidate, not an exact historical live-execution backtest.",
+  "position_convention": "Fixed units until an asset or target exposure change. Equity costs cause exposure drift. No free daily rebalance.",
+  "python": "3.12.10",
+  "result_sha256": {
+    "active_periods.csv": "a3dea3bf2a67e2cf1cc373d0ab544981eb09b6a3c238f38ec5da671e2ceb53f7",
+    "asset_mapping_audit.csv": "df6a9b40f82e0ccb90257e9a6f99e62ec5fec9f4c823f5b30cbd5de7ba54e13e",
+    "causal_ledger.csv": "30d2cbbb154083ddb24de9290ceaf7707c5fd6a3494fe4a59d1eb938d094dac1",
+    "comparison.json": "e4fb8c56b8b61aceb50b71817ec3ec2c43c0489c716d08dc637498289526f789",
+    "core_base.csv": "bb3502eddb48af12208889a3efd1eeeb3e50ca2eb793ce4514087b30898ca78a",
+    "core_overlay.csv": "4753a2fbc6ebacfd3bafc630e7c9061784c9cee03ce7c218b56c5f728d840e83",
+    "daily_comparison.csv": "6c50b431ee76b1d407c6b038badc257bc8840120316b1d0633b365cfbd308e8f",
+    "dashboard_model_chart.csv": "d68dbe6aed9afd927f357253b8c9ab13c3926135abaa31a91cd3fe13a051c3bd",
+    "governance_lineage.csv": "daca5adb662f8574a0e474da4ea269426996776994c9f4c5e5acd0ded04d6be4",
+    "input_verification.json": "964f859a99efbe39cbf4e0d56352b1a7645882706671be67bedef34b236497f9",
+    "original_reproduction.json": "6258e2b83791b819033e573ea7287f11558a80d1cd9641e18091004b8c07b29d",
+    "price_provenance.csv": "c2e49e7b5e95d5420ceb3aeebb2e62a3d49ef643fa4ad6edf1166295ca42aec7",
+    "raw_rebuild_check.json": "a69de9878f0a1e990a26dbaa01fd7e7b8974510760dfcda04f55b050c5bc7e62",
+    "removed_returns.csv": "2a65d83c564195a0f3a13957bcd7e58f28b998216189a7c21199e852eaf3cd5c",
+    "signal_lineage.csv": "85f57b7fb690bbc6f22989405d46897c07f37900a75e31f983418ba89b348fef",
+    "signals.csv": "5f789dacf5ca9d5e7e066dac251d8faefb472953d5685c55fc8a6e29571017ce",
+    "universe_decisions.csv": "a04709663b58ee022d2d41f9b8808fd772e1030dea0bd7c36583da1ad3e04721"
+  },
+  "source_sha256": {
+    "research/causal_baseline_20260926/collect_inputs.py": "4f6996acd5a0e0487b8c1e41f23539b1686d0655494f4dcfbd00eeed5092fd74",
+    "research/causal_baseline_20260926/prepare_bundle.py": "06fe515949bf4914634b3977c07e5fe1bfeeb16734c593d844a31e7b8cdb1b31",
+    "research/causal_baseline_20260926/rebuild_signals.py": "1182d0ecafd885a5697c7fddfc44a9f358aa2cb5c7036fbfa18f9501165cb597",
+    "research/causal_baseline_20260926/render_chart.py": "2a1f0ed021faa7bb7f6ac609b7cda1dff54e2a97ceb637d6547cce9244467daa",
+    "research/causal_baseline_20260926/requirements.txt": "78ebbc55f23be7931a5780785e777a86ecbdbaf6dfbdb644ec8c5148854c6ea4",
+    "research/causal_baseline_20260926/run.py": "34a645159d5d17f14b8c8fa8f9566043e93132c511704257980a6b84522387e7",
+    "research/causal_baseline_20260926/test_causal.py": "1bd3bde762e2c3812c88ba489c15271962c6d989262dd9a095845261429c4802",
+    "scripts/production/causal_performance.py": "e93ae576c32ccf15196e9db68770d47ac72ed01ffd08a07817c119fe0d11222b",
+    "source_of_truth/causal_model_performance_contract.json": "17333ae362321c150f2588042dd31b1c2afaa5a77252824cb5110b0e0ab9d7b2"
+  }
+}

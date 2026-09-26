@@ -1,0 +1,8 @@
+{
+  "rows": 3066,
+  "differences": {},
+  "snapshot_metrics_match": true,
+  "rolling_vol_max_abs_difference": 6.586000000000001e-09,
+  "tolerance": "absolute 1e-9; rolling_vol_30d 1e-8; relative 1e-12",
+  "passed": true
+}

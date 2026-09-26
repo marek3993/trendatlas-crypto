@@ -1,0 +1,215 @@
+{
+  "repo_and_prior_research": [
+    {
+      "path": "AGENTS.md",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "596a5af39c0993997eaa9a470f610ed9116ff378d18e967f6968d672e43f6493",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "source_of_truth/README.md",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "f1879e2f61a9f5c09ddf69dea1013b87e68068811ff746f30ff7fa533f6784cf",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "source_of_truth/master_state.md",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "4cf20ac937fd2a49e33379fbe2ab852b404516df48af359ee8d702c8476699dd",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "source_of_truth/chat_roles.md",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "44bbce7277964fb4618c8dca92b12a3cb5a7f3ff8d6b25e7ad634a82733378dc",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "source_of_truth/project_truth.json",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "7e57395f536f0864b925c08eb36fd434329e265935c0d5aef10af42c2214d7cb",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "source_of_truth/export_contract.json",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "02db9fc823fbb0559fdb1637ab6b8e9a650fec420f11af4af9b9fc8c74915462",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "source_of_truth/paths_registry.json",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "7cc3da1d241fcff2adbdad20b4a7d766af81310255948cb3acda53f5de2e5d1d",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "source_of_truth/current_issues.md",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "4d819107665f5fd3f7d2ab91f8ac1206d8eda217c928d47cd5c935147c8a6e21",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "canonical/script_registry.json",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "a0782a6afdcb2f45e51107867304506c709d51251fbd177fd4226d241fac0fc9",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "canonical/output_registry.json",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "7da675c429cc2f67e3ced72d07ab0adb5d6ec57edcba78a7e11f8c41ebe66e16",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "canonical/registry_workflow.md",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "bb7abaeafaf3bd2f9ac1c470f7732afc43ca432f643c5fc2e0b98a49778efac5",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "source_of_truth/pi_codex_runtime_workflow.md",
+      "revision": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+      "sha256": "df319e38c8b72c6d013092c32a164fac43929ecaa5cd54f2c3ca0dc9c9279480",
+      "read_mode": "truth_and_workflow_review"
+    },
+    {
+      "path": "research/risk_overlay_20260926/.gitattributes",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "ec94f39c34046b40c441bb8ba7c666d8effd56959d551d184bd835988cae4cfc",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/.gitignore",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "735f05e00cb7461e81289a1e5126b6230552c4421af6357f2f5cee9aa7bbde6b",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/AUDIT.md",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "dd416202a073224c78018189692d93bb3ade31c4fefb8b3e9f560e442ade4278",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/LEVERAGE_AND_ARCHITECTURE.md",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "72008f2b70d6d35c57120c3e8d3a3f0922ffdc6e6830f987679ce6f87b0f946d",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/README.md",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "2d23bdd8e208f439b07cd4fb846bcb8a0f939968509fdd554bf087cf813b10c4",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/contract.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "5cc63b6533b4e69cb0b5b11c67d2a40780594f48c20b025796bf5a47ac8e491f",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/exchange_readonly_capture.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "63e079bd7eead7997da3f2e571ff8ad699f332f8a37a65221161e5535e7f1031",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/frozen_inputs.zip",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "2f9fd4d39c98d19212e1283f0e0f1c65f830e8d4c1584c5c2acd297786725699",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/input_manifest.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "d35113568b2c56adff655d08452ee70583a20dae5b4f6ec955b137bcd31371f1",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/leverage_audit.py",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "575602b59e9a648c19d7ec75cb4d2fbd47f0c99484e906a3e9af4634e7cc2e6d",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/leverage_results.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "7cd378424aa509471e7ce9218fef89994fd855583a4183165e53bc9a975e01a6",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/local_asset_return_diagnostics.csv",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "bb0bf478b322d6bc79caffc3de884bcd75a78ed27272e1673676c46b12b5fdb8",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/local_baseline_reproduced.csv",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "6cf757e7f3179d7aee10d0aa277c91fefbf5e681c352125daec2c32675b56f3c",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/local_frozen_inputs.zip",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "8f07548f14b25bfe78e5e7fb0b4acfe75204c29ea87df1a3a0fc3768a221611b",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/local_input_manifest.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "6e84c83e9788349d79d4e88f0d4cc3bb1d7c46f50fa5314915d714e6b5b865b5",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/local_results.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "dcf5116fcfec461cb78dde5ac115303d741ca015e59c692e063bf2cd756c1cbf",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/local_run_manifest.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "100cb428c1e252cd4bf46e934162417dc14ddba0d9dc6498ea363f9bce30d7c5",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/results.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "f28329b46b78262c0896ad0fb9a88f01021f060d3c6547885923ffe041d56a06",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/run_audit.py",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "3d5cea378987b578bb79e8ebef30ddf7eb751ddc0473f931041892e749e15d72",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/run_manifest.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "fee08b2a0eafff73297b59607706dfbfe0ec6e4a005bcd145c1d0ad7489104de",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/test_audit.py",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "15cf087439a14134f3e0d17b090aeb032b6b7f606c0e175e5808b6bd7c79c420",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/validate_research.py",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "8490fbbf76a19d86c714c57828c626d90baaabb03ca04dde07f5029780278396",
+      "read_mode": "prior_research_review_and_data_inspection"
+    },
+    {
+      "path": "research/risk_overlay_20260926/validation.json",
+      "revision": "604125383a7cb16948ec7a2ca0f1c9280fca427a",
+      "sha256": "76291df90c0fbb145d00848e1bee686ebd914a65699331d5ac49ff3109d7d401",
+      "read_mode": "prior_research_review_and_data_inspection"
+    }
+  ],
+  "runtime_evidence": "input_bundle.manifest.json enumerates 806 collected, byte-verified evidence files with original and stored hashes. Key inspected/imported source modules are named in AUDIT.md; the manifest is not a claim that every unrelated metadata row was interpreted."
+}

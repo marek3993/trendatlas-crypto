@@ -1,0 +1,28 @@
+{
+  "candidate_regression_tests": {
+    "passed": 19,
+    "failed": 0
+  },
+  "existing_ssot_tests": {
+    "passed": 6,
+    "failed": 0
+  },
+  "existing_dashboard_tests": {
+    "passed": 11,
+    "failed": 0
+  },
+  "result_files_bitwise_identical": 17,
+  "current_source_hashes_match": true,
+  "original_reproduction": "PASS numerical; snapshot metrics exact",
+  "raw_phase60_reproduction": "PASS",
+  "runtime_python_files_match_commit": 50,
+  "runtime_commit": "5ee031cef7de9c385056cec22f6511391d3e4f4f",
+  "protected_root_data_outputs_changed": false,
+  "pi_remote_writes": false,
+  "live_actions_invoked_by_audit": false,
+  "chart_visually_checked": true,
+  "git_diff_cached_check": "PASS",
+  "staged_blob_hashes_match_manifest": true,
+  "staged_exact_file_count": 41,
+  "credential_pattern_scan_matches": 0
+}

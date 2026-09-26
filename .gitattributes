@@ -1,0 +1,4 @@
+# Preserve byte-stable offline reconstruction sources on Windows checkouts.
+/.gitattributes text eol=lf
+/scripts/production/causal_performance.py text eol=lf
+/source_of_truth/causal_model_performance_contract.json text eol=lf

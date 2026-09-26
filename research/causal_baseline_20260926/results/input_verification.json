@@ -1,0 +1,87 @@
+{
+  "declared_direct_inputs": [
+    {
+      "declared_sha256": "9276c6e3ee6a128689e191a45d1d54dec15c06ce1249cf2c462b7034b7c33082",
+      "match": true,
+      "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+      "role": "durable_baseline_summary"
+    },
+    {
+      "declared_sha256": "743ab1813d8e5f55bd669105f789bc3b727b7571dfdcd178978d62f8de55c26d",
+      "match": true,
+      "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+      "role": "durable_baseline_paper"
+    },
+    {
+      "declared_sha256": "d5ce8fb8a6e7a6701a7c70e697fb0b9196cba148f57759514c1e3c5fdf0e362c",
+      "match": true,
+      "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+      "role": "durable_baseline_trend_status"
+    },
+    {
+      "declared_sha256": "d9538159fb415050a51bb2e658d54702f736cd4322913e68b4981e09d9256e53",
+      "match": true,
+      "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+      "role": "durable_baseline_trend_history"
+    },
+    {
+      "declared_sha256": "236230d68a2101cdb810a65a70adb3ee5a30912804094f24f6db2c2fcc02974c",
+      "match": true,
+      "path": "outputs/execution/freshness/app_freshness_report.json",
+      "role": "durable_baseline_freshness_report"
+    },
+    {
+      "declared_sha256": "ab728dff0abba81fdc054d1846cd43717ae5bbd79122bc4666a9e17ad999b5ff",
+      "match": true,
+      "path": "data/ohlcv/BTCUSDT_1d.csv",
+      "role": "benchmark_ohlcv"
+    },
+    {
+      "declared_sha256": "7d5eff602b4957264b519eabc71a147c033e2d841457be11b257dd20f47fe5a3",
+      "match": true,
+      "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+      "role": "etf_panel"
+    },
+    {
+      "declared_sha256": "ab728dff0abba81fdc054d1846cd43717ae5bbd79122bc4666a9e17ad999b5ff",
+      "match": true,
+      "path": "data/ohlcv/BTCUSDT_1d.csv",
+      "role": "btc_ohlcv"
+    },
+    {
+      "declared_sha256": "7fdd6e2e790fc15ae2c25930dc46c4485a92448615fc4d24b4508ddbeabf120e",
+      "match": true,
+      "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+      "role": "dev_only_script"
+    },
+    {
+      "declared_sha256": "b2331780c20d9153a58876c6ec870b921364e040771839bcbc82355a2f5085cd",
+      "match": true,
+      "path": "scripts/dev_only_phase68g_etf_flow_impulse_probe.py",
+      "role": "probe_helper_source"
+    },
+    {
+      "declared_sha256": "01aab1c51258ea450cab782b34650c36b656eafe8bfd86316433c2ca4b01855a",
+      "match": true,
+      "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py",
+      "role": "cooldown_helper_source"
+    },
+    {
+      "declared_sha256": "91982938796997d1cd7b2b8f52b7813542b0d4502c0c2b05a75da5296e9c6f85",
+      "match": true,
+      "path": "source_of_truth/project_truth.json",
+      "role": "project_truth"
+    },
+    {
+      "declared_sha256": "8512864986bf0200be3913e2e33663fcc472a5ce6b217ee502a5aa50f0cf2d6f",
+      "match": true,
+      "path": "source_of_truth/export_contract.json",
+      "role": "export_contract"
+    }
+  ],
+  "missing_declared_inputs": [],
+  "original_generated_at": "2026-09-26T10:17:06Z",
+  "published_commit": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+  "runtime_code_commit": "5ee031cef7de9c385056cec22f6511391d3e4f4f",
+  "upstream_raw_provenance": "Captured raw is hash-pinned here and Phase60 replay is compared with the captured paper. The original publish does not declare hashes of all upstream raw files."
+}

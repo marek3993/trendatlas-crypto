@@ -1,0 +1,303 @@
+{
+  "absent_files": [],
+  "availability_counts": {
+    "assumed_D_plus_1_12UTC_no_complete_historical_runtime_log": 3041,
+    "observed_original_build_validation_counterfactual_schedule": 24,
+    "observed_published_build_completion": 1
+  },
+  "byte_different_files": [],
+  "commit": "5ee031cef7de9c385056cec22f6511391d3e4f4f",
+  "files_checked": 50,
+  "governance_comparison": {
+    "chosen_asset_differences": 0,
+    "corrected_position_labels": 157,
+    "max_strategy_return_difference": 0.0,
+    "regime_differences": 0,
+    "rows": 3066
+  },
+  "matched_run": {
+    "finished_at": "2026-09-26T10:17:29Z",
+    "model_target_asset": "AVAX",
+    "model_target_exposure": 1.25,
+    "run_id": "prod_20260926T101542Z_354970",
+    "stages": {
+      "ACQUIRE_LOCK": {
+        "finished_at": "2026-09-26T10:15:42Z",
+        "started_at": "2026-09-26T10:15:42Z",
+        "status": "PASSED"
+      },
+      "AUTHORITY_PUBLISH": {
+        "finished_at": "2026-09-26T10:17:29Z",
+        "started_at": "2026-09-26T10:16:47Z",
+        "status": "PASSED"
+      },
+      "BUILD_CANONICAL_INTENT": {
+        "finished_at": "2026-09-26T10:16:25Z",
+        "started_at": "2026-09-26T10:16:24Z",
+        "status": "PASSED"
+      },
+      "BUILD_PRODUCTION_CORE": {
+        "finished_at": "2026-09-26T10:16:21Z",
+        "started_at": "2026-09-26T10:16:19Z",
+        "status": "PASSED"
+      },
+      "BUILD_REAL_ORDER_GATE": {
+        "finished_at": "2026-09-26T10:16:25Z",
+        "started_at": "2026-09-26T10:16:25Z",
+        "status": "PASSED"
+      },
+      "DASHBOARD_RUNTIME": {
+        "finished_at": "2026-09-26T10:16:47Z",
+        "started_at": "2026-09-26T10:16:46Z",
+        "status": "PASSED"
+      },
+      "EXECUTE": {
+        "finished_at": "2026-09-26T10:16:42Z",
+        "started_at": "2026-09-26T10:16:26Z",
+        "status": "PASSED"
+      },
+      "LIVE_PREFLIGHT": {
+        "finished_at": "2026-09-26T10:16:26Z",
+        "started_at": "2026-09-26T10:16:26Z",
+        "status": "PASSED"
+      },
+      "POST_TRADE_VERIFY": {
+        "finished_at": "2026-09-26T10:16:46Z",
+        "started_at": "2026-09-26T10:16:45Z",
+        "status": "PASSED"
+      },
+      "PRECHECK_DATA_HEALTH": {
+        "finished_at": "2026-09-26T10:16:19Z",
+        "started_at": "2026-09-26T10:16:18Z",
+        "status": "PASSED"
+      },
+      "READ_ACCOUNT_AFTER": {
+        "finished_at": "2026-09-26T10:16:45Z",
+        "started_at": "2026-09-26T10:16:42Z",
+        "status": "PASSED"
+      },
+      "READ_ACCOUNT_BEFORE": {
+        "finished_at": "2026-09-26T10:16:24Z",
+        "started_at": "2026-09-26T10:16:22Z",
+        "status": "PASSED"
+      },
+      "RECONCILE": {
+        "finished_at": "2026-09-26T10:16:26Z",
+        "started_at": "2026-09-26T10:16:25Z",
+        "status": "PASSED"
+      },
+      "REFRESH_DATA": {
+        "finished_at": "2026-09-26T10:16:18Z",
+        "started_at": "2026-09-26T10:15:42Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_DATA_HEALTH": {
+        "finished_at": "2026-09-26T10:16:25Z",
+        "started_at": "2026-09-26T10:16:25Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_PRODUCTION_CORE": {
+        "finished_at": "2026-09-26T10:16:22Z",
+        "started_at": "2026-09-26T10:16:21Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_SIGNER": {
+        "finished_at": "2026-09-26T10:16:24Z",
+        "started_at": "2026-09-26T10:16:24Z",
+        "status": "PASSED"
+      }
+    },
+    "started_at": "2026-09-26T10:15:42Z",
+    "target_closed_day": "2026-09-25"
+  },
+  "raw_data_coverage": {
+    "data/funding": [
+      {
+        "file": "data/funding/BNBUSDT_funding.csv",
+        "first_time_field": "1581321600000",
+        "last_time_field": "1773849600005",
+        "rows": 6686
+      },
+      {
+        "file": "data/funding/BTCUSDT_funding.csv",
+        "first_time_field": "1568102400000",
+        "last_time_field": "1773849600005",
+        "rows": 7145
+      },
+      {
+        "file": "data/funding/ETHUSDT_funding.csv",
+        "first_time_field": "1574841600000",
+        "last_time_field": "1773849600005",
+        "rows": 6911
+      },
+      {
+        "file": "data/funding/SOLUSDT_funding.csv",
+        "first_time_field": "1600012800004",
+        "last_time_field": "1773849600005",
+        "rows": 6112
+      },
+      {
+        "file": "data/funding/XRPUSDT_funding.csv",
+        "first_time_field": "1578297600000",
+        "last_time_field": "1773849600005",
+        "rows": 6791
+      }
+    ],
+    "data/macro": [
+      {
+        "file": "data/macro/global_liquidity_weekly.csv",
+        "first_time_field": "2024-01-07",
+        "last_time_field": "2026-03-08",
+        "rows": 114
+      }
+    ],
+    "data/ohlcv": [
+      {
+        "file": "data/ohlcv/ADAUSDT_1d.csv",
+        "first_time_field": "2018-04-17",
+        "last_time_field": "2026-09-25",
+        "rows": 3084
+      },
+      {
+        "file": "data/ohlcv/AVAXUSDT_1d.csv",
+        "first_time_field": "2020-09-22",
+        "last_time_field": "2026-09-25",
+        "rows": 2195
+      },
+      {
+        "file": "data/ohlcv/BNBUSDT_1d.csv",
+        "first_time_field": "2017-11-06",
+        "last_time_field": "2026-09-25",
+        "rows": 3246
+      },
+      {
+        "file": "data/ohlcv/BTCUSDT_1d.csv",
+        "first_time_field": "2017-08-17",
+        "last_time_field": "2026-09-25",
+        "rows": 3327
+      },
+      {
+        "file": "data/ohlcv/DOGEUSDT_1d.csv",
+        "first_time_field": "2019-07-05",
+        "last_time_field": "2026-09-25",
+        "rows": 2640
+      },
+      {
+        "file": "data/ohlcv/DOTUSDT_1d.csv",
+        "first_time_field": "2020-08-18",
+        "last_time_field": "2026-09-25",
+        "rows": 2230
+      },
+      {
+        "file": "data/ohlcv/ETHUSDT_1d.csv",
+        "first_time_field": "2017-08-17",
+        "last_time_field": "2026-09-25",
+        "rows": 3327
+      },
+      {
+        "file": "data/ohlcv/LINKUSDT_1d.csv",
+        "first_time_field": "2019-01-16",
+        "last_time_field": "2026-09-25",
+        "rows": 2810
+      },
+      {
+        "file": "data/ohlcv/LTCUSDT_1d.csv",
+        "first_time_field": "2017-12-13",
+        "last_time_field": "2026-09-25",
+        "rows": 3209
+      },
+      {
+        "file": "data/ohlcv/SOLUSDT_1d.csv",
+        "first_time_field": "2020-08-11",
+        "last_time_field": "2026-09-25",
+        "rows": 2237
+      },
+      {
+        "file": "data/ohlcv/TRXUSDT_1d.csv",
+        "first_time_field": "2018-06-11",
+        "last_time_field": "2026-09-25",
+        "rows": 3029
+      },
+      {
+        "file": "data/ohlcv/XRPUSDT_1d.csv",
+        "first_time_field": "2018-05-04",
+        "last_time_field": "2026-09-25",
+        "rows": 3067
+      }
+    ],
+    "data/ohlcv_4h": [
+      {
+        "file": "data/ohlcv_4h/ADAUSDT_4h.csv",
+        "first_time_field": "2018-04-17 04:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 17366
+      },
+      {
+        "file": "data/ohlcv_4h/AVAXUSDT_4h.csv",
+        "first_time_field": "2020-09-22 04:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 12041
+      },
+      {
+        "file": "data/ohlcv_4h/BNBUSDT_4h.csv",
+        "first_time_field": "2017-11-06 00:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 18332
+      },
+      {
+        "file": "data/ohlcv_4h/BTCUSDT_4h.csv",
+        "first_time_field": "2017-08-17 04:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 18817
+      },
+      {
+        "file": "data/ohlcv_4h/DOGEUSDT_4h.csv",
+        "first_time_field": "2019-07-05 12:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 14707
+      },
+      {
+        "file": "data/ohlcv_4h/DOTUSDT_4h.csv",
+        "first_time_field": "2020-08-18 20:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 12247
+      },
+      {
+        "file": "data/ohlcv_4h/ETHUSDT_4h.csv",
+        "first_time_field": "2017-08-17 04:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 18817
+      },
+      {
+        "file": "data/ohlcv_4h/LINKUSDT_4h.csv",
+        "first_time_field": "2019-01-16 08:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 15725
+      },
+      {
+        "file": "data/ohlcv_4h/LTCUSDT_4h.csv",
+        "first_time_field": "2017-12-13 00:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 18110
+      },
+      {
+        "file": "data/ohlcv_4h/SOLUSDT_4h.csv",
+        "first_time_field": "2020-08-11 04:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 12293
+      },
+      {
+        "file": "data/ohlcv_4h/TRXUSDT_4h.csv",
+        "first_time_field": "2018-06-11 08:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 17035
+      },
+      {
+        "file": "data/ohlcv_4h/XRPUSDT_4h.csv",
+        "first_time_field": "2018-05-04 08:00:00",
+        "last_time_field": "2026-03-21 20:00:00",
+        "rows": 17263
+      }
+    ]
+  }
+}
