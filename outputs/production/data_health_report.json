@@ -1,10 +1,28 @@
 {
   "artifact_type": "data_health_report",
   "schema_version": 1,
-  "generated_at_utc": "2026-09-06T12:00:00Z",
-  "reference_closed_day_utc": "2026-09-05",
+  "generated_at_utc": "2026-09-22T12:00:00Z",
+  "reference_closed_day_utc": "2026-09-21",
   "overall_status": "warning",
+  "incident_level": "degraded",
+  "affected_capability_ids": [
+    "maintenance_diagnostics",
+    "research_btc_derivatives"
+  ],
+  "blocked_action_ids": [
+    "run_research_btc_derivatives"
+  ],
+  "system_available": true,
   "summary": {
+    "system_available": true,
+    "incident_level": "degraded",
+    "affected_capability_ids": [
+      "maintenance_diagnostics",
+      "research_btc_derivatives"
+    ],
+    "blocked_action_ids": [
+      "run_research_btc_derivatives"
+    ],
     "overall_status": "warning",
     "app_status": "ok",
     "execution_status": "ok",
@@ -39,15 +57,15 @@
       "env_mrv1_sosovalue_api_key"
     ],
     "user_messages_sk": [
-      "Výskumný zdroj BTC derivatives research panel je nedostupný alebo blokovaný. Produkcia tým nie je ovplyvnená, ale príslušný research probe je zablokovaný. Očakávaný dátum 2026-09-05, skutočný 2026-04-19.",
-      "Výskumný zdroj BTC derivatives research quality report je nedostupný alebo blokovaný. Produkcia tým nie je ovplyvnená, ale príslušný research probe je zablokovaný. Očakávaný dátum 2026-09-05, skutočný 2026-04-19.",
+      "Výskumný zdroj BTC derivatives research panel je nedostupný alebo blokovaný. Produkcia tým nie je ovplyvnená, ale príslušný research probe je zablokovaný. Očakávaný dátum 2026-09-21, skutočný 2026-04-19.",
+      "Výskumný zdroj BTC derivatives research quality report je nedostupný alebo blokovaný. Produkcia tým nie je ovplyvnená, ale príslušný research probe je zablokovaný. Očakávaný dátum 2026-09-21, skutočný 2026-04-19.",
       "Pomocný zdroj env MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER nie je dostupný. Produkcia tým nie je ovplyvnená.",
       "Pomocný zdroj env MRV1_COINGLASS_API_KEY nie je dostupný. Produkcia tým nie je ovplyvnená.",
       "Pomocný zdroj env MRV1_SOSOVALUE_API_KEY nie je dostupný. Produkcia tým nie je ovplyvnená."
     ],
     "user_messages_en": [
-      "Research source BTC derivatives research panel is unavailable or blocked. Production is unaffected, but the related research probe is blocked. Expected date 2026-09-05, actual 2026-04-19.",
-      "Research source BTC derivatives research quality report is unavailable or blocked. Production is unaffected, but the related research probe is blocked. Expected date 2026-09-05, actual 2026-04-19.",
+      "Research source BTC derivatives research panel is unavailable or blocked. Production is unaffected, but the related research probe is blocked. Expected date 2026-09-21, actual 2026-04-19.",
+      "Research source BTC derivatives research quality report is unavailable or blocked. Production is unaffected, but the related research probe is blocked. Expected date 2026-09-21, actual 2026-04-19.",
       "Auxiliary source env MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER is unavailable. Production is unaffected.",
       "Auxiliary source env MRV1_COINGLASS_API_KEY is unavailable. Production is unaffected.",
       "Auxiliary source env MRV1_SOSOVALUE_API_KEY is unavailable. Production is unaffected."
@@ -61,16 +79,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "production_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:11:29Z",
+      "last_modified_utc": "2026-09-22T00:11:31Z",
       "row_count": null,
       "quality_status": null,
       "failure_reason": null,
       "user_message_sk": "Zdroj produkčný snapshot stratégie je v poriadku.",
       "user_message_en": "Source production strategy snapshot is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "production_current_strategy_timeseries",
@@ -79,16 +101,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "production_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:11:29Z",
-      "row_count": 3046,
+      "last_modified_utc": "2026-09-22T00:11:31Z",
+      "row_count": 3062,
       "quality_status": null,
       "failure_reason": null,
       "user_message_sk": "Zdroj produkčný timeseries stratégie je v poriadku.",
       "user_message_en": "Source production strategy timeseries is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "production_current_strategy_diagnostics",
@@ -97,16 +123,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "production_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:11:29Z",
+      "last_modified_utc": "2026-09-22T00:11:31Z",
       "row_count": null,
       "quality_status": null,
       "failure_reason": null,
       "user_message_sk": "Zdroj produkčné diagnostiky stratégie je v poriadku.",
       "user_message_en": "Source production strategy diagnostics is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "production_current_strategy_snapshot_quality",
@@ -115,16 +145,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "production_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:11:30Z",
+      "last_modified_utc": "2026-09-22T00:11:32Z",
       "row_count": null,
       "quality_status": "passed",
       "failure_reason": null,
       "user_message_sk": "Zdroj produkčný quality report snapshotu je v poriadku.",
       "user_message_en": "Source production snapshot quality report is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "data_ohlcv_btcusdt_1d",
@@ -133,16 +167,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "production_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:10:10Z",
-      "row_count": 3307,
+      "last_modified_utc": "2026-09-22T00:10:09Z",
+      "row_count": 3323,
       "quality_status": null,
       "failure_reason": null,
       "user_message_sk": "Zdroj BTC denné OHLCV dáta je v poriadku.",
       "user_message_en": "Source BTC daily OHLCV data is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "execution_authority_latest_successful_snapshot",
@@ -151,16 +189,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "app_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:11:42Z",
+      "last_modified_utc": "2026-09-22T00:11:45Z",
       "row_count": null,
       "quality_status": null,
       "failure_reason": null,
       "user_message_sk": "Zdroj posledný úspešný autoritatívny snapshot je v poriadku.",
       "user_message_en": "Source latest successful authority snapshot is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "execution_authority_latest_attempt_status",
@@ -169,16 +211,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "execution_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:11:42Z",
+      "last_modified_utc": "2026-09-22T00:11:45Z",
       "row_count": null,
       "quality_status": null,
       "failure_reason": null,
       "user_message_sk": "Zdroj stav posledného autoritatívneho pokusu je v poriadku.",
       "user_message_en": "Source latest authority attempt status is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "execution_latest_execution_intent",
@@ -187,16 +233,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "execution_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:11:38Z",
+      "last_modified_utc": "2026-09-22T00:11:41Z",
       "row_count": null,
       "quality_status": null,
       "failure_reason": null,
       "user_message_sk": "Zdroj najnovší execution intent je v poriadku.",
       "user_message_en": "Source latest execution intent is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "execution_latest_real_order_gate_decision",
@@ -205,16 +255,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "execution_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-21",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:11:39Z",
+      "last_modified_utc": "2026-09-22T00:11:41Z",
       "row_count": null,
       "quality_status": "no_action",
       "failure_reason": null,
       "user_message_sk": "Zdroj najnovšie real-order gate rozhodnutie je v poriadku.",
       "user_message_en": "Source latest real-order gate decision is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "research_btc_etf_flow_daily_panel_csv",
@@ -223,16 +277,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "production_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-22",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:10:49Z",
-      "row_count": 666,
+      "last_modified_utc": "2026-09-22T00:10:49Z",
+      "row_count": 676,
       "quality_status": null,
       "failure_reason": null,
       "user_message_sk": "Zdroj ETF-flow research panel je v poriadku.",
       "user_message_en": "Source ETF flow research panel is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "research_btc_etf_flow_daily_panel_quality",
@@ -241,16 +299,20 @@
       "exists": true,
       "status": "ok",
       "criticality": "production_critical",
-      "expected_last_date": "2026-09-05",
-      "actual_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
+      "actual_last_date": "2026-09-22",
       "max_allowed_lag_days": 0,
-      "last_modified_utc": "2026-09-06T00:10:49Z",
+      "last_modified_utc": "2026-09-22T00:10:49Z",
       "row_count": null,
       "quality_status": "passed",
       "failure_reason": null,
       "user_message_sk": "Zdroj ETF-flow research quality report je v poriadku.",
       "user_message_en": "Source ETF flow research quality report is healthy.",
-      "action": "allow"
+      "action": "allow",
+      "incident_level": "none",
+      "affected_capability_ids": [],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "research_btc_derivatives_daily_panel_csv",
@@ -259,16 +321,24 @@
       "exists": true,
       "status": "stale",
       "criticality": "research_only",
-      "expected_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
       "actual_last_date": "2026-04-19",
       "max_allowed_lag_days": 3,
       "last_modified_utc": "2026-05-09T15:24:35Z",
       "row_count": 2414,
       "quality_status": null,
-      "failure_reason": "Stale source: expected_last_date=2026-09-05 actual_last_date=2026-04-19 max_allowed_lag_days=3 lag_days=139",
-      "user_message_sk": "Výskumný zdroj BTC derivatives research panel je nedostupný alebo blokovaný. Produkcia tým nie je ovplyvnená, ale príslušný research probe je zablokovaný. Očakávaný dátum 2026-09-05, skutočný 2026-04-19.",
-      "user_message_en": "Research source BTC derivatives research panel is unavailable or blocked. Production is unaffected, but the related research probe is blocked. Expected date 2026-09-05, actual 2026-04-19.",
-      "action": "block_research_probe"
+      "failure_reason": "Stale source: expected_last_date=2026-09-21 actual_last_date=2026-04-19 max_allowed_lag_days=3 lag_days=155",
+      "user_message_sk": "Výskumný zdroj BTC derivatives research panel je nedostupný alebo blokovaný. Produkcia tým nie je ovplyvnená, ale príslušný research probe je zablokovaný. Očakávaný dátum 2026-09-21, skutočný 2026-04-19.",
+      "user_message_en": "Research source BTC derivatives research panel is unavailable or blocked. Production is unaffected, but the related research probe is blocked. Expected date 2026-09-21, actual 2026-04-19.",
+      "action": "block_research_probe",
+      "incident_level": "degraded",
+      "affected_capability_ids": [
+        "research_btc_derivatives"
+      ],
+      "blocked_action_ids": [
+        "run_research_btc_derivatives"
+      ],
+      "system_available": true
     },
     {
       "source_id": "research_btc_derivatives_daily_panel_quality",
@@ -277,16 +347,24 @@
       "exists": true,
       "status": "stale",
       "criticality": "research_only",
-      "expected_last_date": "2026-09-05",
+      "expected_last_date": "2026-09-21",
       "actual_last_date": "2026-04-19",
       "max_allowed_lag_days": 3,
       "last_modified_utc": "2026-05-09T15:24:35Z",
       "row_count": null,
       "quality_status": "passed",
-      "failure_reason": "Stale source: expected_last_date=2026-09-05 actual_last_date=2026-04-19 max_allowed_lag_days=3 lag_days=139",
-      "user_message_sk": "Výskumný zdroj BTC derivatives research quality report je nedostupný alebo blokovaný. Produkcia tým nie je ovplyvnená, ale príslušný research probe je zablokovaný. Očakávaný dátum 2026-09-05, skutočný 2026-04-19.",
-      "user_message_en": "Research source BTC derivatives research quality report is unavailable or blocked. Production is unaffected, but the related research probe is blocked. Expected date 2026-09-05, actual 2026-04-19.",
-      "action": "block_research_probe"
+      "failure_reason": "Stale source: expected_last_date=2026-09-21 actual_last_date=2026-04-19 max_allowed_lag_days=3 lag_days=155",
+      "user_message_sk": "Výskumný zdroj BTC derivatives research quality report je nedostupný alebo blokovaný. Produkcia tým nie je ovplyvnená, ale príslušný research probe je zablokovaný. Očakávaný dátum 2026-09-21, skutočný 2026-04-19.",
+      "user_message_en": "Research source BTC derivatives research quality report is unavailable or blocked. Production is unaffected, but the related research probe is blocked. Expected date 2026-09-21, actual 2026-04-19.",
+      "action": "block_research_probe",
+      "incident_level": "degraded",
+      "affected_capability_ids": [
+        "research_btc_derivatives"
+      ],
+      "blocked_action_ids": [
+        "run_research_btc_derivatives"
+      ],
+      "system_available": true
     },
     {
       "source_id": "env_mrv1_btc_etf_flow_primary_provider",
@@ -304,7 +382,13 @@
       "failure_reason": "Missing environment variable MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER.",
       "user_message_sk": "Pomocný zdroj env MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER nie je dostupný. Produkcia tým nie je ovplyvnená.",
       "user_message_en": "Auxiliary source env MRV1_BTC_ETF_FLOW_PRIMARY_PROVIDER is unavailable. Production is unaffected.",
-      "action": "warn_only"
+      "action": "warn_only",
+      "incident_level": "warning",
+      "affected_capability_ids": [
+        "maintenance_diagnostics"
+      ],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "env_mrv1_coinglass_api_key",
@@ -322,7 +406,13 @@
       "failure_reason": "Missing environment variable MRV1_COINGLASS_API_KEY.",
       "user_message_sk": "Pomocný zdroj env MRV1_COINGLASS_API_KEY nie je dostupný. Produkcia tým nie je ovplyvnená.",
       "user_message_en": "Auxiliary source env MRV1_COINGLASS_API_KEY is unavailable. Production is unaffected.",
-      "action": "warn_only"
+      "action": "warn_only",
+      "incident_level": "warning",
+      "affected_capability_ids": [
+        "maintenance_diagnostics"
+      ],
+      "blocked_action_ids": [],
+      "system_available": true
     },
     {
       "source_id": "env_mrv1_sosovalue_api_key",
@@ -340,7 +430,13 @@
       "failure_reason": "Missing environment variable MRV1_SOSOVALUE_API_KEY.",
       "user_message_sk": "Pomocný zdroj env MRV1_SOSOVALUE_API_KEY nie je dostupný. Produkcia tým nie je ovplyvnená.",
       "user_message_en": "Auxiliary source env MRV1_SOSOVALUE_API_KEY is unavailable. Production is unaffected.",
-      "action": "warn_only"
+      "action": "warn_only",
+      "incident_level": "warning",
+      "affected_capability_ids": [
+        "maintenance_diagnostics"
+      ],
+      "blocked_action_ids": [],
+      "system_available": true
     }
   ]
 }
