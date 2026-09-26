@@ -3,6 +3,6 @@ research/causal_search_20260926/*.zip binary
 research/causal_search_20260926/**/*.png binary
 source_of_truth/research_objectives_contract.json text eol=lf
 scripts/research_objectives.py text eol=lf
-research/phase2_20260926/** -text
+research/phase2_20260926/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 research/phase2_20260926/**/*.png binary
 source_of_truth/research_phase2_contract.json text eol=lf

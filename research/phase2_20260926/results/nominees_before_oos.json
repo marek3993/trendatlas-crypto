@@ -1,0 +1,23 @@
+{
+  "A": null,
+  "B": "robust_1.25__all_calmar",
+  "C": "aggressive_1.25__all_calmar",
+  "basis": "2020 validation only; forward parameters use frozen 2026 choice; no historical seal",
+  "forward_parameters": {
+    "aggressive_1.25__all_calmar": {
+      "family": "vol_adjusted",
+      "id": "vol_adjusted_90_monthly_v25",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    },
+    "robust_1.25__all_calmar": {
+      "family": "vol_adjusted",
+      "id": "vol_adjusted_90_monthly_v25",
+      "lookback": 90,
+      "schedule": "monthly",
+      "vol_target": 0.25
+    }
+  },
+  "search_sha256": "151414f989e90b206789b49b28319f213fd6199cb0010a1107c5047dcdde1189"
+}

@@ -1,0 +1,51 @@
+{
+  "active_robust_under_25_mdd": null,
+  "artifact_manifest_sha256": "91804efc5f9d438926bd94855fe72c9639c356065a4f06b1432c05296e15e6f4",
+  "baseline_commit": "9f3bed37ad47c5b952e170aea58671c66fb0c37f",
+  "branch": "codex/phase2-family-research-20260926",
+  "commands": [
+    "python research/phase2_20260926/diagnose.py run",
+    "python research/phase2_20260926/diagnostic_details.py",
+    "python research/phase2_20260926/search.py run --workers 6",
+    "python research/phase2_20260926/audit.py",
+    "python research/phase2_20260926/audit_high_lineage.py",
+    "python research/phase2_20260926/reproduce.py",
+    "python research/phase2_20260926/render.py"
+  ],
+  "completed_at": "2026-09-26T18:19:06.462834+00:00",
+  "counts": {
+    "benchmarks": 6,
+    "bitwise_reproduced_files": 427,
+    "fresh_full_history_reproduction_scenarios": 54,
+    "high_validation_rows_audited": 198,
+    "historical_grid_scenarios": 1188,
+    "legacy_ablations": 45,
+    "legacy_policies_verified": 18,
+    "neighbor_replays": 252,
+    "new_variants": 396,
+    "oos_folds": 504,
+    "oos_policies": 84,
+    "passed_scoped_tests": 86,
+    "prefix_future_replays": 984,
+    "unique_high_full_window_replays": 166
+  },
+  "diagnostic_freeze_sha256": "6d44439cae7d6e1163622590a89506ed2952686a73f530dc78663cc9fb4e8fdc",
+  "failed_preflight_tests": "Two tests initially attempted to mutate pandas read-only arrays; fixture copied before first market search. Unrun superseded freeze preserved.",
+  "goal_cagr_150_200_passed": false,
+  "no_deploy": true,
+  "no_live_orders": true,
+  "no_merge": true,
+  "observed_best_feasible_aggressive": "aggressive_1.5__vol_adjusted",
+  "plots_visually_inspected": true,
+  "pre_run_commit": "740f5ccd",
+  "pre_run_dependency_bytes_match_git": true,
+  "production_protected_diff_empty": true,
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "report_render_fix": "SVG reading explicitly UTF-8; no simulation changes.",
+  "sealed_history": false,
+  "search_freeze_sha256": "151414f989e90b206789b49b28319f213fd6199cb0010a1107c5047dcdde1189",
+  "source_contracts": [
+    "source_of_truth/research_objectives_contract.json",
+    "source_of_truth/research_phase2_contract.json"
+  ]
+}

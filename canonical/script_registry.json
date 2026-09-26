@@ -4,6 +4,17 @@
   "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
   "scripts": [
     {
+      "script_path": "research/phase2_20260926/search.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Runs frozen phase-two families with six independent exposure budgets and chronological validation/OOS choices after benchmark diagnosis.",
+      "primary_outputs": ["research/phase2_20260926/results/", "research/phase2_20260926/diagnostics/"],
+      "output_type": "research_report",
+      "decision_relevance": "reference_only",
+      "writes_source_of_truth": false,
+      "notes": "Offline only. diagnose.py compares frozen phase-one policies and benchmarks on equivalent accounting; audit.py, audit_high_lineage.py and reproduce.py verify actual replays. No pristine historical seal, production promotion, deployment or orders."
+    },
+    {
       "script_path": "research/causal_search_20260926/run.py",
       "layer": "forensic_validation",
       "status": "active",

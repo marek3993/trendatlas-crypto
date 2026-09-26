@@ -1,0 +1,482 @@
+{
+  "aggressive_1.25__all_calmar": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_1.25__all_growth": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v50"
+  },
+  "aggressive_1.25__breakout": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "breakout_55_daily_v50",
+    "2023": null,
+    "2024": "breakout_100_daily_v25",
+    "2025": "breakout_100_daily_v25",
+    "2026": "breakout_100_daily_v25"
+  },
+  "aggressive_1.25__cross_sectional": {
+    "2021": "cross_sectional_180_monthly_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "cross_sectional_365_monthly_v25",
+    "2026": "cross_sectional_90_monthly_v25"
+  },
+  "aggressive_1.25__dual_momentum": {
+    "2021": "dual_momentum_365_monthly_v25",
+    "2022": "dual_momentum_180_monthly_v100",
+    "2023": null,
+    "2024": "dual_momentum_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "dual_momentum_90_monthly_v25"
+  },
+  "aggressive_1.25__ensemble": {
+    "2021": "ensemble_90_weekly_v25",
+    "2022": "ensemble_90_weekly_v50",
+    "2023": null,
+    "2024": "ensemble_90_monthly_v25",
+    "2025": "ensemble_90_monthly_v25",
+    "2026": "ensemble_90_weekly_v25"
+  },
+  "aggressive_1.25__regime_allocation": {
+    "2021": "regime_allocation_90_weekly_v50",
+    "2022": "regime_allocation_180_weekly_v50",
+    "2023": null,
+    "2024": "regime_allocation_90_weekly_v50",
+    "2025": "regime_allocation_180_weekly_v25",
+    "2026": "regime_allocation_180_weekly_v25"
+  },
+  "aggressive_1.25__relative_strength": {
+    "2021": "relative_strength_180_monthly_v25",
+    "2022": "relative_strength_180_monthly_v100",
+    "2023": null,
+    "2024": "relative_strength_180_monthly_v50",
+    "2025": "relative_strength_90_monthly_v50",
+    "2026": "relative_strength_90_weekly_v25"
+  },
+  "aggressive_1.25__slow_hysteresis": {
+    "2021": "slow_hysteresis_180_monthly_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "slow_hysteresis_180_monthly_v100",
+    "2025": "slow_hysteresis_180_monthly_v25",
+    "2026": "slow_hysteresis_90_monthly_v25"
+  },
+  "aggressive_1.25__vol_adjusted": {
+    "2021": "vol_adjusted_180_monthly_v25",
+    "2022": "vol_adjusted_180_monthly_v50",
+    "2023": null,
+    "2024": "vol_adjusted_180_monthly_v100",
+    "2025": "vol_adjusted_90_monthly_v25",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_1.5__all_calmar": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_1.5__all_growth": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v50"
+  },
+  "aggressive_1.5__breakout": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "breakout_55_daily_v50",
+    "2023": null,
+    "2024": "breakout_100_daily_v25",
+    "2025": "breakout_100_daily_v25",
+    "2026": "breakout_100_daily_v25"
+  },
+  "aggressive_1.5__cross_sectional": {
+    "2021": "cross_sectional_180_monthly_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "cross_sectional_365_monthly_v25",
+    "2026": "cross_sectional_90_monthly_v25"
+  },
+  "aggressive_1.5__dual_momentum": {
+    "2021": "dual_momentum_365_monthly_v25",
+    "2022": "dual_momentum_180_monthly_v100",
+    "2023": null,
+    "2024": "dual_momentum_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "dual_momentum_90_monthly_v25"
+  },
+  "aggressive_1.5__ensemble": {
+    "2021": "ensemble_90_weekly_v25",
+    "2022": "ensemble_90_weekly_v50",
+    "2023": null,
+    "2024": "ensemble_90_monthly_v25",
+    "2025": "ensemble_90_monthly_v25",
+    "2026": "ensemble_90_weekly_v25"
+  },
+  "aggressive_1.5__regime_allocation": {
+    "2021": "regime_allocation_90_weekly_v50",
+    "2022": "regime_allocation_180_weekly_v50",
+    "2023": null,
+    "2024": "regime_allocation_90_weekly_v50",
+    "2025": "regime_allocation_180_weekly_v25",
+    "2026": "regime_allocation_180_weekly_v25"
+  },
+  "aggressive_1.5__relative_strength": {
+    "2021": "relative_strength_180_monthly_v25",
+    "2022": "relative_strength_180_monthly_v100",
+    "2023": null,
+    "2024": "relative_strength_180_monthly_v50",
+    "2025": "relative_strength_90_monthly_v50",
+    "2026": "relative_strength_90_weekly_v25"
+  },
+  "aggressive_1.5__slow_hysteresis": {
+    "2021": "slow_hysteresis_180_monthly_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "slow_hysteresis_180_monthly_v100",
+    "2025": "slow_hysteresis_180_monthly_v25",
+    "2026": "slow_hysteresis_90_monthly_v25"
+  },
+  "aggressive_1.5__vol_adjusted": {
+    "2021": "vol_adjusted_180_monthly_v25",
+    "2022": "vol_adjusted_180_monthly_v50",
+    "2023": null,
+    "2024": "vol_adjusted_90_monthly_v25",
+    "2025": "vol_adjusted_90_monthly_v25",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_2.5__all_calmar": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_2.5__all_growth": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v50"
+  },
+  "aggressive_2.5__breakout": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "breakout_55_daily_v50",
+    "2023": null,
+    "2024": "breakout_100_daily_v25",
+    "2025": "breakout_100_daily_v25",
+    "2026": "breakout_100_daily_v25"
+  },
+  "aggressive_2.5__cross_sectional": {
+    "2021": "cross_sectional_180_monthly_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "cross_sectional_365_monthly_v25",
+    "2026": "cross_sectional_90_monthly_v25"
+  },
+  "aggressive_2.5__dual_momentum": {
+    "2021": "dual_momentum_365_monthly_v25",
+    "2022": "dual_momentum_180_monthly_v100",
+    "2023": null,
+    "2024": "dual_momentum_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "dual_momentum_90_monthly_v25"
+  },
+  "aggressive_2.5__ensemble": {
+    "2021": "ensemble_90_weekly_v25",
+    "2022": "ensemble_90_weekly_v50",
+    "2023": null,
+    "2024": "ensemble_90_monthly_v25",
+    "2025": "ensemble_90_monthly_v25",
+    "2026": "ensemble_90_weekly_v50"
+  },
+  "aggressive_2.5__regime_allocation": {
+    "2021": "regime_allocation_90_weekly_v50",
+    "2022": "regime_allocation_180_weekly_v50",
+    "2023": null,
+    "2024": "regime_allocation_90_weekly_v50",
+    "2025": "regime_allocation_180_weekly_v25",
+    "2026": "regime_allocation_180_weekly_v50"
+  },
+  "aggressive_2.5__relative_strength": {
+    "2021": "relative_strength_180_monthly_v25",
+    "2022": "relative_strength_180_monthly_v100",
+    "2023": null,
+    "2024": "relative_strength_180_monthly_v50",
+    "2025": "relative_strength_90_monthly_v25",
+    "2026": "relative_strength_180_weekly_v50"
+  },
+  "aggressive_2.5__slow_hysteresis": {
+    "2021": "slow_hysteresis_180_monthly_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "slow_hysteresis_180_monthly_v25",
+    "2025": "slow_hysteresis_180_monthly_v25",
+    "2026": "slow_hysteresis_90_monthly_v25"
+  },
+  "aggressive_2.5__vol_adjusted": {
+    "2021": "vol_adjusted_180_monthly_v25",
+    "2022": "vol_adjusted_180_monthly_v50",
+    "2023": null,
+    "2024": "vol_adjusted_90_monthly_v25",
+    "2025": "vol_adjusted_90_monthly_v25",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_2__all_calmar": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_2__all_growth": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v50"
+  },
+  "aggressive_2__breakout": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "breakout_55_daily_v50",
+    "2023": null,
+    "2024": "breakout_100_daily_v25",
+    "2025": "breakout_100_daily_v25",
+    "2026": "breakout_100_daily_v25"
+  },
+  "aggressive_2__cross_sectional": {
+    "2021": "cross_sectional_180_monthly_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "cross_sectional_365_monthly_v25",
+    "2026": "cross_sectional_90_monthly_v25"
+  },
+  "aggressive_2__dual_momentum": {
+    "2021": "dual_momentum_365_monthly_v25",
+    "2022": "dual_momentum_180_monthly_v100",
+    "2023": null,
+    "2024": "dual_momentum_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "dual_momentum_90_monthly_v25"
+  },
+  "aggressive_2__ensemble": {
+    "2021": "ensemble_90_weekly_v25",
+    "2022": "ensemble_90_weekly_v50",
+    "2023": null,
+    "2024": "ensemble_90_monthly_v25",
+    "2025": "ensemble_90_monthly_v25",
+    "2026": "ensemble_90_weekly_v50"
+  },
+  "aggressive_2__regime_allocation": {
+    "2021": "regime_allocation_90_weekly_v50",
+    "2022": "regime_allocation_180_weekly_v50",
+    "2023": null,
+    "2024": "regime_allocation_90_weekly_v50",
+    "2025": "regime_allocation_180_weekly_v25",
+    "2026": "regime_allocation_180_weekly_v50"
+  },
+  "aggressive_2__relative_strength": {
+    "2021": "relative_strength_180_monthly_v25",
+    "2022": "relative_strength_180_monthly_v100",
+    "2023": null,
+    "2024": "relative_strength_180_monthly_v50",
+    "2025": "relative_strength_90_monthly_v25",
+    "2026": "relative_strength_180_weekly_v50"
+  },
+  "aggressive_2__slow_hysteresis": {
+    "2021": "slow_hysteresis_180_monthly_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "slow_hysteresis_180_monthly_v100",
+    "2025": "slow_hysteresis_180_monthly_v25",
+    "2026": "slow_hysteresis_90_monthly_v25"
+  },
+  "aggressive_2__vol_adjusted": {
+    "2021": "vol_adjusted_180_monthly_v25",
+    "2022": "vol_adjusted_180_monthly_v50",
+    "2023": null,
+    "2024": "vol_adjusted_90_monthly_v25",
+    "2025": "vol_adjusted_90_monthly_v25",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_3__all_calmar": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "aggressive_3__all_growth": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v50"
+  },
+  "aggressive_3__breakout": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "breakout_55_daily_v50",
+    "2023": null,
+    "2024": "breakout_100_daily_v25",
+    "2025": "breakout_100_daily_v25",
+    "2026": "breakout_100_daily_v25"
+  },
+  "aggressive_3__cross_sectional": {
+    "2021": "cross_sectional_180_monthly_v25",
+    "2022": "cross_sectional_180_monthly_v100",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "cross_sectional_365_monthly_v25",
+    "2026": "cross_sectional_90_monthly_v25"
+  },
+  "aggressive_3__dual_momentum": {
+    "2021": "dual_momentum_365_monthly_v25",
+    "2022": "dual_momentum_180_monthly_v100",
+    "2023": null,
+    "2024": "dual_momentum_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v50",
+    "2026": "dual_momentum_90_monthly_v25"
+  },
+  "aggressive_3__ensemble": {
+    "2021": "ensemble_90_weekly_v25",
+    "2022": "ensemble_90_weekly_v50",
+    "2023": null,
+    "2024": "ensemble_90_monthly_v25",
+    "2025": "ensemble_90_monthly_v25",
+    "2026": "ensemble_90_weekly_v50"
+  },
+  "aggressive_3__regime_allocation": {
+    "2021": "regime_allocation_90_weekly_v50",
+    "2022": "regime_allocation_180_weekly_v50",
+    "2023": null,
+    "2024": "regime_allocation_90_weekly_v50",
+    "2025": "regime_allocation_180_weekly_v25",
+    "2026": "regime_allocation_180_weekly_v50"
+  },
+  "aggressive_3__relative_strength": {
+    "2021": "relative_strength_180_monthly_v25",
+    "2022": "relative_strength_180_monthly_v100",
+    "2023": null,
+    "2024": "relative_strength_180_monthly_v50",
+    "2025": "relative_strength_90_monthly_v25",
+    "2026": "relative_strength_180_weekly_v50"
+  },
+  "aggressive_3__slow_hysteresis": {
+    "2021": "slow_hysteresis_180_monthly_v25",
+    "2022": "slow_hysteresis_180_monthly_v50",
+    "2023": null,
+    "2024": "slow_hysteresis_180_monthly_v25",
+    "2025": "slow_hysteresis_180_monthly_v25",
+    "2026": "slow_hysteresis_90_monthly_v25"
+  },
+  "aggressive_3__vol_adjusted": {
+    "2021": "vol_adjusted_180_monthly_v25",
+    "2022": "vol_adjusted_180_monthly_v50",
+    "2023": null,
+    "2024": "vol_adjusted_90_monthly_v25",
+    "2025": "vol_adjusted_90_monthly_v25",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "robust_1.25__all_calmar": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "cross_sectional_180_monthly_v50",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v25",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "robust_1.25__all_growth": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "cross_sectional_180_monthly_v50",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "vol_adjusted_90_monthly_v50",
+    "2026": "vol_adjusted_90_monthly_v25"
+  },
+  "robust_1.25__breakout": {
+    "2021": "breakout_55_daily_v25",
+    "2022": "breakout_55_daily_v25",
+    "2023": null,
+    "2024": "breakout_100_daily_v25",
+    "2025": null,
+    "2026": "breakout_100_daily_v25"
+  },
+  "robust_1.25__cross_sectional": {
+    "2021": "cross_sectional_180_monthly_v25",
+    "2022": "cross_sectional_180_monthly_v50",
+    "2023": null,
+    "2024": "cross_sectional_180_monthly_v50",
+    "2025": "cross_sectional_365_monthly_v25",
+    "2026": "cross_sectional_90_monthly_v25"
+  },
+  "robust_1.25__dual_momentum": {
+    "2021": "dual_momentum_365_monthly_v25",
+    "2022": "dual_momentum_180_monthly_v50",
+    "2023": null,
+    "2024": "dual_momentum_180_monthly_v50",
+    "2025": "dual_momentum_30_monthly_v25",
+    "2026": "dual_momentum_90_monthly_v25"
+  },
+  "robust_1.25__ensemble": {
+    "2021": "ensemble_90_weekly_v25",
+    "2022": "ensemble_90_weekly_v25",
+    "2023": null,
+    "2024": "ensemble_90_monthly_v25",
+    "2025": "ensemble_90_weekly_v25",
+    "2026": "ensemble_90_weekly_v25"
+  },
+  "robust_1.25__regime_allocation": {
+    "2021": "regime_allocation_90_weekly_v25",
+    "2022": "regime_allocation_180_weekly_v50",
+    "2023": null,
+    "2024": "regime_allocation_90_weekly_v25",
+    "2025": "regime_allocation_180_weekly_v25",
+    "2026": "regime_allocation_180_weekly_v25"
+  },
+  "robust_1.25__relative_strength": {
+    "2021": "relative_strength_180_monthly_v25",
+    "2022": "relative_strength_180_monthly_v50",
+    "2023": null,
+    "2024": "relative_strength_180_monthly_v50",
+    "2025": "relative_strength_90_monthly_v25",
+    "2026": "relative_strength_90_weekly_v25"
+  },
+  "robust_1.25__slow_hysteresis": {
+    "2021": "slow_hysteresis_180_monthly_v25",
+    "2022": "slow_hysteresis_180_monthly_v25",
+    "2023": null,
+    "2024": "slow_hysteresis_180_monthly_v100",
+    "2025": "slow_hysteresis_180_monthly_v25",
+    "2026": "slow_hysteresis_90_monthly_v25"
+  },
+  "robust_1.25__vol_adjusted": {
+    "2021": "vol_adjusted_180_monthly_v25",
+    "2022": "vol_adjusted_180_monthly_v25",
+    "2023": null,
+    "2024": "vol_adjusted_180_monthly_v100",
+    "2025": "vol_adjusted_90_monthly_v25",
+    "2026": "vol_adjusted_90_monthly_v25"
+  }
+}

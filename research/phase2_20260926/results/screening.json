@@ -1,0 +1,2213 @@
+{
+  "aggressive_1.25__all_calmar": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__all_calmar__cat4": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__all_calmar__tp25_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__all_calmar__tp50_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__all_calmar__trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__all_growth": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__breakout": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__cross_sectional": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__dual_momentum": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__ensemble": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__regime_allocation": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__relative_strength": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__slow_hysteresis": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.25__vol_adjusted": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__all_calmar": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__all_calmar__cat4": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__all_calmar__tp25_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__all_calmar__tp50_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__all_calmar__trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__all_growth": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__breakout": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__cross_sectional": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__dual_momentum": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__ensemble": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__regime_allocation": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__relative_strength": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__slow_hysteresis": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_1.5__vol_adjusted": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [],
+    "oos_high_return_failures": [
+      "cagr",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__all_calmar": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__all_calmar__cat4": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__all_calmar__tp25_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__all_calmar__tp50_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__all_calmar__trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__all_growth": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__breakout": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__cross_sectional": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__dual_momentum": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__ensemble": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__regime_allocation": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__relative_strength": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__slow_hysteresis": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2.5__vol_adjusted": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [],
+    "oos_high_return_failures": [
+      "cagr",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__all_calmar": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__all_calmar__cat4": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__all_calmar__tp25_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__all_calmar__tp50_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__all_calmar__trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__all_growth": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__breakout": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__cross_sectional": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__dual_momentum": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__ensemble": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__regime_allocation": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__relative_strength": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__slow_hysteresis": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_2__vol_adjusted": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [],
+    "oos_high_return_failures": [
+      "cagr",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__all_calmar": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__all_calmar__cat4": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__all_calmar__tp25_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__all_calmar__tp50_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__all_calmar__trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__all_growth": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__breakout": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__cross_sectional": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__dual_momentum": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__ensemble": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__regime_allocation": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__relative_strength": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__slow_hysteresis": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "aggressive_3__vol_adjusted": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [],
+    "oos_high_return_failures": [
+      "cagr",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__all_calmar": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__all_calmar__cat4": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__all_calmar__tp25_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__all_calmar__tp50_trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__all_calmar__trail3": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__all_growth": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__breakout": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__cross_sectional": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "worst_fold_return"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__dual_momentum": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "delayed_entry_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__ensemble": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__regime_allocation": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__relative_strength": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__slow_hysteresis": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  },
+  "robust_1.25__vol_adjusted": {
+    "accepted_A": false,
+    "evidence_gaps": [
+      "historical sealed evaluation",
+      "point-in-time delisted universe",
+      "observed publication timestamps",
+      "venue funding and fills"
+    ],
+    "feasibility": [
+      "drawdown_cap_exceeded"
+    ],
+    "oos_high_return_failures": [
+      "cagr",
+      "max_drawdown",
+      "sharpe",
+      "calmar",
+      "without_best_day_cagr",
+      "without_top_three_trades_cagr",
+      "double_cost_cagr",
+      "asset_log_growth_share",
+      "trade_log_growth_share",
+      "profitable_fold_fraction",
+      "parameter_neighbors"
+    ],
+    "sealed": "MISSING"
+  }
+}

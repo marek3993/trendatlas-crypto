@@ -1,0 +1,13 @@
+{
+  "A": null,
+  "B": null,
+  "C_observed": "aggressive_1.5__vol_adjusted",
+  "D": true,
+  "all_24_overlays_worsened_cagr_and_dd": true,
+  "benchmark_dominates_all_new_on_return_and_risk": false,
+  "benchmark_highest_raw_cagr": "equal_weight",
+  "frozen_nominees_passed": false,
+  "highest_observed": "robust_1.25__vol_adjusted",
+  "lowest_robust_dd": "robust_1.25__regime_allocation",
+  "observed_comparison_is_not_reselection": true
+}

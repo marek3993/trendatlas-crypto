@@ -1,0 +1,18 @@
+{
+  "base": "9f3bed37ad47c5b952e170aea58671c66fb0c37f",
+  "final_commit": "Provided in task handoff after commit; no self-referential hash.",
+  "pre_final_evidence_commits": [
+    {
+      "hash": "82f1980df1efc1714e85ada99880aa3ec4813b7e",
+      "message": "research: freeze phase-two benchmark and failure diagnosis protocol"
+    },
+    {
+      "hash": "4113418ed9b5e37892345a9985a2bb4a034bbc33",
+      "message": "research: record baseline diagnosis and freeze eight new strategy families"
+    },
+    {
+      "hash": "740f5ccd92529243252e8718f4e04ebc69574bc4",
+      "message": "research: preserve exact hashed artifact bytes across checkouts"
+    }
+  ]
+}
