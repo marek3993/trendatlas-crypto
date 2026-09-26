@@ -1,5 +1,6 @@
 """Bind completed empirical evidence to the objectives gate and verify exports."""
 from pathlib import Path
+import argparse
 import hashlib
 import json
 import sys
@@ -11,6 +12,33 @@ import run
 HERE=Path(__file__).resolve().parent;ROOT=HERE.parents[1]
 sys.path.insert(0,str(ROOT))
 from scripts import research_objectives as objectives
+
+
+def verify_arithmetic(events,spec):
+    """Rebuild account PnL from quantities and raw event prices, independently
+    of engine returns/log attribution. Each fold starts with one capital unit.
+    """
+    rate=(spec['costs']['fee_bps']+spec['costs']['slippage_bps'])*1e-4
+    checked=0
+    for _,fold in events.groupby(events.date.str[:4],sort=True):
+        equity=1.;qty=0.;mark=0.;asset=None
+        for row in fold.itertuples():
+            price=row.price;change=row.quantity_change;before=equity
+            if row.event=='mark':
+                assert asset==row.asset and qty>0
+                equity=max(0,equity+qty*(price-mark));mark=price
+            elif row.event=='funding':
+                assert asset==row.asset
+                equity=max(0,equity-qty*price*spec['costs']['funding_annual_debit']/365.25)
+            else:
+                if row.event=='entry':assert qty==0;asset=row.asset;mark=price
+                assert asset==row.asset
+                fee=rate+(spec['costs']['liquidation_fee_bps']*1e-4 if row.event=='liquidation' else 0)
+                equity=max(0,equity-abs(change)*price*fee);qty=max(0,qty+change)
+            assert np.isclose(equity,row.equity_after,atol=2e-10,rtol=2e-10),(row.date,row.event,equity,row.equity_after)
+            if equity>0 and before>0:assert np.isclose(np.log(equity/before),row.log_growth,atol=2e-10,rtol=2e-10)
+            checked+=1
+    return checked
 
 
 def finalize(out):
@@ -46,6 +74,7 @@ def finalize(out):
         cagr=eq[-1]**(1/years)-1
         assert abs(cagr-met['cagr'])<1e-10
         if len(events):
+            arithmetic_events=verify_arithmetic(events,spec)
             # Exported episode IDs are local to each annual replay. Composite
             # year + episode is the globally unique position generation.
             events['trade_id']=events.date.str[:4]+'/'+events.episode.astype(str)
@@ -61,7 +90,8 @@ def finalize(out):
             day_growth=events.groupby('date').log_growth.sum().reindex(curve.date,fill_value=0).to_numpy()
             assert np.allclose(day_growth,np.log1p(curve.net_return.to_numpy()),atol=1e-9,rtol=1e-9)
         evidence['ledger_checks'][name]=dict(equity_recomputed=True,cagr_recomputed=True,
-            daily_log_returns_reconciled=True,top_three_episode_omission_recomputed=True,asset_per_episode_unique=True)
+            daily_log_returns_reconciled=True,top_three_episode_omission_recomputed=True,asset_per_episode_unique=True,
+            quantity_price_cost_accounting_recomputed=True,event_count=len(events))
     pd.DataFrame(attribution).to_csv(out/'episode_attribution.csv',index=False,lineterminator='\n')
     write_json(evaluation/'audit_evidence.json',evidence)
     ev=dict(path='audit_evidence.json',sha256=digest((evaluation/'audit_evidence.json').read_bytes()))
@@ -99,4 +129,6 @@ def finalize(out):
     print('PASS: 1,944 trials, 108 OOS folds, all 18 equity/log/asset/episode reconciliations and fail-closed objective gates')
 
 
-if __name__=='__main__':finalize(HERE/'results')
+if __name__=='__main__':
+    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,default=HERE/'results')
+    finalize(parser.parse_args().out)

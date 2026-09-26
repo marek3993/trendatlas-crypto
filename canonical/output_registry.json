@@ -4,6 +4,16 @@
   "last_updated_note": "Update when a new output folder/file becomes relevant, active, deprecated, or decision-relevant.",
   "outputs": [
     {
+      "output_path": "research/causal_search_20260926/results/",
+      "generated_by": ["research/causal_search_20260926/run.py", "research/causal_search_20260926/finalize.py", "research/causal_search_20260926/render.py"],
+      "layer": "report",
+      "status": "active",
+      "output_kind": "offline_research_evidence",
+      "decision_relevance": "reference_only",
+      "official_truth": false,
+      "notes": "Actual frozen-grid and chronological OOS results, event ledgers, Pareto tables, stress and neighbor replays, anti-lookahead audits and charts. Historical prices are already researched; no historical sealed claim, no wallet/account PnL, no production promotion. Forward nominations remain separately immutable."
+    },
+    {
       "output_path": "automation/runs/",
       "generated_by": [
         "automation/tools/create_run.py",

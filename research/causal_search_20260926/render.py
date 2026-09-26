@@ -1,5 +1,6 @@
 """Render actual completed research outputs to exportable charts and report."""
 from pathlib import Path
+import argparse
 import json
 import math
 import numpy as np
@@ -12,7 +13,9 @@ HERE=Path(__file__).resolve().parent
 
 
 def main():
-    out=HERE/'results';result=json.loads((out/'results.json').read_text());table=pd.read_csv(out/'pareto_table.csv')
+    parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,default=HERE/'results')
+    parser.add_argument('--report',type=Path,default=HERE/'RESULTS.md');args=parser.parse_args()
+    out=args.out;result=json.loads((out/'results.json').read_text());table=pd.read_csv(out/'pareto_table.csv')
     plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False})
     fig,axes=plt.subplots(2,1,figsize=(13,9),sharex=True,gridspec_kw={'height_ratios':[2,1]})
     selected=[]
@@ -76,11 +79,12 @@ def main():
         '```powershell','python -m pip install -r research/causal_search_20260926/requirements.txt',
         'python -m unittest discover -s research/causal_search_20260926 -p "test_*.py" -v',
         'python research/causal_search_20260926/run.py --out scratch/reproduction --cache scratch/reproduction_cache',
-        'python research/causal_search_20260926/render.py',
+        'python research/causal_search_20260926/finalize.py --out scratch/reproduction',
+        'python research/causal_search_20260926/render.py --out scratch/reproduction --report scratch/reproduction/RESULTS.md',
         'python research/causal_search_20260926/paper.py --init',
         'python research/causal_search_20260926/paper.py --prices-dir path/to/new_daily_bars','```','',
         'inputs.zip a pre_registration.json su commitnute. Reprodukcia nepotrebuje ine worktree, siet ani produkcne outputs. --init nevytvori nove nominacie, ak forward seal uz existuje; overi jeho hashe.']
-    (HERE/'RESULTS.md').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
+    args.report.write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
 
 
 if __name__=='__main__':main()

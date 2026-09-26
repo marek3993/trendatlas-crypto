@@ -4,6 +4,17 @@
   "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
   "scripts": [
     {
+      "script_path": "research/causal_search_20260926/run.py",
+      "layer": "forensic_validation",
+      "status": "active",
+      "purpose": "Executes the frozen six-partition causal strategy search and chronological Pareto walk-forward evaluation against the explicit research objectives contract.",
+      "primary_outputs": ["research/causal_search_20260926/results/"],
+      "output_type": "research_report",
+      "decision_relevance": "reference_only",
+      "writes_source_of_truth": false,
+      "notes": "Offline spot and funding proxy research only. Engine, parameters, input identities and independent budgets are hashed before replay. No production adapter or promotion; prepare.py freezes inputs, finalize.py checks evidence, reproduce.py verifies replay, and paper.py accepts immutable future paper data."
+    },
+    {
       "script_path": "scripts/research_objectives.py",
       "layer": "research_os_dev_only",
       "status": "active",
