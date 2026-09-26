@@ -307,7 +307,7 @@ def summarize(run,start=None,end=None):
     asset=run['asset_logs'][mask].sum(axis=0)
     share=lambda x:float(max(0,max(x,default=0))/total) if total>0 else 1e6
     std=np.std(rets,ddof=1) if n>1 else 0
-    return dict(cagr=cagr,max_drawdown=float(dd),calmar=cagr/dd if dd>0 else 0.,
+    return dict(cagr=cagr,max_drawdown=float(dd),calmar=float(cagr/dd) if dd>0 else 0.,
         sharpe=float(np.mean(rets)/std*np.sqrt(365.25)) if std>0 else 0.,total_return=float(equity[-1]-1),
         turnover=float(r[:,4].sum()/years),cost_drag=float(r[:,5].sum()/years),max_realized_exposure=float(r[:,6].max()),
         without_best_day_cagr=float(math.exp((total-max(0,logs.max()))/years)-1),

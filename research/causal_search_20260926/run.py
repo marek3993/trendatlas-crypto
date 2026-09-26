@@ -189,7 +189,10 @@ def run_search(m,spec,part,out,cache_root,fingerprint):
         if (index+1)%27==0:print(f'{part["id"]}: {index+1}/324 nominal + 2 stresses; elapsed {time.perf_counter()-begun:.1f}s',flush=True)
     add_grid_stability(records,spec['variants'])
     write_json(cache,dict(fingerprint=fingerprint,records=records))
-    return records
+    # The evidence boundary uses JSON-native finite numbers. In-memory numpy
+    # scalars (notably Calmar) must take the same path as a cached run; the strict
+    # objectives validator intentionally rejects foreign numeric/boolean types.
+    return json.loads(cache.read_text())['records']
 
 
 def main():

@@ -10,6 +10,12 @@ from test_engine import fixture,params
 
 
 class AccountingEdgeTests(unittest.TestCase):
+    def test_summary_scalars_are_json_native_for_strict_objectives(self):
+        m=e.market_from_frames(fixture())
+        run=e.simulate(m,params(),1.25,start='2019-10-01',end='2020-01-31')
+        for key,value in e.summarize(run).items():
+            if not isinstance(value,list):self.assertIn(type(value),(int,float,bool),key)
+
     def test_rotation_after_partial_tp_closes_only_remaining_qty(self):
         s=e.State(equity=100,qty=1,asset=0,mark=100,entry=100,entry_atr=10,episode=1)
         p=params();p.update(tp=.25,tp_atr=2,catastrophic=0,trail=0)
