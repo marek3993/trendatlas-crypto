@@ -90,6 +90,7 @@ class State:
     tp_done: bool=False
     episode: int=0
     blocked: int=-1
+    blocked_since: int=-1
     cooldown_end: int=-1
     bankrupt: bool=False
     pending_asset: int=-1
@@ -121,7 +122,7 @@ def close(s,p,rate,events,kind,i,cooldown):
     if not s.qty:return
     trade(s,-s.qty,p,rate,events,kind)
     if kind in ('stop','exposure_guard','liquidation'):
-        s.blocked=s.asset;s.cooldown_end=i+cooldown
+        s.blocked=s.asset;s.blocked_since=i;s.cooldown_end=i+cooldown
     s.qty=0;s.asset=-1
 
 
@@ -189,7 +190,7 @@ def simulate(m,p,cap,*,start='2018-08-01',end='2026-09-25',cost_multiplier=1,del
     for row_i,i in enumerate(indices):
         if m.dates[i].strftime('%m-%d')=='01-01':
             assert not s.qty, 'Annual fold boundary must be flat'
-            s.blocked=-1;s.cooldown_end=-1
+            s.blocked=-1;s.blocked_since=-1;s.cooldown_end=-1
             s.pending_asset=-1
         old_equity=s.equity;events=[];j=i-2
         if old_equity<=0:
@@ -197,7 +198,7 @@ def simulate(m,p,cap,*,start='2018-08-01',end='2026-09-25',cost_multiplier=1,del
         target,target_exp=choose_target(m,p,j,s.asset)
         target_exp=min(cap*.9,target_exp)
         signals.append((str(m.dates[i].date()),str(m.dates[j].date()) if j>=0 else '',target,target_exp))
-        day_max=0;did_exit=False;old_asset=s.asset;opening_reference=s.mark
+        day_max=0;did_exit=False;rotation=False;old_asset=s.asset;opening_reference=s.mark
         if s.qty:
             opening=m.prices[i,s.asset,0]
             if not np.isfinite(opening):raise ValueError('Missing held price')
@@ -223,8 +224,11 @@ def simulate(m,p,cap,*,start='2018-08-01',end='2026-09-25',cost_multiplier=1,del
             price=m.prices[i,target,0]
             if not np.isfinite(price):raise ValueError('Missing target price')
             rotation=target!=old_asset and old_asset>=0
-            if rotation:s.blocked=-1;s.cooldown_end=-1
-            blocked=(target==s.blocked and (i<=s.cooldown_end or not m.features['rebound'][j,target]))
+            if rotation:s.blocked=-1;s.blocked_since=-1;s.cooldown_end=-1
+            # Two rising completed closes must occur after the risk exit, even
+            # in the zero-cooldown control. A pre-exit rebound is not reentry
+            # evidence. Normal rotation to a new target keeps its priority.
+            blocked=(target==s.blocked and (i<=s.cooldown_end or j<s.blocked_since+2 or not m.features['rebound'][j,target]))
             if not s.qty and not (did_exit and not rotation) and not blocked:
                 entry_source=j;entry_exposure=target_exp;ready=not delay
                 if delay:

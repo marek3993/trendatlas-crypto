@@ -10,6 +10,16 @@ from test_engine import fixture,params
 
 
 class AccountingEdgeTests(unittest.TestCase):
+    def test_risk_reentry_needs_post_exit_closes_even_without_cooldown(self):
+        for cooldown in [0,3,7]:
+            with self.subTest(cooldown=cooldown):
+                m=e.market_from_frames(fixture());p=params('rotation');p.update(vol_target=.6,cooldown=cooldown)
+                m.prices[282,0,2]=90
+                run=e.simulate(m,p,1.5,start=str(m.dates[280].date()),end=str(m.dates[299].date()),ledger=True)
+                exit_day=next(x[0] for x in run['events'] if x[6]=='exposure_guard')
+                next_entry=next(x[0] for x in run['events'] if x[6]=='entry' and x[0]>exit_day)
+                self.assertGreaterEqual((pd.Timestamp(next_entry)-pd.Timestamp(exit_day)).days,max(4,cooldown+1))
+
     def test_summary_scalars_are_json_native_for_strict_objectives(self):
         m=e.market_from_frames(fixture())
         run=e.simulate(m,params(),1.25,start='2019-10-01',end='2020-01-31')

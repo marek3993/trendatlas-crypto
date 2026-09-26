@@ -38,3 +38,12 @@ regression. A new empty-cache full search repeats the unchanged mathematical
 rules, universe, variants, folds, costs and selection rule.
 Only development/validation metrics were inspected to diagnose the interface
 failure; no market OOS candidate outcome informed this correction.
+
+The fourth startup was stopped during the grid when state-machine review found
+that the zero-cooldown rotation control could reuse a rebound confirmed before
+an exposure-guard exit. This did not satisfy the already registered post-exit
+confirmation rule. The state now records the risk-exit bar and requires two
+subsequent completed rising closes before same-asset reentry. Normal rotation
+priority remains unchanged. Regression covers cooldown 0, 3 and 7. The freeze is
+preserved as `reentry_confirmation_correction_freeze.json`. No actual OOS metrics
+had been produced; the same full grid is restarted with another empty cache.
