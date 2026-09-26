@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "classification": ["D", "B"],
+  "scope": "offline research, phase 2; no production promotion, deployment or orders",
+  "objectives_contract": "source_of_truth/research_objectives_contract.json",
+  "objectives_unchanged": true,
+  "baseline_commit": "9f3bed37ad47c5b952e170aea58671c66fb0c37f",
+  "sequence": ["freeze diagnostic protocol", "execute benchmarks and controlled legacy ablations", "freeze new-family protocol and code", "execute base search without protective overlays", "freeze prior-validation choices", "execute chronological OOS and separate overlay comparisons", "audit and report every trial"],
+  "legacy_scope": "The failed phase-1 causal research policies, not a claim to have reconstructed the separate live production strategy.",
+  "engine": "Reuse phase-1 accounting, event paths, admission, costs, margin, fills and summary; expose a causal target/resize controller. Default-controller output must exactly equal the original engine.",
+  "benchmarks": ["BTC annual-fold buy-and-hold", "BTC SMA200 trend", "weekly 90-calendar-day relative strength", "monthly 90-calendar-day relative strength", "annual equal-weight eligible crypto sleeves", "CASH"],
+  "diagnostics": "Exact additive event log-growth/cost/turnover attribution. Asset, timing, stop and resize counterfactuals are separate non-additive path-dependent replays, never an oracle opportunity estimate.",
+  "new_families": ["cross_sectional", "dual_momentum", "relative_strength", "breakout", "vol_adjusted", "ensemble", "regime_allocation", "slow_hysteresis"],
+  "calendar_months": "30/90/180/365 calendar-day lookbacks, explicitly approximating 1/3/6/12 months on a 365-day crypto market.",
+  "separation": "Six independent mode/cap partitions: robust 1.25 and aggressive 1.25/1.5/2/2.5/3; no sharing of validation winners between partitions.",
+  "oos_integrity": "All annual choices use only the preceding calendar year's validation and fixed tie-breaks. History was already researched in phase 1; algorithmic chronological OOS is not untouched scientific OOS or sealed history.",
+  "fills": "Signal from completed UTC day D is assumed available D+1 00:00:01; daily data therefore permits D+2 open, not D+1 open. Extra-entry-bar stress uses D+3 with frozen entry intent. No fabricated intraday D+1 fills.",
+  "overlays": "First select a profitable no-overlay base using prior validation only; compare NONE, catastrophe ATR4, trail ATR3, TP25 and TP50 plus trail ATR3. These paired diagnostics never retroactively change base selection.",
+  "seal": "No pristine historical seal. Finalists, if any, remain forward-evaluation research hypotheses; no successful A without actual sealed evidence.",
+  "outputs": "research/phase2_20260926 only; protected production data/outputs/app/automation remain untouched"
+}

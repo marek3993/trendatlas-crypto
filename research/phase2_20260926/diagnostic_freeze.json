@@ -1,0 +1,127 @@
+{
+  "ablations": [
+    "no_fee",
+    "no_slippage",
+    "no_funding",
+    "zero_cost",
+    "no_protection",
+    "no_resize",
+    "BTC_substitution",
+    "entry_plus_one",
+    "all_signals_plus_one"
+  ],
+  "baseline_commit": "9f3bed37ad47c5b952e170aea58671c66fb0c37f",
+  "basket": "Equal initial equity per asset admitted at fold start minus 2 days. Fixed independent hold sleeves until annual exit, no reallocation to later listings. Intraday DD is a conservative simultaneous-extrema bound.",
+  "benchmark_cap": 3.0,
+  "benchmark_cap_reason": "No borrowed entry notional; passive funding-induced leverage drift is disclosed. All are annual-fold cash-reset hold comparisons, not continuous spot total return.",
+  "benchmark_entry_exposure": 1.0,
+  "benchmarks": {
+    "BTC_SMA200": {
+      "family": "btc_trend"
+    },
+    "BTC_hold": {
+      "family": "hold"
+    },
+    "CASH": {
+      "family": "cash"
+    },
+    "momentum_monthly": {
+      "family": "simple_momentum",
+      "lookback": 90,
+      "schedule": "monthly"
+    },
+    "momentum_weekly": {
+      "family": "simple_momentum",
+      "lookback": 90,
+      "schedule": "weekly"
+    }
+  },
+  "costs": {
+    "borrow_annual": 0,
+    "double_multiplier": 2,
+    "fee_bps": 4.5,
+    "funding_annual_debit": 0.12,
+    "funding_basis": "entire held notional",
+    "funding_is_proxy": true,
+    "liquidation_fee_bps": 50,
+    "maintenance_ratio": 0.05,
+    "model": "Linear long marked exposure on spot price proxy. Not historical Hyperliquid perps, oracle/mark, funding, liquidity or contract listings.",
+    "slippage_bps": 10
+  },
+  "created_at": "2026-09-26T17:54:45.085397+00:00",
+  "folds": [
+    {
+      "id": "2021",
+      "test_end": "2021-12-31",
+      "test_start": "2021-01-01",
+      "train_end": "2019-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01"
+    },
+    {
+      "id": "2022",
+      "test_end": "2022-12-31",
+      "test_start": "2022-01-01",
+      "train_end": "2020-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01"
+    },
+    {
+      "id": "2023",
+      "test_end": "2023-12-31",
+      "test_start": "2023-01-01",
+      "train_end": "2021-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01"
+    },
+    {
+      "id": "2024",
+      "test_end": "2024-12-31",
+      "test_start": "2024-01-01",
+      "train_end": "2022-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01"
+    },
+    {
+      "id": "2025",
+      "test_end": "2025-12-31",
+      "test_start": "2025-01-01",
+      "train_end": "2023-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01"
+    },
+    {
+      "id": "2026",
+      "test_end": "2026-09-25",
+      "test_start": "2026-01-01",
+      "train_end": "2024-12-31",
+      "train_start": "2018-08-01",
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01"
+    }
+  ],
+  "hashes": {
+    "research/causal_search_20260926/engine.py": "f1a7be15f0eb2ef9d96706ac53a3c0d2d1848a1eab550b58d6e3da46d6e5f811",
+    "research/causal_search_20260926/inputs.zip": "cd7771575ab445485413b2473398c11c16b15fdc4e1f3a6bea244cddfbd06363",
+    "research/phase2_20260926/common.py": "2612efca9568aba4673ba2cba5a86f04881d258cf6ac86c6e2a0549773df7d9b",
+    "research/phase2_20260926/diagnose.py": "417e388c9198e1907497be326d876e89bd7204f557b4132cc8788c1f84a6187f",
+    "research/phase2_20260926/replay.py": "9b2f24d814f3d95bf05294547f9b4a217b36339ea9bae361ed587889e1a1a993",
+    "research/phase2_20260926/signals.py": "77a93543744081ecc8d426404d5e48d895c83983e89db4e2992d47a80e4f25ec",
+    "source_of_truth/research_objectives_contract.json": "a642090da96c312dacdb4987ebdb7dbc466668c6b0588bd53c4f02c5d88ab9a4",
+    "source_of_truth/research_phase2_contract.json": "338be5122f857f5554d5b812b73b72bf1ccb8028d0e226ce3737e7f9742d39cb"
+  },
+  "interpretation": "Counterfactual deltas are non-additive. Fees/slippage/funding and mark log contributions are exact additive accounting; regime is ex-ante BTC SMA200 and annualized vol20 > 1.",
+  "representatives": [
+    "robust_1.25__calmar",
+    "robust_1.25__growth",
+    "robust_1.25__defensive",
+    "aggressive_2.5__calmar",
+    "aggressive_3__growth"
+  ],
+  "timing": "D+2 open; +1 entry stress D+3; all-signal +1 is a separate latency counterfactual, not a feasible D+1 oracle."
+}
