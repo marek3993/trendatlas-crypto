@@ -1,0 +1,5 @@
+research/causal_search_20260926/** text eol=lf
+research/causal_search_20260926/*.zip binary
+research/causal_search_20260926/**/*.png binary
+source_of_truth/research_objectives_contract.json text eol=lf
+scripts/research_objectives.py text eol=lf
