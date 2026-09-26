@@ -1,0 +1,8 @@
+source_of_truth/research_objectives_contract.json
+source_of_truth/README.md
+canonical/script_registry.json
+scripts/research_objectives.py
+tests/test_research_objectives.py
+research/objectives_20260926/README.md
+research/objectives_20260926/AUDIT.md
+research/objectives_20260926/GIT_ADD.txt

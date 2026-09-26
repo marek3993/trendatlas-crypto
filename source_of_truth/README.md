@@ -15,6 +15,7 @@ This folder is the central single source of truth layer for Market Regime v1.
 - `paths_registry.json` = registry of important repo paths
 - `decisions_log.jsonl` = decision audit trail
 - `experiments_registry.csv` = experiments registry
+- `research_objectives_contract.json` = user-approved offline research objectives and Pareto/finalist criteria (2026-09-26); supersedes earlier research goals only, grants no production promotion or live-order authority
 
 ## Required read order for truth-sensitive work
 1. `source_of_truth/README.md`

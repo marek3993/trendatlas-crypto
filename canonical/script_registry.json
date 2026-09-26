@@ -4,6 +4,17 @@
   "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
   "scripts": [
     {
+      "script_path": "scripts/research_objectives.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Screens offline research candidates against the 2026-09-26 objectives contract and computes separate development Pareto fronts by mode and exposure cap.",
+      "primary_outputs": [],
+      "output_type": "validation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only CLI writes JSON to stdout only. Library accepts an extended replay audit callback. Missing bound evidence blocks finalists. Does not run a strategy search or promote any model."
+    },
+    {
       "script_path": "automation/tools/bootstrap_automation.py",
       "layer": "automation",
       "status": "active",
