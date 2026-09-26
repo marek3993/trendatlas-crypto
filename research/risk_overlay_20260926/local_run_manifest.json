@@ -1,0 +1,41 @@
+{
+  "command": "python research/risk_overlay_20260926/run_audit.py --source local",
+  "contract_sha256": "5cc63b6533b4e69cb0b5b11c67d2a40780594f48c20b025796bf5a47ac8e491f",
+  "expected_exit_code": 2,
+  "heavy_refresh_steps": "skipped",
+  "input_manifest_sha256": "6e84c83e9788349d79d4e88f0d4cc3bb1d7c46f50fa5314915d714e6b5b865b5",
+  "live_order_chain": "not_invoked",
+  "numpy": "2.4.1",
+  "pandas": "3.0.2",
+  "python": "3.12.10",
+  "result_sha256": "dcf5116fcfec461cb78dde5ac115303d741ca015e59c692e063bf2cd756c1cbf",
+  "seed": 20260926,
+  "source_hashes": {
+    "research/risk_overlay_20260926/run_audit.py": "3d5cea378987b578bb79e8ebef30ddf7eb751ddc0473f931041892e749e15d72",
+    "scripts/__init__.py": "f01a374e9c81e3db89b3a42940c4d6a5447684986a1296e42bf13f196eed6295",
+    "scripts/approved_strategy_net_export_helper.py": "c6f2ae57e5d16ac9b9041d755d2d1ba52a64030e95e772b9414c06bf48c963e5",
+    "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py": "467e52d3f791943bf11ea327a335a7c0da3a16a8685238fb790025bd6c4320aa",
+    "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py": "1508262bcb5c36814d3e860dd04efe3f96f86eb042a0f086e8a81d08dedbe4b3",
+    "scripts/dev_only_phase68g_etf_flow_impulse_probe.py": "52658b50d5c1cfecfbdc762a74b7c6b59e52bbccdc5574ef48bb516196c9ec9a",
+    "scripts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.py": "be317fe0c76354c6e74920c350c402f9ee5f218803ce374c61eada16e340b2bf",
+    "scripts/production/staged_candidate_promotion_support.py": "122c2d652576289b08825e0e08d8875c53c12e644a67f386226d5eb8906666eb",
+    "scripts/production/strategy_adapters/phase68g_66g_1p25x_candidate_adapter.py": "3e5b182d9d7c40504004d3412c09b4ddddbbd007ad6a2c61e81de0d9c8664a53",
+    "scripts/production/strategy_adapters/phase68g_btc_persistence_10d_early_risk_075_adapter.py": "c13bd0c3de0cfd9f68bbed5b58fedbb85ac9de0f246267ba33afa694a6638c4b",
+    "scripts/production/strategy_adapters/phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter.py": "195f3cbe67b36c4f076c0a0f614ad9307bfd4600c4cac2f2b8828667713534de",
+    "scripts/research_os_dev_only_bot_compare_common.py": "1004ce4fc54b32f77366566bc6feac8372f91daecc2af597ad67c0490066a96b"
+  },
+  "source_hashes_lf": {
+    "research/risk_overlay_20260926/run_audit.py": "3d5cea378987b578bb79e8ebef30ddf7eb751ddc0473f931041892e749e15d72",
+    "scripts/__init__.py": "b42f2099187886def637d6aa840022266e05cb6c987a9394e708e23cd505eb46",
+    "scripts/approved_strategy_net_export_helper.py": "b10c198a66322d70715934311907cd638af29e2c82dfe70f273b0d6a9e5d4d82",
+    "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py": "7fdd6e2e790fc15ae2c25930dc46c4485a92448615fc4d24b4508ddbeabf120e",
+    "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py": "01aab1c51258ea450cab782b34650c36b656eafe8bfd86316433c2ca4b01855a",
+    "scripts/dev_only_phase68g_etf_flow_impulse_probe.py": "b2331780c20d9153a58876c6ec870b921364e040771839bcbc82355a2f5085cd",
+    "scripts/dev_only_production_core_btc_candidate_persistence_early_risk_compare.py": "edfed267a320a877100b7fe0b26c6a24e5bdab776cfe267b8bf8776d8a0cec21",
+    "scripts/production/staged_candidate_promotion_support.py": "586b5906078ad00ad4d73733a9f211d900b0a3de07af8ba9976a2aacdb5b4124",
+    "scripts/production/strategy_adapters/phase68g_66g_1p25x_candidate_adapter.py": "fd0c3bea7d0d808f4d7c73a4354bc5ace16b1003f225a18a766bcdd48d4ddf30",
+    "scripts/production/strategy_adapters/phase68g_btc_persistence_10d_early_risk_075_adapter.py": "f3f360f6f44e151c758aa05c50f879a3906aba4538f1f3a49868f909271c27fe",
+    "scripts/production/strategy_adapters/phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter.py": "53529d8af0a6302dec125520951977503dd7df4e4f70d067ef3f8cef179c2590",
+    "scripts/research_os_dev_only_bot_compare_common.py": "705444251d9956eabfc8fb26cc1d1f478d995aa48455904b140afe258bdbfd0b"
+  }
+}

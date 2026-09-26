@@ -1,0 +1,306 @@
+{
+  "code_base_commit": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+  "contract_sha256": "5cc63b6533b4e69cb0b5b11c67d2a40780594f48c20b025796bf5a47ac8e491f",
+  "files": {
+    "data/ohlcv/ADAUSDT_1d.csv": "7bbc6e8232e05f4875c7093ef409297cb8edd14205d37c385ba7ff42fc9444a4",
+    "data/ohlcv/AVAXUSDT_1d.csv": "73afb00e9f1d4458c6fe3048df1afdafbdfd4ecb63484ec5c541dce3f9bc456c",
+    "data/ohlcv/BNBUSDT_1d.csv": "fc0b8155f43e45f62a9d729c2b456755d572a1944aff7e8d48a4738f74cbf84a",
+    "data/ohlcv/BTCUSDT_1d.csv": "3075b6a9c681a07093503a7f429f85ccfb6ea7549b168b505e9c385ada8e22e3",
+    "data/ohlcv/DOGEUSDT_1d.csv": "3608b87df9d72dd33a9aa6c96d169589b085b5098d4d6e12dca147f5c586168f",
+    "data/ohlcv/DOTUSDT_1d.csv": "860733dd41a41a4e694bbdadc2af54e9dd04524a67f7a7b707cdfae04164349d",
+    "data/ohlcv/ETHUSDT_1d.csv": "543b2f33dc78cd4947cee28310f2bc20639b7298bf4fd3e2b24d8a7b0a358b09",
+    "data/ohlcv/LINKUSDT_1d.csv": "8d4bb8421b4aba92b3306b26a45934390bd9a0c683f599472c169777582f3716",
+    "data/ohlcv/LTCUSDT_1d.csv": "2f7dbfe34bd8c661fce4903f2e6c4ccc3e23dc5187dd934e8047103c2594b622",
+    "data/ohlcv/SOLUSDT_1d.csv": "25f67516bb139dfd8783bcf89c55917b3334bcd420acb3bc2680bdad673f3ebe",
+    "data/ohlcv/TRXUSDT_1d.csv": "96e901d6909493472b35748c14d0ee976333fe552760d51bdb1c53e504a08831",
+    "data/ohlcv/XRPUSDT_1d.csv": "c1d6cf5a87597cb99b3d8a841630c4e8b10a94ad4adeb7cd55a476d438ad2eb2",
+    "outputs/execution/app_exports/phase66g_live_status.csv": "4f3a8bf9a6ffb8d0c456c833be2ddc2f384e84b45a7ba0dc0de585b14b708f2f",
+    "outputs/execution/app_exports/phase66g_trend_barometer_history.csv": "4d84bced8abeb39252a532a65d691fa629e720afcedc588a12fb3c61922c9b65",
+    "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv": "cc53a81e0cbcac4e54fd34fcd290c51d8ae0331cac88100410b6631d44e8ad5f",
+    "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv": "1411dc65e20e1dc128b805cee2d5f23b0333c675d9731f72f434efecf9a86e84",
+    "outputs/execution/app_exports/phase68g_etf_flow_impulse_early_risk_cooldown_15_authoritative_net_compare_export.csv": "5945228e82b1f6374f258308a72767f4fb49519d95c861e2b2dfbacc19c58a54",
+    "outputs/execution/freshness/app_freshness_report.json": "05ba6da9a0bad52b4912c0514a6adc4c8d8ed54a411d6b458acafe8bd9fa0c3c",
+    "outputs/phase66g_production_candidate_live/phase66g_manifest.json": "efd9b8e806decb3a8e3c4d7369bfde23ae29075dcf240205867fcec83cb7f3d8",
+    "outputs/phase66g_production_candidate_live/phase66g_production_candidate_asset_quality.csv": "94d675a21dcd0370369c3931c100960a3d2177aaf41941bd404f5fc9ca39742d",
+    "outputs/production/current_strategy_diagnostics.json": "44fdaca502ac458b555161da348d3a0ea2b263955f5fa123fa874e72fb7ee541",
+    "outputs/production/current_strategy_snapshot.json": "4ec142540ab2170d86fdc050f8b67d2462038cfeaf661052dc2219d31a368b1c",
+    "outputs/production/current_strategy_timeseries.csv": "1f6a5b369269669f568934086454713113fb8b14433683e67761a6ff7db9e625",
+    "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv": "ab5575b37ec75a06af54f25d3548ec31ec874f5b5001f020ecfa92429eef75c2",
+    "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py": "467e52d3f791943bf11ea327a335a7c0da3a16a8685238fb790025bd6c4320aa",
+    "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py": "1508262bcb5c36814d3e860dd04efe3f96f86eb042a0f086e8a81d08dedbe4b3",
+    "scripts/dev_only_phase68g_etf_flow_impulse_probe.py": "52658b50d5c1cfecfbdc762a74b7c6b59e52bbccdc5574ef48bb516196c9ec9a",
+    "source_of_truth/export_contract.json": "02db9fc823fbb0559fdb1637ab6b8e9a650fec420f11af4af9b9fc8c74915462",
+    "source_of_truth/project_truth.json": "7e57395f536f0864b925c08eb36fd434329e265935c0d5aef10af42c2214d7cb"
+  },
+  "frozen_inputs_sha256": "2f9fd4d39c98d19212e1283f0e0f1c65f830e8d4c1584c5c2acd297786725699",
+  "intraday_and_funding_inventory": [
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2018-04-17 04:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/ADAUSDT_4h.csv",
+      "rows": 17366,
+      "sha256": "5fa0dc517323dad3acc155c9f7b8eb670f07d80cb083e52324e1e2aa36853f03",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2020-09-22 04:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/AVAXUSDT_4h.csv",
+      "rows": 12041,
+      "sha256": "98dc37b4602c29356a34595afa092748ad0115cb6a5d3cb9088facf5b1058a22",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2017-11-06 00:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/BNBUSDT_4h.csv",
+      "rows": 18332,
+      "sha256": "2ecd6131d983fdef1b1039b954685c6a3d8e41136219121aaa5b047259cfaed6",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2017-08-17 04:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/BTCUSDT_4h.csv",
+      "rows": 18817,
+      "sha256": "7cfb2779840d7eb36ae024033de8338093e52f90492c2da08e71e5ed03f3e94f",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2019-07-05 12:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/DOGEUSDT_4h.csv",
+      "rows": 14707,
+      "sha256": "532b91900ee0100dac6266b9f18b85d19a20ef56f8c9ee17bc18a72fe0f62159",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2020-08-18 20:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/DOTUSDT_4h.csv",
+      "rows": 12247,
+      "sha256": "84f948fdc258eab64e72c1b743c473bf30f2710bd458fdc841bb8ad73714bfaf",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2017-08-17 04:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/ETHUSDT_4h.csv",
+      "rows": 18817,
+      "sha256": "ea37c03f3c03a8ca91580b7480540ce938dc467cb68b5bd60438888078b73b1e",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2019-01-16 08:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/LINKUSDT_4h.csv",
+      "rows": 15725,
+      "sha256": "ea92a023bf0484e3fbba87e000fad17022d1dbb507dd31b5fdd829ccb5a81424",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2017-12-13 00:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/LTCUSDT_4h.csv",
+      "rows": 18110,
+      "sha256": "b5ef59d93614367f3f6e96f71c63d2548612683f8e1fe874e1cf6360b8efaebf",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2020-08-11 04:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/SOLUSDT_4h.csv",
+      "rows": 12293,
+      "sha256": "4c9605da2db7a74d4c6a2e5a3542fae5309653ece85cd5005e65100fbc46adb0",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2018-06-11 08:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/TRXUSDT_4h.csv",
+      "rows": 17035,
+      "sha256": "da38235cfb396aeb87e498ec9eb86f4c4f9ae9a43c011b53b028dec46e1584af",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
+      "first_time_value": "2018-05-04 08:00:00",
+      "last_time_value": "2026-03-21 20:00:00",
+      "path": "data/ohlcv_4h/XRPUSDT_4h.csv",
+      "rows": 17263,
+      "sha256": "b9e60b7383d1e543d52ea3022d232b38dadf4e4b11e038691acd042950608464",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "funding_time",
+        "date",
+        "funding_rate",
+        "mark_price"
+      ],
+      "first_time_value": "1581321600000",
+      "last_time_value": "1773849600005",
+      "path": "data/funding/BNBUSDT_funding.csv",
+      "rows": 6686,
+      "sha256": "91b91ecef5d1558beaef802aba746b59ff467f0733c16b3b54015eb1abe35819",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "funding_time",
+        "date",
+        "funding_rate",
+        "mark_price"
+      ],
+      "first_time_value": "1568102400000",
+      "last_time_value": "1773849600005",
+      "path": "data/funding/BTCUSDT_funding.csv",
+      "rows": 7145,
+      "sha256": "cd5df9efb8b82314c37d41b75e992e49c1b2241162f1ea9b6c4784cb629e23fd",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "funding_time",
+        "date",
+        "funding_rate",
+        "mark_price"
+      ],
+      "first_time_value": "1574841600000",
+      "last_time_value": "1773849600005",
+      "path": "data/funding/ETHUSDT_funding.csv",
+      "rows": 6911,
+      "sha256": "d23e65052ebcbfb9004141ce78feab6bdcbbfb1b6add802feb98444feb8bf79c",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "funding_time",
+        "date",
+        "funding_rate",
+        "mark_price"
+      ],
+      "first_time_value": "1600012800004",
+      "last_time_value": "1773849600005",
+      "path": "data/funding/SOLUSDT_funding.csv",
+      "rows": 6112,
+      "sha256": "c907ca1f4a09116c9d871a2cfa40c61021cea8cd78a448991702d9072296a422",
+      "used_for_overlay": false
+    },
+    {
+      "columns": [
+        "funding_time",
+        "date",
+        "funding_rate",
+        "mark_price"
+      ],
+      "first_time_value": "1578297600000",
+      "last_time_value": "1773849600005",
+      "path": "data/funding/XRPUSDT_funding.csv",
+      "rows": 6791,
+      "sha256": "52598653d1791faffd918562f8a2c456d65a13919a7b699b89573c16f813635b",
+      "used_for_overlay": false
+    }
+  ],
+  "numpy": "2.4.1",
+  "pandas": "3.0.2",
+  "python": "3.12.10",
+  "seed": 20260926,
+  "venue_funding_history": "not_present_in_supplied_dataset",
+  "venue_mark_history": "not_present_in_supplied_dataset"
+}

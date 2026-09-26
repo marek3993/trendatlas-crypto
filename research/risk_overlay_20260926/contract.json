@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "classification": ["D", "B", "C"],
+  "scope": "research_only_non_authoritative",
+  "seed": 20260926,
+  "baseline_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+  "baseline_entrypoint": "Phase68gEtfFlowImpulseEarlyRiskCooldown15LiveAdapter",
+  "baseline_reproduction": {
+    "route": "unchanged_production_adapter_from_frozen_durable_inputs",
+    "upstream_research_grid_rerun": false,
+    "require_all_reference_columns": true,
+    "numeric_absolute_tolerance": 1e-9,
+    "numeric_relative_tolerance": 1e-12,
+    "repeat_runs": 2,
+    "stop_on_mismatch": true,
+    "economic_validation_required": ["causal_signal_timing", "asset_return_identity", "venue_mark_and_funding_coverage"],
+    "note": "Matching an existing export is necessary but does not establish an executable, causal baseline. Do not optimize overlays on an invalid baseline."
+  },
+  "research_rules": {
+    "production_writes": false,
+    "orders_or_leverage_updates": false,
+    "data_or_outputs_writes": false,
+    "network_default": false,
+    "auto_repair_baseline": false,
+    "missing_funding_is_zero": false,
+    "spot_ohlc_is_mark_price": false,
+    "metrics_are_account_pnl": false
+  },
+  "planned_variants_not_executed": {
+    "baseline": 1,
+    "catastrophic_atr_multiples": [2, 3, 4, 5],
+    "chandelier_activation_atr": [1, 2],
+    "chandelier_distance_atr": [2, 3, 4],
+    "partial_tp_fractions": [0.25, 0.5],
+    "partial_tp_profit_atr": [2, 3],
+    "partial_tp_remainder": "original_rotation",
+    "combinations": [
+      {"catastrophic_atr": 4, "tp_fraction": 0.25, "tp_atr": 2, "activation_atr": 1, "trail_atr": 3},
+      {"catastrophic_atr": 5, "tp_fraction": 0.5, "tp_atr": 3, "activation_atr": 2, "trail_atr": 4}
+    ],
+    "fixed_percent_benchmark": [0.05],
+    "total_including_baseline": 18
+  },
+  "future_methodology_not_executed": {
+    "atr": "Wilder 14, completed bars only; entry ATR fixed for activation and TP; trailing ATR from last completed bar",
+    "fills": "mark triggers, separate executable prices, adverse gap fill plus fees/slippage; partial or unfilled stop possible",
+    "daily_ambiguity": "evaluate both O-H-L-C and O-L-H-C admissible paths and retain worse terminal equity; report ambiguous-bar count and sensitivity",
+    "reentry": "only at next canonical daily signal evaluation; rotations always supersede old position overlay",
+    "selection": "expanding training >=3 years, validation 1 year, next 1 year out-of-sample; select on validation Calmar subject to >=90% baseline CAGR, ties fewer trades then lexical ID",
+    "holdout": "NOT_OPENED_FOR_OVERLAY_SELECTION; no claim that previously analyzed repository history is unseen; establish new prospective holdout after baseline repair",
+    "winner": "holdout lower drawdown or ES95, higher Calmar, CAGR >=90% baseline, consistent majority of WF folds, survives leave-one-asset and leave-one-trade-out",
+    "costs": "venue hourly funding on full actual notional, account maker/taker tier, conservative execution slippage, extra stressed scenario",
+    "required_metrics": ["CAGR", "total_return", "max_drawdown", "Calmar", "Sharpe", "Sortino", "worst_day", "worst_trade", "volatility", "win_rate", "mean_win", "mean_loss", "profit_factor", "time_in_market", "turnover", "fees", "funding", "slippage", "stops", "take_profits", "premature_large_winners", "walk_forward_folds", "holdout", "historical_crashes"],
+    "premature_large_winner": "paired baseline episode in top decile of completed training episode returns; overlay closed early and earned less; threshold frozen before test"
+  },
+  "overlay_architecture": {
+    "allowed": ["reduce_position", "close_position", "tighten_stop"],
+    "forbidden": ["choose_asset", "increase_exposure", "block_rotation", "block_old_close", "block_new_target", "global_execution_gate", "new_allowlist", "manual_approval"],
+    "recovery": "exchange positions/orders/fills authoritative; journal keyed by position generation and canonical signal ID; reconstruct remaining size and monotonic high-water/stop",
+    "failure": "record degraded protection; canonical rotation continues independently"
+  }
+}

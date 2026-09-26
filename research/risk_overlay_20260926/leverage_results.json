@@ -1,0 +1,41 @@
+{
+  "account_analysis": {
+    "avax_in_tracked_policy": false,
+    "current_canonical_sizing_equity": 83.982708,
+    "current_equity_source": "unifiedAccount_spot_stable",
+    "legacy_issue_scope": "Legacy manual recovery planner only; superseded by abstraction-aware production_execution.py; not a current canonical sizing defect",
+    "legacy_local_sizing_equity_sum": 96.286575,
+    "legacy_local_target_at_1p25": 120.35821874999999,
+    "leverage_patch_prepared": false,
+    "margin_fraction_at_target_1p25_and_2x": 0.625,
+    "margin_fraction_policy_max_at_2x_with_buffer": 1.05,
+    "margin_fraction_target_1p25_at_2x_with_buffer": 0.65625,
+    "notional_over_unified_usdc_balance": 1.2456564272731,
+    "position_notional": 104.6136,
+    "published_usdc_collateral_balance": 83.982708,
+    "reason": "Current tracked policy already sets execution_leverage=2, while exchange AVAX remains 10. Deployed Pi policy and no-action leverage reconciliation require separate investigation; no speculative config patch.",
+    "repository_policy": {
+      "execution_leverage": 2,
+      "margin_buffer_fraction": 0.05,
+      "max_execution_leverage": 3,
+      "max_strategy_target_exposure": 2.0
+    },
+    "required_margin_at_10x": 10.46136,
+    "required_margin_at_2x": 52.3068,
+    "scope": "single observed USDC-collateral AVAX position; sequential read-only responses, not an atomic snapshot",
+    "unified_balance_target_at_1p25": 104.978385
+  },
+  "capture_sha256": "63e079bd7eead7997da3f2e571ff8ad699f332f8a37a65221161e5535e7f1031",
+  "network_on_replay": false,
+  "production_leverage_changed": false,
+  "sizing": {
+    "notional_invariant_given_fixed_equity": true,
+    "source_expression": "0.0 if is_cash(target_asset) else equity * target_exposure",
+    "strategy_exposure": 1.25,
+    "synthetic_equity": 100.0,
+    "target_notional_by_exchange_setting": {
+      "10": 125.0,
+      "2": 125.0
+    }
+  }
+}

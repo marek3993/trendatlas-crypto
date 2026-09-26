@@ -1,0 +1,59 @@
+{
+  "account_abstraction": "unifiedAccount",
+  "account_address_saved": false,
+  "captured_at_utc": "2026-09-26T12:27:54.939122+00:00",
+  "exchange_time_ms": 1790425674982,
+  "fees": {
+    "activeReferralDiscount": "0.0",
+    "userAddRate": "0.00015",
+    "userCrossRate": "0.00045"
+  },
+  "market_rules": [
+    {
+      "marginTableId": 56,
+      "maxLeverage": 40,
+      "name": "BTC",
+      "szDecimals": 5
+    },
+    {
+      "marginTableId": 55,
+      "maxLeverage": 25,
+      "name": "ETH",
+      "szDecimals": 4
+    },
+    {
+      "marginTableId": 52,
+      "maxLeverage": 10,
+      "name": "AVAX",
+      "szDecimals": 2
+    }
+  ],
+  "perp_margin_summary": {
+    "accountValue": "12.303867",
+    "totalMarginUsed": "10.46136",
+    "totalNtlPos": "104.6136",
+    "totalRawUsd": "-92.309733"
+  },
+  "positions": [
+    {
+      "coin": "AVAX",
+      "leverage": {
+        "type": "cross",
+        "value": 10
+      },
+      "liquidationPx": "2.2668818811",
+      "marginUsed": "10.46136",
+      "maxLeverage": 10,
+      "positionValue": "104.6136",
+      "szi": "9.58"
+    }
+  ],
+  "source": "https://api.hyperliquid.xyz/info",
+  "usdc_balance": {
+    "coin": "USDC",
+    "entryNtl": "0.0",
+    "hold": "10.46136",
+    "token": 0,
+    "total": "83.982708"
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "baseline_reproduction": {
+    "error": "btc_ohlcv cannot be behind the validated durable BTC-persistence source day, and no canonical fallback benchmark is available from the durable baseline paper (btc_last_day=2026-05-05 fallback_last_day=2026-05-08 source_day=2026-09-25)",
+    "error_type": "ValueError",
+    "passed": false,
+    "stage": "unchanged_adapter_load_inputs"
+  },
+  "canonical_snapshot_closed_day": "2026-09-25",
+  "canonical_snapshot_metrics_NOT_REPRODUCED": {
+    "borrow_cost_total_pct": 2.447639,
+    "btc_days_pct": 6.262231,
+    "cagr_pct_net": 182.1216,
+    "cash_days_pct": 77.266797,
+    "funding_total_pct": 0.0,
+    "max_drawdown_pct_net": -12.9306,
+    "sharpe": 2.198,
+    "since2023_cagr_pct_net": 204.918,
+    "since2025_cagr_pct_net": 198.9132,
+    "slippage_cost_total_pct": 15.7,
+    "sortino": 3.6271,
+    "switch_count": 205,
+    "total_return_pct_net": 602239.9336,
+    "trade_count": 205,
+    "trading_fees_total_pct": 11.52
+  },
+  "canonical_timeseries_end": "2026-09-25",
+  "canonical_timeseries_rows": 3066,
+  "canonical_timeseries_start": "2018-05-05",
+  "declared_source_hash_mismatches": [
+    {
+      "available": "cc53a81e0cbcac4e54fd34fcd290c51d8ae0331cac88100410b6631d44e8ad5f",
+      "expected": "9276c6e3ee6a128689e191a45d1d54dec15c06ce1249cf2c462b7034b7c33082",
+      "explained_by_crlf_only": false,
+      "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+      "source": "durable_baseline_summary"
+    },
+    {
+      "available": "1411dc65e20e1dc128b805cee2d5f23b0333c675d9731f72f434efecf9a86e84",
+      "expected": "743ab1813d8e5f55bd669105f789bc3b727b7571dfdcd178978d62f8de55c26d",
+      "explained_by_crlf_only": false,
+      "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+      "source": "durable_baseline_paper"
+    },
+    {
+      "available": "4f3a8bf9a6ffb8d0c456c833be2ddc2f384e84b45a7ba0dc0de585b14b708f2f",
+      "expected": "d5ce8fb8a6e7a6701a7c70e697fb0b9196cba148f57759514c1e3c5fdf0e362c",
+      "explained_by_crlf_only": true,
+      "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+      "source": "durable_baseline_trend_status"
+    },
+    {
+      "available": "4d84bced8abeb39252a532a65d691fa629e720afcedc588a12fb3c61922c9b65",
+      "expected": "d9538159fb415050a51bb2e658d54702f736cd4322913e68b4981e09d9256e53",
+      "explained_by_crlf_only": true,
+      "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+      "source": "durable_baseline_trend_history"
+    },
+    {
+      "available": "05ba6da9a0bad52b4912c0514a6adc4c8d8ed54a411d6b458acafe8bd9fa0c3c",
+      "expected": "236230d68a2101cdb810a65a70adb3ee5a30912804094f24f6db2c2fcc02974c",
+      "explained_by_crlf_only": true,
+      "path": "outputs/execution/freshness/app_freshness_report.json",
+      "source": "durable_baseline_freshness_report"
+    },
+    {
+      "available": "3075b6a9c681a07093503a7f429f85ccfb6ea7549b168b505e9c385ada8e22e3",
+      "expected": "ab728dff0abba81fdc054d1846cd43717ae5bbd79122bc4666a9e17ad999b5ff",
+      "explained_by_crlf_only": false,
+      "path": "data/ohlcv/BTCUSDT_1d.csv",
+      "source": "benchmark_ohlcv"
+    },
+    {
+      "available": "ab5575b37ec75a06af54f25d3548ec31ec874f5b5001f020ecfa92429eef75c2",
+      "expected": "7d5eff602b4957264b519eabc71a147c033e2d841457be11b257dd20f47fe5a3",
+      "explained_by_crlf_only": false,
+      "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+      "source": "etf_panel"
+    },
+    {
+      "available": "3075b6a9c681a07093503a7f429f85ccfb6ea7549b168b505e9c385ada8e22e3",
+      "expected": "ab728dff0abba81fdc054d1846cd43717ae5bbd79122bc4666a9e17ad999b5ff",
+      "explained_by_crlf_only": false,
+      "path": "data/ohlcv/BTCUSDT_1d.csv",
+      "source": "btc_ohlcv"
+    },
+    {
+      "available": "467e52d3f791943bf11ea327a335a7c0da3a16a8685238fb790025bd6c4320aa",
+      "expected": "7fdd6e2e790fc15ae2c25930dc46c4485a92448615fc4d24b4508ddbeabf120e",
+      "explained_by_crlf_only": true,
+      "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+      "source": "dev_only_script"
+    },
+    {
+      "available": "52658b50d5c1cfecfbdc762a74b7c6b59e52bbccdc5574ef48bb516196c9ec9a",
+      "expected": "b2331780c20d9153a58876c6ec870b921364e040771839bcbc82355a2f5085cd",
+      "explained_by_crlf_only": true,
+      "path": "scripts/dev_only_phase68g_etf_flow_impulse_probe.py",
+      "source": "probe_helper_source"
+    },
+    {
+      "available": "1508262bcb5c36814d3e860dd04efe3f96f86eb042a0f086e8a81d08dedbe4b3",
+      "expected": "01aab1c51258ea450cab782b34650c36b656eafe8bfd86316433c2ca4b01855a",
+      "explained_by_crlf_only": true,
+      "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py",
+      "source": "cooldown_helper_source"
+    },
+    {
+      "available": "7e57395f536f0864b925c08eb36fd434329e265935c0d5aef10af42c2214d7cb",
+      "expected": "91982938796997d1cd7b2b8f52b7813542b0d4502c0c2b05a75da5296e9c6f85",
+      "explained_by_crlf_only": false,
+      "path": "source_of_truth/project_truth.json",
+      "source": "project_truth"
+    },
+    {
+      "available": "02db9fc823fbb0559fdb1637ab6b8e9a650fec420f11af4af9b9fc8c74915462",
+      "expected": "8512864986bf0200be3913e2e33663fcc472a5ce6b217ee502a5aa50f0cf2d6f",
+      "explained_by_crlf_only": false,
+      "path": "source_of_truth/export_contract.json",
+      "source": "export_contract"
+    }
+  ],
+  "economic_overlay_analysis": "NOT_RUN_AFTER_REPRODUCTION_FAILURE",
+  "frozen_source_commit": "6fccbc388c1db75f6b46113fac15b7d3232e4123",
+  "holdout": null,
+  "holdout_status": "NOT_RUN",
+  "issues": [
+    "canonical_reproduction_mismatch"
+  ],
+  "production_changes": false,
+  "reason": "Published current model artifacts and repository-tracked raw/durable input bundle are from different vintages; no fallback, data refresh, or strategy patch was applied.",
+  "recommendation": "NENASADZOVAT",
+  "research_status": "STOPPED_AT_BASELINE_PREREQUISITES",
+  "top_three": null,
+  "variants_executed": 0,
+  "walk_forward": null
+}
