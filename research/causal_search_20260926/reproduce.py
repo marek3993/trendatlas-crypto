@@ -21,7 +21,7 @@ HERE=Path(__file__).resolve().parent
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--out',type=Path,default=engine.ROOT/'scratch/causal_reproduction')
-    parser.add_argument('--cache',type=Path,default=engine.ROOT/'scratch/causal_search_native_metrics_cache')
+    parser.add_argument('--cache',type=Path,default=engine.ROOT/'scratch/causal_search_post_exit_cache')
     args=parser.parse_args();reference=HERE/'results'
     if args.out.exists():raise FileExistsError('Use a new output directory for an independent replay')
     subprocess.run([sys.executable,str(HERE/'run.py'),'--out',str(args.out),'--cache',str(args.cache)],check=True,cwd=engine.ROOT)

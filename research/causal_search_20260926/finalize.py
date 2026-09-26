@@ -97,6 +97,19 @@ def finalize(out):
         assert abs(cagr-met['cagr'])<1e-10
         if len(events):
             arithmetic_events=verify_arithmetic(events,spec)
+            pending_risk=None;reentries_checked=0
+            for event in events.itertuples():
+                if event.event in ('stop','exposure_guard','liquidation'):
+                    pending_risk=(event.asset,pd.Timestamp(event.date))
+                elif event.event=='entry':
+                    if pending_risk and pending_risk[0]==event.asset and pending_risk[1].year==pd.Timestamp(event.date).year:
+                        assert (pd.Timestamp(event.date)-pending_risk[1]).days>=4,'Stale pre-exit rebound used for reentry'
+                        if market is None:market=engine.load_market()
+                        source=market.dates.get_loc(event.date)-2;asset=market.assets.index(event.asset)
+                        assert market.features['rebound'][source,asset]
+                        reentries_checked+=1
+                    # A different target is ordinary rotation with priority.
+                    pending_risk=None
             # Exported episode IDs are local to each annual replay. Composite
             # year + episode is the globally unique position generation.
             events['trade_id']=events.date.str[:4]+'/'+events.episode.astype(str)
@@ -117,7 +130,8 @@ def finalize(out):
         evidence['ledger_checks'][name]=dict(equity_recomputed=True,cagr_recomputed=True,
             daily_log_returns_reconciled=True,top_three_episode_omission_recomputed=True,asset_per_episode_unique=True,
             quantity_price_cost_accounting_recomputed=True,intraday_drawdown_recomputed=True,
-            fee_funding_turnover_fields_recomputed=True,event_count=len(events))
+            fee_funding_turnover_fields_recomputed=True,post_exit_reentry_confirmation_checked=True,
+            event_count=len(events))
     pd.DataFrame(attribution).to_csv(out/'episode_attribution.csv',index=False,lineterminator='\n')
     write_json(evaluation/'audit_evidence.json',evidence)
     ev=dict(path='audit_evidence.json',sha256=digest((evaluation/'audit_evidence.json').read_bytes()))

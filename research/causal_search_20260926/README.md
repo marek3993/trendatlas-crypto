@@ -56,7 +56,7 @@ from a second fresh full-grid search.
   from deterministic core comparison. The validation grid alone may have a
   different row/column order after loading a sorted JSON cache; its values must
   match exactly after canonical ordering. All other core files must match bytes.
-- `attempts/`: fingerprints and explanations for two interrupted starts and the
+- `attempts/`: fingerprints and explanations for three interrupted starts and the
   completed grid with a rejected scalar-type interface and invalid CASH output.
   Their work is not hidden or counted as new unique parameter trials.
 

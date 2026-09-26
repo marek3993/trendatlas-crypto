@@ -61,6 +61,14 @@ Regressions require identical non-CASH choices and native summary types. The
 whole grid and all stresses were restarted with an empty cache; no mathematical
 rules or parameters changed after the diagnostic development-metric inspection.
 
+Further state-machine review found that a zero-cooldown exposure-guard exit
+could reuse a rebound signal from before the exit. The next grid startup was
+interrupted before OOS results. Same-asset risk reentry now requires two rising
+completed closes after the recorded exit bar, including the zero-cooldown
+control; the registered confirmation rule and all parameter values are retained.
+Regression covers cooldown 0, 3 and 7 and existing rotation-priority tests still
+pass. The accepted run starts another complete search in a new empty cache.
+
 ## Exact contract impact
 
 The committed source objectives are implemented without lowering the 150–200%
@@ -88,7 +96,7 @@ binary ZIP/PNG bytes across Windows checkouts.
 
 ## Regression tests added/updated
 
-37 research tests exercise causal prefixes/future mutations, same-day rejection,
+38 research tests exercise causal prefixes/future mutations, same-day rejection,
 listing admission, identity/account PnL reconciliation, gap and intrabar stops,
 partial TP, monotonic trailing, rotation priority, cooldown/reentry, no averaging
 down, delayed entries, exposure limits, bankruptcy, calendar annualization,
@@ -98,8 +106,9 @@ of profitable market performance.
 
 The earlier 23 objectives tests also pass. Navigation/source checks add another
 14 passes: five script-registry tests, six source JSON tests and three output
-registry field tests. Exact commands and tool outputs are in `test_results.json`:
-**74 tests passed**. The unrelated legacy output-registry enum suite is not
+registry field tests. Exact commands and tool outputs are in `test_results.json`
+and the superseding research-suite record `final_research_test_results.json`:
+**75 tests passed**. The unrelated legacy output-registry enum suite is not
 claimed as passing or repaired by this work.
 
 ## Forbidden old path checked
@@ -115,7 +124,7 @@ claimed as passing or repaired by this work.
 ## Validation commands/results
 
 The executable reproduction commands are in README.md. The accepted market run
-uses `python research/causal_search_20260926/run.py --cache scratch/causal_search_native_metrics_cache`.
+uses `python research/causal_search_20260926/run.py --cache scratch/causal_search_post_exit_cache`.
 The final evidence is recorded separately to prevent unit tests from being
 misrepresented as completed market replays:
 
@@ -140,9 +149,9 @@ misrepresented as completed market replays:
   no fabricated future observations.
 
 The initial serial startup was also stopped solely to parallelize six independent
-partitions. Both interrupted starts, the entry-delay correction and the completed
-but invalid scalar-interface run are retained under `attempts/`; none changed
-parameter budgets after seeing results.
+partitions. The three interrupted starts, the entry-delay and post-exit reentry
+corrections, and the completed but invalid scalar-interface run are retained
+under `attempts/`; none changed parameter budgets after seeing results.
 
 ## Commit message / commit hash
 
