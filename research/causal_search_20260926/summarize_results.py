@@ -21,6 +21,9 @@ def main():
                 within_requested_mode_dd_limit=dd_cap<=(.25 if mode=='robust' else .35)))
     pd.DataFrame(records).to_csv(out/'observed_frontier_by_drawdown.csv',index=False,lineterminator='\n')
     best_raw=max(policies,key=lambda p:p['oos']['cagr'])
+    best_robust_raw=max((p for p in policies if p['mode']=='robust'),key=lambda p:p['oos']['cagr'])
+    least_dd=min(policies,key=lambda p:p['oos']['max_drawdown'])
+    diagnostic_ids=list(dict.fromkeys([best_robust_raw['id'],least_dd['id'],best_raw['id']]))
     above=[dict(policy=p['id'],cagr=p['oos']['cagr'],failures=p['high_return_failures']) for p in policies if p['oos']['cagr']>=1.5]
     write_json(out/'empirical_summary.json',dict(best_observed_cagr_policy=best_raw['id'],
         best_observed_cagr=best_raw['oos']['cagr'],best_observed_cagr_dd=best_raw['oos']['max_drawdown'],
@@ -49,6 +52,11 @@ def main():
         f'Najvyšší OOS CAGR zo všetkých 18 politík: **{pct(best_raw["oos"]["cagr"])}**, '
         f'DD **{pct(best_raw["oos"]["max_drawdown"])}**, `{best_raw["id"]}`. '
         f'Počet politík s CAGR aspoň 150 %: **{len(above)}**. Počet prechodov všetkých numerických high-return podmienok: **{len(result["oos_numeric_passes"])}**.','',
+        'Najlepší nameraný kandidát v robustnej skupine podľa CAGR: '
+        f'**{pct(best_robust_raw["oos"]["cagr"])} / DD {pct(best_robust_raw["oos"]["max_drawdown"])}**. '
+        'Je vyradený pre drawdown. Najnižší drawdown zo všetkých politík: '
+        f'**{pct(least_dd["oos"]["max_drawdown"])}**, pri CAGR **{pct(least_dd["oos"]["cagr"])}**. '
+        'Ani tento výsledok neprešiel. Prípustný Pareto front je prázdny; žiadny z nasledujúcich diagnostických príkladov sa nepovyšuje na víťaza.','',
         '## Pozorovaná hranica výnosu a drawdownu','',
         '| Režim | Povolený DD v tomto porovnaní | Najlepší pozorovaný CAGR | Skutočný DD | Politika |',
         '|---|---:|---:|---:|---|']
@@ -59,6 +67,10 @@ def main():
         'Ak vyšší limit expozície nepridal výnos, tabuľka ho za výhodu nepovažuje. '
         'Cena vyššieho výnosu sa dá tvrdiť iba tam, kde ju ukazuje konkrétna dvojica zmeraných výsledkov; '
         'z týchto behov nemožno dopočítať, koľko páky by spoľahlivo prinieslo 150 %.','',
+        f'Konkrétny pozorovaný kompromis: prechod z {pct(least_dd["oos"]["cagr"])} na {pct(best_raw["oos"]["cagr"])} CAGR '
+        f'znamenal zvýšenie DD z {pct(least_dd["oos"]["max_drawdown"])} na {pct(best_raw["oos"]["max_drawdown"])} '
+        f'(+{100*(best_raw["oos"]["max_drawdown"]-least_dd["oos"]["max_drawdown"]):.2f} percentuálneho bodu). '
+        'Obe politiky sú pri dvojnásobných nákladoch stratové. Ani uvoľnenie DD na túto úroveň sa k cieľu 150 % nepriblížilo.','',
         '## Samostatné expozičné režimy','',
         '| Režim | Politika growth: CAGR | DD | Maximum skutočnej expozície | Ročný turnover | Ročný súčet nákladov / equity |',
         '|---|---:|---:|---:|---:|---:|']
@@ -67,16 +79,15 @@ def main():
         m=p['oos'];lines.append(f'| {p["mode"]} {p["cap"]:g}× | {pct(m["cagr"])} | {pct(m["max_drawdown"])} | {m["max_realized_exposure"]:.4f}× | {m["turnover"]:.2f}× | {pct(m["cost_drag"])} |')
     lines+=['','Turnover je súčet zobchodovaného notionalu / equity za rok. Nákladový údaj je súčet eventových '
         'nákladových podielov za rok, nie presný rozdiel CAGR medzi beznákladovým a nákladovým modelom.','',
-        '## Stresy a stabilita pozorovaných B/C','']
-    for key in ['B_observed_best_robust','C_observed_aggressive_pareto']:
-        name=result[key]
-        if not name:continue
+        '## Stresy a stabilita vyradených diagnostických referencií','']
+    for name in diagnostic_ids:
         p=next(p for p in policies if p['id']==name);m=p['oos']
         lines += [f'### {name}','',
             f'- CAGR pri 2× poplatkoch, sklze a fundingu: **{pct(m["double_cost_cagr"])}**.',
             f'- CAGR pri vstupe o jeden realizovateľný bar neskôr: **{pct(m["delayed_entry_cagr"])}**.',
             f'- Bez najlepšieho dňa: **{pct(m["without_best_day_cagr"])}**; bez top 3 obchodov: **{pct(m["without_top_three_trades_cagr"])}**.',
-            f'- Najväčší podiel aktíva na čistom log raste: **{pct(m["asset_log_growth_share"])}**; obchodu: **{pct(m["trade_log_growth_share"])}**.',
+        f'- Najväčší podiel aktíva na čistom log raste: **{pct(m["asset_log_growth_share"])}**; obchodu: **{pct(m["trade_log_growth_share"])}**.',
+        '- Podiel nad 100 % znamená, že zisky daného aktíva/obchodu čiastočne vymazali straty ostatných; menovateľom je čistý logaritmický rast.',
             f'- Ziskové foldy: **{round(m["profitable_fold_fraction"]*6)}/6**; najhorší fold **{pct(m["worst_fold_return"])}**; susedia **{round(m["parameter_stability"]*6)}/6**.',
             '- Nesplnené numerické high-return podmienky: `'+', '.join(p['high_return_failures'])+'`.','',
             '| Fold | Zvolený variant | Čistý výnos foldu | Max. DD foldu |','|---|---|---:|---:|']
@@ -92,6 +103,7 @@ def main():
         'nezávislá historická identita obchodovateľných derivátov, likvidita a venue funding nie sú preukázané. '
         'Tieto dôkazové podmienky zostali neúspešné, aj keby numerický výsledok prekročil cieľ.','',
         'Zmrazené forward nominácie: `'+json.dumps({k:result['forward_nominees'][k] for k in ['A','B','C']})+'`. '
+        'Sú to nominácie z development fázy, ktoré neprešli OOS limitmi; zostávajú len diagnostickými paper kandidátmi, nie schválenými finalistami. '
         'Prospektívny paper interval je 2026-09-27 až 2027-09-26, bez refitu. '
         'Stav po zmrazení je WAITING_FOR_FUTURE_DATA; žiadne budúce výsledky neboli vygenerované.','',
         'Úplná [Pareto tabuľka](results/pareto_table.csv), [všetky politiky](RESULTS.md), '

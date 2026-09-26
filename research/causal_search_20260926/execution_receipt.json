@@ -1,0 +1,205 @@
+{
+  "accepted_run_command": "python research/causal_search_20260926/run.py --cache scratch/causal_search_post_exit_cache",
+  "charts_visually_inspected": [
+    "results/equity_curves.png",
+    "results/pareto_frontier.png"
+  ],
+  "core_results_written_utc": "2026-09-26T17:30:26.285754+00:00",
+  "future_asof_records": 0,
+  "future_candidates": {
+    "B": "OOS_REJECTED_DIAGNOSTIC_ONLY",
+    "C": "OOS_REJECTED_DIAGNOSTIC_ONLY"
+  },
+  "future_seal_frozen_at_utc": "2026-09-26T17:34:16.130810+00:00",
+  "grid_stress_replays": 3888,
+  "implementation_commit": "10a7b1248151b89cc30afa4fbb32dcf1d576b736",
+  "implementation_fingerprint": "3f1d79c3b689f798db3397c9d0974282d5ca696163b885146a1400b910539636",
+  "independent_event_ledger_verification": "PASS all 18",
+  "neighbor_policy_replays": 108,
+  "no_deploy": true,
+  "no_live_orders": true,
+  "no_merge": true,
+  "no_post_oos_parameter_search": true,
+  "nominal_trials": 1944,
+  "oos_folds": 108,
+  "oos_policies": 18,
+  "other_relevant_tests": 37,
+  "push_trigger_check": "Only workflow_dispatch and schedule in .github/workflows/app_refresh.yml",
+  "reproducibility": {
+    "all_core_results_identical": true,
+    "bitwise_identical_file_count": 98,
+    "core_file_count": 98,
+    "full_grid_repeated": false,
+    "grid_cache": "Exact input/code/contract fingerprint verified by runner; 18 fixed grid cases independently recomputed",
+    "grid_scenario_replays": 54,
+    "implementation_fingerprint": "3f1d79c3b689f798db3397c9d0974282d5ca696163b885146a1400b910539636",
+    "independent_oos_replay": true,
+    "order_only_differences": [],
+    "replay_command": [
+      "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+      "C:\\Users\\benda\\Desktop\\trendatlas_pareto_research_20260926\\research\\causal_search_20260926\\run.py",
+      "--out",
+      "scratch\\final_reproduction",
+      "--cache",
+      "C:\\Users\\benda\\Desktop\\trendatlas_pareto_research_20260926\\scratch\\causal_search_post_exit_cache"
+    ],
+    "spot_checks": [
+      {
+        "grid_index": 0,
+        "partition": "robust_1.25",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m21_own100_v20_rotation",
+        "windows": 7
+      },
+      {
+        "grid_index": 162,
+        "partition": "robust_1.25",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m63_own200_v40_trail4",
+        "windows": 7
+      },
+      {
+        "grid_index": 323,
+        "partition": "robust_1.25",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m126_market200_v60_combo50",
+        "windows": 7
+      },
+      {
+        "grid_index": 0,
+        "partition": "aggressive_1.25",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m21_own100_v20_rotation",
+        "windows": 7
+      },
+      {
+        "grid_index": 162,
+        "partition": "aggressive_1.25",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m63_own200_v40_trail4",
+        "windows": 7
+      },
+      {
+        "grid_index": 323,
+        "partition": "aggressive_1.25",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m126_market200_v60_combo50",
+        "windows": 7
+      },
+      {
+        "grid_index": 0,
+        "partition": "aggressive_1.5",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m21_own100_v20_rotation",
+        "windows": 7
+      },
+      {
+        "grid_index": 162,
+        "partition": "aggressive_1.5",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m63_own200_v40_trail4",
+        "windows": 7
+      },
+      {
+        "grid_index": 323,
+        "partition": "aggressive_1.5",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m126_market200_v60_combo50",
+        "windows": 7
+      },
+      {
+        "grid_index": 0,
+        "partition": "aggressive_2",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m21_own100_v20_rotation",
+        "windows": 7
+      },
+      {
+        "grid_index": 162,
+        "partition": "aggressive_2",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m63_own200_v40_trail4",
+        "windows": 7
+      },
+      {
+        "grid_index": 323,
+        "partition": "aggressive_2",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m126_market200_v60_combo50",
+        "windows": 7
+      },
+      {
+        "grid_index": 0,
+        "partition": "aggressive_2.5",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m21_own100_v20_rotation",
+        "windows": 7
+      },
+      {
+        "grid_index": 162,
+        "partition": "aggressive_2.5",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m63_own200_v40_trail4",
+        "windows": 7
+      },
+      {
+        "grid_index": 323,
+        "partition": "aggressive_2.5",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m126_market200_v60_combo50",
+        "windows": 7
+      },
+      {
+        "grid_index": 0,
+        "partition": "aggressive_3",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m21_own100_v20_rotation",
+        "windows": 7
+      },
+      {
+        "grid_index": 162,
+        "partition": "aggressive_3",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m63_own200_v40_trail4",
+        "windows": 7
+      },
+      {
+        "grid_index": 323,
+        "partition": "aggressive_3",
+        "passed": true,
+        "scenarios": 3,
+        "variant": "m126_market200_v60_combo50",
+        "windows": 7
+      }
+    ]
+  },
+  "research_unit_tests": 39,
+  "started_utc": "2026-09-26T17:11:29.195751+00:00",
+  "structural_probe_replays_high_development": 24,
+  "structural_probe_replays_oos": 216,
+  "total_tests_passed": 76,
+  "verification_commands": [
+    "python research/causal_search_20260926/finalize.py",
+    "python research/causal_search_20260926/reproduce.py --out scratch/final_reproduction",
+    "scratch/research-venv/Scripts/python.exe research/causal_search_20260926/render.py",
+    "python research/causal_search_20260926/summarize_results.py",
+    "python research/causal_search_20260926/paper.py --init"
+  ]
+}

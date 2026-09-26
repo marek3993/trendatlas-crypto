@@ -32,7 +32,12 @@ def verify_arithmetic(events,spec):
                 cost=qty*price*spec['costs']['funding_annual_debit']/365.25
                 equity=max(0,equity-cost)
             else:
-                if row.event=='entry':assert qty==0;asset=row.asset;mark=price
+                if row.event=='entry':
+                    # CSV decimal round-tripping can leave ~1e-16 quantity
+                    # after summing a flat episode. Bound its account value;
+                    # never ignore a material residual position.
+                    assert abs(qty*mark)<=2e-10*max(1,before),(row.date,qty,mark)
+                    qty=0.;asset=row.asset;mark=price
                 assert asset==row.asset
                 fee=rate+(spec['costs']['liquidation_fee_bps']*1e-4 if row.event=='liquidation' else 0)
                 turnover=abs(change)*price;cost=turnover*fee
@@ -42,7 +47,7 @@ def verify_arithmetic(events,spec):
             assert np.isclose(turnover/max(before,1e-100),row.turnover,atol=2e-10,rtol=2e-10)
             if equity>0 and before>0:assert np.isclose(np.log(equity/before),row.log_growth,atol=2e-10,rtol=2e-10)
             checked+=1
-        assert qty==0,'Fold did not close its position'
+        assert abs(qty*mark)<=2e-10*max(1,equity),'Fold did not close its position'
     return checked
 
 

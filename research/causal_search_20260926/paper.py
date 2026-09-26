@@ -35,13 +35,18 @@ def init(out,results):
     if now.date()>=pd.Timestamp(spec['sealed']['forward_start']).date():
         raise ValueError('Freeze date has passed: do not backdate. Pre-register a new prospective interval explicitly.')
     candidates={}
+    observed=json.loads((results/'results.json').read_text())
     for category in ['A','B','C']:
         name=nominees[category]
         if name:
             partition=name.split('__')[0];part=next(x for x in spec['partitions'] if x['id']==partition)
-            candidates[category]=dict(id=name,parameters=nominees['parameters_for_forward'][name],cap=part['cap'],mode=part['mode'])
+            policy=next(p for p in observed['policies'] if p['id']==name)
+            candidates[category]=dict(id=name,parameters=nominees['parameters_for_forward'][name],cap=part['cap'],mode=part['mode'],
+                oos_risk_feasible=policy['risk_feasible'],oos_numeric_high_return_passed=policy['oos_numeric_high_return_passed'],
+                status='PROVISIONAL_DIAGNOSTIC_ONLY' if policy['risk_feasible'] else 'OOS_REJECTED_DIAGNOSTIC_ONLY')
     seal=dict(schema_version=1,frozen_at_utc=now.isoformat(),start=spec['sealed']['forward_start'],end=spec['sealed']['forward_end'],
               source_hashes=policy_hashes(),nomination_sha256=digest(nomination.read_bytes()),
+              historical_oos_results_sha256=digest((results/'results.json').read_bytes()),
               input_bundle_sha256=spec['input_bundle_sha256'],candidates=candidates,refit_allowed=False,
               production=False,orders=False,kind='hypothetical_forward_sealed_spot_and_cost_proxy',
               status='WAITING_FOR_FUTURE_DATA',historical_seal=False,

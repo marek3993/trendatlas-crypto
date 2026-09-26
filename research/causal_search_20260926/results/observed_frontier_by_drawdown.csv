@@ -1,0 +1,9 @@
+mode,dd_limit,policy,cagr,max_drawdown,within_requested_mode_dd_limit
+robust,0.2,,,,True
+robust,0.25,,,,True
+robust,0.3,,,,False
+robust,0.35,,,,False
+aggressive,0.2,,,,True
+aggressive,0.25,,,,True
+aggressive,0.3,,,,True
+aggressive,0.35,,,,True

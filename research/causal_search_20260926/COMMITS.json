@@ -1,0 +1,141 @@
+{
+  "base": "ae83345fb218826ca9c5afde6f67d64e809328da",
+  "commits_before_final_evidence_commit": [
+    {
+      "files": [
+        "canonical/script_registry.json",
+        "research/objectives_20260926/AUDIT.md",
+        "research/objectives_20260926/GIT_ADD.txt",
+        "research/objectives_20260926/README.md",
+        "scripts/research_objectives.py",
+        "source_of_truth/README.md",
+        "source_of_truth/research_objectives_contract.json",
+        "tests/test_research_objectives.py"
+      ],
+      "hash": "bed0f0fe6c4266839ed1e1af5cd2a247e9e7004d",
+      "message": "research: replace objectives with gated robust and aggressive Pareto evaluation"
+    },
+    {
+      "files": [
+        ".gitattributes",
+        "research/causal_search_20260926/inputs.zip",
+        "research/causal_search_20260926/pre_registration.json",
+        "research/causal_search_20260926/prepare.py"
+      ],
+      "hash": "aed802e3da967b93933f845fd5ab03d138dd72fc",
+      "message": "research: freeze inputs universe variants folds and six independent budgets"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/engine.py",
+        "research/causal_search_20260926/requirements.txt",
+        "research/causal_search_20260926/run.py",
+        "research/causal_search_20260926/test_engine.py",
+        "research/causal_search_20260926/test_runner.py"
+      ],
+      "hash": "fb6926fa46f3b2da9eb2713a021333772ce4a7c0",
+      "message": "research: implement causal event replay and frozen walk-forward search"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/attempts/README.md",
+        "research/causal_search_20260926/attempts/serial_startup_freeze.json",
+        "research/causal_search_20260926/run.py"
+      ],
+      "hash": "1cf610ea9f4b5623ca8f38c47279decdc3a67386",
+      "message": "research: execute independent frozen partitions concurrently"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/finalize.py",
+        "research/causal_search_20260926/paper.py",
+        "research/causal_search_20260926/render.py",
+        "research/causal_search_20260926/test_paper.py"
+      ],
+      "hash": "6fb5a90f192e87c88e77c4b86b7ddd5eadc99298",
+      "message": "research: add immutable forward paper evaluation and result verification"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/attempts/README.md",
+        "research/causal_search_20260926/attempts/entry_delay_correction_freeze.json",
+        "research/causal_search_20260926/engine.py",
+        "research/causal_search_20260926/test_engine.py"
+      ],
+      "hash": "2e319f73dc456e11d5a4148e933d335d0284860e",
+      "message": "research: delay frozen entries without delaying exits or protection"
+    },
+    {
+      "files": [
+        "canonical/output_registry.json",
+        "canonical/script_registry.json",
+        "research/causal_search_20260926/README.md",
+        "research/causal_search_20260926/finalize.py",
+        "research/causal_search_20260926/render.py",
+        "research/causal_search_20260926/reproduce.py",
+        "research/causal_search_20260926/test_accounting_edges.py",
+        "research/causal_search_20260926/test_results.json"
+      ],
+      "hash": "e9ab9cd323f14e62350ed5659e123a469802021d",
+      "message": "research: add independent ledger checks and reproducibility evidence"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/attempts/README.md",
+        "research/causal_search_20260926/attempts/native_scalar_rejection_freeze.json",
+        "research/causal_search_20260926/attempts/native_scalar_rejection_manifest.json",
+        "research/causal_search_20260926/engine.py",
+        "research/causal_search_20260926/run.py",
+        "research/causal_search_20260926/test_accounting_edges.py",
+        "research/causal_search_20260926/test_runner.py"
+      ],
+      "hash": "dd55a24fb29c8488dbc231e14a3201337425a3b5",
+      "message": "research: normalize numerical evidence before strict Pareto selection"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/AUDIT.md",
+        "research/causal_search_20260926/README.md",
+        "research/causal_search_20260926/finalize.py",
+        "research/causal_search_20260926/render.py",
+        "research/causal_search_20260926/reproduce.py",
+        "research/causal_search_20260926/summarize_results.py",
+        "research/causal_search_20260926/test_results.json"
+      ],
+      "hash": "70e446f1c85ad1df000e79c6b9f33f6df3ecf0a4",
+      "message": "research: prepare complete empirical reports and expanded verification"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/attempts/README.md",
+        "research/causal_search_20260926/attempts/reentry_confirmation_correction_freeze.json",
+        "research/causal_search_20260926/engine.py",
+        "research/causal_search_20260926/test_accounting_edges.py"
+      ],
+      "hash": "10a7b1248151b89cc30afa4fbb32dcf1d576b736",
+      "message": "research: require fresh post-exit confirmation before risk reentry"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/AUDIT.md",
+        "research/causal_search_20260926/README.md",
+        "research/causal_search_20260926/final_research_test_results.json",
+        "research/causal_search_20260926/finalize.py",
+        "research/causal_search_20260926/reproduce.py"
+      ],
+      "hash": "ed9dce3a8843c3ced8d40bf7bd25c0826761db7b",
+      "message": "research: verify measured post-exit reentries and record final regressions"
+    },
+    {
+      "files": [
+        "research/causal_search_20260926/AUDIT.md",
+        "research/causal_search_20260926/final_research_test_results.json",
+        "research/causal_search_20260926/paper.py",
+        "research/causal_search_20260926/test_paper.py"
+      ],
+      "hash": "ea2300b4697b9133cf6cdc135cf18491f1d3d9c5",
+      "message": "research: bind forward paper evaluation to immutable historical inputs"
+    }
+  ],
+  "final_commit": "See git log -1 and task handoff; this file cannot contain its own commit hash"
+}

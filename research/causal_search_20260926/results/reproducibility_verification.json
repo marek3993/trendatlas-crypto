@@ -1,0 +1,165 @@
+{
+  "all_core_results_identical": true,
+  "bitwise_identical_file_count": 98,
+  "core_file_count": 98,
+  "full_grid_repeated": false,
+  "grid_cache": "Exact input/code/contract fingerprint verified by runner; 18 fixed grid cases independently recomputed",
+  "grid_scenario_replays": 54,
+  "implementation_fingerprint": "3f1d79c3b689f798db3397c9d0974282d5ca696163b885146a1400b910539636",
+  "independent_oos_replay": true,
+  "order_only_differences": [],
+  "replay_command": [
+    "C:\\Users\\benda\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "C:\\Users\\benda\\Desktop\\trendatlas_pareto_research_20260926\\research\\causal_search_20260926\\run.py",
+    "--out",
+    "scratch\\final_reproduction",
+    "--cache",
+    "C:\\Users\\benda\\Desktop\\trendatlas_pareto_research_20260926\\scratch\\causal_search_post_exit_cache"
+  ],
+  "spot_checks": [
+    {
+      "grid_index": 0,
+      "partition": "robust_1.25",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m21_own100_v20_rotation",
+      "windows": 7
+    },
+    {
+      "grid_index": 162,
+      "partition": "robust_1.25",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m63_own200_v40_trail4",
+      "windows": 7
+    },
+    {
+      "grid_index": 323,
+      "partition": "robust_1.25",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m126_market200_v60_combo50",
+      "windows": 7
+    },
+    {
+      "grid_index": 0,
+      "partition": "aggressive_1.25",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m21_own100_v20_rotation",
+      "windows": 7
+    },
+    {
+      "grid_index": 162,
+      "partition": "aggressive_1.25",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m63_own200_v40_trail4",
+      "windows": 7
+    },
+    {
+      "grid_index": 323,
+      "partition": "aggressive_1.25",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m126_market200_v60_combo50",
+      "windows": 7
+    },
+    {
+      "grid_index": 0,
+      "partition": "aggressive_1.5",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m21_own100_v20_rotation",
+      "windows": 7
+    },
+    {
+      "grid_index": 162,
+      "partition": "aggressive_1.5",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m63_own200_v40_trail4",
+      "windows": 7
+    },
+    {
+      "grid_index": 323,
+      "partition": "aggressive_1.5",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m126_market200_v60_combo50",
+      "windows": 7
+    },
+    {
+      "grid_index": 0,
+      "partition": "aggressive_2",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m21_own100_v20_rotation",
+      "windows": 7
+    },
+    {
+      "grid_index": 162,
+      "partition": "aggressive_2",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m63_own200_v40_trail4",
+      "windows": 7
+    },
+    {
+      "grid_index": 323,
+      "partition": "aggressive_2",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m126_market200_v60_combo50",
+      "windows": 7
+    },
+    {
+      "grid_index": 0,
+      "partition": "aggressive_2.5",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m21_own100_v20_rotation",
+      "windows": 7
+    },
+    {
+      "grid_index": 162,
+      "partition": "aggressive_2.5",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m63_own200_v40_trail4",
+      "windows": 7
+    },
+    {
+      "grid_index": 323,
+      "partition": "aggressive_2.5",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m126_market200_v60_combo50",
+      "windows": 7
+    },
+    {
+      "grid_index": 0,
+      "partition": "aggressive_3",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m21_own100_v20_rotation",
+      "windows": 7
+    },
+    {
+      "grid_index": 162,
+      "partition": "aggressive_3",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m63_own200_v40_trail4",
+      "windows": 7
+    },
+    {
+      "grid_index": 323,
+      "partition": "aggressive_3",
+      "passed": true,
+      "scenarios": 3,
+      "variant": "m126_market200_v60_combo50",
+      "windows": 7
+    }
+  ]
+}

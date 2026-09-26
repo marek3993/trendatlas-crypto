@@ -166,3 +166,38 @@ task handoff, since a commit cannot contain its own hash without changing it.
 
 Research branch: `codex/causal-pareto-research-20260926`.
 Remote: `https://github.com/marek3993/trendatlas-crypto.git`.
+
+## Completed empirical verdict and verification
+
+- The accepted run completed all 1,944 grid trials, 3,888 grid stresses, 18 OOS
+  policies / 108 chronological folds, and 108 policy-neighbor replays.
+- No policy passed its mode's drawdown constraint. A/B/C are therefore empty;
+  D applies. The highest observed OOS CAGR was 9.037934% at 66.861762% event DD.
+  The robust group's highest CAGR was 6.498776% at 71.805493% DD. The least-DD
+  policy returned 3.486161% CAGR at 35.963618% DD. These are rejected diagnostic
+  references, not accepted finalists or substitutes for the 150–200% target.
+- All 18 independent event ledgers reconcile quantity, price, fees, funding,
+  turnover, daily/log equity, intraday DD, episode attribution and post-exit
+  reentry. Decimal CSV summation may leave a residual around 1e-16 quantity;
+  flatness is checked in account value with a 2e-10 relative/unit tolerance.
+  The measured residual that exposed strict-zero comparison was only 6.04e-17
+  account units. No engine result was altered for this verification tolerance.
+- All 18 OOS structural audits and all 12 selected development results above
+  150% pass the price-prefix, future-perturbation, timestamp, raw-asset fill and
+  PnL checks: 240 actual probe replays. Missing venue funding/fills and historical
+  universe evidence remain explicit failures.
+- A second complete OOS/stress/neighbor/audit run produced **98 bitwise-identical
+  core files**. Another **54 fresh full-history grid-scenario replays** matched
+  the cached records at the predefined grid indices 0, 162 and 323 in each mode.
+- PNG/SVG equity and Pareto charts were generated from these files and visually
+  inspected. All 18 points are correctly marked as failing risk limits.
+- The forward seal is initialized for 2026-09-27 to 2027-09-26. The unchanged
+  development nominees B/C are marked `OOS_REJECTED_DIAGNOSTIC_ONLY`, not approved
+  finalists. No as-of future observations exist. Frozen source and historical
+  input hashes are enforced by the offline paper evaluator.
+
+`DECISION.md` contains the complete measured conclusion, failed stress gates,
+folds and the observed cost of moving to a higher-return rejected policy.
+`execution_receipt.json` records the accepted run times, commands and final
+artifact checks. The committed source and results retain the failed-search
+outcome; no post-OOS parameter search was performed to manufacture a winner.

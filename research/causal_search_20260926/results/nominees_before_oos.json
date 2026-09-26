@@ -1,0 +1,34 @@
+{
+  "A": null,
+  "B": "robust_1.25__calmar",
+  "C": "aggressive_3__calmar",
+  "history_sealed": false,
+  "parameters_for_forward": {
+    "aggressive_3__calmar": {
+      "catastrophic": 3,
+      "cooldown": 3,
+      "id": "m126_own200_v20_cat3",
+      "momentum": 126,
+      "name": "cat3",
+      "tp": 0,
+      "tp_atr": 2,
+      "trail": 0,
+      "trend": "own200",
+      "vol_target": 0.2
+    },
+    "robust_1.25__calmar": {
+      "catastrophic": 3,
+      "cooldown": 3,
+      "id": "m126_own200_v20_cat3",
+      "momentum": 126,
+      "name": "cat3",
+      "tp": 0,
+      "tp_atr": 2,
+      "trail": 0,
+      "trend": "own200",
+      "vol_target": 0.2
+    }
+  },
+  "search_fingerprint": "3f1d79c3b689f798db3397c9d0974282d5ca696163b885146a1400b910539636",
+  "selection_source": "2020 validation only; before OOS metric calculation"
+}

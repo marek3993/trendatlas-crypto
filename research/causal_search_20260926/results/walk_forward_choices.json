@@ -1,0 +1,686 @@
+{
+  "aggressive_1.25__calmar": {
+    "2021": {
+      "pareto_size": 172,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat5"
+    },
+    "2022": {
+      "pareto_size": 126,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_trail2"
+    },
+    "2024": {
+      "pareto_size": 63,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v40_trail4"
+    },
+    "2025": {
+      "pareto_size": 38,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_cat4"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_1.25__defensive": {
+    "2021": {
+      "pareto_size": 172,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v20_combo50"
+    },
+    "2022": {
+      "pareto_size": 126,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m63_market200_v20_tp50"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v20_combo50"
+    },
+    "2024": {
+      "pareto_size": 63,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own200_v20_combo50"
+    },
+    "2025": {
+      "pareto_size": 38,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_combo25"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_1.25__growth": {
+    "2021": {
+      "pareto_size": 172,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat5"
+    },
+    "2022": {
+      "pareto_size": 126,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_combo50"
+    },
+    "2024": {
+      "pareto_size": 63,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v40_trail4"
+    },
+    "2025": {
+      "pareto_size": 38,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v60_cat4"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m63_market200_v60_trail2"
+    }
+  },
+  "aggressive_1.5__calmar": {
+    "2021": {
+      "pareto_size": 172,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat4"
+    },
+    "2022": {
+      "pareto_size": 129,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_combo50"
+    },
+    "2024": {
+      "pareto_size": 68,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v40_trail4"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_cat4"
+    },
+    "2026": {
+      "pareto_size": 90,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_1.5__defensive": {
+    "2021": {
+      "pareto_size": 172,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v20_combo50"
+    },
+    "2022": {
+      "pareto_size": 129,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m63_market200_v20_tp50"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v20_combo50"
+    },
+    "2024": {
+      "pareto_size": 68,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own200_v20_combo50"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_combo25"
+    },
+    "2026": {
+      "pareto_size": 90,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_1.5__growth": {
+    "2021": {
+      "pareto_size": 172,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_rotation"
+    },
+    "2022": {
+      "pareto_size": 129,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_combo50"
+    },
+    "2024": {
+      "pareto_size": 68,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v40_trail4"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v60_cooldown"
+    },
+    "2026": {
+      "pareto_size": 90,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m63_market200_v60_trail2"
+    }
+  },
+  "aggressive_2.5__calmar": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat4"
+    },
+    "2022": {
+      "pareto_size": 131,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_trail2"
+    },
+    "2024": {
+      "pareto_size": 61,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v20_trail4"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_cat4"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_2.5__defensive": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v20_combo50"
+    },
+    "2022": {
+      "pareto_size": 131,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m63_market200_v20_tp50"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v20_combo50"
+    },
+    "2024": {
+      "pareto_size": 61,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own200_v20_combo50"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_combo25"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_2.5__growth": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat5"
+    },
+    "2022": {
+      "pareto_size": 131,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_combo50"
+    },
+    "2024": {
+      "pareto_size": 61,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v40_trail4"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v60_cooldown"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m63_own200_v60_trail2"
+    }
+  },
+  "aggressive_2__calmar": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat5"
+    },
+    "2022": {
+      "pareto_size": 132,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_trail2"
+    },
+    "2024": {
+      "pareto_size": 63,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v20_trail4"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_cat4"
+    },
+    "2026": {
+      "pareto_size": 89,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_2__defensive": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v20_combo50"
+    },
+    "2022": {
+      "pareto_size": 132,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m63_market200_v20_tp50"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v20_combo50"
+    },
+    "2024": {
+      "pareto_size": 63,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own200_v20_combo50"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_combo25"
+    },
+    "2026": {
+      "pareto_size": 89,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_2__growth": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat5"
+    },
+    "2022": {
+      "pareto_size": 132,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_trail2"
+    },
+    "2024": {
+      "pareto_size": 63,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v40_trail4"
+    },
+    "2025": {
+      "pareto_size": 42,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v60_cooldown"
+    },
+    "2026": {
+      "pareto_size": 89,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m63_own200_v60_trail2"
+    }
+  },
+  "aggressive_3__calmar": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat4"
+    },
+    "2022": {
+      "pareto_size": 132,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_combo50"
+    },
+    "2024": {
+      "pareto_size": 61,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v20_trail4"
+    },
+    "2025": {
+      "pareto_size": 41,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_cat4"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_3__defensive": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v20_combo50"
+    },
+    "2022": {
+      "pareto_size": 132,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m63_market200_v20_tp50"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v20_combo50"
+    },
+    "2024": {
+      "pareto_size": 61,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own200_v20_combo50"
+    },
+    "2025": {
+      "pareto_size": 41,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_combo25"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "aggressive_3__growth": {
+    "2021": {
+      "pareto_size": 173,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_cat5"
+    },
+    "2022": {
+      "pareto_size": 132,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m126_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_combo50"
+    },
+    "2024": {
+      "pareto_size": 61,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v40_trail4"
+    },
+    "2025": {
+      "pareto_size": 41,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v60_cooldown"
+    },
+    "2026": {
+      "pareto_size": 86,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m63_own200_v60_trail2"
+    }
+  },
+  "robust_1.25__calmar": {
+    "2021": {
+      "pareto_size": 109,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_combo50"
+    },
+    "2022": {
+      "pareto_size": 88,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m63_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_trail2"
+    },
+    "2024": {
+      "pareto_size": 38,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v20_trail4"
+    },
+    "2025": {
+      "pareto_size": 30,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_cat4"
+    },
+    "2026": {
+      "pareto_size": 49,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "robust_1.25__defensive": {
+    "2021": {
+      "pareto_size": 109,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v20_combo50"
+    },
+    "2022": {
+      "pareto_size": 88,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m63_market200_v20_tp50"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v20_combo50"
+    },
+    "2024": {
+      "pareto_size": 38,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own200_v20_combo50"
+    },
+    "2025": {
+      "pareto_size": 30,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v20_combo25"
+    },
+    "2026": {
+      "pareto_size": 49,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m126_own200_v20_cat3"
+    }
+  },
+  "robust_1.25__growth": {
+    "2021": {
+      "pareto_size": 109,
+      "validation_end": "2020-12-31",
+      "validation_start": "2020-01-01",
+      "variant": "m21_own200_v60_combo50"
+    },
+    "2022": {
+      "pareto_size": 88,
+      "validation_end": "2021-12-31",
+      "validation_start": "2021-01-01",
+      "variant": "m63_market200_v60_rotation"
+    },
+    "2023": {
+      "pareto_size": 4,
+      "validation_end": "2022-12-31",
+      "validation_start": "2022-01-01",
+      "variant": "m21_market200_v60_combo50"
+    },
+    "2024": {
+      "pareto_size": 38,
+      "validation_end": "2023-12-31",
+      "validation_start": "2023-01-01",
+      "variant": "m126_own100_v20_trail4"
+    },
+    "2025": {
+      "pareto_size": 30,
+      "validation_end": "2024-12-31",
+      "validation_start": "2024-01-01",
+      "variant": "m126_own200_v40_cat4"
+    },
+    "2026": {
+      "pareto_size": 49,
+      "validation_end": "2025-12-31",
+      "validation_start": "2025-01-01",
+      "variant": "m63_own200_v40_trail2"
+    }
+  }
+}

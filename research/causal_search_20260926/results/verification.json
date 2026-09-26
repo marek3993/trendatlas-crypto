@@ -1,0 +1,14 @@
+{
+  "all_high_return_winners_blocked_without_seal": true,
+  "count_scope": "Unique search candidates; repeated stress, audit, neighbor and reproducibility runs are separate computations.",
+  "generated_outputs_are_real_account_pnl": false,
+  "grid_validation_rows": 13608,
+  "independent_ledger_checks_passed": true,
+  "objective_gate_evaluated": true,
+  "oos_folds": 108,
+  "oos_policies": 18,
+  "partitions": 6,
+  "source_code_matches_frozen_fingerprint": true,
+  "unique_nominal_trials": 1944,
+  "variants_per_partition": 324
+}

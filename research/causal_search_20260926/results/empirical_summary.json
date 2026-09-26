@@ -1,0 +1,78 @@
+{
+  "A": null,
+  "B": null,
+  "C": null,
+  "D": true,
+  "above_150": [],
+  "best_observed_cagr": 0.0903793422791328,
+  "best_observed_cagr_dd": 0.6686176212412791,
+  "best_observed_cagr_policy": "aggressive_2.5__calmar",
+  "frontier": [
+    {
+      "cagr": null,
+      "dd_limit": 0.2,
+      "max_drawdown": null,
+      "mode": "robust",
+      "policy": null,
+      "within_requested_mode_dd_limit": true
+    },
+    {
+      "cagr": null,
+      "dd_limit": 0.25,
+      "max_drawdown": null,
+      "mode": "robust",
+      "policy": null,
+      "within_requested_mode_dd_limit": true
+    },
+    {
+      "cagr": null,
+      "dd_limit": 0.3,
+      "max_drawdown": null,
+      "mode": "robust",
+      "policy": null,
+      "within_requested_mode_dd_limit": false
+    },
+    {
+      "cagr": null,
+      "dd_limit": 0.35,
+      "max_drawdown": null,
+      "mode": "robust",
+      "policy": null,
+      "within_requested_mode_dd_limit": false
+    },
+    {
+      "cagr": null,
+      "dd_limit": 0.2,
+      "max_drawdown": null,
+      "mode": "aggressive",
+      "policy": null,
+      "within_requested_mode_dd_limit": true
+    },
+    {
+      "cagr": null,
+      "dd_limit": 0.25,
+      "max_drawdown": null,
+      "mode": "aggressive",
+      "policy": null,
+      "within_requested_mode_dd_limit": true
+    },
+    {
+      "cagr": null,
+      "dd_limit": 0.3,
+      "max_drawdown": null,
+      "mode": "aggressive",
+      "policy": null,
+      "within_requested_mode_dd_limit": true
+    },
+    {
+      "cagr": null,
+      "dd_limit": 0.35,
+      "max_drawdown": null,
+      "mode": "aggressive",
+      "policy": null,
+      "within_requested_mode_dd_limit": true
+    }
+  ],
+  "new_search_or_parameter_selection": false,
+  "scope": "Only the frozen search space and 18 predeclared OOS policies; not a global attainable-return bound"
+}

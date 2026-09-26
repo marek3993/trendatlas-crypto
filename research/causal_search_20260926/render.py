@@ -16,11 +16,16 @@ def main():
     parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,default=HERE/'results')
     parser.add_argument('--report',type=Path,default=HERE/'RESULTS.md');args=parser.parse_args()
     out=args.out;result=json.loads((out/'results.json').read_text());table=pd.read_csv(out/'pareto_table.csv')
+    diagnostic_ids=list(dict.fromkeys([
+        max((p for p in result['policies'] if p['mode']=='robust'),key=lambda p:p['oos']['cagr'])['id'],
+        min(result['policies'],key=lambda p:p['oos']['max_drawdown'])['id'],
+        max(result['policies'],key=lambda p:p['oos']['cagr'])['id']]))
     plt.rcParams.update({'font.family':'DejaVu Sans','font.size':10,'axes.spines.top':False,'axes.spines.right':False})
     fig,axes=plt.subplots(2,1,figsize=(13,9),sharex=True,gridspec_kw={'height_ratios':[2,1]})
     selected=[]
     for name in [result['B_observed_best_robust'],result['C_observed_aggressive_pareto']]:
         if name and name not in selected:selected.append(name)
+    if not selected:selected=diagnostic_ids.copy()
     # Also show all partition growth policies to expose leverage tradeoffs.
     selected+= [p['id'] for p in result['policies'] if p['selector']=='growth' and p['id'] not in selected]
     for i,name in enumerate(selected):
@@ -30,7 +35,8 @@ def main():
         axes[1].plot(f.date,(eq/np.maximum.accumulate(np.r_[1,eq])[1:]-1)*100,linewidth=2 if i<2 else 1,alpha=1 if i<2 else .55)
     axes[0].set_yscale('log');axes[0].set_ylabel('Net model equity (start = 1)');axes[0].legend(fontsize=8,ncol=2)
     axes[1].set_ylabel('Daily-close drawdown (%)');axes[1].set_xlabel('Chronological OOS period')
-    axes[0].set_title('Walk-forward research: 2021-01-01 to 2026-09-25\nSpot execution and funding proxies; no historical sealed test',loc='left')
+    status='All 18 policies failed drawdown limits' if not result['B_observed_best_robust'] and not result['C_observed_aggressive_pareto'] else 'Conditional historical research'
+    axes[0].set_title('Walk-forward research: 2021-01-01 to 2026-09-25\n'+status+'; spot/cost proxies, no historical seal',loc='left')
     for ax in axes:ax.grid(alpha=.2)
     fig.tight_layout();fig.savefig(out/'equity_curves.png',dpi=160);fig.savefig(out/'equity_curves.svg');plt.close(fig)
     fig,(ax,listing)=plt.subplots(1,2,figsize=(15,7),gridspec_kw={'width_ratios':[1.2,1]})
@@ -79,10 +85,11 @@ def main():
         '**A: ziadny platne potvrdeny sealed vitaz. D: plati.** B/C su podmienene historicke proxy vysledky.','',
         'Forward nominacie boli zvolene z development dat pred vypoctom OOS metrik a su ine pole ako popisny OOS rebricek. OOS vitaz ich automaticky nenahradza.',
         'Zmrazene forward nominacie: `'+json.dumps({k:result['forward_nominees'][k] for k in ['A','B','C']})+'`.','',
-        '## Stresy najlepsich pozorovanych politik','',
+        '## Stresy pozorovanych referencii (pri nesplneni limitov su vyradene)','',
         '| Politika | Zakladny CAGR | 2x naklady | +1 realizovatelny bar | Bez najlepsieho dna | Bez top 3 obchodov | Koncentracia aktivum / obchod | Susedia |',
         '|---|---:|---:|---:|---:|---:|---:|---:|']
-    for name in [result['B_observed_best_robust'],result['C_observed_aggressive_pareto']]:
+    stress_ids=[name for name in [result['B_observed_best_robust'],result['C_observed_aggressive_pareto']] if name] or diagnostic_ids
+    for name in stress_ids:
         if name:
             m=next(p['oos'] for p in result['policies'] if p['id']==name)
             lines.append('| '+name+' | '+' | '.join(f'{100*m[k]:.2f}%' for k in ['cagr','double_cost_cagr','delayed_entry_cagr','without_best_day_cagr','without_top_three_trades_cagr'])+f' | {100*m["asset_log_growth_share"]:.1f}% / {100*m["trade_log_growth_share"]:.1f}% | {m["parameter_stability"]*6:.0f}/6 |')
@@ -103,6 +110,9 @@ def main():
         'python research/causal_search_20260926/paper.py --init',
         'python research/causal_search_20260926/paper.py --prices-dir path/to/new_daily_bars','```','',
         'inputs.zip a pre_registration.json su commitnute. Reprodukcia nepotrebuje ine worktree, siet ani produkcne outputs. --init nevytvori nove nominacie, ak forward seal uz existuje; overi jeho hashe.']
+    for name in ['equity_curves.svg','pareto_frontier.svg']:
+        path=out/name
+        path.write_text('\n'.join(line.rstrip() for line in path.read_text(encoding='utf-8').splitlines())+'\n',encoding='utf-8',newline='\n')
     args.report.write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
 
 

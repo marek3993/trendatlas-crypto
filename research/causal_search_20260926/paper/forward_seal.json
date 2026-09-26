@@ -1,0 +1,66 @@
+{
+  "candidates": {
+    "B": {
+      "cap": 1.25,
+      "id": "robust_1.25__calmar",
+      "mode": "robust",
+      "oos_numeric_high_return_passed": false,
+      "oos_risk_feasible": false,
+      "parameters": {
+        "catastrophic": 3,
+        "cooldown": 3,
+        "id": "m126_own200_v20_cat3",
+        "momentum": 126,
+        "name": "cat3",
+        "tp": 0,
+        "tp_atr": 2,
+        "trail": 0,
+        "trend": "own200",
+        "vol_target": 0.2
+      },
+      "status": "OOS_REJECTED_DIAGNOSTIC_ONLY"
+    },
+    "C": {
+      "cap": 3,
+      "id": "aggressive_3__calmar",
+      "mode": "aggressive",
+      "oos_numeric_high_return_passed": false,
+      "oos_risk_feasible": false,
+      "parameters": {
+        "catastrophic": 3,
+        "cooldown": 3,
+        "id": "m126_own200_v20_cat3",
+        "momentum": 126,
+        "name": "cat3",
+        "tp": 0,
+        "tp_atr": 2,
+        "trail": 0,
+        "trend": "own200",
+        "vol_target": 0.2
+      },
+      "status": "OOS_REJECTED_DIAGNOSTIC_ONLY"
+    }
+  },
+  "end": "2027-09-26",
+  "frozen_at_utc": "2026-09-26T17:34:16.130810+00:00",
+  "historical_oos_results_sha256": "aed99578c120c1550d516034c812c91073d6c580210ae6511712ad7e4d34c691",
+  "historical_seal": false,
+  "input_bundle_sha256": "cd7771575ab445485413b2473398c11c16b15fdc4e1f3a6bea244cddfbd06363",
+  "interim_valuation": "Each as-of snapshot is a hypothetical liquidation-value replay with terminal exit costs. It is not an append-only fill ledger; interim liquidation assumptions are not actual orders. Only the completed sealed interval is the final evaluation.",
+  "kind": "hypothetical_forward_sealed_spot_and_cost_proxy",
+  "nomination_sha256": "4114d6f8e57ead07accc47ca77155f45510074dc2ae2ac777bfd9a74a34b5745",
+  "note": "Nominees derive from the pre-OOS development selection. Observed OOS leaders do not replace them. No return claim before new bars; no real account PnL.",
+  "orders": false,
+  "production": false,
+  "refit_allowed": false,
+  "schema_version": 1,
+  "source_hashes": {
+    "research/causal_search_20260926/engine.py": "f1a7be15f0eb2ef9d96706ac53a3c0d2d1848a1eab550b58d6e3da46d6e5f811",
+    "research/causal_search_20260926/inputs.zip": "cd7771575ab445485413b2473398c11c16b15fdc4e1f3a6bea244cddfbd06363",
+    "research/causal_search_20260926/paper.py": "4752e0a54ee268cfa4e6abd6d8c91af946c6ae1e1ac1b65a0b637b7f589aeba2",
+    "research/causal_search_20260926/pre_registration.json": "792a96e03eccfb6cf4841f72660e9e17c0bbe3d227ff3b03cd03830f85ec43b4",
+    "source_of_truth/research_objectives_contract.json": "a642090da96c312dacdb4987ebdb7dbc466668c6b0588bd53c4f02c5d88ab9a4"
+  },
+  "start": "2026-09-27",
+  "status": "WAITING_FOR_FUTURE_DATA"
+}
