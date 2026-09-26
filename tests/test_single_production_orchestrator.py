@@ -375,6 +375,7 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         self.assertNotIn("LoadCredentialEncrypted=hyperliquid-agent-private-key", service)
         self.assertNotIn("validate_hyperliquid_production_signer.py --quiet", service)
         self.assertIn("Unit=mrv1-production.service", timer)
+        self.assertIn("Persistent=true", timer)
 
     def test_signer_failure_is_redacted_from_run_manifest(self):
         private_key = "0x" + ("cd" * 32)
@@ -492,7 +493,7 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         class PresentationFailure(FixtureOrchestrator):
             presentation_labels = []
             def run_script(self, script, *arguments, label):
-                if label in {"verify_app_freshness", "hyperliquid_real_performance_ledger"}:
+                if label == "hyperliquid_real_performance_ledger":
                     self.presentation_labels.append((label, self.manifest.get("execution_outcome")))
                     raise RuntimeError("presentation source unavailable")
                 super().run_script(script, *arguments, label=label)
@@ -500,9 +501,56 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
         with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
             result = runner.run()
         self.assertEqual(result["final_status"], "SUCCESS")
-        self.assertEqual(set(result["presentation_warnings"]), {"verify_app_freshness", "hyperliquid_real_performance_ledger"})
-        self.assertEqual(len(runner.presentation_labels), 2)
+        self.assertEqual(set(result["presentation_warnings"]), {"hyperliquid_real_performance_ledger"})
+        self.assertEqual(len(runner.presentation_labels), 1)
         self.assertTrue(all(outcome == "FILLED_AND_ALIGNED" for _, outcome in runner.presentation_labels))
+
+    def test_boot_catchup_advances_adapter_freshness_before_build_without_orders(self):
+        freshness_path = self.root / "outputs/app_freshness_verification/app_freshness_report.json"
+        write_json(freshness_path, {"status": "ok", "latest_closed_utc_date": "2026-08-30"})
+        seen = []
+
+        class ClosedDayAdvance(FixtureOrchestrator):
+            def run_script(self, script, *arguments, label):
+                seen.append(label)
+                if label == "verify_app_freshness":
+                    write_json(freshness_path, {"status": "ok", "latest_closed_utc_date": self.target_day})
+                if label == "build_production_core":
+                    freshness = json.loads(freshness_path.read_text(encoding="utf-8"))
+                    if freshness["latest_closed_utc_date"] != self.target_day:
+                        raise ValueError("durable BTC-persistence freshness closed_day must match trend_status")
+                super().run_script(script, *arguments, label=label)
+
+        adapter = FakeAdapter()
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()), patch(
+            "scripts.execution.run_trendatlas_production.authority_publish_helpers.publish_authority_refresh_failure",
+            return_value={"published": True},
+        ):
+            result = ClosedDayAdvance(self.root, no_submit=True, adapter=adapter).run()
+        self.assertEqual(result["final_status"], "PREFLIGHT_READY")
+        self.assertLess(seen.index("verify_app_freshness"), seen.index("build_production_core"))
+        self.assertEqual(result["heavy_refresh_steps"], "skipped")
+        self.assertEqual(result["live_order_chain"], "NOT_INVOKED")
+        self.assertFalse(result["real_order_sent"])
+        self.assertEqual(adapter.submits, [])
+
+    def test_invalid_direct_freshness_stops_before_core_and_execution(self):
+        seen = []
+
+        class InvalidFreshness(FixtureOrchestrator):
+            def run_script(self, script, *arguments, label):
+                seen.append(label)
+                if label == "verify_app_freshness":
+                    raise RuntimeError("direct strategy input is stale")
+                super().run_script(script, *arguments, label=label)
+
+        adapter = FakeAdapter()
+        result = InvalidFreshness(self.root, no_submit=True, adapter=adapter).run()
+        self.assertEqual(result["final_status"], "FAILED")
+        self.assertEqual(result["failure_stage"], "REFRESH_DATA")
+        self.assertNotIn("build_production_core", seen)
+        self.assertFalse(result["real_order_sent"])
+        self.assertEqual(adapter.submits, [])
 
     def test_owner_readback_failure_preserves_terminal_batch_results_and_marks_wallet_unknown(self):
         class ReadbackFailure(FixtureOrchestrator):

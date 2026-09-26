@@ -65,6 +65,13 @@
     "deterministic": "terminal_failure_no_15_minute_restart_loop",
     "next_scheduled_run": "fresh_validation_and_account_recovery_remain_enabled"
   },
+  "outage_recovery": {
+    "scheduler": "mrv1-production.timer_Persistent=true_single_canonical_service",
+    "missed_schedule": "on_boot_reconcile_current_closed_day_only_never_replay_historical_orders",
+    "dependency_order": "refresh_direct_inputs_then_verify_app_freshness_then_materialize_dependencies_then_build_Production_Core",
+    "freshness_report": "adapter_consumed_direct_input_not_deferred_presentation; regenerate_from_current_sources_before_build_never_edit_or_bypass",
+    "operator_handoff": "retain_service_no_submit_override_until_operator_live_activation"
+  },
   "health": {
     "execution_dependencies": ["validated_Production_Core", "direct_strategy_inputs", "fresh_account", "valid_signer", "fresh_exchange_metadata"],
     "presentation_and_research": "degrade_only_dependent_capability_never_trade_permission"

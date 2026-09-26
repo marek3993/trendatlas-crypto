@@ -161,3 +161,9 @@ If step 3 invalidates the approved fresh runtime bundle, restore the approved st
 - Market support comes from current `metaAndAssetCtxs`; deployment verifies assets derived from production data/adapter, without a second asset list.
 - Preserve terminal execution evidence across dashboard/publish failures. No retry may replay a verified fill.
 - Agent-assisted verification does not authorize the assistant to execute financial trades. Stage/deploy with a service `--no-submit` override until the operator chooses live activation.
+
+## Power outage recovery (2026-09-26)
+- Keep `mrv1-production.timer` enabled with `Persistent=true`; a missed calendar event starts the same canonical service after boot. Reconcile only the current closed day, never replay historical targets.
+- `verify_app_freshness.py` produces a direct input consumed by the active Production Core adapter. Run it after fast source refresh and before dependency materialization / Production Core build. It is not a deferred presentation step. Preserve the adapter's date and validity checks; never manually advance its freshness report.
+- The real-performance ledger remains a deferred presentation dependency. Its unavailability must not prevent valid execution.
+- Preserve runtime data and journals when integrating code with main. Leave the persistent service no-submit override installed until the operator performs live activation.

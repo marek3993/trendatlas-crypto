@@ -86,7 +86,9 @@ STAGE_NAMES = (
 )
 FINAL_EXECUTION_SUCCESS = {"FILLED_AND_ALIGNED", "NO_ACTION"}
 STAYING_CASH_RESULTS = {"EXITED_ENTRY_FAILED_STAYING_CASH", "ENTRY_FAILED_STAYING_CASH"}
-DEFERRED_PRESENTATION_STEPS = {"verify_app_freshness", "hyperliquid_real_performance_ledger"}
+# Freshness is an input to the strategy adapter, so it must advance with the
+# refreshed closed day before Production Core is built (including boot catch-up).
+DEFERRED_PRESENTATION_STEPS = {"hyperliquid_real_performance_ledger"}
 PRECHECK_EXECUTION_EXCLUSIONS = {
     "production_current_strategy_snapshot",
     "production_current_strategy_timeseries",
