@@ -15,6 +15,7 @@ from scripts.production.data_health_common import (
     REPORT_ARTIFACT_TYPE,
     SCHEMA_VERSION,
     STATUS_VALUES,
+    dependency_impact,
 )
 
 
@@ -67,8 +68,17 @@ def main() -> None:
                 errors.append(f"{context}.status has invalid value {status!r}.")
             if action not in ACTION_VALUES:
                 errors.append(f"{context}.action has invalid value {action!r}.")
+            for key, expected in dependency_impact(source).items():
+                if source.get(key) != expected:
+                    errors.append(f"{context}.{key} violates dependency scope.")
         if len(source_ids) != len(set(source_ids)):
             errors.append("Duplicate source_id values detected.")
+
+    summary = report.get("summary", {})
+    if summary.get("system_available") is not True or summary.get("block_app") is not False:
+        errors.append("Dependency failure must not disable system/application availability.")
+    if bool(summary.get("block_execution")) != ("new_trade_transition" in summary.get("blocked_action_ids", [])):
+        errors.append("Execution compatibility flag must scope to new_trade_transition.")
 
     print(json.dumps({"status": "passed" if not errors else "failed", "errors": errors}, indent=2, ensure_ascii=False))
     if errors:

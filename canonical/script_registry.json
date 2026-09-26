@@ -1,7 +1,7 @@
 {
   "version": 1,
   "purpose": "Central script index for cross-chat code navigation. This is not source_of_truth and not a decision file.",
-  "last_updated_note": "Update when a script is added, deprecated, renamed, or materially changes outputs.",
+  "last_updated_note": "2026-09-26: route identity and causal performance repair staged for canonical no-submit verification.",
   "scripts": [
     {
       "script_path": "automation/tools/bootstrap_automation.py",
@@ -274,8 +274,8 @@
       "writes_source_of_truth": false,
       "notes": "Read-only validator for the two-file authority consumer contract."
     },
-      {
-        "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
+    {
+      "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
       "layer": "execution_data",
       "status": "active",
       "purpose": "Fetches Hyperliquid account state in read-only mode and writes snapshot/quality/manifest artifacts.",
@@ -290,21 +290,21 @@
       "notes": "No order placement. Unified-account observability uses spot stable total as total equity, native spot hold for free collateral, and publishes unavailable instead of fabricating missing free/withdrawable values."
     },
     {
-        "script_path": "scripts/execution/build_hyperliquid_real_performance_ledger.py",
-        "layer": "execution_data",
-        "status": "active",
-        "purpose": "Builds the canonical exchange-native, cash-flow-adjusted real-account performance ledger from read-only Hyperliquid data.",
-        "primary_outputs": [
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.quality.json",
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.manifest.json"
-        ],
-        "output_type": "real_account_performance_ledger",
-        "decision_relevance": "support_only",
-        "writes_source_of_truth": false,
-        "notes": "Read-only accounting only. Deposits and withdrawals are never PnL."
-      },
-      {
+      "script_path": "scripts/execution/build_hyperliquid_real_performance_ledger.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Builds the canonical exchange-native, cash-flow-adjusted real-account performance ledger from read-only Hyperliquid data.",
+      "primary_outputs": [
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.quality.json",
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.manifest.json"
+      ],
+      "output_type": "real_account_performance_ledger",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only accounting only. Deposits and withdrawals are never PnL."
+    },
+    {
       "script_path": "scripts/execution/render_execution_app_status.py",
       "layer": "execution_data",
       "status": "active",
@@ -1121,6 +1121,34 @@
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
       "notes": "Optional operator helper only. The official refresh entrypoint remains scripts/daily_refresh_app_pipeline.py."
+    },
+    {
+      "script_path": "scripts/production/route_identity.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Resolve CASH/BTC/BASE/CANDIDATE economic identity without candidate label substitution.",
+      "primary_outputs": [
+        "outputs/production/current_strategy_snapshot.json",
+        "outputs/production/current_strategy_timeseries.csv"
+      ],
+      "output_type": "production_core",
+      "decision_relevance": "current_strategy_target_and_model_performance",
+      "writes_source_of_truth": false,
+      "notes": "Review branch only; live activation is not authorized by code availability."
+    },
+    {
+      "script_path": "scripts/production/strategy_adapters/causal_route_adapter.py",
+      "layer": "production_core",
+      "status": "active",
+      "purpose": "Derive current targets from fresh pinned strategy routes; calculate model performance only from causal availability-bound intervals.",
+      "primary_outputs": [
+        "outputs/production/current_strategy_snapshot.json",
+        "outputs/production/current_strategy_timeseries.csv"
+      ],
+      "output_type": "production_core",
+      "decision_relevance": "current_strategy_target_and_model_performance",
+      "writes_source_of_truth": false,
+      "notes": "Review branch only; live activation is not authorized by code availability."
     }
   ]
 }

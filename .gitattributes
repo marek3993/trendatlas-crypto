@@ -2,3 +2,10 @@
 /.gitattributes text eol=lf
 /scripts/production/causal_performance.py text eol=lf
 /source_of_truth/causal_model_performance_contract.json text eol=lf
+
+# Byte-stable code shipped for Pi route review.
+/scripts/**/*.py text eol=lf
+/web/**/*.ts text eol=lf
+/web/*.json text eol=lf
+/source_of_truth/production_route_identity_contract.json text eol=lf
+/source_of_truth/production_asset_universe_contract.json text eol=lf

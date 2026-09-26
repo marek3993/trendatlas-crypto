@@ -206,9 +206,9 @@
     },
     {
       "output_path": "outputs/execution/read_only/",
-        "generated_by": [
-          "scripts/execution/hyperliquid_read_only_snapshot.py",
-          "scripts/execution/build_hyperliquid_real_performance_ledger.py"
+      "generated_by": [
+        "scripts/execution/hyperliquid_read_only_snapshot.py",
+        "scripts/execution/build_hyperliquid_real_performance_ledger.py"
       ],
       "layer": "execution_data",
       "status": "active",
@@ -661,7 +661,7 @@
       "output_kind": "production_truth_snapshot",
       "decision_relevance": "decision_relevant",
       "official_truth": false,
-      "notes": "Single Production Core v1 truth artifact for the current strategy contract. Built from canonical strategy exports through the production adapter or replaced via a validated staged-candidate promotion cutover."
+      "notes": "Route identity contract requires concrete economic asset and availability lineage. Current target and historical executed holdings carry separate signal lineage. Model performance uses only causal interval prices/costs; never real account PnL."
     },
     {
       "output_path": "outputs/api/v1/strategy_catalog.json",
@@ -687,7 +687,7 @@
       "output_kind": "production_diagnostic_timeseries",
       "decision_relevance": "decision_relevant",
       "official_truth": false,
-      "notes": "Clean Production Core v1 timeseries for research, monitoring, and future strategy comparison."
+      "notes": "Route identity contract requires concrete economic asset and availability lineage. Current target and historical executed holdings carry separate signal lineage. Model performance uses only causal interval prices/costs; never real account PnL."
     },
     {
       "output_path": "outputs/production/current_strategy_diagnostics.json",

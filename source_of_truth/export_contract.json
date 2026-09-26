@@ -29,17 +29,19 @@
                                            "execution_read_priority":  "production_core_v1_first"
                                        },
     "production_core_semantics":  {
-                                      "candidate_asset":  "model_candidate_not_automatic_live_exposure",
-                                      "selected_asset":  "selected_model_candidate",
-                                      "actual_held_asset":  "current_authorized_asset",
-                                      "authorized_tradable_asset":  "current_authorized_asset",
-                                      "effective_market_exposure":  "current_authorized_market_exposure",
-                                      "model_candidate_exposure":  "candidate_exposure_if_permission_allows",
-                                      "trend_permission_active":  "gates_market_exposure",
-                                      "execution_target_asset":  "authorized_execution_target_asset",
-                                      "execution_target_exposure":  "authorized_execution_target_exposure",
-                                      "candidate_btc_does_not_automatically_mean_live_market_exposure":  true
-                                  },
+        "candidate_asset": "weekly_candidate_information_only_unless_candidate_trigger_active",
+        "selected_asset": "resolved_strategy_target_not_wallet_exposure",
+        "actual_held_asset": "current_authorized_asset",
+        "authorized_tradable_asset": "current_authorized_asset",
+        "effective_market_exposure": "current_authorized_market_exposure",
+        "model_candidate_exposure": "resolved_route_target_exposure_not_inactive_weekly_candidate",
+        "trend_permission_active": "gates_market_exposure",
+        "execution_target_asset": "authorized_execution_target_asset",
+        "execution_target_exposure": "authorized_execution_target_exposure",
+        "candidate_btc_does_not_automatically_mean_live_market_exposure": true,
+        "resolved_execution_asset": "route_resolved_concrete_model_target_not_real_wallet_position",
+        "signal_available_at": "actual_current_build_availability_after_closed_data_day"
+    },
     "data_health_guard_contract":  {
                                        "status":  "active",
                                        "role":  "data_source_availability_guard",
@@ -91,45 +93,58 @@
                                                          }
                                    },
     "production_execution_contract":  {
-                                            "canonical_entrypoint":  "scripts/execution/run_trendatlas_production.py",
-                                            "run_manifest_path":  "outputs/execution/production_runs/latest_production_run.json",
-                                            "journal_directory":  "outputs/execution/execution_journal/",
-                                            "sizing_mode":  "equity_target_exposure",
-                                            "target_notional_formula":  "fresh_account_equity_usd * validated_strategy_target_exposure",
-                                            "fixed_usd_clipping_forbidden":  true,
-                                            "precision_limited_residual_rule":  "same_asset_residual_within_post_trade_tolerance_and_below_exchange_minimum_is_no_action",
-                                            "transition_actions":  [
-                                                                       "NO_ACTION",
-                                                                       "INCREASE",
-                                                                       "REDUCE",
-                                                                       "EXIT",
-                                                                       "ROTATE"
-                                                                   ],
-                                            "submission_idempotency":  "journal_PREPARED_before_request_and_deterministic_128_bit_cloid",
-                                            "uncertain_execution_rule":  "exchange_cloid_lookup_and_account_readback_before_residual_decision",
-                                            "authority_success_rule":  "required_execution_and_post_trade_verification_must_finish_first",
-                                            "scheduler_retry_rule":  "the_single_canonical_systemd_service_restarts_on_failure_after_15_minutes_and_never_restarts_after_success",
-                                            "finalization_publish_order":  "execution_and_post_trade_verification_then_finalize_run_manifest_then_materialize_dashboard_runtime_then_authority_publish",
-                                            "public_terminal_state_rule":  "a_completed_production_run_must_never_be_materialized_or_published_with_final_status_RUNNING",
-                                            "public_live_order_sent_rule":  "dashboard_public_status.execution.live_order_sent_must_reflect_finalized_production_run_real_order_sent_and_must_never_be_false_when_verified_run_evidence_records_a_submission",
-                                            "manual_app_live_execution":  "intentionally_disabled_use_canonical_systemd_production_orchestrator",
-                                            "production_signer":  {
-                                                                        "account_address":  "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
-                                                                        "agent_name":  "TrendAtlasProd",
-                                                                        "credential_name":  "hyperliquid-agent-private-key",
-                                                                        "credential_mechanism":  "systemd_LoadCredentialEncrypted_host_key",
-                                                                        "account_query_address_rule":  "always_use_configured_master_account_not_agent_address",
-                                                                        "safe_preflight_rule":  "derive_and_validate_named_agent_authorization_without_exchange_mutation",
-                                                                        "secret_output_rule":  "never_emit_signer_secret_to_logs_artifacts_dashboards_or_manifests"
-                                                                    },
-                                            "dashboard_sections":  [
-                                                                        "model_target",
-                                                                        "real_account",
-                                                                        "execution_plan",
-                                                                        "last_order",
-                                                                        "post_trade_verified_state"
-                                                                    ]
-                                        },
+        "canonical_entrypoint": "scripts/execution/run_trendatlas_production.py",
+        "run_manifest_path": "outputs/execution/production_runs/latest_production_run.json",
+        "journal_directory": "outputs/execution/execution_journal/",
+        "sizing_mode": "equity_target_exposure",
+        "target_notional_formula": "fresh_account_equity_usd * validated_strategy_target_exposure",
+        "fixed_usd_clipping_forbidden": true,
+        "precision_limited_residual_rule": "same_asset_residual_within_post_trade_tolerance_and_below_exchange_minimum_is_no_action",
+        "transition_actions": [
+            "NO_ACTION",
+            "INCREASE",
+            "REDUCE",
+            "EXIT",
+            "ROTATE"
+        ],
+        "submission_idempotency": "journal_PREPARED_before_request_and_deterministic_128_bit_cloid",
+        "uncertain_execution_rule": "exchange_cloid_lookup_and_account_readback_before_residual_decision",
+        "authority_success_rule": "required_execution_and_post_trade_verification_must_finish_first",
+        "scheduler_retry_rule": "bounded_transient_failures_retry_after_15_minutes_deterministic_exit_2_does_not_restart_next_daily_timer_remains_enabled",
+        "finalization_publish_order": "execution_and_post_trade_verification_then_finalize_run_manifest_then_materialize_dashboard_runtime_then_authority_publish",
+        "public_terminal_state_rule": "a_completed_production_run_must_never_be_materialized_or_published_with_final_status_RUNNING",
+        "public_live_order_sent_rule": "dashboard_public_status.execution.live_order_sent_must_reflect_finalized_production_run_real_order_sent_and_must_never_be_false_when_verified_run_evidence_records_a_submission",
+        "manual_app_live_execution": "intentionally_disabled_use_canonical_systemd_production_orchestrator",
+        "production_signer": {
+            "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+            "agent_name": "TrendAtlasProd",
+            "credential_name": "hyperliquid-agent-private-key",
+            "credential_mechanism": "systemd_LoadCredentialEncrypted_host_key",
+            "account_query_address_rule": "always_use_configured_master_account_not_agent_address",
+            "safe_preflight_rule": "derive_and_validate_named_agent_authorization_without_exchange_mutation",
+            "secret_output_rule": "never_emit_signer_secret_to_logs_artifacts_dashboards_or_manifests"
+        },
+        "approved_multi_account_backend": {
+            "status": "pending_pi_preflight_and_activation",
+            "single_scheduler_and_lock": true,
+            "canonical_entrypoint": "scripts/execution/run_trendatlas_production.py",
+            "execution_runner": "web/scripts/run-multi-account-production-cycle.ts",
+            "target_binding": "current_run_id_plus_current_signal_id_plus_production_intent_gate_fingerprints",
+            "owner_account_must_be_uniquely_eligible": true,
+            "all_account_preflight_before_first_write": true,
+            "production_batch_concurrency": 1,
+            "unsafe_result_action": "isolate_account_continue_others_publish_owner_outcome",
+            "legacy_python_order_adapter_when_active": "must_not_be_instantiated",
+            "vercel_exchange_writes": "disabled"
+        },
+        "dashboard_sections": [
+            "model_target",
+            "real_account",
+            "execution_plan",
+            "last_order",
+            "post_trade_verified_state"
+        ]
+    },
     "account_observability_contract":  {
                                            "current":  {
                                                            "enabled":  true,
@@ -558,5 +573,23 @@
                                                                               "outputs/execution/runtime_health/*",
                                                                               "outputs/execution/live_status/*"
                                                                           ]
-                                   }
+                                   },
+    "production_route_identity_contract": {
+        "path": "source_of_truth/production_route_identity_contract.json",
+        "required_fields": [
+            "route_type",
+            "base_economic_asset",
+            "candidate_asset",
+            "candidate_trigger_active",
+            "resolved_execution_asset",
+            "resolution_reason",
+            "signal_available_at"
+        ],
+        "no_inactive_candidate_override": true,
+        "base_is_not_tradable_symbol": true,
+        "execution_target_source": "resolved_execution_asset",
+        "performance_source": "causal_execution_interval_ledger",
+        "activation_scope": "code_review_and_no_submit_only"
+    },
+    "production_execution_source_contract": "source_of_truth/production_execution_contract.json"
 }

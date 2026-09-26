@@ -630,7 +630,12 @@
       "owner": "AUTOMATION",
       "artifact_type": "production_run_manifest",
       "truth_domain": "execution_runtime",
-      "read_scope": ["execution", "dashboard", "authority", "audit"],
+      "read_scope": [
+        "execution",
+        "dashboard",
+        "authority",
+        "audit"
+      ],
       "write_mode": "single_production_orchestrator_only"
     },
     "production_execution_journal": {
@@ -639,7 +644,11 @@
       "owner": "AUTOMATION",
       "artifact_type": "execution_journal",
       "truth_domain": "execution_runtime",
-      "read_scope": ["execution", "recovery", "audit"],
+      "read_scope": [
+        "execution",
+        "recovery",
+        "audit"
+      ],
       "write_mode": "durable_pre_submit_journal_only"
     },
     "phase68i_dynamic_ladder_candidate_summary": {
@@ -669,6 +678,48 @@
         ],
         "app_must_not_infer": true
       }
+    },
+    "production_route_identity_contract": {
+      "canonical": "source_of_truth/production_route_identity_contract.json",
+      "legacy_aliases": [],
+      "owner": "SSOT",
+      "artifact_type": "contract",
+      "truth_domain": "production_contract",
+      "read_scope": [
+        "production",
+        "execution",
+        "dashboard",
+        "validation"
+      ],
+      "write_mode": "reviewed_contract_first_code_change"
+    },
+    "production_asset_universe_contract": {
+      "canonical": "source_of_truth/production_asset_universe_contract.json",
+      "legacy_aliases": [],
+      "owner": "SSOT",
+      "artifact_type": "contract",
+      "truth_domain": "production_contract",
+      "read_scope": [
+        "production",
+        "execution",
+        "dashboard",
+        "validation"
+      ],
+      "write_mode": "reviewed_contract_first_code_change"
+    },
+    "production_execution_contract": {
+      "canonical": "source_of_truth/production_execution_contract.json",
+      "legacy_aliases": [],
+      "owner": "SSOT",
+      "artifact_type": "contract",
+      "truth_domain": "production_contract",
+      "read_scope": [
+        "production",
+        "execution",
+        "dashboard",
+        "validation"
+      ],
+      "write_mode": "reviewed_contract_first_code_change"
     }
   }
 }

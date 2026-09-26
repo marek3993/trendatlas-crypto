@@ -26,6 +26,7 @@ from scripts.execution.hyperliquid_live_canary import (  # noqa: E402
     fetch_all_mids,
     fetch_extra_agents,
     fetch_meta,
+    fetch_meta_and_asset_contexts,
     fetch_open_orders,
     fetch_order_status,
     fetch_spot_user_state,
@@ -84,14 +85,15 @@ DEFAULT_EXCHANGE_MARGIN_MODE = "cross"
 
 def load_live_market_context() -> tuple[dict[str, float], dict[str, int]]:
     """Read current mids and precision without loading signer credentials."""
-    meta = fetch_meta()
+    meta, contexts = fetch_meta_and_asset_contexts()
     market_map = build_market_map(meta)
-    raw_mids = fetch_all_mids()
     mids: dict[str, float] = {}
     precision: dict[str, int] = {}
     for asset, entry in market_map.items():
-        if asset in raw_mids:
-            mids[asset] = float(str(raw_mids[asset]))
+        context = contexts[entry["asset"]]
+        value = context.get("midPx") or context.get("markPx")
+        if value is not None:
+            mids[asset] = float(str(value))
         precision[asset] = int(entry["sz_decimals"])
     return mids, precision
 
@@ -157,10 +159,12 @@ class HyperliquidProductionExchangeAdapter:
         self._ensure_signer()
         assert self.crypto is not None and self.account_setup is not None
         asset = str(step["asset"]).upper()
-        market_entry = self.market_map[asset]
+        market_entry = self.market_map.get(asset)
+        if market_entry is None or (market_entry["raw"].get("isDelisted") and not step["reduce_only"]):
+            return {"acknowledged": False, "submit_state": "error", "error": f"market_unavailable:{asset}", "cloid": step["cloid"]}
         requested_leverage = int(step.get("exchange_leverage") or 1)
         market_max_leverage = int(market_entry.get("raw", {}).get("maxLeverage") or 0)
-        if requested_leverage < 1 or market_max_leverage < requested_leverage:
+        if not step["reduce_only"] and (requested_leverage < 1 or market_max_leverage < 1):
             return {
                 "acknowledged": False,
                 "submit_state": "error",
@@ -171,6 +175,9 @@ class HyperliquidProductionExchangeAdapter:
                 "cloid": step["cloid"],
             }
         if not bool(step["reduce_only"]):
+            # A preferred margin setting cannot reject a supported strategy
+            # target. The exchange remains the authority for available leverage.
+            requested_leverage = min(requested_leverage, market_max_leverage)
             leverage_result = submit_signed_action(
                 crypto=self.crypto,
                 account_setup=self.account_setup,
@@ -214,6 +221,18 @@ class HyperliquidProductionExchangeAdapter:
             "cloid": step["cloid"],
             "exchange_leverage": requested_leverage,
         }
+
+    def cancel_order(self, order: Any) -> dict[str, Any]:
+        self._ensure_signer()
+        assert self.crypto is not None and self.account_setup is not None
+        asset = normalize_asset(order.get("asset") or order.get("coin"))
+        entry = self.market_map.get(asset)
+        if entry is None or order.get("oid") is None:
+            raise ValueError("Conflicting order lacks current exchange identity")
+        signed = submit_signed_action(crypto=self.crypto, account_setup=self.account_setup,
+            action={"type": "cancel", "cancels": [{"a": int(entry["asset"]), "o": int(order["oid"])}]},
+            expires_after_ms=self.expires_after_ms)
+        return normalize_submit_response(signed["response"])
 
 
 def utc_now_iso() -> str:
@@ -318,11 +337,7 @@ def first_nonempty(mapping: dict[str, Any], keys: list[str]) -> str | None:
 def ensure_manual_execution(args: argparse.Namespace) -> None:
     if not args.execute_live:
         return
-    if args.manual_confirm != MANUAL_CONFIRM_TOKEN:
-        fail(
-            "Manual confirmation missing. "
-            f"Pass --manual-confirm {MANUAL_CONFIRM_TOKEN} together with --execute-live."
-        )
+    fail("Standalone live execution is disabled; use run_trendatlas_production.py through the canonical production service.")
 
 
 def build_source_paths(args: argparse.Namespace) -> dict[str, str]:
@@ -921,271 +936,40 @@ def build_leverage_step(
 
 
 def build_execution_plan(
-    *,
-    intent: dict[str, Any],
-    snapshot: dict[str, Any],
-    market_map: dict[str, dict[str, Any]],
-    mids: dict[str, Any],
-    policy_cfg: dict[str, Any],
-    gate: dict[str, Any],
-    recon: dict[str, Any],
-    leverage_ctx: dict[str, Any],
-    mode_cfg: dict[str, Any],
-    slippage: float,
-    execute_live: bool,
+    *, intent: dict[str, Any], snapshot: dict[str, Any], market_map: dict[str, dict[str, Any]],
+    mids: dict[str, Any], policy_cfg: dict[str, Any], gate: dict[str, Any], recon: dict[str, Any],
+    leverage_ctx: dict[str, Any], mode_cfg: dict[str, Any], slippage: float, execute_live: bool,
 ) -> dict[str, Any]:
-    signal_id = str(intent.get("signal_id", "")).strip()
-    target_asset = normalize_asset(intent.get("target_asset"))
-    target_regime = str(intent.get("target_regime", "")).strip()
-
-    allowed_assets = {
-        normalize_asset(item)
-        for item in policy_cfg.get("allowed_assets", [])
-        if str(item).strip()
-    }
-    allowed_approval_gate_statuses = {
-        str(item).strip()
-        for item in policy_cfg.get("allowed_approval_gate_statuses", [])
-        if str(item).strip()
-    }
-    manual_approval_required = bool(policy_cfg.get("manual_approval_required", True))
-    require_kill_switch_off = bool(policy_cfg.get("require_kill_switch_off", True))
-    max_order_notional_usd = float(policy_cfg.get("max_order_notional_usd", 0.0))
-
-    current_state = derive_current_state(snapshot)
-    current_asset = current_state["normalized_state"]
-    current_position = None if current_asset in {"CASH", "MULTI_ASSET"} else current_state["active_positions"][0]
-    current_position_size = (
-        0.0 if current_position is None else float(current_position.get("size", 0.0))
-    )
-
-    gate_status = str(gate.get("status", "")).strip()
-    approval_gate_status = str(gate.get("approval_gate_status", "")).strip()
-    recon_open_orders_count = int(recon.get("open_orders_count", 0))
-    snapshot_open_orders_count = extract_snapshot_open_orders_count(snapshot)
-
-    checks = {
-        "signal_present": bool(signal_id),
-        "target_asset_present": bool(target_asset),
-        "target_asset_allowed": target_asset in allowed_assets if target_asset else False,
-        "gate_status": gate_status,
-        "gate_ready": gate_status == "ready_if_enabled",
-        "approval_gate_status": approval_gate_status,
-        "approval_status_allowed": approval_gate_status in allowed_approval_gate_statuses,
-        "mode": str(mode_cfg.get("mode", "")).strip(),
-        "trading_enabled": bool(mode_cfg.get("trading_enabled", False)),
-        "kill_switch": bool(mode_cfg.get("kill_switch", True)),
-        "allow_live_orders": bool(policy_cfg.get("allow_live_orders", False)),
-        "manual_approval_required": manual_approval_required,
-        "require_kill_switch_off": require_kill_switch_off,
-        "intent_stale_signal": bool(intent.get("stale_signal", False)),
-        "duplicate_order_risk": bool(intent.get("duplicate_order_risk", False)),
-        "snapshot_open_orders_count": snapshot_open_orders_count,
-        "upstream_reconciliation_open_orders_count": recon_open_orders_count,
-        "current_state": current_asset,
-        "multi_position": bool(current_state["multi_position"]),
-        "target_regime": target_regime,
-        "max_order_notional_usd": max_order_notional_usd,
-        "strategy_target_leverage": leverage_ctx.get("strategy_target_leverage"),
-        "exchange_leverage_target": leverage_ctx.get("exchange_leverage_target"),
-    }
-
-    block_reasons: list[str] = []
-    if not checks["signal_present"]:
-        block_reasons.append("missing_signal_id")
-    if not checks["target_asset_present"]:
-        block_reasons.append("missing_target_asset")
-    if not checks["target_asset_allowed"]:
-        block_reasons.append("target_asset_not_allowlisted")
-    if not checks["gate_ready"]:
-        block_reasons.append(f"gate_status={gate_status}")
-    if not checks["approval_status_allowed"]:
-        block_reasons.append(f"approval_gate_status={approval_gate_status}")
-    if not checks["trading_enabled"]:
-        block_reasons.append("execution_mode_trading_disabled")
-    if not checks["allow_live_orders"]:
-        block_reasons.append("allow_live_orders=false")
-    if checks["require_kill_switch_off"] and checks["kill_switch"]:
-        block_reasons.append("kill_switch_enabled")
-    if checks["manual_approval_required"]:
-        block_reasons.append("manual_approval_required")
-    if checks["intent_stale_signal"]:
-        block_reasons.append("stale_signal")
-    if checks["duplicate_order_risk"]:
-        block_reasons.append("duplicate_order_risk")
-    if snapshot_open_orders_count > 0:
-        block_reasons.append("open_orders_present_before_first_submit")
-    if recon_open_orders_count > 0:
-        block_reasons.append("upstream_reconciliation_reports_open_orders")
-    if current_state["multi_position"]:
-        block_reasons.append("multi_asset_live_exposure_unsupported")
-    if current_asset == "MULTI_ASSET":
-        block_reasons.append("ambiguous_current_live_state")
-
-    strategy_target_leverage = leverage_ctx.get("strategy_target_leverage")
-    exchange_leverage_target = leverage_ctx.get("exchange_leverage_target")
-    exchange_margin_mode = leverage_ctx.get("exchange_margin_mode")
-    exchange_leverage_blocker = leverage_ctx.get("exchange_leverage_blocker")
-
-    if target_asset != "CASH" and not leverage_ctx.get("resolved", False):
-        block_reasons.append(str(exchange_leverage_blocker or "leverage_resolution_failed"))
-
-    if target_asset != "CASH" and strategy_target_leverage is None:
-        block_reasons.append("missing_strategy_target_leverage")
-
-    total_trading_equity_usd = compute_total_trading_equity_usd(snapshot)
-    if target_asset != "CASH" and (total_trading_equity_usd is None or total_trading_equity_usd <= 0):
-        block_reasons.append("missing_positive_total_trading_equity_usd")
-
-    current_target_position = extract_position(snapshot, target_asset)
-    current_target_size = (
-        0.0 if current_target_position is None else float(current_target_position.get("size", 0.0))
-    )
-    current_target_leverage = extract_current_leverage(current_target_position)
-
-    steps: list[dict[str, Any]] = []
-    target_size = None
-    target_notional_usd = None
-    target_limit_price = None
-
-    if not block_reasons:
-        if target_asset == "CASH":
-            if current_asset != "CASH":
-                close_coin = normalize_asset(current_position.get("coin")) if current_position else ""
-                close_side = "sell" if current_position_size > 0 else "buy"
-                close_size = abs(current_position_size)
-                steps.append(
-                    build_order_step(
-                        coin=close_coin,
-                        side=close_side,
-                        order_size=close_size,
-                        reduce_only=True,
-                        market_map=market_map,
-                        mids=mids,
-                        slippage=slippage,
-                        reason="close_to_cash",
-                        desired_notional_usd=None,
-                    )
-                )
-        else:
-            if exchange_leverage_target is None:
-                block_reasons.append(str(exchange_leverage_blocker))
-            else:
-                if exchange_margin_mode is None:
-                    if current_target_leverage.get("margin_mode") in {"cross", "isolated"}:
-                        exchange_margin_mode = str(current_target_leverage["margin_mode"])
-                    else:
-                        exchange_margin_mode = DEFAULT_EXCHANGE_MARGIN_MODE
-
-                target_notional_usd = float(total_trading_equity_usd or 0.0) * float(strategy_target_leverage or 0.0)
-                if target_notional_usd <= 0:
-                    block_reasons.append("non_positive_target_notional_usd")
-                elif max_order_notional_usd <= 0:
-                    block_reasons.append("max_order_notional_not_enabled")
-                elif target_notional_usd > max_order_notional_usd:
-                    block_reasons.append(
-                        f"target_notional_exceeds_policy_max::{target_notional_usd:.6f}>{max_order_notional_usd:.6f}"
-                    )
-                else:
-                    market_entry = market_map.get(target_asset)
-                    mid_price = to_float(mids.get(target_asset))
-                    if market_entry is None:
-                        block_reasons.append(f"target_asset_not_in_hyperliquid_meta::{target_asset}")
-                    elif mid_price is None or mid_price <= 0:
-                        block_reasons.append(f"missing_mid_price::{target_asset}")
-                    else:
-                        target_limit_price = compute_limit_price(
-                            mid_price=mid_price,
-                            is_buy=True,
-                            slippage=slippage,
-                            sz_decimals=int(market_entry["sz_decimals"]),
-                        )
-                        target_size = compute_order_size(
-                            notional_usd=target_notional_usd,
-                            limit_price=target_limit_price,
-                            sz_decimals=int(market_entry["sz_decimals"]),
-                        )
-
-                        if current_asset not in {"CASH", target_asset}:
-                            close_coin = normalize_asset(current_position.get("coin")) if current_position else ""
-                            close_side = "sell" if current_position_size > 0 else "buy"
-                            close_size = abs(current_position_size)
-                            steps.append(
-                                build_order_step(
-                                    coin=close_coin,
-                                    side=close_side,
-                                    order_size=close_size,
-                                    reduce_only=True,
-                                    market_map=market_map,
-                                    mids=mids,
-                                    slippage=slippage,
-                                    reason="rotate_close_current_asset",
-                                    desired_notional_usd=None,
-                                )
-                            )
-
-                        leverage_needs_update = False
-                        if current_target_leverage.get("value") is None:
-                            leverage_needs_update = True
-                        elif abs(float(current_target_leverage["value"]) - float(exchange_leverage_target)) > 1e-9:
-                            leverage_needs_update = True
-
-                        if leverage_needs_update:
-                            steps.append(
-                                build_leverage_step(
-                                    coin=target_asset,
-                                    exchange_leverage_target=int(exchange_leverage_target),
-                                    exchange_margin_mode=str(exchange_margin_mode),
-                                    reason="target_exchange_leverage_change_required",
-                                    market_map=market_map,
-                                )
-                            )
-
-                        delta_size = target_size - current_target_size
-                        if abs(delta_size) > POSITION_TOLERANCE:
-                            steps.append(
-                                build_order_step(
-                                    coin=target_asset,
-                                    side="buy" if delta_size > 0 else "sell",
-                                    order_size=abs(delta_size),
-                                    reduce_only=delta_size < 0,
-                                    market_map=market_map,
-                                    mids=mids,
-                                    slippage=slippage,
-                                    reason=(
-                                        "enter_target_asset"
-                                        if current_asset == "CASH"
-                                        else ("rebalance_same_asset" if current_asset == target_asset else "rotate_into_target_asset")
-                                    ),
-                                    desired_notional_usd=target_notional_usd,
-                                )
-                            )
-
-    if block_reasons:
-        status = "blocked"
-    elif not steps:
-        status = "no_action_needed"
-    else:
-        status = "ready_if_enabled" if not execute_live else "ready_to_submit"
-
+    """Compatibility preview backed by the same canonical planner as production."""
+    from scripts.execution.production_execution import build_execution_plan as canonical_plan
+    production = read_json(ROOT / "outputs/production/current_strategy_snapshot.json")
+    canonical_snapshot = dict(snapshot)
+    if "raw" not in canonical_snapshot:
+        positions = []
+        for position in snapshot.get("positions", []):
+            positions.append({"position": {"coin": position.get("coin"), "szi": position.get("size"), "positionValue": position.get("position_value")}})
+        canonical_snapshot["raw"] = {"clearinghouseState": {"assetPositions": positions}, "openOrders": snapshot.get("open_orders", [])}
+    plan = canonical_plan(production=production, intent=intent, gate=gate, account_snapshot=canonical_snapshot,
+        policy=policy_cfg, mids={asset: float(value) for asset, value in mids.items()},
+        size_decimals={asset: int(entry["sz_decimals"]) for asset, entry in market_map.items()})
+    blocks = list(plan["block_reasons"])
+    if mode_cfg.get("kill_switch") is not False:
+        blocks.append("kill_switch_enabled")
+    if execute_live:
+        blocks.append("standalone_live_execution_disabled")
+    steps = [build_order_step(coin=row["asset"], side=row["side"].lower(), order_size=row["quantity"],
+        reduce_only=row["reduce_only"], market_map=market_map, mids=mids, slippage=slippage,
+        reason=row["phase"].lower(), desired_notional_usd=row["delta_notional_usd"]) for row in plan["steps"]]
     return {
-        "status": status,
-        "signal_id": signal_id,
-        "target_asset": target_asset,
-        "target_regime": target_regime,
-        "current_state": current_asset,
-        "current_position_size": current_position_size,
-        "current_target_size": current_target_size,
-        "current_target_leverage": current_target_leverage,
-        "target_size": target_size,
-        "target_notional_usd": target_notional_usd,
-        "target_limit_price": target_limit_price,
-        "total_trading_equity_usd": total_trading_equity_usd,
-        "steps": steps,
-        "block_reasons": block_reasons,
-        "checks": checks,
-        "leverage_context": leverage_ctx,
-        "snapshot_state": current_state,
+        "status": "blocked" if blocks else ("ready_if_enabled" if steps else "no_action_needed"),
+        "signal_id": plan["signal_id"], "target_asset": plan["asset"], "target_regime": intent.get("target_regime"),
+        "current_state": plan["current_asset"], "current_position_size": None, "current_target_size": None,
+        "current_target_leverage": {}, "target_size": plan["planned_quantity"], "target_notional_usd": plan["target_notional_usd"],
+        "target_limit_price": steps[-1].get("limit_price") if steps else None,
+        "total_trading_equity_usd": plan["account_equity_usd"], "steps": steps, "block_reasons": blocks,
+        "entry_block_reasons": plan["entry_block_reasons"], "checks": {"canonical_planner": True},
+        "leverage_context": {"exchange_leverage_target": plan["execution_leverage"]},
+        "snapshot_state": derive_current_state(snapshot), "canonical_plan": plan,
     }
 
 

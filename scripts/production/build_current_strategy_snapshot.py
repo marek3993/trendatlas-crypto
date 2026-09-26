@@ -157,6 +157,11 @@ def _resolve_current_strategy_model(root: Path) -> str:
 
 
 def _resolve_adapter(strategy_model: str) -> Any:
+    if (ROOT / "source_of_truth/production_route_identity_contract.json").exists():
+        from scripts.production.strategy_adapters.causal_route_adapter import CausalRouteAdapter
+        if strategy_model != CausalRouteAdapter.strategy_version:
+            raise ValueError("Route identity adapter strategy version mismatch")
+        return CausalRouteAdapter()
     if strategy_model == SOURCE_STRATEGY_VERSION:
         return Phase68g66g1p25xCandidateAdapter()
     if strategy_model == BTC_PERSISTENCE_CANDIDATE_ID:
@@ -621,7 +626,7 @@ def _build_snapshot(
     trend_permission_active = bool(current_row["trend_permission_active"])
     execution_target_asset = str(current_row["execution_target_asset"])
     execution_target_exposure = round(float(current_row["execution_target_exposure"]), 6)
-    return {
+    snapshot = {
         "artifact_type": "current_strategy_snapshot",
         "schema_version": SNAPSHOT_SCHEMA_VERSION,
         "generated_at_utc": generated_at_utc,
@@ -675,6 +680,16 @@ def _build_snapshot(
             "wait_condition": wait_condition,
         },
     }
+
+    if getattr(adapter, "route_identity_required", False):
+        from scripts.production.route_identity import FIELDS
+        for key in FIELDS:
+            value = timeseries.iloc[-1][key]
+            snapshot[key] = bool(value) if key == "candidate_trigger_active" else str(value)
+            snapshot["execution_intent"][key] = snapshot[key]
+        snapshot["generated_at_utc"] = utc_now_iso()
+        snapshot["performance_contract"] = "causal_execution_interval_ledger_v1"
+    return snapshot
 
 
 def _build_diagnostics(
@@ -768,7 +783,7 @@ def main() -> None:
     quality_path = args.output_dir / QUALITY_PATH.name
     manifest_path = args.output_dir / MANIFEST_PATH.name
     strategy_model = _resolve_current_strategy_model(ROOT)
-    dependency_materialization = _maybe_materialize_btc_persistence_dependency(
+    dependency_materialization = {} if (ROOT / "source_of_truth/production_route_identity_contract.json").exists() else _maybe_materialize_btc_persistence_dependency(
         strategy_model=strategy_model,
         root=ROOT,
     )

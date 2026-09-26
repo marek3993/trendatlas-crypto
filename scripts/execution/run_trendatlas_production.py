@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 import argparse
-import fcntl
+try:
+    import fcntl
+except ImportError:  # Windows development/test checkout; Pi uses flock.
+    fcntl = None
+    import msvcrt
 import json
 import os
 import subprocess
@@ -81,6 +85,10 @@ STAGE_NAMES = (
     "AUTHORITY_PUBLISH",
 )
 FINAL_EXECUTION_SUCCESS = {"FILLED_AND_ALIGNED", "NO_ACTION"}
+STAYING_CASH_RESULTS = {"EXITED_ENTRY_FAILED_STAYING_CASH", "ENTRY_FAILED_STAYING_CASH"}
+# Freshness is an input to the strategy adapter, so it must advance with the
+# refreshed closed day before Production Core is built (including boot catch-up).
+DEFERRED_PRESENTATION_STEPS = {"hyperliquid_real_performance_ledger"}
 PRECHECK_EXECUTION_EXCLUSIONS = {
     "production_current_strategy_snapshot",
     "production_current_strategy_timeseries",
@@ -98,8 +106,17 @@ class AlreadyRunning(RuntimeError):
 
 
 class NoOrderAdapter:
+    def __init__(self, account_address: str = "") -> None:
+        self.account_address = account_address
+
     def query_order_by_cloid(self, _cloid: str) -> dict[str, Any]:
-        return {"found": False, "status": "missing"}
+        from scripts.execution.hyperliquid_live_canary import fetch_order_status, normalize_order_status
+        if not self.account_address:
+            return {"found": False, "status": "unknown"}
+        raw = fetch_order_status(self.account_address, _cloid)
+        normalized = normalize_order_status(raw, None)
+        status = str(normalized.get("status") or "unknown").lower()
+        return {"found": bool(normalized.get("order_present")), "status": status, "raw": raw}
 
     def submit_ioc_order(self, _step: Mapping[str, Any]) -> dict[str, Any]:
         raise AssertionError("NO_ACTION must never submit an order")
@@ -144,8 +161,16 @@ class SingleRunLock:
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self.handle = self.path.open("a+", encoding="utf-8")
         try:
-            fcntl.flock(self.handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError as exc:
+            if fcntl is not None:
+                fcntl.flock(self.handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            else:
+                self.handle.seek(0)
+                if not self.handle.read(1):
+                    self.handle.write(" ")
+                    self.handle.flush()
+                self.handle.seek(0)
+                msvcrt.locking(self.handle.fileno(), msvcrt.LK_NBLCK, 1)
+        except (BlockingIOError, PermissionError) as exc:
             self.handle.close()
             self.handle = None
             raise AlreadyRunning("BLOCKED_ALREADY_RUNNING") from exc
@@ -158,7 +183,11 @@ class SingleRunLock:
 
     def __exit__(self, exc_type, exc, tb):
         if self.handle is not None:
-            fcntl.flock(self.handle.fileno(), fcntl.LOCK_UN)
+            if fcntl is not None:
+                fcntl.flock(self.handle.fileno(), fcntl.LOCK_UN)
+            else:
+                self.handle.seek(0)
+                msvcrt.locking(self.handle.fileno(), msvcrt.LK_UNLCK, 1)
             self.handle.close()
 
 
@@ -170,6 +199,7 @@ def new_manifest(run_id: str, target_day: str, *, no_submit: bool) -> dict[str, 
         "finished_at": None,
         "target_closed_day": target_day,
         "no_submit": no_submit,
+        "heavy_refresh_steps": "skipped",
         "stages": {name: {"status": "PENDING", "started_at": None, "finished_at": None, "error": None} for name in STAGE_NAMES},
         "strategy_version": None,
         "signal_id": None,
@@ -198,6 +228,8 @@ def new_manifest(run_id: str, target_day: str, *, no_submit: bool) -> dict[str, 
         "failure_reason": None,
         "live_order_chain": "NOT_INVOKED",
         "real_order_sent": False,
+        "execution_backend": None,
+        "multi_account_execution": None,
     }
 
 
@@ -211,10 +243,14 @@ class TrendAtlasProductionOrchestrator:
         market_loader: Callable[[], tuple[dict[str, float], dict[str, int]]] = load_live_market_context,
         adapter_factory: Callable[[], Any] = HyperliquidProductionExchangeAdapter,
         signer_validator: Callable[[], dict[str, Any]] | None = None,
+        execution_backend: str | None = None,
         now: Callable[[], str] = utc_now_iso,
     ) -> None:
         self.root = root.resolve()
         self.no_submit = no_submit
+        self.execution_backend = str(execution_backend or os.environ.get("MRV1_EXECUTION_BACKEND") or "legacy").strip()
+        if self.execution_backend not in {"legacy", "multi_account"}:
+            raise ValueError("MRV1_EXECUTION_BACKEND must be legacy or multi_account")
         self.command_runner = command_runner
         self.market_loader = market_loader
         self.adapter_factory = adapter_factory
@@ -229,9 +265,17 @@ class TrendAtlasProductionOrchestrator:
         self.run_dir = self.root / "outputs" / "execution" / "production_runs" / self.run_id
         self.latest_run_path = self.root / "outputs" / "execution" / "production_runs" / "latest_production_run.json"
         self.manifest = new_manifest(self.run_id, self.target_day, no_submit=no_submit)
+        previous = read_json(self.latest_run_path) if self.latest_run_path.exists() else {}
+        self.manifest["retry_attempt"] = (
+            int(previous.get("retry_attempt", 0)) + 1
+            if previous.get("target_closed_day") == self.target_day and previous.get("failure_kind") == "retryable"
+            else 0
+        )
+        self.manifest["execution_backend"] = self.execution_backend
         self.current_stage: str | None = None
         self.authority_state: dict[str, Any] | None = None
         self.env = build_pi_authoritative_env(env=os.environ, root=self.root)
+        self.env["MRV1_EXECUTION_BACKEND"] = self.execution_backend
         self.env["MRV1_CURRENT_AUTHORITY_RUN_ID"] = self.run_id
         self.env["MRV1_CURRENT_AUTHORITY_TARGET_CLOSED_DAY"] = self.target_day
         self.env["MRV1_ALLOW_IN_PROGRESS_AUTHORITY_FOR_SAME_RUN"] = "1"
@@ -262,18 +306,62 @@ class TrendAtlasProductionOrchestrator:
         if completed.returncode != 0:
             raise RuntimeError(f"{label}_failed_returncode_{completed.returncode}")
 
+    def run_multi_account_backend(self, signal_id: str, *, no_submit: bool) -> tuple[dict[str, Any], int]:
+        web_root = Path(str(self.env.get("MRV1_MULTI_ACCOUNT_WEB_ROOT") or "")).resolve()
+        node_binary = Path(str(self.env.get("MRV1_MULTI_ACCOUNT_NODE_BINARY") or "")).resolve()
+        runner = web_root / "scripts/run-multi-account-production-cycle.ts"
+        if web_root != self.root / "web" or not node_binary.is_file() or not os.access(node_binary, os.X_OK) or not runner.is_file():
+            raise ExecutionSafetyError("multi_account_runtime_is_incomplete")
+        execution_env = dict(self.env)
+        execution_env.update({
+            "TRENDATLAS_MULTI_ACCOUNT_EXECUTION_MODE": "dry_run" if no_submit else "live",
+            "TRENDATLAS_EXECUTION_OWNER": "multi_account",
+            "TRENDATLAS_MULTI_ACCOUNT_EXECUTION_CONTEXT": "canonical_orchestrator",
+            "TRENDATLAS_AUTHORITY_REPOSITORY_ROOT": str(self.root),
+            "TRENDATLAS_LIVE_SIGNAL_CONFIRMATION": signal_id,
+        })
+        completed = self.command_runner(
+            [
+                str(node_binary),
+                "--conditions=react-server",
+                "--import", "tsx",
+                str(runner),
+            ],
+            cwd=str(web_root),
+            env=execution_env,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        stdout = str(completed.stdout or "").strip()
+        try:
+            report = json.loads(stdout.splitlines()[-1])
+        except Exception as exc:
+            raise ExecutionSafetyError(
+                f"multi_account_runner_failed_returncode_{completed.returncode}"
+            ) from exc
+        if not isinstance(report, dict) or report.get("runId") != self.run_id or report.get("signalId") != signal_id:
+            raise ExecutionSafetyError("multi_account_result_binding_mismatch")
+        return report, int(completed.returncode)
+
     def load_runtime(self) -> tuple[dict, dict, dict, dict, dict, dict]:
-        return tuple(
-            read_json(path)
-            for path in (
+        paths = (
                 self.root / "outputs/production/current_strategy_snapshot.json",
                 self.root / "outputs/execution/intents/latest_execution_intent.json",
                 self.root / "outputs/execution/live_gate/latest_real_order_gate_decision.json",
                 self.root / "outputs/execution/read_only/hyperliquid_account_snapshot.json",
                 self.root / "execution/config/execution_mode.json",
                 self.root / "execution/config/live_order_policy.json",
-            )
-        )  # type: ignore[return-value]
+        )
+        values = []
+        for index, path in enumerate(paths):
+            try:
+                values.append(read_json(path))
+            except (OSError, ValueError, RuntimeError):
+                if index != 3 or self.execution_backend != "multi_account":
+                    raise
+                values.append({})  # Optional observation, never written as wallet truth.
+        return tuple(values)  # type: ignore[return-value]
 
     def rebuild_fail_closed_runtime_state(self, *, refresh_account: bool) -> None:
         """Refresh canonical read-only state after a blocked or uncertain run.
@@ -349,9 +437,9 @@ class TrendAtlasProductionOrchestrator:
             env=self.env,
         )
         result = authority_publish_helpers.publish_authority_refresh_started(state, env=self.env)
-        if not result.get("published"):
-            raise RuntimeError(f"authority_attempt_start_failed:{result.get('reason')}")
         self.authority_state = state
+        if not result.get("published"):
+            self.manifest["authority_attempt_warning"] = f"authority_attempt_start_failed:{result.get('reason')}"
 
     def run_canonical_builders(self) -> None:
         self.run_script(
@@ -380,7 +468,9 @@ class TrendAtlasProductionOrchestrator:
             size_decimals=precision,
         )
         positions = extract_positions(snapshot, mids)
-        old_assets = {str(step["asset"]) for step in plan.get("steps", []) if step.get("reduce_only")}
+        completed_steps = {str((row.get("step") or {}).get("cloid") or row.get("cloid")) for row in action_results}
+        just_completed = next((step for step in reversed(plan.get("steps", [])) if str(step.get("cloid")) in completed_steps and step.get("full_close")), None)
+        old_assets = {str(just_completed["asset"])} if just_completed else set()
         remaining_old = [position for position in positions if position["asset"] in old_assets]
         raw = snapshot.get("raw") if isinstance(snapshot.get("raw"), Mapping) else {}
         open_orders = raw.get("openOrders", []) if isinstance(raw, Mapping) else []
@@ -403,6 +493,7 @@ class TrendAtlasProductionOrchestrator:
             "critical_block_reasons": critical_blockers,
             "residual_action": residual.get("action"),
             "action_results_count": len(action_results),
+            "residual_plan": residual,
         }
 
     def run(self) -> dict[str, Any]:
@@ -413,8 +504,12 @@ class TrendAtlasProductionOrchestrator:
             self.stage_finish("ACQUIRE_LOCK")
 
             self.stage_start("REFRESH_DATA")
+            presentation_steps = []
             for step in build_fast_dependency_steps(self.root):
                 if step.name == "hyperliquid_read_only_snapshot":
+                    continue
+                if step.name in DEFERRED_PRESENTATION_STEPS:
+                    presentation_steps.append(step)
                     continue
                 self.run_script(step.script_path, *step.args, label=step.name)
             materialize = build_production_core_dependency_materialize_step(self.root)
@@ -454,19 +549,45 @@ class TrendAtlasProductionOrchestrator:
             self.stage_finish("VALIDATE_PRODUCTION_CORE")
 
             self.stage_start("READ_ACCOUNT_BEFORE")
-            self.run_script(
-                self.root / "scripts/execution/hyperliquid_read_only_snapshot.py",
-                label="read_account_before",
-            )
-            self.publish_attempt_started()
+            try:
+                self.run_script(
+                    self.root / "scripts/execution/hyperliquid_read_only_snapshot.py",
+                    label="read_account_before",
+                )
+            except Exception as exc:
+                if self.execution_backend != "multi_account":
+                    raise
+                # The child independently reads every account before trading;
+                # optional historical owner context is never trading permission.
+                self.manifest["owner_account_snapshot_warning"] = redact_sensitive_text(exc)
+            try:
+                self.publish_attempt_started()
+            except Exception as exc:
+                self.manifest["authority_attempt_warning"] = redact_sensitive_text(exc)
             self.stage_finish("READ_ACCOUNT_BEFORE")
 
             self.stage_start("VALIDATE_SIGNER")
-            signer_validation = self.signer_validator()
-            if str(signer_validation.get("status") or "").upper() != "PASS":
-                raise ExecutionSafetyError("production_signer_validation_not_passed")
-            if bool(signer_validation.get("credential_value_exposed")):
-                raise ExecutionSafetyError("production_signer_secret_exposure_detected")
+            if self.execution_backend == "multi_account":
+                required_multi_account_env = (
+                    "NEXT_PUBLIC_SUPABASE_URL",
+                    "SUPABASE_ADMIN_KEY",
+                    "TRENDATLAS_AGENT_KEK_B64",
+                    "MRV1_MULTI_ACCOUNT_NODE_BINARY",
+                    "MRV1_MULTI_ACCOUNT_WEB_ROOT",
+                )
+                if any(not str(self.env.get(name) or "").strip() for name in required_multi_account_env):
+                    raise ExecutionSafetyError("multi_account_credentials_or_runtime_missing")
+                signer_validation = {
+                    "status": "PASS",
+                    "mode": "multi_account_per_account_preflight",
+                    "credential_value_exposed": False,
+                }
+            else:
+                signer_validation = self.signer_validator()
+                if str(signer_validation.get("status") or "").upper() != "PASS":
+                    raise ExecutionSafetyError("production_signer_validation_not_passed")
+                if bool(signer_validation.get("credential_value_exposed")):
+                    raise ExecutionSafetyError("production_signer_secret_exposure_detected")
             self.manifest["signer_validation"] = signer_validation
             self.stage_finish("VALIDATE_SIGNER")
 
@@ -495,17 +616,29 @@ class TrendAtlasProductionOrchestrator:
             self.stage_start("RECONCILE")
             production, intent, gate, snapshot, mode, policy = self.load_runtime()
             mids, precision = self.market_loader()
-            plan = build_execution_plan(
-                production=production,
-                intent=intent,
-                gate=gate,
-                account_snapshot=snapshot,
-                policy=policy,
-                mids=mids,
-                size_decimals=precision,
-            )
+            try:
+                plan = build_execution_plan(
+                    production=production,
+                    intent=intent,
+                    gate=gate,
+                    account_snapshot=snapshot,
+                    policy=policy,
+                    mids=mids,
+                    size_decimals=precision,
+                )
+            except ExecutionSafetyError as exc:
+                if self.execution_backend != "multi_account":
+                    raise
+                # Per-account feasibility belongs to the child executor. A
+                # malformed owner observation cannot suppress other accounts.
+                plan = {
+                    "status": "BLOCKED", "block_reasons": list(exc.reasons), "steps": [],
+                    "action": "ACCOUNT_PREFLIGHT_REQUIRED", "current_asset": None,
+                    "account_equity_usd": None, "current_notional_usd": None,
+                    "target_notional_usd": None, "delta_notional_usd": None,
+                }
             atomic_write_json(self.run_dir / "execution_plan.json", plan)
-            if plan["status"] == "BLOCKED":
+            if plan["status"] == "BLOCKED" and self.execution_backend != "multi_account":
                 raise ExecutionSafetyError(list(plan["block_reasons"]))
             self.manifest.update({
                 "account_equity_before": plan["account_equity_usd"],
@@ -524,9 +657,14 @@ class TrendAtlasProductionOrchestrator:
                 intent_path=self.root / "outputs/execution/intents/latest_execution_intent.json",
                 account_path=self.root / "outputs/execution/read_only/hyperliquid_account_snapshot.json",
                 gate=gate,
+                allow_unavailable_owner_snapshot=self.execution_backend == "multi_account",
             )
             preflight_reasons: list[str] = []
-            if plan["action"] != "NO_ACTION":
+            if self.execution_backend == "multi_account":
+                preflight_reasons = list(provenance_reasons)
+                if mode.get("kill_switch") is not False:
+                    preflight_reasons.append("kill_switch_not_off")
+            elif plan["action"] != "NO_ACTION" or plan.get("cancel_orders"):
                 preflight_reasons = validate_live_preflight(
                     plan=plan,
                     production=production,
@@ -550,15 +688,49 @@ class TrendAtlasProductionOrchestrator:
             self.stage_finish("LIVE_PREFLIGHT")
 
             self.stage_start("EXECUTE")
-            if self.no_submit:
+            if self.execution_backend == "multi_account":
+                if not self.no_submit:
+                    self.manifest["live_order_chain"] = "INVOKED"
+                    self.manifest["order_requested"] = None
+                    self.manifest["real_order_sent"] = None
+                    self.manifest["order_result"] = "MULTI_ACCOUNT_EXECUTING_OR_UNCERTAIN"
+                    self.persist()
+                multi_account_report, returncode = self.run_multi_account_backend(
+                    str(self.manifest["signal_id"]),
+                    no_submit=self.no_submit,
+                )
+                self.manifest["multi_account_execution"] = multi_account_report
+                self.manifest["real_order_sent"] = multi_account_report.get("realOrderSent")
+                self.manifest["order_requested"] = multi_account_report.get("realOrderSent")
+                owner_result = multi_account_report.get("ownerResult") or {}
+                owner_status = str(owner_result.get("status") or "")
+                if not self.no_submit and not owner_status:
+                    raise ExecutionSafetyError("multi_account_owner_result_missing")
+                self.manifest["execution_outcome"] = "PREFLIGHT_ONLY" if self.no_submit else owner_status
+                self.manifest["order_result"] = self.manifest["execution_outcome"]
+                self.manifest["failure_kind"] = multi_account_report.get("failureKind")
+                self.persist()
+                if (returncode != 0 or multi_account_report.get("successful") is not True) and (self.no_submit or owner_status not in STAYING_CASH_RESULTS):
+                    raise ExecutionSafetyError("multi_account_execution_not_terminal_success")
+                if self.no_submit:
+                    execution_result = {"status": "PREFLIGHT_ONLY", "order_requested": False, "action_results": []}
+                    self.stage_finish("EXECUTE", "SKIPPED", reason="multi_account_no_submit")
+                else:
+                    execution_result = {
+                        "status": owner_status,
+                        "order_requested": multi_account_report.get("realOrderSent") is True,
+                        "action_results": multi_account_report.get("results", []),
+                    }
+                    self.stage_finish("EXECUTE")
+            elif self.no_submit:
                 execution_result = {"status": "PREFLIGHT_ONLY", "order_requested": False, "action_results": []}
                 self.stage_finish("EXECUTE", "SKIPPED", reason="no_submit")
-            elif plan["action"] == "NO_ACTION":
+            elif plan["action"] == "NO_ACTION" and not plan.get("cancel_orders"):
                 execution_result = execute_plan_once(
                     plan=plan,
                     run_id=self.run_id,
                     journal=ExecutionJournal(self.root / "outputs/execution/execution_journal"),
-                    adapter=NoOrderAdapter(),
+                    adapter=NoOrderAdapter(str(snapshot.get("account_address") or "")),
                     refresh_and_verify=self.post_trade_verifier,
                 )
                 self.stage_finish("EXECUTE", "SKIPPED", reason="no_action")
@@ -590,19 +762,34 @@ class TrendAtlasProductionOrchestrator:
                 ]
                 self.manifest["order_id"] = [oid for oid in order_ids if oid is not None]
                 self.persist()
-                if execution_result.get("status") not in FINAL_EXECUTION_SUCCESS:
-                    raise ExecutionSafetyError(f"execution_result:{execution_result.get('status')}")
                 self.stage_finish("EXECUTE")
             self.manifest["order_requested"] = bool(execution_result.get("order_requested"))
             self.manifest["order_result"] = execution_result.get("status")
+            self.manifest["execution_outcome"] = execution_result.get("status")
             self.persist()
+            if not self.no_submit and execution_result.get("status") not in FINAL_EXECUTION_SUCCESS | STAYING_CASH_RESULTS:
+                self.current_stage = "EXECUTE"
+                if execution_result.get("status") == "UNCERTAIN":
+                    self.manifest["failure_kind"] = "retryable"
+                raise ExecutionSafetyError(f"execution_result:{execution_result.get('status')}")
 
             self.stage_start("READ_ACCOUNT_AFTER")
-            if self.no_submit or plan["action"] == "NO_ACTION":
-                self.run_script(
-                    self.root / "scripts/execution/hyperliquid_read_only_snapshot.py",
-                    label="read_account_after",
-                )
+            if self.no_submit or self.execution_backend == "multi_account" or plan["action"] == "NO_ACTION":
+                try:
+                    self.run_script(
+                        self.root / "scripts/execution/hyperliquid_read_only_snapshot.py",
+                        label="read_account_after",
+                    )
+                except Exception as exc:
+                    if self.execution_backend == "multi_account":
+                        # The child has already persisted per-account execution
+                        # evidence. A failed dashboard read must not relabel it.
+                        self.manifest["owner_account_snapshot_available"] = False
+                        self.manifest["owner_account_snapshot_warning"] = redact_sensitive_text(exc)
+                        self.manifest["authority_status"] = "OWNER_ACCOUNT_OBSERVATION_UNAVAILABLE"
+                        self.manifest["dashboard_status"] = "OWNER_ACCOUNT_OBSERVATION_UNAVAILABLE"
+                    raise
+            self.manifest["owner_account_snapshot_available"] = True
             self.stage_finish("READ_ACCOUNT_AFTER")
 
             self.stage_start("POST_TRADE_VERIFY")
@@ -625,16 +812,24 @@ class TrendAtlasProductionOrchestrator:
             verification_status = (
                 "PREFLIGHT_ONLY"
                 if self.no_submit
-                else ("NO_ACTION" if plan["action"] == "NO_ACTION" else execution_result["status"])
+                else (
+                    execution_result["status"]
+                    if self.execution_backend == "multi_account"
+                    else execution_result["status"]
+                )
             )
             if not self.no_submit and verification_status in FINAL_EXECUTION_SUCCESS and not aligned_after:
                 raise ExecutionSafetyError("post_trade_account_not_aligned")
+            if verification_status in STAYING_CASH_RESULTS and (after_positions or residual_plan.get("cancel_orders")):
+                self.manifest["reported_execution_outcome"] = verification_status
+                self.manifest["execution_outcome"] = "POST_TRADE_VERIFICATION_FAILED"
+                raise ExecutionSafetyError("staying_cash_not_confirmed_by_exchange")
             self.manifest.update({
                 "account_equity_after": residual_plan.get("account_equity_usd"),
                 "real_position_after": after_positions,
                 "real_exposure_after": (
-                    abs(float(after_positions[0]["notional_usd"])) / float(residual_plan["account_equity_usd"])
-                    if len(after_positions) == 1 else 0.0
+                    sum(abs(float(position["notional_usd"])) for position in after_positions) / float(residual_plan["account_equity_usd"])
+                    if float(residual_plan["account_equity_usd"]) > 0 else None
                 ),
                 "residual_delta": residual_plan.get("delta_notional_usd"),
                 "post_trade_verification_status": verification_status,
@@ -655,12 +850,17 @@ class TrendAtlasProductionOrchestrator:
             # execution result, never the in-progress manifest. Authority status
             # is filled later, but execution is final after verified read-back.
             self.manifest["final_status"] = (
-                "PREFLIGHT_READY" if self.no_submit else "SUCCESS"
+                "PREFLIGHT_READY" if self.no_submit else (verification_status if verification_status in STAYING_CASH_RESULTS else "SUCCESS")
             )
             self.manifest["finished_at"] = self.now()
             self.persist()
 
             self.stage_start("DASHBOARD_RUNTIME")
+            for step in presentation_steps:
+                try:
+                    self.run_script(step.script_path, *step.args, label=step.name)
+                except Exception as exc:
+                    self.manifest.setdefault("presentation_warnings", {})[step.name] = redact_sensitive_text(exc)
             self.run_script(
                 self.root / "scripts/execution/materialize_execution_app_exports.py",
                 "--runtime-snapshot-only",
@@ -670,16 +870,16 @@ class TrendAtlasProductionOrchestrator:
             self.stage_finish("DASHBOARD_RUNTIME")
 
             self.stage_start("AUTHORITY_PUBLISH")
-            if self.no_submit:
-                self.manifest["authority_status"] = "SKIPPED_NO_SUBMIT"
+            if self.no_submit or verification_status in STAYING_CASH_RESULTS:
+                self.manifest["authority_status"] = "SKIPPED_NO_SUBMIT" if self.no_submit else "EXECUTION_TARGET_NOT_ALIGNED"
                 if self.authority_state is not None:
                     authority_publish_helpers.publish_authority_refresh_failure(
                         self.authority_state,
                         refresh_finished_at_utc=self.now(),
-                        error="preflight_only_no_authority_success",
+                        error="preflight_only_no_authority_success" if self.no_submit else verification_status,
                         env=self.env,
                     )
-                self.stage_finish("AUTHORITY_PUBLISH", "SKIPPED", reason="no_submit")
+                self.stage_finish("AUTHORITY_PUBLISH", "SKIPPED", reason=self.manifest["authority_status"])
             else:
                 self.run_script(
                     self.root / "scripts/execution/run_pi_authoritative_producer.py",
@@ -723,11 +923,16 @@ class TrendAtlasProductionOrchestrator:
                 })
             self.manifest.update({
                 "finished_at": self.now(),
-                "final_status": "BLOCKED" if isinstance(exc, ExecutionSafetyError) else "FAILED",
+                "final_status": ("EXECUTION_COMPLETE_PUBLISH_FAILED" if self.manifest.get("execution_outcome") in FINAL_EXECUTION_SUCCESS and self.current_stage in {"READ_ACCOUNT_AFTER", "DASHBOARD_RUNTIME", "AUTHORITY_PUBLISH"} else self.manifest.get("execution_outcome") if self.manifest.get("execution_outcome") in STAYING_CASH_RESULTS else "BLOCKED" if isinstance(exc, ExecutionSafetyError) else "FAILED"),
                 "failure_stage": self.current_stage,
                 "failure_reason": safe_error,
                 "traceback": redact_sensitive_text(traceback.format_exc(limit=12)),
             })
+            if not self.manifest.get("failure_kind"):
+                self.manifest["failure_kind"] = "deterministic" if isinstance(exc, ExecutionSafetyError) else "retryable"
+            if int(self.manifest["retry_attempt"]) >= 3:
+                self.manifest["failure_kind"] = "deterministic"
+                self.manifest["retry_exhausted"] = True
             self.persist()
             if self.authority_state is not None:
                 self.rebuild_fail_closed_runtime_state(
@@ -756,7 +961,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps({"final_status": "BLOCKED_ALREADY_RUNNING", "real_order_sent": False}, indent=2))
         return 2
     print(json.dumps(result, indent=2, ensure_ascii=False, sort_keys=True))
-    return 0 if result["final_status"] in {"SUCCESS", "PREFLIGHT_READY"} else 1
+    if result["final_status"] in {"SUCCESS", "PREFLIGHT_READY"}:
+        return 0
+    return 1 if result.get("failure_kind") == "retryable" else 2
 
 
 if __name__ == "__main__":

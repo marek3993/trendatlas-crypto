@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 from unittest import mock
+from tempfile import TemporaryDirectory
 
 from scripts.execution import current_strategy_root_contract as current_strategy_contract
 from scripts.execution.current_strategy_root_contract import (
@@ -19,14 +20,20 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
     def _minimal_product_snapshot(self, contract: dict) -> dict:
+        fixture = TemporaryDirectory()
+        self.addCleanup(fixture.cleanup)
+        paper_path = Path(fixture.name) / "paper.csv"
+        paper_path.write_text("portfolio_held_asset\nCASH\nBTC\nBTC\nCASH\n", encoding="utf-8")
+        # Runtime file paths are distinct from the canonical public source labels.
+        contract["paper_path"] = paper_path
         return {
             "current_main_strategy_root_contract": serialize_current_main_strategy_root_contract(contract),
             "main_strategy_model": contract["main_strategy_model"],
             "main_strategy_metrics": {
                 "model": contract["main_strategy_model"],
-                "switch_count": 60,
-                "cash_days_pct": 66.2093,
-                "btc_days_pct": 13.2075,
+                "switch_count": 2,
+                "cash_days_pct": 50.0,
+                "btc_days_pct": 50.0,
             },
             "chart_source_paths": {
                 "main_strategy": contract["canonical_paper_source_path"],
@@ -38,7 +45,7 @@ class TestExecutionCurrentStrategyRootContract(unittest.TestCase):
                         "path": contract["canonical_paper_source_path"],
                         "held_state_column": "portfolio_held_asset",
                         "series_semantics": "homepage_current_main_strategy_held_state_history",
-                        "held_state_denominator_rows": 583,
+                        "held_state_denominator_rows": 4,
                     },
                 },
                 "strategy_last_closed_day": {

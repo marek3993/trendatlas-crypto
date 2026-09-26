@@ -133,3 +133,13 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+
+## Route identity repair — 2026-09-26 (review / no-submit only)
+- Classes B/C/D: weekly candidate names previously replaced inactive BASE economic holdings; same-day decision returns also contaminated model performance.
+- Normative contract: `source_of_truth/production_route_identity_contract.json`. BASE joins the same-interval concrete Phase60 asset. CANDIDATE requires its actual trigger. No strategy parameters or candidate-selection exclusions are changed.
+- The current signal target is distinct from a historical interval holding. Both have explicit route/availability lineage; only the causal interval ledger feeds model performance. Real account equity/PnL remain exchange-native.
+- Preserve the deployed `5ee031cef7de9c385056cec22f6511391d3e4f4f` exit-first executor, per-account isolation and persistent scheduler semantics when integrating this repair with the main/audit base. `production_execution_contract.json` supersedes older allowlist/duplicate approval-gate prose.
+- The causal adapter consumes freshly produced Phase60/governance/trend/ETF/raw prices directly. It does not rebuild the synthetic legacy Phase68 same-day dependency.
+- Stage the repair in an isolated Pi tree and run the same canonical orchestrator/service environment with `--no-submit`. No-submit skips database mutation callbacks as well as every exchange mutation. Keep the production timer, journal, authority snapshots, secrets and position unchanged.
+- No merge, live activation or trade is authorized. Successful rehearsal is evidence for the operator's final decision, not a permission to trade.

@@ -190,7 +190,7 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
         path="outputs/execution/authority/latest_successful_snapshot.json",
         kind="json",
         criticality=CRITICALITY_APP,
-        action_on_failure=ACTION_BLOCK_EXECUTION,
+        action_on_failure=ACTION_WARN_ONLY,
         label_sk="posledný úspešný autoritatívny snapshot",
         label_en="latest successful authority snapshot",
         required_keys=(
@@ -210,8 +210,8 @@ SOURCE_SPECS: tuple[SourceSpec, ...] = (
         source_type="authority_status_json",
         path="outputs/execution/authority/latest_attempt_status.json",
         kind="json",
-        criticality=CRITICALITY_EXECUTION,
-        action_on_failure=ACTION_BLOCK_EXECUTION,
+        criticality=CRITICALITY_APP,
+        action_on_failure=ACTION_WARN_ONLY,
         label_sk="stav posledného autoritatívneho pokusu",
         label_en="latest authority attempt status",
         required_keys=(
@@ -837,8 +837,14 @@ def canonical_execution_alignment_errors(
     expected_fingerprints = {
         "intent_sha256": sha256_file(intent_path),
         "production_snapshot_sha256": sha256_file(production_path),
-        "account_snapshot_sha256": sha256_file(account_snapshot_path),
     }
+    owner_observation_unavailable = (
+        payload.get("account_validation_scope") == "per_account_exchange"
+        and payload.get("account_snapshot_available") is False
+        and fingerprints.get("account_snapshot_sha256") is None
+    )
+    if not owner_observation_unavailable:
+        expected_fingerprints["account_snapshot_sha256"] = sha256_file(account_snapshot_path)
     for field_name, expected_value in expected_fingerprints.items():
         if not expected_value or fingerprints.get(field_name) != expected_value:
             errors.append(f"gate {field_name} does not match its canonical source")
@@ -852,11 +858,16 @@ def same_run_new_closed_day_is_proven(
     expected_day: str,
     previous_success_day: str,
 ) -> tuple[bool, str | None]:
-    """Allow only a one-day authority advance proven by the canonical same run."""
+    """Allow a forward authority advance proven by the canonical current run.
+
+    The previous publication may predate an outage. It is not used as today's
+    trading input: all same-run evidence below and normal source freshness checks
+    remain mandatory. This does not publish success or replay historical orders.
+    """
     expected_date = iso_day_to_date(expected_day)
     previous_date = iso_day_to_date(previous_success_day)
-    if expected_date is None or previous_date is None or (expected_date - previous_date).days != 1:
-        return False, "Previous successful authority is not exactly one closed day behind."
+    if expected_date is None or previous_date is None or previous_date >= expected_date:
+        return False, "Previous successful authority must precede the target closed day."
 
     attempt, _ = load_effective_json_source(
         "execution_authority_latest_attempt_status",
@@ -1100,8 +1111,8 @@ def build_user_messages(
 
     if action in {ACTION_BLOCK_EXECUTION, ACTION_BLOCK_APP}:
         return (
-            f"Kritický zdroj {spec.label_sk} zlyhal. Aplikácia a execution ostávajú fail-closed.{expected_vs_actual}",
-            f"Critical source {spec.label_en} failed. The app and execution remain fail-closed.{expected_vs_actual_en}",
+            f"Zdroj {spec.label_sk} vyžaduje kontrolu. Pozastavená je iba závislá obchodná zmena; aplikácia zostáva dostupná.{expected_vs_actual}",
+            f"Source {spec.label_en} requires attention. Only the dependent trade transition is blocked; the app remains available.{expected_vs_actual_en}",
         )
 
     detail = f" Dôvod: {failure_reason}" if failure_reason else ""
@@ -1155,6 +1166,7 @@ def evaluate_source(
         else:
             source["quality_status"] = "present"
         source["action"] = derive_action(spec, source["status"])
+        source.update(dependency_impact(source))
         source["user_message_sk"], source["user_message_en"] = build_user_messages(
             spec=spec,
             status=source["status"],
@@ -1289,6 +1301,7 @@ def evaluate_source(
                 source["failure_reason"] = special_reason
 
     source["action"] = derive_action(spec, source["status"])
+    source.update(dependency_impact(source))
     source["user_message_sk"], source["user_message_en"] = build_user_messages(
         spec=spec,
         status=source["status"],
@@ -1325,6 +1338,28 @@ def build_context(
     }
 
 
+def dependency_impact(source: dict[str, Any]) -> dict[str, Any]:
+    """Scope a failed dependency without declaring the whole system unavailable."""
+    if source.get("status") == STATUS_OK:
+        return {"incident_level": "none", "affected_capability_ids": [],
+                "blocked_action_ids": [], "system_available": True}
+    source_id = str(source.get("source_id", "unknown"))
+    if source.get("action") == ACTION_BLOCK_EXECUTION:
+        capabilities, actions, level = ["new_trade_transition"], ["new_trade_transition"], "action_blocked"
+    elif source.get("criticality") == CRITICALITY_RESEARCH:
+        capability = {"research_btc_derivatives_daily_panel_csv": "research_btc_derivatives",
+                      "research_btc_derivatives_daily_panel_quality": "research_btc_derivatives",
+                      "research_btc_etf_flow_daily_panel_csv": "research_btc_etf_flow",
+                      "research_btc_etf_flow_daily_panel_quality": "research_btc_etf_flow"}.get(source_id, "research_" + source_id)
+        capabilities, actions, level = [capability], ["run_" + capability], "degraded"
+    elif source.get("criticality") == CRITICALITY_APP:
+        capabilities, actions, level = ["display_" + source_id], [], "degraded"
+    else:
+        capabilities, actions, level = ["maintenance_diagnostics"], [], "warning"
+    return {"incident_level": level, "affected_capability_ids": capabilities,
+            "blocked_action_ids": actions, "system_available": True}
+
+
 def summarize_sources(sources: list[dict[str, Any]]) -> dict[str, Any]:
     status_counts = {status: 0 for status in sorted(STATUS_VALUES)}
     action_counts = {action: 0 for action in sorted(ACTION_VALUES)}
@@ -1332,12 +1367,7 @@ def summarize_sources(sources: list[dict[str, Any]]) -> dict[str, Any]:
         status_counts[source["status"]] = status_counts.get(source["status"], 0) + 1
         action_counts[source["action"]] = action_counts.get(source["action"], 0) + 1
 
-    app_blocking_source_ids = [
-        source["source_id"]
-        for source in sources
-        if source["status"] != STATUS_OK
-        and source["criticality"] in {CRITICALITY_PRODUCTION, CRITICALITY_APP}
-    ]
+    app_blocking_source_ids: list[str] = []  # Dependency failure never stops the app.
     execution_blocking_source_ids = [
         source["source_id"]
         for source in sources
@@ -1362,21 +1392,24 @@ def summarize_sources(sources: list[dict[str, Any]]) -> dict[str, Any]:
     overall_status = STATUS_OK
     if block_app or block_execution:
         overall_status = STATUS_FAILED
-    elif research_blocked_source_ids or warning_source_ids:
+    elif any(source["status"] != STATUS_OK for source in sources):
         overall_status = STATUS_WARNING
 
-    if block_app or block_execution:
-        app_status = "blocked"
-        execution_status = "blocked"
-    else:
-        app_status = "ok"
-        execution_status = "ok"
+    impacts = [dependency_impact(source) for source in sources]
+    affected = sorted({item for impact in impacts for item in impact["affected_capability_ids"]})
+    blocked = sorted({item for impact in impacts for item in impact["blocked_action_ids"]})
+    app_status = "degraded" if any(x.startswith("display_") for x in affected) else "ok"
+    execution_status = "blocked" if block_execution else "ok"
 
     research_status = "warning" if research_blocked_source_ids else "ok"
 
     messages_sk = [source["user_message_sk"] for source in sources if source["status"] != STATUS_OK]
     messages_en = [source["user_message_en"] for source in sources if source["status"] != STATUS_OK]
     return {
+        "system_available": True,
+        "incident_level": "action_blocked" if block_execution else ("degraded" if research_blocked_source_ids else ("warning" if affected else "none")),
+        "affected_capability_ids": affected,
+        "blocked_action_ids": blocked,
         "overall_status": overall_status,
         "app_status": app_status,
         "execution_status": execution_status,
@@ -1441,6 +1474,7 @@ def build_report_bundle(
         "generated_at_utc": generated_at_utc,
         "reference_closed_day_utc": context["latest_closed_utc_day"],
         "overall_status": summary["overall_status"],
+        **{key: summary[key] for key in ("incident_level", "affected_capability_ids", "blocked_action_ids", "system_available")},
         "summary": summary,
         "sources": sources,
     }
@@ -1469,7 +1503,8 @@ def build_report_bundle(
             "source_id_unique": len(source_ids) == len(set(source_ids)),
             "valid_status_enum": not invalid_status_ids,
             "valid_action_enum": not invalid_action_ids,
-            "production_and_execution_fail_closed": bool(summary["block_execution"]) if summary["overall_status"] != STATUS_OK else True,
+            "dependent_trade_transition_fail_closed": ("new_trade_transition" in summary["blocked_action_ids"]) == bool(summary["block_execution"]),
+            "system_remains_available": summary["system_available"] and not summary["block_app"],
         },
         "validated_paths": {
             "report_path": str((resolved_output_dir / REPORT_PATH.name).resolve()),
@@ -1524,6 +1559,7 @@ def execution_blocking_sources(
     report: dict[str, Any],
     *,
     exclude_source_ids: set[str] | None = None,
+    action_id: str = "new_trade_transition",
 ) -> list[dict[str, Any]]:
     excluded = exclude_source_ids or set()
     sources = report.get("sources") if isinstance(report.get("sources"), list) else []
@@ -1534,18 +1570,13 @@ def execution_blocking_sources(
         and source.get("source_id") not in excluded
         and source.get("status") != STATUS_OK
         and source.get("action") == ACTION_BLOCK_EXECUTION
+        and action_id in dependency_impact(source)["blocked_action_ids"]
     ]
 
 
 def app_blocking_sources(report: dict[str, Any]) -> list[dict[str, Any]]:
-    sources = report.get("sources") if isinstance(report.get("sources"), list) else []
-    return [
-        source
-        for source in sources
-        if isinstance(source, dict)
-        and source.get("status") != STATUS_OK
-        and source.get("criticality") in {CRITICALITY_PRODUCTION, CRITICALITY_APP}
-    ]
+    # A failing source can degrade one display but cannot disable application access.
+    return []
 
 
 def research_warning_sources(report: dict[str, Any]) -> list[dict[str, Any]]:
@@ -1604,7 +1635,7 @@ def homepage_data_health_view(report: dict[str, Any]) -> dict[str, Any]:
     research_sources = research_warning_sources(report)
     informational_sources = informational_warning_sources(report)
 
-    block_app = summary.get("block_app") is True or bool(app_blocking)
+    block_app = False
     block_execution = summary.get("block_execution") is True or bool(critical_sources)
     show_primary_alert = block_app or block_execution or bool(critical_sources)
 

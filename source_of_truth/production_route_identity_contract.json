@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "status": "production_code_review_no_submit_validation",
+  "classification": [
+    "B",
+    "C",
+    "D"
+  ],
+  "strategy_parameters_changed": false,
+  "required_fields": [
+    "route_type",
+    "base_economic_asset",
+    "candidate_asset",
+    "candidate_trigger_active",
+    "resolved_execution_asset",
+    "resolution_reason",
+    "signal_available_at"
+  ],
+  "routes": {
+    "CASH": "resolved_execution_asset=CASH; target exposure=0",
+    "BTC": "resolved_execution_asset=BTC; includes explicitly active BTC overlay",
+    "BASE": "resolved_execution_asset=Phase60 concrete holding for the same economic interval; weekly candidate is informational",
+    "CANDIDATE": "requires candidate_trigger_active=true; resolved_execution_asset=weekly chosen candidate and matches candidate return price symbol"
+  },
+  "identity_rule": "Route, concrete price-return symbol, signal target, Production Core target, canonical execution intent and dashboard signal have one shared lineage. An inactive candidate never overrides BASE.",
+  "performance_rule": "A target from closed data day D applies only at a price after signal_available_at. Historical ledger holdings are interval-start executed holdings and may differ from the newly available target; both carry their own signal lineage. model_index consumes only the causal net ledger, never legacy same-day return or account PnL.",
+  "availability_rule": "Current availability is the actual completed computation timestamp after the newest closed UTC day. Historical unavailable build timestamps are explicit estimates, not invented observations.",
+  "dynamic_support_rule": "Validate the concrete strategy result against same-symbol price data and current Hyperliquid market metadata. Candidate drop lists are candidate selection policy only and never rename a BASE output. No manual asset allowlist.",
+  "entry_failure_scope": "Missing exchange support or liquidity for the new target blocks only that entry. Existing supported positions may still be reduced/closed. Scheduler and dashboard remain operational; original target and failure reason remain visible.",
+  "rotation_rule": "Reduce-only exit of unwanted positions, fresh account read-back, fresh equity and size computation, then supported target entry. Never size entry using hypothetical exit proceeds as if a fill had occurred.",
+  "no_submit_rule": "Run the whole canonical production pipeline with --no-submit. Refresh and read-only metadata/account calls are allowed. Order submission, cancellation, modification, leverage mutation and live reconciliation are forbidden. A post-exit entry is a conditional preview, not a fill or fabricated account read-back.",
+  "deployment_scope": "Code staged on Pi for no-submit verification only; preserve current production data, secrets, journal, position and scheduler configuration. No merge to main and no automatic activation of the candidate code.",
+  "separate_future_issue": "Do not add stop-loss or trailing-stop features. Existing reduce-only orders must not be cancelled during no-submit.",
+  "dependency_rule": "The causal route adapter consumes refreshed Phase60, Phase66 governance, trend, ETF panel and raw prices directly. It must not rebuild or consume synthetic Phase67/legacy Phase68 same-day performance dependencies."
+}

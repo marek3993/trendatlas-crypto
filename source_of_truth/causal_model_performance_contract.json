@@ -1,8 +1,11 @@
 {
   "schema_version": 1,
-  "status": "candidate_for_review_not_promoted",
-  "classification": ["B", "D"],
-  "scope": "offline_model_performance_only",
+  "status": "production_code_review_not_live_activated",
+  "classification": [
+    "B",
+    "D"
+  ],
+  "scope": "model_performance_and_production_no_submit_review",
   "signal_rule": "A decision from closed UTC data day D is available strictly after the end of D. It never controls PnL earned during D.",
   "execution_rule": "Use the first captured price timestamp at or after signal_available_at. If only daily spot data are complete, use the next daily open strictly after the availability estimate, with an explicit venue proxy label.",
   "historical_availability": "Observed build completion when archived; otherwise explicit next-day UTC availability estimate, never a claimed historical event timestamp.",
@@ -11,6 +14,21 @@
   "cost_rule": "Transition fees and slippage apply only to actual executed changes; funding/borrow apply only to held exposure. Missing venue funding is an explicit proxy, never an observed zero.",
   "dashboard_rule": "model_index is the cumulative product of causal net returns. Model exposure is the exposure that earned that interval. Account performance is accepted only from its separate exchange-native ledger.",
   "reproduction_rule": "All input bytes, source code, configuration, versions and source timestamps are frozen and SHA256 verified. Original-build reproduction and a new candidate are separate verdicts.",
-  "unchanged_runtime": ["production_rotation", "position", "timers", "executor", "authority", "order_api"],
-  "forbidden": ["parameter_optimization", "asset_allowlist", "approval_gate", "global_execution_gate", "model_equity_as_account_pnl", "account_pnl_as_model_equity"]
+  "unchanged_runtime": [
+    "production_rotation",
+    "position",
+    "timers",
+    "executor",
+    "authority",
+    "order_api"
+  ],
+  "forbidden": [
+    "parameter_optimization",
+    "asset_allowlist",
+    "approval_gate",
+    "global_execution_gate",
+    "model_equity_as_account_pnl",
+    "account_pnl_as_model_equity"
+  ],
+  "production_integration_contract": "source_of_truth/production_route_identity_contract.json"
 }

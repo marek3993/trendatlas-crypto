@@ -197,7 +197,7 @@ def main() -> None:
         "mode": str(mode_cfg.get("mode", "")).strip(),
         "trading_enabled": bool(mode_cfg.get("trading_enabled", False)),
         "kill_switch": bool(mode_cfg.get("kill_switch", True)),
-        "allow_live_orders": bool(live_order_policy.get("allow_live_orders", False)),
+        "emergency_execution_blocked": mode_cfg.get("kill_switch") is not False,
         "target_asset": target_asset,
         "current_state": current_state["normalized_state"],
         "active_asset": current_state["active_asset"],

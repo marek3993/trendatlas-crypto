@@ -1,0 +1,19 @@
+{
+  "contract_version": 2,
+  "effective_date": "2026-09-26",
+  "artifact_field": "current_strategy_snapshot.source_inputs.current_emittable_universe",
+  "authority": "active_production_strategy_adapter",
+  "adapter_source": "scripts/production/strategy_adapters/causal_route_adapter.py",
+  "selector_source": "outputs/phase66g_production_candidate_live/phase66g_production_soft_filters_paper.csv",
+  "selector_semantics": "actual_governance_routes_joined_to_same_interval_Phase60_holdings_and_same_symbol_prices",
+  "additional_assets": "actual_BASE_holdings_and_explicit_BTC_or_CASH_strategy_routes; candidate_drop_list_never_filters_BASE",
+  "current_target_rule": "current_target_equals_validated_resolved_route",
+  "historical_series_rule": "historical_performance_belongs_to_its_own_available_resolved_signal",
+  "freshness_rule": "governance_base_and_required_price_sources_reach_current_closed_day",
+  "fingerprint_rule": "source_inputs.files_hashes_bind_strategy_price_and_contract_sources",
+  "missing_or_invalid_source": "reject_ambiguous_route_derivation_without_inventing_a_target",
+  "executor_rule": "unsupported_venue_target_blocks_its_entry_only; supported_old_position_exit_scheduler_and_dashboard_remain_available",
+  "strategy_math_changed": false,
+  "base_source": "outputs/phase60_selective_restore_robustness/phase60_restore_trx_sol_base_paper.csv",
+  "route_identity_contract": "source_of_truth/production_route_identity_contract.json"
+}

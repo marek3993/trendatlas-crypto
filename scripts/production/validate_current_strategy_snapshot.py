@@ -490,6 +490,10 @@ def validate_production_payloads(
     adapter: Phase68g66g1p25xCandidateAdapter,
     inputs: dict[str, Any],
 ) -> dict[str, Any]:
+    if getattr(adapter, "route_identity_required", False):
+        from scripts.production.strategy_adapters.causal_route_adapter import validate_route_payloads
+        return validate_route_payloads(snapshot=snapshot, timeseries=timeseries,
+            diagnostics=diagnostics, adapter=adapter, inputs=inputs)
     errors: list[str] = []
     warnings: list[str] = []
     checks: dict[str, Any] = {}
@@ -1201,6 +1205,12 @@ def validate_active_production_payloads(
     timeseries: pd.DataFrame,
     diagnostics: dict[str, Any],
 ) -> dict[str, Any]:
+    if (ROOT / "source_of_truth/production_route_identity_contract.json").exists():
+        from scripts.production.strategy_adapters.causal_route_adapter import CausalRouteAdapter
+        adapter = CausalRouteAdapter()
+        inputs = adapter.load_inputs(root=ROOT)
+        return validate_production_payloads(snapshot=snapshot, timeseries=timeseries,
+            diagnostics=diagnostics, adapter=adapter, inputs=inputs)
     strategy_version = str(snapshot.get("strategy_version") or "").strip()
     provenance = snapshot.get("provenance")
     promoted_from = provenance.get("promoted_from_staged_candidate") if isinstance(provenance, dict) else None

@@ -738,6 +738,9 @@ def simulate_variant(base_input: pd.DataFrame, cfg: VariantConfig) -> pd.DataFra
 
     df["executed_regime"] = df["signal_regime"].shift(1).fillna("CASH")
     df["executed_position"] = df["signal_position"].shift(1).fillna("CASH")
+    # BASE return already belongs to the same-row Phase60 economic interval.
+    # Shifting that holding a second time mislabels its return on rotations.
+    df.loc[df["executed_regime"].eq("BASE"), "executed_position"] = base_pos
 
     df["strategy_return"] = np.where(
         df["executed_regime"] == "BTC",

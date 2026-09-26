@@ -112,6 +112,11 @@ def load_governance_paper(path: Path) -> pd.DataFrame:
     out = pd.DataFrame()
     out["date"] = pd.to_datetime(df[date_col], errors="coerce").dt.tz_localize(None)
     out["base_ret"] = pd.to_numeric(df[ret_col], errors="coerce").fillna(0.0)
+    if not {"executed_regime", "executed_position"} <= set(df):
+        raise ValueError("Governance route identity is required; weekly candidate is not a holding")
+    out["route_type"] = df["executed_regime"].astype(str).str.upper()
+    out["executed_position"] = df["executed_position"].astype(str)
+
 
     if chosen_col is not None:
         out["overlay_candidate_raw"] = df[chosen_col].astype(str).fillna("")
@@ -248,22 +253,32 @@ def build_portfolio_exposure_frame(
     governance_df: pd.DataFrame,
     baseline_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    out = governance_df.merge(baseline_df, on="date", how="left")
-
+    out = governance_df.merge(baseline_df, on="date", how="left", validate="one_to_one")
     if out["baseline_held_asset"].isna().any():
-        out["baseline_held_asset"] = out["baseline_held_asset"].ffill().bfill().fillna("CASH")
-
+        raise ValueError("Missing same-interval BASE holding")
+    if "route_type" not in out:
+        raise ValueError("Explicit governance route required")
     out["overlay_candidate_clean"] = out["overlay_candidate_raw"].astype(str).str.strip().str.upper()
-    out["use_baseline_exposure"] = out["overlay_candidate_clean"].isin(BLANK_OVERRIDE_MARKERS)
-
-    out["portfolio_held_asset"] = np.where(
-        out["use_baseline_exposure"],
-        out["baseline_held_asset"].astype(str),
-        out["overlay_candidate_clean"].map(normalize_asset_label),
-    )
-
-    out["portfolio_held_asset"] = pd.Series(out["portfolio_held_asset"], index=out.index).map(normalize_asset_label)
-    out["is_exposed"] = ~out["portfolio_held_asset"].isin(["CASH", "USD", "USDT"])
+    out["use_baseline_exposure"] = out["route_type"].eq("BASE")
+    assets = []
+    for row in out.itertuples():
+        if row.route_type == "CASH":
+            coin = "CASH"
+        elif row.route_type == "BTC":
+            coin = "BTC"
+        elif row.route_type == "BASE":
+            coin = normalize_asset_label(row.baseline_held_asset)
+        elif row.route_type == "CANDIDATE":
+            coin = normalize_asset_label(row.executed_position)
+            if coin != normalize_asset_label(row.overlay_candidate_clean):
+                raise ValueError("Active candidate return/selection identity mismatch")
+        else:
+            raise ValueError("Unknown governance route")
+        if coin in {"BASE", "BASELINE", "ALT", "CANDIDATE", ""}:
+            raise ValueError("Concrete economic holding required")
+        assets.append(coin)
+    out["portfolio_held_asset"] = assets
+    out["is_exposed"] = out["portfolio_held_asset"].ne("CASH")
 
     return out
 
