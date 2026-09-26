@@ -23,21 +23,26 @@ def verify_arithmetic(events,spec):
     for _,fold in events.groupby(events.date.str[:4],sort=True):
         equity=1.;qty=0.;mark=0.;asset=None
         for row in fold.itertuples():
-            price=row.price;change=row.quantity_change;before=equity
+            price=row.price;change=row.quantity_change;before=equity;cost=0.;turnover=0.
             if row.event=='mark':
                 assert asset==row.asset and qty>0
                 equity=max(0,equity+qty*(price-mark));mark=price
             elif row.event=='funding':
                 assert asset==row.asset
-                equity=max(0,equity-qty*price*spec['costs']['funding_annual_debit']/365.25)
+                cost=qty*price*spec['costs']['funding_annual_debit']/365.25
+                equity=max(0,equity-cost)
             else:
                 if row.event=='entry':assert qty==0;asset=row.asset;mark=price
                 assert asset==row.asset
                 fee=rate+(spec['costs']['liquidation_fee_bps']*1e-4 if row.event=='liquidation' else 0)
-                equity=max(0,equity-abs(change)*price*fee);qty=max(0,qty+change)
+                turnover=abs(change)*price;cost=turnover*fee
+                equity=max(0,equity-cost);qty=max(0,qty+change)
             assert np.isclose(equity,row.equity_after,atol=2e-10,rtol=2e-10),(row.date,row.event,equity,row.equity_after)
+            assert np.isclose(cost/max(before,1e-100),row.cost_fraction,atol=2e-10,rtol=2e-10)
+            assert np.isclose(turnover/max(before,1e-100),row.turnover,atol=2e-10,rtol=2e-10)
             if equity>0 and before>0:assert np.isclose(np.log(equity/before),row.log_growth,atol=2e-10,rtol=2e-10)
             checked+=1
+        assert qty==0,'Fold did not close its position'
     return checked
 
 
@@ -57,9 +62,26 @@ def finalize(out):
     for name,folds in choices.items():
         for fold in spec['folds']:
             assert folds[fold['id']]['validation_end']<fold['test_start']
+    # A large development result also receives an actual replay audit, not
+    # merely the OOS policy's structural checks. This never selects new trials.
+    development_audits={};market=None
+    variant_map={p['id']:p for p in spec['variants']}
+    for policy in result['policies']:
+        if not policy['development'] or policy['development']['cagr']<1.5:continue
+        if market is None:market=engine.load_market()
+        name=policy['id'];selected=choices[name]['2021']['variant']
+        part=next(p for p in spec['partitions'] if name.startswith(p['id']+'__'))
+        replay=engine.simulate(market,variant_map[selected],part['cap'],start='2020-01-01',end='2020-12-31',ledger=True)
+        measured=engine.summarize(replay)
+        assert abs(measured['cagr']-policy['development']['cagr'])<1e-9
+        audit_spec=dict(spec,folds=[dict(id='2020',test_start='2020-01-01',test_end='2020-12-31')])
+        development_audits[name]=run.real_audit(market,part,{'2020':{'variant':selected}},variant_map,audit_spec,replay,measured)
+        development_audits[name]['development_cagr']=measured['cagr']
+    write_json(out/'development_high_return_audits.json',development_audits)
     evaluation=out/'evaluation';evaluation.mkdir(exist_ok=True)
     evidence=dict(scope='Independent post-run consistency checks plus empirical replay audits',
-                  empirical_audits=audit,source_manifest_sha256=digest((out/'reproduction_manifest.json').read_bytes()),
+                  empirical_audits=audit,development_high_return_audits=development_audits,
+                  source_manifest_sha256=digest((out/'reproduction_manifest.json').read_bytes()),
                   input_sha256=spec['input_bundle_sha256'],code_sha256=freeze['code_sha256'],nominees=nom,
                   all_partition_budgets_match=True,all_choices_precede_test=True,ledger_checks={},
                   venue_and_historical_universe_evidence_available=False)
@@ -81,6 +103,9 @@ def finalize(out):
             groups=events.groupby('trade_id').log_growth.sum().sort_values(ascending=False)
             total=np.log(eq[-1])
             assert abs(events.log_growth.sum()-total)<1e-8
+            event_equity=np.r_[1,np.exp(np.cumsum(events.log_growth.to_numpy()))]
+            event_dd=np.max(1-event_equity/np.maximum.accumulate(event_equity))
+            assert abs(event_dd-met['max_drawdown'])<1e-9
             for trade_id,part in events.groupby('trade_id'):
                 assets=part.asset.unique();assert len(assets)==1,(name,trade_id,assets)
                 attribution.append(dict(policy=name,trade_id=trade_id,asset=assets[0],
@@ -91,7 +116,8 @@ def finalize(out):
             assert np.allclose(day_growth,np.log1p(curve.net_return.to_numpy()),atol=1e-9,rtol=1e-9)
         evidence['ledger_checks'][name]=dict(equity_recomputed=True,cagr_recomputed=True,
             daily_log_returns_reconciled=True,top_three_episode_omission_recomputed=True,asset_per_episode_unique=True,
-            quantity_price_cost_accounting_recomputed=True,event_count=len(events))
+            quantity_price_cost_accounting_recomputed=True,intraday_drawdown_recomputed=True,
+            fee_funding_turnover_fields_recomputed=True,event_count=len(events))
     pd.DataFrame(attribution).to_csv(out/'episode_attribution.csv',index=False,lineterminator='\n')
     write_json(evaluation/'audit_evidence.json',evidence)
     ev=dict(path='audit_evidence.json',sha256=digest((evaluation/'audit_evidence.json').read_bytes()))

@@ -1,6 +1,6 @@
 {
   "scope": "Offline research unit tests and SSOT/navigation checks; market replay checks are separate",
-  "tests_passed": 72,
+  "tests_passed": 74,
   "checks": [
     {
       "name": "research",
@@ -47,5 +47,15 @@
       "original_token_count": 146,
       "output": "test_output_entries_have_required_fields (test_output_registry_required_fields.TestOutputRegistryRequiredFields.test_output_entries_have_required_fields) ... ok\r\ntest_output_registry_outputs_block_exists (test_output_registry_required_fields.TestOutputRegistryRequiredFields.test_output_registry_outputs_block_exists) ... ok\r\ntest_required_field_shapes_are_valid (test_output_registry_required_fields.TestOutputRegistryRequiredFields.test_required_field_shapes_are_valid) ... ok\r\n\r\n----------------------------------------------------------------------\r\nRan 3 tests in 0.002s\r\n\r\nOK\r\n"
     }
-  ]
+  ],
+  "latest_research_check": {
+    "cmd": "python -m unittest discover -s research/causal_search_20260926 -p test_*.py -v",
+    "exit_code": 0,
+    "tests_passed": 37,
+    "supersedes": "35-test research check below; other suites unchanged",
+    "added_regressions": [
+      "native numerical metrics for strict objectives",
+      "fresh/cached identical non-CASH selection"
+    ]
+  }
 }
