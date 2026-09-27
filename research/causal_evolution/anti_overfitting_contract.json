@@ -1,0 +1,52 @@
+{
+  "id": "causal_nested_v1_20260927",
+  "source_contract": "evolution_contract.json",
+  "temporal": {
+    "data_start": "2019-01-01",
+    "data_end": "2025-12-31",
+    "anchored_train_start": "2020-01-01",
+    "longest_lookback_days": 365,
+    "publication_latency_days": 1,
+    "max_position_days": 90,
+    "exit_ttl_days": 3,
+    "purge_embargo_days": 459,
+    "inner_validation_days": 120,
+    "inner_windows": 2,
+    "outer_years": [
+      2024,
+      2025
+    ],
+    "rule": "For each outer Jan1, latest inner validation ends 460 days earlier; two consecutive 120-day validation windows; each anchored train ends 460 days before its validation starts. Warmup may read only earlier prices. All search across both origins completes and freezes before ANY outer result is computed. No outer period is exposed in mutation inputs. No random data shuffle."
+  },
+  "prospective": {
+    "new_days_min": 30,
+    "new_days_anchor": "2026-09-26",
+    "first_refit": "2027-01-01",
+    "later_refits": "quarterly UTC Jan1/Apr1/Jul1/Oct1",
+    "prospective_policy": "Read-only forward evaluation only after nominee freeze; no mutation input before fixed refit; on refit used data are explicitly seen, never re-labeled fresh sealed. Retain every old sealed cycle. Changed hash alone insufficient: closed UTC days, append-only observed data, new ID/fingerprint, fixed refit, complete PIT/venue coverage required."
+  },
+  "tests": {
+    "bootstrap_replicates": 499,
+    "mean_block_days": 30,
+    "bootstrap_seed": 872341,
+    "confidence": 0.95,
+    "minimum_days": 365,
+    "minimum_closed_episodes": 20,
+    "minimum_effective_blocks": 12,
+    "cscv_blocks": 8,
+    "cscv_min_candidates": 8,
+    "dsr_trials": "all attempted candidate slots and neighbor hypotheses across seeds/arms/origins; also report unique configs/cache hits, prior studies uncountable so global independence unproven",
+    "multiple_testing": "paired centered stationary-block bootstrap one-sided mean excess log return; Holm familywise adjustment across every frozen finalist, including failures; no claim exact Hansen SPA",
+    "status": "All numeric diagnostics retained; insufficient history/trades/diversity => INCONCLUSIVE, not PASS"
+  },
+  "forbidden": [
+    "outer-to-proposal",
+    "outer-to-fitness",
+    "post-outer-search",
+    "same-data-successor",
+    "old-PnL-input",
+    "synthetic-perp",
+    "production-order-access"
+  ],
+  "frozen_at": "2026-09-27T10:54:10.008032+00:00"
+}

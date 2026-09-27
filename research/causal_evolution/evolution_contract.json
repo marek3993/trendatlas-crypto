@@ -1,0 +1,288 @@
+{
+  "id": "causal_nested_v1_20260927",
+  "class": [
+    "B",
+    "C",
+    "D"
+  ],
+  "base_main": "730b57c1e8815e50def473ad641a1c9db3477bc4",
+  "sources": {
+    "causal": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "capacity": "58e308315d03a4561d53bbbd4019f7392f66e662",
+    "dispatcher": "e655035c3e3651468eb47ed078a6746ec0602860"
+  },
+  "authority": {
+    "orders": false,
+    "promotion": false,
+    "production_writes": false,
+    "historical_status": "previously_seen_not_global_sealed",
+    "prospective_start": "2026-09-27"
+  },
+  "budget": {
+    "islands": [
+      "F_spot",
+      "G_spot",
+      "H_spot",
+      "D_perp"
+    ],
+    "seeds": [
+      1701,
+      2903,
+      4517
+    ],
+    "arms": [
+      "deterministic",
+      "deepseek"
+    ],
+    "population": 10,
+    "survivors": 6,
+    "mutations": 4,
+    "max_generations": 5,
+    "outer_origins": [
+      2024,
+      2025
+    ],
+    "max_candidate_slots": 1248,
+    "plateau_neighbors": 2,
+    "max_api_calls": 96,
+    "api_usd_ceiling": 1.0,
+    "max_evaluation_attempts": 20000,
+    "active_seconds_ceiling": 86400,
+    "state_bytes_ceiling": 536870912,
+    "stop_no_front_improvement": 3,
+    "minimum_distinct_survivors": 6
+  },
+  "split": {
+    "data_start": "2019-01-01",
+    "data_end": "2025-12-31",
+    "anchored_train_start": "2020-01-01",
+    "longest_lookback_days": 365,
+    "publication_latency_days": 1,
+    "max_position_days": 90,
+    "exit_ttl_days": 3,
+    "purge_embargo_days": 459,
+    "inner_validation_days": 120,
+    "inner_windows": 2,
+    "outer_years": [
+      2024,
+      2025
+    ],
+    "rule": "For each outer Jan1, latest inner validation ends 460 days earlier; two consecutive 120-day validation windows; each anchored train ends 460 days before its validation starts. Warmup may read only earlier prices. All search across both origins completes and freezes before ANY outer result is computed. No outer period is exposed in mutation inputs. No random data shuffle."
+  },
+  "engine": {
+    "source": "asset-resolved cash/quantity causal archaeology descendant",
+    "tracks": {
+      "spot": "actual Binance spot research proxy",
+      "perp": "actual Binance USD-M conservative proxy, never venue-certified"
+    },
+    "initial_usd": 100,
+    "capacities": [
+      100,
+      1000,
+      10000,
+      100000
+    ],
+    "fees_bps": 10,
+    "slippage_bps": 10,
+    "latency_seconds": 60,
+    "fill": "first real 4h open after daily publication; delay stress second executable bar",
+    "partial_fill": "0.1% lagged published quote volume, entry TTL6/exitTTL18; retain and mark residual; never fake exit",
+    "maximum_holding": "At 90 elapsed days from actual entry request a latency-safe exit; residual remains MTM. Material position still held after93 days invalidates reliability. Calendar-cut books use only observed MTM, no invented closure. This fixed horizon is a new rule, not an old return input."
+  },
+  "seeds": {
+    "status": "hypotheses_only",
+    "post_oos_selected": [
+      "BTC_mom90_monthly",
+      "BTC_breakout120_weekly"
+    ],
+    "named": [
+      "BTC_SMA200",
+      "G_4d93e50475a7",
+      "G_75fc690a1283",
+      "F_G_H_D_components",
+      "CASH"
+    ],
+    "never_independent_finalists": true
+  },
+  "pareto": {
+    "maximize": [
+      "mean_inner_cagr",
+      "median_sharpe",
+      "median_calmar",
+      "worst_validation_fold",
+      "profitable_fold_fraction",
+      "plateau_fraction",
+      "seed_consistency",
+      "benchmark_delta"
+    ],
+    "minimize": [
+      "maximum_mdd",
+      "turnover",
+      "cost_fraction",
+      "asset_concentration",
+      "episode_concentration",
+      "complexity"
+    ],
+    "method": "Nondominated sorting, normalized NSGA crowding, then simpler rules on epsilon-equivalent results; no weighted sum. Three search seeds remain separate populations; cross-seed consistency is measured on generation-level island/arm outcomes, not claimed as independent market samples."
+  },
+  "qualification": {
+    "cagr_high_min": 1.5,
+    "cagr_reference_upper": 2.0,
+    "mdd_target": 0.2,
+    "mdd_robust": 0.25,
+    "mdd_max": 0.35,
+    "sharpe_min": 1.5,
+    "calmar_min": 4,
+    "asset_positive_profit_share_max": 0.6,
+    "episode_positive_profit_share_max": 0.35,
+    "no_top3_cagr_min": -0.05,
+    "plateau_positive_fraction_min": 0.75,
+    "all_three_seeds_required": true,
+    "benchmark": "same track, periods, capital, costs; gain >=5ppCAGR or >=5ppDD or .15Sharpe or .25Calmar or .15concentration; noninferiority CAGR-10pp/DD+5pp/Sharpe-.20/Calmar-.30",
+    "statistics": "DSR>=.95, paired block-bootstrap lower excess growth bound>0, Holm-adjusted p<=.05, CSCV PBO<=.10; insufficient power is INCONCLUSIVE and cannot qualify",
+    "production_pass": false
+  },
+  "deepseek": {
+    "endpoint": "https://api.deepseek.com/chat/completions",
+    "model": "deepseek-flash",
+    "max_output_tokens": 2200,
+    "allowed_scopes": [
+      "inner_train",
+      "inner_validation"
+    ],
+    "output": "exactly four objects: parent candidate ID, complete schema-valid genes, hypothesis <=600 characters. No code/tools/evaluator/data changes. Strict duplicate/nonfinite/key validation. Immutable exact payload and response; reserve call and cost before network, no uncertain-call automatic retry. Missing/unavailable API -> same-budget deterministic proposals."
+  },
+  "continuation": {
+    "new_days_min": 30,
+    "new_days_anchor": "2026-09-26",
+    "first_refit": "2027-01-01",
+    "later_refits": "quarterly UTC Jan1/Apr1/Jul1/Oct1",
+    "prospective_policy": "Read-only forward evaluation only after nominee freeze; no mutation input before fixed refit; on refit used data are explicitly seen, never re-labeled fresh sealed. Retain every old sealed cycle. Changed hash alone insufficient: closed UTC days, append-only observed data, new ID/fingerprint, fixed refit, complete PIT/venue coverage required."
+  },
+  "runtime": {
+    "worker_network": false,
+    "designer_broker": "separate allowlisted network process, no production/account filesystem or credentials; worker queues development-only JSON",
+    "cpu_quota": "20%",
+    "ram_max_mib": 768,
+    "swap_max": 0,
+    "thermal_stop_c": 75,
+    "thermal_resume_c": 68,
+    "disk_free_reserve_mib": 1024,
+    "per_activation_minutes": 30,
+    "checkpoints": "SQLite FULL synchronous transactions per evaluation/proposal/generation; no SEALED reopening; conservative in-flight attempt reservation",
+    "statuses": [
+      "RUNNING",
+      "WAITING_FOR_NEW_DATA",
+      "SEALED",
+      "FAILED"
+    ],
+    "production_priority": "existing dispatcher gate+job check, RefuseManualStart, research Conflicts/After production; observe gate at each checkpoint; never start/stop production"
+  },
+  "stress": [
+    "double_fees_slippage_funding_debits",
+    "one_executable_bar_later",
+    "adverse_fill_and_mark",
+    "no_best_day",
+    "no_top3_complete_closed_episodes",
+    "parameter_plateau",
+    "three_search_seeds",
+    "annual_and_predefined_regime_slices",
+    "asset_episode_concentration",
+    "four_account_capacities",
+    "dollar_costs",
+    "exposure_drift",
+    "asset_lineage",
+    "prefix_and_future_mutation_audit"
+  ],
+  "statistics": {
+    "bootstrap_replicates": 499,
+    "mean_block_days": 30,
+    "bootstrap_seed": 872341,
+    "confidence": 0.95,
+    "minimum_days": 365,
+    "minimum_closed_episodes": 20,
+    "minimum_effective_blocks": 12,
+    "cscv_blocks": 8,
+    "cscv_min_candidates": 8,
+    "dsr_trials": "all attempted candidate slots and neighbor hypotheses across seeds/arms/origins; also report unique configs/cache hits, prior studies uncountable so global independence unproven",
+    "multiple_testing": "paired centered stationary-block bootstrap one-sided mean excess log return; Holm familywise adjustment across every frozen finalist, including failures; no claim exact Hansen SPA",
+    "status": "All numeric diagnostics retained; insufficient history/trades/diversity => INCONCLUSIVE, not PASS"
+  },
+  "schema": {
+    "family": [
+      "F",
+      "G",
+      "H",
+      "D"
+    ],
+    "signal": [
+      "sma50",
+      "sma100",
+      "sma150",
+      "sma200",
+      "dual50_200",
+      "dual100_200",
+      "dual50_150",
+      "breakout20",
+      "breakout55",
+      "breakout120",
+      "breakout200",
+      "mom90",
+      "mom180",
+      "mom270",
+      "mom365",
+      "combo_sma_mom",
+      "combo_breakout_mom"
+    ],
+    "cadence": [
+      "weekly",
+      "monthly"
+    ],
+    "confirm": [
+      0,
+      3,
+      7,
+      14
+    ],
+    "hysteresis": [
+      0.0,
+      0.01,
+      0.03
+    ],
+    "scope": [
+      "BTC",
+      "ETH",
+      "liquid5"
+    ],
+    "top_k": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "weighting": [
+      "equal",
+      "inverse_vol",
+      "equal_risk"
+    ],
+    "satellite": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "satellite_k": [
+      1,
+      2
+    ],
+    "gross": [
+      1.0,
+      1.25
+    ],
+    "recipe": [
+      "btc_regime",
+      "own_trend_ls",
+      "beta_neutral",
+      "funding_aware"
+    ]
+  }
+}

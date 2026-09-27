@@ -1,0 +1,20 @@
+{
+  "experiment_id": "causal_nested_v1_20260927",
+  "utc": "2026-09-27T10:54:58.794745+00:00",
+  "status": "PREREGISTERED_NO_PERFORMANCE",
+  "files": {
+    "evolution_contract.json": "5a94a91a3feda2dd1abddbc49fa4425bbf125513181855d20adbf1ef3116ffbb",
+    "anti_overfitting_contract.json": "ed8ffa0f82e0daddaef9d0af8d3f9abdfc18b552945b6093c05f09baaa18aab0"
+  },
+  "input_files": {
+    "funding.zip": "0befd0f350595ac3ecd7cf94b1f495244183a1446e8282888d3d6653293f8e65",
+    "identity_events.json": "a62e62989a82a8e962dd4576299b88061823f543d7993d81611769116356da3e",
+    "perp_mark.zip": "46c2dbe4d02546345d87312adbb1d5e806d759efcad1104e3252cbcf4306d7f2",
+    "perp_trade.zip": "5a4196c438df5b1003a6a346fea11cbb69af2c12764ff2f169df0bff9db93c36",
+    "spot_4h.zip": "657a0d64e9c4cc9ea02bb8a81766dc2d9bc2b852a2c88c8a9055e39e33e72409",
+    "spot_daily.zip": "21cdd19d993258ceaa14638887c372bfd6cb352a8f7e955a9d67a68db52fba45",
+    "venue_notices.json": "5c5785987f38ce267d2dd4c2910836a1ff650d6198d700f7eff26f5e3aa5ea26"
+  },
+  "initial_data_end": "2025-12-31",
+  "first_cycle_exception": "Explicit user-requested new methodology; no automatic same-data repetition."
+}
