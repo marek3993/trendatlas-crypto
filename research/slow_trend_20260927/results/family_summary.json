@@ -1,0 +1,58 @@
+[
+  {
+    "cagr_range": [
+      -0.2296727457748311,
+      0.6494126277864882
+    ],
+    "decision": "REJECT",
+    "family": "F",
+    "minimum_mdd": 0.0,
+    "oos_rows": 121,
+    "positive_mdd25_rows": 1,
+    "reliable_rows": 119,
+    "target_numeric_rows": 0,
+    "validation_qualified": 0
+  },
+  {
+    "cagr_range": [
+      -0.09314791423740443,
+      0.3494023066987948
+    ],
+    "decision": "REJECT",
+    "family": "G",
+    "minimum_mdd": 0.0,
+    "oos_rows": 28,
+    "positive_mdd25_rows": 0,
+    "reliable_rows": 26,
+    "target_numeric_rows": 0,
+    "validation_qualified": 0
+  },
+  {
+    "cagr_range": [
+      0.007337704947202761,
+      0.30382163300758647
+    ],
+    "decision": "REJECT",
+    "family": "H",
+    "minimum_mdd": 0.37142500839837445,
+    "oos_rows": 26,
+    "positive_mdd25_rows": 0,
+    "reliable_rows": 25,
+    "target_numeric_rows": 0,
+    "validation_qualified": 0
+  },
+  {
+    "cagr_range": [
+      -0.28711448078915736,
+      0.07688279548132648
+    ],
+    "decision": "REJECT",
+    "family": "D",
+    "minimum_mdd": 0.0,
+    "oos_rows": 17,
+    "positive_mdd25_rows": 0,
+    "reliable_rows": 9,
+    "target_numeric_rows": 0,
+    "validation_qualified": 0
+  }
+]

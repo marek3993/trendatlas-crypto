@@ -1,0 +1,17 @@
+{
+  "files": {
+    "candidate_panel_frozen.json": "8a7b0370d46703f26f603392edda3adec5a41a3736ad2b79a50323a05d89f679",
+    "common.py": "162de7727f7b85f2ecb68fdde9076cdf759b82cf19fae3072fb524af2206c659",
+    "contract.json": "75dd9a05c814f96f85066a6437589e0022f46e7e9a5af0721048ad1173f6c62f",
+    "data.py": "7b7e462fcaa004e4750c5df04b263a5d35b576932f44302150c246f6f36b2a94",
+    "data_freeze.json": "94c4b67e1de1abf336a6d75f251577fef040d3c4a4753409bc4cf391f6065050",
+    "designer.py": "240b7bb5eb2303f1a55ede5d873f0ebab2c5a80b814bf2377cf61ffcdd9a3db4",
+    "evaluate.py": "6087b8389d67dd59cbede90f1d433ef5c5f4ec6b5dc0a88df2bfab7a3f23fb7a",
+    "ledger.py": "32a06edb11974f26b92e1b954fc5df30d8a67049fcd26b8d9f5bd9c3f80402ca",
+    "run.py": "f2239f83820118fc3f5de2e443c802cf10b32e8820567e16c5809b40dcf70b7f",
+    "signals.py": "034a2f31d781b9e0dd6de4274cc83b48962e6972b63dde788da80f457a234989",
+    "test_research.py": "83e9a7c5b02aafbdeeadb5d9e82c76e56b5c7bbb67df1afc0f17d15a4504a392"
+  },
+  "performance_note": "Correctness amendments before validation/OOS only. Unchanged frozen hypotheses, data and budgets; interrupted attempts preserved.",
+  "utc": "2026-09-27T09:21:02.938645+00:00"
+}

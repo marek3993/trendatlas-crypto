@@ -1,0 +1,1342 @@
+{
+  "deepseek_development_boundary": true,
+  "engine_hashes_pass": true,
+  "forbidden_dynamic_code": [],
+  "forward_opened": false,
+  "ledger_reconciliations": [
+    {
+      "entry_PIT_pass": true,
+      "evidence": "BTC_SMA200_spot/100/nominal/none",
+      "fills": 32,
+      "max_cash_quantity_nav_error_usd": 4.998241820430849e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "BTC_SMA200_spot/100/double_cost/none",
+      "fills": 32,
+      "max_cash_quantity_nav_error_usd": 4.997104952053633e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "BTC_SMA200_spot/100/delay/none",
+      "fills": 32,
+      "max_cash_quantity_nav_error_usd": 5.001083991373889e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "BTC_SMA200_spot/100/coarse/none",
+      "fills": 32,
+      "max_cash_quantity_nav_error_usd": 4.999378688808065e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "BTC_SMA200_perp/100/nominal/none",
+      "fills": 35,
+      "max_cash_quantity_nav_error_usd": 5.02012653669226e-10,
+      "max_independent_funding_error_usd": 4.800049246966864e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "BTC_SMA200_perp/100/double_cost/none",
+      "fills": 39,
+      "max_cash_quantity_nav_error_usd": 5.032916305935942e-10,
+      "max_independent_funding_error_usd": 4.998917946252845e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "BTC_SMA200_perp/100/delay/none",
+      "fills": 35,
+      "max_cash_quantity_nav_error_usd": 5.01870545122074e-10,
+      "max_independent_funding_error_usd": 4.945766018948916e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "BTC_SMA200_perp/100/coarse/none",
+      "fills": 35,
+      "max_cash_quantity_nav_error_usd": 5.003641945222626e-10,
+      "max_independent_funding_error_usd": 4.903299988257004e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_f2692e2c3966/100/nominal/none",
+      "fills": 16,
+      "max_cash_quantity_nav_error_usd": 4.999094471713761e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_f2692e2c3966/100/double_cost/none",
+      "fills": 16,
+      "max_cash_quantity_nav_error_usd": 4.994546998204896e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_f2692e2c3966/100/delay/none",
+      "fills": 16,
+      "max_cash_quantity_nav_error_usd": 4.999947122996673e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_f2692e2c3966/100/coarse/none",
+      "fills": 16,
+      "max_cash_quantity_nav_error_usd": 4.999094471713761e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_46c13bb62883/100/nominal/none",
+      "fills": 12,
+      "max_cash_quantity_nav_error_usd": 4.998810254619457e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_46c13bb62883/100/double_cost/none",
+      "fills": 12,
+      "max_cash_quantity_nav_error_usd": 4.999662905902369e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_46c13bb62883/100/delay/none",
+      "fills": 12,
+      "max_cash_quantity_nav_error_usd": 4.999520797355217e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_46c13bb62883/100/coarse/none",
+      "fills": 12,
+      "max_cash_quantity_nav_error_usd": 4.999378688808065e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_e24246390542/100/nominal/none",
+      "fills": 43,
+      "max_cash_quantity_nav_error_usd": 4.998810254619457e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_e24246390542/100/double_cost/none",
+      "fills": 43,
+      "max_cash_quantity_nav_error_usd": 4.999378688808065e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_e24246390542/100/delay/none",
+      "fills": 42,
+      "max_cash_quantity_nav_error_usd": 4.998526037525153e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_e24246390542/100/coarse/none",
+      "fills": 43,
+      "max_cash_quantity_nav_error_usd": 4.999662905902369e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_426fda55f55f/100/nominal/none",
+      "fills": 43,
+      "max_cash_quantity_nav_error_usd": 4.998810254619457e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_426fda55f55f/100/double_cost/none",
+      "fills": 43,
+      "max_cash_quantity_nav_error_usd": 4.999378688808065e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_426fda55f55f/100/delay/none",
+      "fills": 42,
+      "max_cash_quantity_nav_error_usd": 4.998526037525153e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_426fda55f55f/100/coarse/none",
+      "fills": 43,
+      "max_cash_quantity_nav_error_usd": 4.999662905902369e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_6f6eaae8321d/100/nominal/none",
+      "fills": 24,
+      "max_cash_quantity_nav_error_usd": 5.002078751203953e-10,
+      "max_independent_funding_error_usd": 3.9103442706078795e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_6f6eaae8321d/100/double_cost/none",
+      "fills": 25,
+      "max_cash_quantity_nav_error_usd": 5.02083707942802e-10,
+      "max_independent_funding_error_usd": 4.840849943121839e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_6f6eaae8321d/100/delay/none",
+      "fills": 24,
+      "max_cash_quantity_nav_error_usd": 5.012879000787507e-10,
+      "max_independent_funding_error_usd": 3.0829505615059816e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_6f6eaae8321d/100/coarse/none",
+      "fills": 24,
+      "max_cash_quantity_nav_error_usd": 5.004778813599842e-10,
+      "max_independent_funding_error_usd": 3.385763891472493e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_6f6eaae8321d/100/margin10/none",
+      "fills": 24,
+      "max_cash_quantity_nav_error_usd": 5.002078751203953e-10,
+      "max_independent_funding_error_usd": 3.9103442706078795e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_6f6eaae8321d/100/margin20/none",
+      "fills": 3,
+      "max_cash_quantity_nav_error_usd": 4.951061782776378e-11,
+      "max_independent_funding_error_usd": 4.496923666774677e-14,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_6f6eaae8321d/100/funding_adverse/none",
+      "fills": 3,
+      "max_cash_quantity_nav_error_usd": 4.914113560516853e-11,
+      "max_independent_funding_error_usd": 4.988197355171309e-15,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_bea6a4d15701/100/nominal/none",
+      "fills": 42,
+      "max_cash_quantity_nav_error_usd": 5.005631464882754e-10,
+      "max_independent_funding_error_usd": 4.1579240050992894e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_bea6a4d15701/100/double_cost/none",
+      "fills": 38,
+      "max_cash_quantity_nav_error_usd": 5.004068270864082e-10,
+      "max_independent_funding_error_usd": 4.988232049640828e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_bea6a4d15701/100/delay/none",
+      "fills": 45,
+      "max_cash_quantity_nav_error_usd": 4.999662905902369e-10,
+      "max_independent_funding_error_usd": 4.800604358479177e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_bea6a4d15701/100/coarse/none",
+      "fills": 39,
+      "max_cash_quantity_nav_error_usd": 5.005915681977058e-10,
+      "max_independent_funding_error_usd": 4.999611835643236e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_bea6a4d15701/100/margin10/none",
+      "fills": 42,
+      "max_cash_quantity_nav_error_usd": 5.005631464882754e-10,
+      "max_independent_funding_error_usd": 4.1579240050992894e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_bea6a4d15701/100/margin20/none",
+      "fills": 3,
+      "max_cash_quantity_nav_error_usd": 4.8899551075010095e-11,
+      "max_independent_funding_error_usd": 4.880991444355942e-14,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_bea6a4d15701/100/funding_adverse/none",
+      "fills": 3,
+      "max_cash_quantity_nav_error_usd": 4.922640073345974e-11,
+      "max_independent_funding_error_usd": 4.999473057765158e-15,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d85dce707fe/100/nominal/none",
+      "fills": 229,
+      "max_cash_quantity_nav_error_usd": 5.007336767448578e-10,
+      "max_independent_funding_error_usd": 4.981084988919804e-14,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d85dce707fe/100/double_cost/none",
+      "fills": 192,
+      "max_cash_quantity_nav_error_usd": 4.985167834092863e-10,
+      "max_independent_funding_error_usd": 2.7813862324421734e-13,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d85dce707fe/100/delay/none",
+      "fills": 248,
+      "max_cash_quantity_nav_error_usd": 5.006199899071362e-10,
+      "max_independent_funding_error_usd": 4.992534163861251e-14,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d85dce707fe/100/coarse/none",
+      "fills": 231,
+      "max_cash_quantity_nav_error_usd": 4.999236580260913e-10,
+      "max_independent_funding_error_usd": 4.9894116616044926e-14,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d85dce707fe/100/margin10/none",
+      "fills": 229,
+      "max_cash_quantity_nav_error_usd": 5.007336767448578e-10,
+      "max_independent_funding_error_usd": 4.981084988919804e-14,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d85dce707fe/100/margin20/none",
+      "fills": 229,
+      "max_cash_quantity_nav_error_usd": 5.007336767448578e-10,
+      "max_independent_funding_error_usd": 4.981084988919804e-14,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d85dce707fe/100/funding_adverse/none",
+      "fills": 217,
+      "max_cash_quantity_nav_error_usd": 4.993552238374832e-10,
+      "max_independent_funding_error_usd": 4.9850748529145505e-14,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_02ba542a0cc8/100/nominal/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_02ba542a0cc8/100/double_cost/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_02ba542a0cc8/100/delay/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "F_02ba542a0cc8/100/coarse/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_4d93e50475a7/100/nominal/none",
+      "fills": 32,
+      "max_cash_quantity_nav_error_usd": 4.999378688808065e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_4d93e50475a7/100/double_cost/none",
+      "fills": 32,
+      "max_cash_quantity_nav_error_usd": 4.997815494789393e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_4d93e50475a7/100/delay/none",
+      "fills": 32,
+      "max_cash_quantity_nav_error_usd": 4.998241820430849e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_4d93e50475a7/100/coarse/none",
+      "fills": 33,
+      "max_cash_quantity_nav_error_usd": 4.998099711883697e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_75fc690a1283/100/nominal/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.999662905902369e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_75fc690a1283/100/double_cost/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.995399649487808e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_75fc690a1283/100/delay/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.999805014449521e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_75fc690a1283/100/coarse/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.999947122996673e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_ed226e859afc/100/nominal/none",
+      "fills": 59,
+      "max_cash_quantity_nav_error_usd": 4.999094471713761e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_ed226e859afc/100/double_cost/none",
+      "fills": 59,
+      "max_cash_quantity_nav_error_usd": 4.99341012982768e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_ed226e859afc/100/delay/none",
+      "fills": 61,
+      "max_cash_quantity_nav_error_usd": 4.996536517865025e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_ed226e859afc/100/coarse/none",
+      "fills": 58,
+      "max_cash_quantity_nav_error_usd": 4.997389169147937e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_cf97736acea6/100/nominal/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_cf97736acea6/100/double_cost/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_cf97736acea6/100/delay/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "G_cf97736acea6/100/coarse/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_6863c909c70a/100/nominal/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.997673386242241e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_6863c909c70a/100/double_cost/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.998526037525153e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_6863c909c70a/100/delay/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.998810254619457e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_6863c909c70a/100/coarse/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.998810254619457e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_2a056ea9245a/100/nominal/none",
+      "fills": 20,
+      "max_cash_quantity_nav_error_usd": 4.995968083676416e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_2a056ea9245a/100/double_cost/none",
+      "fills": 20,
+      "max_cash_quantity_nav_error_usd": 4.999378688808065e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_2a056ea9245a/100/delay/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.997957603336545e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "H_2a056ea9245a/100/coarse/none",
+      "fills": 22,
+      "max_cash_quantity_nav_error_usd": 4.999378688808065e-10,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "spot",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d0be54d5b08/100/nominal/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d0be54d5b08/100/double_cost/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d0be54d5b08/100/delay/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d0be54d5b08/100/coarse/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d0be54d5b08/100/margin10/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d0be54d5b08/100/margin20/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    },
+    {
+      "entry_PIT_pass": true,
+      "evidence": "D_0d0be54d5b08/100/funding_adverse/none",
+      "fills": 0,
+      "max_cash_quantity_nav_error_usd": 0.0,
+      "max_independent_funding_error_usd": 0.0,
+      "track": "perp",
+      "whole_episode_removal_pass": true
+    }
+  ],
+  "orders_api_called": false,
+  "prefix_tests": [
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 3,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.03,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout120",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 3,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "combo_breakout_mom",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 3,
+        "family": "G",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.5,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma150",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 7,
+        "family": "G",
+        "gross": 1.0,
+        "hysteresis": 0.01,
+        "recipe": "btc_regime",
+        "satellite": 0.5,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma150",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "G",
+        "gross": 1.0,
+        "hysteresis": 0.03,
+        "recipe": "btc_regime",
+        "satellite": 0.75,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 14,
+        "family": "G",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.75,
+        "satellite_k": 2,
+        "scope": "BTC",
+        "signal": "combo_sma_mom",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 14,
+        "family": "H",
+        "gross": 1.0,
+        "hysteresis": 0.03,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "combo_breakout_mom",
+        "top_k": 2,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "H",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 2,
+        "weighting": "equal_risk"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 7,
+        "family": "H",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "dual100_200",
+        "top_k": 2,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "H",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 2,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma50",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma100",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma150",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "dual50_200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "dual100_200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "dual50_150",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout20",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout55",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout120",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "mom90",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "mom180",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "mom270",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "mom365",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "combo_sma_mom",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "combo_breakout_mom",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 7,
+        "family": "D",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "own_trend_ls",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout200",
+        "top_k": 1,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "perp"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "D",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "beta_neutral",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "perp"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 7,
+        "family": "D",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "perp"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "D",
+        "gross": 1.25,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "perp"
+    }
+  ],
+  "production_changed": false,
+  "status": "PASS",
+  "utc": "2026-09-27T10:13:53.070059+00:00"
+}

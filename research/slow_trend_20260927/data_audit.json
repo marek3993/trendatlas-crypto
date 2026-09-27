@@ -1,0 +1,1488 @@
+{
+  "all_historical_identities": 576,
+  "contract_evidence_missing": [
+    {
+      "component": "complete_historical_margin_brackets",
+      "interval": [
+        "2019-01-01",
+        "2025-12-31"
+      ]
+    },
+    {
+      "component": "historical_liquidation_rules_and_filters",
+      "interval": [
+        "2019-01-01",
+        "2025-12-31"
+      ]
+    },
+    {
+      "component": "complete_administrative_perp_listing_delisting_notices",
+      "interval": [
+        "2019-01-01",
+        "2025-12-31"
+      ]
+    },
+    {
+      "component": "historical_Hyperliquid_prices_before_venue_existed",
+      "interval": [
+        "2019-01-01",
+        "2025-12-31"
+      ]
+    }
+  ],
+  "eligible_union": [
+    "ADAUSDT",
+    "AVAXUSDT",
+    "BCHUSDT",
+    "BNBUSDT",
+    "BTCUSDT",
+    "CFXUSDT",
+    "CHZUSDT",
+    "DOGEUSDT",
+    "DOTUSDT",
+    "EOSUSDT",
+    "ETCUSDT",
+    "ETHUSDT",
+    "FILUSDT",
+    "FTMUSDT",
+    "GALAUSDT",
+    "LINKUSDT",
+    "LTCUSDT",
+    "LUNAUSDT@original",
+    "MANAUSDT",
+    "MATICUSDT",
+    "NEARUSDT",
+    "PEPEUSDT",
+    "SANDUSDT",
+    "SHIBUSDT",
+    "SOLUSDT",
+    "SUIUSDT",
+    "TRXUSDT",
+    "VETUSDT",
+    "WINUSDT",
+    "XLMUSDT",
+    "XRPUSDT",
+    "ZECUSDT",
+    "ZILUSDT"
+  ],
+  "input_hashes_pass": true,
+  "market_evidence": [
+    {
+      "asset": "BNBUSDT",
+      "component": "perp_trade",
+      "first": "2020-02-10 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 12910
+    },
+    {
+      "asset": "BTCUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-01 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 13152
+    },
+    {
+      "asset": "ETHUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-01 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 13152
+    },
+    {
+      "asset": "SOLUSDT",
+      "component": "perp_trade",
+      "first": "2020-09-14 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 11579
+    },
+    {
+      "asset": "XRPUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-06 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 13090
+    },
+    {
+      "asset": "ADAUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-31 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 12970
+    },
+    {
+      "asset": "AVAXUSDT",
+      "component": "perp_trade",
+      "first": "2020-09-23 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 11555
+    },
+    {
+      "asset": "BCHUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-01 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 13152
+    },
+    {
+      "asset": "CFXUSDT",
+      "component": "perp_trade",
+      "first": "2023-02-20 12:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 6273
+    },
+    {
+      "asset": "CHZUSDT",
+      "component": "perp_trade",
+      "first": "2021-01-21 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 10835
+    },
+    {
+      "asset": "DOGEUSDT",
+      "component": "perp_trade",
+      "first": "2020-07-10 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 12004
+    },
+    {
+      "asset": "DOTUSDT",
+      "component": "perp_trade",
+      "first": "2020-08-22 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 11747
+    },
+    {
+      "asset": "EOSUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-08 08:00:00",
+      "last": "2025-05-21 08:00:00",
+      "missing_intervals": [],
+      "rows": 11761
+    },
+    {
+      "asset": "ETCUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-16 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 13060
+    },
+    {
+      "asset": "FILUSDT",
+      "component": "perp_trade",
+      "first": "2020-10-16 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 11387
+    },
+    {
+      "asset": "FTMUSDT",
+      "component": "perp_trade",
+      "first": "2020-09-24 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 11519
+    },
+    {
+      "asset": "GALAUSDT",
+      "component": "perp_trade",
+      "first": "2021-09-18 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 9396
+    },
+    {
+      "asset": "LINKUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-17 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 13054
+    },
+    {
+      "asset": "LTCUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-09 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 13072
+    },
+    {
+      "asset": "LUNAUSDT",
+      "component": "perp_trade",
+      "first": "2021-01-28 04:00:00",
+      "last": "2022-05-13 04:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 2791
+    },
+    {
+      "asset": "MANAUSDT",
+      "component": "perp_trade",
+      "first": "2021-03-15 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 10487
+    },
+    {
+      "asset": "MATICUSDT",
+      "component": "perp_trade",
+      "first": "2020-10-22 04:00:00",
+      "last": "2024-09-11 08:00:00",
+      "missing_intervals": [],
+      "rows": 8522
+    },
+    {
+      "asset": "NEARUSDT",
+      "component": "perp_trade",
+      "first": "2020-10-15 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 11392
+    },
+    {
+      "asset": "SANDUSDT",
+      "component": "perp_trade",
+      "first": "2021-01-25 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 10781
+    },
+    {
+      "asset": "SUIUSDT",
+      "component": "perp_trade",
+      "first": "2023-05-03 16:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 5840
+    },
+    {
+      "asset": "TRXUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-15 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 13036
+    },
+    {
+      "asset": "VETUSDT",
+      "component": "perp_trade",
+      "first": "2020-02-14 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 12856
+    },
+    {
+      "asset": "XLMUSDT",
+      "component": "perp_trade",
+      "first": "2020-01-20 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 13006
+    },
+    {
+      "asset": "ZECUSDT",
+      "component": "perp_trade",
+      "first": "2020-02-05 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 12910
+    },
+    {
+      "asset": "ZILUSDT",
+      "component": "perp_trade",
+      "first": "2020-06-18 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-02-26 00:00:00",
+          "2022-02-28 20:00:00"
+        ],
+        [
+          "2022-04-01 00:00:00",
+          "2022-04-02 20:00:00"
+        ]
+      ],
+      "rows": 12106
+    },
+    {
+      "asset": "PEPEUSDT",
+      "component": "perp_trade",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 20:00:00"
+        ]
+      ],
+      "reason": "No exact-symbol perpetual archive; no spot or 1000x contract substitute. Not admitted.",
+      "rows": 0
+    },
+    {
+      "asset": "SHIBUSDT",
+      "component": "perp_trade",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 20:00:00"
+        ]
+      ],
+      "reason": "No exact-symbol perpetual archive; no spot or 1000x contract substitute. Not admitted.",
+      "rows": 0
+    },
+    {
+      "asset": "WINUSDT",
+      "component": "perp_trade",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 20:00:00"
+        ]
+      ],
+      "reason": "No exact-symbol perpetual archive; no spot or 1000x contract substitute. Not admitted.",
+      "rows": 0
+    },
+    {
+      "asset": "BNBUSDT",
+      "component": "perp_mark",
+      "first": "2020-02-01 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 12918
+    },
+    {
+      "asset": "BTCUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-01 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13104
+    },
+    {
+      "asset": "ETHUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-01 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13140
+    },
+    {
+      "asset": "SOLUSDT",
+      "component": "perp_mark",
+      "first": "2020-09-13 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 11572
+    },
+    {
+      "asset": "XRPUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-06 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13080
+    },
+    {
+      "asset": "ADAUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-19 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13030
+    },
+    {
+      "asset": "AVAXUSDT",
+      "component": "perp_mark",
+      "first": "2020-09-22 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 11512
+    },
+    {
+      "asset": "BCHUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-01 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13140
+    },
+    {
+      "asset": "CFXUSDT",
+      "component": "perp_mark",
+      "first": "2023-02-20 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 6269
+    },
+    {
+      "asset": "CHZUSDT",
+      "component": "perp_mark",
+      "first": "2021-01-01 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 10944
+    },
+    {
+      "asset": "DOGEUSDT",
+      "component": "perp_mark",
+      "first": "2020-07-10 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 11994
+    },
+    {
+      "asset": "DOTUSDT",
+      "component": "perp_mark",
+      "first": "2020-08-20 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 11712
+    },
+    {
+      "asset": "EOSUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-08 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13097
+    },
+    {
+      "asset": "ETCUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-16 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13049
+    },
+    {
+      "asset": "FILUSDT",
+      "component": "perp_mark",
+      "first": "2020-10-16 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 11406
+    },
+    {
+      "asset": "FTMUSDT",
+      "component": "perp_mark",
+      "first": "2020-09-23 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 11542
+    },
+    {
+      "asset": "GALAUSDT",
+      "component": "perp_mark",
+      "first": "2021-09-17 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 9382
+    },
+    {
+      "asset": "LINKUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-17 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13007
+    },
+    {
+      "asset": "LTCUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-09 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13091
+    },
+    {
+      "asset": "LUNAUSDT",
+      "component": "perp_mark",
+      "first": "2021-01-28 00:00:00",
+      "last": "2022-07-12 04:00:00",
+      "missing_intervals": [],
+      "rows": 3182
+    },
+    {
+      "asset": "MANAUSDT",
+      "component": "perp_mark",
+      "first": "2021-03-15 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 10506
+    },
+    {
+      "asset": "MATICUSDT",
+      "component": "perp_mark",
+      "first": "2020-10-22 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-07-31 00:00:00",
+          "2022-07-31 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 11333
+    },
+    {
+      "asset": "NEARUSDT",
+      "component": "perp_mark",
+      "first": "2020-10-14 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 11386
+    },
+    {
+      "asset": "SANDUSDT",
+      "component": "perp_mark",
+      "first": "2021-01-25 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 10770
+    },
+    {
+      "asset": "SUIUSDT",
+      "component": "perp_mark",
+      "first": "2023-05-03 12:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [],
+      "rows": 5841
+    },
+    {
+      "asset": "TRXUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-15 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13026
+    },
+    {
+      "asset": "VETUSDT",
+      "component": "perp_mark",
+      "first": "2020-02-14 00:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 12846
+    },
+    {
+      "asset": "XLMUSDT",
+      "component": "perp_mark",
+      "first": "2020-01-19 08:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 13000
+    },
+    {
+      "asset": "ZECUSDT",
+      "component": "perp_mark",
+      "first": "2020-02-04 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 12905
+    },
+    {
+      "asset": "ZILUSDT",
+      "component": "perp_mark",
+      "first": "2020-06-17 04:00:00",
+      "last": "2025-12-31 20:00:00",
+      "missing_intervals": [
+        [
+          "2021-07-01 00:00:00",
+          "2021-07-01 20:00:00"
+        ],
+        [
+          "2021-07-24 00:00:00",
+          "2021-07-27 20:00:00"
+        ],
+        [
+          "2022-10-02 00:00:00",
+          "2022-10-02 20:00:00"
+        ],
+        [
+          "2023-02-24 00:00:00",
+          "2023-02-24 20:00:00"
+        ]
+      ],
+      "rows": 12101
+    },
+    {
+      "asset": "PEPEUSDT",
+      "component": "perp_mark",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 20:00:00"
+        ]
+      ],
+      "reason": "No exact-symbol perpetual archive; no spot or 1000x contract substitute. Not admitted.",
+      "rows": 0
+    },
+    {
+      "asset": "SHIBUSDT",
+      "component": "perp_mark",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 20:00:00"
+        ]
+      ],
+      "reason": "No exact-symbol perpetual archive; no spot or 1000x contract substitute. Not admitted.",
+      "rows": 0
+    },
+    {
+      "asset": "WINUSDT",
+      "component": "perp_mark",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 20:00:00"
+        ]
+      ],
+      "reason": "No exact-symbol perpetual archive; no spot or 1000x contract substitute. Not admitted.",
+      "rows": 0
+    },
+    {
+      "asset": "BNBUSDT",
+      "component": "funding",
+      "first": "2020-02-10 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6455
+    },
+    {
+      "asset": "BTCUSDT",
+      "component": "funding",
+      "first": "2020-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6576
+    },
+    {
+      "asset": "ETHUSDT",
+      "component": "funding",
+      "first": "2020-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6576
+    },
+    {
+      "asset": "SOLUSDT",
+      "component": "funding",
+      "first": "2020-09-13 16:00:00.004000",
+      "interval_changes": [
+        {
+          "after_hours": 4,
+          "at": "2022-11-09 20:00:00.018000",
+          "before_hours": 8
+        },
+        {
+          "after_hours": 2,
+          "at": "2022-11-10 04:00:00.011000",
+          "before_hours": 4
+        },
+        {
+          "after_hours": 8,
+          "at": "2022-11-18 16:00:00",
+          "before_hours": 2
+        }
+      ],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5881
+    },
+    {
+      "asset": "XRPUSDT",
+      "component": "funding",
+      "first": "2020-01-06 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6560
+    },
+    {
+      "asset": "ADAUSDT",
+      "component": "funding",
+      "first": "2020-01-19 16:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6520
+    },
+    {
+      "asset": "AVAXUSDT",
+      "component": "funding",
+      "first": "2020-09-22 16:00:00.004000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5779
+    },
+    {
+      "asset": "BCHUSDT",
+      "component": "funding",
+      "first": "2020-01-01 00:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6576
+    },
+    {
+      "asset": "CFXUSDT",
+      "component": "funding",
+      "first": "2023-02-20 08:00:00.008000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 3137
+    },
+    {
+      "asset": "CHZUSDT",
+      "component": "funding",
+      "first": "2021-01-01 00:00:00.002000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5478
+    },
+    {
+      "asset": "DOGEUSDT",
+      "component": "funding",
+      "first": "2020-07-10 08:00:00.001000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6002
+    },
+    {
+      "asset": "DOTUSDT",
+      "component": "funding",
+      "first": "2020-08-20 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5879
+    },
+    {
+      "asset": "EOSUSDT",
+      "component": "funding",
+      "first": "2020-01-08 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6554
+    },
+    {
+      "asset": "ETCUSDT",
+      "component": "funding",
+      "first": "2020-01-16 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6530
+    },
+    {
+      "asset": "FILUSDT",
+      "component": "funding",
+      "first": "2020-10-16 08:00:00.003000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5708
+    },
+    {
+      "asset": "FTMUSDT",
+      "component": "funding",
+      "first": "2020-09-23 16:00:00.001000",
+      "interval_changes": [],
+      "last": "2025-06-19 08:00:00.003000",
+      "missing_intervals": [],
+      "rows": 5190
+    },
+    {
+      "asset": "GALAUSDT",
+      "component": "funding",
+      "first": "2021-09-17 16:00:00.013000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 4699
+    },
+    {
+      "asset": "LINKUSDT",
+      "component": "funding",
+      "first": "2020-01-17 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6527
+    },
+    {
+      "asset": "LTCUSDT",
+      "component": "funding",
+      "first": "2020-01-09 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6551
+    },
+    {
+      "asset": "LUNAUSDT",
+      "component": "funding",
+      "first": "2021-01-28 08:00:00",
+      "interval_changes": [],
+      "last": "2022-05-13 00:00:00.014000",
+      "missing_intervals": [],
+      "rows": 1410
+    },
+    {
+      "asset": "MANAUSDT",
+      "component": "funding",
+      "first": "2021-03-15 08:00:00.016000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5258
+    },
+    {
+      "asset": "MATICUSDT",
+      "component": "funding",
+      "first": "2020-10-22 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5690
+    },
+    {
+      "asset": "NEARUSDT",
+      "component": "funding",
+      "first": "2020-10-14 16:00:00.001000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5713
+    },
+    {
+      "asset": "SANDUSDT",
+      "component": "funding",
+      "first": "2021-01-25 08:00:00.012000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 5405
+    },
+    {
+      "asset": "SUIUSDT",
+      "component": "funding",
+      "first": "2023-05-03 16:00:00.011000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 2920
+    },
+    {
+      "asset": "TRXUSDT",
+      "component": "funding",
+      "first": "2020-01-15 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6533
+    },
+    {
+      "asset": "VETUSDT",
+      "component": "funding",
+      "first": "2020-02-14 08:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6443
+    },
+    {
+      "asset": "XLMUSDT",
+      "component": "funding",
+      "first": "2020-01-19 16:00:00",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6520
+    },
+    {
+      "asset": "ZECUSDT",
+      "component": "funding",
+      "first": "2020-02-04 08:00:00.001000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6473
+    },
+    {
+      "asset": "ZILUSDT",
+      "component": "funding",
+      "first": "2020-06-17 08:00:00.007000",
+      "interval_changes": [],
+      "last": "2025-12-31 16:00:00.001000",
+      "missing_intervals": [],
+      "rows": 6071
+    },
+    {
+      "asset": "PEPEUSDT",
+      "component": "funding",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 23:59:59"
+        ]
+      ],
+      "reason": "No exact-symbol funding archive acquired; not fabricated.",
+      "rows": 0
+    },
+    {
+      "asset": "SHIBUSDT",
+      "component": "funding",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 23:59:59"
+        ]
+      ],
+      "reason": "No exact-symbol funding archive acquired; not fabricated.",
+      "rows": 0
+    },
+    {
+      "asset": "WINUSDT",
+      "component": "funding",
+      "first": null,
+      "last": null,
+      "missing_intervals": [
+        [
+          "2019-01-01 00:00:00",
+          "2025-12-31 23:59:59"
+        ]
+      ],
+      "reason": "No exact-symbol funding archive acquired; not fabricated.",
+      "rows": 0
+    }
+  ],
+  "max_members": 5,
+  "utc": "2026-09-27T10:04:55.706244+00:00",
+  "venue_certified": false
+}

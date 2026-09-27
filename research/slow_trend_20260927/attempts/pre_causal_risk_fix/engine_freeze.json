@@ -1,0 +1,17 @@
+{
+  "files": {
+    "candidate_panel_frozen.json": "8a7b0370d46703f26f603392edda3adec5a41a3736ad2b79a50323a05d89f679",
+    "common.py": "162de7727f7b85f2ecb68fdde9076cdf759b82cf19fae3072fb524af2206c659",
+    "contract.json": "75dd9a05c814f96f85066a6437589e0022f46e7e9a5af0721048ad1173f6c62f",
+    "data.py": "7b7e462fcaa004e4750c5df04b263a5d35b576932f44302150c246f6f36b2a94",
+    "data_freeze.json": "94c4b67e1de1abf336a6d75f251577fef040d3c4a4753409bc4cf391f6065050",
+    "designer.py": "41f98b593a1cc1550b1aadddd0a8170d0c743cfc4059ab39ca3a04d9312e9c8c",
+    "evaluate.py": "6087b8389d67dd59cbede90f1d433ef5c5f4ec6b5dc0a88df2bfab7a3f23fb7a",
+    "ledger.py": "2121c0484b17b5a8dd386c9062dee774f54f4069b22980b2b7e9b648b2a6ae4d",
+    "run.py": "f63d9ca455d092b050b5e0033e431f072d14c7fde07d649b0d0e6485c0346537",
+    "signals.py": "4647ac7dd3467c37a68555a0ed63d24dd53f9eb8fbabe82b4febfe8e6eac840a",
+    "test_research.py": "6743259783a601ef809587ad268da6a19a8b53b5698bc9c832cf3805efc965f2"
+  },
+  "performance_read": false,
+  "utc": "2026-09-27T09:04:12.399407+00:00"
+}

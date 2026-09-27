@@ -1,0 +1,109 @@
+[
+  {
+    "arm": "deterministic",
+    "budget_slots": 22,
+    "dev_max_cagr": 3.523931648690155,
+    "dev_min_mdd": 0.31227651966626935,
+    "family": "F",
+    "frozen_oos_slot_ids": [
+      "F_46c13bb62883",
+      "F_f2692e2c3966"
+    ],
+    "survivors": 6,
+    "validation_qualified_survivors": 0
+  },
+  {
+    "arm": "deepseek",
+    "budget_slots": 22,
+    "dev_max_cagr": 4.116816971207021,
+    "dev_min_mdd": 0.0,
+    "family": "F",
+    "frozen_oos_slot_ids": [
+      "F_02ba542a0cc8",
+      "F_f2692e2c3966"
+    ],
+    "survivors": 6,
+    "validation_qualified_survivors": 0
+  },
+  {
+    "arm": "deterministic",
+    "budget_slots": 22,
+    "dev_max_cagr": 2.073814052961738,
+    "dev_min_mdd": 0.5026203406149623,
+    "family": "G",
+    "frozen_oos_slot_ids": [
+      "G_4d93e50475a7",
+      "G_75fc690a1283"
+    ],
+    "survivors": 6,
+    "validation_qualified_survivors": 0
+  },
+  {
+    "arm": "deepseek",
+    "budget_slots": 22,
+    "dev_max_cagr": 2.6991687185145072,
+    "dev_min_mdd": 0.0,
+    "family": "G",
+    "frozen_oos_slot_ids": [
+      "G_cf97736acea6",
+      "G_ed226e859afc"
+    ],
+    "survivors": 6,
+    "validation_qualified_survivors": 0
+  },
+  {
+    "arm": "deterministic",
+    "budget_slots": 22,
+    "dev_max_cagr": 1.9693793282555765,
+    "dev_min_mdd": 0.5528933376210006,
+    "family": "H",
+    "frozen_oos_slot_ids": [
+      "H_426fda55f55f",
+      "H_6863c909c70a",
+      "H_e24246390542"
+    ],
+    "survivors": 6,
+    "validation_qualified_survivors": 0
+  },
+  {
+    "arm": "deepseek",
+    "budget_slots": 22,
+    "dev_max_cagr": 2.1641072368070193,
+    "dev_min_mdd": 0.5271648128835333,
+    "family": "H",
+    "frozen_oos_slot_ids": [
+      "H_2a056ea9245a",
+      "H_e24246390542"
+    ],
+    "survivors": 6,
+    "validation_qualified_survivors": 0
+  },
+  {
+    "arm": "deterministic",
+    "budget_slots": 22,
+    "dev_max_cagr": 0.15164557703882897,
+    "dev_min_mdd": 0.3774157295703361,
+    "family": "D",
+    "frozen_oos_slot_ids": [
+      "D_0d85dce707fe",
+      "D_6f6eaae8321d",
+      "D_bea6a4d15701"
+    ],
+    "survivors": 6,
+    "validation_qualified_survivors": 0
+  },
+  {
+    "arm": "deepseek",
+    "budget_slots": 22,
+    "dev_max_cagr": 0.20644892603179987,
+    "dev_min_mdd": 0.0,
+    "family": "D",
+    "frozen_oos_slot_ids": [
+      "D_0d0be54d5b08",
+      "D_6f6eaae8321d",
+      "D_bea6a4d15701"
+    ],
+    "survivors": 6,
+    "validation_qualified_survivors": 0
+  }
+]

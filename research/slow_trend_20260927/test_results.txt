@@ -1,0 +1,23 @@
+test_adverse_margin (test_research.LedgerTests.test_adverse_margin) ... ok
+test_dust_is_marked_not_filled (test_research.LedgerTests.test_dust_is_marked_not_filled) ... ok
+test_funding_signed (test_research.LedgerTests.test_funding_signed) ... ok
+test_future_target_does_not_change_gross_cap (test_research.LedgerTests.test_future_target_does_not_change_gross_cap) ... ok
+test_gross_risk_uses_published_bar (test_research.LedgerTests.test_gross_risk_uses_published_bar) ... ok
+test_latency (test_research.LedgerTests.test_latency) ... ok
+test_missing_does_not_fill (test_research.LedgerTests.test_missing_does_not_fill) ... ok
+test_own_asset_identity (test_research.LedgerTests.test_own_asset_identity) ... ok
+test_partial_and_ttl (test_research.LedgerTests.test_partial_and_ttl) ... ok
+test_precision_residual_not_global_failure (test_research.LedgerTests.test_precision_residual_not_global_failure) ... ok
+test_spot_cannot_short (test_research.LedgerTests.test_spot_cannot_short) ... ok
+test_whole_episode_cash_reconciles (test_research.LedgerTests.test_whole_episode_cash_reconciles) ... ok
+test_breakout_prior_high (test_research.SignalTests.test_breakout_prior_high) ... ok
+test_missing_cash_slots (test_research.SignalTests.test_missing_cash_slots) ... ok
+test_negative_trend_cash (test_research.SignalTests.test_negative_trend_cash) ... ok
+test_pinned_panel_no_B_C (test_research.SignalTests.test_pinned_panel_no_B_C) ... ok
+test_prefix_causality (test_research.SignalTests.test_prefix_causality) ... ok
+test_schema_cannot_mutate_evaluator (test_research.SignalTests.test_schema_cannot_mutate_evaluator) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 0.390s
+
+OK

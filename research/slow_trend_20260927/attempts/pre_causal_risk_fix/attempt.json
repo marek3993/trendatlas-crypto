@@ -1,0 +1,6 @@
+{
+  "new_protocol_unchanged": true,
+  "reason": "Independent code audit found same-open risk sizing and forward-dependent gross-cap inference. Stopped during development; no validation/OOS opened. Fix uses explicit gross cap, published i-2 bar and latency-safe margin exit. F/G/H proposals reused only with byte-identical development payload validation. Nine prior API calls plus at most three new D calls, total budget12.",
+  "source_freeze_sha256": "1782881f175a4427c65fb5430a1d8504bb4cd23dfd2db0f98daaab58de417e05",
+  "utc": "2026-09-27T09:12:27.346986+00:00"
+}

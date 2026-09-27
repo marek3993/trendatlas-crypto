@@ -1,0 +1,12 @@
+{
+  "inputs": {
+    "research\\capacity_followup_20260927\\identity_events.json": "a62e62989a82a8e962dd4576299b88061823f543d7993d81611769116356da3e",
+    "research\\capacity_followup_20260927\\spot_4h.zip": "657a0d64e9c4cc9ea02bb8a81766dc2d9bc2b852a2c88c8a9055e39e33e72409",
+    "research\\capacity_followup_20260927\\spot_daily.zip": "21cdd19d993258ceaa14638887c372bfd6cb352a8f7e955a9d67a68db52fba45",
+    "research\\capacity_followup_20260927\\venue_notices.json": "5c5785987f38ce267d2dd4c2910836a1ff650d6198d700f7eff26f5e3aa5ea26",
+    "research\\slow_trend_20260927\\funding.zip": "0befd0f350595ac3ecd7cf94b1f495244183a1446e8282888d3d6653293f8e65",
+    "research\\slow_trend_20260927\\perp_mark.zip": "46c2dbe4d02546345d87312adbb1d5e806d759efcad1104e3252cbcf4306d7f2",
+    "research\\slow_trend_20260927\\perp_trade.zip": "5a4196c438df5b1003a6a346fea11cbb69af2c12764ff2f169df0bff9db93c36"
+  },
+  "utc": "2026-09-27T08:58:19.729946+00:00"
+}

@@ -1,0 +1,4 @@
+{
+  "reason": "Enforce user/frozen H only inverse-vol/equal-risk. One prior H DeepSeek proposal used equal-notional; reject it. Revalidate remaining H development-only hypotheses, deterministic replacement keeps22 slots; original payload preserved when different. No new call or OOS/validation access. Total real API budget remains9 prior plus at most3 D.",
+  "utc": "2026-09-27T09:24:46.637982+00:00"
+}

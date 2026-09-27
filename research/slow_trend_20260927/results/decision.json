@@ -1,0 +1,218 @@
+{
+  "candidates": {
+    "D_0d0be54d5b08": {
+      "checks": {
+        "benchmark": false,
+        "folds": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "D_0d85dce707fe": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": true,
+        "no_top3": false,
+        "reliable": false,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "D_6f6eaae8321d": {
+      "checks": {
+        "benchmark": false,
+        "folds": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "D_bea6a4d15701": {
+      "checks": {
+        "benchmark": false,
+        "folds": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "F_02ba542a0cc8": {
+      "checks": {
+        "benchmark": false,
+        "folds": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "F_46c13bb62883": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "F_f2692e2c3966": {
+      "checks": {
+        "benchmark": false,
+        "folds": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "G_4d93e50475a7": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": true,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": true,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "G_75fc690a1283": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": true,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "G_cf97736acea6": {
+      "checks": {
+        "benchmark": false,
+        "folds": false,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "G_ed226e859afc": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": true,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "H_2a056ea9245a": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "H_426fda55f55f": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "H_6863c909c70a": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    },
+    "H_e24246390542": {
+      "checks": {
+        "benchmark": false,
+        "folds": true,
+        "neighbors": false,
+        "no_best_day": false,
+        "no_top3": false,
+        "reliable": true,
+        "stresses": false,
+        "target": false,
+        "validation": false
+      },
+      "decision": "REJECT"
+    }
+  },
+  "forward_opened": false,
+  "overall": "REJECT",
+  "utc": "2026-09-27T10:02:17.732651+00:00",
+  "venue_certified": false
+}

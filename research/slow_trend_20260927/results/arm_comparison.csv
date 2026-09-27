@@ -1,0 +1,9 @@
+family,arm,budget_slots,survivors,dev_max_cagr,dev_min_mdd,validation_qualified_survivors,frozen_oos_slot_ids
+F,deterministic,22,6,3.523931648690155,0.31227651966626935,0,"['F_46c13bb62883', 'F_f2692e2c3966']"
+F,deepseek,22,6,4.116816971207021,0.0,0,"['F_02ba542a0cc8', 'F_f2692e2c3966']"
+G,deterministic,22,6,2.073814052961738,0.5026203406149623,0,"['G_4d93e50475a7', 'G_75fc690a1283']"
+G,deepseek,22,6,2.6991687185145072,0.0,0,"['G_cf97736acea6', 'G_ed226e859afc']"
+H,deterministic,22,6,1.9693793282555765,0.5528933376210006,0,"['H_426fda55f55f', 'H_6863c909c70a', 'H_e24246390542']"
+H,deepseek,22,6,2.1641072368070193,0.5271648128835333,0,"['H_2a056ea9245a', 'H_e24246390542']"
+D,deterministic,22,6,0.15164557703882897,0.3774157295703361,0,"['D_0d85dce707fe', 'D_6f6eaae8321d', 'D_bea6a4d15701']"
+D,deepseek,22,6,0.20644892603179987,0.0,0,"['D_0d0be54d5b08', 'D_6f6eaae8321d', 'D_bea6a4d15701']"

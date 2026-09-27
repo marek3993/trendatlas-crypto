@@ -1,0 +1,13 @@
+{
+  "checked_utc_date": "2026-09-27",
+  "hyperliquid": [
+    {"url":"https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/error-responses","fact":"Perp MinTradeNtl minimum $10; separate spot10 quote_token. No universal reduce-only dust waiver certified by this page."},
+    {"url":"https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/tick-and-lot-size","fact":"Sizes use asset szDecimals from meta; price5significant figures and max6-szDecimals for perps, integer exception."},
+    {"url":"https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees","fact":"Standard tier0 perp taker4.5bps, maker1.5bps. No discount assumed. Historical fee/lot versions not reconstructed."},
+    {"url":"https://hyperliquid.gitbook.io/hyperliquid-docs/trading/liquidations","fact":"Maintenance half of initial at maximum leverage, current1.25-16.7%; cross backstop below2/3 maintenance can transfer entire cross book/collateral. Proxy scenarios5/10/20% are deliberately adverse assumptions, not historical certified brackets."},
+    {"url":"https://hyperliquid.gitbook.io/hyperliquid-docs/historical-data","fact":"Requester-pays S3 market snapshots/asset contexts, not a guaranteed complete candle dataset. No paid AWS credential used."},
+    {"url":"https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/info-endpoint","fact":"Candle endpoint only most recent5000; cannot supply full2020-2025 Hyperliquid history. Historical Binance proxy is never labeled Hyperliquid replay."}
+  ],
+  "prices_and_funding": "https://github.com/binance/binance-public-data",
+  "deepseek": {"url":"https://api-docs.deepseek.com/quick_start/pricing/","model":"deepseek-flash","served_version":"DeepSeek-V4.1-Flash","peak_usd_per_million":{"input_hit":0.006,"input_miss":0.30,"output":1.20},"off_peak_factor":0.5,"peak":"Mon-Fri01:00-04:00 and06:00-10:00UTC","price_is_estimate_not_provider_invoice":true}
+}

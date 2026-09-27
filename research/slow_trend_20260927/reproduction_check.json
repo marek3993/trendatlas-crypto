@@ -1,0 +1,93 @@
+{
+  "api_calls": 0,
+  "checks": [
+    {
+      "candidate_id": "BTC_SMA200_spot",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "BTC_SMA200_perp",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "D_0d0be54d5b08",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "D_0d85dce707fe",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "D_6f6eaae8321d",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "D_bea6a4d15701",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "F_02ba542a0cc8",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "F_46c13bb62883",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "F_f2692e2c3966",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "G_4d93e50475a7",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "G_75fc690a1283",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "G_cf97736acea6",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "G_ed226e859afc",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "H_2a056ea9245a",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "H_426fda55f55f",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "H_6863c909c70a",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    },
+    {
+      "candidate_id": "H_e24246390542",
+      "max_numeric_error": 0.0,
+      "metrics_checked": 38
+    }
+  ],
+  "old_pnl_inputs": 0,
+  "status": "PASS",
+  "utc": "2026-09-27T10:05:52.824605+00:00"
+}

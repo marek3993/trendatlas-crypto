@@ -1,0 +1,4 @@
+{
+  "reason": "Development-only audit corrected delayed-fill stress to delay automatic gross-risk orders too. No nominal rule/parameter/data changes. Cached pure funding features replace repeated scalar index lookup without changing values. No new API calls in this interrupted attempt; nine reused F/G/H calls remain total. Validation/OOS not opened.",
+  "utc": "2026-09-27T09:21:02.938645+00:00"
+}

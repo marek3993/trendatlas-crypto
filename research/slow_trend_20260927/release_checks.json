@@ -1,0 +1,60 @@
+{
+  "active_engine_imports": [
+    "argparse",
+    "common",
+    "data",
+    "datetime",
+    "designer",
+    "evaluate",
+    "hashlib",
+    "importlib.util",
+    "io",
+    "itertools",
+    "json",
+    "ledger",
+    "math",
+    "numpy",
+    "pandas",
+    "pathlib",
+    "random",
+    "signals",
+    "time",
+    "urllib.request",
+    "zipfile"
+  ],
+  "branch": "codex/slow-trend-research-20260927",
+  "charts_visually_reviewed": [
+    "equity.png",
+    "panel_leaders.png",
+    "folds.png",
+    "pareto.png"
+  ],
+  "detailed_books": 80,
+  "engine_and_data_hashes": "PASS",
+  "environment": {
+    "numpy": "2.4.1",
+    "pandas": "3.0.2",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10"
+  },
+  "forbidden_old_pnl_path": "Source inspected: only ancestor raw price/identity archives and acquisition/JSON/pricing helpers consumed; no ancestor PnL/equity stream input.",
+  "forward_opened": false,
+  "independent_replays": 17,
+  "max_nav_error_usd": 5.032916305935942e-10,
+  "metrics_per_replay": 38,
+  "prefix_tests": 32,
+  "production_diff_outside_research": [],
+  "reconciled_fills": 3266,
+  "regressions": 18,
+  "replay_max_error": 0,
+  "secret_scan": {
+    "files": 125,
+    "key_available": true,
+    "leaks": 0,
+    "zip_members": 3642
+  },
+  "source_commit": "58e308315d03a4561d53bbbd4019f7392f66e662",
+  "status": "PASS",
+  "temporal_freeze_order": "PASS",
+  "utc": "2026-09-27T10:18:45.587900+00:00"
+}

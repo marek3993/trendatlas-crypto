@@ -1,0 +1,617 @@
+{
+  "data_sha256": "94c4b67e1de1abf336a6d75f251577fef040d3c4a4753409bc4cf391f6065050",
+  "engine_sha256": "116bccb1217927523b8a4b4b36787cfdd249fec0158c28e5895db5fb7ea42673",
+  "finalists_sha256": "3ac8727ac1c7b283ce4f0e6200ad313c693e10519b02305465435d4b2d608e98",
+  "prefix": [
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 3,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.03,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout120",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 3,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "combo_breakout_mom",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 3,
+        "family": "G",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.5,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma150",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 7,
+        "family": "G",
+        "gross": 1.0,
+        "hysteresis": 0.01,
+        "recipe": "btc_regime",
+        "satellite": 0.5,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma150",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "G",
+        "gross": 1.0,
+        "hysteresis": 0.03,
+        "recipe": "btc_regime",
+        "satellite": 0.75,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 14,
+        "family": "G",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.75,
+        "satellite_k": 2,
+        "scope": "BTC",
+        "signal": "combo_sma_mom",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 14,
+        "family": "H",
+        "gross": 1.0,
+        "hysteresis": 0.03,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "combo_breakout_mom",
+        "top_k": 2,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "H",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 2,
+        "weighting": "equal_risk"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 7,
+        "family": "H",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "dual100_200",
+        "top_k": 2,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "H",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 2,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma50",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma100",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma150",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "dual50_200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "dual100_200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "dual50_150",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout20",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout55",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout120",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "mom90",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "mom180",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "mom270",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "mom365",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "combo_sma_mom",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 0,
+        "family": "F",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "combo_breakout_mom",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "spot"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 7,
+        "family": "D",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "own_trend_ls",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "breakout200",
+        "top_k": 1,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "perp"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "D",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "beta_neutral",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "inverse_vol"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "perp"
+    },
+    {
+      "candidate": {
+        "cadence": "monthly",
+        "confirm": 7,
+        "family": "D",
+        "gross": 1.0,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "perp"
+    },
+    {
+      "candidate": {
+        "cadence": "weekly",
+        "confirm": 7,
+        "family": "D",
+        "gross": 1.25,
+        "hysteresis": 0.0,
+        "recipe": "btc_regime",
+        "satellite": 0.25,
+        "satellite_k": 1,
+        "scope": "BTC",
+        "signal": "sma200",
+        "top_k": 5,
+        "weighting": "equal"
+      },
+      "end": "2021-12-31",
+      "pass_prefix": true,
+      "track": "perp"
+    }
+  ],
+  "status": "PASS",
+  "utc": "2026-09-27T09:42:03.705208+00:00"
+}
