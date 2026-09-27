@@ -1,0 +1,34 @@
+{
+  "resume_regressions": {
+    "tests": 17,
+    "windows": "PASS",
+    "pi": "PASS",
+    "pi_seconds": 1.812
+  },
+  "unchanged_frozen_engine": {
+    "tests": 45,
+    "result": "PASS",
+    "seconds": 14.269,
+    "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385"
+  },
+  "systemd_probe": {
+    "production_preemption_checkpoints": true,
+    "dispatch_does_not_stop_authority": true,
+    "resume_after_authority": true,
+    "hard_timeout_still_fails": true,
+    "real_production_invoked": false,
+    "events": ["RUNNING", "CHECKPOINTED", "RUNNING"]
+  },
+  "systemd_analyze_verify": "PASS; existing broker/maintenance RuntimeMaxSec oneshot warnings, with effective TimeoutStartSec limits intact",
+  "forbidden_paths": {
+    "frozen_engine_changed": false,
+    "scientific_manifest_changed": false,
+    "production_checkout_changed_by_task": false,
+    "production_timer_changed": false,
+    "authority_publish_invoked": false,
+    "full_refresh_invoked": false,
+    "live_order_invoked": false,
+    "new_experiment_created": false,
+    "database_reset": false
+  }
+}

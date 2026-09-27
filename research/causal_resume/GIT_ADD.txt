@@ -1,0 +1,5 @@
+git add -- research/causal_resume/contract.json research/causal_resume/runtime.py research/causal_resume/deploy.py research/causal_resume/audit.py research/causal_resume/test_resume.py research/causal_resume/preemption_probe.py research/causal_resume/README.md research/causal_resume/GIT_ADD.txt research/causal_resume/evidence/before.json research/causal_resume/evidence/backup.json research/causal_resume/evidence/checkpoint.json research/causal_resume/evidence/after.json research/causal_resume/evidence/account_check.json research/causal_resume/evidence/systemd.json research/causal_resume/evidence/validation.json
+
+Commit message: Fix frozen causal experiment checkpoint and same-cycle resume
+
+Push target: origin codex/causal-continuous-evolution-20260927

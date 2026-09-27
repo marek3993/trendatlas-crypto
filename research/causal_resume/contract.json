@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "issue_class": "C",
+  "engine_commit": "53b6a5336ca1f7ce35b481a017f7e82396f3613c",
+  "experiment_id": "causal_nested_v1_20260927",
+  "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+  "manifest_sha256": "1f92cd047b2d39cc071984f57485beaafbb560b935fd23109c9f121154af0abc",
+  "cooperative_seconds": 1680,
+  "hard_timeout_seconds": 1800,
+  "stop_timeout_seconds": 20,
+  "resumable_states": ["RUNNING", "CHECKPOINTED", "PAUSED_WAITING_RESUME"],
+  "terminal_states": ["FAILED", "SEALED", "WAITING_FOR_NEW_DATA"],
+  "recovery": {
+    "failure_type": "PauseResearch",
+    "failure_reason": "bounded_activation_checkpoint",
+    "completed_evaluations": 420,
+    "require_verified_sqlite_backup": true,
+    "max_running_reservations": 1
+  },
+  "invariants": [
+    "Load every scientific module from the unchanged frozen release; verify all manifest files before admission and under the worker lock before resume.",
+    "Never initialize an experiment or alter its manifest, schema, inputs, fitness, nominations, candidates or budget.",
+    "All cooperative exits including broker-wait and SIGTERM are caught outside the entire activation, commit a resumable state, and return zero.",
+    "Other exceptions remain FAILED. Hard timeout remains a systemd failure, never a successful checkpoint.",
+    "Mark at most one abandoned RUNNING attempt INTERRUPTED transactionally; retain it in the original attempt budget. Completed cache entries and mutation lineage are immutable.",
+    "Only the frozen controller can freeze nominations and open outer OOS. No new cycle creation is exposed.",
+    "Production gate, conflicts, ordering, manual-start refusal and network/filesystem isolation remain in force."
+  ]
+}

@@ -1,0 +1,303 @@
+{
+  "attempt_status": [
+    [
+      "COMPLETE",
+      436
+    ],
+    [
+      "INTERRUPTED",
+      1
+    ],
+    [
+      "RUNNING",
+      1
+    ]
+  ],
+  "counts": {
+    "attempts": 438,
+    "candidates": 109,
+    "evaluations": 436,
+    "finalists": 0,
+    "trials": 277
+  },
+  "duplicate_completed": [],
+  "engine_and_raw_hashes_verified": true,
+  "engine_commit": "53b6a5336ca1f7ce35b481a017f7e82396f3613c",
+  "events": [
+    {
+      "counts": {
+        "attempts": 420,
+        "candidates": 104,
+        "evaluations": 420,
+        "finalists": 0,
+        "proposals": 7,
+        "trials": 255
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "outer_opened": false,
+      "reason": "bounded_activation_checkpoint",
+      "recovery": true,
+      "status": "CHECKPOINTED",
+      "utc": "2026-09-27T15:46:26.853987+00:00"
+    },
+    {
+      "counts": {
+        "attempts": 420,
+        "candidates": 104,
+        "evaluations": 420,
+        "finalists": 0,
+        "proposals": 7,
+        "trials": 255
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "interrupted_attempts": [],
+      "outer_opened": false,
+      "reason": null,
+      "status": "RUNNING",
+      "utc": "2026-09-27T15:46:41.766845+00:00"
+    },
+    {
+      "counts": {
+        "attempts": 421,
+        "candidates": 105,
+        "evaluations": 420,
+        "finalists": 0,
+        "proposals": 9,
+        "trials": 263
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "interrupted_attempts": [
+        421
+      ],
+      "outer_opened": false,
+      "reason": "bounded_activation_checkpoint",
+      "status": "CHECKPOINTED",
+      "utc": "2026-09-27T15:49:05.287340+00:00"
+    },
+    {
+      "counts": {
+        "attempts": 421,
+        "candidates": 105,
+        "evaluations": 420,
+        "finalists": 0,
+        "proposals": 9,
+        "trials": 263
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "interrupted_attempts": [],
+      "outer_opened": false,
+      "reason": null,
+      "status": "RUNNING",
+      "utc": "2026-09-27T15:51:03.777354+00:00"
+    }
+  ],
+  "experiment_id": "causal_nested_v1_20260927",
+  "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+  "integrity": [
+    [
+      "ok"
+    ]
+  ],
+  "mail_integrity": [
+    [
+      "ok"
+    ]
+  ],
+  "manifest_sha256": "1f92cd047b2d39cc071984f57485beaafbb560b935fd23109c9f121154af0abc",
+  "outer_opened": false,
+  "production_hashes": {
+    "/etc/systemd/system/mrv1-production.service": {
+      "after": "586f571441e759eae062af6c795ad8f5baa13fe4d998ed76d915123a7cd4a591",
+      "before": "586f571441e759eae062af6c795ad8f5baa13fe4d998ed76d915123a7cd4a591",
+      "unchanged": true
+    },
+    "/etc/systemd/system/mrv1-production.timer": {
+      "after": "910fe5499e14af959b2de9ace5cd4195361eadcc919a86bcf83b03648495bb2f",
+      "before": "910fe5499e14af959b2de9ace5cd4195361eadcc919a86bcf83b03648495bb2f",
+      "unchanged": true
+    },
+    "/etc/systemd/system/trendatlas-evolution-dispatch.timer": {
+      "after": "e9afd2e575e0803ce4d58cc0d1b674e2824f6b3dfdd04d4c58c9a2ae9847b4ea",
+      "before": "e9afd2e575e0803ce4d58cc0d1b674e2824f6b3dfdd04d4c58c9a2ae9847b4ea",
+      "unchanged": true
+    },
+    "/opt/market_regime_v1/outputs/execution/execution_journal/exec_445e5da83a53a04f10710c25a31941a8.json": {
+      "after": "de56dab75a357b502158e227db665b5d5614c675c7d5100775742ffe324f1746",
+      "before": "de56dab75a357b502158e227db665b5d5614c675c7d5100775742ffe324f1746",
+      "unchanged": true
+    },
+    "/opt/market_regime_v1/outputs/execution/execution_journal/exec_4a16bcd2bc00e64ad01723670414d938.json": {
+      "after": "4fac2f5ff8459b6fb7494870ce55da563a783e1449fbce3e61642ef8675f2ac4",
+      "before": "4fac2f5ff8459b6fb7494870ce55da563a783e1449fbce3e61642ef8675f2ac4",
+      "unchanged": true
+    },
+    "/opt/market_regime_v1/outputs/execution/execution_journal/exec_5f6cb22125733364f46dc3fd6f65d4bd.json": {
+      "after": "1100fb8e7914828b31878504b51ed924d17df90c8413f168deea6ce1948821bd",
+      "before": "1100fb8e7914828b31878504b51ed924d17df90c8413f168deea6ce1948821bd",
+      "unchanged": true
+    },
+    "/opt/market_regime_v1/outputs/execution/execution_journal/exec_817ce43d04e3f8cd1f4a3bf5980d6d87.json": {
+      "after": "68e68b61ac45f8a327677092b5fb1ed2337c698a658cb8347d7c98e5f16303e8",
+      "before": "68e68b61ac45f8a327677092b5fb1ed2337c698a658cb8347d7c98e5f16303e8",
+      "unchanged": true
+    },
+    "/opt/market_regime_v1/outputs/execution/execution_journal/exec_f973fc01cb74cdd176f9eeb497fd2351.json": {
+      "after": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48",
+      "before": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48",
+      "unchanged": true
+    },
+    "/opt/market_regime_v1/outputs/execution/execution_journal/latest_execution_journal.json": {
+      "after": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48",
+      "before": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48",
+      "unchanged": true
+    },
+    "/opt/market_regime_v1/outputs/execution/production_runs/latest_production_run.json": {
+      "after": "f79714310ff3005e179bd5cb4a1980623fdd26af24b2478bc0cc4a14dffc3a8a",
+      "before": "f79714310ff3005e179bd5cb4a1980623fdd26af24b2478bc0cc4a14dffc3a8a",
+      "unchanged": true
+    },
+    "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot.json": {
+      "after": "da6c85ddf2bb6c5dcc183921fe9808c9590e8ab2d2d45d01a5471592311c4a82",
+      "before": "da6c85ddf2bb6c5dcc183921fe9808c9590e8ab2d2d45d01a5471592311c4a82",
+      "unchanged": true
+    }
+  },
+  "production_head": {
+    "code": 0,
+    "stderr": "",
+    "stdout": "5ee031cef7de9c385056cec22f6511391d3e4f4f"
+  },
+  "production_status_unchanged": true,
+  "retained": {
+    "attempts": {
+      "original": 420,
+      "preserved": 420,
+      "unchanged": true
+    },
+    "candidates": {
+      "original": 104,
+      "preserved": 104,
+      "unchanged": true
+    },
+    "evaluations": {
+      "original": 420,
+      "preserved": 420,
+      "unchanged": true
+    },
+    "populations": {
+      "original": 21,
+      "preserved": 21,
+      "unchanged": true
+    },
+    "scores": {
+      "original": 180,
+      "preserved": 180,
+      "unchanged": true
+    },
+    "trials": {
+      "original": 255,
+      "preserved": 255,
+      "unchanged": true
+    }
+  },
+  "sqlite_status": "RUNNING",
+  "status": {
+    "best_development": {
+      "id": "F_02d1b8f141b8",
+      "run": "2024:F_spot:4517:deepseek",
+      "selection": "display_only_not_weighted_fitness",
+      "validation_cagr": 0.20304954744867032,
+      "validation_calmar": 1.7873088128743506,
+      "validation_mdd": 0.11360630350282108
+    },
+    "cache_hits": 2718,
+    "checkpoint": {
+      "attempt": 437,
+      "evaluation": "2165600a911e86064e7aca936a3c578649717e921a78b15579fee666ada9237a",
+      "utc": "2026-09-27T15:52:32.373964+00:00"
+    },
+    "counts": {
+      "attempts": 438,
+      "candidates": 109,
+      "evaluations": 436,
+      "finalists": 0,
+      "proposals": 9,
+      "trials": 277
+    },
+    "deepseek": {
+      "calls": 9,
+      "proposals": [
+        {
+          "n": 9,
+          "state": "COMPLETE"
+        }
+      ],
+      "tokens": 44339,
+      "usd": 0.016036079999999998
+    },
+    "experiment_id": "causal_nested_v1_20260927",
+    "failure": null,
+    "generation": 3,
+    "next_allowed_cycle": "2027-01-01",
+    "outer_results": null,
+    "pause_reason": null,
+    "phase": "SEARCH",
+    "prospective": {
+      "independent_history": false,
+      "start": "2026-09-27",
+      "status": "NOT_YET_FROZEN"
+    },
+    "reject_reasons": [],
+    "resources": {
+      "disk_free_mib": 1350.17578125,
+      "elapsed_seconds": 91.69297482300317,
+      "locked_kib": 335280,
+      "pi": true,
+      "process_cpu_seconds": 17.479460473,
+      "rss_kib": 332592,
+      "state_bytes": 11450618,
+      "swap_kib": 0,
+      "temperature_c": 46.85,
+      "utc": "2026-09-27T15:52:35.470544+00:00"
+    },
+    "run": "2024:F_spot:2903:deterministic",
+    "status": "RUNNING",
+    "utc": "2026-09-27T15:52:35.580025+00:00"
+  },
+  "systemd": {
+    "mrv1-production.service": {
+      "code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=1h 30min\nTimeoutStopUSec=1min 30s\nRuntimeMaxUSec=infinity\nMainPID=0\nResult=success\nExecMainCode=1\nExecMainStatus=0\nActiveState=inactive\nSubState=dead"
+    },
+    "mrv1-production.timer": {
+      "code": 0,
+      "stderr": "",
+      "stdout": "Result=success\nActiveState=active\nSubState=waiting"
+    },
+    "trendatlas-causal-broker.service": {
+      "code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=1min\nTimeoutStopUSec=1min 30s\nRuntimeMaxUSec=1min\nMainPID=0\nResult=success\nExecMainCode=1\nExecMainStatus=0\nActiveState=inactive\nSubState=dead"
+    },
+    "trendatlas-causal-maintain.service": {
+      "code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=10min\nTimeoutStopUSec=2s\nRuntimeMaxUSec=10min\nMainPID=0\nResult=success\nExecMainCode=1\nExecMainStatus=0\nActiveState=inactive\nSubState=dead"
+    },
+    "trendatlas-evolution-dispatch.service": {
+      "code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=1min\nTimeoutStopUSec=1min 30s\nRuntimeMaxUSec=infinity\nMainPID=0\nResult=success\nExecMainCode=1\nExecMainStatus=0\nActiveState=inactive\nSubState=dead"
+    },
+    "trendatlas-evolution-worker.service": {
+      "code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=1min\nTimeoutStopUSec=20s\nRuntimeMaxUSec=30min\nMainPID=264676\nResult=success\nExecMainCode=0\nExecMainStatus=0\nActiveState=active\nSubState=running"
+    }
+  }
+}

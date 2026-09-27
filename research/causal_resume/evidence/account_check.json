@@ -1,0 +1,17 @@
+{
+  "utc": "2026-09-27T15:53:32.837981+00:00",
+  "method": "Unsigned read-only Hyperliquid /info; no exchange mutation or signer",
+  "positions_equal_saved_snapshot": true,
+  "balances_equal_saved_snapshot": false,
+  "open_orders_equal_saved_snapshot": true,
+  "open_orders_count": 0,
+  "fills_since_pre_repair_backup": 0,
+  "positions_count": 1,
+  "saved_snapshot_utc": "2026-09-27T00:11:05Z",
+  "funding_since_backup": [],
+  "ledger_since_backup": [],
+  "balance_changed_assets": [
+    "USDC"
+  ],
+  "balance_comparison_note": "Saved production snapshot predates the repair by more than 15 hours; spot total and hold differ. Position sizes/entry prices/leverage and open orders match; no fills, funding or ledger changes since backup. This is not a claim that marked account balance is constant."
+}
