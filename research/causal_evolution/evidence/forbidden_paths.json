@@ -1,0 +1,15 @@
+{
+  "raw_input_hashes_match": {
+    "funding.zip": true,
+    "identity_events.json": true,
+    "perp_mark.zip": true,
+    "perp_trade.zip": true,
+    "spot_4h.zip": true,
+    "spot_daily.zip": true,
+    "venue_notices.json": true
+  },
+  "imports_checked": 26,
+  "forbidden_imports": [],
+  "pass_audit": true,
+  "scope": "AST import/data-source audit plus explicit ledger and payload regression tests; not a claim of formal verification"
+}

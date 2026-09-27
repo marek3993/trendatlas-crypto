@@ -1,0 +1,72 @@
+{
+  "vendor\\common.py": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/common.py",
+    "original_sha256": "cab10c4038364148897afa58a9c44d22933cb77c5024b370e3ef6617fe3ed280"
+  },
+  "vendor\\signals.py": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/signals.py",
+    "original_sha256": "034a2f31d781b9e0dd6de4274cc83b48962e6972b63dde788da80f457a234989"
+  },
+  "vendor\\ledger.py": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/ledger.py",
+    "original_sha256": "32a06edb11974f26b92e1b954fc5df30d8a67049fcd26b8d9f5bd9c3f80402ca"
+  },
+  "vendor\\data.py": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/data.py",
+    "original_sha256": "7b7e462fcaa004e4750c5df04b263a5d35b576932f44302150c246f6f36b2a94"
+  },
+  "vendor\\test_research.py": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/test_research.py",
+    "original_sha256": "f38396cc79f8d8b9ce53f862a3b1d8939e41cfab43f3ed2824b4e3adeac2bb83"
+  },
+  "vendor\\contract.json": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/contract.json",
+    "original_sha256": "75dd9a05c814f96f85066a6437589e0022f46e7e9a5af0721048ad1173f6c62f"
+  },
+  "inputs/spot_daily.zip": {
+    "commit": "58e308315d03a4561d53bbbd4019f7392f66e662",
+    "path": "research/capacity_followup_20260927/spot_daily.zip",
+    "original_sha256": "21cdd19d993258ceaa14638887c372bfd6cb352a8f7e955a9d67a68db52fba45"
+  },
+  "inputs/spot_4h.zip": {
+    "commit": "58e308315d03a4561d53bbbd4019f7392f66e662",
+    "path": "research/capacity_followup_20260927/spot_4h.zip",
+    "original_sha256": "657a0d64e9c4cc9ea02bb8a81766dc2d9bc2b852a2c88c8a9055e39e33e72409"
+  },
+  "inputs/identity_events.json": {
+    "commit": "58e308315d03a4561d53bbbd4019f7392f66e662",
+    "path": "research/capacity_followup_20260927/identity_events.json",
+    "original_sha256": "a62e62989a82a8e962dd4576299b88061823f543d7993d81611769116356da3e"
+  },
+  "inputs/venue_notices.json": {
+    "commit": "58e308315d03a4561d53bbbd4019f7392f66e662",
+    "path": "research/capacity_followup_20260927/venue_notices.json",
+    "original_sha256": "5c5785987f38ce267d2dd4c2910836a1ff650d6198d700f7eff26f5e3aa5ea26"
+  },
+  "inputs/perp_trade.zip": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/perp_trade.zip",
+    "original_sha256": "5a4196c438df5b1003a6a346fea11cbb69af2c12764ff2f169df0bff9db93c36"
+  },
+  "inputs/perp_mark.zip": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/perp_mark.zip",
+    "original_sha256": "46c2dbe4d02546345d87312adbb1d5e806d759efcad1104e3252cbcf4306d7f2"
+  },
+  "inputs/funding.zip": {
+    "commit": "c1e4574250c08c2027dea30070ec7705d8fde906",
+    "path": "research/slow_trend_20260927/funding.zip",
+    "original_sha256": "0befd0f350595ac3ecd7cf94b1f495244183a1446e8282888d3d6653293f8e65"
+  },
+  "gate.py": {
+    "commit": "e655035c3e3651468eb47ed078a6746ec0602860",
+    "path": "research_os/dev_only/evolution_worker/gate.py",
+    "original_sha256": "755bd666f9b29825b5fec13f87820fe03b151aca20d699d65b6936563afbd4f1"
+  }
+}
