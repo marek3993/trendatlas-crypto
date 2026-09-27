@@ -1,0 +1,63 @@
+{
+  "best_development": {
+    "id": "F_02d1b8f141b8",
+    "run": "2024:F_spot:4517:deepseek",
+    "selection": "display_only_not_weighted_fitness",
+    "validation_cagr": 0.20304954744867032,
+    "validation_calmar": 1.7873088128743506,
+    "validation_mdd": 0.11360630350282108
+  },
+  "cache_hits": 1257,
+  "checkpoint": {
+    "attempt": 314,
+    "evaluation": "1f0e0dac41ac9cbaf37cafcca8a2a9b8303cce5ba30d978b3b00dc238145dc12",
+    "utc": "2026-09-27T12:23:57.168645+00:00"
+  },
+  "counts": {
+    "attempts": 314,
+    "candidates": 80,
+    "evaluations": 314,
+    "finalists": 0,
+    "proposals": 3,
+    "trials": 156
+  },
+  "deepseek": {
+    "calls": 3,
+    "proposals": [
+      {
+        "n": 3,
+        "state": "COMPLETE"
+      }
+    ],
+    "tokens": 14539,
+    "usd": 0.004963103999999999
+  },
+  "experiment_id": "causal_nested_v1_20260927",
+  "failure": null,
+  "generation": 1,
+  "next_allowed_cycle": "2027-01-01",
+  "outer_results": null,
+  "pause_reason": null,
+  "phase": "SEARCH",
+  "prospective": {
+    "independent_history": false,
+    "start": "2026-09-27",
+    "status": "NOT_YET_FROZEN"
+  },
+  "reject_reasons": [],
+  "resources": {
+    "disk_free_mib": 1359.46484375,
+    "elapsed_seconds": 1238.0907286100119,
+    "locked_kib": 332352,
+    "pi": true,
+    "process_cpu_seconds": 198.364256655,
+    "rss_kib": 329888,
+    "state_bytes": 8778293,
+    "swap_kib": 0,
+    "temperature_c": 46.85,
+    "utc": "2026-09-27T12:23:57.175281+00:00"
+  },
+  "run": "2024:F_spot:1701:deepseek",
+  "status": "RUNNING",
+  "utc": "2026-09-27T12:23:57.320415+00:00"
+}

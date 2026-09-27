@@ -1,0 +1,2376 @@
+[
+  {
+    "created": "2026-09-27T12:14:09.870162+00:00",
+    "generation": 1,
+    "id": "c573fbe4d3da17fa9b6e323111ac07b4b15b4ac913b8a7f8d62825b3f803757e",
+    "payload": {
+      "generation": 1,
+      "parents": [
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.5530197718347039,
+                "calmar": 2.389085117682841,
+                "costs_usd": 1.0475151990011955,
+                "episode_concentration": 0.523355763041653,
+                "mdd": 0.23147763457296755,
+                "reliable": true,
+                "sharpe": 1.2521536230860895,
+                "trades": 2,
+                "turnover": 6.021204107773416,
+                "worst_fold": 0.5530197718347039
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.982315652673328,
+                "calmar": 9.550239819056953,
+                "costs_usd": 3.0777971097339636,
+                "episode_concentration": 0.5280175045830442,
+                "mdd": 0.31227651966626946,
+                "reliable": true,
+                "sharpe": 2.636499114144693,
+                "trades": 4,
+                "turnover": 7.76350963221176,
+                "worst_fold": 2.098816766037725
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "sma200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_c6410fa59bd5"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.25314342767864617,
+                "calmar": 1.1941703580391074,
+                "costs_usd": 0.1997003995005909,
+                "episode_concentration": 1.0,
+                "mdd": 0.2119826756496631,
+                "reliable": true,
+                "sharpe": 1.0578241853728334,
+                "trades": 0,
+                "turnover": 1.2042413032512045,
+                "worst_fold": 0.25314342767864617
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.415013637815003,
+                "calmar": 7.733574206590796,
+                "costs_usd": 1.8989621211460528,
+                "episode_concentration": 0.5659440673605284,
+                "mdd": 0.31227651966626924,
+                "reliable": true,
+                "sharpe": 2.6505771275318377,
+                "trades": 2,
+                "turnover": 4.313061098475992,
+                "worst_fold": 1.5945271510617207
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "breakout120",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_43882aab02ff"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.047750101370173326,
+                "calmar": 0.07754486573782844,
+                "costs_usd": 0.8362087938545412,
+                "episode_concentration": 0.617067468013597,
+                "mdd": 0.615773860923452,
+                "reliable": true,
+                "sharpe": 0.44705024725902737,
+                "trades": 2,
+                "turnover": 6.021204107773415,
+                "worst_fold": 0.047750101370173326
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.012668291528883,
+                "calmar": 3.2685185573005047,
+                "costs_usd": 3.1418148876500513,
+                "episode_concentration": 0.797509341507681,
+                "mdd": 0.615773860923452,
+                "reliable": true,
+                "sharpe": 1.918349788507813,
+                "trades": 4,
+                "turnover": 7.76350963221176,
+                "worst_fold": 1.2375796225610562
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "dual50_200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_b036f0e2d016"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.4462015341409311,
+                "calmar": 2.1048962268895686,
+                "costs_usd": 0.6788469260853671,
+                "episode_concentration": 0.5525908839093614,
+                "mdd": 0.2119826756496631,
+                "reliable": true,
+                "sharpe": 1.223317961942953,
+                "trades": 1,
+                "turnover": 3.6127227055123097,
+                "worst_fold": 0.4462015341409311
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.08491052680529321,
+                "calmar": 2.2253869327868485,
+                "costs_usd": 0.8175344956799062,
+                "episode_concentration": 1.0,
+                "mdd": 0.03815539920464972,
+                "reliable": true,
+                "sharpe": 1.5843114556433557,
+                "trades": 2,
+                "turnover": 12.162831081418583,
+                "worst_fold": 0.08491052680529321
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.8736683287172586,
+                "calmar": 9.202319571731982,
+                "costs_usd": 3.283067707654702,
+                "episode_concentration": 0.8422034888361477,
+                "mdd": 0.31227651966626946,
+                "reliable": true,
+                "sharpe": 2.711201404413153,
+                "trades": 3,
+                "turnover": 6.038285365343876,
+                "worst_fold": 1.9056310173210154
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom180",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_7f094655e7ef"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": -0.042614488866806854,
+                "calmar": -0.06660625065704932,
+                "costs_usd": 1.5951658400924265,
+                "episode_concentration": 1.0,
+                "mdd": 0.6397971428571428,
+                "reliable": true,
+                "sharpe": 0.32000430318187006,
+                "trades": 4,
+                "turnover": 10.838166912295627,
+                "worst_fold": -0.042614488866806854
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": -0.10987640262823051,
+                "calmar": -1.430856634544311,
+                "costs_usd": 0.39248578938797374,
+                "episode_concentration": null,
+                "mdd": 0.07679064413271786,
+                "reliable": true,
+                "sharpe": -1.3481904439020502,
+                "trades": 1,
+                "turnover": 6.081415540709291,
+                "worst_fold": -0.10987640262823051
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 1.7327638984438272,
+                "calmar": 2.708302026335756,
+                "costs_usd": 2.407521448190133,
+                "episode_concentration": 0.5170134786974663,
+                "mdd": 0.6397971428571428,
+                "reliable": true,
+                "sharpe": 1.7589478233736777,
+                "trades": 5,
+                "turnover": 9.488733899079644,
+                "worst_fold": 1.0279386870214475
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "monthly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom365",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_0af531e7e4b4"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": -0.21273493995059922,
+                "calmar": -0.361571519157158,
+                "costs_usd": 1.1180971941375601,
+                "episode_concentration": 0.5370446082711685,
+                "mdd": 0.5883619939050936,
+                "reliable": true,
+                "sharpe": -0.07799484897343528,
+                "trades": 3,
+                "turnover": 8.429685510034522,
+                "worst_fold": -0.21273493995059922
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 1.3528780467725765,
+                "calmar": 2.299397413135431,
+                "costs_usd": 1.5711632804216604,
+                "episode_concentration": 0.7423490538655676,
+                "mdd": 0.5883619939050936,
+                "reliable": true,
+                "sharpe": 1.6508986880909629,
+                "trades": 4,
+                "turnover": 7.76350963221176,
+                "worst_fold": 0.6818162282851972
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "monthly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom90",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_8f38f0535855"
+        }
+      ],
+      "run": "2024:F_spot:1701:deepseek",
+      "schema": {
+        "cadence": [
+          "weekly",
+          "monthly"
+        ],
+        "confirm": [
+          0,
+          3,
+          7,
+          14
+        ],
+        "family": [
+          "F",
+          "G",
+          "H",
+          "D"
+        ],
+        "gross": [
+          1.0,
+          1.25
+        ],
+        "hysteresis": [
+          0.0,
+          0.01,
+          0.03
+        ],
+        "recipe": [
+          "btc_regime",
+          "own_trend_ls",
+          "beta_neutral",
+          "funding_aware"
+        ],
+        "satellite": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "satellite_k": [
+          1,
+          2
+        ],
+        "scope": [
+          "BTC",
+          "ETH",
+          "liquid5"
+        ],
+        "signal": [
+          "sma50",
+          "sma100",
+          "sma150",
+          "sma200",
+          "dual50_200",
+          "dual100_200",
+          "dual50_150",
+          "breakout20",
+          "breakout55",
+          "breakout120",
+          "breakout200",
+          "mom90",
+          "mom180",
+          "mom270",
+          "mom365",
+          "combo_sma_mom",
+          "combo_breakout_mom"
+        ],
+        "top_k": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "weighting": [
+          "equal",
+          "inverse_vol",
+          "equal_risk"
+        ]
+      },
+      "seen": [
+        "F_0af531e7e4b4",
+        "F_2dca6d2073e3",
+        "F_31bc2a444bf2",
+        "F_43882aab02ff",
+        "F_7f094655e7ef",
+        "F_8f38f0535855",
+        "F_b036f0e2d016",
+        "F_c6410fa59bd5",
+        "F_f636452a094b",
+        "F_f9bd739274de"
+      ]
+    },
+    "response": {
+      "content": "{\n  \"candidates\": [\n    {\n      \"parent\": \"F_c6410fa59bd5\",\n      \"genes\": {\n        \"cadence\": \"weekly\",\n        \"confirm\": 3,\n        \"family\": \"F\",\n        \"gross\": 1.0,\n        \"hysteresis\": 0.0,\n        \"recipe\": \"btc_regime\",\n        \"satellite\": 0.25,\n        \"satellite_k\": 1,\n        \"scope\": \"BTC\",\n        \"signal\": \"sma100\",\n        \"top_k\": 5,\n        \"weighting\": \"equal\"\n      },\n      \"hypothesis\": \"Switching from sma200 to sma100 and adding a 3-day confirmation should reduce whipsaws in the BTC regime filter, improving Sharpe and Calmar while keeping turnover manageable.\"\n    },\n    {\n      \"parent\": \"F_43882aab02ff\",\n      \"genes\": {\n        \"cadence\": \"weekly\",\n        \"confirm\": 3,\n        \"family\": \"F\",\n        \"gross\": 1.0,\n        \"hysteresis\": 0.0,\n        \"recipe\": \"btc_regime\",\n        \"satellite\": 0.25,\n        \"satellite_k\": 1,\n        \"scope\": \"BTC\",\n        \"signal\": \"breakout200\",\n        \"top_k\": 5,\n        \"weighting\": \"equal\"\n      },\n      \"hypothesis\": \"Lengthening the breakout window from 120 to 200 days and requiring 3-day confirmation should reduce false starts, lowering drawdowns and improving risk-adjusted returns.\"\n    },\n    {\n      \"parent\": \"F_b036f0e2d016\",\n      \"genes\": {\n        \"cadence\": \"weekly\",\n        \"confirm\": 3,\n        \"family\": \"F\",\n        \"gross\": 1.0,\n        \"hysteresis\": 0.0,\n        \"recipe\": \"btc_regime\",\n        \"satellite\": 0.25,\n        \"satellite_k\": 1,\n        \"scope\": \"BTC\",\n        \"signal\": \"dual100_200\",\n        \"top_k\": 5,\n        \"weighting\": \"equal\"\n      },\n      \"hypothesis\": \"Replacing the fast dual50_200 with a slower dual100_200 crossover and adding confirmation may better capture sustained trends, increasing Calmar and Sharpe.\"\n    },\n    {\n      \"parent\": \"F_7f094655e7ef\",\n      \"genes\": {\n        \"cadence\": \"weekly\",\n        \"confirm\": 3,\n        \"family\": \"F\",\n        \"gross\": 1.0,\n        \"hysteresis\": 0.0,\n        \"recipe\": \"btc_regime\",\n        \"satellite\": 0.25,\n        \"satellite_k\": 1,\n        \"scope\": \"BTC\",\n        \"signal\": \"mom270\",\n        \"top_k\": 5,\n        \"weighting\": \"equal\"\n      },\n      \"hypothesis\": \"Extending the momentum lookback from 180 to 270 days with 3-day confirmation should smooth signals and reduce turnover, potentially improving fold consistency.\"\n    }\n  ]\n}",
+      "finish_reason": "stop",
+      "request": {
+        "max_tokens": 2200,
+        "messages": [
+          {
+            "content": "Return ONLY JSON {\"candidates\":[exactly four objects with parent, genes, hypothesis]}. Mutate supplied parents within their island. Complete canonical enum genes, no inactive-gene changes. Never write code, tools, data, evaluator or metric changes. You see only development/inner-validation. Propose unseen IDs. F scope only; G satellite fields only; H top_k2/3/5 and inverse_vol/equal_risk; D recipe/gross/top_k/weighting. Shared signal/cadence/confirm/hysteresis allowed. G forbids sma50/breakout20/breakout55/mom90.",
+            "role": "system"
+          },
+          {
+            "content": "{\"generation\":1,\"parents\":[{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.5530197718347039,\"calmar\":2.389085117682841,\"costs_usd\":1.0475151990011955,\"episode_concentration\":0.523355763041653,\"mdd\":0.23147763457296755,\"reliable\":true,\"sharpe\":1.2521536230860895,\"trades\":2,\"turnover\":6.021204107773416,\"worst_fold\":0.5530197718347039},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.982315652673328,\"calmar\":9.550239819056953,\"costs_usd\":3.0777971097339636,\"episode_concentration\":0.5280175045830442,\"mdd\":0.31227651966626946,\"reliable\":true,\"sharpe\":2.636499114144693,\"trades\":4,\"turnover\":7.76350963221176,\"worst_fold\":2.098816766037725},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"sma200\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_c6410fa59bd5\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.25314342767864617,\"calmar\":1.1941703580391074,\"costs_usd\":0.1997003995005909,\"episode_concentration\":1.0,\"mdd\":0.2119826756496631,\"reliable\":true,\"sharpe\":1.0578241853728334,\"trades\":0,\"turnover\":1.2042413032512045,\"worst_fold\":0.25314342767864617},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.415013637815003,\"calmar\":7.733574206590796,\"costs_usd\":1.8989621211460528,\"episode_concentration\":0.5659440673605284,\"mdd\":0.31227651966626924,\"reliable\":true,\"sharpe\":2.6505771275318377,\"trades\":2,\"turnover\":4.313061098475992,\"worst_fold\":1.5945271510617207},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"breakout120\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_43882aab02ff\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.047750101370173326,\"calmar\":0.07754486573782844,\"costs_usd\":0.8362087938545412,\"episode_concentration\":0.617067468013597,\"mdd\":0.615773860923452,\"reliable\":true,\"sharpe\":0.44705024725902737,\"trades\":2,\"turnover\":6.021204107773415,\"worst_fold\":0.047750101370173326},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.012668291528883,\"calmar\":3.2685185573005047,\"costs_usd\":3.1418148876500513,\"episode_concentration\":0.797509341507681,\"mdd\":0.615773860923452,\"reliable\":true,\"sharpe\":1.918349788507813,\"trades\":4,\"turnover\":7.76350963221176,\"worst_fold\":1.2375796225610562},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"dual50_200\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_b036f0e2d016\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.4462015341409311,\"calmar\":2.1048962268895686,\"costs_usd\":0.6788469260853671,\"episode_concentration\":0.5525908839093614,\"mdd\":0.2119826756496631,\"reliable\":true,\"sharpe\":1.223317961942953,\"trades\":1,\"turnover\":3.6127227055123097,\"worst_fold\":0.4462015341409311},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.08491052680529321,\"calmar\":2.2253869327868485,\"costs_usd\":0.8175344956799062,\"episode_concentration\":1.0,\"mdd\":0.03815539920464972,\"reliable\":true,\"sharpe\":1.5843114556433557,\"trades\":2,\"turnover\":12.162831081418583,\"worst_fold\":0.08491052680529321},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.8736683287172586,\"calmar\":9.202319571731982,\"costs_usd\":3.283067707654702,\"episode_concentration\":0.8422034888361477,\"mdd\":0.31227651966626946,\"reliable\":true,\"sharpe\":2.711201404413153,\"trades\":3,\"turnover\":6.038285365343876,\"worst_fold\":1.9056310173210154},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom180\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_7f094655e7ef\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":-0.042614488866806854,\"calmar\":-0.06660625065704932,\"costs_usd\":1.5951658400924265,\"episode_concentration\":1.0,\"mdd\":0.6397971428571428,\"reliable\":true,\"sharpe\":0.32000430318187006,\"trades\":4,\"turnover\":10.838166912295627,\"worst_fold\":-0.042614488866806854},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":-0.10987640262823051,\"calmar\":-1.430856634544311,\"costs_usd\":0.39248578938797374,\"episode_concentration\":null,\"mdd\":0.07679064413271786,\"reliable\":true,\"sharpe\":-1.3481904439020502,\"trades\":1,\"turnover\":6.081415540709291,\"worst_fold\":-0.10987640262823051},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":1.7327638984438272,\"calmar\":2.708302026335756,\"costs_usd\":2.407521448190133,\"episode_concentration\":0.5170134786974663,\"mdd\":0.6397971428571428,\"reliable\":true,\"sharpe\":1.7589478233736777,\"trades\":5,\"turnover\":9.488733899079644,\"worst_fold\":1.0279386870214475},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"monthly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom365\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_0af531e7e4b4\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":-0.21273493995059922,\"calmar\":-0.361571519157158,\"costs_usd\":1.1180971941375601,\"episode_concentration\":0.5370446082711685,\"mdd\":0.5883619939050936,\"reliable\":true,\"sharpe\":-0.07799484897343528,\"trades\":3,\"turnover\":8.429685510034522,\"worst_fold\":-0.21273493995059922},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":1.3528780467725765,\"calmar\":2.299397413135431,\"costs_usd\":1.5711632804216604,\"episode_concentration\":0.7423490538655676,\"mdd\":0.5883619939050936,\"reliable\":true,\"sharpe\":1.6508986880909629,\"trades\":4,\"turnover\":7.76350963221176,\"worst_fold\":0.6818162282851972},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"monthly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom90\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_8f38f0535855\"}],\"run\":\"2024:F_spot:1701:deepseek\",\"schema\":{\"cadence\":[\"weekly\",\"monthly\"],\"confirm\":[0,3,7,14],\"family\":[\"F\",\"G\",\"H\",\"D\"],\"gross\":[1.0,1.25],\"hysteresis\":[0.0,0.01,0.03],\"recipe\":[\"btc_regime\",\"own_trend_ls\",\"beta_neutral\",\"funding_aware\"],\"satellite\":[0.25,0.5,0.75],\"satellite_k\":[1,2],\"scope\":[\"BTC\",\"ETH\",\"liquid5\"],\"signal\":[\"sma50\",\"sma100\",\"sma150\",\"sma200\",\"dual50_200\",\"dual100_200\",\"dual50_150\",\"breakout20\",\"breakout55\",\"breakout120\",\"breakout200\",\"mom90\",\"mom180\",\"mom270\",\"mom365\",\"combo_sma_mom\",\"combo_breakout_mom\"],\"top_k\":[1,2,3,5],\"weighting\":[\"equal\",\"inverse_vol\",\"equal_risk\"]},\"seen\":[\"F_0af531e7e4b4\",\"F_2dca6d2073e3\",\"F_31bc2a444bf2\",\"F_43882aab02ff\",\"F_7f094655e7ef\",\"F_8f38f0535855\",\"F_b036f0e2d016\",\"F_c6410fa59bd5\",\"F_f636452a094b\",\"F_f9bd739274de\"]}",
+            "role": "user"
+          }
+        ],
+        "model": "deepseek-flash",
+        "response_format": {
+          "type": "json_object"
+        },
+        "thinking": {
+          "type": "disabled"
+        }
+      }
+    },
+    "run": "2024:F_spot:1701:deepseek",
+    "state": "COMPLETE",
+    "usage": {
+      "api_call": 1,
+      "cache_hit_tokens": 0,
+      "cache_miss_tokens": 4193,
+      "output_tokens": 685,
+      "reserved_usd": 0.006287399999999999,
+      "response_model": "deepseek-flash",
+      "tariff": "documented_peak_upper_estimate_20260927",
+      "total_tokens": 4878,
+      "uncertain": false,
+      "usd": 0.0020798999999999995
+    },
+    "validation": {
+      "accepted": [
+        {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "sma100",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "hypothesis": "Switching from sma200 to sma100 and adding a 3-day confirmation should reduce whipsaws in the BTC regime filter, improving Sharpe and Calmar while keeping turnover manageable.",
+          "parent": "F_c6410fa59bd5"
+        },
+        {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "breakout200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "hypothesis": "Lengthening the breakout window from 120 to 200 days and requiring 3-day confirmation should reduce false starts, lowering drawdowns and improving risk-adjusted returns.",
+          "parent": "F_43882aab02ff"
+        },
+        {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "dual100_200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "hypothesis": "Replacing the fast dual50_200 with a slower dual100_200 crossover and adding confirmation may better capture sustained trends, increasing Calmar and Sharpe.",
+          "parent": "F_b036f0e2d016"
+        },
+        {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom270",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "hypothesis": "Extending the momentum lookback from 180 to 270 days with 3-day confirmation should smooth signals and reduce turnover, potentially improving fold consistency.",
+          "parent": "F_7f094655e7ef"
+        }
+      ],
+      "rejected": []
+    }
+  },
+  {
+    "created": "2026-09-27T12:14:29.591592+00:00",
+    "generation": 1,
+    "id": "a77fb6a513fa63dfce7ab7e45a3f2d833a889778bb67f9ddb06b40f421772f28",
+    "payload": {
+      "generation": 1,
+      "parents": [
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.5530197718347039,
+                "calmar": 2.389085117682841,
+                "costs_usd": 1.0475151990011955,
+                "episode_concentration": 0.523355763041653,
+                "mdd": 0.23147763457296755,
+                "reliable": true,
+                "sharpe": 1.2521536230860895,
+                "trades": 2,
+                "turnover": 6.021204107773416,
+                "worst_fold": 0.5530197718347039
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.982315652673328,
+                "calmar": 9.550239819056953,
+                "costs_usd": 3.0777971097339636,
+                "episode_concentration": 0.5280175045830442,
+                "mdd": 0.31227651966626946,
+                "reliable": true,
+                "sharpe": 2.636499114144693,
+                "trades": 4,
+                "turnover": 7.76350963221176,
+                "worst_fold": 2.098816766037725
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "sma200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_c6410fa59bd5"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.25314342767864617,
+                "calmar": 1.1941703580391074,
+                "costs_usd": 0.1997003995005909,
+                "episode_concentration": 1.0,
+                "mdd": 0.2119826756496631,
+                "reliable": true,
+                "sharpe": 1.0578241853728334,
+                "trades": 0,
+                "turnover": 1.2042413032512045,
+                "worst_fold": 0.25314342767864617
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.415013637815003,
+                "calmar": 7.733574206590796,
+                "costs_usd": 1.8989621211460528,
+                "episode_concentration": 0.5659440673605284,
+                "mdd": 0.31227651966626924,
+                "reliable": true,
+                "sharpe": 2.6505771275318377,
+                "trades": 2,
+                "turnover": 4.313061098475992,
+                "worst_fold": 1.5945271510617207
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "breakout120",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_43882aab02ff"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.4462015341409311,
+                "calmar": 2.1048962268895686,
+                "costs_usd": 0.6788469260853671,
+                "episode_concentration": 0.5525908839093614,
+                "mdd": 0.2119826756496631,
+                "reliable": true,
+                "sharpe": 1.223317961942953,
+                "trades": 1,
+                "turnover": 3.6127227055123097,
+                "worst_fold": 0.4462015341409311
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.08491052680529321,
+                "calmar": 2.2253869327868485,
+                "costs_usd": 0.8175344956799062,
+                "episode_concentration": 1.0,
+                "mdd": 0.03815539920464972,
+                "reliable": true,
+                "sharpe": 1.5843114556433557,
+                "trades": 2,
+                "turnover": 12.162831081418583,
+                "worst_fold": 0.08491052680529321
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.8736683287172586,
+                "calmar": 9.202319571731982,
+                "costs_usd": 3.283067707654702,
+                "episode_concentration": 0.8422034888361477,
+                "mdd": 0.31227651966626946,
+                "reliable": true,
+                "sharpe": 2.711201404413153,
+                "trades": 3,
+                "turnover": 6.038285365343876,
+                "worst_fold": 1.9056310173210154
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom180",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_7f094655e7ef"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.22265419098652184,
+                "calmar": 1.0503414503291542,
+                "costs_usd": 0.19970039950059565,
+                "episode_concentration": 1.0,
+                "mdd": 0.2119826756496631,
+                "reliable": true,
+                "sharpe": 0.9198120100328546,
+                "trades": 0,
+                "turnover": 1.2042413032512043,
+                "worst_fold": 0.22265419098652184
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.272478276012767,
+                "calmar": 7.277134631964548,
+                "costs_usd": 1.8107864498070856,
+                "episode_concentration": 0.5805500741819466,
+                "mdd": 0.31227651966626935,
+                "reliable": true,
+                "sharpe": 2.5493765172433025,
+                "trades": 2,
+                "turnover": 4.313061098475992,
+                "worst_fold": 1.4379932209522504
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "monthly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "breakout120",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_ee6e8018f64d"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 0.2253481218713122,
+                "cagr": 0.33565674865758655,
+                "calmar": 0.6942632984326849,
+                "costs_usd": 2.3038729057381375,
+                "episode_concentration": 0.2020269917023218,
+                "mdd": 0.48347183181847475,
+                "reliable": true,
+                "sharpe": 0.7995611876685048,
+                "trades": 25,
+                "turnover": 12.657004181148103,
+                "worst_fold": 0.33565674865758655
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 0.9142362277156537,
+                "cagr": -0.1625671647871515,
+                "calmar": -1.0527947857124509,
+                "costs_usd": 0.43293841548113,
+                "episode_concentration": 0.9142362277156537,
+                "mdd": 0.1544148650747149,
+                "reliable": true,
+                "sharpe": -0.5166003463319838,
+                "trades": 5,
+                "turnover": 6.574743437085943,
+                "worst_fold": -0.1625671647871515
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 0.24176870610894813,
+                "cagr": 1.535147149665379,
+                "calmar": 3.1752566512329268,
+                "costs_usd": 5.056922609283046,
+                "episode_concentration": 0.18686676040577113,
+                "mdd": 0.48347183181847475,
+                "reliable": true,
+                "sharpe": 1.69375604962472,
+                "trades": 39,
+                "turnover": 14.186018439950537,
+                "worst_fold": 0.9694502901429913
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": -0.16063380637559066,
+                "calmar": -1.6992728316434633,
+                "costs_usd": 0.22438964225644578,
+                "episode_concentration": null,
+                "mdd": 0.09453090956573029,
+                "reliable": true,
+                "sharpe": -1.0656774720235787,
+                "trades": 3,
+                "turnover": 3.516307878662636,
+                "worst_fold": -0.16063380637559066
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "liquid5",
+            "signal": "sma200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_0f857c5e393d"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": -0.21273493995059922,
+                "calmar": -0.361571519157158,
+                "costs_usd": 1.1180971941375601,
+                "episode_concentration": 0.5370446082711685,
+                "mdd": 0.5883619939050936,
+                "reliable": true,
+                "sharpe": -0.07799484897343528,
+                "trades": 3,
+                "turnover": 8.429685510034522,
+                "worst_fold": -0.21273493995059922
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 1.3528780467725765,
+                "calmar": 2.299397413135431,
+                "costs_usd": 1.5711632804216604,
+                "episode_concentration": 0.7423490538655676,
+                "mdd": 0.5883619939050936,
+                "reliable": true,
+                "sharpe": 1.6508986880909629,
+                "trades": 4,
+                "turnover": 7.76350963221176,
+                "worst_fold": 0.6818162282851972
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "monthly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom90",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_8f38f0535855"
+        }
+      ],
+      "run": "2024:F_spot:2903:deepseek",
+      "schema": {
+        "cadence": [
+          "weekly",
+          "monthly"
+        ],
+        "confirm": [
+          0,
+          3,
+          7,
+          14
+        ],
+        "family": [
+          "F",
+          "G",
+          "H",
+          "D"
+        ],
+        "gross": [
+          1.0,
+          1.25
+        ],
+        "hysteresis": [
+          0.0,
+          0.01,
+          0.03
+        ],
+        "recipe": [
+          "btc_regime",
+          "own_trend_ls",
+          "beta_neutral",
+          "funding_aware"
+        ],
+        "satellite": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "satellite_k": [
+          1,
+          2
+        ],
+        "scope": [
+          "BTC",
+          "ETH",
+          "liquid5"
+        ],
+        "signal": [
+          "sma50",
+          "sma100",
+          "sma150",
+          "sma200",
+          "dual50_200",
+          "dual100_200",
+          "dual50_150",
+          "breakout20",
+          "breakout55",
+          "breakout120",
+          "breakout200",
+          "mom90",
+          "mom180",
+          "mom270",
+          "mom365",
+          "combo_sma_mom",
+          "combo_breakout_mom"
+        ],
+        "top_k": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "weighting": [
+          "equal",
+          "inverse_vol",
+          "equal_risk"
+        ]
+      },
+      "seen": [
+        "F_01748e2e75ce",
+        "F_0af531e7e4b4",
+        "F_0f857c5e393d",
+        "F_28fc015a612e",
+        "F_43882aab02ff",
+        "F_7f094655e7ef",
+        "F_8f38f0535855",
+        "F_b036f0e2d016",
+        "F_c6410fa59bd5",
+        "F_ee6e8018f64d"
+      ]
+    },
+    "response": {
+      "content": "{\"candidates\":[{\"parent\":\"F_c6410fa59bd5\",\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"ETH\",\"signal\":\"sma200\",\"top_k\":5,\"weighting\":\"equal\"},\"hypothesis\":\"Adding ETH exposure alongside BTC may capture additional regime-driven trends within the btc_regime recipe while preserving the long-only satellite structure.\"},{\"parent\":\"F_43882aab02ff\",\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"own_trend_ls\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"breakout120\",\"top_k\":5,\"weighting\":\"equal\"},\"hypothesis\":\"Switching to own_trend_ls may isolate each asset's own trend signal, potentially improving robustness over the shared btc_regime overlay when combined with breakout120.\"},{\"parent\":\"F_7f094655e7ef\",\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.5,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom180\",\"top_k\":5,\"weighting\":\"inverse_vol\"},\"hypothesis\":\"Increasing satellite allocation to 0.5 with inverse_vol weighting might reduce drawdowns by scaling exposure inversely to asset volatility while keeping the mom180 signal.\"},{\"parent\":\"F_ee6e8018f64d\",\"genes\":{\"cadence\":\"monthly\",\"confirm\":3,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"breakout120\",\"top_k\":5,\"weighting\":\"equal\"},\"hypothesis\":\"Adding a 3-day confirmation delay to the monthly breakout120 signal may filter whipsaws and improve the reliability of regime transitions.\"}]}",
+      "finish_reason": "stop",
+      "request": {
+        "max_tokens": 2200,
+        "messages": [
+          {
+            "content": "Return ONLY JSON {\"candidates\":[exactly four objects with parent, genes, hypothesis]}. Mutate supplied parents within their island. Complete canonical enum genes, no inactive-gene changes. Never write code, tools, data, evaluator or metric changes. You see only development/inner-validation. Propose unseen IDs. F scope only; G satellite fields only; H top_k2/3/5 and inverse_vol/equal_risk; D recipe/gross/top_k/weighting. Shared signal/cadence/confirm/hysteresis allowed. G forbids sma50/breakout20/breakout55/mom90.",
+            "role": "system"
+          },
+          {
+            "content": "{\"generation\":1,\"parents\":[{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.5530197718347039,\"calmar\":2.389085117682841,\"costs_usd\":1.0475151990011955,\"episode_concentration\":0.523355763041653,\"mdd\":0.23147763457296755,\"reliable\":true,\"sharpe\":1.2521536230860895,\"trades\":2,\"turnover\":6.021204107773416,\"worst_fold\":0.5530197718347039},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.982315652673328,\"calmar\":9.550239819056953,\"costs_usd\":3.0777971097339636,\"episode_concentration\":0.5280175045830442,\"mdd\":0.31227651966626946,\"reliable\":true,\"sharpe\":2.636499114144693,\"trades\":4,\"turnover\":7.76350963221176,\"worst_fold\":2.098816766037725},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"sma200\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_c6410fa59bd5\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.25314342767864617,\"calmar\":1.1941703580391074,\"costs_usd\":0.1997003995005909,\"episode_concentration\":1.0,\"mdd\":0.2119826756496631,\"reliable\":true,\"sharpe\":1.0578241853728334,\"trades\":0,\"turnover\":1.2042413032512045,\"worst_fold\":0.25314342767864617},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.415013637815003,\"calmar\":7.733574206590796,\"costs_usd\":1.8989621211460528,\"episode_concentration\":0.5659440673605284,\"mdd\":0.31227651966626924,\"reliable\":true,\"sharpe\":2.6505771275318377,\"trades\":2,\"turnover\":4.313061098475992,\"worst_fold\":1.5945271510617207},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"breakout120\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_43882aab02ff\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.4462015341409311,\"calmar\":2.1048962268895686,\"costs_usd\":0.6788469260853671,\"episode_concentration\":0.5525908839093614,\"mdd\":0.2119826756496631,\"reliable\":true,\"sharpe\":1.223317961942953,\"trades\":1,\"turnover\":3.6127227055123097,\"worst_fold\":0.4462015341409311},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.08491052680529321,\"calmar\":2.2253869327868485,\"costs_usd\":0.8175344956799062,\"episode_concentration\":1.0,\"mdd\":0.03815539920464972,\"reliable\":true,\"sharpe\":1.5843114556433557,\"trades\":2,\"turnover\":12.162831081418583,\"worst_fold\":0.08491052680529321},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.8736683287172586,\"calmar\":9.202319571731982,\"costs_usd\":3.283067707654702,\"episode_concentration\":0.8422034888361477,\"mdd\":0.31227651966626946,\"reliable\":true,\"sharpe\":2.711201404413153,\"trades\":3,\"turnover\":6.038285365343876,\"worst_fold\":1.9056310173210154},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom180\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_7f094655e7ef\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.22265419098652184,\"calmar\":1.0503414503291542,\"costs_usd\":0.19970039950059565,\"episode_concentration\":1.0,\"mdd\":0.2119826756496631,\"reliable\":true,\"sharpe\":0.9198120100328546,\"trades\":0,\"turnover\":1.2042413032512043,\"worst_fold\":0.22265419098652184},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.272478276012767,\"calmar\":7.277134631964548,\"costs_usd\":1.8107864498070856,\"episode_concentration\":0.5805500741819466,\"mdd\":0.31227651966626935,\"reliable\":true,\"sharpe\":2.5493765172433025,\"trades\":2,\"turnover\":4.313061098475992,\"worst_fold\":1.4379932209522504},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"monthly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"breakout120\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_ee6e8018f64d\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":0.2253481218713122,\"cagr\":0.33565674865758655,\"calmar\":0.6942632984326849,\"costs_usd\":2.3038729057381375,\"episode_concentration\":0.2020269917023218,\"mdd\":0.48347183181847475,\"reliable\":true,\"sharpe\":0.7995611876685048,\"trades\":25,\"turnover\":12.657004181148103,\"worst_fold\":0.33565674865758655},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":0.9142362277156537,\"cagr\":-0.1625671647871515,\"calmar\":-1.0527947857124509,\"costs_usd\":0.43293841548113,\"episode_concentration\":0.9142362277156537,\"mdd\":0.1544148650747149,\"reliable\":true,\"sharpe\":-0.5166003463319838,\"trades\":5,\"turnover\":6.574743437085943,\"worst_fold\":-0.1625671647871515},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":0.24176870610894813,\"cagr\":1.535147149665379,\"calmar\":3.1752566512329268,\"costs_usd\":5.056922609283046,\"episode_concentration\":0.18686676040577113,\"mdd\":0.48347183181847475,\"reliable\":true,\"sharpe\":1.69375604962472,\"trades\":39,\"turnover\":14.186018439950537,\"worst_fold\":0.9694502901429913},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":-0.16063380637559066,\"calmar\":-1.6992728316434633,\"costs_usd\":0.22438964225644578,\"episode_concentration\":null,\"mdd\":0.09453090956573029,\"reliable\":true,\"sharpe\":-1.0656774720235787,\"trades\":3,\"turnover\":3.516307878662636,\"worst_fold\":-0.16063380637559066},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"liquid5\",\"signal\":\"sma200\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_0f857c5e393d\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":-0.21273493995059922,\"calmar\":-0.361571519157158,\"costs_usd\":1.1180971941375601,\"episode_concentration\":0.5370446082711685,\"mdd\":0.5883619939050936,\"reliable\":true,\"sharpe\":-0.07799484897343528,\"trades\":3,\"turnover\":8.429685510034522,\"worst_fold\":-0.21273493995059922},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":1.3528780467725765,\"calmar\":2.299397413135431,\"costs_usd\":1.5711632804216604,\"episode_concentration\":0.7423490538655676,\"mdd\":0.5883619939050936,\"reliable\":true,\"sharpe\":1.6508986880909629,\"trades\":4,\"turnover\":7.76350963221176,\"worst_fold\":0.6818162282851972},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"monthly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom90\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_8f38f0535855\"}],\"run\":\"2024:F_spot:2903:deepseek\",\"schema\":{\"cadence\":[\"weekly\",\"monthly\"],\"confirm\":[0,3,7,14],\"family\":[\"F\",\"G\",\"H\",\"D\"],\"gross\":[1.0,1.25],\"hysteresis\":[0.0,0.01,0.03],\"recipe\":[\"btc_regime\",\"own_trend_ls\",\"beta_neutral\",\"funding_aware\"],\"satellite\":[0.25,0.5,0.75],\"satellite_k\":[1,2],\"scope\":[\"BTC\",\"ETH\",\"liquid5\"],\"signal\":[\"sma50\",\"sma100\",\"sma150\",\"sma200\",\"dual50_200\",\"dual100_200\",\"dual50_150\",\"breakout20\",\"breakout55\",\"breakout120\",\"breakout200\",\"mom90\",\"mom180\",\"mom270\",\"mom365\",\"combo_sma_mom\",\"combo_breakout_mom\"],\"top_k\":[1,2,3,5],\"weighting\":[\"equal\",\"inverse_vol\",\"equal_risk\"]},\"seen\":[\"F_01748e2e75ce\",\"F_0af531e7e4b4\",\"F_0f857c5e393d\",\"F_28fc015a612e\",\"F_43882aab02ff\",\"F_7f094655e7ef\",\"F_8f38f0535855\",\"F_b036f0e2d016\",\"F_c6410fa59bd5\",\"F_ee6e8018f64d\"]}",
+            "role": "user"
+          }
+        ],
+        "model": "deepseek-flash",
+        "response_format": {
+          "type": "json_object"
+        },
+        "thinking": {
+          "type": "disabled"
+        }
+      }
+    },
+    "run": "2024:F_spot:2903:deepseek",
+    "state": "COMPLETE",
+    "usage": {
+      "api_call": 1,
+      "cache_hit_tokens": 1152,
+      "cache_miss_tokens": 3112,
+      "output_tokens": 475,
+      "reserved_usd": 0.0063402,
+      "response_model": "deepseek-flash",
+      "tariff": "documented_peak_upper_estimate_20260927",
+      "total_tokens": 4739,
+      "uncertain": false,
+      "usd": 0.0015105119999999999
+    },
+    "validation": {
+      "accepted": [
+        {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "ETH",
+            "signal": "sma200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "hypothesis": "Adding ETH exposure alongside BTC may capture additional regime-driven trends within the btc_regime recipe while preserving the long-only satellite structure.",
+          "parent": "F_c6410fa59bd5"
+        },
+        {
+          "genes": {
+            "cadence": "monthly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "breakout120",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "hypothesis": "Adding a 3-day confirmation delay to the monthly breakout120 signal may filter whipsaws and improve the reliability of regime transitions.",
+          "parent": "F_ee6e8018f64d"
+        }
+      ],
+      "rejected": [
+        {
+          "proposal": {
+            "genes": {
+              "cadence": "weekly",
+              "confirm": 0,
+              "family": "F",
+              "gross": 1.0,
+              "hysteresis": 0.0,
+              "recipe": "own_trend_ls",
+              "satellite": 0.25,
+              "satellite_k": 1,
+              "scope": "BTC",
+              "signal": "breakout120",
+              "top_k": 5,
+              "weighting": "equal"
+            },
+            "hypothesis": "Switching to own_trend_ls may isolate each asset's own trend signal, potentially improving robustness over the shared btc_regime overlay when combined with breakout120.",
+            "parent": "F_43882aab02ff"
+          },
+          "reason": "Noncanonical inactive genes"
+        },
+        {
+          "proposal": {
+            "genes": {
+              "cadence": "weekly",
+              "confirm": 0,
+              "family": "F",
+              "gross": 1.0,
+              "hysteresis": 0.0,
+              "recipe": "btc_regime",
+              "satellite": 0.5,
+              "satellite_k": 1,
+              "scope": "BTC",
+              "signal": "mom180",
+              "top_k": 5,
+              "weighting": "inverse_vol"
+            },
+            "hypothesis": "Increasing satellite allocation to 0.5 with inverse_vol weighting might reduce drawdowns by scaling exposure inversely to asset volatility while keeping the mom180 signal.",
+            "parent": "F_7f094655e7ef"
+          },
+          "reason": "Noncanonical inactive genes"
+        }
+      ]
+    }
+  },
+  {
+    "created": "2026-09-27T12:15:42.100115+00:00",
+    "generation": 1,
+    "id": "5478270bafaa92b1b2561276ccff030a121a574ad99b79e65b1841538566bab7",
+    "payload": {
+      "generation": 1,
+      "parents": [
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.5530197718347039,
+                "calmar": 2.389085117682841,
+                "costs_usd": 1.0475151990011955,
+                "episode_concentration": 0.523355763041653,
+                "mdd": 0.23147763457296755,
+                "reliable": true,
+                "sharpe": 1.2521536230860895,
+                "trades": 2,
+                "turnover": 6.021204107773416,
+                "worst_fold": 0.5530197718347039
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.982315652673328,
+                "calmar": 9.550239819056953,
+                "costs_usd": 3.0777971097339636,
+                "episode_concentration": 0.5280175045830442,
+                "mdd": 0.31227651966626946,
+                "reliable": true,
+                "sharpe": 2.636499114144693,
+                "trades": 4,
+                "turnover": 7.76350963221176,
+                "worst_fold": 2.098816766037725
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "sma200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_c6410fa59bd5"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.25314342767864617,
+                "calmar": 1.1941703580391074,
+                "costs_usd": 0.1997003995005909,
+                "episode_concentration": 1.0,
+                "mdd": 0.2119826756496631,
+                "reliable": true,
+                "sharpe": 1.0578241853728334,
+                "trades": 0,
+                "turnover": 1.2042413032512045,
+                "worst_fold": 0.25314342767864617
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.415013637815003,
+                "calmar": 7.733574206590796,
+                "costs_usd": 1.8989621211460528,
+                "episode_concentration": 0.5659440673605284,
+                "mdd": 0.31227651966626924,
+                "reliable": true,
+                "sharpe": 2.6505771275318377,
+                "trades": 2,
+                "turnover": 4.313061098475992,
+                "worst_fold": 1.5945271510617207
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "breakout120",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_43882aab02ff"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.047750101370173326,
+                "calmar": 0.07754486573782844,
+                "costs_usd": 0.8362087938545412,
+                "episode_concentration": 0.617067468013597,
+                "mdd": 0.615773860923452,
+                "reliable": true,
+                "sharpe": 0.44705024725902737,
+                "trades": 2,
+                "turnover": 6.021204107773415,
+                "worst_fold": 0.047750101370173326
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.012668291528883,
+                "calmar": 3.2685185573005047,
+                "costs_usd": 3.1418148876500513,
+                "episode_concentration": 0.797509341507681,
+                "mdd": 0.615773860923452,
+                "reliable": true,
+                "sharpe": 1.918349788507813,
+                "trades": 4,
+                "turnover": 7.76350963221176,
+                "worst_fold": 1.2375796225610562
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "dual50_200",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_b036f0e2d016"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.4462015341409311,
+                "calmar": 2.1048962268895686,
+                "costs_usd": 0.6788469260853671,
+                "episode_concentration": 0.5525908839093614,
+                "mdd": 0.2119826756496631,
+                "reliable": true,
+                "sharpe": 1.223317961942953,
+                "trades": 1,
+                "turnover": 3.6127227055123097,
+                "worst_fold": 0.4462015341409311
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.08491052680529321,
+                "calmar": 2.2253869327868485,
+                "costs_usd": 0.8175344956799062,
+                "episode_concentration": 1.0,
+                "mdd": 0.03815539920464972,
+                "reliable": true,
+                "sharpe": 1.5843114556433557,
+                "trades": 2,
+                "turnover": 12.162831081418583,
+                "worst_fold": 0.08491052680529321
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 2.8736683287172586,
+                "calmar": 9.202319571731982,
+                "costs_usd": 3.283067707654702,
+                "episode_concentration": 0.8422034888361477,
+                "mdd": 0.31227651966626946,
+                "reliable": true,
+                "sharpe": 2.711201404413153,
+                "trades": 3,
+                "turnover": 6.038285365343876,
+                "worst_fold": 1.9056310173210154
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom180",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_7f094655e7ef"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.0029751721129176456,
+                "calmar": 0.004650180367532459,
+                "costs_usd": 1.627144329624983,
+                "episode_concentration": 0.885856413559944,
+                "mdd": 0.6397971428571428,
+                "reliable": true,
+                "sharpe": 0.39059309220585076,
+                "trades": 4,
+                "turnover": 10.838166912295627,
+                "worst_fold": 0.0029751721129176456
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 0.40609909489734064,
+                "calmar": 3.5746176257487012,
+                "costs_usd": 0.42373303137855084,
+                "episode_concentration": 1.0,
+                "mdd": 0.11360630350282108,
+                "reliable": true,
+                "sharpe": 1.580316667616611,
+                "trades": 1,
+                "turnover": 6.081415540709291,
+                "worst_fold": 0.40609909489734064
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 1.8253613634328714,
+                "calmar": 2.8530314394361826,
+                "costs_usd": 2.4714626959070642,
+                "episode_concentration": 0.51188115017614,
+                "mdd": 0.6397971428571428,
+                "reliable": true,
+                "sharpe": 1.8005851877759877,
+                "trades": 5,
+                "turnover": 9.488733899079643,
+                "worst_fold": 1.1075628249187548
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "monthly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom365",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_02d1b8f141b8"
+        },
+        {
+          "folds": [
+            {
+              "end": "2020-10-29",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": -0.22404879632665842,
+                "calmar": -0.3808009331799207,
+                "costs_usd": 1.105655859969153,
+                "episode_concentration": 0.5370446082711688,
+                "mdd": 0.5883619939050935,
+                "reliable": true,
+                "sharpe": -0.07393514289024293,
+                "trades": 3,
+                "turnover": 8.42968551003452,
+                "worst_fold": -0.22404879632665842
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-05-31",
+              "fold": 0,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": -0.2675389526020412,
+                "calmar": -1.8418199386946856,
+                "costs_usd": 0.38052513776769514,
+                "episode_concentration": null,
+                "mdd": 0.14525793047481528,
+                "reliable": true,
+                "sharpe": -1.6231480385120816,
+                "trades": 1,
+                "turnover": 6.081415540709292,
+                "worst_fold": -0.2675389526020412
+              },
+              "scope": "inner_validation",
+              "start": "2022-02-01"
+            },
+            {
+              "end": "2021-02-26",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": 1.0,
+                "cagr": 1.3286074067953102,
+                "calmar": 2.2581462102557612,
+                "costs_usd": 1.5533139276863739,
+                "episode_concentration": 0.7423490538655673,
+                "mdd": 0.5883619939050935,
+                "reliable": true,
+                "sharpe": 1.6103499791291287,
+                "trades": 4,
+                "turnover": 7.76350963221176,
+                "worst_fold": 0.6617821378512037
+              },
+              "scope": "inner_train",
+              "start": "2020-01-01"
+            },
+            {
+              "end": "2022-09-28",
+              "fold": 1,
+              "metrics": {
+                "asset_concentration": null,
+                "cagr": 0.0,
+                "calmar": 0,
+                "costs_usd": 0.0,
+                "episode_concentration": null,
+                "mdd": 0.0,
+                "reliable": true,
+                "sharpe": 0,
+                "trades": 0,
+                "turnover": 0.0,
+                "worst_fold": 0.0
+              },
+              "scope": "inner_validation",
+              "start": "2022-06-01"
+            }
+          ],
+          "genes": {
+            "cadence": "monthly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom90",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "id": "F_47cc21fc17e0"
+        }
+      ],
+      "run": "2024:F_spot:4517:deepseek",
+      "schema": {
+        "cadence": [
+          "weekly",
+          "monthly"
+        ],
+        "confirm": [
+          0,
+          3,
+          7,
+          14
+        ],
+        "family": [
+          "F",
+          "G",
+          "H",
+          "D"
+        ],
+        "gross": [
+          1.0,
+          1.25
+        ],
+        "hysteresis": [
+          0.0,
+          0.01,
+          0.03
+        ],
+        "recipe": [
+          "btc_regime",
+          "own_trend_ls",
+          "beta_neutral",
+          "funding_aware"
+        ],
+        "satellite": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "satellite_k": [
+          1,
+          2
+        ],
+        "scope": [
+          "BTC",
+          "ETH",
+          "liquid5"
+        ],
+        "signal": [
+          "sma50",
+          "sma100",
+          "sma150",
+          "sma200",
+          "dual50_200",
+          "dual100_200",
+          "dual50_150",
+          "breakout20",
+          "breakout55",
+          "breakout120",
+          "breakout200",
+          "mom90",
+          "mom180",
+          "mom270",
+          "mom365",
+          "combo_sma_mom",
+          "combo_breakout_mom"
+        ],
+        "top_k": [
+          1,
+          2,
+          3,
+          5
+        ],
+        "weighting": [
+          "equal",
+          "inverse_vol",
+          "equal_risk"
+        ]
+      },
+      "seen": [
+        "F_02d1b8f141b8",
+        "F_0af531e7e4b4",
+        "F_43882aab02ff",
+        "F_47cc21fc17e0",
+        "F_7cb0375d9359",
+        "F_7f094655e7ef",
+        "F_8f38f0535855",
+        "F_b036f0e2d016",
+        "F_c6410fa59bd5",
+        "F_d6cadf2dee16"
+      ]
+    },
+    "response": {
+      "content": "{\n  \"candidates\": [\n    {\n      \"parent\": \"F_c6410fa59bd5\",\n      \"genes\": {\n        \"cadence\": \"weekly\",\n        \"confirm\": 0,\n        \"family\": \"F\",\n        \"gross\": 1.0,\n        \"hysteresis\": 0.0,\n        \"recipe\": \"btc_regime\",\n        \"satellite\": 0.25,\n        \"satellite_k\": 1,\n        \"scope\": \"BTC\",\n        \"signal\": \"sma150\",\n        \"top_k\": 5,\n        \"weighting\": \"inverse_vol\"\n      },\n      \"hypothesis\": \"Same regime filter but a shorter 150-day SMA and inverse-vol weighting should reduce drawdown and improve Sharpe versus equal-weight sma200.\"\n    },\n    {\n      \"parent\": \"F_43882aab02ff\",\n      \"genes\": {\n        \"cadence\": \"weekly\",\n        \"confirm\": 0,\n        \"family\": \"F\",\n        \"gross\": 1.0,\n        \"hysteresis\": 0.0,\n        \"recipe\": \"btc_regime\",\n        \"satellite\": 0.25,\n        \"satellite_k\": 1,\n        \"scope\": \"BTC\",\n        \"signal\": \"breakout200\",\n        \"top_k\": 3,\n        \"weighting\": \"equal_risk\"\n      },\n      \"hypothesis\": \"Extending breakout to 200 days reduces whipsaw, while equal-risk weighting further stabilizes exposure across the concentrated BTC sleeve.\"\n    },\n    {\n      \"parent\": \"F_b036f0e2d016\",\n      \"genes\": {\n        \"cadence\": \"weekly\",\n        \"confirm\": 3,\n        \"family\": \"F\",\n        \"gross\": 1.0,\n        \"hysteresis\": 0.01,\n        \"recipe\": \"btc_regime\",\n        \"satellite\": 0.25,\n        \"satellite_k\": 1,\n        \"scope\": \"BTC\",\n        \"signal\": \"dual100_200\",\n        \"top_k\": 5,\n        \"weighting\": \"inverse_vol\"\n      },\n      \"hypothesis\": \"A slower dual100_200 crossover with 3-confirm and small hysteresis should cut false regime flips and boost Calmar versus dual50_200.\"\n    },\n    {\n      \"parent\": \"F_7f094655e7ef\",\n      \"genes\": {\n        \"cadence\": \"monthly\",\n        \"confirm\": 3,\n        \"family\": \"F\",\n        \"gross\": 1.0,\n        \"hysteresis\": 0.0,\n        \"recipe\": \"btc_regime\",\n        \"satellite\": 0.25,\n        \"satellite_k\": 1,\n        \"scope\": \"BTC\",\n        \"signal\": \"combo_sma_mom\",\n        \"top_k\": 2,\n        \"weighting\": \"equal_risk\"\n      },\n      \"hypothesis\": \"Combining trend and momentum with monthly cadence and only top-2 equal-risk positions should reduce turnover while preserving the strong validation fold.\"\n    }\n  ]\n}",
+      "finish_reason": "stop",
+      "request": {
+        "max_tokens": 2200,
+        "messages": [
+          {
+            "content": "Return ONLY JSON {\"candidates\":[exactly four objects with parent, genes, hypothesis]}. Mutate supplied parents within their island. Complete canonical enum genes, no inactive-gene changes. Never write code, tools, data, evaluator or metric changes. You see only development/inner-validation. Propose unseen IDs. F scope only; G satellite fields only; H top_k2/3/5 and inverse_vol/equal_risk; D recipe/gross/top_k/weighting. Shared signal/cadence/confirm/hysteresis allowed. G forbids sma50/breakout20/breakout55/mom90.",
+            "role": "system"
+          },
+          {
+            "content": "{\"generation\":1,\"parents\":[{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.5530197718347039,\"calmar\":2.389085117682841,\"costs_usd\":1.0475151990011955,\"episode_concentration\":0.523355763041653,\"mdd\":0.23147763457296755,\"reliable\":true,\"sharpe\":1.2521536230860895,\"trades\":2,\"turnover\":6.021204107773416,\"worst_fold\":0.5530197718347039},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.982315652673328,\"calmar\":9.550239819056953,\"costs_usd\":3.0777971097339636,\"episode_concentration\":0.5280175045830442,\"mdd\":0.31227651966626946,\"reliable\":true,\"sharpe\":2.636499114144693,\"trades\":4,\"turnover\":7.76350963221176,\"worst_fold\":2.098816766037725},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"sma200\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_c6410fa59bd5\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.25314342767864617,\"calmar\":1.1941703580391074,\"costs_usd\":0.1997003995005909,\"episode_concentration\":1.0,\"mdd\":0.2119826756496631,\"reliable\":true,\"sharpe\":1.0578241853728334,\"trades\":0,\"turnover\":1.2042413032512045,\"worst_fold\":0.25314342767864617},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.415013637815003,\"calmar\":7.733574206590796,\"costs_usd\":1.8989621211460528,\"episode_concentration\":0.5659440673605284,\"mdd\":0.31227651966626924,\"reliable\":true,\"sharpe\":2.6505771275318377,\"trades\":2,\"turnover\":4.313061098475992,\"worst_fold\":1.5945271510617207},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"breakout120\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_43882aab02ff\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.047750101370173326,\"calmar\":0.07754486573782844,\"costs_usd\":0.8362087938545412,\"episode_concentration\":0.617067468013597,\"mdd\":0.615773860923452,\"reliable\":true,\"sharpe\":0.44705024725902737,\"trades\":2,\"turnover\":6.021204107773415,\"worst_fold\":0.047750101370173326},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.012668291528883,\"calmar\":3.2685185573005047,\"costs_usd\":3.1418148876500513,\"episode_concentration\":0.797509341507681,\"mdd\":0.615773860923452,\"reliable\":true,\"sharpe\":1.918349788507813,\"trades\":4,\"turnover\":7.76350963221176,\"worst_fold\":1.2375796225610562},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"dual50_200\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_b036f0e2d016\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.4462015341409311,\"calmar\":2.1048962268895686,\"costs_usd\":0.6788469260853671,\"episode_concentration\":0.5525908839093614,\"mdd\":0.2119826756496631,\"reliable\":true,\"sharpe\":1.223317961942953,\"trades\":1,\"turnover\":3.6127227055123097,\"worst_fold\":0.4462015341409311},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.08491052680529321,\"calmar\":2.2253869327868485,\"costs_usd\":0.8175344956799062,\"episode_concentration\":1.0,\"mdd\":0.03815539920464972,\"reliable\":true,\"sharpe\":1.5843114556433557,\"trades\":2,\"turnover\":12.162831081418583,\"worst_fold\":0.08491052680529321},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":2.8736683287172586,\"calmar\":9.202319571731982,\"costs_usd\":3.283067707654702,\"episode_concentration\":0.8422034888361477,\"mdd\":0.31227651966626946,\"reliable\":true,\"sharpe\":2.711201404413153,\"trades\":3,\"turnover\":6.038285365343876,\"worst_fold\":1.9056310173210154},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"weekly\",\"confirm\":0,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom180\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_7f094655e7ef\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.0029751721129176456,\"calmar\":0.004650180367532459,\"costs_usd\":1.627144329624983,\"episode_concentration\":0.885856413559944,\"mdd\":0.6397971428571428,\"reliable\":true,\"sharpe\":0.39059309220585076,\"trades\":4,\"turnover\":10.838166912295627,\"worst_fold\":0.0029751721129176456},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":0.40609909489734064,\"calmar\":3.5746176257487012,\"costs_usd\":0.42373303137855084,\"episode_concentration\":1.0,\"mdd\":0.11360630350282108,\"reliable\":true,\"sharpe\":1.580316667616611,\"trades\":1,\"turnover\":6.081415540709291,\"worst_fold\":0.40609909489734064},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":1.8253613634328714,\"calmar\":2.8530314394361826,\"costs_usd\":2.4714626959070642,\"episode_concentration\":0.51188115017614,\"mdd\":0.6397971428571428,\"reliable\":true,\"sharpe\":1.8005851877759877,\"trades\":5,\"turnover\":9.488733899079643,\"worst_fold\":1.1075628249187548},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"monthly\",\"confirm\":3,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom365\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_02d1b8f141b8\"},{\"folds\":[{\"end\":\"2020-10-29\",\"fold\":0,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":-0.22404879632665842,\"calmar\":-0.3808009331799207,\"costs_usd\":1.105655859969153,\"episode_concentration\":0.5370446082711688,\"mdd\":0.5883619939050935,\"reliable\":true,\"sharpe\":-0.07393514289024293,\"trades\":3,\"turnover\":8.42968551003452,\"worst_fold\":-0.22404879632665842},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-05-31\",\"fold\":0,\"metrics\":{\"asset_concentration\":null,\"cagr\":-0.2675389526020412,\"calmar\":-1.8418199386946856,\"costs_usd\":0.38052513776769514,\"episode_concentration\":null,\"mdd\":0.14525793047481528,\"reliable\":true,\"sharpe\":-1.6231480385120816,\"trades\":1,\"turnover\":6.081415540709292,\"worst_fold\":-0.2675389526020412},\"scope\":\"inner_validation\",\"start\":\"2022-02-01\"},{\"end\":\"2021-02-26\",\"fold\":1,\"metrics\":{\"asset_concentration\":1.0,\"cagr\":1.3286074067953102,\"calmar\":2.2581462102557612,\"costs_usd\":1.5533139276863739,\"episode_concentration\":0.7423490538655673,\"mdd\":0.5883619939050935,\"reliable\":true,\"sharpe\":1.6103499791291287,\"trades\":4,\"turnover\":7.76350963221176,\"worst_fold\":0.6617821378512037},\"scope\":\"inner_train\",\"start\":\"2020-01-01\"},{\"end\":\"2022-09-28\",\"fold\":1,\"metrics\":{\"asset_concentration\":null,\"cagr\":0.0,\"calmar\":0,\"costs_usd\":0.0,\"episode_concentration\":null,\"mdd\":0.0,\"reliable\":true,\"sharpe\":0,\"trades\":0,\"turnover\":0.0,\"worst_fold\":0.0},\"scope\":\"inner_validation\",\"start\":\"2022-06-01\"}],\"genes\":{\"cadence\":\"monthly\",\"confirm\":3,\"family\":\"F\",\"gross\":1.0,\"hysteresis\":0.0,\"recipe\":\"btc_regime\",\"satellite\":0.25,\"satellite_k\":1,\"scope\":\"BTC\",\"signal\":\"mom90\",\"top_k\":5,\"weighting\":\"equal\"},\"id\":\"F_47cc21fc17e0\"}],\"run\":\"2024:F_spot:4517:deepseek\",\"schema\":{\"cadence\":[\"weekly\",\"monthly\"],\"confirm\":[0,3,7,14],\"family\":[\"F\",\"G\",\"H\",\"D\"],\"gross\":[1.0,1.25],\"hysteresis\":[0.0,0.01,0.03],\"recipe\":[\"btc_regime\",\"own_trend_ls\",\"beta_neutral\",\"funding_aware\"],\"satellite\":[0.25,0.5,0.75],\"satellite_k\":[1,2],\"scope\":[\"BTC\",\"ETH\",\"liquid5\"],\"signal\":[\"sma50\",\"sma100\",\"sma150\",\"sma200\",\"dual50_200\",\"dual100_200\",\"dual50_150\",\"breakout20\",\"breakout55\",\"breakout120\",\"breakout200\",\"mom90\",\"mom180\",\"mom270\",\"mom365\",\"combo_sma_mom\",\"combo_breakout_mom\"],\"top_k\":[1,2,3,5],\"weighting\":[\"equal\",\"inverse_vol\",\"equal_risk\"]},\"seen\":[\"F_02d1b8f141b8\",\"F_0af531e7e4b4\",\"F_43882aab02ff\",\"F_47cc21fc17e0\",\"F_7cb0375d9359\",\"F_7f094655e7ef\",\"F_8f38f0535855\",\"F_b036f0e2d016\",\"F_c6410fa59bd5\",\"F_d6cadf2dee16\"]}",
+            "role": "user"
+          }
+        ],
+        "model": "deepseek-flash",
+        "response_format": {
+          "type": "json_object"
+        },
+        "thinking": {
+          "type": "disabled"
+        }
+      }
+    },
+    "run": "2024:F_spot:4517:deepseek",
+    "state": "COMPLETE",
+    "usage": {
+      "api_call": 1,
+      "cache_hit_tokens": 2432,
+      "cache_miss_tokens": 1811,
+      "output_tokens": 679,
+      "reserved_usd": 0.0063237,
+      "response_model": "deepseek-flash",
+      "tariff": "documented_peak_upper_estimate_20260927",
+      "total_tokens": 4922,
+      "uncertain": false,
+      "usd": 0.001372692
+    },
+    "validation": {
+      "accepted": [],
+      "rejected": [
+        {
+          "proposal": {
+            "genes": {
+              "cadence": "weekly",
+              "confirm": 0,
+              "family": "F",
+              "gross": 1.0,
+              "hysteresis": 0.0,
+              "recipe": "btc_regime",
+              "satellite": 0.25,
+              "satellite_k": 1,
+              "scope": "BTC",
+              "signal": "sma150",
+              "top_k": 5,
+              "weighting": "inverse_vol"
+            },
+            "hypothesis": "Same regime filter but a shorter 150-day SMA and inverse-vol weighting should reduce drawdown and improve Sharpe versus equal-weight sma200.",
+            "parent": "F_c6410fa59bd5"
+          },
+          "reason": "Noncanonical inactive genes"
+        },
+        {
+          "proposal": {
+            "genes": {
+              "cadence": "weekly",
+              "confirm": 0,
+              "family": "F",
+              "gross": 1.0,
+              "hysteresis": 0.0,
+              "recipe": "btc_regime",
+              "satellite": 0.25,
+              "satellite_k": 1,
+              "scope": "BTC",
+              "signal": "breakout200",
+              "top_k": 3,
+              "weighting": "equal_risk"
+            },
+            "hypothesis": "Extending breakout to 200 days reduces whipsaw, while equal-risk weighting further stabilizes exposure across the concentrated BTC sleeve.",
+            "parent": "F_43882aab02ff"
+          },
+          "reason": "Noncanonical inactive genes"
+        },
+        {
+          "proposal": {
+            "genes": {
+              "cadence": "weekly",
+              "confirm": 3,
+              "family": "F",
+              "gross": 1.0,
+              "hysteresis": 0.01,
+              "recipe": "btc_regime",
+              "satellite": 0.25,
+              "satellite_k": 1,
+              "scope": "BTC",
+              "signal": "dual100_200",
+              "top_k": 5,
+              "weighting": "inverse_vol"
+            },
+            "hypothesis": "A slower dual100_200 crossover with 3-confirm and small hysteresis should cut false regime flips and boost Calmar versus dual50_200.",
+            "parent": "F_b036f0e2d016"
+          },
+          "reason": "Noncanonical inactive genes"
+        },
+        {
+          "proposal": {
+            "genes": {
+              "cadence": "monthly",
+              "confirm": 3,
+              "family": "F",
+              "gross": 1.0,
+              "hysteresis": 0.0,
+              "recipe": "btc_regime",
+              "satellite": 0.25,
+              "satellite_k": 1,
+              "scope": "BTC",
+              "signal": "combo_sma_mom",
+              "top_k": 2,
+              "weighting": "equal_risk"
+            },
+            "hypothesis": "Combining trend and momentum with monthly cadence and only top-2 equal-risk positions should reduce turnover while preserving the strong validation fold.",
+            "parent": "F_7f094655e7ef"
+          },
+          "reason": "Noncanonical inactive genes"
+        }
+      ]
+    }
+  }
+]

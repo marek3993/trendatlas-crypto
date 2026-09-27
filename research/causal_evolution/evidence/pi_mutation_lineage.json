@@ -1,0 +1,1562 @@
+[
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:03:29.477463+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_c6410fa59bd5",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_2ee97843c903",
+    "created": "2026-09-27T12:04:06.775105+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_2ee97843c903",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_35bac723fe2d",
+    "created": "2026-09-27T12:04:09.878887+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_35bac723fe2d",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:04:45.391145+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_8f38f0535855",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_2aa33ec20e80",
+    "created": "2026-09-27T12:04:49.067551+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_8f38f0535855",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_2aa33ec20e80",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_47cc21fc17e0",
+    "created": "2026-09-27T12:04:52.789198+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_8f38f0535855",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_47cc21fc17e0",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:05:19.782964+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_43882aab02ff",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_3816e108660e",
+    "created": "2026-09-27T12:05:23.479279+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_43882aab02ff",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_3816e108660e",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_3836594fa723",
+    "created": "2026-09-27T12:05:27.969862+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_43882aab02ff",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_3836594fa723",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:05:58.488145+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_b036f0e2d016",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_6f739c49f4e9",
+    "created": "2026-09-27T12:06:02.380818+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_b036f0e2d016",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_6f739c49f4e9",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_87b1a18bbd00",
+    "created": "2026-09-27T12:06:06.179631+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_b036f0e2d016",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_87b1a18bbd00",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:06:33.771729+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_7f094655e7ef",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_174984ac681d",
+    "created": "2026-09-27T12:06:37.262817+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_7f094655e7ef",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_174984ac681d",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:06:57.180395+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_0af531e7e4b4",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_02d1b8f141b8",
+    "created": "2026-09-27T12:07:00.784111+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_0af531e7e4b4",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_02d1b8f141b8",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_3223f0d4a040",
+    "created": "2026-09-27T12:07:04.465243+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_0af531e7e4b4",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_3223f0d4a040",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_2dca6d2073e3",
+    "created": "2026-09-27T12:07:32.967691+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_2dca6d2073e3",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_a51db759e54e",
+    "created": "2026-09-27T12:07:41.865111+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_2dca6d2073e3",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_a51db759e54e",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_a563390216e0",
+    "created": "2026-09-27T12:07:50.972825+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_2dca6d2073e3",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_a563390216e0",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_31bc2a444bf2",
+    "created": "2026-09-27T12:08:42.484895+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_31bc2a444bf2",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_26a8966d65c0",
+    "created": "2026-09-27T12:08:46.784054+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_31bc2a444bf2",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_26a8966d65c0",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_57343aaded8c",
+    "created": "2026-09-27T12:08:52.181508+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_31bc2a444bf2",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_57343aaded8c",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_f9bd739274de",
+    "created": "2026-09-27T12:09:21.680527+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_f9bd739274de",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_2dca6d2073e3",
+    "created": "2026-09-27T12:09:24.480070+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_f9bd739274de",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_2dca6d2073e3",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_33a060dbc11d",
+    "created": "2026-09-27T12:09:24.562822+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_f9bd739274de",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_33a060dbc11d",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_f636452a094b",
+    "created": "2026-09-27T12:09:45.072323+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:0:F_f636452a094b",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_a6b1e27aeec7",
+    "created": "2026-09-27T12:09:48.788998+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_f636452a094b",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_a6b1e27aeec7",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:09:52.763917+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_f636452a094b",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_b036f0e2d016",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:10:09.975736+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_c6410fa59bd5",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:10:10.172005+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_8f38f0535855",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:10:10.370317+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_43882aab02ff",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:10:10.565778+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_b036f0e2d016",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:10:10.762937+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_7f094655e7ef",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:10:10.889619+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_0af531e7e4b4",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0f857c5e393d",
+    "created": "2026-09-27T12:10:11.084268+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_0f857c5e393d",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_28fc015a612e",
+    "created": "2026-09-27T12:10:14.797691+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_0f857c5e393d",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_28fc015a612e",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_48e50be5826b",
+    "created": "2026-09-27T12:10:19.469905+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_0f857c5e393d",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_48e50be5826b",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_28fc015a612e",
+    "created": "2026-09-27T12:10:52.863120+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_28fc015a612e",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0247eabdfc55",
+    "created": "2026-09-27T12:10:52.877662+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_28fc015a612e",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_0247eabdfc55",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_0f857c5e393d",
+    "created": "2026-09-27T12:10:57.470178+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_28fc015a612e",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_0f857c5e393d",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_01748e2e75ce",
+    "created": "2026-09-27T12:11:08.364163+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_01748e2e75ce",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_51599d9047a2",
+    "created": "2026-09-27T12:11:11.571794+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_01748e2e75ce",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_51599d9047a2",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_ee6e8018f64d",
+    "created": "2026-09-27T12:11:34.066925+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:0:F_ee6e8018f64d",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:11:37.581270+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_ee6e8018f64d",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_43882aab02ff",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_50c14e1a006f",
+    "created": "2026-09-27T12:11:37.587866+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_ee6e8018f64d",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_50c14e1a006f",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:11:56.979588+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_c6410fa59bd5",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:11:57.271746+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_8f38f0535855",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:11:57.498742+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_43882aab02ff",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:11:57.774039+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_b036f0e2d016",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:11:58.066581+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_7f094655e7ef",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:11:58.282562+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_0af531e7e4b4",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_7cb0375d9359",
+    "created": "2026-09-27T12:11:58.575366+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_7cb0375d9359",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_12549895c8fa",
+    "created": "2026-09-27T12:12:03.082240+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_7cb0375d9359",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_12549895c8fa",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_40b292e396f3",
+    "created": "2026-09-27T12:12:08.183186+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_7cb0375d9359",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_40b292e396f3",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_d6cadf2dee16",
+    "created": "2026-09-27T12:12:41.086453+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_d6cadf2dee16",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_488d109c407b",
+    "created": "2026-09-27T12:12:44.683683+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_d6cadf2dee16",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_488d109c407b",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_62c62ef24be0",
+    "created": "2026-09-27T12:12:49.067254+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_d6cadf2dee16",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_62c62ef24be0",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_02d1b8f141b8",
+    "created": "2026-09-27T12:13:26.874286+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_02d1b8f141b8",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:13:26.883702+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_02d1b8f141b8",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_0af531e7e4b4",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_16549dfe828d",
+    "created": "2026-09-27T12:13:26.937051+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_02d1b8f141b8",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_16549dfe828d",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_47cc21fc17e0",
+    "created": "2026-09-27T12:13:38.372002+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:0:F_47cc21fc17e0",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0e9a3f090c70",
+    "created": "2026-09-27T12:13:38.382522+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_47cc21fc17e0",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_0e9a3f090c70",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_19ec60d99d2a",
+    "created": "2026-09-27T12:13:40.972170+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_47cc21fc17e0",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_19ec60d99d2a",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:14:01.865660+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_c6410fa59bd5",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:14:02.084119+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_8f38f0535855",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:14:02.376539+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_43882aab02ff",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:14:02.669173+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_b036f0e2d016",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:14:02.935631+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_7f094655e7ef",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:14:03.176224+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_0af531e7e4b4",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_2dca6d2073e3",
+    "created": "2026-09-27T12:14:03.469107+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_2dca6d2073e3",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_31bc2a444bf2",
+    "created": "2026-09-27T12:14:03.683245+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_31bc2a444bf2",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_f9bd739274de",
+    "created": "2026-09-27T12:14:03.982931+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_f9bd739274de",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_f636452a094b",
+    "created": "2026-09-27T12:14:04.276970+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:0:F_f636452a094b",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:14:04.569590+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_c6410fa59bd5",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:14:04.866484+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_8f38f0535855",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:14:05.082815+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_43882aab02ff",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:14:05.374006+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_b036f0e2d016",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:14:05.667229+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_7f094655e7ef",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:14:05.935646+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_0af531e7e4b4",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0f857c5e393d",
+    "created": "2026-09-27T12:14:06.201799+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_0f857c5e393d",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_28fc015a612e",
+    "created": "2026-09-27T12:14:06.535664+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_28fc015a612e",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_01748e2e75ce",
+    "created": "2026-09-27T12:14:06.875849+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_01748e2e75ce",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_ee6e8018f64d",
+    "created": "2026-09-27T12:14:07.235676+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:2903:deepseek",
+    "slot": "2024:F_spot:2903:deepseek:0:F_ee6e8018f64d",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:14:07.480063+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_c6410fa59bd5",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:14:07.771534+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_8f38f0535855",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:14:08.063156+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_43882aab02ff",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:14:08.274368+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_b036f0e2d016",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:14:08.474318+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_7f094655e7ef",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:14:08.673234+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_0af531e7e4b4",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_7cb0375d9359",
+    "created": "2026-09-27T12:14:08.875398+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_7cb0375d9359",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_d6cadf2dee16",
+    "created": "2026-09-27T12:14:09.165944+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_d6cadf2dee16",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_02d1b8f141b8",
+    "created": "2026-09-27T12:14:09.365849+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_02d1b8f141b8",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_47cc21fc17e0",
+    "created": "2026-09-27T12:14:09.562941+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen initial hypothesis, previously seen history",
+    "parent": null,
+    "run": "2024:F_spot:4517:deepseek",
+    "slot": "2024:F_spot:4517:deepseek:0:F_47cc21fc17e0",
+    "source": "seed"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:16:51.291337+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_c6410fa59bd5",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:16:51.580505+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_43882aab02ff",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_43882aab02ff",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:16:51.868998+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_b036f0e2d016",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_b036f0e2d016",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:16:52.084066+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_7f094655e7ef",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_7f094655e7ef",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:16:52.375097+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_0af531e7e4b4",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_0af531e7e4b4",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:16:52.666161+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_8f38f0535855",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_8f38f0535855",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_d4e22ad7c38b",
+    "created": "2026-09-27T12:16:52.883166+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_0af531e7e4b4",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_d4e22ad7c38b",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_3193a642cd02",
+    "created": "2026-09-27T12:16:56.583512+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_d4e22ad7c38b",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_3193a642cd02",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_8bdc20052dfa",
+    "created": "2026-09-27T12:17:19.379961+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_43882aab02ff",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_8bdc20052dfa",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_10e1df7ae99d",
+    "created": "2026-09-27T12:17:22.984647+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_8bdc20052dfa",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_10e1df7ae99d",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_43ecb268d2f1",
+    "created": "2026-09-27T12:17:42.665175+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_0af531e7e4b4",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_43ecb268d2f1",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_0d47e0912860",
+    "created": "2026-09-27T12:17:45.177774+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_43ecb268d2f1",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_0d47e0912860",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_18ed128e329a",
+    "created": "2026-09-27T12:17:48.081835+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_43ecb268d2f1",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_18ed128e329a",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_7b9c6ee74453",
+    "created": "2026-09-27T12:18:21.984903+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_7f094655e7ef",
+    "run": "2024:F_spot:1701:deterministic",
+    "slot": "2024:F_spot:1701:deterministic:1:F_7b9c6ee74453",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:18:35.671618+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_c6410fa59bd5",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:18:35.874460+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_43882aab02ff",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_43882aab02ff",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:18:36.067949+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_7f094655e7ef",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_7f094655e7ef",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_ee6e8018f64d",
+    "created": "2026-09-27T12:18:36.265772+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_ee6e8018f64d",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_ee6e8018f64d",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_0f857c5e393d",
+    "created": "2026-09-27T12:18:36.388152+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_0f857c5e393d",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_0f857c5e393d",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:18:36.692109+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_8f38f0535855",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_8f38f0535855",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_60c9479a5325",
+    "created": "2026-09-27T12:18:36.878893+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_8f38f0535855",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_60c9479a5325",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_00399cb015b0",
+    "created": "2026-09-27T12:18:39.564885+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_60c9479a5325",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_00399cb015b0",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_30ff5ecaf25b",
+    "created": "2026-09-27T12:18:42.582256+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_60c9479a5325",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_30ff5ecaf25b",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_e13f59d8cad0",
+    "created": "2026-09-27T12:19:12.174630+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_ee6e8018f64d",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_e13f59d8cad0",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_2c564e3634eb",
+    "created": "2026-09-27T12:19:15.681051+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_e13f59d8cad0",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_2c564e3634eb",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_730657c15c2c",
+    "created": "2026-09-27T12:19:19.085925+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_e13f59d8cad0",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_730657c15c2c",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_fc6f8f51ac18",
+    "created": "2026-09-27T12:19:47.064035+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_0f857c5e393d",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_fc6f8f51ac18",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_05be0390b637",
+    "created": "2026-09-27T12:19:51.679790+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_fc6f8f51ac18",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_05be0390b637",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_d006f31e505a",
+    "created": "2026-09-27T12:20:16.676283+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_8f38f0535855",
+    "run": "2024:F_spot:2903:deterministic",
+    "slot": "2024:F_spot:2903:deterministic:1:F_d006f31e505a",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_1f6f6a899618",
+    "created": "2026-09-27T12:20:20.375806+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_d006f31e505a",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_1f6f6a899618",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_60c9479a5325",
+    "created": "2026-09-27T12:20:24.037572+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_d006f31e505a",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_60c9479a5325",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:20:40.277542+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_c6410fa59bd5",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:20:40.478245+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_43882aab02ff",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_43882aab02ff",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:20:40.677853+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_b036f0e2d016",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_b036f0e2d016",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:20:40.966139+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_7f094655e7ef",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_7f094655e7ef",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_02d1b8f141b8",
+    "created": "2026-09-27T12:20:41.183759+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_02d1b8f141b8",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_02d1b8f141b8",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_47cc21fc17e0",
+    "created": "2026-09-27T12:20:41.474598+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_47cc21fc17e0",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_47cc21fc17e0",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_a563390216e0",
+    "created": "2026-09-27T12:20:41.764560+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_a563390216e0",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_3292e1b82119",
+    "created": "2026-09-27T12:20:41.782878+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_a563390216e0",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_3292e1b82119",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_70ca2f12b28d",
+    "created": "2026-09-27T12:20:54.984172+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_70ca2f12b28d",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_0790e776ed06",
+    "created": "2026-09-27T12:20:58.783460+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_70ca2f12b28d",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_0790e776ed06",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_28bd00780bb2",
+    "created": "2026-09-27T12:21:21.085706+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_47cc21fc17e0",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_28bd00780bb2",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_095eca117ace",
+    "created": "2026-09-27T12:21:24.962856+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_28bd00780bb2",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_095eca117ace",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_0e0146f73137",
+    "created": "2026-09-27T12:21:28.770933+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_28bd00780bb2",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_0e0146f73137",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_1a8de364ecdd",
+    "created": "2026-09-27T12:21:56.264327+00:00",
+    "generation": 1,
+    "hypothesis": "Deterministic single-enum causal rule mutation.",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:F_spot:4517:deterministic",
+    "slot": "2024:F_spot:4517:deterministic:1:F_1a8de364ecdd",
+    "source": "deterministic"
+  },
+  {
+    "candidate": "F_15b904b69af5",
+    "created": "2026-09-27T12:22:00.075065+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_1a8de364ecdd",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_15b904b69af5",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_35cd240a7917",
+    "created": "2026-09-27T12:22:03.874411+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_1a8de364ecdd",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_35cd240a7917",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_c6410fa59bd5",
+    "created": "2026-09-27T12:22:35.376666+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_c6410fa59bd5",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_43882aab02ff",
+    "created": "2026-09-27T12:22:35.670778+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_43882aab02ff",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_43882aab02ff",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_b036f0e2d016",
+    "created": "2026-09-27T12:22:35.887692+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_b036f0e2d016",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_b036f0e2d016",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_7f094655e7ef",
+    "created": "2026-09-27T12:22:36.178986+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_7f094655e7ef",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_7f094655e7ef",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_0af531e7e4b4",
+    "created": "2026-09-27T12:22:36.470727+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_0af531e7e4b4",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_0af531e7e4b4",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_8f38f0535855",
+    "created": "2026-09-27T12:22:36.687980+00:00",
+    "generation": 1,
+    "hypothesis": "Pareto survivor, no new hypothesis",
+    "parent": "F_8f38f0535855",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_8f38f0535855",
+    "source": "survivor"
+  },
+  {
+    "candidate": "F_2c29cc995c92",
+    "created": "2026-09-27T12:22:36.983156+00:00",
+    "generation": 1,
+    "hypothesis": "Switching from sma200 to sma100 and adding a 3-day confirmation should reduce whipsaws in the BTC regime filter, improving Sharpe and Calmar while keeping turnover manageable.",
+    "parent": "F_c6410fa59bd5",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_2c29cc995c92",
+    "source": "deepseek"
+  },
+  {
+    "candidate": "F_3e96674034b4",
+    "created": "2026-09-27T12:22:39.875710+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_2c29cc995c92",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_3e96674034b4",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_3f5e5fc26a70",
+    "created": "2026-09-27T12:22:42.679788+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_2c29cc995c92",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_3f5e5fc26a70",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_612dd7503c4c",
+    "created": "2026-09-27T12:23:12.685992+00:00",
+    "generation": 1,
+    "hypothesis": "Lengthening the breakout window from 120 to 200 days and requiring 3-day confirmation should reduce false starts, lowering drawdowns and improving risk-adjusted returns.",
+    "parent": "F_43882aab02ff",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_612dd7503c4c",
+    "source": "deepseek"
+  },
+  {
+    "candidate": "F_1fd564eb32a6",
+    "created": "2026-09-27T12:23:15.962858+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_612dd7503c4c",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_1fd564eb32a6",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_20977af88a1d",
+    "created": "2026-09-27T12:23:19.375093+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_612dd7503c4c",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_20977af88a1d",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_f8f8de823ba6",
+    "created": "2026-09-27T12:23:49.602855+00:00",
+    "generation": 1,
+    "hypothesis": "Replacing the fast dual50_200 with a slower dual100_200 crossover and adding confirmation may better capture sustained trends, increasing Calmar and Sharpe.",
+    "parent": "F_b036f0e2d016",
+    "run": "2024:F_spot:1701:deepseek",
+    "slot": "2024:F_spot:1701:deepseek:1:F_f8f8de823ba6",
+    "source": "deepseek"
+  },
+  {
+    "candidate": "F_02abdee1cb70",
+    "created": "2026-09-27T12:23:53.364999+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_f8f8de823ba6",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_02abdee1cb70",
+    "source": "plateau"
+  },
+  {
+    "candidate": "F_12dde278aa74",
+    "created": "2026-09-27T12:23:57.173884+00:00",
+    "generation": 0,
+    "hypothesis": "Frozen lexical adjacent-enum plateau probe",
+    "parent": "F_f8f8de823ba6",
+    "run": "2024:spot:neighbors",
+    "slot": "neighbor:2024:spot:F_12dde278aa74",
+    "source": "plateau"
+  }
+]

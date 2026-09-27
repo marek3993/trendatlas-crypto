@@ -1,0 +1,228 @@
+{
+  "cgroup_controllers": "cpuset cpu io pids",
+  "counts": {
+    "attempts": 315,
+    "candidates": 80,
+    "evaluations": 314,
+    "finalists": 0,
+    "trials": 156
+  },
+  "database_snapshots": {
+    "candidates.sqlite": {
+      "integrity": "ok",
+      "sha256": "2899700015f2773869f060ecf13348626e07393ba7268448e5c4a8966b52f2d4",
+      "utc": "2026-09-27T12:23:59.381396+00:00"
+    },
+    "mailbox/proposals.sqlite": {
+      "integrity": "ok",
+      "sha256": "8e87d501e6c8820925a8fcd2d4f3ef82c27438d36cc62552f9f76dcc021d37ba",
+      "utc": "2026-09-27T12:23:59.386951+00:00"
+    }
+  },
+  "deepseek": {
+    "accepted": 6,
+    "calls": 3,
+    "rejected": [
+      {
+        "proposal": {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "own_trend_ls",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "breakout120",
+            "top_k": 5,
+            "weighting": "equal"
+          },
+          "hypothesis": "Switching to own_trend_ls may isolate each asset's own trend signal, potentially improving robustness over the shared btc_regime overlay when combined with breakout120.",
+          "parent": "F_43882aab02ff"
+        },
+        "reason": "Noncanonical inactive genes"
+      },
+      {
+        "proposal": {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.5,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "mom180",
+            "top_k": 5,
+            "weighting": "inverse_vol"
+          },
+          "hypothesis": "Increasing satellite allocation to 0.5 with inverse_vol weighting might reduce drawdowns by scaling exposure inversely to asset volatility while keeping the mom180 signal.",
+          "parent": "F_7f094655e7ef"
+        },
+        "reason": "Noncanonical inactive genes"
+      },
+      {
+        "proposal": {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "sma150",
+            "top_k": 5,
+            "weighting": "inverse_vol"
+          },
+          "hypothesis": "Same regime filter but a shorter 150-day SMA and inverse-vol weighting should reduce drawdown and improve Sharpe versus equal-weight sma200.",
+          "parent": "F_c6410fa59bd5"
+        },
+        "reason": "Noncanonical inactive genes"
+      },
+      {
+        "proposal": {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 0,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "breakout200",
+            "top_k": 3,
+            "weighting": "equal_risk"
+          },
+          "hypothesis": "Extending breakout to 200 days reduces whipsaw, while equal-risk weighting further stabilizes exposure across the concentrated BTC sleeve.",
+          "parent": "F_43882aab02ff"
+        },
+        "reason": "Noncanonical inactive genes"
+      },
+      {
+        "proposal": {
+          "genes": {
+            "cadence": "weekly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.01,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "dual100_200",
+            "top_k": 5,
+            "weighting": "inverse_vol"
+          },
+          "hypothesis": "A slower dual100_200 crossover with 3-confirm and small hysteresis should cut false regime flips and boost Calmar versus dual50_200.",
+          "parent": "F_b036f0e2d016"
+        },
+        "reason": "Noncanonical inactive genes"
+      },
+      {
+        "proposal": {
+          "genes": {
+            "cadence": "monthly",
+            "confirm": 3,
+            "family": "F",
+            "gross": 1.0,
+            "hysteresis": 0.0,
+            "recipe": "btc_regime",
+            "satellite": 0.25,
+            "satellite_k": 1,
+            "scope": "BTC",
+            "signal": "combo_sma_mom",
+            "top_k": 2,
+            "weighting": "equal_risk"
+          },
+          "hypothesis": "Combining trend and momentum with monthly cadence and only top-2 equal-risk positions should reduce turnover while preserving the strong validation fold.",
+          "parent": "F_7f094655e7ef"
+        },
+        "reason": "Noncanonical inactive genes"
+      }
+    ],
+    "tokens": 14539,
+    "usd_peak_upper_estimate": 0.004963103999999999
+  },
+  "evaluation_scopes": [
+    {
+      "attempts": 159,
+      "scope": "inner_train"
+    },
+    {
+      "attempts": 156,
+      "scope": "inner_validation"
+    }
+  ],
+  "finished": "2026-09-27T12:23:59.513589+00:00",
+  "host_network_namespace": "net:[4026531840]",
+  "kind": "LIVE_PROGRESS_NOT_FINAL_RESULTS",
+  "outer_opened": false,
+  "production_head": {
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "5ee031cef7de9c385056cec22f6511391d3e4f4f"
+  },
+  "source": "/var/lib/trendatlas-research/causal-v1/cycles/causal_nested_v1_20260927",
+  "started": "2026-09-27T12:23:59.367656+00:00",
+  "systemd": {
+    "mrv1-production.service": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=1h 30min\nMainPID=0\nResult=success\nCPUUsageNSec=91190943000\nCPUQuotaPerSecUSec=infinity\nLimitAS=infinity\nLimitMEMLOCK=8388608\nInaccessiblePaths=\nPrivateNetwork=no\nRestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX\nActiveState=inactive\nSubState=dead"
+    },
+    "mrv1-production.timer": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Result=success\nActiveState=active\nSubState=waiting"
+    },
+    "trendatlas-causal-broker.service": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=1min\nMainPID=0\nResult=success\nCPUUsageNSec=325243000\nCPUQuotaPerSecUSec=50ms\nLimitAS=805306368\nLimitMEMLOCK=805306368\nInaccessiblePaths=/var/lib/trendatlas-research /opt/trendatlas-research/releases/53b6a5336ca1f7ce35b481a017f7e82396f3613c/research/causal_evolution/inputs -/run/credentials/mrv1-production.service /opt/market_regime_v1 /opt/home_automation /etc/default -/etc/credstore -/etc/credstore.encrypted -/run/user\nPrivateNetwork=no\nRestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX\nActiveState=inactive\nSubState=dead"
+    },
+    "trendatlas-causal-maintain.service": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=10min\nMainPID=0\nResult=success\nCPUUsageNSec=242913000\nCPUQuotaPerSecUSec=100ms\nLimitAS=805306368\nLimitMEMLOCK=805306368\nInaccessiblePaths=-/run/credentials /opt/market_regime_v1 /opt/home_automation /etc/default -/etc/credstore -/etc/credstore.encrypted -/run/user\nPrivateNetwork=no\nRestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX\nActiveState=inactive\nSubState=dead"
+    },
+    "trendatlas-causal-research.slice": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "CPUUsageNSec=230055149000\nCPUQuotaPerSecUSec=200ms\nActiveState=active\nSubState=active"
+    },
+    "trendatlas-evolution-dispatch.timer": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "Result=success\nActiveState=active\nSubState=waiting"
+    },
+    "trendatlas-evolution-worker.service": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "TimeoutStartUSec=1min 30s\nMainPID=227065\nResult=success\nCPUUsageNSec=208312447000\nCPUQuotaPerSecUSec=200ms\nLimitAS=805306368\nLimitMEMLOCK=805306368\nInaccessiblePaths=-/run/credentials -/var/lib/trendatlas-research/continuous -/var/lib/trendatlas-research/jobs /opt/market_regime_v1 /opt/home_automation /etc/default -/etc/credstore -/etc/credstore.encrypted -/run/user\nPrivateNetwork=yes\nRestrictAddressFamilies=AF_UNIX\nActiveState=active\nSubState=running"
+    }
+  },
+  "unit_hashes": {
+    "mrv1-production.service": "586f571441e759eae062af6c795ad8f5baa13fe4d998ed76d915123a7cd4a591",
+    "mrv1-production.timer": "910fe5499e14af959b2de9ace5cd4195361eadcc919a86bcf83b03648495bb2f",
+    "trendatlas-evolution-dispatch.timer": "e9afd2e575e0803ce4d58cc0d1b674e2824f6b3dfdd04d4c58c9a2ae9847b4ea"
+  },
+  "worker_memory": [
+    "VmPeak:\t  332464 kB",
+    "VmSize:\t  332416 kB",
+    "VmLck:\t  332352 kB",
+    "VmRSS:\t  329888 kB",
+    "VmSwap:\t       0 kB",
+    "Threads:\t1"
+  ],
+  "worker_network_namespace": "net:[4026532684]"
+}

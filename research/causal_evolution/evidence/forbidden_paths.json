@@ -8,8 +8,11 @@
     "spot_daily.zip": true,
     "venue_notices.json": true
   },
-  "imports_checked": 26,
+  "imports_checked": 29,
   "forbidden_imports": [],
   "pass_audit": true,
-  "scope": "AST import/data-source audit plus explicit ledger and payload regression tests; not a claim of formal verification"
+  "scope": "AST import/data-source audit plus explicit ledger and payload regression tests; not a claim of formal verification",
+  "arbitrary_code_calls": [],
+  "includes_operational_scripts": true,
+  "deployed_engine_commit": "53b6a5336ca1f7ce35b481a017f7e82396f3613c"
 }

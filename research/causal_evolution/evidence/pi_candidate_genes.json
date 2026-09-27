@@ -1,0 +1,1362 @@
+[
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_00399cb015b0"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 7,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_01748e2e75ce"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_0247eabdfc55"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual50_150",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_02abdee1cb70"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom365",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_02d1b8f141b8"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_05be0390b637"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom270",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_0790e776ed06"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 7,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_095eca117ace"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom365",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_0af531e7e4b4"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 14,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "ETH",
+      "signal": "mom365",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_0d47e0912860"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_0e0146f73137"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom180",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_0e9a3f090c70"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_0f857c5e393d"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_10e1df7ae99d"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "breakout55",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_12549895c8fa"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual100_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_12dde278aa74"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 14,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_15b904b69af5"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom365",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_16549dfe828d"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom180",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_174984ac681d"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 14,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "combo_sma_mom",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_18ed128e329a"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "ETH",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_19ec60d99d2a"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 14,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_1a8de364ecdd"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.03,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom180",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_1f6f6a899618"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 7,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_1fd564eb32a6"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_20977af88a1d"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "breakout200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_26a8966d65c0"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_28bd00780bb2"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_28fc015a612e"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_2aa33ec20e80"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma100",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_2c29cc995c92"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 7,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout120",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_2c564e3634eb"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.03,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_2dca6d2073e3"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma150",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_2ee97843c903"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_30ff5ecaf25b"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "combo_sma_mom",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_3193a642cd02"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_31bc2a444bf2"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom270",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_3223f0d4a040"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.03,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_3292e1b82119"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "ETH",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_33a060dbc11d"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_35bac723fe2d"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 7,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_35cd240a7917"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout55",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_3816e108660e"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_3836594fa723"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma150",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_3e96674034b4"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma100",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_3f5e5fc26a70"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "breakout120",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_40b292e396f3"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout120",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_43882aab02ff"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 14,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom365",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_43ecb268d2f1"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_47cc21fc17e0"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "combo_breakout_mom",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_488d109c407b"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_48e50be5826b"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_50c14e1a006f"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 7,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_51599d9047a2"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "ETH",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_57343aaded8c"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_60c9479a5325"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_612dd7503c4c"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "combo_sma_mom",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_62c62ef24be0"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual100_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_6f739c49f4e9"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom270",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_70ca2f12b28d"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout120",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_730657c15c2c"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom180",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_7b9c6ee74453"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "breakout120",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_7cb0375d9359"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom180",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_7f094655e7ef"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_87b1a18bbd00"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout120",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_8bdc20052dfa"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_8f38f0535855"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.03,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "ETH",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_a51db759e54e"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.03,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_a563390216e0"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "ETH",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_a6b1e27aeec7"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_b036f0e2d016"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_c6410fa59bd5"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.03,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom90",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_d006f31e505a"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "mom365",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_d4e22ad7c38b"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "combo_breakout_mom",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_d6cadf2dee16"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout120",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_e13f59d8cad0"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "breakout120",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_ee6e8018f64d"
+  },
+  {
+    "genes": {
+      "cadence": "monthly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_f636452a094b"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 3,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.0,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual100_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_f8f8de823ba6"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "BTC",
+      "signal": "dual50_200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_f9bd739274de"
+  },
+  {
+    "genes": {
+      "cadence": "weekly",
+      "confirm": 0,
+      "family": "F",
+      "gross": 1.0,
+      "hysteresis": 0.01,
+      "recipe": "btc_regime",
+      "satellite": 0.25,
+      "satellite_k": 1,
+      "scope": "liquid5",
+      "signal": "sma200",
+      "top_k": 5,
+      "weighting": "equal"
+    },
+    "id": "F_fc6f8f51ac18"
+  }
+]

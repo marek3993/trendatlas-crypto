@@ -1,0 +1,76 @@
+{
+  "best_development": {
+    "id": "F_7f094655e7ef",
+    "run": "2024:F_spot:4517:deepseek",
+    "selection": "display_only_not_weighted_fitness",
+    "validation_cagr": 0.4614350633481349,
+    "validation_calmar": 2.547466300138805,
+    "validation_mdd": 0.22249303899210815
+  },
+  "cache_hits": 2019,
+  "checkpoint": {
+    "attempt": 325,
+    "evaluation": "627da4c536e1d2037486b66bb5479d77742d1d1eb485abf188bfa68dd042bf67",
+    "utc": "2026-09-27T11:56:02.030007+00:00"
+  },
+  "counts": {
+    "attempts": 325,
+    "candidates": 68,
+    "evaluations": 325,
+    "finalists": 18,
+    "proposals": 3,
+    "trials": 169
+  },
+  "deepseek": {
+    "calls": 0,
+    "proposals": [
+      {
+        "n": 3,
+        "state": "FALLBACK"
+      }
+    ],
+    "tokens": 0,
+    "usd": 0
+  },
+  "experiment_id": "causal_nested_v1_20260927_SYNTHETIC_TEST",
+  "failure": null,
+  "generation": 1,
+  "next_allowed_cycle": "2027-01-01",
+  "outer_results": {
+    "A": null,
+    "B": null,
+    "C": null,
+    "D": "REJECT",
+    "E": "FROZEN_FORWARD_CANDIDATES_AWAIT_CLOSED_PROSPECTIVE_DATA",
+    "history": "PREVIOUSLY_SEEN_NOT_GLOBAL_SEALED"
+  },
+  "pause_reason": null,
+  "phase": "TERMINAL",
+  "prospective": {
+    "independent_history": false,
+    "start": "2026-09-27",
+    "status": "FROZEN_NOT_YET_OBSERVED"
+  },
+  "reject_reasons": [
+    "BTC_SMA200_noninferiority_or_gain",
+    "CSCV_PBO",
+    "asset_concentration",
+    "bootstrap_Holm_excess",
+    "deflated_sharpe",
+    "episode_concentration",
+    "inner_fold_failure",
+    "parameter_plateau",
+    "statistical_power_INCONCLUSIVE"
+  ],
+  "resources": {
+    "disk_free_mib": 89118.97265625,
+    "elapsed_seconds": 298.2820000000065,
+    "pi": false,
+    "process_cpu_seconds": 272.59375,
+    "state_bytes": 11921566,
+    "utc": "2026-09-27T11:56:00.728354+00:00"
+  },
+  "run": "OUTER:2024:F_spot:4517:deterministic:C",
+  "status": "SEALED",
+  "utc": "2026-09-27T11:56:12.508345+00:00"
+}

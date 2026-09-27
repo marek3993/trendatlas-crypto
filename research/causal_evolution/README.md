@@ -2,6 +2,8 @@
 
 This package is isolated from production and starts from origin/main `730b57c1e8815e50def473ad641a1c9db3477bc4`. It does not import the legacy worker's evaluator, weighted fitness, paper equity, return streams or production integrations. The preregistration commit is `b476a8edf6bfdd68936a109a631e44cd85f152ef`.
 
+The exact validated and currently deployed engine is `53b6a5336ca1f7ce35b481a017f7e82396f3613c`. Later evidence/operational files change the package fingerprint but do not replace that running release. Use the pinned checkout commands in [REPORT.md](REPORT.md) to reproduce its accepted replay, and never resume its state with a different fingerprint.
+
 ## Reproduce
 
 ```powershell

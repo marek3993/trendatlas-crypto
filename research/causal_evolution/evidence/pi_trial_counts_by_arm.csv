@@ -1,0 +1,16 @@
+run,generation,source,slots
+2024:F_spot:1701:deepseek,0,seed,10
+2024:F_spot:1701:deepseek,1,deepseek,3
+2024:F_spot:1701:deepseek,1,survivor,6
+2024:F_spot:1701:deterministic,0,seed,10
+2024:F_spot:1701:deterministic,1,deterministic,4
+2024:F_spot:1701:deterministic,1,survivor,6
+2024:F_spot:2903:deepseek,0,seed,10
+2024:F_spot:2903:deterministic,0,seed,10
+2024:F_spot:2903:deterministic,1,deterministic,4
+2024:F_spot:2903:deterministic,1,survivor,6
+2024:F_spot:4517:deepseek,0,seed,10
+2024:F_spot:4517:deterministic,0,seed,10
+2024:F_spot:4517:deterministic,1,deterministic,4
+2024:F_spot:4517:deterministic,1,survivor,6
+2024:spot:neighbors,0,plateau,57

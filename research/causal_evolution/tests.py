@@ -188,6 +188,10 @@ class ProductionPriority(unittest.TestCase):
         self.assertIn('InaccessiblePaths=/var/lib/trendatlas-research',broker)
         self.assertIn('/current/mailbox:/var/lib/trendatlas-causal-broker/mailbox',broker)
         self.assertIn('CPUQuota=20%',files['trendatlas-causal-research.slice'])
+        self.assertIn('TimeoutStartSec=60s',broker)
+        self.assertNotIn('RuntimeMaxSec=',broker)
+        self.assertIn('TimeoutStartSec=10min',files['trendatlas-causal-maintain.service'])
+        self.assertNotIn('RuntimeMaxSec=',files['trendatlas-causal-maintain.service'])
 
     def test_broker_database_contains_no_market_or_outer_tables(self):
         from .mailbox import Mailbox

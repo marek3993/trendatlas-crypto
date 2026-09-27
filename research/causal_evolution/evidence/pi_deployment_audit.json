@@ -1,0 +1,43 @@
+{
+  "frozen_engine_commit": "53b6a5336ca1f7ce35b481a017f7e82396f3613c",
+  "production_preemption_probe": {
+    "preempts_running_research": true,
+    "admission_does_not_stop_authority": true,
+    "real_production_invoked": false,
+    "test_script": "ops/preemption_probe.py"
+  },
+  "broker_filesystem_probe": {
+    "service_start_exit_code": 0,
+    "production_head_readable": false,
+    "candidates_database_readable": false,
+    "raw_market_archive_readable": false,
+    "development_mailbox_readable": true,
+    "test_script": "ops/boundary_probe.py"
+  },
+  "runtime_patch": {
+    "scope": "research-only systemd drop-ins, not frozen evaluator",
+    "broker_timeout_start_seconds": 60,
+    "maintenance_timeout_start_seconds": 600,
+    "reason": "RuntimeMaxSec does not bound Type=oneshot startup"
+  },
+  "cache_cleanup": {
+    "scope": "regeneratable pip/APT caches only",
+    "apt_index_files": 23,
+    "apt_index_reclaimed_bytes": 154023750,
+    "backup": "C:/Users/benda/.codex/backups/trendatlas/20260927-apt-index-cache.tar.gz",
+    "backup_sha256": "04a72028bb3fac862b072abc17bf3e8866b3a9db041fbb88192c5b95b521b092",
+    "deleted_only_if_hash_matched_backup": true,
+    "production_data_deleted": false,
+    "installed_packages_changed": false
+  },
+  "research_unit_backup": "/var/lib/trendatlas-research/causal-v1/deployment-backup/20260927T120312Z",
+  "memory_controller_available": false,
+  "effective_fallback": "RLIMIT_AS 768 MiB; mlockall CURRENT|FUTURE; observed VmSwap 0",
+  "production_head_before_after": "5ee031cef7de9c385056cec22f6511391d3e4f4f",
+  "production_unit_hashes_unchanged": true,
+  "production_timer_active": true,
+  "research_dispatch_timer_content_unchanged": true,
+  "production_orders_sent": 0,
+  "deployment": "research only",
+  "recorded_utc": "2026-09-27T12:28:21.019128+00:00"
+}

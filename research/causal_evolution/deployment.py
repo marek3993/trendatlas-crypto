@@ -93,7 +93,7 @@ BindPaths={BASE}/current/mailbox:/var/lib/trendatlas-causal-broker/mailbox
 ReadWritePaths=/var/lib/trendatlas-causal-broker/mailbox
 InaccessiblePaths=/var/lib/trendatlas-research {release}/research/causal_evolution/inputs -/run/credentials/mrv1-production.service
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
-RuntimeMaxSec=60s
+TimeoutStartSec=60s
 CPUQuota=5%
 {isolation}'''
     maintenance=f'''[Unit]
@@ -111,7 +111,7 @@ ReadWritePaths={BASE}
 InaccessiblePaths=-/run/credentials
 RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
 CPUQuota=10%
-RuntimeMaxSec=10min
+TimeoutStartSec=10min
 TimeoutStopSec=2s
 {isolation}'''
     maintenance_dispatch=f'''[Unit]

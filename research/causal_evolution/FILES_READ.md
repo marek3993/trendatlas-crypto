@@ -23,6 +23,9 @@
 - e655035c3e3651468eb47ed078a6746ec0602860: docs/continuous-evolution-deployment-audit-20260922.md; research_os/dev_only/evolution_worker/{CONTINUOUS_CONTRACT.md,runtime.py,walk_forward.py,bootstrap.py,gate.py}; systemd templates and resource guard.
 - Pi installed research release826e42d9f31d92d290c5c152566cc917cda5be20: guards/memory_guard.py; research dispatcher/worker/timer and their two drop-ins; cgroup controllers, resource metadata and production unit state (read-only).
 - This package's contracts, preregistration, source_lineage.json and each newly implemented module/test.
+- Pi actual frozen research status, service properties, private/host network namespace identifiers and process memory metadata; production HEAD and production/research-dispatch unit SHA256 before/after installation.
+- Read-only SQLite backup exports of the live candidate/result and development-mailbox databases; all first three actual DeepSeek request/response/validation records.
+- Verified synthetic status, manifest, tables, audit, lineage and equity; real-data smoke audit; research-only resource, filesystem-boundary and fake-authority probe results.
 
 ## SOURCE OF TRUTH
 
