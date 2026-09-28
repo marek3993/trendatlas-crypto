@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_execution_intent",
-  "generated_at_utc": "2026-09-27T00:11:38Z",
-  "started_at_utc": "2026-09-27T00:11:38Z",
+  "generated_at_utc": "2026-09-28T00:11:57Z",
+  "started_at_utc": "2026-09-28T00:11:57Z",
   "script_path": "/opt/market_regime_v1/scripts/execution/build_execution_intent_from_strategy_exports.py",
   "input_paths": [
     "/opt/market_regime_v1/source_of_truth/export_contract.json",
@@ -19,13 +19,13 @@
   "authority_day_context": {
     "attempt_status": "success",
     "attempt_currentness_status": "current",
-    "attempt_target_closed_day": "2026-09-26",
-    "success_target_closed_day": "2026-09-26",
-    "aligned_closed_day": "2026-09-26",
+    "attempt_target_closed_day": "2026-09-27",
+    "success_target_closed_day": "2026-09-27",
+    "aligned_closed_day": "2026-09-27",
     "authority_alignment_mode": "validated_production_core",
     "same_run_authority_allowed": true,
-    "same_run_authority_run_id": "prod_20260927T001001Z_865790",
-    "same_run_authority_target_closed_day": "2026-09-26",
+    "same_run_authority_run_id": "prod_20260928T001004Z_222326",
+    "same_run_authority_target_closed_day": "2026-09-27",
     "prior_publish_required_for_execution": false
   }
 }
