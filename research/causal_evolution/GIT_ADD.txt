@@ -8,3 +8,60 @@ git add -f -- research/causal_evolution/AUDIT.md research/causal_evolution/FILES
 
 Commit message: research: record verified Pi execution, AI proposals and causal audit
 Frozen running engine remains 53b6a5336ca1f7ce35b481a017f7e82396f3613c.
+
+
+# Terminal result delivery 2026-09-28
+git add -- research/causal_delivery_20260928/.gitattributes
+git add -- research/causal_delivery_20260928/GIT_ADD.txt
+git add -- research/causal_delivery_20260928/INITIAL_REPORT.md
+git add -- research/causal_delivery_20260928/README.md
+git add -- research/causal_delivery_20260928/archive/index.json
+git add -- research/causal_delivery_20260928/archive/terminal.tar.gz.part01
+git add -- research/causal_delivery_20260928/archive/terminal.tar.gz.part02
+git add -- research/causal_delivery_20260928/archive/terminal.tar.gz.part03
+git add -- research/causal_delivery_20260928/derived/api_calls.csv
+git add -- research/causal_delivery_20260928/derived/arm_budget.csv
+git add -- research/causal_delivery_20260928/derived/arms_descriptive_only.csv
+git add -- research/causal_delivery_20260928/derived/common_comparison.csv
+git add -- research/causal_delivery_20260928/derived/continuous_annual_folds.csv
+git add -- research/causal_delivery_20260928/derived/continuous_capacity.csv
+git add -- research/causal_delivery_20260928/derived/continuous_stresses_neighbors.csv
+git add -- research/causal_delivery_20260928/derived/episodes.csv
+git add -- research/causal_delivery_20260928/derived/exact_rules.csv
+git add -- research/causal_delivery_20260928/derived/verification.json
+git add -- research/causal_delivery_20260928/equity_overview.png
+git add -- research/causal_delivery_20260928/equity_overview.svg
+git add -- research/causal_delivery_20260928/pi-final-readonly.txt
+git add -- research/causal_delivery_20260928/plot.py
+git add -- research/causal_delivery_20260928/raw/REPORT.md
+git add -- research/causal_delivery_20260928/raw/all_results.csv
+git add -- research/causal_delivery_20260928/raw/annual_folds_stresses_capacity.csv
+git add -- research/causal_delivery_20260928/raw/audit_results.json
+git add -- research/causal_delivery_20260928/raw/backup_audit.json
+git add -- research/causal_delivery_20260928/raw/candidate_genes.json
+git add -- research/causal_delivery_20260928/raw/deepseek_proposals.json
+git add -- research/causal_delivery_20260928/raw/development.csv
+git add -- research/causal_delivery_20260928/raw/development_folds.csv
+git add -- research/causal_delivery_20260928/raw/equity.csv
+git add -- research/causal_delivery_20260928/raw/equity.svg
+git add -- research/causal_delivery_20260928/raw/folds.json
+git add -- research/causal_delivery_20260928/raw/frozen_finalists.json
+git add -- research/causal_delivery_20260928/raw/frozen_manifest.json
+git add -- research/causal_delivery_20260928/raw/mutation_lineage.json
+git add -- research/causal_delivery_20260928/raw/pareto_front.json
+git add -- research/causal_delivery_20260928/raw/regime_attribution.csv
+git add -- research/causal_delivery_20260928/raw/regime_folds.json
+git add -- research/causal_delivery_20260928/raw/results.json
+git add -- research/causal_delivery_20260928/raw/status.json
+git add -- research/causal_delivery_20260928/raw/transfer_manifest.json
+git add -- research/causal_delivery_20260928/restore.py
+git add -- research/causal_delivery_20260928/validation.json
+git add -- research/causal_delivery_20260928/verify.py
+git add -- research/causal_delivery_20260928/vps-final-readonly.txt
+git add -- research/causal_delivery_20260928/vps-terminal-admission.txt
+git add -- research/causal_evolution/AUDIT.md
+git add -- research/causal_evolution/FILES_READ.md
+git add -- research/causal_evolution/GIT_ADD.txt
+git add -- research/causal_evolution/REPORT.md
+
+Commit message: research: archive sealed causal cycle and audit rejected finalists

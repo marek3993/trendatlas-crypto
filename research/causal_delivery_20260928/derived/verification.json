@@ -1,0 +1,118 @@
+{
+  "active_seconds": 33431.82666053898,
+  "api": {
+    "accepted": 177,
+    "calls": 96,
+    "completed": 93,
+    "fallback_slots": 207,
+    "rejection_records": {
+      "Bad enum/type cadence": 3,
+      "Bad enum/type confirm": 2,
+      "Bad enum/type signal": 2,
+      "Duplicate/already tried": 19,
+      "Exactly four candidates required": 3,
+      "H only inverse_vol/equal_risk; equal-notional is outside user contract": 2,
+      "Noncanonical inactive genes": 155,
+      "URLError": 3
+    },
+    "reported_cost_upper_usd": 0.18380472,
+    "reported_plus_uncertain_reserve_usd": 0.20398032,
+    "reported_tokens": 483589,
+    "uncertain_calls": 3,
+    "uncertain_reserved_usd": 0.020175600000000002
+  },
+  "attempt_states": {
+    "COMPLETE": 7203,
+    "INTERRUPTED": 8
+  },
+  "barrier_file_utc": "2026-09-28T19:48:08.122491+00:00",
+  "barrier_note": "File is refreshed on outer resume; it is not the first freeze timestamp. All recorded hypotheses and development attempts precede first outer.",
+  "benchmark_rows_verified": 2,
+  "causal_prefix_audits": 144,
+  "counts": {
+    "attempts": 7211,
+    "candidates": 1126,
+    "evaluations": 7203,
+    "finalists": 144,
+    "populations": 240,
+    "scores": 2400,
+    "trials": 3415
+  },
+  "decision": {
+    "A": null,
+    "B": null,
+    "C": null,
+    "D": "REJECT",
+    "E": "FROZEN_FORWARD_CANDIDATES_AWAIT_CLOSED_PROSPECTIVE_DATA",
+    "history": "PREVIOUSLY_SEEN_NOT_GLOBAL_SEALED"
+  },
+  "engine_commit": "53b6a5336ca1f7ce35b481a017f7e82396f3613c",
+  "equity_rows_verified": 54094,
+  "evaluation_scopes": {
+    "inner_train": 2974,
+    "inner_validation": 2974,
+    "outer": 1255
+  },
+  "files_verified": 132,
+  "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+  "first_outer": "2026-09-28T19:20:21.928416+00:00",
+  "holm_values": [
+    1.0
+  ],
+  "last_development_finish": "2026-09-28T19:20:13.457279+00:00",
+  "last_trial": "2026-09-28T19:20:02.404004+00:00",
+  "limitations": [
+    "Historical data previously studied; no globally sealed or prospective result",
+    "Binance spot / USD-M research proxies; not certified Hyperliquid fills",
+    "Actual perp gross can drift above target 1.25; this is not a hard exposure cap",
+    "Benchmark double-cost and delayed-fill books absent; explicitly NOT_EVALUATED, no new run",
+    "No million-dollar test in this frozen contract; capacity maximum is a tested point, not a venue guarantee",
+    "No evaluator or strategy replay performed by this verification"
+  ],
+  "manifest_sha256": "1f92cd047b2d39cc071984f57485beaafbb560b935fd23109c9f121154af0abc",
+  "max_actual_gross": 1.7005490405978188,
+  "nomination_records": 144,
+  "pareto_rows": 29,
+  "preserved_checkpoint_5087_rows": {
+    "candidates.sqlite:attempts": 5095,
+    "candidates.sqlite:candidates": 999,
+    "candidates.sqlite:evaluations": 5087,
+    "candidates.sqlite:finalists": 108,
+    "candidates.sqlite:orchestration_events": 41,
+    "candidates.sqlite:populations": 210,
+    "candidates.sqlite:scores": 2056,
+    "candidates.sqlite:trials": 2925,
+    "mailbox/proposals.sqlite:proposals": 84
+  },
+  "primary_days": 731,
+  "primary_rows_verified": 72,
+  "prospective_earliest_closed_day": "2026-09-29",
+  "sqlite_integrity": "ok",
+  "statistical_rejection_counts": {
+    "BTC_SMA200_noninferiority_or_gain": 63,
+    "CSCV_PBO": 72,
+    "MDD_above35": 69,
+    "asset_concentration": 56,
+    "bootstrap_Holm_excess": 72,
+    "deflated_sharpe": 72,
+    "episode_concentration": 41,
+    "execution_cost_or_margin_stress": 71,
+    "execution_reliability": 4,
+    "inner_fold_failure": 72,
+    "no_best_day_loss": 28,
+    "no_top3_loss": 72,
+    "parameter_plateau": 70,
+    "search_seed_instability": 72,
+    "statistical_power_INCONCLUSIVE": 54
+  },
+  "status": "PASS_DELIVERY_INTEGRITY_NOT_STRATEGY",
+  "stored_fill_lineage_audits": 7203,
+  "trial_sources": {
+    "deepseek": 177,
+    "deterministic": 384,
+    "deterministic_fallback": 207,
+    "plateau": 1015,
+    "seed": 480,
+    "survivor": 1152
+  }
+}

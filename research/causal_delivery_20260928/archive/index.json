@@ -1,0 +1,22 @@
+{
+  "name": "terminal.tar.gz",
+  "bytes": 142112008,
+  "sha256": "d7ae706d1e082ff9b303fafb0d834c146575bf97bc1354ef727d9357b9d588cc",
+  "parts": [
+    {
+      "name": "terminal.tar.gz.part01",
+      "bytes": 50331648,
+      "sha256": "a3a80b2df771d8eecf7d2d2a597e89d5219d01ee090959da2889c77f3627962e"
+    },
+    {
+      "name": "terminal.tar.gz.part02",
+      "bytes": 50331648,
+      "sha256": "6781b909c1c033bd3c70ea1f1c8df59b4dfc4c474b75cbee6cc5c4dbef8c3f65"
+    },
+    {
+      "name": "terminal.tar.gz.part03",
+      "bytes": 41448712,
+      "sha256": "ce5190804a046d1caef02b947c7e7da576546d27f077290919daa5e62bd80a7e"
+    }
+  ]
+}

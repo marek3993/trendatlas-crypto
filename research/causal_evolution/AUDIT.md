@@ -53,3 +53,106 @@ Production HEAD remained `5ee031cef7de9c385056cec22f6511391d3e4f4f`. Production 
 Systemd reported that RuntimeMaxSec did not bound Type=oneshot. Research-only broker/maintenance drop-ins now set TimeoutStartSec to 60 seconds / 10 minutes; effective properties were verified. Future deployment templates and their regression assertions are corrected. This operations patch, operational probe scripts and evidence do not modify or replace the already frozen running release. Reproduction of its manifest must use the exact engine commit, not the later evidence commit's expanded file fingerprint.
 
 The 45 focused tests were rerun successfully after the operations change. The immutable synthetic integration completed 325 evaluations and full reporting, with idempotent sealed resume. Synthetic curves/results are explicitly plumbing evidence. No economic result from a changing-code prototype, saved paper equity, old stored CAGR or the real-data smoke is used as an OOS acceptance result.
+
+## Terminal delivery audit — 2026-09-28
+
+**Scientific decision REJECT; evidence verification PASS.** This append supersedes
+only the pending status of earlier handoff paragraphs. Initial report bytes and all
+old evidence remain preserved. Classification: B/C research evidence and read-only
+runtime inspection; no new D strategy-math change.
+
+FILES READ / SOURCE OF TRUTH: see FILES_READ.md and the terminal delivery README.
+The exact scientific sources remain the two frozen contracts, manifest, seven raw
+input hashes and engine 53b6a5336ca1f7ce35b481a017f7e82396f3613c. Terminal SQLite is
+the result authority; reports derive from it. Production authority is unchanged.
+
+Exact root cause of financial rejection: every schedule fails inner qualification,
+whole-top-three-episode removal, seed stability, DSR and bootstrap/Holm/PBO gates.
+69/72 exceed 35% MDD; maximum CAGR 44.78% is below 150%; no Sharpe 1.5/Calmar 4. The
+absence of a qualified strategy is not a missing API or capacity-blocked B result.
+No new strategy is created from these OOS failures.
+
+Exact contract impact: none to scientific or production contracts. Frozen targets,
+parameters, costs, evaluator, data and budgets remain unchanged. Delivery tooling
+is outside the frozen package. Added reports explicitly disclose actual gross
+exposure drift up to 1.70055, unknown billing on 3 API failures, missing benchmark
+stress books, and the true earliest prospective closed day 2026-09-29. No hidden
+repair or reassignment of these outcomes was made.
+
+### Verification actually completed
+
+- Locked consistent snapshot at 20:16:14 UTC, after SEALED at 20:02:42 UTC. Both worker
+  and broker locks were acquired by the existing snapshot helper; neither service
+  was stopped/restarted. Existing 18:47 export/checkpoint 5112 was rejected as stale.
+- All 132 file sizes/SHA256 values verified, both SQLite integrity/FK checks pass;
+  7203 COMPLETE attempts map bijectively to 7203 results, 8 INTERRUPTED preserved,
+  zero open attempts. Candidate count 1126; trial count 3415; scores 2400; populations 240.
+- All 38 code/input manifest hashes match the pinned source export. Archive parts
+  were reassembled to a fresh ignored directory and passed the same verification.
+- All 144 final nominations equal SQLite, selected only from inner folds. All
+  recorded trial creation, development completions and API payload creation precede
+  first outer 19:20:21 UTC. The mailbox seal timestamp is refreshed on outer resume;
+  it must not be interpreted as the initial freeze timestamp.
+- All 96 saved API payloads validated against pinned allowed fields and actual
+  train/validation date windows. All 93 returned responses reproduce accepted/rejected
+  classifications exactly. 3 unknown network failures were counted, never retried.
+  No network call or evaluator is invoked by verify.py.
+- All 72 continuous results, stored stress/neighbor/capacity books, 2 benchmarks and
+  54,094 equity rows reconcile with immutable SQLite. NAV-derived CAGR/Sharpe,
+  recorded cumulative intrabar MDD, costs, closed episodes and concentration-removal
+  calculations match within 1e-9. This independently verifies saved accounting,
+  not a new raw-bar replay.
+- All 7203 stored own-asset fill audits and 144 actual prefix/future-mutation audits
+  are PASS. Original raw-price references were checked during the frozen run;
+  delivery did not claim to independently rerun those 7203 books.
+- Plain return labels do not convert data to globally sealed history. The raw
+  report/status prospective date 2026-09-27 is retained as evidence but corrected
+  in the final interpretation: first wholly post-freeze UTC day is September 29.
+- Initial non-sudo VPS readlink exited 1 on export permissions; sudo read-only retry
+  confirmed the old export. No credential or authority failure was hidden.
+
+Full machine-readable checks: ../causal_delivery_20260928/derived/verification.json.
+Exact commands: ../causal_delivery_20260928/README.md. This delivery introduces no
+runtime regression fix, so no new strategy test is added. Existing frozen regression
+coverage remains authoritative; the snapshot verifier adds data-integrity assertions.
+
+### Important limits
+
+The largest reliable tested capital is 100k for all schedules, but 4 books are
+unreliable at the primary 100 account; capacity reliability is not monotonic under
+minimum-order/dust assumptions. All residuals stay MTM. Maximum target gross 1.25
+is not a hard cap on marked exposure: nominal D reaches 1.70055. Historical margin
+brackets and Hyperliquid execution certification remain absent. D is PROXY only.
+Double-cost/delayed-fill benchmark rows and 1m capacity are not in the frozen run;
+they remain explicitly uncomputed. Statistical trial penalties exclude unknown
+previous research choices and cannot establish global historical independence.
+The Pareto output contains 29 labeled, possibly duplicate, cross-track rows and
+zero accepted rows. Annual-reset diagnostics are not primary continuous NAV.
+
+### Runtime and forbidden paths
+
+VPS worker stopped successfully at 20:02:44 UTC; immutable terminal status has no
+failure. Pi remains CHECKPOINTED at 5087 with research inactive; production timer
+active/enabled at 20:27 UTC. Dispatcher 255/failed journal lines are the existing
+`ready` routine refusing SEALED (non-resumable), not lost results or renewed search.
+That operational log noise is documented, not repaired under this heartbeat.
+The broker returns without requests once its sealed mailbox is present.
+
+No scientific evaluator, genes, raw inputs, frozen manifest, production source,
+outputs/*, data/*, authority snapshot, dashboard, account, signer, live order,
+Pi timer, LeadPilot or deployment file was edited. No merge, full-refresh,
+publish-existing, live-order command or same-history evolution rerun occurred.
+This is a research-only commit on codex/causal-continuous-evolution-20260927.
+The completion heartbeat will be paused after successful push; no Pi/VPS unit is
+changed by that action. Future cycles require the existing frozen refit contract.
+
+Exact files changed and git add list: ../causal_delivery_20260928/GIT_ADD.txt.
+Commit message: research: archive sealed causal cycle and audit rejected finalists.
+Commit hash: supplied in final handoff; resolve with git log -1 --format=%H --
+research/causal_delivery_20260928. A report cannot contain its own resulting hash.
+
+Terminal validation reran the pinned 45 focused tests: PASS in 15.713 seconds.
+All 5,087 pre-migration evaluations and every prior science-table/proposal row
+were compared directly with the final snapshot and remain byte-identical by cell.
+The independently restored archive and matplotlib overview were verified; the
+plot was visually inspected. No new strategy tests or scientific runs were added.

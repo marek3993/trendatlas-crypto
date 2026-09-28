@@ -34,3 +34,23 @@ Production authority stays in the existing source_of_truth contracts and Pi runt
 Exact root cause addressed: old continuous infrastructure used a weighted fitness and could launch a different family after rejection over the same history. That would continue selection pressure against already inspected data. Legacy strategy/PnL routes were also unsuitable as research truth. The new path restricts chronological information and budgets, freezes all nominees before outer, and requires new observations and refit admission for successors.
 
 Exact contract impact: new research-only B/C/D contracts; no production source-of-truth, execution planner, account, dashboard, wallet, reconciliation, strategy setting or production timer contract is changed. Only research services and their private runtime are replaced after validation.
+
+## Terminal delivery files read (2026-09-28)
+
+- research/causal_migration/REPORT.md, runtime.py, snapshot.py and verified migration evidence.
+- Frozen controller.py, evaluator.py, statistics.py, designer.py, proposal_schema.py,
+  protocol.py, vendor/signals.py, vendor/data.py, ledger.py, both contracts and manifest.
+- Terminal SQLite schemas and records for attempts, evaluations, trials, finalists,
+  populations, scores, metadata, orchestration history and all 96 mailbox proposals.
+- All terminal result, audit, nominee, equity, fold, API and lineage exports;
+  all 132 snapshot hashes; all 38 pinned engine/input hashes.
+- VPS status and worker/dispatcher/broker journals, installed dispatch unit,
+  old export target and final locked backup; Pi research status and production
+  timer properties (read-only). No credential values were read or emitted.
+- Existing Codex completion automation configuration, for stopping the completed
+  monitor after successful result delivery.
+
+Terminal result source: locked VPS SQLite snapshot 20:16:14 UTC, engine 53b6a533,
+experiment causal_nested_v1_20260927; remote status SEALED at 20:02:42 UTC. Derived
+reports never modify that source. See ../causal_delivery_20260928/README.md for
+reproduction and ../causal_delivery_20260928/GIT_ADD.txt for exact changed paths.

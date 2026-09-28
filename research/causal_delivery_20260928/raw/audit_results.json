@@ -1,0 +1,1442 @@
+[
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_d42e91aa1dfe",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_4481fe475e8a",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_34f06a793432",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_3d77f0aa9852",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_3f513ca6e529",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_4481fe475e8a",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_3f513ca6e529",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_b79603d77816",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_daf4a37588f0",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_3d77f0aa9852",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_3f513ca6e529",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_b79603d77816",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_9dc8245c4119",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_13e0bda9e049",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_c4754fcfe5cb",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_065b25f0f2f9",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_9dc8245c4119",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_13e0bda9e049",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_a0bcf636c61e",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_544e23db85f8",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_f62e2c4269ba",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_7fcf113dc7f4",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_3f513ca6e529",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_544e23db85f8",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_3f513ca6e529",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_b79603d77816",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_72347a15a40e",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_72347a15a40e",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_3f513ca6e529",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_b79603d77816",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_3f513ca6e529",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_b79603d77816",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_72347a15a40e",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_72347a15a40e",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "D_3f513ca6e529",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "D_b79603d77816",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "perp",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_ce4bbd9e72b9",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_0af531e7e4b4",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_ce4bbd9e72b9",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_81fa72471c0d",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_3c819df1ec35",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_0af531e7e4b4",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_0e9a3f090c70",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_3c819df1ec35",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_0ff456d286ea",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_b036f0e2d016",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_0af531e7e4b4",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_0ff456d286ea",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_b036f0e2d016",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_fee8ec089f5a",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_6f739c49f4e9",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_6f739c49f4e9",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_7f094655e7ef",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_6f739c49f4e9",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_6f739c49f4e9",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_3836594fa723",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_6f739c49f4e9",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_16549dfe828d",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_ce4bbd9e72b9",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_c6410fa59bd5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_0af531e7e4b4",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "F_16549dfe828d",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "F_ce4bbd9e72b9",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_eec41b6dc7e5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_16e147914262",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_25e0ebbe4dec",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_eec41b6dc7e5",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_eec41b6dc7e5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_16e147914262",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_0b09a50bcd2f",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_4e514354f863",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_25e0ebbe4dec",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_60d62248b657",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_7174c26df673",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_60d62248b657",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_61b63846e9c7",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_4e514354f863",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_25e0ebbe4dec",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_70f6942b3a5e",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_61b63846e9c7",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_70f6942b3a5e",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_4264b4c0e2c1",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_4e514354f863",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_25e0ebbe4dec",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_52ca26cfad76",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_4264b4c0e2c1",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_4e514354f863",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_7174c26df673",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_4e514354f863",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_25e0ebbe4dec",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_eec41b6dc7e5",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_7174c26df673",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_4e514354f863",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_4264b4c0e2c1",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_0b243118e346",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_25e0ebbe4dec",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_0b243118e346",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "G_4264b4c0e2c1",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "G_0b243118e346",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_4fee3e396a19",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_958b0a330cd4",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_426fda55f55f",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_9fa0b79855bd",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_4fee3e396a19",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_958b0a330cd4",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_ded651981df5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_774986b19688",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_426fda55f55f",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_cd2db92ce8c7",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_ded651981df5",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_774986b19688",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_774986b19688",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_89742fc74158",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_774986b19688",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_f8679aceedba",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_774986b19688",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_89742fc74158",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_4d6506064c2c",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_e24246390542",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_426fda55f55f",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_02aaac5a340c",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_4d6506064c2c",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_e24246390542",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_89b90e449670",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_6acbf53f60cc",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_ea2a6bd37b43",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_6acbf53f60cc",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_89b90e449670",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_6acbf53f60cc",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_ea2a6bd37b43",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_dbe7ccdb2ffd",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_ea2a6bd37b43",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_dbe7ccdb2ffd",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2024-07-01",
+    "candidate": "H_ea2a6bd37b43",
+    "days_checked": 2008,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  },
+  {
+    "boundary": "2025-07-01",
+    "candidate": "H_dbe7ccdb2ffd",
+    "days_checked": 2373,
+    "future_mutation_signals": true,
+    "pass_audit": true,
+    "track": "spot",
+    "true_prefix_ledger": true,
+    "true_prefix_signals": true
+  }
+]

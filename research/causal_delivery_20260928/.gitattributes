@@ -1,0 +1,4 @@
+raw/** -text -whitespace
+archive/** -text
+INITIAL_REPORT.md -text whitespace=cr-at-eol
+*.png binary

@@ -1,0 +1,86 @@
+{
+  "best_development": {
+    "id": "D_3f6dbd6b8b06",
+    "run": "2025:D_perp:4517:deepseek",
+    "selection": "display_only_not_weighted_fitness",
+    "validation_cagr": 0.05953400466755332,
+    "validation_calmar": 0.6777841028234673,
+    "validation_mdd": 0.08783623637608284
+  },
+  "cache_hits": 43395,
+  "checkpoint": {
+    "attempt": 7211,
+    "evaluation": "f628fb34a0f69961d594686622bc6290331f7be1bc5b4281ca50201ff058181b",
+    "utc": "2026-09-28T20:02:27.159090+00:00"
+  },
+  "counts": {
+    "attempts": 7211,
+    "candidates": 1126,
+    "evaluations": 7203,
+    "finalists": 144,
+    "proposals": 96,
+    "trials": 3415
+  },
+  "deepseek": {
+    "calls": 96,
+    "proposals": [
+      {
+        "n": 93,
+        "state": "COMPLETE"
+      },
+      {
+        "n": 3,
+        "state": "FALLBACK"
+      }
+    ],
+    "tokens": 483589,
+    "usd": 0.18380472
+  },
+  "experiment_id": "causal_nested_v1_20260927",
+  "failure": null,
+  "generation": 4,
+  "next_allowed_cycle": "2027-01-01",
+  "outer_results": {
+    "A": null,
+    "B": null,
+    "C": null,
+    "D": "REJECT",
+    "E": "FROZEN_FORWARD_CANDIDATES_AWAIT_CLOSED_PROSPECTIVE_DATA",
+    "history": "PREVIOUSLY_SEEN_NOT_GLOBAL_SEALED"
+  },
+  "pause_reason": null,
+  "phase": "TERMINAL",
+  "prospective": {
+    "independent_history": false,
+    "start": "2026-09-27",
+    "status": "FROZEN_NOT_YET_OBSERVED"
+  },
+  "reject_reasons": [
+    "BTC_SMA200_noninferiority_or_gain",
+    "CSCV_PBO",
+    "MDD_above35",
+    "asset_concentration",
+    "bootstrap_Holm_excess",
+    "deflated_sharpe",
+    "episode_concentration",
+    "execution_cost_or_margin_stress",
+    "execution_reliability",
+    "inner_fold_failure",
+    "no_best_day_loss",
+    "no_top3_loss",
+    "parameter_plateau",
+    "search_seed_instability",
+    "statistical_power_INCONCLUSIVE"
+  ],
+  "resources": {
+    "disk_free_mib": 65520.51953125,
+    "elapsed_seconds": 856.1925649199984,
+    "pi": false,
+    "process_cpu_seconds": 849.264967256,
+    "state_bytes": 219269951,
+    "utc": "2026-09-28T20:02:24.260217+00:00"
+  },
+  "run": "OUTER:2025:H_spot:4517:deterministic:C",
+  "status": "SEALED",
+  "utc": "2026-09-28T20:02:42.577178+00:00"
+}

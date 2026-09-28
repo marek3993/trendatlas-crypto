@@ -1,0 +1,26 @@
+/srv/trendatlas-research-export/20260928T184709Z
+Sep 28 18:47:09 vps-4f79db29 systemd[1]: Stopping trendatlas-research-worker.service - TrendAtlas isolated research worker...
+Sep 28 18:47:13 vps-4f79db29 systemd[1]: trendatlas-research-worker.service: Deactivated successfully.
+Sep 28 18:47:13 vps-4f79db29 systemd[1]: Stopped trendatlas-research-worker.service - TrendAtlas isolated research worker.
+Sep 28 18:47:13 vps-4f79db29 systemd[1]: trendatlas-research-worker.service: Consumed 39.205s CPU time over 39.017s wall clock time, 239M memory peak.
+Sep 28 18:49:32 vps-4f79db29 systemd[1]: Starting trendatlas-research-worker.service - TrendAtlas isolated research worker...
+Sep 28 18:49:33 vps-4f79db29 systemd[1]: Started trendatlas-research-worker.service - TrendAtlas isolated research worker.
+Sep 28 19:17:39 vps-4f79db29 systemd[1]: trendatlas-research-worker.service: Deactivated successfully.
+Sep 28 19:17:39 vps-4f79db29 systemd[1]: trendatlas-research-worker.service: Consumed 19min 51.254s CPU time over 28min 6.838s wall clock time, 287.1M memory peak.
+Sep 28 19:19:06 vps-4f79db29 systemd[1]: Starting trendatlas-research-worker.service - TrendAtlas isolated research worker...
+Sep 28 19:19:07 vps-4f79db29 systemd[1]: Started trendatlas-research-worker.service - TrendAtlas isolated research worker.
+Sep 28 19:47:14 vps-4f79db29 systemd[1]: trendatlas-research-worker.service: Deactivated successfully.
+Sep 28 19:47:14 vps-4f79db29 systemd[1]: trendatlas-research-worker.service: Consumed 27min 58.689s CPU time over 28min 8.139s wall clock time, 516.7M memory peak.
+Sep 28 19:48:04 vps-4f79db29 systemd[1]: Starting trendatlas-research-worker.service - TrendAtlas isolated research worker...
+Sep 28 19:48:05 vps-4f79db29 systemd[1]: Started trendatlas-research-worker.service - TrendAtlas isolated research worker.
+Sep 28 20:02:44 vps-4f79db29 systemd[1]: trendatlas-research-worker.service: Deactivated successfully.
+Sep 28 20:02:44 vps-4f79db29 systemd[1]: trendatlas-research-worker.service: Consumed 14min 33.424s CPU time over 14min 40.504s wall clock time, 522.7M memory peak.
+# /etc/systemd/system/trendatlas-research-dispatch.service
+[Unit]
+Description=Resume a checkpointed TrendAtlas research activation
+[Service]
+Type=oneshot
+ExecCondition=/opt/trendatlas-research/venvs/causal-v1/bin/python3 -I -B /opt/trendatlas-research/orchestration/causal-migration-20260928/research/causal_migration/runtime.py ready --platform vps
+ExecStart=/usr/bin/systemctl start trendatlas-research-worker.service
+
+REMOTE EXIT: 0

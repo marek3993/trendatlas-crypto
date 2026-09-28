@@ -1,0 +1,86 @@
+Mon 28 Sep 20:27:49 UTC 2026
+Id=mrv1-production.timer
+ActiveState=active
+SubState=waiting
+UnitFileState=enabled
+
+MainPID=0
+Id=trendatlas-research-worker.service
+ActiveState=inactive
+SubState=dead
+UnitFileState=
+
+Id=trendatlas-research-dispatch.timer
+ActiveState=inactive
+SubState=dead
+UnitFileState=
+{
+  "best_development": {
+    "id": "H_ea2a6bd37b43",
+    "run": "2025:H_spot:4517:deepseek",
+    "selection": "display_only_not_weighted_fitness",
+    "validation_cagr": 0.3379452005000966,
+    "validation_calmar": 1.5257722831215186,
+    "validation_mdd": 0.2209859782095267
+  },
+  "cache_hits": 27897,
+  "checkpoint": {
+    "attempt": 5095,
+    "evaluation": "3ba2ebdb89923c83e26b78d1df4f01da538781980bbd4980ef038aa1c9c4ace9",
+    "utc": "2026-09-28T18:29:46.269514+00:00"
+  },
+  "counts": {
+    "attempts": 5095,
+    "candidates": 999,
+    "evaluations": 5087,
+    "finalists": 108,
+    "proposals": 84,
+    "trials": 2925
+  },
+  "deepseek": {
+    "calls": 84,
+    "proposals": [
+      {
+        "n": 81,
+        "state": "COMPLETE"
+      },
+      {
+        "n": 3,
+        "state": "FALLBACK"
+      }
+    ],
+    "tokens": 418156,
+    "usd": 0.15706937999999998
+  },
+  "engine_commit": "53b6a5336ca1f7ce35b481a017f7e82396f3613c",
+  "experiment_id": "causal_nested_v1_20260927",
+  "failure": null,
+  "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+  "generation": 4,
+  "next_allowed_cycle": "2027-01-01",
+  "outer_opened": false,
+  "outer_results": null,
+  "pause_reason": "validation_evaluation_limit",
+  "phase": "SEARCH",
+  "prospective": {
+    "independent_history": false,
+    "start": "2026-09-27",
+    "status": "NOT_YET_FROZEN"
+  },
+  "reject_reasons": [],
+  "resources": {
+    "disk_free_mib": 1093.3828125,
+    "elapsed_seconds": 43.296751699992456,
+    "locked_kib": 354800,
+    "pi": true,
+    "process_cpu_seconds": 8.562632157,
+    "rss_kib": 352112,
+    "state_bytes": 116396018,
+    "swap_kib": 0,
+    "temperature_c": 49.05,
+    "utc": "2026-09-28T18:29:45.439666+00:00"
+  },
+  "run": "2025:H_spot:2903:deterministic",
+  "status": "CHECKPOINTED",
+  "utc": "2026-09-28T18:29:47.145073+00:00"
+}

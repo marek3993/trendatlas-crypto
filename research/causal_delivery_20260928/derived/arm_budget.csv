@@ -1,0 +1,3 @@
+arm,new_candidate_slots,seed,survivor,deepseek,deterministic_fallback,deterministic
+deepseek,624,240,576,177,207,
+deterministic,624,240,576,,,384

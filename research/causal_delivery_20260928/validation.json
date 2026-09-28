@@ -1,0 +1,24 @@
+{
+  "frozen_regression_tests": {
+    "passed": 45,
+    "seconds": 15.713,
+    "command": "python -m unittest research.causal_evolution.tests research.causal_evolution.vendor.test_research",
+    "source": "pinned engine export"
+  },
+  "archive_reconstruction": "PASS: 132 files identical",
+  "raw_export_byte_preservation": "PASS",
+  "initial_report_byte_preservation": "copied before replacement",
+  "credential_signature_scan": {
+    "files": 175,
+    "matches": 0,
+    "scope": "literal API-key/private-key signatures; no credential values loaded"
+  },
+  "plot": "All 72 curves plus track benchmarks; visual inspection PASS",
+  "forbidden_paths": "Only reporting markdown and research/causal_delivery_20260928; frozen scientific sources, previous evidence, migration/recovery and production untouched",
+  "new_regression_tests": "none; no runtime or strategy fix; read-only snapshot assertions added",
+  "staged_files": 52,
+  "git_diff_cached_check": "PASS; immutable raw exports retain source whitespace",
+  "index_raw_export_bytes": "identical to final snapshot",
+  "previous_audit_and_files_read_prefixes": "byte-identical",
+  "prior_checkpoint": "All 5087 evaluations and all prior immutable table rows preserved; see derived/verification.json"
+}

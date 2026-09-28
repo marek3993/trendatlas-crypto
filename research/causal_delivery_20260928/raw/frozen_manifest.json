@@ -1,0 +1,404 @@
+{
+  "contract": {
+    "authority": {
+      "historical_status": "previously_seen_not_global_sealed",
+      "orders": false,
+      "production_writes": false,
+      "promotion": false,
+      "prospective_start": "2026-09-27"
+    },
+    "base_main": "730b57c1e8815e50def473ad641a1c9db3477bc4",
+    "budget": {
+      "active_seconds_ceiling": 86400,
+      "api_usd_ceiling": 1.0,
+      "arms": [
+        "deterministic",
+        "deepseek"
+      ],
+      "islands": [
+        "F_spot",
+        "G_spot",
+        "H_spot",
+        "D_perp"
+      ],
+      "max_api_calls": 96,
+      "max_candidate_slots": 1248,
+      "max_evaluation_attempts": 20000,
+      "max_generations": 5,
+      "minimum_distinct_survivors": 6,
+      "mutations": 4,
+      "outer_origins": [
+        2024,
+        2025
+      ],
+      "plateau_neighbors": 2,
+      "population": 10,
+      "seeds": [
+        1701,
+        2903,
+        4517
+      ],
+      "state_bytes_ceiling": 536870912,
+      "stop_no_front_improvement": 3,
+      "survivors": 6
+    },
+    "class": [
+      "B",
+      "C",
+      "D"
+    ],
+    "continuation": {
+      "first_refit": "2027-01-01",
+      "later_refits": "quarterly UTC Jan1/Apr1/Jul1/Oct1",
+      "new_days_anchor": "2026-09-26",
+      "new_days_min": 30,
+      "prospective_policy": "Read-only forward evaluation only after nominee freeze; no mutation input before fixed refit; on refit used data are explicitly seen, never re-labeled fresh sealed. Retain every old sealed cycle. Changed hash alone insufficient: closed UTC days, append-only observed data, new ID/fingerprint, fixed refit, complete PIT/venue coverage required."
+    },
+    "deepseek": {
+      "allowed_scopes": [
+        "inner_train",
+        "inner_validation"
+      ],
+      "endpoint": "https://api.deepseek.com/chat/completions",
+      "max_output_tokens": 2200,
+      "model": "deepseek-flash",
+      "output": "exactly four objects: parent candidate ID, complete schema-valid genes, hypothesis <=600 characters. No code/tools/evaluator/data changes. Strict duplicate/nonfinite/key validation. Immutable exact payload and response; reserve call and cost before network, no uncertain-call automatic retry. Missing/unavailable API -> same-budget deterministic proposals."
+    },
+    "engine": {
+      "capacities": [
+        100,
+        1000,
+        10000,
+        100000
+      ],
+      "fees_bps": 10,
+      "fill": "first real 4h open after daily publication; delay stress second executable bar",
+      "initial_usd": 100,
+      "latency_seconds": 60,
+      "maximum_holding": "At 90 elapsed days from actual entry request a latency-safe exit; residual remains MTM. Material position still held after93 days invalidates reliability. Calendar-cut books use only observed MTM, no invented closure. This fixed horizon is a new rule, not an old return input.",
+      "partial_fill": "0.1% lagged published quote volume, entry TTL6/exitTTL18; retain and mark residual; never fake exit",
+      "slippage_bps": 10,
+      "source": "asset-resolved cash/quantity causal archaeology descendant",
+      "tracks": {
+        "perp": "actual Binance USD-M conservative proxy, never venue-certified",
+        "spot": "actual Binance spot research proxy"
+      }
+    },
+    "id": "causal_nested_v1_20260927",
+    "pareto": {
+      "maximize": [
+        "mean_inner_cagr",
+        "median_sharpe",
+        "median_calmar",
+        "worst_validation_fold",
+        "profitable_fold_fraction",
+        "plateau_fraction",
+        "seed_consistency",
+        "benchmark_delta"
+      ],
+      "method": "Nondominated sorting, normalized NSGA crowding, then simpler rules on epsilon-equivalent results; no weighted sum. Three search seeds remain separate populations; cross-seed consistency is measured on generation-level island/arm outcomes, not claimed as independent market samples.",
+      "minimize": [
+        "maximum_mdd",
+        "turnover",
+        "cost_fraction",
+        "asset_concentration",
+        "episode_concentration",
+        "complexity"
+      ]
+    },
+    "qualification": {
+      "all_three_seeds_required": true,
+      "asset_positive_profit_share_max": 0.6,
+      "benchmark": "same track, periods, capital, costs; gain >=5ppCAGR or >=5ppDD or .15Sharpe or .25Calmar or .15concentration; noninferiority CAGR-10pp/DD+5pp/Sharpe-.20/Calmar-.30",
+      "cagr_high_min": 1.5,
+      "cagr_reference_upper": 2.0,
+      "calmar_min": 4,
+      "episode_positive_profit_share_max": 0.35,
+      "mdd_max": 0.35,
+      "mdd_robust": 0.25,
+      "mdd_target": 0.2,
+      "no_top3_cagr_min": -0.05,
+      "plateau_positive_fraction_min": 0.75,
+      "production_pass": false,
+      "sharpe_min": 1.5,
+      "statistics": "DSR>=.95, paired block-bootstrap lower excess growth bound>0, Holm-adjusted p<=.05, CSCV PBO<=.10; insufficient power is INCONCLUSIVE and cannot qualify"
+    },
+    "runtime": {
+      "checkpoints": "SQLite FULL synchronous transactions per evaluation/proposal/generation; no SEALED reopening; conservative in-flight attempt reservation",
+      "cpu_quota": "20%",
+      "designer_broker": "separate allowlisted network process, no production/account filesystem or credentials; worker queues development-only JSON",
+      "disk_free_reserve_mib": 1024,
+      "per_activation_minutes": 30,
+      "production_priority": "existing dispatcher gate+job check, RefuseManualStart, research Conflicts/After production; observe gate at each checkpoint; never start/stop production",
+      "ram_max_mib": 768,
+      "statuses": [
+        "RUNNING",
+        "WAITING_FOR_NEW_DATA",
+        "SEALED",
+        "FAILED"
+      ],
+      "swap_max": 0,
+      "thermal_resume_c": 68,
+      "thermal_stop_c": 75,
+      "worker_network": false
+    },
+    "schema": {
+      "cadence": [
+        "weekly",
+        "monthly"
+      ],
+      "confirm": [
+        0,
+        3,
+        7,
+        14
+      ],
+      "family": [
+        "F",
+        "G",
+        "H",
+        "D"
+      ],
+      "gross": [
+        1.0,
+        1.25
+      ],
+      "hysteresis": [
+        0.0,
+        0.01,
+        0.03
+      ],
+      "recipe": [
+        "btc_regime",
+        "own_trend_ls",
+        "beta_neutral",
+        "funding_aware"
+      ],
+      "satellite": [
+        0.25,
+        0.5,
+        0.75
+      ],
+      "satellite_k": [
+        1,
+        2
+      ],
+      "scope": [
+        "BTC",
+        "ETH",
+        "liquid5"
+      ],
+      "signal": [
+        "sma50",
+        "sma100",
+        "sma150",
+        "sma200",
+        "dual50_200",
+        "dual100_200",
+        "dual50_150",
+        "breakout20",
+        "breakout55",
+        "breakout120",
+        "breakout200",
+        "mom90",
+        "mom180",
+        "mom270",
+        "mom365",
+        "combo_sma_mom",
+        "combo_breakout_mom"
+      ],
+      "top_k": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "weighting": [
+        "equal",
+        "inverse_vol",
+        "equal_risk"
+      ]
+    },
+    "seeds": {
+      "named": [
+        "BTC_SMA200",
+        "G_4d93e50475a7",
+        "G_75fc690a1283",
+        "F_G_H_D_components",
+        "CASH"
+      ],
+      "never_independent_finalists": true,
+      "post_oos_selected": [
+        "BTC_mom90_monthly",
+        "BTC_breakout120_weekly"
+      ],
+      "status": "hypotheses_only"
+    },
+    "sources": {
+      "capacity": "58e308315d03a4561d53bbbd4019f7392f66e662",
+      "causal": "c1e4574250c08c2027dea30070ec7705d8fde906",
+      "dispatcher": "e655035c3e3651468eb47ed078a6746ec0602860"
+    },
+    "split": {
+      "anchored_train_start": "2020-01-01",
+      "data_end": "2025-12-31",
+      "data_start": "2019-01-01",
+      "exit_ttl_days": 3,
+      "inner_validation_days": 120,
+      "inner_windows": 2,
+      "longest_lookback_days": 365,
+      "max_position_days": 90,
+      "outer_years": [
+        2024,
+        2025
+      ],
+      "publication_latency_days": 1,
+      "purge_embargo_days": 459,
+      "rule": "For each outer Jan1, latest inner validation ends 460 days earlier; two consecutive 120-day validation windows; each anchored train ends 460 days before its validation starts. Warmup may read only earlier prices. All search across both origins completes and freezes before ANY outer result is computed. No outer period is exposed in mutation inputs. No random data shuffle."
+    },
+    "statistics": {
+      "bootstrap_replicates": 499,
+      "bootstrap_seed": 872341,
+      "confidence": 0.95,
+      "cscv_blocks": 8,
+      "cscv_min_candidates": 8,
+      "dsr_trials": "all attempted candidate slots and neighbor hypotheses across seeds/arms/origins; also report unique configs/cache hits, prior studies uncountable so global independence unproven",
+      "mean_block_days": 30,
+      "minimum_closed_episodes": 20,
+      "minimum_days": 365,
+      "minimum_effective_blocks": 12,
+      "multiple_testing": "paired centered stationary-block bootstrap one-sided mean excess log return; Holm familywise adjustment across every frozen finalist, including failures; no claim exact Hansen SPA",
+      "status": "All numeric diagnostics retained; insufficient history/trades/diversity => INCONCLUSIVE, not PASS"
+    },
+    "stress": [
+      "double_fees_slippage_funding_debits",
+      "one_executable_bar_later",
+      "adverse_fill_and_mark",
+      "no_best_day",
+      "no_top3_complete_closed_episodes",
+      "parameter_plateau",
+      "three_search_seeds",
+      "annual_and_predefined_regime_slices",
+      "asset_episode_concentration",
+      "four_account_capacities",
+      "dollar_costs",
+      "exposure_drift",
+      "asset_lineage",
+      "prefix_and_future_mutation_audit"
+    ]
+  },
+  "created_utc": "2026-09-27T12:03:19.068057+00:00",
+  "dataset": null,
+  "experiment_id": "causal_nested_v1_20260927",
+  "files": {
+    "__init__.py": "00d8a347eedb1f164bb1f94b409df1ebcb5ee5230d3b884b0c12f9161c4ae397",
+    "acquisition.py": "6467da15b1d50d97542fce3b75cebff19525fede21b392c3f289cbd1c84a5948",
+    "anti_overfitting_contract.json": "ed8ffa0f82e0daddaef9d0af8d3f9abdfc18b552945b6093c05f09baaa18aab0",
+    "bootstrap.py": "aeea47a37ccfac9c5e3d75fb898eb91bcc9d2915a50094ac5c2920bc2b87fc95",
+    "cli.py": "f4a881ee2fe58d21fa03fbad599aa02bcc6298ea97980d5dbfa3fb5aee0fe5dc",
+    "continuation.py": "5d4e782ff4fe715716a979e49402ef00d6abe69056565f16b865afce586d5d6c",
+    "controller.py": "f193f31f953bb7ba1b7e808c991160dc8a3b0ca9dab1b231b316a46f147cfe04",
+    "deployment.py": "84a517e96869e45e6f0648f2a18fec1d33e5371e80a202af9460870fe5f888e4",
+    "designer.py": "82b1fec9ce24df035db39b885e9e48a0608f01058a4a2364bd9d043df3b00ca1",
+    "evaluator.py": "844834c89994798f7162865d7e2c3e2db3967039fa1a7c08c4ccf15f91e6e958",
+    "evolution_contract.json": "5a94a91a3feda2dd1abddbc49fa4425bbf125513181855d20adbf1ef3116ffbb",
+    "gate.py": "755bd666f9b29825b5fec13f87820fe03b151aca20d699d65b6936563afbd4f1",
+    "inputs/funding.zip": "0befd0f350595ac3ecd7cf94b1f495244183a1446e8282888d3d6653293f8e65",
+    "inputs/identity_events.json": "a62e62989a82a8e962dd4576299b88061823f543d7993d81611769116356da3e",
+    "inputs/perp_mark.zip": "46c2dbe4d02546345d87312adbb1d5e806d759efcad1104e3252cbcf4306d7f2",
+    "inputs/perp_trade.zip": "5a4196c438df5b1003a6a346fea11cbb69af2c12764ff2f169df0bff9db93c36",
+    "inputs/spot_4h.zip": "657a0d64e9c4cc9ea02bb8a81766dc2d9bc2b852a2c88c8a9055e39e33e72409",
+    "inputs/spot_daily.zip": "21cdd19d993258ceaa14638887c372bfd6cb352a8f7e955a9d67a68db52fba45",
+    "inputs/venue_notices.json": "5c5785987f38ce267d2dd4c2910836a1ff650d6198d700f7eff26f5e3aa5ea26",
+    "install_release.py": "5c94dfe3d7ce96390c653d7f3ce41b0fd21aafe63dda66bb6e3516be881d2018",
+    "locking.py": "a46f091b01af402cbe568dedbb05808b0c6d7afc11ec08f4179117eba4a8360c",
+    "mailbox.py": "58868a5dddacc96b2153bd35345b09f858883d4838c8a0006c1db0cad38289f2",
+    "preregistration.json": "559eb6c79ef4187ba5a67cff9eaeeb460567a25441130d69f64719ad2f75f0d4",
+    "proposal_schema.py": "f659490ec5426e9efdda2050ca4600e5f6dc13faa8cee8336c93520854110680",
+    "protocol.py": "159edf0237e891ffbc716c07f9105bdd956e430904e84306fadcde6cf6c58e43",
+    "reporting.py": "24b9fa3299d60e2f4b84f3caaef2f2274be6113c371184050daa0ab6cd59f61c",
+    "resources.py": "db3f7b8345bf919290b7ffb7e459fdcfa5ab759e94c8e9cff034b864e98dfe86",
+    "source_lineage.json": "5fedab9dc433c5fcbeb903022ed65a9c529093826779312128ee6be57937e46b",
+    "statistics.py": "309e0b9a4b2bc6b9a8376fdf96941792c559673c887834395612a6436454ec1b",
+    "store.py": "9d7904e3fbafb088e580e4420799def02787981c08ecc6f644deccc0cc407ad1",
+    "tests.py": "6f250b41ecfdc219a084150e54ffc784b18f88ae4210363a1a06e2c0bbad4122",
+    "vendor/__init__.py": "1fd499df0af17d2860fd4b85be41547ef1aa37a0dc8298f763f33fab159c59cf",
+    "vendor/common.py": "3ee73fadd524cd6702245f380cd94af525234ad6da9e92900fb15a991ebe1129",
+    "vendor/contract.json": "75dd9a05c814f96f85066a6437589e0022f46e7e9a5af0721048ad1173f6c62f",
+    "vendor/data.py": "9769dfc4c7c044a04074ef005bb381fbe56a2c36a6286b37cfbff04b51b84161",
+    "vendor/ledger.py": "a08ffb32f9ca025453143f3708ed79d4830ef529e5dfd9b0b9ef5dcf3a87180b",
+    "vendor/signals.py": "e68532c3a59167f70fc0ae41adb1556854d6aa78acf9827737460543759c0ae1",
+    "vendor/test_research.py": "2521b2bef5b5180277abf105c46174dee0459409715b7e8a339b0d5bc28ee61e"
+  },
+  "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+  "historical_label": "PREVIOUSLY_SEEN_NOT_GLOBAL_SEALED",
+  "periods": {
+    "2024": [
+      {
+        "end": "2020-10-29",
+        "fold": 0,
+        "scope": "inner_train",
+        "start": "2020-01-01"
+      },
+      {
+        "end": "2022-05-31",
+        "fold": 0,
+        "scope": "inner_validation",
+        "start": "2022-02-01"
+      },
+      {
+        "end": "2021-02-26",
+        "fold": 1,
+        "scope": "inner_train",
+        "start": "2020-01-01"
+      },
+      {
+        "end": "2022-09-28",
+        "fold": 1,
+        "scope": "inner_validation",
+        "start": "2022-06-01"
+      },
+      {
+        "end": "2024-12-31",
+        "fold": 2024,
+        "scope": "outer",
+        "start": "2024-01-01"
+      }
+    ],
+    "2025": [
+      {
+        "end": "2021-10-30",
+        "fold": 0,
+        "scope": "inner_train",
+        "start": "2020-01-01"
+      },
+      {
+        "end": "2023-06-01",
+        "fold": 0,
+        "scope": "inner_validation",
+        "start": "2023-02-02"
+      },
+      {
+        "end": "2022-02-27",
+        "fold": 1,
+        "scope": "inner_train",
+        "start": "2020-01-01"
+      },
+      {
+        "end": "2023-09-29",
+        "fold": 1,
+        "scope": "inner_validation",
+        "start": "2023-06-02"
+      },
+      {
+        "end": "2025-12-31",
+        "fold": 2025,
+        "scope": "outer",
+        "start": "2025-01-01"
+      }
+    ]
+  },
+  "prospective_start": "2026-09-27",
+  "synthetic": false,
+  "synthetic_profile": null
+}
