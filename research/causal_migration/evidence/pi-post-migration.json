@@ -1,0 +1,37 @@
+{
+  "checkpoint_count": 5087,
+  "failure": null,
+  "outer_opened": false,
+  "production": {
+    "git_diff_sha256": "db26e0921697f64361308d2a233e661409f9f6b469f7974c999f4b468b548e71",
+    "head": "5ee031cef7de9c385056cec22f6511391d3e4f4f",
+    "inventory_sha256": "6f64b87046c0ad2d32e1eaee4a09fcbec9ac7977bde28b4fc2c76bea9f36450c",
+    "journal": {
+      "/opt/market_regime_v1/outputs/execution/execution_journal/exec_445e5da83a53a04f10710c25a31941a8.json": "de56dab75a357b502158e227db665b5d5614c675c7d5100775742ffe324f1746",
+      "/opt/market_regime_v1/outputs/execution/execution_journal/exec_4a16bcd2bc00e64ad01723670414d938.json": "4fac2f5ff8459b6fb7494870ce55da563a783e1449fbce3e61642ef8675f2ac4",
+      "/opt/market_regime_v1/outputs/execution/execution_journal/exec_5f6cb22125733364f46dc3fd6f65d4bd.json": "1100fb8e7914828b31878504b51ed924d17df90c8413f168deea6ce1948821bd",
+      "/opt/market_regime_v1/outputs/execution/execution_journal/exec_817ce43d04e3f8cd1f4a3bf5980d6d87.json": "68e68b61ac45f8a327677092b5fb1ed2337c698a658cb8347d7c98e5f16303e8",
+      "/opt/market_regime_v1/outputs/execution/execution_journal/exec_f973fc01cb74cdd176f9eeb497fd2351.json": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48",
+      "/opt/market_regime_v1/outputs/execution/execution_journal/latest_execution_journal.json": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48"
+    },
+    "states": {
+      "home-blinds-dashboard.service": "Result=success\nActiveState=active\nUnitFileState=enabled",
+      "mrv1-production.service": "Result=success\nActiveState=inactive\nUnitFileState=disabled",
+      "mrv1-production.timer": "Result=success\nActiveState=active\nUnitFileState=enabled",
+      "mrv1-watchdog.timer": "Result=success\nActiveState=active\nUnitFileState=enabled"
+    },
+    "units": {
+      "home-blinds-dashboard.service": "fa4b5270081136d7a899040b68a2c1391e3076f10dd5c6391893b91914fecbe6",
+      "mrv1-production.service": "858a6016bcae4f92e56a318a2212609ab6f963fa3b8479060d2e1d7d2cf34889",
+      "mrv1-production.timer": "2bc7d0521cfe503140ce8d37c6767727a47e0bbbab565047da6fb8fece9dfbca",
+      "mrv1-watchdog.timer": "78fda3cfc5a4f18661be08c73853157803c77fda21121aeedee5491c414f7cac"
+    }
+  },
+  "production_identical": true,
+  "research": {
+    "trendatlas-causal-broker.timer": "ActiveState=inactive\nUnitFileState=disabled",
+    "trendatlas-causal-maintain-dispatch.timer": "ActiveState=inactive\nUnitFileState=disabled",
+    "trendatlas-evolution-dispatch.timer": "ActiveState=inactive\nUnitFileState=disabled",
+    "trendatlas-evolution-worker.service": "MainPID=0\nActiveState=inactive\nUnitFileState=static"
+  }
+}

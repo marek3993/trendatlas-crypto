@@ -1,0 +1,233 @@
+{
+  "active_seconds": 29160.412287573985,
+  "ai_ledger_unchanged": true,
+  "counts": {
+    "attempts": 5099,
+    "candidates": 999,
+    "evaluations": 5091,
+    "finalists": 108,
+    "proposals": 84,
+    "trials": 2925
+  },
+  "events": [
+    {
+      "activation_token": "bb1f52cdac555c0523e5a9648ffb05dc",
+      "counts": {
+        "attempts": 5099,
+        "candidates": 999,
+        "evaluations": 5091,
+        "finalists": 108,
+        "proposals": 84,
+        "trials": 2925
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "interrupted_attempts": [],
+      "outer_opened": false,
+      "reason": "validation_evaluation_limit",
+      "status": "CHECKPOINTED",
+      "utc": "2026-09-28T18:44:32.672790+00:00",
+      "verified": {
+        "checkpoint": {
+          "attempt": 5099,
+          "evaluation": "f26b633f92dab12828cbc2570a2633363c00f91cd52c434651a87da37c7e4060",
+          "utc": "2026-09-28T18:44:32.428598+00:00"
+        },
+        "evaluations": 5091,
+        "outer_opened": false,
+        "running": 0
+      }
+    },
+    {
+      "activation": {
+        "active_seconds_before": 29151.182369769987,
+        "closed_outer": true,
+        "initial_evaluations": 5089,
+        "monotonic": 79349.832314631,
+        "pid": 310791,
+        "token": "bb1f52cdac555c0523e5a9648ffb05dc",
+        "utc": "2026-09-28T18:44:23.445500+00:00"
+      },
+      "counts": {
+        "attempts": 5097,
+        "candidates": 999,
+        "evaluations": 5089,
+        "finalists": 108,
+        "proposals": 84,
+        "trials": 2925
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "outer_opened": false,
+      "reason": null,
+      "status": "RUNNING",
+      "utc": "2026-09-28T18:44:23.448142+00:00"
+    },
+    {
+      "activation_token": "ca8babb048c998cbfcaa28ba1f205acb",
+      "counts": {
+        "attempts": 5097,
+        "candidates": 999,
+        "evaluations": 5089,
+        "finalists": 108,
+        "proposals": 84,
+        "trials": 2925
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "interrupted_attempts": [],
+      "outer_opened": false,
+      "reason": "validation_evaluation_limit",
+      "status": "CHECKPOINTED",
+      "utc": "2026-09-28T18:43:57.993989+00:00",
+      "verified": {
+        "checkpoint": {
+          "attempt": 5097,
+          "evaluation": "a261873755598737a43d7274ae9fcc65d7fd6d5d20b95ec28928757c06349c60",
+          "utc": "2026-09-28T18:43:57.743164+00:00"
+        },
+        "evaluations": 5089,
+        "outer_opened": false,
+        "running": 0
+      }
+    },
+    {
+      "activation": {
+        "active_seconds_before": 29142.120198655,
+        "closed_outer": true,
+        "initial_evaluations": 5087,
+        "monotonic": 79315.322779323,
+        "pid": 310419,
+        "token": "ca8babb048c998cbfcaa28ba1f205acb",
+        "utc": "2026-09-28T18:43:48.935976+00:00"
+      },
+      "counts": {
+        "attempts": 5095,
+        "candidates": 999,
+        "evaluations": 5087,
+        "finalists": 108,
+        "proposals": 84,
+        "trials": 2925
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "outer_opened": false,
+      "reason": null,
+      "status": "RUNNING",
+      "utc": "2026-09-28T18:43:48.938438+00:00"
+    },
+    {
+      "activation_token": "4714e062e1d365faa47910a9b11e95bb",
+      "counts": {
+        "attempts": 5095,
+        "candidates": 999,
+        "evaluations": 5087,
+        "finalists": 108,
+        "proposals": 84,
+        "trials": 2925
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "interrupted_attempts": [],
+      "outer_opened": false,
+      "reason": "validation_evaluation_limit",
+      "status": "CHECKPOINTED",
+      "utc": "2026-09-28T18:29:47.139078+00:00",
+      "verified": {
+        "checkpoint": {
+          "attempt": 5095,
+          "evaluation": "3ba2ebdb89923c83e26b78d1df4f01da538781980bbd4980ef038aa1c9c4ace9",
+          "utc": "2026-09-28T18:29:46.269514+00:00"
+        },
+        "evaluations": 5087,
+        "outer_opened": false,
+        "running": 0
+      }
+    },
+    {
+      "activation": {
+        "active_seconds_before": 29097.116338530992,
+        "closed_outer": true,
+        "initial_evaluations": 5085,
+        "monotonic": 207546.742446114,
+        "pid": 538372,
+        "token": "4714e062e1d365faa47910a9b11e95bb",
+        "utc": "2026-09-28T18:29:02.137969+00:00"
+      },
+      "counts": {
+        "attempts": 5093,
+        "candidates": 999,
+        "evaluations": 5085,
+        "finalists": 108,
+        "proposals": 84,
+        "trials": 2925
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "outer_opened": false,
+      "reason": null,
+      "status": "RUNNING",
+      "utc": "2026-09-28T18:29:02.143027+00:00"
+    },
+    {
+      "counts": {
+        "attempts": 5093,
+        "candidates": 999,
+        "evaluations": 5085,
+        "finalists": 108,
+        "proposals": 84,
+        "trials": 2925
+      },
+      "experiment_id": "causal_nested_v1_20260927",
+      "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+      "outer_opened": false,
+      "preserved_evaluations": 5085,
+      "reason": "authorized_sigterm_recovery",
+      "status": "CHECKPOINTED",
+      "utc": "2026-09-28T18:28:00.084816+00:00"
+    },
+    {
+      "ai_ledger_sha256": "5cac0171904aa006746e6a588b508b6db58fd4ab102759fece42084fd56e7b13",
+      "authorization": "user-authorized forensic recovery and migration 2026-09-28",
+      "backup": "/run/trendatlas-migration-evidence/original-5085",
+      "original_failure": {
+        "reason": "Command '['/usr/bin/systemctl', 'list-jobs', '--no-legend', '--no-pager']' died with <Signals.SIGTERM: 15>.",
+        "type": "CalledProcessError",
+        "utc": "2026-09-28T00:10:02.064303+00:00"
+      },
+      "preserved": {
+        "attempts": "71fdeadb84e2fedfbf56080da5908f3518ac26aacc1f0c8f766b5da9ac0a7dfb",
+        "candidates": "8f49bda97be51af4c388b8be1babfc1af7ee4be6fb47cb264d5291d0997361d6",
+        "evaluations": "bd586d9786285d03cc295acd003abfc77da05904f0a5a5fab32f6d81b7c9f07a",
+        "finalists": "9bb437fbeb02fb85f39687ec3d13721e5342970e305667d8eb1b7486e8706437",
+        "populations": "d420128efb75a161dfa4fb7b36b3e906afdcacf044622632bf454471183d7462",
+        "scores": "4a8dbb6f18af372bf06bba0ba56ca9a2f4cc348b65a40175d9f9d52995c2f871",
+        "trials": "920462a85974b9441915514557de1fd7576162dca4bbc309739c8bb9591f876f"
+      },
+      "preserved_evaluations": 5085,
+      "status": "AUTHORIZED_RECOVERY",
+      "utc": "2026-09-28T18:27:59.623223+00:00"
+    }
+  ],
+  "failure": null,
+  "prior_rows_missing": {
+    "attempts": 0,
+    "candidates": 0,
+    "evaluations": 0,
+    "finalists": 0,
+    "populations": 0,
+    "scores": 0,
+    "trials": 0
+  },
+  "status": "CHECKPOINTED",
+  "verified": {
+    "checkpoint": {
+      "attempt": 5099,
+      "evaluation": "f26b633f92dab12828cbc2570a2633363c00f91cd52c434651a87da37c7e4060",
+      "utc": "2026-09-28T18:44:32.428598+00:00"
+    },
+    "evaluations": 5091,
+    "outer_opened": false,
+    "running": 0
+  }
+}

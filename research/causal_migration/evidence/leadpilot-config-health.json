@@ -1,0 +1,8 @@
+{
+  "api_health_paths": [
+    "/health/ready"
+  ],
+  "caddy_hashes": {
+    "/opt/leadpilot/deploy/Caddyfile": "069c97a51dd2d2129b6b2cc1dbf6478d2a8f6f6b75938de16df489510355d8b8"
+  }
+}

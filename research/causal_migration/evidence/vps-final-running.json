@@ -1,0 +1,64 @@
+{
+  "active_seconds": 29342.775290073972,
+  "api_calls": 84,
+  "authorized_recovery_events": 1,
+  "backup_health": {
+    "backup": "/var/backups/trendatlas-research/20260928T184709Z",
+    "checkpoint": {
+      "checkpoint": {
+        "attempt": 5120,
+        "evaluation": "f7924123e4ea9e8b6663b4fa0c42cece158ff8f931b204ecf3ec86c29322cc2c",
+        "utc": "2026-09-28T18:47:11.210146+00:00"
+      },
+      "evaluations": 5112,
+      "outer_opened": false,
+      "running": 0
+    },
+    "disk_used_percent": 10.47708246599769,
+    "disk_warning": false,
+    "export": "/srv/trendatlas-research-export/20260928T184709Z",
+    "utc": "20260928T184709Z",
+    "verified": {
+      "files": 9,
+      "integrity": "ok",
+      "sha256": "8ea25401ced71be4377f8530ed8ff80e72a41f568368f9028500f6280c1686ea"
+    }
+  },
+  "checkpoint": {
+    "attempt": 5221,
+    "evaluation": "b64934394b0fd480dbd281d6be15b7cc94defca66ede5162bca2d6d2172c7c06",
+    "utc": "2026-09-28T18:52:05.191326+00:00"
+  },
+  "completed_evaluations": 5213,
+  "experiment_id": "causal_nested_v1_20260927",
+  "failure": null,
+  "foreign_keys": [],
+  "manifest_sha256": "1f92cd047b2d39cc071984f57485beaafbb560b935fd23109c9f121154af0abc",
+  "missing_prior_evaluations": 0,
+  "orchestration_files": {
+    "broker.py": "b5d87221d544a9ea4ad56be8e423cb2a42cb43cb286e0ade5dfae0142081c3a5",
+    "contract.json": "3ac00454f63ac6b8a8bdc3c126c44dfc30d3a6468c70a4465d55d0fc892fa744",
+    "deploy.py": "4670df03065763a65fcb18de0529b87c574f79862be19955a31b857117a22e03",
+    "logrotate.conf": "19eb303ce56661c083b69abf5ca530a926d900703a0ce9ae5234f01012eab191",
+    "maintenance.py": "74a2d5a90761cebb2f6091f387a3a02b54d4854a231072968f819e4923c37124",
+    "replay.py": "84d7a3bdcb147879d9d90d8f65bcb7dbadb48bfed886c4cfa7d4290c99f3daf7",
+    "runtime.py": "747fc938dccc139a39eb2f3b619a36bba3120fda9a6a20ce9957592dfa1227fc",
+    "snapshot.py": "0e5b71f9ff471bf215da0fad0fcd5c52c5bb9c98a48d0e65f25f1765c58eb0e0",
+    "systemd_probe.py": "5100df3a14e816b48c46e3f2ac79589c0c9646f24a1bd84bf7033d181b4e07f1",
+    "test_replay.py": "936b11cea093bcecc7e9ce15d8fb642deacd12282ae6f66474a716e1717536ff",
+    "test_runtime.py": "63a94c5633a61268ad5b9d9e7978e068ccffd4f350a9d7bf3d3be19487076268"
+  },
+  "original_failed_events": 1,
+  "outer_opened": false,
+  "proposals": 84,
+  "running_reservations": 1,
+  "sqlite_integrity": "ok",
+  "sqlite_lock_errors": [],
+  "status": "RUNNING",
+  "units": {
+    "trendatlas-research-backup.timer": "ActiveState=active\nUnitFileState=enabled\nResult=success",
+    "trendatlas-research-broker.timer": "ActiveState=active\nUnitFileState=enabled\nResult=success",
+    "trendatlas-research-dispatch.timer": "ActiveState=active\nUnitFileState=enabled\nResult=success",
+    "trendatlas-research-worker.service": "ActiveState=active\nUnitFileState=enabled\nMainPID=313358\nResult=success"
+  }
+}

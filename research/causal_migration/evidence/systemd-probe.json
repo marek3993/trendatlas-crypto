@@ -1,0 +1,63 @@
+{
+  "admin": {
+    "attempts": [
+      [
+        "COMPLETE",
+        1
+      ],
+      [
+        "INTERRUPTED",
+        1
+      ]
+    ],
+    "failure": null,
+    "status": "CHECKPOINTED",
+    "systemd": {
+      "ActiveState": "inactive",
+      "MainPID": "0",
+      "Result": "success"
+    }
+  },
+  "timeout": {
+    "attempts": [
+      [
+        "COMPLETE",
+        1
+      ],
+      [
+        "INTERRUPTED",
+        1
+      ]
+    ],
+    "failure": null,
+    "status": "CHECKPOINTED",
+    "systemd": {
+      "ActiveState": "failed",
+      "MainPID": "0",
+      "Result": "timeout"
+    }
+  },
+  "unexpected": {
+    "attempts": [
+      [
+        "COMPLETE",
+        1
+      ],
+      [
+        "RUNNING",
+        1
+      ]
+    ],
+    "failure": {
+      "reason": "SIGTERM/SIGINT without bound administrative request",
+      "type": "UnexpectedStop",
+      "utc": "2026-09-28T18:23:36.416812+00:00"
+    },
+    "status": "FAILED",
+    "systemd": {
+      "ActiveState": "failed",
+      "MainPID": "0",
+      "Result": "exit-code"
+    }
+  }
+}

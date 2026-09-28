@@ -1,0 +1,4 @@
+Sep 28 18:50:30 vps-4f79db29 systemd[1]: Starting trendatlas-broker-isolation-probe.service - Development-only research proposal broker...
+Sep 28 18:50:31 vps-4f79db29 python3[313854]: {"blocked": {"/var/lib/trendatlas-research/causal-v1/current/candidates.sqlite": true, "/opt/trendatlas-research/releases/53b6a5336ca1f7ce35b481a017f7e82396f3613c/research/causal_evolution/inputs": true, "/opt/leadpilot/.env": true, "/run/docker.sock": true}, "credential_present": true, "mailbox_readable": true}
+Sep 28 18:50:31 vps-4f79db29 systemd[1]: trendatlas-broker-isolation-probe.service: Deactivated successfully.
+Sep 28 18:50:31 vps-4f79db29 systemd[1]: Finished trendatlas-broker-isolation-probe.service - Development-only research proposal broker.

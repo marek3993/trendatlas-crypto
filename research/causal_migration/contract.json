@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "issue_class": ["C", "B"],
+  "experiment_id": "causal_nested_v1_20260927",
+  "engine_commit": "53b6a5336ca1f7ce35b481a017f7e82396f3613c",
+  "fingerprint": "eeb244ea6a79ef396f8f607696eebe08115b4a3a3bb16d4e74d0d251df0d8385",
+  "manifest_sha256": "1f92cd047b2d39cc071984f57485beaafbb560b935fd23109c9f121154af0abc",
+  "cooperative_seconds": 1680,
+  "hard_timeout_seconds": 1800,
+  "stop_timeout_seconds": 120,
+  "maximum_workers": 1,
+  "recovery": {
+    "authorization": "user-authorized forensic recovery and migration 2026-09-28",
+    "failure_type": "CalledProcessError",
+    "failure_reason": "Command '['/usr/bin/systemctl', 'list-jobs', '--no-legend', '--no-pager']' died with <Signals.SIGTERM: 15>.",
+    "failure_utc": "2026-09-28T00:10:02.064303+00:00",
+    "completed_evaluations": 5085,
+    "attempts": 5093,
+    "candidates": 999,
+    "trials": 2925,
+    "require_closed_outer": true,
+    "require_verified_sqlite_backup": true,
+    "max_running_reservations": 0
+  },
+  "stop_contract": {
+    "expected_admin_stop": "ExecStop writes a request bound to the current activation token and PID before signaling; repeated requests are idempotent.",
+    "cooperative_exit": "The frozen Guard remains unchanged. On expected stop, at most one unfinished reservation becomes INTERRUPTED, retaining its attempt budget; completed results are never overwritten.",
+    "checkpoint_validation": "Both SQLite integrity/foreign-key checks pass, COMPLETE attempts bijectively match evaluations, last checkpoint identifies an atomic completed row, no open reservations remain, count never decreases, original identity and OOS barrier remain valid.",
+    "unexpected_signal": "SIGTERM without a bound administrative request is FAILED, including signals during unsaved work. No generic CalledProcessError is reclassified.",
+    "hard_timeout": "Only systemd ExecStopPost with SERVICE_RESULT=timeout and an existing activation record may reconcile at most one abandoned reservation and validate the last durable checkpoint. Systemd remains failed/timeout; database may become CHECKPOINTED and Restart=on-failure resumes. Invalid database/checkpoint becomes FAILED.",
+    "failure_history": "Record original failure and authorized recovery event transactionally before clearing only current runtime failure; preserve all previous events."
+  },
+  "migration": {
+    "single_host": "Disable Pi research dispatch/maintenance/broker only after valid checkpoint; acquire worker and broker locks for SQLite-safe package; never run real experiment workers on both hosts.",
+    "engine": "Exact frozen release and input hashes; no scientific code or budget change. VPS uses frozen Guard with pi=false plus external OS resource isolation; Pi retains frozen production gate and limits.",
+    "validation_resume": "Bounded evaluation-count guard and no_outer stop before outer_estimate; no new experiment initialization.",
+    "cross_architecture": "Exact signal decisions, event identities, integer/string fields, nonfinite masks and shapes. Numeric replay uses the frozen evaluator.prefix_audit existing rtol=1e-10, atol=1e-10, declared before replay, for fills/daily returns/NAV/metrics. Fixed existing candidate, development slice, search seed and double_cost stress; report exact equality separately. No tolerance adjustment after results.",
+    "vps_limits": "One network-denied worker; MemoryMax=4608M MemorySwapMax=0 CPUQuota=300% CPUWeight=10 Nice=10 TasksMax=32; isolated development-only broker limited to 512M/20% CPU with root-owned systemd credential. Research logs rotate daily, 7 compressed copies, 10M maximum size; backup health records disk usage and warning above 75%.",
+    "backup": "Worker/broker locks; SQLite backup API; manifest SHA256; 7 daily and 4 weekly snapshots. Export read-only, no production writes. Never delete newest valid backup, manifest or final result."
+  }
+}

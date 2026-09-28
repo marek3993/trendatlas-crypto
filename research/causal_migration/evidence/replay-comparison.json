@@ -1,0 +1,34 @@
+{
+  "atol": 1e-10,
+  "candidate_id": "F_43882aab02ff",
+  "environments": [
+    {
+      "architecture": "aarch64",
+      "numpy": "2.4.4",
+      "pandas": "3.0.3",
+      "python": "3.13.5",
+      "sqlite": "3.46.1"
+    },
+    {
+      "architecture": "x86_64",
+      "numpy": "2.4.4",
+      "pandas": "3.0.3",
+      "python": "3.13.5",
+      "sqlite": "3.49.1"
+    }
+  ],
+  "exact_numeric_equality": true,
+  "fills": 3,
+  "maximum_absolute_delta": 0.0,
+  "mismatches": [],
+  "pass_replay": true,
+  "period": {
+    "end": "2023-06-01",
+    "fold": 0,
+    "scope": "inner_validation",
+    "start": "2023-02-02"
+  },
+  "rtol": 1e-10,
+  "seed": 1701,
+  "stress": "double_cost"
+}

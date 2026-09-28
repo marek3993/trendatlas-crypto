@@ -1,0 +1,9 @@
+{
+  "live_order_chain": "NOT_INVOKED",
+  "method": "Unsigned read-only /info, no signer, no mutation",
+  "openOrders_count": 0,
+  "real_order_sent": false,
+  "since": "2026-09-28T17:00:00+00:00",
+  "userFillsByTime_count": 0,
+  "utc": "2026-09-28T18:54:04.640999+00:00"
+}

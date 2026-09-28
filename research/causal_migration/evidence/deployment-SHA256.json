@@ -1,0 +1,26 @@
+{
+  "logrotate_sha256": "19eb303ce56661c083b69abf5ca530a926d900703a0ce9ae5234f01012eab191",
+  "orchestration": {
+    "broker.py": "b5d87221d544a9ea4ad56be8e423cb2a42cb43cb286e0ade5dfae0142081c3a5",
+    "contract.json": "3ac00454f63ac6b8a8bdc3c126c44dfc30d3a6468c70a4465d55d0fc892fa744",
+    "deploy.py": "4670df03065763a65fcb18de0529b87c574f79862be19955a31b857117a22e03",
+    "logrotate.conf": "19eb303ce56661c083b69abf5ca530a926d900703a0ce9ae5234f01012eab191",
+    "maintenance.py": "6672f821245176a129e6238f1a3cea64017f138bb415f5d16406e7b2a4108e63",
+    "replay.py": "84d7a3bdcb147879d9d90d8f65bcb7dbadb48bfed886c4cfa7d4290c99f3daf7",
+    "runtime.py": "747fc938dccc139a39eb2f3b619a36bba3120fda9a6a20ce9957592dfa1227fc",
+    "snapshot.py": "0e5b71f9ff471bf215da0fad0fcd5c52c5bb9c98a48d0e65f25f1765c58eb0e0",
+    "systemd_probe.py": "5100df3a14e816b48c46e3f2ac79589c0c9646f24a1bd84bf7033d181b4e07f1",
+    "test_maintenance.py": "9cc5b1bb566d11f3958d04b0097086400bc23a55f46495e5db44556ab8986b79",
+    "test_replay.py": "936b11cea093bcecc7e9ce15d8fb642deacd12282ae6f66474a716e1717536ff",
+    "test_runtime.py": "1a45ff15aea5bc42da5e96131be1f0a6be3fe594358a3867add99a263212fcba"
+  },
+  "units": {
+    "trendatlas-research-backup.service": "0be586a4ee5142862883b514e3df8ae49605ccd23f252672a92b93701b29e448",
+    "trendatlas-research-backup.timer": "d93df23c4a674d11142c5dbb32eef7c5ad728cb33f6ab8eef6f6f70c6871eded",
+    "trendatlas-research-broker.service": "327f0b035224e31a5e14fb01c10f9d3c4df45597da2a0ab8c5334f808159abc1",
+    "trendatlas-research-broker.timer": "8d46aff0cf6bfea39efe2afa721daf8b53b1fb32fee1cf52c43ff6097bacb113",
+    "trendatlas-research-dispatch.service": "5f8044e1e0f09c1558507f9006236e9a2e31dfa6582482594b2f502ea523d334",
+    "trendatlas-research-dispatch.timer": "26f6c657d8a03cb048d864d4407f18d5bb76824c2af419bc1cdf8ac4d984a6a5",
+    "trendatlas-research-worker.service": "631802fa29779eb9a64fdf371c8370d70d4c35a25b2d0a388debc7c6e1f7e171"
+  }
+}

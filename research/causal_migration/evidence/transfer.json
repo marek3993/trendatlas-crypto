@@ -1,0 +1,28 @@
+{
+  "checkpoint-5087.tar.gz": {
+    "bytes": 75639466,
+    "sha256": "3ecf5101bee3a19993b500835e1521d4f2a2a53d1b78ff236ce151921107e8e8"
+  },
+  "frozen_manifest": {
+    "sha256": "1f92cd047b2d39cc071984f57485beaafbb560b935fd23109c9f121154af0abc"
+  },
+  "migration-5087.tar.gz": {
+    "bytes": 131304764,
+    "sha256": "9cfa5c74d8b57992620333a2d5d5c41399712d8c9b4280c6b09ac0717a5fa264"
+  },
+  "original-5085.tar.gz": {
+    "bytes": 75586145,
+    "sha256": "98658cdf8687b7fd498a3cf953b439d5712869613b3077621028066c2ffab0ca"
+  },
+  "sqlite_source": {
+    "candidates.sqlite": {
+      "bytes": 111435776,
+      "sha256": "5457c1d146ae3d7825dec926cb0d13b82ea1b13c596f578c98b48715254ad720"
+    },
+    "mailbox/proposals.sqlite": {
+      "bytes": 2514944,
+      "sha256": "b9f962fd154bedc05198ca1c07ae96517d4150b299e0bbe23b6c23efc16ae909"
+    }
+  },
+  "transfer_file_manifest_sha256": "44e95237f0c332253bae4f4d9c594dda933d3761dc987063291ef11d39254547"
+}

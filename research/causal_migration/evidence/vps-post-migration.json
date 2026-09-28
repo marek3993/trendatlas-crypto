@@ -1,0 +1,43 @@
+{
+  "broker_groups": "trendatlas-research-broker trendatlas-research",
+  "config_hashes": {
+    "/opt/leadpilot/docker-compose.yml": "fa76a3b2f667cd92e7eb993c7a37ed2575190405063692e07cfeb7f867a9e047"
+  },
+  "containers": {
+    "/leadpilot-api-1": {
+      "health": "healthy",
+      "id": "805caf351d276bf6c98ed2c8acf18b61e5f5e954249744a447f5953b659ef4f9",
+      "restarts": 0,
+      "running": true,
+      "started": "2026-09-27T20:42:03.232115845Z"
+    },
+    "/leadpilot-db-1": {
+      "health": "healthy",
+      "id": "19c0f003667485132ea3b257019e459481d42a3bd2ac14d775a98cf8c1f22e62",
+      "restarts": 0,
+      "running": true,
+      "started": "2026-09-27T20:42:03.230522174Z"
+    },
+    "/leadpilot-frontend-1": {
+      "health": "healthy",
+      "id": "5dbda13863fcc4d95068d233a60828bea2803b411e3465379274dfe2dc21e170",
+      "restarts": 0,
+      "running": true,
+      "started": "2026-09-27T20:42:03.228102002Z"
+    },
+    "/leadpilot-proxy-1": {
+      "health": null,
+      "id": "5a483dbed29089b036fc16b90a2f3d3517adb328624641b45f6b70d0c3145e7b",
+      "restarts": 0,
+      "running": true,
+      "started": "2026-09-27T20:42:03.227505228Z"
+    }
+  },
+  "containers_unchanged": true,
+  "cpu_count": "4",
+  "disk": "Filesystem       1B-blocks       Used   Available Use% Mounted on\n/dev/sda1      76878503936 8054644736 68807081984  11% /",
+  "ports": "Netid State  Recv-Q Send-Q      Local Address:Port Peer Address:Port\nudp   UNCONN 0      0              127.0.0.54:53        0.0.0.0:*   \nudp   UNCONN 0      0           127.0.0.53%lo:53        0.0.0.0:*   \nudp   UNCONN 0      0      57.129.127.49%ens3:68        0.0.0.0:*   \nudp   UNCONN 0      0               127.0.0.1:323       0.0.0.0:*   \nudp   UNCONN 0      0                 0.0.0.0:443       0.0.0.0:*   \nudp   UNCONN 0      0                   [::1]:323          [::]:*   \nudp   UNCONN 0      0                    [::]:443          [::]:*   \ntcp   LISTEN 0      4096           127.0.0.54:53        0.0.0.0:*   \ntcp   LISTEN 0      4096              0.0.0.0:443       0.0.0.0:*   \ntcp   LISTEN 0      4096              0.0.0.0:80        0.0.0.0:*   \ntcp   LISTEN 0      4096              0.0.0.0:22        0.0.0.0:*   \ntcp   LISTEN 0      4096        127.0.0.53%lo:53        0.0.0.0:*   \ntcp   LISTEN 0      4096                 [::]:443          [::]:*   \ntcp   LISTEN 0      4096                 [::]:80           [::]:*   \ntcp   LISTEN 0      4096                 [::]:22           [::]:*",
+  "ram": "total        used        free      shared  buff/cache   available\nMem:      8122306560   949338112  4617175040    33890304  2909224960  7172968448\nSwap:              0           0           0",
+  "research_groups": "trendatlas-research",
+  "swap": ""
+}

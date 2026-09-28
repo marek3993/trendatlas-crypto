@@ -1,0 +1,14 @@
+{
+  "checkpoint_evaluations": 5087,
+  "mailbox_byte_equal": true,
+  "missing_or_changed_original_rows": {
+    "attempts": 0,
+    "candidates": 0,
+    "evaluations": 0,
+    "finalists": 0,
+    "populations": 0,
+    "scores": 0,
+    "trials": 0
+  },
+  "original_evaluations": 5085
+}

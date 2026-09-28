@@ -1,0 +1,15 @@
+{"blocked": {"/opt/leadpilot/.env": true, "/run/docker.sock": true, "/etc/credstore/trendatlas-research-deepseek": true, "/root/.ssh": true, "/home/ubuntu/.ssh": true}, "network_denied": true, "uid": 999}
+
+MemoryCurrent=214761472
+MemoryPeak=215449600
+TasksCurrent=1
+CPUQuotaPerSecUSec=3s
+MemoryMax=4831838208
+MemorySwapMax=0
+PrivateNetwork=yes
+ProtectSystem=strict
+
+{"backup": "/var/backups/trendatlas-research/20260928T184709Z", "checkpoint": {"checkpoint": {"attempt": 5120, "evaluation": "f7924123e4ea9e8b6663b4fa0c42cece158ff8f931b204ecf3ec86c29322cc2c", "utc": "2026-09-28T18:47:11.210146+00:00"}, "evaluations": 5112, "outer_opened": false, "running": 0}, "disk_used_percent": 10.47708246599769, "disk_warning": false, "export": "/srv/trendatlas-research-export/20260928T184709Z", "utc": "20260928T184709Z", "verified": {"files": 9, "integrity": "ok", "sha256": "8ea25401ced71be4377f8530ed8ff80e72a41f568368f9028500f6280c1686ea"}}
+ActiveState=inactive
+MainPID=0
+Result=success
