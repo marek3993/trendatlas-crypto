@@ -1,111 +1,156 @@
-# VPS production preparation continuation — 2026-09-29
+# Production migration continuation — 2026-09-29
 
-**Verdict: BLOCKED. READY_FOR_OPERATOR_CUTOVER was not issued. PI_SAFE_TO_POWER_OFF=false.**
-
-The VPS now has an isolated production runtime and successfully executed the canonical **no-submit** orchestrator. The blocker is an actual exact-replay mismatch, not an ARM-only policy. No live cutover, financial order, Pi fencing, production-timer activation on VPS, retirement or reboot was executed.
+**READY_FOR_OPERATOR_CUTOVER.** Exact canonical replay and the actual read-only operator preflight passed. Root-owned readiness receipts are sealed. **No live cutover, financial order, Pi fence, VPS timer activation, cleanup or reboot was executed. PI_SAFE_TO_POWER_OFF=false.**
 
 ## SOURCE OF TRUTH
 
-- Live execution host: Pi `/opt/market_regime_v1`, commit `5ee031cef7de9c385056cec22f6511391d3e4f4f`; its production timer remains enabled/active.
-- Staging branch: `codex/vps-production-execution-20260929`, continuing `8db32e600b79e751bb90d34de1f098b3ee49823a`.
-- VPS: `/opt/trendatlas-production/current`, user/group `trendatlas-production`; separate pinned Python 3.13.5 and Node 22.23.2, Python packages matched to Pi, npm package-lock installation.
-- Strategy truth: validated Production Core and canonical intent/gate, closed day **2026-09-28**, **AVAX 1.00x**, trend permission true.
-- Real account truth: fresh Hyperliquid Info reads, **7.65 AVAX**, open orders `[]`. Equity changes with market prices; it is not model equity. One read at 18:24 UTC reported equity 85.98228 USD. Frozen account/metadata inputs were used for exact architecture comparison, rather than pretending independently timed prices must match.
-- Active journal: existing Supabase multi-account run/action/CLOID records and per-agent nonce. There is **no global journal sequence**. Last observed agent nonce remains `1790640666333`. No database restoration/import or journal migration write was performed.
+Branch: codex/vps-production-execution-20260929. Identical corrected source replayed on ARM and x86: **a6413782e4814d820fb6a0ed9e135878dc275ade**. Initial numerical implementation: 07dea5ca62c3a1436535634f8dd5f888db983294.
 
-## Exact root cause and contract impact (B/C)
+Live Pi remains /opt/market_regime_v1 at 5ee031cef7de9c385056cec22f6511391d3e4f4f, unchanged. ARM verification ran in /var/lib/trendatlas-migration/replay; VPS staging is /opt/trendatlas-production/current. Identical commit archives and SHA256 verification established source identity.
 
-The inherited no-submit batch failure bug was fixed in the preceding commit. This continuation adds a GET/HEAD-only database transport, rejects RPCs and mutations before network access, and requires a separately copied rehearsal workspace even when the Python orchestrator is constructed directly. Account snapshots, local journals and failed run evidence are isolated from the canonical runtime. Runtime files cannot be shared through symlinks/hardlinks. Before/after fingerprints prove the copied source did not change during rehearsal.
+Normative contracts under source_of_truth: diagnostic_numeric_contract.json, export_contract.json, production_host_contract.json, production_execution_contract.json and pi_codex_runtime_workflow.md.
 
-The old publisher admitted only Pi/ARM identity. `production_host_contract.json` now defines Linux/aarch64 and Linux/x86_64 capability admission: dependency pins, host binding, SHA256 source and systemd manifests, exact replay and operator-established single authority. Canonical-host admission measures the actual platform. The still-live Pi's historical identity remains compatible; x86 cannot spoof that legacy path using environment architecture overrides. Existing production Pi code is deliberately unchanged until operator migration.
+Current target: closed UTC day **2026-09-28, AVAX 1.00x**, permission true. Real account: **7.65 AVAX**, no open orders, no new fills. Planner: **NO_ACTION**, empty actions.
 
-The full golden replay is **not exactly equal**. Current snapshot values (excluding file/build provenance), all strategy decision columns and the real-input TypeScript planner match exactly, including NO_ACTION and empty action lists. The historical timeseries differs in:
+## Exact root cause — class B, diagnostic export contract
 
-| Field | Differing rows | Maximum absolute difference |
+Raw source SHA256, row ordering, dates/index/dtypes/null masks and daily return bits match. Both hosts use Python 3.13.5, numpy 2.4.4 and pandas 3.0.3, with architecture-specific cp313 manylinux wheels. Both pandas ELF compiler comments identify GCC 14.2.1 20250110. NumPy links scipy-openblas 0.3.31.188.0, neoversev2/Haswell builds. CPUs are Cortex-A76 and virtualized Intel Haswell. Complete wheel tags, build/BLAS configuration, CPU flags and binary hashes are in numeric-portability-evidence.json.
+
+First differing intermediate: **population variance at row 331 (zero-based), 2019-04-01**. For the 30-day window ARM gives 0x1.36d0b85607c70p-16, x86 0x1.36d0b85607c6fp-16. Means and annualization constant are bit-identical. Divergence occurs before square root, annualization and serialization.
+
+The precise cause is **FMA contraction of the Welford second-moment multiply/add in the ARM pandas wheel**, versus separately rounded multiplication and addition on x86. A fixed-order scalar experiment with FMA reproduces every ARM 30/90-day variance bit. Disabling only FMA reproduces every x86 variance bit. ARM disassembly contains fused operations; x86 hardware supports FMA but its wheel produces the unfused recurrence result. This identifies compiler-generated contraction in pandas rolling. [Upstream recurrence](https://github.com/pandas-dev/pandas/blob/v3.0.3/pandas/_libs/window/aggregations.pyx).
+
+Unrestricted process thread counts were 4/5 (ARM/x86). OpenBLAS/OMP/MKL/NumExpr one-thread limits produced 1/2 process threads and no changed metric bits. The scalar controlled recurrence explains the entire variance output without BLAS. Thread scheduling, BLAS, input ordering and serialization are not the cause.
+
+## Exact lineage and contract impact
+
+| Stage / consumer | Role |
+|---|---|
+| ETF-flow adapter build_candidate_timeseries | Diagnostic assignments after decisions/returns; recomputed after historical stitching. |
+| staged_candidate_promotion_support.transform_candidate_timeseries_to_active | Final native diagnostics from authorized return_net, after decisions. |
+| Active adapter build_timeseries | Returns the transformed frame; universe guard reads target asset. |
+| Production Core builder | Builds/validates snapshot using unchanged native frame; canonicalizes only an export copy. |
+| Production Core validator | Requires column names; values do not select, authorize or size trades. Canonical export also validates. |
+| app.py CSV reader | Numeric coercion/presentation history. |
+| TypeScript planner / web frontend | No reads of either field. Planner reads target/account/exchange metadata. |
+
+Neither field feeds **selected asset, target exposure, trend permission, risk scaling or execution planning**. Other staged/fallback adapters emit diagnostics, but no decision reader of these names was found. No frontend or strategy adapter was edited.
+
+The source export contract was patched and validated first. Native computation and its existing precision remain unchanged. A deep export copy changes exactly two columns. All **67 other columns, every historical row and current snapshot remain exactly unchanged** against original per-platform replay. The comparator now fails closed on any non-diagnostic history/snapshot change.
+
+## Deterministic representation and oracle
+
+Precision remains the **existing 12 fractional places**, not a coarser precision chosen from observed differences. Volatility is an annualized return fraction; its exported quantum is 10^-12 (10^-10 percentage points). Sharpe is dimensionless. Published returns already occupy the 12-place decimal lattice; off-lattice/infinite values fail closed. Missing values preserve active zero-fill behavior. Unique increasing ISO dates are required; no silent sort/deduplication.
+
+Let scaled integer returns be x_i, S=10^12, n the window, A=sum(x_i), Q=sum(x_i²), D=nQ−A². Unbounded integers compute D exactly. Population variance is D/(nS)² and annualization is exactly 1461/4.
+
+- Scaled volatility: round_half_even(sqrt(1461 D / (4 n²))).
+- Scaled Sharpe: sign(A) round_half_even(sqrt(1461 A² S² / (4 D))).
+- Integer isqrt and exact squared-midpoint comparisons implement rounding. No platform float reduction/sqrt or production Decimal context.
+- Full windows: 30/90; earlier rows null. Zero variance: volatility 0, Sharpe null. Negative exact variance fails, never clamps.
+- CSV uses fixed decimal text; JSON stays numeric. Audit also compares scaled integer arrays and complete CSV SHA256.
+
+Independent oracle: fresh **centered two-pass Decimal mean/variance/sqrt at 80 digits**, checked at 120 digits over full history. It shares no production integer-moment algorithm and never feeds signals. Exact binary inputs and public decimal inputs were both examined.
+
+| Original metric error vs decimal oracle | ARM / old Pi absolute | x86 absolute | Maximum relative, nonzero reference |
+|---|---:|---:|---:|
+| rolling_vol_30d | 2.1004e-8 | 2.2986e-8 | ~7.84341e-10 |
+| rolling_sharpe_90d | 1.97274e-11 | 5.47274e-11 | ~4.35320e-11 |
+
+Relative error at zero is undefined. Native residual variance caused 942 ARM / 976 x86 nonzero exports in truly zero-volatility windows. In 416 constant-return windows, old Sharpe was finite because of the residual; canonical Sharpe is now correctly null. These are diagnostic corrections only.
+
+Canonical maximum absolute errors: **4.995904e-13 volatility**, **4.998774e-13 Sharpe**, bounded by exact decimal half-quantum 0.5e-12. This proves rounding, **not an acceptance tolerance**. No allclose, threshold relaxation or price/quantity/order/journal approximation was introduced.
+
+## Decision threshold evidence
+
+Diagnostic influence on every decision threshold is exactly zero, including exact boundaries. Tests place values below/on/above exposed boundaries and prove every non-diagnostic column unchanged.
+
+| Historical surface | Minimum absolute distance | Maximum ARM/x86 difference |
 |---|---:|---:|
-| rolling_vol_30d | 976 | 6.586000000000001e-9 |
-| rolling_sharpe_90d | 97 | 3.5000002895912985e-11 |
+| trend score − buy threshold | 0.000233 | 0 |
+| trend score − activation threshold | 0.000032 | 0 |
+| BTC close − EMA10 | 0.387911435689 USD | 4e-11 USD |
+| three-day ETF flow − 500 million USD | 900,000 USD | 0 |
+| exposure − cash tolerance 1e-9 | 1e-9 | 0 |
+| exposure − leverage boundary 1.000000001 | 1e-9 | 0 |
 
-These are derived rolling statistics. The precise native floating-point/build cause has not been isolated. File line endings were normalized to Git LF; the numerical differences remained. No tolerance was invented, widened or borrowed from an unrelated check. No strategy calculation was changed to make the replay pass. `cross-architecture.json` preserves the failed full comparison, and the root-owned VPS readiness/capability receipts remain BLOCKED. Fixing/proving this numerical portability is required before READY can be issued.
+Intentional exposure=0/1 boundaries remain exact. Cooldown/date/count boundaries and permission/filter booleans are untouched and equal in enriched decision surfaces. Baseline selector/trend decisions are frozen upstream inputs, not rerun research searches.
 
-## Deployed and observed
+Native EMA is another existing differing intermediate, unchanged here. Independent 80-digit EMA oracle (alpha=2/11, adjust=false): maximum absolute errors 7.044e-11 ARM and 6.377e-11 x86 USD; closest oracle price boundary 0.387911435691 USD away. Every price-filter boolean matches. We do not claim every native intermediate is bit-identical.
 
-- Canonical run `prod_20260929T184645Z_371710`: **PREFLIGHT_READY**, backend multi_account, `live_order_chain=NOT_INVOKED`, `real_order_sent=false`, dashboard materialization PASSED, authority publication SKIPPED_NO_SUBMIT. Source runtime fingerprints unchanged. See `no-submit-evidence.json`.
-- Separate `publish-existing --dry-run`: exit 0, zero pushes. No real authority publication occurred. Publisher Git read access and `git push --dry-run` were verified without modifying a remote ref.
-- VPS production service's persistent override invokes `run_production_rehearsal.py`. Production timer: **disabled/inactive**, `Persistent=yes`. No automatic live trading is enabled.
-- Watchdog installed and manually verified: Result=success, no production writes, no strategy change, no order chain. Its timer remains disabled/inactive pending operator activation.
-- Active multi-account server configuration and the existing publisher SSH credential were transferred over authenticated encrypted SSH channels without printing values. Legacy Pi agent credential was not substituted for the active backend. Files are protected from both research identities.
-- `trendatlas-research` and an actual DynamicUser `trendatlas-phase2` probe received **Permission denied** for the trading environment, publisher key, production journal and protected runtime script.
-- LeadPilot API/frontend/DB healthy, proxy running. All four start timestamps remain 2026-09-27T20:42:03Z: no LeadPilot restart or configuration change.
-- Original research remains SEALED with 7,203 evaluations, 7,211 attempts, zero running work. Its existing checkpoint inspection passed. Phase 2 collector timer remains active. Production priority uses the existing checkpoint stop/resume protocol and a dispatcher admission condition. Active-worker stop/resume and checkpoint-failure behavior were fault-tested with synthetic adapters; no new scientific evaluation was started merely to test preemption. The real SEALED/inactive worker was not resumed by production rehearsal.
-- Pi Production Core and latest production-run SHA256 still equal the original audit. Temporary copied replay data on Pi was removed after results were retained, returning disk headroom to about 1.3 GiB. No Pi production data/repository was removed.
-- SHA256 deployment evidence: `deployment-SHA256.json`. Private frozen exchange/journal captures remain in protected host storage, not Git.
+## Replay / regression tests / validation commands and results
 
-## Operator commands and their effect
+- Identical corrected commit a6413782e4814d820fb6a0ed9e135878dc275ade, identical frozen raw inputs.
+- **3,069 days, 2018-05-05 through 2026-09-28: complete canonical history exact.** Snapshot exact, all 67 other columns unchanged against original history, exact NO_ACTION planner.
+- Both core replay SHA256: bdee4e0cc94f3385e9c78d505fe1e52d891611005a7d90d5281642216cf2557c.
+- Canonical CSV SHA256: 1c32e957ef281722b7f35712105f4330d2bef6a7150f9615e9c4ded1288619f3.
+- Both planner SHA256: 740a3cbf6e709f740863d66eed95b8fb5e061f097b2df1e3dde26a2adb328416.
+- **258 existing + 19 new = 277 passed:** Python 161, TypeScript 116. New 19 also passed on each actual ARM/x86 Python 3.13 runtime. TypeScript tsc, JSON parsing, git diff checks passed.
+- New tests: ARM/x86 FMA fixtures for both metrics; independent 80/120-digit oracle; windows; NaN/zero/constant returns; cancellation/departing outlier; scaling/sign metamorphisms; midpoint rounding; invalid lattice/infinity; row ordering; stable serialization/unchanged native frame; boundaries; AVAX 1x; full frozen history; rejection of changed decisions/snapshot.
+- Existing suites retain NO_ACTION/dust, EXIT-before-ENTRY, unknown submission/CLOID recovery, no-submit transport, journal/account isolation and operator faults. Actual readback below supplies real no-submit/account evidence; synthetic tests are not trades.
 
-**These commands are prepared, but live cutover must not be attempted while this report is BLOCKED.** The first command currently fails its admission gate before fencing Pi. A successful read-only planner is not a substitute for the failed full golden gate.
-
-One future operator cutover invocation from PowerShell:
-
-```powershell
-python C:\Users\benda\Desktop\ta_vps_prod\scripts\execution\cutover_pi_to_vps.py --pi-host 172.16.20.107 --execute-live
-```
-
-The IP was observed on Pi during this task; `HostKeyAlias=trendatlas.local` preserves the known SSH host identity. If DHCP changes it, supply the current Pi address. Without `--execute-live`, the command only runs read-only preflight.
-
-The coordinator verifies account/signer/target/journal continuity, waits for Pi to become idle, disables its timer and installs a persistent execution fence, rechecks the final shared database checkpoint, then permits VPS activation. It never restores a stale database snapshot. The VPS helper records possible activation before removing no-submit and enabling the canonical production/watchdog timers. It recognizes a Persistent timer-started run rather than blindly starting a second one. The canonical executor alone handles trading. Final checks include fresh account, open orders, recent fills, journal recovery and sole-host state.
-
-With the currently aligned AVAX position, the expected execution is **NO_ACTION**, retaining 7.65 AVAX without a sell/buy round trip. A later invocation must follow the then-current validated strategy and account; a legitimate resize/exit/entry may differ from today's expectation.
-
-Rollback: before any possible VPS activation, a proven non-activated VPS permits restoration of Pi. After possible submission/activation, Pi stays fenced; the tool reconciles journal/CLOIDs and exchange readback first. Repeating a successful cutover performs readback only. Ambiguous or unverified results fail closed and are not blindly replayed.
-
-Second operator command, **only after successful cutover/readback**:
-
-```powershell
-python C:\Users\benda\Desktop\ta_vps_prod\scripts\execution\retire_pi_after_cutover.py --pi-host 172.16.20.107 --execute-cleanup
-```
-
-The cleanup tool requires SUCCESS, inventories system/user/cron paths, creates and decrypt-verifies an encrypted rollback archive with SHA256, retires/masks owned units, removes the known active plaintext trading configuration, requests reboot, verifies a different boot ID and retired units, and checks VPS again before setting PI_SAFE_TO_POWER_OFF=true. Production repository/data remain. The independently owned AI Hologram voice service is excluded; shared username alone does not establish TrendAtlas ownership. Actual Pi retirement, encrypted final archive and reboot were deliberately not executed. Cleanup ordering/credential removal/reboot proof were tested on a synthetic filesystem and systemd adapter; this is not a claim of a real reboot test.
-
-## Regression tests and validation commands/results
-
-- Original Python suite: **100 passed**.
-- Existing authority publication suite: **17 passed**; fixtures now explicitly emulate actual ARM hardware instead of environment spoofing.
-- Host/rehearsal/replay, cutover, retirement and research priority suites: **25 passed**.
-- Original four TypeScript suites plus no-submit transport: **116 passed** (original 109 plus 7). Total **258** tests.
-- TypeScript `tsc --noEmit`: PASS. Python compile and JSON UTF-8/parse checks: PASS. `git diff --check`: PASS.
-- `systemd-analyze verify` on deployed production, timer, watchdog and readback units: exit 0. Unrelated host XFS CPUAccounting deprecation warnings were observed earlier.
-- Actual VPS canonical no-submit, actual Info-only account/signer readback, stable journal/account-status checkpoint, fresh fills readback, protected filesystem permission probes, watchdog and publication dry-run: PASS.
-- Exact current decision/planner replay: PASS. Full numerical golden replay: **BLOCKED**, as documented above.
-- Read-only operator preflight: correctly rejected by the protected failed golden gate before any Pi fence/live action.
-
-```text
-python -m unittest tests.test_production_execution tests.test_single_production_orchestrator tests.test_hyperliquid_systemd_credentials tests.test_production_asset_universe_contract tests.test_execution_authority_publish tests.test_production_host_migration tests.test_operator_cutover tests.test_migration_retirement_priority -q
-cd web
+~~~text
+python -m unittest tests.test_production_execution tests.test_single_production_orchestrator tests.test_hyperliquid_systemd_credentials tests.test_production_asset_universe_contract tests.test_execution_authority_publish tests.test_production_host_migration tests.test_operator_cutover tests.test_migration_retirement_priority tests.test_diagnostic_portability -q
 node node_modules/vitest/vitest.mjs run tests/canonical-execution-contract.test.ts tests/multi-account-executor.test.ts tests/production-boundary.test.ts tests/production-asset-support.test.ts tests/no-submit-transport.test.ts
 node node_modules/typescript/bin/tsc --noEmit
-```
+python scripts/execution/numeric_portability_audit.py --root <isolated-root> --output <private-audit.json>
+python scripts/execution/production_golden_replay.py --output <core.json>
+node --conditions=react-server --import tsx scripts/production-golden-replay.ts <frozen-readback.json> <planner.json>
+python scripts/execution/compare_production_replay.py <pi-core> <vps-core> <pi-planner> <vps-planner> --previous-pi-core <original-pi-core> --previous-vps-core <original-vps-core> --output <report.json>
+~~~
 
-EXIT-before-ENTRY, reduce-only exits, duplicate/CLOID prevention and unknown-submission recovery remain covered by the unchanged core execution suites. Cutover tests inject failures before activation and after possible submission, check journal/nonce handoff and prevent a second execution on repeat. No synthetic test is presented as a real financial trade.
+## Runtime, account, timers, LeadPilot and research
 
-## Forbidden old paths checked
+Canonical no-submit **prod_20260929T193125Z_903971** completed PREFLIGHT_READY: real_order_sent=false, live_order_chain=NOT_INVOKED, execution_outcome=PREFLIGHT_ONLY, dashboard PASSED, authority SKIPPED_NO_SUBMIT. Canonical runtime fingerprints unchanged. Separate publish-existing dry-run exited 0, zero pushes.
 
-No full-refresh, manual BUY/SELL, manual authority-snapshot edit, stale JSON journal restoration, legacy environment signer recovery, architecture spoof, second enabled trading timer or generated `outputs/*`/`data/*` commit. No frontend edits or internal labels added to frontend. Pi service/timer and trading configuration were not changed. VPS live override was never removed.
+Fresh reads around **19:34 UTC** prove unchanged 7.65 AVAX, no open orders and no new fills. Market price moved; final read equity was 86.838001 USD. Valuation movement is not a trade or a claim of unchanged equity.
+
+Supabase journal checkpoint remains 44c811ba01523f0461d1c21b855a96a7a3d438b244adea5975e68e75d45a9d11; nonce 1790640666333. No DB write/restore or stale handoff. Journal uses UUID/CLOID/per-agent nonce, not a global sequence. Supabase skill applied to read-only verification; no schema/permission changes.
+
+- Pi timer **enabled/active**, sole live executor. Live source, Production Core and latest run hashes equal initial audit.
+- VPS production/watchdog timers **disabled/inactive**. No-submit override remains; activated_by_operator=false, single_execution_host=null.
+- Root-owned receipts updated only after successful evidence. Actual read-only operator preflight passed readiness, identity, target and journal gates.
+- LeadPilot API/frontend/DB healthy, proxy running without healthcheck. All retain original 2026-09-27T20:42:03Z starts.
+- Research sealed/terminal, 7,203 evaluations, 7,211 attempts, zero running; checkpoint f628fb34a0f69961d594686622bc6290331f7be1bc5b4281ca50201ff058181b unchanged. No search resumed; preemption marker cleared.
+- Phase 2 timer enabled/active, latest checked collector run successful at 19:30:25 UTC. No LeadPilot/research configuration change.
+
+Earlier protected-permission, publisher-access, systemd and synthetic preemption/cleanup proofs remain intact. No real cleanup/reboot test is claimed.
+
+## Operator commands / stop point
+
+This command **now passes the readiness gate**, verified without its live flag. The live form was not run:
+
+~~~powershell
+python C:\Users\benda\Desktop\ta_vps_prod\scripts\execution\cutover_pi_to_vps.py --pi-host 172.16.20.107 --execute-live
+~~~
+
+It rechecks state, quiesces/fences Pi, captures the final shared journal checkpoint and activates the sole VPS executor. Current expectation: NO_ACTION. Fresh-state checks still apply if date, target, account, source or IP changes.
+
+Cleanup is prepared for **after successful operator cutover and verified VPS readback**:
+
+~~~powershell
+python C:\Users\benda\Desktop\ta_vps_prod\scripts\execution\retire_pi_after_cutover.py --pi-host 172.16.20.107 --execute-cleanup
+~~~
+
+The SUCCESS gate intentionally cannot pass before cutover. Cleanup encrypts/verifies rollback archives, retires owned autostart/trading configuration, reboots/verifies Pi, then rechecks VPS before PI_SAFE_TO_POWER_OFF=true. These actions remain unexecuted.
 
 ## FILES READ
 
-Required ordered truth reads: AGENTS.md; source_of_truth/README.md; master_state.md; chat_roles.md; project_truth.json; export_contract.json; paths_registry.json; current_issues.md; canonical/script_registry.json; canonical/output_registry.json; canonical/registry_workflow.md; source_of_truth/pi_codex_runtime_workflow.md.
+AGENTS.md; ordered source_of_truth README.md, master_state.md, chat_roles.md, project_truth.json, export_contract.json, paths_registry.json, current_issues.md; canonical/script_registry.json, output_registry.json, registry_workflow.md; then source_of_truth/pi_codex_runtime_workflow.md and production_host_contract.json.
 
-Additional source reads: production_execution_contract.json; watchdog_maintenance_contract.md; original migration REPORT and audit manifests; run_trendatlas_production.py; production_execution.py; authority_contract.py; authority_publish_helpers.py; run_pi_authoritative_producer.py; validate_execution_source_contract.py; Production Core builder/validator and active strategy adapter; web multi-account runner, authority, guard, repository, preflight, planner, types, dry-run gateway and Supabase admin; active database schema migration; existing execution and authority test suites; installed Pi/VPS production/watchdog/research units; pinned research orchestration checkpoint code. Supabase skill and official API security/changelog references were consulted for the read-only transport boundary. No messages were sent using a connector.
+Also original report/manifests; active ETF-flow and BTC-persistence/fallback lineage; staged_candidate_promotion_support; Core builder/validator; current_emittable_universe; ETF-flow probe/cooldown; app.py; repo-wide metric searches; Python/TypeScript replay/comparator; production_host; rehearsal/cutover/host-control/retirement; package/ELF/build evidence; frozen archives; regression suites; installed units; protected Info/Supabase readbacks; Supabase SKILL.md.
 
-## Exact files changed / exact git add list
+## Forbidden old path checked
 
-`GIT_ADD.txt` contains the exact explicit add command for this continuation, including code, source contracts, tests, units and reports. No credential, private account dump, raw journal, generated runtime data or virtual environment is included.
+No tolerance widening/allclose, strategy adapter change, manual authority edit, full-refresh, generated outputs/data commit, live order/submit adapter invocation, DB mutation, architecture spoof, legacy signer revival, second active executor, Pi fence/retirement/reboot/power-off, frontend internal labels or LeadPilot/research restart.
 
-## Commit message
+## Exact files changed / exact git add / commit message / commit hash
 
-`Stage isolated VPS production and gate cutover on exact replay`
+GIT_ADD_NUMERIC.txt records explicit add commands and complete changed-file list versus 95452304dc0aac4b5ce5d1e48a9b390e5b3fe76b.
 
-## Commit hash
+- 07dea5ca62c3a1436535634f8dd5f888db983294 — Canonicalize diagnostic exports with exact decimal arithmetic.
+- a6413782e4814d820fb6a0ed9e135878dc275ade — Require unchanged decision history before operator cutover.
 
-The final task response supplies the created commit hash and push result. This document does not embed its own commit hash. No merge or production activation is implied by pushing this branch.
+Both pushed to the same branch. The final evidence-only commit records this report and replay/no-submit/runtime/readiness manifests; its hash is supplied in the final task response, not self-embedded. It changes no replayed production source and activates no trading.
+
+Evidence: numeric-portability-evidence.json; cross-architecture.json; no-submit-evidence.json; numeric-final-runtime-evidence.json; operator-readiness.json; deployment-SHA256.json.

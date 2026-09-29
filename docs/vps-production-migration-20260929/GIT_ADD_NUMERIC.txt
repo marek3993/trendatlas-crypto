@@ -1,0 +1,29 @@
+git add -- canonical/output_registry.json canonical/script_registry.json scripts/execution/compare_production_replay.py scripts/execution/production_golden_replay.py scripts/execution/numeric_portability_audit.py scripts/production/build_current_strategy_snapshot.py scripts/production/canonical_diagnostics.py source_of_truth/export_contract.json source_of_truth/diagnostic_numeric_contract.json tests/fixtures/production_numeric_returns_20260928.json tests/test_diagnostic_portability.py docs/vps-production-migration-20260929/numeric-portability-evidence.json
+
+git add -- scripts/execution/compare_production_replay.py tests/test_diagnostic_portability.py canonical/script_registry.json source_of_truth/project_truth.json source_of_truth/master_state.md source_of_truth/current_issues.md
+
+git add -- docs/vps-production-migration-20260929/CONTINUATION.md docs/vps-production-migration-20260929/GIT_ADD_NUMERIC.txt docs/vps-production-migration-20260929/cross-architecture.json docs/vps-production-migration-20260929/deployment-SHA256.json docs/vps-production-migration-20260929/no-submit-evidence.json docs/vps-production-migration-20260929/numeric-final-runtime-evidence.json docs/vps-production-migration-20260929/operator-readiness.json
+
+Complete changed-file list:
+canonical/output_registry.json
+canonical/script_registry.json
+docs/vps-production-migration-20260929/CONTINUATION.md
+docs/vps-production-migration-20260929/GIT_ADD_NUMERIC.txt
+docs/vps-production-migration-20260929/cross-architecture.json
+docs/vps-production-migration-20260929/deployment-SHA256.json
+docs/vps-production-migration-20260929/no-submit-evidence.json
+docs/vps-production-migration-20260929/numeric-final-runtime-evidence.json
+docs/vps-production-migration-20260929/numeric-portability-evidence.json
+docs/vps-production-migration-20260929/operator-readiness.json
+scripts/execution/compare_production_replay.py
+scripts/execution/numeric_portability_audit.py
+scripts/execution/production_golden_replay.py
+scripts/production/build_current_strategy_snapshot.py
+scripts/production/canonical_diagnostics.py
+source_of_truth/current_issues.md
+source_of_truth/diagnostic_numeric_contract.json
+source_of_truth/export_contract.json
+source_of_truth/master_state.md
+source_of_truth/project_truth.json
+tests/fixtures/production_numeric_returns_20260928.json
+tests/test_diagnostic_portability.py

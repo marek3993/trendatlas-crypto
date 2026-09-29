@@ -1,18 +1,22 @@
 {
-  "frozen_closed_day": "2026-09-28",
-  "current_snapshot_without_file_provenance_exact": true,
+  "status": "PASS",
+  "comparison": "exact",
+  "current_snapshot_exact": true,
   "planner_exact": true,
-  "full_timeseries_exact": false,
-  "differences": {
-    "rolling_vol_30d": {
-      "count": 976,
-      "max_absolute_difference": 6.586000000000001e-09
-    },
-    "rolling_sharpe_90d": {
-      "count": 97,
-      "max_absolute_difference": 3.5000002895912985e-11
-    }
-  },
+  "timeseries_shape_equal": true,
+  "full_timeseries_exact": true,
+  "canonical_serialization_exact": true,
+  "differences": {},
   "new_tolerance_introduced": false,
-  "full_golden_verdict": "BLOCKED"
+  "historical_non_diagnostic_and_snapshot_unchanged": true,
+  "previous_sha256": {
+    "pi-core-golden.json": "652c48ee4dbff3f5f5e7ef7ffe23c947d8f41408cfbe98e1db83ad9e23520cf2",
+    "vps-core-golden.json": "bc3e98b0176e0a727c8de2ba545594bac0d6c1774f61c8f1020d250079637b7e"
+  },
+  "input_sha256": {
+    "pi-canonical-core.json": "bdee4e0cc94f3385e9c78d505fe1e52d891611005a7d90d5281642216cf2557c",
+    "vps-canonical-core.json": "bdee4e0cc94f3385e9c78d505fe1e52d891611005a7d90d5281642216cf2557c",
+    "pi-canonical-planner.json": "740a3cbf6e709f740863d66eed95b8fb5e061f097b2df1e3dde26a2adb328416",
+    "vps-canonical-planner.json": "740a3cbf6e709f740863d66eed95b8fb5e061f097b2df1e3dde26a2adb328416"
+  }
 }

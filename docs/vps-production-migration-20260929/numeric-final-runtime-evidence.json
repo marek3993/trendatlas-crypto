@@ -1,0 +1,96 @@
+{
+  "pi": {
+    "at": "2026-09-29T19:34:30.855Z",
+    "journal_sha256": "44c811ba01523f0461d1c21b855a96a7a3d438b244adea5975e68e75d45a9d11",
+    "journal_unchanged": true,
+    "target": {
+      "strategyVersion": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "closedDay": "2026-09-28",
+      "signalId": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-28::target_AVAX::candidate_AVAX",
+      "asset": "AVAX",
+      "exposure": 1,
+      "stale": false,
+      "executionGate": "approved"
+    },
+    "accounts": [
+      {
+        "master": "0xae8d1a44f5c32ecb235519a06bb6691a4b33e856",
+        "positions_before": [
+          {
+            "asset": "AVAX",
+            "size": 7.65,
+            "markPrice": 11.357
+          }
+        ],
+        "positions_after": [
+          {
+            "asset": "AVAX",
+            "size": 7.65,
+            "markPrice": 11.365
+          }
+        ],
+        "open_orders": [],
+        "fills_unchanged": true,
+        "equity_usd": 86.838001,
+        "plan": {
+          "state": "NO_ACTION",
+          "actions": []
+        },
+        "position_quantities_unchanged": true
+      }
+    ]
+  },
+  "vps": {
+    "at": "2026-09-29T19:34:34.529Z",
+    "journal_sha256": "44c811ba01523f0461d1c21b855a96a7a3d438b244adea5975e68e75d45a9d11",
+    "journal_unchanged": true,
+    "target": {
+      "strategyVersion": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "closedDay": "2026-09-28",
+      "signalId": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-28::target_AVAX::candidate_AVAX",
+      "asset": "AVAX",
+      "exposure": 1,
+      "stale": false,
+      "executionGate": "approved"
+    },
+    "accounts": [
+      {
+        "master": "0xae8d1a44f5c32ecb235519a06bb6691a4b33e856",
+        "positions_before": [
+          {
+            "asset": "AVAX",
+            "size": 7.65,
+            "markPrice": 11.362
+          }
+        ],
+        "positions_after": [
+          {
+            "asset": "AVAX",
+            "size": 7.65,
+            "markPrice": 11.365
+          }
+        ],
+        "open_orders": [],
+        "fills_unchanged": true,
+        "equity_usd": 86.838001,
+        "plan": {
+          "state": "NO_ACTION",
+          "actions": []
+        },
+        "position_quantities_unchanged": true
+      }
+    ]
+  },
+  "pi_runtime": "5ee031cef7de9c385056cec22f6511391d3e4f4f\nActiveState=active\nUnitFileState=enabled\n200c153dd1afe5a23374121d8a21254671c161b08a6d259e254f6cf89f0f7535  /opt/market_regime_v1/outputs/production/current_strategy_snapshot.json\nc748e8c5da35b1c46d8d0f2ef8077b4efed53de4f420ad998076746e7dc07e07  /opt/market_regime_v1/outputs/execution/production_runs/latest_production_run.json\n",
+  "vps_units": "Id=mrv1-production.timer\nActiveState=inactive\nUnitFileState=disabled\n\nId=mrv1-watchdog.timer\nActiveState=inactive\nUnitFileState=disabled\n\nId=trendatlas-phase2-collector.timer\nActiveState=active\nUnitFileState=enabled\n\nId=trendatlas-research-worker.service\nActiveState=inactive\nUnitFileState=enabled\nResult=success\nExecStart={ path=/opt/trendatlas-production/current/.venv/bin/python ; argv[]=/opt/trendatlas-production/current/.venv/bin/python /opt/trendatlas-production/current/scripts/execution/run_production_rehearsal.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }\n/leadpilot-api-1 running 2026-09-27T20:42:03.232115845Z\n/leadpilot-proxy-1 running 2026-09-27T20:42:03.227505228Z\n/leadpilot-frontend-1 running 2026-09-27T20:42:03.228102002Z\n/leadpilot-db-1 running 2026-09-27T20:42:03.230522174Z\n",
+  "research": {
+    "checkpoint": {
+      "attempt": 7211,
+      "evaluation": "f628fb34a0f69961d594686622bc6290331f7be1bc5b4281ca50201ff058181b",
+      "utc": "2026-09-28T20:02:27.159090+00:00"
+    },
+    "evaluations": 7203,
+    "outer_opened": true,
+    "running": 0
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "run_id": "prod_20260929T184645Z_371710",
+  "run_id": "prod_20260929T193125Z_903971",
   "target_closed_day": "2026-09-28",
   "final_status": "PREFLIGHT_READY",
   "no_submit": true,
@@ -9,7 +9,9 @@
   "execution_backend": "multi_account",
   "authority_status": "SKIPPED_NO_SUBMIT",
   "dashboard_status": "PASSED",
+  "target_asset": null,
+  "target_exposure": null,
   "canonical_files_unchanged": true,
   "publication_dry_run_returncode": 0,
-  "staging_root": "/var/lib/trendatlas-production/rehearsal/20260929T184630543530Z"
+  "staging_root": "/var/lib/trendatlas-production/rehearsal/20260929T193111054370Z"
 }

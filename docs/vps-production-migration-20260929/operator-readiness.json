@@ -1,0 +1,15 @@
+{
+  "command": "python scripts/execution/cutover_pi_to_vps.py --pi-host 172.16.20.107",
+  "exit_code": 0,
+  "live_flag_used": false,
+  "readiness_gate_passed": true,
+  "source_commit": "a6413782e4814d820fb6a0ed9e135878dc275ade",
+  "pi_only_live_host": true,
+  "vps_no_submit": true,
+  "target": {"closed_day": "2026-09-28", "asset": "AVAX", "exposure": 1.0},
+  "planner": {"state": "NO_ACTION", "actions": []},
+  "journal_sha256": "44c811ba01523f0461d1c21b855a96a7a3d438b244adea5975e68e75d45a9d11",
+  "last_nonce": 1790640666333,
+  "cleanup_readiness": "prepared; intentionally requires successful operator cutover before execution",
+  "PI_SAFE_TO_POWER_OFF": false
+}
