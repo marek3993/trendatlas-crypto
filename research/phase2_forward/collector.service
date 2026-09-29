@@ -1,0 +1,43 @@
+[Unit]
+Description=TrendAtlas public venue data collection (no strategy or account access)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+DynamicUser=yes
+User=trendatlas-phase2
+StateDirectory=trendatlas-phase2
+StateDirectoryMode=0750
+ExecStart=/usr/bin/python3 -I -B /opt/trendatlas-phase2/current/collector.py --root /var/lib/trendatlas-phase2
+TimeoutStartSec=180s
+Nice=15
+CPUQuota=20%
+CPUWeight=1
+MemoryMax=256M
+MemorySwapMax=0
+TasksMax=4
+IOSchedulingClass=idle
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectProc=invisible
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/var/lib/trendatlas-phase2
+InaccessiblePaths=-/opt/leadpilot -/var/lib/docker -/run/docker.sock -/var/run/docker.sock -/opt/market_regime_v1 -/opt/home_automation -/var/lib/trendatlas-research -/opt/trendatlas-research -/etc/credstore -/etc/credstore.encrypted -/run/credentials
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

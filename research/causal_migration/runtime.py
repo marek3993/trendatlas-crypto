@@ -296,6 +296,10 @@ def main():
     meta=legacy.verify(a.state,a.engine,POLICY)
     if a.command=='stop':request_stop(a.state);return 0
     if a.command=='ready':
+        # systemd ExecCondition 1..254 skips without failing; 255 means failure.
+        # Verification above still checks the immutable engine and DB binding.
+        # Never open Store, resume, or rewrite a terminal experiment here.
+        if meta.get('status') == 'SEALED':return 1
         if meta.get('status') not in legacy.POLICY['resumable_states']:return 255
         legacy.load_engine(a.engine)
         return legacy.ready(meta) if a.platform=='pi' else 0

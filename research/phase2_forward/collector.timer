@@ -1,0 +1,12 @@
+[Unit]
+Description=Collect public venue observations every fifteen minutes
+
+[Timer]
+OnBootSec=2min
+OnCalendar=*:0/15
+Persistent=true
+RandomizedDelaySec=20
+Unit=trendatlas-phase2-collector.service
+
+[Install]
+WantedBy=timers.target
