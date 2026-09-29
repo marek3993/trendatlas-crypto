@@ -760,5 +760,13 @@
         "app_must_not_infer": true
       }
     }
+  },
+  "production_host_contract": "source_of_truth/production_host_contract.json",
+  "production_host_paths": {
+    "pi": "/opt/market_regime_v1",
+    "vps": "/opt/trendatlas-production/current",
+    "protected_state": "/var/lib/trendatlas-production",
+    "credentials": "/etc/trendatlas-production",
+    "rehearsal": "/var/lib/trendatlas-production/rehearsal"
   }
 }

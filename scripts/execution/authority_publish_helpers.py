@@ -431,7 +431,7 @@ def publish_authority_refresh_started(
             started_at_utc=state["refresh_started_at_utc"],
             finished_at_utc=None,
             script_path=state["pipeline_script_path"],
-            non_authoritative_support_only=state["authority_mode"] != "pi_only_authoritative_producer",
+            non_authoritative_support_only=state["authority_mode"] not in {"pi_only_authoritative_producer", "canonical_production_host"},
         )
     ]
     state["stage_history"] = stage_history
@@ -492,7 +492,7 @@ def publish_authority_refresh_success(
             started_at_utc=state["refresh_started_at_utc"],
             finished_at_utc=normalized_finished_at_utc,
             script_path=state["pipeline_script_path"],
-            non_authoritative_support_only=state["authority_mode"] != "pi_only_authoritative_producer",
+            non_authoritative_support_only=state["authority_mode"] not in {"pi_only_authoritative_producer", "canonical_production_host"},
         )
     )
     state["stage_history"] = stage_history
@@ -578,7 +578,7 @@ def publish_authority_refresh_failure(
             finished_at_utc=normalized_finished_at_utc,
             script_path=state["pipeline_script_path"],
             error=error,
-            non_authoritative_support_only=state["authority_mode"] != "pi_only_authoritative_producer",
+            non_authoritative_support_only=state["authority_mode"] not in {"pi_only_authoritative_producer", "canonical_production_host"},
         )
     )
     state["stage_history"] = stage_history

@@ -1,0 +1,49 @@
+[Unit]
+Description=TrendAtlas canonical production host
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=trendatlas-production
+Group=trendatlas-production
+WorkingDirectory=/opt/trendatlas-production/current
+EnvironmentFile=/etc/trendatlas-production/multi-account.env
+Environment=PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+Environment=MRV1_EXECUTION_BACKEND=multi_account
+Environment=MRV1_HYPERLIQUID_ACCOUNT_ADDRESS=0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856
+Environment=MRV1_AUTOMATIC_PRODUCER_ID=canonical_production_host
+Environment=MRV1_MULTI_ACCOUNT_WEB_ROOT=/opt/trendatlas-production/current/web
+Environment=MRV1_MULTI_ACCOUNT_NODE_BINARY=/opt/trendatlas-production/current/.runtime/node-v22.23.2-linux-x64/bin/node
+Environment=TRENDATLAS_MULTI_ACCOUNT_MAX_CONCURRENCY=1
+Environment=MRV1_AUTHORITY_PUBLISH_TREE=/var/lib/trendatlas-production/publish
+Environment="MRV1_AUTHORITY_GIT_USER_NAME=TrendAtlas Production"
+Environment=MRV1_AUTHORITY_GIT_USER_EMAIL=trendatlas-production@localhost
+ExecStartPre=+/opt/trendatlas-production/current/.venv/bin/python /opt/trendatlas-production/current/scripts/execution/production_research_priority.py pause
+ExecStopPost=+/opt/trendatlas-production/current/.venv/bin/python /opt/trendatlas-production/current/scripts/execution/production_research_priority.py resume
+Environment="GIT_SSH_COMMAND=/usr/bin/ssh -F /etc/trendatlas-production/ssh/config"
+ExecStart=/opt/trendatlas-production/current/.venv/bin/python /opt/trendatlas-production/current/scripts/execution/run_trendatlas_production.py
+TimeoutStartSec=90min
+Restart=on-failure
+RestartSec=15min
+RestartPreventExitStatus=2
+CPUWeight=1000
+CPUQuota=200%
+MemoryMax=2G
+MemorySwapMax=0
+Nice=-5
+OOMScoreAdjust=-500
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectProc=invisible
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/opt/trendatlas-production/current/data /opt/trendatlas-production/current/outputs /var/lib/trendatlas-production
+InaccessiblePaths=-/opt/leadpilot -/opt/trendatlas-research -/var/lib/trendatlas-research -/run/docker.sock
+UMask=0077

@@ -134,7 +134,7 @@
                                     "continuous_runtime_loop_requires_explicit_request":  true,
                                     "source_of_truth_runtime_writes_allowed":  false,
                                     "pi_authoritative_runtime_available":  true,
-                                    "automatic_production_producer":  "raspberry_pi",
+                                    "automatic_production_producer":  "canonical_production_host",
                                     "local_pc_role":  "manual_recovery_debug_only",
                                     "local_pc_production_authority":  false,
                                     "github_actions_role":  "validation_only",
@@ -362,7 +362,7 @@
                                                                              "outputs/production/current_strategy_timeseries.csv",
                                                                              "outputs/production/current_strategy_diagnostics.json"
                                                                          ],
-                                           "runtime_publish_authority_role":  "pi_only_runtime_publish_authority",
+                                           "runtime_publish_authority_role":  "canonical_production_host",
                                            "runtime_authority_files":  [
                                                                            "outputs/execution/authority/latest_successful_snapshot.json",
                                                                            "outputs/execution/authority/latest_attempt_status.json"
@@ -522,7 +522,7 @@
                                                                                ]
                                                    },
     "production_authority_model":  {
-                                       "automatic_production_producer":  "raspberry_pi",
+                                       "automatic_production_producer":  "canonical_production_host",
                                        "pc_role":  "manual_recovery_debug_only",
                                        "github_actions_role":  "validation_only",
                                        "runtime_authority_scope":  "runtime_publish_authority_only",
@@ -653,5 +653,7 @@
     "legacy_phase_chain_status":  {
                                       "role":  "research_archive_input_lineage",
                                       "primary_runtime_production_truth_interface":  false
-                                   }
+                                   },
+  "production_host_contract": "source_of_truth/production_host_contract.json",
+  "production_host_migration_state": {"active_host": "raspberry_pi", "target_host": "vps-4f79db29", "status": "BLOCKED_FULL_GOLDEN_REPLAY", "live_cutover_executed": false}
 }

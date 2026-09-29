@@ -23,7 +23,7 @@ async function main(): Promise<void> {
   currentRunId = guard.runId;
   currentSignalId = guard.signalId;
   noSubmit = guard.mode === "dry_run";
-  const repository = new SupabaseExecutionRepository();
+  const repository = new SupabaseExecutionRepository(noSubmit);
   const exchange = new HyperliquidDryRunGateway();
   stage = "authority";
   const target = await loadCanonicalRunTarget(guard.repositoryRoot, guard.runId, guard.signalId);

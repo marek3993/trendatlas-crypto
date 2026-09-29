@@ -120,3 +120,8 @@
 - Class C+B incident: independent Python/TypeScript/database trading asset restrictions and historical approval gates can reject valid strategy targets; full-plan entry checks can strand non-target exposure.
 - The new normative contract is `source_of_truth/production_execution_contract.json`: dynamic exchange metadata, verified EXIT before ENTRY, account-isolated failures, durable recovery and separate wallet/model/outcome display.
 - Implementation/deployment evidence is tracked in `docs/execution-reconciliation-20260925.md`; this contract update is not a claim of live alignment or completed deployment.
+
+## Canonical host migration contract (2026-09-29)
+The normative host admission contract is `production_host_contract.json`. Linux aarch64 and x86_64 are eligible only with pinned dependencies, SHA256 verification, exact cross-architecture replay, validated systemd runtime and a single active production authority. This supersedes Pi-only hardware requirements. Historical Pi payloads remain readable. Pi remains live until the operator executes cutover; VPS preparation is no-submit with its timer disabled. Rehearsal must use isolated filesystem copies and read-only database transport. The active multi-account journal uses UUIDs/CLOIDs and per-agent nonces, not a global JSON sequence.
+
+VPS production is staged in no-submit, with its timer disabled. Canonical no-submit and publish-existing dry-run passed on 2026-09-29. Full cross-architecture replay remains BLOCKED: 976 rolling_vol_30d and 97 rolling_sharpe_90d values differ; current snapshot and all planner actions match exactly. No new tolerance or strategy-math change was introduced. Pi remains the sole live host. See docs/vps-production-migration-20260929/CONTINUATION.md.

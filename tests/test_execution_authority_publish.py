@@ -45,6 +45,12 @@ def load_json(path: Path) -> dict:
 
 
 class TestExecutionAuthorityPublish(unittest.TestCase):
+    def setUp(self):
+        system = mock.patch.object(contract.platform, "system", return_value="Linux")
+        machine = mock.patch.object(contract.platform, "machine", return_value="aarch64")
+        system.start(); machine.start()
+        self.addCleanup(system.stop); self.addCleanup(machine.stop)
+
     def run_git(
         self,
         args: list[str],

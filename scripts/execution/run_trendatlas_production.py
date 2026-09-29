@@ -247,6 +247,9 @@ class TrendAtlasProductionOrchestrator:
         now: Callable[[], str] = utc_now_iso,
     ) -> None:
         self.root = root.resolve()
+        if no_submit:
+            from scripts.execution.rehearsal_workspace import assert_isolated_rehearsal
+            assert_isolated_rehearsal(self.root)
         self.no_submit = no_submit
         self.execution_backend = str(execution_backend or os.environ.get("MRV1_EXECUTION_BACKEND") or "legacy").strip()
         if self.execution_backend not in {"legacy", "multi_account"}:
@@ -953,6 +956,9 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_args(argv)
+    if args.no_submit:
+        from scripts.execution.rehearsal_workspace import assert_isolated_rehearsal
+        assert_isolated_rehearsal(ROOT)
     lock_path = ROOT / "outputs/execution/production_runs/trendatlas_production.lock"
     try:
         with SingleRunLock(lock_path):

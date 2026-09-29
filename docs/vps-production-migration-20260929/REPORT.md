@@ -1,3 +1,5 @@
+> Continuation: see [CONTINUATION.md](CONTINUATION.md) for the subsequently deployed VPS no-submit runtime, exact replay blocker and operator tools. The original audit below remains historical.
+
 # Production migration audit, 2026-09-29
 
 **Verdict: BLOCKED_WITHOUT_LIVE_CHANGE. PI_SAFE_TO_POWER_OFF=false.**

@@ -1,0 +1,17 @@
+[Unit]
+Description=TrendAtlas read-only migration evidence
+After=network-online.target
+[Service]
+Type=oneshot
+User=trendatlas-production
+Group=trendatlas-production
+WorkingDirectory=/opt/trendatlas-production/current/web
+EnvironmentFile=/etc/trendatlas-production/multi-account.env
+Environment=TRENDATLAS_AUTHORITY_REPOSITORY_ROOT=/opt/trendatlas-production/current
+ExecStart=/opt/trendatlas-production/current/.runtime/node-v22.23.2-linux-x64/bin/node --conditions=react-server --import tsx scripts/production-migration-readback.ts /var/lib/trendatlas-production/readback.json
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/trendatlas-production
+UMask=0077

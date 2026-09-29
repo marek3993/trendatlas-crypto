@@ -469,7 +469,7 @@ def build_publish_existing_success_payloads(
             finished_at_utc=None,
             script_path=working_state["pipeline_script_path"],
             non_authoritative_support_only=working_state["authority_mode"]
-            != "pi_only_authoritative_producer",
+            not in {"pi_only_authoritative_producer", "canonical_production_host"},
         ),
         authority_contract.build_stage_history_entry(
             authority_helpers.AUTHORITY_STAGE_NAME,
@@ -478,7 +478,7 @@ def build_publish_existing_success_payloads(
             finished_at_utc=normalized_finished_at_utc,
             script_path=working_state["pipeline_script_path"],
             non_authoritative_support_only=working_state["authority_mode"]
-            != "pi_only_authoritative_producer",
+            not in {"pi_only_authoritative_producer", "canonical_production_host"},
         ),
     ]
     working_state["stage_history"] = stage_history
@@ -1238,11 +1238,11 @@ def publish_authority_artifacts_to_repo(
         raise RuntimeError(
             "Authority repo publish requires a terminal latest_attempt_status payload"
         )
-    if automatic_producer_id != "raspberry_pi":
+    if automatic_producer_id not in {"raspberry_pi", "canonical_production_host"}:
         raise RuntimeError(
             "Authority repo publish requires automatic_producer_id=raspberry_pi"
         )
-    if authority_role != "pi_only_authoritative_producer":
+    if authority_role not in {"pi_only_authoritative_producer", "canonical_production_host"}:
         raise RuntimeError(
             "Authority repo publish requires authority_role=pi_only_authoritative_producer"
         )
@@ -1251,6 +1251,10 @@ def publish_authority_artifacts_to_repo(
             "Successful authority publish requires snapshot artifact: "
             f"{latest_successful_snapshot_path}"
         )
+
+    if automatic_producer_id == "canonical_production_host":
+        from scripts.execution.authority_contract import ensure_pi_only_publish_allowed
+        ensure_pi_only_publish_allowed(env)
 
     publish_paths = resolve_authority_publish_paths(resolved_root)
     if not publish_paths:
@@ -1382,7 +1386,7 @@ def build_pi_authoritative_env(
     merged_env = dict(os.environ if env is None else env)
     merged_env["MRV1_ENABLE_AUTHORITY_PUBLISH"] = "1"
     merged_env["MRV1_AUTHORITY_MODE"] = "authoritative"
-    merged_env["MRV1_AUTOMATIC_PRODUCER_ID"] = "raspberry_pi"
+    merged_env.setdefault("MRV1_AUTOMATIC_PRODUCER_ID", "raspberry_pi")
     merged_env["MRV1_REQUIRE_PI_RUNTIME"] = "1"
     merged_env.setdefault("MRV1_PUBLISH_HOSTNAME", socket.gethostname())
     merged_env.setdefault("MRV1_AUTHORITY_REPO_REMOTE", "origin")

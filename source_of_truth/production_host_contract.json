@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "effective_date": "2026-09-29",
+  "authority_role": "canonical_production_host",
+  "migration_state": "PREPARATION_ONLY_PI_REMAINS_LIVE",
+  "supported_platforms": ["linux/aarch64", "linux/x86_64"],
+  "python_version": "3.13.5",
+  "node_version": "22.23.2",
+  "critical_python_packages": {"numpy": "2.4.4", "pandas": "3.0.3", "requests": "2.34.2", "eth-account": "0.13.7"},
+  "capability_evidence": "/etc/trendatlas-production/capabilities.json",
+  "required_capabilities": ["sha256_manifest", "cross_arch_golden_replay", "systemd_verified", "single_execution_host"],
+  "cross_arch_comparison": "exact_decisions_and_planned_actions_no_new_tolerance",
+  "historical_identity": "raspberry_pi_is_read_compatible_only_during_operator_migration",
+  "no_submit": {
+    "filesystem": "separate_copy_no_shared_writable_runtime_files_or_symlinks",
+    "database": "GET_HEAD_only_no_RPC_or_mutations",
+    "exchange": "Info_only_no_live_adapter",
+    "failed_preflight": "local_staging_evidence_only"
+  },
+  "journal_handoff": {
+    "backend": "existing_Supabase_multi_account_tables",
+    "sequence": "no_global_sequence_preserve_UUID_run_action_CLOID_and_per_agent_nonce",
+    "snapshot": "consistent_read_only_snapshot_for_rehearsal_never_restore_snapshot_over_live_DB",
+    "cutover": "quiesce_Pi_verify_no_leases_capture_final_checkpoint_then_activate_VPS_against_same_DB"
+  },
+  "operator_cutover": {
+    "assistant_may_execute": false,
+    "live_flag": "--execute-live",
+    "before_activation_failure": "restore_Pi_only_after_proving_VPS_never_activated",
+    "after_possible_submission_failure": "VPS_only_reconcile_by_CLOID_and_account_readback_never_auto_restore_Pi",
+    "repeat_after_success": "readback_only_never_start_second_run",
+    "cleanup": "operator_only_after_success_archive_encrypt_mask_remove_autostart_reboot_verify"
+  },
+  "forbidden": ["architecture_spoofing", "new_asset_allowlist", "manual_orders", "dual_live_hosts", "automatic_assistant_cutover", "manual_authority_snapshot_edit"]
+}

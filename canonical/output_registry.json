@@ -47,8 +47,15 @@
     },
     {
       "output_path": "/var/lib/trendatlas-research/",
-      "campaign_outputs": ["status.json", "campaign_queue/", "jobs/<id>/research.sqlite3", "jobs/<id>/SEALED.json"],
-      "generated_by": ["research_os/dev_only/evolution_worker/bootstrap.py"],
+      "campaign_outputs": [
+        "status.json",
+        "campaign_queue/",
+        "jobs/<id>/research.sqlite3",
+        "jobs/<id>/SEALED.json"
+      ],
+      "generated_by": [
+        "research_os/dev_only/evolution_worker/bootstrap.py"
+      ],
       "layer": "research_os_dev_only",
       "status": "active",
       "output_kind": "isolated_queue_ledger_and_sealed_research_jobs",
@@ -58,8 +65,16 @@
     },
     {
       "output_path": "/var/lib/trendatlas-research/continuous/",
-      "cycle_outputs": ["status.json", "ledger.sqlite3", "inputs/<sha>.csv", "cycles/<id>/research.sqlite3", "cycles/<id>/SEALED.json"],
-      "generated_by": ["research_os/dev_only/evolution_worker/continuous.py"],
+      "cycle_outputs": [
+        "status.json",
+        "ledger.sqlite3",
+        "inputs/<sha>.csv",
+        "cycles/<id>/research.sqlite3",
+        "cycles/<id>/SEALED.json"
+      ],
+      "generated_by": [
+        "research_os/dev_only/evolution_worker/continuous.py"
+      ],
       "layer": "research_os_dev_only",
       "status": "active_five_cycles_sealed_waiting_for_new_closed_input",
       "output_kind": "isolated_continuous_historical_research_ledger_and_sealed_cycles",
@@ -69,7 +84,9 @@
     },
     {
       "output_path": "outputs/research_os/dev_only/mean_reversion/",
-      "generated_by": ["research_os/dev_only/mean_reversion/__main__.py"],
+      "generated_by": [
+        "research_os/dev_only/mean_reversion/__main__.py"
+      ],
       "layer": "research_os_dev_only",
       "status": "active",
       "output_kind": "retrospective_research_database_and_report",
@@ -79,7 +96,9 @@
     },
     {
       "output_path": "outputs/research_os/dev_only/evolution/",
-      "generated_by": ["research_os/dev_only/evolution/__main__.py"],
+      "generated_by": [
+        "research_os/dev_only/evolution/__main__.py"
+      ],
       "layer": "research_os_dev_only",
       "status": "active",
       "output_kind": "research_backtest_database_and_report",
@@ -290,9 +309,9 @@
     },
     {
       "output_path": "outputs/execution/read_only/",
-        "generated_by": [
-          "scripts/execution/hyperliquid_read_only_snapshot.py",
-          "scripts/execution/build_hyperliquid_real_performance_ledger.py"
+      "generated_by": [
+        "scripts/execution/hyperliquid_read_only_snapshot.py",
+        "scripts/execution/build_hyperliquid_real_performance_ledger.py"
       ],
       "layer": "execution_data",
       "status": "active",
@@ -910,6 +929,13 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Approved deployment candidate product metrics for APP summary_path. APP must not infer these metrics."
+    },
+    {
+      "output_path": "source_of_truth/production_host_contract.json",
+      "generated_by": [],
+      "layer": "source_of_truth",
+      "status": "active",
+      "purpose": "Capability-based canonical production host admission and operator migration contract."
     }
   ]
 }

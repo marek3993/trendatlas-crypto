@@ -210,6 +210,10 @@ class SingleProductionOrchestratorTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
+        write_json(self.root / ".rehearsal.json", {
+            "source_root": str(self.root.parent / (self.root.name + "-synthetic-source")),
+            "staging_root": str(self.root),
+        })
         write_json(self.root / "execution/config/execution_mode.json", {
             "mode": "live", "trading_enabled": True, "kill_switch": False,
         })

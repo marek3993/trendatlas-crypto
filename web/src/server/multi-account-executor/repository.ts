@@ -14,7 +14,9 @@ type CandidateRow = {
 };
 
 export class SupabaseExecutionRepository implements ExecutionRepository {
-  private readonly db = createAdminClient();
+  private readonly db: ReturnType<typeof createAdminClient>;
+
+  constructor(readOnly = false) { this.db = createAdminClient(readOnly); }
 
   async listMultiAccountCandidates(): Promise<Array<EligibleAccount & { encryptedSecret?: EncryptedAgentSecret }>> {
     const { data, error } = await this.db.from("hyperliquid_agent_authorizations")

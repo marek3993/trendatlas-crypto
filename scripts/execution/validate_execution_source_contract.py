@@ -696,8 +696,8 @@ def validate_authority_latest_successful_snapshot() -> dict[str, Any]:
     currentness_status = str(payload.get("currentness_status") or "").strip()
     if currentness_status not in CURRENTNESS_STATUSES:
         errors.append("authority_latest_successful_snapshot.currentness_status has unsupported value")
-    if str(payload.get("automatic_producer_id") or "").strip().lower() != "raspberry_pi":
-        errors.append("authority_latest_successful_snapshot.automatic_producer_id must be raspberry_pi")
+    if str(payload.get("automatic_producer_id") or "").strip().lower() not in {"raspberry_pi", "canonical_production_host"}:
+        errors.append("authority_latest_successful_snapshot.automatic_producer_id must identify the canonical production host")
     if payload.get("manual_recovery_only") is not True:
         errors.append("authority_latest_successful_snapshot.manual_recovery_only must be true")
     if str(payload.get("github_actions_role") or "").strip() != "validation_only":
@@ -818,8 +818,8 @@ def validate_authority_latest_attempt_status() -> dict[str, Any]:
     currentness_status = str(payload.get("currentness_status") or "").strip()
     if currentness_status not in CURRENTNESS_STATUSES:
         errors.append("authority_latest_attempt_status.currentness_status has unsupported value")
-    if str(payload.get("automatic_producer_id") or "").strip().lower() != "raspberry_pi":
-        errors.append("authority_latest_attempt_status.automatic_producer_id must be raspberry_pi")
+    if str(payload.get("automatic_producer_id") or "").strip().lower() not in {"raspberry_pi", "canonical_production_host"}:
+        errors.append("authority_latest_attempt_status.automatic_producer_id must identify the canonical production host")
     if payload.get("manual_recovery_only") is not True:
         errors.append("authority_latest_attempt_status.manual_recovery_only must be true")
     if str(payload.get("github_actions_role") or "").strip() != "validation_only":

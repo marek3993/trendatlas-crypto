@@ -559,7 +559,7 @@
                                                            }
                             },
     "runtime_authority_contract":  {
-                                       "automatic_production_producer":  "raspberry_pi",
+                                       "automatic_production_producer":  "canonical_production_host",
                                        "pc_role":  "manual_recovery_debug_only",
                                        "github_actions_role":  "validation_only",
                                        "runtime_authority_scope":  "runtime_publish_authority_only",
@@ -583,5 +583,6 @@
                                                                               "outputs/execution/runtime_health/*",
                                                                               "outputs/execution/live_status/*"
                                                                           ]
-                                   }
+                                   },
+  "production_host_contract": "source_of_truth/production_host_contract.json"
 }

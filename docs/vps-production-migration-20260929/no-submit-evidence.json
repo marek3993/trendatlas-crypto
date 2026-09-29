@@ -1,0 +1,15 @@
+{
+  "run_id": "prod_20260929T184645Z_371710",
+  "target_closed_day": "2026-09-28",
+  "final_status": "PREFLIGHT_READY",
+  "no_submit": true,
+  "real_order_sent": false,
+  "live_order_chain": "NOT_INVOKED",
+  "execution_outcome": "PREFLIGHT_ONLY",
+  "execution_backend": "multi_account",
+  "authority_status": "SKIPPED_NO_SUBMIT",
+  "dashboard_status": "PASSED",
+  "canonical_files_unchanged": true,
+  "publication_dry_run_returncode": 0,
+  "staging_root": "/var/lib/trendatlas-production/rehearsal/20260929T184630543530Z"
+}

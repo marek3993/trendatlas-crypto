@@ -89,5 +89,6 @@
     "second_manual_asset_list": "forbidden",
     "unsupported_asset": "reject_strategy_deployment_before_activation"
   },
-  "retained_protections": ["validated_target_provenance", "account_consent", "signer_authorization", "single_run_lock", "account_lease", "durable_journal", "CLOID_recovery", "reduce_only_exit", "per_step_exchange_precision", "entry_margin", "exchange_readback", "secrets_isolation", "filesystem_publish_allowlists"]
+  "retained_protections": ["validated_target_provenance", "account_consent", "signer_authorization", "single_run_lock", "account_lease", "durable_journal", "CLOID_recovery", "reduce_only_exit", "per_step_exchange_precision", "entry_margin", "exchange_readback", "secrets_isolation", "filesystem_publish_allowlists"],
+  "production_host_contract": "source_of_truth/production_host_contract.json"
 }

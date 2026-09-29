@@ -19,7 +19,9 @@
       "layer": "production",
       "status": "active",
       "purpose": "Derive present selector capabilities and fingerprints without treating stitched historical baskets as instruments.",
-      "primary_outputs": ["outputs/production/current_strategy_snapshot.json::source_inputs.current_emittable_universe"],
+      "primary_outputs": [
+        "outputs/production/current_strategy_snapshot.json::source_inputs.current_emittable_universe"
+      ],
       "output_type": "embedded_source_contract",
       "decision_relevance": "deployment_gate",
       "writes_source_of_truth": false,
@@ -45,7 +47,9 @@
       "layer": "research_os_dev_only",
       "status": "active",
       "purpose": "Entrypoint for the installed isolated research release: preserves the SEALED v3 queue and routes authorized continuous cycles to their separate ledger.",
-      "primary_outputs": ["/var/lib/trendatlas-research/"],
+      "primary_outputs": [
+        "/var/lib/trendatlas-research/"
+      ],
       "output_type": "research_outputs",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
@@ -57,7 +61,9 @@
       "layer": "research_os_dev_only",
       "status": "active_waiting_for_new_closed_input_after_five_historical_rejects",
       "purpose": "Schedules distinct bounded historical research cycles from a frozen policy and rejection history, with SQLite resume and production preemption.",
-      "primary_outputs": ["/var/lib/trendatlas-research/continuous/"],
+      "primary_outputs": [
+        "/var/lib/trendatlas-research/continuous/"
+      ],
       "output_type": "research_outputs",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
@@ -68,7 +74,9 @@
       "layer": "research_os_dev_only",
       "status": "active",
       "purpose": "Runs the preregistered BTC short-horizon long-only mean-reversion historical study in a separate local SQLite store.",
-      "primary_outputs": ["outputs/research_os/dev_only/mean_reversion/"],
+      "primary_outputs": [
+        "outputs/research_os/dev_only/mean_reversion/"
+      ],
       "output_type": "research_outputs",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
@@ -79,7 +87,9 @@
       "layer": "research_os_dev_only",
       "status": "active",
       "purpose": "Offline 10/6/4 evolution with real OHLCV backtests, transactional persistence and a sealed final test.",
-      "primary_outputs": ["outputs/research_os/dev_only/evolution/"],
+      "primary_outputs": [
+        "outputs/research_os/dev_only/evolution/"
+      ],
       "output_type": "research_outputs",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
@@ -367,8 +377,8 @@
       "writes_source_of_truth": false,
       "notes": "Read-only validator for the two-file authority consumer contract."
     },
-      {
-        "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
+    {
+      "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
       "layer": "execution_data",
       "status": "active",
       "purpose": "Fetches Hyperliquid account state in read-only mode and writes snapshot/quality/manifest artifacts.",
@@ -383,21 +393,21 @@
       "notes": "No order placement. Unified-account observability uses spot stable total as total equity, native spot hold for free collateral, and publishes unavailable instead of fabricating missing free/withdrawable values."
     },
     {
-        "script_path": "scripts/execution/build_hyperliquid_real_performance_ledger.py",
-        "layer": "execution_data",
-        "status": "active",
-        "purpose": "Builds the canonical exchange-native, cash-flow-adjusted real-account performance ledger from read-only Hyperliquid data.",
-        "primary_outputs": [
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.quality.json",
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.manifest.json"
-        ],
-        "output_type": "real_account_performance_ledger",
-        "decision_relevance": "support_only",
-        "writes_source_of_truth": false,
-        "notes": "Read-only accounting only. Deposits and withdrawals are never PnL."
-      },
-      {
+      "script_path": "scripts/execution/build_hyperliquid_real_performance_ledger.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Builds the canonical exchange-native, cash-flow-adjusted real-account performance ledger from read-only Hyperliquid data.",
+      "primary_outputs": [
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.quality.json",
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.manifest.json"
+      ],
+      "output_type": "real_account_performance_ledger",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only accounting only. Deposits and withdrawals are never PnL."
+    },
+    {
       "script_path": "scripts/execution/render_execution_app_status.py",
       "layer": "execution_data",
       "status": "active",
@@ -1214,6 +1224,86 @@
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
       "notes": "Optional operator helper only. The official refresh entrypoint remains scripts/daily_refresh_app_pipeline.py."
+    },
+    {
+      "script_path": "scripts/execution/production_host.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/rehearsal_workspace.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/run_production_rehearsal.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/production_golden_replay.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/compare_production_replay.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/cutover_pi_to_vps.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/migration_host_control.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/pi_migration_host_control.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/retire_pi_after_cutover.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/production_research_priority.py",
+      "layer": "execution",
+      "status": "staged_migration_blocked",
+      "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
     }
   ]
 }

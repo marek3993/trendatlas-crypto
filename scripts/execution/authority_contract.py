@@ -277,6 +277,12 @@ def authority_publish_context_from_env(
 
 def resolve_authority_publish_mode(env: Mapping[str, str] | None = None) -> str:
     context = authority_publish_context_from_env(env)
+    if context["automatic_producer_id"] == "canonical_production_host":
+        try:
+            ensure_pi_only_publish_allowed(env)
+            return "canonical_production_host"
+        except (PermissionError, OSError, ValueError):
+            return "non_authoritative_manual_or_validation"
 
     if (
         context["authority_publish_enabled"]
@@ -298,10 +304,20 @@ def ensure_pi_only_publish_allowed(
         raise AuthorityPublishGuardError(
             "authority publish requires MRV1_AUTHORITY_MODE=authoritative"
         )
+    if context["automatic_producer_id"] == "canonical_production_host":
+        from scripts.execution.production_host import require_canonical_host
+        try:
+            require_canonical_host(dict(os.environ if env is None else env))
+        except (PermissionError, OSError, ValueError) as exc:
+            raise AuthorityPublishGuardError(str(exc)) from exc
+        return context
     if context["automatic_producer_id"] != "raspberry_pi":
         raise AuthorityPublishGuardError(
             "authority publish requires MRV1_AUTOMATIC_PRODUCER_ID=raspberry_pi"
         )
+    # Compatibility for the still-live Pi is measured, never architecture spoofing.
+    if platform.system().lower() != "linux" or platform.machine().lower() != "aarch64":
+        raise AuthorityPublishGuardError("legacy Pi publication requires an actual Linux/aarch64 host")
     if str(context["platform_system"] or "").strip().lower() != PI_ALLOWED_PLATFORM_SYSTEM:
         raise AuthorityPublishGuardError(
             "authority publish requires Linux Pi runtime"
