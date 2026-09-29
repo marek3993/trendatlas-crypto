@@ -1,0 +1,388 @@
+{
+  "experiment_id": "phase2_architecture_forward_20260929",
+  "version": 2,
+  "status": "DESIGN_FROZEN_EXECUTION_BLOCKED",
+  "classification": [
+    "B",
+    "C",
+    "D"
+  ],
+  "predecessor": "causal_nested_v1_20260927",
+  "predecessor_commit": "7d8eead2377887f9f03791598ef5c3af7881d561",
+  "authority": {
+    "orders": false,
+    "production_writes": false,
+    "promotion": false,
+    "sealed_writes": false
+  },
+  "admission": {
+    "not_before": "2027-01-01",
+    "new_days_anchor": "2026-09-26",
+    "minimum_new_closed_days": 30,
+    "new_complete_year": 2026,
+    "require_verified_append_only_chain": true,
+    "require_complete_pit_coverage": true,
+    "historical_label": "DEVELOPMENT_EXPLORATORY_PREVIOUSLY_SEEN",
+    "rejection_does_not_authorize_successor": true,
+    "automatic_launch": false,
+    "implementation_ready": false
+  },
+  "budget": {
+    "families": [
+      "J",
+      "K",
+      "L",
+      "M",
+      "N"
+    ],
+    "arms": [
+      "deterministic",
+      "deepseek"
+    ],
+    "seeds": [
+      1701,
+      2903,
+      4517
+    ],
+    "selection_origins": [
+      2023,
+      2026
+    ],
+    "initial_population": 8,
+    "survivors": 4,
+    "mutations_per_generation": 4,
+    "generations_including_initial": 3,
+    "candidate_slots_max": 960,
+    "evaluation_attempts_max": 10000,
+    "plateau_neighbors_per_nominee": 4,
+    "api_calls_max": 60,
+    "api_tokens_max": 1000000,
+    "api_usd_max": 1.0,
+    "active_cpu_hours_max": 24,
+    "workers": 1,
+    "two_workers": "NOT_RUN_until_leases_crash_recovery_and_identical_result_hashes_verified"
+  },
+  "parameters": {
+    "J": {
+      "trend_days": [
+        120,
+        180,
+        240
+      ],
+      "vol_days": [
+        20,
+        60
+      ],
+      "vol_target": [
+        0.1,
+        0.15,
+        0.2
+      ],
+      "exit_confirm_days": [
+        1,
+        3
+      ]
+    },
+    "K": {
+      "trend_days": [
+        120,
+        180
+      ],
+      "vol_days": [
+        30,
+        60
+      ],
+      "vol_target": [
+        0.1,
+        0.15
+      ],
+      "correlation_cap": [
+        0.6,
+        0.8
+      ],
+      "asset_weight_cap": [
+        0.2,
+        0.25
+      ],
+      "rebalance_days": [
+        7,
+        14
+      ]
+    },
+    "L": {
+      "market_sma_days": [
+        150,
+        200
+      ],
+      "momentum_days": [
+        60,
+        120
+      ],
+      "breadth_on": [
+        0.6,
+        0.7
+      ],
+      "vol_target": [
+        0.1,
+        0.15
+      ],
+      "adverse_exposure_fraction": [
+        0.0,
+        0.25
+      ]
+    },
+    "M": {
+      "slow_days": [
+        180,
+        240
+      ],
+      "breakout_days": [
+        55,
+        120
+      ],
+      "momentum_days": [
+        60,
+        120
+      ],
+      "vol_target": [
+        0.1,
+        0.15
+      ]
+    },
+    "N": {
+      "breakout_days": [
+        55,
+        120
+      ],
+      "atr_days": [
+        20,
+        40
+      ],
+      "initial_stop_atr": [
+        2.0,
+        3.0
+      ],
+      "trailing_stop_atr": [
+        4.0,
+        6.0
+      ],
+      "risk_per_entry": [
+        0.0025,
+        0.005
+      ]
+    }
+  },
+  "fixed_rules": {
+    "direction": "long_cash; long_short_NOT_RUN_without_complete_mark_funding_margin_liquidation_evidence",
+    "J": "PIT top10 own-close SMA trend; independent long/CASH states; inverse-vol size at portfolio vol target, max25pct per asset with unused cash; daily causal trend-loss exit; no holding cap; no averaging down; no correlation filter",
+    "K": "top10 lagged 30d quote-volume PIT universe with 365 observed days and >=10m USD/day; positive own trend; inverse-vol weights; max5 positions; greedy descending liquidity correlation filter over 90 prior daily returns; no renormalization of rejected weights; 2pct weight deadband and 10pct rank hysteresis",
+    "L": "BTC market SMA AND PIT breadth plus BTC realized vol20 <=1.2*prior63d median vol; breadth off=on-0.1 with 2day confirmation; inverse-vol positive momentum positions capped25pct; adverse regime scales targets, never earned returns; derivative features excluded",
+    "M": "three equal fixed 1/3 sleeves: own SMA slow, close breakout with 20day low exit, positive momentum; same PIT universe; total account vol20 target; max25pct per asset; weekly rebalance; no choosing best sleeve",
+    "N": "prior-bar Donchian high breakout; per-asset initial and trailing stops frozen at signal using ATR; high-water mark only advances after bar; new asset resets all stop state; no averaging down; no partial take profit; nominal, no-trailing, no-initial-stop, no-stop ablations all preregistered",
+    "gross_target_max": 0.95,
+    "gross_mtm_hard_limit": 1.0,
+    "exposure_breach": "retain actual breach and PnL, cancel entries, request next-realizable reduction; any >1.0 breach invalidates nomination, never clip reported exposure",
+    "execution": "daily UTC signal available next midnight+60s; first actual 1h bar strictly later; participation<=0.1pct prior hour quote volume; entry TTL6h exit TTL18h; mark residual until truly filled; missing price/funding/rules invalidates certified track",
+    "intrabar_stop": "long gap stop fills at worse of bar open/stop minus slippage; if high and low both touched assume adverse order; never use current-bar high to improve a same-bar trailing fill; actual liquidity partial-fill cap; unfilled residual retains losses and adverse mark",
+    "fee_bps": 10,
+    "slippage_bps": 10,
+    "funding": "actual timestamped signed venue rates; missing is unknown, not zero; adverse stress max(2*debit,10bps_per_day) without multiplying credits",
+    "capital_usd": [
+      100,
+      1000,
+      10000,
+      100000
+    ],
+    "state": "per-asset CASH, PENDING_ENTRY, LONG, PENDING_EXIT, COOLDOWN; exits prior to new entries; cooldown7d after failed breakout; no transfer of PnL/high-water/cooldown across assets"
+  },
+  "windows": {
+    "raw_start": "2019-01-01",
+    "training_start": "2020-01-01",
+    "selection_data_end": "2023-12-31",
+    "forensic_only_no_selection": [
+      "2024-01-01",
+      "2025-12-31"
+    ],
+    "new_2026_window": "required_for_refit_admission_and_preregistered_exploratory_outer_gate_only; never_independent_holdout; no_mutation_or_replacement_from_results",
+    "folds": [
+      {
+        "origin": 2023,
+        "inner": [
+          {
+            "train_start": "2020-01-01",
+            "train_end": "2020-11-21",
+            "validation_start": "2021-08-14",
+            "validation_end": "2021-12-11"
+          },
+          {
+            "train_start": "2020-01-01",
+            "train_end": "2021-03-21",
+            "validation_start": "2021-12-12",
+            "validation_end": "2022-04-10"
+          }
+        ],
+        "outer_exploratory": [
+          "2023-01-01",
+          "2023-12-31"
+        ]
+      },
+      {
+        "origin": 2026,
+        "inner": [
+          {
+            "train_start": "2020-01-01",
+            "train_end": "2022-08-13",
+            "validation_start": "2023-05-06",
+            "validation_end": "2023-09-02"
+          },
+          {
+            "train_start": "2020-01-01",
+            "train_end": "2022-12-11",
+            "validation_start": "2023-09-03",
+            "validation_end": "2023-12-31"
+          }
+        ],
+        "outer_exploratory": [
+          "2026-01-01",
+          "2026-12-31"
+        ]
+      }
+    ],
+    "purge_days": 244,
+    "embargo_days": 21,
+    "unbounded_hold_rule": "244 is feature lookback240+publication1+exit3, NOT a bound on episode dependence; additionally purge whole episodes intersecting boundaries, start each scored book flat after unscored warmup, censor unresolved training episodes, never transfer label-derived state; require executable event-overlap regression before implementation_ready",
+    "nonoverlap": "scored outer years2023/2026 disjoint; 2024-2025 never evaluated by new strategies or supplied to selection/proposals; 2026 origin inner selection is deliberately capped at2023-12-31",
+    "accounting": "separate causally initialized annual exploratory books; no fictional continuous equity over missing2024-2025; aggregate disjoint-fold metrics explicitly labeled; episode attribution stays within actual book; bootstrap blocks never cross the gap"
+  },
+  "gates": {
+    "order": [
+      "validity",
+      "risk",
+      "robustness",
+      "Pareto"
+    ],
+    "mdd_preferred": 0.2,
+    "mdd_acceptable": 0.25,
+    "mdd_absolute": 0.35,
+    "sharpe_min": 1.5,
+    "calmar_min": 4,
+    "stretch_cagr": [
+      1.5,
+      2.0
+    ],
+    "asset_positive_profit_share_max": 0.6,
+    "episode_positive_profit_share_max": 0.35,
+    "no_best_day_cagr_min": 0.0,
+    "no_top3_whole_episodes_cagr_min": 0.0,
+    "plateau_passing_fraction_min": 0.75,
+    "bootstrap_replicates": 999,
+    "stationary_mean_block_days": 30,
+    "dsr_min": 0.95,
+    "pbo_max": 0.1,
+    "cscv_blocks": 8,
+    "holm_p_max": 0.05,
+    "minimum_closed_episodes": 20,
+    "minimum_days": 365,
+    "insufficient_power": "INCONCLUSIVE_not_eligible",
+    "stresses": [
+      "double_costs",
+      "one_executable_bar_delay",
+      "no_best_day",
+      "no_top3_whole_episodes",
+      "adverse_mark_funding_margin_liquidation",
+      "four_parameter_neighbors",
+      "three_seeds",
+      "asset_episode_concentration",
+      "MTM_exposure_cap",
+      "N_stop_ablations",
+      "four_capacities"
+    ],
+    "no_weighted_fitness": true,
+    "statistics_trials": "all_attempts_neighbors_ablations_and_historical_selection_disclosed; duplicates_not_new_hypotheses"
+  },
+  "deepseek": {
+    "allowed_input": [
+      "inner_train",
+      "inner_validation"
+    ],
+    "forbidden_input": [
+      "2024_2025_forensic",
+      "outer_exploratory",
+      "prospective"
+    ],
+    "output": "exact family-specific parameter object, parent_id, hypothesis<=600chars; additionalProperties=false; reject inactive keys, duplicate JSON keys, nonfinite numbers, out-of-range values and normalized duplicate IDs before evaluation; no arbitrary code/tools",
+    "matched_control": "same seeds, initial populations, four slots per generation, same evaluation budget; rejected/uncertain calls count and deterministic replacement uses same reserved slot",
+    "api_reservation": "reserve worst_case_tokens_and_dollars_before_network; no_retry_uncertain_calls; record_exact_payload_response_usage_price_version; broker cannot read forward database"
+  },
+  "forward": {
+    "max_per_family": 2,
+    "max_total": 10,
+    "selection": "preselect at most2 per family from inner validity/risk/Pareto; freeze before exploratory outer; outer/stresses may only reject these, never replace/rerank them; MDD<=25pct Sharpe>=1.5 Calmar>=4 plus all robustness; deterministic rules_hash tie break; missing evidence yields no nomination",
+    "benchmarks": [
+      "BTC_SMA200_spot_proxy",
+      "BTC_SMA200_Hyperliquid_perp"
+    ],
+    "diagnostic_references": [
+      "REJECTED_F_4517_deterministic_A",
+      "REJECTED_D_4517_deterministic_B"
+    ],
+    "freeze_fields": [
+      "candidate_id",
+      "rules_hash",
+      "code_hash",
+      "data_hash",
+      "parameter_hash",
+      "freeze_timestamp",
+      "first_eligible_prospective_day"
+    ],
+    "first_day": "UTC date strictly after actual freeze; never backfill",
+    "during_observation": "INCOMPLETE_never_PASS",
+    "current_nominees": [],
+    "status": "NOT_STARTED_REFIT_BLOCKED"
+  },
+  "collector": {
+    "venue": "Hyperliquid",
+    "url": "https://api.hyperliquid.xyz/info",
+    "public_only": true,
+    "request_types": [
+      "metaAndAssetCtxs",
+      "l2Book",
+      "candleSnapshot",
+      "fundingHistory"
+    ],
+    "assets": [
+      "BTC",
+      "ETH",
+      "SOL",
+      "HYPE",
+      "DOGE",
+      "AVAX",
+      "LINK",
+      "SUI",
+      "XRP",
+      "LTC"
+    ],
+    "universe_metadata": "all native perp assets; detailed bars/books fixed10_collection_assets_not_PIT_strategy_universe",
+    "interval_seconds": 900,
+    "history_hours": 4999,
+    "funding_page_hours": 400,
+    "max_requests_per_activation": 61,
+    "max_response_bytes": 8388608,
+    "disk_reserve_bytes": 2147483648,
+    "state_limit_bytes": 2147483648,
+    "retention": "append_only_no_deletion; stop_at_quota",
+    "missing": "NULL_or_explicit_gap_never_zero",
+    "historical_fills": "OHLCV_not_guaranteed_executable_fills; books_sampled_every15m_not_complete_intrabar_path",
+    "fee_history": "UNKNOWN; public_fee_and_tick_docs_frozen_as_source_documents_not_account_fee_tier",
+    "spot_track": "PROXY_ONLY_no_spot_venue_certification",
+    "backfill_label": "HISTORICAL_RETRIEVAL_NOT_PROSPECTIVE"
+  },
+  "orchestration": {
+    "SEALED": "verified_immutable_terminal_success_no_worker_start",
+    "CHECKPOINTED_or_RUNNING": "defer_to_existing_verified_admission",
+    "FAILED_or_corrupt_or_unknown": "fail_closed_do_not_mask_as_success",
+    "research_state": "/var/lib/trendatlas-phase2",
+    "no_automatic_refit": true
+  },
+  "design_note": "Separate strategy design revision before zero Phase2 strategy results; collector contract.json and deployed collection manifest remain immutable."
+}

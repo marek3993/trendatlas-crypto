@@ -11,7 +11,7 @@ import subprocess
 OLD = Path('/opt/trendatlas-research/orchestration/causal-migration-20260928/research/causal_migration/runtime.py')
 EXPECTED_OLD = '747fc938dccc139a39eb2f3b619a36bba3120fda9a6a20ce9957592dfa1227fc'
 BASE = Path('/opt/trendatlas-phase2')
-PAYLOAD = ['contract.json','collector.py','admission.py','collector.service','collector.timer','DESIGN_AUDIT.md']
+PAYLOAD = ['contract.json','research_contract.json','collector.py','admission.py','collector.service','collector.timer','DESIGN_AUDIT.md']
 
 
 def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()

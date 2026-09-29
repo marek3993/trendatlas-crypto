@@ -1121,6 +1121,55 @@
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
       "notes": "Optional operator helper only. The official refresh entrypoint remains scripts/daily_refresh_app_pipeline.py."
+    },
+    {
+      "script_path": "research/phase2_forward/admission.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Read-only Phase2 refit admission; no search or automatic launch.",
+      "primary_outputs": [],
+      "output_type": "research_preparation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Phase2 historical search and forward tournament remain blocked by refit/coverage/implementation gates. Production unchanged."
+    },
+    {
+      "script_path": "research/phase2_forward/forensics.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Read-only attribution of fixed rejected F/D references from a hash-verified immutable terminal backup.",
+      "primary_outputs": [
+        "research/phase2_forward/evidence/forensics.json"
+      ],
+      "output_type": "research_preparation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Phase2 historical search and forward tournament remain blocked by refit/coverage/implementation gates. Production unchanged."
+    },
+    {
+      "script_path": "research/phase2_forward/collector.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Credential-free append-only Hyperliquid public data collection; not a paper tournament or certified venue backtest.",
+      "primary_outputs": [
+        "/var/lib/trendatlas-phase2/venue.sqlite",
+        "/var/lib/trendatlas-phase2/status.json"
+      ],
+      "output_type": "research_preparation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Phase2 historical search and forward tournament remain blocked by refit/coverage/implementation gates. Production unchanged."
+    },
+    {
+      "script_path": "research/phase2_forward/deploy.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Narrow VPS preparation deployment: public collector and verified SEALED successful skip, no engine or production deployment.",
+      "primary_outputs": [],
+      "output_type": "research_preparation",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Phase2 historical search and forward tournament remain blocked by refit/coverage/implementation gates. Production unchanged."
     }
   ]
 }

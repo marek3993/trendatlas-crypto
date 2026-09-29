@@ -1,0 +1,372 @@
+{
+  "status": "INCOMPLETE",
+  "venue_certification": false,
+  "market_observed_utc": "2026-09-29T17:41:35.780238+00:00",
+  "all_native_perp_metadata_assets": 234,
+  "coverage": {
+    "BTC": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "ETH": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "SOL": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "HYPE": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "DOGE": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "AVAX": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "LINK": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "SUI": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "XRP": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    },
+    "LTC": {
+      "bars": 4999,
+      "first_bar": "2026-03-05T10:00:00+00:00",
+      "last_bar": "2026-09-29T16:00:00+00:00",
+      "missing_hours_inside_retrieved_span": 0,
+      "funding_records": 400,
+      "first_funding": "2026-03-05T10:00:00.091000+00:00",
+      "last_funding": "2026-03-22T01:00:00.020000+00:00",
+      "funding_backfill_complete": false
+    }
+  },
+  "latest_selected_metadata_and_context": [
+    {
+      "asset": {
+        "szDecimals": 5,
+        "name": "BTC",
+        "maxLeverage": 40,
+        "marginTableId": 56
+      },
+      "context": {
+        "funding": "0.0000125",
+        "openInterest": "35858.1302",
+        "prevDayPx": "83996.0",
+        "dayNtlVlm": "2294512581.2493414879",
+        "premium": "-0.0003005534",
+        "oraclePx": "83179.9",
+        "markPx": "83146.0",
+        "midPx": "83153.5",
+        "impactPxs": [
+          "83153.0",
+          "83154.9"
+        ],
+        "dayBaseVlm": "27424.22972"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 4,
+        "name": "ETH",
+        "maxLeverage": 25,
+        "marginTableId": 55
+      },
+      "context": {
+        "funding": "0.0000125",
+        "openInterest": "1182360.997",
+        "prevDayPx": "2701.9",
+        "dayNtlVlm": "1325646888.5506103039",
+        "premium": "0.0003362852",
+        "oraclePx": "2676.3",
+        "markPx": "2677.1",
+        "midPx": "2677.25",
+        "impactPxs": [
+          "2677.2",
+          "2677.45"
+        ],
+        "dayBaseVlm": "490915.1125999995"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 2,
+        "name": "SOL",
+        "maxLeverage": 20,
+        "marginTableId": 54
+      },
+      "context": {
+        "funding": "0.0000125",
+        "openInterest": "5640573.2199999988",
+        "prevDayPx": "119.9",
+        "dayNtlVlm": "214639500.0438000858",
+        "premium": "-0.0002967233",
+        "oraclePx": "117.955",
+        "markPx": "117.89",
+        "midPx": "117.905",
+        "impactPxs": [
+          "117.89",
+          "117.92"
+        ],
+        "dayBaseVlm": "1802297.9700000004"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 2,
+        "name": "AVAX",
+        "maxLeverage": 10,
+        "marginTableId": 52
+      },
+      "context": {
+        "funding": "0.0000125",
+        "openInterest": "3553591.1999999997",
+        "prevDayPx": "10.518",
+        "dayNtlVlm": "33172167.1966099963",
+        "premium": "0.000530504",
+        "oraclePx": "11.1215",
+        "markPx": "11.1275",
+        "midPx": "11.1285",
+        "impactPxs": [
+          "11.1274",
+          "11.1304"
+        ],
+        "dayBaseVlm": "2964159.9100000006"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 2,
+        "name": "LTC",
+        "maxLeverage": 10,
+        "marginTableId": 52
+      },
+      "context": {
+        "funding": "0.0000125",
+        "openInterest": "707099.2600000001",
+        "prevDayPx": "69.386",
+        "dayNtlVlm": "21067809.7296899967",
+        "premium": "0.0000177791",
+        "oraclePx": "67.495",
+        "markPx": "67.501",
+        "midPx": "67.502",
+        "impactPxs": [
+          "67.4962",
+          "67.5039"
+        ],
+        "dayBaseVlm": "307927.28"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 0,
+        "name": "DOGE",
+        "maxLeverage": 10,
+        "marginTableId": 52
+      },
+      "context": {
+        "funding": "0.0000125",
+        "openInterest": "1154095112.0",
+        "prevDayPx": "0.094796",
+        "dayNtlVlm": "15790497.9720129967",
+        "premium": "0.0001284865",
+        "oraclePx": "0.093395",
+        "markPx": "0.093407",
+        "midPx": "0.093407",
+        "impactPxs": [
+          "0.093407",
+          "0.093418"
+        ],
+        "dayBaseVlm": "167382915.0"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 1,
+        "name": "SUI",
+        "maxLeverage": 10,
+        "marginTableId": 52
+      },
+      "context": {
+        "funding": "0.0000125",
+        "openInterest": "70447343.0",
+        "prevDayPx": "1.1695",
+        "dayNtlVlm": "45020765.4568099827",
+        "premium": "0.0006243679",
+        "oraclePx": "1.13715",
+        "markPx": "1.1377",
+        "midPx": "1.13795",
+        "impactPxs": [
+          "1.13786",
+          "1.13809"
+        ],
+        "dayBaseVlm": "39326870.5"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 1,
+        "name": "LINK",
+        "maxLeverage": 10,
+        "marginTableId": 52
+      },
+      "context": {
+        "funding": "-0.0000149588",
+        "openInterest": "6714566.2000000002",
+        "prevDayPx": "15.226",
+        "dayNtlVlm": "58169268.0732999742",
+        "premium": "-0.00033142",
+        "oraclePx": "14.634",
+        "markPx": "14.624",
+        "midPx": "14.625",
+        "impactPxs": [
+          "14.622",
+          "14.62915"
+        ],
+        "dayBaseVlm": "3838672.7999999989"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 0,
+        "name": "XRP",
+        "maxLeverage": 20,
+        "marginTableId": 53
+      },
+      "context": {
+        "funding": "0.0000125",
+        "openInterest": "196423198.0",
+        "prevDayPx": "1.5073",
+        "dayNtlVlm": "154096815.8862000108",
+        "premium": "0.0",
+        "oraclePx": "1.4839",
+        "markPx": "1.4838",
+        "midPx": "1.48395",
+        "impactPxs": [
+          "1.4839",
+          "1.484"
+        ],
+        "dayBaseVlm": "101654572.0"
+      }
+    },
+    {
+      "asset": {
+        "szDecimals": 2,
+        "name": "HYPE",
+        "maxLeverage": 10,
+        "marginTableId": 52
+      },
+      "context": {
+        "funding": "-0.0000359037",
+        "openInterest": "20902257.5800000131",
+        "prevDayPx": "89.136",
+        "dayNtlVlm": "477665152.7365902662",
+        "premium": "-0.0008763632",
+        "oraclePx": "86.1515",
+        "markPx": "86.075",
+        "midPx": "86.0755",
+        "impactPxs": [
+          "86.075",
+          "86.076"
+        ],
+        "dayBaseVlm": "5466774.3199999947"
+      }
+    }
+  ],
+  "retrieval_gaps": [
+    {
+      "kind": "source_document",
+      "asset": "https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees.md",
+      "received_utc": "2026-09-29T17:41:59.526968+00:00",
+      "detail": {
+        "data": null,
+        "error_type": "HTTPError"
+      }
+    },
+    {
+      "kind": "source_document",
+      "asset": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/tick-and-lot-size.md",
+      "received_utc": "2026-09-29T17:41:59.686330+00:00",
+      "detail": {
+        "data": null,
+        "error_type": "HTTPError"
+      }
+    },
+    {
+      "kind": "source_document",
+      "asset": "https://hyperliquid.gitbook.io/hyperliquid-docs/historical-data.md",
+      "received_utc": "2026-09-29T17:41:59.842023+00:00",
+      "detail": {
+        "data": null,
+        "error_type": "HTTPError"
+      }
+    }
+  ],
+  "funding_backfill_note": "bounded400hour pages; completeness must be verified after pagination, never assumed",
+  "fills": "NOT_CERTIFIED_15minute_books_and_1hour_OHLCV_do_not_prove_all_intrabar_fills",
+  "history": "retrieved_before_nominee_freeze_is_not_prospective"
+}

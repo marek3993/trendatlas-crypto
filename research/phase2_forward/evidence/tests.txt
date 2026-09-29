@@ -1,0 +1,20 @@
+test_calendar_alone_does_not_launch (research.phase2_forward.test_phase2.AdmissionTests.test_calendar_alone_does_not_launch) ... ok
+test_fold_gaps_and_budget (research.phase2_forward.test_phase2.AdmissionTests.test_fold_gaps_and_budget) ... ok
+test_new_id_cannot_bypass_refit (research.phase2_forward.test_phase2.AdmissionTests.test_new_id_cannot_bypass_refit) ... ok
+test_account_and_order_requests_forbidden (research.phase2_forward.test_phase2.PublicCollectorTests.test_account_and_order_requests_forbidden) ... ok
+test_append_only_hash_chain_and_binding (research.phase2_forward.test_phase2.PublicCollectorTests.test_append_only_hash_chain_and_binding) ... ok
+test_bad_metadata_alignment (research.phase2_forward.test_phase2.PublicCollectorTests.test_bad_metadata_alignment) ... ok
+test_closed_candle_inclusive_endpoint (research.phase2_forward.test_phase2.PublicCollectorTests.test_closed_candle_inclusive_endpoint) ... ok
+test_error_does_not_create_zero_observation (research.phase2_forward.test_phase2.PublicCollectorTests.test_error_does_not_create_zero_observation) ... ok
+test_missing_mark_never_zero (research.phase2_forward.test_phase2.PublicCollectorTests.test_missing_mark_never_zero) ... ok
+test_redirect_forbidden (research.phase2_forward.test_phase2.PublicCollectorTests.test_redirect_forbidden) ... ok
+test_checkpoint_still_admitted (research.phase2_forward.test_phase2.SealedAdmissionTests.test_checkpoint_still_admitted) ... ok
+test_corrupt_sealed_is_not_hidden (research.phase2_forward.test_phase2.SealedAdmissionTests.test_corrupt_sealed_is_not_hidden) ... ok
+test_failed_and_unknown_remain_failure (research.phase2_forward.test_phase2.SealedAdmissionTests.test_failed_and_unknown_remain_failure) ... ok
+test_sealed_execcondition_is_successful_skip (research.phase2_forward.test_phase2.SealedAdmissionTests.test_sealed_execcondition_is_successful_skip) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.256s
+
+OK
+{"status": "COLLECTING_WITH_GAPS", "tournament": "NOT_STARTED_REFIT_BLOCKED", "verdict": "INCOMPLETE", "utc": "2026-09-29T17:51:44.705262+00:00", "calls_this_activation": 34, "gaps_this_activation": 34, "observations": 34, "strategy_evaluations": 0, "deepseek_calls": 0, "venue_certified_backtest": false, "forward_nominees": [], "coverage": "native_perp_metadata_all; books_and_bars_fixed10; historical_gaps_unknown", "historical_backfill_is_prospective": false}

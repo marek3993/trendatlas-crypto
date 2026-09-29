@@ -1,0 +1,16 @@
+{
+  "verdict": "BLOCKED_WITHOUT_STATE_CHANGE",
+  "reasons": [
+    "fixed_refit_not_due",
+    "fewer_than_30_new_closed_days",
+    "no_new_complete_annual_outer_window",
+    "append_only_verified_missing",
+    "complete_pit_coverage_missing",
+    "source_hashes_verified_missing",
+    "research_engine_and_event_overlap_validation_not_ready"
+  ],
+  "not_before": "2027-01-01",
+  "evaluations": 0,
+  "api_calls": 0,
+  "forward_nominees": []
+}

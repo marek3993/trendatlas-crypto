@@ -1,0 +1,30 @@
+{
+  "observed_utc": "2026-09-29T17:48:22.127614+00:00",
+  "source_method": "official_documentation_via_web_tool; VPS_document_fetch_failed_HTTPError",
+  "historical_validity": "current_observation_only_no_historical_backfill",
+  "venue": "Hyperliquid",
+  "public_base_tier0": {
+    "perp_taker_bps": 4.5,
+    "perp_maker_bps": 1.5,
+    "spot_taker_bps": 7.0,
+    "spot_maker_bps": 4.0,
+    "account_specific_fee_tier": null,
+    "fee_source": "https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees"
+  },
+  "precision": {
+    "price_significant_digits_max": 5,
+    "perp_decimal_places_max_formula": "6 - szDecimals",
+    "spot_decimal_places_max_formula": "8 - szDecimals",
+    "integer_prices_exempt_from_significant_digit_rule": true,
+    "size_decimals_source": "meta.universe[].szDecimals",
+    "source": "https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/tick-and-lot-size"
+  },
+  "missing": [
+    "historical_fee_tiers",
+    "historical_lot_tick_versions",
+    "historical_listing_event_timestamps",
+    "full_mark_oracle_and_OI_history",
+    "complete_intrabar_execution_paths"
+  ],
+  "not_account_data": true
+}

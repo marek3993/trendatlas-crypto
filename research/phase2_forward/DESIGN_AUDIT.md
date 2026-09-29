@@ -20,13 +20,14 @@ Today neither the date nor a closed 2026 annual window exists. Calling a new
 historical search “architecture discovery” does not waive this rule. A valid
 future launch also requires verified append-only/PIT coverage, a separate tested
 engine, event-overlap purge tests and a pre-result manifest binding actual code,
-input bytes, rules, costs, budget and timestamps. The design is frozen in
-`contract.json`; it is **not** a claim that this missing engine was implemented.
+input bytes, rules, costs, budget and timestamps. The strategy design is frozen in
+`research_contract.json`; the separately deployed `contract.json` continues to bind
+the immutable collector. It is **not** a claim that the missing engine was implemented.
 `implementation_ready=false` is deliberate. No automatic launch on 2027-01-01.
 
 ## Economic hypotheses and exact finite search space
 
-Exact enums, fixed rules and transitions are in `contract.json`, with no shared
+Exact enums, fixed rules and transitions are in `research_contract.json`, with no shared
 inactive genes. Different families may share the causal ledger, never an old PnL
 stream. All are long/CASH initially. Long/short is **NOT_RUN** until historical
 mark/funding/margin/liquidation evidence supports it.
@@ -63,26 +64,34 @@ Rejected/uncertain API calls consume their reservation; replacements consume the
 same slot. Actual attempts, unique hypotheses, cache hits and duplicate slots are
 reported separately. No weighted fitness: validity, risk gates, Pareto.
 
-Raw development lineage starts2019-01-01. Warmup precedes scored training starting
-2019-09-01. Two nonoverlapping annual exploratory outer windows: **2022 and2023**.
-For each origin, two120-day inner windows end266 days before Jan1 of that origin;
-each train ends266 days before its inner-validation start. Every exact date is in
-the contract. Thus the first train ends2019-11-22, latest inner ends2022-04-10.
-**2024–2025 are forensic only**, excluded from proposal, ranking and nomination.
-Closed2026 is required for refit admission, not a freshly independent holdout.
+Raw development lineage starts2019-01-01. A full365-day PIT admission warmup
+precedes scored training starting2020-01-01. The two nonoverlapping exploratory
+outer windows are **2023 and2026**. Origin2023 has two120-day inner windows ending
+2022-04-10. Origin2026 has two120-day inner windows ending2023-12-31, deliberately
+capped before the forbidden old OOS period. Each train ends266 days before its
+inner-validation start. Every exact date is in `research_contract.json`.
+**2024–2025 are forensic only**, excluded from new-strategy evaluation, proposals,
+ranking and nomination. Closed2026 is required for refit admission and a frozen
+exploratory rejection gate, never a freshly independent holdout. This means the
+scientific design cannot be executed today. These are separate annual books;
+there is no invented continuous equity across the omitted2024–2025 gap, and
+bootstrap blocks must stay within actual observed folds.
 
 The265 omitted days comprise244 feature/publication/exit days plus21 embargo days.
 Because J/N can hold indefinitely, this fixed gap alone is insufficient. Whole
 episodes intersecting label boundaries must additionally be purged, unresolved
 training episodes censored and scored fold books initialized flat after unscored
-warmup. These requirements need executable tests before launch. The early training
-windows are small: lack of effective observations must be INCONCLUSIVE, never a
-relaxed gate. Historical statistical power cannot be promised in advance.
+warmup. These requirements need executable tests before launch. Lack of effective
+observations must be INCONCLUSIVE, never a relaxed gate. Historical statistical
+power cannot be promised in advance. The first design draft's2022 origin was
+removed before any strategy evaluation because its first train preceded365-day
+PIT admission. The collector's already frozen contract is preserved; the corrected
+strategy-only contract is a new file, with unchanged budget and risk thresholds.
 
 Within each origin, preselect at most2/family from inner results before opening
 exploratory outer. The latter can only reject these; it cannot nominate alternates
-or feed mutation. Carry the frozen annual schedule in continuous diagnostic books;
-separately initialized folds are labeled. All history remains development evidence.
+or feed mutation. Separately initialized annual books and any aggregate disjoint-
+fold statistics must be labeled. All history remains development evidence.
 
 MDD preferred20%, acceptable25%, absolute35%; Sharpe>=1.5; Calmar>=4.
 150–200%CAGR is a stretch, not an obligation to declare success. Require positive

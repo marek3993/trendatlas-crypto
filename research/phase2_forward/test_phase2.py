@@ -34,9 +34,12 @@ class AdmissionTests(unittest.TestCase):
         for f in c['windows']['folds']:
             if end:self.assertLess(end,f['outer_exploratory'][0])
             end=f['outer_exploratory'][1]
-            self.assertLess(end,'2024-01-01')
+            self.assertIn(f['origin'],[2023,2026])
             for w in f['inner']:
                 self.assertLess(w['train_start'],w['train_end'])
+                self.assertLess(w['validation_end'],'2024-01-01')
+                warmup=(dt.date.fromisoformat(w['train_start'])-dt.date.fromisoformat(c['windows']['raw_start'])).days
+                self.assertGreaterEqual(warmup,365)
                 gap=(dt.date.fromisoformat(w['validation_start'])-dt.date.fromisoformat(w['train_end'])).days-1
                 self.assertGreaterEqual(gap,c['windows']['purge_days']+c['windows']['embargo_days'])
 

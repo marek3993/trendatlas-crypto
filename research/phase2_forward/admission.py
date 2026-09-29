@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-CONTRACT = json.loads((HERE / 'contract.json').read_text())
+CONTRACT = json.loads((HERE / 'research_contract.json').read_text())
 
 
 def check(today, evidence):

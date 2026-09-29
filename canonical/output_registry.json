@@ -826,6 +826,21 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Approved deployment candidate product metrics for APP summary_path. APP must not infer these metrics."
+    },
+    {
+      "output_path": "research/phase2_forward/",
+      "generated_by": [
+        "research/phase2_forward/admission.py",
+        "research/phase2_forward/forensics.py",
+        "research/phase2_forward/ops_probe.py",
+        "research/phase2_forward/venue_summary.py"
+      ],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "research_preparation_and_forensic_evidence",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "No new strategy evaluations or qualified nominees. Separate deployment collects public venue observations under /var/lib/trendatlas-phase2; never real-account truth."
     }
   ]
 }

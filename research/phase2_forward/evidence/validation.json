@@ -1,0 +1,17 @@
+{
+  "old_state_133_files_unchanged": true,
+  "old_engine_files_unchanged": true,
+  "leadpilot_config_unchanged": true,
+  "old_status": "SEALED",
+  "old_evaluations": 7203,
+  "new_strategy_evaluations": 0,
+  "new_deepseek_calls": 0,
+  "forward_candidates": [],
+  "collector_rows": 68,
+  "collector_integrity": "ok",
+  "protected_git_diff": "",
+  "tests": "14 PASS; see tests.txt",
+  "verdict": "BLOCKED_WITHOUT_STATE_CHANGE",
+  "collector_contract_sha256": "28e7fb1d8357cdc855e3fe2adb7b49ada451974878dd162efbf04447af9ac586",
+  "research_contract_sha256": "a1bbd70687cac4ae6a198eadccc4787396f2c35029da2ceac19914e569a3e8e1"
+}

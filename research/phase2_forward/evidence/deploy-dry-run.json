@@ -1,0 +1,20 @@
+{
+  "release": "c782aa56ff082c4985957fc09a38c2c03c42f716",
+  "hashes": {
+    "contract.json": "28e7fb1d8357cdc855e3fe2adb7b49ada451974878dd162efbf04447af9ac586",
+    "collector.py": "aa1bfe020c83a7ca0bbf4ceff08fac5666fe40510cc5ae581ce69b78604962b4",
+    "admission.py": "31166018e8c4dcd256021705fdfb55060ae7baec73364091cd3ced15d30b390e",
+    "collector.service": "6e022aca77552fa11ede0b2ee8846dabe7f1f9a303fca374523ade61d2da71e6",
+    "collector.timer": "989c1a5b7157f478fba1fd87d77f783de9f3e6f1fb32c5c61d6fcd3820cb9ca8",
+    "DESIGN_AUDIT.md": "b7f37e69aa29625897b8a8d674b5a3a01882b656d4502fef41390c99d967e0ef",
+    "runtime.py": "57b33d8293cd459465e5af31fd5d531d4cd1ddbb06768e82a033fd13beeb639f"
+  },
+  "old_runtime_sha256": "747fc938dccc139a39eb2f3b619a36bba3120fda9a6a20ce9957592dfa1227fc",
+  "changes": [
+    "isolated_public_collector",
+    "SEALED_ExecCondition_successful_skip"
+  ],
+  "old_experiment_writes": false,
+  "production_writes": false,
+  "apply": false
+}
