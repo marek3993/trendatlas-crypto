@@ -842,8 +842,12 @@ def main() -> None:
         manifest_path=manifest_path,
     )
 
+    # Diagnostic serialization is independent of native rolling reductions;
+    # decisions, validation and the internal adapter frame stay unchanged.
+    from scripts.production.canonical_diagnostics import canonical_diagnostic_export
+    exported_timeseries = canonical_diagnostic_export(timeseries)
     _atomic_write_json(snapshot_path, snapshot)
-    _atomic_write_csv(timeseries_path, timeseries)
+    _atomic_write_csv(timeseries_path, exported_timeseries)
     _atomic_write_json(diagnostics_path, diagnostics)
     _atomic_write_json(quality_path, quality)
     _atomic_write_json(manifest_path, manifest)

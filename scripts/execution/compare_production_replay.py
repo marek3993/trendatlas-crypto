@@ -22,10 +22,12 @@ def compare(a,b,planner_a,planner_b):
                     entry['count']+=1
                     if isinstance(u,(int,float)) and isinstance(v,(int,float)):
                         entry['max_absolute_difference']=max(entry['max_absolute_difference'],abs(u-v))
-    exact=sa==sb and same_shape and not differences and planner_a==planner_b
+    canonical_exact = all(a.get(key)==b.get(key) for key in ('diagnostic_units','csv_sha256'))
+    exact=sa==sb and same_shape and not differences and planner_a==planner_b and canonical_exact
     return {'status':'PASS' if exact else 'BLOCKED','comparison':'exact',
         'current_snapshot_exact':sa==sb,'planner_exact':planner_a==planner_b,
         'timeseries_shape_equal':same_shape,'full_timeseries_exact':same_shape and not differences,
+        'canonical_serialization_exact':canonical_exact,
         'differences':differences,'new_tolerance_introduced':False}
 
 

@@ -936,6 +936,13 @@
       "layer": "source_of_truth",
       "status": "active",
       "purpose": "Capability-based canonical production host admission and operator migration contract."
+    },
+    {
+      "output_path": "source_of_truth/diagnostic_numeric_contract.json",
+      "generated_by": [],
+      "layer": "source_of_truth",
+      "status": "active",
+      "purpose": "Exact decimal diagnostic serialization; no strategy or account impact."
     }
   ]
 }

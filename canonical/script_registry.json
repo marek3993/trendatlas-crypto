@@ -1304,6 +1304,22 @@
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/production/canonical_diagnostics.py",
+      "layer": "production",
+      "status": "staged_migration",
+      "purpose": "Exact 12-place diagnostic export only; no decision consumer.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
+    },
+    {
+      "script_path": "scripts/execution/numeric_portability_audit.py",
+      "layer": "execution",
+      "status": "audit_only",
+      "purpose": "Offline FMA experiment and independent Decimal oracle; no orders or production signals.",
+      "primary_outputs": [],
+      "writes_source_of_truth": false
     }
   ]
 }

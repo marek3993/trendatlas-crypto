@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "classification": "B_export_only_no_strategy_change",
+  "scope": "Production Core current_strategy_timeseries canonical export",
+  "fields": ["rolling_vol_30d", "rolling_sharpe_90d"],
+  "decision_consumers": [],
+  "native_computation": "Retain the adapter frame unchanged. Canonicalization operates on an export copy after decisions and validation.",
+  "input": "Already published return_net decimal lattice, 12 fractional places; non-finite missing values become zero as in the active transform; infinity and values outside that lattice fail closed.",
+  "ordering": "Unique increasing ISO date rows; never silently reorder or deduplicate.",
+  "scale": 1000000000000,
+  "precision_basis": "Preserve the existing active adapter public precision of 12 decimal places for returns and these diagnostics. No precision reduction is based on observed ARM/x86 differences. Volatility is an annualized return fraction (one unit is 100 percentage points); Sharpe is dimensionless.",
+  "windows": {"rolling_vol_30d": 30, "rolling_sharpe_90d": 90},
+  "min_periods": "full window, otherwise null",
+  "variance": "Population ddof=0. For integer returns x, n*sum(x*x)-sum(x)**2 is computed exactly with unbounded integers; no cancellation or negative-variance clamp.",
+  "annualization": "365.25 = 1461/4 days, exactly",
+  "representation": "Decimal numbers with 12 fractional places, ROUND_HALF_EVEN; zero is positive zero. CSV uses fixed decimal text. JSON remains numeric. Exact scaled integer values accompany audit evidence.",
+  "rounding": "Round the rational square root using integer isqrt and exact comparison against the squared half-integer midpoint, including ties to even.",
+  "zero_variance": "volatility=0; Sharpe=null, including nonzero constant returns",
+  "oracle": "Test/audit only: independent centered two-pass Decimal mean/variance and sqrt at 80 decimal digits, checked again at 120 digits; never imported by production signal code.",
+  "error_bound": "Canonical decimal rounding at most 0.5e-12 per finite metric relative to its exact decimal-return definition. No acceptance tolerance: compare canonical outputs and all decisions exactly.",
+  "threshold_influence": "Exactly zero: neither diagnostic is an input to selected asset, exposure, permission, risk scaling or planner. No margin requirement or approximation is applied to decision thresholds.",
+  "forbidden": ["changing strategy decisions", "rounding account or order values", "global allclose", "using diagnostic metrics as execution inputs"]
+}
