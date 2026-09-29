@@ -1228,7 +1228,7 @@
     {
       "script_path": "scripts/execution/production_host.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1236,7 +1236,7 @@
     {
       "script_path": "scripts/execution/rehearsal_workspace.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1244,7 +1244,7 @@
     {
       "script_path": "scripts/execution/run_production_rehearsal.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1252,7 +1252,7 @@
     {
       "script_path": "scripts/execution/production_golden_replay.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1260,7 +1260,7 @@
     {
       "script_path": "scripts/execution/compare_production_replay.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1268,7 +1268,7 @@
     {
       "script_path": "scripts/execution/cutover_pi_to_vps.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1276,7 +1276,7 @@
     {
       "script_path": "scripts/execution/migration_host_control.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1284,7 +1284,7 @@
     {
       "script_path": "scripts/execution/pi_migration_host_control.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1292,7 +1292,7 @@
     {
       "script_path": "scripts/execution/retire_pi_after_cutover.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false
@@ -1300,7 +1300,7 @@
     {
       "script_path": "scripts/execution/production_research_priority.py",
       "layer": "execution",
-      "status": "staged_migration_blocked",
+      "status": "staged_operator_cutover_ready",
       "purpose": "Canonical host migration preparation; live activation and Pi retirement are operator-only and fail closed on incomplete evidence.",
       "primary_outputs": [],
       "writes_source_of_truth": false

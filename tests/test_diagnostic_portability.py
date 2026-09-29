@@ -12,6 +12,7 @@ from scripts.production.canonical_diagnostics import (
     FIELDS, SCALE, canonical_diagnostic_export, diagnostic_units, round_sqrt_ratio,
 )
 from scripts.execution.numeric_portability_audit import oracle, emulate_welford
+from scripts.execution.compare_production_replay import unchanged_history
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -148,6 +149,20 @@ class DiagnosticPortabilityTests(unittest.TestCase):
 
     def test_arm_x86_rolling_volatility_root_cause_fixture(self): self.check_cross_architecture(30)
     def test_arm_x86_rolling_sharpe_root_cause_fixture(self): self.check_cross_architecture(90)
+
+    def test_historical_decision_gate_rejects_any_changed_decision(self):
+        before={'snapshot':{'asset':'AVAX','exposure':1},'timeseries':frame([0.01]*100).to_json(orient='split')}
+        for column,value in [('selected_asset','BTC'),('execution_target_exposure',0.5),('trend_permission_active',False),('return_net',0.02)]:
+            changed=frame([0.01]*100);changed.loc[10,column]=value
+            self.assertFalse(unchanged_history(before,{'snapshot':before['snapshot'],'timeseries':changed.to_json(orient='split')}))
+
+    def test_historical_decision_gate_accepts_only_diagnostic_changes(self):
+        native=frame([0.01]*100)
+        before={'snapshot':{'asset':'AVAX','exposure':1},'timeseries':native.to_json(orient='split')}
+        after={'snapshot':{'asset':'AVAX','exposure':1},'timeseries':canonical_diagnostic_export(native).to_json(orient='split')}
+        self.assertTrue(unchanged_history(before,after))
+        after['snapshot']['asset']='BTC'
+        self.assertFalse(unchanged_history(before,after))
 
 
 if __name__=='__main__': unittest.main()

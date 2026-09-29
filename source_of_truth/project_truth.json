@@ -655,5 +655,5 @@
                                       "primary_runtime_production_truth_interface":  false
                                    },
   "production_host_contract": "source_of_truth/production_host_contract.json",
-  "production_host_migration_state": {"active_host": "raspberry_pi", "target_host": "vps-4f79db29", "status": "BLOCKED_FULL_GOLDEN_REPLAY", "live_cutover_executed": false}
+  "production_host_migration_state": {"active_host": "raspberry_pi", "target_host": "vps-4f79db29", "status": "READY_FOR_OPERATOR_CUTOVER", "live_cutover_executed": false}
 }

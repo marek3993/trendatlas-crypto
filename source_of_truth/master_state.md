@@ -159,3 +159,6 @@
 
 ## Canonical host migration contract (2026-09-29)
 The normative host admission contract is `production_host_contract.json`. Linux aarch64 and x86_64 are eligible only with pinned dependencies, SHA256 verification, exact cross-architecture replay, validated systemd runtime and a single active production authority. This supersedes Pi-only hardware requirements. Historical Pi payloads remain readable. Pi remains live until the operator executes cutover; VPS preparation is no-submit with its timer disabled. Rehearsal must use isolated filesystem copies and read-only database transport. The active multi-account journal uses UUIDs/CLOIDs and per-agent nonces, not a global JSON sequence.
+
+## Diagnostic portability verified (2026-09-29)
+Exact integer/decimal export of the two diagnostic rolling fields resolves the ARM FMA versus x86 separate-operation mismatch. Full 3,069-row replay, all 67 other columns, current snapshot and NO_ACTION planner agree exactly. Contract: `diagnostic_numeric_contract.json`. Pi remains the sole live host; VPS remains no-submit with disabled production/watchdog timers. See `docs/vps-production-migration-20260929/CONTINUATION.md` for operator readiness evidence.
