@@ -1,0 +1,150 @@
+{
+  "observed_at_utc": "2026-09-29T17:49:41.637133+00:00",
+  "host": "vps-4f79db29",
+  "production_checkout_exists": false,
+  "files": {
+    "/etc/systemd/system/trendatlas-research-broker.timer": {
+      "sha256": "8d46aff0cf6bfea39efe2afa721daf8b53b1fb32fee1cf52c43ff6097bacb113",
+      "bytes": 118
+    },
+    "/etc/systemd/system/trendatlas-research-backup.service": {
+      "sha256": "0be586a4ee5142862883b514e3df8ae49605ccd23f252672a92b93701b29e448",
+      "bytes": 743
+    },
+    "/etc/systemd/system/trendatlas-research-worker.service": {
+      "sha256": "631802fa29779eb9a64fdf371c8370d70d4c35a25b2d0a388debc7c6e1f7e171",
+      "bytes": 2198
+    },
+    "/etc/systemd/system/trendatlas-phase2-collector.timer": {
+      "sha256": "989c1a5b7157f478fba1fd87d77f783de9f3e6f1fb32c5c61d6fcd3820cb9ca8",
+      "bytes": 242
+    },
+    "/etc/systemd/system/trendatlas-phase2-collector.service": {
+      "sha256": "6e022aca77552fa11ede0b2ee8846dabe7f1f9a303fca374523ade61d2da71e6",
+      "bytes": 1278
+    },
+    "/etc/systemd/system/trendatlas-research-dispatch.service": {
+      "sha256": "5f8044e1e0f09c1558507f9006236e9a2e31dfa6582482594b2f502ea523d334",
+      "bytes": 361
+    },
+    "/etc/systemd/system/trendatlas-research-broker.service": {
+      "sha256": "327f0b035224e31a5e14fb01c10f9d3c4df45597da2a0ab8c5334f808159abc1",
+      "bytes": 1677
+    },
+    "/etc/systemd/system/trendatlas-research-dispatch.timer": {
+      "sha256": "26f6c657d8a03cb048d864d4407f18d5bb76824c2af419bc1cdf8ac4d984a6a5",
+      "bytes": 187
+    },
+    "/etc/systemd/system/trendatlas-research-backup.timer": {
+      "sha256": "d93df23c4a674d11142c5dbb32eef7c5ad728cb33f6ab8eef6f6f70c6871eded",
+      "bytes": 123
+    },
+    "/var/lib/trendatlas-research/causal-v1/current/status.json": {
+      "sha256": "f7ddbe301094b591f2b27bfa822781cea8b430dd5f322d8cebd1fd2ac11725e7"
+    }
+  },
+  "research": {
+    "state": null,
+    "status": "SEALED",
+    "phase": "TERMINAL",
+    "failure": null,
+    "counts": {
+      "attempts": 7211,
+      "candidates": 1126,
+      "evaluations": 7203,
+      "finalists": 144,
+      "proposals": 96,
+      "trials": 3415
+    },
+    "checkpoint": {
+      "attempt": 7211,
+      "evaluation": "f628fb34a0f69961d594686622bc6290331f7be1bc5b4281ca50201ff058181b",
+      "utc": "2026-09-28T20:02:27.159090+00:00"
+    },
+    "experiment_id": "causal_nested_v1_20260927",
+    "outer_results": {
+      "A": null,
+      "B": null,
+      "C": null,
+      "D": "REJECT",
+      "E": "FROZEN_FORWARD_CANDIDATES_AWAIT_CLOSED_PROSPECTIVE_DATA",
+      "history": "PREVIOUSLY_SEEN_NOT_GLOBAL_SEALED"
+    }
+  },
+  "production_user_exists": false,
+  "research_identity": "uid=999(trendatlas-research) gid=982(trendatlas-research) groups=982(trendatlas-research)",
+  "isolation": {
+    "/var/run/docker.sock": {
+      "research_can_read": false,
+      "research_can_write": false
+    },
+    "/opt/leadpilot": {
+      "research_can_read": false,
+      "research_can_write": false
+    },
+    "/etc/credstore/trendatlas-research-deepseek": {
+      "research_can_read": false,
+      "research_can_write": false
+    }
+  },
+  "leadpilot_containers": [
+    {
+      "Status": "running",
+      "Running": true,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 1659,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-09-27T20:42:03.232115845Z",
+      "FinishedAt": "2026-09-27T20:41:48.694408829Z"
+    },
+    {
+      "Status": "running",
+      "Running": true,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 1644,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-09-27T20:42:03.228102002Z",
+      "FinishedAt": "2026-09-27T20:41:48.297276127Z"
+    },
+    {
+      "Status": "running",
+      "Running": true,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 1636,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-09-27T20:42:03.227505228Z",
+      "FinishedAt": "2026-09-27T20:41:48.220409691Z"
+    },
+    {
+      "Status": "running",
+      "Running": true,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 1652,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-09-27T20:42:03.230522174Z",
+      "FinishedAt": "2026-09-27T20:41:48.253171246Z"
+    }
+  ],
+  "leadpilot_health": [
+    "leadpilot-api-1:Up 45 hours (healthy)",
+    "leadpilot-proxy-1:Up 45 hours",
+    "leadpilot-frontend-1:Up 45 hours (healthy)",
+    "leadpilot-db-1:Up 45 hours (healthy)"
+  ]
+}

@@ -1,0 +1,207 @@
+{
+  "observed_at_utc": "2026-09-29T17:49:43.351160+00:00",
+  "host": "TrendAtlas",
+  "files": {
+    "/opt/market_regime_v1/source_of_truth/production_execution_contract.json": {
+      "sha256": "b3e6ade66186e52221fd5d8bb7a42cda2325c77530e826a7fcdb09b1152bf406",
+      "bytes": 5943
+    },
+    "/opt/market_regime_v1/scripts/execution/run_trendatlas_production.py": {
+      "sha256": "874f4a3f09d1de7f14b50400acd6d68f0db5429bbc25d0a2d823aa6239ec72f6",
+      "bytes": 47473
+    },
+    "/opt/market_regime_v1/web/src/server/multi-account-executor/batch.ts": {
+      "sha256": "ea41f4a43b6eea8fa1f1997110d08f74a275c9ae5308efc9241708cfdc2b4aa6",
+      "bytes": 5087
+    },
+    "/opt/market_regime_v1/web/package-lock.json": {
+      "sha256": "7ac6e08a4c519b05241240720728e17b245ab5cfe25cdb7ea7768bc4a514c9b7",
+      "bytes": 275447
+    },
+    "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json": {
+      "sha256": "200c153dd1afe5a23374121d8a21254671c161b08a6d259e254f6cf89f0f7535",
+      "bytes": 19229
+    },
+    "/opt/market_regime_v1/outputs/execution/production_runs/latest_production_run.json": {
+      "sha256": "c748e8c5da35b1c46d8d0f2ef8077b4efed53de4f420ad998076746e7dc07e07",
+      "bytes": 6928
+    },
+    "/opt/market_regime_v1/outputs/execution/execution_journal/latest_execution_journal.json": {
+      "sha256": "ba7996929ea2f4b1db82223426841cfb2fa6a2207f86d111465e8d1cfa3a0b48",
+      "bytes": 1649
+    },
+    "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json": {
+      "sha256": "9626036582ab1018b5cfb407b566c6fe7978345654decd7498adf0d4253f4a90",
+      "bytes": 2217895
+    },
+    "/opt/market_regime_v1/outputs/execution/app_snapshot/dashboard_public_status.json": {
+      "sha256": "cdcd020546e8b7ea02bb1d20d33e792c7efef9e69dcd7d5a661241959be74b04",
+      "bytes": 704246
+    },
+    "/etc/systemd/system/mrv1-daily-live.service": {
+      "sha256": "f083a5a92e581dbe2ac26fc3bff7196f5190257383c8d8114ca3075f21111298",
+      "bytes": 1495
+    },
+    "/etc/systemd/system/trendatlas-evolution-dispatch.service": {
+      "sha256": "e081bd6f08f9f26c5fd33683b09c38680d28965baf69fab7912548ce1e05b463",
+      "bytes": 1484
+    },
+    "/etc/systemd/system/trendatlas-causal-maintain-dispatch.service": {
+      "sha256": "bf9c99ff7e190378f34820c68d94f234f247657ea07317a4c0732303e2e7ae17",
+      "bytes": 1117
+    },
+    "/etc/systemd/system/mrv1-full-auto.service": {
+      "sha256": "a3e35af6cb3400408e77c2bf1ff58ce62d68b031ef97c6d0aa83258d833ae9d3",
+      "bytes": 429
+    },
+    "/etc/systemd/system/trendatlas-evolution-worker.service": {
+      "sha256": "70565c6b0c7d467537b2ff992e07ffdbc2a8fe4750dc9adb242a7b9f9156033f",
+      "bytes": 1970
+    },
+    "/etc/systemd/system/trendatlas-wifi-setup-mode.timer": {
+      "sha256": "93daef47878d236270a0baf5b6a60a766b546697b4a8c02ecdec6257764a6820",
+      "bytes": 224
+    },
+    "/etc/systemd/system/trendatlas-causal-broker.timer": {
+      "sha256": "365798b27e0c444b1415730b6c3a7b9a7309724d0527107f1a44a00160f0f551",
+      "bytes": 202
+    },
+    "/etc/systemd/system/research_os_pi_cycle.timer": {
+      "sha256": "d02be5656ead8fa141dd6f9c3b2e3f7e1bc37b13e53bbe87ac521dfd3061ba06",
+      "bytes": 203
+    },
+    "/etc/systemd/system/mrv1-production.service": {
+      "sha256": "586f571441e759eae062af6c795ad8f5baa13fe4d998ed76d915123a7cd4a591",
+      "bytes": 2470
+    },
+    "/etc/systemd/system/mrv1-daily-live.timer": {
+      "sha256": "cb1bd4682bc1555c3f8d0c1f55f0696b7529f52079e82a2d1947aac7d2d1f60d",
+      "bytes": 180
+    },
+    "/etc/systemd/system/home-blinds-dashboard.service": {
+      "sha256": "2b97d92a61f81750aedea041a978d6e314e4cad0a0c7135bd00001964f812634",
+      "bytes": 585
+    },
+    "/etc/systemd/system/home-dashboard-kiosk-watchdog.service": {
+      "sha256": "4ae9ab72d2ee7caa422be15c8be1ae9d9f500e6d93028528d232b8ad38ba0cbd",
+      "bytes": 234
+    },
+    "/etc/systemd/system/trendatlas-causal-maintain.service": {
+      "sha256": "360932296b3978b216ec9030b6ad0f54e6a4421666233df053718cb5e687aacf",
+      "bytes": 1549
+    },
+    "/etc/systemd/system/trendatlas-wifi-setup-mode.service": {
+      "sha256": "28285fefea335b2a57aba850bd4d82a22c23e092716f3b6d8465782b8f4027c1",
+      "bytes": 185
+    },
+    "/etc/systemd/system/research_os_pi_cycle.service": {
+      "sha256": "875302e7fa7b350d6dd26a2373303dbfab4cf2f3dd9437da29eaa3ba9b4c70fe",
+      "bytes": 536
+    },
+    "/etc/systemd/system/mrv1-production.timer": {
+      "sha256": "910fe5499e14af959b2de9ace5cd4195361eadcc919a86bcf83b03648495bb2f",
+      "bytes": 220
+    },
+    "/etc/systemd/system/trendatlas-evolution-dispatch.timer": {
+      "sha256": "e9afd2e575e0803ce4d58cc0d1b674e2824f6b3dfdd04d4c58c9a2ae9847b4ea",
+      "bytes": 245
+    },
+    "/etc/systemd/system/trendatlas-causal-broker.service": {
+      "sha256": "bbe3fc67041e204105c38fce3e6dd951585292359b6c89f4ac20d34d59eb5179",
+      "bytes": 1777
+    },
+    "/etc/systemd/system/home-dashboard-kiosk-watchdog.timer": {
+      "sha256": "cc53a1e58f2da8fe8c4da206422232d49672072d895a51655a3d2cc660454169",
+      "bytes": 218
+    },
+    "/etc/systemd/system/mrv1-watchdog.service": {
+      "sha256": "043359c3a24ccbc3269e3b221777c6aa84599e061e5ae4f20f739f48e93480e6",
+      "bytes": 1387
+    },
+    "/etc/systemd/system/home-dashboard-kiosk.service": {
+      "sha256": "8bda10eaed5e4eb6817881cdf864396705b81554140a4641d5f43b51926fe57f",
+      "bytes": 665
+    },
+    "/etc/systemd/system/mrv1-daily-preview.timer": {
+      "sha256": "73155d40facedf94bca833d2575949673129e4e47bbbe13f94c25ab003b4eb4e",
+      "bytes": 168
+    },
+    "/etc/systemd/system/trendatlas-causal-maintain-dispatch.timer": {
+      "sha256": "6197c94b6d83acfa289bf3414910895105777aa950068fdf307b1e43fe3f52ae",
+      "bytes": 225
+    },
+    "/etc/systemd/system/mrv1-watchdog.timer": {
+      "sha256": "2dcefc2898ca89b8a1a7712bdac3f601211c892b0d7c48a7cb84417eaf0aa4d7",
+      "bytes": 227
+    },
+    "/etc/systemd/system/mrv1-daily-preview.service": {
+      "sha256": "d4b3bfb9823ece6f4eb3085cc80d00568a0d3941c4a2afddb722c4b6c04c10c5",
+      "bytes": 391
+    },
+    "/etc/systemd/system/mrv1-daily-live.service.d/override.conf": {
+      "sha256": "5a856ae46777b8c2e516930150277ccbbfc87193c8e8556dafe5f3624a9676b7",
+      "bytes": 602
+    },
+    "/etc/systemd/system/trendatlas-causal-broker.service.d/30-bounded.conf": {
+      "sha256": "976874fb147c3eb670dec42ce4ab79dfc64258f4764987d9b97b5bfa6f6d00e0",
+      "bytes": 32
+    },
+    "/etc/systemd/system/trendatlas-causal-maintain.service.d/30-bounded.conf": {
+      "sha256": "e5ce409fc5f1ac4ec9bc3bd8e38208982b81c532d033f2f6a7e963a590a032f1",
+      "bytes": 34
+    },
+    "/etc/systemd/system/trendatlas-evolution-dispatch.service.d/60-migration.conf": {
+      "sha256": "45f7c95e100f2b6c98615687e0cc066a2a494ba7f9d9703841a049357467f130",
+      "bytes": 241
+    },
+    "/etc/systemd/system/trendatlas-evolution-dispatch.service.d/50-causal-resume.conf": {
+      "sha256": "051d44b0688d65332b1c6bf752195aa4908ced1af06ffd9f5459db2314e1413d",
+      "bytes": 368
+    },
+    "/etc/systemd/system/mrv1-watchdog.service.d/override.conf": {
+      "sha256": "fdef1460052a61876f313ff228880762ea10e18361e436c80134f1d1818363cf",
+      "bytes": 291
+    },
+    "/etc/systemd/system/home-blinds-dashboard.service.d/override.conf": {
+      "sha256": "a5bb3f74e31183543bc5dfb7a0e0215b3b3b1f8cc6081a23af8baa7bffe4b33f",
+      "bytes": 74
+    },
+    "/etc/systemd/system/trendatlas-evolution-worker.service.d/60-migration.conf": {
+      "sha256": "6d85868a848a49df592f2df14a9417e4669d010c39db4f990193d1a4c5b6bd0e",
+      "bytes": 1073
+    },
+    "/etc/systemd/system/trendatlas-evolution-worker.service.d/50-causal-resume.conf": {
+      "sha256": "94e852b48c627f592eb2ecb344722a10a7486c7021f20612fd1a11ed817bdc5b",
+      "bytes": 774
+    }
+  },
+  "git_commit": "5ee031cef7de9c385056cec22f6511391d3e4f4f",
+  "matching_unit_files": [
+    "home-blinds-dashboard.service                enabled         enabled",
+    "home-dashboard-kiosk-watchdog.service        static          -",
+    "home-dashboard-kiosk.service                 enabled         enabled",
+    "mrv1-daily-live.service                      disabled        enabled",
+    "mrv1-daily-preview.service                   static          -",
+    "mrv1-full-auto.service                       disabled        enabled",
+    "mrv1-production.service                      disabled        enabled",
+    "mrv1-watchdog.service                        static          -",
+    "research_os_pi_cycle.service                 disabled        enabled",
+    "trendatlas-causal-broker.service             static          -",
+    "trendatlas-causal-maintain-dispatch.service  static          -",
+    "trendatlas-causal-maintain.service           static          -",
+    "trendatlas-evolution-dispatch.service        static          -",
+    "trendatlas-evolution-worker.service          static          -",
+    "trendatlas-wifi-setup-mode.service           static          -",
+    "trendatlas-causal-research.slice             static          -",
+    "home-dashboard-kiosk-watchdog.timer          enabled         enabled",
+    "mrv1-daily-live.timer                        disabled        enabled",
+    "mrv1-daily-preview.timer                     disabled        enabled",
+    "mrv1-production.timer                        enabled         enabled",
+    "mrv1-watchdog.timer                          enabled         enabled",
+    "research_os_pi_cycle.timer                   enabled         enabled",
+    "trendatlas-causal-broker.timer               disabled        enabled",
+    "trendatlas-causal-maintain-dispatch.timer    disabled        enabled",
+    "trendatlas-evolution-dispatch.timer          disabled        enabled",
+    "trendatlas-wifi-setup-mode.timer             enabled         enabled"
+  ]
+}

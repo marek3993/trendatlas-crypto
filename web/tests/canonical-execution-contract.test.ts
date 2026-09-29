@@ -73,6 +73,21 @@ describe("independent account batch", () => {
     const execute = vi.fn(); const result = await runPreflightedBatch(preflight, true, execute);
     expect(execute).not.toHaveBeenCalled(); expect(result.map(({ status }) => status)).toEqual(["FAILED", "PREFLIGHT_READY"]);
   });
+  it.each(["FAILED", "BLOCKED", "ENTRY_BLOCKED"] as const)("keeps the production journal and account state unchanged on no-submit %s", async (status) => {
+    const durable = { run: "FILLED_AND_ALIGNED", account: "aligned", nonce: 1000 };
+    const before = structuredClone(durable);
+    const recordFailure = vi.fn(async () => { durable.run = "BLOCKED"; durable.account = "blocked"; });
+    const execute = vi.fn(async () => { durable.nonce++; return []; });
+    const rows = [{ ...preflight[0], status }, preflight[1]];
+    const result = await runPreflightedBatch(rows, true, execute, recordFailure);
+    expect(recordFailure).not.toHaveBeenCalled();
+    expect(execute).not.toHaveBeenCalled();
+    expect(durable).toEqual(before);
+    expect(result.map(({ status: outcome }) => outcome)).toEqual([
+      status === "ENTRY_BLOCKED" ? "PREFLIGHT_ENTRY_BLOCKED" : status, "PREFLIGHT_READY"
+    ]);
+    expect(result.every(({ orderRequested }) => orderRequested === false)).toBe(true);
+  });
   it("records preflight failure and isolates failed evidence recording", async () => {
     const execute = vi.fn(async () => [{ accountId: "good", status: "NO_ACTION", orderRequested: false }]);
     const recordFailure = vi.fn(async () => { throw new Error("database unavailable"); });

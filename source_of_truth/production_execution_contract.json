@@ -23,7 +23,8 @@
     "emergency_switch": "execution/config/execution_mode.json::kill_switch",
     "dry_run": "invocation_--no-submit_only",
     "per_account_consent": "explicit_user_trading_enabled_is_required",
-    "no_submit": "no_exchange_writes_no_order_cancellation_no_live_adapter"
+    "no_submit": "no_exchange_writes_no_order_cancellation_no_live_adapter",
+    "no_submit_shared_database": "read_only_no_run_action_nonce_lease_or_account_status_writes; failed_preflight_is_reported_in_local_rehearsal_evidence_only; preserve_existing_terminal_execution_evidence"
   },
   "state_machine": ["VALIDATE_TARGET", "RECOVER_JOURNAL", "RECONCILE_ORDERS", "EXIT", "VERIFY_EXIT", "REPLAN_ENTRY", "ENTRY", "VERIFY_ACCOUNT", "FINALIZE_EXECUTION", "PUBLISH"],
   "exit_contract": {

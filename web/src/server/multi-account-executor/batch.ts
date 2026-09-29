@@ -53,8 +53,10 @@ export async function runPreflightedBatch(
   recordFailure?: (result: LivePreflightResult) => Promise<void>
 ): Promise<BatchAccountResult[]> {
   const recordingFailures = new Set<string>();
-  if (recordFailure) {
-    await Promise.all(preflight.filter(({ status }) => status === "FAILED" || status === "BLOCKED" || (noSubmit && status === "ENTRY_BLOCKED")).map(async (row) => {
+  // Rehearsals share the production database. Persisting a failed preflight
+  // could overwrite an existing terminal run and the account's live status.
+  if (recordFailure && !noSubmit) {
+    await Promise.all(preflight.filter(({ status }) => status === "FAILED" || status === "BLOCKED").map(async (row) => {
       try { await recordFailure(row); } catch { recordingFailures.add(row.accountId); }
     }));
   }
