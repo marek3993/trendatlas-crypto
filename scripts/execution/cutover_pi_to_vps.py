@@ -15,6 +15,7 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT))
 from scripts.execution.authority_contract import atomic_write_json
 from scripts.execution.run_trendatlas_production import SingleRunLock
+from scripts.execution.migration_diagnostics import remote_error, failure_report
 
 
 class Cutover:
@@ -72,21 +73,27 @@ class Cutover:
 
 
 class SSHBackend:
-    def __init__(self,key:Path,pi_host='trendatlas.local'): self.key,self.pi_host=key,pi_host
+    def __init__(self,key:Path,pi_host='trendatlas.local'):
+        self.key,self.pi_host=key,pi_host
+        self.phase='NEW'
     def remote(self,host,command):
         options=['-o','HostName='+self.pi_host,'-o','HostKeyAlias=trendatlas.local'] if host=='trendatlas@trendatlas.local' else []
         result=subprocess.run(['ssh','-i',str(self.key),'-o','BatchMode=yes','-o','ConnectTimeout=15',*options,host,command],capture_output=True,text=True,check=False)
-        if result.returncode: raise RuntimeError(f'{host}: migration operation failed ({result.returncode}); inspect protected host logs')
+        if result.returncode: raise remote_error(result.stdout)
         return result.stdout.strip()
     def helper(self,action):
         return json.loads(self.remote('ubuntu@57.129.127.49',
             'sudo -n /opt/trendatlas-production/current/.venv/bin/python /opt/trendatlas-production/current/scripts/execution/migration_host_control.py '+action+(' --execute-live' if action in {'activate','run-once'} else '')))
     def preflight(self):
+        self.phase='PREFLIGHT_PI'
         pi=json.loads(self.remote('trendatlas@trendatlas.local','sudo -n /var/lib/trendatlas-migration/bin/readback'))
+        self.phase='PREFLIGHT_VPS'
         vps=self.helper('preflight')
+        self.phase='PREFLIGHT_COMPARE'
         if pi['identity']!=vps['identity'] or pi['journal_sha256']!=vps['journal_sha256'] or pi['target']!=vps['target']:
             raise RuntimeError('account/signer/journal identity mismatch')
         if not pi['only_live_host'] or not vps['no_submit']: raise RuntimeError('single execution host not established')
+        self.phase='PREPARED'
         return {'pi':pi,'vps':vps}
     def wait_pi_idle(self):
         self.remote('trendatlas@trendatlas.local','sudo -n /var/lib/trendatlas-migration/bin/control wait-idle')
@@ -112,9 +119,23 @@ def main(argv=None):
     parser.add_argument('--ssh-key',type=Path,default=Path.home()/'.ssh/trendatlas_research_admin_20260928')
     parser.add_argument('--pi-host',default='trendatlas.local',help='Optional current Pi IP; original SSH host-key identity is retained')
     parser.add_argument('--state',type=Path,default=Path.home()/'.codex/trendatlas-production-cutover.json')
+    parser.add_argument('--diagnostic-report',type=Path,default=Path.home()/'.codex/trendatlas-cutover-diagnostic.json')
     args=parser.parse_args(argv); backend=SSHBackend(args.ssh_key,args.pi_host)
-    with SingleRunLock(args.state.with_suffix('.lock')):
-        result=Cutover(backend,args.state).execute() if args.execute_live else backend.preflight()
+    cutover=None
+    try:
+        with SingleRunLock(args.state.with_suffix('.lock')):
+            cutover=Cutover(backend,args.state)
+            result=cutover.execute() if args.execute_live else backend.preflight()
+    except Exception as error:
+        state=cutover.state if cutover is not None else {'phase':'UNKNOWN'}
+        phase=backend.phase if state.get('phase') in {'NEW','PREPARED'} else None
+        report=failure_report(error,state,phase)
+        report['diagnostic_report']=str(args.diagnostic_report.resolve())
+        report['observed_at']=datetime.now(timezone.utc).isoformat()
+        atomic_write_json(args.diagnostic_report,report)
+        print(json.dumps(report,indent=2))
+        return 1
     print(json.dumps(result,indent=2))
+    return 0
 
-if __name__=='__main__': main()
+if __name__=='__main__': raise SystemExit(main())

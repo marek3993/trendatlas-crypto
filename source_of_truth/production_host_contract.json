@@ -3,12 +3,25 @@
   "effective_date": "2026-09-29",
   "authority_role": "canonical_production_host",
   "migration_state": "PREPARATION_ONLY_PI_REMAINS_LIVE",
-  "supported_platforms": ["linux/aarch64", "linux/x86_64"],
+  "supported_platforms": [
+    "linux/aarch64",
+    "linux/x86_64"
+  ],
   "python_version": "3.13.5",
   "node_version": "22.23.2",
-  "critical_python_packages": {"numpy": "2.4.4", "pandas": "3.0.3", "requests": "2.34.2", "eth-account": "0.13.7"},
+  "critical_python_packages": {
+    "numpy": "2.4.4",
+    "pandas": "3.0.3",
+    "requests": "2.34.2",
+    "eth-account": "0.13.7"
+  },
   "capability_evidence": "/etc/trendatlas-production/capabilities.json",
-  "required_capabilities": ["sha256_manifest", "cross_arch_golden_replay", "systemd_verified", "single_execution_host"],
+  "required_capabilities": [
+    "sha256_manifest",
+    "cross_arch_golden_replay",
+    "systemd_verified",
+    "single_execution_host"
+  ],
   "cross_arch_comparison": "exact_decisions_and_planned_actions_no_new_tolerance",
   "historical_identity": "raspberry_pi_is_read_compatible_only_during_operator_migration",
   "no_submit": {
@@ -29,7 +42,42 @@
     "before_activation_failure": "restore_Pi_only_after_proving_VPS_never_activated",
     "after_possible_submission_failure": "VPS_only_reconcile_by_CLOID_and_account_readback_never_auto_restore_Pi",
     "repeat_after_success": "readback_only_never_start_second_run",
-    "cleanup": "operator_only_after_success_archive_encrypt_mask_remove_autostart_reboot_verify"
+    "cleanup": "operator_only_after_success_archive_encrypt_mask_remove_autostart_reboot_verify",
+    "readiness_receipt": {
+      "version": 2,
+      "required_bindings": [
+        "current_UTC_closed_day",
+        "exact_target_and_signal",
+        "account_identity_positions_open_orders_recent_fills",
+        "journal_sha256_and_nonce_watermarks",
+        "planner",
+        "runtime_capabilities_sha256",
+        "paired_current_input_replay"
+      ],
+      "max_age_seconds": 3600,
+      "valuation_policy": "prices_and_equity_are_freshly_replanned_not_frozen; positions_orders_fills_and_identity_must_match",
+      "invalidated_by": "day_rollover_target_account_journal_planner_or_host_change",
+      "validation_order": "fresh_readback_then_receipt_binding_before_Pi_fence"
+    },
+    "failure_diagnostic": {
+      "transport": "allowlisted_reason_code_and_phase_only_never_remote_stdout_stderr_or_exception_text",
+      "required_fields": [
+        "reason_code",
+        "phase",
+        "pi_fenced",
+        "live_activation_possible",
+        "diagnostic_report"
+      ],
+      "unknown_state": "null_is_unknown_never_claim_false",
+      "report": "safe_JSON_local_report_even_when_SSH_or_remote_helper_fails"
+    }
   },
-  "forbidden": ["architecture_spoofing", "new_asset_allowlist", "manual_orders", "dual_live_hosts", "automatic_assistant_cutover", "manual_authority_snapshot_edit"]
+  "forbidden": [
+    "architecture_spoofing",
+    "new_asset_allowlist",
+    "manual_orders",
+    "dual_live_hosts",
+    "automatic_assistant_cutover",
+    "manual_authority_snapshot_edit"
+  ]
 }

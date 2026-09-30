@@ -19,6 +19,9 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT))
 from scripts.execution.authority_contract import atomic_write_json
 from scripts.execution.production_host import validate_evidence, verify_systemd_evidence
+from scripts.execution.migration_diagnostics import reason_code
+from scripts.execution.migration_readiness import validate_receipt, digest
+from scripts.execution.rehearsal_workspace import runtime_fingerprints
 
 STATE=Path('/var/lib/trendatlas-production')
 CAPABILITIES=Path('/etc/trendatlas-production/capabilities.json')
@@ -80,16 +83,24 @@ def action(name,execute_live=False):
         return {'never_activated':not ACTIVATION.exists() and OVERRIDE.exists() and property_value('mrv1-production.timer','ActiveState')=='inactive'}
     if name=='preflight':
         validate_ready(); assert_inactive()
-        if ACTIVATION.exists() or not OVERRIDE.exists() or property_value('mrv1-production.timer','UnitFileState')!='disabled':
+        if (ACTIVATION.exists() or not OVERRIDE.exists()
+                or property_value('mrv1-production.timer','UnitFileState')!='disabled'
+                or property_value('mrv1-production.timer','ActiveState')!='inactive'
+                or 'run_production_rehearsal.py' not in property_value('mrv1-production.service','ExecStart')):
             raise RuntimeError('VPS must still be disabled and no-submit')
-        _,result=fresh_readback(); result['no_submit']=True; return result
+        payload,result=fresh_readback()
+        validate_receipt(json.loads(Path('/etc/trendatlas-production/ready.json').read_text()), payload,
+                         runtime_inputs_sha256=digest(runtime_fingerprints(ROOT)))
+        result['no_submit']=True; return result
     if name=='checkpoint':
         _,result=fresh_readback(); atomic_write_json(STATE/'final-handoff.json',result); return result
     if name=='activate':
         evidence=validate_ready(); assert_inactive()
         if ACTIVATION.exists(): raise RuntimeError('activation already attempted; reconcile instead')
         handoff=json.loads((STATE/'final-handoff.json').read_text())
-        _,current=fresh_readback()
+        payload,current=fresh_readback()
+        validate_receipt(json.loads(Path('/etc/trendatlas-production/ready.json').read_text()), payload,
+                         runtime_inputs_sha256=digest(runtime_fingerprints(ROOT)))
         if current['journal_sha256']!=handoff['journal_sha256']: raise RuntimeError('journal changed after handoff')
         previous=json.loads((ROOT/'outputs/execution/production_runs/latest_production_run.json').read_text())
         atomic_write_json(ACTIVATION,{'phase':'ACTIVATING','previous_run_id':previous.get('run_id'),
@@ -133,6 +144,13 @@ def action(name,execute_live=False):
 def main():
     p=argparse.ArgumentParser(); p.add_argument('action'); p.add_argument('--execute-live',action='store_true'); a=p.parse_args()
     if os.geteuid()!=0: raise RuntimeError('root required')
-    print(json.dumps(action(a.action,a.execute_live)))
+    try:
+        result=action(a.action,a.execute_live)
+    except Exception as error:
+        # Raw exception/command output is deliberately never transported to the operator.
+        print(json.dumps({'reason_code':reason_code(error)}))
+        return 1
+    print(json.dumps(result))
+    return 0
 
-if __name__=='__main__': main()
+if __name__=='__main__': raise SystemExit(main())
