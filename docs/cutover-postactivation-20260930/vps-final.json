@@ -1,0 +1,105 @@
+{
+  "observed_at": "2026-09-30T15:28:23.764Z",
+  "target": {
+    "closedDay": "2026-09-29",
+    "asset": "AVAX",
+    "exposure": 1
+  },
+  "journal_sha256": "177f7f579aed2d811f92219b4f15b98d63a95906ff9fc751afb63d63538b8809",
+  "journalUnchanged": true,
+  "nonce": [
+    1790640666333
+  ],
+  "locks": [],
+  "accounts": [
+    {
+      "positions": [
+        {
+          "asset": "AVAX",
+          "size": 7.65,
+          "markPrice": 10.814
+        }
+      ],
+      "equity_usd": 82.59984,
+      "open_orders": [],
+      "fills_since_1440": [],
+      "planner": {
+        "state": "NO_ACTION",
+        "actions": []
+      }
+    }
+  ],
+  "cloid_checks": [
+    {
+      "cloid": "0x37d093ba43127dd7a43549bb4fae112f",
+      "journal_submission": "KNOWN",
+      "journal_verification": "VERIFIED",
+      "exchange_status": "filled"
+    },
+    {
+      "cloid": "0xb6e35a6976c8e14bc7d25fbad437e781",
+      "journal_submission": "SUBMITTED",
+      "journal_verification": "VERIFIED",
+      "exchange_status": "filled"
+    },
+    {
+      "cloid": "0x9d0611c0ea77e558ee8f280e3d2777c2",
+      "journal_submission": "SUBMITTED",
+      "journal_verification": "VERIFIED",
+      "exchange_status": "filled"
+    },
+    {
+      "cloid": "0xd738ad3f5adaabfc0f00244bfa21eb8f",
+      "journal_submission": "SUBMITTED",
+      "journal_verification": "VERIFIED",
+      "exchange_status": "filled"
+    }
+  ],
+  "run": {
+    "run_id": "prod_20260930T144223Z_081482",
+    "final_status": "SUCCESS",
+    "no_submit": false,
+    "real_order_sent": false,
+    "execution_outcome": "NO_ACTION",
+    "authority_status": "PASSED"
+  },
+  "execution_repeated": false,
+  "units": {
+    "mrv1-production.timer": {
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    },
+    "mrv1-production.service": {
+      "ActiveState": "inactive",
+      "UnitFileState": "static",
+      "ExecMainStartTimestamp": "Wed 2026-09-30 14:42:21 UTC",
+      "ExecMainStatus": "2"
+    },
+    "mrv1-watchdog.timer": {
+      "ActiveState": "active",
+      "UnitFileState": "enabled"
+    }
+  },
+  "no_submit_override": false,
+  "latest_successful_snapshot.json": {
+    "run_id": "20260930_151656",
+    "generated_at_utc": "2026-09-30T15:17:15Z",
+    "target_closed_day_utc": "2026-09-29",
+    "authority_role": "canonical_production_host",
+    "automatic_producer_id": "canonical_production_host",
+    "hostname": null,
+    "latest_authoritative_attempt_status": "success",
+    "sha256": "ffda0fa4fb568986578787b709f379748116162409dfb5b70deb1cb127646de6"
+  },
+  "latest_attempt_status.json": {
+    "run_id": "20260930_151656",
+    "generated_at_utc": "2026-09-30T15:17:15Z",
+    "target_closed_day_utc": "2026-09-29",
+    "authority_role": "canonical_production_host",
+    "automatic_producer_id": "canonical_production_host",
+    "hostname": null,
+    "latest_authoritative_attempt_status": "success",
+    "sha256": "9f310c979f7ac0f693059788721b2f724de43c330f446b9e4f570d0bc028c6ae"
+  },
+  "publisher_head": "a9480b5ab8244ba95c16f9f9c0b458f76aa38fef"
+}

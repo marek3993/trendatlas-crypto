@@ -1,0 +1,179 @@
+{
+  "observed_at": "2026-09-30T15:05:20.618290+00:00",
+  "host": "vps",
+  "units": {
+    "mrv1-production.timer": {
+      "Id": "mrv1-production.timer",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled",
+      "Result": "success"
+    },
+    "mrv1-production.service": {
+      "Id": "mrv1-production.service",
+      "ActiveState": "failed",
+      "SubState": "failed",
+      "UnitFileState": "static",
+      "Restart": "on-failure",
+      "Result": "exit-code",
+      "NRestarts": "0",
+      "ExecMainStartTimestamp": "Wed 2026-09-30 14:42:21 UTC",
+      "ExecMainExitTimestamp": "Wed 2026-09-30 14:44:25 UTC",
+      "ExecMainStatus": "2"
+    },
+    "mrv1-watchdog.timer": {
+      "Id": "mrv1-watchdog.timer",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled",
+      "Result": "success"
+    },
+    "mrv1-watchdog.service": {
+      "Id": "mrv1-watchdog.service",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "static",
+      "Restart": "no",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStartTimestamp": "",
+      "ExecMainExitTimestamp": "",
+      "ExecMainStatus": "0"
+    }
+  },
+  "fence_exists": false,
+  "no_submit_override": false,
+  "operator-activation.json": {
+    "phase": "ACTIVATING",
+    "previous_run_id": "prod_20260930T001011Z_854735",
+    "at": "2026-09-30T14:42:19.814115+00:00",
+    "run_requested": true
+  },
+  "cutover-success.json": null,
+  "final-handoff.json": {
+    "journal_sha256": "c41fe05c53965e3510cb2c13d1c8539339b137ac24ed5a7da5ab85bea2bdf0b3"
+  },
+  "latest_run": {
+    "run_id": "prod_20260930T144223Z_081482",
+    "started_at": "2026-09-30T14:42:23Z",
+    "finished_at": "2026-09-30T14:44:19Z",
+    "target_closed_day": "2026-09-29",
+    "final_status": "EXECUTION_COMPLETE_PUBLISH_FAILED",
+    "no_submit": false,
+    "real_order_sent": false,
+    "live_order_chain": "INVOKED",
+    "execution_outcome": "NO_ACTION",
+    "authority_status": null,
+    "model_target_asset": "AVAX",
+    "model_target_exposure": 1.0
+  },
+  "stage_statuses": {
+    "ACQUIRE_LOCK": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:42:23Z",
+      "finished_at": "2026-09-30T14:42:23Z"
+    },
+    "AUTHORITY_PUBLISH": {
+      "status": "FAILED",
+      "started_at": "2026-09-30T14:43:41Z",
+      "finished_at": "2026-09-30T14:44:19Z"
+    },
+    "BUILD_CANONICAL_INTENT": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:27Z",
+      "finished_at": "2026-09-30T14:43:28Z"
+    },
+    "BUILD_PRODUCTION_CORE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:18Z",
+      "finished_at": "2026-09-30T14:43:21Z"
+    },
+    "BUILD_REAL_ORDER_GATE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:28Z",
+      "finished_at": "2026-09-30T14:43:28Z"
+    },
+    "DASHBOARD_RUNTIME": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:39Z",
+      "finished_at": "2026-09-30T14:43:41Z"
+    },
+    "EXECUTE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:29Z",
+      "finished_at": "2026-09-30T14:43:34Z"
+    },
+    "LIVE_PREFLIGHT": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:29Z",
+      "finished_at": "2026-09-30T14:43:29Z"
+    },
+    "POST_TRADE_VERIFY": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:38Z",
+      "finished_at": "2026-09-30T14:43:39Z"
+    },
+    "PRECHECK_DATA_HEALTH": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:18Z",
+      "finished_at": "2026-09-30T14:43:18Z"
+    },
+    "READ_ACCOUNT_AFTER": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:34Z",
+      "finished_at": "2026-09-30T14:43:38Z"
+    },
+    "READ_ACCOUNT_BEFORE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:24Z",
+      "finished_at": "2026-09-30T14:43:27Z"
+    },
+    "RECONCILE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:29Z",
+      "finished_at": "2026-09-30T14:43:29Z"
+    },
+    "REFRESH_DATA": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:42:23Z",
+      "finished_at": "2026-09-30T14:43:18Z"
+    },
+    "VALIDATE_DATA_HEALTH": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:28Z",
+      "finished_at": "2026-09-30T14:43:29Z"
+    },
+    "VALIDATE_PRODUCTION_CORE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:21Z",
+      "finished_at": "2026-09-30T14:43:24Z"
+    },
+    "VALIDATE_SIGNER": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T14:43:27Z",
+      "finished_at": "2026-09-30T14:43:27Z"
+    }
+  },
+  "latest_successful_snapshot.json": {
+    "producer_id": null,
+    "producer": null,
+    "status": null,
+    "run_id": "20260930_001137",
+    "target_closed_day_utc": "2026-09-29",
+    "generated_at_utc": "2026-09-30T00:11:52Z",
+    "published_at_utc": null,
+    "git_commit": null,
+    "sha256": "caf2d1dfc248108128717173308ce450ec8cc66389681b1922332c0b6783ce87"
+  },
+  "latest_attempt_status.json": {
+    "producer_id": null,
+    "producer": null,
+    "status": null,
+    "run_id": "20260930_001137",
+    "target_closed_day_utc": "2026-09-29",
+    "generated_at_utc": "2026-09-30T00:11:52Z",
+    "published_at_utc": null,
+    "git_commit": null,
+    "sha256": "a61f392e3b38542b2b7552ed96413bb158002325b26602a03aef03c20cf2e5ab"
+  }
+}

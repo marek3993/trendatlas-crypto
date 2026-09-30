@@ -1,0 +1,36 @@
+{
+  "admission_as_service_user": "PASS",
+  "run_id": "prod_20260930T144223Z_081482",
+  "verified": true,
+  "real_order_sent": false,
+  "host_state": {
+    "available": true,
+    "no_submit": false,
+    "activation_exists": true,
+    "units": {
+      "mrv1-production.timer": {
+        "UnitFileState": "enabled",
+        "ActiveState": "active",
+        "ExecMainStatus": ""
+      },
+      "mrv1-production.service": {
+        "UnitFileState": "static",
+        "ActiveState": "inactive",
+        "ExecMainStatus": "2"
+      },
+      "mrv1-watchdog.timer": {
+        "UnitFileState": "enabled",
+        "ActiveState": "active",
+        "ExecMainStatus": ""
+      }
+    },
+    "run": {
+      "run_id": "prod_20260930T144223Z_081482",
+      "final_status": "SUCCESS",
+      "no_submit": false,
+      "real_order_sent": false,
+      "execution_outcome": "NO_ACTION",
+      "authority_status": "PASSED"
+    }
+  }
+}

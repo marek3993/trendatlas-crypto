@@ -1,0 +1,8 @@
+{
+  "host": "vps",
+  "tests": 49,
+  "tests_passed": true,
+  "core_semantic_sha256": "5c335cf85e8b7f4bc338a9192ac888233467a7b6c3be65be920faee419c85d84",
+  "csv_sha256": "7c23b25b3b4c395f4108d28950982daae4b192ff4d538d7f6a8b5c73255d8ada",
+  "closed_day": "2026-09-29"
+}

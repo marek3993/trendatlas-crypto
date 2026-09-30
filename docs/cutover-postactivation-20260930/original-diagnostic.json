@@ -1,0 +1,8 @@
+{
+  "reason_code": "REMOTE_FAILURE",
+  "phase": "RUN_REQUESTED",
+  "pi_fenced": null,
+  "live_activation_possible": true,
+  "diagnostic_report": "C:\\Users\\benda\\.codex\\trendatlas-cutover-diagnostic.json",
+  "observed_at": "2026-09-30T14:44:37.426315+00:00"
+}

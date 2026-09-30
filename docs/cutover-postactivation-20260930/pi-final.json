@@ -1,0 +1,172 @@
+{
+  "observed_at": "2026-09-30T15:29:04.279127+00:00",
+  "host": "pi",
+  "units": {
+    "mrv1-production.timer": {
+      "Result": "success",
+      "Id": "mrv1-production.timer",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "mrv1-production.service": {
+      "Restart": "on-failure",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStartTimestamp": "",
+      "ExecMainExitTimestamp": "",
+      "ExecMainStatus": "0",
+      "Id": "mrv1-production.service",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "disabled"
+    },
+    "mrv1-watchdog.timer": {
+      "Result": "success",
+      "Id": "mrv1-watchdog.timer",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "mrv1-watchdog.service": {
+      "Restart": "no",
+      "Result": "success",
+      "NRestarts": "0",
+      "ExecMainStartTimestamp": "Wed 2026-09-30 15:28:58 CEST",
+      "ExecMainExitTimestamp": "Wed 2026-09-30 15:28:59 CEST",
+      "ExecMainStatus": "0",
+      "Id": "mrv1-watchdog.service",
+      "ActiveState": "inactive",
+      "SubState": "dead",
+      "UnitFileState": "static"
+    }
+  },
+  "fence_exists": true,
+  "no_submit_override": false,
+  "operator-activation.json": null,
+  "cutover-success.json": null,
+  "final-handoff.json": null,
+  "latest_run": {
+    "run_id": "prod_20260930T001011Z_854735",
+    "started_at": "2026-09-30T00:10:11Z",
+    "finished_at": "2026-09-30T00:11:59Z",
+    "target_closed_day": "2026-09-29",
+    "final_status": "SUCCESS",
+    "no_submit": false,
+    "real_order_sent": false,
+    "live_order_chain": "INVOKED",
+    "execution_outcome": "NO_ACTION",
+    "authority_status": "PASSED",
+    "model_target_asset": "AVAX",
+    "model_target_exposure": 1.0
+  },
+  "stage_statuses": {
+    "ACQUIRE_LOCK": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:10:11Z",
+      "finished_at": "2026-09-30T00:10:11Z"
+    },
+    "AUTHORITY_PUBLISH": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:16Z",
+      "finished_at": "2026-09-30T00:11:59Z"
+    },
+    "BUILD_CANONICAL_INTENT": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:05Z",
+      "finished_at": "2026-09-30T00:11:05Z"
+    },
+    "BUILD_PRODUCTION_CORE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:10:56Z",
+      "finished_at": "2026-09-30T00:11:01Z"
+    },
+    "BUILD_REAL_ORDER_GATE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:05Z",
+      "finished_at": "2026-09-30T00:11:05Z"
+    },
+    "DASHBOARD_RUNTIME": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:15Z",
+      "finished_at": "2026-09-30T00:11:16Z"
+    },
+    "EXECUTE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:06Z",
+      "finished_at": "2026-09-30T00:11:11Z"
+    },
+    "LIVE_PREFLIGHT": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:06Z",
+      "finished_at": "2026-09-30T00:11:06Z"
+    },
+    "POST_TRADE_VERIFY": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:14Z",
+      "finished_at": "2026-09-30T00:11:15Z"
+    },
+    "PRECHECK_DATA_HEALTH": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:10:56Z",
+      "finished_at": "2026-09-30T00:10:56Z"
+    },
+    "READ_ACCOUNT_AFTER": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:11Z",
+      "finished_at": "2026-09-30T00:11:14Z"
+    },
+    "READ_ACCOUNT_BEFORE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:02Z",
+      "finished_at": "2026-09-30T00:11:05Z"
+    },
+    "RECONCILE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:06Z",
+      "finished_at": "2026-09-30T00:11:06Z"
+    },
+    "REFRESH_DATA": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:10:11Z",
+      "finished_at": "2026-09-30T00:10:56Z"
+    },
+    "VALIDATE_DATA_HEALTH": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:05Z",
+      "finished_at": "2026-09-30T00:11:05Z"
+    },
+    "VALIDATE_PRODUCTION_CORE": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:01Z",
+      "finished_at": "2026-09-30T00:11:02Z"
+    },
+    "VALIDATE_SIGNER": {
+      "status": "PASSED",
+      "started_at": "2026-09-30T00:11:05Z",
+      "finished_at": "2026-09-30T00:11:05Z"
+    }
+  },
+  "latest_successful_snapshot.json": {
+    "producer_id": null,
+    "producer": null,
+    "status": null,
+    "run_id": "20260930_001137",
+    "target_closed_day_utc": "2026-09-29",
+    "generated_at_utc": "2026-09-30T00:11:52Z",
+    "published_at_utc": null,
+    "git_commit": null,
+    "sha256": "caf2d1dfc248108128717173308ce450ec8cc66389681b1922332c0b6783ce87"
+  },
+  "latest_attempt_status.json": {
+    "producer_id": null,
+    "producer": null,
+    "status": null,
+    "run_id": "20260930_001137",
+    "target_closed_day_utc": "2026-09-29",
+    "generated_at_utc": "2026-09-30T00:11:52Z",
+    "published_at_utc": null,
+    "git_commit": null,
+    "sha256": "a61f392e3b38542b2b7552ed96413bb158002325b26602a03aef03c20cf2e5ab"
+  }
+}
