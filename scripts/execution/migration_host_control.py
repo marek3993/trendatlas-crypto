@@ -19,9 +19,10 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT))
 from scripts.execution.authority_contract import atomic_write_json
 from scripts.execution.production_host import validate_evidence, verify_systemd_evidence
-from scripts.execution.migration_diagnostics import reason_code
+from scripts.execution.migration_diagnostics import reason_code, MigrationError
 from scripts.execution.migration_readiness import validate_receipt, digest
 from scripts.execution.rehearsal_workspace import runtime_fingerprints
+from scripts.execution.migration_reconciliation import classify_execution
 
 STATE=Path('/var/lib/trendatlas-production')
 CAPABILITIES=Path('/etc/trendatlas-production/capabilities.json')
@@ -31,11 +32,45 @@ ACTIVATION=STATE/'operator-activation.json'
 
 def run(*args):
     p=subprocess.run(args,capture_output=True,text=True,check=False)
-    if p.returncode: raise RuntimeError('host command failed: '+args[0])
+    if p.returncode: raise MigrationError('SERVICE_COMMAND_FAILED')
     return p.stdout.strip()
 
 
 def property_value(unit,prop): return run('systemctl','show',unit,'--value','-p',prop)
+
+
+def write_capabilities(evidence):
+    import pwd
+    user = property_value('mrv1-production.service', 'User')
+    gid = pwd.getpwnam(user).pw_gid
+    atomic_write_json(CAPABILITIES, evidence)
+    # atomic_write_json creates a new 0600 inode. These are non-secret admission
+    # hashes, which the unprivileged publisher must be able to read.
+    os.chown(CAPABILITIES, 0, gid)
+    CAPABILITIES.chmod(0o640)
+    verify_service_readability()
+
+
+def verify_service_readability():
+    user = property_value('mrv1-production.service', 'User')
+    p = subprocess.run(['runuser', '-u', user, '--', sys.executable, '-c',
+                        'import json;from pathlib import Path;'
+                        'c=json.loads(Path("/etc/trendatlas-production/capabilities.json").read_text());'
+                        'r=Path(c["runtime_root"]);'
+                        '[p.read_bytes() for p in [*(r/k for k in c["files"]),*(Path(k) for k in c["systemd_files"])]]'],
+                       capture_output=True, text=True)
+    if p.returncode:
+        raise MigrationError('CAPABILITIES_UNREADABLE')
+
+
+def host_snapshot():
+    result = {'available': True, 'no_submit': OVERRIDE.exists(), 'activation_exists': ACTIVATION.exists(),
+              'units': {u: {k: property_value(u, k) for k in ('UnitFileState', 'ActiveState', 'ExecMainStatus')}
+                        for u in ('mrv1-production.timer', 'mrv1-production.service', 'mrv1-watchdog.timer')}}
+    path = ROOT/'outputs/execution/production_runs/latest_production_run.json'
+    manifest = json.loads(path.read_text())
+    result['run'] = {k: manifest.get(k) for k in ('run_id', 'final_status', 'no_submit', 'real_order_sent', 'execution_outcome', 'authority_status')}
+    return result
 
 
 def fresh_readback():
@@ -69,6 +104,7 @@ def validate_ready():
     if any(ready.get(k) is not True for k in required): raise RuntimeError('deployment readiness gates are incomplete')
     if ready.get('capabilities_sha256')!=__import__('hashlib').sha256(CAPABILITIES.read_bytes()).hexdigest():
         raise RuntimeError('readiness receipt does not bind capabilities')
+    verify_service_readability()
     return evidence
 
 
@@ -79,6 +115,7 @@ def assert_inactive():
 
 def action(name,execute_live=False):
     if name in {'activate','run-once'} and not execute_live: raise RuntimeError('explicit operator live confirmation required')
+    if name=='snapshot': return host_snapshot()
     if name=='activation-status':
         return {'never_activated':not ACTIVATION.exists() and OVERRIDE.exists() and property_value('mrv1-production.timer','ActiveState')=='inactive'}
     if name=='preflight':
@@ -106,7 +143,7 @@ def action(name,execute_live=False):
         atomic_write_json(ACTIVATION,{'phase':'ACTIVATING','previous_run_id':previous.get('run_id'),
             'at':datetime.now(timezone.utc).isoformat(),'handoff':handoff})
         evidence.update(activated_by_operator=True,single_execution_host=Path('/etc/machine-id').read_text().strip())
-        atomic_write_json(CAPABILITIES,evidence)
+        write_capabilities(evidence)
         OVERRIDE.unlink()
         run('systemctl','daemon-reload')
         run('systemctl','enable','--now','mrv1-production.timer','mrv1-watchdog.timer')
@@ -129,13 +166,12 @@ def action(name,execute_live=False):
         payload,result=fresh_readback()
         activation=json.loads(ACTIVATION.read_text())
         manifest=json.loads((ROOT/'outputs/execution/production_runs/latest_production_run.json').read_text())
-        verified=(manifest.get('run_id')!=activation['previous_run_id'] and manifest.get('no_submit') is False
-                  and manifest.get('final_status')=='SUCCESS' and all(a['plan']['state']=='NO_ACTION' for a in payload['accounts']))
-        result.update(verified=verified,run_id=manifest.get('run_id'),real_order_sent=manifest.get('real_order_sent'))
-        if verified: atomic_write_json(STATE/'cutover-success.json',result)
+        result.update(classify_execution(manifest,payload,activation),run_id=manifest.get('run_id'),real_order_sent=manifest.get('real_order_sent'))
+        result['host_state']=host_snapshot()
+        if result['verified']: atomic_write_json(STATE/'cutover-success.json',result)
         return result
     if name=='verify-active':
-        if OVERRIDE.exists() or not ACTIVATION.exists() or any(property_value(unit,'UnitFileState')!='enabled' for unit in ('mrv1-production.timer','mrv1-watchdog.timer')):
+        if OVERRIDE.exists() or not ACTIVATION.exists() or any(property_value(unit,'UnitFileState')!='enabled' or property_value(unit,'ActiveState')!='active' for unit in ('mrv1-production.timer','mrv1-watchdog.timer')):
             raise RuntimeError('VPS activation not established')
         return {'sole_vps_local_posture':True}
     raise RuntimeError('unsupported action')

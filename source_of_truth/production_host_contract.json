@@ -2,7 +2,7 @@
   "version": 1,
   "effective_date": "2026-09-29",
   "authority_role": "canonical_production_host",
-  "migration_state": "PREPARATION_ONLY_PI_REMAINS_LIVE",
+  "migration_state": "VPS_ACTIVE_PI_FENCED",
   "supported_platforms": [
     "linux/aarch64",
     "linux/x86_64"
@@ -70,6 +70,13 @@
       ],
       "unknown_state": "null_is_unknown_never_claim_false",
       "report": "safe_JSON_local_report_even_when_SSH_or_remote_helper_fails"
+    },
+    "post_activation_recovery": {
+      "response_loss": "persist_RECONCILE_REQUIRED_before_network_probes_then_readback_only_never_start_run_again",
+      "diagnostic": "always_include_independently_observed_Pi_and_VPS_posture_or_explicit_unknown",
+      "completion": "verify_current_account_open_orders_journal_CLOIDs_nonce_and_terminal_original_run; publication_failure_is_separate_from_submission_ambiguity",
+      "publication_recovery": "locked_existing_run_only_dry_run_before_publish_no_exchange_mutation_preserve_execution_evidence",
+      "cleanup": "requires_verified_execution_and_successful_current_VPS_publication"
     }
   },
   "forbidden": [
@@ -79,5 +86,12 @@
     "dual_live_hosts",
     "automatic_assistant_cutover",
     "manual_authority_snapshot_edit"
-  ]
+  ],
+  "capability_file_access": {
+    "owner": "root",
+    "group": "production_service_primary_group",
+    "mode": "0640",
+    "atomic_replacement": "restore_owner_group_and_mode_before_activation",
+    "preflight": "test_readability_as_actual_service_user_not_only_root"
+  }
 }

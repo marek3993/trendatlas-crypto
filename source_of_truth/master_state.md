@@ -162,3 +162,8 @@ The normative host admission contract is `production_host_contract.json`. Linux 
 
 ## Diagnostic portability verified (2026-09-29)
 Exact integer/decimal export of the two diagnostic rolling fields resolves the ARM FMA versus x86 separate-operation mismatch. Full 3,069-row replay, all 67 other columns, current snapshot and NO_ACTION planner agree exactly. Contract: `diagnostic_numeric_contract.json`. Pi remains the sole live host; VPS remains no-submit with disabled production/watchdog timers. See `docs/vps-production-migration-20260929/CONTINUATION.md` for operator readiness evidence.
+
+## Operator cutover completed 2026-09-30
+- VPS `vps-4f79db29` is the sole active production execution/publish host. Pi production timer is disabled/inactive and its persistent migration fence remains installed. This supersedes earlier Pi-live migration notes above.
+- Operator-started run `prod_20260930T144223Z_081482` completed NO_ACTION, no order, 7.65 AVAX and zero open orders. A publication permission failure was recovered without repeating execution; current authority publication and reconciliation are verified.
+- Pi cleanup, shutdown and reboot have not been performed. LeadPilot and research were not changed. See `docs/cutover-postactivation-20260930/README.md`.

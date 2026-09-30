@@ -15,7 +15,7 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path.insert(0,str(ROOT))
 from scripts.execution.authority_contract import atomic_write_json
 from scripts.execution.run_trendatlas_production import SingleRunLock
-from scripts.execution.migration_diagnostics import remote_error, failure_report
+from scripts.execution.migration_diagnostics import remote_error, failure_report, MigrationError, reason_code
 
 
 class Cutover:
@@ -27,16 +27,26 @@ class Cutover:
         self.state.update(phase=phase, updated_at=datetime.now(timezone.utc).isoformat(), **details)
         atomic_write_json(self.path,self.state)
 
+    def reconcile_existing(self):
+        # Persist uncertainty before any fallible network call. No start/restore
+        # operation belongs in this path, even when a response was lost.
+        self.save('RECONCILE_REQUIRED')
+        self.backend.verify_pi_fenced()
+        result=self.backend.reconcile(self.state)
+        if not result.get('verified'):
+            self.save('RECONCILE_REQUIRED',readback=result)
+            raise MigrationError(result.get('reason_code','SUBMISSION_UNRESOLVED'))
+        self.backend.verify_sole_vps()
+        self.save('SUCCESS',readback=result)
+        return result
+
     def execute(self):
         b=self.backend
         if self.state['phase']=='SUCCESS':
             b.verify_sole_vps(); return b.readback()
         if self.state['phase'] in {'ACTIVATING','VPS_ACTIVE','RUN_REQUESTED','RECONCILE_REQUIRED'}:
             # Reconcile only: an uncertain start may already have submitted a signed order.
-            b.verify_pi_fenced()
-            result=b.reconcile(self.state)
-            if not result.get('verified'): raise RuntimeError('readback unresolved; no new run or Pi restoration permitted')
-            b.verify_sole_vps(); self.save('SUCCESS',readback=result); return result
+            return self.reconcile_existing()
         try:
             evidence=b.preflight()
             self.save('PREPARED',evidence=evidence)
@@ -62,12 +72,15 @@ class Cutover:
             b.verify_sole_vps()
             self.save('SUCCESS',readback=result)
             return result
-        except BaseException:
+        except BaseException as original_error:
+            if self.state['phase'] in {'RUN_REQUESTED','VPS_ACTIVE'}:
+                self.save('RECONCILE_REQUIRED',recovery_trigger=reason_code(original_error))
+                return self.reconcile_existing()
+            self.save('RECONCILE_REQUIRED')
             if b.vps_provably_never_activated():
                 b.restore_pi()
                 self.save('PI_RESTORED_BEFORE_ACTIVATION')
                 raise
-            self.save('RECONCILE_REQUIRED')
             # Possible order: never re-enable Pi, remove journal rows or resubmit here.
             raise
 
@@ -79,7 +92,15 @@ class SSHBackend:
     def remote(self,host,command):
         options=['-o','HostName='+self.pi_host,'-o','HostKeyAlias=trendatlas.local'] if host=='trendatlas@trendatlas.local' else []
         result=subprocess.run(['ssh','-i',str(self.key),'-o','BatchMode=yes','-o','ConnectTimeout=15',*options,host,command],capture_output=True,text=True,check=False)
-        if result.returncode: raise remote_error(result.stdout)
+        if result.returncode:
+            error=remote_error(result.stdout)
+            if result.returncode==255:
+                for text,code in [('timed out','SSH_CONNECTION_TIMEOUT'),('Connection closed','SSH_CONNECTION_CLOSED'),
+                                  ('Connection reset','SSH_CONNECTION_CLOSED'),('Permission denied','SSH_AUTH_FAILED')]:
+                    if text in result.stderr:
+                        error=MigrationError(code);break
+            error.remote_exit_code=result.returncode
+            raise error
         return result.stdout.strip()
     def helper(self,action):
         return json.loads(self.remote('ubuntu@57.129.127.49',
@@ -111,11 +132,25 @@ class SSHBackend:
     def readback(self): return self.helper('readback')
     def reconcile(self,state): return self.helper('reconcile')
     def verify_sole_vps(self): self.verify_pi_fenced(); self.helper('verify-active')
+    def snapshot(self):
+        import shlex
+        script = ('import json,subprocess;from pathlib import Path;'
+                  'units=["mrv1-production.timer","mrv1-production.service","mrv1-watchdog.timer"];'
+                  'print(json.dumps({"available":True,"fenced":Path("/etc/systemd/system/mrv1-production.service.d/90-migration-fence.conf").exists(),'
+                  '"units":{u:{k:subprocess.check_output(["systemctl","show",u,"--value","-p",k],text=True).strip() '
+                  'for k in ["UnitFileState","ActiveState"]} for u in units}}))')
+        result={}
+        for name,call in [('pi',lambda:json.loads(self.remote('trendatlas@trendatlas.local','python3 -c '+shlex.quote(script)))),
+                          ('vps',lambda:self.helper('snapshot'))]:
+            try: result[name]=call()
+            except Exception: result[name]={'available':False}
+        return result
 
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--execute-live',action='store_true',help='Operator confirmation: migrate authority and activate automatic real trading')
+    parser.add_argument('--reconcile-only',action='store_true',help='Read back an existing activation; never activate or request a production run')
     parser.add_argument('--ssh-key',type=Path,default=Path.home()/'.ssh/trendatlas_research_admin_20260928')
     parser.add_argument('--pi-host',default='trendatlas.local',help='Optional current Pi IP; original SSH host-key identity is retained')
     parser.add_argument('--state',type=Path,default=Path.home()/'.codex/trendatlas-production-cutover.json')
@@ -125,11 +160,23 @@ def main(argv=None):
     try:
         with SingleRunLock(args.state.with_suffix('.lock')):
             cutover=Cutover(backend,args.state)
-            result=cutover.execute() if args.execute_live else backend.preflight()
+            if args.reconcile_only:
+                if cutover.state['phase'] not in {'ACTIVATING','VPS_ACTIVE','RUN_REQUESTED','RECONCILE_REQUIRED','SUCCESS'}:
+                    raise MigrationError('SUBMISSION_UNRESOLVED')
+                result=cutover.reconcile_existing()
+            else:
+                result=cutover.execute() if args.execute_live else backend.preflight()
     except Exception as error:
         state=cutover.state if cutover is not None else {'phase':'UNKNOWN'}
         phase=backend.phase if state.get('phase') in {'NEW','PREPARED'} else None
         report=failure_report(error,state,phase)
+        if isinstance(error,MigrationError) and hasattr(error,'remote_exit_code'):
+            report['remote_exit_code']=error.remote_exit_code
+        if report['live_activation_possible'] is not False:
+            report['host_state']=backend.snapshot()
+            pi=report['host_state']['pi']
+            if pi.get('available'):
+                report['pi_fenced']=pi['fenced']
         report['diagnostic_report']=str(args.diagnostic_report.resolve())
         report['observed_at']=datetime.now(timezone.utc).isoformat()
         atomic_write_json(args.diagnostic_report,report)

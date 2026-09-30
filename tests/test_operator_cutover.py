@@ -41,7 +41,7 @@ class CutoverTests(unittest.TestCase):
         self.assertTrue(b.pi); self.assertFalse(b.vps); self.assertEqual(b.orders,0)
     def test_failure_after_possible_submission_reconciles_no_replay(self):
         b=Backend('readback')
-        with self.assertRaises(RuntimeError): Cutover(b,self.path).execute()
+        self.assertTrue(Cutover(b,self.path).execute()['verified'])
         self.assertFalse(b.pi); self.assertEqual(b.orders,1)
         b.fail=None; Cutover(b,self.path).execute()
         self.assertEqual(b.orders,1); self.assertIn('reconcile',b.calls); self.assertNotIn('restore',b.calls)
@@ -51,7 +51,11 @@ class CutoverTests(unittest.TestCase):
         self.assertTrue(b.pi); self.assertFalse(b.vps)
     def test_interruption_before_acknowledgement_is_uncertain(self):
         b=Backend('run')
+        original_reconcile=b.reconcile
+        b.reconcile=lambda state: {'verified':False}
         with self.assertRaises(RuntimeError): Cutover(b,self.path).execute()
+        self.assertEqual(Cutover(b,self.path).state['phase'],'RECONCILE_REQUIRED')
+        b.reconcile=original_reconcile
         b.fail=None; Cutover(b,self.path).execute(); self.assertEqual(b.calls.count('run'),1)
     def test_failed_preflight_does_not_fence_pi(self):
         b=Backend('preflight')

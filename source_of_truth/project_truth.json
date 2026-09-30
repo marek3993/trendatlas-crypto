@@ -655,5 +655,16 @@
                                       "primary_runtime_production_truth_interface":  false
                                    },
   "production_host_contract": "source_of_truth/production_host_contract.json",
-  "production_host_migration_state": {"active_host": "raspberry_pi", "target_host": "vps-4f79db29", "status": "READY_FOR_OPERATOR_CUTOVER", "live_cutover_executed": false}
+  "production_host_migration_state": {
+    "active_host": "vps-4f79db29",
+    "previous_host": "raspberry_pi",
+    "status": "CUTOVER_COMPLETE",
+    "live_cutover_executed": true,
+    "operator_activation_at_utc": "2026-09-30T14:42:19.814115+00:00",
+    "production_run_id": "prod_20260930T144223Z_081482",
+    "execution_outcome": "NO_ACTION",
+    "real_order_sent": false,
+    "pi_fenced": true,
+    "pi_cleanup_executed": false
+}
 }
