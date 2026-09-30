@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "comparison": "exact",
+  "current_snapshot_exact": true,
+  "planner_exact": true,
+  "timeseries_shape_equal": true,
+  "full_timeseries_exact": true,
+  "canonical_serialization_exact": true,
+  "differences": {},
+  "new_tolerance_introduced": false,
+  "input_sha256": {
+    "pi-core.json": "3834b2a18567cb78c1cc50bca1065a8dcc4f22dd86c253758f97ed317b08fb6f",
+    "vps-core.json": "3834b2a18567cb78c1cc50bca1065a8dcc4f22dd86c253758f97ed317b08fb6f",
+    "pi-planner.json": "098606b92149a550cb05e7d888fe3890cfc7b99cb75f718a7ca2d2ac9cc45baf",
+    "vps-planner.json": "098606b92149a550cb05e7d888fe3890cfc7b99cb75f718a7ca2d2ac9cc45baf"
+  }
+}

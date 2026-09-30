@@ -1,0 +1,41 @@
+{
+  "verdict": "READY_FOR_OPERATOR_CUTOVER",
+  "canonical_no_submit": true,
+  "publication_dry_run": true,
+  "cross_arch_core": true,
+  "cross_arch_planner": true,
+  "journal_isolation": true,
+  "research_permissions": true,
+  "research_checkpoint_preemption": true,
+  "systemd_verified": true,
+  "publisher_access": true,
+  "cleanup_tool_verified": true,
+  "research_checkpoint_preemption_scope": "synthetic_active_worker_and_real_sealed_checkpoint",
+  "cleanup_tool_verification_scope": "synthetic_filesystem_systemd_and_reboot_proof_only",
+  "capabilities_sha256": "d9d83257f2d0a25378c70a86d746b2d298d3b259f6f43070e36f8d26beaf8ab9",
+  "numeric_oracle": true,
+  "historical_decisions_unchanged": true,
+  "receipt_version": 2,
+  "observed_at": "2026-09-30T14:27:59.521009+00:00",
+  "closed_day": "2026-09-29",
+  "target_sha256": "022dd4874a87264aefcfbd0ec9cbd5024ed764942faf5b5162d9af3c3c320071",
+  "account_sha256": "e16bd9e04a396d86ea33f3cf1264ff343cd7cb5c72054b64d7c398fb3716f308",
+  "journal_sha256": "c41fe05c53965e3510cb2c13d1c8539339b137ac24ed5a7da5ab85bea2bdf0b3",
+  "planner_sha256": "6abf100d499626e7da832a8dedbbd3d08933e64988bb6f49fd783117cddc5ca0",
+  "runtime_inputs_sha256": "72005093c271718d52aee83ac85fa7f90e8b9c9034e0a8ca8afb56ebe6bd1204",
+  "current_replay": {
+    "status": "PASS",
+    "closed_day": "2026-09-29",
+    "target_sha256": "022dd4874a87264aefcfbd0ec9cbd5024ed764942faf5b5162d9af3c3c320071",
+    "account_sha256": "e16bd9e04a396d86ea33f3cf1264ff343cd7cb5c72054b64d7c398fb3716f308",
+    "journal_sha256": "c41fe05c53965e3510cb2c13d1c8539339b137ac24ed5a7da5ab85bea2bdf0b3",
+    "planner_sha256": "6abf100d499626e7da832a8dedbbd3d08933e64988bb6f49fd783117cddc5ca0",
+    "report_sha256": "d56ec1a167e65618b9d6076bcfb3052f273bc080e5aee4ad554e3e26abb2e0c2",
+    "inputs_sha256": "c254ea01101ac1baac3cc66bfce9a39f43674c31f62d02fc9414ed57f704e17b",
+    "source_commit": "d6bbcf5fc520a2e6e061b159df646a796e625325",
+    "no_submit_run_ids": [
+      "prod_20260930T142206Z_229371",
+      "prod_20260930T141131Z_404500"
+    ]
+  }
+}

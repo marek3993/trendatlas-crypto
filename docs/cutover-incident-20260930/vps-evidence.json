@@ -1,0 +1,65 @@
+{
+  "host": "vps",
+  "observed_at": "2026-09-30T14:26:31.724Z",
+  "bindings": {
+    "closed_day": "2026-09-29",
+    "target_sha256": "022dd4874a87264aefcfbd0ec9cbd5024ed764942faf5b5162d9af3c3c320071",
+    "account_sha256": "e16bd9e04a396d86ea33f3cf1264ff343cd7cb5c72054b64d7c398fb3716f308",
+    "journal_sha256": "c41fe05c53965e3510cb2c13d1c8539339b137ac24ed5a7da5ab85bea2bdf0b3",
+    "planner_sha256": "6abf100d499626e7da832a8dedbbd3d08933e64988bb6f49fd783117cddc5ca0"
+  },
+  "preflight": {
+    "run_id": "prod_20260930T141131Z_404500",
+    "target_closed_day": "2026-09-29",
+    "final_status": "PREFLIGHT_READY",
+    "no_submit": true,
+    "real_order_sent": false,
+    "live_order_chain": "NOT_INVOKED",
+    "execution_outcome": "PREFLIGHT_ONLY",
+    "authority_status": "SKIPPED_NO_SUBMIT",
+    "model_target_asset": "AVAX",
+    "model_target_exposure": 1.0
+  },
+  "timer": {
+    "UnitFileState": "disabled",
+    "ActiveState": "inactive"
+  },
+  "positions": [
+    [
+      {
+        "asset": "AVAX",
+        "size": 7.65,
+        "markPrice": 10.964
+      }
+    ]
+  ],
+  "open_orders": [
+    []
+  ],
+  "account_equity": [
+    83.748381
+  ],
+  "recent_fills_count": [
+    18
+  ],
+  "last_fill_ms": [
+    1790640668472
+  ],
+  "nonce": [
+    1790640666333
+  ],
+  "journalUnchanged": true,
+  "execution_locks": 0,
+  "planner": [
+    {
+      "state": "NO_ACTION",
+      "actions": []
+    }
+  ],
+  "publish_dry_run": {
+    "ActiveState": "inactive",
+    "ExecMainStatus": "0"
+  },
+  "no_submit_override": true,
+  "activation_exists": false
+}

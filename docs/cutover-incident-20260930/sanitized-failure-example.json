@@ -1,0 +1,8 @@
+{
+  "reason_code": "RUNTIME_MANIFEST_MISMATCH",
+  "phase": "PREFLIGHT_VPS",
+  "pi_fenced": false,
+  "live_activation_possible": false,
+  "diagnostic_report": "C:\\Users\\benda\\.codex\\tmp\\cutover-20260930\\safe-failure.json",
+  "observed_at": "2026-09-30T14:25:28.569079+00:00"
+}
