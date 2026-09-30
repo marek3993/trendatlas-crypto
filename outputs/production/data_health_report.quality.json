@@ -15,6 +15,6 @@
     "system_remains_available": true
   },
   "validated_paths": {
-    "report_path": "/opt/market_regime_v1/outputs/production/data_health_report.json"
+    "report_path": "/opt/trendatlas-production/current/outputs/production/data_health_report.json"
   }
 }

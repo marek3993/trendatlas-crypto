@@ -1,7 +1,7 @@
 {
   "artifact_type": "current_strategy_snapshot",
   "schema_version": 4,
-  "generated_at_utc": "2026-09-30T00:11:35Z",
+  "generated_at_utc": "2026-09-30T15:16:54Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "closed_day": "2026-09-29",
@@ -83,8 +83,8 @@
       "overlay_assets": [
         "BTC"
       ],
-      "selector_sha256": "8c507c33927c757db9699d2b90ea8795ac43c1711bcf9aabdaa96265d8023692",
-      "adapter_sha256": "b630a1bff92ef6cb3d09169999488de98f6c7e6c9d193344e30f249972639289",
+      "selector_sha256": "f54b820312721e452192e0bd5f448c66f9bafd44f6685fd7cad45fa9fde6f14e",
+      "adapter_sha256": "e42ba6aee2db961b6d081d24f3522e86f6b4ed62bb5b0b34886487a02d18a6cb",
       "selector_candidate_count": 9
     },
     "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
@@ -163,7 +163,7 @@
             "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
             "sha256": "1f1bddceb2e7d28af43103d92fd764d4c47354436b92f322614903d884090291",
             "size_bytes": 396518,
-            "modified_utc": "2026-09-30T00:10:45Z",
+            "modified_utc": "2026-09-30T14:43:05Z",
             "last_date": "2026-09-29",
             "row_count": 3070,
             "materialized_closed_day": "2026-09-29",
@@ -172,9 +172,9 @@
           },
           "durable_baseline_freshness_report": {
             "path": "outputs/execution/freshness/app_freshness_report.json",
-            "sha256": "e1bedfa0ac1f3fd85b62fda5920017aba7ce121a9ae57fd32f009763007edd39",
-            "size_bytes": 1002,
-            "modified_utc": "2026-09-30T00:10:53Z",
+            "sha256": "4ceb095ab0daed8445dffe2298f1eb7142c7d578bd024fb97c42bb0c40888dfb",
+            "size_bytes": 1015,
+            "modified_utc": "2026-09-30T14:43:15Z",
             "closed_day": "2026-09-29",
             "status": "ok",
             "materialized_closed_day": "2026-09-29",
@@ -254,7 +254,7 @@
         "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
         "sha256": "1f1bddceb2e7d28af43103d92fd764d4c47354436b92f322614903d884090291",
         "size_bytes": 396518,
-        "modified_utc": "2026-09-30T00:10:45Z",
+        "modified_utc": "2026-09-30T14:43:05Z",
         "last_date": "2026-09-29",
         "row_count": 3070,
         "materialized_closed_day": "2026-09-29",
@@ -263,9 +263,9 @@
       },
       "durable_baseline_freshness_report": {
         "path": "outputs/execution/freshness/app_freshness_report.json",
-        "sha256": "e1bedfa0ac1f3fd85b62fda5920017aba7ce121a9ae57fd32f009763007edd39",
-        "size_bytes": 1002,
-        "modified_utc": "2026-09-30T00:10:53Z",
+        "sha256": "4ceb095ab0daed8445dffe2298f1eb7142c7d578bd024fb97c42bb0c40888dfb",
+        "size_bytes": 1015,
+        "modified_utc": "2026-09-30T14:43:15Z",
         "closed_day": "2026-09-29",
         "status": "ok",
         "materialized_closed_day": "2026-09-29",
@@ -288,12 +288,12 @@
       },
       "etf_panel": {
         "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
-        "sha256": "2e70dadbdbca49447c079473c1a79ee18fe927c7859200f50f3eb562f224d36f",
-        "size_bytes": 257446,
-        "modified_utc": "2026-09-30T00:10:53Z",
-        "last_date": "2026-09-30",
-        "row_count": 682,
-        "latest_source_session_day": "2026-09-29",
+        "sha256": "720e871182fd22953482eefe5e28d85c25a2f5dad3248ed99137838c31d720de",
+        "size_bytes": 257798,
+        "modified_utc": "2026-09-30T14:43:14Z",
+        "last_date": "2026-10-01",
+        "row_count": 683,
+        "latest_source_session_day": "2026-09-30",
         "active_source_session_day": "2026-09-28",
         "active_source_causal_available_day": "2026-09-29",
         "materialized_closed_day": "2026-09-29",
@@ -316,33 +316,33 @@
       },
       "dev_only_script": {
         "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
-        "sha256": "7fdd6e2e790fc15ae2c25930dc46c4485a92448615fc4d24b4508ddbeabf120e",
-        "size_bytes": 61227,
-        "modified_utc": "2026-05-10T08:10:37Z"
+        "sha256": "467e52d3f791943bf11ea327a335a7c0da3a16a8685238fb790025bd6c4320aa",
+        "size_bytes": 62701,
+        "modified_utc": "2026-09-29T19:36:16Z"
       },
       "probe_helper_source": {
         "path": "scripts/dev_only_phase68g_etf_flow_impulse_probe.py",
-        "sha256": "b2331780c20d9153a58876c6ec870b921364e040771839bcbc82355a2f5085cd",
-        "size_bytes": 15070,
-        "modified_utc": "2026-05-10T18:36:47Z"
+        "sha256": "52658b50d5c1cfecfbdc762a74b7c6b59e52bbccdc5574ef48bb516196c9ec9a",
+        "size_bytes": 15435,
+        "modified_utc": "2026-09-29T19:36:16Z"
       },
       "cooldown_helper_source": {
         "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py",
-        "sha256": "01aab1c51258ea450cab782b34650c36b656eafe8bfd86316433c2ca4b01855a",
-        "size_bytes": 13591,
-        "modified_utc": "2026-05-10T18:36:47Z"
+        "sha256": "1508262bcb5c36814d3e860dd04efe3f96f86eb042a0f086e8a81d08dedbe4b3",
+        "size_bytes": 13928,
+        "modified_utc": "2026-09-29T19:36:16Z"
       },
       "project_truth": {
         "path": "source_of_truth/project_truth.json",
-        "sha256": "91982938796997d1cd7b2b8f52b7813542b0d4502c0c2b05a75da5296e9c6f85",
-        "size_bytes": 62159,
-        "modified_utc": "2026-09-25T07:08:21Z"
+        "sha256": "410be40fc26bfb447ef8ddb75a9ad991792e6426bc1637979fa30564f2b87162",
+        "size_bytes": 63088,
+        "modified_utc": "2026-09-29T19:36:16Z"
       },
       "export_contract": {
         "path": "source_of_truth/export_contract.json",
-        "sha256": "8512864986bf0200be3913e2e33663fcc472a5ce6b217ee502a5aa50f0cf2d6f",
-        "size_bytes": 72450,
-        "modified_utc": "2026-09-25T07:08:21Z"
+        "sha256": "b40a12d0e83f7a5231536ae831a40b6a7925b9b5847b612cabc3102a8c5f7929",
+        "size_bytes": 73216,
+        "modified_utc": "2026-09-29T19:36:16Z"
       }
     },
     "cost_model": {
@@ -410,8 +410,8 @@
       }
     },
     "etf_panel_materialization": {
-      "actual_latest_source_session_day": "2026-09-29",
-      "actual_latest_causal_available_day": "2026-09-30",
+      "actual_latest_source_session_day": "2026-09-30",
+      "actual_latest_causal_available_day": "2026-10-01",
       "active_source_session_day": "2026-09-28",
       "active_source_causal_available_day": "2026-09-29",
       "materialized_closed_day": "2026-09-29",
@@ -445,8 +445,8 @@
       "source_of_truth/project_truth.json",
       "source_of_truth/export_contract.json"
     ],
-    "build_command": "/opt/market_regime_v1/.venv/bin/python /opt/market_regime_v1/scripts/production/build_current_strategy_snapshot.py",
-    "git_commit": "5ee031cef7de9c385056cec22f6511391d3e4f4f",
+    "build_command": "/opt/trendatlas-production/current/.venv/bin/python /opt/trendatlas-production/current/scripts/production/build_current_strategy_snapshot.py",
+    "git_commit": "e85712b614db9d9faeae59cf6216aaba0470f539",
     "wait_condition": {
       "code": "already_in_target_state",
       "text": "The active Production Core is already in its current authorized state for AVAX.",

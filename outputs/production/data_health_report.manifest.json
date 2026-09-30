@@ -2,12 +2,12 @@
   "artifact_type": "data_health_report_manifest",
   "schema_version": 1,
   "generated_at_utc": "2026-09-30T12:00:00Z",
-  "script_path": "/opt/market_regime_v1/scripts/production/data_health_common.py",
-  "root_path": "/opt/market_regime_v1",
+  "script_path": "/opt/trendatlas-production/current/scripts/production/data_health_common.py",
+  "root_path": "/opt/trendatlas-production/current",
   "output_paths": {
-    "report_path": "/opt/market_regime_v1/outputs/production/data_health_report.json",
-    "quality_path": "/opt/market_regime_v1/outputs/production/data_health_report.quality.json",
-    "manifest_path": "/opt/market_regime_v1/outputs/production/data_health_report.manifest.json"
+    "report_path": "/opt/trendatlas-production/current/outputs/production/data_health_report.json",
+    "quality_path": "/opt/trendatlas-production/current/outputs/production/data_health_report.quality.json",
+    "manifest_path": "/opt/trendatlas-production/current/outputs/production/data_health_report.manifest.json"
   },
   "source_ids": [
     "production_current_strategy_snapshot",

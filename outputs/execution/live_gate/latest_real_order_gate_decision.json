@@ -1,6 +1,6 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-09-30T00:11:48Z",
+  "generated_at_utc": "2026-09-30T15:17:10Z",
   "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-29::target_AVAX::candidate_AVAX",
   "target_asset": "AVAX",
   "mode": "canonical_invocation",
@@ -50,19 +50,19 @@
     "strategy_status": "ready"
   },
   "source_fingerprints": {
-    "intent_sha256": "7b6b969ea258c8fac258b32bbedc64eeae79cb1cc2f9844a690e7357940fee2b",
-    "account_snapshot_sha256": "f01eee0c00f26de73ecc06fef0f0e267b7d1e9035d1e98bb13b06a2a9d702faf",
-    "production_snapshot_sha256": "36c93c573b44926f546b314c1503931a03d4589be962fec5d86bd698789dfa5c"
+    "intent_sha256": "2e344b8dc557ee9a412a7bac30ee1a57847bd8cc105304d1cdb2a8fb6d154185",
+    "account_snapshot_sha256": "5384229c4ec3d6ca9ed00e85827117f214678efb2f4fb03403df46b1a7298b92",
+    "production_snapshot_sha256": "2c4e71e3d39a239198c7acd0f0eeb51ba785a9ce91405048c4dd1c280649609a"
   },
   "notes": [
     "Read-only validation of the current Production Core target and canonical intent.",
     "Exchange feasibility and order reconciliation are evaluated by the executor per account and per step."
   ],
   "source_paths": {
-    "mode_config_path": "/opt/market_regime_v1/execution/config/execution_mode.json",
-    "live_order_policy_path": "/opt/market_regime_v1/execution/config/live_order_policy.json",
-    "intent_path": "/opt/market_regime_v1/outputs/execution/intents/latest_execution_intent.json",
-    "account_snapshot_path": "/opt/market_regime_v1/outputs/execution/read_only/hyperliquid_account_snapshot.json",
-    "production_snapshot_path": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json"
+    "mode_config_path": "/opt/trendatlas-production/current/execution/config/execution_mode.json",
+    "live_order_policy_path": "/opt/trendatlas-production/current/execution/config/live_order_policy.json",
+    "intent_path": "/opt/trendatlas-production/current/outputs/execution/intents/latest_execution_intent.json",
+    "account_snapshot_path": "/opt/trendatlas-production/current/outputs/execution/read_only/hyperliquid_account_snapshot.json",
+    "production_snapshot_path": "/opt/trendatlas-production/current/outputs/production/current_strategy_snapshot.json"
   }
 }

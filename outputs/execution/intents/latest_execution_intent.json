@@ -1,6 +1,6 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-09-30T00:11:47Z",
+  "generated_at_utc": "2026-09-30T15:17:10Z",
   "as_of_source": "2026-09-29",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
@@ -25,18 +25,18 @@
     "kill_switch_required": true,
     "leverage_live_truth_allowed": false,
     "production_snapshot_validated": true,
-    "same_run_authority_allowed": true,
-    "same_run_authority_run_id": "prod_20260930T001011Z_854735",
-    "same_run_authority_target_closed_day": "2026-09-29"
+    "same_run_authority_allowed": false,
+    "same_run_authority_run_id": null,
+    "same_run_authority_target_closed_day": null
   },
   "source_fingerprints": {
-    "production_snapshot_sha256": "36c93c573b44926f546b314c1503931a03d4589be962fec5d86bd698789dfa5c"
+    "production_snapshot_sha256": "2c4e71e3d39a239198c7acd0f0eeb51ba785a9ce91405048c4dd1c280649609a"
   },
   "source_paths": {
-    "production_snapshot": "/opt/market_regime_v1/outputs/production/current_strategy_snapshot.json",
-    "authority_latest_successful_snapshot": "/opt/market_regime_v1/outputs/execution/authority/latest_successful_snapshot.json",
-    "authority_latest_attempt_status": "/opt/market_regime_v1/outputs/execution/authority/latest_attempt_status.json",
-    "data_health_report": "/opt/market_regime_v1/outputs/production/data_health_report.json"
+    "production_snapshot": "/opt/trendatlas-production/current/outputs/production/current_strategy_snapshot.json",
+    "authority_latest_successful_snapshot": "/opt/trendatlas-production/current/outputs/execution/authority/latest_successful_snapshot.json",
+    "authority_latest_attempt_status": "/opt/trendatlas-production/current/outputs/execution/authority/latest_attempt_status.json",
+    "data_health_report": "/opt/trendatlas-production/current/outputs/production/data_health_report.json"
   },
   "authority_day_context": {
     "attempt_status": "success",
@@ -45,9 +45,9 @@
     "success_target_closed_day": "2026-09-29",
     "aligned_closed_day": "2026-09-29",
     "authority_alignment_mode": "validated_production_core",
-    "same_run_authority_allowed": true,
-    "same_run_authority_run_id": "prod_20260930T001011Z_854735",
-    "same_run_authority_target_closed_day": "2026-09-29",
+    "same_run_authority_allowed": false,
+    "same_run_authority_run_id": null,
+    "same_run_authority_target_closed_day": null,
     "prior_publish_required_for_execution": false
   },
   "source_samples": {
