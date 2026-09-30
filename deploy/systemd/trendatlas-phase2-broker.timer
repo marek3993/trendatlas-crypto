@@ -1,0 +1,10 @@
+[Unit]
+Description=Process Phase 2 development proposals
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=30s
+Unit=trendatlas-phase2-broker.service
+
+[Install]
+WantedBy=timers.target

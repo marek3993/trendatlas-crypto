@@ -826,6 +826,16 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Approved deployment candidate product metrics for APP summary_path. APP must not infer these metrics."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-research-development/",
+      "generated_by": ["research/phase2_continuous/runtime.py", "research/phase2_continuous/broker.py"],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "isolated_vps_development_ledger",
+      "decision_relevance": "research_only",
+      "official_truth": false,
+      "notes": "Separate SQLite and mailbox for continuous development; not production or independent outer/forward evidence."
     }
   ]
 }

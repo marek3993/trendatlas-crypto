@@ -1,0 +1,42 @@
+[Unit]
+Description=Isolated TrendAtlas Phase 2 development evolution
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=trendatlas-research
+Group=trendatlas-research
+WorkingDirectory=/opt/trendatlas-research/phase2-development/current
+ExecStart=/opt/trendatlas-research/venvs/causal-v1/bin/python3 -I -B /opt/trendatlas-research/phase2-development/current/research/phase2_continuous/run.py run --root /var/lib/trendatlas-research-development --inputs /opt/trendatlas-research/releases/53b6a5336ca1f7ce35b481a017f7e82396f3613c/research/causal_evolution/inputs --workers 2 --seconds 1500
+TimeoutStartSec=1600
+Nice=15
+CPUQuota=160%
+CPUWeight=5
+MemoryMax=4096M
+MemorySwapMax=0
+TasksMax=32
+IOSchedulingClass=idle
+PrivateNetwork=true
+RestrictAddressFamilies=AF_UNIX
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectProc=invisible
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+ReadWritePaths=/var/lib/trendatlas-research-development /var/log/trendatlas-research-development
+InaccessiblePaths=-/opt/leadpilot -/var/lib/docker -/run/docker.sock -/var/run/docker.sock -/etc/credstore -/etc/credstore.encrypted -/opt/market_regime_v1 -/opt/home_automation -/var/lib/trendatlas-research/causal-v1 -/var/lib/private/trendatlas-phase2
+Environment=OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
+StandardOutput=append:/var/log/trendatlas-research-development/worker.log
+StandardError=journal
+UMask=0027

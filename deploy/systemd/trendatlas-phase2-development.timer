@@ -1,0 +1,10 @@
+[Unit]
+Description=Continue bounded Phase 2 development research after boot and checkpoints
+
+[Timer]
+OnBootSec=2min
+OnUnitInactiveSec=1min
+Unit=trendatlas-phase2-development.service
+
+[Install]
+WantedBy=timers.target

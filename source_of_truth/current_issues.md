@@ -94,6 +94,12 @@
 - Widened dev-only anomaly operating mode remains approved.
 - `response_shape_bot_v1`, bot-vs-bot compare, and `supportive_vs_caution_subset_layer_v1` remain dev-only and non-authoritative.
 
+## Phase 2 development operating boundary
+- VPS development evolution is separate from the sealed first causal cycle and from the Phase 2 collector's future refit contract.
+- The development timer resumes bounded two-worker evaluations and creates distinct successor cycles; the broker uses the existing isolated DeepSeek credential and local deterministic fallback.
+- Search of repeatedly seen inner folds accumulates multiple-testing debt. No development score is certified venue evidence, outer OOS, prospective 2027 evidence, or production authority.
+- The predeclared parameter space and 1 GiB ledger limit are finite. Exhaustion or disk guard is reported explicitly; neither may be bypassed by relabeling old hypotheses or opening sealed data.
+
 ## Legacy phase chain
 - Legacy phase-chain outputs remain research/archive/input lineage only.
 - They are not the primary runtime production truth interface.

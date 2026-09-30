@@ -1,0 +1,41 @@
+[Unit]
+Description=Isolated Phase 2 DeepSeek development broker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=trendatlas-research-broker
+Group=trendatlas-research
+WorkingDirectory=/opt/trendatlas-research/phase2-development/current
+ExecStart=/opt/trendatlas-research/venvs/causal-v1/bin/python3 -I -B /opt/trendatlas-research/phase2-development/current/research/phase2_continuous/run.py broker --mailbox /var/lib/trendatlas-phase2-broker-mailbox
+LoadCredential=deepseek-key:/etc/credstore/trendatlas-research-deepseek
+BindPaths=/var/lib/trendatlas-research-development/mailbox:/var/lib/trendatlas-phase2-broker-mailbox
+ReadWritePaths=/var/lib/trendatlas-phase2-broker-mailbox /var/log/trendatlas-research-development
+InaccessiblePaths=/var/lib/trendatlas-research-development -/opt/leadpilot -/var/lib/docker -/run/docker.sock -/opt/market_regime_v1 -/opt/home_automation -/var/lib/trendatlas-research/causal-v1 -/var/lib/private/trendatlas-phase2 -/etc/credstore -/etc/credstore.encrypted
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+TimeoutStartSec=90
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectProc=invisible
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+UMask=0007
+MemoryMax=512M
+MemorySwapMax=0
+CPUQuota=20%
+CPUWeight=5
+Nice=15
+StandardOutput=append:/var/log/trendatlas-research-development/broker.log
+StandardError=journal

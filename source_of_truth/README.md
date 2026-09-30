@@ -14,6 +14,7 @@ This folder is the central single source of truth layer for Market Regime v1.
 - `export_contract.json` = official app/execution/dashboard export contract
 - `paths_registry.json` = registry of important repo paths
 - `decisions_log.jsonl` = decision audit trail
+- `phase2_development_contract.json` = isolated, user-authorized development research contract; outer OOS and 2027 forward evidence stay sealed
 - `experiments_registry.csv` = experiments registry
 
 ## Required read order for truth-sensitive work

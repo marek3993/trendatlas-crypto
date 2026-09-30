@@ -130,6 +130,12 @@
 - Dev-only post-run anomaly step is attached after successful daily refresh.
 - All such outputs remain `dev_only=true` and `non_authoritative=true`.
 
+## Phase 2 continuous development research
+- The VPS-only Phase 2 development runner and DeepSeek broker are active under `source_of_truth/phase2_development_contract.json`.
+- The 2026-09-27 causal cycle remains immutable `SEALED/REJECT`; new development uses separate cycle IDs and an append-only research ledger.
+- Development may use only declared inner validation folds. Outer OOS remains locked and 2027 remains sealed forward evidence.
+- Phase 2 public venue collection is separate; its old forward-refit design remains unimplemented. Development proxy results are non-authoritative and cannot change production or place orders.
+
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
