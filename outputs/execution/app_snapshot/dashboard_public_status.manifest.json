@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-30T15:17:14Z",
+  "generated_at_utc": "2026-10-01T00:12:34Z",
   "source_files": [
     "outputs/execution/live_status/execution_status.json",
     "outputs/execution/read_only/hyperliquid_account_snapshot.json",
@@ -23,19 +23,19 @@
   ],
   "sha256s": {
     "outputs/execution/live_status/execution_status.json": "297ad5b8201371bd80a659d51502a45efa29d9123c2187949ca2afa3d6e02795",
-    "outputs/execution/read_only/hyperliquid_account_snapshot.json": "5384229c4ec3d6ca9ed00e85827117f214678efb2f4fb03403df46b1a7298b92",
-    "outputs/execution/read_only/hyperliquid_real_performance_ledger.json": "d1ceb7e1903b1b4aa4e634981d6197a09038b3e740b2ec6d46cb50faa968186a",
+    "outputs/execution/read_only/hyperliquid_account_snapshot.json": "7f133892f7a710c30cf6c3a7c5d3bf71fdc9f65afbe1b78a4ca9f3388c8bcda2",
+    "outputs/execution/read_only/hyperliquid_real_performance_ledger.json": "215125827053fdc43f7c5385be4494a8ee9adc00c6e803060c617bc87ecf44f0",
     "outputs/execution/dry_run/latest_dry_run_decision.json": "dd46788c49706594b169555cb8cf633df46d05d7c01605ccf498c3aae33e1ea6",
-    "outputs/execution/intents/latest_execution_intent.json": "2e344b8dc557ee9a412a7bac30ee1a57847bd8cc105304d1cdb2a8fb6d154185",
-    "outputs/execution/live_gate/latest_real_order_gate_decision.json": "f41f451696a40a6b9c4268759d72fd3573f8fd3069414e6a9a51690af9efdade",
-    "outputs/execution/app_snapshot/app_product_snapshot.json": "ee1261c5a2fe3aedc3b970403c54f240a9b8c04ea2dd2e4c2c11b92e581e17f2",
-    "outputs/production/current_strategy_snapshot.json": "2c4e71e3d39a239198c7acd0f0eeb51ba785a9ce91405048c4dd1c280649609a",
-    "outputs/production/current_strategy_timeseries.csv": "7c23b25b3b4c395f4108d28950982daae4b192ff4d538d7f6a8b5c73255d8ada",
-    "outputs/production/data_health_report.json": "4806831b66b3ffcb968d86dcc528a530dc63bf10759018672a86cdaa52107c67",
-    "outputs/production/data_health_report.quality.json": "5ee473a619d069f5ce38aaa6c211bd668c67b26a9a367eba819e698a5e94a3be",
-    "outputs/production/data_health_report.manifest.json": "ac7b56937084218dd7e41cc9831632ab6051f0ce90a174d06bf15c654054cd96",
-    "outputs/execution/app_snapshot/dashboard_public_status.json": "b7af1ce3e3b963f423fea1d79773f87e0bd7965b674760ab298c47eb24323bfc",
-    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": "f5cc4c9253b09e87d17b6df849424a5016725d6d27b6e4dbdead22a7559d234a",
+    "outputs/execution/intents/latest_execution_intent.json": "865b8d7f73dbe1739c2a1a22d99e448651ec7ba0124bd493612b62cfbb131b41",
+    "outputs/execution/live_gate/latest_real_order_gate_decision.json": "7da6519da0b07f5577746326fc662850f12942ac055c8abe2f387ab4646426a4",
+    "outputs/execution/app_snapshot/app_product_snapshot.json": "0a2a5ecad1c929887053825eba4d1cb2dd3eee6f72693f15b4d74f0f45fb2396",
+    "outputs/production/current_strategy_snapshot.json": "46b9e1516d4326c06b28311e4745fc45ec030d2b35b3383af0414673db31db72",
+    "outputs/production/current_strategy_timeseries.csv": "a74c027e4b5d83c280d4c3c1a7b80d99ec72efbf25c14add8e170d158fbe7e00",
+    "outputs/production/data_health_report.json": "72016764bf8c96b3689f4787e1c3beda930622db1ce21f32389b5b12a0e5e232",
+    "outputs/production/data_health_report.quality.json": "14af7bb9b2420ef1c9b2057939418bd0651e1cdc3dfcf8b23ccdff3978925d23",
+    "outputs/production/data_health_report.manifest.json": "7833beca7e5f65b7e1584b11dd7cad1d3ac5eedad2a0598676df709d47f34b4e",
+    "outputs/execution/app_snapshot/dashboard_public_status.json": "c3306243b77098f2ccdbf2119f03e8ac8ef7417510b4e5d35e094d88699ea4a5",
+    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": "1f4ea7d108211f44f7605fb0f6b353a71c8b24550e804925d34ea806e071ce73",
     "outputs/execution/app_snapshot/dashboard_public_status.quality.json": "eeaa45f24e2ae158215b6a627ee40b15ea85fc6fba8cc8498b6b7d92a220827b"
   },
   "row_counts": {
@@ -47,15 +47,15 @@
     "outputs/execution/live_gate/latest_real_order_gate_decision.json": 1,
     "outputs/execution/app_snapshot/app_product_snapshot.json": 1,
     "outputs/production/current_strategy_snapshot.json": 1,
-    "outputs/production/current_strategy_timeseries.csv": 3070,
+    "outputs/production/current_strategy_timeseries.csv": 3071,
     "outputs/production/data_health_report.json": 1,
     "outputs/production/data_health_report.quality.json": 1,
     "outputs/production/data_health_report.manifest.json": 1,
     "outputs/execution/live_status/live_market_state.json": null,
     "outputs/execution/app_snapshot/dashboard_public_status.json": 1,
-    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": 3070,
+    "outputs/execution/app_snapshot/dashboard_public_chart_timeseries.csv": 3071,
     "outputs/execution/app_snapshot/dashboard_public_status.quality.json": 1,
     "outputs/execution/app_snapshot/dashboard_public_status.manifest.json": 1
   },
-  "closed_day": "2026-09-29"
+  "closed_day": "2026-09-30"
 }

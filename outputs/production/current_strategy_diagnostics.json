@@ -1,20 +1,14 @@
 {
   "artifact_type": "current_strategy_diagnostics",
   "schema_version": 4,
-  "generated_at_utc": "2026-09-30T15:16:54Z",
+  "generated_at_utc": "2026-10-01T00:12:14Z",
   "strategy_id": "current_strategy",
   "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
-  "closed_day": "2026-09-29",
-  "latest_state_explanation": "The active Production Core passes through the baseline FULL_RISK row unchanged, so authorized exposure remains AVAX at 1.00x.",
-  "current_flatline_explanation": null,
-  "current_cash_or_risk_reason": "The active Production Core passes through the baseline FULL_RISK row unchanged, so authorized exposure remains AVAX at 1.00x.",
+  "closed_day": "2026-09-30",
+  "latest_state_explanation": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
+  "current_flatline_explanation": "Authorized capital should stay flat during the current CASH streak of 1 days because no market exposure is currently authorized.",
+  "current_cash_or_risk_reason": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
   "recent_regime_changes": [
-    {
-      "date": "2026-09-02",
-      "held_asset": "CASH",
-      "regime": "CASH",
-      "reason_code": "candidate_asset_not_btc"
-    },
     {
       "date": "2026-09-22",
       "held_asset": "BTC",
@@ -38,16 +32,15 @@
       "held_asset": "AVAX",
       "regime": "ALT",
       "reason_code": "baseline_full_risk_pass_through"
+    },
+    {
+      "date": "2026-09-30",
+      "held_asset": "CASH",
+      "regime": "CASH",
+      "reason_code": "candidate_asset_not_btc"
     }
   ],
   "recent_rebalance_events": [
-    {
-      "date": "2026-09-02",
-      "held_asset": "CASH",
-      "exposure": 0.0,
-      "reason_code": "candidate_asset_not_btc",
-      "reason_text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure."
-    },
     {
       "date": "2026-09-22",
       "held_asset": "BTC",
@@ -75,40 +68,47 @@
       "exposure": 1.0,
       "reason_code": "baseline_full_risk_pass_through",
       "reason_text": "The active Production Core passes through the baseline FULL_RISK row unchanged, so authorized exposure remains AVAX at 1.00x."
+    },
+    {
+      "date": "2026-09-30",
+      "held_asset": "CASH",
+      "exposure": 0.0,
+      "reason_code": "candidate_asset_not_btc",
+      "reason_text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure."
     }
   ],
   "current_cost_pressure": {
-    "current_effective_exposure": 1.0,
-    "trailing_30d_fees_pct": 0.2925,
+    "current_effective_exposure": 0.0,
+    "trailing_30d_fees_pct": 0.3375,
     "trailing_30d_funding_pct": 0.0,
     "trailing_30d_borrow_pct": 0.0,
     "trailing_30d_slippage_pct": 0.2
   },
   "current_fee_drag_summary": {
-    "lifetime_trading_fees_total_pct": 11.71125,
+    "lifetime_trading_fees_total_pct": 11.75625,
     "lifetime_funding_total_pct": 0.0,
     "lifetime_borrow_cost_total_pct": 2.447639,
     "lifetime_slippage_cost_total_pct": 15.7,
-    "lifetime_total_cost_pct": 29.858889,
-    "trailing_90d_turnover": 8.0
+    "lifetime_total_cost_pct": 29.903889,
+    "trailing_90d_turnover": 9.0
   },
   "current_data_health_summary": {
     "status": "passed",
-    "closed_day": "2026-09-29",
-    "softer_fallback_closed_day": "2026-09-29",
+    "closed_day": "2026-09-30",
+    "softer_fallback_closed_day": "2026-09-30",
     "full_history_start_date": "2018-05-05",
     "etf_flow_evidence_window_start": "2024-01-12",
-    "etf_flow_evidence_window_end": "2026-09-29",
-    "trend_status_day": "2026-09-29",
-    "trend_history_last_day": "2026-09-29",
-    "freshness_closed_day": "2026-09-29",
-    "benchmark_last_day": "2026-09-29",
-    "benchmark_raw_last_day": "2026-09-29",
+    "etf_flow_evidence_window_end": "2026-09-30",
+    "trend_status_day": "2026-09-30",
+    "trend_history_last_day": "2026-09-30",
+    "freshness_closed_day": "2026-09-30",
+    "benchmark_last_day": "2026-09-30",
+    "benchmark_raw_last_day": "2026-09-30",
     "benchmark_source_mode": "raw_btc_ohlcv",
     "etf_panel_latest_source_session_day": "2026-09-30",
     "etf_panel_latest_causal_available_day": "2026-10-01",
-    "etf_panel_active_source_session_day": "2026-09-28",
-    "etf_panel_active_source_causal_available_day": "2026-09-29",
+    "etf_panel_active_source_session_day": "2026-09-29",
+    "etf_panel_active_source_causal_available_day": "2026-09-30",
     "etf_panel_evaluation_mode": "same_day_causal_evaluation",
     "etf_panel_carry_forward_reason": "no_carry_forward_needed",
     "etf_panel_carry_forward_days_applied": 0,
@@ -215,13 +215,13 @@
           "cooldown_days": 15,
           "period": "full_etf_overlap",
           "period_start": "2018-05-05",
-          "period_end": "2026-09-29",
+          "period_end": "2026-09-30",
           "baseline_not_cash": 595,
           "etf_flow_not_ready": 2389,
           "flow_2_of_3_not_positive": 2659,
-          "flow_3d_sum_below_floor": 2852,
+          "flow_3d_sum_below_floor": 2853,
           "btc_price_filter_failed": 1462,
-          "hard_invalidation_on": 204,
+          "hard_invalidation_on": 205,
           "permission_on_but_baseline_already_full_risk": 78,
           "cooldown_active_days": 195,
           "cooldown_blocked_entry_days": 33
@@ -232,13 +232,13 @@
           "cooldown_days": 15,
           "period": "since2025",
           "period_start": "2025-01-01",
-          "period_end": "2026-09-29",
+          "period_end": "2026-09-30",
           "baseline_not_cash": 100,
           "etf_flow_not_ready": 200,
           "flow_2_of_3_not_positive": 398,
-          "flow_3d_sum_below_floor": 512,
+          "flow_3d_sum_below_floor": 513,
           "btc_price_filter_failed": 318,
-          "hard_invalidation_on": 58,
+          "hard_invalidation_on": 59,
           "permission_on_but_baseline_already_full_risk": 38,
           "cooldown_active_days": 128,
           "cooldown_blocked_entry_days": 27
@@ -247,8 +247,8 @@
     },
     "cash_drag": {
       "status": "elevated",
-      "cash_days_pct": 77.166124,
-      "current_cash_streak_days": 0
+      "cash_days_pct": 77.173559,
+      "current_cash_streak_days": 1
     },
     "current_research_questions": [
       "Does the ETF-flow cooldown still improve net performance once BTC persistence is the softer fallback?",
@@ -262,49 +262,58 @@
     "warnings": []
   },
   "current_trade_state": {
-    "is_cash": false,
-    "is_waiting": false,
-    "state_code": "IN_MARKET",
+    "is_cash": true,
+    "is_waiting": true,
+    "state_code": "OUT_OF_MARKET",
     "candidate_asset": "AVAX",
     "selected_asset": "AVAX",
-    "actual_held_asset": "AVAX",
-    "authorized_tradable_asset": "AVAX",
-    "effective_market_exposure": 1.0,
+    "actual_held_asset": "CASH",
+    "authorized_tradable_asset": "CASH",
+    "effective_market_exposure": 0.0,
     "model_candidate_exposure": 1.0,
-    "trend_permission_active": true,
-    "waiting_reason_code": "baseline_full_risk_pass_through",
-    "waiting_reason_text": "The active Production Core passes through the baseline FULL_RISK row unchanged, so authorized exposure remains AVAX at 1.00x.",
-    "waiting_condition_code": "already_in_target_state",
-    "waiting_condition_text": "The active Production Core is already in its current authorized state for AVAX.",
+    "trend_permission_active": false,
+    "waiting_reason_code": "candidate_asset_not_btc",
+    "waiting_reason_text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
+    "waiting_condition_code": "candidate_entry_not_authorized",
+    "waiting_condition_text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
     "waiting_condition_values": {
       "candidate_asset": "AVAX",
-      "actual_held_asset": "AVAX",
-      "effective_market_exposure": 1.0
+      "actual_held_asset": "CASH",
+      "effective_market_exposure": 0.0,
+      "model_candidate_exposure": 1.0
     },
     "target_condition": {
-      "next_rebalance_date": null
+      "execution_target_asset": "AVAX",
+      "execution_target_exposure": 1.0
     },
     "pain_points": [
       {
         "code": "cash_drag_elevated",
         "severity": "medium",
-        "text": "Cash participation remains elevated at 77.1661% of history.",
-        "metric_value": 77.166124,
+        "text": "Cash participation remains elevated at 77.1736% of history.",
+        "metric_value": 77.173559,
         "metric_unit": "pct"
       },
       {
         "code": "lifetime_cost_drag_elevated",
         "severity": "medium",
-        "text": "Lifetime modeled cost drag totals 29.8589%.",
-        "metric_value": 29.858888999999998,
+        "text": "Lifetime modeled cost drag totals 29.9039%.",
+        "metric_value": 29.903889,
         "metric_unit": "pct"
       },
       {
         "code": "churn_pressure_visible",
         "severity": "medium",
         "text": "Trailing 90-day turnover is elevated, which can amplify fee drag.",
-        "metric_value": 8.0,
+        "metric_value": 9.0,
         "metric_unit": "notional_multiple"
+      },
+      {
+        "code": "active_wait_condition",
+        "severity": "low",
+        "text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
+        "metric_value": null,
+        "metric_unit": null
       }
     ]
   },
@@ -312,35 +321,44 @@
     {
       "code": "cash_drag_elevated",
       "severity": "medium",
-      "text": "Cash participation remains elevated at 77.1661% of history.",
-      "metric_value": 77.166124,
+      "text": "Cash participation remains elevated at 77.1736% of history.",
+      "metric_value": 77.173559,
       "metric_unit": "pct"
     },
     {
       "code": "lifetime_cost_drag_elevated",
       "severity": "medium",
-      "text": "Lifetime modeled cost drag totals 29.8589%.",
-      "metric_value": 29.858888999999998,
+      "text": "Lifetime modeled cost drag totals 29.9039%.",
+      "metric_value": 29.903889,
       "metric_unit": "pct"
     },
     {
       "code": "churn_pressure_visible",
       "severity": "medium",
       "text": "Trailing 90-day turnover is elevated, which can amplify fee drag.",
-      "metric_value": 8.0,
+      "metric_value": 9.0,
       "metric_unit": "notional_multiple"
+    },
+    {
+      "code": "active_wait_condition",
+      "severity": "low",
+      "text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
+      "metric_value": null,
+      "metric_unit": null
     }
   ],
   "current_wait_condition": {
-    "code": "already_in_target_state",
-    "text": "The active Production Core is already in its current authorized state for AVAX.",
+    "code": "candidate_entry_not_authorized",
+    "text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
     "current_values": {
       "candidate_asset": "AVAX",
-      "actual_held_asset": "AVAX",
-      "effective_market_exposure": 1.0
+      "actual_held_asset": "CASH",
+      "effective_market_exposure": 0.0,
+      "model_candidate_exposure": 1.0
     },
     "target_condition": {
-      "next_rebalance_date": null
+      "execution_target_asset": "AVAX",
+      "execution_target_exposure": 1.0
     }
   }
 }
