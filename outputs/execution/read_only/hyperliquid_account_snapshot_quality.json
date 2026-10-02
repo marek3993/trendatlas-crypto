@@ -10,7 +10,7 @@
   "open_orders_count": 0,
   "recent_fills_count": 19,
   "historical_fills_count": 7,
-  "funding_events_count": 194,
+  "funding_events_count": 172,
   "non_funding_ledger_events_count": 1,
   "balance_source_of_truth": "spot_stable_balance",
   "account_equity_usd": 83.348433,
