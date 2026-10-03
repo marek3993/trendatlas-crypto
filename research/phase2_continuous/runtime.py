@@ -5,7 +5,9 @@ import argparse
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime, timezone
 import hashlib
+import itertools
 import json
+import math
 import multiprocessing
 import os
 from pathlib import Path
@@ -21,6 +23,7 @@ except ImportError:  # Windows test host; production is Linux.
     import msvcrt
 
 from .engine import SPACE, canonical, digest, evaluate_fold, load_market, mutate, synthetic_market, validate_genes
+from .compact import POLICY, proposal
 
 HERE = Path(__file__).resolve().parent
 CONTRACT_PATH = HERE.parents[1] / "source_of_truth" / "phase2_development_contract.json"
@@ -83,6 +86,10 @@ def connect(root, *, recover=False):
     CREATE TRIGGER IF NOT EXISTS candidate_no_delete BEFORE DELETE ON candidates
       BEGIN SELECT RAISE(ABORT,'candidate_immutable'); END;
     CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY,value TEXT NOT NULL);
+    CREATE INDEX IF NOT EXISTS evaluations_by_candidate ON evaluations(candidate_id,fold,stress);
+    CREATE INDEX IF NOT EXISTS candidates_by_cycle_family ON candidates(cycle_id,family,generation);
+    CREATE INDEX IF NOT EXISTS candidates_by_family ON candidates(family);
+    CREATE INDEX IF NOT EXISTS evaluations_by_status ON evaluations(status);
     """)
     # A killed evaluator may be retried; a completed key remains unique forever.
     if recover:
@@ -155,10 +162,17 @@ def seed_population(db, cycle_id):
     ordinal = db.execute("SELECT ordinal FROM cycles WHERE id=?",(cycle_id,)).fetchone()[0]
     existing = {r[0] for r in db.execute("SELECT id FROM candidates")}
     for family in SPACE:
+        stage = db.execute("SELECT state FROM family_stage WHERE cycle_id=? AND family=? AND generation=0",
+                           (cycle_id,family)).fetchone()
+        if stage:
+            continue
         rows = db.execute("SELECT COUNT(*) FROM candidates WHERE cycle_id=? AND family=? AND generation=0",(cycle_id,family)).fetchone()[0]
+        family_total = math.prod(len(v) for v in SPACE[family].values())
+        family_seen = db.execute("SELECT COUNT(*) FROM candidates WHERE family=?",(family,)).fetchone()[0]
+        desired = min(CONTRACT["initial_population_per_family"], family_total-family_seen+rows)
         rng = random.Random(1701+ordinal*10007+ord(family))
         attempts = 0
-        while rows < CONTRACT["initial_population_per_family"] and attempts < 10000:
+        while rows < desired and attempts < 10000:
             attempts += 1
             genes = {"family":family, **{k:rng.choice(v) for k,v in SPACE[family].items()}}
             cid = digest(genes)
@@ -166,6 +180,18 @@ def seed_population(db, cycle_id):
                 continue
             add_candidate(db,cycle_id,0,genes,None,"initial_predeclared_space",1701+ordinal)
             existing.add(cid); rows += 1
+        if rows < desired:
+            # Random sampling failure is not scientific exhaustion. Finish with exact unseen enumeration.
+            keys = list(SPACE[family])
+            for values in itertools.product(*(SPACE[family][k] for k in keys)):
+                genes = {"family":family, **dict(zip(keys,values))}
+                cid = digest(genes)
+                if cid in existing:
+                    continue
+                add_candidate(db,cycle_id,0,genes,None,"initial_predeclared_space",1701+ordinal)
+                existing.add(cid); rows += 1
+                if rows >= desired:
+                    break
         if rows < CONTRACT["initial_population_per_family"]:
             with db:
                 event(db,"family_space_exhausted",cycle_id=cycle_id,family=family,available=rows)
@@ -303,10 +329,7 @@ def parents_for_family(db,cycle_id,family,generation):
 
 
 def proposal_payload(db,cycle_id,family,parents):
-    return {"cycle_id":cycle_id,"family":family,"generation":1,
-            "parents":parents,"seen":[x[0] for x in db.execute("SELECT id FROM candidates WHERE family=?",(family,))],
-            "schema":SPACE[family],"scope":"development_inner_validation_only",
-            "excluded":"outer_oos_and_forward_2027"}
+    return proposal(db,cycle_id,family,parents,SPACE[family])
 
 
 def strict_json(data):
@@ -360,7 +383,11 @@ def advance_family(db,root,cycle_id,family):
     if parents is None:
         return False
     mailbox = Path(root)/"mailbox"
-    request = proposal_payload(db,cycle_id,family,parents)
+    # Resume the exact durable request, including a request made by the previous release.
+    if stage[1]:
+        request = json.loads((mailbox/"requests"/(stage[1]+".json")).read_text())["payload"]
+    else:
+        request = proposal_payload(db,cycle_id,family,parents)
     request_hash = digest(request)
     request_path = mailbox/"requests"/(request_hash+".json")
     response_path = mailbox/"responses"/(request_hash+".json")
@@ -377,10 +404,13 @@ def advance_family(db,root,cycle_id,family):
     seen = {x[0] for x in db.execute("SELECT id FROM candidates")}
     accepted = accepted_mutations(response.get("content") or "",parents,seen,family)
     ordinal = db.execute("SELECT ordinal FROM cycles WHERE id=?",(cycle_id,)).fetchone()[0]
-    for position,row in enumerate(accepted[:CONTRACT["mutations_per_family"]]):
+    existing_children = db.execute("SELECT COUNT(*) FROM candidates WHERE cycle_id=? AND family=? AND generation=1",
+                                   (cycle_id,family)).fetchone()[0]
+    remaining_slots = max(0, CONTRACT["mutations_per_family"]-existing_children)
+    for position,row in enumerate(accepted[:remaining_slots]):
         add_candidate(db,cycle_id,1,row["genes"],row["parent"],"deepseek:"+row["hypothesis"],ordinal*1000+position)
-    created = len(accepted[:CONTRACT["mutations_per_family"]])
-    for position in range(created,CONTRACT["mutations_per_family"]):
+    created = len(accepted[:remaining_slots])
+    for position in range(existing_children+created,CONTRACT["mutations_per_family"]):
         parent = parents[position%len(parents)]
         child,reason = mutate(parent["genes"],ordinal*10000+ord(family)*100+position,seen)
         if child is None: break
@@ -390,7 +420,9 @@ def advance_family(db,root,cycle_id,family):
         db.execute("UPDATE family_stage SET state='DONE' WHERE cycle_id=? AND family=? AND generation=0",(cycle_id,family))
         db.execute("INSERT OR IGNORE INTO family_stage VALUES(?,?,1,'EVALUATING',NULL)",(cycle_id,family))
         db.execute("UPDATE cycles SET generation=1 WHERE id=?",(cycle_id,))
-        event(db,"generation_created",cycle_id=cycle_id,family=family,broker_state=response.get("state"))
+        event(db,"generation_created",cycle_id=cycle_id,family=family,broker_state=response.get("state"),
+              request_hash=request_hash,wire_hash=response.get("wire_hash"),
+              accepted_mutations=created,rejected_or_missing_slots=CONTRACT["mutations_per_family"]-created)
     return True
 
 
@@ -419,10 +451,10 @@ def status(db):
 
 def run(root,input_dir,*,synthetic=False,workers=2,seconds=1500,steps=None):
     root = Path(root);root.mkdir(parents=True,exist_ok=True)
-    if shutil.disk_usage(root).free < 2*1024**3:
+    if shutil.disk_usage(root).free < POLICY["disk_reserve_bytes"]:
         raise RuntimeError("research_disk_reserve_below_2GiB")
-    if (root/"research.sqlite").exists() and (root/"research.sqlite").stat().st_size > 1024**3:
-        raise RuntimeError("research_ledger_size_limit_1GiB")
+    if (root/"research.sqlite").exists() and (root/"research.sqlite").stat().st_size > POLICY["ledger_max_bytes"]:
+        raise RuntimeError("research_ledger_size_limit")
     lock = (root/"runner.lock").open("a+")
     if fcntl:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)

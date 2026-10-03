@@ -1,0 +1,532 @@
+{
+  "classification": [
+    "B",
+    "C"
+  ],
+  "FILES READ": [
+    "AGENTS.md",
+    "source_of_truth/README.md",
+    "source_of_truth/master_state.md",
+    "source_of_truth/chat_roles.md",
+    "source_of_truth/project_truth.json",
+    "source_of_truth/export_contract.json",
+    "source_of_truth/paths_registry.json",
+    "source_of_truth/current_issues.md",
+    "canonical/script_registry.json",
+    "canonical/output_registry.json",
+    "canonical/registry_workflow.md",
+    "source_of_truth/pi_codex_runtime_workflow.md",
+    "source_of_truth/phase2_development_contract.json",
+    "source_of_truth/phase2_broker_policy.json",
+    "research/phase2_continuous/README.md",
+    "research/phase2_continuous/engine.py",
+    "research/phase2_continuous/runtime.py",
+    "research/phase2_continuous/broker.py",
+    "tests/test_phase2_continuous.py",
+    "tests/test_phase2_broker_optimization.py",
+    "/etc/systemd/system/trendatlas-phase2-development.service",
+    "/etc/systemd/system/trendatlas-phase2-development.timer",
+    "/etc/systemd/system/trendatlas-phase2-broker.service",
+    "/etc/systemd/system/trendatlas-phase2-broker.timer",
+    "/var/lib/trendatlas-research-development/research.sqlite (read-only diagnosis)",
+    "/var/lib/trendatlas-research-development/status.json",
+    "/var/lib/trendatlas-research-development/mailbox/requests/*.json",
+    "/var/lib/trendatlas-research-development/mailbox/responses/*.json",
+    "/var/log/trendatlas-research-development/worker.log",
+    "/var/log/trendatlas-research-development/broker.log",
+    "Phase 2 systemd journal",
+    "/var/lib/trendatlas-research/causal-v1/cycles/causal_nested_v1_20260927/deepseek_proposals.json",
+    "Prior chat: Skontroluj TrendAtlas evoluciu (VPS connection/release discovery)"
+  ],
+  "SOURCE OF TRUTH": {
+    "scientific_contract": "source_of_truth/phase2_development_contract.json",
+    "operational_contract": "source_of_truth/phase2_broker_policy.json",
+    "runtime_root": "/var/lib/trendatlas-research-development",
+    "scientific_contract_hash_unchanged": "fc400c3f0c655d29c03a40e773981ab1f2009f5136ee7cd19015f87e332c5be3",
+    "evaluator_hash_unchanged": "f679a126b9629dc39e43e9b2c6d6f3ae53437425d2bd312a68741f32821fb3d9"
+  },
+  "root_cause": "proposal_payload transmitted the entire growing family seen-hash ledger. The broker reserved input UTF-8 bytes + 1800 output against a 100000-token per-cycle ceiling. It first rejected some requests on 2026-09-30; after the last successful call 2026-10-01T11:20:36.196047+00:00 all further requests fell back locally due to cycle_api_budget. This was API starvation while novel backtests continued, not a stopped evolution or retry storm.",
+  "contract_impact": "Operational prompt/accounting/resume/exhaustion policy only. Frozen 74056 gene space, evaluator bytes, fold dates, costs, qualification rules, input binding, completed scientific results, outer LOCKED and 2027 SEALED unchanged. No production, account, orders, journal, LeadPilot or Pi changes.",
+  "answers": {
+    "active_before": true,
+    "active_after": true,
+    "cycle": [
+      "phase2_dev_20261003_001224",
+      1224,
+      "ACTIVE",
+      1,
+      "2026-10-03T22:23:36.571251+00:00",
+      "fc400c3f0c655d29c03a40e773981ab1f2009f5136ee7cd19015f87e332c5be3",
+      "e006ecf6bc0c535799d8ed2b87bde867f39b0ed36de61a9ad104b6df416c4d22"
+    ],
+    "snapshot_utc": "2026-10-03T22:25:38.622971+00:00",
+    "evaluation_rows_completed": 462552,
+    "evaluation_rows_remaining_in_frozen_space": 722344,
+    "combinations_completed": 28908,
+    "combinations_remaining": 45148,
+    "family_space_sizes": {
+      "J": 5040,
+      "K": 54880,
+      "L": 9408,
+      "M": 1728,
+      "N": 3000
+    },
+    "family_registered_counts": {
+      "J": 5040,
+      "K": 9776,
+      "L": 9368,
+      "M": 1728,
+      "N": 3000
+    },
+    "last_evaluation": "2026-10-03T22:25:38.300193+00:00",
+    "last_checkpoint": "2026-10-03T22:25:37.177179+00:00",
+    "last_deepseek": {
+      "hash": "e5bb6626f5c2aaeffe319accaf0af944fbbc946608c4564d99c53e597a21c752",
+      "input_token_upper_bound": 6270,
+      "model": "deepseek-flash",
+      "payload_bytes": 5151,
+      "seen_bytes": 2,
+      "usage": {
+        "api_call": 1,
+        "billing_known": true,
+        "finish_reason": "stop",
+        "input_cache_hit_tokens": 0,
+        "input_cache_miss_tokens": 2216,
+        "output_tokens": 585,
+        "provider_request_id": "915e7017-1230-47f2-bb48-121cc82c8ef5",
+        "provider_usage": {
+          "completion_tokens": 585,
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 2216,
+          "prompt_tokens": 2216,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "total_tokens": 2801
+        },
+        "tariff": "documented_peak_upper_estimate_20260927",
+        "tariff_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+        "total_tokens": 2801,
+        "usd_upper_estimate": 0.0013668
+      },
+      "utc": "2026-10-03T22:25:31.952004+00:00",
+      "wire_hash": "92d7e4bebd031e67e04d9d72b3faef69b1eb80ccc68f01499ea924a8d8dbe9d9"
+    },
+    "phase2_usage_before_repair": {
+      "api_call": 459,
+      "input_cache_hit_tokens": 0,
+      "input_cache_miss_tokens": 9149471,
+      "output_tokens": 304375,
+      "total_tokens": 9453846,
+      "usd_upper_estimate": 3.110091300000001
+    },
+    "phase2_average_before": 20596.614379084967,
+    "phase2_max_call_before": {
+      "hash": "41f0036af6afe3db89932306bdac2d7fcc9a8bcde8b5567748129e0869548ae8",
+      "input_token_upper_bound": null,
+      "model": "deepseek-flash",
+      "payload_bytes": 98094,
+      "seen_bytes": 90853,
+      "usage": {
+        "api_call": 1,
+        "input_cache_hit_tokens": 0,
+        "input_cache_miss_tokens": 54555,
+        "output_tokens": 1036,
+        "tariff": "documented_peak_upper_estimate_20260927",
+        "total_tokens": 55591,
+        "usd_upper_estimate": 0.017609700000000002
+      },
+      "utc": "2026-10-01T10:46:09.562926+00:00",
+      "wire_hash": null
+    },
+    "predecessor_usage": {
+      "api_call": 96,
+      "input_cache_hit_tokens": 46720,
+      "input_cache_miss_tokens": 378576,
+      "output_tokens": 58293,
+      "total_tokens": 483589,
+      "unknown_billing_calls": 3,
+      "usd_upper_estimate": 0.18380472
+    },
+    "combined_local_before": {
+      "api_call": 555,
+      "input_cache_hit_tokens": 46720,
+      "input_cache_miss_tokens": 9528047,
+      "output_tokens": 362668,
+      "total_tokens": 9937435,
+      "unknown_billing_calls": 3,
+      "usd_upper_estimate": 3.293896020000001
+    },
+    "dashboard_supplied": {
+      "requests": 587,
+      "tokens": 10011394,
+      "cost_usd": 1.66
+    },
+    "unreconciled_dashboard_difference": {
+      "requests": 32,
+      "tokens": 73959
+    },
+    "uncertain_predecessor_calls": 3,
+    "billing_limitation": "Local historical dollar fields are peak-rate upper estimates, not invoice amounts. No account-wide provider request export available. 32 requests and 73959 tokens cannot be assigned from the available VPS ledgers; source not invented.",
+    "phase2_daily_utc_before": {
+      "2026-09-30": {
+        "calls": 249,
+        "tokens": 2666974
+      },
+      "2026-10-01": {
+        "calls": 210,
+        "tokens": 6786872
+      },
+      "2026-10-02": {
+        "calls": 0,
+        "tokens": 0
+      },
+      "2026-10-03": {
+        "calls": 0,
+        "tokens": 0
+      }
+    },
+    "phase2_daily_europe_paris_before": {
+      "2026-09-30": {
+        "calls": 156,
+        "tokens": 1228742
+      },
+      "2026-10-01": {
+        "calls": 303,
+        "tokens": 8225104
+      }
+    },
+    "charged_legacy_payload_bytes": 17076128,
+    "charged_seen_hash_bytes": 13789997,
+    "charged_seen_hash_fraction": 0.807559945673867,
+    "duplicate_or_retry_storm": false,
+    "historically_repeated_proposal_gene_hashes": 155,
+    "proposal_acceptance_before": {
+      "accepted_unique_candidates": 1176,
+      "calls_with_accepted_mutation": 358,
+      "calls_with_four_accepted_mutations": 182,
+      "calls_with_no_accepted_mutation": 101,
+      "invalid_envelopes": 65,
+      "returned_candidates": 1806
+    },
+    "proposal_acceptance_after": {
+      "accepted_unique_candidates": 1226,
+      "calls_with_accepted_mutation": 373,
+      "calls_with_four_accepted_mutations": 189,
+      "calls_with_no_accepted_mutation": 104,
+      "invalid_envelopes": 67,
+      "returned_candidates": 1878
+    },
+    "api_silence_explanation": "cycle_api_budget local refusals; not backtest latency, sealed terminal failure, broker HTTP error or globally exhausted space.",
+    "search_character": "Initial populations are deterministic-seeded random sampling of the frozen parameter space; generation 1 combines accepted DeepSeek mutations with deterministic local replacements. 1176 historical DeepSeek candidates genuinely entered generation 1, but only about 4.1% of all candidates and 8.4% of generation-1 candidates. Cross-cycle initial populations are fresh samples, not survivor inheritance. It was predominantly seeded exploration/deterministic mutation rather than DeepSeek-driven multi-generation learning.",
+    "space_exhausted": false,
+    "exhausted_families": [
+      "J",
+      "M",
+      "N"
+    ],
+    "new_scientific_space_created": false,
+    "optimized_calls_at_snapshot": 18,
+    "optimized_total_tokens_at_snapshot": 48467,
+    "optimized_average_tokens": 2692.6111111111113,
+    "optimized_reduction_vs_prior_average": 0.8692692370914441
+  },
+  "fix": {
+    "applied": true,
+    "release": "/opt/trendatlas-research/phase2-development/releases/broker-opt-7f52ea93ddd77839",
+    "archive_sha256": "7f52ea93ddd77839cdf047642acc61a4e74bf35fe9d28c790d1b02d4b19d44ff",
+    "input_ceiling": 6500,
+    "input_bound": "entire wire JSON UTF-8 byte upper bound, including system message",
+    "output_ceiling": 1500,
+    "parents_max": 2,
+    "weak_folds_per_parent": 2,
+    "unseen_options_max": 12,
+    "batch_mutations": 4,
+    "cache": "Wire-content hash excludes cycle/generation; cache reuse carries zero new billing and original response lineage",
+    "retry": "Only explicit HTTP 429, once; per-attempt durable reservation. Timeout/5xx/uncertain result never blindly retried.",
+    "audit": "Raw provider usage, provider request ID, model, finish reason, reservations, per-attempt records; unknown billing remains null",
+    "resume": "Persisted request hash survives deployment; partial generation fills only remaining slots; all previously complete evaluation rows preserved",
+    "storage": "3GiB ledger bound + 2GiB disk reserve; old 1GiB bound would stop before the finite space completed. DB was about 768MB with 50GB free before repair; projected full space about 2GB.",
+    "exhaustion": "Completed seed stages skipped; exact cardinality avoids repeated 10000 random attempts in exhausted families; enumeration supplies only unseen existing-space hypotheses when sampling/neighborhoods are exhausted."
+  },
+  "verification": {
+    "tests_linux_final": {
+      "passed": 15,
+      "seconds": 54.508,
+      "command": "OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 nice -n 19 python3 -I -B [unittest discovery tests/test_phase2*.py in final release]"
+    },
+    "tests_windows": {
+      "original_passed": 6,
+      "optimization_passed": 9
+    },
+    "regression_test_added": "tests/test_phase2_broker_optimization.py",
+    "regression_cases": [
+      "Growing historical ledger excluded from wire",
+      "Cross-cycle cache no second charge",
+      "HTTP429 bounded retry with attempts audit",
+      "Timeout billing unknown/no retry",
+      "Crash reservation no repeat call",
+      "Input ceiling",
+      "Raw token-cache usage preservation",
+      "Legacy checkpoint request preserved",
+      "Partial-generation budget preserved",
+      "Seed stage no repeated events",
+      "Sampling failure exact unseen enumeration",
+      "Exhausted neighborhood bounded novel options"
+    ],
+    "progress_points": [
+      {
+        "COMPLETE": 461456
+      },
+      {
+        "COMPLETE": 461520
+      }
+    ],
+    "progress_point_times": [
+      "2026-10-03T22:15:34.532144+00:00",
+      "2026-10-03T22:17:26.536505+00:00"
+    ],
+    "generation_transition": "cycle 001220 generation 0 -> 1 automatically; then 001221/001222/001223 automatic successors",
+    "checkpoint_resume": {
+      "utc": "2026-10-03T22:21:55.595176+00:00",
+      "baseline_completed": 460512,
+      "completed_now": 462208,
+      "changed_completed_results": 0,
+      "changed_candidates": 0,
+      "duplicate_evaluation_keys": 0,
+      "sqlite_quick_check": "ok",
+      "foreign_key_errors": [],
+      "latest_cycles": [
+        [
+          "phase2_dev_20261003_001223",
+          "ACTIVE",
+          0
+        ],
+        [
+          "phase2_dev_20261003_001222",
+          "SEALED_DEVELOPMENT",
+          1
+        ],
+        [
+          "phase2_dev_20261003_001221",
+          "SEALED_DEVELOPMENT",
+          1
+        ],
+        [
+          "phase2_dev_20261003_001220",
+          "SEALED_DEVELOPMENT",
+          1
+        ],
+        [
+          "phase2_dev_20261003_001219",
+          "SEALED_DEVELOPMENT",
+          1
+        ],
+        [
+          "phase2_dev_20261003_001218",
+          "SEALED_DEVELOPMENT",
+          1
+        ]
+      ]
+    },
+    "git_diff_check": "passed",
+    "python_compile": "passed",
+    "resources": {
+      "worker_memory_peak_bytes": 392544256,
+      "broker_memory_peak_bytes": 59121664,
+      "available_ram_approx_GiB": 6.0,
+      "swap_bytes": 0,
+      "free_disk_approx_GiB": 49,
+      "workers": 2,
+      "worker_cpu_quota_percent": 160,
+      "broker_cpu_quota_percent": 20,
+      "nice": 15
+    },
+    "systemd": {
+      "development_timer": "enabled active",
+      "broker_timer": "enabled active",
+      "collector_timer": "enabled active; unchanged",
+      "development_service": "oneshot success between activations",
+      "broker_service": "oneshot success between activations",
+      "failed_units": 0
+    },
+    "quality": {
+      "after_by_family": {
+        "K": {
+          "eligible": 0,
+          "fully_evaluated": 16,
+          "mean_cagr": 0.17073387993819142,
+          "mean_delayed_entry_cagr": 0.1478765253996424,
+          "mean_double_cost_cagr": 0.16254918095196147,
+          "mean_mdd": 0.04666828172369851,
+          "mean_parameter_stability": 0.796875,
+          "reasons": {
+            "nonpositive_growth_or_missing_concentration": 11,
+            "parameter_instability": 3,
+            "top3_episode_dependence": 16
+          },
+          "registered": 16
+        },
+        "L": {
+          "eligible": 0,
+          "fully_evaluated": 2,
+          "mean_cagr": 0.15292358010562604,
+          "mean_delayed_entry_cagr": 0.1511890697506034,
+          "mean_double_cost_cagr": 0.12920699181579587,
+          "mean_mdd": 0.0646308523523907,
+          "mean_parameter_stability": 0.625,
+          "reasons": {
+            "nonpositive_growth_or_missing_concentration": 2,
+            "parameter_instability": 1,
+            "top3_episode_dependence": 2
+          },
+          "registered": 2
+        }
+      },
+      "before_by_family": {
+        "J": {
+          "eligible": 0,
+          "fully_evaluated": 271,
+          "mean_cagr": 0.14478835011977112,
+          "mean_delayed_entry_cagr": 0.13648805270592826,
+          "mean_double_cost_cagr": 0.1379321357308349,
+          "mean_mdd": 0.03920773333010419,
+          "mean_parameter_stability": 0.7373154981549815,
+          "reasons": {
+            "nonpositive_growth_or_missing_concentration": 271,
+            "parameter_instability": 34,
+            "top3_episode_dependence": 3
+          },
+          "registered": 271
+        },
+        "K": {
+          "eligible": 0,
+          "fully_evaluated": 280,
+          "mean_cagr": 0.17534397766867674,
+          "mean_delayed_entry_cagr": 0.1421125603113063,
+          "mean_double_cost_cagr": 0.16735730454599201,
+          "mean_mdd": 0.04624651779768987,
+          "mean_parameter_stability": 0.8020089285714286,
+          "reasons": {
+            "nonpositive_growth_or_missing_concentration": 199,
+            "parameter_instability": 34,
+            "top3_episode_dependence": 277
+          },
+          "registered": 280
+        },
+        "L": {
+          "eligible": 0,
+          "fully_evaluated": 250,
+          "mean_cagr": 0.06902598023029556,
+          "mean_delayed_entry_cagr": 0.06018440566888597,
+          "mean_double_cost_cagr": 0.05464500608994915,
+          "mean_mdd": 0.038074608059437964,
+          "mean_parameter_stability": 0.4555,
+          "reasons": {
+            "best_day_dependence": 22,
+            "nonpositive_growth_or_missing_concentration": 250,
+            "parameter_instability": 224,
+            "top3_episode_dependence": 233
+          },
+          "registered": 250
+        },
+        "M": {
+          "eligible": 0,
+          "fully_evaluated": 188,
+          "mean_cagr": 0.1867838617152142,
+          "mean_delayed_entry_cagr": 0.10488743818683773,
+          "mean_double_cost_cagr": 0.1619878641505133,
+          "mean_mdd": 0.039488611952166276,
+          "mean_parameter_stability": 0.75,
+          "reasons": {
+            "nonpositive_growth_or_missing_concentration": 188,
+            "top3_episode_dependence": 132
+          },
+          "registered": 188
+        },
+        "N": {
+          "eligible": 0,
+          "fully_evaluated": 187,
+          "mean_cagr": 0.050970053755491684,
+          "mean_delayed_entry_cagr": -0.005149848038573852,
+          "mean_double_cost_cagr": 0.04159415890703649,
+          "mean_mdd": 0.01306759772949404,
+          "mean_parameter_stability": 0.6006016042780749,
+          "reasons": {
+            "best_day_dependence": 1,
+            "delayed_entry_loss": 137,
+            "nonpositive_growth_or_missing_concentration": 187,
+            "parameter_instability": 157,
+            "top3_episode_dependence": 131
+          },
+          "registered": 187
+        }
+      },
+      "cutoff_utc": "2026-10-03T22:06:48.980391+00:00",
+      "definition": "Exact candidate_summary eligibility on unchanged development folds; observational comparison, unequal sample sizes.",
+      "utc": "2026-10-03T22:17:23.542699+00:00"
+    },
+    "quality_conclusion": "Performance superiority not demonstrated. All 1176 historical schema-accepted DeepSeek mutations and the measured new completed mutations remain ineligible under unchanged scientific filters. New context uses the same metrics and offers fewer tokens; samples are small and unequal."
+  },
+  "forbidden_old_path_checked": [
+    "No seen-hash ledger enters wire_payload",
+    "No historical ledger or all-candidate serialization in new proposal_payload",
+    "No outputs/* or data/* manually changed or committed",
+    "No production app/execution/account/journal/Pi/LeadPilot code touched",
+    "No full-refresh, trading order, production timer/publisher or old SEALED-cycle execution invoked"
+  ],
+  "exact_files_changed": [
+    "canonical/script_registry.json",
+    "deploy/systemd/trendatlas-phase2-broker.service",
+    "research/phase2_audit_20261003/GIT_ADD.txt",
+    "research/phase2_audit_20261003/final_snapshot.json",
+    "research/phase2_audit_20261003/phase2_audit_after_point1_20261003.json",
+    "research/phase2_audit_20261003/phase2_audit_after_point2_20261003.json",
+    "research/phase2_audit_20261003/phase2_audit_before_20261003.json",
+    "research/phase2_audit_20261003/phase2_audit_final_point1_20261003.json",
+    "research/phase2_audit_20261003/phase2_audit_final_point2_20261003.json",
+    "research/phase2_audit_20261003/phase2_deploy_optimization_20261003.py",
+    "research/phase2_audit_20261003/phase2_deployment_receipt_final_20261003.json",
+    "research/phase2_audit_20261003/phase2_deployment_receipt_first_20261003.json",
+    "research/phase2_audit_20261003/phase2_quality_after_20261003.json",
+    "research/phase2_audit_20261003/report.json",
+    "research/phase2_audit_20261003/resume_verification.json",
+    "research/phase2_continuous/README.md",
+    "research/phase2_continuous/audit.py",
+    "research/phase2_continuous/broker.py",
+    "research/phase2_continuous/compact.py",
+    "research/phase2_continuous/quality_audit.py",
+    "research/phase2_continuous/runtime.py",
+    "source_of_truth/README.md",
+    "source_of_truth/phase2_broker_policy.json",
+    "tests/test_phase2_broker_optimization.py"
+  ],
+  "exact_git_add_list": [
+    "canonical/script_registry.json",
+    "deploy/systemd/trendatlas-phase2-broker.service",
+    "research/phase2_audit_20261003/GIT_ADD.txt",
+    "research/phase2_audit_20261003/final_snapshot.json",
+    "research/phase2_audit_20261003/phase2_audit_after_point1_20261003.json",
+    "research/phase2_audit_20261003/phase2_audit_after_point2_20261003.json",
+    "research/phase2_audit_20261003/phase2_audit_before_20261003.json",
+    "research/phase2_audit_20261003/phase2_audit_final_point1_20261003.json",
+    "research/phase2_audit_20261003/phase2_audit_final_point2_20261003.json",
+    "research/phase2_audit_20261003/phase2_deploy_optimization_20261003.py",
+    "research/phase2_audit_20261003/phase2_deployment_receipt_final_20261003.json",
+    "research/phase2_audit_20261003/phase2_deployment_receipt_first_20261003.json",
+    "research/phase2_audit_20261003/phase2_quality_after_20261003.json",
+    "research/phase2_audit_20261003/report.json",
+    "research/phase2_audit_20261003/resume_verification.json",
+    "research/phase2_continuous/README.md",
+    "research/phase2_continuous/audit.py",
+    "research/phase2_continuous/broker.py",
+    "research/phase2_continuous/compact.py",
+    "research/phase2_continuous/quality_audit.py",
+    "research/phase2_continuous/runtime.py",
+    "source_of_truth/README.md",
+    "source_of_truth/phase2_broker_policy.json",
+    "tests/test_phase2_broker_optimization.py"
+  ],
+  "commit_message": "fix(research): compact Phase 2 DeepSeek context and preserve checkpoint audit",
+  "commit_hash": "Reported in final response after committing this evidence; no production merge or push performed"
+}

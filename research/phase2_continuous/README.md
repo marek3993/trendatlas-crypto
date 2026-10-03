@@ -25,3 +25,22 @@ The public-data collector remains a separate archive. Its documentation fix
 uses current official URLs without `.md`, retry and backoff. Missing prose is a
 warning; missing market observations remain missing. The explicit manifest
 migration preserves the existing append-only observation chain.
+
+The broker policy bounds the complete input envelope to 6,500 UTF-8 bytes (a
+conservative token upper bound) and output to 1,500 tokens. Two Pareto parents,
+aggregate rejection reasons, two weak folds per parent and at most twelve novel
+neighbor options replace the historical hash ledger. One call proposes four
+mutations. Content caching excludes cycle identity; local SQLite still rejects
+every previously registered candidate. Durable reservations prohibit retry of
+uncertain transport outcomes. Only an explicit HTTP 429 is retried once; raw
+provider usage and per-attempt evidence remain in the mailbox. Invoice cost is
+separate from the documented peak-rate upper estimate.
+
+Existing queued requests retain their original lineage hash and are compacted
+only at the broker boundary. Existing evaluator and development-contract bytes
+remain frozen. Partial generation recovery fills only its remaining slots.
+Already seeded family stages are not rerun. Exact enumeration prevents random
+sampling failure from falsely claiming exhaustion. The bounded ledger limit is
+3 GiB with a 2 GiB free-disk reserve, sufficient for the unchanged 74,056-space
+at the measured storage per evaluation. Read-only `audit.py` reports progress,
+API use, acceptance, duplicate keys and development lineage metrics.

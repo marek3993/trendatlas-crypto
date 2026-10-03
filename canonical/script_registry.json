@@ -1142,7 +1142,29 @@
       "output_type": "research_proposals",
       "decision_relevance": "research_only",
       "writes_source_of_truth": false,
-      "notes": "Broker has no market data or trading account access."
+      "notes": "Bounded compact context and cross-cycle content cache under phase2_broker_policy.json; raw provider usage and durable per-attempt reservations. Broker has no market data or trading account access."
+    },
+    {
+      "script_path": "research/phase2_continuous/audit.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Read-only SQLite/mailbox progress, token, mutation acceptance and development quality audit.",
+      "primary_outputs": ["stdout JSON audit snapshot"],
+      "output_type": "research_audit",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "No credentials, OOS, forward, production or order access."
+    },
+    {
+      "script_path": "research/phase2_continuous/quality_audit.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Read-only before/after development mutation quality with unchanged qualification criteria.",
+      "primary_outputs": ["stdout JSON quality comparison"],
+      "output_type": "research_audit",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Observational comparison; no performance superiority or production promotion claim."
     },
     {
       "script_path": "research/phase2_continuous/collector_v2.py",
