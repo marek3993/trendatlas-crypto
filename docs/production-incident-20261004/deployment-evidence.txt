@@ -1,0 +1,39 @@
+{
+  "files": {
+    "source_of_truth/production_execution_contract.json": "012cb1f46cdc6be25d1455063f1a2f5dfb995cb692ae222fe4cb762c7cd3c3c4",
+    "scripts/execution/run_trendatlas_production.py": "b416fca00487c21d414ebc89845478be3176db2bb29ed527931f303b6f716047",
+    "web/src/server/multi-account-executor/engine.ts": "0a6428a8acaf4454a981aa3f07a45cb0915edb1f58dc7fa1fdd4764f48a6bff2",
+    "web/src/server/multi-account-executor/repository.ts": "c18c353949ab2f140420140c30a1f267ff4febc563670dbf59e21a6ac98a3a30",
+    "tests/test_dynamic_execution_source_contract.py": "0a7f67a939153a1752868f13c1be73e7cafba6dc349cb212e6950e91c45b5582",
+    "tests/test_single_production_orchestrator.py": "a4fd27c14d04dd0e63fe4cd0ef0507937b683929d764be312cf239c806212618",
+    "web/tests/multi-account-executor.test.ts": "dfef0d8e3f416df84e4034adeb3a9b598a1e9e1cb35484350c3670caa856b83d"
+  },
+  "capabilities_sha256": "74cec8a322a9c0f85bb339d9b1bbc12340c3e2079ea41b5f056532f9e85af1fa",
+  "timer_changed": false,
+  "research_changed": false,
+  "pi_contacted": false,
+  "backup": "/var/lib/trendatlas-production/production-audit-20261004/before",
+  "capabilities_at_deploy_sha256": "cd79b193a27b0de1e4870c07ba9ffe7470057eb835cc745102bd1c8fd0f168db",
+  "patch_commit": "bcd54a85c2273b82ee47fafa51738d3fb457e164"
+}
+{
+  "status": "PASS",
+  "comparison": "exact",
+  "current_snapshot_exact": true,
+  "planner_exact": true,
+  "timeseries_shape_equal": true,
+  "full_timeseries_exact": true,
+  "canonical_serialization_exact": true,
+  "differences": {},
+  "new_tolerance_introduced": false,
+  "unchanged_trade_source_sha256": {
+    "web/src/server/multi-account-executor/planner.ts": "c5d7767f0f43e7e55f538c19a9e3aaeb4c90ab3a529e641b36639729de9a884d",
+    "web/src/server/multi-account-executor/cloid.ts": "45b62491e5cf5c1e4a0068894ef4de26e70520a0082716d4bbc1d0db338e97db",
+    "web/src/server/multi-account-executor/hyperliquid-live-gateway.ts": "2e57d33646a45c9bd70ba9f76c18ee6895ba355b5a62042f95a4cce191c8c4b9",
+    "web/src/server/multi-account-executor/hyperliquid-l1-signing.ts": "4d5db40f77234714b497848e13d9e9d8050f13009d4abbb0baf18cf4c60a0690",
+    "scripts/execution/production_execution.py": "a6afb79c4519bbe9b3903de3b740f746acae73f7dd9bc4fa6459ab67ad177d3c"
+  },
+  "rows": 3070,
+  "arm_reference": "/var/lib/trendatlas-production/postactivation-20260930/final-replay-proof.json",
+  "pi_contacted": false
+}

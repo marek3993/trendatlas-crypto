@@ -1,0 +1,961 @@
+{
+  "observed_at_utc": "2026-10-04T07:34:10.335250+00:00",
+  "cutover_history_start_utc": "2026-09-30T14:40:00Z",
+  "account_master": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "spot": {
+    "balances": [
+      {
+        "coin": "USDC",
+        "token": 0,
+        "total": "83.348433",
+        "hold": "0.0",
+        "entryNtl": "0.0"
+      },
+      {
+        "coin": "USDE",
+        "token": 235,
+        "total": "0.0",
+        "hold": "0.0",
+        "entryNtl": "0.0"
+      },
+      {
+        "coin": "USDT0",
+        "token": 268,
+        "total": "0.0",
+        "hold": "0.0",
+        "entryNtl": "0.0"
+      },
+      {
+        "coin": "USDH",
+        "token": 360,
+        "total": "0.0",
+        "hold": "0.0",
+        "entryNtl": "0.0"
+      }
+    ],
+    "tokenToAvailableAfterMaintenance": [
+      [
+        0,
+        "83.348433"
+      ]
+    ]
+  },
+  "all_perp_dexs": [
+    {
+      "dex": "native",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099246447
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "xyz",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099246447
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "flx",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099246447
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "vntl",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099246980
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "hyna",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099246980
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "km",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099246980
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "abcd",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099247518
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "cash",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099247787
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "para",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099248054
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "mkts",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099247987
+      },
+      "open_orders": []
+    },
+    {
+      "dex": "io",
+      "state": {
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0",
+          "totalMarginUsed": "0.0"
+        },
+        "crossMaintenanceMarginUsed": "0.0",
+        "withdrawable": "0.0",
+        "assetPositions": [],
+        "time": 1791099248255
+      },
+      "open_orders": []
+    }
+  ],
+  "fills_since_cutover": [
+    {
+      "coin": "AVAX",
+      "px": "10.918",
+      "sz": "7.65",
+      "side": "A",
+      "time": 1790813501250,
+      "startPosition": "7.65",
+      "dir": "Close Long",
+      "closedPnl": "1.56825",
+      "hash": "0x3e9d3c31a5d396084016044591c6d8020705001740d6b4dae265e78464d76ff2",
+      "oid": 561784971605,
+      "crossed": true,
+      "fee": "0.037585",
+      "tid": 852970980061947,
+      "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+      "feeToken": "USDC",
+      "twapId": null
+    }
+  ],
+  "historical_order_events_since_cutover": [
+    {
+      "order": {
+        "coin": "AVAX",
+        "side": "A",
+        "limitPx": "10.809",
+        "sz": "0.0",
+        "oid": 561784971605,
+        "timestamp": 1790813501250,
+        "triggerCondition": "N/A",
+        "isTrigger": false,
+        "triggerPx": "0.0",
+        "children": [],
+        "isPositionTpsl": false,
+        "reduceOnly": true,
+        "orderType": "Limit",
+        "origSz": "7.65",
+        "tif": "Ioc",
+        "cloid": "0xd91d0679bb48242964e7922e7b861ac7"
+      },
+      "status": "filled",
+      "statusTimestamp": 1790813501250
+    },
+    {
+      "order": {
+        "coin": "AVAX",
+        "side": "A",
+        "limitPx": "10.809",
+        "sz": "7.65",
+        "oid": 561784971605,
+        "timestamp": 1790813501250,
+        "triggerCondition": "N/A",
+        "isTrigger": false,
+        "triggerPx": "0.0",
+        "children": [],
+        "isPositionTpsl": false,
+        "reduceOnly": true,
+        "orderType": "Limit",
+        "origSz": "7.65",
+        "tif": "Ioc",
+        "cloid": "0xd91d0679bb48242964e7922e7b861ac7"
+      },
+      "status": "open",
+      "statusTimestamp": 1790813501250
+    }
+  ],
+  "non_funding_ledger_since_cutover": [],
+  "funding_since_cutover": [
+    {
+      "time": 1790780400083,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001041",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790784000113,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001047",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790787600035,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001054",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790791200021,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001052",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790794800064,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001047",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790798400022,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001041",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790802000036,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001045",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790805600030,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001044",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790809200017,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001047",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    },
+    {
+      "time": 1790812800051,
+      "hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "delta": {
+        "type": "funding",
+        "coin": "AVAX",
+        "usdc": "-0.001045",
+        "szi": "7.65",
+        "fundingRate": "0.0000125",
+        "nSamples": null
+      }
+    }
+  ],
+  "funding_total_usdc": -0.010463,
+  "sale": {
+    "fill": {
+      "coin": "AVAX",
+      "px": "10.918",
+      "sz": "7.65",
+      "side": "A",
+      "time": 1790813501250,
+      "startPosition": "7.65",
+      "dir": "Close Long",
+      "closedPnl": "1.56825",
+      "hash": "0x3e9d3c31a5d396084016044591c6d8020705001740d6b4dae265e78464d76ff2",
+      "oid": 561784971605,
+      "crossed": true,
+      "fee": "0.037585",
+      "tid": 852970980061947,
+      "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+      "feeToken": "USDC",
+      "twapId": null
+    },
+    "time_utc": "2026-10-01T00:11:41.250000+00:00",
+    "action": {
+      "id": "bba2bdc0-aecf-4186-9119-b99af54b1f94",
+      "run_id": "c74ae2b4-4e9a-4ff0-81f3-88323a3b1864",
+      "leg_index": 0,
+      "action": "EXIT",
+      "asset": "AVAX",
+      "requested_notional": 83.5227,
+      "size": 7.65,
+      "reduce_only": true,
+      "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+      "hyperliquid_order_id": "561784971605",
+      "submission_state": "SUBMITTED",
+      "verification_state": "VERIFIED",
+      "created_at": "2026-10-01T00:11:39.476085+00:00",
+      "updated_at": "2026-10-01T00:11:42.069+00:00",
+      "side": "sell",
+      "expires_at_ms": 1790813679788
+    },
+    "journal_run_id": "c74ae2b4-4e9a-4ff0-81f3-88323a3b1864",
+    "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-30::target_CASH::candidate_AVAX",
+    "reason": "validated Production Core target CASH/0; candidate AVAX/1 not authorized; reduce-only EXIT",
+    "order_status": {
+      "status": "order",
+      "order": {
+        "order": {
+          "coin": "AVAX",
+          "side": "A",
+          "limitPx": "10.809",
+          "sz": "0.0",
+          "oid": 561784971605,
+          "timestamp": 1790813501250,
+          "triggerCondition": "N/A",
+          "isTrigger": false,
+          "triggerPx": "0.0",
+          "children": [],
+          "isPositionTpsl": false,
+          "reduceOnly": true,
+          "orderType": "Limit",
+          "origSz": "7.65",
+          "tif": "Ioc",
+          "cloid": "0xd91d0679bb48242964e7922e7b861ac7"
+        },
+        "status": "filled",
+        "statusTimestamp": 1790813501250
+      }
+    }
+  },
+  "journal_sha256": "622a531b4d32585a5dda5f2a81ee6390955e1b50b5588ed5531602899935cb82",
+  "nonce_watermarks": [
+    {
+      "agent_address": "0x6fad0830d66fc21b6dba0c39357625df55360f9b",
+      "last_nonce": 1790813499788,
+      "updated_at": "2026-10-01T00:11:39.767979+00:00"
+    }
+  ],
+  "leases": [],
+  "journal_runs_since_cutover": [
+    {
+      "id": "1a19a6a7-da62-44de-b8df-29604457f851",
+      "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d",
+      "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+      "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-01::target_CASH::candidate_AVAX",
+      "canonical_closed_day": "2026-10-01",
+      "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "authorized_target_asset": "CASH",
+      "authorized_target_exposure": 0,
+      "account_equity_before": 83.348433,
+      "account_equity_after": 83.348433,
+      "status": "NO_ACTION",
+      "started_at": "2026-10-02T00:11:37.349502+00:00",
+      "completed_at": "2026-10-02T00:11:38.495+00:00",
+      "sanitized_error": null
+    },
+    {
+      "id": "51e7d468-c7ef-48b5-997b-66eced0970d0",
+      "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d",
+      "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+      "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-02::target_CASH::candidate_AVAX",
+      "canonical_closed_day": "2026-10-02",
+      "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "authorized_target_asset": "CASH",
+      "authorized_target_exposure": 0,
+      "account_equity_before": 83.348433,
+      "account_equity_after": 83.348433,
+      "status": "NO_ACTION",
+      "started_at": "2026-10-03T00:11:21.655823+00:00",
+      "completed_at": "2026-10-03T00:11:22.545+00:00",
+      "sanitized_error": null
+    },
+    {
+      "id": "71be83e0-ef16-4112-886f-2c76ec497372",
+      "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d",
+      "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+      "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-29::target_AVAX::candidate_AVAX",
+      "canonical_closed_day": "2026-09-29",
+      "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "authorized_target_asset": "AVAX",
+      "authorized_target_exposure": 1,
+      "account_equity_before": 87.023082,
+      "account_equity_after": 82.945131,
+      "status": "NO_ACTION",
+      "started_at": "2026-09-30T00:11:10.975073+00:00",
+      "completed_at": "2026-09-30T14:43:34.452+00:00",
+      "sanitized_error": null
+    },
+    {
+      "id": "9395a298-f83a-4359-a7e0-edc51cd2eaac",
+      "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d",
+      "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+      "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
+      "canonical_closed_day": "2026-10-03",
+      "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "authorized_target_asset": "CASH",
+      "authorized_target_exposure": 0,
+      "account_equity_before": 83.348433,
+      "account_equity_after": 83.348433,
+      "status": "NO_ACTION",
+      "started_at": "2026-10-04T00:11:36.250542+00:00",
+      "completed_at": "2026-10-04T07:31:11.184+00:00",
+      "sanitized_error": null
+    },
+    {
+      "id": "c74ae2b4-4e9a-4ff0-81f3-88323a3b1864",
+      "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d",
+      "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+      "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-30::target_CASH::candidate_AVAX",
+      "canonical_closed_day": "2026-09-30",
+      "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "authorized_target_asset": "CASH",
+      "authorized_target_exposure": 0,
+      "account_equity_before": 83.386018,
+      "account_equity_after": 83.348433,
+      "status": "FILLED_AND_ALIGNED",
+      "started_at": "2026-10-01T00:11:38.588296+00:00",
+      "completed_at": "2026-10-01T00:11:42.506+00:00",
+      "sanitized_error": null
+    }
+  ],
+  "journal_actions_since_cutover": [
+    {
+      "id": "bba2bdc0-aecf-4186-9119-b99af54b1f94",
+      "run_id": "c74ae2b4-4e9a-4ff0-81f3-88323a3b1864",
+      "leg_index": 0,
+      "action": "EXIT",
+      "asset": "AVAX",
+      "requested_notional": 83.5227,
+      "size": 7.65,
+      "reduce_only": true,
+      "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+      "hyperliquid_order_id": "561784971605",
+      "submission_state": "SUBMITTED",
+      "verification_state": "VERIFIED",
+      "created_at": "2026-10-01T00:11:39.476085+00:00",
+      "updated_at": "2026-10-01T00:11:42.069+00:00",
+      "side": "sell",
+      "expires_at_ms": 1790813679788
+    }
+  ],
+  "production": {
+    "closed_day": "2026-10-03",
+    "generated_at_utc": "2026-10-04T07:31:41Z",
+    "candidate_asset": "AVAX",
+    "model_candidate_exposure": 1.0,
+    "trend_permission_active": false,
+    "execution_intent": {
+      "target_asset": "CASH",
+      "target_exposure": 0.0,
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
+      "stale_signal": false,
+      "allow_live_order_candidate": false
+    },
+    "validation": {
+      "status": "passed",
+      "errors": [],
+      "warnings": []
+    },
+    "decision_context": {
+      "current_reason_code": "candidate_asset_not_btc",
+      "current_reason_text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
+      "current_regime_duration_days": 4,
+      "days_since_last_trade": 3,
+      "days_since_last_risk_on": 11,
+      "days_since_last_equity_high": 8,
+      "current_drawdown_pct": -10.336607,
+      "current_cash_streak_days": 4,
+      "latest_rebalance_date": "2026-09-30",
+      "latest_rebalance_reason": "candidate_asset_not_btc"
+    }
+  },
+  "repair_run": {
+    "account_equity_after": 83.348433,
+    "account_equity_before": 83.348433,
+    "authority_status": "PASSED",
+    "cloid": [],
+    "dashboard_status": "PASSED",
+    "execution_action": "NO_ACTION",
+    "execution_backend": "multi_account",
+    "execution_evidence": {
+      "actions": [],
+      "available": true,
+      "journalRunId": "9395a298-f83a-4359-a7e0-edc51cd2eaac"
+    },
+    "execution_outcome": "NO_ACTION",
+    "failure_kind": "deterministic",
+    "failure_reason": null,
+    "failure_stage": null,
+    "final_status": "SUCCESS",
+    "finished_at": "2026-10-04T07:32:08Z",
+    "gate_status": "ready_if_enabled",
+    "heavy_refresh_steps": "skipped",
+    "live_order_chain": "INVOKED",
+    "manifest_type": "trendatlas_production_run_manifest",
+    "model_target_asset": "CASH",
+    "model_target_exposure": 0.0,
+    "multi_account_execution": {
+      "accountCount": 1,
+      "allAccountsSuccessful": true,
+      "failureKind": "deterministic",
+      "mode": "canonical_multi_account_production",
+      "ownerResult": {
+        "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "executionEvidence": {
+          "actions": [],
+          "available": true,
+          "journalRunId": "9395a298-f83a-4359-a7e0-edc51cd2eaac"
+        },
+        "orderRequested": false,
+        "status": "NO_ACTION"
+      },
+      "preflight": [
+        {
+          "accountEquityUsd": 83.348433,
+          "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+          "actionCount": 0,
+          "actions": [],
+          "cancelOrderIds": [],
+          "maxActionNotionalUsd": 0,
+          "positions": [],
+          "status": "ALIGNED",
+          "targetAsset": "CASH",
+          "targetExposure": 0
+        }
+      ],
+      "realOrderSent": false,
+      "results": [
+        {
+          "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+          "executionEvidence": {
+            "actions": [],
+            "available": true,
+            "journalRunId": "9395a298-f83a-4359-a7e0-edc51cd2eaac"
+          },
+          "orderRequested": false,
+          "status": "NO_ACTION"
+        }
+      ],
+      "runId": "prod_20261004T073000Z_449133",
+      "signalId": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
+      "successful": true,
+      "target": "CASH"
+    },
+    "no_submit": false,
+    "order_id": [],
+    "order_requested": false,
+    "order_result": "NO_ACTION",
+    "owner_account_snapshot_available": true,
+    "planned_delta": 0,
+    "post_trade_block_reasons": [],
+    "post_trade_tolerance_usd": 1.66696866,
+    "post_trade_verification_status": "NO_ACTION",
+    "real_exposure_after": 0.0,
+    "real_order_sent": false,
+    "real_position_after": [],
+    "real_position_before": {
+      "asset": "CASH",
+      "notional_usd": 0
+    },
+    "residual_delta": 0,
+    "retry_attempt": 0,
+    "run_id": "prod_20261004T073000Z_449133",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
+    "signer_validation": {
+      "credential_value_exposed": false,
+      "mode": "multi_account_per_account_preflight",
+      "status": "PASS"
+    },
+    "stages": {
+      "ACQUIRE_LOCK": {
+        "error": null,
+        "finished_at": "2026-10-04T07:30:00Z",
+        "started_at": "2026-10-04T07:30:00Z",
+        "status": "PASSED"
+      },
+      "AUTHORITY_PUBLISH": {
+        "error": null,
+        "finished_at": "2026-10-04T07:32:08Z",
+        "started_at": "2026-10-04T07:31:18Z",
+        "status": "PASSED"
+      },
+      "BUILD_CANONICAL_INTENT": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:03Z",
+        "started_at": "2026-10-04T07:31:02Z",
+        "status": "PASSED"
+      },
+      "BUILD_PRODUCTION_CORE": {
+        "error": null,
+        "finished_at": "2026-10-04T07:30:56Z",
+        "started_at": "2026-10-04T07:30:53Z",
+        "status": "PASSED"
+      },
+      "BUILD_REAL_ORDER_GATE": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:03Z",
+        "started_at": "2026-10-04T07:31:03Z",
+        "status": "PASSED"
+      },
+      "DASHBOARD_RUNTIME": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:18Z",
+        "started_at": "2026-10-04T07:31:16Z",
+        "status": "PASSED"
+      },
+      "EXECUTE": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:11Z",
+        "started_at": "2026-10-04T07:31:04Z",
+        "status": "PASSED"
+      },
+      "LIVE_PREFLIGHT": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:04Z",
+        "started_at": "2026-10-04T07:31:04Z",
+        "status": "PASSED"
+      },
+      "POST_TRADE_VERIFY": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:16Z",
+        "started_at": "2026-10-04T07:31:14Z",
+        "status": "PASSED"
+      },
+      "PRECHECK_DATA_HEALTH": {
+        "blocker_count": 0,
+        "error": null,
+        "finished_at": "2026-10-04T07:30:53Z",
+        "started_at": "2026-10-04T07:30:52Z",
+        "status": "PASSED"
+      },
+      "READ_ACCOUNT_AFTER": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:14Z",
+        "started_at": "2026-10-04T07:31:11Z",
+        "status": "PASSED"
+      },
+      "READ_ACCOUNT_BEFORE": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:02Z",
+        "started_at": "2026-10-04T07:30:58Z",
+        "status": "PASSED"
+      },
+      "RECONCILE": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:04Z",
+        "started_at": "2026-10-04T07:31:03Z",
+        "status": "PASSED"
+      },
+      "REFRESH_DATA": {
+        "error": null,
+        "finished_at": "2026-10-04T07:30:52Z",
+        "started_at": "2026-10-04T07:30:00Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_DATA_HEALTH": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:03Z",
+        "started_at": "2026-10-04T07:31:03Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_PRODUCTION_CORE": {
+        "error": null,
+        "finished_at": "2026-10-04T07:30:58Z",
+        "started_at": "2026-10-04T07:30:56Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_SIGNER": {
+        "error": null,
+        "finished_at": "2026-10-04T07:31:02Z",
+        "started_at": "2026-10-04T07:31:02Z",
+        "status": "PASSED"
+      }
+    },
+    "started_at": "2026-10-04T07:30:00Z",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "target_closed_day": "2026-10-03",
+    "target_notional": 0.0
+  },
+  "authority": {
+    "run_id": "20261004_073143",
+    "generated_at_utc": "2026-10-04T07:32:02Z",
+    "currentness_status": "current",
+    "latest_authoritative_attempt_status": "success"
+  },
+  "public_contract": {
+    "generated_at_utc": "2026-10-04T07:32:01Z",
+    "real_account": {
+      "asset": "CASH",
+      "position_label_sk": "Mimo trhu",
+      "exposure_x": 0.0,
+      "in_market": false,
+      "state_available": true,
+      "positions": [],
+      "account_equity_usd": 83.348433,
+      "free_collateral_usd": 83.348433,
+      "available_balance_usd": 83.348433,
+      "withdrawable_usd": null,
+      "margin_used_usd": 0.0,
+      "position_notional_usd": 0.0,
+      "balance_source_of_truth": "spot_stable_balance",
+      "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
+      "withdrawable_source": "unavailable_individual_perp_state_not_meaningful"
+    },
+    "model_target_state": {
+      "asset": "CASH",
+      "exposure_x": 0.0,
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
+      "closed_day": "2026-10-03",
+      "validated": true,
+      "label_sk": "Potvrden\u00fd cie\u013e strat\u00e9gie",
+      "not_real_wallet_exposure": true
+    },
+    "model_signal": {
+      "preferred_asset": "AVAX",
+      "exposure_x": 1.0,
+      "label_sk": "Modelov\u00fd sign\u00e1l",
+      "not_real_wallet_exposure": true
+    },
+    "execution_result_state": {
+      "run_id": "prod_20261004T073000Z_449133",
+      "outcome": "NO_ACTION",
+      "completed_at_utc": "2026-10-04T07:31:16Z",
+      "staying_cash": false,
+      "live_order_sent": false,
+      "public_message_sk": "\u00da\u010det je zos\u00faladen\u00fd s cie\u013eom strat\u00e9gie.",
+      "public_message_en": "The account is aligned with the strategy target."
+    }
+  },
+  "browser_dashboard": {
+    "url": "https://trendatlas-accounts.vercel.app/dashboard",
+    "observed_at_utc": "2026-10-04T07:28:00Z",
+    "account": "Marek Benda",
+    "asset": "CASH",
+    "equity_display": "$83.35",
+    "position_count": 0,
+    "open_orders": 0,
+    "source": "Live Hyperliquid read-only API",
+    "after_repair_navigation": "blocked_by_open_extension_UI"
+  },
+  "next_automatic_run_utc": "2026-10-05T00:10:00Z",
+  "next_automatic_run_after_repair_verified": false,
+  "orders_sent_during_repair": 0,
+  "incident_resolved": false,
+  "pi_contacted": false,
+  "research_changed": false,
+  "leadpilot_changed": false
+}
