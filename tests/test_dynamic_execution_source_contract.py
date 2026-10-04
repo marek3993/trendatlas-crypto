@@ -17,6 +17,8 @@ class DynamicExecutionSourceContractTests(unittest.TestCase):
         self.assertEqual(contract["multi_account"]["retryable_statuses_remain_eligible"], ["blocked", "error"])
         self.assertEqual(contract["outage_recovery"]["scheduler"], "mrv1-production.timer_Persistent=true_single_canonical_service")
         self.assertIn("verify_app_freshness_then", contract["outage_recovery"]["dependency_order"])
+        self.assertIn("never_auxiliary_Python_preview", contract["execution_evidence"]["manifest_order_identity"])
+        self.assertIn("never_fabricate_or_resubmit", contract["execution_evidence"]["unavailable"])
         for filename in ("project_truth.json", "export_contract.json"):
             reference = json.loads((ROOT / "source_of_truth" / filename).read_text(encoding="utf-8"))
             self.assertEqual(reference["production_execution_source_contract"], "source_of_truth/production_execution_contract.json")

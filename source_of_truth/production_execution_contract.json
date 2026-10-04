@@ -53,6 +53,13 @@
     "power_loss_between_exit_and_entry": "recover_completed_exit_and_replan_only_missing_entry",
     "publish_failure": "preserve_terminal_execution_evidence_never_resubmit_verified_fill"
   },
+  "execution_evidence": {
+    "multi_account_source": "active_executor_durable_per_account_run_UUID_and_action_journal",
+    "manifest_order_identity": "owner_journal_CLOIDs_and_exchange_order_IDs_never_auxiliary_Python_preview_CLOIDs",
+    "no_action": "current_signal_journal_may_include_previously_verified_actions; retain_them_as_recovered_evidence_without_claiming_new_submission",
+    "unavailable": "preserve_terminal_execution_outcome_report_unknown_identity_never_fabricate_or_resubmit",
+    "no_submit": "no_live_journal_receipt_claim_no_preview_as_submitted_identity"
+  },
   "multi_account": {
     "shared_failure": "invalid_common_target_or_unavailable_exchange_metadata_stops_batch",
     "account_snapshot_binding": "per_account_exchange_fresh_reads; optional_canonical_owner_snapshot_is_informational_only_and_may_have_null_fingerprint",

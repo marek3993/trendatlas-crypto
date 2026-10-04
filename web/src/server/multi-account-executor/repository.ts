@@ -69,11 +69,12 @@ export class SupabaseExecutionRepository implements ExecutionRepository {
   }
   async readActions(runId: string) {
     const { data, error } = await this.db.from("multi_account_execution_actions")
-      .select("leg_index,action,asset,side,requested_notional,size,reduce_only,cloid,hyperliquid_order_id,expires_at_ms,submission_state").eq("run_id", runId).order("created_at");
+      .select("leg_index,action,asset,side,requested_notional,size,reduce_only,cloid,hyperliquid_order_id,expires_at_ms,submission_state,verification_state").eq("run_id", runId).order("created_at");
     if (error) throw new Error("execution journal cannot be recovered");
     return (data ?? []).map((row) => ({
       action: { leg: row.leg_index, action: row.action, asset: row.asset, side: row.side, requestedNotionalUsd: Number(row.requested_notional), size: Number(row.size), reduceOnly: row.reduce_only, ...(row.action === "CANCEL" ? { orderId: row.hyperliquid_order_id } : {}) } as PlannedAction,
       cloid: String(row.cloid),
+      verificationState: String(row.verification_state),
       ...(row.expires_at_ms !== null && row.expires_at_ms !== undefined ? { expiresAtMs: Number(row.expires_at_ms) } : {}),
       state: row.submission_state as "NOT_SUBMITTED" | "KNOWN" | "SUBMITTED" | "AMBIGUOUS" | "REJECTED",
       ...(row.hyperliquid_order_id ? { orderId: String(row.hyperliquid_order_id) } : {})

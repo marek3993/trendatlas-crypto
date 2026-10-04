@@ -12,7 +12,7 @@ export type ExchangeOrder = PlannedAction & { cloid: string; nonce: bigint; expi
 export type ExchangeCancellation = OpenOrder & { nonce: bigint; masterAddress: string; agentAddress: string; agentPrivateKey: `0x${string}` };
 export type KnownOrder = { state: "filled" | "open" | "rejected" | "cancelled" | "unknown"; orderId?: string } | null;
 export type SubmissionState = "NOT_SUBMITTED" | "KNOWN" | "SUBMITTED" | "AMBIGUOUS" | "REJECTED";
-export type JournalAction = { action: PlannedAction; cloid: string; state: SubmissionState; orderId?: string; runId?: string; expiresAtMs?: number };
+export type JournalAction = { action: PlannedAction; cloid: string; state: SubmissionState; orderId?: string; runId?: string; expiresAtMs?: number; verificationState?: string };
 export interface ExchangeGateway {
   readAccount(masterAddress: string): Promise<AccountState>;
   readMarkets(): Promise<Map<string, MarketSpec>>;
@@ -38,7 +38,8 @@ export interface ExecutionRepository {
   setAccountStatus(authorizationId: string, status: "ready" | "disabled_by_user" | "blocked" | "executing" | "aligned" | "error"): Promise<void>;
 }
 
-export type AccountResult = { accountId: string; status: FinalStatus; orderRequested: boolean | null; failureKind?: "retryable" | "deterministic"; reason?: string };
+export type ExecutionEvidence = { available: boolean; journalRunId: string; actions: Array<{ cloid: string; orderId: string | null; state: SubmissionState; verificationState: string | null; action: PlannedAction["action"]; asset: string }> | null };
+export type AccountResult = { accountId: string; status: FinalStatus; orderRequested: boolean | null; failureKind?: "retryable" | "deterministic"; reason?: string; executionEvidence?: ExecutionEvidence };
 const flat = (account: AccountState) => account.positions.every(({ size }) => size === 0);
 const sameAction = (a: PlannedAction, b: PlannedAction) => a.action === b.action && a.asset === b.asset && (a.side ?? (a.reduceOnly ? "sell" : "buy")) === b.side;
 
@@ -66,7 +67,8 @@ export class MultiAccountExecutor {
 
   private async runOne(account: EligibleAccount & { encryptedSecret?: EncryptedAgentSecret }, target: AuthorizedTarget): Promise<AccountResult> {
     let orderRequested: boolean | null = false;
-    const result = (status: FinalStatus, reason?: string, failureKind?: AccountResult["failureKind"]): AccountResult => ({ accountId: account.accountId, status, orderRequested, ...(reason ? { reason } : {}), ...(failureKind ? { failureKind } : {}) });
+    let executionEvidence: ExecutionEvidence | undefined;
+    const result = (status: FinalStatus, reason?: string, failureKind?: AccountResult["failureKind"]): AccountResult => ({ accountId: account.accountId, status, orderRequested, ...(reason ? { reason } : {}), ...(failureKind ? { failureKind } : {}), ...(executionEvidence ? { executionEvidence } : {}) });
     if (!isEligibleMultiAccount(account)) return result("BLOCKED", "account is not eligible", "deterministic");
     if (this.mode === "disabled") return result("DISABLED", "global executor is disabled");
     const holderId = randomUUID();
@@ -75,9 +77,19 @@ export class MultiAccountExecutor {
     let state: AccountState | null = null;
     let exited = false;
     let unresolvedRequest = false;
+    const observeExecutionEvidence = async () => {
+      if (!runId || this.mode !== "live") return;
+      executionEvidence = { available: false, journalRunId: runId, actions: null };
+      try {
+        if (!this.repository.readActions) return;
+        const actions = await this.repository.readActions(runId);
+        executionEvidence = { available: true, journalRunId: runId, actions: actions.map(({ cloid, orderId, state, verificationState, action }) => ({ cloid, orderId: orderId ?? null, state, verificationState: verificationState ?? null, action: action.action, asset: action.asset })) };
+      } catch { /* Presentation failure must never replay or relabel terminal execution. */ }
+    };
     const finish = async (status: FinalStatus, reason?: string, failureKind?: AccountResult["failureKind"]): Promise<AccountResult> => {
       if (runId) await this.repository.finishRun(runId, status, state?.equityUsd ?? null, reason);
       await this.repository.setAccountStatus(account.authorizationId, status === "NO_ACTION" || status === "FILLED_AND_ALIGNED" ? "aligned" : status === "DRY_RUN" ? "ready" : failureKind === "deterministic" ? "blocked" : "error");
+      await observeExecutionEvidence();
       return result(status, reason, failureKind);
     };
     const entryFailure = (reason: string) => finish(state && flat(state) ? exited ? "EXITED_ENTRY_FAILED_STAYING_CASH" : "ENTRY_FAILED_STAYING_CASH" : "PARTIAL", reason, "deterministic");
@@ -240,6 +252,7 @@ export class MultiAccountExecutor {
         try { await this.repository.finishRun(runId, failureStatus, state?.equityUsd ?? null, "Account execution could not be verified."); } catch { /* Preserve isolated account result when persistence fails. */ }
       }
       try { await this.repository.setAccountStatus(account.authorizationId, "error"); } catch { /* Lease remains bounded. */ }
+      await observeExecutionEvidence();
       return result(failureStatus, "Account execution could not be verified.", "retryable");
     } finally {
       if (lockHeld) {

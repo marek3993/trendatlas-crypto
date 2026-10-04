@@ -207,6 +207,35 @@ def health_bundle():
 
 
 class SingleProductionOrchestratorTests(unittest.TestCase):
+    def test_multi_account_manifest_uses_durable_identity_not_python_preview(self):
+        class DurableReceipt(FixtureOrchestrator):
+            def run_multi_account_backend(self, signal_id, *, no_submit):
+                report, code = super().run_multi_account_backend(signal_id, no_submit=no_submit)
+                report["ownerResult"]["executionEvidence"] = {"available": True, "journalRunId": "journal-uuid", "actions": [
+                    {"action": "ENTER", "cloid": "0x" + "d9" * 16, "orderId": "561784971605", "state": "SUBMITTED", "verificationState": "VERIFIED"},
+                    {"action": "ENTER", "cloid": "preview-never-sent", "orderId": None, "state": "NOT_SUBMITTED"},
+                    {"action": "CANCEL", "cloid": "cancellation-id", "orderId": "old-order", "state": "KNOWN"},
+                ]}
+                return report, code
+        runner = DurableReceipt(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
+            result = runner.run()
+        self.assertEqual(result["final_status"], "SUCCESS")
+        self.assertEqual(result["cloid"], ["0x" + "d9" * 16])
+        self.assertEqual(result["order_id"], ["561784971605"])
+        self.assertEqual(result["execution_evidence"]["journalRunId"], "journal-uuid")
+        plan = json.loads((runner.run_dir / "execution_plan.json").read_text())
+        self.assertNotEqual(result["cloid"], [step["cloid"] for step in plan["steps"]])
+        self.assertEqual(runner.dashboard_seen["cloid"], result["cloid"])
+
+    def test_multi_account_missing_evidence_is_unknown_not_a_preview_order(self):
+        runner = FixtureOrchestrator(self.root, no_submit=False, adapter=FakeAdapter(), execution_backend="multi_account")
+        with patch("scripts.execution.run_trendatlas_production.build_report_bundle", return_value=health_bundle()):
+            result = runner.run()
+        self.assertEqual(result["final_status"], "SUCCESS")
+        self.assertIsNone(result["cloid"])
+        self.assertIsNone(result["order_id"])
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)

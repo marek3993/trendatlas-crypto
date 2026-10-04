@@ -650,7 +650,7 @@ class TrendAtlasProductionOrchestrator:
                 "planned_delta": plan["delta_notional_usd"],
                 "execution_action": plan["action"],
                 "gate_status": gate.get("status"),
-                "cloid": [step["cloid"] for step in plan.get("steps", [])],
+                "cloid": None if self.execution_backend == "multi_account" else [step["cloid"] for step in plan.get("steps", [])],
             })
             self.stage_finish("RECONCILE")
 
@@ -707,6 +707,18 @@ class TrendAtlasProductionOrchestrator:
                 self.manifest["order_requested"] = multi_account_report.get("realOrderSent")
                 owner_result = multi_account_report.get("ownerResult") or {}
                 owner_status = str(owner_result.get("status") or "")
+                # The Python plan is a preview; only the active executor's
+                # durable journal can identify submitted/recovered orders.
+                evidence = owner_result.get("executionEvidence")
+                self.manifest["execution_evidence"] = evidence
+                if self.no_submit:
+                    self.manifest.update({"cloid": [], "order_id": []})
+                elif isinstance(evidence, Mapping) and evidence.get("available") is True and isinstance(evidence.get("actions"), list):
+                    actions = [row for row in evidence["actions"] if isinstance(row, Mapping) and row.get("state") != "NOT_SUBMITTED" and row.get("action") != "CANCEL"]
+                    self.manifest["cloid"] = list(dict.fromkeys(row["cloid"] for row in actions if row.get("cloid")))
+                    self.manifest["order_id"] = list(dict.fromkeys(row["orderId"] for row in actions if row.get("orderId")))
+                else:
+                    self.manifest.update({"cloid": None, "order_id": None})
                 if not self.no_submit and not owner_status:
                     raise ExecutionSafetyError("multi_account_owner_result_missing")
                 self.manifest["execution_outcome"] = "PREFLIGHT_ONLY" if self.no_submit else owner_status

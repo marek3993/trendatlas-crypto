@@ -113,6 +113,24 @@ describe("dynamic exit-first production planner", () => {
 });
 
 describe("execution state machine and recovery", () => {
+  it("reports the durable run, exchange CLOIDs and verified order IDs without signer data", async () => {
+    const h = harness(account([position("AVAX")]));
+    h.repository.markActionVerified = async (cloid) => { h.journal.get(cloid)!.verificationState = "VERIFIED"; };
+    const [result] = await h.run(target("CASH"));
+    expect(result.executionEvidence).toEqual({ available: true, journalRunId: "run", actions: [{ cloid: h.orders[0].cloid, orderId: "1", state: "SUBMITTED", verificationState: "VERIFIED", action: "EXIT", asset: "AVAX" }] });
+    expect(JSON.stringify(result)).not.toContain(privateKey);
+    const [resumed] = await h.run(target("CASH"));
+    expect(resumed).toMatchObject({ status: "FILLED_AND_ALIGNED", orderRequested: false, executionEvidence: { journalRunId: "run", actions: [{ cloid: h.orders[0].cloid, orderId: "1" }] } });
+    expect(h.orders).toHaveLength(1);
+  });
+  it("preserves verified execution when the final journal observation is unavailable", async () => {
+    const h = harness(account([position("AVAX")]));
+    const read = h.repository.readActions!;
+    let reads = 0;
+    h.repository.readActions = async (runId) => { if (++reads > 1) throw new Error("observation unavailable"); return read(runId); };
+    expect(await h.run(target("CASH"))).toMatchObject([{ status: "FILLED_AND_ALIGNED", orderRequested: true, executionEvidence: { available: false, journalRunId: "run", actions: null } }]);
+    expect(h.orders).toHaveLength(1);
+  });
   it.each([["BTC", "AVAX"], ["AVAX", "BTC"]])("executes %s to %s only after fresh exit read-back", async (from, to) => {
     const h = harness(account([position(from)]));
     expect(await h.run(target(to, 1.25))).toMatchObject([{ status: "FILLED_AND_ALIGNED", orderRequested: true }]);
