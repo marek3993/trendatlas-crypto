@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-10-04T00:12:29Z",
+  "generated_at_utc": "2026-10-04T07:32:01Z",
   "closed_day": "2026-10-03",
   "model_target_state": {
     "asset": "CASH",
@@ -12,9 +12,9 @@
     "not_real_wallet_exposure": true
   },
   "execution_result_state": {
-    "run_id": "prod_20261004T001018Z_485129",
+    "run_id": "prod_20261004T073000Z_449133",
     "outcome": "NO_ACTION",
-    "completed_at_utc": "2026-10-04T00:11:42Z",
+    "completed_at_utc": "2026-10-04T07:31:16Z",
     "staying_cash": false,
     "live_order_sent": false,
     "public_message_sk": "Účet je zosúladený s cieľom stratégie.",
@@ -40,7 +40,7 @@
       "ledger_type": "hyperliquid_real_account_performance_ledger",
       "version": 1,
       "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
-      "generated_at_utc": "2026-10-04T00:11:43Z",
+      "generated_at_utc": "2026-10-04T07:31:16Z",
       "source_complete": true,
       "missing_sources": [],
       "reconciliation_status": "ok",
@@ -17863,6 +17863,60 @@
           "free_collateral_usd": 83.348433,
           "margin_used_usd": 0.0,
           "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-10-04T00:50:00Z",
+          "timestamp_utc": "2026-10-04T00:50:00Z",
+          "effective_day": "2026-10-04",
+          "equity_usd": 83.348433,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-10-04T03:10:00Z",
+          "timestamp_utc": "2026-10-04T03:10:00Z",
+          "effective_day": "2026-10-04",
+          "equity_usd": 83.348433,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-10-04T05:10:00Z",
+          "timestamp_utc": "2026-10-04T05:10:00Z",
+          "effective_day": "2026-10-04",
+          "equity_usd": 83.348433,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-10-04T07:30:00Z",
+          "timestamp_utc": "2026-10-04T07:30:00Z",
+          "effective_day": "2026-10-04",
+          "equity_usd": 83.348433,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.week.accountValueHistory"
+        },
+        {
+          "valuation_id": "portfolio_equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-10-04T07:31:14Z",
+          "timestamp_utc": "2026-10-04T07:31:14Z",
+          "effective_day": "2026-10-04",
+          "equity_usd": 83.348433,
+          "free_collateral_usd": null,
+          "margin_used_usd": null,
+          "source": "Hyperliquid portfolio.allTime.accountValueHistory"
+        },
+        {
+          "valuation_id": "equity:0xae8d1a44f5c32ecb235519a06bb6691a4b33e856:2026-10-04T07:31:14Z",
+          "timestamp_utc": "2026-10-04T07:31:14Z",
+          "effective_day": "2026-10-04",
+          "equity_usd": 83.348433,
+          "free_collateral_usd": 83.348433,
+          "margin_used_usd": 0.0,
+          "source": "Hyperliquid clearinghouseState/spotClearinghouseState snapshot"
         }
       ],
       "daily": [
@@ -18507,7 +18561,7 @@
           "equity_event_reconciliation_delta_usd": 0.0
         },
         {
-          "timestamp_utc": "2026-10-04T00:11:41Z",
+          "timestamp_utc": "2026-10-04T07:31:14Z",
           "effective_day": "2026-10-04",
           "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
           "equity_usd": 83.348433,
@@ -18530,7 +18584,7 @@
       "live_genesis_date": "2026-09-02",
       "history_days": 33,
       "current": {
-        "timestamp_utc": "2026-10-04T00:11:41Z",
+        "timestamp_utc": "2026-10-04T07:31:14Z",
         "effective_day": "2026-10-04",
         "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
         "equity_usd": 83.348433,
@@ -18646,7 +18700,7 @@
     "model_signal": "Modelový signál"
   },
   "production_execution": {
-    "run_id": "prod_20261004T001018Z_485129",
+    "run_id": "prod_20261004T073000Z_449133",
     "final_status": "SUCCESS",
     "model_target": {
       "asset": "CASH",
@@ -18670,7 +18724,7 @@
     },
     "last_order": {
       "requested": false,
-      "order_id": null,
+      "order_id": [],
       "cloid": [],
       "result": "NO_ACTION"
     },
