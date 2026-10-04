@@ -1,7 +1,7 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-10-03T00:12:11Z",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-02::target_CASH::candidate_AVAX",
+  "generated_at_utc": "2026-10-04T00:12:25Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
   "target_asset": "CASH",
   "mode": "canonical_invocation",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
@@ -34,8 +34,8 @@
     "exit_required": false
   },
   "production_signal_context": {
-    "closed_day": "2026-10-02",
-    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-02::target_CASH::candidate_AVAX",
+    "closed_day": "2026-10-03",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
     "target_asset": "CASH",
     "target_exposure": 0.0,
     "candidate_asset": "AVAX",
@@ -50,9 +50,9 @@
     "strategy_status": "ready"
   },
   "source_fingerprints": {
-    "intent_sha256": "0bfd61f5717db11c71ea1171d68fc868b7097d333c35fba23a7b4b0aecb14487",
-    "account_snapshot_sha256": "479ad5489b6c2467fc2bfdabd1f50f2555ba257040f527c325a1c37715462143",
-    "production_snapshot_sha256": "bb54d07a955e385b457b22717b9b57ed01164c5423a4c97321ae0869f0668f14"
+    "intent_sha256": "f890fc25216e4c5767b4128d9e645ce9de44e44a6235f7fd747c618532ecd223",
+    "account_snapshot_sha256": "4f8aaaaaa321cb1e465e5fc8598dd89aea53d111c867f85e47cfe7aacf9d6a4e",
+    "production_snapshot_sha256": "6feaedbcbc383ebd2cb58a826441723bd7f16668b07164181369d048816badac"
   },
   "notes": [
     "Read-only validation of the current Production Core target and canonical intent.",
