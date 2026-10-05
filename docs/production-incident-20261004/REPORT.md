@@ -1,7 +1,6 @@
-# Produkčný incident — stav 4. októbra 2026
+# Produkčný incident — stav 5. októbra 2026
 
-**INCIDENT_RESOLVED=false.** Oprava auditu je nasadená, čerstvý kanonický run aj publikovanie uspeli a účet je zosúladený. Záverečné potvrdenie nasledujúceho automatického runu **po oprave** zostáva otvorené: timer ho plánuje na **2026-10-05 00:10 UTC**. Plánovanie nie je dôkaz vykonania. V tomto chate je aktívny následný read-only follow-up `overi-al-automatick-run-trendatlas`, denne o 02:20 miestneho času Europe/Paris, teda teraz 00:20 UTC. Po úspešnom záverečnom overení sa má pozastaviť.
-
+**INCIDENT_RESOLVED=false — zostáva iba browser read-back.** Nasledujúci automatický run po oprave bol read-only potvrdený 5. októbra 2026: `prod_20261005T001018Z_547978`, SUCCESS/NO_ACTION, bez objednávky. Systemd invocation `bdfd5bcff4bc4f2cb605479c7085fbd8` skončil exit 0 o 00:12:39 UTC; timer zostáva enabled/active. Čerstvé priame Hyperliquid overenie o 05:22:42 UTC potvrdilo 83.348433 USDC, nulové pozície a open orders. Uzavretý deň je 2026-10-04, autorizovaný cieľ CASH/0x; journal, nonce a publikovaný účet sú v zhode. Chrome však znovu blokuje automatizáciu otvoreným rozhraním iného rozšírenia. Verejný autentifikovaný dashboard preto dnes nebol potvrdený a follow-up zostáva ACTIVE. Dôkazy: `followup-20261005.json`. Zvyšok pôvodného auditu nižšie zachováva historické dôkazy zo 4. októbra.
 ## Živý účet a kanonický cieľ
 
 Posledné priame burzové overenie: **2026-10-04T07:34:10.335250Z**. Master je `0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856`, nie agent. Účet používa `unifiedAccount`.
@@ -136,3 +135,26 @@ Runtime-only: the same seven file overlays, capability hashes/access restoration
 Code: `Bind production order audit to active executor journal receipts` — **bcd54a85c2273b82ee47fafa51738d3fb457e164**.
 
 Evidence: `Record production account reconciliation and pending automatic verification`. Its commit hash is provided in the response. Branch: `codex/production-incident-audit-20261004`; no push or merge performed. Task completion is deliberately pending, not claimed by committing this report.
+
+## Read-only follow-up — 2026-10-05
+
+- Automatic timer trigger: 00:10:16 UTC. Service started 00:10:17, terminal manifest finished 00:12:38, systemd exit 0 at 00:12:39. Invocation `bdfd5bcff4bc4f2cb605479c7085fbd8`; NRestarts 0. Next automatic timer event: 2026-10-06 00:10 UTC, Persistent=yes.
+- Run `prod_20261005T001018Z_547978`: SUCCESS/NO_ACTION; EXECUTE, POST_TRADE_VERIFY, DASHBOARD_RUNTIME and AUTHORITY_PUBLISH PASSED. No manual run, order, cancellation or runtime snapshot was initiated by the follow-up.
+- Current UTC closed day 2026-10-04. Canonical target CASH/0, candidate AVAX/1, trend permission false. Core, intent, gate and account-snapshot SHA256 bindings match exactly. Authority `20261005_001214`: success/current, generated 00:12:32 UTC; account read-back 00:11:43 UTC.
+- Fresh direct exchange Info at 05:22:42 UTC: unifiedAccount, USDC 83.348433, hold 0, stable free funds 83.348433; other reported spot balances zero. No positions or orders on native and all ten currently registered HIP-3 dexes. Real notional/exposure and margin used 0. Exchange-native individual-perp accountValue=0 is not unified total equity.
+- Supabase was queried with GET only, with exact response counts and matching journal hashes before/after. Current durable run UUID `aaca7558-c73d-4161-a1f0-f80eab367c6b`, NO_ACTION, completed 00:11:39.181 UTC, no action rows. Total historical actions remain 5; nonce remains 1790813499788; leases 0. Latest manifest receipt correctly binds to this UUID, with empty order/CLOID arrays.
+- Only one fill since cutover: the previously verified 7.65 AVAX EXIT on 2026-10-01 00:11:41.250 UTC, order 561784971605, CLOID `0xd91d0679bb48242964e7922e7b861ac7`. Fresh orderStatus remains filled. No duplicate submission or new fill after the repair.
+- Producer-generated public contract contains real_account CASH/0, equity/free collateral 83.348433, authorized target CASH/0, SUCCESS/NO_ACTION and live_order_sent=false. It preserves AVAX/1 as a separate model candidate. Compatibility `would_place_real_order=true` represents canonical gate readiness, as assigned by prepare_real_order_gate.py; actual planner, receipt, journal and exchange all prove no order was requested or sent. This compatibility flag was not used as submission evidence.
+- Authenticated Chrome read-back remains UNVERIFIED: opening dashboard tab 703928341 was followed by Chrome blocking automation because another extension UI is open. No session/token extraction or alternate unauthenticated evidence was substituted. User was asked to complete or dismiss that UI. Published VPS contract agreement does not establish current browser agreement. INCIDENT_RESOLVED remains false; follow-up was not paused.
+
+### FILES READ / SOURCE OF TRUTH / validation
+
+Read AGENTS.md, the ordered ten truth/navigation documents, pi_codex_runtime_workflow.md (local only), production_execution_contract.json, production_host_contract.json, the original incident report/evidence, production-migration-readback.ts, Supabase admin/repository code, and relevant gate/export assignments. Remote evidence: terminal manifest, core/intent/gate/account files, both authority files, public contract, systemd show/journal, live Hyperliquid Info and Supabase execution tables. Supabase and computer-use skill instructions were followed. No Pi, research or LeadPilot connection or inspection occurred.
+
+Original root cause and deployed contract repair remain unchanged. This follow-up's remaining blocker is browser observation, not account misalignment or a failed automatic run. Contract impact: none. No runtime code, services, timers, generated outputs/data or journals changed. No new regression test; existing repair regressions are recorded above. Read-only validation: automatic invocation/exit, current closed day/target, SHA256 provenance, journal receipt, unchanged action/nonce, all venue position/order lists, and publication agreement passed. Browser verification blocked. Local JSON parse and git diff --check validate the evidence only.
+
+Exact files changed / git add list:
+`git add -- docs/production-incident-20261004/REPORT.md docs/production-incident-20261004/followup-20261005.json`
+
+Commit message: `Record automatic production verification and pending Chrome readback`.
+Commit hash: recorded in the final response after committing this audit; no push or merge.

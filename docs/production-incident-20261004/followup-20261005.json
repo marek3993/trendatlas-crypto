@@ -1,0 +1,1386 @@
+{
+  "account_abstraction": "unifiedAccount",
+  "account_master": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "all_perp_dexs": {
+    "": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177756577,
+        "withdrawable": "0.0"
+      }
+    },
+    "abcd": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177758390,
+        "withdrawable": "0.0"
+      }
+    },
+    "cash": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177758390,
+        "withdrawable": "0.0"
+      }
+    },
+    "flx": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177756577,
+        "withdrawable": "0.0"
+      }
+    },
+    "hyna": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177757514,
+        "withdrawable": "0.0"
+      }
+    },
+    "io": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177759330,
+        "withdrawable": "0.0"
+      }
+    },
+    "km": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177757514,
+        "withdrawable": "0.0"
+      }
+    },
+    "mkts": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177759397,
+        "withdrawable": "0.0"
+      }
+    },
+    "para": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177758390,
+        "withdrawable": "0.0"
+      }
+    },
+    "vntl": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177757514,
+        "withdrawable": "0.0"
+      }
+    },
+    "xyz": {
+      "orders": [],
+      "state": {
+        "assetPositions": [],
+        "crossMaintenanceMarginUsed": "0.0",
+        "crossMarginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "marginSummary": {
+          "accountValue": "0.0",
+          "totalMarginUsed": "0.0",
+          "totalNtlPos": "0.0",
+          "totalRawUsd": "0.0"
+        },
+        "time": 1791177756577,
+        "withdrawable": "0.0"
+      }
+    }
+  },
+  "authority": {
+    "latest_attempt_status.json": {
+      "dashboard_public_status": null,
+      "metadata": {
+        "attempt_status": null,
+        "currentness_status": "current",
+        "generated_at": null,
+        "generated_at_utc": "2026-10-05T00:12:32Z",
+        "run_id": "20261005_001214",
+        "source_run_id": null,
+        "status": null,
+        "target_closed_day": null,
+        "target_closed_day_utc": "2026-10-04"
+      },
+      "root_keys": [
+        "artifact_type",
+        "schema_version",
+        "target_closed_day_utc",
+        "latest_available_closed_utc_day",
+        "refresh_started_at_utc",
+        "refresh_finished_at_utc",
+        "refresh_started_at_local",
+        "refresh_finished_at_local",
+        "display_timezone",
+        "latest_authoritative_attempt_status",
+        "latest_authoritative_attempt_error",
+        "strategy_artifact_closed_day_utc",
+        "currentness_status",
+        "currentness_reason",
+        "generated_at_utc",
+        "generated_at_local",
+        "run_id",
+        "authority_role",
+        "automatic_producer_id",
+        "manual_recovery_only",
+        "github_actions_role",
+        "source_manifest_path",
+        "latest_successful_snapshot_path",
+        "latest_attempt_status_path",
+        "attempt_stage",
+        "attempt_stage_status",
+        "stage_history",
+        "authority_wallet_sync_utc",
+        "authority_account_snapshot_as_of_utc",
+        "authority_runtime_snapshot_generated_at_utc",
+        "app_product_snapshot",
+        "app_runtime_snapshot"
+      ],
+      "runtime": {
+        "authority_state": null,
+        "model_signal_state": {
+          "exposure_x": 1,
+          "label_sk": "Modelový signál",
+          "not_real_wallet_exposure": true,
+          "preferred_asset": "AVAX",
+          "source": "model_signal"
+        },
+        "model_target_state": {
+          "asset": "CASH",
+          "closed_day": "2026-10-04",
+          "exposure_x": 0,
+          "label_sk": "Potvrdený cieľ stratégie",
+          "not_real_wallet_exposure": true,
+          "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+          "validated": true
+        },
+        "real_account_state": {
+          "account_equity_usd": 83.348433,
+          "asset": "CASH",
+          "available_balance_usd": 83.348433,
+          "balance_source_of_truth": "spot_stable_balance",
+          "exposure_x": 0,
+          "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
+          "free_collateral_usd": 83.348433,
+          "gate_status": "ready_if_enabled",
+          "in_market": false,
+          "intent_target_asset": "CASH",
+          "intent_target_size_pct": 0,
+          "label_sk": "Reálny účet",
+          "margin_used_usd": 0,
+          "position_label_sk": "Mimo trhu",
+          "position_notional_usd": 0,
+          "positions": [],
+          "source": "exchange_account_snapshot",
+          "state_available": true,
+          "withdrawable_source": "unavailable_individual_perp_state_not_meaningful",
+          "withdrawable_usd": null,
+          "would_place_real_order": true
+        }
+      }
+    },
+    "latest_successful_snapshot.json": {
+      "dashboard_public_status": null,
+      "metadata": {
+        "attempt_status": null,
+        "currentness_status": "current",
+        "generated_at": null,
+        "generated_at_utc": "2026-10-05T00:12:32Z",
+        "run_id": "20261005_001214",
+        "source_run_id": null,
+        "status": null,
+        "target_closed_day": null,
+        "target_closed_day_utc": "2026-10-04"
+      },
+      "root_keys": [
+        "artifact_type",
+        "schema_version",
+        "target_closed_day_utc",
+        "latest_available_closed_utc_day",
+        "refresh_started_at_utc",
+        "refresh_finished_at_utc",
+        "refresh_started_at_local",
+        "refresh_finished_at_local",
+        "display_timezone",
+        "latest_authoritative_attempt_status",
+        "latest_authoritative_attempt_error",
+        "strategy_artifact_closed_day_utc",
+        "currentness_status",
+        "currentness_reason",
+        "generated_at_utc",
+        "generated_at_local",
+        "run_id",
+        "authority_role",
+        "automatic_producer_id",
+        "manual_recovery_only",
+        "github_actions_role",
+        "source_manifest_path",
+        "latest_successful_snapshot_path",
+        "latest_attempt_status_path",
+        "attempt_stage",
+        "attempt_stage_status",
+        "stage_history",
+        "authority_wallet_sync_utc",
+        "authority_account_snapshot_as_of_utc",
+        "authority_runtime_snapshot_generated_at_utc",
+        "app_product_snapshot",
+        "app_runtime_snapshot"
+      ],
+      "runtime": {
+        "authority_state": null,
+        "model_signal_state": {
+          "exposure_x": 1,
+          "label_sk": "Modelový signál",
+          "not_real_wallet_exposure": true,
+          "preferred_asset": "AVAX",
+          "source": "model_signal"
+        },
+        "model_target_state": {
+          "asset": "CASH",
+          "closed_day": "2026-10-04",
+          "exposure_x": 0,
+          "label_sk": "Potvrdený cieľ stratégie",
+          "not_real_wallet_exposure": true,
+          "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+          "validated": true
+        },
+        "real_account_state": {
+          "account_equity_usd": 83.348433,
+          "asset": "CASH",
+          "available_balance_usd": 83.348433,
+          "balance_source_of_truth": "spot_stable_balance",
+          "exposure_x": 0,
+          "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
+          "free_collateral_usd": 83.348433,
+          "gate_status": "ready_if_enabled",
+          "in_market": false,
+          "intent_target_asset": "CASH",
+          "intent_target_size_pct": 0,
+          "label_sk": "Reálny účet",
+          "margin_used_usd": 0,
+          "position_label_sk": "Mimo trhu",
+          "position_notional_usd": 0,
+          "positions": [],
+          "source": "exchange_account_snapshot",
+          "state_available": true,
+          "withdrawable_source": "unavailable_individual_perp_state_not_meaningful",
+          "withdrawable_usd": null,
+          "would_place_real_order": true
+        }
+      }
+    }
+  },
+  "canonical": {
+    "candidate_asset": "AVAX",
+    "closed_day": "2026-10-04",
+    "decision_context": {
+      "current_cash_streak_days": 5,
+      "current_drawdown_pct": -10.336607,
+      "current_reason_code": "candidate_asset_not_btc",
+      "current_reason_text": "The active Production Core remains in CASH because neither the baseline FULL_RISK state nor the ETF-flow EARLY_RISK entry conditions authorize market exposure.",
+      "current_regime_duration_days": 5,
+      "days_since_last_equity_high": 9,
+      "days_since_last_risk_on": 12,
+      "days_since_last_trade": 4,
+      "latest_rebalance_date": "2026-09-30",
+      "latest_rebalance_reason": "candidate_asset_not_btc"
+    },
+    "execution_intent": {
+      "allow_live_order_candidate": false,
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+      "stale_signal": false,
+      "target_asset": "CASH",
+      "target_exposure": 0
+    },
+    "generated_at_utc": "2026-10-05T00:12:12Z",
+    "model_candidate_exposure": 1,
+    "strategy_status": "ready",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "trend_permission_active": false
+  },
+  "fills_since_cutover": [
+    {
+      "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+      "closedPnl": "1.56825",
+      "coin": "AVAX",
+      "crossed": true,
+      "dir": "Close Long",
+      "fee": "0.037585",
+      "feeToken": "USDC",
+      "hash": "0x3e9d3c31a5d396084016044591c6d8020705001740d6b4dae265e78464d76ff2",
+      "oid": 561784971605,
+      "px": "10.918",
+      "side": "A",
+      "startPosition": "7.65",
+      "sz": "7.65",
+      "tid": 852970980061947,
+      "time": 1790813501250,
+      "twapId": null
+    }
+  ],
+  "gate": {
+    "gate_decision": null,
+    "generated_at_utc": "2026-10-05T00:12:28Z",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+    "source_fingerprints": {
+      "account_snapshot_sha256": "16735a346b69885e2de13c0d4ea5836676b2b9d830926d8dfa61d6b56d084b47",
+      "intent_sha256": "59b91cd50764e3e96174ebdb316cc62a84afc313dc930645ca5ac56e78d33d37",
+      "production_snapshot_sha256": "d6a25a6cc7ea35278ef76e5cab3ea490c0cb24872fabf1a2a1ed51edd1d3d6a8"
+    },
+    "target_asset": "CASH",
+    "target_exposure": null,
+    "would_place_real_order": true
+  },
+  "intent": {
+    "as_of_source": "2026-10-04",
+    "generated_at_utc": "2026-10-05T00:12:27Z",
+    "guardrail_flags": {
+      "contract_validated": true,
+      "kill_switch_required": true,
+      "leverage_live_truth_allowed": false,
+      "production_snapshot_validated": true,
+      "same_run_authority_allowed": true,
+      "same_run_authority_run_id": "prod_20261005T001018Z_547978",
+      "same_run_authority_target_closed_day": "2026-10-04",
+      "trading_disabled": true
+    },
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+    "source_fingerprints": {
+      "production_snapshot_sha256": "d6a25a6cc7ea35278ef76e5cab3ea490c0cb24872fabf1a2a1ed51edd1d3d6a8"
+    },
+    "stale_signal": false,
+    "target_asset": "CASH",
+    "target_size_pct": 0
+  },
+  "journal": {
+    "multi_account_agent_nonces": [
+      {
+        "agent_address": "0x6fad0830d66fc21b6dba0c39357625df55360f9b",
+        "last_nonce": 1790813499788,
+        "updated_at": "2026-10-01T00:11:39.767979+00:00"
+      }
+    ],
+    "multi_account_execution_actions": [
+      {
+        "action": "ENTER",
+        "asset": "BTC",
+        "cloid": "0x37d093ba43127dd7a43549bb4fae112f",
+        "created_at": "2026-09-23T00:11:08.224121+00:00",
+        "expires_at_ms": null,
+        "hyperliquid_order_id": "553532365661",
+        "id": "25f54928-f5e2-40a3-bc77-b93f2c67c666",
+        "leg_index": 0,
+        "reduce_only": false,
+        "requested_notional": 41.593231,
+        "run_id": "de9399ee-d5fa-4680-8c08-1e676c46e80b",
+        "side": "buy",
+        "size": 0.00048,
+        "submission_state": "KNOWN",
+        "updated_at": "2026-09-26T10:16:34.748+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "EXIT",
+        "asset": "BTC",
+        "cloid": "0xb6e35a6976c8e14bc7d25fbad437e781",
+        "created_at": "2026-09-26T10:16:35.268167+00:00",
+        "expires_at_ms": 1790417975571,
+        "hyperliquid_order_id": "557185919168",
+        "id": "3dc23a6c-eb05-4351-85bc-36f8109b1c1c",
+        "leg_index": 0,
+        "reduce_only": true,
+        "requested_notional": 40.35696,
+        "run_id": "451e6647-afcd-43b7-a637-e19c59622fdd",
+        "side": "sell",
+        "size": 0.00048,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-09-26T10:16:38.063+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "ENTER",
+        "asset": "AVAX",
+        "cloid": "0xd738ad3f5adaabfc0f00244bfa21eb8f",
+        "created_at": "2026-09-26T10:16:39.16134+00:00",
+        "expires_at_ms": 1790417979460,
+        "hyperliquid_order_id": "557185956698",
+        "id": "80146dad-edd9-4332-b18d-45ccf7d1755c",
+        "leg_index": 1,
+        "reduce_only": false,
+        "requested_notional": 102.56054,
+        "run_id": "451e6647-afcd-43b7-a637-e19c59622fdd",
+        "side": "buy",
+        "size": 9.58,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-09-26T10:16:41.678+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "RESIZE",
+        "asset": "AVAX",
+        "cloid": "0x9d0611c0ea77e558ee8f280e3d2777c2",
+        "created_at": "2026-09-29T00:11:05.993565+00:00",
+        "expires_at_ms": 1790640846333,
+        "hyperliquid_order_id": "559520232243",
+        "id": "7d625144-a42a-480b-8d82-61488ae16457",
+        "leg_index": 0,
+        "reduce_only": true,
+        "requested_notional": 20.709367999999998,
+        "run_id": "5599db8e-962a-4815-8366-19073b18fb66",
+        "side": "sell",
+        "size": 1.93,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-09-29T00:11:10.183+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "EXIT",
+        "asset": "AVAX",
+        "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+        "created_at": "2026-10-01T00:11:39.476085+00:00",
+        "expires_at_ms": 1790813679788,
+        "hyperliquid_order_id": "561784971605",
+        "id": "bba2bdc0-aecf-4186-9119-b99af54b1f94",
+        "leg_index": 0,
+        "reduce_only": true,
+        "requested_notional": 83.5227,
+        "run_id": "c74ae2b4-4e9a-4ff0-81f3-88323a3b1864",
+        "side": "sell",
+        "size": 7.65,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-10-01T00:11:42.069+00:00",
+        "verification_state": "VERIFIED"
+      }
+    ],
+    "multi_account_execution_locks": [],
+    "multi_account_execution_runs": [
+      {
+        "account_equity_after": 82.945131,
+        "account_equity_before": 87.023082,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1,
+        "canonical_closed_day": "2026-09-29",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-29::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-30T14:43:34.452+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "71be83e0-ef16-4112-886f-2c76ec497372",
+        "sanitized_error": null,
+        "started_at": "2026-09-30T00:11:10.975073+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.386018,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-30",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-30::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-01T00:11:42.506+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "c74ae2b4-4e9a-4ff0-81f3-88323a3b1864",
+        "sanitized_error": null,
+        "started_at": "2026-10-01T00:11:38.588296+00:00",
+        "status": "FILLED_AND_ALIGNED",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-03",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-03::target_CASH::candidate_ETH",
+        "completed_at": "2026-09-06T13:26:22.647+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "83612150-26c9-442d-b6e2-f11763050eb0",
+        "sanitized_error": null,
+        "started_at": "2026-09-05T17:00:44.275032+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-05",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-05::target_CASH::candidate_BTC",
+        "completed_at": "2026-09-06T20:12:30.186+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "89dc5d5b-1c3e-41bb-ac8c-aa84e77b5fb6",
+        "sanitized_error": null,
+        "started_at": "2026-09-06T20:12:29.469686+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-19",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-19::target_CASH::candidate_BNB",
+        "completed_at": "2026-09-20T07:11:26.967+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "409181ee-0a09-4f52-8eef-a620f257e5b3",
+        "sanitized_error": null,
+        "started_at": "2026-09-20T07:11:26.252894+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-20",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-20::target_CASH::candidate_BNB",
+        "completed_at": "2026-09-21T00:11:04.997+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "7bfae820-3470-4d13-89f9-67b1165815ad",
+        "sanitized_error": null,
+        "started_at": "2026-09-21T00:11:04.470697+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-21",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-21::target_CASH::candidate_AVAX",
+        "completed_at": "2026-09-22T00:11:06.43+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "d92dd1f5-94de-431e-8c66-1d03272121b3",
+        "sanitized_error": null,
+        "started_at": "2026-09-22T00:11:05.874646+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 103.879102,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "BTC",
+        "authorized_target_exposure": 0.5,
+        "canonical_closed_day": "2026-09-22",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-22::target_BTC::candidate_BTC",
+        "completed_at": "2026-09-23T00:11:10.902+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "de9399ee-d5fa-4680-8c08-1e676c46e80b",
+        "sanitized_error": null,
+        "started_at": "2026-09-23T00:11:07.975711+00:00",
+        "status": "PARTIAL",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 81.983089,
+        "account_equity_before": 82.066112,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1.25,
+        "canonical_closed_day": "2026-09-25",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-25::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-26T10:16:42.54+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "451e6647-afcd-43b7-a637-e19c59622fdd",
+        "sanitized_error": null,
+        "started_at": "2026-09-26T10:16:33.25981+00:00",
+        "status": "FILLED_AND_ALIGNED",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 82.942076,
+        "account_equity_before": 82.942076,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1.25,
+        "canonical_closed_day": "2026-09-26",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-26::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-27T00:11:01.784+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "5829a182-495c-4376-af83-3f2056e12232",
+        "sanitized_error": null,
+        "started_at": "2026-09-27T00:11:00.558178+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.054357,
+        "account_equity_before": 83.054357,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1.25,
+        "canonical_closed_day": "2026-09-27",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-27::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-28T00:11:20.892+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "2e177d0f-93ee-4bc4-b411-f30adfb0e6a6",
+        "sanitized_error": null,
+        "started_at": "2026-09-28T00:11:19.996911+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 81.71551,
+        "account_equity_before": 81.694126,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1,
+        "canonical_closed_day": "2026-09-28",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-28::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-29T00:11:10.608+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "5599db8e-962a-4815-8366-19073b18fb66",
+        "sanitized_error": null,
+        "started_at": "2026-09-29T00:11:05.205173+00:00",
+        "status": "FILLED_AND_ALIGNED",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-10-01",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-01::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-02T00:11:38.495+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "1a19a6a7-da62-44de-b8df-29604457f851",
+        "sanitized_error": null,
+        "started_at": "2026-10-02T00:11:37.349502+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-10-02",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-02::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-03T00:11:22.545+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "51e7d468-c7ef-48b5-997b-66eced0970d0",
+        "sanitized_error": null,
+        "started_at": "2026-10-03T00:11:21.655823+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-10-03",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-04T07:31:11.184+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "9395a298-f83a-4359-a7e0-edc51cd2eaac",
+        "sanitized_error": null,
+        "started_at": "2026-10-04T00:11:36.250542+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-10-04",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-05T00:11:39.181+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "aaca7558-c73d-4161-a1f0-f80eab367c6b",
+        "sanitized_error": null,
+        "started_at": "2026-10-05T00:11:38.307486+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      }
+    ]
+  },
+  "journal_sha256": "f38986aca87a4a32188282e7a83a87f129c9ede5cb371182b7254453ebe8ed1b",
+  "journal_unchanged_during_observation": true,
+  "leadpilot_inspected": false,
+  "manifest": {
+    "account_equity_after": 83.348433,
+    "account_equity_before": 83.348433,
+    "authority_status": "PASSED",
+    "cloid": [],
+    "dashboard_status": "PASSED",
+    "execution_action": "NO_ACTION",
+    "execution_backend": "multi_account",
+    "execution_evidence": {
+      "actions": [],
+      "available": true,
+      "journalRunId": "aaca7558-c73d-4161-a1f0-f80eab367c6b"
+    },
+    "execution_outcome": "NO_ACTION",
+    "failure_kind": "deterministic",
+    "failure_reason": null,
+    "failure_stage": null,
+    "final_status": "SUCCESS",
+    "finished_at": "2026-10-05T00:12:38Z",
+    "gate_status": "ready_if_enabled",
+    "heavy_refresh_steps": "skipped",
+    "live_order_chain": "INVOKED",
+    "manifest_type": "trendatlas_production_run_manifest",
+    "model_target_asset": "CASH",
+    "model_target_exposure": 0,
+    "multi_account_execution": {
+      "accountCount": 1,
+      "allAccountsSuccessful": true,
+      "failureKind": "deterministic",
+      "mode": "canonical_multi_account_production",
+      "ownerResult": {
+        "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "executionEvidence": {
+          "actions": [],
+          "available": true,
+          "journalRunId": "aaca7558-c73d-4161-a1f0-f80eab367c6b"
+        },
+        "orderRequested": false,
+        "status": "NO_ACTION"
+      },
+      "preflight": [
+        {
+          "accountEquityUsd": 83.348433,
+          "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+          "actionCount": 0,
+          "actions": [],
+          "cancelOrderIds": [],
+          "maxActionNotionalUsd": 0,
+          "positions": [],
+          "status": "ALIGNED",
+          "targetAsset": "CASH",
+          "targetExposure": 0
+        }
+      ],
+      "realOrderSent": false,
+      "results": [
+        {
+          "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+          "executionEvidence": {
+            "actions": [],
+            "available": true,
+            "journalRunId": "aaca7558-c73d-4161-a1f0-f80eab367c6b"
+          },
+          "orderRequested": false,
+          "status": "NO_ACTION"
+        }
+      ],
+      "runId": "prod_20261005T001018Z_547978",
+      "signalId": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+      "successful": true,
+      "target": "CASH"
+    },
+    "no_submit": false,
+    "order_id": [],
+    "order_requested": false,
+    "order_result": "NO_ACTION",
+    "owner_account_snapshot_available": true,
+    "planned_delta": 0,
+    "post_trade_block_reasons": [],
+    "post_trade_tolerance_usd": 1.66696866,
+    "post_trade_verification_status": "NO_ACTION",
+    "real_exposure_after": 0,
+    "real_order_sent": false,
+    "real_position_after": [],
+    "real_position_before": {
+      "asset": "CASH",
+      "notional_usd": 0
+    },
+    "residual_delta": 0,
+    "retry_attempt": 0,
+    "run_id": "prod_20261005T001018Z_547978",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+    "signer_validation": {
+      "credential_value_exposed": false,
+      "mode": "multi_account_per_account_preflight",
+      "status": "PASS"
+    },
+    "stages": {
+      "ACQUIRE_LOCK": {
+        "error": null,
+        "finished_at": "2026-10-05T00:10:18Z",
+        "started_at": "2026-10-05T00:10:18Z",
+        "status": "PASSED"
+      },
+      "AUTHORITY_PUBLISH": {
+        "error": null,
+        "finished_at": "2026-10-05T00:12:38Z",
+        "started_at": "2026-10-05T00:11:46Z",
+        "status": "PASSED"
+      },
+      "BUILD_CANONICAL_INTENT": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:30Z",
+        "started_at": "2026-10-05T00:11:30Z",
+        "status": "PASSED"
+      },
+      "BUILD_PRODUCTION_CORE": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:23Z",
+        "started_at": "2026-10-05T00:11:17Z",
+        "status": "PASSED"
+      },
+      "BUILD_REAL_ORDER_GATE": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:31Z",
+        "started_at": "2026-10-05T00:11:30Z",
+        "status": "PASSED"
+      },
+      "DASHBOARD_RUNTIME": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:46Z",
+        "started_at": "2026-10-05T00:11:44Z",
+        "status": "PASSED"
+      },
+      "EXECUTE": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:39Z",
+        "started_at": "2026-10-05T00:11:32Z",
+        "status": "PASSED"
+      },
+      "LIVE_PREFLIGHT": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:32Z",
+        "started_at": "2026-10-05T00:11:32Z",
+        "status": "PASSED"
+      },
+      "POST_TRADE_VERIFY": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:44Z",
+        "started_at": "2026-10-05T00:11:43Z",
+        "status": "PASSED"
+      },
+      "PRECHECK_DATA_HEALTH": {
+        "blocker_count": 0,
+        "error": null,
+        "finished_at": "2026-10-05T00:11:17Z",
+        "started_at": "2026-10-05T00:11:16Z",
+        "status": "PASSED"
+      },
+      "READ_ACCOUNT_AFTER": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:43Z",
+        "started_at": "2026-10-05T00:11:39Z",
+        "status": "PASSED"
+      },
+      "READ_ACCOUNT_BEFORE": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:29Z",
+        "started_at": "2026-10-05T00:11:25Z",
+        "status": "PASSED"
+      },
+      "RECONCILE": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:32Z",
+        "started_at": "2026-10-05T00:11:31Z",
+        "status": "PASSED"
+      },
+      "REFRESH_DATA": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:16Z",
+        "started_at": "2026-10-05T00:10:18Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_DATA_HEALTH": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:31Z",
+        "started_at": "2026-10-05T00:11:31Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_PRODUCTION_CORE": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:25Z",
+        "started_at": "2026-10-05T00:11:23Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_SIGNER": {
+        "error": null,
+        "finished_at": "2026-10-05T00:11:30Z",
+        "started_at": "2026-10-05T00:11:30Z",
+        "status": "PASSED"
+      }
+    },
+    "started_at": "2026-10-05T00:10:18Z",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "target_closed_day": "2026-10-04",
+    "target_notional": 0
+  },
+  "observed_at_utc": "2026-10-05T05:22:42.730061+00:00",
+  "orders_sent_by_followup": 0,
+  "pi_contacted": false,
+  "production_run_started_by_followup": false,
+  "research_inspected": false,
+  "sale_order_status": {
+    "order": {
+      "order": {
+        "children": [],
+        "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+        "coin": "AVAX",
+        "isPositionTpsl": false,
+        "isTrigger": false,
+        "limitPx": "10.809",
+        "oid": 561784971605,
+        "orderType": "Limit",
+        "origSz": "7.65",
+        "reduceOnly": true,
+        "side": "A",
+        "sz": "0.0",
+        "tif": "Ioc",
+        "timestamp": 1790813501250,
+        "triggerCondition": "N/A",
+        "triggerPx": "0.0"
+      },
+      "status": "filled",
+      "statusTimestamp": 1790813501250
+    },
+    "status": "order"
+  },
+  "spot": {
+    "balances": [
+      {
+        "coin": "USDC",
+        "entryNtl": "0.0",
+        "hold": "0.0",
+        "token": 0,
+        "total": "83.348433"
+      },
+      {
+        "coin": "USDE",
+        "entryNtl": "0.0",
+        "hold": "0.0",
+        "token": 235,
+        "total": "0.0"
+      },
+      {
+        "coin": "USDT0",
+        "entryNtl": "0.0",
+        "hold": "0.0",
+        "token": 268,
+        "total": "0.0"
+      },
+      {
+        "coin": "USDH",
+        "entryNtl": "0.0",
+        "hold": "0.0",
+        "token": 360,
+        "total": "0.0"
+      }
+    ],
+    "tokenToAvailableAfterMaintenance": [
+      [
+        0,
+        "83.348433"
+      ]
+    ]
+  },
+  "systemd_journal": [
+    {
+      "INVOCATION_ID": null,
+      "JOB_RESULT": null,
+      "MESSAGE": "    \"runId\": \"prod_20261005T001018Z_547978\",",
+      "_SYSTEMD_INVOCATION_ID": "bdfd5bcff4bc4f2cb605479c7085fbd8",
+      "__REALTIME_TIMESTAMP": "1791159158999348"
+    },
+    {
+      "INVOCATION_ID": null,
+      "JOB_RESULT": null,
+      "MESSAGE": "  \"run_id\": \"prod_20261005T001018Z_547978\",",
+      "_SYSTEMD_INVOCATION_ID": "bdfd5bcff4bc4f2cb605479c7085fbd8",
+      "__REALTIME_TIMESTAMP": "1791159159003092"
+    },
+    {
+      "INVOCATION_ID": "bdfd5bcff4bc4f2cb605479c7085fbd8",
+      "JOB_RESULT": null,
+      "MESSAGE": "mrv1-production.service: Deactivated successfully.",
+      "_SYSTEMD_INVOCATION_ID": null,
+      "__REALTIME_TIMESTAMP": "1791159159201593"
+    },
+    {
+      "INVOCATION_ID": "bdfd5bcff4bc4f2cb605479c7085fbd8",
+      "JOB_RESULT": "done",
+      "MESSAGE": "Finished mrv1-production.service - TrendAtlas canonical production host.",
+      "_SYSTEMD_INVOCATION_ID": null,
+      "__REALTIME_TIMESTAMP": "1791159159202024"
+    }
+  ],
+  "systemd_service": "ActiveState=inactive\nSubState=dead\nInvocationID=bdfd5bcff4bc4f2cb605479c7085fbd8\nResult=success\nNRestarts=0\nExecMainStartTimestamp=Mon 2026-10-05 00:10:17 UTC\nExecMainExitTimestamp=Mon 2026-10-05 00:12:39 UTC\nExecMainStatus=0\n",
+  "systemd_timer": "ActiveState=active\nSubState=waiting\nUnitFileState=enabled\nNextElapseUSecRealtime=Tue 2026-10-06 00:10:00 UTC\nLastTriggerUSec=Mon 2026-10-05 00:10:16 UTC\nPersistent=yes\n",
+  "contract_evidence": {
+    "sha256": {
+      "outputs/production/current_strategy_snapshot.json": "d6a25a6cc7ea35278ef76e5cab3ea490c0cb24872fabf1a2a1ed51edd1d3d6a8",
+      "outputs/execution/intents/latest_execution_intent.json": "59b91cd50764e3e96174ebdb316cc62a84afc313dc930645ca5ac56e78d33d37",
+      "outputs/execution/live_gate/latest_real_order_gate_decision.json": "c2b63795b82a8e980f386375adf48101791d25249dfb7b9638a2c781145a7022",
+      "outputs/execution/read_only/hyperliquid_account_snapshot.json": "16735a346b69885e2de13c0d4ea5836676b2b9d830926d8dfa61d6b56d084b47"
+    },
+    "gate": {
+      "decision_type": "real_order_gate_decision",
+      "generated_at_utc": "2026-10-05T00:12:28Z",
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+      "target_asset": "CASH",
+      "mode": "canonical_invocation",
+      "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+      "account_validation_scope": "per_account_exchange",
+      "account_snapshot_available": true,
+      "strategy_validated": true,
+      "emergency_execution_blocked": false,
+      "would_place_real_order": true,
+      "real_orders_enabled": true,
+      "status": "ready_if_enabled",
+      "block_reasons": [],
+      "checks": {
+        "signal_present": true,
+        "target_asset_present": true,
+        "target_asset_is_cash": true,
+        "contract_validated": true,
+        "stale_signal": false,
+        "kill_switch": false,
+        "account_address_present": true,
+        "production_snapshot_validation_passed": true,
+        "intent_day_matches_production_snapshot": true,
+        "intent_signal_matches_production_snapshot": true,
+        "intent_target_asset_matches_production_snapshot": true,
+        "intent_target_exposure_matches_production_snapshot": true,
+        "intent_strategy_model_matches_production_snapshot": true,
+        "intent_allow_live_order_candidate_matches_snapshot": true,
+        "intent_stale_signal_matches_production_snapshot": true,
+        "positions_count": 0,
+        "open_orders_present": false,
+        "exit_required": false
+      },
+      "production_signal_context": {
+        "closed_day": "2026-10-04",
+        "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+        "target_asset": "CASH",
+        "target_exposure": 0,
+        "candidate_asset": "AVAX",
+        "current_asset": "CASH",
+        "effective_market_exposure": 0,
+        "model_candidate_exposure": 1,
+        "trend_permission_active": false,
+        "stale_signal": false,
+        "allow_live_order_candidate": false,
+        "validation_status": "passed",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "strategy_status": "ready"
+      },
+      "source_fingerprints": {
+        "intent_sha256": "59b91cd50764e3e96174ebdb316cc62a84afc313dc930645ca5ac56e78d33d37",
+        "account_snapshot_sha256": "16735a346b69885e2de13c0d4ea5836676b2b9d830926d8dfa61d6b56d084b47",
+        "production_snapshot_sha256": "d6a25a6cc7ea35278ef76e5cab3ea490c0cb24872fabf1a2a1ed51edd1d3d6a8"
+      },
+      "notes": [
+        "Read-only validation of the current Production Core target and canonical intent.",
+        "Exchange feasibility and order reconciliation are evaluated by the executor per account and per step."
+      ],
+      "source_paths": {
+        "mode_config_path": "/opt/trendatlas-production/current/execution/config/execution_mode.json",
+        "live_order_policy_path": "/opt/trendatlas-production/current/execution/config/live_order_policy.json",
+        "intent_path": "/opt/trendatlas-production/current/outputs/execution/intents/latest_execution_intent.json",
+        "account_snapshot_path": "/opt/trendatlas-production/current/outputs/execution/read_only/hyperliquid_account_snapshot.json",
+        "production_snapshot_path": "/opt/trendatlas-production/current/outputs/production/current_strategy_snapshot.json"
+      }
+    },
+    "latest_successful_snapshot.json": {
+      "latest_authoritative_attempt_status": "success",
+      "latest_authoritative_attempt_error": null,
+      "target_closed_day_utc": "2026-10-04",
+      "currentness_status": "current",
+      "authority_wallet_sync_utc": "2026-10-05T00:11:43Z",
+      "authority_account_snapshot_as_of_utc": "2026-10-05T00:11:43Z",
+      "run_id": "20261005_001214",
+      "generated_at_utc": "2026-10-05T00:12:32Z"
+    },
+    "latest_attempt_status.json": {
+      "latest_authoritative_attempt_status": "success",
+      "latest_authoritative_attempt_error": null,
+      "target_closed_day_utc": "2026-10-04",
+      "currentness_status": "current",
+      "authority_wallet_sync_utc": "2026-10-05T00:11:43Z",
+      "authority_account_snapshot_as_of_utc": "2026-10-05T00:11:43Z",
+      "run_id": "20261005_001214",
+      "generated_at_utc": "2026-10-05T00:12:32Z"
+    },
+    "public_contract": {
+      "generated_at_utc": "2026-10-05T00:12:31Z",
+      "closed_day": "2026-10-04",
+      "model_target_state": {
+        "asset": "CASH",
+        "exposure_x": 0,
+        "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+        "closed_day": "2026-10-04",
+        "validated": true,
+        "label_sk": "Potvrdený cieľ stratégie",
+        "not_real_wallet_exposure": true
+      },
+      "execution_result_state": {
+        "run_id": "prod_20261005T001018Z_547978",
+        "outcome": "NO_ACTION",
+        "completed_at_utc": "2026-10-05T00:11:44Z",
+        "staying_cash": false,
+        "live_order_sent": false,
+        "public_message_sk": "Účet je zosúladený s cieľom stratégie.",
+        "public_message_en": "The account is aligned with the strategy target."
+      },
+      "execution": {
+        "target_asset": "CASH",
+        "target_size_pct": 0,
+        "gate_status": "ready_if_enabled",
+        "would_place_real_order": true,
+        "live_order_sent": false,
+        "signal_status": "candidate_unconfirmed",
+        "wait_reason_code": "candidate_entry_not_authorized",
+        "next_rebalance_date": "2026-10-04",
+        "block_reasons": []
+      },
+      "model_signal": {
+        "preferred_asset": "AVAX",
+        "exposure_x": 1,
+        "label_sk": "Modelový signál",
+        "not_real_wallet_exposure": true
+      },
+      "production_execution": {
+        "run_id": "prod_20261005T001018Z_547978",
+        "final_status": "SUCCESS",
+        "model_target": {
+          "asset": "CASH",
+          "exposure": 0,
+          "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX"
+        },
+        "real_account": {
+          "before": {
+            "asset": "CASH",
+            "notional_usd": 0
+          },
+          "after": [],
+          "equity_before": 83.348433,
+          "equity_after": 83.348433,
+          "exposure_after": 0
+        },
+        "execution_plan": {
+          "action": "NO_ACTION",
+          "target_notional": 0,
+          "planned_delta": 0
+        },
+        "last_order": {
+          "requested": false,
+          "order_id": [],
+          "cloid": [],
+          "result": "NO_ACTION"
+        },
+        "post_trade_verified_state": {
+          "status": "NO_ACTION",
+          "residual_delta": 0
+        },
+        "source_path": "outputs/execution/production_runs/latest_production_run.json"
+      },
+      "real_account": {
+        "asset": "CASH",
+        "position_label_sk": "Mimo trhu",
+        "exposure_x": 0,
+        "in_market": false,
+        "state_available": true,
+        "positions": [],
+        "account_equity_usd": 83.348433,
+        "free_collateral_usd": 83.348433,
+        "available_balance_usd": 83.348433,
+        "withdrawable_usd": null,
+        "margin_used_usd": 0,
+        "position_notional_usd": 0,
+        "balance_source_of_truth": "spot_stable_balance",
+        "free_collateral_source": "spotClearinghouseState.stable_total_minus_native_hold",
+        "withdrawable_source": "unavailable_individual_perp_state_not_meaningful"
+      }
+    }
+  },
+  "validation": {
+    "intent_core": true,
+    "gate_core": true,
+    "gate_intent": true,
+    "gate_account": true,
+    "signal": true,
+    "current_closed_day": "2026-10-04",
+    "auto_run_verified": true,
+    "account_aligned": true,
+    "open_orders_count": 0,
+    "account_quantity_usdc": 83.348433,
+    "actual_exposure": 0,
+    "actions_for_latest_run": 0,
+    "total_historical_actions": 5,
+    "last_nonce": 1790813499788,
+    "published_account_matches_exchange": true
+  },
+  "browser_dashboard": {
+    "url": "https://trendatlas-accounts.vercel.app/dashboard",
+    "browser": "Chrome",
+    "browser_id": "3",
+    "attempted_tab": "703928341",
+    "verified": false,
+    "matches_exchange": null,
+    "blocker": "Chrome blocks automation while another extension UI is open. User asked to close or complete that UI; no authenticated page content was obtained on 2026-10-05."
+  },
+  "incident_resolved": false,
+  "followup_status": "ACTIVE_PENDING_BROWSER_READBACK"
+}
