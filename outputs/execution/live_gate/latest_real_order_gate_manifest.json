@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_real_order_gate_decision",
-  "generated_at_utc": "2026-10-04T07:31:57Z",
-  "started_at_utc": "2026-10-04T07:31:57Z",
+  "generated_at_utc": "2026-10-05T00:12:28Z",
+  "started_at_utc": "2026-10-05T00:12:28Z",
   "script_path": "/opt/trendatlas-production/current/scripts/execution/prepare_real_order_gate.py",
   "input_paths": [
     "/opt/trendatlas-production/current/execution/config/execution_mode.json",

@@ -1,6 +1,6 @@
 {
   "artifact_name": "hyperliquid_read_only_account_snapshot",
-  "generated_at_utc": "2026-10-04T07:31:14Z",
+  "generated_at_utc": "2026-10-05T00:11:43Z",
   "script_path": "/opt/trendatlas-production/current/scripts/execution/hyperliquid_read_only_snapshot.py",
   "config_paths": [
     "/opt/trendatlas-production/current/execution/config/execution_mode.json",
@@ -12,6 +12,6 @@
     "/opt/trendatlas-production/current/outputs/execution/read_only/hyperliquid_account_snapshot_manifest.json"
   ],
   "status": "success",
-  "started_at_utc": "2026-10-04T07:31:12Z",
+  "started_at_utc": "2026-10-05T00:11:40Z",
   "runtime_posture": "read_only_observability"
 }
