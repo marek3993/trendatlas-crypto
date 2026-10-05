@@ -831,11 +831,21 @@
       "output_path": "/var/lib/trendatlas-research-development/",
       "generated_by": ["research/phase2_continuous/runtime.py", "research/phase2_continuous/broker.py"],
       "layer": "research_os_dev_only",
-      "status": "active",
+      "status": "legacy_read_only_methodologically_incomparable",
       "output_kind": "isolated_vps_development_ledger",
       "decision_relevance": "research_only",
       "official_truth": false,
-      "notes": "Separate SQLite and mailbox for continuous development; not production or independent outer/forward evidence."
+      "notes": "Retired 2026-10-05 with full verified SQLite backup and candidate/evaluation row hashes; records immutable. Legacy timers disabled."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-research-v2/",
+      "generated_by": ["research/phase2_v2/runtime.py", "research/phase2_v2/broker.py"],
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "output_kind": "versioned_nested_development_ledger",
+      "decision_relevance": "research_only",
+      "official_truth": false,
+      "notes": "Separate v2 cycle; continuous book, past-only inner selection and inherited survivors. No historical independent OOS; prospective OOS LOCKED. Invalid prices produce UNDEFINED_INVALID."
     }
   ]
 }

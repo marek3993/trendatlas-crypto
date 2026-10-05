@@ -103,3 +103,11 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs remain research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+## Phase 2 v2 methodology correction — 2026-10-05
+- The continuous v1 evaluator and its paid mutation scheduler are retired as methodologically incomparable; original contracts, frozen manifests, 39,996 candidates and 639,936 completed evaluations are preserved.
+- `phase2_v2_contract.json` records explicit user authorization of 2018-05-05 through 2026-09-25 as seen development, including 2024-2025. No historical interval is claimed independent sealed OOS in v2.
+- Prospective 2026-09-27 through 2027-09-26 is LOCKED, forward 2027 SEALED; Sep26 2026 is excluded.
+- Primary results use a continuous daily book and calendar compounded CAGR. Inner selection and mutation context precede each development test fold; completed results are immutable and survivors carry forward.
+- Legacy best hypothesis encounters unpriced original LUNA on May13 2022; no fabricated liquidation, price or CAGR is permitted. Its full-horizon reference is explicitly UNDEFINED_INVALID.
+- Historical production BASE sleeve needs same-date underlying position expansion for a tradable offline reference. This research-only expansion never changes production exports, account, planner or dashboard.

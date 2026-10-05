@@ -669,6 +669,17 @@
         ],
         "app_must_not_infer": true
       }
+    },
+    "phase2_v2_development_contract": {
+      "path": "source_of_truth/phase2_v2_contract.json",
+      "artifact_type": "research_contract",
+      "truth_status": "authorized_development_only",
+      "read_scope": [
+        "research",
+        "validation"
+      ],
+      "write_mode": "explicit_user_authorized_versioned_contract",
+      "notes": "V2 reclassifies seen 2024-2025 as development without changing legacy manifests. Prospective OOS 2026-09-27 through 2027-09-26 remains LOCKED; no production authority."
     }
   }
 }

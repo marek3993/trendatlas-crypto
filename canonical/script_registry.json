@@ -1125,7 +1125,7 @@
     {
       "script_path": "research/phase2_continuous/runtime.py",
       "layer": "research_os_dev_only",
-      "status": "active",
+      "status": "legacy_read_only_methodologically_incomparable",
       "purpose": "Checkpointed Phase 2 development evolution and automatic successor cycles on VPS.",
       "primary_outputs": ["/var/lib/trendatlas-research-development/research.sqlite", "/var/lib/trendatlas-research-development/status.json"],
       "output_type": "research_runtime",
@@ -1136,7 +1136,7 @@
     {
       "script_path": "research/phase2_continuous/broker.py",
       "layer": "research_os_dev_only",
-      "status": "active",
+      "status": "disabled_legacy_paid_mutations",
       "purpose": "Deduplicated JSON-only DeepSeek proposal broker with bounded budget and deterministic fallback.",
       "primary_outputs": ["/var/lib/trendatlas-research-development/mailbox/responses/"],
       "output_type": "research_proposals",
@@ -1176,6 +1176,39 @@
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
       "notes": "Explicit manifest migration preserves the append-only observation chain."
+    },
+    {
+      "script_path": "research/phase2_v2/runtime.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Versioned nested chronological Phase 2 v2, continuous causal book, calendar compounded CAGR and inherited survivors.",
+      "primary_outputs": ["/var/lib/trendatlas-research-v2/v2.sqlite", "/var/lib/trendatlas-research-v2/status.json"],
+      "output_type": "research_runtime",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "phase2_v2_contract.json; previously seen historical development; prospective Sep27 2026-Sep26 2027 LOCKED. No production authority."
+    },
+    {
+      "script_path": "research/phase2_v2/broker.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Compact past-origin mutation context, bounded DeepSeek budget, durable reservations and content cache.",
+      "primary_outputs": ["/var/lib/trendatlas-research-v2/mailbox/"],
+      "output_type": "research_proposals",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Separate v2 mailbox. No market data, production or account access."
+    },
+    {
+      "script_path": "research/phase2_v2/audit.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Read-only lineage, hash-chain, mutation quality, usage and continuous stitched walk-forward audit.",
+      "primary_outputs": ["stdout JSON audit"],
+      "output_type": "research_audit",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "No locked market data or credentials."
     }
   ]
 }

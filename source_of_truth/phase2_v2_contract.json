@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "phase2_v2_20261005",
+  "classification": ["B", "C", "D"],
+  "authority": "user_request_20261005_correct_evaluator_before_search",
+  "scope": "offline_research_only",
+  "legacy_comparability": "INCOMPARABLE; original records immutable",
+  "orders_allowed": false,
+  "production_writes_allowed": false,
+  "promotion_allowed": false,
+  "activation_status": "READY",
+  "partition_decision": "Explicit user authorization 2026-10-05: 2022-04-11 through 2026-09-25 including 2024-2025 are seen development in v2; no historical independent outer OOS. Prior sealed manifests and ledgers remain untouched.",
+  "requested_development": ["2020-01-01", "2026-09-25"],
+  "authorized_development": [["2018-05-05", "2026-09-25"]],
+  "excluded_days": ["2026-09-26"],
+  "outer_oos": {"status": "LOCKED", "kind": "prospective_only", "intervals": [["2026-09-27", "2027-09-26"]], "access_by_runner": false},
+  "original_frozen_outer": [],
+  "historical_outer_oos": "NONE; 2024-2025 previously seen, development only in v2",
+  "forward_2027": {"status": "SEALED", "start": "2027-01-01", "access_by_runner": false},
+  "available_frozen_input_end": "2026-09-25",
+  "diagnostic_only_folds": [
+    ["2020-01-01", "2020-06-30"], ["2020-07-01", "2020-12-31"],
+    ["2021-01-01", "2021-06-30"], ["2021-07-01", "2021-12-31"],
+    ["2022-01-01", "2022-04-10"]
+  ],
+  "walk_forward": {
+    "validation_folds": [
+      ["2020-01-01", "2020-06-30"], ["2020-07-01", "2020-12-31"],
+      ["2021-01-01", "2021-06-30"], ["2021-07-01", "2021-12-31"],
+      ["2022-01-01", "2022-06-30"], ["2022-07-01", "2022-12-31"],
+      ["2023-01-01", "2023-06-30"], ["2023-07-01", "2023-12-31"],
+      ["2024-01-01", "2024-06-30"], ["2024-07-01", "2024-12-31"],
+      ["2025-01-01", "2025-06-30"], ["2025-07-01", "2025-12-31"],
+      ["2026-01-01", "2026-06-30"], ["2026-07-01", "2026-09-25"]
+    ],
+    "training": "rolling prior 365 calendar days; two chronological inner validation halves; every evaluation, mutation context and survivor selection at origin cut off strictly before outer development test interval; freeze selection before test; no replay of later mutations on prior tests",
+    "train_days": 365,
+    "continuity": "one portfolio; carry cash, quantities and episode state across adjacent folds; strategy state reinitialized only when selected genes change; gaps rejected; no hidden cash reset",
+    "regimes": "calendar folds frozen before scoring; bull/bear/sideways coverage must be reviewed before activation; never select boundaries from winners",
+    "outer_independence": "development walk-forward scores are selection evidence, not sealed final test"
+  },
+  "metrics": {
+    "primary_cagr": "(last_equity/initial_equity)^(365.25/elapsed_calendar_days)-1; prior-close initial timestamp, final-close terminal timestamp",
+    "mdd": "close equity peak to trough, include initial equity; continuous primary plus each fold",
+    "fold_annualized_average": "diagnostic_only_never_selection",
+    "concentration": "dominant positive log contribution / net log growth; null when net growth nonpositive or no positive contribution; never impute zero",
+    "attribution": "daily asset PnL reconciles NAV; log contributions reconcile total growth; named whole episodes carry across folds; open terminal episodes marked OPEN and never claimed closed",
+    "no_top3": "remove log contributions of top three positive CLOSED whole episodes; if fewer than three, metric null and INCONCLUSIVE",
+    "no_best_day": "remove best positive daily log contribution, keep calendar duration",
+    "fold_health": "profitable_fold_fraction, worst_fold_return and fold identity"
+  },
+  "execution": {
+    "signal": "prior completed UTC daily close",
+    "fill": "next daily open; long-only historical spot proxy, not venue certified",
+    "fee_bps": 10,
+    "slippage_bps": 10,
+    "maximum_gross": 1.25,
+    "borrow_apr": 0.10,
+    "cash_return_apr": 0,
+    "double_cost": "double fee, slippage and borrow debits",
+    "delayed_entry": "one additional daily open for exposure increases; exits remain next open; cancel stale entry on intervening exit",
+    "production_reference": "offline canonical authorized target decisions, never imported PnL; historical BASE is a composite sleeve, resolved only from same-date phase67j_no_neo_main_paper.csv::executed_position when executed_regime=BASE and chosen_asset empty; CASH underlying gives zero risky exposure, retain original target/exposure/source lineage; unresolved BASE fails; all targets applied at following open",
+    "benchmark_parity": "all references and candidates same execution engine, period, cost and fill assumptions"
+  },
+  "invalid_reference_policy": "Run every reference. Missing held-asset execution/mark price makes the entire requested metric UNDEFINED_INVALID, not zero, truncated CAGR or invented liquidation. Preserve failure date/asset. Valid production and BTC controls required before evolution; invalid legacy hypothesis explicitly rejected rather than blocking unrelated valid trials.",
+  "checkpoint_serialization": "native JSON scalars and integer cooldown keys; serialization-only fixes require explicit append-only binding migration, identical equity/metrics proof for all existing completed evaluations, no deletion, same cycle ID",
+  "development_filters": {
+    "mdd_max": 0.35,
+    "positive_stressed_growth": true,
+    "positive_without_best_day": true,
+    "positive_without_top3_closed_episodes": true,
+    "all_concentration_defined": true,
+    "profitable_fold_fraction_min": 0.60
+  },
+  "evolution": {
+    "family_schema": "phase2_development_contract.json::gene_space (frozen hypothesis schema, new evaluator)",
+    "survivors": 2,
+    "mutations_per_arm_per_generation": 4,
+    "max_generations": 10,
+    "stop_front_stagnant_generations": 3,
+    "dedup": "global gene hash within v2; completed evaluation bound to engine, contract, input and stress; v1 re-evaluation explicitly versioned",
+    "inheritance": "survivors membership in next generation, same immutable evaluation reused; valid Pareto only, diagnostic fallback explicitly labeled",
+    "origin_audit": "separate deepseek/deterministic candidate counts, eligibility, paired parent deltas, gain per evaluation and provider token; no advantage asserted without evidence",
+    "api_policy": "phase2_broker_policy.json; compact context only, durable reservations, content cache and unknown billing protection",
+    "api_calls_cycle_max": 40,
+    "api_tokens_cycle_max": 320000,
+    "api_usd_upper_cycle_max": 0.20
+  }
+}
