@@ -1,0 +1,17 @@
+canonical/output_registry.json
+canonical/script_registry.json
+source_of_truth/paths_registry.json
+source_of_truth/current_issues.md
+source_of_truth/phase2_v2_recovery_contract.json
+research/phase2_v2/README.md
+research/phase2_v2/continuation.py
+research/phase2_v2/deploy_continuation.py
+tests/test_phase2_v2_continuation.py
+docs/phase2-v2-recovery-20261006/REPORT.md
+docs/phase2-v2-recovery-20261006/GIT_ADD.txt
+docs/phase2-v2-recovery-20261006/audit_readonly.py
+docs/phase2-v2-recovery-20261006/checkpoint-A.json
+docs/phase2-v2-recovery-20261006/checkpoint-B.json
+docs/phase2-v2-recovery-20261006/checkpoint-C.json
+docs/phase2-v2-recovery-20261006/deployment.json
+docs/phase2-v2-recovery-20261006/systemd.txt

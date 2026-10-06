@@ -630,7 +630,12 @@
       "owner": "AUTOMATION",
       "artifact_type": "production_run_manifest",
       "truth_domain": "execution_runtime",
-      "read_scope": ["execution", "dashboard", "authority", "audit"],
+      "read_scope": [
+        "execution",
+        "dashboard",
+        "authority",
+        "audit"
+      ],
       "write_mode": "single_production_orchestrator_only"
     },
     "production_execution_journal": {
@@ -639,7 +644,11 @@
       "owner": "AUTOMATION",
       "artifact_type": "execution_journal",
       "truth_domain": "execution_runtime",
-      "read_scope": ["execution", "recovery", "audit"],
+      "read_scope": [
+        "execution",
+        "recovery",
+        "audit"
+      ],
       "write_mode": "durable_pre_submit_journal_only"
     },
     "phase68i_dynamic_ladder_candidate_summary": {
@@ -680,6 +689,16 @@
       ],
       "write_mode": "explicit_user_authorized_versioned_contract",
       "notes": "V2 reclassifies seen 2024-2025 as development without changing legacy manifests. Prospective OOS 2026-09-27 through 2027-09-26 remains LOCKED; no production authority."
+    },
+    "phase2_v2_recovery_contract": {
+      "path": "source_of_truth/phase2_v2_recovery_contract.json",
+      "artifact_type": "research_runtime_recovery_contract",
+      "truth_status": "authorized_research_only",
+      "read_scope": [
+        "research",
+        "validation"
+      ],
+      "write_mode": "explicit_user_authorized_contract"
     }
   }
 }

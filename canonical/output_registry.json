@@ -206,9 +206,9 @@
     },
     {
       "output_path": "outputs/execution/read_only/",
-        "generated_by": [
-          "scripts/execution/hyperliquid_read_only_snapshot.py",
-          "scripts/execution/build_hyperliquid_real_performance_ledger.py"
+      "generated_by": [
+        "scripts/execution/hyperliquid_read_only_snapshot.py",
+        "scripts/execution/build_hyperliquid_real_performance_ledger.py"
       ],
       "layer": "execution_data",
       "status": "active",
@@ -829,7 +829,10 @@
     },
     {
       "output_path": "/var/lib/trendatlas-research-development/",
-      "generated_by": ["research/phase2_continuous/runtime.py", "research/phase2_continuous/broker.py"],
+      "generated_by": [
+        "research/phase2_continuous/runtime.py",
+        "research/phase2_continuous/broker.py"
+      ],
       "layer": "research_os_dev_only",
       "status": "legacy_read_only_methodologically_incomparable",
       "output_kind": "isolated_vps_development_ledger",
@@ -839,13 +842,17 @@
     },
     {
       "output_path": "/var/lib/trendatlas-research-v2/",
-      "generated_by": ["research/phase2_v2/runtime.py", "research/phase2_v2/broker.py"],
+      "generated_by": [
+        "research/phase2_v2/runtime.py",
+        "research/phase2_v2/broker.py",
+        "research/phase2_v2/continuation.py"
+      ],
       "layer": "research_os_dev_only",
       "status": "active",
       "output_kind": "versioned_nested_development_ledger",
       "decision_relevance": "research_only",
       "official_truth": false,
-      "notes": "Separate v2 cycle; continuous book, past-only inner selection and inherited survivors. No historical independent OOS; prospective OOS LOCKED. Invalid prices produce UNDEFINED_INVALID."
+      "notes": "Separate v2 cycle; continuous book, past-only inner selection and inherited survivors. No historical independent OOS; prospective OOS LOCKED. Invalid prices produce UNDEFINED_INVALID. Terminal selected-book failure invalidates full continuous portfolio; remaining origin training continues without book reset. status distinguishes test_folds_completed, invalid_test_folds and processed_origins."
     }
   ]
 }

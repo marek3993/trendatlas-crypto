@@ -1,0 +1,22 @@
+{
+  "release": "/opt/trendatlas-research/phase2-v2/releases/continuation-25c3e61f95085e6c",
+  "backup": "/var/lib/trendatlas-research-v2/recovery-checkpoint-25c3e61f95085e6c.sqlite",
+  "cycle": "phase2_v2_20261005T175209Z_47661557",
+  "unchanged_tables_sha256": {
+    "meta": "35d2ebf68921ebb9787ed44fac2db144164bb1566b48eebc61d207a7b8d49e0f",
+    "candidates": "6e433b61bc658145bfea44354d2d88489969d170ef7cf376b3c67a19af10be8e",
+    "evaluations": "03ec0197a55d14ebd599445a7f5585f0a630fd96e9a92e5bea0ddb3f72d6fff2",
+    "members": "28dbb8d431cac13f6d51057fe6254fcf99e5b33d1c20923815bb6187ea674bea",
+    "stages": "9752162ca314254ce00007af43271505489787b02384303014d72b9244576634",
+    "selections": "971a4381f3570d9e07f9ae18291386862106e4af21387360d92812bef5f518eb",
+    "test_books": "8e1ec36a6e8c208f2465b98ca26516ab6a6e338d2f760363182caadc788f6947",
+    "events": "834f826bf0f516a52b1757ec23fe1385cee91ede0b8b4491cb9b063d1701609f"
+  },
+  "evaluator_binding_unchanged": {
+    "engine": "4008759cb48125e8ad111cb43388640b309cee82e04a6b2d1be4b8ab74bfaa85",
+    "contract": "70f4640f7ab51e03b1f6241a9aec1da12d0a869d7ab776395d9ccf815dbead0f",
+    "inputs": "09f484df4f1505642412eef6ab61b9db479c3b13c2394ab0bb6b86770cd2708b"
+  },
+  "broker_changed": false,
+  "production_touched": false
+}

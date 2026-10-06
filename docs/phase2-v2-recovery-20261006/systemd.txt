@@ -1,0 +1,29 @@
+Id=trendatlas-phase2-v2-development.service
+ActiveState=inactive
+SubState=dead
+UnitFileState=static
+Result=success
+ExecMainStartTimestamp=Tue 2026-10-06 17:14:55 UTC
+ExecMainExitTimestamp=Tue 2026-10-06 17:15:22 UTC
+ExecMainStatus=0
+
+Id=trendatlas-phase2-v2-development.timer
+ActiveState=active
+SubState=waiting
+UnitFileState=enabled
+Result=success
+
+Id=trendatlas-phase2-v2-broker.service
+ActiveState=activating
+SubState=start
+UnitFileState=static
+Result=success
+ExecMainStartTimestamp=Tue 2026-10-06 17:15:23 UTC
+ExecMainExitTimestamp=
+ExecMainStatus=0
+
+Id=trendatlas-phase2-v2-broker.timer
+ActiveState=active
+SubState=running
+UnitFileState=enabled
+Result=success

@@ -111,3 +111,9 @@
 - Primary results use a continuous daily book and calendar compounded CAGR. Inner selection and mutation context precede each development test fold; completed results are immutable and survivors carry forward.
 - Legacy best hypothesis encounters unpriced original LUNA on May13 2022; no fabricated liquidation, price or CAGR is permitted. Its full-horizon reference is explicitly UNDEFINED_INVALID.
 - Historical production BASE sleeve needs same-date underlying position expansion for a tradable offline reference. This research-only expansion never changes production exports, account, planner or dashboard.
+
+## Phase 2 v2 terminal selected-book recovery — 2026-10-06
+- Classification B/C: selected origin 4 held original LUNA across 2022-05-13 without an executable price. An uncaught terminal ValueError caused continuous systemd retries without new evaluations after 879.
+- `phase2_v2_recovery_contract.json` authorizes an append-only terminal receipt and unchanged remaining past-only training. Evaluator, frozen market inputs, cycle, all completed trials and selections remain unchanged.
+- The full continuous selected portfolio is UNDEFINED_INVALID. Four valid prefix folds must never be reported as a valid full-horizon portfolio; valid completed folds and processed origins are distinct.
+- The research timer resumed automatically from the existing checkpoint. No production, account, order, LeadPilot or Pi state was modified.

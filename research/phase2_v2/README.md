@@ -69,3 +69,18 @@ unchanged strategy math, exact equality of every existing completed result,
 backup, append-only event, and the same cycle ID.
 
 Validation: `python -m unittest tests.test_phase2_v2 -v`.
+
+Recovery contract (2026-10-06): `phase2_v2_recovery_contract.json` and
+`continuation.py` preserve the exact evaluator/input binding and cycle. A
+terminal missing-price failure in a frozen selected test becomes an immutable
+receipt. The entire continuous selected portfolio is then UNDEFINED_INVALID;
+the four valid prefix books are diagnostics only, not a full-horizon CAGR.
+Later origins continue unchanged past-only training and selection, while their
+tests are NOT_EVALUABLE_CONTINUITY_LOST. No cash reset, liquidation or replay is
+invented. `status` separates valid completed folds from processed origins.
+Legacy `audit.py` only assembles valid prefix books; after a terminal receipt,
+use continuation status and the recovery audit evidence before interpreting
+any prefix metric. Timers continue automatically until all 14 origins are
+processed, then stop without a duplicate cycle or extra API budget.
+
+Validation: `python -m unittest tests.test_phase2_v2_continuation tests.test_phase2_v2 -q`.

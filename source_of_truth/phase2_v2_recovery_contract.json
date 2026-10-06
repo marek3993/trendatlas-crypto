@@ -1,0 +1,17 @@
+{
+  "id": "phase2_v2_terminal_book_recovery_20261006",
+  "classification": ["B", "C"],
+  "authority": "user_request_20261006_resume_existing_checkpoint_without_strategy_change",
+  "scope": "research_only",
+  "base_contract": "phase2_v2_contract.json",
+  "evaluator_binding": "preserve_exact_existing_engine_contract_inputs_and_cycle",
+  "terminal_errors": ["missing_held_asset_price:", "missing_entry_price", "insolvent_book", "invalid_equity"],
+  "failed_test": "append_immutable_failure_receipt_with_frozen_selection_and_previous_checkpoint_hash; never_overwrite_existing_book_or_selection",
+  "continuity": "after_a_terminal_selected_book_failure_the_entire_continuous_selected_portfolio_is_UNDEFINED_INVALID; later_test_folds_are_NOT_EVALUABLE_CONTINUITY_LOST; never_reset_cash_liquidate_or_report_partial_CAGR_as_full_result",
+  "continuation": "continue_unchanged_past_only_training_and_frozen_selection_for_remaining_14_origins; reuse_existing_completed_evaluations; no_failed_book_retry",
+  "completion": "valid_test_books_and_terminal_receipts_partition_processed_origins; report_valid_completed_folds_separately; stop_at_14_processed_origins_without_duplicate_cycle_or_extra_API_budget",
+  "api_budget": "unchanged; explicit_budget_fallback_continues_deterministic_arm",
+  "production_writes_allowed": false,
+  "orders_allowed": false,
+  "sealed_data_access_allowed": false
+}
