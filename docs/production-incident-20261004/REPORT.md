@@ -1,4 +1,15 @@
-# Produkčný incident — stav 5. októbra 2026
+# Produkčný incident — stav 6. októbra 2026
+
+**INCIDENT_RESOLVED=false — zostáva čerstvý browser read-back.** Dnešný automatický
+run `prod_20261006T001001Z_915393` pre uzavretý deň 2026-10-05 úspešne vykonal
+kanonický AVAX ENTRY a skončil SUCCESS/FILLED_AND_ALIGNED. Priama burza o
+16:42:28 UTC potvrdila 7.47 AVAX long, equity 85.467664 USD, expozíciu
+1.000746902x a žiadne open orders. Cieľ je AVAX/1x, účet je v existujúcej
+kanonickej tolerancii. Follow-up neposlal žiadnu objednávku ani nespustil run.
+Chrome naďalej blokuje dashboard otvoreným UI iného rozšírenia, takže zhoda
+aktuálneho prihláseného dashboardu zostáva UNKNOWN a follow-up ACTIVE.
+Dôkazy: `followup-20261006.json`. Nasledujúci odsek a pôvodný audit sú zachované
+ako historické pozorovania z 5. a 4. októbra; ich CASH stav už nie je aktuálny.
 
 **INCIDENT_RESOLVED=false — zostáva iba browser read-back.** Nasledujúci automatický run po oprave bol read-only potvrdený 5. októbra 2026: `prod_20261005T001018Z_547978`, SUCCESS/NO_ACTION, bez objednávky. Systemd invocation `bdfd5bcff4bc4f2cb605479c7085fbd8` skončil exit 0 o 00:12:39 UTC; timer zostáva enabled/active. Čerstvé priame Hyperliquid overenie o 05:22:42 UTC potvrdilo 83.348433 USDC, nulové pozície a open orders. Uzavretý deň je 2026-10-04, autorizovaný cieľ CASH/0x; journal, nonce a publikovaný účet sú v zhode. Chrome však znovu blokuje automatizáciu otvoreným rozhraním iného rozšírenia. Verejný autentifikovaný dashboard preto dnes nebol potvrdený a follow-up zostáva ACTIVE. Dôkazy: `followup-20261005.json`. Zvyšok pôvodného auditu nižšie zachováva historické dôkazy zo 4. októbra.
 ## Živý účet a kanonický cieľ
@@ -158,3 +169,86 @@ Exact files changed / git add list:
 
 Commit message: `Record automatic production verification and pending Chrome readback`.
 Commit hash: recorded in the final response after committing this audit; no push or merge.
+
+## Read-only follow-up — 2026-10-06
+
+- Timer reálne spustil produkciu o 00:10:00 UTC. Manifest
+  `prod_20261006T001001Z_915393` skončil 00:12:29 UTC; systemd invocation
+  `4d7203dd04534d3f921f6a8143585a78` exit 0 o 00:12:30 UTC, Result success,
+  NRestarts 0. Timer enabled/active/waiting, nasledujúci termín 7. októbra
+  00:10 UTC. Nejde len o naplánovaný run.
+- Najnovší úplne uzavretý UTC deň 2026-10-05 má kanonický autorizovaný cieľ
+  AVAX/1x, trend_permission_active=true. Core → intent → gate → account
+  fingerprinty aj signal ID sú v zhode. EXECUTE, POST_TRADE_VERIFY,
+  DASHBOARD_RUNTIME a AUTHORITY_PUBLISH PASSED. Authority `20261006_001204`
+  je success/current pre ten istý deň, generated 00:12:23 UTC.
+- Automatický ENTRY fill 00:11:27.744 UTC: 7.47 AVAX, cena 11.159 USD,
+  order `566271255984`, CLOID `0x69b7680580acc75446fb6e497545bfa2`, fee
+  0.03751 USDC. Priamy orderStatus podľa CLOID je filled. Supabase run
+  `f98ab533-7006-413e-8804-0327594cf6e4` má FILLED_AND_ALIGNED;
+  action `7cb38327-581b-47c9-9973-14ba00a86501` má SUBMITTED/VERIFIED a rovnakú
+  order identitu ako nový manifest aj burza. Opravený owner receipt teda
+  funguje aj pre skutočne odoslanú objednávku, nie iba NO_ACTION.
+- Priama Hyperliquid Info kontrola 16:42:28.074521 UTC: unifiedAccount;
+  spot stable total 85.467664 USDC, hold 8.55315, free collateral
+  76.914514 USD. Ostatné spot balances sú nulové. Native perp AVAX long
+  7.47, position notional 85.5315 USD, unrealized PnL 2.17377 USD. Na všetkých
+  aktuálne registrovaných HIP-3 dexoch žiadna ďalšia pozícia; open orders
+  spolu 0. Real exposure = position notional / unified equity = 1.000746902x.
+  Rozdiel voči cieľu je 0.063836 USD, pod existujúcou planner toleranciou 1 USD:
+  ACCOUNT_ALIGNED=true. Exchange leverage parameter 10 nie je market exposure.
+- Od cutoveru sú presne dva filly: pôvodný 7.65 AVAX EXIT 1. októbra a dnešný
+  7.47 AVAX ENTRY. Historický predaj, jeho dôvod a identita zostávajú potvrdené.
+  Journal má 17 runov, 6 action rows, 0 leases; nonce 1791245486492 zodpovedá
+  novému automatickému ENTRY. Hashy kompletných read-only GET journal odpovedí
+  pred/po kontrole sú rovnaké. Follow-up neurobil write/RPC ani nonce reset.
+- Producentom publikovaný kontrakt má správny deň, AVAX/1x cieľ, reálnu pozíciu
+  7.47 AVAX a FILLED_AND_ALIGNED. Jeho equity 83.288513 USD je stav pri
+  produkčnom read-backu 00:11:33 UTC, nie čerstvé equity o 16:42. Cenový pohyb
+  nie je dokladom nesúladu. Publikovaný súbor však nenahrádza pozorovanie
+  aktuálneho dashboardu v prihlásenom browseri.
+- Chrome/Marek: prvý inventár timeout sa zotavil. Navigácia vytvorila tab
+  `703928546`; následný read-back vrátil: "Google Chrome is blocking automation
+  because another extension UI is open on this page. Complete or dismiss that
+  extension UI in Google Chrome, then ask me to continue." UI nebolo obchádzané,
+  session ani auth tokeny neboli extrahované. DASHBOARD_MATCHES_EXCHANGE=UNKNOWN.
+  Follow-up sa nepozastavil, pretože podmienka úplného potvrdenia nie je splnená.
+
+### FILES READ / SOURCE OF TRUTH / kontrakt / validácia
+
+Prečítané: pôvodný report a followup-20261005; AGENTS.md; desať truth/registry
+dokumentov v požadovanom poradí; lokálny pi_codex_runtime_workflow.md a
+production_host_contract.json; web/scripts/production-migration-readback.ts,
+web/src/lib/supabase/admin.ts, kanonický orchestrátor a
+web/src/server/multi-account-executor/planner.ts. Normatívne produkčné
+kontrakty a význam wallet/model polí sú uvedené vo vyššom SOURCE OF TRUTH.
+VPS: iba existujúce produkčné manifest/core/intent/gate/account/authority/public
+súbory, systemd show/journal a EnvironmentFiles cesta. Account = čerstvá
+Hyperliquid master Info odpoveď; order identita = burza + Supabase journal.
+Použité read-only pokyny Supabase a computer-use; changelog overený, žiadna
+implementácia Supabase feature, migrácia ani zmena auth/dependencies.
+
+Root cause opraveného incidentu B+C zostáva preview CLOID namiesto owner
+receipt. Nový reálny ENTRY teraz potvrdzuje správne napojenie. Zostávajúci
+blokátor je Chrome observation, nie vykonanie runu alebo nesúlad účtu.
+Contract impact: žiadny. Žiadny nový regresný test ani nasadenie; source/runtime
+sa nemenili. Existujúce regresie opravy sú zaznamenané vyššie.
+
+Validácia: current closed day, SHA256 provenance, úspešný automatický systemd
+invocation/terminal manifest, verified receipt/CLOID/fill/journal, stabilný
+GET-only journal hash, všetky aktuálne venue pozície/open orders, aktuálna
+alignment tolerancia a publikovaná position quantity PASS. Browser BLOCKED.
+Lokálny JSON parse a git diff --check overujú iba auditné artefakty.
+Prvý pokus použil chýbajúcu starú EnvironmentFile cestu; opravené podľa
+systemd EnvironmentFiles bez akejkoľvek zmeny configu. Dôkaz zaznamenaný v JSON.
+
+Forbidden old path checked: žiadny Pi kontakt, research/LeadPilot kontrola,
+run/start/restart/publish/refresh, live order/cancellation, ručný runtime
+snapshot, generated outputs/data edit, DB write alebo dashboard zmena.
+Jediná nová objednávka patrí už prebehnutému automatickému runu, nie follow-upu.
+
+Exact files changed / git add list:
+`git add -- docs/production-incident-20261004/REPORT.md docs/production-incident-20261004/followup-20261006.json`
+
+Commit message: `Record automatic AVAX entry and blocked dashboard verification`.
+Commit hash: recorded in final response after audit commit; no push/merge.
