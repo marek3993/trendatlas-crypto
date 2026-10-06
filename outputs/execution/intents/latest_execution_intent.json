@@ -1,24 +1,24 @@
 {
   "intent_type": "normalized_execution_intent",
-  "generated_at_utc": "2026-10-05T00:12:27Z",
-  "as_of_source": "2026-10-04",
+  "generated_at_utc": "2026-10-06T00:12:18Z",
+  "as_of_source": "2026-10-05",
   "execution_mode": "read_only_intent_only",
   "trading_enabled": false,
   "kill_switch_required": true,
   "strategy_model": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
   "reference_model": "phase67j_no_neo_main",
   "benchmark": "BTC",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
-  "target_asset": "CASH",
-  "target_side": "hold_cash_no_market_entry",
-  "target_regime": "CASH",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
+  "target_asset": "AVAX",
+  "target_side": "long_only_hold_selected_asset_or_cash",
+  "target_regime": "ALT",
   "size_mode": "production_snapshot_target_exposure",
-  "target_size_pct": 0.0,
+  "target_size_pct": 1.0,
   "target_notional_usd": null,
   "reference_asset": null,
   "staleness_ok": true,
   "stale_signal": false,
-  "allow_live_order_candidate": false,
+  "allow_live_order_candidate": true,
   "guardrail_flags": {
     "contract_validated": true,
     "trading_disabled": true,
@@ -26,11 +26,11 @@
     "leverage_live_truth_allowed": false,
     "production_snapshot_validated": true,
     "same_run_authority_allowed": true,
-    "same_run_authority_run_id": "prod_20261005T001018Z_547978",
-    "same_run_authority_target_closed_day": "2026-10-04"
+    "same_run_authority_run_id": "prod_20261006T001001Z_915393",
+    "same_run_authority_target_closed_day": "2026-10-05"
   },
   "source_fingerprints": {
-    "production_snapshot_sha256": "d6a25a6cc7ea35278ef76e5cab3ea490c0cb24872fabf1a2a1ed51edd1d3d6a8"
+    "production_snapshot_sha256": "5f2c83716d37db61b572de3d6dd293eb588ba2ca7117ccf61a8c42c3fd1c94f4"
   },
   "source_paths": {
     "production_snapshot": "/opt/trendatlas-production/current/outputs/production/current_strategy_snapshot.json",
@@ -41,30 +41,30 @@
   "authority_day_context": {
     "attempt_status": "success",
     "attempt_currentness_status": "current",
-    "attempt_target_closed_day": "2026-10-04",
-    "success_target_closed_day": "2026-10-04",
-    "aligned_closed_day": "2026-10-04",
+    "attempt_target_closed_day": "2026-10-05",
+    "success_target_closed_day": "2026-10-05",
+    "aligned_closed_day": "2026-10-05",
     "authority_alignment_mode": "validated_production_core",
     "same_run_authority_allowed": true,
-    "same_run_authority_run_id": "prod_20261005T001018Z_547978",
-    "same_run_authority_target_closed_day": "2026-10-04",
+    "same_run_authority_run_id": "prod_20261006T001001Z_915393",
+    "same_run_authority_target_closed_day": "2026-10-05",
     "prior_publish_required_for_execution": false
   },
   "source_samples": {
     "production_snapshot_execution_intent": {
-      "target_asset": "CASH",
-      "target_exposure": 0.0,
-      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+      "target_asset": "AVAX",
+      "target_exposure": 1.0,
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
       "stale_signal": false,
-      "allow_live_order_candidate": false
+      "allow_live_order_candidate": true
     },
     "production_snapshot_summary": {
       "strategy_status": "ready",
       "candidate_asset": "AVAX",
-      "current_asset": "CASH",
-      "effective_market_exposure": 0.0,
-      "trend_permission_active": false,
-      "current_regime": "CASH",
+      "current_asset": "AVAX",
+      "effective_market_exposure": 1.0,
+      "trend_permission_active": true,
+      "current_regime": "ALT",
       "validation_status": "passed"
     }
   },
