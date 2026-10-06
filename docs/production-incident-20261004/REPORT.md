@@ -252,3 +252,77 @@ Exact files changed / git add list:
 
 Commit message: `Record automatic AVAX entry and blocked dashboard verification`.
 Commit hash: recorded in final response after audit commit; no push/merge.
+
+## Read-only closure check — 2026-10-06 17:09 UTC
+
+The original production execution repair is confirmed. The incident cannot be
+declared fully resolved because a real dashboard balance discrepancy was found,
+independently of the later Chrome extension interruption.
+
+SOURCE OF TRUTH: direct master-account Hyperliquid Info, all registered perp
+venues, current GET-only Supabase journal, terminal canonical manifest, and the
+successfully loaded hosted dashboard. Evidence: closure-readback-20261006.json.
+
+Exchange read-back at 17:09:12.905607 UTC: unifiedAccount, USDC total/equity
+85.735517 USD, AVAX long 7.47, position value 85.800420 USD, real exposure
+1.000757014x, no other positions and zero open orders. The 0.064903 USD residual
+is below the unchanged 1 USD tolerance: ACCOUNT_ALIGNED=true.
+
+Original run prod_20261006T001001Z_915393 is SUCCESS/FILLED_AND_ALIGNED.
+The active journal run f98ab533-7006-413e-8804-0327594cf6e4, action
+7cb38327-581b-47c9-9973-14ba00a86501, manifest and direct filled orderStatus
+all agree on order 566271255984 and CLOID
+0x69b7680580acc75446fb6e497545bfa2. Journal GET hashes before/after match;
+17 runs, six action rows, one nonce record, zero leases. The only two fills
+since cutover remain the historical 7.65 AVAX exit and automatic 7.47 entry.
+
+Dashboard https://trendatlas-accounts.vercel.app/dashboard loaded successfully
+in Chrome tab 703928572. Visible master identity 0xae8d…e856, synchronization
+6 Oct 2026 19:06 local (17:06 UTC), In market, AVAX 7.47, one position,
+zero open orders, and Live Hyperliquid read-only API all confirm the position.
+However, its TOTAL ACCOUNT VALUE was 96.23 USD and EXCHANGE WITHDRAWABLE
+87.66 USD. The exchange's unified equity remains approximately 85.74 USD;
+the native single-perp margin accountValue is 10.780536 USD and withdrawable
+2.200494 USD at the fresh read-back. The discrepancy is consistent with the
+old additive spot-plus-perp dashboard formula. The inspected current repo
+info.ts already contains the correct unified-account guard; the live page
+therefore does not demonstrate that corrected balance behavior. Exact deployed
+source/version was not independently retrieved, so additive double-counting
+is a supported inference, not a newly proved deployment diagnosis.
+
+DASHBOARD_MATCHES_EXCHANGE=false (position matches, balance does not).
+INCIDENT_RESOLVED=false. This blocker is a measured balance disagreement,
+not a request to close Chrome. A subsequent reload was blocked by extension UI;
+the prior successful observation and independent exchange read remain evidence.
+The existing follow-up was not paused because its completion condition remains
+false. Production, account, frontend and deployments were not changed.
+
+FILES READ: ordered ten truth/navigation documents, local runtime workflow,
+production_host_contract.json, production_execution_contract.json, original
+incident report/followup, dashboard/page.tsx, hyperliquid/info.ts,
+hyperliquid/performance.ts, planner.ts, supabase/admin.ts and
+production-migration-readback.ts; live manifest/core/public contract/systemd
+posture, GET-only journal and native exchange Info. Supabase skill/changelog
+and computer-use guidance were read. No credentials or signing material were
+printed, stored in audit evidence or sent to the browser.
+
+Root cause of original execution incident remains the repaired preview-CLOID
+mapping. New class B observability finding: hosted balance disagrees with native
+unified account equity. Contract impact: no change; no patch/test/deployment is
+authorized for production in this request. Existing repair regressions remain
+documented above. Validation: native account/order/fill/venue queries, preserved
+GET journal hash, matching receipt/manifest identity, successful dashboard
+observation, evidence JSON parse and git diff --check. The account/order checks
+pass; complete dashboard balance agreement fails.
+
+Forbidden old path checked: no production run/start/restart, order/cancel,
+publish/refresh, DB write/RPC, manual snapshot, generated outputs/data edit,
+Pi contact, LeadPilot control or production strategy/account modification.
+
+Exact files changed / git add list:
+`git add -- docs/production-incident-20261004/REPORT.md docs/production-incident-20261004/closure-readback-20261006.json`
+
+Commit message: `Record verified AVAX position and dashboard equity mismatch`.
+Commit hash: reported after committing in the final chat response. Requested
+commit aebc0b2cbd6a7159432ac8994845baaed6c1f902 was pushed to its existing
+production audit branch and its remote hash verified. No merge into main.

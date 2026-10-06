@@ -1,0 +1,4332 @@
+{
+  "account_aligned": true,
+  "core": {
+    "actual_held_asset": "AVAX",
+    "artifact_type": "current_strategy_snapshot",
+    "authorized_tradable_asset": "AVAX",
+    "candidate_asset": "AVAX",
+    "closed_day": "2026-10-05",
+    "current_asset": "AVAX",
+    "current_exposure": 1.0,
+    "current_regime": "ALT",
+    "decision_context": {
+      "current_cash_streak_days": 0,
+      "current_drawdown_pct": -10.700112,
+      "current_reason_code": "baseline_full_risk_pass_through",
+      "current_reason_text": "The active Production Core passes through the baseline FULL_RISK row unchanged, so authorized exposure remains AVAX at 1.00x.",
+      "current_regime_duration_days": 1,
+      "days_since_last_equity_high": 10,
+      "days_since_last_risk_on": 1,
+      "days_since_last_trade": 0,
+      "latest_rebalance_date": "2026-10-05",
+      "latest_rebalance_reason": "baseline_full_risk_pass_through"
+    },
+    "effective_market_exposure": 1.0,
+    "execution_intent": {
+      "allow_live_order_candidate": true,
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
+      "stale_signal": false,
+      "target_asset": "AVAX",
+      "target_exposure": 1.0
+    },
+    "execution_state": "IN_MARKET",
+    "generated_at_utc": "2026-10-06T00:12:03Z",
+    "market_state": "IN_MARKET",
+    "metrics": {
+      "borrow_cost_total_pct": 2.447639,
+      "btc_days_pct": 6.241873,
+      "cagr_pct_net": 177.4173,
+      "cash_days_pct": 77.145644,
+      "funding_total_pct": 0.0,
+      "max_drawdown_pct_net": -12.9306,
+      "sharpe": 2.1665,
+      "since2023_cagr_pct_net": 193.4822,
+      "since2025_cagr_pct_net": 175.5343,
+      "slippage_cost_total_pct": 15.7,
+      "sortino": 3.5553,
+      "switch_count": 210,
+      "total_return_pct_net": 537788.8838,
+      "trade_count": 210,
+      "trading_fees_total_pct": 11.89125
+    },
+    "model_candidate_exposure": 1.0,
+    "next_rebalance_date": "2026-10-11",
+    "provenance": {
+      "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
+      "build_command": "/opt/trendatlas-production/current/.venv/bin/python /opt/trendatlas-production/current/scripts/production/build_current_strategy_snapshot.py",
+      "git_commit": "e85712b614db9d9faeae59cf6216aaba0470f539",
+      "source_strategy_export_paths": [
+        "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+        "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+        "outputs/execution/app_exports/phase66g_live_status.csv",
+        "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+        "outputs/execution/freshness/app_freshness_report.json",
+        "data/ohlcv/BTCUSDT_1d.csv",
+        "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+        "data/ohlcv/BTCUSDT_1d.csv",
+        "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+        "scripts/dev_only_phase68g_etf_flow_impulse_probe.py",
+        "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py",
+        "source_of_truth/project_truth.json",
+        "source_of_truth/export_contract.json"
+      ],
+      "wait_condition": {
+        "code": "already_in_target_state",
+        "current_values": {
+          "actual_held_asset": "AVAX",
+          "candidate_asset": "AVAX",
+          "effective_market_exposure": 1.0
+        },
+        "target_condition": {
+          "next_rebalance_date": null
+        },
+        "text": "The active Production Core is already in its current authorized state for AVAX."
+      }
+    },
+    "schema_version": 4,
+    "selected_asset": "AVAX",
+    "source_inputs": {
+      "adapter_name": "phase68g_etf_flow_impulse_early_risk_cooldown_15_live_adapter",
+      "base_strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+      "baseline_closed_day": "2026-10-05",
+      "benchmark_source_mode": "raw_btc_ohlcv",
+      "blocker_rows": {
+        "full_etf_overlap": {
+          "baseline_not_cash": 597,
+          "btc_price_filter_failed": 1462,
+          "cooldown_active_days": 195,
+          "cooldown_blocked_entry_days": 33,
+          "cooldown_days": 15,
+          "etf_flow_not_ready": 2391,
+          "flow_2_of_3_not_positive": 2661,
+          "flow_3d_sum_below_floor": 2858,
+          "hard_invalidation_on": 208,
+          "model_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+          "period": "full_etf_overlap",
+          "period_end": "2026-10-05",
+          "period_start": "2018-05-05",
+          "permission_on_but_baseline_already_full_risk": 78,
+          "variant_id": "cooldown_15_days"
+        },
+        "since2025": {
+          "baseline_not_cash": 102,
+          "btc_price_filter_failed": 318,
+          "cooldown_active_days": 128,
+          "cooldown_blocked_entry_days": 27,
+          "cooldown_days": 15,
+          "etf_flow_not_ready": 202,
+          "flow_2_of_3_not_positive": 400,
+          "flow_3d_sum_below_floor": 518,
+          "hard_invalidation_on": 62,
+          "model_id": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+          "period": "since2025",
+          "period_end": "2026-10-05",
+          "period_start": "2025-01-01",
+          "permission_on_but_baseline_already_full_risk": 38,
+          "variant_id": "cooldown_15_days"
+        }
+      },
+      "candidate_compare_closed_day": "2026-10-05",
+      "compare_windows": [
+        {
+          "name": "full_etf_overlap",
+          "start_date": "2024-01-12"
+        },
+        {
+          "name": "since2025",
+          "start_date": "2025-01-01"
+        }
+      ],
+      "cost_model": {
+        "annual_borrow_cost_pct": 12.0,
+        "btc_ema_days": 10,
+        "cooldown_days": 15,
+        "fee_side_mode": "taker",
+        "flow_3d_floor_usd": 500000000.0,
+        "maker_fee_bps": 1.5,
+        "source": "derived from outputs/production/current_strategy_timeseries.csv daily cost columns",
+        "taker_fee_bps": 4.5,
+        "tradable_transition_slippage_bps": 10.0
+      },
+      "current_emittable_universe": {
+        "adapter_sha256": "e42ba6aee2db961b6d081d24f3522e86f6b4ed62bb5b0b34886487a02d18a6cb",
+        "adapter_source": "scripts/production/strategy_adapters/phase68g_etf_flow_impulse_early_risk_cooldown_15_adapter.py",
+        "assets": [
+          "ADA",
+          "AVAX",
+          "BNB",
+          "BTC",
+          "CASH",
+          "DOGE",
+          "DOT",
+          "ETH",
+          "LINK",
+          "TRX",
+          "XRP"
+        ],
+        "closed_day": "2026-10-05",
+        "errors": [],
+        "overlay_assets": [
+          "BTC"
+        ],
+        "schema_version": 1,
+        "selector_candidate_count": 9,
+        "selector_sha256": "d4176b1ffcf8fb3adf904bf6f8ade4990c5d02e56e9ab17972c7737078d36476",
+        "selector_source": "outputs/phase66g_production_candidate_live/phase66g_production_candidate_asset_quality.csv",
+        "source_kind": "current_production_selector",
+        "status": "available",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15"
+      },
+      "durable_non_circular_route": {
+        "lineage": "phase68g_etf_flow_impulse_early_risk_cooldown_15 -> phase68g_btc_persistence_10d_early_risk_075 -> phase68g_66g_1p25x_candidate",
+        "secondary_baseline_strategy_version": "phase68g_66g_1p25x_candidate",
+        "softer_fallback_source_inputs": {
+          "carry_forward_rows_added": 0,
+          "files": {
+            "benchmark_ohlcv": {
+              "carry_forward_rows_added": 0,
+              "effective_row_count": 3337,
+              "last_date": "2026-10-05",
+              "materialized_closed_day": "2026-10-05",
+              "modified_utc": "2026-10-06T00:10:03Z",
+              "path": "data/ohlcv/BTCUSDT_1d.csv",
+              "raw_source_last_day": "2026-10-05",
+              "row_count": 3337,
+              "sha256": "dc5efdb2505f42f0d528eeef2403a2fd25aa2f5be717c072b290f5f81ee5070b",
+              "size_bytes": 287646,
+              "source_mode": "raw_btc_ohlcv"
+            },
+            "durable_baseline_freshness_report": {
+              "carry_forward_rows_added": 0,
+              "closed_day": "2026-10-05",
+              "materialized_closed_day": "2026-10-05",
+              "modified_utc": "2026-10-06T00:10:59Z",
+              "path": "outputs/execution/freshness/app_freshness_report.json",
+              "raw_source_closed_day": "2026-10-05",
+              "raw_source_last_day": "2026-10-05",
+              "sha256": "f547bbfc30e00b93e439d583ad249d983c0776c9230d916d4a194abc77539ce1",
+              "size_bytes": 1015,
+              "status": "ok"
+            },
+            "durable_baseline_paper": {
+              "carry_forward_rows_added": 0,
+              "last_date": "2026-10-05",
+              "materialized_closed_day": "2026-10-05",
+              "modified_utc": "2026-10-06T00:11:08Z",
+              "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+              "raw_source_last_day": "2026-10-05",
+              "row_count": 3076,
+              "sha256": "cffa5001717e20c89b34cdb53fec51b6b8e0fde8cdb506d662578cf209f44e0d",
+              "size_bytes": 2031531
+            },
+            "durable_baseline_summary": {
+              "carry_forward_rows_added": 0,
+              "last_date": "2026-10-05",
+              "materialized_closed_day": "2026-10-05",
+              "modified_utc": "2026-10-06T00:11:08Z",
+              "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+              "raw_source_last_day": "2026-10-05",
+              "row_count": 1,
+              "sha256": "39ca821c2d22f3ea4bb4490fb155214dd0a0becc6dc6918949002919885471c6",
+              "size_bytes": 866
+            },
+            "durable_baseline_trend_history": {
+              "carry_forward_rows_added": 0,
+              "last_date": "2026-10-05",
+              "materialized_closed_day": "2026-10-05",
+              "modified_utc": "2026-10-06T00:10:49Z",
+              "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+              "raw_source_last_day": "2026-10-05",
+              "row_count": 3076,
+              "sha256": "20bbf5e4d18df1c3b4b1cee6fd4be94f308a885a3c21d07e6fee4b3e5fdd5829",
+              "size_bytes": 397361
+            },
+            "durable_baseline_trend_status": {
+              "carry_forward_rows_added": 0,
+              "last_date": "2026-10-05",
+              "materialized_closed_day": "2026-10-05",
+              "modified_utc": "2026-10-06T00:10:49Z",
+              "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+              "raw_source_last_day": "2026-10-05",
+              "row_count": 1,
+              "sha256": "1ed01e32ae6c97149a3b61bc9cf0bb36f4805431207488ae53acb062cd9834bb",
+              "size_bytes": 622
+            }
+          },
+          "materialized_closed_day": "2026-10-05",
+          "paper_materialization": {
+            "carry_forward_rows_added": 0,
+            "freshness_source_closed_day": "2026-10-05",
+            "materialized_closed_day": "2026-10-05",
+            "paper_source_last_day": "2026-10-05",
+            "raw_source_last_day": "2026-10-05",
+            "summary_latest_available_date": "2026-10-05",
+            "summary_source_last_day": "2026-10-05",
+            "trend_source_last_day": "2026-10-05"
+          },
+          "raw_source_last_day": "2026-10-05",
+          "strategy_version": "phase68g_btc_persistence_10d_early_risk_075",
+          "validated_closed_day": "2026-10-05"
+        },
+        "softer_fallback_strategy_version": "phase68g_btc_persistence_10d_early_risk_075"
+      },
+      "etf_flow_evidence_window": {
+        "end_date": "2026-10-05",
+        "feature_row_count": 685,
+        "start_date": "2024-01-12"
+      },
+      "etf_panel_materialization": {
+        "active_source_causal_available_day": "2026-10-03",
+        "active_source_session_day": "2026-10-02",
+        "actual_latest_causal_available_day": "2026-10-06",
+        "actual_latest_source_session_day": "2026-10-05",
+        "carry_forward_days_applied": 2,
+        "carry_forward_non_session_days": [
+          {
+            "date": "2026-10-03",
+            "reason": "weekend"
+          },
+          {
+            "date": "2026-10-04",
+            "reason": "weekend"
+          }
+        ],
+        "carry_forward_reason": "no_intermediate_us_trading_sessions",
+        "d_plus_1_source_contract_ok": true,
+        "evaluation_mode": "carry_forward_last_valid_etf_state",
+        "materialized_closed_day": "2026-10-05",
+        "synthetic_source_rows_added": 0
+      },
+      "files": {
+        "benchmark_ohlcv": {
+          "carry_forward_rows_added": 0,
+          "effective_row_count": 3337,
+          "last_date": "2026-10-05",
+          "materialized_closed_day": "2026-10-05",
+          "modified_utc": "2026-10-06T00:10:03Z",
+          "path": "data/ohlcv/BTCUSDT_1d.csv",
+          "raw_source_last_day": "2026-10-05",
+          "row_count": 3337,
+          "sha256": "dc5efdb2505f42f0d528eeef2403a2fd25aa2f5be717c072b290f5f81ee5070b",
+          "size_bytes": 287646,
+          "source_mode": "raw_btc_ohlcv"
+        },
+        "btc_ohlcv": {
+          "carry_forward_rows_added": 0,
+          "last_date": "2026-10-05",
+          "materialized_closed_day": "2026-10-05",
+          "modified_utc": "2026-10-06T00:10:03Z",
+          "path": "data/ohlcv/BTCUSDT_1d.csv",
+          "raw_source_last_day": "2026-10-05",
+          "row_count": 3337,
+          "sha256": "dc5efdb2505f42f0d528eeef2403a2fd25aa2f5be717c072b290f5f81ee5070b",
+          "size_bytes": 287646,
+          "source_mode": "raw_btc_ohlcv"
+        },
+        "cooldown_helper_source": {
+          "modified_utc": "2026-09-29T19:36:16Z",
+          "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_sensitivity.py",
+          "sha256": "1508262bcb5c36814d3e860dd04efe3f96f86eb042a0f086e8a81d08dedbe4b3",
+          "size_bytes": 13928
+        },
+        "dev_only_script": {
+          "modified_utc": "2026-09-29T19:36:16Z",
+          "path": "scripts/dev_only_phase68g_etf_flow_impulse_cooldown_15_rebuilt_candidate.py",
+          "sha256": "467e52d3f791943bf11ea327a335a7c0da3a16a8685238fb790025bd6c4320aa",
+          "size_bytes": 62701
+        },
+        "durable_baseline_freshness_report": {
+          "carry_forward_rows_added": 0,
+          "closed_day": "2026-10-05",
+          "materialized_closed_day": "2026-10-05",
+          "modified_utc": "2026-10-06T00:10:59Z",
+          "path": "outputs/execution/freshness/app_freshness_report.json",
+          "raw_source_closed_day": "2026-10-05",
+          "raw_source_last_day": "2026-10-05",
+          "sha256": "f547bbfc30e00b93e439d583ad249d983c0776c9230d916d4a194abc77539ce1",
+          "size_bytes": 1015,
+          "status": "ok"
+        },
+        "durable_baseline_paper": {
+          "carry_forward_rows_added": 0,
+          "last_date": "2026-10-05",
+          "materialized_closed_day": "2026-10-05",
+          "modified_utc": "2026-10-06T00:11:08Z",
+          "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_paper.csv",
+          "raw_source_last_day": "2026-10-05",
+          "row_count": 3076,
+          "sha256": "cffa5001717e20c89b34cdb53fec51b6b8e0fde8cdb506d662578cf209f44e0d",
+          "size_bytes": 2031531
+        },
+        "durable_baseline_summary": {
+          "carry_forward_rows_added": 0,
+          "last_date": "2026-10-05",
+          "materialized_closed_day": "2026-10-05",
+          "modified_utc": "2026-10-06T00:11:08Z",
+          "path": "outputs/execution/app_exports/phase68g_btc_persistence_10d_early_risk_075_authoritative_net_compare_export.csv",
+          "raw_source_last_day": "2026-10-05",
+          "row_count": 1,
+          "sha256": "39ca821c2d22f3ea4bb4490fb155214dd0a0becc6dc6918949002919885471c6",
+          "size_bytes": 866
+        },
+        "durable_baseline_trend_history": {
+          "carry_forward_rows_added": 0,
+          "last_date": "2026-10-05",
+          "materialized_closed_day": "2026-10-05",
+          "modified_utc": "2026-10-06T00:10:49Z",
+          "path": "outputs/execution/app_exports/phase66g_trend_barometer_history.csv",
+          "raw_source_last_day": "2026-10-05",
+          "row_count": 3076,
+          "sha256": "20bbf5e4d18df1c3b4b1cee6fd4be94f308a885a3c21d07e6fee4b3e5fdd5829",
+          "size_bytes": 397361
+        },
+        "durable_baseline_trend_status": {
+          "carry_forward_rows_added": 0,
+          "last_date": "2026-10-05",
+          "materialized_closed_day": "2026-10-05",
+          "modified_utc": "2026-10-06T00:10:49Z",
+          "path": "outputs/execution/app_exports/phase66g_live_status.csv",
+          "raw_source_last_day": "2026-10-05",
+          "row_count": 1,
+          "sha256": "1ed01e32ae6c97149a3b61bc9cf0bb36f4805431207488ae53acb062cd9834bb",
+          "size_bytes": 622
+        },
+        "etf_panel": {
+          "active_source_causal_available_day": "2026-10-03",
+          "active_source_session_day": "2026-10-02",
+          "carry_forward_days_applied": 2,
+          "carry_forward_reason": "no_intermediate_us_trading_sessions",
+          "evaluation_mode": "carry_forward_last_valid_etf_state",
+          "last_date": "2026-10-06",
+          "latest_source_session_day": "2026-10-05",
+          "materialized_closed_day": "2026-10-05",
+          "modified_utc": "2026-10-06T00:10:58Z",
+          "path": "outputs/research_os/dev_only/non_authoritative_btc_etf_flow_daily_panel/btc_etf_flow_daily_panel.csv",
+          "row_count": 686,
+          "sha256": "1ab0e5685b013f81bdeb6f051146d2e136c5b60361bfc34c4d3feb3d5c7302aa",
+          "size_bytes": 258939,
+          "synthetic_source_rows_added": 0
+        },
+        "export_contract": {
+          "modified_utc": "2026-09-29T19:36:16Z",
+          "path": "source_of_truth/export_contract.json",
+          "sha256": "b40a12d0e83f7a5231536ae831a40b6a7925b9b5847b612cabc3102a8c5f7929",
+          "size_bytes": 73216
+        },
+        "probe_helper_source": {
+          "modified_utc": "2026-09-29T19:36:16Z",
+          "path": "scripts/dev_only_phase68g_etf_flow_impulse_probe.py",
+          "sha256": "52658b50d5c1cfecfbdc762a74b7c6b59e52bbccdc5574ef48bb516196c9ec9a",
+          "size_bytes": 15435
+        },
+        "project_truth": {
+          "modified_utc": "2026-09-30T15:25:08Z",
+          "path": "source_of_truth/project_truth.json",
+          "sha256": "8c76207507a375501f2d059df62e17bd8aa3eefb2a2290a2c912f59cf3907160",
+          "size_bytes": 63360
+        }
+      },
+      "full_history_window": {
+        "end_date": "2026-10-05",
+        "row_count": 3076,
+        "start_date": "2018-05-05"
+      },
+      "hard_invalidation_rule": {
+        "detail": "stress_block_day is present and is used directly as the hard invalidation / risk-off equivalent.",
+        "fallback_used": false,
+        "source_column": "stress_block_day"
+      },
+      "lineage": {
+        "app_truth": true,
+        "dev_only_source_lineage": true,
+        "execution_truth": true,
+        "live_truth": true,
+        "non_authoritative_research_input": true,
+        "official_truth": true
+      },
+      "strategy_id": "current_strategy",
+      "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+      "validated_closed_day": "2026-10-05",
+      "window_counts": {
+        "full_etf_overlap": {
+          "activation_windows_count": 19,
+          "false_start_count": 16,
+          "successful_handoff_count": 3
+        },
+        "since2025": {
+          "activation_windows_count": 12,
+          "false_start_count": 11,
+          "successful_handoff_count": 1
+        }
+      }
+    },
+    "strategy_id": "current_strategy",
+    "strategy_status": "ready",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "trend_permission_active": true,
+    "trend_score": 0.159758,
+    "trend_state": "nad_buy_hranicou",
+    "validation": {
+      "errors": [],
+      "status": "passed",
+      "warnings": []
+    }
+  },
+  "equity_usd": 85.735517,
+  "exchange": {
+    "clearinghouseState": {
+      "assetPositions": [
+        {
+          "position": {
+            "coin": "AVAX",
+            "cumFunding": {
+              "allTime": "0.018096",
+              "sinceChange": "0.018096",
+              "sinceOpen": "0.018096"
+            },
+            "entryPx": "11.159",
+            "leverage": {
+              "type": "cross",
+              "value": 10
+            },
+            "liquidationPx": "0.0091457761",
+            "marginUsed": "8.580042",
+            "maxLeverage": 10,
+            "positionValue": "85.80042",
+            "returnOnEquity": "0.2930370105",
+            "szi": "7.47",
+            "unrealizedPnl": "2.44269"
+          },
+          "type": "oneWay"
+        }
+      ],
+      "crossMaintenanceMarginUsed": "4.290021",
+      "crossMarginSummary": {
+        "accountValue": "10.780536",
+        "totalMarginUsed": "8.580042",
+        "totalNtlPos": "85.80042",
+        "totalRawUsd": "-75.019884"
+      },
+      "marginSummary": {
+        "accountValue": "10.780536",
+        "totalMarginUsed": "8.580042",
+        "totalNtlPos": "85.80042",
+        "totalRawUsd": "-75.019884"
+      },
+      "time": 1791306549632,
+      "withdrawable": "2.200494"
+    },
+    "fills": [
+      {
+        "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+        "closedPnl": "1.56825",
+        "coin": "AVAX",
+        "crossed": true,
+        "dir": "Close Long",
+        "fee": "0.037585",
+        "feeToken": "USDC",
+        "hash": "0x3e9d3c31a5d396084016044591c6d8020705001740d6b4dae265e78464d76ff2",
+        "oid": 561784971605,
+        "px": "10.918",
+        "side": "A",
+        "startPosition": "7.65",
+        "sz": "7.65",
+        "tid": 852970980061947,
+        "time": 1790813501250,
+        "twapId": null
+      },
+      {
+        "cloid": "0x69b7680580acc75446fb6e497545bfa2",
+        "closedPnl": "0.0",
+        "coin": "AVAX",
+        "crossed": true,
+        "dir": "Open Long",
+        "fee": "0.03751",
+        "feeToken": "USDC",
+        "hash": "0x5e24e9ccab247c0b5f9e0445eddb3402025600b246279add01ed951f6a2855f6",
+        "oid": 566271255984,
+        "px": "11.159",
+        "side": "B",
+        "startPosition": "0.0",
+        "sz": "7.47",
+        "tid": 73185475786114,
+        "time": 1791245487744,
+        "twapId": null
+      }
+    ],
+    "order_status": {
+      "order": {
+        "order": {
+          "children": [],
+          "cloid": "0x69b7680580acc75446fb6e497545bfa2",
+          "coin": "AVAX",
+          "isPositionTpsl": false,
+          "isTrigger": false,
+          "limitPx": "11.265",
+          "oid": 566271255984,
+          "orderType": "Limit",
+          "origSz": "7.47",
+          "reduceOnly": false,
+          "side": "B",
+          "sz": "0.0",
+          "tif": "Ioc",
+          "timestamp": 1791245487744,
+          "triggerCondition": "N/A",
+          "triggerPx": "0.0"
+        },
+        "status": "filled",
+        "statusTimestamp": 1791245487744
+      },
+      "status": "order"
+    },
+    "perpDexs": [
+      null,
+      {
+        "assetToFundingClamp": [],
+        "assetToFundingInterestRate": [
+          [
+            "xyz:EUR",
+            "0.0"
+          ],
+          [
+            "xyz:GBP",
+            "0.0"
+          ],
+          [
+            "xyz:JPY",
+            "0.0"
+          ],
+          [
+            "xyz:KRW",
+            "0.0"
+          ]
+        ],
+        "assetToFundingMultiplier": [
+          [
+            "xyz:AAOI",
+            "0.5"
+          ],
+          [
+            "xyz:AAPL",
+            "0.5"
+          ],
+          [
+            "xyz:ALUMINIUM",
+            "0.5"
+          ],
+          [
+            "xyz:AMAT",
+            "0.5"
+          ],
+          [
+            "xyz:AMD",
+            "0.5"
+          ],
+          [
+            "xyz:AMZN",
+            "0.5"
+          ],
+          [
+            "xyz:ARM",
+            "0.5"
+          ],
+          [
+            "xyz:ASML",
+            "0.5"
+          ],
+          [
+            "xyz:AVGO",
+            "0.5"
+          ],
+          [
+            "xyz:BABA",
+            "0.5"
+          ],
+          [
+            "xyz:BB",
+            "0.5"
+          ],
+          [
+            "xyz:BE",
+            "0.5"
+          ],
+          [
+            "xyz:BIRD",
+            "0.5"
+          ],
+          [
+            "xyz:BMNR",
+            "0.5"
+          ],
+          [
+            "xyz:BOT",
+            "0.5"
+          ],
+          [
+            "xyz:BRENTOIL",
+            "0.5"
+          ],
+          [
+            "xyz:BX",
+            "0.5"
+          ],
+          [
+            "xyz:CAMBRICON",
+            "0.5"
+          ],
+          [
+            "xyz:CBRS",
+            "0.5"
+          ],
+          [
+            "xyz:CL",
+            "0.5"
+          ],
+          [
+            "xyz:COIN",
+            "0.5"
+          ],
+          [
+            "xyz:COPPER",
+            "0.5"
+          ],
+          [
+            "xyz:CORN",
+            "0.5"
+          ],
+          [
+            "xyz:COST",
+            "0.5"
+          ],
+          [
+            "xyz:CRCL",
+            "0.5"
+          ],
+          [
+            "xyz:CRWD",
+            "0.5"
+          ],
+          [
+            "xyz:CRWV",
+            "0.5"
+          ],
+          [
+            "xyz:CVX",
+            "0.5"
+          ],
+          [
+            "xyz:CXMT",
+            "0.5"
+          ],
+          [
+            "xyz:DELL",
+            "0.5"
+          ],
+          [
+            "xyz:DKNG",
+            "0.5"
+          ],
+          [
+            "xyz:DRAM",
+            "0.5"
+          ],
+          [
+            "xyz:DXY",
+            "0.5"
+          ],
+          [
+            "xyz:EBAY",
+            "0.5"
+          ],
+          [
+            "xyz:EUR",
+            "0.5"
+          ],
+          [
+            "xyz:EWJ",
+            "0.5"
+          ],
+          [
+            "xyz:EWT",
+            "0.5"
+          ],
+          [
+            "xyz:EWY",
+            "0.5"
+          ],
+          [
+            "xyz:EWZ",
+            "0.5"
+          ],
+          [
+            "xyz:GBP",
+            "0.5"
+          ],
+          [
+            "xyz:GEV",
+            "0.5"
+          ],
+          [
+            "xyz:GIGADEV",
+            "0.5"
+          ],
+          [
+            "xyz:GLW",
+            "0.5"
+          ],
+          [
+            "xyz:GME",
+            "0.5"
+          ],
+          [
+            "xyz:GOLD",
+            "0.5"
+          ],
+          [
+            "xyz:GOOGL",
+            "0.5"
+          ],
+          [
+            "xyz:H100",
+            "0.5"
+          ],
+          [
+            "xyz:HIMS",
+            "0.5"
+          ],
+          [
+            "xyz:HO",
+            "0.5"
+          ],
+          [
+            "xyz:HOOD",
+            "0.5"
+          ],
+          [
+            "xyz:HYUNDAI",
+            "0.5"
+          ],
+          [
+            "xyz:IBIDEN",
+            "0.5"
+          ],
+          [
+            "xyz:IBM",
+            "0.5"
+          ],
+          [
+            "xyz:IBOV",
+            "0.5"
+          ],
+          [
+            "xyz:INTC",
+            "0.5"
+          ],
+          [
+            "xyz:IREN",
+            "0.5"
+          ],
+          [
+            "xyz:JP225",
+            "0.5"
+          ],
+          [
+            "xyz:JPY",
+            "0.5"
+          ],
+          [
+            "xyz:KIOXIA",
+            "0.5"
+          ],
+          [
+            "xyz:KORU",
+            "0.5"
+          ],
+          [
+            "xyz:KR200",
+            "0.5"
+          ],
+          [
+            "xyz:KRW",
+            "0.5"
+          ],
+          [
+            "xyz:KSTR",
+            "0.5"
+          ],
+          [
+            "xyz:LITE",
+            "0.5"
+          ],
+          [
+            "xyz:LLY",
+            "0.5"
+          ],
+          [
+            "xyz:LRCX",
+            "0.5"
+          ],
+          [
+            "xyz:LYTE",
+            "0.5"
+          ],
+          [
+            "xyz:MAGS",
+            "0.5"
+          ],
+          [
+            "xyz:META",
+            "0.5"
+          ],
+          [
+            "xyz:MINIMAX",
+            "0.5"
+          ],
+          [
+            "xyz:MRNA",
+            "0.5"
+          ],
+          [
+            "xyz:MRVL",
+            "0.5"
+          ],
+          [
+            "xyz:MSFT",
+            "0.5"
+          ],
+          [
+            "xyz:MSTR",
+            "0.5"
+          ],
+          [
+            "xyz:MU",
+            "0.5"
+          ],
+          [
+            "xyz:NATGAS",
+            "0.5"
+          ],
+          [
+            "xyz:NBIS",
+            "0.5"
+          ],
+          [
+            "xyz:NCLD",
+            "0.5"
+          ],
+          [
+            "xyz:NET",
+            "0.5"
+          ],
+          [
+            "xyz:NFLX",
+            "0.5"
+          ],
+          [
+            "xyz:NIFTY",
+            "0.5"
+          ],
+          [
+            "xyz:NOK",
+            "0.5"
+          ],
+          [
+            "xyz:NOW",
+            "0.5"
+          ],
+          [
+            "xyz:NVDA",
+            "0.5"
+          ],
+          [
+            "xyz:ORCL",
+            "0.5"
+          ],
+          [
+            "xyz:OURA",
+            "0.005"
+          ],
+          [
+            "xyz:PALLADIUM",
+            "0.5"
+          ],
+          [
+            "xyz:PLATINUM",
+            "0.5"
+          ],
+          [
+            "xyz:PLTR",
+            "0.5"
+          ],
+          [
+            "xyz:PURRDAT",
+            "0.5"
+          ],
+          [
+            "xyz:QCOM",
+            "0.5"
+          ],
+          [
+            "xyz:QNT",
+            "0.5"
+          ],
+          [
+            "xyz:RDDT",
+            "0.5"
+          ],
+          [
+            "xyz:RIVN",
+            "0.5"
+          ],
+          [
+            "xyz:RKLB",
+            "0.5"
+          ],
+          [
+            "xyz:SHAZ",
+            "0.5"
+          ],
+          [
+            "xyz:SHEIN",
+            "0.5"
+          ],
+          [
+            "xyz:SILVER",
+            "0.5"
+          ],
+          [
+            "xyz:SKHX",
+            "0.5"
+          ],
+          [
+            "xyz:SKHY",
+            "0.5"
+          ],
+          [
+            "xyz:SMH",
+            "0.5"
+          ],
+          [
+            "xyz:SMSN",
+            "0.5"
+          ],
+          [
+            "xyz:SNDK",
+            "0.5"
+          ],
+          [
+            "xyz:SNXX",
+            "0.5"
+          ],
+          [
+            "xyz:SOFTBANK",
+            "0.5"
+          ],
+          [
+            "xyz:SOXL",
+            "0.5"
+          ],
+          [
+            "xyz:SP500",
+            "0.5"
+          ],
+          [
+            "xyz:SPCX",
+            "0.5"
+          ],
+          [
+            "xyz:STRC",
+            "0.5"
+          ],
+          [
+            "xyz:TLT",
+            "0.5"
+          ],
+          [
+            "xyz:TSLA",
+            "0.5"
+          ],
+          [
+            "xyz:TSM",
+            "0.5"
+          ],
+          [
+            "xyz:TTF",
+            "0.5"
+          ],
+          [
+            "xyz:TWST",
+            "0.5"
+          ],
+          [
+            "xyz:UMC",
+            "0.5"
+          ],
+          [
+            "xyz:UNITREE",
+            "0.5"
+          ],
+          [
+            "xyz:URANIUM",
+            "0.5"
+          ],
+          [
+            "xyz:URNM",
+            "0.5"
+          ],
+          [
+            "xyz:USAR",
+            "0.5"
+          ],
+          [
+            "xyz:VIX",
+            "0.5"
+          ],
+          [
+            "xyz:VOL",
+            "0.5"
+          ],
+          [
+            "xyz:WDC",
+            "0.5"
+          ],
+          [
+            "xyz:WHEAT",
+            "0.5"
+          ],
+          [
+            "xyz:XBI",
+            "0.5"
+          ],
+          [
+            "xyz:XLE",
+            "0.5"
+          ],
+          [
+            "xyz:XYZ100",
+            "0.5"
+          ],
+          [
+            "xyz:YMTC",
+            "0.5"
+          ],
+          [
+            "xyz:ZHIPU",
+            "0.5"
+          ],
+          [
+            "xyz:ZM",
+            "0.5"
+          ]
+        ],
+        "assetToStreamingOiCap": [
+          [
+            "xyz:AAOI",
+            "25000000.0"
+          ],
+          [
+            "xyz:AAPL",
+            "200000000.0"
+          ],
+          [
+            "xyz:ALUMINIUM",
+            "25000000.0"
+          ],
+          [
+            "xyz:AMAT",
+            "25000000.0"
+          ],
+          [
+            "xyz:AMD",
+            "100000000.0"
+          ],
+          [
+            "xyz:AMZN",
+            "100000000.0"
+          ],
+          [
+            "xyz:ARM",
+            "50000000.0"
+          ],
+          [
+            "xyz:ASML",
+            "25000000.0"
+          ],
+          [
+            "xyz:AVGO",
+            "75000000.0"
+          ],
+          [
+            "xyz:BABA",
+            "50000000.0"
+          ],
+          [
+            "xyz:BB",
+            "75000000.0"
+          ],
+          [
+            "xyz:BE",
+            "25000000.0"
+          ],
+          [
+            "xyz:BIRD",
+            "25000000.0"
+          ],
+          [
+            "xyz:BMNR",
+            "25000000.0"
+          ],
+          [
+            "xyz:BOT",
+            "25000000.0"
+          ],
+          [
+            "xyz:BRENTOIL",
+            "750000000.0"
+          ],
+          [
+            "xyz:BX",
+            "25000000.0"
+          ],
+          [
+            "xyz:CAMBRICON",
+            "25000000.0"
+          ],
+          [
+            "xyz:CBRS",
+            "150000000.0"
+          ],
+          [
+            "xyz:CL",
+            "1000000000.0"
+          ],
+          [
+            "xyz:COIN",
+            "50000000.0"
+          ],
+          [
+            "xyz:COPPER",
+            "300000000.0"
+          ],
+          [
+            "xyz:CORN",
+            "25000000.0"
+          ],
+          [
+            "xyz:COST",
+            "25000000.0"
+          ],
+          [
+            "xyz:CRCL",
+            "200000000.0"
+          ],
+          [
+            "xyz:CRWD",
+            "25000000.0"
+          ],
+          [
+            "xyz:CRWV",
+            "50000000.0"
+          ],
+          [
+            "xyz:CVX",
+            "25000000.0"
+          ],
+          [
+            "xyz:CXMT",
+            "250000000.0"
+          ],
+          [
+            "xyz:DELL",
+            "25000000.0"
+          ],
+          [
+            "xyz:DKNG",
+            "25000000.0"
+          ],
+          [
+            "xyz:DRAM",
+            "250000000.0"
+          ],
+          [
+            "xyz:DXY",
+            "25000000.0"
+          ],
+          [
+            "xyz:EBAY",
+            "25000000.0"
+          ],
+          [
+            "xyz:EUR",
+            "50000000.0"
+          ],
+          [
+            "xyz:EWJ",
+            "25000000.0"
+          ],
+          [
+            "xyz:EWT",
+            "25000000.0"
+          ],
+          [
+            "xyz:EWY",
+            "100000000.0"
+          ],
+          [
+            "xyz:EWZ",
+            "25000000.0"
+          ],
+          [
+            "xyz:GBP",
+            "25000000.0"
+          ],
+          [
+            "xyz:GEV",
+            "25000000.0"
+          ],
+          [
+            "xyz:GIGADEV",
+            "25000000.0"
+          ],
+          [
+            "xyz:GLW",
+            "25000000.0"
+          ],
+          [
+            "xyz:GME",
+            "25000000.0"
+          ],
+          [
+            "xyz:GOLD",
+            "750000000.0"
+          ],
+          [
+            "xyz:GOOGL",
+            "350000000.0"
+          ],
+          [
+            "xyz:H100",
+            "25000000.0"
+          ],
+          [
+            "xyz:HIMS",
+            "25000000.0"
+          ],
+          [
+            "xyz:HO",
+            "25000000.0"
+          ],
+          [
+            "xyz:HOOD",
+            "150000000.0"
+          ],
+          [
+            "xyz:HYUNDAI",
+            "25000000.0"
+          ],
+          [
+            "xyz:IBIDEN",
+            "25000000.0"
+          ],
+          [
+            "xyz:IBM",
+            "50000000.0"
+          ],
+          [
+            "xyz:IBOV",
+            "25000000.0"
+          ],
+          [
+            "xyz:INTC",
+            "350000000.0"
+          ],
+          [
+            "xyz:IREN",
+            "25000000.0"
+          ],
+          [
+            "xyz:JP225",
+            "25000000.0"
+          ],
+          [
+            "xyz:JPY",
+            "100000000.0"
+          ],
+          [
+            "xyz:KIOXIA",
+            "50000000.0"
+          ],
+          [
+            "xyz:KORU",
+            "25000000.0"
+          ],
+          [
+            "xyz:KR200",
+            "25000000.0"
+          ],
+          [
+            "xyz:KRW",
+            "25000000.0"
+          ],
+          [
+            "xyz:KSTR",
+            "25000000.0"
+          ],
+          [
+            "xyz:LITE",
+            "100000000.0"
+          ],
+          [
+            "xyz:LLY",
+            "25000000.0"
+          ],
+          [
+            "xyz:LRCX",
+            "25000000.0"
+          ],
+          [
+            "xyz:LYTE",
+            "25000000.0"
+          ],
+          [
+            "xyz:MAGS",
+            "25000000.0"
+          ],
+          [
+            "xyz:META",
+            "200000000.0"
+          ],
+          [
+            "xyz:MINIMAX",
+            "50000000.0"
+          ],
+          [
+            "xyz:MRNA",
+            "75000000.0"
+          ],
+          [
+            "xyz:MRVL",
+            "200000000.0"
+          ],
+          [
+            "xyz:MSFT",
+            "250000000.0"
+          ],
+          [
+            "xyz:MSTR",
+            "150000000.0"
+          ],
+          [
+            "xyz:MU",
+            "500000000.0"
+          ],
+          [
+            "xyz:NATGAS",
+            "100000000.0"
+          ],
+          [
+            "xyz:NBIS",
+            "150000000.0"
+          ],
+          [
+            "xyz:NCLD",
+            "25000000.0"
+          ],
+          [
+            "xyz:NET",
+            "25000000.0"
+          ],
+          [
+            "xyz:NFLX",
+            "50000000.0"
+          ],
+          [
+            "xyz:NIFTY",
+            "25000000.0"
+          ],
+          [
+            "xyz:NOK",
+            "25000000.0"
+          ],
+          [
+            "xyz:NOW",
+            "25000000.0"
+          ],
+          [
+            "xyz:NVDA",
+            "500000000.0"
+          ],
+          [
+            "xyz:ORCL",
+            "150000000.0"
+          ],
+          [
+            "xyz:OURA",
+            "25000000.0"
+          ],
+          [
+            "xyz:PALLADIUM",
+            "25000000.0"
+          ],
+          [
+            "xyz:PLATINUM",
+            "25000000.0"
+          ],
+          [
+            "xyz:PLTR",
+            "150000000.0"
+          ],
+          [
+            "xyz:PURRDAT",
+            "50000000.0"
+          ],
+          [
+            "xyz:QCOM",
+            "25000000.0"
+          ],
+          [
+            "xyz:QNT",
+            "20000000.0"
+          ],
+          [
+            "xyz:RDDT",
+            "25000000.0"
+          ],
+          [
+            "xyz:RIVN",
+            "25000000.0"
+          ],
+          [
+            "xyz:RKLB",
+            "50000000.0"
+          ],
+          [
+            "xyz:SHAZ",
+            "25000000.0"
+          ],
+          [
+            "xyz:SHEIN",
+            "25000000.0"
+          ],
+          [
+            "xyz:SILVER",
+            "500000000.0"
+          ],
+          [
+            "xyz:SKHX",
+            "1000000000.0"
+          ],
+          [
+            "xyz:SKHY",
+            "400000000.0"
+          ],
+          [
+            "xyz:SMH",
+            "25000000.0"
+          ],
+          [
+            "xyz:SMSN",
+            "250000000.0"
+          ],
+          [
+            "xyz:SNDK",
+            "500000000.0"
+          ],
+          [
+            "xyz:SNXX",
+            "25000000.0"
+          ],
+          [
+            "xyz:SOFTBANK",
+            "25000000.0"
+          ],
+          [
+            "xyz:SOXL",
+            "50000000.0"
+          ],
+          [
+            "xyz:SP500",
+            "1250000000.0"
+          ],
+          [
+            "xyz:SPCX",
+            "750000000.0"
+          ],
+          [
+            "xyz:STRC",
+            "50000000.0"
+          ],
+          [
+            "xyz:TLT",
+            "25000000.0"
+          ],
+          [
+            "xyz:TSLA",
+            "100000000.0"
+          ],
+          [
+            "xyz:TSM",
+            "50000000.0"
+          ],
+          [
+            "xyz:TTF",
+            "25000000.0"
+          ],
+          [
+            "xyz:TWST",
+            "25000000.0"
+          ],
+          [
+            "xyz:UMC",
+            "25000000.0"
+          ],
+          [
+            "xyz:UNITREE",
+            "100000000.0"
+          ],
+          [
+            "xyz:URANIUM",
+            "25000000.0"
+          ],
+          [
+            "xyz:URNM",
+            "25000000.0"
+          ],
+          [
+            "xyz:USAR",
+            "25000000.0"
+          ],
+          [
+            "xyz:VIX",
+            "25000000.0"
+          ],
+          [
+            "xyz:VOL",
+            "25000000.0"
+          ],
+          [
+            "xyz:WDC",
+            "50000000.0"
+          ],
+          [
+            "xyz:WHEAT",
+            "25000000.0"
+          ],
+          [
+            "xyz:XBI",
+            "25000000.0"
+          ],
+          [
+            "xyz:XLE",
+            "25000000.0"
+          ],
+          [
+            "xyz:XYZ100",
+            "1000000000.0"
+          ],
+          [
+            "xyz:YMTC",
+            "25000000.0"
+          ],
+          [
+            "xyz:ZHIPU",
+            "100000000.0"
+          ],
+          [
+            "xyz:ZM",
+            "25000000.0"
+          ]
+        ],
+        "deployer": "0x88806a71d74ad0a510b350545c9ae490912f0888",
+        "feeRecipient": "0x83ffcfb1f2ad843c474b2e28df86c721cb869d3a",
+        "fullName": "XYZ",
+        "name": "xyz",
+        "oracleUpdater": null,
+        "subDeployers": [
+          [
+            "registerAsset",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0x8c4190018486a2dbac2629d688136e8990170ff2",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ],
+          [
+            "setOracle",
+            [
+              "0x1234567890545d1df9ee64b35fdd16966e08acec"
+            ]
+          ],
+          [
+            "setFeeRecipient",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ],
+          [
+            "haltTrading",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ],
+          [
+            "setMarginTableIds",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0x8c4190018486a2dbac2629d688136e8990170ff2",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ],
+          [
+            "setOpenInterestCaps",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0x8c4190018486a2dbac2629d688136e8990170ff2",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ],
+          [
+            "setFundingMultipliers",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0x8c4190018486a2dbac2629d688136e8990170ff2",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ],
+          [
+            "setMarginModes",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0x8c4190018486a2dbac2629d688136e8990170ff2",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ],
+          [
+            "setDeployerFees",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0x8c4190018486a2dbac2629d688136e8990170ff2"
+            ]
+          ],
+          [
+            "setFundingInterestRates",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0x8c4190018486a2dbac2629d688136e8990170ff2",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ],
+          [
+            "setPerpAnnotation",
+            [
+              "0x7d16f116d252db609c56d27d6c9605eb03e16657",
+              "0x8c4190018486a2dbac2629d688136e8990170ff2",
+              "0xc0892b4f864807ec26dde6ad8dad6914e079059d"
+            ]
+          ]
+        ]
+      },
+      {
+        "assetToFundingClamp": [],
+        "assetToFundingInterestRate": [],
+        "assetToFundingMultiplier": [
+          [
+            "flx:COIN",
+            "0.0"
+          ],
+          [
+            "flx:COPPER",
+            "0.0"
+          ],
+          [
+            "flx:CRCL",
+            "0.0"
+          ],
+          [
+            "flx:GAS",
+            "0.0"
+          ],
+          [
+            "flx:GOLD",
+            "0.0"
+          ],
+          [
+            "flx:NVDA",
+            "0.0"
+          ],
+          [
+            "flx:OIL",
+            "0.0"
+          ],
+          [
+            "flx:PALLADIUM",
+            "0.0"
+          ],
+          [
+            "flx:PLATINUM",
+            "0.0"
+          ],
+          [
+            "flx:SILVER",
+            "0.0"
+          ],
+          [
+            "flx:TSLA",
+            "0.0"
+          ],
+          [
+            "flx:USA100",
+            "0.0"
+          ],
+          [
+            "flx:USA500",
+            "0.0"
+          ],
+          [
+            "flx:USDE",
+            "0.0"
+          ],
+          [
+            "flx:XMR",
+            "0.0"
+          ]
+        ],
+        "assetToStreamingOiCap": [
+          [
+            "flx:COIN",
+            "8000000.0"
+          ],
+          [
+            "flx:COPPER",
+            "5000000.0"
+          ],
+          [
+            "flx:CRCL",
+            "5000000.0"
+          ],
+          [
+            "flx:GAS",
+            "5000000.0"
+          ],
+          [
+            "flx:GOLD",
+            "10000000.0"
+          ],
+          [
+            "flx:NVDA",
+            "2500000.0"
+          ],
+          [
+            "flx:OIL",
+            "22500000.0"
+          ],
+          [
+            "flx:PALLADIUM",
+            "2500000.0"
+          ],
+          [
+            "flx:PLATINUM",
+            "10000000.0"
+          ],
+          [
+            "flx:SILVER",
+            "20000000.0"
+          ],
+          [
+            "flx:TSLA",
+            "8000000.0"
+          ],
+          [
+            "flx:USA100",
+            "2500000.0"
+          ],
+          [
+            "flx:USA500",
+            "5000000.0"
+          ],
+          [
+            "flx:USDE",
+            "7500000.0"
+          ],
+          [
+            "flx:XMR",
+            "4000000.0"
+          ]
+        ],
+        "deployer": "0x2fab552502a6d45920d5741a2f3ebf4c35536352",
+        "feeRecipient": "0xe2872b5ae7dcbba40cc4510d08c8bbea95b42d43",
+        "fullName": "Felix Exchange",
+        "name": "flx",
+        "oracleUpdater": "0x94757f8dcb4bf73b850195660e959d1105cfedd5",
+        "subDeployers": [
+          [
+            "registerAsset",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setOracle",
+            [
+              "0x94757f8dcb4bf73b850195660e959d1105cfedd5",
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "insertMarginTable",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setFeeRecipient",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "haltTrading",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setMarginTableIds",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setOpenInterestCaps",
+            [
+              "0x17f5d164a9fa8ed292cdc91e34c0edeed6fc9b90",
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setFundingMultipliers",
+            [
+              "0xae083732032a813f9142733cdf380e1bc9e518af",
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setMarginModes",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setDeployerFees",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setFundingInterestRates",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ],
+          [
+            "setPerpAnnotation",
+            [
+              "0xd0d4ef34424af3da883672b8cdeca751293655a5"
+            ]
+          ]
+        ]
+      },
+      {
+        "assetToFundingClamp": [],
+        "assetToFundingInterestRate": [],
+        "assetToFundingMultiplier": [
+          [
+            "vntl:ANTHROPIC",
+            "0.0"
+          ],
+          [
+            "vntl:BIOTECH",
+            "0.0"
+          ],
+          [
+            "vntl:DEFENSE",
+            "0.0"
+          ],
+          [
+            "vntl:ENERGY",
+            "0.0"
+          ],
+          [
+            "vntl:GOLDJM",
+            "0.5"
+          ],
+          [
+            "vntl:INFOTECH",
+            "0.0"
+          ],
+          [
+            "vntl:MAG7",
+            "0.0"
+          ],
+          [
+            "vntl:NUCLEAR",
+            "0.0"
+          ],
+          [
+            "vntl:OPENAI",
+            "0.0"
+          ],
+          [
+            "vntl:ROBOT",
+            "0.0"
+          ],
+          [
+            "vntl:SEMIS",
+            "0.0"
+          ],
+          [
+            "vntl:SILVERJM",
+            "0.5"
+          ],
+          [
+            "vntl:SOY",
+            "0.0"
+          ],
+          [
+            "vntl:SPACEX",
+            "0.0"
+          ],
+          [
+            "vntl:WHEAT",
+            "0.0"
+          ]
+        ],
+        "assetToStreamingOiCap": [
+          [
+            "vntl:ANTHROPIC",
+            "10000000.0"
+          ],
+          [
+            "vntl:BIOTECH",
+            "10000000.0"
+          ],
+          [
+            "vntl:DEFENSE",
+            "10000000.0"
+          ],
+          [
+            "vntl:ENERGY",
+            "10000000.0"
+          ],
+          [
+            "vntl:GOLDJM",
+            "10000000.0"
+          ],
+          [
+            "vntl:INFOTECH",
+            "10000000.0"
+          ],
+          [
+            "vntl:MAG7",
+            "10000000.0"
+          ],
+          [
+            "vntl:NUCLEAR",
+            "10000000.0"
+          ],
+          [
+            "vntl:OPENAI",
+            "5000000.0"
+          ],
+          [
+            "vntl:ROBOT",
+            "10000000.0"
+          ],
+          [
+            "vntl:SEMIS",
+            "10000000.0"
+          ],
+          [
+            "vntl:SILVERJM",
+            "10000000.0"
+          ],
+          [
+            "vntl:SOY",
+            "10000000.0"
+          ],
+          [
+            "vntl:SPACEX",
+            "10000000.0"
+          ],
+          [
+            "vntl:WHEAT",
+            "10000000.0"
+          ]
+        ],
+        "deployer": "0x8888888192a4a0593c13532ba48449fc24c3beda",
+        "feeRecipient": "0x5afe865300895b96d20132a8d9fa8e7829334b52",
+        "fullName": "Ventuals",
+        "name": "vntl",
+        "oracleUpdater": null,
+        "subDeployers": [
+          [
+            "registerAsset",
+            [
+              "0xdfc9f8b03664fb312c51ebf820eaefb6732f495a"
+            ]
+          ],
+          [
+            "setOracle",
+            [
+              "0x0ac1e81a640f1492c286d71031af5af27a9b712e"
+            ]
+          ],
+          [
+            "setMarginTableIds",
+            [
+              "0x6bdf4b47b638a8bb8ba630fbf867dc0f458d953e"
+            ]
+          ],
+          [
+            "setOpenInterestCaps",
+            [
+              "0x6bdf4b47b638a8bb8ba630fbf867dc0f458d953e"
+            ]
+          ],
+          [
+            "setFundingMultipliers",
+            [
+              "0x6bdf4b47b638a8bb8ba630fbf867dc0f458d953e",
+              "0x9f82ce39734468c213f46834d0189222e1fadf5b"
+            ]
+          ],
+          [
+            "setPerpAnnotation",
+            [
+              "0x6bdf4b47b638a8bb8ba630fbf867dc0f458d953e"
+            ]
+          ]
+        ]
+      },
+      {
+        "assetToFundingClamp": [],
+        "assetToFundingInterestRate": [],
+        "assetToFundingMultiplier": [
+          [
+            "hyna:IP",
+            "0.01"
+          ],
+          [
+            "hyna:LIGHTER",
+            "1.0"
+          ],
+          [
+            "hyna:LIT",
+            "0.05"
+          ]
+        ],
+        "assetToStreamingOiCap": [
+          [
+            "hyna:ADA",
+            "35000000.0"
+          ],
+          [
+            "hyna:BASED",
+            "10000000.0"
+          ],
+          [
+            "hyna:BCH",
+            "35000000.0"
+          ],
+          [
+            "hyna:BNB",
+            "35000000.0"
+          ],
+          [
+            "hyna:BTC",
+            "75000000.0"
+          ],
+          [
+            "hyna:DOGE",
+            "35000000.0"
+          ],
+          [
+            "hyna:ENA",
+            "35000000.0"
+          ],
+          [
+            "hyna:ETH",
+            "75000000.0"
+          ],
+          [
+            "hyna:FARTCOIN",
+            "35000000.0"
+          ],
+          [
+            "hyna:GOLD",
+            "10000000.0"
+          ],
+          [
+            "hyna:HYPE",
+            "35000000.0"
+          ],
+          [
+            "hyna:IP",
+            "35000000.0"
+          ],
+          [
+            "hyna:LIGHTER",
+            "35000000.0"
+          ],
+          [
+            "hyna:LINK",
+            "35000000.0"
+          ],
+          [
+            "hyna:LIT",
+            "35000000.0"
+          ],
+          [
+            "hyna:LTC",
+            "35000000.0"
+          ],
+          [
+            "hyna:PUMP",
+            "35000000.0"
+          ],
+          [
+            "hyna:SILVER",
+            "10000000.0"
+          ],
+          [
+            "hyna:SOL",
+            "35000000.0"
+          ],
+          [
+            "hyna:SUI",
+            "35000000.0"
+          ],
+          [
+            "hyna:XMR",
+            "35000000.0"
+          ],
+          [
+            "hyna:XPL",
+            "35000000.0"
+          ],
+          [
+            "hyna:XRP",
+            "35000000.0"
+          ],
+          [
+            "hyna:ZEC",
+            "35000000.0"
+          ]
+        ],
+        "deployer": "0x53e655101ea361537124ef814ad4e654b54d0637",
+        "feeRecipient": null,
+        "fullName": "HyENA",
+        "name": "hyna",
+        "oracleUpdater": "0xaab93501e78f5105e265a1eafda10ce6530de17e",
+        "subDeployers": [
+          [
+            "setOracle",
+            [
+              "0xaab93501e78f5105e265a1eafda10ce6530de17e",
+              "0xaffde4868990b0b547dea3aaf8082b69825bbc2f"
+            ]
+          ]
+        ]
+      },
+      {
+        "assetToFundingClamp": [],
+        "assetToFundingInterestRate": [
+          [
+            "km:AAPL",
+            "0.0000456621"
+          ],
+          [
+            "km:BABA",
+            "0.0000639269"
+          ],
+          [
+            "km:BMNR",
+            "0.0000456621"
+          ],
+          [
+            "km:EUR",
+            "0.0"
+          ],
+          [
+            "km:GLDMINE",
+            "0.0000456621"
+          ],
+          [
+            "km:GOLD",
+            "0.0000456621"
+          ],
+          [
+            "km:GOOGL",
+            "0.0000456621"
+          ],
+          [
+            "km:MU",
+            "0.0000456621"
+          ],
+          [
+            "km:NVDA",
+            "0.0000456621"
+          ],
+          [
+            "km:PLTR",
+            "0.0000456621"
+          ],
+          [
+            "km:RTX",
+            "0.0000456621"
+          ],
+          [
+            "km:SEMI",
+            "0.0000456621"
+          ],
+          [
+            "km:SILVER",
+            "0.0000456621"
+          ],
+          [
+            "km:SMALL2000",
+            "0.0000456621"
+          ],
+          [
+            "km:TENCENT",
+            "0.0000456621"
+          ],
+          [
+            "km:TSLA",
+            "0.0000456621"
+          ],
+          [
+            "km:US500",
+            "0.0000456621"
+          ],
+          [
+            "km:USBOND",
+            "0.0000456621"
+          ],
+          [
+            "km:USENERGY",
+            "0.0000456621"
+          ],
+          [
+            "km:USOIL",
+            "0.0000456621"
+          ],
+          [
+            "km:USTECH",
+            "0.0000456621"
+          ],
+          [
+            "km:XIAOMI",
+            "0.0000456621"
+          ]
+        ],
+        "assetToFundingMultiplier": [],
+        "assetToStreamingOiCap": [
+          [
+            "km:AAPL",
+            "160000.0"
+          ],
+          [
+            "km:BABA",
+            "1300000.0"
+          ],
+          [
+            "km:BMNR",
+            "420000.0"
+          ],
+          [
+            "km:EUR",
+            "280000.0"
+          ],
+          [
+            "km:GLDMINE",
+            "40000.0"
+          ],
+          [
+            "km:GOLD",
+            "60000.0"
+          ],
+          [
+            "km:GOOGL",
+            "60000.0"
+          ],
+          [
+            "km:MU",
+            "210000.0"
+          ],
+          [
+            "km:NVDA",
+            "450000.0"
+          ],
+          [
+            "km:PLTR",
+            "175000.0"
+          ],
+          [
+            "km:RTX",
+            "20000.0"
+          ],
+          [
+            "km:SEMI",
+            "50000.0"
+          ],
+          [
+            "km:SILVER",
+            "75000.0"
+          ],
+          [
+            "km:SMALL2000",
+            "200000.0"
+          ],
+          [
+            "km:TENCENT",
+            "210000.0"
+          ],
+          [
+            "km:TSLA",
+            "100000.0"
+          ],
+          [
+            "km:US500",
+            "1150000.0"
+          ],
+          [
+            "km:USBOND",
+            "160000.0"
+          ],
+          [
+            "km:USENERGY",
+            "850000.0"
+          ],
+          [
+            "km:USOIL",
+            "775000.0"
+          ],
+          [
+            "km:USTECH",
+            "210000.0"
+          ],
+          [
+            "km:XIAOMI",
+            "140000.0"
+          ]
+        ],
+        "deployer": "0x71f0019cc7fa79e4f42587fb7b9a817d8d2429ec",
+        "feeRecipient": "0xbcd4071d023bf2aae484d724c130b5af6f0ca0d2",
+        "fullName": "Markets by Kinetiq",
+        "name": "km",
+        "oracleUpdater": null,
+        "subDeployers": [
+          [
+            "registerAsset",
+            [
+              "0x2cb0dc3ac9a528527db7cc9210b9d4e3c7f68e19"
+            ]
+          ],
+          [
+            "setOracle",
+            [
+              "0xe99202afc998c66b16c1dbb41148ed25efda86c4"
+            ]
+          ],
+          [
+            "haltTrading",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setMarginTableIds",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setOpenInterestCaps",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setFundingMultipliers",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setMarginModes",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setFundingInterestRates",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setPerpAnnotation",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ]
+        ]
+      },
+      {
+        "assetToFundingClamp": [],
+        "assetToFundingInterestRate": [],
+        "assetToFundingMultiplier": [],
+        "assetToStreamingOiCap": [],
+        "deployer": "0x372c7f69d0ecc14f73f89bd8a7dfb41bdf29857c",
+        "feeRecipient": null,
+        "fullName": "ABCDEx",
+        "name": "abcd",
+        "oracleUpdater": null,
+        "subDeployers": []
+      },
+      {
+        "assetToFundingClamp": [],
+        "assetToFundingInterestRate": [
+          [
+            "cash:META",
+            "0.005"
+          ]
+        ],
+        "assetToFundingMultiplier": [
+          [
+            "cash:AMZN",
+            "0.000001"
+          ],
+          [
+            "cash:BTC",
+            "0.000001"
+          ],
+          [
+            "cash:CAR",
+            "0.000001"
+          ],
+          [
+            "cash:ETH",
+            "0.000001"
+          ],
+          [
+            "cash:EWY",
+            "0.000001"
+          ],
+          [
+            "cash:GOLD",
+            "0.000001"
+          ],
+          [
+            "cash:GOOGL",
+            "0.000001"
+          ],
+          [
+            "cash:HOOD",
+            "0.000001"
+          ],
+          [
+            "cash:INTC",
+            "0.000001"
+          ],
+          [
+            "cash:KWEB",
+            "0.000001"
+          ],
+          [
+            "cash:META",
+            "0.000001"
+          ],
+          [
+            "cash:MSFT",
+            "0.000001"
+          ],
+          [
+            "cash:NVDA",
+            "0.000001"
+          ],
+          [
+            "cash:SILVER",
+            "0.000001"
+          ],
+          [
+            "cash:TSLA",
+            "0.000001"
+          ],
+          [
+            "cash:USA500",
+            "0.000001"
+          ],
+          [
+            "cash:WTI",
+            "0.000001"
+          ]
+        ],
+        "assetToStreamingOiCap": [
+          [
+            "cash:AMZN",
+            "20000000.0"
+          ],
+          [
+            "cash:CAR",
+            "500000.0"
+          ],
+          [
+            "cash:EWY",
+            "50000000.0"
+          ],
+          [
+            "cash:GOLD",
+            "2000000.0"
+          ],
+          [
+            "cash:GOOGL",
+            "2000000.0"
+          ],
+          [
+            "cash:HOOD",
+            "2000000.0"
+          ],
+          [
+            "cash:INTC",
+            "1000000.0"
+          ],
+          [
+            "cash:KWEB",
+            "500000.0"
+          ],
+          [
+            "cash:META",
+            "20000000.0"
+          ],
+          [
+            "cash:MSFT",
+            "1000000.0"
+          ],
+          [
+            "cash:NVDA",
+            "20000000.0"
+          ],
+          [
+            "cash:SILVER",
+            "2000000.0"
+          ],
+          [
+            "cash:TSLA",
+            "1000000.0"
+          ],
+          [
+            "cash:USA500",
+            "100000000.0"
+          ],
+          [
+            "cash:WTI",
+            "2000000.0"
+          ]
+        ],
+        "deployer": "0xffa8198c62adb1e811629bd54c9b646d726deef7",
+        "feeRecipient": "0xaa7f0d3da989dae8fd166345a3ce21509f8c8bb4",
+        "fullName": "dreamcash",
+        "name": "cash",
+        "oracleUpdater": null,
+        "subDeployers": [
+          [
+            "setOracle",
+            [
+              "0xa1607092ef78d439f097c1aec678a08902c773e2",
+              "0xe2de88eb25452f26dd02cbe21a3c2a4db17f9b1d"
+            ]
+          ],
+          [
+            "insertMarginTable",
+            [
+              "0x50ad2695c1e2a896c65b9a9382926eebbf4a77a6"
+            ]
+          ],
+          [
+            "haltTrading",
+            [
+              "0x50ad2695c1e2a896c65b9a9382926eebbf4a77a6"
+            ]
+          ],
+          [
+            "setMarginTableIds",
+            [
+              "0x50ad2695c1e2a896c65b9a9382926eebbf4a77a6"
+            ]
+          ],
+          [
+            "setOpenInterestCaps",
+            [
+              "0x50ad2695c1e2a896c65b9a9382926eebbf4a77a6"
+            ]
+          ],
+          [
+            "setFundingMultipliers",
+            [
+              "0x1a5ddaccd40db649cbe68d72a3017c30a96902fb",
+              "0x50ad2695c1e2a896c65b9a9382926eebbf4a77a6"
+            ]
+          ],
+          [
+            "setMarginModes",
+            [
+              "0x50ad2695c1e2a896c65b9a9382926eebbf4a77a6"
+            ]
+          ],
+          [
+            "setFundingInterestRates",
+            [
+              "0x50ad2695c1e2a896c65b9a9382926eebbf4a77a6"
+            ]
+          ],
+          [
+            "setPerpAnnotation",
+            [
+              "0x50ad2695c1e2a896c65b9a9382926eebbf4a77a6"
+            ]
+          ]
+        ]
+      },
+      {
+        "assetToFundingClamp": [
+          [
+            "para:10Y",
+            "0.005"
+          ],
+          [
+            "para:2Y",
+            "0.005"
+          ],
+          [
+            "para:30Y",
+            "0.005"
+          ]
+        ],
+        "assetToFundingInterestRate": [],
+        "assetToFundingMultiplier": [
+          [
+            "para:10Y",
+            "0.1"
+          ],
+          [
+            "para:2Y",
+            "0.1"
+          ],
+          [
+            "para:30Y",
+            "0.1"
+          ],
+          [
+            "para:AAOI",
+            "0.6"
+          ],
+          [
+            "para:ANSEM",
+            "0.6"
+          ],
+          [
+            "para:ANTH",
+            "0.006"
+          ],
+          [
+            "para:AVGO",
+            "0.6"
+          ],
+          [
+            "para:BTCD",
+            "0.6"
+          ],
+          [
+            "para:CIEN",
+            "0.6"
+          ],
+          [
+            "para:CIFR",
+            "0.6"
+          ],
+          [
+            "para:COHR",
+            "0.6"
+          ],
+          [
+            "para:CRDO",
+            "0.6"
+          ],
+          [
+            "para:CRWD",
+            "0.6"
+          ],
+          [
+            "para:DRV",
+            "0.6"
+          ],
+          [
+            "para:GLW",
+            "0.6"
+          ],
+          [
+            "para:IGV",
+            "0.6"
+          ],
+          [
+            "para:IREN",
+            "0.6"
+          ],
+          [
+            "para:LRCX",
+            "0.6"
+          ],
+          [
+            "para:MELI",
+            "0.6"
+          ],
+          [
+            "para:NET",
+            "0.6"
+          ],
+          [
+            "para:OTHERS",
+            "0.6"
+          ],
+          [
+            "para:RDDT",
+            "0.6"
+          ],
+          [
+            "para:SMCI",
+            "0.6"
+          ],
+          [
+            "para:SMH",
+            "0.6"
+          ],
+          [
+            "para:SOFI",
+            "0.6"
+          ],
+          [
+            "para:STX",
+            "0.6"
+          ],
+          [
+            "para:TER",
+            "0.6"
+          ],
+          [
+            "para:TOTAL2",
+            "0.6"
+          ],
+          [
+            "para:TREAD",
+            "0.6"
+          ],
+          [
+            "para:TTWO",
+            "0.6"
+          ],
+          [
+            "para:UNITREE",
+            "0.6"
+          ],
+          [
+            "para:VST",
+            "0.6"
+          ]
+        ],
+        "assetToStreamingOiCap": [
+          [
+            "para:10Y",
+            "25000000.0"
+          ],
+          [
+            "para:2Y",
+            "25000000.0"
+          ],
+          [
+            "para:30Y",
+            "25000000.0"
+          ],
+          [
+            "para:AAOI",
+            "25000000.0"
+          ],
+          [
+            "para:ANSEM",
+            "5000000.0"
+          ],
+          [
+            "para:ANTH",
+            "25000000.0"
+          ],
+          [
+            "para:AVGO",
+            "25000000.0"
+          ],
+          [
+            "para:BTCD",
+            "10000000.0"
+          ],
+          [
+            "para:CIEN",
+            "25000000.0"
+          ],
+          [
+            "para:CIFR",
+            "25000000.0"
+          ],
+          [
+            "para:COHR",
+            "25000000.0"
+          ],
+          [
+            "para:CRDO",
+            "25000000.0"
+          ],
+          [
+            "para:CRWD",
+            "25000000.0"
+          ],
+          [
+            "para:DRV",
+            "10000000.0"
+          ],
+          [
+            "para:GDX",
+            "25000000.0"
+          ],
+          [
+            "para:GLW",
+            "25000000.0"
+          ],
+          [
+            "para:IGV",
+            "25000000.0"
+          ],
+          [
+            "para:IREN",
+            "25000000.0"
+          ],
+          [
+            "para:LRCX",
+            "25000000.0"
+          ],
+          [
+            "para:MELI",
+            "25000000.0"
+          ],
+          [
+            "para:NET",
+            "25000000.0"
+          ],
+          [
+            "para:OTHERS",
+            "5000000.0"
+          ],
+          [
+            "para:RDDT",
+            "25000000.0"
+          ],
+          [
+            "para:SMCI",
+            "25000000.0"
+          ],
+          [
+            "para:SMH",
+            "25000000.0"
+          ],
+          [
+            "para:SOFI",
+            "25000000.0"
+          ],
+          [
+            "para:STX",
+            "25000000.0"
+          ],
+          [
+            "para:TER",
+            "25000000.0"
+          ],
+          [
+            "para:TOTAL2",
+            "5000000.0"
+          ],
+          [
+            "para:TREAD",
+            "10000000.0"
+          ],
+          [
+            "para:TTWO",
+            "25000000.0"
+          ],
+          [
+            "para:UNITREE",
+            "25000000.0"
+          ],
+          [
+            "para:VST",
+            "25000000.0"
+          ]
+        ],
+        "deployer": "0x8888888c43cbb7e1c4132542e46831bffd866ed3",
+        "feeRecipient": "0x1770f43c71b8b2977771b73ca4c4cbe0c20412ed",
+        "fullName": "Paragon",
+        "name": "para",
+        "oracleUpdater": "0x8888888c43cbb7e1c4132542e46831bffd866ed3",
+        "subDeployers": [
+          [
+            "setOracle",
+            [
+              "0x764ed9d59c91a2c653fd50c43585917366244335",
+              "0x8888888c43cbb7e1c4132542e46831bffd866ed3"
+            ]
+          ]
+        ]
+      },
+      {
+        "assetToFundingClamp": [
+          [
+            "mkts:BVIV",
+            "0.0003"
+          ]
+        ],
+        "assetToFundingInterestRate": [
+          [
+            "mkts:BVIV",
+            "0.00217458"
+          ],
+          [
+            "mkts:SMALL2000",
+            "0.0000456621"
+          ],
+          [
+            "mkts:US500",
+            "0.0000456621"
+          ],
+          [
+            "mkts:USBOND",
+            "0.0000456621"
+          ],
+          [
+            "mkts:USTECH",
+            "0.0000456621"
+          ]
+        ],
+        "assetToFundingMultiplier": [],
+        "assetToStreamingOiCap": [
+          [
+            "mkts:BVIV",
+            "2000000.0"
+          ],
+          [
+            "mkts:SMALL2000",
+            "10000000.0"
+          ],
+          [
+            "mkts:US500",
+            "25000000.0"
+          ],
+          [
+            "mkts:USBOND",
+            "10000000.0"
+          ],
+          [
+            "mkts:USTECH",
+            "30000000.0"
+          ]
+        ],
+        "deployer": "0x71f0019cc7fa79e4f42587fb7b9a817d8d2429ec",
+        "feeRecipient": "0xbcd4071d023bf2aae484d724c130b5af6f0ca0d2",
+        "fullName": "Markets By Kinetiq",
+        "name": "mkts",
+        "oracleUpdater": null,
+        "subDeployers": [
+          [
+            "registerAsset",
+            [
+              "0x2cb0dc3ac9a528527db7cc9210b9d4e3c7f68e19",
+              "0xc4514914debbe9caee3e8786aa29b27a05c4957c"
+            ]
+          ],
+          [
+            "setOracle",
+            [
+              "0x64752ac82334692392e7f9aba941dc9ce470c46e",
+              "0xe99202afc998c66b16c1dbb41148ed25efda86c4"
+            ]
+          ],
+          [
+            "haltTrading",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setMarginTableIds",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setOpenInterestCaps",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setFundingMultipliers",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setMarginModes",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setDeployerFees",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setFundingInterestRates",
+            [
+              "0xe38a4ea7103894d8d29f38bfe69b5d28f038581a",
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setPerpAnnotation",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ],
+          [
+            "setFundingClamps",
+            [
+              "0xecc1e0731ca1cbd237c0564935637c4c9e899e41"
+            ]
+          ]
+        ]
+      },
+      {
+        "assetToFundingClamp": [],
+        "assetToFundingInterestRate": [],
+        "assetToFundingMultiplier": [
+          [
+            "io:ANTH",
+            "0.125"
+          ],
+          [
+            "io:DRAM",
+            "0.5"
+          ],
+          [
+            "io:EWY",
+            "0.5"
+          ],
+          [
+            "io:GPRO",
+            "0.5"
+          ],
+          [
+            "io:IONQ",
+            "0.5"
+          ],
+          [
+            "io:NBIS",
+            "0.5"
+          ],
+          [
+            "io:OAI",
+            "0.125"
+          ],
+          [
+            "io:SNDK",
+            "0.5"
+          ],
+          [
+            "io:TCNT",
+            "0.5"
+          ]
+        ],
+        "assetToStreamingOiCap": [
+          [
+            "io:ANTH",
+            "45000000.0"
+          ],
+          [
+            "io:DRAM",
+            "5000000.0"
+          ],
+          [
+            "io:EWY",
+            "5000000.0"
+          ],
+          [
+            "io:GPRO",
+            "5000000.0"
+          ],
+          [
+            "io:IONQ",
+            "5000000.0"
+          ],
+          [
+            "io:NBIS",
+            "15000000.0"
+          ],
+          [
+            "io:OAI",
+            "12000000.0"
+          ],
+          [
+            "io:SNDK",
+            "10000000.0"
+          ],
+          [
+            "io:TCNT",
+            "5000000.0"
+          ]
+        ],
+        "deployer": "0x320c8988e3d1b5198f335802d7bfd2728a8fcac6",
+        "feeRecipient": null,
+        "fullName": "EntropyIO",
+        "name": "io",
+        "oracleUpdater": "0x94757f8dcb4bf73b850195660e959d1105cfedd5",
+        "subDeployers": [
+          [
+            "registerAsset",
+            [
+              "0xd5d18d5f4026a33ca6c8fce75551b24cbb5452ea"
+            ]
+          ],
+          [
+            "setOracle",
+            [
+              "0x94757f8dcb4bf73b850195660e959d1105cfedd5"
+            ]
+          ],
+          [
+            "setFeeRecipient",
+            [
+              "0xd5d18d5f4026a33ca6c8fce75551b24cbb5452ea"
+            ]
+          ],
+          [
+            "haltTrading",
+            [
+              "0xd5d18d5f4026a33ca6c8fce75551b24cbb5452ea"
+            ]
+          ],
+          [
+            "setMarginTableIds",
+            [
+              "0x7704c6ec1fb6b359a63da840a0b1e9d66441ffe4"
+            ]
+          ],
+          [
+            "setOpenInterestCaps",
+            [
+              "0x7704c6ec1fb6b359a63da840a0b1e9d66441ffe4"
+            ]
+          ],
+          [
+            "setFundingMultipliers",
+            [
+              "0x7704c6ec1fb6b359a63da840a0b1e9d66441ffe4"
+            ]
+          ],
+          [
+            "setMarginModes",
+            [
+              "0xd5d18d5f4026a33ca6c8fce75551b24cbb5452ea"
+            ]
+          ],
+          [
+            "setDeployerFees",
+            [
+              "0xd5d18d5f4026a33ca6c8fce75551b24cbb5452ea"
+            ]
+          ],
+          [
+            "setFundingInterestRates",
+            [
+              "0x7704c6ec1fb6b359a63da840a0b1e9d66441ffe4"
+            ]
+          ],
+          [
+            "setPerpAnnotation",
+            [
+              "0x7704c6ec1fb6b359a63da840a0b1e9d66441ffe4"
+            ]
+          ]
+        ]
+      }
+    ],
+    "spotClearinghouseState": {
+      "balances": [
+        {
+          "coin": "USDC",
+          "entryNtl": "0.0",
+          "hold": "8.580042",
+          "token": 0,
+          "total": "85.735517"
+        },
+        {
+          "coin": "USDE",
+          "entryNtl": "0.0",
+          "hold": "0.0",
+          "token": 235,
+          "total": "0.0"
+        },
+        {
+          "coin": "USDT0",
+          "entryNtl": "0.0",
+          "hold": "0.0",
+          "token": 268,
+          "total": "0.0"
+        },
+        {
+          "coin": "USDH",
+          "entryNtl": "0.0",
+          "hold": "0.0",
+          "token": 360,
+          "total": "0.0"
+        }
+      ],
+      "tokenToAvailableAfterMaintenance": [
+        [
+          0,
+          "81.445496"
+        ]
+      ]
+    },
+    "userAbstraction": "unifiedAccount",
+    "venues": {
+      "": {
+        "orders": [],
+        "state": {
+          "assetPositions": [
+            {
+              "position": {
+                "coin": "AVAX",
+                "cumFunding": {
+                  "allTime": "0.018096",
+                  "sinceChange": "0.018096",
+                  "sinceOpen": "0.018096"
+                },
+                "entryPx": "11.159",
+                "leverage": {
+                  "type": "cross",
+                  "value": 10
+                },
+                "liquidationPx": "0.0091457761",
+                "marginUsed": "8.580042",
+                "maxLeverage": 10,
+                "positionValue": "85.80042",
+                "returnOnEquity": "0.2930370105",
+                "szi": "7.47",
+                "unrealizedPnl": "2.44269"
+              },
+              "type": "oneWay"
+            }
+          ],
+          "crossMaintenanceMarginUsed": "4.290021",
+          "crossMarginSummary": {
+            "accountValue": "10.780536",
+            "totalMarginUsed": "8.580042",
+            "totalNtlPos": "85.80042",
+            "totalRawUsd": "-75.019884"
+          },
+          "marginSummary": {
+            "accountValue": "10.780536",
+            "totalMarginUsed": "8.580042",
+            "totalNtlPos": "85.80042",
+            "totalRawUsd": "-75.019884"
+          },
+          "time": 1791306549910,
+          "withdrawable": "2.200494"
+        }
+      },
+      "abcd": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306550712,
+          "withdrawable": "0.0"
+        }
+      },
+      "cash": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306550777,
+          "withdrawable": "0.0"
+        }
+      },
+      "flx": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306550171,
+          "withdrawable": "0.0"
+        }
+      },
+      "hyna": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306550444,
+          "withdrawable": "0.0"
+        }
+      },
+      "io": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306551244,
+          "withdrawable": "0.0"
+        }
+      },
+      "km": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306550511,
+          "withdrawable": "0.0"
+        }
+      },
+      "mkts": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306551041,
+          "withdrawable": "0.0"
+        }
+      },
+      "para": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306550955,
+          "withdrawable": "0.0"
+        }
+      },
+      "vntl": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306550227,
+          "withdrawable": "0.0"
+        }
+      },
+      "xyz": {
+        "orders": [],
+        "state": {
+          "assetPositions": [],
+          "crossMaintenanceMarginUsed": "0.0",
+          "crossMarginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "marginSummary": {
+            "accountValue": "0.0",
+            "totalMarginUsed": "0.0",
+            "totalNtlPos": "0.0",
+            "totalRawUsd": "0.0"
+          },
+          "time": 1791306549910,
+          "withdrawable": "0.0"
+        }
+      }
+    }
+  },
+  "exposure_x": 1.000757014155522,
+  "journal": {
+    "multi_account_agent_nonces": [
+      {
+        "agent_address": "0x6fad0830d66fc21b6dba0c39357625df55360f9b",
+        "last_nonce": 1791245486492,
+        "updated_at": "2026-10-06T00:11:26.474922+00:00"
+      }
+    ],
+    "multi_account_execution_actions": [
+      {
+        "action": "ENTER",
+        "asset": "BTC",
+        "cloid": "0x37d093ba43127dd7a43549bb4fae112f",
+        "created_at": "2026-09-23T00:11:08.224121+00:00",
+        "expires_at_ms": null,
+        "hyperliquid_order_id": "553532365661",
+        "id": "25f54928-f5e2-40a3-bc77-b93f2c67c666",
+        "leg_index": 0,
+        "reduce_only": false,
+        "requested_notional": 41.593231,
+        "run_id": "de9399ee-d5fa-4680-8c08-1e676c46e80b",
+        "side": "buy",
+        "size": 0.00048,
+        "submission_state": "KNOWN",
+        "updated_at": "2026-09-26T10:16:34.748+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "EXIT",
+        "asset": "BTC",
+        "cloid": "0xb6e35a6976c8e14bc7d25fbad437e781",
+        "created_at": "2026-09-26T10:16:35.268167+00:00",
+        "expires_at_ms": 1790417975571,
+        "hyperliquid_order_id": "557185919168",
+        "id": "3dc23a6c-eb05-4351-85bc-36f8109b1c1c",
+        "leg_index": 0,
+        "reduce_only": true,
+        "requested_notional": 40.35696,
+        "run_id": "451e6647-afcd-43b7-a637-e19c59622fdd",
+        "side": "sell",
+        "size": 0.00048,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-09-26T10:16:38.063+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "ENTER",
+        "asset": "AVAX",
+        "cloid": "0xd738ad3f5adaabfc0f00244bfa21eb8f",
+        "created_at": "2026-09-26T10:16:39.16134+00:00",
+        "expires_at_ms": 1790417979460,
+        "hyperliquid_order_id": "557185956698",
+        "id": "80146dad-edd9-4332-b18d-45ccf7d1755c",
+        "leg_index": 1,
+        "reduce_only": false,
+        "requested_notional": 102.56054,
+        "run_id": "451e6647-afcd-43b7-a637-e19c59622fdd",
+        "side": "buy",
+        "size": 9.58,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-09-26T10:16:41.678+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "RESIZE",
+        "asset": "AVAX",
+        "cloid": "0x9d0611c0ea77e558ee8f280e3d2777c2",
+        "created_at": "2026-09-29T00:11:05.993565+00:00",
+        "expires_at_ms": 1790640846333,
+        "hyperliquid_order_id": "559520232243",
+        "id": "7d625144-a42a-480b-8d82-61488ae16457",
+        "leg_index": 0,
+        "reduce_only": true,
+        "requested_notional": 20.709367999999998,
+        "run_id": "5599db8e-962a-4815-8366-19073b18fb66",
+        "side": "sell",
+        "size": 1.93,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-09-29T00:11:10.183+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "EXIT",
+        "asset": "AVAX",
+        "cloid": "0xd91d0679bb48242964e7922e7b861ac7",
+        "created_at": "2026-10-01T00:11:39.476085+00:00",
+        "expires_at_ms": 1790813679788,
+        "hyperliquid_order_id": "561784971605",
+        "id": "bba2bdc0-aecf-4186-9119-b99af54b1f94",
+        "leg_index": 0,
+        "reduce_only": true,
+        "requested_notional": 83.5227,
+        "run_id": "c74ae2b4-4e9a-4ff0-81f3-88323a3b1864",
+        "side": "sell",
+        "size": 7.65,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-10-01T00:11:42.069+00:00",
+        "verification_state": "VERIFIED"
+      },
+      {
+        "action": "ENTER",
+        "asset": "AVAX",
+        "cloid": "0x69b7680580acc75446fb6e497545bfa2",
+        "created_at": "2026-10-06T00:11:26.186551+00:00",
+        "expires_at_ms": 1791245666492,
+        "hyperliquid_order_id": "566271255984",
+        "id": "7cb38327-581b-47c9-9973-14ba00a86501",
+        "leg_index": 0,
+        "reduce_only": false,
+        "requested_notional": 83.348433,
+        "run_id": "f98ab533-7006-413e-8804-0327594cf6e4",
+        "side": "buy",
+        "size": 7.47,
+        "submission_state": "SUBMITTED",
+        "updated_at": "2026-10-06T00:11:28.828+00:00",
+        "verification_state": "VERIFIED"
+      }
+    ],
+    "multi_account_execution_locks": [],
+    "multi_account_execution_runs": [
+      {
+        "account_equity_after": 83.288513,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1,
+        "canonical_closed_day": "2026-10-05",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-10-06T00:11:29.63+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "f98ab533-7006-413e-8804-0327594cf6e4",
+        "sanitized_error": null,
+        "started_at": "2026-10-06T00:11:24.915385+00:00",
+        "status": "FILLED_AND_ALIGNED",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 82.945131,
+        "account_equity_before": 87.023082,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1,
+        "canonical_closed_day": "2026-09-29",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-29::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-30T14:43:34.452+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "71be83e0-ef16-4112-886f-2c76ec497372",
+        "sanitized_error": null,
+        "started_at": "2026-09-30T00:11:10.975073+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.386018,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-30",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-30::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-01T00:11:42.506+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "c74ae2b4-4e9a-4ff0-81f3-88323a3b1864",
+        "sanitized_error": null,
+        "started_at": "2026-10-01T00:11:38.588296+00:00",
+        "status": "FILLED_AND_ALIGNED",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-03",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-03::target_CASH::candidate_ETH",
+        "completed_at": "2026-09-06T13:26:22.647+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "83612150-26c9-442d-b6e2-f11763050eb0",
+        "sanitized_error": null,
+        "started_at": "2026-09-05T17:00:44.275032+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-05",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-05::target_CASH::candidate_BTC",
+        "completed_at": "2026-09-06T20:12:30.186+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "89dc5d5b-1c3e-41bb-ac8c-aa84e77b5fb6",
+        "sanitized_error": null,
+        "started_at": "2026-09-06T20:12:29.469686+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-19",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-19::target_CASH::candidate_BNB",
+        "completed_at": "2026-09-20T07:11:26.967+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "409181ee-0a09-4f52-8eef-a620f257e5b3",
+        "sanitized_error": null,
+        "started_at": "2026-09-20T07:11:26.252894+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-20",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-20::target_CASH::candidate_BNB",
+        "completed_at": "2026-09-21T00:11:04.997+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "7bfae820-3470-4d13-89f9-67b1165815ad",
+        "sanitized_error": null,
+        "started_at": "2026-09-21T00:11:04.470697+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.186462,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-09-21",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-21::target_CASH::candidate_AVAX",
+        "completed_at": "2026-09-22T00:11:06.43+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "d92dd1f5-94de-431e-8c66-1d03272121b3",
+        "sanitized_error": null,
+        "started_at": "2026-09-22T00:11:05.874646+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 103.879102,
+        "account_equity_before": 83.186462,
+        "authorized_target_asset": "BTC",
+        "authorized_target_exposure": 0.5,
+        "canonical_closed_day": "2026-09-22",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-22::target_BTC::candidate_BTC",
+        "completed_at": "2026-09-23T00:11:10.902+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "de9399ee-d5fa-4680-8c08-1e676c46e80b",
+        "sanitized_error": null,
+        "started_at": "2026-09-23T00:11:07.975711+00:00",
+        "status": "PARTIAL",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 81.983089,
+        "account_equity_before": 82.066112,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1.25,
+        "canonical_closed_day": "2026-09-25",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-25::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-26T10:16:42.54+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "451e6647-afcd-43b7-a637-e19c59622fdd",
+        "sanitized_error": null,
+        "started_at": "2026-09-26T10:16:33.25981+00:00",
+        "status": "FILLED_AND_ALIGNED",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 82.942076,
+        "account_equity_before": 82.942076,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1.25,
+        "canonical_closed_day": "2026-09-26",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-26::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-27T00:11:01.784+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "5829a182-495c-4376-af83-3f2056e12232",
+        "sanitized_error": null,
+        "started_at": "2026-09-27T00:11:00.558178+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.054357,
+        "account_equity_before": 83.054357,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1.25,
+        "canonical_closed_day": "2026-09-27",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-27::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-28T00:11:20.892+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "2e177d0f-93ee-4bc4-b411-f30adfb0e6a6",
+        "sanitized_error": null,
+        "started_at": "2026-09-28T00:11:19.996911+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 81.71551,
+        "account_equity_before": 81.694126,
+        "authorized_target_asset": "AVAX",
+        "authorized_target_exposure": 1,
+        "canonical_closed_day": "2026-09-28",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-09-28::target_AVAX::candidate_AVAX",
+        "completed_at": "2026-09-29T00:11:10.608+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "5599db8e-962a-4815-8366-19073b18fb66",
+        "sanitized_error": null,
+        "started_at": "2026-09-29T00:11:05.205173+00:00",
+        "status": "FILLED_AND_ALIGNED",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-10-01",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-01::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-02T00:11:38.495+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "1a19a6a7-da62-44de-b8df-29604457f851",
+        "sanitized_error": null,
+        "started_at": "2026-10-02T00:11:37.349502+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-10-02",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-02::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-03T00:11:22.545+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "51e7d468-c7ef-48b5-997b-66eced0970d0",
+        "sanitized_error": null,
+        "started_at": "2026-10-03T00:11:21.655823+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-10-03",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-03::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-04T07:31:11.184+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "9395a298-f83a-4359-a7e0-edc51cd2eaac",
+        "sanitized_error": null,
+        "started_at": "2026-10-04T00:11:36.250542+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      },
+      {
+        "account_equity_after": 83.348433,
+        "account_equity_before": 83.348433,
+        "authorized_target_asset": "CASH",
+        "authorized_target_exposure": 0,
+        "canonical_closed_day": "2026-10-04",
+        "canonical_signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-04::target_CASH::candidate_AVAX",
+        "completed_at": "2026-10-05T00:11:39.181+00:00",
+        "hyperliquid_account_id": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "id": "aaca7558-c73d-4161-a1f0-f80eab367c6b",
+        "sanitized_error": null,
+        "started_at": "2026-10-05T00:11:38.307486+00:00",
+        "status": "NO_ACTION",
+        "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "user_id": "7ae958ed-0d46-4ad8-955a-88bc674e687d"
+      }
+    ]
+  },
+  "journal_sha256_after": "5806979e2ad14dcc88147a2021b57e9f09774196bec168042fa2071f8c3fe75a",
+  "journal_sha256_before": "5806979e2ad14dcc88147a2021b57e9f09774196bec168042fa2071f8c3fe75a",
+  "journal_unchanged": true,
+  "manifest": {
+    "account_equity_after": 83.288513,
+    "account_equity_before": 83.348433,
+    "authority_status": "PASSED",
+    "cloid": [
+      "0x69b7680580acc75446fb6e497545bfa2"
+    ],
+    "dashboard_status": "PASSED",
+    "execution_action": "INCREASE",
+    "execution_backend": "multi_account",
+    "execution_evidence": {
+      "actions": [
+        {
+          "action": "ENTER",
+          "asset": "AVAX",
+          "cloid": "0x69b7680580acc75446fb6e497545bfa2",
+          "orderId": "566271255984",
+          "state": "SUBMITTED",
+          "verificationState": "VERIFIED"
+        }
+      ],
+      "available": true,
+      "journalRunId": "f98ab533-7006-413e-8804-0327594cf6e4"
+    },
+    "execution_outcome": "FILLED_AND_ALIGNED",
+    "failure_kind": "deterministic",
+    "failure_reason": null,
+    "failure_stage": null,
+    "final_status": "SUCCESS",
+    "finished_at": "2026-10-06T00:12:29Z",
+    "gate_status": "ready_if_enabled",
+    "heavy_refresh_steps": "skipped",
+    "live_order_chain": "INVOKED",
+    "manifest_type": "trendatlas_production_run_manifest",
+    "model_target_asset": "AVAX",
+    "model_target_exposure": 1.0,
+    "multi_account_execution": {
+      "accountCount": 1,
+      "allAccountsSuccessful": true,
+      "failureKind": "deterministic",
+      "mode": "canonical_multi_account_production",
+      "ownerResult": {
+        "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+        "executionEvidence": {
+          "actions": [
+            {
+              "action": "ENTER",
+              "asset": "AVAX",
+              "cloid": "0x69b7680580acc75446fb6e497545bfa2",
+              "orderId": "566271255984",
+              "state": "SUBMITTED",
+              "verificationState": "VERIFIED"
+            }
+          ],
+          "available": true,
+          "journalRunId": "f98ab533-7006-413e-8804-0327594cf6e4"
+        },
+        "orderRequested": true,
+        "status": "FILLED_AND_ALIGNED"
+      },
+      "preflight": [
+        {
+          "accountEquityUsd": 83.348433,
+          "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+          "actionCount": 1,
+          "actions": [
+            {
+              "action": "ENTER",
+              "asset": "AVAX",
+              "leg": 0,
+              "reduceOnly": false,
+              "requestedNotionalUsd": 83.348433,
+              "side": "buy",
+              "size": 7.47
+            }
+          ],
+          "cancelOrderIds": [],
+          "maxActionNotionalUsd": 83.348433,
+          "positions": [],
+          "status": "READY",
+          "targetAsset": "AVAX",
+          "targetExposure": 1
+        }
+      ],
+      "realOrderSent": true,
+      "results": [
+        {
+          "accountId": "33db3a83-c899-4a4f-a383-f752f67c9e4b",
+          "executionEvidence": {
+            "actions": [
+              {
+                "action": "ENTER",
+                "asset": "AVAX",
+                "cloid": "0x69b7680580acc75446fb6e497545bfa2",
+                "orderId": "566271255984",
+                "state": "SUBMITTED",
+                "verificationState": "VERIFIED"
+              }
+            ],
+            "available": true,
+            "journalRunId": "f98ab533-7006-413e-8804-0327594cf6e4"
+          },
+          "orderRequested": true,
+          "status": "FILLED_AND_ALIGNED"
+        }
+      ],
+      "runId": "prod_20261006T001001Z_915393",
+      "signalId": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
+      "successful": true,
+      "target": "AVAX"
+    },
+    "no_submit": false,
+    "order_id": [
+      "566271255984"
+    ],
+    "order_requested": true,
+    "order_result": "FILLED_AND_ALIGNED",
+    "owner_account_snapshot_available": true,
+    "planned_delta": 83.348433,
+    "post_trade_block_reasons": [],
+    "post_trade_tolerance_usd": 1.66577026,
+    "post_trade_verification_status": "FILLED_AND_ALIGNED",
+    "real_exposure_after": 1.0005619862609385,
+    "real_order_sent": true,
+    "real_position_after": [
+      {
+        "asset": "AVAX",
+        "notional_usd": 83.33532,
+        "raw": {
+          "position": {
+            "coin": "AVAX",
+            "cumFunding": {
+              "allTime": "0.0",
+              "sinceChange": "0.0",
+              "sinceOpen": "0.0"
+            },
+            "entryPx": "11.159",
+            "leverage": {
+              "type": "cross",
+              "value": 10
+            },
+            "liquidationPx": "0.0065957867",
+            "marginUsed": "8.333532",
+            "maxLeverage": 10,
+            "positionValue": "83.33532",
+            "returnOnEquity": "-0.0026884129",
+            "szi": "7.47",
+            "unrealizedPnl": "-0.02241"
+          },
+          "type": "oneWay"
+        },
+        "reference_price": 11.1565,
+        "size": 7.47
+      }
+    ],
+    "real_position_before": {
+      "asset": "CASH",
+      "notional_usd": 0
+    },
+    "residual_delta": -0.046807,
+    "retry_attempt": 0,
+    "run_id": "prod_20261006T001001Z_915393",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
+    "signer_validation": {
+      "credential_value_exposed": false,
+      "mode": "multi_account_per_account_preflight",
+      "status": "PASS"
+    },
+    "stages": {
+      "ACQUIRE_LOCK": {
+        "error": null,
+        "finished_at": "2026-10-06T00:10:01Z",
+        "started_at": "2026-10-06T00:10:01Z",
+        "status": "PASSED"
+      },
+      "AUTHORITY_PUBLISH": {
+        "error": null,
+        "finished_at": "2026-10-06T00:12:29Z",
+        "started_at": "2026-10-06T00:11:37Z",
+        "status": "PASSED"
+      },
+      "BUILD_CANONICAL_INTENT": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:17Z",
+        "started_at": "2026-10-06T00:11:16Z",
+        "status": "PASSED"
+      },
+      "BUILD_PRODUCTION_CORE": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:10Z",
+        "started_at": "2026-10-06T00:11:03Z",
+        "status": "PASSED"
+      },
+      "BUILD_REAL_ORDER_GATE": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:17Z",
+        "started_at": "2026-10-06T00:11:17Z",
+        "status": "PASSED"
+      },
+      "DASHBOARD_RUNTIME": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:37Z",
+        "started_at": "2026-10-06T00:11:35Z",
+        "status": "PASSED"
+      },
+      "EXECUTE": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:29Z",
+        "started_at": "2026-10-06T00:11:18Z",
+        "status": "PASSED"
+      },
+      "LIVE_PREFLIGHT": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:18Z",
+        "started_at": "2026-10-06T00:11:18Z",
+        "status": "PASSED"
+      },
+      "POST_TRADE_VERIFY": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:35Z",
+        "started_at": "2026-10-06T00:11:33Z",
+        "status": "PASSED"
+      },
+      "PRECHECK_DATA_HEALTH": {
+        "blocker_count": 0,
+        "error": null,
+        "finished_at": "2026-10-06T00:11:03Z",
+        "started_at": "2026-10-06T00:11:02Z",
+        "status": "PASSED"
+      },
+      "READ_ACCOUNT_AFTER": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:33Z",
+        "started_at": "2026-10-06T00:11:29Z",
+        "status": "PASSED"
+      },
+      "READ_ACCOUNT_BEFORE": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:16Z",
+        "started_at": "2026-10-06T00:11:12Z",
+        "status": "PASSED"
+      },
+      "RECONCILE": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:18Z",
+        "started_at": "2026-10-06T00:11:18Z",
+        "status": "PASSED"
+      },
+      "REFRESH_DATA": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:02Z",
+        "started_at": "2026-10-06T00:10:01Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_DATA_HEALTH": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:18Z",
+        "started_at": "2026-10-06T00:11:17Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_PRODUCTION_CORE": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:12Z",
+        "started_at": "2026-10-06T00:11:10Z",
+        "status": "PASSED"
+      },
+      "VALIDATE_SIGNER": {
+        "error": null,
+        "finished_at": "2026-10-06T00:11:16Z",
+        "started_at": "2026-10-06T00:11:16Z",
+        "status": "PASSED"
+      }
+    },
+    "started_at": "2026-10-06T00:10:01Z",
+    "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+    "target_closed_day": "2026-10-05",
+    "target_notional": 83.348433
+  },
+  "observed_utc": "2026-10-06T17:09:12.905607+00:00",
+  "open_orders": [],
+  "order_sent": false,
+  "pi_contacted": false,
+  "position_notional_usd": 85.80042,
+  "positions": [
+    {
+      "coin": "AVAX",
+      "cumFunding": {
+        "allTime": "0.018096",
+        "sinceChange": "0.018096",
+        "sinceOpen": "0.018096"
+      },
+      "dex": "",
+      "entryPx": "11.159",
+      "leverage": {
+        "type": "cross",
+        "value": 10
+      },
+      "liquidationPx": "0.0091457761",
+      "marginUsed": "8.580042",
+      "maxLeverage": 10,
+      "positionValue": "85.80042",
+      "returnOnEquity": "0.2930370105",
+      "szi": "7.47",
+      "unrealizedPnl": "2.44269"
+    }
+  ],
+  "production_run_started": false,
+  "public_status": {
+    "generated_at_utc": "2026-10-06T00:12:22Z",
+    "closed_day": "2026-10-05",
+    "execution": {
+      "block_reasons": [],
+      "gate_status": "ready_if_enabled",
+      "live_order_sent": true,
+      "next_rebalance_date": "2026-10-11",
+      "signal_status": "authorized",
+      "target_asset": "AVAX",
+      "target_size_pct": 1.0,
+      "wait_reason_code": "already_in_target_state",
+      "would_place_real_order": true
+    },
+    "model_target_state": {
+      "asset": "AVAX",
+      "closed_day": "2026-10-05",
+      "exposure_x": 1.0,
+      "label_sk": "Potvrden\u00fd cie\u013e strat\u00e9gie",
+      "not_real_wallet_exposure": true,
+      "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
+      "validated": true
+    },
+    "model_signal": {
+      "exposure_x": 1.0,
+      "label_sk": "Modelov\u00fd sign\u00e1l",
+      "not_real_wallet_exposure": true,
+      "preferred_asset": "AVAX"
+    }
+  },
+  "dashboard_observation": {
+    "observed_utc": "2026-10-06T17:06:00Z",
+    "time_precision": "minute_from_visible_LAST_SYNCHRONIZATION",
+    "url": "https://trendatlas-accounts.vercel.app/dashboard",
+    "account_address_displayed": "0xae8d\u2026e856",
+    "position": "AVAX 7.47",
+    "open_orders": 0,
+    "total_account_value_usd": 96.23,
+    "exchange_withdrawable_usd": 87.66,
+    "data_source": "Live Hyperliquid read-only API",
+    "browser_tab_id": "703928572",
+    "position_matches_exchange": true,
+    "balance_matches_exchange": false,
+    "DASHBOARD_MATCHES_EXCHANGE": false,
+    "INCIDENT_RESOLVED": false,
+    "subsequent_browser_reload": "blocked_by_extension; does_not_invalidate_successful_prior_observation",
+    "likely_cause": "deployed_dashboard_adds_perp_accountValue_to_unified_spot_total; current_repo_source_already_has_unified_guard"
+  }
+}
