@@ -1,8 +1,8 @@
 {
   "decision_type": "real_order_gate_decision",
-  "generated_at_utc": "2026-10-06T00:12:19Z",
-  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
-  "target_asset": "AVAX",
+  "generated_at_utc": "2026-10-07T00:12:33Z",
+  "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-06::target_CASH::candidate_AVAX",
+  "target_asset": "CASH",
   "mode": "canonical_invocation",
   "account_address": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
   "account_validation_scope": "per_account_exchange",
@@ -16,7 +16,7 @@
   "checks": {
     "signal_present": true,
     "target_asset_present": true,
-    "target_asset_is_cash": false,
+    "target_asset_is_cash": true,
     "contract_validated": true,
     "stale_signal": false,
     "kill_switch": false,
@@ -29,30 +29,30 @@
     "intent_strategy_model_matches_production_snapshot": true,
     "intent_allow_live_order_candidate_matches_snapshot": true,
     "intent_stale_signal_matches_production_snapshot": true,
-    "positions_count": 1,
+    "positions_count": 0,
     "open_orders_present": false,
     "exit_required": false
   },
   "production_signal_context": {
-    "closed_day": "2026-10-05",
-    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-05::target_AVAX::candidate_AVAX",
-    "target_asset": "AVAX",
-    "target_exposure": 1.0,
+    "closed_day": "2026-10-06",
+    "signal_id": "current_strategy::phase68g_etf_flow_impulse_early_risk_cooldown_15::2026-10-06::target_CASH::candidate_AVAX",
+    "target_asset": "CASH",
+    "target_exposure": 0.0,
     "candidate_asset": "AVAX",
-    "current_asset": "AVAX",
-    "effective_market_exposure": 1.0,
+    "current_asset": "CASH",
+    "effective_market_exposure": 0.0,
     "model_candidate_exposure": 1.0,
-    "trend_permission_active": true,
+    "trend_permission_active": false,
     "stale_signal": false,
-    "allow_live_order_candidate": true,
+    "allow_live_order_candidate": false,
     "validation_status": "passed",
     "strategy_version": "phase68g_etf_flow_impulse_early_risk_cooldown_15",
     "strategy_status": "ready"
   },
   "source_fingerprints": {
-    "intent_sha256": "fd6f68609d4e5acf03d47895c67c802905c3e0a13720e5708cfb6decd6782bec",
-    "account_snapshot_sha256": "3076f9621ba9565a05546840c7c6e8b974c95c09aeef638c3e952c89caf38e14",
-    "production_snapshot_sha256": "5f2c83716d37db61b572de3d6dd293eb588ba2ca7117ccf61a8c42c3fd1c94f4"
+    "intent_sha256": "27f4a55f7ff2c489295f0016601f0ac4bc55475b5431fc9266d8a77a6a593233",
+    "account_snapshot_sha256": "4b283f1f2ee50527b88fce09627456a51ce9aa5f6bbf9f733304cf6c8847b210",
+    "production_snapshot_sha256": "567590b270a2efcb3408410b51d1d33c034e09fdaf84c60ac622c1b5b3748ab1"
   },
   "notes": [
     "Read-only validation of the current Production Core target and canonical intent.",
