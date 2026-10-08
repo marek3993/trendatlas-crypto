@@ -853,6 +853,31 @@
       "decision_relevance": "research_only",
       "official_truth": false,
       "notes": "Separate v2 cycle; continuous book, past-only inner selection and inherited survivors. No historical independent OOS; prospective OOS LOCKED. Invalid prices produce UNDEFINED_INVALID. Terminal selected-book failure invalidates full continuous portfolio; remaining origin training continues without book reset. status distinguishes test_folds_completed, invalid_test_folds and processed_origins."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-anomaly-lab/",
+      "generated_by": [
+        "research/anomaly_lab/runtime.py",
+        "research/anomaly_lab/handoff.py"
+      ],
+      "layer": "raw_output",
+      "status": "active",
+      "output_kind": "research_anomaly_discovery",
+      "decision_relevance": "reference_only",
+      "official_truth": false,
+      "notes": "Immutable SQLite, status, aggregate frequency, event aftermath, continuous book stresses and structured Phase2 future-origin outbox; no historical independent holdout"
+    },
+    {
+      "output_path": "/var/lib/trendatlas-anomaly-lab/discovery_report.json",
+      "generated_by": [
+        "scripts/anomaly_lab_report_consumer.py"
+      ],
+      "layer": "report",
+      "status": "active",
+      "output_kind": "research_anomaly_report",
+      "decision_relevance": "reference_only",
+      "official_truth": false,
+      "notes": "Coherent append-only evidence read model; sparse uncertainty and unknown billing remain null; no trading authority"
     }
   ]
 }

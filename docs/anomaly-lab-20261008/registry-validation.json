@@ -1,0 +1,15 @@
+{
+  "baseline_ref": "82bfae8ae56a7b7ced113a795c3572f7c89423eb",
+  "tests_run": 23,
+  "passed": 21,
+  "failed": 2,
+  "failures_identical_to_baseline": true,
+  "baseline_failure_tests": [
+    "test_decision_relevance_values_are_allowed",
+    "test_layer_values_are_allowed"
+  ],
+  "preexisting_registry_entries_unchanged": true,
+  "new_output_entries_schema_valid": true,
+  "source_and_script_registry_checks": "PASS",
+  "new_official_truth_outputs": false
+}

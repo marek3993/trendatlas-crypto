@@ -1242,6 +1242,97 @@
       "decision_relevance": "research_only",
       "writes_source_of_truth": false,
       "notes": "phase2_v2_recovery_contract.json; original evaluator/input/cycle bindings preserved; valid folds distinct from processed origins."
+    },
+    {
+      "script_path": "research/anomaly_lab/runtime.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Runs bounded checkpointed causal anomaly research using the frozen Phase2 v2 book",
+      "primary_outputs": [
+        "/var/lib/trendatlas-anomaly-lab/"
+      ],
+      "output_type": "research_runtime",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "anomaly_lab_contract.json; historical development only; no orders or production promotion; existing Phase2 cycles immutable"
+    },
+    {
+      "script_path": "research/anomaly_lab/broker.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Reuses isolated DeepSeek transport and lifetime budget for structured prior-training hypotheses",
+      "primary_outputs": [
+        "/var/lib/trendatlas-anomaly-mailbox/"
+      ],
+      "output_type": "research_support",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "anomaly_lab_contract.json; historical development only; no orders or production promotion; existing Phase2 cycles immutable"
+    },
+    {
+      "script_path": "research/anomaly_lab/handoff.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Exports and validates testable development hypotheses for future Phase2 origins",
+      "primary_outputs": [
+        "/var/lib/trendatlas-anomaly-lab/"
+      ],
+      "output_type": "research_support",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "anomaly_lab_contract.json; historical development only; no orders or production promotion; existing Phase2 cycles immutable"
+    },
+    {
+      "script_path": "research/anomaly_lab/audit.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Verifies append-only anomaly evidence and emits read-only progress/frequency/economic audit",
+      "primary_outputs": [
+        "/var/lib/trendatlas-anomaly-lab/"
+      ],
+      "output_type": "research_support",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "anomaly_lab_contract.json; historical development only; no orders or production promotion; existing Phase2 cycles immutable"
+    },
+    {
+      "script_path": "research/anomaly_lab/deploy.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Installs standalone anomaly units without changing existing Phase2 or production",
+      "primary_outputs": [
+        "/var/lib/trendatlas-anomaly-lab/"
+      ],
+      "output_type": "research_support",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "anomaly_lab_contract.json; historical development only; no orders or production promotion; existing Phase2 cycles immutable"
+    },
+    {
+      "script_path": "scripts/anomaly_lab_report_consumer.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Read-only Lab report consumer suppressing unreliable rare-event bootstrap confidence and unknown billing estimates",
+      "primary_outputs": [
+        "/var/lib/trendatlas-anomaly-lab/discovery_report.json"
+      ],
+      "output_type": "research_read_model",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Separate reporting contract; frozen worker and immutable source books unchanged; systemd ExecStartPost"
+    },
+    {
+      "script_path": "scripts/deploy_anomaly_lab_reporting.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Installs a read-only report observer after validating its separate contract and native tests",
+      "primary_outputs": [
+        "/var/lib/trendatlas-anomaly-lab/discovery_report.json"
+      ],
+      "output_type": "research_support",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Only new Lab ExecStartPost drop-in; frozen runtime unchanged and worker not restarted"
     }
   ]
 }

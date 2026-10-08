@@ -699,6 +699,21 @@
         "validation"
       ],
       "write_mode": "explicit_user_authorized_contract"
+    },
+    "anomaly_discovery_lab": {
+      "canonical": "/var/lib/trendatlas-anomaly-lab",
+      "legacy_aliases": [],
+      "owner": "AI_LAB",
+      "artifact_type": "research",
+      "truth_domain": "non_authoritative_development",
+      "read_scope": [
+        "research",
+        "audit"
+      ],
+      "write_mode": "isolated_lab_only",
+      "source_contract": "source_of_truth/anomaly_lab_contract.json",
+      "runtime_code": "/opt/trendatlas-research/anomaly-lab/releases/",
+      "no_production_authority": true
     }
   }
 }

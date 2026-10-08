@@ -1,0 +1,14 @@
+{
+  "id": "anomaly_lab_reporting_20261008",
+  "classification": ["B"],
+  "scope": "read_only_research_consumer",
+  "experiment_contract": "anomaly_lab_contract.json",
+  "experiment_or_evaluator_changes_allowed": false,
+  "orders_allowed": false,
+  "minimum_events_for_uncertainty": 20,
+  "rare_event_uncertainty": "Bootstrap intervals from sparse or zero observed clusters are not reliable frequency confidence bounds. Publish null plus INSUFFICIENT_EVIDENCE, retain the original interval as a diagnostic only in immutable source books.",
+  "frequency_by_asset": "Representative asset of each globally clustered event; counts must not be interpreted as independent per-coin shock counts.",
+  "usage": "Provider-native usage totals with billing uncertainty explicit; peak tariff estimate is never an invoice amount and unknown billing is never zero.",
+  "source_status": "Use the generated portfolio summary only when its processed origin count matches the coherent SQLite snapshot; otherwise mark summary pending.",
+  "output": "/var/lib/trendatlas-anomaly-lab/discovery_report.json"
+}

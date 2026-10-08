@@ -131,10 +131,19 @@
 - All such outputs remain `dev_only=true` and `non_authoritative=true`.
 
 ## Phase 2 continuous development research
-- The VPS-only Phase 2 development runner and DeepSeek broker are active under `source_of_truth/phase2_development_contract.json`.
+- The original VPS Phase 2 continuous v1 runner is retired; its frozen evidence and contracts remain immutable.
+- Live read on 2026-10-08: Phase 2 v2 processed all 14 origins with 1,854 evaluations; four valid prefix folds and ten terminal/not-evaluable receipts. Full continuous selected portfolio remains UNDEFINED_INVALID after the original LUNA halt.
 - The 2026-09-27 causal cycle remains immutable `SEALED/REJECT`; new development uses separate cycle IDs and an append-only research ledger.
 - Development may use only declared inner validation folds. Outer OOS remains locked and 2027 remains sealed forward evidence.
 - Phase 2 public venue collection is separate; its old forward-refit design remains unimplemented. Development proxy results are non-authoritative and cannot change production or place orders.
+
+## Anomaly Discovery Lab
+- User-authorized standalone VPS research uses `source_of_truth/anomaly_lab_contract.json` and the unchanged frozen Phase2 v2 accounting engine.
+- Its separate worker/broker timers resume `/var/lib/trendatlas-anomaly-lab` without a PC or open Codex. No production, account, Pi or LeadPilot authority is granted.
+- Inputs end 2026-09-25. The prospective 2026-09-27 through 2027-09-26 interval is inaccessible; previously inspected history is development evidence only.
+- The finite 66-rule, 14-origin experiment freezes clustering, costs, publication buffer, neighbors and lifetime multiplicity before results. Sparse events remain INSUFFICIENT_EVIDENCE.
+- Live final read on 2026-10-08: all 14 origins finished automatically; 924 training results, 504 books and 154 handoffs are preserved. The finite experiment is EXHAUSTED, with timers enabled and costly work skipped. No anomaly family passed all economic gates.
+- Structured hypotheses and valid mechanism-inspired gene suggestions go to a read-only future-origin Phase2 ingress. The completed v2 cycle is never reopened or modified.
 
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.

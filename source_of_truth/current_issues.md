@@ -117,3 +117,14 @@
 - `phase2_v2_recovery_contract.json` authorizes an append-only terminal receipt and unchanged remaining past-only training. Evaluator, frozen market inputs, cycle, all completed trials and selections remain unchanged.
 - The full continuous selected portfolio is UNDEFINED_INVALID. Four valid prefix folds must never be reported as a valid full-horizon portfolio; valid completed folds and processed origins are distinct.
 - The research timer resumed automatically from the existing checkpoint. No production, account, order, LeadPilot or Pi state was modified.
+
+## Anomaly Discovery Lab — 2026-10-08
+- Classification B/C/D. New standalone Lab is authorized by the user's implement/test/deploy request, separate from all existing frozen Phase2 cycles.
+- Live VPS read confirms the recovered v2 cycle has finished all 14 origins. Its full selected-book CAGR remains null/UNDEFINED_INVALID, not the prefix's return.
+- Lab uses the unchanged v2 book, immutable historical inputs, guarded timestamps, a conservative extra publication bar, independent quantity/price/cost accounting, common-calendar event clustering and lifetime alpha spending.
+- Exact historical publication times, universe completeness and venue certification remain unproven. Spot quote volume includes explicitly declared proxies; derivatives are UNAVAILABLE.
+- Already seen history and modern AI cannot provide independent historical holdout. All current hypotheses are development-only; no trading candidate can be confirmed without separately authorized prospective evaluation.
+- Live final read at 2026-10-08 19:54 UTC: all 14 origins completed automatically, with 924 training results, 504 nominal/stress/control books, 154 structured handoffs and 1,428 persistent trials. All event-association verdicts remain INSUFFICIENT_EVIDENCE and every anomaly family fails one or more economic gates.
+- All 154 nominal anomaly books passed independent quantity/price/cost accounting; maximum NAV discrepancy is 1.71e-13. Existing v2 table hashes and the original Lab evidence prefix remain unchanged.
+- The read-only report observer ran automatically through the final origin. Sparse frequency confidence intervals are suppressed under its separate reporting contract; frozen experiment records are preserved.
+- Finite research budgets are durable. The experiment is now EXHAUSTED after 14 API calls and 42,953 provider-native tokens; enabled timers skip costly work and API calls rather than reset the search counter.

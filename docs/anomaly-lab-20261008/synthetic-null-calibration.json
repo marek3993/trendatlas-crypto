@@ -1,0 +1,14 @@
+{
+  "seed": 42,
+  "no_edge_model": "independent symmetric calendar-block signs, common signs across correlated hypotheses; arbitrary intra-block serial repeats",
+  "runs": 120,
+  "hypotheses_per_run": 20,
+  "false_discovery_runs": 3,
+  "empirical_familywise_rate": 0.025,
+  "wilson95": [
+    0.00853802009878548,
+    0.07093123740434756
+  ],
+  "lifetime_alpha": 0.05,
+  "condition": "conditional validity and block-sign symmetry are assumptions; no guarantee asserted for previously seen financial history"
+}
