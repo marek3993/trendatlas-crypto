@@ -151,6 +151,13 @@
 - The frozen 16-entry pool is now `IDLE_NO_NEW_WORK`; the wider K space remains partially untried. Enabled health timers are not continuous evolutionary progress.
 - The 39-block exact-sign design is arithmetically feasible under its declared conditional sign null. Historical independence, executable LUNA halt handling and certified point-in-time completeness remain unproven; no production promotion is allowed.
 
+## Continuing discovery/evolution research
+- `continuous_research_contract_v1.json` creates a separate ongoing VPS scheduler: four-member frozen batches, globally unused K configurations, real compact DeepSeek proposals and train/validation feedback. Old finite experiments remain immutable.
+- Scheduler lifetime has no batch/pool cap. Daily compute allowance and shared daily/monthly API budgets renew in Europe/Paris; global genes, hypothesis identities, scientific alpha debt and all reservations persist.
+- `continuous_research_protocol_v2.json` freezes a prospective JSON example after two malformed native replies; rejected responses remain rejected and charged, the scientific runtime/parser and original wire history stay unchanged.
+- Live counters, actual AI/backtest lineage, automatic activation evidence and SIGKILL recovery are in `docs/continuous-research-20261009/REPORT.md`. Computing status comes from verified live phases and completed work, never timer enablement alone.
+- All results remain contaminated exploratory development. Conditional p-values, uncertified temporal independence/PIT data and unresolved original LUNA execution do not confirm a trading candidate or grant production authority.
+
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.

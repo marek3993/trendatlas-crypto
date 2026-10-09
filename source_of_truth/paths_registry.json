@@ -729,6 +729,24 @@
       "source_contract": "source_of_truth/discovery_evolution_contract_v2.json",
       "runtime_code": "/opt/trendatlas-research/discovery-evolution/releases/",
       "no_production_authority": true
+    },
+    "continuous_research": {
+      "canonical": "/var/lib/trendatlas-continuous-research",
+      "legacy_aliases": [],
+      "owner": "AI_LAB",
+      "artifact_type": "research",
+      "truth_domain": "non_authoritative_development",
+      "read_scope": [
+        "research",
+        "audit"
+      ],
+      "write_mode": "isolated_continuous_scheduler_only",
+      "source_contract": "source_of_truth/continuous_research_contract_v1.json",
+      "runtime_code": "/opt/trendatlas-research/continuous/releases/",
+      "shared_api_mailbox": "/var/lib/trendatlas-continuous-mailbox",
+      "no_production_authority": true,
+      "protocol_contract": "source_of_truth/continuous_research_protocol_v2.json",
+      "observer_contract": "source_of_truth/continuous_research_observer_contract_v1.json"
     }
   }
 }

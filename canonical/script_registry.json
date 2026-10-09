@@ -1346,6 +1346,87 @@
       "decision_relevance": "research_only",
       "writes_source_of_truth": false,
       "notes": "Versioned contract; global legacy gene dedup; zero additional API allowance; private-network systemd unit with no production authority"
+    },
+    {
+      "script_path": "research/continuous_research/entry.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Native continuing worker and credential-separated shared-budget DeepSeek broker",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/",
+        "/var/lib/trendatlas-continuous-mailbox/"
+      ],
+      "output_type": "research",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "continuous_research_contract_v1.json; inherited global novelty and alpha debt; renewable operating budget only; unchanged engine; old cycles immutable; no production authority"
+    },
+    {
+      "script_path": "research/continuous_research/deploy.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Install a new immutable research release and isolated units after contract, regression and predecessor-hash validation",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/deployment.json"
+      ],
+      "output_type": "research",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "continuous_research_contract_v1.json; inherited global novelty and alpha debt; renewable operating budget only; unchanged engine; old cycles immutable; no production authority"
+    },
+    {
+      "script_path": "research/continuous_research_protocol.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Frozen prospective AI wire adapter and active native entrypoint",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/",
+        "/var/lib/trendatlas-continuous-mailbox/"
+      ],
+      "output_type": "research_support",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Additive protocol v2 binding before new AI requests; v1 validator, frozen batches, old request wire, original runtime bytes and shared budget preserved"
+    },
+    {
+      "script_path": "scripts/deploy_continuous_research_protocol.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Install and append-freeze a new content-addressed protocol release while research units are quiescent",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/",
+        "/var/lib/trendatlas-continuous-mailbox/"
+      ],
+      "output_type": "research_support",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Additive protocol v2 binding before new AI requests; v1 validator, frozen batches, old request wire, original runtime bytes and shared budget preserved"
+    },
+    {
+      "script_path": "scripts/audit_continuous_research.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Read-only native proof of source bindings, global novelty, actual AI provenance/backtests, automatic activations, crash recovery and frozen predecessor hashes",
+      "primary_outputs": [
+        "docs/continuous-research-20261009/"
+      ],
+      "output_type": "research_read_model",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Explicit audit collection only; no state or budget mutations; never substitutes enabled timers for computation"
+    },
+    {
+      "script_path": "scripts/fix_continuous_research_storage.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Apply versioned shared API WAL permission contract without changing SQL records or scientific source",
+      "primary_outputs": [
+        "/etc/systemd/system/trendatlas-continuous-broker.service.d/shared-wal.conf"
+      ],
+      "output_type": "research_support",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Only new continuous api.sqlite and WAL/SHM modes 0660 in their existing group; broker pre-start preserves shared main-file mode; native separate-user regression"
     }
   ]
 }

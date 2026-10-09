@@ -1,0 +1,8 @@
+# Preserve the exact source bytes bound by the deployed research manifests.
+research/continuous_research/*.py -text
+research/continuous_research_protocol.py -text
+scripts/deploy_continuous_research_protocol.py -text
+source_of_truth/continuous_research_contract_v1.json -text
+source_of_truth/continuous_research_protocol_v2.json -text
+tests/test_continuous_research.py -text
+tests/test_continuous_research_protocol.py -text

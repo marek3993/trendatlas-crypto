@@ -1,0 +1,17 @@
+{
+  "immutable_snapshot_prefixes": {
+    "runtime-first.json": "all prior worker rows preserved exactly",
+    "runtime-progress.json": "all prior worker rows preserved exactly",
+    "runtime-ai.json": "all prior worker rows preserved exactly",
+    "runtime-feedback.json": "all prior worker rows preserved exactly"
+  },
+  "AI_backtest_feedback_to_batch5": "PASS",
+  "global_gene_uniqueness": "PASS",
+  "native_regression": "separate users, one test PASS 0.200s",
+  "research_suite": "75 tests PASS 90.079s",
+  "runtime_and_protocol_suite": "23 tests PASS 31.955s",
+  "initial_native_runtime_suite": "18 tests PASS 11.826s",
+  "native_protocol_suite": "5 tests PASS 1.133s",
+  "mock_vs_native": "unit API transports are fixtures; runtime JSON contains actual native provider IDs, usage, raw content, reservations and backtest books",
+  "real_API_response_after_storage_fix": "PASS"
+}

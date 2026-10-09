@@ -19,6 +19,9 @@ This folder is the central single source of truth layer for Market Regime v1.
 - `anomaly_lab_contract.json` = independently deployed, finite anomaly discovery research; fixed frequency/clustering, prior-origin selection, lifetime multiplicity and future Phase2 handoff; no production or prospective-data access
 - `anomaly_lab_reporting_contract.json` = read-only result consumer; sparse frequency uncertainty and unknown billing stay null; frozen Lab experiments remain immutable
 - `discovery_evolution_contract_v2.json` = versioned bounded discovery/evolution successor experiment; global gene deduplication, immutable batches, exact block-sign diagnostics and inherited budgets; predecessor experiments remain frozen
+- `continuous_research_contract_v1.json` = continuing isolated scheduler, renewable shared DeepSeek reservations, immutable lifetime novelty/scientific debt and automatically frozen successor batches
+- `continuous_research_protocol_v2.json` = separately frozen prospective DeepSeek JSON request example; original parser, experiments and shared budget remain unchanged
+- `continuous_research_observer_contract_v1.json` = shared API WAL permissions and read-only observer discipline; no experiment or budget changes
 - `experiments_registry.csv` = experiments registry
 
 ## Required read order for truth-sensitive work

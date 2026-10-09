@@ -1,0 +1,18 @@
+{
+  "observed_utc": "2026-10-09T19:29:52.809208+00:00",
+  "repair_utc": "2026-10-09 19:27:35Z",
+  "post_repair_warnings": "-- No entries --\n",
+  "units": {
+    "trendatlas-continuous-research": "ActiveState=activating\nSubState=start\nMainPID=73645\nResult=success\nExecStart={ path=/opt/trendatlas-research/venvs/causal-v1/bin/python ; argv[]=/opt/trendatlas-research/venvs/causal-v1/bin/python -I -B /opt/trendatlas-research/continuous/releases/200a81ce82b6b0c7/research/continuous_research_protocol.py worker --root /var/lib/trendatlas-continuous-research --mailbox /var/lib/trendatlas-continuous-mailbox --inputs /var/lib/trendatlas-research-v2-inputs/91237299dee6880e --bootstrap /opt/trendatlas-research/continuous/releases/200a81ce82b6b0c7/continuous-bootstrap.json ; ignore_errors=no ; start_time=[Fri 2026-10-09 19:29:11 UTC] ; stop_time=[n/a] ; pid=73645 ; code=(null) ; status=0/0 }\nCPUQuotaPerSecUSec=600ms\nMemoryMax=3221225472\nUser=trendatlas-continuous\nGroup=trendatlas-research\nReadWritePaths=/var/lib/trendatlas-continuous-research /var/lib/trendatlas-continuous-mailbox\nInaccessiblePaths=-/opt/leadpilot -/var/lib/docker -/run/docker.sock -/opt/market_regime_v1 -/opt/home_automation -/opt/trendatlas-production -/var/lib/trendatlas-production -/etc/credstore -/etc/credstore.encrypted -/var/lib/trendatlas-phase2 -/var/lib/trendatlas-research-v2 -/var/lib/trendatlas-research-development -/var/lib/trendatlas-research/causal-v1 -/var/lib/trendatlas-anomaly-lab -/var/lib/trendatlas-discovery-evolution -/run/credentials\nPrivateNetwork=yes\nProtectSystem=strict\n",
+    "trendatlas-continuous-broker": "ActiveState=inactive\nSubState=dead\nMainPID=0\nResult=success\nExecStartPre={ path=/usr/bin/chmod ; argv[]=/usr/bin/chmod 0660 /var/lib/trendatlas-continuous-mailbox/api.sqlite ; ignore_errors=no ; start_time=[Fri 2026-10-09 19:29:33 UTC] ; stop_time=[Fri 2026-10-09 19:29:34 UTC] ; pid=73774 ; code=exited ; status=0 }\nExecStart={ path=/opt/trendatlas-research/venvs/causal-v1/bin/python ; argv[]=/opt/trendatlas-research/venvs/causal-v1/bin/python -I -B /opt/trendatlas-research/continuous/releases/200a81ce82b6b0c7/research/continuous_research_protocol.py broker --mailbox /var/lib/trendatlas-continuous-mailbox ; ignore_errors=no ; start_time=[Fri 2026-10-09 19:29:34 UTC] ; stop_time=[Fri 2026-10-09 19:29:42 UTC] ; pid=73776 ; code=exited ; status=0 }\nCPUQuotaPerSecUSec=100ms\nMemoryMax=268435456\nUser=trendatlas-continuous-broker\nGroup=trendatlas-research\nReadWritePaths=/var/lib/trendatlas-continuous-mailbox\nInaccessiblePaths=-/opt/leadpilot -/var/lib/docker -/run/docker.sock -/opt/market_regime_v1 -/opt/home_automation -/opt/trendatlas-production -/var/lib/trendatlas-production -/etc/credstore -/etc/credstore.encrypted -/var/lib/trendatlas-phase2 -/var/lib/trendatlas-research-v2 -/var/lib/trendatlas-research-development -/var/lib/trendatlas-research/causal-v1 -/var/lib/trendatlas-anomaly-lab -/var/lib/trendatlas-discovery-evolution /var/lib/trendatlas-continuous-research /var/lib/trendatlas-research-v2-inputs\nPrivateNetwork=no\nProtectSystem=strict\n"
+  },
+  "shared_files": [
+    {
+      "name": "api.sqlite",
+      "uid": 990,
+      "gid": 982,
+      "mode": "0o660"
+    }
+  ],
+  "dropin": "[Service]\nExecStartPre=/usr/bin/chmod 0660 /var/lib/trendatlas-continuous-mailbox/api.sqlite\n"
+}

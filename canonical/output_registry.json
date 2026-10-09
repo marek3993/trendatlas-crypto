@@ -890,6 +890,30 @@
       "decision_relevance": "reference_only",
       "official_truth": false,
       "notes": "Append-only SQLite and hash chain; distinct hypotheses, repeated receipts, genes, backtest computations and statistical attempts; IDLE_NO_NEW_WORK at frozen pool exhaustion"
+    },
+    {
+      "output_path": "/var/lib/trendatlas-continuous-research/",
+      "generated_by": [
+        "research/continuous_research/runtime.py"
+      ],
+      "layer": "raw_output",
+      "status": "active",
+      "output_kind": "continuous_research_ledger",
+      "decision_relevance": "reference_only",
+      "official_truth": false,
+      "notes": "Immutable batches, global gene/hypothesis novelty, reserved scientific attempts, separate backtests and conditional diagnostics, train/validation feedback. No lifetime pool/batch cap; daily compute WAIT renews without resetting history."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-continuous-mailbox/",
+      "generated_by": [
+        "research/continuous_research/broker.py"
+      ],
+      "layer": "raw_output",
+      "status": "active",
+      "output_kind": "shared_research_api_accounting",
+      "decision_relevance": "reference_only",
+      "official_truth": false,
+      "notes": "Compact prior train/validation requests, immutable provider responses and conservative reservations for every transport/retry. 24 attempts/day, 6500 input/1500 output, USD0.25/day and USD5/month in Europe/Paris. Old API budget remains immutable."
     }
   ]
 }

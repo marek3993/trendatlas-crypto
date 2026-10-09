@@ -1,0 +1,15 @@
+{
+  "id": "continuous_research_protocol_v2_20261009",
+  "classification": ["B", "C"],
+  "parent_contract": "continuous_research_contract_v1.json",
+  "scope": "prospective AI request formatting only; exact JSON example and explicit compact schema instructions",
+  "reason": "two native JSON-mode responses omitted evaluation; first also exceeded narrative limits; preserve both rejected responses and their charged reservations",
+  "response_validation": "unchanged strict v1 parser; no repairing, truncating, relabelling or admitting old rejected responses",
+  "freeze": "new content-addressed release plus protocol manifest before any v2 request; append the manifest hash to worker and shared API metadata; preserve original immutable binding and all old rows",
+  "compatibility": "legacy request IDs retain the original wire builder; only new request payload IDs use v2; existing batch plans and evaluator bytes stay unchanged",
+  "accounting": "same continuous_research_shared_v1 database, reservations, limits and retry rules; no new budget",
+  "scientific_changes": false,
+  "orders_allowed": false,
+  "sealed_access": false,
+  "provider_guidance": "https://api-docs.deepseek.com/guides/json_mode/"
+}

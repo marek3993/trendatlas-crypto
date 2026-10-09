@@ -1,0 +1,13 @@
+{
+  "id": "continuous_research_observer_v1_20261009",
+  "classification": ["B", "C"],
+  "scope": "shared API SQLite file permissions and read-only audit process permissions; no scientific or runtime source revision",
+  "reason": "SQLite initially creates the API database as 0640; a read-only worker with another UID can create 0640 WAL sidecars that deny the broker its next write; concurrent observers can extend the lifetime of those sidecars",
+  "shared_storage": "only the new continuous API database and its WAL/SHM use 0660 in their existing shared research group; broker ExecStartPre preserves the main database mode; no SQL records, owner, budget or legacy path changes",
+  "sqlite": "observer opens mode=ro and sets its effective group to the existing common ledger group and umask 0007 before any SQLite open; the observer itself never chmods/chowns files; only the separate authorized storage repair sets shared modes",
+  "group_guard": "worker and shared API database must have the same existing group; otherwise fail before SQLite open",
+  "validation": "native separate-user regression reproduces the failure when the worker reads a 0640 API database, then proves a concurrent broker writer succeeds after the new shared database is 0660; observer remains mode=ro",
+  "budgets_changed": false,
+  "scientific_changes": false,
+  "orders_allowed": false
+}
