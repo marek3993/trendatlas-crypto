@@ -878,6 +878,18 @@
       "decision_relevance": "reference_only",
       "official_truth": false,
       "notes": "Coherent append-only evidence read model; sparse uncertainty and unknown billing remain null; no trading authority"
+    },
+    {
+      "output_path": "/var/lib/trendatlas-discovery-evolution/",
+      "generated_by": [
+        "research/discovery_evolution/runtime.py"
+      ],
+      "layer": "raw_output",
+      "status": "active",
+      "output_kind": "discovery_evolution_successors",
+      "decision_relevance": "reference_only",
+      "official_truth": false,
+      "notes": "Append-only SQLite and hash chain; distinct hypotheses, repeated receipts, genes, backtest computations and statistical attempts; IDLE_NO_NEW_WORK at frozen pool exhaustion"
     }
   ]
 }

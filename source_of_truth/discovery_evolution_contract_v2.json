@@ -1,0 +1,59 @@
+{
+  "id": "discovery_evolution_v2_20261009",
+  "classification": ["B", "C", "D"],
+  "authority": "explicit_user_complete_discovery_evolution_successors_commit_push_20261009",
+  "orders_allowed": false,
+  "production_writes_allowed": false,
+  "promotion_allowed": false,
+  "development": ["2018-05-05", "2026-09-25"],
+  "sealed": ["2026-09-27", "2027-09-26"],
+  "training": ["2020-01-01", "2021-12-17"],
+  "test": ["2022-01-01", "2026-09-25"],
+  "purge_days": 14,
+  "history_status": "ALL_PREVIOUSLY_SEEN_DEVELOPMENT; modern AI and repeated feedback cannot create independent historical evidence",
+  "engine": "unchanged research.phase2_v2.engine.evaluate; exact frozen source binding",
+  "inputs": "/var/lib/trendatlas-research-v2-inputs/91237299dee6880e",
+  "legacy_lab": "/var/lib/trendatlas-anomaly-lab",
+  "legacy_alpha_debt": 1428,
+  "legacy_api_budget_id": "anomaly_lab_lifetime_20261008",
+  "api_limits": {"calls": 14, "tokens": 112000, "usd_upper": 0.20},
+  "new_api_calls_allowed": 0,
+  "discovery": {
+    "version": "bounded_onset_v2",
+    "rule_grid": "existing 66 declarative rules; only historically prior-cutoff outbox roots",
+    "event": "per-asset false-to-true onset after eligible prior/current bars; an event ends at first onset+horizon, never extends transitively; cross-asset onsets inside that FIXED interval share one bounded episode",
+    "independence": "episodes are occurrence units, NOT statistically independent samples; simultaneous assets never multiply inferential n",
+    "frequency_uncertainty": "30-day moving calendar blocks jointly resample counts and eligibility; fewer than 20 episodes => null/INSUFFICIENT_EVIDENCE",
+    "association": "event aftermath descriptive only; no independent association PASS from frequency"
+  },
+  "statistics": {
+    "primary_endpoint": "positive median common-calendar block log-growth difference between costed Phase2 candidate and BTC_HALF; portfolio aggregates all assets before inference",
+    "block_days": 30,
+    "gap_days": 14,
+    "min_nonzero_blocks": 30,
+    "test": "exact one-sided binomial sign test, ties excluded; no Monte Carlo p floor",
+    "null_assumption": "conditional on prior training selection, independent fair block signs; within-block and cross-asset dependence unrestricted; 14-day gaps limit label overlap but do NOT establish independence of financial regimes",
+    "alpha": "0.05/[t*(t+1)]; inherit 1428 conservative legacy attempts; one new alpha reservation per candidate primary endpoint, including invalid/uninformative attempts; backtest calls counted separately and never advertised as statistical tests",
+    "claim": "conditional-null development diagnostic ONLY; historical sign independence and modern-LLM contamination remain unverified; no confirmed trading candidate",
+    "primary_sources": ["https://www.itl.nist.gov/div898/software/dataplot/refman1/auxillar/signtest.htm", "https://www.ime.usp.br/~abe/lista/pdf4R8xPVzCnX.pdf"]
+  },
+  "evolution": {
+    "schema": "existing Phase2 J-N SPACE unchanged",
+    "gene_dedup": "global normalized genes across legacy continuous v1, completed v2 and all successor cycles; no new progress for a previously evaluated gene",
+    "family_bridge": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+    "authorized_pool": "freeze at deployment at most 16 previously unseen K genes paired with distinct bounded-onset hypotheses and valid prior-cutoff outbox roots; no hidden widening or paid new AI",
+    "successors": "after both candidate receipts/feedback complete, freeze next two unused pool entries; order uses ONLY prior-training metrics/failures, with previous feedback hashes and lineage; never use test score for mutation selection",
+    "scoring": "training, nominal continuous test, 2x costs and delayed-entry test through unchanged engine; candidate failure terminal for that candidate only",
+    "idle": "IDLE_NO_NEW_WORK when the frozen authorized 16-entry pool is exhausted; disclose remaining wider K space, never claim all global research is exhausted"
+  },
+  "data_policy": {
+    "identity": "all unresolved @ identity segments quarantined prospectively by frozen universe restriction; do not splice original/new LUNA, do not call this certified point-in-time completeness",
+    "halt": "daily engine cannot price an intraday halt/exit; missing held price invalidates entire candidate book, no invented exit, stale mark or CASH reset",
+    "luna": "official USDT minute archive/checksum can prove observations 00:00-00:39 on 2022-05-13; it does not restore a full daily candle or certify 00:29 executable exit. Original frozen result stays UNDEFINED_INVALID",
+    "quality": "positive valid OHLCV and 61 contiguous bars for eligibility; no gap filling; trading a bad candle invalidates candidate; separate candidate receipts preserve unrelated work",
+    "venue": "historical spot proxy; exact publication latency/depth/slippage unavailable; no derivatives inferred"
+  },
+  "budgets": {"pool_max": 16, "batch_size": 2, "cycles_max": 8, "candidates_per_activation": 1, "worker_seconds": 180, "memory_bytes": 3221225472, "ledger_bytes": 1073741824, "disk_reserve_bytes": 2147483648},
+  "freeze": "contract, code, input manifest, inherited counters, all historical seen-gene hashes, pool, endpoint/window/null/power before any new results; each batch separately hash-frozen before discovery/evolution evaluations",
+  "immutable_predecessors": true
+}

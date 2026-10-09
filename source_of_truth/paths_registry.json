@@ -714,6 +714,21 @@
       "source_contract": "source_of_truth/anomaly_lab_contract.json",
       "runtime_code": "/opt/trendatlas-research/anomaly-lab/releases/",
       "no_production_authority": true
+    },
+    "discovery_evolution_successors": {
+      "canonical": "/var/lib/trendatlas-discovery-evolution",
+      "legacy_aliases": [],
+      "owner": "AI_LAB",
+      "artifact_type": "research",
+      "truth_domain": "non_authoritative_development",
+      "read_scope": [
+        "research",
+        "audit"
+      ],
+      "write_mode": "isolated_successor_only",
+      "source_contract": "source_of_truth/discovery_evolution_contract_v2.json",
+      "runtime_code": "/opt/trendatlas-research/discovery-evolution/releases/",
+      "no_production_authority": true
     }
   }
 }

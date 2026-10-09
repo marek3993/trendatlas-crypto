@@ -1333,6 +1333,19 @@
       "decision_relevance": "research_only",
       "writes_source_of_truth": false,
       "notes": "Only new Lab ExecStartPost drop-in; frozen runtime unchanged and worker not restarted"
+    },
+    {
+      "script_path": "research/discovery_evolution/entry.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Immutable bounded successor batches: training discovery, consumed research inbox, unchanged Phase2 K backtests, feedback, successor freeze",
+      "primary_outputs": [
+        "/var/lib/trendatlas-discovery-evolution/"
+      ],
+      "output_type": "research",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "Versioned contract; global legacy gene dedup; zero additional API allowance; private-network systemd unit with no production authority"
     }
   ]
 }

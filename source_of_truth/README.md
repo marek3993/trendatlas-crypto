@@ -18,6 +18,7 @@ This folder is the central single source of truth layer for Market Regime v1.
 - `phase2_broker_policy.json` = bounded development prompts, content cache, retry/accounting and exact exhaustion policy; evaluator and frozen research contract remain unchanged
 - `anomaly_lab_contract.json` = independently deployed, finite anomaly discovery research; fixed frequency/clustering, prior-origin selection, lifetime multiplicity and future Phase2 handoff; no production or prospective-data access
 - `anomaly_lab_reporting_contract.json` = read-only result consumer; sparse frequency uncertainty and unknown billing stay null; frozen Lab experiments remain immutable
+- `discovery_evolution_contract_v2.json` = versioned bounded discovery/evolution successor experiment; global gene deduplication, immutable batches, exact block-sign diagnostics and inherited budgets; predecessor experiments remain frozen
 - `experiments_registry.csv` = experiments registry
 
 ## Required read order for truth-sensitive work

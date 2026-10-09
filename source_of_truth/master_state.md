@@ -145,6 +145,12 @@
 - Live final read on 2026-10-08: all 14 origins finished automatically; 924 training results, 504 books and 154 handoffs are preserved. The finite experiment is EXHAUSTED, with timers enabled and costly work skipped. No anomaly family passed all economic gates.
 - Structured hypotheses and valid mechanism-inspired gene suggestions go to a read-only future-origin Phase2 ingress. The completed v2 cycle is never reopened or modified.
 
+## Discovery to evolution successors
+- `discovery_evolution_contract_v2.json` freezes a separate research experiment with bounded onset episodes, globally novel K descendants, inherited alpha/API debt and training-only successor ordering. The old Lab and Phase2 evidence remain unchanged.
+- Live VPS proof on 2026-10-09: eight automatically frozen/closed batches, 16 unique hypotheses, 16 consumed candidates, 65 completed backtest computations and 16 primary statistical diagnostics; no candidate confirmed. SIGKILL recovery reused the same reserved attempt.
+- The frozen 16-entry pool is now `IDLE_NO_NEW_WORK`; the wider K space remains partially untried. Enabled health timers are not continuous evolutionary progress.
+- The 39-block exact-sign design is arithmetically feasible under its declared conditional sign null. Historical independence, executable LUNA halt handling and certified point-in-time completeness remain unproven; no production promotion is allowed.
+
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.

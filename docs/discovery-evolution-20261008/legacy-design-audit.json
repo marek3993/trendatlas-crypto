@@ -1,0 +1,179 @@
+{
+  "statistic_invocations": 1078,
+  "nonnull_pvalues": 79,
+  "maximum_occupied_blocks": 11,
+  "nonnull_resolution_exceeds_spent_alpha": 79,
+  "half_year_days_max": 184,
+  "minimum_occupied_blocks_required": 8,
+  "longest_transitive_clusters": [
+    {
+      "family": "momentum",
+      "horizon": 7,
+      "interval": [
+        "2023-01-01",
+        "2023-12-17"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 344,
+      "raw_triggers": 1715
+    },
+    {
+      "family": "momentum",
+      "horizon": 14,
+      "interval": [
+        "2023-01-01",
+        "2023-12-17"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 344,
+      "raw_triggers": 1715
+    },
+    {
+      "family": "momentum",
+      "horizon": 14,
+      "interval": [
+        "2023-01-01",
+        "2023-12-17"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 343,
+      "raw_triggers": 1212
+    },
+    {
+      "family": "momentum",
+      "horizon": 14,
+      "interval": [
+        "2023-01-01",
+        "2023-12-17"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 343,
+      "raw_triggers": 1433
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2020-01-02",
+        "2020-12-17"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 326,
+      "raw_triggers": 599
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2020-01-02",
+        "2020-12-17"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 326,
+      "raw_triggers": 432
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2021-01-01",
+        "2021-12-17"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 301,
+      "raw_triggers": 378
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2020-01-02",
+        "2020-12-17"
+      ],
+      "clusters": 2,
+      "maximum_duration_days": 300,
+      "raw_triggers": 315
+    },
+    {
+      "family": "momentum",
+      "horizon": 14,
+      "interval": [
+        "2022-01-01",
+        "2022-12-17"
+      ],
+      "clusters": 2,
+      "maximum_duration_days": 270,
+      "raw_triggers": 670
+    },
+    {
+      "family": "momentum",
+      "horizon": 14,
+      "interval": [
+        "2022-01-01",
+        "2022-12-17"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 270,
+      "raw_triggers": 832
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2025-07-01",
+        "2026-06-16"
+      ],
+      "clusters": 2,
+      "maximum_duration_days": 262,
+      "raw_triggers": 626
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2025-07-01",
+        "2026-06-16"
+      ],
+      "clusters": 2,
+      "maximum_duration_days": 262,
+      "raw_triggers": 256
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2025-07-01",
+        "2026-06-16"
+      ],
+      "clusters": 2,
+      "maximum_duration_days": 262,
+      "raw_triggers": 400
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2024-07-01",
+        "2025-06-16"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 256,
+      "raw_triggers": 647
+    },
+    {
+      "family": "reentry_confirmation",
+      "horizon": 14,
+      "interval": [
+        "2024-07-01",
+        "2025-06-16"
+      ],
+      "clusters": 1,
+      "maximum_duration_days": 255,
+      "raw_triggers": 470
+    }
+  ],
+  "calendar_alignment_audit": "legacy-calendar-alignment.json",
+  "minimum_gate_impossible_windows": 13,
+  "minimum_gate_possible_windows": 1,
+  "all_significance_gates_impossible": true
+}

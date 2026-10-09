@@ -1,0 +1,220 @@
+{
+  "calendar_origin": "2018-05-05",
+  "block_definition": "absolute calendar_index // 30; partial boundary cells count",
+  "windows": [
+    {
+      "interval": [
+        "2020-01-01",
+        "2020-06-30"
+      ],
+      "days": 182,
+      "start_offset": 6,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 5,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 1.0974539069359088e-05,
+      "minimum_actual_trial": 67,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2020-07-01",
+        "2020-12-31"
+      ],
+      "days": 184,
+      "start_offset": 8,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 6,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 1.740341106856944e-06,
+      "minimum_actual_trial": 169,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2021-01-01",
+        "2021-06-30"
+      ],
+      "days": 181,
+      "start_offset": 12,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 5,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 6.783156066854787e-07,
+      "minimum_actual_trial": 271,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2021-07-01",
+        "2021-12-31"
+      ],
+      "days": 184,
+      "start_offset": 13,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 4,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 3.5841780046164213e-07,
+      "minimum_actual_trial": 373,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2022-01-01",
+        "2022-06-30"
+      ],
+      "days": 181,
+      "start_offset": 17,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 5,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 2.2114108801415303e-07,
+      "minimum_actual_trial": 475,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2022-07-01",
+        "2022-12-31"
+      ],
+      "days": 184,
+      "start_offset": 18,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 5,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 1.4992234022776202e-07,
+      "minimum_actual_trial": 577,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2023-01-01",
+        "2023-06-30"
+      ],
+      "days": 181,
+      "start_offset": 22,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 4,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 1.0829073897600278e-07,
+      "minimum_actual_trial": 679,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2023-07-01",
+        "2023-12-31"
+      ],
+      "days": 184,
+      "start_offset": 23,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 3,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 8.186762986662127e-08,
+      "minimum_actual_trial": 781,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2024-01-01",
+        "2024-06-30"
+      ],
+      "days": 182,
+      "start_offset": 27,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 3,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 6.405559000322841e-08,
+      "minimum_actual_trial": 883,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2024-07-01",
+        "2024-12-31"
+      ],
+      "days": 184,
+      "start_offset": 29,
+      "calendar_cells": 8,
+      "actual_occupied_blocks_max": 4,
+      "best_case_exact_sign_p_floor": 0.00390625,
+      "largest_alpha": 5.1482171723932004e-08,
+      "minimum_actual_trial": 985,
+      "min_blocks_gate_possible": true,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2025-01-01",
+        "2025-06-30"
+      ],
+      "days": 181,
+      "start_offset": 3,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 5,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 4.227772065587965e-08,
+      "minimum_actual_trial": 1087,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2025-07-01",
+        "2025-12-31"
+      ],
+      "days": 184,
+      "start_offset": 4,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 3,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 3.533793668855263e-08,
+      "minimum_actual_trial": 1189,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2026-01-01",
+        "2026-06-30"
+      ],
+      "days": 181,
+      "start_offset": 8,
+      "calendar_cells": 7,
+      "actual_occupied_blocks_max": 5,
+      "best_case_exact_sign_p_floor": 0.0078125,
+      "largest_alpha": 2.997652238766598e-08,
+      "minimum_actual_trial": 1291,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    },
+    {
+      "interval": [
+        "2026-07-01",
+        "2026-09-25"
+      ],
+      "days": 87,
+      "start_offset": 9,
+      "calendar_cells": 4,
+      "actual_occupied_blocks_max": 2,
+      "best_case_exact_sign_p_floor": 0.0625,
+      "largest_alpha": 2.574874783839262e-08,
+      "minimum_actual_trial": 1393,
+      "min_blocks_gate_possible": false,
+      "significance_possible_even_if_all_cells_occupied": false
+    }
+  ],
+  "gate_impossible_windows": 13,
+  "gate_possible_windows": 1,
+  "significance_possible_windows": 0,
+  "correction": "ceil(window_days/30) is NOT a valid upper bound when bins are anchored outside the window"
+}

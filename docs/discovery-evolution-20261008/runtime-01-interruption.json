@@ -1,0 +1,752 @@
+{
+  "observed_utc": "2026-10-09T05:09:02Z",
+  "audit": {
+    "contract": "discovery_evolution_v2_20261009",
+    "state": "RUNNING",
+    "idle_reason": null,
+    "discovery_active": true,
+    "evolution_active": true,
+    "current_cycles": [
+      1
+    ],
+    "closed_cycles": 0,
+    "unique_new_hypotheses": 2,
+    "legacy_handoff_receipts": 154,
+    "legacy_unique_hypotheses": 62,
+    "legacy_repeated_handoffs": 92,
+    "legacy_unique_proposed_genes": 5,
+    "accepted_new_genes": 2,
+    "candidates_actually_evaluated": 0,
+    "failed_candidates": 0,
+    "backtest_calculations_completed": 0,
+    "backtest_attempts_reserved": 1,
+    "statistical_attempts_reserved": 1,
+    "statistical_tests_with_pvalue": 0,
+    "conservative_lifetime_alpha_index": 1429,
+    "inherited": {
+      "api_calls": 14,
+      "api_tokens": 42953,
+      "api_unknown_billing": false,
+      "backtest_trials": 1428,
+      "handoffs": 154,
+      "hypotheses": 66,
+      "last_event_hash": "f3d44f7adb7380cf38f5a99cfbd4d24b1d9795f802a5ed55cd856c5d6aec0c33",
+      "nonnull_pvalues": 79,
+      "nonnull_resolution_exceeds_alpha": 79,
+      "statistic_calls": 1078
+    },
+    "global_historical_gene_ids": 40172,
+    "authorized_pool_remaining": 16,
+    "last_progress_utc": "2026-10-09T05:08:32.245451+00:00",
+    "last_event_hash": "5e2c889733be31583238206d74bf5fbf8bf522f849e2245b6b07f6d080df7526",
+    "next_automatic_action": "resume active candidate / freeze successor from training feedback",
+    "statistical_design": {
+      "assumption": "conditional on prior training selection, independent fair block signs; within-block and cross-asset dependence unrestricted; 14-day gaps limit label overlap but do NOT establish independence of financial regimes",
+      "available_full_blocks": 39,
+      "calendar_days": 1729,
+      "critical_positive_blocks_at_full_coverage": 36,
+      "feasible_in_principle": true,
+      "guaranteed_power_on_market_data": false,
+      "last_planned_alpha_index": 1444,
+      "minimum_p_at_available_blocks": 1.8189894035458565e-12,
+      "minimum_p_at_required_blocks": 9.313225746154785e-10,
+      "minimum_required_nonzero_blocks": 30,
+      "power_at_block_positive_probability": {
+        "0.5": 1.8044374883174896e-08,
+        "0.55": 4.1420945675934475e-07,
+        "0.7": 0.000794225209105115,
+        "0.8": 0.03320733455875954,
+        "0.9": 0.4437193574371222,
+        "0.95": 0.8708623760236189
+      },
+      "worst_planned_alpha": 2.3962656595960855e-08
+    },
+    "orders_allowed": false,
+    "sealed_access": false,
+    "new_api_calls": 0,
+    "counts": {
+      "cycles": 1,
+      "discoveries": 2,
+      "inbox": 2,
+      "candidates": 2,
+      "attempts": 1,
+      "backtests": 0,
+      "stat_reservations": 1,
+      "statistics": 0,
+      "feedback": 0,
+      "completed": 0,
+      "events": 9
+    },
+    "hash_chain": "PASS"
+  },
+  "interruption": {
+    "utc": "2026-10-09T05:08:32Z",
+    "pending_attempts": [
+      [
+        1,
+        "efb4e3746744bfd487e72436197f877d192a218e8cabc533aa432b573c614f3a"
+      ]
+    ],
+    "ledger_hash_before_kill": "5e2c889733be31583238206d74bf5fbf8bf522f849e2245b6b07f6d080df7526",
+    "service_before": "ActiveState=activating\nMainPID=4038711",
+    "signal": "SIGKILL",
+    "scope": "trendatlas-discovery-evolution.service",
+    "kill_returncode": 0,
+    "stderr": ""
+  },
+  "deployment": {
+    "release": "/opt/trendatlas-research/discovery-evolution/releases/3e303e4a499a98ab",
+    "package_sha256": "3e303e4a499a98ab97e6e904d1515abf909b9174bc2990a32b6c7d0228707314",
+    "bootstrap_sha256": "55d89256e4e10562aa682047aaa5ae1f7f053899ddee1b5972ec42484e344d42",
+    "pool_digest": "b78069fdff17301329703a27bb667ed51be8246b1fe177dc9752e8cbe67b84df",
+    "pool_entries": 16,
+    "old_v2_hashes": {
+      "meta": "8607ea07d585319c745b71462e6d94d7cafca2661c5c17b81bb1c89bdd76ec97",
+      "candidates": "d27aa77585cb083bd15e18aaac1d83e335ed32ddd65baa5e32f8e846487466d0",
+      "evaluations": "b9da056a8bc6945dee05120c7a3ab7640db7900aa766af2d8db2403a2ea18963",
+      "members": "8c88320e399d07c3069c5c78002f5baadec3252a396284dc2a231d8b8d8fa230",
+      "stages": "1b8f5805289fa86efa2f20c6d44714274f4ec68e16140180eebf2d67d4200ba7",
+      "selections": "cb714c0f92db15cb56c45a1678c8c775f608722b3d42e3bef784fb4328c1596f",
+      "test_books": "8e1ec36a6e8c208f2465b98ca26516ab6a6e338d2f760363182caadc788f6947",
+      "terminal_test_failures": "93f771413132db752eb718ea3ef9279ac9bb700bd6b962422b3a0dc468bd4c14",
+      "events": "2e887e44a826ce57b728e30061508793a05f66bc821e6d45155afdba28336557"
+    },
+    "predecessors_unchanged": true,
+    "new_api_calls": 0,
+    "unit_paths": [
+      "/etc/systemd/system/trendatlas-discovery-evolution.service",
+      "/etc/systemd/system/trendatlas-discovery-evolution.timer"
+    ]
+  },
+  "repair": {
+    "previous_release": "/opt/trendatlas-research/discovery-evolution/releases/3e303e4a499a98ab",
+    "release": "/opt/trendatlas-research/discovery-evolution/releases/9123165b53ae37e4",
+    "package_sha256": "9123165b53ae37e48fc27d6357fd049bd2eca79252aa3fc5b30a993efa431aae",
+    "changed_files": [
+      "research/discovery_evolution/deploy.py",
+      "research/discovery_evolution/runtime.py",
+      "tests/test_discovery_evolution.py"
+    ],
+    "old_v2_unchanged": true,
+    "bootstrap_bytes_unchanged": true,
+    "results_before_repair": 0,
+    "checkpoint_retained": true
+  },
+  "histories": [
+    {
+      "backtest_evaluations": 639936,
+      "normalized_gene_ids_digest": "b95a9aff4f7d7aca7380238c24659231fe1c0122787956ef7c14699e281b751c",
+      "path": "/var/lib/trendatlas-research-development/research.sqlite",
+      "registered_candidates": 39996
+    },
+    {
+      "backtest_evaluations": 1854,
+      "normalized_gene_ids_digest": "b3340227b6e854c9fee086bd63a9c17e31b06ef1946dbae3bd04c8ef23247943",
+      "path": "/var/lib/trendatlas-research-v2/v2.sqlite",
+      "registered_candidates": 515
+    }
+  ],
+  "pool": [
+    {
+      "gene_id": "63234d4652c5abb3352afb1df87c8ef33ee12d594b8efd071017f15e7cb63795",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 21,
+        "trend_days": 140,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "breakout",
+          "horizon": 7,
+          "threshold": 40
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "afbb78ff2a4c032750faacb852bc3b54c1caf6ac021ac6322cc1753824669896",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-12-17",
+      "root_genes": {
+        "atr_days": 20,
+        "breakout_days": 40,
+        "family": "N",
+        "initial_stop_atr": 2.0,
+        "risk_per_entry": 0.005,
+        "trailing_stop_atr": 4.0
+      },
+      "root_hypothesis": "5525797bd6a5b14f724b445f9210be53a84713ae7f85a69615508fd5816db052",
+      "root_receipt": "cd9b15604f12c56b3ac2dffe53397b23bd9e2b28871f2aaf0d29e9b2499700a6"
+    },
+    {
+      "gene_id": "e21e4545d7e02c3918163e8638681ae6543b14eba5ae82f395ee7af0f10f1451",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 10,
+        "trend_days": 120,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "mean_reversion",
+          "horizon": 7,
+          "threshold": 1.5
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "58dbeaa90001a10c8db6db8d1927606a2bca93d88012fe89759e96dc4ecbaf09",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2020-12-17",
+      "root_genes": {
+        "breakout_days": 40,
+        "family": "M",
+        "momentum_days": 30,
+        "slow_days": 120,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "0cca80626f5f297a4aa55b1c317cdc570948ba6a9ca97a23ec36aebd0c9749af",
+      "root_receipt": "ba4a0484de0dd158cbf7703434d5a8e6dfe0ee848995b129eb1b113f9ac97070"
+    },
+    {
+      "gene_id": "96a2def955c683aae5465d344b2e026d0787944786cb0ebfdd1cca04be2242fb",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 14,
+        "trend_days": 120,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "momentum",
+          "horizon": 14,
+          "threshold": 0.15
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "b05060a5b84aac1361134c4b6e3248ed954b491a0adcc68fbda3fbc7f10feef1",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-12-17",
+      "root_genes": {
+        "breakout_days": 40,
+        "family": "M",
+        "momentum_days": 30,
+        "slow_days": 120,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "2d821741b5a26c0cf6abbc95c06e85259d7c363870ab32d315ad5687df982fa4",
+      "root_receipt": "fa3bbde3311fd6827e4719043baaa598fd58558ba690804fc488c34f312780bc"
+    },
+    {
+      "gene_id": "19de903d702a9e2fe50298af5de4935f7c62caf22d930bf4a874c61e5c1c6b27",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 21,
+        "trend_days": 120,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "reentry_confirmation",
+          "horizon": 7,
+          "threshold": 0.06
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "b91e55a6378a4a4da16512b1aee1617fafde98685bf5774d9cb2e2b1ef2a4b17",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-12-17",
+      "root_genes": {
+        "breakout_days": 40,
+        "family": "M",
+        "momentum_days": 30,
+        "slow_days": 120,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "a5593f11a4f028377a616647c48a984967e593ac7f4ffd223a6cde179aca8816",
+      "root_receipt": "c3b52f8c79753a8f38aee905f6afc54a16d8d4e6050da7f4beda9bef33d220b2"
+    },
+    {
+      "gene_id": "38a61e961b7cfa64b2ca97603e1410c2cc43b47cba395d16f94b161067b5eda0",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 28,
+        "trend_days": 120,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "relative_strength",
+          "horizon": 7,
+          "threshold": 0.1
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "d1cadaed1dd50baa7308dfc7cefbfdfaf223fdb22de6a219d27e2609661191b6",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2019-12-17",
+      "root_genes": {
+        "breakout_days": 40,
+        "family": "M",
+        "momentum_days": 30,
+        "slow_days": 120,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "243425236b25dc6700850634fbc585bf1aeeca4626e0cb9c6b7338ff30d976e4",
+      "root_receipt": "349b0f676fd60390ea28838829224cb5ea4351be8841c4e49e23a4d386625be0"
+    },
+    {
+      "gene_id": "6c040589f6838e32ab8cc8315e6f9b1339bd2e4ccfe95a0a0f6b9f4024fde07e",
+      "genes": {
+        "asset_weight_cap": 0.1,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 14,
+        "trend_days": 140,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "avoid",
+          "family": "rotation_churn",
+          "horizon": 14,
+          "threshold": 2
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "a75299516392b9d19f2d2278a2afb5327e7fd678425d59a71a2b799c2aa93146",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-12-17",
+      "root_genes": {
+        "adverse_exposure_fraction": 0.0,
+        "breadth_on": 0.55,
+        "family": "L",
+        "market_sma_days": 150,
+        "momentum_days": 30,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "8809efcf5a90e3ae841885e5d156fae4db6f0a6dd986003655427e4289835039",
+      "root_receipt": "5614f6822be33c4ee5930a23d29a1b5b346287157fd9df99cb5c1af6a37b0c9a"
+    },
+    {
+      "gene_id": "097ae79017e295033aadb5f57e2b915cb5c2c96b87c5823ebb38aafd06d0a76f",
+      "genes": {
+        "asset_weight_cap": 0.1,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 7,
+        "trend_days": 140,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "avoid",
+          "family": "stop_trail_context",
+          "horizon": 14,
+          "threshold": 0.03
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "f90b211ee14c7c1f8a85a67a715315b9df0cbf37c1bbedbeff3cc694cacf2a8a",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-12-17",
+      "root_genes": {
+        "atr_days": 20,
+        "breakout_days": 40,
+        "family": "N",
+        "initial_stop_atr": 2.0,
+        "risk_per_entry": 0.005,
+        "trailing_stop_atr": 4.0
+      },
+      "root_hypothesis": "1e8ebbf082dc55bb56e0129f04f87c49d9b05f85665e7cec18c278cd1a8d61f5",
+      "root_receipt": "d79084de66d9e96104a73be89c03c7f7e5045d93fe072925dda18566236891dd"
+    },
+    {
+      "gene_id": "36c3ff6ae5686c3bce3156e30f5a2351194dc05b6e0d85fb609366eacb4ea409",
+      "genes": {
+        "asset_weight_cap": 0.1,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 28,
+        "trend_days": 140,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "reduce",
+          "family": "take_profit_context",
+          "horizon": 7,
+          "threshold": 2.5
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "578c39b4461e0e875942e8dbf53c6906e547f5f2550f34c9e4fcb60270f25d58",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2020-12-17",
+      "root_genes": {
+        "adverse_exposure_fraction": 0.0,
+        "breadth_on": 0.55,
+        "family": "L",
+        "market_sma_days": 150,
+        "momentum_days": 30,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "6127ce86e8cae046a1afb21acf71daadbdb8cba02ac8c78182fe24ef7bf9c98c",
+      "root_receipt": "8147b8ae0f2841ce2f486d29fc6739b6961a24f9d131d7468f89fb583133c4b7"
+    },
+    {
+      "gene_id": "47b6997a0e0b5f78ebf3626a14453d7d1123d7a08f601d5bead019815fc57295",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 5,
+        "trend_days": 140,
+        "vol_days": 30,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "vol_compression",
+          "horizon": 7,
+          "threshold": 0.5
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "4a1e457f43bb070834cee725916163d3455d46cc3da32b80c224b01a79cd8a9b",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2020-12-17",
+      "root_genes": {
+        "atr_days": 20,
+        "breakout_days": 40,
+        "family": "N",
+        "initial_stop_atr": 2.0,
+        "risk_per_entry": 0.005,
+        "trailing_stop_atr": 4.0
+      },
+      "root_hypothesis": "612ffd6bbf802cfc02608a80f9f59dffc93dce1f90847cdb4b0a0a18074098ad",
+      "root_receipt": "f2048b121244a93f1797171dfd747cf2a67b9adb982991df77f74ee080894661"
+    },
+    {
+      "gene_id": "f75a4f1bb6149d45b5ad740590195cee81a113e744ba8bea067f38de929179cf",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 21,
+        "trend_days": 140,
+        "vol_days": 30,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "vol_expansion",
+          "horizon": 7,
+          "threshold": 1.75
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "e56cf605d0ed46dfd0af800b372c179c96f39186b7652b79af6c74893224ed44",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2019-12-17",
+      "root_genes": {
+        "atr_days": 20,
+        "breakout_days": 40,
+        "family": "N",
+        "initial_stop_atr": 2.0,
+        "risk_per_entry": 0.005,
+        "trailing_stop_atr": 4.0
+      },
+      "root_hypothesis": "15a699e976a5172ac72379222a68e9fe88d6613a1eae606e302dab29e715c724",
+      "root_receipt": "47d9f4c6e04c0bc996fc86cc28c1ba4cab37578518c5df8814cb84f51173a2cc"
+    },
+    {
+      "gene_id": "2279492328b0dd6094427e86e638a429806e15b3b85627cfc4968b4987dcb894",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 28,
+        "trend_days": 140,
+        "vol_days": 30,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "volume_reaction",
+          "horizon": 7,
+          "threshold": 3.0
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "2766f4ac5b246ca338d1b9c1303b3c0251d446ad6e6b668f2128e209fd424e39",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-12-17",
+      "root_genes": {
+        "atr_days": 20,
+        "breakout_days": 40,
+        "family": "N",
+        "initial_stop_atr": 2.0,
+        "risk_per_entry": 0.005,
+        "trailing_stop_atr": 4.0
+      },
+      "root_hypothesis": "5f7681a30d9ebdcfd644b3e455313c76ae90441ea72f375aa86f5b73c23f8641",
+      "root_receipt": "8126faa9e22fd0ee3ea9d9d50e8d1d7a2b4c5c913f500e7d2bde8a7b37676a19"
+    },
+    {
+      "gene_id": "8bdc2e3ba4b046309de7ffafbd7f19b82979d250f84344f6556b788db3d7992b",
+      "genes": {
+        "asset_weight_cap": 0.15,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 28,
+        "trend_days": 140,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "breakout",
+          "horizon": 7,
+          "threshold": 60
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "e8273c7c843e8c17fa7f4035233a62f65bf238847f1901bca8db93f103222485",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2019-12-17",
+      "root_genes": {
+        "atr_days": 20,
+        "breakout_days": 55,
+        "family": "N",
+        "initial_stop_atr": 2.0,
+        "risk_per_entry": 0.005,
+        "trailing_stop_atr": 4.0
+      },
+      "root_hypothesis": "c29d5d0b028ea6fd419e2007ec1f208c921f129aef2088b4a975352b7f843cf9",
+      "root_receipt": "6cd6604d23ee40b5ec1e7db00cffce6b24a65a573bb3fd36e0d7f4a805ef4932"
+    },
+    {
+      "gene_id": "5fc01a65236287e68e5695e889bed64d797f53173800715b539a80516da876ce",
+      "genes": {
+        "asset_weight_cap": 0.1,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 14,
+        "trend_days": 120,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "mean_reversion",
+          "horizon": 14,
+          "threshold": 2.0
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "9ecc87006a1b42219cb0dd019f4dde5c181f9799b6af77c9556245c0104a82c6",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-06-16",
+      "root_genes": {
+        "breakout_days": 40,
+        "family": "M",
+        "momentum_days": 30,
+        "slow_days": 120,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "2b338aad4c7d053b1d8ce28ea59ec22357f15f175a8f968876d95b4515b677e3",
+      "root_receipt": "bf1c7cb0b3cd37057e1ddc4460cfe671fbfa1fc77afa9067cd4f79c8c74c9617"
+    },
+    {
+      "gene_id": "b129c802097606602607c088003c52a2e410b8f85f4b447698aabc856a94c757",
+      "genes": {
+        "asset_weight_cap": 0.1,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 7,
+        "trend_days": 120,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "momentum",
+          "horizon": 7,
+          "threshold": 0.1
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "297a0cc24ccb45a8d490fa5e688022f729e70087c8d10e0a1143940c695f92bb",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2019-12-17",
+      "root_genes": {
+        "breakout_days": 40,
+        "family": "M",
+        "momentum_days": 30,
+        "slow_days": 120,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "b4d812043a5d5e3a7fb41a9a1e75e767b1aea2aebf109816da9d3c844f85b314",
+      "root_receipt": "ab5bcd3ff0ee49926f23269720cc5378ded4a586f3da62319a6e2c05cc0fb9b1"
+    },
+    {
+      "gene_id": "ee685115ceb5d58e07af1044c71abcc7d93828ace832ba11b36a2275cfae5fb4",
+      "genes": {
+        "asset_weight_cap": 0.1,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 5,
+        "trend_days": 120,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "reentry_confirmation",
+          "horizon": 7,
+          "threshold": 0.02
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "9b31490624b1e821c4ae199b69526eca535f1ddaeb7d61c283ad2b6c3893c593",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-06-16",
+      "root_genes": {
+        "breakout_days": 40,
+        "family": "M",
+        "momentum_days": 30,
+        "slow_days": 120,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "d5fe60e824e55418578da6f256f1171f00e33012131380a75dc025840fc828f7",
+      "root_receipt": "af8b0e7d7ac375da859c6ad04a2ab7b1353b3b536e86d11b84cca7cf3d8ea5da"
+    },
+    {
+      "gene_id": "eb24432b432841ad0d3b0747d071d706773662a6e06a221903f3c2cc0ed6ef0e",
+      "genes": {
+        "asset_weight_cap": 0.1,
+        "correlation_cap": 0.5,
+        "family": "K",
+        "rebalance_days": 10,
+        "trend_days": 120,
+        "vol_days": 20,
+        "vol_target": 0.1
+      },
+      "hypothesis": {
+        "rule": {
+          "action": "long",
+          "family": "relative_strength",
+          "horizon": 14,
+          "threshold": 0.1
+        },
+        "training": [
+          "2020-01-01",
+          "2021-12-17"
+        ],
+        "version": "bounded_onset_v2"
+      },
+      "hypothesis_id": "6d3108415494ab51ff6e608aa6b710eb41854159b10a2246475c8e4d4226e9dc",
+      "mapping": "M/L/N/J outbox mechanisms can propose correlation-aware K genes inside the ALREADY authorized K space; explicit mechanism-inspired bridge, never equivalence to anomaly rule",
+      "root_cutoff": "2021-12-17",
+      "root_genes": {
+        "breakout_days": 40,
+        "family": "M",
+        "momentum_days": 30,
+        "slow_days": 120,
+        "vol_target": 0.1
+      },
+      "root_hypothesis": "e7effe500dcb61d328a89d7fa2dc283b617ac061ccf89b184038d9f7df9a175b",
+      "root_receipt": "d18497845aa135fe8fc189c11d7b7ab2307ffd55aca894dbfe24561368515920"
+    }
+  ],
+  "pool_digest": "b78069fdff17301329703a27bb667ed51be8246b1fe177dc9752e8cbe67b84df"
+}

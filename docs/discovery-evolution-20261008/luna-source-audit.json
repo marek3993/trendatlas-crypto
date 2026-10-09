@@ -1,0 +1,74 @@
+{
+  "source": "https://data.binance.vision/data/spot/daily/klines/LUNAUSDT/1m/LUNAUSDT-1m-2022-05-13.zip",
+  "notice_source": "https://www.binance.com/en-TR/support/announcement/detail/514e0ba636e843bda47d5d740b7dadf4",
+  "quote": "USDT",
+  "date": "2022-05-13",
+  "old_result_repaired": false,
+  "sha256": "b3e67cd58c4da5348234ef983bf52795fdf8dedb1bfd45485cea4c90dd5c48c4",
+  "published_sha256": "b3e67cd58c4da5348234ef983bf52795fdf8dedb1bfd45485cea4c90dd5c48c4",
+  "checksum_valid": true,
+  "minute_rows": 40,
+  "first_rows": [
+    [
+      "1652400000000",
+      "0.00032000",
+      "0.00047000",
+      "0.00031000",
+      "0.00047000",
+      "1461818205.88000000",
+      "1652400059999",
+      "598070.52211280",
+      "5849",
+      "896767091.49000000",
+      "362323.51311160",
+      "0"
+    ],
+    [
+      "1652400060000",
+      "0.00046000",
+      "0.00055000",
+      "0.00042000",
+      "0.00049000",
+      "1718934759.79000000",
+      "1652400119999",
+      "842605.41877750",
+      "7867",
+      "822062021.17000000",
+      "405149.88713570",
+      "0"
+    ]
+  ],
+  "last_rows": [
+    [
+      "1652402280000",
+      "0.00005000",
+      "0.00006000",
+      "0.00004000",
+      "0.00006000",
+      "4656630308.76000000",
+      "1652402339999",
+      "229460.27280390",
+      "4493",
+      "2180512233.71000000",
+      "116777.24748140",
+      "0"
+    ],
+    [
+      "1652402340000",
+      "0.00005000",
+      "0.00006000",
+      "0.00005000",
+      "0.00005000",
+      "5046719173.62000000",
+      "1652402399999",
+      "265948.15862450",
+      "4467",
+      "1361219994.35000000",
+      "81673.19966100",
+      "0"
+    ]
+  ],
+  "notice_utc": "2022-05-13T00:28:00Z",
+  "halt_utc": "2022-05-13T00:40:00Z",
+  "exit_rule_status": "Minute archive alone does not certify publication latency, depth, size/slippage or post-halt valuation. Frozen daily evaluator cannot represent a 00:29 exit; original result remains invalid."
+}
