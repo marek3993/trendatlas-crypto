@@ -161,3 +161,10 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+## Automatic successor research spaces — 2026-10-10
+- `research_space_successor_v1.json` prospectively authorizes results-driven finite K refinements after full current-space exhaustion. The initial 54,880-configuration grid and its historical/global dedup records remain intact.
+- Each successor freezes its parent space hash, eligible train/validation evidence, finite enum grid, contamination, frequency policy and lifetime statistical design before admission/backtest. Open work and pending AI responses close first.
+- Risk parameter grids refine only within the original envelopes; lookbacks, accounting/exit math, data cutoffs, sealed access, daily/monthly budgets and scientific debt do not change. Deterministic space construction is explicitly local; metered AI proposals retain separate provenance.
+- No eligible novel frontier gives explicit IDLE; missing valid train/validation evidence is a separate cause. Never recycle a gene with a new space identifier or confirm a trading candidate from this adaptive development search.
+- Implementation, isolated native deployment and tiny-space actual-engine exhaustion/resume regressions: `docs/research-spaces-20261010/REPORT.md`. No production, account, order, LeadPilot or Pi authority.

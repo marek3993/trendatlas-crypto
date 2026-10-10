@@ -1,0 +1,21 @@
+{
+  "classification": [
+    "B",
+    "C",
+    "D"
+  ],
+  "source_contract_validation": "PASS before implementation",
+  "commands": [
+    {
+      "command": "python -B -m unittest tests.test_research_spaces tests.test_continuous_research tests.test_continuous_research_protocol tests.test_discovery_evolution tests.test_anomaly_lab tests.test_anomaly_lab_reporting tests.test_phase2_v2 tests.test_phase2_v2_continuation -q",
+      "result": "87 tests PASS",
+      "elapsed_seconds": 121.127
+    },
+    {
+      "command": "python -B -m unittest tests.test_research_spaces.ResearchSpaceTests.test_successor_AI_schema_admission_backtest_and_same_shared_budget tests.test_research_spaces.ResearchSpaceTests.test_frontier_exhaustion_never_relabels_seen_genes_as_new_space tests.test_research_spaces.ResearchSpaceTests.test_deployment_changes_only_isolated_research_entrypoint -v",
+      "result": "3 additional tests PASS",
+      "elapsed_seconds": 3.532
+    }
+  ],
+  "unique_regressions": 90
+}

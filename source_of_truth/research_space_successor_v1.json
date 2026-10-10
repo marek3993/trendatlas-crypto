@@ -1,0 +1,47 @@
+{
+  "id": "research_space_successor_v1_20261010",
+  "classification": [
+    "B",
+    "C",
+    "D"
+  ],
+  "authority": "explicit_user_20261010_automatic_result_driven_successor_space",
+  "ancestor_contract": "continuous_discovery_evolution_v1_20261009",
+  "orders_allowed": false,
+  "production_writes_allowed": false,
+  "promotion_allowed": false,
+  "sealed_access": false,
+  "budget_policy": "Reuse continuous_research_shared_v1 API reservations and original 128 candidate starts/day; no new account, reset, refund or per-space allowance.",
+  "alpha_policy": "Original lifetime 0.05/[t*(t+1)], inherited 1444 plus every reserved unique candidate including invalid results; no space/day reset.",
+  "initial_space": "Exactly the existing K grid, including all legacy global dedup records and outstanding requests, proposals and batches.",
+  "refinement": {
+    "vol_target": {
+      "min": 0.06,
+      "max": 0.24,
+      "step": 0.005
+    },
+    "correlation_cap": {
+      "min": 0.3,
+      "max": 0.9,
+      "step": 0.05
+    },
+    "asset_weight_cap": {
+      "min": 0.1,
+      "max": 0.25,
+      "step": 0.025
+    }
+  },
+  "fixed_axes": [
+    "trend_days",
+    "vol_days",
+    "rebalance_days"
+  ],
+  "successor_algorithm": "LOCAL_RESULT_REFINEMENT, not AI authored: rank completed valid training AND validation views by validation log growth descending, drawdown ascending, candidate id ascending. Choose first parent with globally unseen configurations in the Cartesian center/adjacent-one-step grid of the three refinement axes. Keep its other axes fixed. Maximum 27 configurations before global dedup; use original rule. No performance PASS threshold. If frontier is empty, report IDLE_NO_ELIGIBLE_NOVEL_FRONTIER.",
+  "eligibility": "Both exact original training and validation intervals, cutoff <= 2021-12-17, finite numeric log_growth and mdd, valid receipts. Read only training_view; diagnostics/statistics never enter selection. Invalid or unavailable feedback cannot seed a successor.",
+  "transition": "Only after all current configurations registered globally, no open batch, no unassigned proposal, no unresolved scientific attempt and no pending AI request. Pending old response is WAIT_PENDING_SPACE_REQUEST, not exhaustion. Freeze successor before accepting or evaluating its members.",
+  "freeze": "Append-only research_spaces, space_batches, space_ends tables; parent hash, bounded parent evidence, full safe feedback digest/count, contract/code binding, enum schema, novel count, windows, frequency policy, contamination, lifetime alpha design before results. Batch-to-space link exists before backtest. Resume reuses frozen space and reservations.",
+  "dedup": "Canonical genes and rule+genes identities exclude space id, text and lineage. All legacy and new hashes retained globally. Parameter refinement is a new configuration, not a new market discovery.",
+  "ai": "Existing metered broker continues with compact frozen successor enum schema and space id/hash in request. No entire history or growing hash list; exact parser limits unchanged. Old requests retain their original wire bytes.",
+  "overfitting": "All history remains seen development; repeated validation selection and diagnostic inspection are contamination. Conditional p-values and unverified independence never confirm a trading candidate. Original cutoffs, sealed interval, statistical thresholds, data identity/LUNA invalidation and cost/exit math unchanged.",
+  "finite_authority": "No expansion outside declared envelope, no new lookback values, family, data, executable AI code or trading authority. Empty eligible novel frontier means IDLE, not recycling. A later wider envelope requires another versioned authorization."
+}

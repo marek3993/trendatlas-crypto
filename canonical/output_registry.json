@@ -894,14 +894,15 @@
     {
       "output_path": "/var/lib/trendatlas-continuous-research/",
       "generated_by": [
-        "research/continuous_research/runtime.py"
+        "research/continuous_research/runtime.py",
+        "research/research_spaces.py"
       ],
       "layer": "raw_output",
       "status": "active",
       "output_kind": "continuous_research_ledger",
       "decision_relevance": "reference_only",
       "official_truth": false,
-      "notes": "Immutable batches, global gene/hypothesis novelty, reserved scientific attempts, separate backtests and conditional diagnostics, train/validation feedback. No lifetime pool/batch cap; daily compute WAIT renews without resetting history."
+      "notes": "Immutable batches, global gene/hypothesis novelty, reserved scientific attempts, separate backtests and conditional diagnostics, train/validation feedback. No lifetime pool/batch cap; daily compute WAIT renews without resetting history. Prospective immutable research_spaces, space_batches and space_ends preserve full-space lineage; tiny-space transition proof is synthetic and separate from live daily-budget WAIT."
     },
     {
       "output_path": "/var/lib/trendatlas-continuous-mailbox/",

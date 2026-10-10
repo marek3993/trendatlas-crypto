@@ -6,3 +6,7 @@ source_of_truth/continuous_research_contract_v1.json -text
 source_of_truth/continuous_research_protocol_v2.json -text
 tests/test_continuous_research.py -text
 tests/test_continuous_research_protocol.py -text
+research/research_spaces.py -text
+scripts/deploy_research_spaces.py -text
+source_of_truth/research_space_successor_v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+tests/test_research_spaces.py -text

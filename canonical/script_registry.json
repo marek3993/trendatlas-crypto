@@ -1378,7 +1378,7 @@
       "script_path": "research/continuous_research_protocol.py",
       "layer": "research_os_dev_only",
       "status": "active",
-      "purpose": "Frozen prospective AI wire adapter and active native entrypoint",
+      "purpose": "Frozen AI wire compatibility adapter used by the research-space entrypoint",
       "primary_outputs": [
         "/var/lib/trendatlas-continuous-research/",
         "/var/lib/trendatlas-continuous-mailbox/"
@@ -1427,6 +1427,34 @@
       "decision_relevance": "research_only",
       "writes_source_of_truth": false,
       "notes": "Only new continuous api.sqlite and WAL/SHM modes 0660 in their existing group; broker pre-start preserves shared main-file mode; native separate-user regression"
+    },
+    {
+      "script_path": "research/research_spaces.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Frozen automatic successor-space planner and active isolated research entrypoint",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/",
+        "/var/lib/trendatlas-continuous-mailbox/"
+      ],
+      "output_type": "research",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "research_space_successor_v1.json; finite train/validation-driven refinement; immutable space lineage; original shared accounting and global identities; no production authority"
+    },
+    {
+      "script_path": "scripts/deploy_research_spaces.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Append-freeze successor-space adapter without resetting old records or budgets",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/",
+        "/var/lib/trendatlas-continuous-mailbox/"
+      ],
+      "output_type": "research",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "research_space_successor_v1.json; finite train/validation-driven refinement; immutable space lineage; original shared accounting and global identities; no production authority"
     }
   ]
 }

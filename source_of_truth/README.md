@@ -78,3 +78,5 @@ This folder is the central single source of truth layer for Market Regime v1.
 - Pi authority/runtime work must follow `source_of_truth/pi_codex_runtime_workflow.md`.
 - `master_state.md` should remain a short state snapshot, not a full history log.
 - Chats must read this layer first and only then patch or interpret repo state.
+
+- Automatic finite-space research continuation: `research_space_successor_v1.json`; implementation and proof in `docs/research-spaces-20261010/REPORT.md`.
