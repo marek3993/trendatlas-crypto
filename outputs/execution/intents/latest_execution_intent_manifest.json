@@ -1,7 +1,7 @@
 {
   "artifact_name": "latest_execution_intent",
-  "generated_at_utc": "2026-10-09T00:12:29Z",
-  "started_at_utc": "2026-10-09T00:12:29Z",
+  "generated_at_utc": "2026-10-10T00:12:22Z",
+  "started_at_utc": "2026-10-10T00:12:22Z",
   "script_path": "/opt/trendatlas-production/current/scripts/execution/build_execution_intent_from_strategy_exports.py",
   "input_paths": [
     "/opt/trendatlas-production/current/source_of_truth/export_contract.json",
@@ -19,13 +19,13 @@
   "authority_day_context": {
     "attempt_status": "success",
     "attempt_currentness_status": "current",
-    "attempt_target_closed_day": "2026-10-08",
-    "success_target_closed_day": "2026-10-08",
-    "aligned_closed_day": "2026-10-08",
+    "attempt_target_closed_day": "2026-10-09",
+    "success_target_closed_day": "2026-10-09",
+    "aligned_closed_day": "2026-10-09",
     "authority_alignment_mode": "validated_production_core",
     "same_run_authority_allowed": true,
-    "same_run_authority_run_id": "prod_20261009T001018Z_634853",
-    "same_run_authority_target_closed_day": "2026-10-08",
+    "same_run_authority_run_id": "prod_20261010T001010Z_640330",
+    "same_run_authority_target_closed_day": "2026-10-09",
     "prior_publish_required_for_execution": false
   }
 }
