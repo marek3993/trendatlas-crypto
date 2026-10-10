@@ -10,3 +10,8 @@ research/research_spaces.py -text
 scripts/deploy_research_spaces.py -text
 source_of_truth/research_space_successor_v1.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 tests/test_research_spaces.py -text
+research/meta_research.py -text
+research/meta_resources.py -text
+scripts/deploy_meta_research.py -text
+source_of_truth/research_meta_policy_v1.json -text
+tests/test_meta_research.py -text

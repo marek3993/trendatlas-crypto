@@ -1,0 +1,76 @@
+{
+  "id": "research_meta_policy_v1_20261010",
+  "classification": [
+    "B",
+    "C",
+    "D"
+  ],
+  "authority": "explicit_user_20261010_resource_pacing_and_autonomous_post_K_meta_policy",
+  "ancestor": "research_space_successor_v1_20261010",
+  "orders_allowed": false,
+  "production_writes_allowed": false,
+  "promotion_allowed": false,
+  "sealed_access": false,
+  "candidate_starts_per_day": null,
+  "candidates_per_activation": 1,
+  "api": "Unchanged continuous_research_shared_v1: 24 attempts/day including retries, 6500 input and 1500 output/request, USD0.25/day and USD5/month. All old reservations persist. API WAIT does not block local candidates or space creation.",
+  "resources": {
+    "cpu_busy_max_pct": 75,
+    "load_per_cpu_max": 0.8,
+    "cpu_pressure_some_avg10_max": 70,
+    "memory_available_min_bytes": 1610612736,
+    "memory_pressure_full_avg10_max": 2,
+    "io_pressure_full_avg10_max": 10,
+    "disk_reserve_bytes": 2147483648,
+    "incoming_book_reserve_bytes": 262144000,
+    "ledger_max_bytes": 3221225472,
+    "worker_memory_high_bytes": 2147483648,
+    "worker_memory_max_bytes": 3221225472,
+    "worker_cpu_quota_percent": 60,
+    "nice": 19,
+    "cpu_weight": 1,
+    "io_weight": 1,
+    "io_scheduling_class": "idle",
+    "unknown_metrics": "WAIT_RESOURCE_OBSERVATION"
+  },
+  "primitive_families": [
+    "J",
+    "K",
+    "L",
+    "M",
+    "N"
+  ],
+  "primitive_parameters": "J/L/M/N exact previously supported phase2_development_contract gene_space; K previously frozen refined envelope. No new feature lookbacks or data sources.",
+  "blend_families": [
+    "J",
+    "K",
+    "L",
+    "M"
+  ],
+  "blend_left_weights": [
+    0.25,
+    0.5,
+    0.75
+  ],
+  "composition": "BLEND of exactly two distinct primitive families, canonical ascending family order. Weight reversal normalized for dedup. Signals at prior close; each component keeps independent prior signal memory. Weighted sum of component target vectors executes in ONE original costed quantity/cash book at next open. No averaging returns/equity. No nested blends; N remains standalone because its intraday stops cannot be represented by a target-only blend.",
+  "categories": [
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "J+K",
+    "J+L",
+    "J+M",
+    "K+L",
+    "K+M",
+    "L+M"
+  ],
+  "meta_policy": "On exhaustion of current frozen space with no open batch, ready proposal or unresolved scientific attempt, rotate supported categories. Rank eligible completed train/validation evidence; project supported shared parameter values into other families. Freeze a bounded neighborhood grid around the best eligible seed or first globally unseen canonical enumeration seed. Primitive grids at most 3 values/axis; blend grids vary one axis/component plus three weights. All existing global genes and rule+gene hashes suppress repeats. Deterministic plans have LOCAL_META_POLICY provenance, not AI authorship.",
+  "scan_positions_per_activation": 4096,
+  "scan_policy": "Append-only per-category ordinal cursor; bounded scans checkpoint skipped configurations and continue automatically. Cursor exhaustion for every finite supported category gives honest IDLE_META_GRAMMAR_EXHAUSTED. WAIT_META_SCAN is not progress in evaluated candidates. No claim of infinite new supported mechanisms.",
+  "pending_AI": "Old queued requests retain exact wire and billing identity. Late proposals from ended spaces are recorded/rejected against current frozen scope; waiting for paid quota must not hold local research hostage. New requests contain compact permitted schemas and at most two eligible parent summaries.",
+  "freeze": "Existing immutable spaces preserved. New meta spaces append parent space hash, exact grammar, evidence digest/count and parent summaries, mapping semantics, windows, frequency policy, contamination, accumulated alpha and conditional resolution/power before admission. Every batch binds a space before evaluation. Resource interruptions reuse scientific reservation and backtest key.",
+  "science": "No change to development cutoff 2026-09-25, feedback cutoff 2021-12-17, original train/validation windows, locked interval 2026-09-27..2027-09-26, lifetime alpha 0.05/[t*(t+1)] inherited 1444, or 30-day blocks/14-day gaps/minimum30. All observed history and repeated selection remain contaminated development; no conditional p-value confirms a trading candidate. Full selection evidence retained forever; invalid/missing prices or LUNA exits are never fabricated and only invalidate affected candidates.",
+  "status": "Separate resource admission, actual completed candidates/backtests, local/AI origins and provider reservations. Timer enabled, frontier scans and space freezes are not actual backtest progress."
+}

@@ -1432,7 +1432,7 @@
       "script_path": "research/research_spaces.py",
       "layer": "research_os_dev_only",
       "status": "active",
-      "purpose": "Frozen automatic successor-space planner and active isolated research entrypoint",
+      "purpose": "Frozen successor-space compatibility layer retained beneath the meta-policy entrypoint",
       "primary_outputs": [
         "/var/lib/trendatlas-continuous-research/",
         "/var/lib/trendatlas-continuous-mailbox/"
@@ -1455,6 +1455,48 @@
       "decision_relevance": "research_only",
       "writes_source_of_truth": false,
       "notes": "research_space_successor_v1.json; finite train/validation-driven refinement; immutable space lineage; original shared accounting and global identities; no production authority"
+    },
+    {
+      "script_path": "research/meta_research.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Active isolated resource-paced research entrypoint; supported-mechanism meta-policy and automatic frozen spaces",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/",
+        "/var/lib/trendatlas-continuous-mailbox/"
+      ],
+      "output_type": "research",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "research_meta_policy_v1.json; no daily computation count cap; unchanged shared API budget; global novelty and scientific history; no production authority"
+    },
+    {
+      "script_path": "research/meta_resources.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "CPU/RAM/I/O/storage observation and checkpoint-preserving admission",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/",
+        "/var/lib/trendatlas-continuous-mailbox/"
+      ],
+      "output_type": "research",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "research_meta_policy_v1.json; no daily computation count cap; unchanged shared API budget; global novelty and scientific history; no production authority"
+    },
+    {
+      "script_path": "scripts/deploy_meta_research.py",
+      "layer": "research_os_dev_only",
+      "status": "active",
+      "purpose": "Append-freeze meta-policy and lower research resource priority without changing production services",
+      "primary_outputs": [
+        "/var/lib/trendatlas-continuous-research/",
+        "/var/lib/trendatlas-continuous-mailbox/"
+      ],
+      "output_type": "research",
+      "decision_relevance": "research_only",
+      "writes_source_of_truth": false,
+      "notes": "research_meta_policy_v1.json; no daily computation count cap; unchanged shared API budget; global novelty and scientific history; no production authority"
     }
   ]
 }

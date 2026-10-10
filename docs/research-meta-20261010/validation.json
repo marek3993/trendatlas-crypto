@@ -1,0 +1,35 @@
+{
+  "classification": [
+    "B",
+    "C",
+    "D"
+  ],
+  "source_contract_before_implementation": "PASS",
+  "local_regressions": {
+    "command": "python -B -m unittest tests.test_meta_research tests.test_research_spaces tests.test_continuous_research tests.test_continuous_research_protocol tests.test_discovery_evolution tests.test_anomaly_lab tests.test_anomaly_lab_reporting tests.test_phase2_v2 tests.test_phase2_v2_continuation -q",
+    "tests": 101,
+    "result": "PASS",
+    "seconds": 218.553
+  },
+  "finite_categories": {
+    "J": 5040,
+    "K": 824915,
+    "L": 9408,
+    "M": 1728,
+    "N": 3000,
+    "J+K": 12472714800,
+    "J+L": 142248960,
+    "J+M": 26127360,
+    "K+L": 23282400960,
+    "K+M": 4276359360,
+    "L+M": 48771072
+  },
+  "source_files": [
+    "research/meta_research.py",
+    "research/meta_resources.py",
+    "source_of_truth/research_meta_policy_v1.json",
+    "scripts/deploy_meta_research.py",
+    "tests/test_meta_research.py"
+  ],
+  "production_authority": false
+}
