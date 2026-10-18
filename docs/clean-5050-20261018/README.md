@@ -1,3 +1,5 @@
+> Superseded execution direction: use [MULTI_ACCOUNT.md](MULTI_ACCOUNT.md). The single-key Python executor is not the deployment route. Verified signal math remains unchanged.
+
 # TrendAtlas Clean 50/50 — implementation and handoff
 
 **Signal and portfolio execution implemented and tested. Operator VPS deployment is pending.** See [EXECUTION.md](EXECUTION.md) for the current one-command activation and exact runtime behavior.

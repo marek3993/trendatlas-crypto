@@ -149,12 +149,23 @@ def main(argv: list[str] | None = None) -> int:
                 if report["failures"]:
                     raise ValueError("INCOMPLETE_FETCH: incomplete universe is not silently accepted")
             panel = load(args.data_dir, args.closed_day, symbols)
+            if args.refresh:
+                from concurrent.futures import ThreadPoolExecutor
+                from .fetch_data import fetch_funding
+                history_weights = target_weights(panel.close, panel.quote_volume).loc["2020-12-31":]
+                funding_assets = ["BTC"] + [c for c in history_weights if c not in {"BTC", "ETH"} and history_weights[c].gt(0).any()]
+                with ThreadPoolExecutor(4) as pool:
+                    funding_report = list(pool.map(lambda s: fetch_funding(s, args.data_dir, args.closed_day), funding_assets))
+                _atomic_bytes(args.state_dir / "funding_report.json", json.dumps(funding_report, indent=2).encode())
+                panel = load(args.data_dir, args.closed_day, symbols)
             signal = build_signal(panel.close, panel.quote_volume, args.closed_day, input_sha256=panel.input_sha256)
             signal["universe"] = {"kind": args.universe, "symbol_count": len(symbols),
                                   "sha256": hashlib.sha256(json.dumps(universe, sort_keys=True).encode()).hexdigest()}
             comparison = compare_reference(signal, args.reference_signal)
             status = persist(args.state_dir, signal, comparison)
             signal = json.loads((args.state_dir / "signal.json").read_text())
+            from .public_metrics import publish_public
+            publish_public(panel, signal["universe"], args.state_dir)
             print(json.dumps({"signal": signal, "reference_comparison": comparison, "status": status}, allow_nan=False))
             return 0
         except Exception as exc:

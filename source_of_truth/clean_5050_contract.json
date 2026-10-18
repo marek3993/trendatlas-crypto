@@ -1,9 +1,9 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "strategy_id": "trendatlas_clean_5050_v1",
   "status": "IMPLEMENTED_TESTED_OPERATOR_DEPLOYMENT_PENDING",
   "authority": "user_reference_2026-10-18",
-  "scope": "standalone_signal_and_portfolio_execution",
+  "scope": "signal_producer_and_existing_typescript_multi_account_executor",
   "live_enabled": false,
   "source": "Binance spot USDT daily UTC close and quote_volume",
   "source_closed_day": "UTC today minus one",
@@ -66,7 +66,8 @@
     "cash_yield_pa": 0.04,
     "cash_yield": "research assumption; not asserted as real account income",
     "funding_fallback": "BTC observed rate then 0.0003/day, explicitly tagged proxy; never observed zero",
-    "execution_venues": "BTC/ETH spot UBTC/UETH USDC pairs; all other assets original Hyperliquid perps, leverage setting 1"
+    "execution_venues": "BTC/ETH spot UBTC/UETH USDC pairs; all other assets original Hyperliquid perps, leverage setting 1",
+    "accounting": "daily drift rebalancing and post-cost NAV reserve; reference target-change-only costs recorded separately in audit"
   },
   "universe": {
     "reference": "frozen 59 symbols from attachment",
@@ -97,12 +98,12 @@
       "prefix_invariance",
       "return_identity"
     ],
-    "account_activation": "operator_only_after_verified_venue_routes_and_multi_asset_executor",
+    "account_activation": "existing_per_account_consent_and_agent_authorization",
     "vps_access": "NOT_AVAILABLE_IN_THIS_SESSION",
-    "execution_integration": "IMPLEMENTED_MULTI_ASSET_SPOT_PERP_TESTED",
+    "execution_integration": "TYPESCRIPT_MULTI_ACCOUNT_SPOT_PERP_TESTED",
     "old_phase68g_shutdown": "USER_REPORTED_APPLIED_VERIFIED_DISABLED; not independently SSH-verified here",
-    "deployment_entrypoint": "deploy/clean_5050/install_vps.py --source-commit SHA --activate-live",
-    "execution_owner_after_operator_activation": "trendatlas-clean-production.service/timer on VPS; old mrv1-production disabled with old kill switch retained",
+    "deployment_entrypoint": "deploy/clean_5050/install_multi_account.py --source-commit SHA --activate-live",
+    "execution_owner_after_operator_activation": "trendatlas-clean-production.service on VPS; mrv1-production remains disabled",
     "live_enabled_in_repository": false
   },
   "execution": {
@@ -132,13 +133,27 @@
     "ambiguous_submission": "query_cloid_do_not_resubmit_automatically",
     "missing_target_market": "entry_leg_failure_does_not_block_exits",
     "same_day_completed_run": "fresh_readback_no_new_orders",
-    "credentials": "systemd encrypted hyperliquid-agent-private-key only; no inline keys",
+    "credentials": "existing Supabase hyperliquid_agent_secrets AES-256-GCM; KEK from /etc/trendatlas-production/multi-account.env; never export a systemd signing key",
     "no_automatic_transfers_or_borrowing": true,
-    "recovery_journal": "/var/lib/trendatlas-clean/state/execution.sqlite3",
-    "actual_account_receipt": "/var/lib/trendatlas-clean/state/execution_receipt.json",
-    "automatic_retry_seconds": 900,
+    "recovery_journal": "existing Supabase multi_account_execution_runs/actions/locks/agent_nonces",
+    "actual_account_receipt": "/var/lib/trendatlas-clean/state/multi_account_receipt.json",
+    "automatic_retry_seconds": 0,
     "risk_budget_sizing": "post-cost NAV reserve and floor quantities, target sum <=1, visible exchange minimum dust",
-    "native_vps_validation": "installer runs unit tests, frozen 59/18 checkpoint replay, 25 prefix tests, return identity, signer-only readback before clearing Clean kill switch",
-    "new_config": "/etc/trendatlas-clean/policy.json"
+    "native_vps_validation": "91 Python tests, 250 TypeScript tests, typecheck/build, 18 checkpoints and read-only per-account preflight before activation",
+    "new_config": "/etc/trendatlas-clean/policy.json",
+    "authorized_target": "weights dictionary with sum <= 1; identical signal for every consenting account, equity-sized per account",
+    "legacy_single_key_installer": "DISABLED_DO_NOT_DEPLOY",
+    "per_account_same_day_completed_run": "readback_only_no_rebalance"
+  },
+  "public_performance": {
+    "source": "clean5050_metrics.json + clean5050_timeseries.csv",
+    "start_day": "2021-01-01",
+    "annualization_days": 365.25,
+    "cagr": "product(1+daily net return) ** (365.25 / calendar_days) - 1",
+    "chart": "Clean vs BTC buy and hold, log scale, common window",
+    "signal_source": "signal.json ciel_vahy; D+1, no second shift",
+    "live_account": "exchange only, never model-derived",
+    "reference_metrics": "user targets are unverified acceptance references, never hardcoded public values",
+    "funding_proxies": "explicitly disclosed; never labelled observed Binance funding"
   }
 }

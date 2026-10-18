@@ -1,34 +1,32 @@
 [Unit]
-Description=TrendAtlas Clean 50/50 current-close signal and portfolio execution
+Description=TrendAtlas Clean signal and TypeScript multi-account execution
 Wants=network-online.target
 After=network-online.target
-StartLimitIntervalSec=0
 
 [Service]
 Type=oneshot
 User=trendatlas-clean
 Group=trendatlas-clean
 WorkingDirectory=/opt/trendatlas-clean/current
-Environment=PYTHONPATH=/opt/trendatlas-clean/current/src
-ExecStart=/opt/trendatlas-clean/current/.venv/bin/python /opt/trendatlas-clean/current/scripts/production/run_clean_5050.py --data-dir /var/lib/trendatlas-clean/data --state-dir /var/lib/trendatlas-clean/state --universe all --refresh
-ExecStart=/opt/trendatlas-clean/current/.venv/bin/python /opt/trendatlas-clean/current/scripts/production/execute_clean_5050.py --signal /var/lib/trendatlas-clean/state/signal.json --state-dir /var/lib/trendatlas-clean/state --config /etc/trendatlas-clean/policy.json --execute-live
-# Installer adds exactly the existing hyperliquid-agent-private-key encrypted credential.
-StateDirectory=trendatlas-clean
-StateDirectoryMode=0700
-UMask=0077
-Restart=on-failure
-RestartSec=15min
-TimeoutStartSec=infinity
-TimeoutStopSec=45s
-Nice=5
-CPUQuota=200%
-MemoryMax=3G
-NoNewPrivileges=true
-PrivateTmp=true
-ProtectSystem=strict
-ProtectHome=true
-ReadWritePaths=/var/lib/trendatlas-clean
-InaccessiblePaths=-/opt/trendatlas-production -/opt/market_regime_v1
-RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+EnvironmentFile=/etc/trendatlas-production/multi-account.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=TRENDATLAS_CLEAN_STATE_DIR=/var/lib/trendatlas-clean/state
+Environment=TRENDATLAS_CLEAN_CONFIG=/etc/trendatlas-clean/policy.json
+Environment=TRENDATLAS_NODE=@NODE@
+ExecStart=/opt/trendatlas-clean/current/.venv/bin/python /opt/trendatlas-clean/current/scripts/production/run_clean_multi_account.py
 StandardOutput=journal
 StandardError=journal
+TimeoutStartSec=6h
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=read-only
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+ReadWritePaths=/var/lib/trendatlas-clean
+UMask=0077

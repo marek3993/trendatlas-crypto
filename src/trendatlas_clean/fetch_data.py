@@ -247,16 +247,54 @@ def fetch_funding(symbol: str, data_dir: Path, end: str) -> dict:
             start = nxt
             if len(batch) < 1000:
                 break
-    except DataUnavailable as exc:
-        return {"symbol": symbol, "status": "FUNDING_UNAVAILABLE", "reason": str(exc), "rows": 0}
+    except DataUnavailable:
+        return fetch_funding_archive(symbol, data_dir, end)
     if not rows:
-        return {"symbol": symbol, "status": "FUNDING_UNAVAILABLE", "rows": 0}
+        return fetch_funding_archive(symbol, data_dir, end)
     df = pd.DataFrame(rows)
     df["date"] = pd.to_datetime(df["fundingTime"].astype("int64"), unit="ms", utc=True).dt.tz_localize(None).dt.normalize()
     df["rate"] = pd.to_numeric(df["fundingRate"], errors="raise")
     daily = df.groupby("date")["rate"].sum().rename("funding_daily").reset_index()
     _atomic_bytes(data_dir / "funding" / f"{symbol}.csv", daily.to_csv(index=False, date_format="%Y-%m-%d", float_format="%.17g").encode())
     return {"symbol": symbol, "status": "OK", "rows": len(daily)}
+
+
+def fetch_funding_archive(symbol: str, data_dir: Path, end: str) -> dict:
+    """Official Binance monthly funding archives; missing days remain labelled proxies."""
+    def month_frame(month):
+        name = f"{symbol}USDT-fundingRate-{month}.zip"
+        url = ARCHIVE + f"data/futures/um/monthly/fundingRate/{symbol}USDT/{name}"
+        cache = data_dir / "funding-archive-cache" if str(month) < end[:7] else None
+        try:
+            body = _bytes(url, cache=cache, missing_ok=True)
+            if not body:
+                return None
+            with zipfile.ZipFile(io.BytesIO(body)) as z:
+                frame = pd.read_csv(z.open(z.namelist()[0]))
+            frame["date"] = pd.to_datetime(frame["calc_time"], unit="ms", utc=True).dt.tz_localize(None).dt.normalize()
+            frame["rate"] = pd.to_numeric(frame["last_funding_rate"], errors="raise")
+            frame["hours"] = pd.to_numeric(frame["funding_interval_hours"], errors="raise")
+            daily = frame.groupby("date").agg(funding_daily=("rate", "sum"), hours=("hours", "sum"))
+            return daily.loc[daily.hours >= 24, ["funding_daily"]]
+        except (DataUnavailable, ValueError, KeyError, zipfile.BadZipFile):
+            return None
+    start_month = "2019-09"
+    ohlcv_path = data_dir / "ohlcv" / f"{symbol}.csv"
+    if ohlcv_path.exists():
+        first = pd.read_csv(ohlcv_path, nrows=1)
+        if not first.empty:
+            start_month = max(start_month, str(first.iloc[0]["date"])[:7])
+    with ThreadPoolExecutor(6) as pool:
+        frames = [f for f in pool.map(month_frame, pd.period_range(start_month, end[:7], freq="M")) if f is not None]
+    path = data_dir / "funding" / f"{symbol}.csv"
+    if path.exists():
+        frames.append(pd.read_csv(path, parse_dates=["date"]).set_index("date"))
+    if not frames:
+        return {"symbol": symbol, "status": "FUNDING_UNAVAILABLE", "rows": 0}
+    daily = pd.concat(frames).sort_index()
+    daily = daily[~daily.index.duplicated(keep="last")].loc[:end]
+    _atomic_bytes(path, daily.to_csv(index_label="date", date_format="%Y-%m-%d", float_format="%.17g").encode())
+    return {"symbol": symbol, "status": "BINANCE_MONTHLY_ARCHIVES", "rows": len(daily), "last_observed": str(daily.index.max().date())}
 
 
 def discover_universe(exclusions_path: Path) -> dict:

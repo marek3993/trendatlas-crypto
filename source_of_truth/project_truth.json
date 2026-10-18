@@ -519,6 +519,9 @@
         "phase68g_shutdown_user_report":  {"applied": true, "verified_disabled": true, "kill_switch": true, "trading_enabled": false, "timer": "inactive_disabled", "service": "inactive", "orders_sent": 0},
         "account_activation":  "OPERATOR_ONLY",
         "live_execution_integration":  "IMPLEMENTED_TESTED_OPERATOR_DEPLOYMENT_PENDING",
-        "last_verified_repository_runtime_truth_unchanged":  true
+        "last_verified_repository_runtime_truth_unchanged":  false,
+        "execution_backend": "existing TypeScript multi-account, production e85712b base",
+        "public_metrics": "Clean 50/50 only; daily runner files; no old phase67j/68g fallback",
+        "database_migration": "20261018172656_clean_portfolio_execution applied; no Clean runs or orders created"
     }
 }

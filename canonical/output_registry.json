@@ -845,11 +845,11 @@
         "scripts/production/execute_clean_5050.py"
       ],
       "layer": "execution_data",
-      "status": "active",
+      "status": "deprecated",
       "output_kind": "export",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Actual fresh account, terminal order outcomes and visible dust, separate from signal weights"
+      "notes": "Retired single-key path; existing Supabase journal is authoritative for multi-account execution."
     },
     {
       "output_path": "/var/lib/trendatlas-clean/state/execution.sqlite3",
@@ -857,11 +857,47 @@
         "scripts/production/execute_clean_5050.py"
       ],
       "layer": "execution_data",
+      "status": "deprecated",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Retired single-key path; existing Supabase journal is authoritative for multi-account execution."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/multi_account_receipt.json",
+      "generated_by": [
+        "web/scripts/run-clean-multi-account.ts"
+      ],
+      "layer": "execution_data",
       "status": "active",
       "output_kind": "export",
       "decision_relevance": "support_only",
       "official_truth": false,
-      "notes": "Durable per-day semantic targets, per-order CLOIDs reserved before submit, monotonic nonce and recovery outcomes"
+      "notes": "Actual per-account exchange readback, never model PnL"
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/clean5050_metrics.json",
+      "generated_by": [
+        "scripts/production/run_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Net model metrics; common 2021 window; CAGR; funding proxy disclosure"
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/clean5050_timeseries.csv",
+      "generated_by": [
+        "scripts/production/run_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Daily net model returns and BTC benchmark; bound by metrics checksum"
     }
   ]
 }

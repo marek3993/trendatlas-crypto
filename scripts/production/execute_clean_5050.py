@@ -1,7 +1,3 @@
-"""Clean portfolio executor entry point; default is read-only planning."""
-from pathlib import Path
-import sys
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-from trendatlas_clean.execution_cli import main
+"""Retired single-key Python entry point. Reference modules remain for simulation tests."""
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit("RETIRED_SINGLE_KEY_EXECUTOR: use run_clean_multi_account.py")

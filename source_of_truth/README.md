@@ -1,3 +1,5 @@
+> Clean 50/50 continuation (2026-10-18): [multi-account override](clean_5050_multi_account.md) and [contract v2](clean_5050_contract.json) supersede single-key Clean deployment. The old phase68g remains disabled.
+
 # Market Regime v1 - Source of Truth
 
 This folder is the central single source of truth layer for Market Regime v1.

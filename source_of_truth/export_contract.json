@@ -570,15 +570,24 @@
         ],
         "decision_timing": "close D decision for D+1 holdings; no signal shift",
         "live_or_account_state": false,
-        "legacy_consumers_unchanged": true
+        "legacy_consumers_unchanged": false
     },
     "clean_5050_execution_contract": {
         "source_contract": "source_of_truth/clean_5050_contract.json",
         "signal_path": "/var/lib/trendatlas-clean/state/signal.json",
-        "receipt_path": "/var/lib/trendatlas-clean/state/execution_receipt.json",
-        "journal_path": "/var/lib/trendatlas-clean/state/execution.sqlite3",
+        "receipt_path": "/var/lib/trendatlas-clean/state/multi_account_receipt.json",
+        "journal_path": "Supabase multi_account_execution_runs/actions/locks/agent_nonces",
         "account_source": "fresh Hyperliquid spot and all perp DEX clearinghouse state; model signal never substitutes account state",
-        "legacy_dashboard_migrated": false,
+        "legacy_dashboard_migrated": true,
         "deployed": false
+    },
+    "clean_5050_public_contract": {
+        "metrics": "clean5050_metrics.json",
+        "series": "clean5050_timeseries.csv",
+        "source": "daily Clean runner",
+        "start_day": "2021-01-01",
+        "growth": "geometric CAGR",
+        "legacy_fallback": "FORBIDDEN",
+        "live_account_source": "Hyperliquid Info only"
     }
 }

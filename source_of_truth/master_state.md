@@ -1,3 +1,5 @@
+> Active Clean replacement: TypeScript multi-account backend from production e85712b, per-account Supabase agent secrets, portfolio weights from signal.json. See clean_5050_multi_account.md. No phase68g reactivation or single-key Python installation.
+
 # Master State
 
 ## Official state snapshot

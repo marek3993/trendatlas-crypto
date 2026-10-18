@@ -693,7 +693,7 @@
       "notes": "Close-D weights for D+1; input to separate portfolio executor, never actual wallet state"
     },
     "clean_5050_execution_receipt": {
-      "canonical": "/var/lib/trendatlas-clean/state/execution_receipt.json",
+      "canonical": "/var/lib/trendatlas-clean/state/multi_account_receipt.json",
       "legacy_aliases": [],
       "owner": "CORE",
       "artifact_type": "export",
@@ -701,8 +701,32 @@
       "read_scope": [
         "validation"
       ],
-      "write_mode": "clean_portfolio_executor_only",
+      "write_mode": "typescript_multi_account_worker_only",
       "notes": "Fresh actual account and per-leg outcomes; no model returns as PnL"
+    },
+    "clean5050_metrics": {
+      "canonical": "/var/lib/trendatlas-clean/state/clean5050_metrics.json",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "export",
+      "truth_domain": "historical_model_after_costs",
+      "read_scope": [
+        "app",
+        "validation"
+      ],
+      "write_mode": "clean_runner_only"
+    },
+    "clean5050_timeseries": {
+      "canonical": "/var/lib/trendatlas-clean/state/clean5050_timeseries.csv",
+      "legacy_aliases": [],
+      "owner": "DATA",
+      "artifact_type": "export",
+      "truth_domain": "historical_model_after_costs",
+      "read_scope": [
+        "app",
+        "validation"
+      ],
+      "write_mode": "clean_runner_only"
     }
   }
 }
