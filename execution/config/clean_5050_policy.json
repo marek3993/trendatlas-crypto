@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "strategy_id": "trendatlas_clean_5050_v1",
+  "account": "0xAE8D1A44F5C32EcB235519A06bb6691a4B33E856",
+  "agent_name": "TrendAtlasProd",
+  "kill_switch": true,
+  "trading_enabled": false,
+  "policy": {
+    "maker_wait_seconds": 300,
+    "poll_seconds": 5,
+    "max_slippage_bps": 50,
+    "minimum_notional_usd": 10,
+    "tolerance_fraction": 0.01,
+    "fee_reserve_bps": 10,
+    "max_rebalance_rounds": 3
+  }
+}

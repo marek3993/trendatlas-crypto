@@ -1133,7 +1133,7 @@
       "output_type": "export",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Clean 50/50 implementation; not a live multi-asset executor. Shutdown script mutates runtime only with explicit --apply."
+      "notes": "Clean replacement source contract; live activation remains an explicit operator installer action. Old runtime is not restarted."
     },
     {
       "script_path": "scripts/research/fetch_clean_5050_data.py",
@@ -1146,7 +1146,7 @@
       "output_type": "export",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Clean 50/50 implementation; not a live multi-asset executor. Shutdown script mutates runtime only with explicit --apply."
+      "notes": "Clean replacement source contract; live activation remains an explicit operator installer action. Old runtime is not restarted."
     },
     {
       "script_path": "scripts/research/validate_clean_5050.py",
@@ -1159,7 +1159,7 @@
       "output_type": "export",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Clean 50/50 implementation; not a live multi-asset executor. Shutdown script mutates runtime only with explicit --apply."
+      "notes": "Clean replacement source contract; live activation remains an explicit operator installer action. Old runtime is not restarted."
     },
     {
       "script_path": "scripts/production/disable_phase68g.py",
@@ -1172,7 +1172,48 @@
       "output_type": "export",
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
-      "notes": "Clean 50/50 implementation; not a live multi-asset executor. Shutdown script mutates runtime only with explicit --apply."
+      "notes": "Clean replacement source contract; live activation remains an explicit operator installer action. Old runtime is not restarted."
+    },
+    {
+      "script_path": "scripts/production/execute_clean_5050.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Reconcile Clean portfolio weights to UBTC/UETH spot and other perp 1x; default read-only, operator systemd --execute-live",
+      "primary_outputs": [
+        "/var/lib/trendatlas-clean/state/execution_receipt.json",
+        "/var/lib/trendatlas-clean/state/execution.sqlite3"
+      ],
+      "output_type": "export",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No seven-day wait; do not activate old and new execution timers together."
+    },
+    {
+      "script_path": "scripts/production/build_clean_installer.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Build deterministic source-only stdin installer, without credentials or runtime data",
+      "primary_outputs": [
+        "deploy/clean_5050/install_vps.py",
+        "deploy/clean_5050/bundle_manifest.json"
+      ],
+      "output_type": "export",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No seven-day wait; do not activate old and new execution timers together."
+    },
+    {
+      "script_path": "deploy/clean_5050/install_vps.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Operator VPS installation; native tests/reference replay/signer-only preflight before Clean activation",
+      "primary_outputs": [
+        "/var/lib/trendatlas-clean-install/status.json"
+      ],
+      "output_type": "export",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "No seven-day wait; do not activate old and new execution timers together."
     }
   ]
 }

@@ -49,20 +49,26 @@ def disable(repo_root: Path, *, apply: bool = False, systemctl=_systemctl) -> di
             os.fsync(out.fileno())
     fd, temp = tempfile.mkstemp(dir=path.parent, prefix=".clean-kill-")
     try:
-        os.fchmod(fd, stat.S_IMODE(metadata.st_mode))
-        if os.geteuid() == 0:
-            os.fchown(fd, metadata.st_uid, metadata.st_gid)
         with os.fdopen(fd, "w") as out:
+            # Own the descriptor before any platform-specific operation. If one
+            # fails, Windows must not retain an open handle that masks the error.
+            if hasattr(os, "fchmod"):
+                os.fchmod(out.fileno(), stat.S_IMODE(metadata.st_mode))
+            else:
+                os.chmod(temp, stat.S_IMODE(metadata.st_mode))
+            if hasattr(os, "geteuid") and hasattr(os, "fchown") and os.geteuid() == 0:
+                os.fchown(out.fileno(), metadata.st_uid, metadata.st_gid)
             json.dump(mode, out, indent=2)
             out.write("\n")
             out.flush()
             os.fsync(out.fileno())
         os.replace(temp, path)
-        parent = os.open(path.parent, os.O_RDONLY)
-        try:
-            os.fsync(parent)
-        finally:
-            os.close(parent)
+        if os.name == "posix":
+            parent = os.open(path.parent, os.O_RDONLY)
+            try:
+                os.fsync(parent)
+            finally:
+                os.close(parent)
     finally:
         if Path(temp).exists():
             Path(temp).unlink()

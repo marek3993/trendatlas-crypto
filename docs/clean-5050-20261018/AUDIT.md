@@ -1,4 +1,6 @@
-# Clean 50/50 implementation audit
+# Clean 50/50 signal implementation audit — first delivery
+
+**Historical first-delivery record. Current executor implementation and validation supersede its integration-pending statements: see [EXECUTION_AUDIT.md](EXECUTION_AUDIT.md).**
 
 ## FILES READ
 

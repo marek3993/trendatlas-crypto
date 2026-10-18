@@ -516,8 +516,9 @@
         "reference_signal_validation":  "PASSED_18_CHECKPOINTS_2116_DAYS_25_TRUNCATIONS_ZERO_PNL_IDENTITY_ERROR",
         "deployment_status":  "NOT_DEPLOYED",
         "phase68g_disabled_verified":  false,
+        "phase68g_shutdown_user_report":  {"applied": true, "verified_disabled": true, "kill_switch": true, "trading_enabled": false, "timer": "inactive_disabled", "service": "inactive", "orders_sent": 0},
         "account_activation":  "OPERATOR_ONLY",
-        "live_execution_integration":  "NOT_IMPLEMENTED_MULTI_ASSET_SPOT_PERP",
+        "live_execution_integration":  "IMPLEMENTED_TESTED_OPERATOR_DEPLOYMENT_PENDING",
         "last_verified_repository_runtime_truth_unchanged":  true
     }
 }

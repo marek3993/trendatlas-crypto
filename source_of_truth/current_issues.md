@@ -99,7 +99,8 @@
 - They are not the primary runtime production truth interface.
 
 ## Clean 50/50 deployment continuation — 2026-10-18
-- Signal implementation is validated; SSH from the authoring environment to VPS port 22 returns `Network is unreachable`.
-- The existing executor is single-target; Clean 50/50 requires BTC/ETH spot plus potentially a second perp target. This change does not claim that integration or live deployment is complete.
-- The seven-day waiting requirement was withdrawn by the user. It is not an acceptance gate.
-- `scripts/production/disable_phase68g.py` prepares an operator-only shutdown with a kill-switch readback; it has not been run on the VPS.
+- User reports old phase68g shutdown complete, kill switch on, timer disabled/inactive, no orders sent by shutdown. SSH remains unavailable from this authoring environment.
+- Portfolio execution is implemented and tested (BTC/ETH spot, other perps 1x, EXIT before ENTRY, limit/cancel/IOC, CLOID recovery and fresh account readback).
+- One-command operator installer runs on VPS under systemd without a laptop; it performs native tests/reference replay and signer-only preflight before activating only Clean.
+- Old phase68g flags stay disabled. No mandatory seven-day wait. No direct live activation was performed in this session.
+- Existing dashboard/publisher is not migrated by this executor task. Use Clean signal/receipt files as separate model/account outputs until that integration is done.

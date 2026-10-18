@@ -559,17 +559,26 @@
                                                                               "outputs/execution/live_status/*"
                                                                           ]
                                    },
-    "clean_5050_signal_contract":  {
-        "source_contract":  "source_of_truth/clean_5050_contract.json",
-        "status":  "STANDALONE_SIGNAL_NOT_CONNECTED_TO_LIVE_EXECUTOR",
-        "signal_path":  "/var/lib/trendatlas-clean/state/signal.json",
-        "fields":  [
+    "clean_5050_signal_contract": {
+        "source_contract": "source_of_truth/clean_5050_contract.json",
+        "status": "SIGNAL_PRODUCER_AND_EXECUTOR_IMPLEMENTED_OPERATOR_DEPLOYMENT_PENDING",
+        "signal_path": "/var/lib/trendatlas-clean/state/signal.json",
+        "fields": [
             "rozhodnute_na_close_utc",
             "drzat_pocas_dna_utc",
             "ciel_vahy"
         ],
-        "decision_timing":  "close D decision for D+1 holdings; no signal shift",
-        "live_or_account_state":  false,
-        "legacy_consumers_unchanged":  true
+        "decision_timing": "close D decision for D+1 holdings; no signal shift",
+        "live_or_account_state": false,
+        "legacy_consumers_unchanged": true
+    },
+    "clean_5050_execution_contract": {
+        "source_contract": "source_of_truth/clean_5050_contract.json",
+        "signal_path": "/var/lib/trendatlas-clean/state/signal.json",
+        "receipt_path": "/var/lib/trendatlas-clean/state/execution_receipt.json",
+        "journal_path": "/var/lib/trendatlas-clean/state/execution.sqlite3",
+        "account_source": "fresh Hyperliquid spot and all perp DEX clearinghouse state; model signal never substitutes account state",
+        "legacy_dashboard_migrated": false,
+        "deployed": false
     }
 }

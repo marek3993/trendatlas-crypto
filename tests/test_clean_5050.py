@@ -273,7 +273,7 @@ class DataAndRuntimeTests(unittest.TestCase):
         s = self.signal()
         self.assertEqual(pd.Timestamp(s["drzat_pocas_dna_utc"]) - pd.Timestamp(s["decision_closed_day_utc"]), pd.Timedelta(days=1))
         self.assertEqual(s["orders_sent"], 0)
-        self.assertEqual(s["live_order_chain"], "NOT_IMPLEMENTED")
+        self.assertEqual(s["live_order_chain"], "NOT_INVOKED_BY_SIGNAL_PRODUCER")
         self.assertNotIn("BASE", s["ciel_vahy"])
         self.assertAlmostEqual(sum(s["ciel_vahy"].values()), 1)
 
@@ -302,9 +302,19 @@ class DataAndRuntimeTests(unittest.TestCase):
             p, s = Path(temp), self.signal()
             persist(p, s, {"status": "NOT_PROVIDED", "matched": None})
             old = (p / "signal.json").read_bytes()
-            s["input_sha256"] = "changed"
+            s["ciel_vahy"] = {"BTC": 1.0} if s["ciel_vahy"] != {"BTC": 1.0} else {"CASH": 1.0}
             with self.assertRaisesRegex(ValueError, "DAY_REVISION_DETECTED"):
                 persist(p, s, {"status": "NOT_PROVIDED", "matched": None})
+            self.assertEqual((p / "signal.json").read_bytes(), old)
+
+    def test_same_target_new_provenance_does_not_block_daily_resume(self):
+        with tempfile.TemporaryDirectory() as temp:
+            p, s = Path(temp), self.signal()
+            persist(p, s, {"status": "NOT_PROVIDED", "matched": None})
+            old = (p / "signal.json").read_bytes()
+            s["input_sha256"] = "new source hash, identical decision"
+            s["code_sha256"] = "new executor code, identical decision"
+            persist(p, s, {"status": "NOT_PROVIDED", "matched": None})
             self.assertEqual((p / "signal.json").read_bytes(), old)
 
     def test_crash_after_sqlite_commit_rematerializes_same_signal(self):

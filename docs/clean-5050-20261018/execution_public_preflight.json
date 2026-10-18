@@ -1,0 +1,62 @@
+{
+  "observed_at_utc": "2026-10-18T14:52:00.819894+00:00",
+  "operation": "READ_ONLY_INFO_NO_SIGNER",
+  "abstraction": "unifiedAccount",
+  "equity": 86.869106,
+  "position_count": 0,
+  "open_order_count": 0,
+  "entry_blockers": [],
+  "spot_cash_free": 86.869106,
+  "perp_margin_free": 86.869106,
+  "routes": {
+    "BTC": {
+      "key": "spot:@142",
+      "logical": "BTC",
+      "venue": "spot",
+      "coin": "@142",
+      "asset_id": 10142,
+      "size_decimals": 5,
+      "mark": 81022.5,
+      "entry_available": true,
+      "token_index": 197,
+      "unit_multiplier": 1
+    },
+    "ETH": {
+      "key": "spot:@151",
+      "logical": "ETH",
+      "venue": "spot",
+      "coin": "@151",
+      "asset_id": 10151,
+      "size_decimals": 4,
+      "mark": 2373.75,
+      "entry_available": true,
+      "token_index": 221,
+      "unit_multiplier": 1
+    },
+    "SOL": {
+      "key": "perp:SOL",
+      "logical": "SOL",
+      "venue": "perp",
+      "coin": "SOL",
+      "asset_id": 5,
+      "size_decimals": 2,
+      "mark": 102.015,
+      "entry_available": true,
+      "token_index": null,
+      "unit_multiplier": 1
+    },
+    "ZEC": {
+      "key": "perp:ZEC",
+      "logical": "ZEC",
+      "venue": "perp",
+      "coin": "ZEC",
+      "asset_id": 214,
+      "size_decimals": 2,
+      "mark": 1094.4,
+      "entry_available": true,
+      "token_index": null,
+      "unit_multiplier": 1
+    }
+  },
+  "orders_sent": 0
+}

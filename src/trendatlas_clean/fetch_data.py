@@ -265,7 +265,6 @@ def discover_universe(exclusions_path: Path) -> dict:
     symbols = {x["baseAsset"] for x in info["symbols"] if x["quoteAsset"] == "USDT"}
     _, prefixes = _listing("data/spot/monthly/klines/", delimiter="/")
     symbols.update(p.rstrip("/").split("/")[-1][:-4] for p in prefixes if p.rstrip("/").endswith("USDT"))
-    symbols.discard("BSV")
     explicit = {x: reason for reason in ("stablecoins", "wrapped_tokens") for x in exclusions[reason]}
     accepted, rejected = [], {}
     for s in sorted(symbols):

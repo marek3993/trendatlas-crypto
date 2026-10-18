@@ -838,6 +838,30 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Isolated decision weights with explicit close/holding dates. No exchange/account authority and no order submission."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/execution_receipt.json",
+      "generated_by": [
+        "scripts/production/execute_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Actual fresh account, terminal order outcomes and visible dust, separate from signal weights"
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/execution.sqlite3",
+      "generated_by": [
+        "scripts/production/execute_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Durable per-day semantic targets, per-order CLOIDs reserved before submit, monotonic nonce and recovery outcomes"
     }
   ]
 }

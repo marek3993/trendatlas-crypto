@@ -1,8 +1,8 @@
 # TrendAtlas Clean 50/50 — implementation and handoff
 
-**Signal implementation validated. NOT deployed. No live multi-asset executor is implemented by this change.**
+**Signal and portfolio execution implemented and tested. Operator VPS deployment is pending.** See [EXECUTION.md](EXECUTION.md) for the current one-command activation and exact runtime behavior.
 
-Marek withdrew the seven-day dry-run requirement. There is no seven-day waiting gate in the contract or runner. This implementation does not activate trading, issue an order, or claim that phase68g is disabled.
+Marek withdrew the seven-day dry-run requirement. There is no seven-day waiting gate in the contract or runner. No live activation or order was performed by this authoring session. Marek subsequently supplied a successful phase68g shutdown receipt; the new installer rechecks it before deployment.
 
 ## Implemented
 
@@ -14,7 +14,7 @@ Marek withdrew the seven-day dry-run requirement. There is no seven-day waiting 
 - Signals record the decision at close D and intended holdings during D+1; the signal is not shifted. Only accounting applies yesterday's decision to today's return.
 - Bounded public-data GET downloader using Binance's documented market-data-only endpoint, with archive support and source hashes. The private/account/trading API is not used.
 - Frozen 59-coin replay and separate all-USDT discovery. The latter combines current exchangeInfo with historical archive prefixes and versioned stable/wrapped/leveraged exclusions. It has not been replay-certified in this session; new token classifications require periodic review.
-- Atomic signal writes, SQLite WAL with FULL synchronization, idempotent same-day recovery, immutable decision bindings, online SQLite backup. Revised same-day inputs preserve the original signal and produce an explicit error.
+- Atomic signal writes, SQLite WAL with FULL synchronization, idempotent same-day recovery, immutable decision bindings, online SQLite backup. Different same-day weights preserve the original signal and produce an explicit error; identical weights with newer input/code hashes preserve the original signal and append provenance verification.
 - Geometric CAGR, price-drift rebalancing costs and explicit spot/perp fee, slippage, cash-yield and funding assumptions; model PnL is not account PnL.
 - Isolated signal-only systemd service and daily 00:10 UTC persistent timer, with 15-minute failure retries. No credentials or live execution modules are mounted/imported.
 - Operator-only phase68g shutdown script, with runtime-path validation and kill-switch/systemd readback. It is unit-tested, not run on the VPS.
@@ -60,30 +60,10 @@ python scripts/production/run_clean_5050.py --data-dir /var/lib/trendatlas-clean
 
 For all-USDT signal collection only, `sudo bash deploy/clean_5050/install_signal_service.sh` installs `/opt/trendatlas-clean` and `trendatlas-clean-signal.timer`. **This is NOT a live cutover command.** It does not change the production timer, production checkout, account, or dashboard. No mandatory observation period is imposed.
 
-## One operator action to disable phase68g
+## Current execution continuation
 
-From a Windows PowerShell checkout containing this feature branch, with the existing SSH key and network access to the VPS:
+Marek ran the old-model shutdown helper successfully: applied/verified, old kill switch on, old trading disabled, old timer disabled/inactive and service inactive, zero shutdown orders. This is user-supplied host evidence. A new read-only exchange observation confirmed CASH 86.869106 USDC and no positions/open orders at 14:52 UTC on 18 October.
 
-```powershell
-Get-Content -Raw .\scripts\production\disable_phase68g.py | ssh ubuntu@57.129.127.49 "sudo python3 - --repo-root /opt/trendatlas-production/current --apply"
-```
+The portfolio executor, recovery journal, live systemd chain and source-bundle VPS installer are now implemented. See [EXECUTION.md](EXECUTION.md) and [EXECUTION_AUDIT.md](EXECUTION_AUDIT.md). Default maker timeout is 5 minutes, configurable; after confirmed cancellation only the actual remaining quantity falls back to a bounded IOC order. The operator's single installation command runs tests on VPS before activating only Clean. No SSH access or live activation was performed from this environment.
 
-The standalone script verifies that the installed production unit points to the supplied root, stops/disables its timer, stops its service, atomically writes `kill_switch=true`, `trading_enabled=false`, `dry_run_enabled=true`, preserves a local config backup, and reads the state back. It never calls the production run or an order endpoint. A failed or ambiguous shutdown returns exit 2; it does not declare the account flat. A read-only exchange reconciliation is still required before any later activation, especially if an old run was in flight.
-
-This command **has not been run**. The authoring environment attempted a read-only SSH command and received `Network is unreachable` on 57.129.127.49 port 22. No password/key was requested, read, changed, or transmitted.
-
-## Remaining live integration — explicit, not a new waiting period
-
-1. On the VPS, inspect the actual production source commit, unit, config and exchange metadata/account state. Do not replace the production checkout with the older main branch: the published manifest declares a different production commit.
-2. Extend the canonical executor/intent contract to a portfolio of weights. The existing code accepts one `target_asset`; it cannot be made into a BTC+SOL portfolio by changing a label. Preserve durable per-leg idempotency, account readback and terminal receipts across partial fills/restarts.
-3. Resolve actual Hyperliquid spot market identifiers, precisions, minimum notionals and unified-account availability for UBTC/UETH; use actual 1x perp settings for other coins. `routes_metadata` in the new signal is descriptive, not a verified venue mapping or an order plan.
-4. Implement and test the requested limit-first/taker fallback. The timeout X was not supplied and is not guessed by this implementation. No submitter or fake activation command is shipped.
-5. Confirm the current all-USDT universe, exclusions and data coverage; report differences from the frozen 59-coin reference. Do not silently substitute the 59-coin universe for the requested live universe.
-6. Publish Clean-only model metrics with geometric CAGR and a separately sourced actual account view. Existing dashboard/main model has not been switched by this change.
-7. After the required tests and runtime verification, the operator may activate the fully implemented canonical path without a seven-day delay. Re-read the current closed-day decision at cutover; do not reuse an expired historical validation signal.
-
-**No claim of LIVE_READY, CUTOVER_COMPLETE, phase68g disabled, or account alignment is made by this delivery.**
-
-## Short access handoff for Marek
-
-Use a Codex/terminal session with the `marek3993/trendatlas-crypto` feature checkout and existing SSH-key access to `ubuntu@57.129.127.49`, plus sudo for the TrendAtlas units. The current authoring environment has no network route to SSH. Keep credentials out of chat. Continue from the tested module and this report; do not repeat the research or add the withdrawn seven-day wait.
+The legacy dashboard is not migrated in this task. It must be switched separately to Clean model metrics and actual account readback; do not interpret old dashboard output as a receipt from the new executor.

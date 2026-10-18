@@ -690,7 +690,19 @@
         "validation"
       ],
       "write_mode": "producer_only_clean_5050",
-      "notes": "Not an account state or a live order intent; no mandatory seven-day wait"
+      "notes": "Close-D weights for D+1; input to separate portfolio executor, never actual wallet state"
+    },
+    "clean_5050_execution_receipt": {
+      "canonical": "/var/lib/trendatlas-clean/state/execution_receipt.json",
+      "legacy_aliases": [],
+      "owner": "CORE",
+      "artifact_type": "export",
+      "truth_domain": "verified_account_execution_readback",
+      "read_scope": [
+        "validation"
+      ],
+      "write_mode": "clean_portfolio_executor_only",
+      "notes": "Fresh actual account and per-leg outcomes; no model returns as PnL"
     }
   }
 }
