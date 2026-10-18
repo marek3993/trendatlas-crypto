@@ -274,8 +274,8 @@
       "writes_source_of_truth": false,
       "notes": "Read-only validator for the two-file authority consumer contract."
     },
-      {
-        "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
+    {
+      "script_path": "scripts/execution/hyperliquid_read_only_snapshot.py",
       "layer": "execution_data",
       "status": "active",
       "purpose": "Fetches Hyperliquid account state in read-only mode and writes snapshot/quality/manifest artifacts.",
@@ -290,21 +290,21 @@
       "notes": "No order placement. Unified-account observability uses spot stable total as total equity, native spot hold for free collateral, and publishes unavailable instead of fabricating missing free/withdrawable values."
     },
     {
-        "script_path": "scripts/execution/build_hyperliquid_real_performance_ledger.py",
-        "layer": "execution_data",
-        "status": "active",
-        "purpose": "Builds the canonical exchange-native, cash-flow-adjusted real-account performance ledger from read-only Hyperliquid data.",
-        "primary_outputs": [
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.quality.json",
-          "outputs/execution/read_only/hyperliquid_real_performance_ledger.manifest.json"
-        ],
-        "output_type": "real_account_performance_ledger",
-        "decision_relevance": "support_only",
-        "writes_source_of_truth": false,
-        "notes": "Read-only accounting only. Deposits and withdrawals are never PnL."
-      },
-      {
+      "script_path": "scripts/execution/build_hyperliquid_real_performance_ledger.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Builds the canonical exchange-native, cash-flow-adjusted real-account performance ledger from read-only Hyperliquid data.",
+      "primary_outputs": [
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.json",
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.quality.json",
+        "outputs/execution/read_only/hyperliquid_real_performance_ledger.manifest.json"
+      ],
+      "output_type": "real_account_performance_ledger",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Read-only accounting only. Deposits and withdrawals are never PnL."
+    },
+    {
       "script_path": "scripts/execution/render_execution_app_status.py",
       "layer": "execution_data",
       "status": "active",
@@ -1121,6 +1121,58 @@
       "decision_relevance": "support_only",
       "writes_source_of_truth": false,
       "notes": "Optional operator helper only. The official refresh entrypoint remains scripts/daily_refresh_app_pipeline.py."
+    },
+    {
+      "script_path": "scripts/production/run_clean_5050.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Produce standalone Clean 50/50 close-D weights for D+1 without any order API",
+      "primary_outputs": [
+        "/var/lib/trendatlas-clean/state/signal.json"
+      ],
+      "output_type": "export",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Clean 50/50 implementation; not a live multi-asset executor. Shutdown script mutates runtime only with explicit --apply."
+    },
+    {
+      "script_path": "scripts/research/fetch_clean_5050_data.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Download original Binance close and quote volume for the frozen 59-symbol reference",
+      "primary_outputs": [
+        "operator-selected isolated data directory"
+      ],
+      "output_type": "export",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Clean 50/50 implementation; not a live multi-asset executor. Shutdown script mutates runtime only with explicit --apply."
+    },
+    {
+      "script_path": "scripts/research/validate_clean_5050.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Replay reference signals, checkpoints, truncation and return identity",
+      "primary_outputs": [
+        "operator-selected validation directory"
+      ],
+      "output_type": "export",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Clean 50/50 implementation; not a live multi-asset executor. Shutdown script mutates runtime only with explicit --apply."
+    },
+    {
+      "script_path": "scripts/production/disable_phase68g.py",
+      "layer": "execution_data",
+      "status": "active",
+      "purpose": "Operator-only old scheduler shutdown and kill switch; no order submission",
+      "primary_outputs": [
+        "operator stdout shutdown receipt"
+      ],
+      "output_type": "export",
+      "decision_relevance": "support_only",
+      "writes_source_of_truth": false,
+      "notes": "Clean 50/50 implementation; not a live multi-asset executor. Shutdown script mutates runtime only with explicit --apply."
     }
   ]
 }

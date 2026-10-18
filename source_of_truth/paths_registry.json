@@ -36,7 +36,8 @@
     "research_os_diagnostics": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\research_os\\diagnostics",
     "validation_bundles": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\bundles",
     "validation_manifests": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\manifests",
-    "validation_reports": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\reports"
+    "validation_reports": "C:\\Users\\benda\\Desktop\\market_regime_v1\\outputs\\validation\\reports",
+    "clean_5050_runtime": "/var/lib/trendatlas-clean"
   },
   "artifact_type_definitions": {
     "paper": "time_series_source_of_truth_output",
@@ -630,7 +631,12 @@
       "owner": "AUTOMATION",
       "artifact_type": "production_run_manifest",
       "truth_domain": "execution_runtime",
-      "read_scope": ["execution", "dashboard", "authority", "audit"],
+      "read_scope": [
+        "execution",
+        "dashboard",
+        "authority",
+        "audit"
+      ],
       "write_mode": "single_production_orchestrator_only"
     },
     "production_execution_journal": {
@@ -639,7 +645,11 @@
       "owner": "AUTOMATION",
       "artifact_type": "execution_journal",
       "truth_domain": "execution_runtime",
-      "read_scope": ["execution", "recovery", "audit"],
+      "read_scope": [
+        "execution",
+        "recovery",
+        "audit"
+      ],
       "write_mode": "durable_pre_submit_journal_only"
     },
     "phase68i_dynamic_ladder_candidate_summary": {
@@ -669,6 +679,18 @@
         ],
         "app_must_not_infer": true
       }
+    },
+    "clean_5050_signal": {
+      "canonical": "/var/lib/trendatlas-clean/state/signal.json",
+      "legacy_aliases": [],
+      "owner": "CORE",
+      "artifact_type": "export",
+      "truth_domain": "strategy_signal_only",
+      "read_scope": [
+        "validation"
+      ],
+      "write_mode": "producer_only_clean_5050",
+      "notes": "Not an account state or a live order intent; no mandatory seven-day wait"
     }
   }
 }

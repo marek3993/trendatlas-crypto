@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "strategy_id": "trendatlas_clean_5050_v1",
+  "status": "REFERENCE_SIGNAL_TESTS_PASSED_NOT_DEPLOYED",
+  "authority": "user_reference_2026-10-18",
+  "scope": "standalone_signal_only",
+  "live_enabled": false,
+  "source": "Binance spot USDT daily UTC close and quote_volume",
+  "source_closed_day": "UTC today minus one",
+  "data": {
+    "reference_symbol_count": 59,
+    "excluded_reference_symbol": "BSV",
+    "price_feature_ffill_limit": 3,
+    "eligibility": "original close.notna(); exit from decision on first missing close",
+    "minimum_history_observations": 365,
+    "liquidity": "30-calendar-day rolling median of original quote volume; min 20 observed",
+    "luna_original_only_cutoff_inclusive": "2022-05-13",
+    "delisting_fill": "unpriced liquidation must be reported, never fabricated"
+  },
+  "features": {
+    "trend_lookbacks": [
+      20,
+      40,
+      80,
+      160
+    ],
+    "score_lookbacks": [
+      20,
+      40,
+      80
+    ],
+    "vol_lookback": 60,
+    "vol_min_periods": 40,
+    "vol_ddof": 1
+  },
+  "params": {
+    "regime_min": 0.5,
+    "universe_n": 10,
+    "top_k": 1,
+    "switch_h": 0.25,
+    "btc_pref": 0.25
+  },
+  "portfolio": {
+    "clean_weight": 0.5,
+    "btc_trend_weight": 0.5,
+    "max_gross_exposure": 1,
+    "cash_weight": "1 - sum(asset weights)",
+    "cash_when_no_regime": true
+  },
+  "timing": {
+    "decision": "close D",
+    "holding": "D+1",
+    "signal_shift": 0,
+    "pnl": "weights[D-1] * price_returns[D]",
+    "schedule": "00:10 UTC",
+    "backtest_fill_assumption": "previous close; 00:10 execution not certified by daily data"
+  },
+  "costs": {
+    "perp_fee_bps": 2.4,
+    "spot_fee_bps": 4.9,
+    "slippage_bps_each_side": 5,
+    "spot_assets": [
+      "BTC",
+      "ETH"
+    ],
+    "cash_yield_pa": 0.04,
+    "cash_yield": "research assumption; not asserted as real account income",
+    "funding_fallback": "BTC observed rate then 0.0003/day, explicitly tagged proxy; never observed zero",
+    "execution_venues": "metadata only: BTC/ETH spot UBTC/UETH, others perp 1x; no submitter"
+  },
+  "universe": {
+    "reference": "frozen 59 symbols from attachment",
+    "production": "all discovered Binance spot USDT, excluding stable, leveraged, wrapped; historical membership from archives",
+    "ties": "deterministic alphabetical tie break, average liquidity ranks; deviation from reference set iteration reported"
+  },
+  "dry_run": {
+    "required": false,
+    "minimum_elapsed_days": 0,
+    "automatic_live_promotion": false,
+    "one_record_per_closed_day": true,
+    "state_and_data_root": "/var/lib/trendatlas-clean",
+    "no_order_or_signer_access": true
+  },
+  "validation": {
+    "historical_checkpoints": 18,
+    "reference_array_comparison": true,
+    "prefix_invariance": true,
+    "future_mutation_invariance": true,
+    "return_identity": true,
+    "production_certification_requires_external_replay": true
+  },
+  "activation": {
+    "user_authorized_after_tests": true,
+    "mandatory_seven_day_wait": false,
+    "required_tests": [
+      "historical_checkpoints",
+      "prefix_invariance",
+      "return_identity"
+    ],
+    "account_activation": "operator_only_after_verified_venue_routes_and_multi_asset_executor",
+    "vps_access": "NOT_AVAILABLE_IN_THIS_SESSION",
+    "execution_integration": "NOT_IMPLEMENTED_MULTI_ASSET_SPOT_PERP"
+  }
+}

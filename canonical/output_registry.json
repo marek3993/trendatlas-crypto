@@ -206,9 +206,9 @@
     },
     {
       "output_path": "outputs/execution/read_only/",
-        "generated_by": [
-          "scripts/execution/hyperliquid_read_only_snapshot.py",
-          "scripts/execution/build_hyperliquid_real_performance_ledger.py"
+      "generated_by": [
+        "scripts/execution/hyperliquid_read_only_snapshot.py",
+        "scripts/execution/build_hyperliquid_real_performance_ledger.py"
       ],
       "layer": "execution_data",
       "status": "active",
@@ -826,6 +826,18 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Approved deployment candidate product metrics for APP summary_path. APP must not infer these metrics."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/signal.json",
+      "generated_by": [
+        "scripts/production/run_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Isolated decision weights with explicit close/holding dates. No exchange/account authority and no order submission."
     }
   ]
 }

@@ -97,3 +97,9 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs remain research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+## Clean 50/50 deployment continuation — 2026-10-18
+- Signal implementation is validated; SSH from the authoring environment to VPS port 22 returns `Network is unreachable`.
+- The existing executor is single-target; Clean 50/50 requires BTC/ETH spot plus potentially a second perp target. This change does not claim that integration or live deployment is complete.
+- The seven-day waiting requirement was withdrawn by the user. It is not an acceptance gate.
+- `scripts/production/disable_phase68g.py` prepares an operator-only shutdown with a kill-switch readback; it has not been run on the VPS.

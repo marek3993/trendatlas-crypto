@@ -1,0 +1,11 @@
+[Unit]
+Description=Compute Clean 50/50 close-D decision at 00:10 UTC
+
+[Timer]
+OnCalendar=*-*-* 00:10:00 UTC
+Persistent=true
+AccuracySec=1s
+Unit=trendatlas-clean-signal.service
+
+[Install]
+WantedBy=timers.target

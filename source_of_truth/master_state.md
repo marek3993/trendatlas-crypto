@@ -133,3 +133,9 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+## Clean 50/50 replacement request — 2026-10-18
+- User requests replacement of phase68g by `trendatlas_clean_5050_v1`, with no mandatory seven-day wait.
+- Standalone signal math passed 18 historical checkpoints, exact 2,116-day reference comparison, 25 truncation checks, future-mutation and return identity checks.
+- Deployment and disabling the old runtime are NOT verified. Live multi-asset spot/perp integration is not implemented in this change. Existing live truth above is not silently relabelled.
+- Contract: `source_of_truth/clean_5050_contract.json`. Handoff and evidence: `docs/clean-5050-20261018/`.

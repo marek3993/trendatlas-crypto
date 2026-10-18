@@ -1,0 +1,194 @@
+{
+  "signal": {
+    "schema_version": 1,
+    "strategy_id": "trendatlas_clean_5050_v1",
+    "mode": "DRY_RUN",
+    "generated_at_utc": "2026-10-18T14:16:38.825838Z",
+    "decision_closed_day_utc": "2026-10-17",
+    "rozhodnute_na_close_utc": "2026-10-17T23:59:59.999Z",
+    "drzat_pocas_dna_utc": "2026-10-18",
+    "ciel_vahy": {
+      "CASH": 1.0
+    },
+    "gross_target_exposure": 0.0,
+    "params": {
+      "regime_min": 0.5,
+      "universe_n": 10,
+      "top_k": 1,
+      "switch_h": 0.25,
+      "btc_pref": 0.25
+    },
+    "input_sha256": "d7b95e04392d4b581d6a9e620c45b529b38c8d068261e6f4e9d2e65c1787d1c9",
+    "code_sha256": "14e4595695c00309f56d3c9605e72dfee80ebafe071f2f534f1160e3eb22ef2d",
+    "orders_sent": 0,
+    "live_order_chain": "NOT_IMPLEMENTED",
+    "routes_metadata": {},
+    "diagnostics": {
+      "day": "2026-10-17",
+      "btc_trend": 0.0,
+      "params": {
+        "regime_min": 0.5,
+        "universe_n": 10,
+        "top_k": 1,
+        "switch_h": 0.25,
+        "btc_pref": 0.25
+      },
+      "liquidity_ranking": [
+        {
+          "asset": "BTC",
+          "liquidity_usd": 1311201613.6112823,
+          "rank": 1.0,
+          "eligible_top10": true,
+          "trend": 0.0,
+          "score": 0.3955890891799583,
+          "adjusted_score": 0.6455890891799583
+        },
+        {
+          "asset": "ETH",
+          "liquidity_usd": 708199061.616297,
+          "rank": 2.0,
+          "eligible_top10": true,
+          "trend": 0.0,
+          "score": -0.00528120044684266,
+          "adjusted_score": -0.00528120044684266
+        },
+        {
+          "asset": "SOL",
+          "liquidity_usd": 259021867.93831003,
+          "rank": 3.0,
+          "eligible_top10": true,
+          "trend": 0.0,
+          "score": 0.10263785204397073,
+          "adjusted_score": 0.10263785204397073
+        },
+        {
+          "asset": "ZEC",
+          "liquidity_usd": 242607001.91861498,
+          "rank": 4.0,
+          "eligible_top10": true,
+          "trend": 0.0,
+          "score": 0.3876177220295696,
+          "adjusted_score": 0.3876177220295696
+        },
+        {
+          "asset": "NEAR",
+          "liquidity_usd": 207586899.10745,
+          "rank": 5.0,
+          "eligible_top10": true,
+          "trend": 0.5,
+          "score": 1.6966963353828712,
+          "adjusted_score": 1.6966963353828712
+        },
+        {
+          "asset": "XRP",
+          "liquidity_usd": 174395463.558215,
+          "rank": 6.0,
+          "eligible_top10": true,
+          "trend": -0.5,
+          "score": -0.16557625231715248,
+          "adjusted_score": -0.16557625231715248
+        },
+        {
+          "asset": "BNB",
+          "liquidity_usd": 89387199.371725,
+          "rank": 7.0,
+          "eligible_top10": true,
+          "trend": 0.0,
+          "score": 0.09847162095783268,
+          "adjusted_score": 0.09847162095783268
+        },
+        {
+          "asset": "SUI",
+          "liquidity_usd": 87905660.56797498,
+          "rank": 8.0,
+          "eligible_top10": true,
+          "trend": 0.0,
+          "score": 0.16146769030408573,
+          "adjusted_score": 0.16146769030408573
+        },
+        {
+          "asset": "DOGE",
+          "liquidity_usd": 68360813.66213,
+          "rank": 9.0,
+          "eligible_top10": true,
+          "trend": -0.5,
+          "score": -0.36305526980845776,
+          "adjusted_score": -0.36305526980845776
+        },
+        {
+          "asset": "UNI",
+          "liquidity_usd": 64442111.028175,
+          "rank": 10.0,
+          "eligible_top10": true,
+          "trend": 0.5,
+          "score": 0.19551849093536236,
+          "adjusted_score": 0.19551849093536236
+        },
+        {
+          "asset": "AVAX",
+          "liquidity_usd": 48914391.26336,
+          "rank": 11.0,
+          "eligible_top10": false,
+          "trend": 0.0,
+          "score": 0.45044117485319424,
+          "adjusted_score": 0.45044117485319424
+        },
+        {
+          "asset": "ADA",
+          "liquidity_usd": 41982818.670545,
+          "rank": 12.0,
+          "eligible_top10": false,
+          "trend": -0.5,
+          "score": 0.05893933241018379,
+          "adjusted_score": 0.05893933241018379
+        },
+        {
+          "asset": "PEPE",
+          "liquidity_usd": 32401355.51864791,
+          "rank": 13.0,
+          "eligible_top10": false,
+          "trend": 0.0,
+          "score": 0.17924828724983247,
+          "adjusted_score": 0.17924828724983247
+        },
+        {
+          "asset": "LINK",
+          "liquidity_usd": 31414076.824115,
+          "rank": 14.0,
+          "eligible_top10": false,
+          "trend": 0.0,
+          "score": 0.05545990922298664,
+          "adjusted_score": 0.05545990922298664
+        },
+        {
+          "asset": "TRX",
+          "liquidity_usd": 26778124.76387,
+          "rank": 15.0,
+          "eligible_top10": false,
+          "trend": 0.0,
+          "score": 0.09383265148520875,
+          "adjusted_score": 0.09383265148520875
+        }
+      ]
+    },
+    "universe": {
+      "kind": "reference",
+      "symbol_count": 59,
+      "sha256": "cb169732dbd07619c9301792feb390c0812ba414f3a74099023cace54e50e8c0"
+    }
+  },
+  "reference_comparison": {
+    "status": "NOT_PROVIDED",
+    "matched": null
+  },
+  "status": {
+    "status": "SIGNAL_RECORDED_OPERATOR_ACTIVATION_SEPARATE",
+    "last_closed_day": "2026-10-17",
+    "distinct_days": 1,
+    "elapsed_days": 4.393032407407407e-06,
+    "mandatory_wait_days": 0,
+    "reference_comparisons_passed": 0,
+    "automatic_live_promotion": false,
+    "orders_sent": 0
+  }
+}

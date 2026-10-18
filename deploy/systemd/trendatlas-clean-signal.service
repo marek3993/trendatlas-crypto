@@ -1,0 +1,32 @@
+[Unit]
+Description=TrendAtlas Clean 50/50 price-derived signal producer (no orders)
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+User=trendatlas-clean
+Group=trendatlas-clean
+WorkingDirectory=/opt/trendatlas-clean
+Environment=PYTHONPATH=/opt/trendatlas-clean/src
+ExecStart=/usr/bin/env /opt/trendatlas-clean/.venv/bin/python /opt/trendatlas-clean/scripts/production/run_clean_5050.py --data-dir /var/lib/trendatlas-clean/data --state-dir /var/lib/trendatlas-clean/state --universe all --refresh
+StateDirectory=trendatlas-clean
+StateDirectoryMode=0700
+UMask=0077
+Restart=on-failure
+RestartSec=15min
+TimeoutStartSec=infinity
+Nice=15
+CPUQuota=150%
+MemoryMax=2G
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/trendatlas-clean
+InaccessiblePaths=-/opt/trendatlas-production -/run/credentials -/opt/market_regime_v1
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target
