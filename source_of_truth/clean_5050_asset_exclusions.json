@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "as_of_utc": "2026-10-18",
+  "purpose": "Explicit, reviewable exclusions requested for the all-USDT universe; not an execution allowlist",
+  "stablecoins": ["USDT", "USDC", "BUSD", "FDUSD", "TUSD", "USDP", "PAX", "DAI", "USDD", "UST", "USTC", "USD1", "USDE", "SUSDE", "USDS", "SUSD", "USDF", "USDJ", "GUSD", "FRAX", "LUSD", "PYUSD", "RLUSD", "EUR", "AEUR", "EURI", "EURC", "EURS", "BIDR", "IDRT", "VAI", "XUSD", "USDN", "MIM"],
+  "wrapped_tokens": ["WBTC", "WETH", "WBETH", "BETH", "STETH", "WSTETH", "WEETH", "RETH", "CBETH", "EZETH", "RSETH", "BTCB", "CBBTC", "TBTC", "RENBTC", "WBCH", "WBNB", "WAVAX", "WSOL", "WTRX", "WMATIC", "WPOL"],
+  "leveraged_rule": "UP/DOWN/BULL/BEAR suffix with an independently present underlying base asset; avoids falsely excluding JUP",
+  "coverage": "Versioned classification requires periodic review when new stable/wrapped tokens list; exchangeInfo does not certify these categories"
+}

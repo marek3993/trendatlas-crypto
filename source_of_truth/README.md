@@ -1,3 +1,5 @@
+> Clean 50/50 continuation (2026-10-18): [multi-account override](clean_5050_multi_account.md) and [contract v2](clean_5050_contract.json) supersede single-key Clean deployment. The old phase68g remains disabled.
+
 # Market Regime v1 - Source of Truth
 
 This folder is the central single source of truth layer for Market Regime v1.
@@ -70,3 +72,5 @@ This folder is the central single source of truth layer for Market Regime v1.
 - Pi authority/runtime work must follow `source_of_truth/pi_codex_runtime_workflow.md`.
 - `master_state.md` should remain a short state snapshot, not a full history log.
 - Chats must read this layer first and only then patch or interpret repo state.
+
+Clean replacement continuation: `clean_5050_contract.json` governs the new VPS signal + portfolio execution chain. See `docs/clean-5050-20261018/EXECUTION.md` for operator deployment and current evidence; implementation does not imply deployment.

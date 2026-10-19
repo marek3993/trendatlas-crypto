@@ -1,0 +1,7 @@
+revoke insert, update on table public.hyperliquid_account_performance from authenticated;
+revoke insert, update on table public.hyperliquid_account_performance_history from authenticated;
+
+drop policy if exists hyperliquid_account_performance_insert_own on public.hyperliquid_account_performance;
+drop policy if exists hyperliquid_account_performance_update_own on public.hyperliquid_account_performance;
+drop policy if exists hyperliquid_account_performance_history_insert_own on public.hyperliquid_account_performance_history;
+drop policy if exists hyperliquid_account_performance_history_update_own on public.hyperliquid_account_performance_history;

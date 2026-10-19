@@ -97,3 +97,10 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs remain research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+## Clean 50/50 deployment continuation — 2026-10-18
+- User reports old phase68g shutdown complete, kill switch on, timer disabled/inactive, no orders sent by shutdown. SSH remains unavailable from this authoring environment.
+- Portfolio execution is implemented and tested (BTC/ETH spot, other perps 1x, EXIT before ENTRY, limit/cancel/IOC, CLOID recovery and fresh account readback).
+- One-command operator installer runs on VPS under systemd without a laptop; it performs native tests/reference replay and signer-only preflight before activating only Clean.
+- Old phase68g flags stay disabled. No mandatory seven-day wait. No direct live activation was performed in this session.
+- Existing dashboard/publisher is not migrated by this executor task. Use Clean signal/receipt files as separate model/account outputs until that integration is done.

@@ -1,0 +1,3 @@
+-r requirements-clean-5050.txt
+hyperliquid-python-sdk==0.24.0
+eth-account==0.13.7

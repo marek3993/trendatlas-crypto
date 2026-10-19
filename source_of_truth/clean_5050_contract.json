@@ -1,0 +1,165 @@
+{
+  "schema_version": 2,
+  "strategy_id": "trendatlas_clean_5050_v1",
+  "status": "IMPLEMENTED_TESTED_OPERATOR_DEPLOYMENT_PENDING",
+  "authority": "user_reference_2026-10-18",
+  "scope": "signal_producer_and_existing_typescript_multi_account_executor",
+  "live_enabled": false,
+  "source": "Binance spot USDT daily UTC close and quote_volume",
+  "source_closed_day": "UTC today minus one",
+  "data": {
+    "reference_symbol_count": 59,
+    "excluded_reference_symbol": "BSV",
+    "price_feature_ffill_limit": 3,
+    "eligibility": "original close.notna(); exit from decision on first missing close",
+    "minimum_history_observations": 365,
+    "liquidity": "30-calendar-day rolling median of original quote volume; min 20 observed",
+    "luna_original_only_cutoff_inclusive": "2022-05-13",
+    "delisting_fill": "unpriced liquidation must be reported, never fabricated",
+    "public_response_max_bytes": 67108864
+  },
+  "features": {
+    "trend_lookbacks": [
+      20,
+      40,
+      80,
+      160
+    ],
+    "score_lookbacks": [
+      20,
+      40,
+      80
+    ],
+    "vol_lookback": 60,
+    "vol_min_periods": 40,
+    "vol_ddof": 1
+  },
+  "params": {
+    "regime_min": 0.5,
+    "universe_n": 10,
+    "top_k": 1,
+    "switch_h": 0.25,
+    "btc_pref": 0.25
+  },
+  "portfolio": {
+    "clean_weight": 0.5,
+    "btc_trend_weight": 0.5,
+    "max_gross_exposure": 1,
+    "cash_weight": "1 - sum(asset weights)",
+    "cash_when_no_regime": true
+  },
+  "timing": {
+    "decision": "close D",
+    "holding": "D+1",
+    "signal_shift": 0,
+    "pnl": "weights[D-1] * price_returns[D]",
+    "schedule": "00:10 UTC",
+    "backtest_fill_assumption": "previous close; 00:10 execution not certified by daily data"
+  },
+  "costs": {
+    "perp_fee_bps": 2.4,
+    "spot_fee_bps": 4.9,
+    "slippage_bps_each_side": 5,
+    "spot_assets": [
+      "BTC",
+      "ETH"
+    ],
+    "cash_yield_pa": 0.04,
+    "cash_yield": "research assumption; not asserted as real account income",
+    "funding_fallback": "BTC observed rate then 0.0003/day, explicitly tagged proxy; never observed zero",
+    "execution_venues": "BTC/ETH spot UBTC/UETH USDC pairs; all other assets original Hyperliquid perps, leverage setting 1",
+    "accounting": "daily drift rebalancing and post-cost NAV reserve; reference target-change-only costs recorded separately in audit"
+  },
+  "universe": {
+    "reference": "frozen 59 symbols from attachment",
+    "production": "all discovered Binance spot USDT, excluding stable, leveraged, wrapped; historical membership from archives",
+    "ties": "deterministic alphabetical tie break, average liquidity ranks; deviation from reference set iteration reported"
+  },
+  "dry_run": {
+    "required": false,
+    "minimum_elapsed_days": 0,
+    "automatic_live_promotion": false,
+    "one_record_per_closed_day": true,
+    "state_and_data_root": "/var/lib/trendatlas-clean",
+    "no_order_or_signer_access": false
+  },
+  "validation": {
+    "historical_checkpoints": 18,
+    "reference_array_comparison": true,
+    "prefix_invariance": true,
+    "future_mutation_invariance": true,
+    "return_identity": true,
+    "production_certification_requires_external_replay": true
+  },
+  "activation": {
+    "user_authorized_after_tests": true,
+    "mandatory_seven_day_wait": false,
+    "required_tests": [
+      "historical_checkpoints",
+      "prefix_invariance",
+      "return_identity"
+    ],
+    "account_activation": "existing_per_account_consent_and_agent_authorization",
+    "vps_access": "NOT_AVAILABLE_IN_THIS_SESSION",
+    "execution_integration": "TYPESCRIPT_MULTI_ACCOUNT_SPOT_PERP_TESTED",
+    "old_phase68g_shutdown": "USER_REPORTED_APPLIED_VERIFIED_DISABLED; not independently SSH-verified here",
+    "deployment_entrypoint": "deploy/clean_5050/install_multi_account.py --source-commit SHA --activate-live [--upgrade-active]",
+    "execution_owner_after_operator_activation": "trendatlas-clean-production.service on VPS; mrv1-production remains disabled",
+    "live_enabled_in_repository": false,
+    "active_upgrade": "Explicit --upgrade-active: refuse an in-flight worker; pause timer and take production.lock; preserve existing policy and journal; test/preflight before symlink switch; one manual start; fresh aligned receipt before timer resumes; failures stay disarmed.",
+    "legacy_guard_access": "trendatlas-clean is added to trendatlas-production supplementary group before read-only preflight; same group on production service"
+  },
+  "execution": {
+    "weights_source": "signal.json ciel_vahy",
+    "max_gross_target": 1.0,
+    "spot_assets": {
+      "BTC": "UBTC",
+      "ETH": "UETH"
+    },
+    "quote_asset": "USDC",
+    "perp_leverage": 1,
+    "ordering": [
+      "all_independent_exits",
+      "fresh_account_readback",
+      "entries",
+      "posttrade_reconciliation"
+    ],
+    "maker_tif": "Alo",
+    "maker_wait_seconds_default": 300,
+    "fallback_tif": "Ioc",
+    "max_slippage_bps_default": 50,
+    "minimum_notional_usd_default": 10,
+    "reconciliation_tolerance_fraction": 0.01,
+    "maker_timeout_configurable": true,
+    "durable_cloid_before_submit": true,
+    "durable_monotonic_nonce": true,
+    "ambiguous_submission": "query_cloid_do_not_resubmit_automatically",
+    "missing_target_market": "entry_leg_failure_does_not_block_exits",
+    "same_day_completed_run": "fresh_readback_no_new_orders",
+    "credentials": "existing Supabase hyperliquid_agent_secrets AES-256-GCM; KEK from /etc/trendatlas-production/multi-account.env; never export a systemd signing key",
+    "no_automatic_transfers_or_borrowing": true,
+    "recovery_journal": "existing Supabase multi_account_execution_runs/actions/locks/agent_nonces",
+    "actual_account_receipt": "/var/lib/trendatlas-clean/state/multi_account_receipt.json",
+    "automatic_retry_seconds": 0,
+    "risk_budget_sizing": "post-cost NAV reserve and floor quantities, target sum <=1, visible exchange minimum dust",
+    "native_vps_validation": "Full Python Clean and TypeScript suites, typecheck/build, 18 checkpoints and read-only per-account preflight before activation",
+    "new_config": "/etc/trendatlas-clean/policy.json",
+    "authorized_target": "weights dictionary with sum <= 1; identical signal for every consenting account, equity-sized per account",
+    "legacy_single_key_installer": "DISABLED_DO_NOT_DEPLOY",
+    "source_bundle_manifest": "unpack preserves the original BUNDLE_MANIFEST.json bytes at release root after validating every source file; tests must not require a Git checkout",
+    "per_account_same_day_completed_run": "readback_only_no_rebalance",
+    "failure_diagnostics": "Receipt reason, DB sanitized_error and systemd journal: stage + error.name/message, maximum 200 characters after redacting 0x/long hex/base64, known credentials and control characters; no error objects, stack, request or payload dumps; receipt survives journal write failure."
+  },
+  "public_performance": {
+    "source": "clean5050_metrics.json + clean5050_timeseries.csv",
+    "start_day": "2021-01-01",
+    "annualization_days": 365.25,
+    "cagr": "product(1+daily net return) ** (365.25 / calendar_days) - 1",
+    "chart": "Clean vs BTC buy and hold, log scale, common window",
+    "signal_source": "signal.json ciel_vahy; D+1, no second shift",
+    "live_account": "exchange only, never model-derived",
+    "reference_metrics": "user targets are unverified acceptance references, never hardcoded public values",
+    "funding_proxies": "explicitly disclosed; never labelled observed Binance funding",
+    "drawdown_wording": "Drawdowns around 50% are possible; metric value always read from the published full-universe artifact, never frozen to the 59-symbol reference."
+  }
+}

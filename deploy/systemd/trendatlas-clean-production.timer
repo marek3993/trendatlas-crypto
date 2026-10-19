@@ -1,0 +1,12 @@
+[Unit]
+Description=TrendAtlas Clean 50/50 daily execution at 00:10 UTC
+
+[Timer]
+OnCalendar=*-*-* 00:10:00 UTC
+Persistent=true
+AccuracySec=1s
+RandomizedDelaySec=0
+Unit=trendatlas-clean-production.service
+
+[Install]
+WantedBy=timers.target

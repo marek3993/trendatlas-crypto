@@ -1,0 +1,227 @@
+{
+  "strategy": "trendatlas_clean_5050_v1",
+  "input_sha256": "d7b95e04392d4b581d6a9e620c45b529b38c8d068261e6f4e9d2e65c1787d1c9",
+  "history_start": "2017-08-17",
+  "history_end": "2026-10-17",
+  "comparison_days_since_2021": 2116,
+  "reference_signal_mismatches_full_history": 0,
+  "reference_signal_mismatches_since_2021": 0,
+  "checkpoint_matches": 18,
+  "checkpoint_count": 18,
+  "checkpoints": [
+    {
+      "day": "2026-04-22",
+      "expected": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-04-23",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-04-24",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-04-27",
+      "expected": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-06",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-16",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-17",
+      "expected": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-20",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-21",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-07-15",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-07-16",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-08-20",
+      "expected": {
+        "BTC": 1.0
+      },
+      "actual": {
+        "BTC": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-08-26",
+      "expected": {
+        "BTC": 0.5,
+        "SOL": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "SOL": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-09-01",
+      "expected": {
+        "BTC": 0.5,
+        "UNI": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "UNI": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-09-02",
+      "expected": {
+        "BTC": 0.5,
+        "SOL": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "SOL": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-09-04",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-09-23",
+      "expected": {
+        "BTC": 0.5,
+        "NEAR": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "NEAR": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-10-17",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    }
+  ],
+  "truncation_tests": 25,
+  "truncation_mismatches": [],
+  "future_mutation_mismatches": 0,
+  "gross_return_identity_max_abs_error": 0.0,
+  "passed": true,
+  "focused_linux_tests": 86,
+  "live_deployment_performed": false,
+  "orders_sent_in_authoring_session": 0,
+  "native_windows_run": false,
+  "native_vps_tests": "PENDING_OPERATOR_INSTALLER"
+}

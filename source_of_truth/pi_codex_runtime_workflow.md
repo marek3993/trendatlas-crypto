@@ -137,3 +137,6 @@ If step 3 invalidates the approved fresh runtime bundle, restore the approved st
 - No manual generated `outputs/*` or `data/*` commits outside the official authority producer path.
 - No default escalation from `publish-existing` to `full-refresh`.
 - No dashboard or tablet task may redefine repo authority away from the Pi authority files.
+
+## Clean 50/50 user-authorized VPS replacement — 2026-10-18
+The user explicitly requests a new standalone signal + portfolio executor, replacing phase68g. For this replacement, the single automatic owner is `trendatlas-clean-production.service`, scheduled by its 00:10 UTC timer. It runs `run_clean_5050.py` then `execute_clean_5050.py`. This is an explicit exception to the historical old-orchestrator path above, not a second concurrent scheduler. Old `mrv1-production` must remain stopped/disabled with its kill switch on. Contract: `source_of_truth/clean_5050_contract.json`. The new signer reads only the existing encrypted systemd credential and uses actual exchange readback. Operator activation is after the specified tests, with no seven-day wait. Pi is outside this migration.

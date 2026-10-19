@@ -206,9 +206,9 @@
     },
     {
       "output_path": "outputs/execution/read_only/",
-        "generated_by": [
-          "scripts/execution/hyperliquid_read_only_snapshot.py",
-          "scripts/execution/build_hyperliquid_real_performance_ledger.py"
+      "generated_by": [
+        "scripts/execution/hyperliquid_read_only_snapshot.py",
+        "scripts/execution/build_hyperliquid_real_performance_ledger.py"
       ],
       "layer": "execution_data",
       "status": "active",
@@ -826,6 +826,78 @@
       "decision_relevance": "support_only",
       "official_truth": false,
       "notes": "Approved deployment candidate product metrics for APP summary_path. APP must not infer these metrics."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/signal.json",
+      "generated_by": [
+        "scripts/production/run_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Isolated decision weights with explicit close/holding dates. No exchange/account authority and no order submission."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/execution_receipt.json",
+      "generated_by": [
+        "scripts/production/execute_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "deprecated",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Retired single-key path; existing Supabase journal is authoritative for multi-account execution."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/execution.sqlite3",
+      "generated_by": [
+        "scripts/production/execute_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "deprecated",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Retired single-key path; existing Supabase journal is authoritative for multi-account execution."
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/multi_account_receipt.json",
+      "generated_by": [
+        "web/scripts/run-clean-multi-account.ts"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Actual per-account exchange readback, never model PnL"
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/clean5050_metrics.json",
+      "generated_by": [
+        "scripts/production/run_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Net model metrics; common 2021 window; CAGR; funding proxy disclosure"
+    },
+    {
+      "output_path": "/var/lib/trendatlas-clean/state/clean5050_timeseries.csv",
+      "generated_by": [
+        "scripts/production/run_clean_5050.py"
+      ],
+      "layer": "execution_data",
+      "status": "active",
+      "output_kind": "export",
+      "decision_relevance": "support_only",
+      "official_truth": false,
+      "notes": "Daily net model returns and BTC benchmark; bound by metrics checksum"
     }
   ]
 }

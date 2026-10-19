@@ -1,3 +1,5 @@
+> Active Clean replacement: TypeScript multi-account backend from production e85712b, per-account Supabase agent secrets, portfolio weights from signal.json. See clean_5050_multi_account.md. No phase68g reactivation or single-key Python installation.
+
 # Master State
 
 ## Official state snapshot
@@ -133,3 +135,11 @@
 ## Legacy phase chain
 - Legacy phase-chain outputs are research/archive/input lineage only.
 - They are not the primary runtime production truth interface.
+
+## Clean 50/50 replacement request — 2026-10-18
+- User requests replacement of phase68g by `trendatlas_clean_5050_v1`, with no mandatory seven-day wait.
+- Standalone signal math passed 18 historical checkpoints, exact 2,116-day reference comparison, 25 truncation checks, future-mutation and return identity checks.
+- Operator reports phase68g disabled on VPS (kill switch on, timer disabled/inactive); this session has no SSH route to independently recheck the service. Live Clean deployment remains PENDING.
+- Multi-asset portfolio executor and one-command VPS installer are implemented and tested. The installer runs native tests/reference checks before activating the new sole Clean scheduler.
+- Read-only Hyperliquid API at 2026-10-18 14:52 UTC: unifiedAccount, 86.869106 USDC, no positions/open orders. This is an account observation, not deployment proof.
+- Contract: `source_of_truth/clean_5050_contract.json`. Handoff and evidence: `docs/clean-5050-20261018/`.

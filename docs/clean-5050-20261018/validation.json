@@ -1,0 +1,333 @@
+{
+  "strategy": "trendatlas_clean_5050_v1",
+  "reference_symbols": 59,
+  "input_sha256": "d7b95e04392d4b581d6a9e620c45b529b38c8d068261e6f4e9d2e65c1787d1c9",
+  "input_files": {
+    "ohlcv/AAVE.csv": "59f92f5503a5f195c87fed53e27fea13f44e0f4e86b337552965b5f22f348810",
+    "ohlcv/ADA.csv": "2c14d3f2a540a89105280103b9f3d9b087327f0eb1a0e960438240607c032c1a",
+    "ohlcv/ALGO.csv": "900dde15a8a8d74df91259db1e842cf7c726a1cb78c245c32fc53141bb6e2492",
+    "ohlcv/APT.csv": "0fafe2ef0cdad861a3be67ef978ab5434c1b0d8234868b2fba1d208e95d0d263",
+    "ohlcv/ARB.csv": "ca4687bde18039e84ceb4ad856f6d27946d6a3864bb27a81163f6f8b291b198d",
+    "ohlcv/ATOM.csv": "aeec40770b5d57522d5ac22716aded757697cc9cd47b83df40639b557664bee6",
+    "ohlcv/AVAX.csv": "75fcda5897582db89f6927839c01dbb5e1d379b7ff0f6ae47cc87e229eb2bf70",
+    "ohlcv/AXS.csv": "8b6609c8f9c0418f12946381e547a17e27053602e5b69a072c150f7a4d287117",
+    "ohlcv/BCH.csv": "6fcab1da885219ab738bf241a39e731bdd4c6ba83a9c30c812109d6a5b78fef1",
+    "ohlcv/BNB.csv": "e39acf2efd21e45e2e4dd7e46e9fd246b7789a5a4d4ff117df8d077a452eee0c",
+    "ohlcv/BTC.csv": "e66d516c4a69240c64f9a0bc104cc6b2d72f993c28945c5a67647225812028fd",
+    "ohlcv/CHZ.csv": "263bf4d706f5c7e0f5ba7511de3d6206eb1ec9c61fb289df3a768f92736b54b9",
+    "ohlcv/CRV.csv": "02cd7f76b8004199306e71a69f6c88e78c8e24537eb3eb68d34203c01b2935cf",
+    "ohlcv/DASH.csv": "fb23b3ef12e61606d45a56e38f88bb0e688c082c6f89b126b079a264fd1f61dc",
+    "ohlcv/DOGE.csv": "13fbce6cc0b27941c1b529968962f7028cd5cd88e0b5677dd6385aa8bce6db5f",
+    "ohlcv/DOT.csv": "5fbb225c9da3162de411c08bbec1ed08e17307671c2bd75de4df80ba665d747f",
+    "ohlcv/EGLD.csv": "ef26caae39d7c6720b96f1d2b1275777f4461a3a5e4c1ab88a8c7f1ebf4eb333",
+    "ohlcv/EOS.csv": "95421a9576a99c726c21710e2062cda781ffbc0dccff685814dbc6b74232fa80",
+    "ohlcv/ETC.csv": "f4f63151fbfb019124852b730cf5e26e9b77bddd2be6662fac0c6b6b1ade0aaf",
+    "ohlcv/ETH.csv": "4fc48c930eaac623d499ac6064ad9417b16dc61e184a72eba0713c730c6d4f5f",
+    "ohlcv/FIL.csv": "4886d5dc60c77f6c89eabf6515c2edb9c8eaac23548d787e3a62f905977790e9",
+    "ohlcv/FTM.csv": "ff34f9aa3ab9a09bc424d381f09279bc5028c6ca13336549d06885aefad00dcd",
+    "ohlcv/FTT.csv": "07ee1d35d39c87f56fcee2995c7c90773c5b72f526f974eb6552c0285530871d",
+    "ohlcv/GALA.csv": "888918d87162d52c6e19a60db22ec7d053e9e7da3ab97d6a947c7229f3f73460",
+    "ohlcv/HBAR.csv": "0ad47ff30b5da2615353b162fe172a9654c5bae2b09e5e614eb5e081b64f8b50",
+    "ohlcv/ICP.csv": "db950f0bff1e06fa527dc0a02f6721ed4aebf2875c7be06c7a9ca8383bde71ba",
+    "ohlcv/ICX.csv": "a490bb9a842d053dfecc33059702d1d1d36a48554dbe6b3e34a289492705e885",
+    "ohlcv/INJ.csv": "8b003d08c3298dda772f773d3e1b70350c7dab90278ead0ba0d8a130c3a03d56",
+    "ohlcv/IOTA.csv": "2e5643ca4a5a457f6907637827dbdc47fa9e9ee78ca7812a3efe49f19737bc71",
+    "ohlcv/KSM.csv": "794d53b96a500662386d3c2fd31f3a7df6f0277ac070b855691455b1c78307ca",
+    "ohlcv/LINK.csv": "cf88aa44ab90569fc6ba6cfbec8702df8dfda7e24791dccdde4651a46f1e573d",
+    "ohlcv/LTC.csv": "b5114b4984edb06bd8130dd1666779f7be15dfc2c83d86dc38b6e3a26973121e",
+    "ohlcv/LUNA.csv": "ea37177b648ad59b18f127960c1d08229e0373dce06c4835d80749658763138f",
+    "ohlcv/MANA.csv": "1d1a4e2e60a58f2fd46d3461d73a769ee9834e9972c66ca0022095bc5e3e3c82",
+    "ohlcv/MATIC.csv": "916f2d3cac4e1bb462bc7dc99fab3c22f6ef3b8531ab56de9610410e113eeee1",
+    "ohlcv/NEAR.csv": "9eaebaa4cecce7f10c313f9d9310a6101b6a8ceeb63dd4cf43e06ea99ad36c6a",
+    "ohlcv/NEO.csv": "2b1c393a6ba596c44e32f6ea41a8b87d467f4a093f7d25c1d8a2646418a3fa96",
+    "ohlcv/OMG.csv": "2eda13a7e479ab9baf2dd0e1f05df7ba9229392623a3f74c8f58cafe5ef022b8",
+    "ohlcv/ONT.csv": "18c6cb32f57ca3ca2cc1ecd5b14884c73a0bf6f9b03ac7b44768cdc5901808c4",
+    "ohlcv/OP.csv": "84ae066b3b5782ae5feff79310122cea92c92a2cafd8b65ebddbd41ff380d08b",
+    "ohlcv/PEPE.csv": "6cc3260e4b321256495c3a915e0041531d605b13c94101bab343d8cf826a0bbe",
+    "ohlcv/QTUM.csv": "b22da449fcc15ad81dad07b3c4380a847348989b3b28b0453a1ae35785f3e04b",
+    "ohlcv/SAND.csv": "647e88a58a033dbaa35ca35cdb50b7b8b320e95a1f717b9347612a2de1853238",
+    "ohlcv/SHIB.csv": "b67884eb033f6b57b1a9634add45c76288a21681dd5cd1c677d05bdd0147c893",
+    "ohlcv/SOL.csv": "3976efd2bc3650e4e4638cd65f2c439984b4c192c823000131e9ee773003b897",
+    "ohlcv/SUI.csv": "61a25403fb348a3b58867d19b2447a31cbbac14bf32a8ba12f5a42bb3f9cdc96",
+    "ohlcv/THETA.csv": "88f6835fc1b7a4eefff48f90d5365715d63bf2d59b717d645616cae4637c51d9",
+    "ohlcv/TON.csv": "70cf51f0852bf4494fa19dd0fcba58131b3a7ac9d3411be99fea830c85bfb3b8",
+    "ohlcv/TRX.csv": "1e3f1193a031d394156f1a33c9c42a888f2e21ad93ea12e161bcfe299192dcb1",
+    "ohlcv/UNI.csv": "ccce928fa096968a5269d19eff296cbb549c5c57c4e84a9b5fd48f3b32624607",
+    "ohlcv/VET.csv": "075ae3d54003fe28938367ff9f38d0a0edbc843a1907e0a1f342bac24ba35c2b",
+    "ohlcv/WAVES.csv": "6476476c9bfa8ef84be77538b97108acd03306660540c12cced4b3bb6ae1cec5",
+    "ohlcv/WIF.csv": "977c68cafd3a918b0a8110dbb2a78b4dfbd6fe90e05fb0c9b91820047313fa74",
+    "ohlcv/XLM.csv": "08db2fcc13c2036c4762b5f217c7a56014b4591f2035429e2c58d01494f17d88",
+    "ohlcv/XMR.csv": "44eb5c910b0f18dbf3c9c34319a252cc5251a0dfdc98f209f01de4f20c2cca73",
+    "ohlcv/XRP.csv": "dbe5c293175e57ee3a832a6e2d7636f776f9a0a04140e920f3e43d4cc4a112a1",
+    "ohlcv/XTZ.csv": "fab5147a4fabba1a49c7ce19b3b3c053ebebeefe83836b61b00f1ae8b4cf4197",
+    "ohlcv/ZEC.csv": "857ba3f47e6ab167ffb369c173587b5c09f2c2eaf1c4a6adc0a496c210516c3a",
+    "ohlcv/ZIL.csv": "91252da3fc5d7e8d9c29292fee3fd4ac4069e2bf42f9a16658011414befbde45"
+  },
+  "history_start": "2017-08-17",
+  "history_end": "2026-10-17",
+  "comparison_days_since_2021": 2116,
+  "reference_signal_mismatches_full_history": 0,
+  "reference_signal_mismatches_since_2021": 0,
+  "reference_mismatch_days": [],
+  "checkpoints": [
+    {
+      "day": "2026-04-22",
+      "expected": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-04-23",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-04-24",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-04-27",
+      "expected": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-06",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-16",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-17",
+      "expected": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "TRX": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-20",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-05-21",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-07-15",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-07-16",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-08-20",
+      "expected": {
+        "BTC": 1.0
+      },
+      "actual": {
+        "BTC": 1.0
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-08-26",
+      "expected": {
+        "BTC": 0.5,
+        "SOL": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "SOL": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-09-01",
+      "expected": {
+        "BTC": 0.5,
+        "UNI": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "UNI": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-09-02",
+      "expected": {
+        "BTC": 0.5,
+        "SOL": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "SOL": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-09-04",
+      "expected": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "ZEC": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-09-23",
+      "expected": {
+        "BTC": 0.5,
+        "NEAR": 0.5
+      },
+      "actual": {
+        "BTC": 0.5,
+        "NEAR": 0.5
+      },
+      "matched": true
+    },
+    {
+      "day": "2026-10-17",
+      "expected": {
+        "CASH": 1.0
+      },
+      "actual": {
+        "CASH": 1.0
+      },
+      "matched": true
+    }
+  ],
+  "checkpoint_matches": 18,
+  "checkpoint_count": 18,
+  "truncation_tests": 25,
+  "truncation_mismatches": [],
+  "future_mutation_mismatches": 0,
+  "gross_return_identity_max_abs_error": 0.0,
+  "weight_changes_since_2021": 178,
+  "state_observations_including_initial_since_2021": 179,
+  "reference_expected_state_observations_including_initial": 179,
+  "metrics_since_2021": {
+    "status": "DAILY_SPOT_PRICE_COST_PROXY",
+    "start_day": "2021-01-01",
+    "end_day": "2026-10-17",
+    "calendar_days": 2116,
+    "cagr_pct": 86.73558659529728,
+    "total_return_pct": 3626.4715006656565,
+    "max_drawdown_pct": -35.20179017048088,
+    "sharpe": 1.396422441391159,
+    "turnover_notional": 191.64524210802148,
+    "unpriced_execution_proxy_days": 0,
+    "funding_proxy_days": 708,
+    "cash_yield_is_model_assumption": true,
+    "daily_close_fill_is_model_assumption": true,
+    "real_account_pnl": false,
+    "live_execution_certified": false
+  },
+  "metrics_last_365_days": {
+    "status": "DAILY_SPOT_PRICE_COST_PROXY",
+    "start_day": "2025-10-18",
+    "end_day": "2026-10-17",
+    "calendar_days": 365,
+    "cagr_pct": 37.86856438184103,
+    "total_return_pct": 37.83826393608032,
+    "max_drawdown_pct": -14.114784686322091,
+    "sharpe": 1.1102252826228225,
+    "turnover_notional": 18.707453608141417,
+    "unpriced_execution_proxy_days": 0,
+    "funding_proxy_days": 80,
+    "cash_yield_is_model_assumption": true,
+    "daily_close_fill_is_model_assumption": true,
+    "real_account_pnl": false,
+    "live_execution_certified": false
+  },
+  "costs": {
+    "perp_fee_bps": 2.3999999999999995,
+    "spot_fee_bps": 4.9,
+    "slippage_bps": 5.0,
+    "cash_yield_pa": 0.04
+  },
+  "cost_timing": "weights[D-1] changes charged to holding day D",
+  "claimed_83_5_percent_independently_verified": false,
+  "full_universe_replay": "NOT_RUN_REFERENCE_59_ONLY",
+  "oos_status": "HISTORY_ALREADY_INSPECTED_NOT_UNTOUCHED_OOS",
+  "live_orders_sent": 0,
+  "passed": true
+}

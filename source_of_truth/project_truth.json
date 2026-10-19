@@ -506,5 +506,22 @@
     "legacy_phase_chain_status":  {
                                       "role":  "research_archive_input_lineage",
                                       "primary_runtime_production_truth_interface":  false
-                                   }
+                                   },
+    "clean_5050_replacement":  {
+        "user_decision_date_utc":  "2026-10-18",
+        "strategy_id":  "trendatlas_clean_5050_v1",
+        "source_contract":  "source_of_truth/clean_5050_contract.json",
+        "requested_live_replacement":  "phase68g_etf_flow_impulse_early_risk_cooldown_15",
+        "mandatory_wait_days":  0,
+        "reference_signal_validation":  "PASSED_18_CHECKPOINTS_2116_DAYS_25_TRUNCATIONS_ZERO_PNL_IDENTITY_ERROR",
+        "deployment_status":  "NOT_DEPLOYED",
+        "phase68g_disabled_verified":  false,
+        "phase68g_shutdown_user_report":  {"applied": true, "verified_disabled": true, "kill_switch": true, "trading_enabled": false, "timer": "inactive_disabled", "service": "inactive", "orders_sent": 0},
+        "account_activation":  "OPERATOR_ONLY",
+        "live_execution_integration":  "IMPLEMENTED_TESTED_OPERATOR_DEPLOYMENT_PENDING",
+        "last_verified_repository_runtime_truth_unchanged":  false,
+        "execution_backend": "existing TypeScript multi-account, production e85712b base",
+        "public_metrics": "Clean 50/50 only; daily runner files; no old phase67j/68g fallback",
+        "database_migration": "20261018172656_clean_portfolio_execution applied; no Clean runs or orders created"
+    }
 }
