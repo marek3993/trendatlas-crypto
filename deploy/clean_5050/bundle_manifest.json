@@ -1,7 +1,7 @@
 {
-  "bundle_sha256": "e3923ffbb60c66fd76ff934d89d0103baae371793e1bb0b0f21bbe5a116017de",
+  "bundle_sha256": "11bde8c5b2e98e99d0c2139f44f6470e7ba75471edf09ba29c539e983af1b208",
   "files": {
-    "app.py": "0ab06c13084c1aa98a30388690706f19c7c1fa21940e7db2da60b34f04e7f60e",
+    "app.py": "87cce65ed967d0e38a92050909f5cec0461d27c236fd0b25bf15ed7d44774cdf",
     "deploy/clean_5050/bootstrap_multi_account.py": "18f7890f2927ff44e270845aac1fb923ab6dab1682de328f66bc60439e0adff1",
     "deploy/systemd/trendatlas-clean-production.service": "d6ffba7aa27fa7a2e183bd6922858474fd36b8da36f154ddb49e93f769dcf238",
     "deploy/systemd/trendatlas-clean-production.timer": "3a050235ebb3bf21dbdca8f1a8e438eaf5d86e089001d09de023f9edb3df4a95",
@@ -27,7 +27,7 @@
     "src/trendatlas_clean/hyperliquid.py": "14375f96d8059d10a95f9d04047ab893735bbb21e1cdc2dd9663a61ef3ba043d",
     "src/trendatlas_clean/journal.py": "6dbf10d286f4c5c7dd9f534a114bc50b280af585ccb900c88b76ff0471a4a903",
     "src/trendatlas_clean/portfolio.py": "29f9e712386076d5be2266ffc01060d71f746034e23393270a50e1305e475067",
-    "src/trendatlas_clean/public_metrics.py": "c28b806878f0e7b7da5adeefbfed42fe02e7e676ad30f3afb20446dcdbb55acb",
+    "src/trendatlas_clean/public_metrics.py": "0e0eb8ac16c868c15680f1983eae9a7cf862573586b7388939604b2c09c48b7e",
     "src/trendatlas_clean/runner.py": "17ff24b086c755925c037cec39686550ba0952f7c6794a2a24147d9d10ba8463",
     "tests/fixtures/clean_5050_checkpoints.json": "6f5162be56f1e6fff54762d6766386d65c8e40b4b6534ba72dcd2412eebaf997",
     "tests/fixtures/clean_5050_reference.py": "c7d77d5fce35904cca59564bc6bc7c020b1b22d9f282efdfc4bd20196b51b58d",

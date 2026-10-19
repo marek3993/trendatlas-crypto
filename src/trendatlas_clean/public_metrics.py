@@ -4,6 +4,7 @@ from dataclasses import asdict
 import hashlib
 import json
 from pathlib import Path
+import numpy as np
 import pandas as pd
 from .backtest import Costs, metrics, replay
 from .core import STRATEGY_ID, price_returns, target_weights
@@ -25,6 +26,12 @@ def build_public(panel: Panel, universe: dict) -> tuple[dict, pd.DataFrame]:
     series["btc_return"] = btc
     series["btc_equity"] = (1 + btc).cumprod()
     series["date"] = series.index.strftime("%Y-%m-%d")
+    label = lambda row: ";".join(f"{c}={w:.4f}" for c, w in sorted(row.items()) if w > 1e-12) or "CASH"
+    decided = weights.reindex(ledger.index).fillna(0.0)
+    series["target_weights"] = decided.apply(label, axis=1)
+    series["held_weights"] = weights.shift(1).reindex(ledger.index).fillna(0.0).apply(label, axis=1)
+    c = panel.close["BTC"].ffill(limit=3)
+    series["btc_trend"] = (sum(np.sign(c / c.shift(L) - 1.0) for L in (20, 40, 80, 160)) / 4).reindex(ledger.index)
     annual = []
     for year, part in ledger.groupby(ledger.index.year):
         annual.append({"year": int(year), "return_pct": metrics(part)["total_return_pct"],
