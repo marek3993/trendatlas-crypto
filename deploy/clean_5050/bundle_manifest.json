@@ -1,5 +1,5 @@
 {
-  "bundle_sha256": "0a3bc3f6c47af2d4a8a7e5bdf673aafc65c82c1c50835318323c21a9bc7867ce",
+  "bundle_sha256": "e3923ffbb60c66fd76ff934d89d0103baae371793e1bb0b0f21bbe5a116017de",
   "files": {
     "app.py": "0ab06c13084c1aa98a30388690706f19c7c1fa21940e7db2da60b34f04e7f60e",
     "deploy/clean_5050/bootstrap_multi_account.py": "18f7890f2927ff44e270845aac1fb923ab6dab1682de328f66bc60439e0adff1",
@@ -107,7 +107,7 @@
     "web/src/server/multi-account-executor/order-status.ts": "b6b2f5abd85633f26a7ade2b1df9bbce4d5ae4585239eb60a6780e97a7c0d949",
     "web/src/server/multi-account-executor/planner.ts": "ddeb157e6f83ff67b94b018fe963afe13b0b7418dfa2afe9954c211a6ce13d49",
     "web/src/server/multi-account-executor/portfolio-engine.ts": "2c6f833c3e75b3102850fa7d6591cf7f5c6ceb59a404877cda592c524d1af06a",
-    "web/src/server/multi-account-executor/portfolio-market-data.ts": "be0875a28ca9e38eef73249c19b8d9ab4383a376e3ec0cc42f8f23a0377ec59b",
+    "web/src/server/multi-account-executor/portfolio-market-data.ts": "a154269502a034c6c6f91caae56b702ae2a7b684ac56ed24d0168685eb6a08c3",
     "web/src/server/multi-account-executor/portfolio-planner.ts": "ffc83c0ac227631a82535d8a78cdd8b33a14c51f97e1ca143d7a4f67c02bbb73",
     "web/src/server/multi-account-executor/read-only-transport.ts": "61561fd5afdc22919173a2deb42c0b1efb6667fd912c1c44ccbf780942c3b02d",
     "web/src/server/multi-account-executor/repository.ts": "d578609273664206d3126da47ce6caf02e6ac6be840964b05e8ec42e26336c61",

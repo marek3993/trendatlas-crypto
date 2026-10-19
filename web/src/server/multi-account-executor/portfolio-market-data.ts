@@ -2,15 +2,29 @@ import "server-only";
 import type {AccountState, MarketSpec} from "./types";
 export const INFO_URL="https://api.hyperliquid.xyz/info";
 export async function info<T>(fetcher: typeof fetch, payload: object): Promise<T> {
-  const response=await fetcher(INFO_URL,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload),cache:"no-store",signal:AbortSignal.timeout(8000)});
-  if(!response.ok) throw new Error("exchange read unavailable");
-  return await response.json() as T;
+  // Hyperliquid rate-limits bursts of info reads; retry 429/5xx with bounded backoff.
+  for(let attempt=0;;attempt++) {
+    const response=await fetcher(INFO_URL,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload),cache:"no-store",signal:AbortSignal.timeout(8000)});
+    if(response.ok) return await response.json() as T;
+    if(attempt>=4 || !(response.status===429 || response.status>=500)) throw new Error(`exchange read unavailable (HTTP ${response.status})`);
+    await new Promise(resolve=>setTimeout(resolve,1000*2**attempt));
+  }
 }
 type Context={coin?:string;markPx?:string;midPx?:string};
 type PerpMeta={universe:Array<{name:string;szDecimals:number;isDelisted?:boolean;maxLeverage?:number}>};
 type SpotMeta={tokens:Array<{name:string;index:number;szDecimals:number}>;universe:Array<{name:string;index:number;tokens:[number,number]}>};
 export type PortfolioMarket = MarketSpec & {assetIndex:number;coin:string;tokenIndex?:number;dex?:string};
+// One run fetches the catalog many times; reuse it briefly to stay under the info rate limit.
+let marketCache:{at:number;fetcher:typeof fetch;value:Promise<Map<string,PortfolioMarket>>}|undefined;
 export async function fetchPortfolioMarkets(fetcher:typeof fetch):Promise<Map<string,PortfolioMarket>> {
+  const now=Date.now();
+  if(marketCache && marketCache.fetcher===fetcher && now-marketCache.at<30000) return new Map([...(await marketCache.value)].map(([k,v])=>[k,{...v}]));
+  const value=loadPortfolioMarkets(fetcher);
+  marketCache={at:now,fetcher,value};
+  value.catch(()=>{if(marketCache?.value===value)marketCache=undefined;});
+  return new Map([...(await value)].map(([k,v])=>[k,{...v}]));
+}
+async function loadPortfolioMarkets(fetcher:typeof fetch):Promise<Map<string,PortfolioMarket>> {
   const [spot,dexs]=await Promise.all([info<[SpotMeta,Context[]]>(fetcher,{type:"spotMetaAndAssetCtxs"}),info<Array<{name:string}|null>>(fetcher,{type:"perpDexs"})]);
   if(!Array.isArray(dexs) || !Array.isArray(spot) || !Array.isArray(spot[0]?.tokens) || !Array.isArray(spot[0]?.universe)) throw new Error("invalid market catalog");
   const result=new Map<string,PortfolioMarket>(), tokens=new Map(spot[0].tokens.map(t=>[t.index,t])), contexts=new Map(spot[1].map(c=>[c.coin,c]));
