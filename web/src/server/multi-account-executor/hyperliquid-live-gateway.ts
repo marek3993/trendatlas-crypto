@@ -1,4 +1,5 @@
 import "server-only";
+import {safeExecutionError} from "./safe-error";
 import {fetchPortfolioMarkets,info} from "./portfolio-market-data";
 import {portfolioPrice,signLeverageOne} from "./hyperliquid-l1-signing";
 import type {PlannedAction} from "./types";
@@ -15,8 +16,9 @@ import { buildSignedHyperliquidIocPayload, buildSignedHyperliquidCancelPayload }
 const EXCHANGE_API_URL = "https://api.hyperliquid.xyz/exchange";
 
 export class HyperliquidLiveGatewayError extends Error {
-  constructor() {
-    super("Hyperliquid live order could not be verified safely.");
+  constructor(message="Hyperliquid live order could not be verified safely.") {
+    super(message);
+    this.name="HyperliquidLiveGatewayError";
   }
 }
 
@@ -119,7 +121,11 @@ export class HyperliquidLiveGateway extends HyperliquidDryRunGateway {
     if(!market)throw new HyperliquidOrderRejectedError();
     const payload=await signLeverageOne(order,market);
     const response=await this.liveFetcher(EXCHANGE_API_URL,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(payload),cache:"no-store",signal:AbortSignal.timeout(HYPERLIQUID_REQUEST_TIMEOUT_MS)});
-    if(!response.ok || asRecord(await response.json())?.status!=="ok")throw new HyperliquidLiveGatewayError();
+    if(!response.ok)throw new HyperliquidLiveGatewayError(`updateLeverage HTTP ${response.status}`);
+    const body=asRecord(await response.json());
+    if(body?.status!=="ok")throw new HyperliquidLiveGatewayError(safeExecutionError({
+      name:"ExchangeRejection",message:typeof body?.response==="string"?body.response:"updateLeverage response missing status ok"
+    },"updateLeverage",[order.agentPrivateKey]));
   }
   override async cancelOrder(order: ExchangeCancellation): Promise<void> {
     if(this.portfolio && !this.writeGuard) throw new HyperliquidLiveGatewayError();

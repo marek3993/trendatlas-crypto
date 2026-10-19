@@ -27,6 +27,7 @@ ARCHIVE = "https://data.binance.vision/"
 BUCKET = "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision"
 COLS = ["open_time", "open", "high", "low", "close", "volume", "close_time", "quote_volume", "trades", "tb_base", "tb_quote", "ignore"]
 START_MS = int(pd.Timestamp("2017-08-01", tz="UTC").timestamp() * 1000)
+MAX_PUBLIC_RESPONSE_BYTES = 64 * 1024 * 1024
 _rate_lock = threading.Lock()
 _next_request = 0.0
 
@@ -55,8 +56,8 @@ def _bytes(url: str, *, cache: Path | None = None, missing_ok: bool = False) -> 
         try:
             request = Request(url, headers={"User-Agent": "TrendAtlas-Clean-public-data/1.0"})
             with urlopen(request, timeout=30) as response:
-                body = response.read(16 * 1024 * 1024 + 1)
-            if len(body) > 16 * 1024 * 1024:
+                body = response.read(MAX_PUBLIC_RESPONSE_BYTES + 1)
+            if len(body) > MAX_PUBLIC_RESPONSE_BYTES:
                 raise DataUnavailable("Public response exceeds size bound")
             if cp:
                 cp.parent.mkdir(parents=True, exist_ok=True)

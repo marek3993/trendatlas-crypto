@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import fcntl
 from datetime import datetime, timezone
 import hashlib
 import io
@@ -24,6 +25,7 @@ CONFIG = Path('/etc/trendatlas-clean/policy.json')
 OLD = Path('/opt/trendatlas-production/current')
 UNIT = 'trendatlas-clean-production'
 SYSTEMD = Path('/etc/systemd/system')
+TIMER_STAMPS = Path('/var/lib/systemd/timers')
 
 
 def emit(phase, **fields):
@@ -127,6 +129,7 @@ def node_runtime():
 def systemd_worker(release,node,envfile,no_submit=True):
     args=['systemd-run','--quiet','--wait','--collect','--unit=clean-preflight-'+str(os.getpid()),
           '--uid=trendatlas-clean','--gid=trendatlas-clean',
+          '--property=SupplementaryGroups=trendatlas-production',
           '--property=EnvironmentFile='+str(envfile),'--property=WorkingDirectory='+str(release/'web'),
           '--property=UMask=0077','--setenv=TRENDATLAS_CLEAN_WORKER=1',
           '--setenv=TRENDATLAS_CLEAN_STATE_DIR='+str(STATE/'state'),
@@ -136,16 +139,51 @@ def systemd_worker(release,node,envfile,no_submit=True):
     run(args)
 
 
+def unit_state(suffix):
+    return subprocess.run(['systemctl','is-active',UNIT+'.'+suffix],capture_output=True,text=True).stdout.strip()
+
+
+def stop_timer():
+    if subprocess.run(['systemctl','cat',UNIT+'.timer'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0:
+        run(['systemctl','disable','--now',UNIT+'.timer'])
+
+
+def write_policy(config):
+    gid=CONFIG.stat().st_gid if CONFIG.exists() else 0
+    atomic_json(CONFIG,config);os.chown(CONFIG,0,gid)
+
+
+def require_idle_worker():
+    if unit_state('service') not in {'inactive','failed','unknown'}:
+        raise ValueError('CLEAN_WORKER_BUSY_WAIT_FOR_COMPLETION')
+
+
 def install(args):
     INSTALL.mkdir(parents=True,exist_ok=True);os.chmod(INSTALL,0o700)
-    if any(subprocess.run(['systemctl','is-active',UNIT+'.'+suffix],capture_output=True,text=True).stdout.strip()=='active' for suffix in ('service','timer')):
+    if not args.upgrade_active and any(unit_state(suffix) not in {'inactive','failed','unknown'} for suffix in ('service','timer')):
         emit('CLEAN_ALREADY_ACTIVE_READBACK_ONLY',status_path=str(INSTALL/'status.json'));return
-    report={'source_commit':args.source_commit,'bundle_sha256':BUNDLE_SHA256,'status':'INSTALLING_MULTI_ACCOUNT','live_activation_possible':False}
+    report={'source_commit':args.source_commit,'bundle_sha256':BUNDLE_SHA256,'status':'INSTALLING_MULTI_ACCOUNT','live_activation_possible':False,'upgrade_active':args.upgrade_active}
     atomic_json(INSTALL/'status.json',report)
     old_disabled();envfile=environment_source();node=node_runtime()
-    for suffix in ('timer','service'):
-        if subprocess.run(['systemctl','is-active',UNIT+'.'+suffix],capture_output=True,text=True).stdout.strip()=='active':
-            raise ValueError('CLEAN_ALREADY_ACTIVE_USE_EXISTING_JOURNAL')
+    # Never stop a running worker or replace its files while an order is in flight.
+    require_idle_worker();stop_timer();require_idle_worker()
+    lock_path=STATE/'state/production.lock';lock_path.parent.mkdir(parents=True,exist_ok=True)
+    with lock_path.open('a') as production_lock:
+        try:fcntl.flock(production_lock.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError:raise ValueError('CLEAN_PRODUCTION_LOCK_BUSY_TIMER_PAUSED') from None
+        try:
+            install_release(args,report,envfile,node,production_lock)
+        except BaseException:
+            # No blind restart/rollback: the existing CLOID journal is authoritative.
+            if CONFIG.exists():
+                config=json.loads(CONFIG.read_text());config.update(kill_switch=True,trading_enabled=False);write_policy(config)
+            stop_timer()
+            report.update(timer_resumed=False,clean_disarmed=True)
+            atomic_json(INSTALL/'status.json',report)
+            raise
+
+
+def install_release(args,report,envfile,node,production_lock):
     payload=base64.b64decode(BUNDLE_B64)
     if hashlib.sha256(payload).hexdigest()!=BUNDLE_SHA256:raise ValueError('BUNDLE_HASH_MISMATCH')
     release=ROOT/'releases'/args.source_commit
@@ -159,8 +197,12 @@ def install(args):
         if source['bundle_sha256']!=BUNDLE_SHA256:raise ValueError('EXISTING_RELEASE_HAS_OTHER_BUNDLE')
         for name,digest in source['files'].items():
             if hashlib.sha256((release/name).read_bytes()).hexdigest()!=digest:raise ValueError('EXISTING_RELEASE_MODIFIED')
-    config=json.loads((release/'execution/config/clean_5050_policy.json').read_text())
-    config.update(kill_switch=True,trading_enabled=False);atomic_json(CONFIG,config)
+    config=json.loads((CONFIG if CONFIG.exists() else release/'execution/config/clean_5050_policy.json').read_text())
+    if config.get('strategy_id')!='trendatlas_clean_5050_v1' or config.get('execution_backend')!='multi_account':
+        raise ValueError('EXISTING_CLEAN_POLICY_INVALID')
+    atomic_json(INSTALL/('before-'+args.source_commit+'-'+str(os.getpid())+'.json'),{
+        'policy':config,'previous_release':str((ROOT/'current').resolve()) if (ROOT/'current').exists() else None})
+    config.update(kill_switch=True,trading_enabled=False);write_policy(config)
     runtime=python_runtime(args);run([runtime,'-m','venv',release/'.venv']);py=release/'.venv/bin/python'
     run([py,'-m','pip','install','--disable-pip-version-check','-r',release/'requirements-clean-execution.txt'])
     env=dict(os.environ,PYTHONPATH=str(release/'src'),PATH=str(Path(node).parent)+os.pathsep+os.environ.get('PATH',''))
@@ -182,6 +224,7 @@ def install(args):
     try:identity=pwd.getpwnam('trendatlas-clean')
     except KeyError:
         run(['useradd','--system','--home-dir',STATE,'--shell','/usr/sbin/nologin','trendatlas-clean']);identity=pwd.getpwnam('trendatlas-clean')
+    run(['usermod','-aG','trendatlas-production','trendatlas-clean'])
     run(['chown','-R','trendatlas-clean:trendatlas-clean',STATE]);run(['chmod','-R','a+rX',release])
     ROOT.chmod(0o755);(ROOT/'releases').chmod(0o755)
     if (ROOT/'python').exists():run(['chmod','-R','a+rX',ROOT/'python'])
@@ -207,18 +250,45 @@ def install(args):
     for unit in ('mrv1-production.timer','trendatlas-clean-signal.timer'):
         if subprocess.run(['systemctl','cat',unit],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0:run(['systemctl','disable','--now',unit])
     old_disabled()
-    config.update(kill_switch=False,trading_enabled=True);atomic_json(CONFIG,config);os.chown(CONFIG,0,identity.pw_gid)
+    config.update(kill_switch=False,trading_enabled=True);write_policy(config);os.chown(CONFIG,0,identity.pw_gid)
     report.update(status='ACTIVATING_MULTI_ACCOUNT',live_activation_possible=True);atomic_json(INSTALL/'status.json',report)
-    run(['systemctl','enable','--now',UNIT+'.timer']);run(['systemctl','start',UNIT+'.service'])
-    receipt=json.loads((STATE/'state/multi_account_receipt.json').read_text())
-    if not receipt.get('all_accounts_aligned'):raise ValueError('ACCOUNT_RECONCILIATION_INCOMPLETE_SEE_RECEIPT')
-    report.update(status='CLEAN_MULTI_ACCOUNT_LIVE_AND_ALIGNED',old_phase68g_disabled=True,receipt=str(STATE/'state/multi_account_receipt.json'))
-    atomic_json(INSTALL/'status.json',report);emit(report['status'])
+    started=datetime.now(timezone.utc)
+    fcntl.flock(production_lock.fileno(),fcntl.LOCK_UN)
+    start_error=None
+    try:run(['systemctl','start',UNIT+'.service'])
+    except RuntimeError as exc:start_error=exc
+    # Even exit 2 can have a useful fresh receipt. Surface it before reporting failure.
+    receipt_path=STATE/'state/multi_account_receipt.json'
+    receipt=json.loads(receipt_path.read_text()) if receipt_path.exists() else {}
+    generated=datetime.fromisoformat(receipt.get('generated_at_utc','1970-01-01T00:00:00+00:00').replace('Z','+00:00'))
+    fresh=(generated>=started and receipt.get('mode')=='CLEAN_MULTI_ACCOUNT'
+           and receipt.get('signal_id')==preflight.get('signal_id')
+           and receipt.get('closed_day')==preflight.get('closed_day'))
+    if fresh:
+        report['account_results']=[{'status':r.get('status'),'orderRequested':r.get('orderRequested'),'reason':r.get('reason')} for r in receipt.get('results',[])]
+        emit('LIVE_RECEIPT',results=report['account_results'],all_accounts_aligned=receipt.get('all_accounts_aligned'))
+        atomic_json(INSTALL/'status.json',report)
+    if start_error:raise start_error
+    if not fresh:raise ValueError('FRESH_LIVE_RECEIPT_REQUIRED')
+    results=receipt.get('results',[])
+    if not (receipt.get('all_accounts_aligned') is True and receipt.get('account_count')==preflight['account_count']
+            and len(results)==preflight['account_count'] and all(r.get('status') in {'NO_ACTION','FILLED_AND_ALIGNED'} for r in results)):
+        raise ValueError('ACCOUNT_RECONCILIATION_INCOMPLETE_SEE_RECEIPT')
+    old_disabled()
+    # Count the verified manual cycle as covering missed calendar ticks. systemd
+    # reads this mtime on timer_start, overriding any in-memory last_trigger.
+    # Deleting the stamp alone does not clear an already-loaded timer's state.
+    run(['systemctl','clean','--what=state',UNIT+'.timer'])
+    TIMER_STAMPS.mkdir(parents=True,exist_ok=True)
+    (TIMER_STAMPS/('stamp-'+UNIT+'.timer')).touch(mode=0o644)
+    run(['systemctl','enable','--now',UNIT+'.timer'])
+    report.update(status='CLEAN_MULTI_ACCOUNT_LIVE_AND_ALIGNED',old_phase68g_disabled=True,receipt=str(receipt_path),timer_resumed=True)
+    atomic_json(INSTALL/'status.json',report);emit(report['status'],results=report['account_results'])
 
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--source-commit',required=True);parser.add_argument('--activate-live',action='store_true');parser.add_argument('--foreground',action='store_true');parser.add_argument('--python');args=parser.parse_args()
+    parser.add_argument('--source-commit',required=True);parser.add_argument('--activate-live',action='store_true');parser.add_argument('--foreground',action='store_true');parser.add_argument('--upgrade-active',action='store_true');parser.add_argument('--python');args=parser.parse_args()
     if os.geteuid()!=0:raise ValueError('SUDO_REQUIRED')
     if not re.fullmatch('[0-9a-f]{40}',args.source_commit):raise ValueError('FULL_SOURCE_COMMIT_REQUIRED')
     INSTALL.mkdir(parents=True,exist_ok=True);os.chmod(INSTALL,0o700)
@@ -227,10 +297,10 @@ def main():
         script.write_text('BUNDLE_B64='+repr(BUNDLE_B64)+'\nBUNDLE_SHA256='+repr(BUNDLE_SHA256)+'\nRUNTIME_SOURCE='+repr(RUNTIME_SOURCE)+'\nexec(compile(RUNTIME_SOURCE,"bootstrap_multi_account","exec"))\n');os.chmod(script,0o600)
         cmd=['systemd-run','--unit=trendatlas-clean-install-'+args.source_commit[:12]+'-'+str(os.getpid()),'--property=Type=exec','--property=UMask=0077',sys.executable,script,'--source-commit',args.source_commit,'--foreground']
         if args.activate_live:cmd.append('--activate-live')
+        if args.upgrade_active:cmd.append('--upgrade-active')
         if args.python:cmd.extend(['--python',args.python])
         run(cmd);emit('INSTALL_SCHEDULED_ON_VPS',status_path=str(INSTALL/'status.json'),continues_without_laptop=True);return
     # Never run two installers concurrently.
-    import fcntl
     with (INSTALL/'install.lock').open('a') as lock:
         fcntl.flock(lock.fileno(),fcntl.LOCK_EX|fcntl.LOCK_NB)
         try:install(args)

@@ -1,3 +1,4 @@
+import {safeExecutionError} from "@/server/multi-account-executor/safe-error";
 import {readFile,writeFile,rename} from "node:fs/promises";
 import path from "node:path";
 import {spawnSync} from "node:child_process";
@@ -56,4 +57,4 @@ async function main() {
  console.log(JSON.stringify({status:passed?"CLEAN_ACCOUNTS_VERIFIED":"CLEAN_ACCOUNT_ATTENTION_REQUIRED",mode:report.mode,account_count:candidates.length,receipt:file}));
  if(!passed)process.exitCode=2;
 }
-main().catch(()=>{console.error("Clean multi-account cycle stopped safely; inspect the local receipt.");process.exitCode=2;});
+main().catch(error=>{console.error(JSON.stringify({event:"CLEAN_WORKER_ERROR",reason:safeExecutionError(error,"worker")}));process.exitCode=2;});

@@ -15,7 +15,8 @@
     "minimum_history_observations": 365,
     "liquidity": "30-calendar-day rolling median of original quote volume; min 20 observed",
     "luna_original_only_cutoff_inclusive": "2022-05-13",
-    "delisting_fill": "unpriced liquidation must be reported, never fabricated"
+    "delisting_fill": "unpriced liquidation must be reported, never fabricated",
+    "public_response_max_bytes": 67108864
   },
   "features": {
     "trend_lookbacks": [
@@ -102,9 +103,11 @@
     "vps_access": "NOT_AVAILABLE_IN_THIS_SESSION",
     "execution_integration": "TYPESCRIPT_MULTI_ACCOUNT_SPOT_PERP_TESTED",
     "old_phase68g_shutdown": "USER_REPORTED_APPLIED_VERIFIED_DISABLED; not independently SSH-verified here",
-    "deployment_entrypoint": "deploy/clean_5050/install_multi_account.py --source-commit SHA --activate-live",
+    "deployment_entrypoint": "deploy/clean_5050/install_multi_account.py --source-commit SHA --activate-live [--upgrade-active]",
     "execution_owner_after_operator_activation": "trendatlas-clean-production.service on VPS; mrv1-production remains disabled",
-    "live_enabled_in_repository": false
+    "live_enabled_in_repository": false,
+    "active_upgrade": "Explicit --upgrade-active: refuse an in-flight worker; pause timer and take production.lock; preserve existing policy and journal; test/preflight before symlink switch; one manual start; fresh aligned receipt before timer resumes; failures stay disarmed.",
+    "legacy_guard_access": "trendatlas-clean is added to trendatlas-production supplementary group before read-only preflight; same group on production service"
   },
   "execution": {
     "weights_source": "signal.json ciel_vahy",
@@ -139,12 +142,13 @@
     "actual_account_receipt": "/var/lib/trendatlas-clean/state/multi_account_receipt.json",
     "automatic_retry_seconds": 0,
     "risk_budget_sizing": "post-cost NAV reserve and floor quantities, target sum <=1, visible exchange minimum dust",
-    "native_vps_validation": "92 Python tests, 250 TypeScript tests, typecheck/build, 18 checkpoints and read-only per-account preflight before activation",
+    "native_vps_validation": "Full Python Clean and TypeScript suites, typecheck/build, 18 checkpoints and read-only per-account preflight before activation",
     "new_config": "/etc/trendatlas-clean/policy.json",
     "authorized_target": "weights dictionary with sum <= 1; identical signal for every consenting account, equity-sized per account",
     "legacy_single_key_installer": "DISABLED_DO_NOT_DEPLOY",
     "source_bundle_manifest": "unpack preserves the original BUNDLE_MANIFEST.json bytes at release root after validating every source file; tests must not require a Git checkout",
-    "per_account_same_day_completed_run": "readback_only_no_rebalance"
+    "per_account_same_day_completed_run": "readback_only_no_rebalance",
+    "failure_diagnostics": "Receipt reason, DB sanitized_error and systemd journal: stage + error.name/message, maximum 200 characters after redacting 0x/long hex/base64, known credentials and control characters; no error objects, stack, request or payload dumps; receipt survives journal write failure."
   },
   "public_performance": {
     "source": "clean5050_metrics.json + clean5050_timeseries.csv",
@@ -155,6 +159,7 @@
     "signal_source": "signal.json ciel_vahy; D+1, no second shift",
     "live_account": "exchange only, never model-derived",
     "reference_metrics": "user targets are unverified acceptance references, never hardcoded public values",
-    "funding_proxies": "explicitly disclosed; never labelled observed Binance funding"
+    "funding_proxies": "explicitly disclosed; never labelled observed Binance funding",
+    "drawdown_wording": "Drawdowns around 50% are possible; metric value always read from the published full-universe artifact, never frozen to the 59-symbol reference."
   }
 }

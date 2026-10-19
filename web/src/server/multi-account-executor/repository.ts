@@ -24,7 +24,7 @@ export class SupabaseExecutionRepository implements ExecutionRepository {
       .eq("authorization_status", "authorized")
       .eq("auto_trading_requested", true)
       .in("execution_status", ["ready", "aligned", "executing", "blocked", "error"]);
-    if (error) throw new Error("eligible accounts are unavailable");
+    if (error) throw new Error("eligible accounts are unavailable", {cause:error});
     return ((data ?? []) as unknown as CandidateRow[]).flatMap((row) => {
       const account = row.hyperliquid_accounts;
       const secret = row.hyperliquid_agent_secrets;
@@ -35,7 +35,7 @@ export class SupabaseExecutionRepository implements ExecutionRepository {
 
   async tryAcquire(accountId: string, holderId: string): Promise<boolean> {
     const { data, error } = await this.db.rpc("try_acquire_multi_account_execution_lock", { expected_account_id: accountId, expected_holder_id: holderId, lease_seconds: 120 });
-    if (error) throw new Error("account lock is unavailable");
+    if (error) throw new Error("account lock is unavailable", {cause:error});
     return data === true;
   }
   async release(accountId: string, holderId: string): Promise<void> {
@@ -43,39 +43,39 @@ export class SupabaseExecutionRepository implements ExecutionRepository {
   }
   async renewLease(accountId: string, holderId: string): Promise<boolean> {
     const { data, error } = await this.db.rpc("renew_multi_account_execution_lock", { expected_account_id: accountId, expected_holder_id: holderId, lease_seconds: 120 });
-    if (error) throw new Error("account lease cannot be renewed");
+    if (error) throw new Error("account lease cannot be renewed", {cause:error});
     return data === true;
   }
   async reserveNonce(agentAddress: string): Promise<bigint> {
     const { data, error } = await this.db.rpc("reserve_multi_account_agent_nonce", { expected_agent_address: agentAddress });
-    if (error || (typeof data !== "number" && typeof data !== "string")) throw new Error("agent nonce is unavailable");
+    if (error || (typeof data !== "number" && typeof data !== "string")) throw new Error("agent nonce is unavailable", {cause:error});
     return BigInt(data);
   }
   async createRun(account: EligibleAccount, target: AuthorizedTarget, equityBefore: number | null, status: FinalStatus): Promise<string> {
     const existing = await this.db.from("multi_account_execution_runs").select("id").eq("hyperliquid_account_id", account.accountId).eq("canonical_signal_id", target.signalId).maybeSingle<{ id: string }>();
-    if (existing.error) throw new Error("execution run cannot be recovered");
+    if (existing.error) throw new Error("execution run cannot be recovered", {cause:existing.error});
     if (existing.data) return existing.data.id;
     const { data, error } = await this.db.from("multi_account_execution_runs").insert({ user_id: account.userId, hyperliquid_account_id: account.accountId, canonical_signal_id: target.signalId, canonical_closed_day: target.closedDay, strategy_version: target.strategyVersion, authorized_target_asset: target.asset, authorized_target_exposure: target.exposure, ...(target.weights ? {authorized_target_weights:target.weights} : {}), account_equity_before: equityBefore, status }).select("id").single<{ id: string }>();
-    if (error || !data) throw new Error("execution run cannot be recorded");
+    if (error || !data) throw new Error("execution run cannot be recorded", {cause:error});
     return data.id;
   }
   async isRunCompleted(runId:string):Promise<boolean> {
     const {data,error}=await this.db.from("multi_account_execution_runs").select("portfolio_completed_at").eq("id",runId).single();
-    if(error)throw new Error("run completion unavailable");
+    if(error)throw new Error("run completion unavailable", {cause:error});
     return !!data.portfolio_completed_at;
   }
   async recordAction(runId: string, action: PlannedAction, cloid: string, submissionState: "NOT_SUBMITTED" | "KNOWN" | "SUBMITTED" | "AMBIGUOUS" | "REJECTED", orderId?: string, expiresAtMs?: number): Promise<void> {
     const { data: prior, error: readError } = await this.db.from("multi_account_execution_actions")
       .select("submission_state,hyperliquid_order_id,verification_state,expires_at_ms,execution_spec").eq("cloid", cloid).maybeSingle();
-    if (readError) throw new Error("execution action cannot be recovered");
+    if (readError) throw new Error("execution action cannot be recovered", {cause:readError});
     if (prior && submissionState === "NOT_SUBMITTED" && prior.submission_state !== "NOT_SUBMITTED") return;
     const { error } = await this.db.from("multi_account_execution_actions").upsert({ run_id: runId, leg_index: action.leg, action: action.action, asset: action.asset, side: action.side ?? (action.reduceOnly ? "sell" : "buy"), requested_notional: action.requestedNotionalUsd, size: action.size, reduce_only: action.reduceOnly, cloid, hyperliquid_order_id: orderId ?? prior?.hyperliquid_order_id ?? null, submission_state: submissionState, expires_at_ms: expiresAtMs ?? prior?.expires_at_ms ?? null, execution_spec: prior?.execution_spec ?? (action.tif ? {tif:action.tif,limitPrice:action.limitPrice,referencePrice:action.referencePrice,makerDeadlineMs:action.makerDeadlineMs,venue:action.venue} : null), verification_state: prior?.verification_state ?? "PENDING", updated_at: new Date().toISOString() }, { onConflict: "cloid" });
-    if (error) throw new Error("execution action cannot be recorded");
+    if (error) throw new Error("execution action cannot be recorded", {cause:error});
   }
   async readActions(runId: string) {
     const { data, error } = await this.db.from("multi_account_execution_actions")
       .select("leg_index,action,asset,side,requested_notional,size,reduce_only,cloid,hyperliquid_order_id,expires_at_ms,execution_spec,submission_state").eq("run_id", runId).order("created_at");
-    if (error) throw new Error("execution journal cannot be recovered");
+    if (error) throw new Error("execution journal cannot be recovered", {cause:error});
     return (data ?? []).map((row) => ({
       action: { leg: row.leg_index, action: row.action, asset: row.asset, side: row.side, requestedNotionalUsd: Number(row.requested_notional), size: Number(row.size), reduceOnly: row.reduce_only, ...(row.execution_spec ?? {}), ...(row.action === "CANCEL" ? { orderId: row.hyperliquid_order_id } : {}) } as PlannedAction,
       cloid: String(row.cloid),
@@ -92,7 +92,7 @@ export class SupabaseExecutionRepository implements ExecutionRepository {
       .in("submission_state", ["KNOWN", "SUBMITTED", "AMBIGUOUS"]);
     query = cloid ? query.eq("cloid", cloid) : query.eq("hyperliquid_order_id", orderId!);
     const { data, error } = await query.limit(1);
-    if (error) throw new Error("order ownership cannot be verified");
+    if (error) throw new Error("order ownership cannot be verified", {cause:error});
     return Boolean(data?.length);
   }
   async readUnresolvedActions(accountId: string) {
@@ -100,7 +100,7 @@ export class SupabaseExecutionRepository implements ExecutionRepository {
       .select("run_id,leg_index,action,asset,side,requested_notional,size,reduce_only,cloid,hyperliquid_order_id,expires_at_ms,execution_spec,submission_state,multi_account_execution_runs!inner(hyperliquid_account_id)")
       .eq("multi_account_execution_runs.hyperliquid_account_id", accountId)
       .in("submission_state", ["KNOWN", "SUBMITTED", "AMBIGUOUS"]).neq("verification_state", "VERIFIED").order("created_at");
-    if (error) throw new Error("unresolved account journal cannot be recovered");
+    if (error) throw new Error("unresolved account journal cannot be recovered", {cause:error});
     return (data ?? []).map((row) => ({
       runId: String(row.run_id),
       action: { leg: row.leg_index, action: row.action, asset: row.asset, side: row.side, requestedNotionalUsd: Number(row.requested_notional), size: Number(row.size), reduceOnly: row.reduce_only, ...(row.execution_spec ?? {}), ...(row.action === "CANCEL" ? { orderId: row.hyperliquid_order_id } : {}) } as PlannedAction,
@@ -112,14 +112,14 @@ export class SupabaseExecutionRepository implements ExecutionRepository {
   }
   async markActionVerified(cloid: string): Promise<void> {
     const { error } = await this.db.from("multi_account_execution_actions").update({ verification_state: "VERIFIED", updated_at: new Date().toISOString() }).eq("cloid", cloid);
-    if (error) throw new Error("action verification cannot be recorded");
+    if (error) throw new Error("action verification cannot be recorded", {cause:error});
   }
   async finishRun(runId: string, status: FinalStatus, equityAfter: number | null, sanitizedError?: string): Promise<void> {
     const { error } = await this.db.from("multi_account_execution_runs").update({ status, ...(["NO_ACTION","FILLED_AND_ALIGNED"].includes(status)?{portfolio_completed_at:new Date().toISOString()}:{}), account_equity_after: equityAfter, sanitized_error: sanitizedError ?? null, completed_at: new Date().toISOString() }).eq("id", runId);
-    if (error) throw new Error("execution run cannot be finalized");
+    if (error) throw new Error("execution run cannot be finalized", {cause:error});
   }
   async setAccountStatus(authorizationId: string, status: "ready" | "disabled_by_user" | "blocked" | "executing" | "aligned" | "error"): Promise<void> {
     const { error } = await this.db.from("hyperliquid_agent_authorizations").update({ execution_status: status }).eq("id", authorizationId);
-    if (error) throw new Error("account status cannot be updated");
+    if (error) throw new Error("account status cannot be updated", {cause:error});
   }
 }

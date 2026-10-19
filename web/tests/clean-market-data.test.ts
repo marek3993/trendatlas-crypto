@@ -1,3 +1,5 @@
+import {privateKeyToAccount} from "viem/accounts";
+import {HyperliquidLiveGateway} from "@/server/multi-account-executor/hyperliquid-live-gateway";
 import {describe,it,expect} from "vitest";
 import {fetchPortfolioMarkets,readPortfolioAccount} from "@/server/multi-account-executor/portfolio-market-data";
 function fixture(abstraction="unifiedAccount") {
@@ -10,4 +12,16 @@ describe("Clean exchange identity and equity",()=>{
  it("values unified spot equity exactly once",async()=>{const f=fixture(),m=await fetchPortfolioMarkets(f.fetcher),a=await readPortfolioAccount("wallet",f.fetcher,m);expect(a.equityUsd).toBe(100);expect(a.spotCashFreeUsd).toBe(40);expect(a.marginAvailableUsd).toBe(40);expect(a.positions[0]).toMatchObject({asset:"SPOT:BTC",size:.001});});
  it("keeps standard spot and perp collateral separate",async()=>{const f=fixture("default"),m=await fetchPortfolioMarkets(f.fetcher),a=await readPortfolioAccount("wallet",f.fetcher,m);expect(a.equityUsd).toBe(1099);expect(a.marginAvailableUsd).toBe(30);expect(a.spotCashFreeUsd).toBe(40);});
  it("blocks entry in borrowing modes",async()=>{const f=fixture("portfolioMargin"),m=await fetchPortfolioMarkets(f.fetcher),a=await readPortfolioAccount("wallet",f.fetcher,m);expect(a.entryBlockers).toContain("UNSUPPORTED_ABSTRACTION_FOR_ENTRY:portfolioMargin");});
+});
+
+describe("Clean leverage diagnostic boundary",()=>{
+ it("retains the exchange rejection while redacting signing material",async()=>{
+   const f=fixture(),key=`0x${"11".repeat(32)}` as const;
+   const fetcher=(async(url:unknown,init?:RequestInit)=>String(url).endsWith("/exchange")
+     ?new Response(JSON.stringify({status:"err",response:`leverage unavailable for ${key}`}))
+     :f.fetcher(url as string,init)) as typeof fetch;
+   const gateway=new HyperliquidLiveGateway(fetcher,true,async()=>{});
+   const error=await gateway.setLeverageOne({asset:"SOL",nonce:BigInt(Date.now()),masterAddress:`0x${"aa".repeat(20)}`,agentAddress:privateKeyToAccount(key).address,agentPrivateKey:key}).catch(e=>e as Error);
+   expect(error).toBeInstanceOf(Error);expect(error.message).toContain("leverage unavailable");expect(error.message).not.toContain(key);
+ });
 });

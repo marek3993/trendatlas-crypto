@@ -44,6 +44,29 @@ describe("portfolio execution recovery",()=>{
     expect(result[0].status).toBe(state==="NOT_SUBMITTED"?"READY":"FAILED");
     expect(h.orders).toHaveLength(0);
   });
+  it.each(["readActions","readUnresolvedActions","reserveNonce","prepareOrder","setLeverageOne"])("records a safe %s error in receipt, DB journal and systemd journal",async step=>{
+    const h=harness(),log=vi.spyOn(console,"error").mockImplementation(()=>{}),finish=vi.spyOn(h.repo,"finishRun");
+    const error=new TypeError(`failure key ${key} nonce ${"ab".repeat(32)} kek ${process.env.TRENDATLAS_AGENT_KEK_B64}`);
+    const owner=step in h.repo?h.repo:h.exchange;
+    Object.assign(owner,{[step]:async()=>{throw error;}});
+    const result=await h.run(target({BTC:.5,SOL:.5}));
+    expect(result).toMatchObject({status:"FAILED",orderRequested:false});
+    expect(result.reason).toContain(`${step}: TypeError: failure`);
+    expect(result.reason!.length).toBeLessThanOrEqual(200);
+    expect(result.reason).not.toContain(key);expect(result.reason).not.toContain(process.env.TRENDATLAS_AGENT_KEK_B64);
+    expect(finish).toHaveBeenCalledWith("run","FAILED",1000,result.reason);
+    expect(JSON.parse(log.mock.calls[0][0])).toMatchObject({event:"CLEAN_EXECUTION_ERROR",reason:result.reason});
+    expect(h.orders).toHaveLength(0);
+  });
+  it("retains the original receipt error if finalizing the journal also fails",async()=>{
+    const h=harness(),log=vi.spyOn(console,"error").mockImplementation(()=>{});
+    h.exchange.prepareOrder=async()=>{throw new Error("book unavailable");};
+    h.repo.finishRun=async()=>{throw new Error("database unavailable");};
+    const result=await h.run(target({BTC:1}));
+    expect(result.reason).toBe("prepareOrder: Error: book unavailable");
+    expect(result.orderRequested).toBe(false);
+    expect(log.mock.calls.map(c=>JSON.parse(c[0]).event)).toEqual(["CLEAN_EXECUTION_ERROR","CLEAN_EXECUTION_JOURNAL_ERROR"]);
+  });
   it("completes reductions before entries and sets 1x",async()=>{const h=harness();h.state.positions=[{asset:"DOGE",size:5,markPrice:100,venue:"perp",leverage:5}];const r=await h.run(target({BTC:.5,SOL:.5}));expect(r.status).toBe("FILLED_AND_ALIGNED");expect(h.orders[0].action).toBe("EXIT");expect(h.events).toContain("1x");expect(h.orders.map(o=>o.asset)).toEqual(["DOGE","SOL","SPOT:BTC"]);});
   it("waits, cancels, verifies and sends only residual IOC after partial maker fill",async()=>{const h=harness();const normal=h.exchange.writeIoc;h.exchange.writeIoc=async o=>{if(o.tif==="Ioc")return normal(o);h.orders.push(o);h.fill(o,.4);h.known.set(o.cloid,{state:"open",orderId:"10"});h.state.openOrders=[{asset:o.asset,orderId:"10",cloid:o.cloid}];h.state.openOrderCount=1;return {orderId:"10"};};expect((await h.run(target({BTC:1}))).status).toBe("FILLED_AND_ALIGNED");expect(h.events).toContain("cancel");expect(h.orders[1].tif).toBe("Ioc");expect(h.orders[1].size).toBeLessThan(h.orders[0].size*.62);});
   it("recovers an accepted fill despite a lost HTTP response",async()=>{const h=harness(),normal=h.exchange.writeIoc;h.exchange.writeIoc=async o=>{await normal(o);throw new Error("lost");};expect((await h.run(target({BTC:1}))).status).toBe("FILLED_AND_ALIGNED");expect(h.orders).toHaveLength(1);});
