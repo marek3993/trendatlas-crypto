@@ -139,10 +139,11 @@
     "actual_account_receipt": "/var/lib/trendatlas-clean/state/multi_account_receipt.json",
     "automatic_retry_seconds": 0,
     "risk_budget_sizing": "post-cost NAV reserve and floor quantities, target sum <=1, visible exchange minimum dust",
-    "native_vps_validation": "91 Python tests, 250 TypeScript tests, typecheck/build, 18 checkpoints and read-only per-account preflight before activation",
+    "native_vps_validation": "92 Python tests, 250 TypeScript tests, typecheck/build, 18 checkpoints and read-only per-account preflight before activation",
     "new_config": "/etc/trendatlas-clean/policy.json",
     "authorized_target": "weights dictionary with sum <= 1; identical signal for every consenting account, equity-sized per account",
     "legacy_single_key_installer": "DISABLED_DO_NOT_DEPLOY",
+    "source_bundle_manifest": "unpack preserves the original BUNDLE_MANIFEST.json bytes at release root after validating every source file; tests must not require a Git checkout",
     "per_account_same_day_completed_run": "readback_only_no_rebalance"
   },
   "public_performance": {

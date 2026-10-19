@@ -27,6 +27,19 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(a,other)
         self.assertIn('src/trendatlas_clean/execution.py',manifest)
         self.assertFalse(any(n.startswith(('data/','outputs/')) or 'private-key' in n or n.endswith('.sqlite3') for n in manifest))
+    def test_unpack_preserves_bundle_manifest_at_release_root(self):
+        builder=module(ROOT/'scripts/production/build_clean_installer.py','manifest_builder')
+        installer=module(ROOT/'deploy/clean_5050/bootstrap_multi_account.py','manifest_installer')
+        body,expected=builder.bundle()
+        with zipfile.ZipFile(io.BytesIO(body)) as archive:
+            original=archive.read('BUNDLE_MANIFEST.json')
+        with tempfile.TemporaryDirectory() as temp:
+            release=Path(temp)
+            self.assertEqual(installer.unpack(body,release),expected)
+            manifest=release/'BUNDLE_MANIFEST.json'
+            self.assertTrue(manifest.is_file(), 'Release root must identify the source bundle without Git')
+            self.assertEqual(manifest.read_bytes(),original)
+            self.assertEqual(json.loads(manifest.read_bytes()),expected)
     def test_bundle_path_escape_rejected(self):
         m=module(ROOT/'deploy/clean_5050/bootstrap_multi_account.py','clean_installer')
         buf=io.BytesIO();body=b'bad'

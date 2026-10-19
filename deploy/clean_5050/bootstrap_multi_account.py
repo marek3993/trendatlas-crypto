@@ -67,6 +67,7 @@ def unpack(body, destination):
             if hashlib.sha256(data).hexdigest()!=digest:
                 raise ValueError('BUNDLE_FILE_HASH_MISMATCH')
             path=destination.joinpath(*p.parts);path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(data)
+        (destination/'BUNDLE_MANIFEST.json').write_bytes(archive.read('BUNDLE_MANIFEST.json'))
     return manifest
 
 

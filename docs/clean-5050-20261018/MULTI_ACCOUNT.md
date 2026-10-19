@@ -16,7 +16,7 @@ The additive Supabase migration `20261018172656_clean_portfolio_execution` has b
 
 ## Operator deployment
 
-The pinned PowerShell command in the PR handoff downloads `deploy/clean_5050/install_multi_account.py` from the exact commit and sends it through SSH stdin to `ubuntu@57.129.127.49`, using the existing `trendatlas_research_admin_20260928` key. It does not depend on a stale laptop checkout.
+The pinned PowerShell command in the PR handoff enters `$HOME\Downloads\ta-clean`, fetches the exact commit with Git, checks it out detached, and sends `deploy/clean_5050/install_multi_account.py` through SSH stdin to `ubuntu@57.129.127.49`, using the existing `trendatlas_research_admin_20260928` key and a 15-second connection timeout. Failed fetch/checkout stops the command before installation. It does not use `raw.githubusercontent.com`, whose DNS resolution failed on the operator laptop.
 
 The installer runs independently on VPS after scheduling. `INSTALL_SCHEDULED_ON_VPS` only acknowledges the start. Its private report is `/var/lib/trendatlas-clean-install/status.json`.
 
@@ -63,3 +63,7 @@ A diagnostic that charges fees/slippage only on changes of target weights reprod
 The funding REST endpoint returned HTTP 451 in this environment. Public monthly archives supplied observed history through September 2026. Missing October observations and absent original PEPEUSDT/SHIBUSDT funding remain explicit BTC/default proxies: 69 affected invested days in the full period, 17 in the trailing year. No rate was fabricated and no renamed contract was silently substituted. The remaining 2026 discrepancy cannot be certified without the reference funding inputs/cost implementation. The production runner retries the official funding REST source on VPS and discloses any remaining proxies.
 
 All values on the page come from the generated ledger, not these acceptance numbers. The production all-USDT universe can produce different historical results from the frozen 59-coin reference; the exact universe and input hashes travel with the artifact.
+
+## Installer manifest repair — 2026-10-19
+
+The operator reported that 1f46a946 stopped before activation: 248/250 TS tests passed, while two source-bundle boundary tests fell back to Git because the release lacked `BUNDLE_MANIFEST.json`. `unpack()` now preserves that file after validating the source entries. The two TS tests remain unchanged. The new regression checks the release-root manifest and its exact archive bytes, and the rebuilt installer is verified by calling its embedded `unpack()` before running the suites in a Git-free directory. See `INSTALLER_MANIFEST_FIX_20261019.md` for the audit. Phase68g remains disabled; no VPS activation was performed during this repair.
